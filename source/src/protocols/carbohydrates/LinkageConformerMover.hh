@@ -24,7 +24,7 @@
 
 #include <core/chemical/carbohydrates/LinkageConformers.hh>
 
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/types.hh>
 
@@ -37,7 +37,7 @@ namespace protocols {
 namespace carbohydrates {
 
 ///@brief This code changes all of the dihedrals of a particular glycosidic linkage based on database info,
-///  esentially sampling carbohydrate dihedral conformers of two residues.
+///  esentially sampling carbohydrate dihedral conformers of two residues.  Randomly samples on any set selector at each apply or (default) samples a linkage conformer for each residue set.
 ///
 ///@details The linkage conformers are carbohydrate residue type and (and linkage oxygen) dependant ie MAN-MAN
 /// If data is not known here, by default we sample from restype-independant data.
@@ -66,22 +66,22 @@ public:
 	LinkageConformerMover();
 
 	///@brief Constructor with pair of residues in linkage we will build the conformer for.
-	LinkageConformerMover(core::kinematics::MoveMapCOP movemap);
+	LinkageConformerMover(core::select::residue_selector::ResidueSelectorCOP selector);
 
 	// copy constructor
 	LinkageConformerMover( LinkageConformerMover const & src );
 
 	~LinkageConformerMover() override;
 
-	///@brief Set the Movemap.  Each apply will randomly sample on the movemap.
+	///@brief Set the Selector.  Each apply will randomly sample Selector.
 	/// If the conformer is not found, will set move status to false.
 	/// Will optimize the linkage between the residue and the parent residue.
 	void
-	set_movemap( core::kinematics::MoveMapCOP movemap );
+	set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
 	///@brief Set a single resnum to sample on instead of a movemap.
 	void
-	set_single_resnum( core::Size resnum );
+	set_single_resnum( core::pose::Pose const & pose, core::Size resnum );
 
 	void
 	apply( core::pose::Pose & pose ) override;
@@ -175,8 +175,6 @@ public:
 private:
 	//std::pair< core::Size, core::Size > linkage_pair_; Can't check if this exists.
 
-	utility::vector1< core::Size > movemap_residues_;
-
 	core::Real sample_sd_;
 	bool use_sugar_bb_data_if_needed_;
 	bool idealize_torsions_;
@@ -184,11 +182,14 @@ private:
 	bool use_sd_as_prob_;
 	bool sample_protein_linkage_;
 	bool use_conformer_population_stats_;
+	bool random_sampler_ = false;
 
 	simple_moves::BBDihedralSamplerMoverOP phi_sampler_mover_;
 	simple_moves::BBDihedralSamplerMoverOP psi_sampler_mover_;
+	simple_moves::BBDihedralSamplerMoverOP omega_sampler_mover_;
 
-	core::kinematics::MoveMapOP movemap_;
+	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
+
 };
 
 

@@ -2035,6 +2035,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc = 'Number of rounds to use for Glycan Relax. Total rounds is this # times number of glycan residues in movemap',
 				default = '25'
 				),
+			Option('min_rings', 'Boolean',
+				desc = 'Minimize Carbohydrate Rings during minimization?  Otherwise, we keep them at their input values (which is recommended).',
+				default = 'false'
+				),
 			Option('pack_glycans', 'Boolean',
 				desc = 'Pack Glycan OH groups during Glycan Relax. Currently time consuming',
 				default = 'false'
@@ -3822,7 +3826,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				),
 			Option('disallow_aa', 'StringVector',
 				desc = 'Disallow certain amino acids while sequence-designing (could still be in the graft-designed sequence, however).  Useful for optimizing without, for example, cysteines and prolines. Applies to all sequence design profiles and residues from any region (cdrs, framework, antigen).  You can control this per-cdr (or only for the CDRs) through the CDR-instruction file. A resfile is also accepted if you wish to limit specific positions directly.',
-				legal = ["ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "H,IS", "ILE", "LYS", "LEU", "MET", "ASN", "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR", \
+				legal = ["ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "HIS", "ILE", "LYS", "LEU", "MET", "ASN", "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR", \
 					"A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"]
 				),
 

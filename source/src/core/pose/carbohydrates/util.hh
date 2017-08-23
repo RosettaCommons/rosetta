@@ -26,6 +26,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/chemical/carbohydrates/LinkageConformers.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 
 // Utility Header
@@ -40,6 +41,44 @@
 namespace core {
 namespace pose {
 namespace carbohydrates {
+
+////////////////////////   Pose-Required Kinematics    ///////////////////////////////////
+///
+///
+///
+
+///@brief
+///
+///  Get a pre-configured movemap from a residue selector.
+///  Use the ReturnResidueSubsetSelector to obtain from a subset.
+///
+///  The Rosetta Movemap is VERY different from IUPAC-designated torsions for carbohydrates.
+///  NEVER attempt to create a MoveMap for carbohydrates unless you know what you are doing.
+///
+///@details
+///
+/// This will create a Movemap from the residue selector for ALL residues within it.
+/// including non-carbohydrates. This includes Chemical Edge Branch points, Mainchains, ASN->glycan linakge, etc.
+///
+/// include_iupac_chi:
+///    Include the 'carbohydrate 'side-chains' (rotatable OH groups) and any selected non-carbohydrate side-chain
+///
+/// include_ring_torsions:
+///    Include moveable ring torsions
+///
+/// include_bb_torsions:
+///    Include BB torsions (normal for protein) or
+///    between both carboydrate or ASN/Carbohydrate residues as defined by IUPAC.
+///     IE for Carbohdrate linkage 1->5, the torsions of residue 5
+///
+kinematics::MoveMapOP
+create_glycan_movemap_from_residue_selector(
+	core::pose::Pose const & pose,
+	core::select::residue_selector::ResidueSelectorCOP selector,
+	bool include_iupac_chi = true,
+	bool include_glycan_ring_torsions = true,
+	bool include_bb_torsions = true);
+
 
 /////////////////////////////////   Glycosylation    ////////////////////////////////////////
 ///
@@ -154,6 +193,12 @@ align_virtual_atoms_in_carbohydrate_residue( Pose & pose, uint const sequence_po
 ///
 ///
 
+///@brief Get the torsion num that this torsionID moves.
+/// Returns 0 if not any of the 4 cannonical BB torsions up to omega2.
+core::Size
+which_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id );
+
+
 /// @brief  Is this is the phi torsion angle of a glycosidic linkage?
 bool
 is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id );
@@ -165,6 +210,14 @@ is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 /// @brief  Is this is an omega torsion angle of a glycosidic linkage?
 bool
 is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id );
+
+bool
+is_glycosidic_omega2_torsion( Pose const & pose, id::TorsionID const & torsion_id );
+
+
+///@brief Base function to reduce code-duplication in torsion queries.
+bool
+is_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id, core::id::MainchainTorsionType const & torsion_type);
 
 /// @brief  Return the sequence position of the immediate downstream (child) residue affected by this torsion.
 core::uint
@@ -180,7 +233,7 @@ get_downstream_residue_that_this_torsion_moves( Pose const & pose, id::TorsionID
 // Getters
 /// @brief Get the number of glycosidic torsions for this residue.  Up to 4 (omega2).
 Size
-get_n_glycosidic_torsions_in_res( Pose & pose, uint const sequence_position );
+get_n_glycosidic_torsions_in_res( Pose const & pose, uint const sequence_position );
 
 /// @brief  Return the requested torsion angle between a saccharide residue of the given pose and the previous residue.
 core::Angle

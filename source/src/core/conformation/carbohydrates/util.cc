@@ -116,7 +116,7 @@ find_seqpos_of_saccharides_child_residue_at( conformation::Residue const & resid
 		TR.Debug << "Residue " << residue.seqpos() << " is an upper terminus! Returning 0." << endl;
 		return 0;
 	} else if ( linkage_position > info->n_carbons() ) {
-		TR.Warning << "Residue " << residue.seqpos() << " does not have a position " << linkage_position << '!' << endl;
+		TR.Debug << "Residue " << residue.seqpos() << " does not have a position " << linkage_position << '!' << endl;
 		return 0;
 	} else {
 		string atom_name( "O" + string( 1, ( '0' + linkage_position ) ) );  // to get "O1", "O2", etc.

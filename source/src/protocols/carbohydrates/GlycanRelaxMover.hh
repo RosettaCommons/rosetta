@@ -53,6 +53,8 @@ namespace carbohydrates {
 ///  .05 MinMover
 ///  .05 PackRotamersMover
 ///
+/// Supports Symmetry
+///
 class GlycanRelaxMover : public protocols::moves::Mover {
 
 public:
@@ -60,7 +62,7 @@ public:
 	GlycanRelaxMover();
 
 	//@brief constructor with arguments
-	GlycanRelaxMover( core::kinematics::MoveMapCOP mm,
+	GlycanRelaxMover( core::select::residue_selector::ResidueSelectorCOP selector,
 		core::scoring::ScoreFunctionCOP scorefxn,
 		core::Size rounds = 75);
 
@@ -78,7 +80,7 @@ public:
 
 	///@brief Set the Movemap
 	void
-	set_movemap(core::kinematics::MoveMapCOP movemap);
+	set_residue_selector(core::select::residue_selector::ResidueSelectorCOP selector );
 
 	///@brief Set a ResidueSelector for glycan residue selection, instead of the typical movemap.
 	void
@@ -125,6 +127,10 @@ public:
 	///@brief Set refinement mode instead of denovo modeling mode.
 	void
 	set_refine( bool refine );
+
+	///@brief set to minimize ring torsions during minimzation.  Default false.
+	void
+	set_min_rings( bool min_rings);
 
 public:
 	void
@@ -188,12 +194,30 @@ private:
 	setup_default_task_factory(utility::vector1< bool > const & glycan_residues, core::pose::Pose const & pose );
 
 	void
+	setup_score_function();
+
+	void
 	setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const;
 
-private:
+	///@brief Randomize all torsions of the subset.  Used to start the protocol.
+	void
+	randomize_glycan_torsions( core::pose::Pose & pose, utility::vector1< bool > const & subset ) const;
 
-	core::kinematics::MoveMapOP full_movemap_;
-	core::kinematics::MoveMapOP glycan_movemap_;
+
+	//Setup the final WeightedMover from our subsets and movemap.
+	void
+	setup_movers(
+		core::pose::Pose & pose,
+		utility::vector1< bool > const & dihedral_subset,
+		utility::vector1< bool > const & sugar_bb_subset,
+		utility::vector1< bool > const & subset);
+
+	void
+	setup_packer(
+		core::pose::Pose & pose,
+		utility::vector1< bool > const & full_subset );
+
+private:
 
 	core::pack::task::TaskFactoryCOP tf_;
 
@@ -218,18 +242,16 @@ private:
 	core::Size total_glycan_residues_ = 0;
 	bool pymol_movie_ = false; // cmdline
 
-	std::string ref_pose_name_;
-	bool use_branches_ = false;
-
 	utility::vector1< std::string > parsed_positions_;
 	core::Real pack_distance_ = 6.0;
 	bool cartmin_ = false; // cmdline
 	bool tree_based_min_pack_ = true; // cmdline
 
-	core::select::residue_selector::ResidueSelectorCOP selector_;  //Residue selector to pass residues to relax.  Currently used for RS only.
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 	bool population_based_conformer_sampling_ = false;
 	core::Real conformer_sd_ = 2.0;
 	bool uniform_conformer_sd_sampling_ = true;
+	bool min_rings_ = false;
 
 };
 

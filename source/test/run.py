@@ -489,6 +489,9 @@ class Tester:
         if Options.levels:
             flags.extend(["-out:levels"] + Options.levels)
 
+        if Options.level:
+            flags.extend(["-out:level"] + Options.level)
+
         return flags
 
 def parse_valgrind_options(options, option_parser):
@@ -558,6 +561,11 @@ def main(args):
       default=[],
       action="append",
       help="Tracer out:levels configuration.",
+    )
+
+    parser.add_option('--level',
+      action="append",
+      help="Tracer out:level configuration",
     )
 
     parser.add_option("-c", '--compiler',

@@ -68,6 +68,8 @@ public:
 
 	virtual void apply( core::pose::Pose & pose_ ) override;
 
+	SymMinMover( MinMover const & src );
+
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 

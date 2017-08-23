@@ -150,6 +150,10 @@ public:
 	void
 	set_final_min_pack_min( bool const minpackmin );
 
+	///@brief Override Glycan Relax rounds.
+	void
+	set_glycan_relax_rounds( core::Size glycan_relax_rounds);
+
 public:
 
 	///@brief Set the scorefunction used for modeling.
@@ -219,6 +223,7 @@ private: // data
 	core::Size rounds_ = 1;
 	core::Size completed_quenches_ = 0;
 	core::Size trees_to_model_ = 0;
+	core::Size glycan_relax_rounds_ = 0; //Set at zero to indicate being unset.
 
 	bool refine_ = false;
 	bool quench_mode_ = false;

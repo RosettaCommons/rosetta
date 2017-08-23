@@ -886,6 +886,15 @@ public:
 		return ring_atoms_.size();
 	}
 
+	/// @brief Return the number of intraresidue dihedrals.  This covers all pairs
+	/// of atoms that are separated by four bonds, and all pairs of intervening
+	/// atoms.
+	Size
+	ndihe() const
+	{
+		return dihedral_atom_sets_.size();
+	}
+
 	/// @brief number of proton chis
 	Size
 	n_proton_chi() const
@@ -2037,15 +2046,6 @@ public:
 	improper_dihedrals_for_atom( Size atomno ) const
 	{
 		return improper_dihedrals_for_atom_[ atomno ];
-	}
-
-	/// @brief Return the number of intraresidue dihedrals.  This covers all pairs
-	/// of atoms that are separated by four bonds, and all pairs of intervening
-	/// atoms.
-	Size
-	ndihe() const
-	{
-		return dihedral_atom_sets_.size();
 	}
 
 

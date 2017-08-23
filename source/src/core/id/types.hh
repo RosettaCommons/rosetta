@@ -110,6 +110,7 @@ to_string( TorsionType const & type ) {
 static Size const   phi_torsion( 1 );
 static Size const   psi_torsion( 2 );
 static Size const omega_torsion( 3 );
+static Size const omega2_torsion( 4);
 
 //Torsion ids for beta-amino acids:
 static Size const phi_torsion_beta_aa( 1 );

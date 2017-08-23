@@ -21,6 +21,8 @@
 #include <core/pose/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/carbohydrates/util.hh>
+#include <core/pose/PDBInfo.hh>
+
 #include <core/chemical/AA.hh>
 #include <core/kinematics/util.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -48,6 +50,7 @@ namespace carbohydrates {
 using namespace core::chemical::carbohydrates;
 using namespace core::pose::carbohydrates;
 using namespace core::kinematics;
+using namespace protocols::rosetta_scripts;
 
 SimpleGlycosylateMover::SimpleGlycosylateMover():
 	protocols::moves::Mover( "SimpleGlycosylateMover" ),
@@ -61,7 +64,21 @@ SimpleGlycosylateMover::SimpleGlycosylateMover():
 
 SimpleGlycosylateMover::~SimpleGlycosylateMover()= default;
 
-SimpleGlycosylateMover::SimpleGlycosylateMover( SimpleGlycosylateMover const & )= default;
+SimpleGlycosylateMover::SimpleGlycosylateMover( SimpleGlycosylateMover const & src ):
+	protocols::moves::Mover( src ),
+	glycosylations_( src.glycosylations_ ),
+	glycosylation_weights_( src.glycosylation_weights_ ),
+	parsed_positions_( src.parsed_positions_ ),
+	positions_( src.positions_ ),
+	strip_existing_glycans_( src.strip_existing_glycans_ ),
+	ref_pose_name_( src.ref_pose_name_ ),
+	idealize_glycosylation_( src.idealize_glycosylation_)
+{
+	if ( selector_ ) {
+		selector_ = src.selector_->clone();
+	}
+
+}
 
 void
 SimpleGlycosylateMover::parse_my_tag(
@@ -69,7 +86,7 @@ SimpleGlycosylateMover::parse_my_tag(
 	basic::datacache::DataMap& data,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
-	core::pose::Pose const & pose)
+	core::pose::Pose const & )
 {
 
 	using namespace core::kinematics;
@@ -80,7 +97,8 @@ SimpleGlycosylateMover::parse_my_tag(
 	positions_.clear();
 
 	if ( tag->hasOption("glycosylation") ) {
-		glycosylations_ = utility::string_split_multi_delim( tag->getOption< std::string >("glycosylation"), ",'`~+*&|;. ");
+		glycosylations_.push_back( tag->getOption< std::string >("glycosylation"));
+
 	} else if ( tag->hasOption("glycosylations") ) {
 		glycosylations_ = utility::string_split_multi_delim( tag->getOption< std::string >("glycosylations"), ",'`~+*&|;. ");
 	} else {
@@ -88,19 +106,18 @@ SimpleGlycosylateMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("position") ) {
-		parsed_positions_ = utility::string_split_multi_delim( tag->getOption< std::string >("position"), ",'`~+*&|;. ");
+		parsed_positions_.push_back( tag->getOption< std::string >("position") );
 	} else if ( tag->hasOption("positions") ) {
 		parsed_positions_ = utility::string_split_multi_delim( tag->getOption< std::string >("positions"), ",'`~+*&|;. ");
-	} else if  ( tag->hasTag( "MoveMap") ) {
-		MoveMapOP mm = MoveMapOP( new MoveMap() );
-
-		//protocols::rosetta_scripts::add_movemaps_to_datamap(tag, pose, data, false);
-		protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false );
-		set_positions_from_movemap(mm);
+	} else if  ( tag->hasTag( "residue_selector") ) {
+		selector_ = parse_residue_selector( tag, data );
 	} else {
 		utility_exit_with_message(" Must pass either position or positions");
 	}
 
+	if ( parsed_positions_.size() > 0 && selector_ ) {
+		utility_exit_with_message(" Cannot set position(s) and residue_selector! ");
+	}
 
 	if ( tag->hasOption("weights") ) {
 		utility::vector1< std::string > weights = utility::string_split_multi_delim( tag->getOption< std::string >("weights"), ",'`~+*&|;. ");
@@ -160,11 +177,6 @@ SimpleGlycosylateMover::set_position(core::Size position){
 }
 
 void
-SimpleGlycosylateMover::set_positions(const utility::vector1<core::Size> &positions) {
-	positions_ = positions;
-}
-
-void
 SimpleGlycosylateMover::set_positions(const utility::vector1<bool> &positions){
 	positions_.clear();
 	if ( positions.size() == 0 ) {
@@ -179,12 +191,14 @@ SimpleGlycosylateMover::set_positions(const utility::vector1<bool> &positions){
 }
 
 void
-SimpleGlycosylateMover::set_positions_from_movemap(core::kinematics::MoveMapCOP mm){
-	positions_ = core::kinematics::get_residues_from_movemap_with_id(core::id::BB, *mm);
+SimpleGlycosylateMover::set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector ){
+	positions_.clear();
+	selector_ = selector->clone();
 }
 
+
 void
-SimpleGlycosylateMover::set_glycosylation(const std::string &iupac_or_common_string){
+SimpleGlycosylateMover::set_glycosylation(const std::string & iupac_or_common_string){
 	glycosylations_.clear();
 	glycosylations_.push_back(iupac_or_common_string);
 }
@@ -281,6 +295,12 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 			}
 			positions_.push_back(resnum);
 		}
+	} else if ( selector_ ) {
+		if ( ref_pose_name_ != "" ) {
+			utility_exit_with_message("Using a ResidueSelector with a set ref pose name is currently unsupported!");
+		}
+		utility::vector1< bool > subset = selector_->apply( pose );
+		set_positions( subset);
 	}
 
 	if ( glycosylations_.size() == 0 || positions_.size() == 0 ) {
@@ -338,6 +358,10 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 		glycosylate_pose( pose, resnum, glycosylation, idealize_glycosylation_ /* idealize linkages - Seems to be a bug here!*/);
 
 	}
+
+	//Fix PDBINFO.  We are adding Glycans, we should retain any PDB Info set.
+	pose.pdb_info()->obsolete(false);
+
 
 	/* This doesn't work for O-linked glycosylations
 	//Check positions are ASN.  Optionally mutate to ASN and motif?
@@ -399,16 +423,18 @@ void SimpleGlycosylateMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute( "glycosylation", xs_string, "String specifying the glycosylation to add to this pose (or a file name containing the glycosylation)" )
-		+ XMLSchemaAttribute( "glycosylations", xs_string, "String or file name specifying multiple possible glycosylations to add to this pose (will be sampled randomly" )
+		+ XMLSchemaAttribute( "glycosylation", xs_string, "String specifying the glycosylation to add to this pose (IUPAC Glycan String) (or a file name containing the glycosylation with a .iupac name)" )
+		+ XMLSchemaAttribute( "glycosylations", xs_string, "String or file name specifying multiple possible glycosylations to add to this pose (IUPAC Glycan String) (or a file name containing the glycosylation with a .iupac name) (will be sampled randomly" )
 		+ XMLSchemaAttribute( "position", xsct_refpose_enabled_residue_number, "Position to add glycosylation" )
 		+ XMLSchemaAttribute( "positions", xsct_refpose_enabled_residue_number_cslist, "Positions to add glycosylations" )
 		+ XMLSchemaAttribute( "weights", "delimited_real_list", "Sampling weights corresponding to the provided set of glycans" )
 		+ XMLSchemaAttribute( "strip_existing", xsct_rosetta_bool, "Strip existing glycosylations from the pose" )
 		+ XMLSchemaAttribute( "ref_pose_name", xs_string, "Name of saved reference pose" )
 		+ XMLSchemaAttribute( "idealize_glycosylation", xsct_rosetta_bool, "Idealize glycosylations on the pose?" );
+
+	rosetta_scripts::attributes_for_parse_residue_selector( attlist );
+
 	XMLSchemaSimpleSubelementList subelements;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Mover to add specified glycosylations to a pose in the specified positions", attlist, subelements );
 }

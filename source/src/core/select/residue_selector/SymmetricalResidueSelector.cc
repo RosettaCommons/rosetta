@@ -11,6 +11,7 @@
 /// @brief  The SymmetricalResidueSelector selects symmetrical counterparts of the input residues
 /// @author Yang Hsia (yhsia@uw.edu)
 
+
 // Unit headers
 #include <core/select/residue_selector/SymmetricalResidueSelector.hh>
 #include <core/select/residue_selector/SymmetricalResidueSelectorCreator.hh>
@@ -71,9 +72,13 @@ SymmetricalResidueSelector::apply( core::pose::Pose const & pose ) const
 	//make sure a selector is set as input
 	runtime_assert( selector_ );
 
+
 	//DO THINGS HERE
 	ResidueSubset subset_non= selector_->apply( pose );
 	ResidueSubset subset_sym= selector_->apply( pose );
+
+	if ( ! core::pose::symmetry::is_symmetric(pose) ) return subset_non;
+
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
 	for ( Size i = 1; i <= subset_non.size(); i++ ) {

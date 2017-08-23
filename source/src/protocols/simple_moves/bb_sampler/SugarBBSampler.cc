@@ -18,6 +18,7 @@
 #include <core/scoring/carbohydrates/OmegaPreferencesFunction.hh>
 #include <core/scoring/carbohydrates/util.hh>
 #include <core/pose/carbohydrates/util.hh>
+#include <core/pose/util.hh>
 
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
@@ -46,6 +47,8 @@ using namespace core::scoring::carbohydrates;
 using namespace core::chemical::carbohydrates;
 using namespace core::pose;
 using namespace core::pose::carbohydrates;
+using namespace core::conformation::carbohydrates;
+
 using core::Angle;
 using core::Probability;
 using core::conformation::Residue;
@@ -93,7 +96,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 
 	Angle new_dihedral = 0.0;
 
-	//TR << "Optimizing resnum " << resnum << " dihedral " << Size(torsion_type_ ) << std::endl;
+	if ( TR.Debug.visible() ) { TR.Debug << "Optimizing resnum " << resnum << " dihedral " << Size(torsion_type_ ) << std::endl; }
 
 	if ( torsion_type_ == core::id::phi_dihedral || torsion_type_ == core::id::psi_dihedral ) {
 		CHIEnergyFunction const & sugar_bb =
@@ -103,7 +106,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		CHIEnergyFunctionLinkageType linkage_type =
 			get_CHI_energy_function_linkage_type_for_residue_in_pose( torsion_type_, pose, resnum );
 
-		//TR << "Applying linkage type: " << linkage_type << std::endl;
+		TR.Debug << "Applying linkage type: " << linkage_type << std::endl;
 
 		if ( linkage_type == LINKAGE_NA ) {
 			std::string msg = "No data for linkage.  Either this is psi and previous residue is not carbohydrate or we do not have a pyranose ring in the previous residue.";
@@ -114,7 +117,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		}
 		CHIDihedralSamplingData const & sampling_data = sugar_bb.get_sampling_data( linkage_type );
 
-		//TR << "Optimizing resnum " << resnum << " dihedral " << Size(torsion_type_ ) << std::endl;
+		if ( TR.Debug.visible() ) { TR.Debug << "Optimizing resnum " << resnum << " dihedral " << Size(torsion_type_ ) << std::endl; }
 
 		//Sample Dihedral
 
@@ -184,7 +187,21 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 
 void
 SugarBBSampler::set_torsion_to_pose(Pose & pose, core::Size resnum) const{
+
+	//If the residue has no omega torsion, just skip it here.
+	if ( torsion_type_ == core::id::omega_dihedral  && ! pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( resnum ) ) {
+		return;
+	}
+
+	if ( TR.Debug.visible() ) { TR.Debug <<"NTorsions: " << get_n_glycosidic_torsions_in_res(pose, resnum) << std::endl; }
 	Angle torsion_angle = get_torsion(pose, resnum);
+	if ( TR.Debug.visible() ) {
+		core::Angle current_angle = get_bb_torsion( core::Size( torsion_type_ ), pose, resnum);
+		TR.Debug << "Current Angle: " << current_angle << "For resnum " << resnum <<" torsion "<< core::Size( torsion_type_ ) << std::endl;
+		TR.Debug << "Setting " << torsion_angle <<" to pose." << std::endl;
+	}
+
+
 	set_glycosidic_torsion( torsion_type_, pose, resnum, torsion_angle );
 
 }

@@ -97,6 +97,13 @@ public:
 	/// @brief Returns a random int in the range specified by the arguments
 	int random_range( int low, int high );
 
+	/// @brief Returns a random int in the range specified by the arguments
+	///  If low == high, it will return the given integer to simplify code using this.
+	///s
+	/// @author JAB - Editing random_range produced huge integration test changes, so this is the result.
+	///  If you have a better name, please change this.
+	int random_range2( int low, int high );
+
 	/// @brief Return the seed used by this RNG.
 	int get_seed() const;
 

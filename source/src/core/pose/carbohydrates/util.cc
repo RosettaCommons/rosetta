@@ -44,6 +44,8 @@
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/carbohydrates/GlycanTree.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 // Utility Headers
 #include <utility/string_constants.hh>
@@ -77,6 +79,181 @@ namespace pose {
 namespace carbohydrates {
 using std::map;
 using namespace conformation::carbohydrates;
+
+// Torsion Access /////////////////////////////////////////////////////////////
+// Getters ////////////////////////////////////////////////////////////////////
+
+///@brief Get the number of glycosidic torsions for this residue.  Up to 4 (omega2).
+Size
+get_n_glycosidic_torsions_in_res( Pose const & pose, uint const sequence_position )
+{
+	core::Size n_torsions( 0 );
+	for ( core::Size torsion_id = 1; torsion_id <= 4; ++torsion_id ) {
+		utility::vector1< id::AtomID > const ref_atoms = get_reference_atoms( torsion_id, pose, sequence_position );
+		if ( ref_atoms.size() != 0 ) {
+			n_torsions+=1;
+		}
+	}
+	return n_torsions;
+}
+
+///@brief
+///
+///  Get a pre-configured movemap from a residue selector.
+///  Use the ReturnResidueSubsetSelector to obtain from a subset.
+///
+///  The Rosetta Movemap is VERY different from IUPAC-designated torsions for carbohydrates.
+///  NEVER attempt to create a MoveMap for carbohydrates unless you know what you are doing.
+///
+///@details
+///
+/// This will create a Movemap from the residue selector for ALL residues within it.
+/// including non-carbohydrates. This includes Chemical Edge Branch points, Mainchains, ASN->glycan linakge, etc.
+///
+///@params
+///
+/// include_iupac_chi:
+///    Include the 'carbohydrate 'side-chains' (rotatable OH groups) and any selected non-carbohydrate side-chain
+///
+/// include_ring_torsions:
+///    Include moveable ring torsions
+///
+/// include_bb_torsions:
+///    Include torsions between both residues as defined by IUPAC. IE for linkage 1->5, the torsions of residue 5
+///
+kinematics::MoveMapOP
+create_glycan_movemap_from_residue_selector(
+	core::pose::Pose const & pose,
+	select::residue_selector::ResidueSelectorCOP selector,
+	bool include_iupac_chi /* true */,
+	bool include_glycan_ring_torsions /* false */,
+	bool include_bb_torsions /* true */)
+{
+	using namespace core::id;
+
+	core::kinematics::MoveMapOP movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
+	utility::vector1< bool > subset = selector->apply( pose );
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		if ( ! subset[i] ) continue;
+
+		TR.Debug << "Residue " << i << std::endl;
+		if ( ! pose.residue( i ).is_carbohydrate() ) {
+			if ( include_bb_torsions ) {
+				movemap->set_bb(i, true);
+			}
+			if ( include_iupac_chi ) {
+				movemap->set_chi(i, true);
+			}
+
+		} else {
+
+			if ( include_glycan_ring_torsions ) {
+				movemap->set_nu(i, true);
+			}
+
+			//Here is where it gets super tricky.
+
+			// Setup MinMover-specific Glycan Movemap //
+			// NOTE: THIS IS NOT IUPAC DEFINITION AND MUST BE DEALT WITH CAREFULLY.
+			// 1) MM residue is the ONE BEFORE the IUPAC!
+			// 2) CHI for ASN must be set to enable it's torsions to move.
+			// 3) set_bb is for non-ring torsions.  Add an option to enable minimization of rings torsions (set_neus in movemap to true)
+			// 4) set_branches must be on to allow the chemical-edge torsion to move.
+			//    ->  This must be on for ASN and any residue that has a non-mainchain connection!
+
+			core::Size parent_res = pose.glycan_tree_set()->get_parent( i );
+
+			TR.Debug << "Setting up residue " << i << ", with parent " << parent_res << std::endl;
+			//This residue is the protein-linkage. Set the BB up properly.
+			bool branched_connection = false;
+			if ( parent_res != 0 && !pose.residue( parent_res ).is_carbohydrate() ) {
+				if ( include_bb_torsions ) {
+					TR.Debug << "Setting ASN Linkage Torsion " << std::endl;
+					movemap->set_chi( parent_res, true);
+					movemap->set_branches( parent_res, true);
+				}
+			} else {
+				//Branch Linkage
+				if ( parent_res != 0 && pose.residue(i).is_branch_lower_terminus() ) {
+					core::Size total_connections = pose.residue( parent_res ).n_possible_residue_connections();
+					core::Size mainchain_connections = pose.residue( parent_res).n_polymeric_residue_connections();
+					for ( core::Size connection_id = 1; connection_id <= total_connections; ++connection_id ) {
+						TR.Debug << "Connection: " << connection_id << std::endl;
+						core::Size child = pose.residue( parent_res).residue_connection_partner( connection_id );
+						core::SSize torsion_id = connection_id - mainchain_connections;
+
+						//This is the branch.  We now turn on PHI for this connection.
+						if ( include_bb_torsions && child == i && torsion_id > 0 ) {
+							TR.Debug << "Setting BRANCH torsion" << torsion_id << std::endl;
+							movemap->set( TorsionID( parent_res, BRANCH, torsion_id ), true );
+							branched_connection = true;
+							break; //Only a single 'torsion' will be set here.
+						}
+					}
+
+				} else if ( parent_res != 0 ) {
+					//MainChain Linkage
+					core::Size n_torsions_i = get_n_glycosidic_torsions_in_res(pose, i);
+					core::Size phi_torsion_parent = pose.residue_type(parent_res).mainchain_atoms().size();
+					TR.Debug << "Setting mainchain connection, Parent Mainchain torsions:  "<< phi_torsion_parent <<" Real Res Linkage Torsions " << n_torsions_i << std::endl;
+					//n_torsions_i = 3;
+					//Phi = phi_torsion_parent
+					//psi = phi_torsion_parent -1
+					//omega = phi_torsion_parent - 2
+					//omega = phi_torsion_parent - n_torsions_i + 1
+					if ( include_bb_torsions ) {
+						for ( core::Size torsion = phi_torsion_parent; torsion >= phi_torsion_parent - n_torsions_i +1; --torsion ) {
+							TR.Debug << "Setting BB Torsion: " << parent_res << " " << torsion << std::endl;
+							movemap->set( TorsionID( parent_res, BB, torsion), true);
+						}
+					}
+				}
+			}
+
+			//Psi/Omega/Omega2 are all 'chi' torsions with numbers corresponding to the atom numbers before the torsion.
+			//Go through all CARBON atoms.
+			//
+
+			///Non-BB Torsions
+			if ( include_iupac_chi ) {
+				for ( core::Size chi_torsion_num = 1; chi_torsion_num <= pose.residue_type( i ).nchi(); ++ chi_torsion_num ) {
+					TorsionID torsion_id = TorsionID(i, CHI, chi_torsion_num);
+					core::Size child_resnum = get_downstream_residue_that_this_torsion_moves( pose, torsion_id);
+					if ( child_resnum == 0 ) {
+						TR.Debug << "Setting Non-BB CHI Torsion " << chi_torsion_num << std::endl;
+						movemap->set( torsion_id, true);
+						continue;
+					}
+				}
+			}
+
+			///BB-Torsions
+			//  It either has no parent, or the parent is not carboydrate and we already set it up
+			if ( parent_res == 0 || !pose.residue(parent_res).is_carbohydrate() ) {
+				continue;
+			}
+
+			//Real BB of a carbohydrate-carbohydrate linkage
+			if ( include_bb_torsions && branched_connection ) {
+				for ( core::Size chi_torsion_num = 1; chi_torsion_num <= pose.residue_type( parent_res ).nchi(); ++ chi_torsion_num ) {
+					TorsionID torsion_id = TorsionID(parent_res, CHI, chi_torsion_num);
+					core::Size child_resnum = get_downstream_residue_that_this_torsion_moves( pose, torsion_id);
+					//This is the BB Torsion we are after.  It is the same one as IUPAC.
+					if ( child_resnum == i ) {
+						TR.Debug << "Setting BB CHI Torsion " << chi_torsion_num << std::endl;
+						movemap->set( torsion_id, true);
+					}
+				}
+			}
+		}
+	}
+
+	return movemap;
+}
+
+
+
+
 
 // Glycosylate the Pose at the given sequence position and atom using an IUPAC sequence.
 /// @details   Format for <iupac_sequence>:\n
@@ -314,8 +491,8 @@ get_glycosidic_bond_residues( Pose const & pose, uint const sequence_position )
 	ResidueCOP res_n( pose.residue( sequence_position ).get_self_ptr() );
 
 	if ( res_n->is_lower_terminus() ) {
-		if ( TR.Info.visible() ) {
-			TR.Info << "Glycosidic torsions are undefined for the first polysaccharide residue of a chain unless part "
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Glycosidic torsions are undefined for the first polysaccharide residue of a chain unless part "
 				"of a branch." << endl;
 		}
 		return make_pair( res_n, res_n );
@@ -754,6 +931,17 @@ is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 	return false;
 }
 
+///@brief Get the torsion num that this torsionID moves.
+core::Size
+which_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id ){
+	if      ( is_glycosidic_phi_torsion( pose, torsion_id) ) return 1;
+	else if ( is_glycosidic_torsion( pose, torsion_id, core::id::psi_dihedral) ) return 2;
+	else if ( is_glycosidic_torsion( pose, torsion_id, core::id::omega_dihedral) ) return 3;
+	else if ( is_glycosidic_torsion( pose, torsion_id, core::id::omega2_dihedral) ) return 4;
+	else return 0;
+}
+
+
 // Is this is the psi torsion angle of a glycosidic linkage?
 /// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
 /// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 2 ) is psi.  For a sugar, psi (of the next
@@ -764,42 +952,7 @@ is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 bool
 is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 {
-	using namespace id;
-
-	if ( torsion_id.type() == BB || torsion_id.type() == CHI ) {  // Psi for a branched saccharide has a CHI type.
-		conformation::Residue const & residue( pose.residue( torsion_id.rsd() ) );
-		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
-
-		switch( torsion_id.type() ) {
-		case BB :
-			if ( ! residue.is_upper_terminus() ) {
-				// If this is a main-chain torsion, we need the next residue on the main chain.
-				next_rsd_num = torsion_id.rsd() + 1;
-				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
-				}
-			}
-			break;
-		case CHI :
-			{
-			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-			// A psi angle will always have the third atom of its definition be a connect atom.
-			uint const third_atom( residue.chi_atoms( torsion_id.torsion() )[ 3 ] );
-			Size const n_branches( residue.n_non_polymeric_residue_connections() );
-			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
-				conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
-				if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == third_atom ) ) {
-					return true;
-				}
-			}
-		}
-			break;
-		default :
-			break;
-		}
-	}
-	return false;
+	return is_glycosidic_torsion(pose, torsion_id, core::id::psi_dihedral);
 }
 
 // Is this is an omega torsion angle of a glycosidic linkage?
@@ -813,7 +966,54 @@ is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 bool
 is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 {
+	return is_glycosidic_torsion(pose, torsion_id, core::id::omega_dihedral);
+}
+
+// Is this is an omega torsion angle of a glycosidic linkage?
+/// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
+/// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 3 ) is omega.  For a sugar, omega (of the next
+/// residue) is the 3rd-to-last torsion, and the number of main-chain torsions varies per saccharide residue.
+/// @note     This function currently will not recognize additional omegas beyond omega1.\n
+/// Also, this function will return false if the TorsionID is a CHI and the torsion is already covered by an equivalent
+/// BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to access that
+/// torsion is through CHI.
+bool
+is_glycosidic_omega2_torsion( Pose const & pose, id::TorsionID const & torsion_id )
+{
+	return is_glycosidic_torsion(pose, torsion_id, core::id::omega2_dihedral);
+}
+
+///@brief Base function to reduce code-duplication in torsion queries.
+bool
+is_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id, core::id::MainchainTorsionType const & torsion_type){
+
 	using namespace id;
+	core::Size mainchain_offset = 0;
+	core::Size connect_atom_num = 0;
+
+	switch( torsion_type){
+	case phi_dihedral :
+		return is_glycosidic_phi_torsion( pose, torsion_id);
+
+	case psi_dihedral :
+		mainchain_offset = 1;
+		connect_atom_num = 3;
+		break;
+
+	case omega_dihedral :
+		mainchain_offset = 2;
+		connect_atom_num = 4;
+		break;
+
+	case omega2_dihedral :
+		utility_exit_with_message("Omega2 currently unsupported!");
+
+	case omega3_dihedral :
+		utility_exit_with_message("Omega3 currently unsupported");
+
+	default :
+		utility_exit_with_message("Unknown behavior");
+	}
 
 	if ( torsion_id.type() == BB || torsion_id.type() == CHI ) {  // Omega for a branched saccharide has a CHI type.
 		conformation::Residue const & residue( pose.residue( torsion_id.rsd() ) );
@@ -826,23 +1026,28 @@ is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id
 				next_rsd_num = torsion_id.rsd() + 1;
 				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
 					chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-					if ( info->has_exocyclic_linkage_to_child_mainchain() ) {
-						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
+					if ( core::Size(torsion_type) > 2 && ! info->has_exocyclic_linkage_to_child_mainchain() ) {
+						return false;
 					}
+					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - mainchain_offset );
+
 				}
 			}
 			break;
 		case CHI :
 			{
-			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-			// An omega angle will always have the fourth atom of its definition be a connect atom.
-			uint const fourth_atom( residue.chi_atoms( torsion_id.torsion() )[ 4 ] );
-			Size const n_branches( residue.n_non_polymeric_residue_connections() );
-			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
-				conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
-				if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == fourth_atom ) ) {
-					return true;
+
+			if ( ! residue.is_upper_terminus() ) {
+				Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+				// An omega angle will always have the fourth atom of its definition be a connect atom.
+				uint const N_atom( residue.chi_atoms( torsion_id.torsion() )[ connect_atom_num ] );
+				Size const n_branches( residue.n_non_polymeric_residue_connections() );
+				for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+					next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
+					conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
+					if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == N_atom ) ) {
+						return true;
+					}
 				}
 			}
 		}
@@ -852,6 +1057,7 @@ is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id
 		}
 	}
 	return false;
+
 }
 
 // Return the sequence position of the immediate downstream (child) residue affected by this torsion.
@@ -875,28 +1081,13 @@ get_downstream_residue_that_this_torsion_moves( Pose const & pose, id::TorsionID
 		next_rsd = find_seqpos_of_saccharides_child_residue_at( rsd, torsion_id.torsion() );
 	}
 	if ( ! next_rsd ) {
-		TR.Error << "Torsion " << torsion_id << " does not move any downstream residues!  Returning 0." << std::endl;
+		TR.Debug << "Torsion " << torsion_id << " does not move any downstream residues!  Returning 0." << std::endl;
 	}
 	return next_rsd;
 }
 
 
-// Torsion Access /////////////////////////////////////////////////////////////
-// Getters ////////////////////////////////////////////////////////////////////
 
-///@brief Get the number of glycosidic torsions for this residue.  Up to 4 (omega2).
-Size
-get_n_glycosidic_torsions_in_res( Pose & pose, uint const sequence_position )
-{
-	core::Size n_torsions( 0 );
-	for ( core::Size torsion_id = 1; torsion_id <= 4; ++torsion_id ) {
-		utility::vector1< id::AtomID > const ref_atoms = get_reference_atoms( torsion_id, pose, sequence_position );
-		if ( ref_atoms.size() != 0 ) {
-			n_torsions+=1;
-		}
-	}
-	return n_torsions;
-}
 
 
 // Return the requested torsion angle between a saccharide residue of the given pose and the previous residue.
@@ -1040,7 +1231,7 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 			set_glycosidic_torsion( i, pose, upper_residue, torsion_mean );
 		}
 	} else if ( use_prob_for_sd ) {
-		TR << "This is not yet implemented." << std::endl;
+		utility_exit_with_message( " UseProbForSD in LinkageConformer sampling is not yet implemented." );
 
 	} else {
 		Real mean;

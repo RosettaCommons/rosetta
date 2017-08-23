@@ -22,6 +22,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -115,18 +116,9 @@ public:
 	void
 	set_position(core::Size position);
 
-	///@brief Set multiple positions to glycosylate
+	///@brief Set positions from a Residue Selector.
 	void
-	set_positions(utility::vector1< bool > const & positions );
-
-	///@brief Set mutliple positions to glycosylate
-	void
-	set_positions(utility::vector1< core::Size > const & positions);
-
-	///@brief Set positions to glycosylate using a movemap.
-	void
-	set_positions_from_movemap( core::kinematics::MoveMapCOP mm);
-
+	set_residue_selector(core::select::residue_selector::ResidueSelectorCOP selector);
 
 public:
 
@@ -189,6 +181,8 @@ private:
 	utility::vector1< std::string >
 	setup_and_load_iupac_sequences() const;
 
+	void
+	set_positions( utility::vector1<bool> const & positions);
 
 private:
 
@@ -203,6 +197,7 @@ private:
 	std::string ref_pose_name_; //Used for RosettaScripts
 
 	bool idealize_glycosylation_;
+	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
 
 };
 

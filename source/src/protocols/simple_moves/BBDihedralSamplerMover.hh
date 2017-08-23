@@ -23,7 +23,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -37,15 +37,13 @@ namespace simple_moves {
 /// Samples using BBDihedralSamplers randomly using residues set in the movemap.
 /// If multiple samplers are given, will randomly sample on them.
 ///
-///@details Obeys Movemap BB Torsion ID settings if given in movemap.
-///
 class BBDihedralSamplerMover : public protocols::moves::Mover {
 
 public:
 
 	BBDihedralSamplerMover();
 	BBDihedralSamplerMover( bb_sampler::BBDihedralSamplerOP sampler);
-	BBDihedralSamplerMover( bb_sampler::BBDihedralSamplerOP sampler, core::kinematics::MoveMapCOP mm);
+	BBDihedralSamplerMover( bb_sampler::BBDihedralSamplerOP sampler, core::select::residue_selector::ResidueSelectorCOP selector);
 
 
 
@@ -60,9 +58,9 @@ public:
 
 public:
 
-	///@brief Sets residues (and optionally torsions) to sample on FROM movemap.
+	///@brief Sets residues from a residue selector.
 	void
-	set_movemap( core::kinematics::MoveMapCOP movemap);
+	set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector);
 
 	///@brief Set a single resnum instead of a movemap.
 	void
@@ -76,6 +74,13 @@ public:
 	void
 	add_sampler( bb_sampler::BBDihedralSamplerOP sampler );
 
+
+	///@brief Limit the torsions that are sampled using a mask.
+	/// Mask is a vector of torsions we are allowed to sample at each residue.
+	///  NOT every residue must be present - only the ones we need to mask.
+	///  This helps for carbohydrates, since not every residue has all possible dihedrals, even if we have samplers to use.
+	void
+	set_dihedral_mask( std::map< core::Size, utility::vector1< core::Size >> mask );
 
 public:
 
@@ -109,7 +114,7 @@ private:
 
 	//@brief Sets the union of residues available in movemap and sampler torsion ids.
 	void
-	setup_sampler_movemap_union( core::pose::Pose const & pose );
+	setup_samplers( core::pose::Pose const & pose );
 
 	///@brief Sets up bb_residues_ variable as all residues in the pose.
 	void
@@ -122,10 +127,11 @@ private:
 	std::map< core::Size, utility::vector1< bb_sampler::BBDihedralSamplerOP > > samplers_;
 	utility::vector1< core::Size > sampler_torsion_types_;
 
-	core::kinematics::MoveMapCOP movemap_;
+	core::select::residue_selector::ResidueSelectorOP selector_ = nullptr;
 	utility::vector1< core::Size > bb_residues_; //This is faster than turning the movemap into a vector each apply, as we will need to randomly sample on these residues.
 
-	std::map< core::Size, utility::vector1< core::Size > > sampler_movemap_union_; //Union of the torsion samplers we have and torsion IDs on in the movemap.
+	std::map< core::Size, utility::vector1< core::Size > > sampler_torsions_; //Resnum, vector of torsion IDs to sample.
+	std::map< core::Size, utility::vector1< core::Size >> dihedral_mask_;
 
 };
 

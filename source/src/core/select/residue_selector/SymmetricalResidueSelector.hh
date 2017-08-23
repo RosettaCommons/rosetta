@@ -35,7 +35,11 @@ namespace select {
 namespace residue_selector {
 
 /// @brief The SymmetricalResidueSelector returns a ResidueSubset, i.e. a utility::vector1< bool > containing
-/// 'true' for residue positions which are symmetrically generated residues of the input list.
+/// 'true' for residue positions which are symmetrically generated residues of the input list. (IE Union)
+///
+/// @details
+///   If the Pose is not symmetrical, returns the generated subset from the passed residue selector.
+///
 class SymmetricalResidueSelector : public ResidueSelector {
 public:
 	SymmetricalResidueSelector();
@@ -68,6 +72,7 @@ public:
 
 private: // data members
 	core::select::residue_selector::ResidueSelectorCOP selector_;
+
 };
 
 } //namespace residue_selector

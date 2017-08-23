@@ -15,14 +15,22 @@
 #include <protocols/carbohydrates/GlycanTreeMinMover.hh>
 #include <protocols/carbohydrates/GlycanTreeMinMoverCreator.hh>
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
+
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
+#include <core/pose/carbohydrates/util.hh>
 #include <core/kinematics/util.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/AndResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -33,6 +41,7 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.carbohydrates.GlycanTreeMinMover" );
 
@@ -41,6 +50,8 @@ namespace carbohydrates {
 
 using namespace core::kinematics;
 using namespace core::scoring;
+using namespace protocols::simple_moves;
+using namespace protocols::simple_moves::symmetry;
 
 /////////////////////
 /// Constructors  ///
@@ -48,35 +59,78 @@ using namespace core::scoring;
 
 /// @brief Default constructor
 GlycanTreeMinMover::GlycanTreeMinMover():
-	protocols::simple_moves::MinMover()
+	protocols::moves::Mover("GlycanTreeMinMover")
 {
 
 }
 
 GlycanTreeMinMover::GlycanTreeMinMover(
-	core::kinematics::MoveMapOP movemap_in,
-	ScoreFunctionCOP scorefxn_in,
-	std::string const & min_type_in /*dfpmin_armijo_nonmonotone */,
-	Real tolerance_in /* .01 */):
-
-	protocols::simple_moves::MinMover(movemap_in, scorefxn_in, min_type_in, tolerance_in, false /*use nblist*/)
+	core::select::residue_selector::ResidueSelectorCOP selector,
+	bool min_rings /* False */,
+	bool min_bb /* False */,
+	bool min_chi /* False */):
+	protocols::moves::Mover("GlycanTreeMinMover"),
+	min_rings_(min_rings),
+	min_bb_(min_bb),
+	min_chi_(min_chi)
 
 {
-
+	selector_ = selector->clone();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
 GlycanTreeMinMover::GlycanTreeMinMover( GlycanTreeMinMover const & src ):
-	protocols::simple_moves::MinMover( src ),
-	mm_residues_(src.mm_residues_)
-{
+	protocols::moves::Mover( src ),
+	min_rings_(src.min_rings_),
+	min_bb_(src.min_bb_),
+	min_chi_(src.min_chi_)
 
+{
+	if ( src.selector_ ) {
+		selector_ = src.selector_->clone();
+	}
+
+	//I don't have a pose to check its conformation for symmetry, so I must rely on the mover name here.
+	if ( src.min_mover_ ) {
+		if ( src.min_mover_->get_name() == "SymMinMover" ) {
+			min_mover_ = simple_moves::symmetry::SymMinMoverOP( new simple_moves::symmetry::SymMinMover( *src.min_mover_));
+		} else {
+			min_mover_ = simple_moves::MinMoverOP( new simple_moves::MinMover( *src.min_mover_));
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 GlycanTreeMinMover::~GlycanTreeMinMover(){}
+
+
+///@brief Minimize Rings? Default False
+void
+GlycanTreeMinMover::set_min_rings( bool min_rings ){
+	min_rings_ = min_rings;
+}
+
+///@brief Minimize Chi? Default True
+void
+GlycanTreeMinMover::set_min_chi( bool min_chi ){
+	min_chi_ = min_chi;
+}
+
+///@brief Minimize BB? Default True
+void
+GlycanTreeMinMover::set_min_bb( bool min_bb ){
+	min_bb_ = min_bb;
+}
+
+///@brief Set a pre-configured MinMover for this class.
+///  Will OVERRIDE movemap settings.
+void
+GlycanTreeMinMover::set_minmover( protocols::simple_moves::MinMoverCOP min_mover){
+	min_mover_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover( *min_mover));
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,10 +182,9 @@ GlycanTreeMinMoverCreator::keyname() const
 }
 
 void
-GlycanTreeMinMover::set_movemap(core::kinematics::MoveMapCOP movemap_in){
-	runtime_assert( movemap_in != nullptr );
-	protocols::simple_moves::MinMover::set_movemap(core::kinematics::MoveMapOP( new MoveMap( *movemap_in ) ));
-	mm_residues_.clear();
+GlycanTreeMinMover::set_residue_selector(core::select::residue_selector::ResidueSelectorCOP selector){
+	runtime_assert( selector != nullptr );
+	selector_ = selector->clone();
 
 }
 
@@ -144,86 +197,110 @@ GlycanTreeMinMover::set_movemap(core::kinematics::MoveMapCOP movemap_in){
 void
 GlycanTreeMinMover::apply( core::pose::Pose& pose){
 
-	core::select::residue_selector::GlycanResidueSelector selector = core::select::residue_selector::GlycanResidueSelector();
-	selector.set_include_root( true ); //Since we wont really have the ASN root, and we want the possibility to sample the whole glycan.
+	using namespace core::select::residue_selector;
+	using namespace core::scoring;
 
-	utility::vector1< bool > root(pose.total_residue(), false);
+	GlycanResidueSelectorOP branch_selector = GlycanResidueSelectorOP( new GlycanResidueSelector() );
+	AndResidueSelectorOP and_selector = AndResidueSelectorOP( new AndResidueSelector());
 
-	MoveMapOP active_movemap = MoveMapOP( new MoveMap());
 
-	//Set default movemap, only include carbohydrate residues.
-	if ( ! movemap() ) {
-		MoveMapOP full_mm = MoveMapOP( new MoveMap ) ;
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-			if ( !pose.residue(i).is_carbohydrate() ) {
-				full_mm->set_bb(false, i);
-				full_mm->set_chi(false, i);
-			} else {
-				full_mm->set_bb(true, i);
-				full_mm->set_chi(true, i);
-			}
-			set_movemap(full_mm);
-		}
+	branch_selector->set_include_root( true ); //Since we wont really have the ASN root, and we want the possibility to sample the whole glycan.
+
+	if ( ! selector_ ) {
+		selector_ = GlycanResidueSelectorOP( new GlycanResidueSelector());
 	}
-	if ( mm_residues_.size() == 0 ) {
-		mm_residues_ = core::kinematics::get_residues_from_movemap_bb_or_chi(*movemap(), pose.total_residue());
-	}
+
+	utility::vector1< core::Size > mm_residues = selection_positions( selector_->apply(pose));
+
+	//We need to set reasonable defaults here!
+
+
 
 
 	//Randomly select a residue from the movemap.
-	core::Size index = numeric::random::rg().random_range( 1, mm_residues_.size() );
-	core::Size resnum = mm_residues_[ index ];
+	core::Size index = numeric::random::rg().random_range( 1, mm_residues.size() );
+	core::Size resnum = mm_residues[ index ];
 
 	TR << "Minimizing from carbohydrate root: " << resnum << std::endl;
-	core::Size min_residue_n = 0;
+
 
 	//Get downstream Tree.
-	selector.set_select_from_branch_residue( resnum );
+	branch_selector->set_select_from_branch_residue( resnum );
 
-	utility::vector1< bool > subset = selector.apply(pose);
+	and_selector->add_residue_selector( selector_ );
+	and_selector->add_residue_selector( branch_selector );
 
-	//Setup the active movemap
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-		if ( subset[ i ] && ! pose.residue( i ).is_virtual_residue() ) {
-			min_residue_n+=1;
-			if ( movemap()->get_bb(i) ) {
-				active_movemap->set_bb(i, true);
-			}
-			if ( movemap()->get_chi(i) ) {
-				active_movemap->set_chi(i, true);
-			}
-			//This needs to be total number of possible glycan torsions!
-			for ( core::Size xx = 1; xx <= 10; ++xx ) {
-				if ( movemap()->get_bb( i, xx) ) {
-					active_movemap->set_bb(i, xx, true);
-				}
-			}
+
+	utility::vector1< bool > subset = and_selector->apply(pose);
+	core::Size min_residue_n = count_selected( subset );
+
+	MoveMapOP mm = core::pose::carbohydrates::create_glycan_movemap_from_residue_selector(
+		pose,
+		and_selector,
+		min_chi_,
+		min_rings_,
+		min_bb_
+	);
+
+	if ( ! min_mover_ ) {
+		//Make Symmetric or Non-symmetric versions of the MinMover.
+		ScoreFunctionCOP scorefxn = core::scoring::get_score_function();
+
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
+			min_mover_ = SymMinMoverOP( new SymMinMover( mm->clone(), scorefxn, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
 		} else {
-			active_movemap->set_bb( i, false );
-			active_movemap->set_chi( i, false );
-
+			min_mover_ = MinMoverOP( new MinMover( mm->clone(), scorefxn, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
 		}
+	} else {
+
+		min_mover_->set_movemap( mm );
 	}
 
 	//Minimize
-	TR.Debug << "Minimizing " << min_residue_n << " residues " << std::endl;
-	apply_dof_tasks_to_movemap(pose, *active_movemap);
-
-	if ( ! score_function() ) score_function(get_score_function()); // get a default (INITIALIZED!) ScoreFunction
-
-	minimize( pose, *active_movemap );
-
-
+	TR << "Minimizing " << min_residue_n << " residues " << std::endl;
+	min_mover_->apply(pose);
 }
 
-void GlycanTreeMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void
+GlycanTreeMinMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap& datamap,
+	protocols::filters::Filters_map const & ,
+	protocols::moves::Movers_map const & ,
+	core::pose::Pose const & )
 {
-	using namespace utility::tag;
 
-	XMLSchemaComplexTypeGeneratorOP ct_gen = MinMover::complex_type_generator_for_min_mover( xsd );
-	ct_gen->element_name( class_name() )
-		.description( "A class that selects the downstream branch from residues in a movemap/selector, and minimizes those residues if on in the primary glycan movemap. Multiple Applies randomly select a different residue in the movemap/selector" )
-		.write_complex_type_to_schema( xsd );
+	using namespace core::select::residue_selector;
+
+	min_rings_ = tag->getOption< bool >("min_rings", min_rings_);
+	min_bb_ = tag->getOption< bool >("min_bb", min_bb_);
+	min_chi_ = tag->getOption< bool >("min_chi", min_chi_);
+
+
+	if ( tag->hasOption("residue_selector") ) {
+		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );
+	}
+}
+
+void
+GlycanTreeMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Ring Torsions?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("min_bb", xsct_rosetta_bool, "Minimize the Backbone?", "true")
+
+		+ XMLSchemaAttribute::attribute_w_default("min_chi", xsct_rosetta_bool, "Minimize the Chi angles?", "true");
+
+	rosetta_scripts::attributes_for_parse_residue_selector( attlist );
+
+	XMLSchemaSimpleSubelementList subelements;
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, "GlycanTreeMinMover",
+
+		" A class that selects the downstream branch from residues in a movemap/selector, and minimizes those residues if on in the primary glycan movemap. Multiple Applies randomly select a different residue in the movemap/selector", attlist, subelements );
+
 }
 
 void GlycanTreeMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

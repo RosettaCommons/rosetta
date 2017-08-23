@@ -114,6 +114,7 @@ bool
 CarbohydrateInfoManager::pair_has_linkage_statistics( std::string const & res1, std::string const & res2 )
 {
 	pair< string, string > const key( convert_residue_names_into_linkage_map_key( res1, res2 ) );
+	//std::cout << "Map Keys: " << key.first << " " << key.second << std::endl;
 	return get_instance()->linkage_conformers_map().count( key );
 }
 

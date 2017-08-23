@@ -26,6 +26,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -35,8 +36,10 @@ namespace carbohydrates {
 
 ///@brief A class that selects the downstream branch from residues in a movemap/selector, and minimizes those residues if on in the primary glycan movemap. Multiple Applies randomly select a different residue in the movemap/selector
 ///
+/// Supports Symmetry
+///
 ///@details
-class GlycanTreeMinMover : public protocols::simple_moves::MinMover {
+class GlycanTreeMinMover : public protocols::moves::Mover {
 
 public:
 
@@ -48,10 +51,10 @@ public:
 	GlycanTreeMinMover();
 
 	GlycanTreeMinMover(
-		core::kinematics::MoveMapOP movemap_in,
-		ScoreFunctionCOP scorefxn_in,
-		std::string const & min_type_in = "dfpmin_armijo_nonmonotone",
-		Real tolerance_in = .01
+		core::select::residue_selector::ResidueSelectorCOP selector,
+		bool min_rings = false,
+		bool min_bb = true,
+		bool min_chi = true
 	);
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
@@ -65,12 +68,39 @@ public:
 	/////////////////////
 
 public:
+
 	/// @brief Apply the mover
 	virtual void
 	apply( core::pose::Pose & pose ) override;
 
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose ) override;
+
+public:
+
 	void
-	set_movemap( core::kinematics::MoveMapCOP movemap_in) override;
+	set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector);
+
+	///@brief Minimize Rings? Default False
+	void
+	set_min_rings( bool min_rings );
+
+	///@brief Minimize Chi? Default True
+	void
+	set_min_chi( bool min_chi );
+
+	///@brief Minimize BB? Default True
+	void
+	set_min_bb( bool min_bb );
+
+	///@brief Set a pre-configured MinMover for this class.
+	///  Will OVERRIDE movemap settings.
+	void
+	set_minmover( protocols::simple_moves::MinMoverCOP min_mover);
 
 public:
 
@@ -103,7 +133,14 @@ public:
 private: // methods
 
 private:
-	utility::vector1< core::Size > mm_residues_;
+
+	bool min_rings_ = false;
+	bool min_bb_ = true;
+	bool min_chi_ = true;
+
+	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
+	protocols::simple_moves::MinMoverOP min_mover_ = nullptr;
+
 };
 
 

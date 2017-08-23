@@ -21,6 +21,8 @@
 #include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 
 // Package headers
 #include <core/conformation/Residue.hh>
@@ -484,6 +486,91 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, NU, 1 ) ), 0 );
 	}
 
+	void test_glycan_movemap_setup()
+	{
+		using namespace core::select::residue_selector;
+		using namespace core::pose::carbohydrates;
+		using namespace core::kinematics;
+		using namespace core::id;
+
+		//Main Chain 1->2
+		utility::vector1< bool > subset( bisected_man_.size(), false);
+		subset[2] = true; //Single Glycan residue.  Make sure all are enabled.
+
+		ReturnResidueSubsetSelectorOP return_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( subset));
+
+		bool move_ring = true;
+		bool move_bb = true;
+		bool move_chi = true;
+
+		MoveMapOP mm = create_glycan_movemap_from_residue_selector( bisected_man_, return_subset, move_chi, move_ring, move_bb );
+
+		//mm->show(TR);
+
+		TS_ASSERT( mm->get( TorsionID( 1, BB, 4) ));
+		TS_ASSERT( mm->get( TorsionID( 1, BB, 3) ));
+
+		//TS_ASSERT( mm->get( TorsionID( 1, CHI, 1) ) );
+		//TS_ASSERT( mm->get( TorsionID( 1, CHI, 2) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 3) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 4) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 5) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 6) ) );
+
+		TS_ASSERT( ! mm->get( TorsionID( 1, BRANCH, 1) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, BRANCH, 2) ) );
+
+
+		//Branch Connection 1->3
+
+		subset[2] = false;
+		subset[3] = true;
+
+		return_subset->set_residue_subset(subset);
+		mm = create_glycan_movemap_from_residue_selector( bisected_man_, return_subset, move_chi, move_ring, move_bb );
+		//mm->show(TR);
+
+		TS_ASSERT( ! mm->get( TorsionID( 1, BB, 4) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, BB, 3) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, BB, 2) ) );
+		TS_ASSERT( ! mm->get(   TorsionID( 1, CHI, 1) ) );
+		TS_ASSERT( ! mm->get(   TorsionID( 1, CHI, 2) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 3) ) );
+		TS_ASSERT( mm->get(   TorsionID( 1, CHI, 4) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 5) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 6) ) );
+
+		TS_ASSERT( mm->get(   TorsionID( 1, BRANCH, 1) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, BRANCH, 2) ) );
+		TS_ASSERT( mm->get_nu( 3 ) );
+
+
+		// Testing CHI
+		subset[1] = true;
+		subset[2] = false;
+		subset[3] = false;
+
+		move_ring = false;
+		move_bb = false;
+		move_chi = true;
+
+		return_subset->set_residue_subset(subset);
+		mm = create_glycan_movemap_from_residue_selector( bisected_man_, return_subset, move_chi, move_ring, move_bb );
+
+		TS_ASSERT( ! mm->get( TorsionID( 1, BB, 4) ));
+		TS_ASSERT( ! mm->get( TorsionID( 1, BB, 3) ));
+
+		TS_ASSERT( mm->get( TorsionID( 1, CHI, 1) ) );
+		TS_ASSERT( mm->get( TorsionID( 1, CHI, 2) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 3) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 4) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 5) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, CHI, 6) ) );
+
+		TS_ASSERT( ! mm->get( TorsionID( 1, BRANCH, 1) ) );
+		TS_ASSERT( ! mm->get( TorsionID( 1, BRANCH, 2) ) );
+
+	}
 	void test_exocyclic_detection()
 	{
 		using namespace core::id;

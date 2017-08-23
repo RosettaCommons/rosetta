@@ -87,6 +87,13 @@ SymMinMover::SymMinMover( std::string const & name )
 
 SymMinMover::~SymMinMover(){}
 
+SymMinMover::SymMinMover( MinMover const & src ):
+	protocols::simple_moves::MinMover(src)
+{
+
+}
+
+
 // constructor with arguments
 SymMinMover::SymMinMover(
 	MoveMapOP movemap_in,

@@ -238,6 +238,7 @@ read_linkage_conformers_from_database_file( std::string const & filename ) {
 		}
 
 		pair< string, string > const linkage_pair( make_pair( non_red_res, red_res ) );
+		TR.Debug << "Adding pair to linkage conformers: " << linkage_pair.first << " " << linkage_pair.second << std::endl;
 		conformer_data_structure[ linkage_pair ].push_back( conformer );
 	}
 

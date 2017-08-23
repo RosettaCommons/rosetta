@@ -108,7 +108,15 @@ SmallBBSampler::get_torsion(core::pose::Pose const & pose, core::Size resnum) co
 void
 SmallBBSampler::set_torsion_to_pose(core::pose::Pose &pose, core::Size resnum) const {
 
+	//TR.Info <<"NTorsions: " << get_n_glycosidic_torsions_in_res(pose, resnum) << std::endl;
 	core::Angle new_angle = get_torsion( pose, resnum );
+
+	if ( TR.Debug.visible() ) {
+		core::Angle current_angle = get_bb_torsion( core::Size( torsion_type_ ), pose, resnum);
+		TR.Debug << "Current Angle: " << current_angle << " For resnum " << resnum <<" torsion "<< core::Size( torsion_type_ ) << std::endl;
+		TR.Debug << "Setting " << new_angle << " to pose." << std::endl;
+	}
+
 	core::pose::set_bb_torsion( torsion_type_ , pose, resnum, new_angle);
 
 }

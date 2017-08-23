@@ -78,6 +78,7 @@ GlycanTreeRelax::GlycanTreeRelax( GlycanTreeRelax const & src ):
 	rounds_(src.rounds_),
 	completed_quenches_(src.completed_quenches_),
 	trees_to_model_(src.trees_to_model_),
+	glycan_relax_rounds_(src.glycan_relax_rounds_),
 	refine_(src.refine_),
 	quench_mode_(src.quench_mode_),
 	final_min_pack_min_(src.final_min_pack_min_)
@@ -124,6 +125,7 @@ GlycanTreeRelax::parse_my_tag(
 	refine_ = tag->getOption< bool >("refine", refine_);
 	quench_mode_ = tag->getOption< bool >("quench_mode", quench_mode_);
 	final_min_pack_min_ = tag->getOption< bool >("final_min_pack_min", final_min_pack_min_);
+	glycan_relax_rounds_ = tag->getOption< core::Size >("glycan_relax_rounds", glycan_relax_rounds_);
 
 	if ( tag->hasOption("residue_selector") ) {
 		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );
@@ -165,10 +167,10 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
 	attlist + XMLSchemaAttribute("layer_size", xsct_non_negative_integer,
-		"@brief Set the layer size we will be using.  A layer is a set of glycan residues that we will be optimizing.\n"
+		"Brief: Set the layer size we will be using.  A layer is a set of glycan residues that we will be optimizing.\n"
 		"  We work our way through the layers, while the rest of the residues are virtual (not scored).\n"
 		" \n"
-		"@details \n"
+		"Details: \n"
 		" \n"
 		"  The distance that make up a layer.  If we have a distance of 2,\n"
 		"  we first model all glycans that are equal to or less than 2 residue distance to the root.\n"
@@ -176,9 +178,9 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 
 		+ XMLSchemaAttribute("window_size", xsct_non_negative_integer,
-		"\t@brief Set the window size.  This is the overlap of the layers during modeling. \n"
+		"\tBrief: Set the window size.  This is the overlap of the layers during modeling. \n"
 		" \n"
-		"  @details \n"
+		"  Details: \n"
 		"  \n"
 		"  The layers are slid down throught the tree of the glycan.  The window size represents the overlap in the layers.\n"
 		"  A window size of 1, means that the last residue (or residues of layer 1) from the last modeling effort, will be used again as \n"
@@ -191,51 +193,51 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool, "Do a refinement instead of a denovo model", "false")
 		+ XMLSchemaAttribute::attribute_w_default("quench_mode", xsct_rosetta_bool, "Do quench mode for each glycan tree?", "false")
-		+ XMLSchemaAttribute::attribute_w_default("final_min_pack_min", xsct_rosetta_bool, "Do a final set of cycles of min/pack", "true");
+		+ XMLSchemaAttribute::attribute_w_default("final_min_pack_min", xsct_rosetta_bool, "Do a final set of cycles of min/pack", "true")
+		+ XMLSchemaAttribute::attribute_w_default("glycan_relax_rounds", xsct_non_negative_integer, "Round Number for the internal GlycanRelax.  Default is the default of GlycanRelax.", "25");
 
 
 	std::string documentation =
-		"///@brief A protocol for optimizing glycan trees using GlycanRelax from the base of the tree out to the leaves.\n"
-		"///@details Works by making all other residues virtual except the ones it is working on (current Layer).\n"
-		"/// A virtual residue is not scored.\n"
-		"/// It will start at the first glycan residues, and then move out to the edges.\n"
-		"///\n"
-		"/// GENERAL ALGORITHM\n"
-		"///\n"
-		"/// We start at the roots, and make all other glycan residues virtual.\n"
-		"/// We first model towards the leaves and this is considered the forward direction.\n"
-		"/// GlycanRelax is used for the actual modeling, we only model a layer at a time, until we reach the tips.\n"
-		"/// If more than one round is set, the protocol will move backwards on the next round, from the leafs to the roots.\n"
-		"/// A third round will involve relaxation again in the forward direction.\n"
-		"/// So we go forward, back, forward, etc. for how ever many rounds you set.\n"
-		"///\n"
-		"/// QUECHING\n"
-		"///\n"
-		"/// By default, we model all glycans simultaneously. First, all glycan roots (the start of the tree), and slowly unvirtualize \n"
-		"/// all glycan residues, while only modeling each layer. \n"
-		"/// Alternatively, we can choose a particular glycan tree, run the algorithm, and then choose another glycan tree randomly until all \n"
-		"/// glycan trees have been optimized. \n"
-		"/// Here, we call this quenching. \n"
-		"/// \n"
-		"/// GLYCAN LAYERS \n"
-		"/// \n"
-		"/// Draw a tree on a paper.  We start with the beginning N residues, and work our way out towards the leaves. \n"
-		"/// Layers are defined by the glycan residue distance to the rooot.  This enables branching residues to be considered the same \n"
-		"/// layer conceptually and computationally, and allows them to be modeled together. \n"
-		"/// \n"
-		"/// --LAYER SIZE-- \n"
-		"/// \n"
-		"///  The distance that make up a layer.  If we have a distance of 2, \n"
-		"///  we first model all glycans that are equal to or less than 2 residue distance to the root. \n"
-		"///  We then slide this layer up.  So we take all residues that have a distance between 3 and 1, and so on. \n"
-		"/// \n"
-		"///  --WINDOW SIZE-- \n"
-		"/// \n"
-		"///  The layers are slid down throught the tree of the glycan.  The window size represents the overlap in the layers. \n"
-		"///  A window size of 1, means that the last residue (or residues of layer 1) from the last modeling effort, will be used again as \n"
-		"///  part of the next layer.  A window size of 0, means that no residues will be re-modeled. \n"
-		"///  Typically, we would want at least a window size of 1. \n"
-		"///";
+		"Brief: A protocol for optimizing glycan trees using GlycanRelax from the base of the tree out to the leaves.\n"
+		"Details: Works by making all other residues virtual except the ones it is working on (current Layer).\n"
+		"A virtual residue is not scored.\n"
+		"It will start at the first glycan residues, and then move out to the edges.\n"
+		"\n"
+		"GENERAL ALGORITHM\n"
+		"\n"
+		"We start at the roots, and make all other glycan residues virtual.\n"
+		"We first model towards the leaves and this is considered the forward direction.\n"
+		"GlycanRelax is used for the actual modeling, we only model a layer at a time, until we reach the tips.\n"
+		"If more than one round is set, the protocol will move backwards on the next round, from the leafs to the roots.\n"
+		"A third round will involve relaxation again in the forward direction.\n"
+		"So we go forward, back, forward, etc. for how ever many rounds you set.\n"
+		"\n"
+		"QUECHING\n"
+		"\n"
+		"By default, we model all glycans simultaneously. First, all glycan roots (the start of the tree), and slowly unvirtualize \n"
+		"all glycan residues, while only modeling each layer. \n"
+		"Alternatively, we can choose a particular glycan tree, run the algorithm, and then choose another glycan tree randomly until all \n"
+		"glycan trees have been optimized. \n"
+		"Here, we call this quenching. \n"
+		"\n"
+		"GLYCAN LAYERS \n"
+		"\n"
+		"Draw a tree on a paper.  We start with the beginning N residues, and work our way out towards the leaves. \n"
+		"Layers are defined by the glycan residue distance to the rooot.  This enables branching residues to be considered the same \n"
+		"layer conceptually and computationally, and allows them to be modeled together. \n"
+		"\n"
+		"--LAYER SIZE-- \n"
+		"\n"
+		"The distance that make up a layer.  If we have a distance of 2, \n"
+		"we first model all glycans that are equal to or less than 2 residue distance to the root. \n"
+		"We then slide this layer up.  So we take all residues that have a distance between 3 and 1, and so on. \n"
+		"\n"
+		"--WINDOW SIZE-- \n"
+		"\n"
+		"The layers are slid down throught the tree of the glycan.  The window size represents the overlap in the layers. \n"
+		"A window size of 1, means that the last residue (or residues of layer 1) from the last modeling effort, will be used again as \n"
+		"part of the next layer.  A window size of 0, means that no residues will be re-modeled. \n"
+		"Typically, we would want at least a window size of 1. \n";
 
 	rosetta_scripts::attributes_for_parse_residue_selector( attlist );
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
@@ -281,6 +283,12 @@ GlycanTreeRelax::set_selector(core::select::residue_selector::ResidueSelectorCOP
 void
 GlycanTreeRelax::set_rounds(const core::Size rounds){
 	rounds_ = rounds;
+}
+
+///@brief Override Glycan Relax rounds.
+void
+GlycanTreeRelax::set_glycan_relax_rounds( core::Size glycan_relax_rounds){
+	glycan_relax_rounds_ = glycan_relax_rounds;
 }
 
 bool
@@ -346,6 +354,10 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 		glycan_relax.set_scorefunction( scorefxn_ );
 	}
 	glycan_relax.set_refine( refine_ );
+
+	if ( glycan_relax_rounds_ != 0 ) {
+		glycan_relax.set_rounds(glycan_relax_rounds_);
+	}
 
 	ConvertRealToVirtualMover real_to_virt = ConvertRealToVirtualMover();
 	ConvertVirtualToRealMover virt_to_real = ConvertVirtualToRealMover();

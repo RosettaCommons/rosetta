@@ -131,6 +131,14 @@ int RandomGenerator::random_range(int low, int high)
 	return ( static_cast< int >( range * numeric::random::uniform() ) + low );
 }
 
+int RandomGenerator::random_range2(int low, int high){
+	if ( low == high ) {
+		return low;
+	} else {
+		return random_range( low, high);
+	}
+
+}
 int RandomGenerator::get_seed() const
 {
 	return generator_->getSeed();

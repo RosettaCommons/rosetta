@@ -132,11 +132,14 @@ public:
 	get_parent( core::Size const glycan_residue ) const;
 
 	///@brief Convenience function to get the starting position of a particular tree which contains the residue.
+	/// This is the first Glycan Residue of the tree.
 	/// Accessed from a stored GlycanTree class.
 	core::Size
 	get_tree_start_of_glycan_residue( core::Size resnum) const;
 
 	///@brief Convenience function to get the root of a particular tree which contains the residue.
+	/// This is the residue that 'roots' the glycan.  It should be protein.
+	///  If this is 0, it means the glycan is a 'free' glycan.
 	/// Accessed from a stored GlycanTree class.
 	core::Size
 	get_tree_root_of_glycan_residue( core::Size resnum ) const;
