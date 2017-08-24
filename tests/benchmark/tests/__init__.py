@@ -13,7 +13,8 @@
 ## @author Sergey Lyskov
 
 
-import codecs, commands
+import codecs, commands, urllib2
+import  platform as  platform_module
 
 # ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
@@ -101,7 +102,7 @@ def execute(message, commandline, return_=False, until_successes=False, terminat
             raise BenchmarkError("\nEncounter error while executing: " + commandline + '\n' + output)
 
     if return_ == 'output': return output
-    else: return False
+    else: return res
 
 
 def parallel_execute(name, jobs, rosetta_dir, working_dir, cpu_count, time=16):
@@ -172,18 +173,23 @@ def build_rosetta(rosetta_dir, platform, jobs, mode='release', verbose=False, de
 
 
 def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verbose=False, debug=False):
-    ''' Compile Rosetta binaries on a given platform return (res, output, build_command_line, pyrosetta_path) '''
+    ''' Compile Rosetta binaries on a given platform return NT(exitcode, output, build_command_line, pyrosetta_path, python) '''
 
     #binder = install_llvm_tool('binder', source_location='{}/source/src/python/PyRosetta/binder'.format(rosetta_dir), config=config)
 
-    extra = ''
-    if platform['os'] == 'mac'  and  platform['python'].startswith('python3'):
-        python_prefix = execute('Getting {} prefix path...'.format(platform['python']), '{}-config --prefix'.format(platform['python']), return_='output')
-        extra += ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
+    py_env = get_path_to_python_executable(platform, config)
+
+    #print(sysconfig.get_config_vars())
+    #CONFINCLUDEPY
+
+    extra = ' --python-include-dir={py_env.python_include_dir} --python-lib={py_env.python_lib_dir}'.format(**vars())
+    # if platform['os'] == 'mac'  and  platform['python'].startswith('python3'):
+    #     python_prefix = execute('Getting {} prefix path...'.format(platform['python']), '{}-config --prefix'.format(platform['python']), return_='output')
+    #     extra += ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
 
     if 'serialization' in platform['extras']: extra += ' --serialization'
 
-    command_line = 'cd {rosetta_dir}/source/src/python/PyRosetta && {python} build.py -j{jobs} --compiler {compiler} --type {mode}{extra}'.format(rosetta_dir=rosetta_dir, python=platform['python'], jobs=jobs, compiler=platform['compiler'], mode=mode, extra=extra)
+    command_line = 'cd {rosetta_dir}/source/src/python/PyRosetta && {python} build.py -j{jobs} --compiler {compiler} --type {mode}{extra}'.format(rosetta_dir=rosetta_dir, python=py_env.python, jobs=jobs, compiler=platform['compiler'], mode=mode, extra=extra)
 
     pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output')
 
@@ -192,7 +198,7 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verb
     else:
         res, output = execute('Building PyRosetta {}...'.format(mode), command_line, return_='tuple')
 
-    return res, output, command_line, pyrosetta_path
+    return NT(exitcode=res, output=output, command_line=command_line, pyrosetta_path=pyrosetta_path, python=py_env.python, python_root_dir=py_env.python_root_dir)
 
 
 
@@ -241,3 +247,103 @@ def install_llvm_tool(name, source_location, config, clean=True):
     if not os.path.isfile(executable): raise BenchmarkError("\nEncounter error while running install_llvm_tool: Build is complete but executable {} is not there!!!".format(executable) )
 
     return executable
+
+
+
+def get_path_to_python_executable(platform, config):
+    ''' Perform local install of given Python version and return path-to-python-interpreter, python_include_dir, python_lib_dir
+        If previous install is detected skip installiation.
+    '''
+    prefix = config['prefix']
+    jobs = config['cpu_count']
+
+    python_version = platform.get('python', '3.6')
+
+    python_version = {'python2'   : '2.7',
+                      'python2.7' : '2.7',
+                      'python3'   : '3.5',
+    }.get(python_version, python_version)
+
+    # for security reasons we only allow installs for version listed here with hand-coded URL's
+    python_sources = {
+        '2.7' : 'https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz',
+
+        '3.5' : 'https://www.python.org/ftp/python/3.5.4/Python-3.5.4.tgz',
+        '3.6' : 'https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tgz',
+    }
+
+    # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
+    extras = {
+        ('mac',) :         ('MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),
+        ('linux', '2.7') : ('', '--enable-unicode=ucs4'),
+    }
+
+    packages = None #if python_version.startswith('2.') else 'pydoc'  # Python-2 does not install pip as default
+
+    url = python_sources[python_version]
+
+    extra = extras.get( (platform['os'],)  , ('', '') )
+    extra = extras.get( (platform['os'], python_version) , extra)
+
+    signature = 'url: {url}\nextra: {extra}\npackages: {packages}\n'.format( **vars() )
+
+    machine_name = os.uname()[1]
+    suffix = platform['os'] + '.' + machine_name
+
+    root = os.path.abspath(prefix + '/' + suffix + '/python-' + python_version)
+
+    signature_file_name = root + '/.signature'
+
+    #activate   = root + '/bin/activate'
+    executable = root + '/bin/python' + python_version
+
+    # if os.path.isfile(executable)  and  (not execute('Getting python configuration info...', '{executable}-config --prefix --includes'.format(**vars()), terminate_on_failure=False) ):
+    #     print('found executable!')
+    #     _, executable_version = execute('Checking Python interpreter version...', '{executable} --version'.format(**vars()), return_='tuple')
+    #     executable_version = executable_version.split()[-1]
+    # else: executable_version = ''
+    # print('executable_version: {}'.format(executable_version))
+    #if executable_version != url.rpartition('Python-')[2][:-len('.tgz')]:
+
+    if os.path.isfile(signature_file_name) and open(signature_file_name).read() == signature:
+        #print('Install for Python-{} is detected, skipping installation procedure...'.format(python_version))
+        pass
+
+    else:
+        print( 'Installing Python-{python_version}, using {url} with extra:{extra}...'.format( **vars() ) )
+
+        if os.path.isdir(root): shutil.rmtree(root)
+
+        build_prefix = os.path.abspath(root + '/../build-python-{}'.format(python_version) )
+
+        if not os.path.isdir(root): os.makedirs(root)
+        if not os.path.isdir(build_prefix): os.makedirs(build_prefix)
+
+        archive = build_prefix + '/' + url.split('/')[-1]
+        build_dir = archive.rpartition('.tgz')[0]
+        if os.path.isdir(build_dir): shutil.rmtree(build_dir)
+
+        with open(archive, 'w') as f:
+            response = urllib2.urlopen(url)
+            f.write( response.read() )
+
+        execute('Unpacking {}'.format(archive), 'cd {build_prefix} && tar -xvzf {archive}'.format(**vars()) )
+
+        execute('Building and installing...', 'cd {} && {extra[0]} ./configure {extra[1]} --prefix={root} && make -j{jobs} && make install'.format(build_dir, **vars()) )
+
+        shutil.rmtree(build_prefix)
+
+        #if packages: execute('Installing packages {}...'.format(packages), 'cd {root} && {root}/bin/pip{python_version} install {packages}'.format(**vars()) )
+
+        with open(signature_file_name, 'w') as f: f.write(signature)
+
+        print( 'Installing Python-{python_version}, using {url} with extra:{extra}... Done.'.format( **vars() ) )
+
+    info = execute('Getting python configuration info...', '{executable}-config --prefix --includes'.format(**vars()), return_='output').split('\n')  # Python-3 only: --abiflags
+    python_prefix = info[0]
+    python_include_dir = info[1].split()[0][len('-I'):]
+    python_lib_dir = python_prefix + '/lib'
+    #python_abi_suffix = info[2]
+    #print(python_include_dir, python_lib_dir)
+
+    return NT(python=executable, python_root_dir=root, python_include_dir=python_include_dir, python_lib_dir=python_lib_dir)

@@ -58,7 +58,7 @@ def main(args):
 
     parser.add_argument('--compiler', default=Platform['compiler'], help="Compiler to use")
 
-    parser.add_argument('--python', default=Platform['python'], help="Python interpreter to use")
+    parser.add_argument('--python', default='{}.{}'.format(*sys.version_info), help="Python interpreter to use")
 
     parser.add_argument("--extras", default='', help="Specify scons extras separated by ',': like --extras=mpi,static" )
 

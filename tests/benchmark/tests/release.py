@@ -463,17 +463,19 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
     # return results
     # ----------------------------------
 
-    res, output, build_command_line, pyrosetta_path = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, debug=debug)
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, debug=debug)
+    build_command_line = result.command_line
+    pyrosetta_path = result.pyrosetta_path
 
     for f in os.listdir(pyrosetta_path + '/source'):
         if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
     distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
 
-    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(result.output)
 
-    if res:
+    if result.exitcode:
         res_code = _S_build_failed_
-        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
         json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
 
     else:
@@ -481,14 +483,14 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
         distr_file_list = os.listdir(pyrosetta_path+'/build')
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
-        gui_flag = ''
+        gui_flag, res, output = '', result.exitcode, result.output
         if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
-        else: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=pyrosetta_path, python=platform['python'], jobs=jobs, gui_flag=gui_flag), return_='tuple')
+        else: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=pyrosetta_path, python=result.python, jobs=jobs, gui_flag=gui_flag), return_='tuple')
 
         json_file = pyrosetta_path + '/build/.test.output/.test.results.json'
         results = json.load( file(json_file) )
 
-        execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=pyrosetta_path, python=platform['python']), return_='tuple')
+        execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=pyrosetta_path, python=result.python), return_='tuple')
         extra_files = [f for f in os.listdir(pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
         if extra_files:
             results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))
@@ -507,7 +509,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
             TR('Running PyRosetta4 release test: Build and Unit tests passged! Now creating package...')
 
-            python_version = execute('Getting Python version...', '{python} --version'.format(python=platform['python']), return_='output').split()[1][:3].replace('.', '')
+            python_version = execute('Getting Python version...', '{python} --version'.format(python=result.python), return_='output').split()[1][:3].replace('.', '')
 
             release_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=python_version)
             package_dir = working_dir + '/' + release_name
@@ -553,7 +555,11 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
     # return results
     # ----------------------------------
 
-    res, output, build_command_line, pyrosetta_path = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, debug=debug)
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, debug=debug)
+    res = result.exitcode
+    output = result.output
+    build_command_line = result.command_line
+    pyrosetta_path = result.pyrosetta_path
 
     for f in os.listdir(pyrosetta_path + '/source'):
         if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
@@ -569,11 +575,11 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
     else:
         documentation_dir = os.path.abspath(pyrosetta_path+'/build/documentation')
 
-        python_version = execute('Getting Python version...', '{python} --version'.format(python=platform['python']), return_='output').split()[1][:3].replace('.', '')
+        python_version = execute('Getting Python version...', '{python} --version'.format(python=result.python), return_='output').split()[1][:3].replace('.', '')
         release_name = 'PyRosetta4.{kind}'.format(kind=kind, os=platform['os'], python_version=python_version)
         package_dir = working_dir + '/' + release_name
 
-        res, output2 = execute('Generating PyRosetta4 documentation...', '{build_command_line} -s -d --documentation {documentation_dir} --pydoc /usr/bin/pydoc3.5'.format(**vars()), return_='tuple')
+        res, output2 = execute('Generating PyRosetta4 documentation...', '{build_command_line} -s -d --documentation {documentation_dir} --pydoc {result.python_root_dir}/bin/pydoc3'.format(**vars()), return_='tuple')
 
         if res:
             res_code = _S_build_failed_

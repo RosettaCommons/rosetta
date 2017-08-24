@@ -28,16 +28,16 @@ def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     TR('Running PyRosetta build test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    res, output, build_command_line, pyrosetta_path = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', debug=debug)
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', debug=debug)
 
-    for f in os.listdir(pyrosetta_path + '/source'):
-        if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
-    distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
+    for f in os.listdir(result.pyrosetta_path + '/source'):
+        if os.path.islink(result.pyrosetta_path + '/source/' + f): os.remove(result.pyrosetta_path + '/source/' + f)
+    distutils.dir_util.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
 
-    res_code = _S_failed_ if res else _S_passed_
-    if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
-    output = 'Running: {}\n'.format(build_command_line) + output + '\nPyRosetta build path: ' + pyrosetta_path + '\n'  # Making sure that exact command line used is stored
-    r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+    res_code = _S_failed_ if result.exitcode else _S_passed_
+    if not result.exitcode: result.output = '...\n'+'\n'.join( result.output.split('\n')[-32:] )  # truncating log for passed builds.
+    result.output = 'Running: {}\n'.format(result.command_line) + result.output + '\nPyRosetta build path: ' + result.pyrosetta_path + '\n'  # Making sure that exact command line used is stored
+    r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
     # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
     json.dump({_ResultsKey_:r[_ResultsKey_], _StateKey_:r[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
 
@@ -52,38 +52,42 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     TR('Running PyRosetta unit tests: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    res, output, build_command_line, pyrosetta_path = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', debug=debug)
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', debug=debug)
 
-    for f in os.listdir(pyrosetta_path + '/source'):
-        if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
-    distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
+    for f in os.listdir(result.pyrosetta_path + '/source'):
+        if os.path.islink(result.pyrosetta_path + '/source/' + f): os.remove(result.pyrosetta_path + '/source/' + f)
+    distutils.dir_util.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
 
-    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(result.output)
 
-    if res:
+    if result.exitcode:
         res_code = _S_build_failed_
-        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
         json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
 
     else:
 
-        distr_file_list = os.listdir(pyrosetta_path+'/build')
+        distr_file_list = os.listdir(result.pyrosetta_path+'/build')
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
-        gui_flag = ''
-        if not res: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=pyrosetta_path, python=platform['python'], jobs=jobs, gui_flag=gui_flag), return_='tuple')
+        gui_flag, res, output = '', result.exitcode, result.output
+        command_line = 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=result.pyrosetta_path, python=result.python, jobs=jobs, gui_flag=gui_flag)
+        output += '\nRunning PyRosetta tests: ' + command_line + '\n'
+        if not res:
+            res, o = execute('Running PyRosetta tests...', command_line, return_='tuple')
+            output += o
 
-        json_file = pyrosetta_path + '/build/.test.output/.test.results.json'
+        json_file = result.pyrosetta_path + '/build/.test.output/.test.results.json'
         results = json.load( file(json_file) )
 
-        execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=pyrosetta_path, python=platform['python']), return_='tuple')
-        extra_files = [f for f in os.listdir(pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
+        execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=result.pyrosetta_path, python=result.python), return_='tuple')
+        extra_files = [f for f in os.listdir(result.pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
         if extra_files:
             results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))
             results[_StateKey_] = 'failed'
 
         if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
-        output = 'Running: {}\n'.format(build_command_line) + output  # Making sure that exact command line used is stored
+        output = 'Running: {}\n'.format(result.command_line) + output  # Making sure that exact command line used is stored
 
         #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
         results[_LogKey_] = output
