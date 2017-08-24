@@ -25,7 +25,8 @@ from hpc_drivers import *
 
 # Calculating value of Platform dict
 Platform = {}
-if sys.platform.startswith("linux"): Platform['os'] = 'linux'  # can be linux1, linux2, etc
+if sys.platform.startswith("linux"):
+    Platform['os'] = 'ubuntu' if os.path.isfile('/etc/lsb-release') and 'Ubuntu' in open('/etc/lsb-release').read() else 'linux'  # can be linux1, linux2, etc
 elif sys.platform == "darwin" :      Platform['os'] = 'mac'
 elif sys.platform == "cygwin" :      Platform['os'] = 'cygwin'
 elif sys.platform == "win32" :       Platform['os'] = 'windows'
@@ -90,7 +91,7 @@ def main(args):
     #Platform['options'] = json.loads( Options.options ) if Options.options else {}
 
     if Options.memory: memory = Options.memory
-    elif Platform['os'] == 'linux': memory = int(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
+    elif Platform['os'] in ['linux', 'ubuntu']: memory = int(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
     elif Platform['os'] == 'mac':   memory = int(commands.getoutput('sysctl -a | grep hw.memsize').split()[1]) / 1024 / 1024 / 1024
 
     Platform['compiler'] = Options.compiler

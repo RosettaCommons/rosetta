@@ -274,8 +274,9 @@ def get_path_to_python_executable(platform, config):
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
     extras = {
-        ('mac',) :         ('MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),
-        ('linux', '2.7') : ('', '--enable-unicode=ucs4'),
+        ('mac',) :          ('MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),
+        ('linux',  '2.7') : ('', '--enable-unicode=ucs4'),
+        ('ubuntu', '2.7') : ('', '--enable-unicode=ucs4'),
     }
 
     packages = None #if python_version.startswith('2.') else 'pydoc'  # Python-2 does not install pip as default
