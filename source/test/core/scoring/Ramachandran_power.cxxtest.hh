@@ -45,12 +45,12 @@ public:
 	void setUp() {
 		core_init_with_additional_options("-rama_power 2.0");
 		pose_ = core::pose::PoseOP( new core::pose::Pose );
-		core::pose::make_pose_from_sequence(*pose_, "VVAV", "fa_standard", false);
+		core::pose::make_pose_from_sequence(*pose_, "AVVAVA", "fa_standard", false);
 
-		pose_->set_phi(1, 296); pose_->set_psi(1, 319);  // alpha helix
-		pose_->set_phi(2, 235); pose_->set_psi(2, 138);  // beta strand
-		pose_->set_phi(3,  55); pose_->set_psi(3,  42);  // left-handed helix
-		pose_->set_phi(4, 125); pose_->set_psi(4, 100);  // forbidden
+		pose_->set_phi(2, 296); pose_->set_psi(2, 319);  // alpha helix
+		pose_->set_phi(3, 235); pose_->set_psi(3, 138);  // beta strand
+		pose_->set_phi(4,  55); pose_->set_psi(4,  42);  // left-handed helix
+		pose_->set_phi(5, 125); pose_->set_psi(5, 100);  // forbidden
 	}
 
 	void tearDown() {
@@ -61,10 +61,10 @@ public:
 	void test_eval_rama_score_residue() {
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 		//Real expected[] = { -0.2578, -0.9390, 1.1552, 34.6217 };
-		Real expected[] = { -1.0049, -0.7500, 5.0607, 61.5358 };
+		Real expected[] = { 0, -1.0049, -0.7500, 5.0607, 61.5358, 0 };
 
 		TR << "Res\tExpected\tObserved" << std::endl;
-		for ( Size i = 1; i <= pose_->size(); i++ ) {
+		for ( Size i = 2; i <= pose_->size()-1; i++ ) {
 			Real observed = rama.eval_rama_score_residue(pose_->residue(i));
 			TR << i << "\t" << expected[i-1] << "\t" << observed << std::endl;
 			TS_ASSERT_DELTA(observed, expected[i-1], 1e-4);

@@ -73,6 +73,16 @@ static THREAD_LOCAL basic::Tracer TR("core.scoring.ramachandran");
 namespace core {
 namespace scoring {
 
+inline
+bool
+polymeric_termini_incomplete( conformation::Residue res ) {
+	for ( Size i = 1; i <= res.n_polymeric_residue_connections(); ++i ) {
+		if ( res.connection_incomplete( i ) ) {
+			return true;
+		}
+	}
+	return false;
+}
 
 // @brief Auto-generated virtual destructor
 Ramachandran::~Ramachandran() = default;
@@ -460,7 +470,13 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 	bool const force_mirroring
 ) const {
 
-	if ( res.connection_incomplete(1) || res.connection_incomplete(2) ) { //If this is an open terminus, don't score this residue.
+	//if(res.connection_incomplete(1) || res.connection_incomplete(2)) { //If this is an open terminus, don't score this residue.
+	// I think this is a better check. A lower terminal CYS:disulfide without a
+	// connection partner has a complete connection 1 (i.e. UPPER, since those
+	// connections are renumbered) but an incomplete connection 2
+	if ( res.is_terminus() || polymeric_termini_incomplete( res )
+			|| res.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
+			|| res.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) {
 		rama=0.0;
 		drama_dphi=0.0;
 		drama_dpsi=0.0;
@@ -519,10 +535,18 @@ Ramachandran::eval_rama_score_residue(
 
 	debug_assert( rsd.is_protein() );
 
-	if ( 0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1) ) ||
-			0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2) ) ||
+	if ( //0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1) ) ||
+			//0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2) ) ||
 			rsd.is_terminus() ||
-			rsd.is_virtual_residue() ) { // begin or end of chain -- don't calculate rama score
+			rsd.is_virtual_residue() ||
+			!rsd.has_lower_connect() ||
+			!rsd.has_upper_connect() ||
+			rsd.residue_connection_partner( rsd.type().lower_connect_id() ) == 0 ||
+			rsd.residue_connection_partner( rsd.type().upper_connect_id() ) == 0 ||
+			rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ||
+			rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ||
+			polymeric_termini_incomplete( rsd )
+			) { // begin or end of chain -- don't calculate rama score
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;

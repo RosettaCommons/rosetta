@@ -67,12 +67,12 @@ public:
 	void setUp() {
 		core_init();
 		pose_ = core::pose::PoseOP( new core::pose::Pose );
-		core::pose::make_pose_from_sequence(*pose_, "VVAV", "fa_standard", false);
+		core::pose::make_pose_from_sequence(*pose_, "AVVAVA", "fa_standard", false);
 
-		pose_->set_phi(1, 296); pose_->set_psi(1, 319);  // alpha helix
-		pose_->set_phi(2, 235); pose_->set_psi(2, 138);  // beta strand
-		pose_->set_phi(3,  55); pose_->set_psi(3,  42);  // left-handed helix
-		pose_->set_phi(4, 125); pose_->set_psi(4, 100);  // forbidden
+		pose_->set_phi(2, 296); pose_->set_psi(2, 319);  // alpha helix
+		pose_->set_phi(3, 235); pose_->set_psi(3, 138);  // beta strand
+		pose_->set_phi(4,  55); pose_->set_psi(4,  42);  // left-handed helix
+		pose_->set_phi(5, 125); pose_->set_psi(5, 100);  // forbidden
 	}
 
 	void tearDown() {
@@ -83,9 +83,10 @@ public:
 	void test_eval_rama_score_residue() {
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 		//Real expected[] = { -0.2578, -0.9390, 0.4680, 4.9683};
-		Real expected[] = { -1.0048, -0.7500, 1.4618, 6.9079};
+		Real expected[] = { 0, -1.0048, -0.7500, 1.4618, 6.9079, 0 };
 
-		for ( Size i = 1; i <= pose_->size(); i++ ) {
+		// Skip terminal residues
+		for ( Size i = 2; i <= pose_->size() - 1; i++ ) {
 			Real observed = rama.eval_rama_score_residue(pose_->residue(i));
 			TS_ASSERT_DELTA(observed, expected[i-1], 1e-4);
 		}
@@ -115,9 +116,10 @@ public:
 	// Make sure allowed and forbidden points are properly discriminated.
 	void test_phipsi_in_allowed_rama() {
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
-		bool expected[] = {true, true, true, false};
+		bool expected[] = {true, true, true, true, false, true};
 
-		for ( Size i = 1; i <= pose_->size(); i++ ) {
+		// skip unmodified termini
+		for ( Size i = 2; i <= pose_->size()-1; i++ ) {
 			bool is_allowed = rama.phipsi_in_allowed_rama(
 				pose_->aa(i), pose_->phi(i), pose_->psi(i));
 			bool is_forbidden = rama.phipsi_in_forbidden_rama(
@@ -259,3 +261,4 @@ private:
 	core::pose::PoseOP pose_;
 
 };
+

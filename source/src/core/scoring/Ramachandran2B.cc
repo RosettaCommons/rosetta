@@ -59,6 +59,16 @@ using namespace ObjexxFCL;
 namespace core {
 namespace scoring {
 
+inline
+bool
+polymeric_termini_incomplete( conformation::Residue res ) {
+	for ( Size i = 1; i <= res.n_polymeric_residue_connections(); ++i ) {
+		if ( res.connection_incomplete( i ) ) {
+			return true;
+		}
+	}
+	return false;
+}
 
 // @brief Auto-generated virtual destructor
 Ramachandran2B::~Ramachandran2B() = default;
@@ -160,10 +170,7 @@ Ramachandran2B::eval_rama_score_residue(
 	Real const psi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
-	// amw replacing anything that would set rama to 0 because of an incidental phi/psi of 0
-	// (rare but possible)
-	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) || rsd.is_terminus() ) { // begin or end of chain
+	if ( /*phi == 0.0 || psi == 0.0 ||*/ rsd.is_terminus() || polymeric_termini_incomplete( rsd ) ) { // begin or end of chain
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;
@@ -193,8 +200,13 @@ Ramachandran2B::eval_rama_score_residue(
 	Real const psi
 		( nonnegative_principal_angle_degrees( center.mainchain_torsion(2)));
 
+	// This is the center aa. Thus, it has left and right neighbors.
+	// Thus, it is not the beginning or end of the chain.
+	// But let's check anyway, because maybe the code uses something weird
+	// to pass for left and right_aa as a signal that they don't exist?
 	if ( center.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-			|| center.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+			|| center.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT )
+			|| center.is_terminus() || polymeric_termini_incomplete( center )/*phi == 0.0 || psi == 0.0*/ ) { // begin or end of chain
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;
@@ -307,7 +319,8 @@ Ramachandran2B::RamaE_Lower(
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
 	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT )
+			|| rsd.is_terminus() || polymeric_termini_incomplete( rsd )/*phi == 0.0 || psi == 0.0*/ ) { // begin or end of chain
 		return 0.0;
 	}
 
@@ -374,7 +387,8 @@ Ramachandran2B::RamaE_Upper(
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
 	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { // begin or end of chain
+			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT )
+			|| rsd.is_terminus() || polymeric_termini_incomplete( rsd ) /*phi == 0.0 || psi == 0.0*/ ) { // begin or end of chain
 		return 0.0;
 	}
 
@@ -439,7 +453,8 @@ Ramachandran2B::RamaE(
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
 	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT )
+			|| rsd.is_terminus() || polymeric_termini_incomplete( rsd )/*phi == 0.0 || psi == 0.0*/ ) { // begin or end of chain
 		return 0.0;
 	}
 
