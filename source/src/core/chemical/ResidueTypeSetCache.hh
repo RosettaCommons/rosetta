@@ -25,7 +25,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/thread/ReadWriteMutex.fwd.hh>
 
 // C++ headers
 #include <map>
@@ -38,7 +37,6 @@
 #endif // SERIALIZATION
 
 #ifdef MULTI_THREADED
-//#include <mutex>
 #include <utility/thread/ReadWriteMutex.fwd.hh>
 #endif
 

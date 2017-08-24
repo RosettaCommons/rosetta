@@ -31,7 +31,9 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
+#ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>
+#endif
 
 #ifdef    SERIALIZATION
 // Cereal headers

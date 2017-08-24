@@ -193,6 +193,39 @@ public:  // Other public methods //////////////////////////////////////////////
 	// TODO: Add n_variants() and search for get_list_of_variants().size() calls.
 	// TODO: Add is_not_a_variant() and search for get_list_of_variants().empty()  calls.
 
+	/// @brief Generate the map of (string->VariantType).
+	/// @details Used to initialize the const static map.  Since c++11 initialization of const static singletons
+	/// is inherently threadsafe, we don't subsequently have to worry about mutexes for access to this.
+	/// @note This is implemented in core/chemical/VariantType_mappings.cc, an automatically-generated file.  DO NOT EDIT
+	/// THAT FILE DIRECTLY.  Intead, edit the generating script.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	static std::map< std::string, VariantType > const * generate_string_to_variant_map();
+
+	/// @brief Generate the map of (string->ResidueProperty).
+	/// @details Used to initialize the const static map.  Since c++11 initialization of const static singletons
+	/// is inherently threadsafe, we don't subsequently have to worry about mutexes for access to this.
+	/// @note This is implemented in core/chemical/ResidueProperty_mappings.cc, an automatically-generated file.  DO NOT EDIT
+	/// THAT FILE DIRECTLY.  Intead, edit the generating script.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	static std::map< std::string, ResidueProperty > const * generate_string_to_property_map();
+
+	/// @brief Generate the map of (VariantType->string).  (This is actually a vector since we're going from an enum -- which can be
+	/// a vector index -- to a string).
+	/// @details Used to initialize the const static vector.  Since c++11 initialization of const static singletons
+	/// is inherently threadsafe, we don't subsequently have to worry about mutexes for access to this.
+	/// @note This is implemented in core/chemical/VariantType_mappings.cc, an automatically-generated file.  DO NOT EDIT
+	/// THAT FILE DIRECTLY.  Intead, edit the generating script.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	static utility::vector1< std::string > const * generate_variant_to_string_vector();
+
+	/// @brief Generate the map of (ResidueProperty->string).  (This is actually a vector since we're going from an enum -- which can be
+	/// a vector index -- to a string).
+	/// @details Used to initialize the const static vector.  Since c++11 initialization of const static singletons
+	/// is inherently threadsafe, we don't subsequently have to worry about mutexes for access to this.
+	/// @note This is implemented in core/chemical/ResidueProperty_mappings.cc, an automatically-generated file.  DO NOT EDIT
+	/// THAT FILE DIRECTLY.  Intead, edit the generating script.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	static utility::vector1< std::string > const * generate_property_to_string_vector();
 
 private:  // Private methods //////////////////////////////////////////////////
 	// Initialize data members.

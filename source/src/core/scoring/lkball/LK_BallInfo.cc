@@ -411,11 +411,10 @@ LKBallDatabase::~LKBallDatabase() {
 
 bool
 LKBallDatabase::has( chemical::ResidueType const & rsd_type ) const {
-
+	ResidueType const * const address( &rsd_type );
 #if defined MULTI_THREADED
 	utility::thread::ReadLockGuard lock( lkball_db_mutex_ );
 #endif
-	ResidueType const * const address( &rsd_type );
 	return water_builder_map_.count( address ) > 0 && atom_weights_map_.count( address ) > 0;
 }
 
@@ -426,13 +425,14 @@ LKBallDatabase::initialize_residue_type( ResidueType const & rsd_type )
 	using namespace conformation;
 	using namespace chemical;
 
+	bool const sidechain_only = !(basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ]());
+
+	ResidueType const * const address( &rsd_type );
+
 #if defined MULTI_THREADED
 	utility::thread::WriteLockGuard lock( lkball_db_mutex_ );
 #endif
 
-	bool const sidechain_only = !(basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ]());
-
-	ResidueType const * const address( &rsd_type );
 	if ( water_builder_map_.find( address ) == water_builder_map_.end() || atom_weights_map_.find( address ) == atom_weights_map_.end() ) {
 		TR.Trace << "initialize_residue_type: " << rsd_type.name() << std::endl;
 

@@ -35,7 +35,6 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 
 // Utility headers
-#include <utility/thread/ReadWriteMutex.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
