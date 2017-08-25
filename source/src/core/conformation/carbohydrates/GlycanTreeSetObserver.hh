@@ -7,18 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/pose/carbohydrates/GlycanTreeSetObserver.hh
+/// @file core/conformation/carbohydrates/GlycanTreeSetObserver.hh
 /// @brief The CacheablePoseObserver version of GlycanTreeSet that will react to pose length changes..
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_core_pose_carbohydrates_GlycanTreeSetObserver_hh
-#define INCLUDED_core_pose_carbohydrates_GlycanTreeSetObserver_hh
+#ifndef INCLUDED_core_conformation_carbohydrates_GlycanTreeSetObserver_hh
+#define INCLUDED_core_conformation_carbohydrates_GlycanTreeSetObserver_hh
 
-#include <core/pose/carbohydrates/GlycanTreeSetObserver.fwd.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSetObserver.fwd.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.fwd.hh>
-#include <core/pose/datacache/CacheableObserver.hh>
-#include <core/pose/Pose.fwd.hh>
+
 
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
@@ -29,36 +28,28 @@
 
 #include <utility/signals/Link.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
-namespace pose {
+namespace conformation {
 namespace carbohydrates {
 
 
-///@brief
-///
-///  Get the GlycanTreeSet from the pose.
-///
-///
-///@details
-///
-/// This is so we can get the glycan_tree_set using a const pose!
-///
-conformation::carbohydrates::GlycanTreeSetCOP
-get_glycan_tree_set(Pose const & pose);
-
 ///@brief The CacheablePoseObserver version of GlycanTreeSet that will react to pose length changes..
-class GlycanTreeSetObserver : public core::pose::datacache::CacheableObserver {
+class GlycanTreeSetObserver : public utility::pointer::ReferenceCount {
 
 public:
 
 	GlycanTreeSetObserver();
 
 	///@brief Construct the GlycanTreeSet, but do not attach it to any pose.
-	GlycanTreeSetObserver( conformation::Conformation const & conf );
+	GlycanTreeSetObserver( Conformation const & conf );
 
 	///@Brief Construct the GlycanTreeSet and attach this object to the pose.
-	GlycanTreeSetObserver( core::pose::Pose & pose );
+	//GlycanTreeSetObserver( core::pose::Pose & pose );
 
 	GlycanTreeSetObserver(GlycanTreeSetObserver const & src);
 
@@ -70,58 +61,56 @@ public:
 public:
 
 	///@brief Get the GlycanTreeSet that is maintained by this Observer.
-	conformation::carbohydrates::GlycanTreeSetCOP
+	GlycanTreeSetCOP
 	get_glycan_tree_set() const;
-
-public:
-
-	//////////////////////////////////////////////////////////////////
-	///                   ///
-	///                Cacheable Observer Functions                ///
-	///                  ///
-	//////////////////////////////////////////////////////////////////
-
-
-	virtual
-	core::pose::datacache::CacheableObserverOP
-	clone();
-
-	virtual
-	core::pose::datacache::CacheableObserverOP
-	create();
 
 
 public: //observer interface
 
-	virtual
-	bool is_attached() const;
+	bool
+	is_attached() const;
 
-protected: //observer interface
+public: //observer interface
 
-	virtual
-	void attach_impl( core::pose::Pose & pose );
-
-	virtual
-	void detach_impl();
+	/// @brief Detach and attach to Conformation
+	void
+	attach_to( Conformation & conf );
+	
+	/// @brief Do the attachment to the length event signal
+	void
+	attach_impl( Conformation & conf );
 
 	void
-	on_length_change( core::conformation::signals::LengthEvent const & event );
+	detach_impl();
+
+	void
+	on_length_change( signals::LengthEvent const & event );
 
 private:
 
 	utility::signals::Link length_event_link_;
-	conformation::carbohydrates::GlycanTreeSetOP glycan_tree_set_;
+	GlycanTreeSetOP glycan_tree_set_;
 
-};
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+
+}; // GlycanTreeSetObserver
+
 
 
 } //core
-} //pose
+} //conformation
 } //carbohydrates
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_carbohydrates_GlycanTreeSetObserver )
+#endif // SERIALIZATION
 
-
-#endif //INCLUDED_core_pose_carbohydrates_GlycanTreeSetObserver_hh
+#endif //INCLUDED_core_conformation_carbohydrates_GlycanTreeSetObserver_hh
 
 
 

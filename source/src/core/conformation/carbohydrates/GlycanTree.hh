@@ -32,6 +32,11 @@
 #include <utility>
 #include <vector>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 /////////////////
 // This class gathers and stores information on entire glycan trees. Typical glycan trees
 // contain multiple chains but with consective residue numbers. Gathering all the information about
@@ -140,6 +145,13 @@ private:
 	core::Size start_pos_;
 	Size root_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+
 };
 
 
@@ -147,6 +159,9 @@ private:
 } //chemical
 } //carbohydrates
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_carbohydrates_GlycanTree )
+#endif // SERIALIZATION
 
 
 #endif //INCLUDED_core_pose_carbohydrates_GlycanTree_hh

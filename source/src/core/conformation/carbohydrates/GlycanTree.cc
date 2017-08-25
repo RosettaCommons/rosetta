@@ -35,6 +35,26 @@
 #include <vector>
 
 #include <basic/Tracer.hh>
+
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/list.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/map.hpp>
+
+#endif // SERIALIZATION
+
+
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.carbohydrates.GlycanTree" );
 
 
@@ -263,7 +283,33 @@ GlycanTree::update_start_position( core::Size const start_pos){
 } //chemical
 } //carbohydrates
 
+#ifdef    SERIALIZATION
 
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::carbohydrates::GlycanTree::save( Archive & arc ) const {
+	arc( CEREAL_NVP( tree_ ) ); // std::map< Size, GlycanNodeOP >
+	arc( CEREAL_NVP( branch_tips_ ) ); // utility::vector< core::Size >
+	arc( CEREAL_NVP( start_pos_ ) ); // core::Size
+	arc( CEREAL_NVP( root_ ) ); //core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::carbohydrates::GlycanTree::load( Archive & arc ) {
+	arc( tree_ );
+	arc( branch_tips_ );
+	arc( start_pos_ );
+	arc( root_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::carbohydrates::GlycanTree );
+CEREAL_REGISTER_TYPE( core::conformation::carbohydrates::GlycanTree )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_carbohydrates_GlycanTree )
+#endif // SERIALIZATION
 
 
 

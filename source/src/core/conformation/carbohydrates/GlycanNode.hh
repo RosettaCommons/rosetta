@@ -32,6 +32,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace conformation {
 namespace carbohydrates {
@@ -182,6 +187,11 @@ private:
 
 	Size mainchain_child_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -190,7 +200,9 @@ private:
 } //chemical
 } //carbohydrates
 
-
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_carbohydrates_GlycanNode )
+#endif // SERIALIZATION
 
 #endif //INCLUDED_core_pose_carbohydrates_GlycanNode_hh
 

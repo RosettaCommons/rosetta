@@ -807,9 +807,9 @@ void build_pose_as_is2(
 	if ( pose.conformation().contains_carbohydrate_residues() ) {
 		for ( uint i = 1, n_residues = pose.size(); i <= n_residues; ++i ) {
 
-			ResidueType const & res_type = pose.residue_type(i);
+			ResidueType const & res_type = pose.residue_type( i );
 			if ( res_type.is_carbohydrate() ) {
-				pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue(pose, i);
+				pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue( pose, i );
 			}
 		}
 	}
@@ -825,10 +825,6 @@ void build_pose_as_is2(
 
 	pose.pdb_info( pdb_info );
 }
-
-
-
-
 
 
 // Initialization from command line -- everything that doesn't require protocols
@@ -1256,8 +1252,6 @@ setup_for_density_scoring( core::pose::Pose & pose ) {
 	// Note from rhiju -- should we update full_model_info & full_model_parameters?
 	// I put a new function in core/pose/full_model_info/util.hh called append_virtual_residue_to_full_model_info().
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////

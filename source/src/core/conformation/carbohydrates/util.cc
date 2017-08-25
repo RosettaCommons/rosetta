@@ -10,6 +10,7 @@
 /// @file core/conformation/carbohydrates/util.cc
 /// @brief Utility functions that DO NOT require a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @author Labonte <JWLabonte@jhu.edu>
 
 #include <core/conformation/carbohydrates/util.hh>
 
@@ -25,6 +26,7 @@
 #include <core/types.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
@@ -37,6 +39,10 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
+// Numeric Headers
+#include <numeric/conversions.hh>
+#include <numeric/angle.functions.hh>
+#include <numeric/random/random.hh>
 
 
 // External Headers
@@ -203,7 +209,6 @@ get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd, c
 }
 
 
-
 // Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic carbon.
 /// @details  Does not currently work for aa->glycan.  Returns false if previous residue is not carbohydrate.
 /// @author   Jared Adolf-Bryfogle (jadolfbr@gmail.com)
@@ -246,6 +251,664 @@ has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformatio
 		return false;
 	}
 }
+
+// Return pointers to the two residues of the glycosidic bond.
+/// @return  Pointers to the residue at <sequence_position> and its parent or else the same pointer twice if undefined.
+std::pair< conformation::ResidueCOP, conformation::ResidueCOP >
+get_glycosidic_bond_residues( Conformation const & conf, uint const sequence_position )
+{
+	using namespace std;
+	using namespace conformation;
+
+	// Get the 1st residue of interest.
+	ResidueCOP res_n( conf.residue( sequence_position ).get_self_ptr() );
+
+	if ( res_n->is_lower_terminus() ) {
+		if ( TR.Info.visible() ) {
+			TR.Info << "Glycosidic torsions are undefined for the first polysaccharide residue of a chain unless part "
+				"of a branch." << endl;
+		}
+		return make_pair( res_n, res_n );
+	}
+
+	// Get the 2nd residue of interest.
+	// (res_n_minus_1 is a misnomer for the lower termini of branches.)
+	ResidueCOP res_n_minus_1;
+	if ( conf.glycan_tree_set() ) {
+		res_n_minus_1 = conf.residue( conf.glycan_tree_set()->get_parent( sequence_position ) ).get_self_ptr();
+	} else {
+		res_n_minus_1 = conf.residue( find_seqpos_of_saccharides_parent_residue( *res_n ) ).get_self_ptr();
+	}
+
+	return make_pair( res_n, res_n_minus_1 );
+}
+
+/// Return the AtomIDs of the four phi torsion reference atoms.
+/// @details For aldopyranoses, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
+/// where X is the position of the glycosidic linkage.\n
+/// For aldofuranoses, phi is defined as O4(n)-C1(n)-OX(n-1)-CX(n-1).\n
+/// For 2-ketopyranoses, phi is defined as O6(n)-C2(n)-OX(n-1)-CX(n-1).\n
+/// For 2-ketofuranoses, phi is defined as O5(n)-C2(n)-OX(n-1)-CX(n-1).\n
+/// Et cetera...\n
+utility::vector1< id::AtomID >
+get_reference_atoms_for_phi( Conformation const & conf, uint const sequence_position )
+{
+	using namespace std;
+	using namespace id;
+	using namespace utility;
+	using namespace conformation;
+
+	vector1< AtomID > ids;
+
+	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
+	pair< ResidueCOP, ResidueCOP > const residues( get_glycosidic_bond_residues( conf, sequence_position ) );
+
+	if ( residues.first->seqpos() == residues.second->seqpos() ) {  // This occurs when there is no parent residue.
+		return ids;
+	}
+	ids.resize( 4 );  // A torsion has 4 reference atoms.
+
+	// Set the atom names of the four reference atoms.
+	// Reference 1 is O(cyclic) for cyclic saccharides, C? for linear saccharides.
+	// Because the cyclic O is not connected by the atom tree,
+	// we actually will return the AtomID for the virtual atom that superimposes with the real atom.
+	AtomID ref1;
+	if ( residues.first->carbohydrate_info()->is_cyclic() ) {
+		ref1 = AtomID( residues.first->carbohydrate_info()->virtual_cyclic_oxygen_index(), residues.first->seqpos() );
+	} else /* is linear */ {
+		utility_exit_with_message("Linear Polysacharides are not yet handled!");  // TODO: Figure out how linear polysaccharides are handled by IUPAC.
+	}
+	ids[ 1 ] = ref1;
+
+	// Reference 2 is always the anomeric carbon.
+	AtomID const ref2( residues.first->carbohydrate_info()->anomeric_carbon_index(), residues.first->seqpos() );
+	ids[ 2 ] = ref2;
+
+	// Reference 3 is OX(n-1) for polysaccharides.
+	AtomID const ref3( residues.second->connect_atom( *residues.first ), residues.second->seqpos() );
+	ids[ 3 ] = ref3;
+
+	// Reference 4 is CX(n-1) for polysaccharides.
+	AtomID const ref4( residues.second->type().atom_base( ref3.atomno() ), residues.second->seqpos() );
+	ids[ 4 ] = ref4;
+
+	if ( TR.Trace.visible() ) {
+		TR.Trace << "Reference atoms for phi: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	}
+
+	return ids;
+}
+
+// Return the AtomIDs of the four psi torsion reference atoms.
+/// @details For saccharides, psi is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1),\n
+/// where X is the position of the glycosidic linkage.
+utility::vector1< id::AtomID >
+get_reference_atoms_for_psi( Conformation const & conf, uint const sequence_position )
+{
+	using namespace std;
+	using namespace id;
+	using namespace utility;
+	using namespace conformation;
+
+	vector1< AtomID > ids;
+
+	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
+	pair< ResidueCOP, ResidueCOP > const residues( get_glycosidic_bond_residues( conf, sequence_position ) );
+
+	if ( residues.first->seqpos() == residues.second->seqpos() ) {  // This occurs when there is no parent residue.
+		return ids;
+	}
+
+	ids.resize( 4 );  // A torsion has 4 reference atoms.
+
+	// Set the atom names of the four reference atoms.
+	// Reference 1 is always the anomeric carbon.
+	AtomID const ref1( residues.first->carbohydrate_info()->anomeric_carbon_index(), residues.first->seqpos() );
+	ids[ 1 ] = ref1;
+
+	// Reference 2 is OX(n-1) for polysaccharides.
+	AtomID const ref2( residues.second->connect_atom( *residues.first ), residues.second->seqpos() );
+	ids[ 2 ] = ref2;
+
+	// Reference 3 is CX(n-1) for polysaccharides.
+	AtomID const ref3( residues.second->type().atom_base( ref2.atomno() ), residues.second->seqpos() );
+	ids[ 3 ] = ref3;
+
+	// Reference 4 is CX-1(n-1) for polysaccharides.
+	AtomID const ref4( residues.second->type().atom_base( ref3.atomno() ), residues.second->seqpos() );
+	ids[ 4 ] = ref4;
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Reference atoms for psi: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	}
+
+	return ids;
+}
+
+// Return the AtomIDs of the four omega torsion reference atoms.
+/// For carbohydrates glycosylated at an exocyclic position,
+/// omega of residue n is defined as OX(n-1)-CX(n-1)-CX-1(n-1)-CX-2(n-1),
+/// where X is the position of the glycosidic linkage.
+utility::vector1< id::AtomID >
+get_reference_atoms_for_1st_omega( Conformation const & conf, uint const sequence_position )
+{
+	using namespace std;
+	using namespace id;
+	using namespace utility;
+	using namespace conformation;
+
+	vector1< AtomID > ids;
+
+	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
+	pair< ResidueCOP, ResidueCOP > const residues( get_glycosidic_bond_residues( conf, sequence_position ) );
+
+	if ( residues.first->seqpos() == residues.second->seqpos() ) {  // This occurs when there is no parent residue.
+		return ids;
+	}
+
+
+	//if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
+	bool exocylic_linkage;
+	if ( conf.glycan_tree_set() ) {
+		exocylic_linkage = conf.glycan_tree_set()->has_exocyclic_glycosidic_linkage( residues.first->seqpos() );
+	} else {
+		exocylic_linkage = has_exocyclic_glycosidic_linkage(conf, residues.first->seqpos() );
+	}
+
+	if ( residues.second->is_carbohydrate() && ( ! exocylic_linkage) ) {
+		TR.Debug << "Omega is undefined for residue " << sequence_position <<
+			" because the glycosidic linkage is not exocyclic." << endl;
+		return ids;
+	}
+
+	ids.resize( 4 );  // A torsion has 4 reference atoms.
+
+	// Set the atom names of the four reference atoms.
+	// Reference 1 is OX(n-1) for polysaccharides.
+	AtomID const ref1( residues.second->connect_atom( *residues.first ), residues.second->seqpos() );
+	ids[ 1 ] = ref1;
+
+	// Reference 2 is CX(n-1) for polysaccharides.
+	AtomID const ref2( residues.second->type().atom_base( ref1.atomno() ), residues.second->seqpos() );
+	ids[ 2 ] = ref2;
+
+	// Reference 3 is CX-1(n-1) for polysaccharides.
+	AtomID const ref3( residues.second->type().atom_base( ref2.atomno() ), residues.second->seqpos() );
+	ids[ 3 ] = ref3;
+
+	// Reference 4 is CX-2(n-1) for polysaccharides.
+	AtomID const ref4( residues.second->type().atom_base( ref3.atomno() ), residues.second->seqpos() );
+	ids[ 4 ] = ref4;
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Reference atoms for omega: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	}
+
+	return ids;
+}
+
+// Return the AtomIDs of the four omega2 torsion reference atoms.
+/// For carbohydrates glycosylated at positions with more than 1 exocyclic
+/// position, or for linkages to longer amino acid residues,
+/// omega2 of residue n is defined as CX(n-1)-CX-1(n-1)-CX-2(n-1)-CX-3(n-1),
+/// where X is the position of the glycosidic linkage.
+utility::vector1< id::AtomID >
+get_reference_atoms_for_2nd_omega( Conformation const & conf, uint const sequence_position )
+{
+	using namespace std;
+	using namespace id;
+	using namespace utility;
+	using namespace conformation;
+
+	vector1< AtomID > ids;
+
+	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
+	pair< ResidueCOP, ResidueCOP > const residues( get_glycosidic_bond_residues( conf, sequence_position ) );
+
+	if ( residues.first->seqpos() == residues.second->seqpos() ) {  // This occurs when there is no parent residue.
+		return ids;
+	}
+
+	bool exocyclic_linkage;
+	if ( conf.glycan_tree_set() ) {
+		exocyclic_linkage = conf.glycan_tree_set()->has_exocyclic_glycosidic_linkage( residues.first->seqpos() );
+	} else {
+		exocyclic_linkage = has_exocyclic_glycosidic_linkage(conf, residues.first->seqpos() );
+	}
+
+	if ( residues.second->is_carbohydrate() && ( ! exocyclic_linkage ) ) {
+		TR.Debug << "Omega2 is undefined for residue " << sequence_position <<
+			" because the glycosidic linkage is not exocyclic." << endl;
+		return ids;
+	}
+
+	// Set the atom names of the four reference atoms.
+	// Reference 0 is OX(n-1) for polysaccharides.
+	AtomID const ref0( residues.second->connect_atom( *residues.first ), residues.second->seqpos() );
+
+	// Reference 1 is CX(n-1) for polysaccharides.
+	AtomID const ref1( residues.second->type().atom_base( ref0.atomno() ), residues.second->seqpos() );
+
+
+	// Reference 2 is CX-1(n-1) for polysaccharides.
+	AtomID const ref2( residues.second->type().atom_base( ref1.atomno() ), residues.second->seqpos() );
+
+	//If Ref2 is a ring atom and we do not have an omega2 angle
+	if ( residues.second->is_carbohydrate() && residues.second->type().is_ring_atom( 1, ref2.atomno() ) ) {
+		return ids;
+	} else if ( (! residues.second->is_carbohydrate() ) && (residues.second->aa() == core::chemical::aa_ser || residues.second->aa() == core::chemical::aa_thr ) ) {
+		//O-linked Glycosylation has 3 dihedrals.  We should address this better.
+		return ids;
+	}
+
+	ids.resize( 4 );  // A torsion has 4 reference atoms.
+	ids[ 1 ] = ref1;
+	ids[ 2 ] = ref2;
+
+	// Reference 3 is CX-2(n-1) for polysaccharides.
+	AtomID const ref3( residues.second->type().atom_base( ref2.atomno() ), residues.second->seqpos() );
+	ids[ 3 ] = ref3;
+
+	// Reference 4 is CX-3(n-1) for polysaccharides.
+	AtomID const ref4( residues.second->type().atom_base( ref3.atomno() ), residues.second->seqpos() );
+	ids[ 4 ] = ref4;
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Reference atoms for omega2: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	}
+
+	return ids;
+}
+
+
+// Return the AtomIDs of the four reference atoms for the requested torsion.
+utility::vector1< id::AtomID >
+get_reference_atoms( uint const torsion_id, Conformation const & conf, uint const sequence_position )
+{
+	using namespace id;
+	using namespace utility;
+
+	vector1< AtomID > ref_atoms;
+	switch ( torsion_id ) {
+	case phi_torsion :
+		ref_atoms = get_reference_atoms_for_phi( conf, sequence_position );
+		break;
+	case psi_torsion :
+		ref_atoms = get_reference_atoms_for_psi( conf, sequence_position );
+		break;
+	case omega_torsion :
+		ref_atoms = get_reference_atoms_for_1st_omega( conf, sequence_position );
+		break;
+	case 4 :
+		ref_atoms = get_reference_atoms_for_2nd_omega( conf, sequence_position );
+		break;
+	default :
+		utility_exit_with_message( "An invalid torsion angle was requested." );
+	}
+	return ref_atoms;
+}
+
+
+// Virtual Atom Alignment /////////////////////////////////////////////////////
+// Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given
+// conformation.
+/// @details  This method aligns virtual atom VOX, where X is the position of the cyclic oxygen, OY and HOY, where Y is
+/// the position of the anomeric carbon, (provided the residue is not the reducing end, where OY and HOY would be real
+/// atoms), and HOZ, where Z is the mainchain glycosidic bond location.  OY and HOY are aligned with the last two "main
+/// chain" atoms of the parent residue.  This ensures that torsion angles with duplicate names, e.g., chi1 and phi for
+/// internal linked aldoses, will always return the same values.  The same concept applies for HOZ, which aligns with
+/// the anomeric carbon of the downstream residue.  This method should be called after any coordinate change for a sac-
+/// charide residue and after loading a saccharide residue from a file or sequence for the first time.
+/// @note     Do I need to worry about aligning the virtual atoms left over from modified sugar patches?  Can such
+/// virtual atoms be deleted?
+void
+align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, uint const sequence_position )
+{
+	using namespace std;
+	using namespace id;
+	using namespace conformation;
+
+	TR.Debug << " Aligning virtual atoms on residue " << sequence_position << "..." << endl;
+
+	ResidueCOP res( conf.residue( sequence_position ).get_self_ptr() );
+
+	// Find and align VOX, if applicable.
+	if ( res->carbohydrate_info()->is_cyclic() ) {
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  Aligning VOX..." << endl;
+		}
+		uint const x( res->carbohydrate_info()->cyclic_oxygen() );
+		uint const OX( res->atom_index( res->carbohydrate_info()->cyclic_oxygen_name() ) );
+		uint const VOX( res->atom_index( "VO" + string( 1, x + '0' ) ) );
+
+		conf.set_xyz( AtomID( VOX, sequence_position ), conf.xyz( AtomID( OX, sequence_position ) ) );
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  VOX aligned." << endl;
+		}
+	}
+
+	// Find and align OY and HOY, if applicable.
+	if ( ! res->is_lower_terminus() ) {
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  Aligning OY and HOY..." << endl;
+		}
+		uint const y( res->carbohydrate_info()->anomeric_carbon() );
+		uint const OY( res->atom_index( "O" + string( 1, y + '0') ) );
+		uint const HOY( res->atom_index( "HO" + string( 1, y + '0' ) ) );
+
+		uint const parent_res_seqpos( find_seqpos_of_saccharides_parent_residue( *res ) );
+		ResidueCOP parent_res( conf.residue( parent_res_seqpos ).get_self_ptr() );
+		uint const OY_ref( parent_res->connect_atom( *res ) );
+		uint const HOY_ref( parent_res->first_adjacent_heavy_atom( OY_ref ) );
+
+		conf.set_xyz( AtomID( HOY, sequence_position ), conf.xyz( AtomID( HOY_ref, parent_res_seqpos ) ) );
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  HOY aligned with atom " << parent_res->atom_name( HOY_ref ) <<
+				" of residue " << parent_res_seqpos << endl;
+
+			TR.Debug << "   Updating torsions..." << endl;
+		}
+		ResidueCOP dummy( conf.residue( sequence_position ).get_self_ptr() );  // to trigger private method commented below
+		//conf.update_residue_torsions( res->seqpos(), false );
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "   Torsions updated." << endl;
+		}
+
+		conf.set_xyz( AtomID( OY, sequence_position ), conf.xyz( AtomID( OY_ref, parent_res_seqpos ) ) );
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  OY aligned with atom " << parent_res->atom_name( OY_ref ) <<
+				" of residue " << parent_res_seqpos << endl;
+		}
+	}
+
+	// Find and align HOZ(s), if applicable.
+	if ( ! res->is_upper_terminus() ) {
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  Aligning HOZ..." << endl;
+		}
+		uint const z( res->carbohydrate_info()->mainchain_glycosidic_bond_acceptor() );
+		uint const HOZ( res->atom_index( "HO" + string( 1, z + '0' ) ) );
+
+		uint const downstream_res_seqpos( sequence_position + 1 );
+		ResidueCOP downstream_res( conf.residue( downstream_res_seqpos ).get_self_ptr() );
+		uint const HOZ_ref( downstream_res->atom_index( downstream_res->carbohydrate_info()->anomeric_carbon_name() ) );
+
+		conf.set_xyz( AtomID( HOZ, sequence_position ), conf.xyz( AtomID( HOZ_ref, downstream_res_seqpos ) ) );
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  HOZ aligned." << endl;
+		}
+	}
+	Size const n_branches( res->carbohydrate_info()->n_branches() );
+	for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+		uint const z( res->carbohydrate_info()->branch_point( branch_num ) );
+		uint const OZ( res->atom_index( "O" + string( 1, z + '0' ) ) );
+		uint const HOZ( res->atom_index( "HO" + string( 1, z + '0' ) ) );
+		uint const branch_connection_id( res->type().residue_connection_id_for_atom( OZ ) );
+		uint const branch_res_seqpos( res->residue_connection_partner( branch_connection_id ) );
+		ResidueCOP branch_res( conf.residue( branch_res_seqpos ).get_self_ptr() );
+		uint const HOZ_ref( branch_res->atom_index( branch_res->carbohydrate_info()->anomeric_carbon_name() ) );
+		conf.set_xyz( AtomID( HOZ, sequence_position ), conf.xyz( AtomID( HOZ_ref, branch_res_seqpos ) ) );
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << " All virtual atoms aligned." << endl;
+	}
+}
+
+
+// TorsionID Queries //////////////////////////////////////////////////////////
+// Is this is the phi torsion angle of a glycosidic linkage?
+/// @details  Carbohydrate linkages are defined as the torsion angles leading back to the previous residue.  Much
+/// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 1 ) is phi.  For a sugar, phi (of the next
+/// residue) is the last torsion, and the number of main-chain torsions varies per saccharide residue.
+bool
+is_glycosidic_phi_torsion( Conformation const & conf, id::TorsionID const & torsion_id )
+{
+	using namespace id;
+
+	if ( torsion_id.type() == BB || torsion_id.type() == BRANCH ) {  // Phi for a branched saccharide has a BRANCH type.
+		conformation::Residue const & residue( conf.residue( torsion_id.rsd() ) );
+		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
+
+		switch( torsion_id.type() ) {
+		case  BB :
+			if ( ! residue.is_upper_terminus() ) {
+				// If this is a main-chain torsion, we need the next residue on the main chain.
+				next_rsd_num = torsion_id.rsd() + 1;
+				if ( conf.residue( next_rsd_num ).is_carbohydrate() ) {
+					return ( torsion_id.torsion() == residue.n_mainchain_atoms() );  // The last BB is phi.
+				}
+			}
+			break;
+		case BRANCH :
+			if ( torsion_id.torsion() <= residue.n_non_polymeric_residue_connections() ) {
+				Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
+				if ( conf.residue( next_rsd_num ).is_carbohydrate() ) {
+					return true;  // If it's a branch to a sugar, it must be the phi from the branching residue.
+				}
+			}
+			break;
+		default :
+			break;
+		}
+	}
+	return false;
+}
+
+// Is this is the psi torsion angle of a glycosidic linkage?
+/// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
+/// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 2 ) is psi.  For a sugar, psi (of the next
+/// residue) is the penultimate torsion, and the number of main-chain torsions varies per saccharide residue.
+/// @note  This function will return false if the TorsionID is a CHI and the torsion is already covered by an equivalent
+/// BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to access that
+/// torsion is through CHI.
+bool
+is_glycosidic_psi_torsion( Conformation const & conf, id::TorsionID const & torsion_id )
+{
+	using namespace id;
+
+	if ( torsion_id.type() == BB || torsion_id.type() == CHI ) {  // Psi for a branched saccharide has a CHI type.
+		conformation::Residue const & residue( conf.residue( torsion_id.rsd() ) );
+		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
+
+		switch( torsion_id.type() ) {
+		case BB :
+			if ( ! residue.is_upper_terminus() ) {
+				// If this is a main-chain torsion, we need the next residue on the main chain.
+				next_rsd_num = torsion_id.rsd() + 1;
+				if ( conf.residue( next_rsd_num ).is_carbohydrate() ) {
+					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
+				}
+			}
+			break;
+		case CHI :
+			{
+			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+			// A psi angle will always have the third atom of its definition be a connect atom.
+			uint const third_atom( residue.chi_atoms( torsion_id.torsion() )[ 3 ] );
+			Size const n_branches( residue.n_non_polymeric_residue_connections() );
+			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
+				conformation::Residue const & next_rsd( conf.residue( next_rsd_num ) );
+				if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == third_atom ) ) {
+					return true;
+				}
+			}
+		}
+			break;
+		default :
+			break;
+		}
+	}
+	return false;
+}
+
+// Is this is an omega torsion angle of a glycosidic linkage?
+/// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
+/// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 3 ) is omega.  For a sugar, omega (of the next
+/// residue) is the 3rd-to-last torsion, and the number of main-chain torsions varies per saccharide residue.
+/// @note     This function currently will not recognize additional omegas beyond omega1.\n
+/// Also, this function will return false if the TorsionID is a CHI and the torsion is already covered by an equivalent
+/// BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to access that
+/// torsion is through CHI.
+bool
+is_glycosidic_omega_torsion( Conformation const & conf, id::TorsionID const & torsion_id )
+{
+	using namespace id;
+
+	if ( torsion_id.type() == BB || torsion_id.type() == CHI ) {  // Omega for a branched saccharide has a CHI type.
+		conformation::Residue const & residue( conf.residue( torsion_id.rsd() ) );
+		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
+
+		switch( torsion_id.type() ) {
+		case BB :
+			if ( ! residue.is_upper_terminus() ) {
+				// If this is a main-chain torsion, we need the next residue on the main chain.
+				next_rsd_num = torsion_id.rsd() + 1;
+				if ( conf.residue( next_rsd_num ).is_carbohydrate() ) {
+					chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
+					if ( info->has_exocyclic_linkage_to_child_mainchain() ) {
+						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
+					}
+				}
+			}
+			break;
+		case CHI :
+			{
+			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+			// An omega angle will always have the fourth atom of its definition be a connect atom.
+			uint const fourth_atom( residue.chi_atoms( torsion_id.torsion() )[ 4 ] );
+			Size const n_branches( residue.n_non_polymeric_residue_connections() );
+			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
+				conformation::Residue const & next_rsd( conf.residue( next_rsd_num ) );
+				if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == fourth_atom ) ) {
+					return true;
+				}
+			}
+		}
+			break;
+		default :
+			break;
+		}
+	}
+	return false;
+}
+
+// Return the sequence position of the immediate downstream (child) residue affected by this torsion.
+/// @note  This method is designed for saccharide residues, because it makes assumptions about CHI and BRANCH numbering.
+core::uint
+get_downstream_residue_that_this_torsion_moves( Conformation const & conf, id::TorsionID const & torsion_id )
+{
+	using namespace id;
+
+	conformation::Residue const & rsd( conf.residue( torsion_id.rsd() ) );
+	uint next_rsd( 0 );
+	if ( torsion_id.type() == BB ) {
+		debug_assert( torsion_id.torsion() <= rsd.n_mainchain_atoms() );
+		// If this is a main-chain torsion, we can be confident that the next residue on this chain MUST be n+1.
+		next_rsd = torsion_id.rsd() + 1;
+	} else if ( torsion_id.type() == BRANCH ) {
+		debug_assert( torsion_id.torsion() <= rsd.n_non_polymeric_residue_connections() );
+		Size const n_mainchain_connections( rsd.n_polymeric_residue_connections() );
+		next_rsd = rsd.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
+	} else if ( torsion_id.type() == CHI ) {
+		next_rsd = find_seqpos_of_saccharides_child_residue_at( rsd, torsion_id.torsion() );
+	}
+	if ( ! next_rsd ) {
+		TR.Error << "Torsion " << torsion_id << " does not move any downstream residues!  Returning 0." << std::endl;
+	}
+	return next_rsd;
+}
+
+
+// Torsion Access /////////////////////////////////////////////////////////////
+// Getters ////////////////////////////////////////////////////////////////////
+
+///@brief Get the number of glycosidic torsions for this residue.  Up to 4 (omega2).
+Size
+get_n_glycosidic_torsions_in_res( Conformation const & conf, uint const sequence_position )
+{
+	core::Size n_torsions( 0 );
+	for ( core::Size torsion_id = 1; torsion_id <= 4; ++torsion_id ) {
+		utility::vector1< id::AtomID > const ref_atoms = get_reference_atoms( torsion_id, conf, sequence_position );
+		if ( ref_atoms.size() != 0 ) {
+			n_torsions+=1;
+		}
+	}
+	return n_torsions;
+}
+
+
+// Return the requested torsion angle between a saccharide residue of the given pose and the previous residue.
+/// @details This method is used in place of Residue::mainchain_torsion() since the main-chain torsions of saccharide
+/// residues only make sense in the context of two residues.  Moreover, the reference atoms as defined by the IUPAC are
+/// different from the ones that Rosetta uses by default for mainchain torsions for sugars.
+/// @param   <named_torsion> is an integer representing the specific torsion angle requested, as defined in
+/// core/id/types.hh:\n
+///     phi_torsion = 1\n
+///     psi_torsion = 2\n
+///     omega_torsion = 3
+/// @note    I would rather named_torsion were an enum, but as it was already defined, I'm leaving it as a constant
+/// for now.
+core::Angle
+get_glycosidic_torsion( uint const named_torsion, Conformation const & conf, uint const sequence_position )
+{
+	using namespace id;
+	using namespace numeric;
+	using namespace utility;
+
+	utility::vector1< id::AtomID > const ref_atoms = get_reference_atoms( named_torsion, conf, sequence_position );
+
+	if ( ref_atoms.size() == 0 ) {
+		// This occurs when there is no parent residue or when the glycosidic bond is not exocyclic (omega only).
+		TR.Debug << "Returning zero." << std::endl;
+		return 0.0;
+	}
+
+	Angle const angle_in_radians(
+		conf.torsion_angle( ref_atoms[ 1 ], ref_atoms[ 2 ], ref_atoms[ 3 ], ref_atoms[ 4 ]) );
+	return principal_angle_degrees( conversions::degrees( angle_in_radians ) );
+}
+
+
+// Setters ////////////////////////////////////////////////////////////////////
+// Set the requested torsion angle between a saccharide residue of the given pose and the previous residue.
+/// @details This method is used in place of Conformation::set_torsion() since the reference atoms as defined by the
+/// IUPAC are different from the ones that Rosetta uses by default for main-chain torsions for sugars.
+/// @param   <named_torsion> is an integer representing the specific torsion angle requested, as defined in
+/// core/id/types.hh:\n
+///     phi_torsion = 1\n
+///     psi_torsion = 2\n
+///     omega_torsion = 3\n
+/// <setting> is in degrees.
+/// @note    I would rather named_torsion were an enum, but as it was already defined, I'm leaving it as a constant
+/// for now.
+void
+set_glycosidic_torsion(
+	uint const named_torsion,
+	Conformation & conf,
+	uint const sequence_position,
+	core::Angle const setting )
+{
+	using namespace id;
+	using namespace numeric;
+	using namespace utility;
+
+	vector1< AtomID > const ref_atoms = get_reference_atoms( named_torsion, conf, sequence_position );
+
+	if ( ref_atoms.size() == 0 ) {
+		// This occurs when there is no parent residue or when the glycosidic bond is not exocyclic (omega only).
+		return;
+	}
+
+	Angle const setting_in_radians( conversions::radians( setting ) );
+	conf.set_torsion_angle(
+		ref_atoms[ 1 ], ref_atoms[ 2 ], ref_atoms[ 3 ], ref_atoms[ 4 ], setting_in_radians );
+	//align_virtual_atoms_in_carbohydrate_residue( conf, sequence_position );
+}
+
 
 /// @brief  Recursive function to get branches of a set of residues, etc.
 ///  list_of_residues and tips are arrays are non-const references and modified by this function.
@@ -483,9 +1146,6 @@ get_glycan_position_from_resnum(conformation::Conformation const & conf, core::S
 
 }
 
-
-} //core
-} //conformation
-} //carbohydrates
-
-
+}  // carbohydrates
+}  // conformation
+}  // core

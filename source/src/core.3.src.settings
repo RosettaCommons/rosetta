@@ -111,7 +111,6 @@ sources = {
 		"xyzStripeHashPose",
 	],
 	"core/pose/carbohydrates": [
-		"GlycanTreeSetObserver",
 		"util",
 	],
 	"core/pose/copydofs": [

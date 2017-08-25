@@ -153,6 +153,7 @@ sources = {
 		"GlycanNode",
 		"GlycanTree",
 		"GlycanTreeSet",
+		"GlycanTreeSetObserver",
 		"util",
 	],
 	"core/conformation/membrane": [

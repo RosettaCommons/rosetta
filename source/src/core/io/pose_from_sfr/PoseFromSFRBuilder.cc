@@ -58,7 +58,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
-#include <core/pose/carbohydrates/GlycanTreeSetObserver.hh>
 #include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -811,7 +810,6 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	// 5. Connectivity.
 
 	using namespace core;
-	using namespace pose::carbohydrates;
 	using namespace io;
 	using namespace pdb;
 	using namespace chemical;
@@ -930,8 +928,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	//Create the GlycanTreeSet if carbohydrates are present.
 	// This requires up-to-data connectivity information and is required to be in the pose if glycan residues are present.
 	if ( pose.conformation().contains_carbohydrate_residues() ) {
-		GlycanTreeSetObserverOP observer = GlycanTreeSetObserverOP( new GlycanTreeSetObserver( pose.conformation() ));
-		pose.observer_cache().set( pose::datacache::GLYCAN_TREE_OBSERVER, observer, true /*auto_attach */ );
+		pose.conformation().setup_glycan_trees();
 	}
 
 	// Step 6. Addition of automatic constraints, bfactor repair, and comment reading.

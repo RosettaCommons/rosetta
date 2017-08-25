@@ -34,6 +34,11 @@
 // C++ headers
 #include<map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace conformation {
 namespace carbohydrates {
@@ -174,6 +179,12 @@ private:
 	std::map< Size, GlycanTreeOP > glycan_tree_set_; // The actual tree set - Maps first glycan residue to the tree
 	std::map< Size, GlycanTreeOP > glycan_res_to_tree_; //Maps glycan residues to their glycan tree.
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -181,7 +192,9 @@ private:
 } //chemical
 } //carbohydrates
 
-
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_carbohydrates_GlycanTreeSet )
+#endif // SERIALIZATION
 
 #endif //INCLUDED_core_pose_carbohydrates_GlycanTreeSet_hh
 

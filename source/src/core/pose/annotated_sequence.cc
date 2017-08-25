@@ -20,10 +20,10 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/ObserverCache.hh>
-#include <core/pose/datacache/CacheableObserverType.hh>
+//#include <core/pose/datacache/ObserverCache.hh>
+//#include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/carbohydrates/util.hh>
-#include <core/pose/carbohydrates/GlycanTreeSetObserver.hh>
+//#include <core/pose/carbohydrates/GlycanTreeSetObserver.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -828,9 +828,7 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 
 	//Create the GlycanTreeSetObserver if we don't already have it in the pose.
 	if ( ! pose.glycan_tree_set() ) {
-		GlycanTreeSetObserverOP observer = GlycanTreeSetObserverOP( new GlycanTreeSetObserver( pose.conformation()));
-		pose.observer_cache().set( datacache::GLYCAN_TREE_OBSERVER, observer, true /*auto_attach */ );
-
+		pose.conformation().setup_glycan_trees();
 	}
 
 	if ( idealize_linkages ) {

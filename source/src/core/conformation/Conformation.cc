@@ -10,7 +10,8 @@
 /// @file   core/conformation/Conformation.cc
 /// @brief  Method definitions for the Conformation class.
 /// @author Phil Bradley
-/// @author Modified by Vikram K. Mulligan (vmullig@uw.edu) to try to start to remove the assumption that all polymer connections are to the i+1 and i-1 residues.
+/// @author Modified by Vikram K. Mulligan (vmullig@uw.edu) to try to start to remove the assumption that all polymer
+/// connections are to the i+1 and i-1 residues.
 
 /// Note: Don't use get_self_weak_ptr() here for Events as it causes
 /// seg faults, double free corruption or just won't compile with
@@ -20,23 +21,28 @@
 #include <core/conformation/Conformation.hh>
 
 // Package headers
-#include <core/conformation/signals/ConnectionEvent.hh>
-#include <core/conformation/signals/GeneralEvent.hh>
-#include <core/conformation/signals/IdentityEvent.hh>
-#include <core/conformation/signals/LengthEvent.hh>
-#include <core/conformation/signals/XYZEvent.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/PseudoBond.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/PointGraph.fwd.hh>
 #include <core/conformation/PointGraphData.hh>
+#include <core/conformation/signals/ConnectionEvent.hh>
+#include <core/conformation/signals/GeneralEvent.hh>
+#include <core/conformation/signals/IdentityEvent.hh>
+#include <core/conformation/signals/LengthEvent.hh>
+#include <core/conformation/signals/XYZEvent.hh>
+#include <core/conformation/carbohydrates/util.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSetObserver.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneParams.hh>
+#include <core/conformation/parametric/ParametersSet.hh>
+#include <core/conformation/parametric/Parameters.hh>
 
 // Project headers
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <utility/graph/UpperEdgeGraph.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -47,11 +53,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/MembraneParams.hh>
-#include <core/conformation/parametric/ParametersSet.hh>
-#include <core/conformation/parametric/Parameters.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
@@ -71,6 +73,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/vector1.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 
 // External headers
 #include <ObjexxFCL/format.hh>
@@ -151,8 +154,7 @@ Conformation::Conformation( Conformation const & src ) :
 		}
 	}
 
-	// carbohydrates?
-	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
+
 
 	// membranes
 	using namespace core::conformation::membrane;
@@ -162,6 +164,15 @@ Conformation::Conformation( Conformation const & src ) :
 		membrane_info_ = nullptr;
 	}
 
+	// carbohydrates?
+	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
+	if (src.contains_carbohydrate_residues_ && src.tree_set_observer_){
+		tree_set_observer_ = src.tree_set_observer_->clone();
+		
+		//Detach old, attach to new.
+		tree_set_observer_->attach_to(*this);
+	}
+	
 	// chain info
 	chain_endings_ = src.chain_endings_;
 	// secstruct
@@ -179,6 +190,7 @@ Conformation::Conformation( Conformation const & src ) :
 	for ( core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i ) {
 		parameters_set_[i]->update_residue_links( *this );
 	}
+	
 }
 
 // equals operator
@@ -220,6 +232,12 @@ Conformation::operator=( Conformation const & src )
 
 		// carbohydrates?
 		contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
+		if (src.contains_carbohydrate_residues_ && src.tree_set_observer_){
+			tree_set_observer_ = src.tree_set_observer_->clone();
+			
+			//Detach old, attach to new.
+			tree_set_observer_->attach_to(*this);
+		}
 
 		// membranes
 		membrane_info_ = src.membrane_info_;
@@ -273,7 +291,8 @@ void
 Conformation::clear()
 {
 	pre_nresidue_change(); // nuke old atom tree update-data before destroying coordinates.
-
+	clear_glycan_trees();
+	
 	residue_type_sets_.clear();
 	fold_tree_->clear();
 	atom_tree_->clear();
@@ -742,6 +761,49 @@ Conformation::check_valid_membrane() const {
 	}
 
 }
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// Rosetta Carbohydrate Data                                               ///
+/// Core data for interacting with glycan trees in Rosetta                  ///
+///                                                                         ///                                         ///
+///////////////////////////////////////////////////////////////////////////////
+
+
+///@brief
+/// Get the glycan tree set.  Null if not present.
+carbohydrates::GlycanTreeSetCOP
+Conformation::glycan_tree_set() const {
+	if ( tree_set_observer_ ){
+		return tree_set_observer_->get_glycan_tree_set();
+	}
+	else {
+		return nullptr;
+	}
+}
+
+///@brief
+/// Setup glycan trees and attach length observer.
+void
+Conformation::setup_glycan_trees(){
+	if (! tree_set_observer_){
+		tree_set_observer_ = carbohydrates::GlycanTreeSetObserverOP( new carbohydrates::GlycanTreeSetObserver( *this ));
+		tree_set_observer_->attach_to(*this);
+	}
+	else {
+		TR << "GlycanTreeSet already present. Nothing to be done." << std::endl;
+	}
+	
+}
+
+void
+Conformation::clear_glycan_trees(){
+	if (tree_set_observer_){
+		tree_set_observer_->detach_impl();
+		tree_set_observer_ = nullptr;
+	}
+}
+
 
 // Trees /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2650,6 +2712,13 @@ Conformation::set_torsion_angle(
 		TR << "set_torsion_angle failed, unable to find dof_id: " << atom1 << ' ' << atom2 << ' ' << atom3 << ' ' <<
 			atom4 << std::endl;
 	}
+
+	if ( residues_[ atom1.rsd() ]->is_carbohydrate() ) {
+		align_virtual_atoms_in_carbohydrate_residue( atom1.rsd() );
+	}
+	if ( ( atom4.rsd() != atom1.rsd() ) && ( residues_[ atom4.rsd() ]->is_carbohydrate() ) ) {
+		align_virtual_atoms_in_carbohydrate_residue( atom4.rsd() );
+	}
 }
 
 
@@ -3102,6 +3171,95 @@ Conformation::reset_move_data()
 	structure_moved_ = false;
 	dof_moved_.fill_with( false );
 	xyz_moved_.fill_with( false );
+}
+
+// Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of this conformation.
+/// @details  This method aligns virtual atom VOX, where X is the position of the cyclic oxygen, OY and HOY, where Y is
+/// the position of the anomeric carbon, (provided the residue is not the reducing end, where OY and HOY would be real
+/// atoms), and HOZ, where Z is the mainchain glycosidic bond location.  OY and HOY are aligned with the last two "main
+/// chain" atoms of the parent residue.  This ensures that torsion angles with duplicate names, e.g., chi1 and phi for
+/// internal linked aldoses, will always return the same values.  The same concept applies for HOZ, which aligns with
+/// the anomeric carbon of the downstream residue.  This method should be called after any coordinate change for a sac-
+/// charide residue and after loading a saccharide residue from a file or sequence for the first time.
+/// @note     Do I need to worry about aligning the virtual atoms left over from modified sugar patches?  Can such
+/// virtual atoms be deleted?
+/// @author  Labonte <JWLabonte@jhu.edu>
+void
+Conformation::align_virtual_atoms_in_carbohydrate_residue( uint const sequence_position )
+{
+	using namespace std;
+	using namespace id;
+	using namespace conformation;
+
+	TR.Debug << " Aligning virtual atoms on residue " << sequence_position << "..." << endl;
+
+	Residue const & res( *residues_[ sequence_position ] );
+
+	// Find and align VOX, if applicable.
+	if ( res.carbohydrate_info()->is_cyclic() ) {
+		if ( TR.Debug.visible() ) { TR.Debug << "  Aligning VOX..." << endl; }
+		uint const x( res.carbohydrate_info()->cyclic_oxygen() );
+		uint const OX( res.atom_index( res.carbohydrate_info()->cyclic_oxygen_name() ) );
+		uint const VOX( res.atom_index( "VO" + string( 1, x + '0' ) ) );
+
+		set_xyz( AtomID( VOX, sequence_position ), xyz( AtomID( OX, sequence_position ) ) );
+		if ( TR.Debug.visible() ) { TR.Debug << "  VOX aligned." << endl; }
+	}
+
+	// Find and align OY and HOY, if applicable.
+	if ( ! res.is_lower_terminus() ) {
+		if ( TR.Debug.visible() ) { TR.Debug << "  Aligning OY and HOY..." << endl; }
+		uint const y( res.carbohydrate_info()->anomeric_carbon() );
+		uint const OY( res.atom_index( "O" + string( 1, y + '0') ) );
+		uint const HOY( res.atom_index( "HO" + string( 1, y + '0' ) ) );
+
+		uint const parent_res_seqpos( carbohydrates::find_seqpos_of_saccharides_parent_residue( res ) );
+		Residue const & parent_res( *residues_[ parent_res_seqpos ] );
+		uint const OY_ref( parent_res.connect_atom( res ) );
+		uint const HOY_ref( parent_res.first_adjacent_heavy_atom( OY_ref ) );
+
+		set_xyz( AtomID( HOY, sequence_position ), xyz( AtomID( HOY_ref, parent_res_seqpos ) ) );
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  HOY aligned with atom " << parent_res.atom_name( HOY_ref ) <<
+				" of residue " << parent_res_seqpos << endl;
+			//TR.Debug << "   Updating torsions..." << endl;
+		}
+		//update_residue_torsions( res.seqpos(), false );
+		//if ( TR.Debug.visible() ) { TR.Debug << "   Torsions updated." << endl; }
+
+		set_xyz( AtomID( OY, sequence_position ), xyz( AtomID( OY_ref, parent_res_seqpos ) ) );
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  OY aligned with atom " << parent_res.atom_name( OY_ref ) <<
+				" of residue " << parent_res_seqpos << endl;
+		}
+	}
+
+	// Find and align HOZ(s), if applicable.
+	if ( ! res.is_upper_terminus() ) {
+		if ( TR.Debug.visible() ) { TR.Debug << "  Aligning HOZ..." << endl; }
+		uint const z( res.carbohydrate_info()->mainchain_glycosidic_bond_acceptor() );
+		uint const HOZ( res.atom_index( "HO" + string( 1, z + '0' ) ) );
+
+		uint const downstream_res_seqpos( sequence_position + 1 );
+		Residue const & downstream_res( *residues_[ downstream_res_seqpos ] );
+		uint const HOZ_ref( downstream_res.atom_index( downstream_res.carbohydrate_info()->anomeric_carbon_name() ) );
+
+		set_xyz( AtomID( HOZ, sequence_position ), xyz( AtomID( HOZ_ref, downstream_res_seqpos ) ) );
+		if ( TR.Debug.visible() ) { TR.Debug << "  HOZ aligned." << endl; }
+	}
+	Size const n_branches( res.carbohydrate_info()->n_branches() );
+	for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+		uint const z( res.carbohydrate_info()->branch_point( branch_num ) );
+		uint const OZ( res.atom_index( "O" + string( 1, z + '0' ) ) );
+		uint const HOZ( res.atom_index( "HO" + string( 1, z + '0' ) ) );
+		uint const branch_connection_id( res.type().residue_connection_id_for_atom( OZ ) );
+		uint const branch_res_seqpos( res.residue_connection_partner( branch_connection_id ) );
+		Residue const & branch_res( *residues_[ branch_res_seqpos ] );
+		uint const HOZ_ref( branch_res.atom_index( branch_res.carbohydrate_info()->anomeric_carbon_name() ) );
+		set_xyz( AtomID( HOZ, sequence_position ), xyz( AtomID( HOZ_ref, branch_res_seqpos ) ) );
+	}
+
+	if ( TR.Debug.visible() ) { TR.Debug << " All virtual atoms aligned." << endl; }
 }
 
 
@@ -4215,7 +4373,7 @@ Conformation::update_residue_coordinates( Size const seqpos, bool const fire_sig
 	rsd.update_actcoord();
 
 	//update orbital coords!
-	this->update_orbital_coords(rsd);
+	this->update_orbital_coords( rsd );
 
 	if ( fire_signal ) {
 		notify_xyz_obs( XYZEvent( this ) );
@@ -4552,6 +4710,7 @@ core::conformation::Conformation::save( Archive & arc ) const {
 	arc( CEREAL_NVP( residue_type_sets_ ) ); // CacheableResidueTypeSets
 	arc( CEREAL_NVP( chain_endings_ ) ); // utility::vector1<Size>
 	arc( CEREAL_NVP( membrane_info_ ) ); // membrane::MembraneInfoOP
+	arc( CEREAL_NVP( tree_set_observer_ ) ); //carbohydates::GlycanTreeSetOP
 	arc( CEREAL_NVP( fold_tree_ ) ); // FoldTreeOP
 	arc( CEREAL_NVP( atom_tree_ ) ); // AtomTreeOP
 	arc( CEREAL_NVP( parameters_set_ ) ); // utility::vector1<ParametersSetOP>
@@ -4580,6 +4739,10 @@ core::conformation::Conformation::load( Archive & arc ) {
 	arc( residue_type_sets_ ); // CacheableResidueTypeSets
 	arc( chain_endings_ ); // utility::vector1<Size>
 	arc( membrane_info_ ); // membrane::MembraneInfoOP
+	arc(tree_set_observer_);
+	if (tree_set_observer_ ){
+		tree_set_observer_->attach_impl( *this );
+	}
 	arc( fold_tree_ ); // FoldTreeOP
 
 	arc( atom_tree_ ); // AtomTreeOP
@@ -4593,7 +4756,7 @@ core::conformation::Conformation::load( Archive & arc ) {
 	arc( xyz_moved_ ); // AtomID_Mask
 	arc( structure_moved_ ); // _Bool
 	arc( secstruct_ ); // utility::vector1<char>
-
+	
 	// Don't deserialize the observer data
 	//arc( connection_obs_hub_ ); // utility::signals::BufferedSignalHub<void, ConnectionEvent>
 	//arc( general_obs_hub_ ); // utility::signals::PausableSignalHub<void, GeneralEvent>

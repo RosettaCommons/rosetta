@@ -24,7 +24,7 @@
 #include <core/pose/signals/EnergyEvent.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
-#include <core/pose/carbohydrates/GlycanTreeSetObserver.hh>
+//#include <core/pose/carbohydrates/GlycanTreeSetObserver.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
@@ -213,7 +213,8 @@ Pose::operator=( Pose const & src )
 		}
 		was_pymol_observer_attached = observer_cache_->is_attached( datacache::CacheableObserverType::PYMOL_OBSERVER );
 	}
-
+	
+	
 	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );
 	*observer_cache_ = *src.observer_cache_;
 
@@ -612,9 +613,7 @@ Pose::append_pose_by_jump(
 	}
 
 	if ( conformation().contains_carbohydrate_residues() && ! glycan_tree_set() ) {
-		GlycanTreeSetObserverOP observer = GlycanTreeSetObserverOP( new GlycanTreeSetObserver( conformation()));
-		observer_cache().set( datacache::GLYCAN_TREE_OBSERVER, observer, true /*auto_attach */ );
-
+		conformation_->setup_glycan_trees();
 	}
 	//No change to residue mappings in ReferencePose objects.
 }
@@ -1700,7 +1699,7 @@ Pose::virtual_to_real( core::Size seqpos ){
 
 conformation::carbohydrates::GlycanTreeSetCOP
 Pose::glycan_tree_set() const {
-	return core::pose::carbohydrates::get_glycan_tree_set(*this);
+	return conformation_->glycan_tree_set();
 
 }
 

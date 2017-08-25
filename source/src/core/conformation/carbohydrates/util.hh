@@ -10,17 +10,27 @@
 /// @file core/conformation/carbohydrates/util.hh
 /// @brief Utility functions that DO NOT require a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @author Labonte <JWLabonte@jhu.edu>
 
 #ifndef INCLUDED_core_conformation_carbohydrates_util_hh
 #define INCLUDED_core_conformation_carbohydrates_util_hh
 
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.fwd.hh>
+
 #include <core/chemical/ResidueType.fwd.hh>
 
 #include <core/types.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
 
+// Utility Header
 #include <utility/vector1.hh>
+
+// C++ Header
+#include <string>
+#include <utility>
 
 namespace core {
 namespace conformation {
@@ -28,48 +38,107 @@ namespace carbohydrates {
 
 /// @brief  Use a saccharide residue's connections to find the residue from which it follows or branches.
 ///         Returns 0 if it has no parent.
-core::uint
-find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue );
+core::uint find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue );
 
 /// @brief  Use the mainchain acceptor to find the mainchain child.
 ///         Typically, this is N+1, but this is independant of the residue number.
 ///         Returns 0 if it has no child.
-core::uint
-find_seqpos_of_saccharides_mainchain_child( conformation::Residue const & residue );
+core::uint find_seqpos_of_saccharides_mainchain_child( conformation::Residue const & residue );
 
 
 /// @brief  Use a saccharide residue's connections to find the residue following it from a given linkage position.
-core::uint
-find_seqpos_of_saccharides_child_residue_at( conformation::Residue const & residue,
+core::uint find_seqpos_of_saccharides_child_residue_at( conformation::Residue const & residue,
 	core::uint linkage_position );
 
 // Use a saccharide residue's connections to find its linkage number on the previous residue.
 /// @return an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the
 /// parent monosaccharide residue; e.g., 4 specifies O4; n = 0 specifies that the residue at <seqpos> is a lower
 /// terminus or connected to a non-sugar.
-core::uint
-get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd,
+core::uint get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd,
 	conformation::Residue const & parent_rsd);
 
 
 /// @brief Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic
 /// carbon.
-bool
-has_exocyclic_glycosidic_linkage( conformation::Conformation const & conf, uint const seqpos );
+bool has_exocyclic_glycosidic_linkage( conformation::Conformation const & conf, uint const seqpos );
 
 /// @brief Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic
 /// carbon.
-bool
-has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformation::Residue const & parent_rsd );
+bool has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformation::Residue const & parent_rsd );
 
+
+////////////////////////    Torsions Information    ///////////////////////////////////
+
+/// @brief  Return pointers to the two residues of the glycosidic bond.
+std::pair< conformation::ResidueCOP, conformation::ResidueCOP > get_glycosidic_bond_residues(
+	Conformation const & conf,
+	uint const sequence_position );
+	
+/// @brief  Return the AtomIDs of the four phi torsion reference atoms.
+utility::vector1< core::id::AtomID > get_reference_atoms_for_phi(
+	Conformation const & conf,
+	uint const sequence_position );
+
+/// @brief  Return the AtomIDs of the four psi torsion reference atoms.
+utility::vector1< core::id::AtomID > get_reference_atoms_for_psi(
+	Conformation const & conf,
+	uint const sequence_position );
+
+/// @brief  Return the AtomIDs of the four omega torsion reference atoms.
+utility::vector1< core::id::AtomID > get_reference_atoms_for_1st_omega(
+	Conformation const & conf,
+	uint const sequence_position );
+
+/// @brief  Return the AtomIDs of the four omega2 torsion reference atoms.
+utility::vector1< core::id::AtomID > get_reference_atoms_for_2nd_omega(
+	Conformation const & conf,
+	uint const sequence_position );
+
+/// @brief  Return the AtomIDs of the four reference atoms for the requested torsion.
+utility::vector1< core::id::AtomID > get_reference_atoms( uint const named_torsion,
+	Conformation const & conf,
+	uint const sequence_position );
+
+/// @brief  Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given
+/// conformation.
+void align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, uint const sequence_position );
+
+
+//////////////////////////    On-The-Fly TorsionID Queries    //////////////////////////////////
+
+/// @brief  Is this is the phi torsion angle of a glycosidic linkage?
+bool is_glycosidic_phi_torsion( Conformation const & conf, id::TorsionID const & torsion_id );
+
+/// @brief  Is this is the psi torsion angle of a glycosidic linkage?
+bool is_glycosidic_psi_torsion( Conformation const & conf, id::TorsionID const & torsion_id );
+
+/// @brief  Is this is an omega torsion angle of a glycosidic linkage?
+bool is_glycosidic_omega_torsion( Conformation const & conf, id::TorsionID const & torsion_id );
+
+/// @brief  Return the sequence position of the immediate downstream (child) residue affected by this torsion.
+core::uint get_downstream_residue_that_this_torsion_moves( Conformation const & conf, id::TorsionID const & torsion_id );
+
+
+///////////////////////////    On-The-Fly Torsion Access    ///////////////////////////////////
+
+// Getters
+/// @brief Get the number of glycosidic torsions for this residue.  Up to 4 (omega2).
+Size get_n_glycosidic_torsions_in_res( Conformation const & conf, uint const sequence_position );
+
+/// @brief  Return the requested torsion angle between a saccharide residue of the given pose and the previous residue.
+core::Angle get_glycosidic_torsion( uint const named_torsion, Conformation const & conf, uint const sequence_position );
+
+
+// Setters
+/// @brief  Set the requested torsion angle between a saccharide residue of the given pose and the previous residue.
+void set_glycosidic_torsion(
+	uint const named_torsion,
+	Conformation & conf,
+	uint const sequence_position,
+	core::Angle const setting );
 
 
 ////////////////////////    Branch Information    ///////////////////////////////////
-///
-///
-///
-
-
 
 /// @brief  Recursive function to get branches of a set of residues, etc.
 ///  list_of_residues and tips are arrays are non-const references and modified by this function.
@@ -178,11 +247,8 @@ get_glycan_position_from_resnum(
 	core::Size const first_glycan_resnum,
 	core::Size const resnum);
 
-
-} //core
-} //conformation
-} //carbohydrates
-
+}  // carbohydrates
+}  // conformation
+}  // core
 
 #endif //core/conformation/carbohydrates_util_hh
-

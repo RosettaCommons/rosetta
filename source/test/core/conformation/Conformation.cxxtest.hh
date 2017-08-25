@@ -26,6 +26,8 @@
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSetObserver.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 

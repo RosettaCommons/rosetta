@@ -55,6 +55,8 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.fwd.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSetObserver.fwd.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
 #include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <core/conformation/parametric/Parameters.hh>
@@ -425,6 +427,29 @@ public: // membrane
 	void
 	check_valid_membrane() const;
 
+public: // carbohydrate
+
+	///////////////////////////////////////////////////////////////////////////////
+	/// Rosetta Carbohydrate Data                                               ///
+	/// Core data for interacting with glycan trees in Rosetta                  ///
+	///                                                                         ///                                         ///
+	///////////////////////////////////////////////////////////////////////////////
+	
+	///@brief
+	/// Get the glycan tree set.  Nullptr if not present.
+	carbohydrates::GlycanTreeSetCOP
+	glycan_tree_set() const;
+	
+	///@brief
+	/// Setup glycan trees and attach length observer.
+	void
+	setup_glycan_trees();
+	
+	///@brief
+	/// Safely detaches any tree observers and clears it to null.
+	void
+	clear_glycan_trees();
+	
 public:  // Trees
 
 	/// @brief Returns the conformation's FoldTree
@@ -1122,11 +1147,14 @@ public:  // for tracking changes to the structure
 	}
 
 	/// @brief forget all the structure modifications
-	void
-	reset_move_data();
+	void reset_move_data();
+
+	/// @brief  Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of this
+	/// conformation.
+	void align_virtual_atoms_in_carbohydrate_residue( uint const sequence_position );
 
 
-public: //passport managment methods
+public: //passport management methods
 
 	virtual void push_passport( core::environment::DofPassportCOP ) {}
 	virtual core::environment::DofPassportCOP pop_passport() { return core::environment::DofPassportCOP(); }
@@ -1587,15 +1615,21 @@ private:
 	**/
 	utility::vector1< Size > chain_endings_;
 
-	/// @brief Membrane Info object
-	membrane::MembraneInfoOP membrane_info_;
 
+	
+	
 	/// @brief fold tree for the kinematics
 	FoldTreeOP fold_tree_;
 
 	/// @brief atom tree for the kinematics
 	AtomTreeOP atom_tree_;
 
+	/// @brief Membrane Info object
+	membrane::MembraneInfoOP membrane_info_;
+	
+	/// @brief GlycanTreeSetObserver Object
+	carbohydrates::GlycanTreeSetObserverOP tree_set_observer_ = nullptr;
+	
 	/// @brief Parameter sets for parametric conformation generation.
 	/// @details This is a list of pointers to parameter set objects.
 	/// The list is empty by default; the list only contains anything

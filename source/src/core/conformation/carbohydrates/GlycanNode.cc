@@ -26,6 +26,24 @@
 // C++ headers
 #include <utility>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/list.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+
+#endif // SERIALIZATION
+
+
 static THREAD_LOCAL basic::Tracer TR( "core.pose.carbohydrates.GlycanNode" );
 
 
@@ -152,12 +170,52 @@ GlycanNode::get_mainchain_child() const {
 	return mainchain_child_;
 }
 
+
 } //core
 } //chemical
 } //carbohydrates
 
+#ifdef    SERIALIZATION
 
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::carbohydrates::GlycanNode::save( Archive & arc ) const {
+	arc( CEREAL_NVP( node_residue_ ) ); // Size
+	arc( CEREAL_NVP( parent_residue_ ) ); // Size
+	arc( CEREAL_NVP( tree_start_residue_ ) ); // Size
+	arc( CEREAL_NVP( children_ ) ); //vector1< Size >
+	arc( CEREAL_NVP( downstream_connections_ ) ); // vector1< connection >; connection= std::pair<upstream_atom,downstream_atom>
+	arc( CEREAL_NVP( glycan_position_ ) ); //Size
+	arc( CEREAL_NVP( distance_to_start_ ) ); //Size
+	arc( CEREAL_NVP( has_exocyclic_linkage_ ) ); //Size
+	arc( CEREAL_NVP( linkage_position_ ) ); //Size
+	arc( CEREAL_NVP( mainchain_child_ ) ); //Size
 
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::carbohydrates::GlycanNode::load( Archive & arc ) {
+	arc( node_residue_ ); // Size
+	arc( parent_residue_ ); // Size
+	arc( tree_start_residue_ ); // Size
+	arc( children_ ) ; //vector1< Size >
+	arc( downstream_connections_ ); // vector1< connection >; connection= std::pair<upstream_atom,downstream_atom>
+	arc( glycan_position_ ); //Size
+	arc( distance_to_start_ ); //Size
+	arc( has_exocyclic_linkage_ ); //Size
+	arc( linkage_position_ ); //Size
+	arc( mainchain_child_ ); //Size
+
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::carbohydrates::GlycanNode );
+CEREAL_REGISTER_TYPE( core::conformation::carbohydrates::GlycanNode )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_carbohydrates_GlycanNode )
+#endif // SERIALIZATION
 
 
 

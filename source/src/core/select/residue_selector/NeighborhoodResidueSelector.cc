@@ -28,6 +28,7 @@
 // Project headers
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
+#include <core/scoring/Energies.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -304,6 +305,7 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 			} // focus set
 		} // subset
 	} else {
+		debug_assert(pose.energies().residue_neighbors_updated());
 		if ( include_focus_in_subset_ ) {
 			fill_neighbor_residues( pose, subset, distance_);
 		} else {

@@ -422,17 +422,17 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 				TR << "Going in the forward direction " << std::endl;
 
 				bool first_modeling = true;
-				core::SSize current_start = 0;
+				core::Size current_start = 0;
 				core::Size current_end = layer_size_ - 1;
 
 				core::Size max_end = pose.glycan_tree_set()->get_largest_glycan_tree_layer();
-
+				TR << "Modeling up to max end: " << max_end << std::endl;
 				ResidueSubset pre_virtualized( pose.total_residue(), false );
 				ResidueSubset needed_virtualization( pose.total_residue(), false );
 
 
 
-				while ( current_end <= max_end ) {
+				while ( current_start <= max_end ) {
 
 
 					modeling_layer_selector->set_layer( current_start, current_end );
@@ -481,7 +481,11 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 					// Set the next layer.
 					current_start = current_start + layer_size_ - window_size_;
 					current_end = current_end + layer_size_ - window_size_;
-
+					
+					//Here, we just model the rest of the glycans at the end.
+					if (current_end > max_end) {
+						current_end = max_end;
+					}
 
 					first_modeling = false;
 

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/pose/carbohydrates/GlycanTreeSetObserver.fwd.hh
+/// @file core/conformation/carbohydrates/GlycanTreeSetObserver.fwd.hh
 /// @brief The CacheablePoseObserver version of GlycanTreeSet that will react to pose length changes..
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_core_pose_carbohydrates_GlycanTreeSetObserver_fwd_hh
-#define INCLUDED_core_pose_carbohydrates_GlycanTreeSetObserver_fwd_hh
+#ifndef INCLUDED_core_conformation_carbohydrates_GlycanTreeSetObserver_fwd_hh
+#define INCLUDED_core_conformation_carbohydrates_GlycanTreeSetObserver_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,7 +22,7 @@
 
 // Forward
 namespace core {
-namespace pose {
+namespace conformation {
 namespace carbohydrates {
 
 class GlycanTreeSetObserver;
@@ -33,11 +33,11 @@ typedef utility::pointer::shared_ptr< GlycanTreeSetObserver const > GlycanTreeSe
 
 
 } //core
-} //pose
+} //conformation
 } //carbohydrates
 
 
-#endif //INCLUDED_core_pose_carbohydrates_GlycanTreeSetObserver_fwd_hh
+#endif //INCLUDED_core_conformation_carbohydrates_GlycanTreeSetObserver_fwd_hh
 
 
 
