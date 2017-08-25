@@ -583,6 +583,11 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 	}
 
 	std::string res_patchname( "MP-" + res_atom + "-connect" );
+	//Metals can no longer use the -connect patch.  If the residue is a metal, use -metal_connect instead.
+	if ( pose.residue_type( res_pos ).is_metal() ) {
+		res_patchname = "MP-" + res_atom + "-metal_connect";
+	}
+
 	res_varname = "MP-" + res_atom + "-CONNECT";
 
 	std::string res_type_mod_name( current_residue_type_basename + ':' + res_patchname + current_residue_type_patches_name );
