@@ -307,7 +307,7 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 
 	/// >
 	// AMW: This runtime_assert may fail in at least ONE case that is legitimate:
-	// you delete self edges and in the result you turn a JEDGE 2 1 1 into 
+	// you delete self edges and in the result you turn a JEDGE 2 1 1 into
 	// EDGE 1 2 1. That is not bad -- the two trees are 'the same' so we should
 	// catch at least that case.
 	runtime_assert( (core::Size)root() == original_root || ( pos1 == 1 && pos2 == 2 ) );
