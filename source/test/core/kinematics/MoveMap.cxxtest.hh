@@ -102,5 +102,88 @@ public:
 			TS_ASSERT_EQUALS(before[i], after[i]);
 		}
 	}
+
+	void test_show() {
+		MoveMap mm;
+
+		// Do an example of all the settings you can have in the MoveMap
+		mm.set_bb(false);
+		mm.set_bb(1, true);
+		mm.set_chi(true);
+		mm.set_chi(2, false);
+		mm.set_jump(3, true);
+		mm.set_jump(4, false);
+
+		mm.set( core::id::NU, true );
+		mm.set( core::id::BRANCH, false );
+
+		mm.set( core::kinematics::MoveMap::MoveMapTorsionID( 5, core::id::NU ), false );
+		mm.set( core::kinematics::MoveMap::MoveMapTorsionID( 6, core::id::BRANCH ), true );
+
+		mm.set( core::id::TorsionID(7, core::id::BB, 2), true );
+		mm.set( core::id::TorsionID(8, core::id::CHI, 3), false );
+
+		mm.set( core::id::THETA, true );
+		mm.set( core::id::DOF_ID( core::id::AtomID(9,10), core::id::D ), true );
+
+		mm.set_jump( core::id::JumpID(11,12) , true );
+
+		std::stringstream out;
+		mm.show(out);
+
+		// Feel free to change this string for formatting issues
+		// (The comparision is mainly here to make sure all the data gets represented in the output.)
+		std::string expected("\n"
+			"-------------------------------\n"
+			"  resnum     Type  TRUE/FALSE \n"
+			"-------------------------------\n"
+			" DEFAULT      BB     FALSE\n"
+			" DEFAULT      SC      TRUE\n"
+			" DEFAULT      NU      TRUE\n"
+			" DEFAULT  BRANCH     FALSE\n"
+			"     001      BB      TRUE\n"
+			"     002      SC     FALSE\n"
+			"     005      NU     FALSE\n"
+			"     006  BRANCH      TRUE\n"
+			"-------------------------------\n"
+			" jumpnum     Type  TRUE/FALSE \n"
+			"-------------------------------\n"
+			" DEFAULT     JUMP    FALSE\n"
+			"     003     JUMP     TRUE\n"
+			"     004     JUMP    FALSE\n"
+			"-------------------------------\n"
+			" jumpstart    jumpend  TRUE/FALSE \n"
+			"-------------------------------\n"
+			"       011        012     TRUE\n"
+			"-------------------------------\n"
+			"  resnum  atomnum     Type  TRUE/FALSE \n"
+			"-------------------------------\n"
+			" DEFAULT               PHI    FALSE\n"
+			" DEFAULT             THETA     TRUE\n"
+			" DEFAULT                 D    FALSE\n"
+			" DEFAULT               RB1    FALSE\n"
+			" DEFAULT               RB2    FALSE\n"
+			" DEFAULT               RB3    FALSE\n"
+			" DEFAULT               RB4    FALSE\n"
+			" DEFAULT               RB5    FALSE\n"
+			" DEFAULT               RB6    FALSE\n"
+			"     010      009        D     TRUE\n"
+			"-------------------------------\n"
+			"  resnum   torsion#     Type  TRUE/FALSE \n"
+			"-------------------------------\n"
+			"     007        002       BB     TRUE\n"
+			"     008        003       SC    FALSE\n"
+			"-------------------------------\n"
+			"\n");
+
+		TR << "~~~~~~~~FOUND~~~~~~~~~~" << std::endl;
+		TR << out.str() << std::endl;
+		TR << "~~~~~~~~EXPECTED~~~~~~~" << std::endl;
+		TR << expected << std::endl;
+		TR << "~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+
+		TS_ASSERT( out.str() == expected );
+	}
+
 };
 }  // anonymous namespace

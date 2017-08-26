@@ -23,6 +23,9 @@ Documentation for more classes and functions can be found by looking at the Name
   - core::conformation
     - core::conformation::Residue
     - core::conformation::Conformation
+  - core::kinematics
+    - core::kinematics::FoldTree
+    - core::kinematics::MoveMap
   - core::pose
     - core::pose::Pose
   - core::pack::task
@@ -30,7 +33,7 @@ Documentation for more classes and functions can be found by looking at the Name
     - core::pack::task::PackerTask
   - core::scoring
     - core::scoring::ScoreFunction
-  - 
+
 @section protocols_index Protocols
   - protocols::moves
     - protocols::moves::Mover

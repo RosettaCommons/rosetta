@@ -833,6 +833,8 @@ private:
 	DOF_ID_Map dof_id_map_;
 
 	JumpID_Map jump_id_map_;
+
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

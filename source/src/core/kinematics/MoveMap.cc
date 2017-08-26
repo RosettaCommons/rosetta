@@ -519,13 +519,13 @@ MoveMap::show( std::ostream & out ) const
 	out << "-------------------------------\n";
 	out << A(8, "resnum") << ' ' << A(8, "Type") << ' ' << A(12, "TRUE/FALSE ") << "\n";
 	out << "-------------------------------\n";
-	// The general settings:
+	// The general settings: (torsion_type_map_)
 	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::BB) ) << "  " << A(8,( get(id::BB) ? "TRUE":"FALSE")) << "\n";
 	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::CHI)) << "  " << A(8,( get(id::CHI) ? "TRUE":"FALSE")) << "\n";
 	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::NU) ) << "  " << A(8,( get(id::NU) ? "TRUE":"FALSE")) << "\n";
 	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::BRANCH) ) << "  "
 		<< A(8,( get(id::BRANCH) ? "TRUE":"FALSE")) << "\n";
-	// The overrides:
+	// The overrides: (move_map_torsion_id_map_)
 	Size prev_resnum = 0;
 	utility::vector1< bool > jumpbool;
 	utility::vector1< Size > jumpnum;
@@ -564,10 +564,24 @@ MoveMap::show( std::ostream & out ) const
 		out << I(8,3,jumpnum[i])<<' '<< A(8,"JUMP") <<' '<< A(8,(jumpbool[i] ? "TRUE":"FALSE"))<< "\n";
 	}
 
+	// JumpID (FoldTree independent jumps) (jump_id_map_)
+	if ( ! jump_id_map_.empty() ) {
+		out << "-------------------------------\n";
+		out << A(10, "jumpstart") << ' ' << A(10, "jumpend") << ' ' << A(12, "TRUE/FALSE ") << "\n";
+		out << "-------------------------------\n";
+		for ( auto jump_id: jump_id_map_ ) {
+			bool const & boolean = jump_id.second;
+			core::Size const & jumpstart( jump_id.first.rsd1() );
+			core::Size const & jumpend( jump_id.first.rsd2() );
+			out << I(10,3,jumpstart) <<' '<< I(10,3,jumpend) <<' '<< A(8,(boolean ? "TRUE":"FALSE"))<< "\n";
+		}
+	}
+
+
 	out << "-------------------------------\n";
 	out << A(8, "resnum") << ' ' << A(8, "atomnum") << ' ' << A(8, "Type") << ' ' << A(12, "TRUE/FALSE ") << "\n";
 	out << "-------------------------------\n";
-	// The defaults
+	// The defaults (dof_type_map_)
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::PHI)) <<' '<< A(8,( get(id::PHI) ? "TRUE":"FALSE"))<< "\n";
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::THETA)) <<' '<< A(8,( get(id::THETA) ? "TRUE":"FALSE"))<< "\n";
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::D)) <<' '<< A(8,( get(id::D) ? "TRUE":"FALSE"))<< "\n";
@@ -578,6 +592,7 @@ MoveMap::show( std::ostream & out ) const
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB5)) <<' '<< A(8,( get(id::RB5) ? "TRUE":"FALSE"))<< "\n";
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB6)) <<' '<< A(8,( get(id::RB6) ? "TRUE":"FALSE"))<< "\n";
 	//prev_resnum = 0;
+	// The overrides: (dof_id_map_)
 	for ( auto it = dof_id_begin(), it_end = dof_id_end();
 			it != it_end; ++it ) {
 		DOF_ID const & dofID = it->first;
@@ -585,9 +600,24 @@ MoveMap::show( std::ostream & out ) const
 		Size res = dofID.rsd();
 		Size atomno = dofID.atomno();
 		DOF_Type doftype = dofID.type();
-		std::string type( id::to_string( doftype ) );
+		std::string const & type( id::to_string( doftype ) );
 		out << I(8,3,res) << ' ' << I(8,3,atomno) << ' ' << A(8,type) <<' '<< A(8,( boolean ? "TRUE":"FALSE"))<< "\n";
 	}
+
+	// Individual Torsions (torsion_id_map_)
+	if ( ! torsion_id_map_.empty() ) {
+		out << "-------------------------------\n";
+		out << A(8, "resnum") << ' ' << A(10, "torsion#") << ' ' << A(8, "Type") << ' ' << A(12, "TRUE/FALSE ") << "\n";
+		out << "-------------------------------\n";
+		for ( auto torsion_id: torsion_id_map_ ) {
+			bool const & boolean = torsion_id.second;
+			Size const & res = torsion_id.first.rsd();
+			Size const & torsionno = torsion_id.first.torsion();
+			std::string const & type( id::to_string( torsion_id.first.type() ) );
+			out << I(8,3,res) << ' ' << I(10,3,torsionno) << ' ' << A(8,type) <<' '<< A(8,( boolean ? "TRUE":"FALSE"))<< "\n";
+		}
+	}
+	out << "-------------------------------\n";
 	out << std::endl;
 }
 
