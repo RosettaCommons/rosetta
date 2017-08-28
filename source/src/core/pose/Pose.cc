@@ -213,8 +213,8 @@ Pose::operator=( Pose const & src )
 		}
 		was_pymol_observer_attached = observer_cache_->is_attached( datacache::CacheableObserverType::PYMOL_OBSERVER );
 	}
-	
-	
+
+
 	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );
 	*observer_cache_ = *src.observer_cache_;
 

@@ -481,9 +481,9 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 					// Set the next layer.
 					current_start = current_start + layer_size_ - window_size_;
 					current_end = current_end + layer_size_ - window_size_;
-					
+
 					//Here, we just model the rest of the glycans at the end.
-					if (current_end > max_end) {
+					if ( current_end > max_end ) {
 						current_end = max_end;
 					}
 

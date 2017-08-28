@@ -66,10 +66,10 @@ GlycanTreeSetObserver::GlycanTreeSetObserver( conformation::Conformation const &
 
 /*
 GlycanTreeSetObserver::GlycanTreeSetObserver( core::pose::Pose & pose ):
-	CacheableObserver()
+CacheableObserver()
 {
-	glycan_tree_set_ = GlycanTreeSetOP( new GlycanTreeSet( pose.conformation() ) );
-	attach_impl( pose );
+glycan_tree_set_ = GlycanTreeSetOP( new GlycanTreeSet( pose.conformation() ) );
+attach_impl( pose );
 }
 */
 
@@ -113,8 +113,8 @@ GlycanTreeSetObserver::attach_to( Conformation & conf ){
 	detach_impl();
 	attach_impl( conf );
 }
-	
-	
+
+
 void
 GlycanTreeSetObserver::attach_impl( Conformation & conf ){
 	length_event_link_ = conf.attach_length_obs( &GlycanTreeSetObserver::on_length_change, this );

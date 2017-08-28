@@ -166,13 +166,13 @@ Conformation::Conformation( Conformation const & src ) :
 
 	// carbohydrates?
 	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
-	if (src.contains_carbohydrate_residues_ && src.tree_set_observer_){
+	if ( src.contains_carbohydrate_residues_ && src.tree_set_observer_ ) {
 		tree_set_observer_ = src.tree_set_observer_->clone();
-		
+
 		//Detach old, attach to new.
 		tree_set_observer_->attach_to(*this);
 	}
-	
+
 	// chain info
 	chain_endings_ = src.chain_endings_;
 	// secstruct
@@ -190,7 +190,7 @@ Conformation::Conformation( Conformation const & src ) :
 	for ( core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i ) {
 		parameters_set_[i]->update_residue_links( *this );
 	}
-	
+
 }
 
 // equals operator
@@ -232,9 +232,9 @@ Conformation::operator=( Conformation const & src )
 
 		// carbohydrates?
 		contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
-		if (src.contains_carbohydrate_residues_ && src.tree_set_observer_){
+		if ( src.contains_carbohydrate_residues_ && src.tree_set_observer_ ) {
 			tree_set_observer_ = src.tree_set_observer_->clone();
-			
+
 			//Detach old, attach to new.
 			tree_set_observer_->attach_to(*this);
 		}
@@ -292,7 +292,7 @@ Conformation::clear()
 {
 	pre_nresidue_change(); // nuke old atom tree update-data before destroying coordinates.
 	clear_glycan_trees();
-	
+
 	residue_type_sets_.clear();
 	fold_tree_->clear();
 	atom_tree_->clear();
@@ -774,10 +774,9 @@ Conformation::check_valid_membrane() const {
 /// Get the glycan tree set.  Null if not present.
 carbohydrates::GlycanTreeSetCOP
 Conformation::glycan_tree_set() const {
-	if ( tree_set_observer_ ){
+	if ( tree_set_observer_ ) {
 		return tree_set_observer_->get_glycan_tree_set();
-	}
-	else {
+	} else {
 		return nullptr;
 	}
 }
@@ -786,19 +785,18 @@ Conformation::glycan_tree_set() const {
 /// Setup glycan trees and attach length observer.
 void
 Conformation::setup_glycan_trees(){
-	if (! tree_set_observer_){
+	if ( ! tree_set_observer_ ) {
 		tree_set_observer_ = carbohydrates::GlycanTreeSetObserverOP( new carbohydrates::GlycanTreeSetObserver( *this ));
 		tree_set_observer_->attach_to(*this);
-	}
-	else {
+	} else {
 		TR << "GlycanTreeSet already present. Nothing to be done." << std::endl;
 	}
-	
+
 }
 
 void
 Conformation::clear_glycan_trees(){
-	if (tree_set_observer_){
+	if ( tree_set_observer_ ) {
 		tree_set_observer_->detach_impl();
 		tree_set_observer_ = nullptr;
 	}
@@ -4756,7 +4754,7 @@ core::conformation::Conformation::load( Archive & arc ) {
 	arc( xyz_moved_ ); // AtomID_Mask
 	arc( structure_moved_ ); // _Bool
 	arc( secstruct_ ); // utility::vector1<char>
-	
+
 	// Don't deserialize the observer data
 	//arc( connection_obs_hub_ ); // utility::signals::BufferedSignalHub<void, ConnectionEvent>
 	//arc( general_obs_hub_ ); // utility::signals::PausableSignalHub<void, GeneralEvent>

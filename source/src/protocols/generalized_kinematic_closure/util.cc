@@ -117,9 +117,9 @@ void set_loop_pose (
 
 	//Update carbohydrate residues' virtual atoms:
 	/*for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
-		if ( pose.residue_type(i).is_carbohydrate() ) {
-			core::pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue( pose, i );
-		}
+	if ( pose.residue_type(i).is_carbohydrate() ) {
+	core::pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue( pose, i );
+	}
 	}*/
 
 	pose.update_residue_neighbors();
@@ -181,9 +181,9 @@ void copy_loop_pose_to_original (
 
 	//Update carbohydrate residues' virtual atoms:
 	/*for ( core::Size i(1), imax(original_pose.total_residue()); i<=imax; ++i ) {
-		if ( original_pose.residue_type(i).is_carbohydrate() ) {
-			core::pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue( original_pose, i );
-		}
+	if ( original_pose.residue_type(i).is_carbohydrate() ) {
+	core::pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue( original_pose, i );
+	}
 	}*/
 
 	original_pose.update_residue_neighbors();

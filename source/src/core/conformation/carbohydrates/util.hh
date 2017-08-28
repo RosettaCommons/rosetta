@@ -73,7 +73,7 @@ bool has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, confor
 std::pair< conformation::ResidueCOP, conformation::ResidueCOP > get_glycosidic_bond_residues(
 	Conformation const & conf,
 	uint const sequence_position );
-	
+
 /// @brief  Return the AtomIDs of the four phi torsion reference atoms.
 utility::vector1< core::id::AtomID > get_reference_atoms_for_phi(
 	Conformation const & conf,

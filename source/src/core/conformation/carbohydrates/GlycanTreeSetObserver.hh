@@ -75,7 +75,7 @@ public: //observer interface
 	/// @brief Detach and attach to Conformation
 	void
 	attach_to( Conformation & conf );
-	
+
 	/// @brief Do the attachment to the length event signal
 	void
 	attach_impl( Conformation & conf );

@@ -164,7 +164,7 @@ public:
 		TS_ASSERT_EQUALS(tree_set->n_trees(), 2 );
 		TS_ASSERT_EQUALS(tree_set->get_tree(585)->size(), 6);
 		TR << "Complete" << std::endl;
-		
+
 	}
 	void test_glycan_end_residue_deletion() {
 		TR << "Testing end residue deletion" <<std::endl;
@@ -294,28 +294,28 @@ public:
 
 		run_basic_tests( pose_, tree_set, start_points);
 		TR << "Complete" << std::endl;
-	
-	
+
+
 	}
 	void test_glycan_tree_set() {
 		TR << "Testing GlycanTreeSet" << std::endl;
 		TS_ASSERT( pose_.glycan_tree_set() != nullptr );
 		GlycanTreeSetCOP tree_set = pose_.glycan_tree_set();
-		
+
 		assert_basic_glycan_tree_set_intact( tree_set );
 	}
-	
+
 	//For now, we are commenting the serialization test out until Andrew gets back.
 	// We need this into master ASAP.
 	void test_serialization_and_clone() {
 		using namespace core::conformation;
-		
+
 		ConformationOP conf = pose_.conformation().clone();
 		assert_basic_glycan_tree_set_intact( conf->glycan_tree_set() );
 
 #ifdef SERIALIZATION
-		
-		
+
+
 		std::ostringstream oss;
 		{
 			cereal::BinaryOutputArchive arc( oss );
@@ -337,14 +337,14 @@ public:
 	}
 	void test_serialization_observation() {
 		TS_ASSERT(true);
-		
+
 #ifdef SERIALIZATION
-		
+
 		//Serialze a pose, which SHOULD serialize the underlying Conformation.
 		// Test to make sure that the GlycanTreeSet is still observing that conformation.
 		core::pose::PoseOP pose = pose_.clone();
 		assert_basic_glycan_tree_set_intact( pose->conformation().glycan_tree_set() );
-		
+
 		std::ostringstream oss;
 		{
 			cereal::BinaryOutputArchive arc( oss );
@@ -357,17 +357,17 @@ public:
 			cereal::BinaryInputArchive arc( iss );
 			arc( pose2 );
 		}
-		
+
 		TR.Debug << "Serialized Form: \n";
 		TR.Debug << oss.str() << std::endl;
-		
+
 		assert_tree_set_observation_on_end_deletion( *pose2);
 
 #endif
 	}
-	
-	
-	
+
+
+
 private:
 
 

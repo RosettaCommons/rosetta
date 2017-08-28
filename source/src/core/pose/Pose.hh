@@ -1651,7 +1651,7 @@ public:
 	///
 	conformation::carbohydrates::GlycanTreeSetCOP
 	glycan_tree_set() const;
-	
+
 	/// @brief Get information on any glycan trees within this pose.
 	///  Add or update the GlycanTree if needed.
 	///
