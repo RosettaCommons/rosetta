@@ -48,7 +48,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.constraints" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints" );
 
 ConstraintOP DihedralPairConstraint::clone() const {
 	return ConstraintOP( new DihedralPairConstraint( *this ) );

@@ -42,7 +42,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.constraints" );
 
 
 #ifdef SERIALIZATION
