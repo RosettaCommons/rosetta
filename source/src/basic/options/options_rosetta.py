@@ -4354,6 +4354,16 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 		Option( 'hh_map','FileVector', desc='Input file that maps pdbChains to hhsearch probabilities'
 		),
+		Option( 'seeds','IntegerVector', desc='list of tags used as seed parents at prv iteration'
+				),
+		Option( 'quota_per_silent','RealVector', desc='quota for picking input structures associated with -in:file:silent'
+		),
+		Option( 'similarity_cut','Real', desc='Distance cut on the structure population, used for CSA (in S-score)'
+		),
+		Option( 'similarity_limit','Real', desc='Distance cut for initial filtering (in S-score)'
+		),
+		Option( 'refsimilarity_cut','Real', desc='Lower threshold on model-to-template GDT-HA where it starts to get penalty', default = '25',
+		),
 		Option_Group( 'hybridize', # tempalate hybridization
 			Option( 'starting_template',              'IntegerVector',    desc='Define starting templates' ),
 			Option( 'realign_domains',                'Boolean',     desc='domain parse and realign the starting templates', default='true' ),

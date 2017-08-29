@@ -40,11 +40,27 @@ public:
 	~MultiObjective() override;
 
 	bool
+	update_library_seeds(protocols::wum::SilentStructStore &structs,
+		protocols::wum::SilentStructStore &new_structs,
+		core::Real const dcut,
+		utility::vector1< core::Size > const seeds, // should be 'poolid'
+		std::string const prefix_in,
+		std::string const objname = "",
+		core::Size const maxreplace = 100000
+	);
+
+	bool
 	update_library_NSGAII(protocols::wum::SilentStructStore &structs,
 		protocols::wum::SilentStructStore &new_structs,
 		core::Size const nmax,
 		bool const update_obj_cut = false
 	);
+
+	void
+	succeed_substitute_info( core::io::silent::SilentStructOP ss_sub,
+		core::io::silent::SilentStructCOP ss_ref,
+		bool const reset
+	) const;
 
 	void
 	filter_similar( protocols::wum::SilentStructStore &structs,
@@ -82,6 +98,18 @@ public:
 	get_fobj( core::io::silent::SilentStructCOP pss, core::Size i ) const
 	{ return pss->get_energy( fobjnames_[i] ); }
 
+	void set_init_pose( core::pose::Pose inpose ) { init_pose_ = inpose; }
+	core::pose::Pose init_pose() const { return init_pose_; }
+
+	void set_iha_cut( core::Real value ) { iha_cut_ = value; }
+	core::Real iha_cut() const { return iha_cut_; }
+
+	void set_iha_penalty_slope( core::Real value ) { iha_penalty_slope_ = value; }
+	core::Real iha_penalty_slope() const { return iha_penalty_slope_; }
+
+	void set_iha_penalty_mode( std::string value ) { iha_penalty_mode_ = value; }
+	std::string iha_penalty_mode() const { return iha_penalty_mode_; }
+
 	void
 	calculate_pool_diversity( protocols::wum::SilentStructStore &structs ) const;
 
@@ -111,6 +139,10 @@ private:
 	utility::vector1< core::Real > obj_cut_increment_;
 	utility::vector1< std::string > fobjnames_;
 	utility::vector1< core::scoring::ScoreFunctionCOP > objsfxnOPs_;
+	core::pose::Pose init_pose_;
+	core::Real iha_cut_;
+	core::Real iha_penalty_slope_;
+	std::string iha_penalty_mode_;
 
 };
 

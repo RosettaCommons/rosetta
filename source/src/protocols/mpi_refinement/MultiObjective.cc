@@ -32,6 +32,7 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -146,6 +147,9 @@ MultiObjective::set_defaults()
 
 	obj_dominant_cut_ = objective_cut_from_cmd;
 	obj_cut_increment_ = objective_inc_from_cmd;
+	iha_cut_ = 25.0;
+	iha_penalty_slope_ = 10.0;
+	iha_penalty_mode_ = "relative";
 }
 
 // Check if ss1 is better than ss2 by any obj function
@@ -165,30 +169,6 @@ MultiObjective::is_dominant( core::io::silent::SilentStructCOP ss1,
 
 	return true;
 }
-
-/*
-core::Real
-MultiObjective::fobj_density( protocols::wum::SilentStructStore const &ref_structs,
-protocols::wum::SilentStructStore &structs,
-bool const is_symmetric )
-{
-
-core::Size const nstruct_ref( ref_structs.size() );
-core::Size const nstruct    ( structs.size() );
-
-// First, fill in Similarity matrix
-utility::vector1< utility::vector1< core::Real > > sim_matrix( nstruct );
-for( core::Size i = 1; i <= nstruct; ++i ) sim_matrix[i].resize( nstruct_ref );
-
-for( core::Size i = 1; i <= nstruct; ++i ){
-SilentStructCOP p( totalpool.get_struct( i_p ) );
-for( core::Size j = 1; i <= nstruct; ++i ){
-
-}
-}
-
-}
-*/
 
 // Takes care of objective function "similarity"
 void
@@ -227,7 +207,8 @@ MultiObjective::calculate_structure_diversity(
 	using namespace basic::options::OptionKeys;
 
 	//core::Real simlimit = option[ lh::similarity_reference ]();
-	core::Real simlimit = option[ lh::rms_limit ]();
+	//core::Real simlimit = option[ lh::rms_limit ]();
+	core::Real simlimit = option[ cm::similarity_limit ]();
 	std::string similarity_method = option[ lh::similarity_method ]();
 	std::string similarity_measure = option[ lh::similarity_measure ]();
 	core::Size const n( structs.size() );
@@ -247,17 +228,17 @@ MultiObjective::calculate_structure_diversity(
 		} else {
 			core::Real dumm, dist( 0.0 );
 			if ( similarity_measure.compare( "Sscore" ) == 0 ) {
-				dist = CA_Sscore( ss1, ss2, dumm, 2.0 );
+				dist = CA_Sscore( ss1, ss2, dumm, true, 2.0 );
 				//dist = CA_Sscore( ss1, ss2, dumm, 1.0 );
 
 			} else if ( similarity_measure.compare( "rmsd" ) == 0 ) {
-				dumm = CA_Sscore( ss1, ss2, dist, 2.0 );
+				dumm = CA_Sscore( ss1, ss2, dist, true, 2.0 );
 				//dumm = CA_Sscore( ss1, ss2, dist, 1.0 );
 
 			} else if ( similarity_measure.compare( "looprmsd" ) == 0 ) {
 				std::string loopstr = option[ lh::loop_string ]();
 				utility::vector1< core::Size > loopres = loopstring_to_loopvector( loopstr );
-				dumm = CA_Sscore( ss1, ss2, dist, loopres, 2.0 );
+				dumm = CA_Sscore( ss1, ss2, dist, loopres, true, 2.0 );
 				//dumm = CA_Sscore( ss1, ss2, dist, loopres, 1.0 );
 			} else { }
 			dvector[j] = dist;
@@ -303,6 +284,270 @@ MultiObjective::calculate_structure_diversity(
 
 }
 
+// update library following Conformational Space Annealing (CSA) logic using seed info & distance cut
+bool
+MultiObjective::update_library_seeds(protocols::wum::SilentStructStore &structs,
+	protocols::wum::SilentStructStore &new_structs,
+	core::Real const dcut,
+	utility::vector1< core::Size > const seeds, // should be 'poolid'
+	std::string const prefix,
+	std::string const objname,
+	core::Size const maxreplace
+)
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::io::silent;
+
+	//core::Real const simlimit = option[ OptionKeys::lh::rms_limit ]();
+	//std::string const measure = option[ lh::similarity_measure ]();
+	// let's use our own... rms_limit is too misleading
+	core::Real const simlimit = option[ cm::similarity_limit ]();
+	std::string const measure( "Sscore" );
+	bool const reverse_order( false );
+
+	// CSA will use only the first fobjnames_ registered, whatever number of multiobjs are assigned
+	//std::string objname = fobjnames_[1];
+
+	// info that should be conserved
+	utility::vector1< std::string > columns_copy;
+	columns_copy.push_back( "poolid" ); columns_copy.push_back( "nuse" ); columns_copy.push_back( "score" ); columns_copy.push_back( objname );
+
+	// rescore silents at the beginning
+	core::pose::Pose pose_tmp;
+	for ( core::Size iss = 0; iss < structs.size(); ++iss ) {
+		core::io::silent::SilentStructOP ss = structs.get_struct( iss );
+		ss->fill_pose( pose_tmp );
+		core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( pose_tmp );
+		objsfxnOPs_[1]->score( pose_tmp );
+		ss->energies_from_pose( pose_tmp );
+	}
+	for ( core::Size iss = 0; iss < new_structs.size(); ++iss ) {
+		core::io::silent::SilentStructOP ss = new_structs.get_struct( iss );
+		ss->fill_pose( pose_tmp );
+		core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( pose_tmp );
+		objsfxnOPs_[1]->score( pose_tmp );
+		ss->energies_from_pose( pose_tmp );
+	}
+
+	// store starting reference pool
+	protocols::wum::SilentStructStore ref_structs( structs );
+
+	// add iHA penalty if defined
+	if ( iha_cut_ > 0.0 && objname.compare("penaltysum") == 0 ) {
+		TR << "Penalty activated based on structural difference from reference structure." << std::endl;
+		add_init_dev_penalty( new_structs, init_pose(), iha_penalty_mode(), iha_cut(), iha_penalty_slope() );
+		add_init_dev_penalty( ref_structs, init_pose(), iha_penalty_mode(), iha_cut(), iha_penalty_slope() ); //in case when they don't have it yet
+	}
+
+	// superimpose to lowest energy at the begining only
+	SilentStructOP ss0 = structs.get_struct( 0 );
+	TR << "superimpose all before starting" << std::endl;
+	superimpose_all( ss0, new_structs, columns_copy );
+	superimpose_all( ss0, ref_structs, columns_copy );
+
+	TR << "simlimit: " << simlimit << " " << measure << std::endl;
+
+	// first start with removing redundancy
+	core::Size nbefore( new_structs.size() );
+	TR << "nbefore: " << nbefore << std::endl;
+	filter_similar( new_structs, measure, simlimit, objname );
+
+	TR << "New structures, initial/filtered_by_similiarity:" << nbefore << " " << new_structs.size() << std::endl;
+
+	// sort by energy
+	ref_structs.sort_by( objname );
+	new_structs.sort_by( objname );
+	core::Size nref( ref_structs.size() );
+	//core::Size nnew( new_structs.size() );
+
+	/* TODO
+	core::Real const var_new = get_RMSF( new_structs );
+	core::Real const var_ref = get_RMSF( ref_structs );
+	TR << "Variation in energy, RefStructs: " << F(8,3,ref_structs.get_struct( 0 )->get_energy( objname )) << " to "
+	<< F(8,3,ref_structs.get_struct( nref-1 )->get_energy( objname ))
+	<< " / NewStructs: " << F(8,3,new_structs.get_struct( 0 )->get_energy( objname )) << " to "
+	<< F(8,3,new_structs.get_struct( nnew-1 )->get_energy( objname )) << std::endl;
+
+	TR << "Variation in struct(RMSF), RefStructs: " << var_ref << " / NewStrcuts: " << var_new << std::endl;
+	*/
+
+	// add nuse for seeds
+	std::map< core::Size, bool > found_new;
+	TR << "Available seeds: ";
+	for ( core::Size iseed = 1; iseed <= seeds.size(); ++iseed ) TR << " " << seeds[iseed];
+	TR << std::endl;
+
+	for ( core::Size iref = 0; iref < ref_structs.size(); ++iref ) {
+		SilentStructOP ss2 = ref_structs.get_struct( iref );
+		core::Size const ipool = core::Size(ss2->get_energy( "poolid" ));
+		if ( seeds.contains( ipool ) ) {
+			core::Size nuse = ss2->get_energy( "nuse" ) + 1;
+			ss2->add_energy( "nuse", nuse );
+			found_new[ ipool ] = false;
+		}
+	}
+
+	protocols::wum::SilentStructStore selected;
+	core::Real emax( 0.0 );
+	core::Size nreplace( 0 );
+
+	for ( core::Size inew = 0; inew < new_structs.size(); ++inew ) {
+
+		SilentStructOP ss1 = reverse_order? new_structs.get_struct( new_structs.size() - inew - 1 ) : new_structs.get_struct( inew );
+
+		core::Real const score1 = ss1->get_energy( objname );
+		core::Size const parent( ss1->get_energy( "parent" ) );
+		//TR << ss1->decoy_tag() << ": parent " << parent << ", count: " << found_new.count( parent ) << std::endl;
+		bool found_close( false );
+
+		ref_structs.sort_by( objname ) ;
+		emax = ref_structs.get_struct( nref-1 )->get_energy( objname );
+
+		//TR << "current Emax: " << emax << std::endl;
+
+		// search by reverse order
+		core::Real distmin( 99.0 );
+		core::Real emin_close( 1e10 );
+		core::Size closest( 1 );
+		for ( core::Size iref = ref_structs.size()-1; int(iref) >=0; --iref ) {
+			SilentStructOP ss2 = ref_structs.get_struct( iref );
+			core::Real const score2 = ss2->get_energy( objname );
+			//core::Size const ipool = core::Size(ss2->get_energy( "poolid" ));
+
+			core::Real dist = distance( ss1, ss2, measure, false );
+			// Dscore = 1 - Sscore
+			if ( measure.compare("Sscore") == 0 ) dist = 1.0 - dist;
+
+			if ( dist < distmin ) {
+				distmin = dist;
+				closest = iref;
+			}
+			if ( dist < dcut ) found_close = true;
+			if ( dist < dcut && score2 < emin_close ) emin_close = score2;
+
+			/*
+			if( score1 < score2 ){ // lower
+			TR << "Replace_Sim: " << I(3,ipool) << " by " << ss1->decoy_tag()
+			<< ", Eref/Emax/Enew/dist: "
+			<< F(8,3,score2) << "/" << F(8,3,emax) << "/" << F(8,3,score1)
+			<< "/" << F(8,3,dist) << std::endl;
+
+			succeed_substitute_info( ss1, ss2, false );
+			ref_structs.store()[iref] = ss1;
+			break;
+			} else {
+			//TR << "Keep " << iref << " " << ss2->decoy_tag() << " " << score2 << std::endl;
+			}
+			*/
+		}
+
+		// Decision
+		if ( found_close ) {
+			if ( score1 < emin_close && nreplace < maxreplace ) { // lower than any close refstruct
+				// replace closest
+				SilentStructOP ss2 = ref_structs.get_struct( closest );
+				core::Real const score2 = ss2->get_energy( objname );
+				core::Size const ipool = core::Size(ss2->get_energy( "poolid" ));
+
+				TR << "Replace_Sim: " << I(3,ipool) << " by " << A(30, ss1->decoy_tag())
+					<< ", Eref/Emax/Enew/dist: "
+					<< F(8,3,score2) << "/" << F(8,3,emax) << "/" << F(8,3,score1)
+					<< "/" << F(8,3,distmin) << std::endl;
+
+				succeed_substitute_info( ss1, ss2, false );
+				ref_structs.store()[closest] = ss1;
+				nreplace++;
+
+			} else {
+				TR << "Pass_Sim   :        "   << A(30, ss1->decoy_tag() )
+					<< ", Eref/Emax/Enew/mind: "
+					<< F(8,3,emin_close) << "/" << F(8,3,emax) << "/" << F(8,3,score1)
+					<< "/" << F(8,3,distmin) << std::endl;
+			}
+
+		} else {
+			if ( score1 < emax && nreplace < maxreplace ) { // found new->reset
+				SilentStructOP ss2 = ref_structs.get_struct( nref-1 );
+				core::Real const score2 = ss2->get_energy( objname );
+				core::Size const ipool = core::Size(ss2->get_energy( "poolid" ));
+				TR << "Replace_Max: " << I(3,ipool) << " by "  << A(30, ss1->decoy_tag() )
+					<< ", Eref=Emax/Enew/mind:          " << F(8,3,score2)
+					<< "/" << F(8,3,score1) << "/" << F(8,3,distmin) << std::endl;
+
+				succeed_substitute_info( ss1, ss2, true ); //reset!
+				nreplace++;
+
+				// in case when the seed found a new one, keep nuse for the seed
+				//found_new[ ipool ] = true;
+				if ( found_new.count( parent ) == 0 ) {
+					TR << "No such parent " << parent << " found among seeds, check it out!" << std::endl;
+				} else {
+					found_new[ parent ] = true;
+				}
+
+				// keep size
+				ref_structs.store().pop_back();
+				ref_structs.add( ss1 );
+			} else {
+				TR << "Pass_Max   :       "  << A(30,ss1->decoy_tag())
+					<< ",     /Emax/Enew/mind: " << "         /" << F(8,3,emax) << "/" << F(8,3,score1)
+					<< "/" << F(8,3,distmin) << std::endl;
+			}
+		}
+	}
+
+	// retag and replace into "structs"
+	structs.clear();
+	ref_structs.sort_by( objname );
+
+	for ( core::Size i = 1; i <= seeds.size(); ++i ) {
+		if ( found_new.at( seeds[i] ) ) {
+			TR << "Seed " << seeds[i] << ", found new!" << std::endl;
+		} else {
+			TR << "Seed " << seeds[i] << ", nothing found new..." << std::endl;
+		}
+	}
+
+	for ( core::Size i = 0; i < ref_structs.size(); ++i ) {
+		SilentStructOP ss = ref_structs.get_struct( i );
+		std::stringstream sstream( "" );
+		sstream << prefix << "." << i;
+		core::Size const poolid( ss->get_energy( "poolid" ) );
+
+		// increase nuse if the pool was seed but
+		if ( seeds.contains( poolid ) ) {
+			if ( found_new.at( poolid ) ) {
+				int nuse = std::max( 0, int(ss->get_energy( "nuse" )-1) );
+				ss->add_energy( "nuse", nuse );
+			}
+		}
+		ss->set_decoy_tag( sstream.str() );
+		structs.add( ss );
+	}
+
+	// report
+	structs.sort_by( objname );
+	TR << "I/Pool/FObj/Score/Nuse/GDTMM/dist_to_emin" << std::endl;
+
+	SilentStructOP ss_emin = structs.get_struct( 0 );
+	for ( core::Size i = 0; i < structs.size(); ++i ) {
+		SilentStructOP ss = structs.get_struct( i );
+		core::Real dist = distance( ss_emin, ss, measure, false );
+		if ( measure.compare("Sscore") == 0 ) dist = 1.0 - dist;
+
+		TR << I(3,i)
+			<< " " << I(3,ss->get_energy( "poolid" ))
+			<< " " << F(8,3,ss->get_energy( objname ))
+			<< " " << F(8,3,ss->get_energy( "score" ))
+			<< " " << I(4,ss->get_energy( "nuse" ))
+			<< " " << F(8,3,ss->get_energy( "GDTMM_final" ))
+			<< F(8,3,dist) << std::endl;
+	}
+
+	return true;
+}
+
 // Update library pool based on NSGAII rule, the multiobj GA
 bool
 MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs,
@@ -315,7 +560,7 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 	using namespace basic::options::OptionKeys;
 	using namespace core::io::silent;
 
-	core::Real const simlimit = option[ OptionKeys::lh::rms_limit ]();
+	core::Real const simlimit = option[ OptionKeys::cm::similarity_limit ]();
 	std::string const measure = option[ lh::similarity_measure ]();
 
 	// Total pool
@@ -562,6 +807,20 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 	return true;
 }
 
+// only for CSA
+void
+MultiObjective::succeed_substitute_info( core::io::silent::SilentStructOP ss_sub,
+	core::io::silent::SilentStructCOP ss_ref,
+	bool const reset
+) const
+{
+	core::Size const nuse = reset? 0:ss_ref->get_energy( "nuse" );
+	core::Size const poolid( ss_ref->get_energy( "poolid" ) );
+
+	ss_sub->add_energy( "nuse", nuse );
+	ss_sub->add_energy( "poolid", poolid );
+}
+
 void
 MultiObjective::filter_similar( protocols::wum::SilentStructStore &structs,
 	std::string const measure,
@@ -582,6 +841,9 @@ MultiObjective::filter_similar( protocols::wum::SilentStructStore &structs,
 	core::Size nfilt( 0 );
 	core::Size nfilt_max = (nstruct >= nmax) ? nstruct - nmax : 0;
 
+	TR << "start filtering from nstruct=" << structs.size() << ", " << "DistMeasure/Dcut: "
+		<< measure << "/" << F(8,3,criteria) << std::endl;
+
 	for ( core::Size i = 1; i < nstruct; ++i ) {
 		SilentStructOP ss1 = structs.get_struct( i );
 		core::Real score1 = ss1->get_energy( score_for_priority );
@@ -596,29 +858,13 @@ MultiObjective::filter_similar( protocols::wum::SilentStructStore &structs,
 
 			if ( filtered[j] ) continue;
 
+
 			// only Sscore for now
 			bool is_similar( false );
-			core::Real dist( 0.0 );
-			core::Real dumm( 0.0 );
+			core::Real dist = distance( ss1, ss2, measure, false );
+			if ( measure.compare("Sscore") == 0 ) dist = 1.0 - dist;
 
-			if ( measure.compare( "Sscore" ) == 0 ) {
-				dist = CA_Sscore( ss1, ss2, dumm, 2.0 );
-				if ( dist > criteria ) is_similar = true;
-
-			} else if ( measure.compare( "rmsd" ) == 0 ) {
-				dumm = CA_Sscore( ss1, ss2, dist, 2.0 );
-				if ( dist < criteria ) is_similar = true;
-
-			} else if ( measure.compare( "looprmsd" ) == 0 ) {
-				std::string loopstr = option[ lh::loop_string ]();
-				utility::vector1< core::Size > loopres = loopstring_to_loopvector( loopstr );
-				dumm = CA_Sscore( ss1, ss2, dist, loopres, 2.0 );
-				if ( dist < criteria ) is_similar = true;
-
-			}
-
-			//TR << "check similarity, " << i << " " << j << " with measure " << measure << ": " << dist << " " << criteria << std::endl;
-
+			if ( dist < criteria ) is_similar = true;
 			if ( !is_similar ) continue;
 
 			// get larger nuse if similar
@@ -626,13 +872,13 @@ MultiObjective::filter_similar( protocols::wum::SilentStructStore &structs,
 				filtered[j] = true;
 				nfilt++;
 				nuse[i] = nuse[j] > nuse[i] ? nuse[j] : nuse[i];
-				TR << "remove " << jname << " on " << iname << ", dist/dE " << dist << "/" << score2 - score1 << std::endl;
+				TR << "remove " << jname << " on " << iname << ", dist/dE " << F(8,3,dist) << "/" << F(8,3,score2 - score1) << std::endl;
 				break;
 			} else {
 				filtered[i] = true;
 				nfilt++;
 				nuse[j] = nuse[j] > nuse[i] ? nuse[j] : nuse[i];
-				TR << "remove " << iname << " on " << jname << ", dist/dE " << dist << "/" << score1 - score2 << std::endl;
+				TR << "remove " << iname << " on " << jname << ", dist/dE " << F(8,3,dist) << "/" << F(8,3,score1 - score2) << std::endl;
 			}
 		} // j
 

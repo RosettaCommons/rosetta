@@ -56,6 +56,7 @@
 #include <cstdlib> // atoi
 #include <algorithm> // for sort
 #include <fstream> // for ifstream
+#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
@@ -265,51 +266,6 @@ constrain_residue( core::pose::Pose &pose,
 		}
 	}
 }
-
-/*
-// not being used...
-void
-setup_cutpoints( core::pose::Pose &pose,
-utility::vector1< core::Size > cutpoints )
-{
-using namespace core::scoring::constraints;
-
-core::kinematics::FoldTree ft( pose.fold_tree() ) ;
-
-core::Size prvres( 0 );
-core::Size resno;
-for( core::Size ires = 1; ires <= cutpoints.size(); ++ires ){
-resno = cutpoints[ires];
-pose.conformation().insert_chain_ending( resno );
-
-//std::cout << "new jump " << prvres+1 << " " << resno+1 << " " << resno << std::endl;
-ft.new_jump( prvres+1, resno+1, resno );
-core::Size const ica = pose.residue( resno ).atom_index( " CA " );
-core::Size const jca = pose.residue( resno+1 ).atom_index( " CA " );
-core::Size const ic  = pose.residue( resno ).atom_index( " C  " );
-core::Size const jn  = pose.residue( resno+1 ).atom_index( " N  " );
-
-core::id::AtomID idca_i( core::id::AtomID(ica, resno ) );
-core::id::AtomID idca_j(core::id::AtomID(jca, resno+1 ) );
-pose.add_constraint( ConstraintCOP( ConstraintOP(
-new AtomPairConstraint( idca_i, idca_j, new BoundFunc( 3.8, 3.8, 0.5, "gap" ) )
-)));
-pose.add_constraint(
-new AtomPairConstraint(
-core::id::AtomID(ic, resno ),
-core::id::AtomID(jn, resno+1 ),
-new core::scoring::constraints::BoundFunc( 1.5, 1.5, 0.5, "gap" ) )
-);
-
-TR << "add atom_pair_constraint at: " << resno << " " << resno+1 << std::endl;
-
-prvres = resno;
-}
-pose.fold_tree( ft );
-
-protocols::loops::add_cutpoint_variants( pose );
-}
-*/
 
 utility::vector1< core::Size >
 get_touched_res( core::pose::Pose const pose,
@@ -664,15 +620,48 @@ void mean_and_stdev( utility::vector1< core::Real > values,
 	shave_cut = values_cut[start+ncut2];
 }
 
+void
+superimpose_all( core::io::silent::SilentStructCOP ss_ref,
+	protocols::wum::SilentStructStore &structs,
+	utility::vector1< std::string > const columns_copy
+)
+{
+	core::pose::Pose pose1, pose2;
+	TR.Debug << "Ref: " << ss_ref->decoy_tag() << std::endl;
+	ss_ref->fill_pose( pose1 );
+	protocols::wum::SilentStructStore structs_al;
+
+	for ( core::Size iss = 0; iss < structs.size(); ++iss ) {
+		core::io::silent::SilentStructOP ss2 = structs.get_struct( iss );
+		std::string decoytag( ss2->decoy_tag() );
+		TR.Debug << "Running " << decoytag << std::endl;
+
+		utility::vector1< core::Real > info_pass;
+		for ( core::Size i = 1; i <= columns_copy.size(); ++i ) info_pass.push_back( ss2->get_energy(columns_copy[i]) );
+
+		ss2->fill_pose( pose2 );
+		core::scoring::calpha_superimpose_pose( pose2, pose1 );
+
+		ss2->fill_struct( pose2, decoytag );
+		for ( core::Size i = 1; i <= columns_copy.size(); ++i ) ss2->add_energy( columns_copy[i], info_pass[i] );
+
+		structs_al.add( ss2 );
+	}
+	structs.clear();
+	structs.add( structs_al );
+}
+
 core::Real CA_Sscore( core::io::silent::SilentStructOP ss1,
 	core::io::silent::SilentStructOP ss2,
 	core::Real &rmsd,
 	utility::vector1< core::Size > const loopres,
+	bool const superimpose,
 	core::Real const dbase
 )
 {
 	core::Real const dbase2( dbase*dbase );
 
+	/*
 	ObjexxFCL::FArray2D< numeric::Real > crd1 = ss1->get_CA_xyz();
 	ObjexxFCL::FArray2D< numeric::Real > crd2 = ss2->get_CA_xyz();
 	runtime_assert( crd1.size() == crd2.size() );
@@ -685,34 +674,50 @@ core::Real CA_Sscore( core::io::silent::SilentStructOP ss1,
 
 	// structure alignment (ww, uu, ctx are dummy here)
 	numeric::model_quality::findUU( crd1, crd2, ww, n, uu, rmsd );
+	*/
 
-	core::pose::Pose pose1, pose2;
-	ss1->fill_pose( pose1 );
-	ss2->fill_pose( pose2 );
+	utility::vector1< core::Vector > crd1, crd2;
+	if ( superimpose ) {
+		core::pose::Pose pose1, pose2;
+		ss1->fill_pose( pose1 );
+		ss2->fill_pose( pose2 );
+		core::scoring::calpha_superimpose_pose( pose1, pose2 );
 
-	rmsd = core::scoring::calpha_superimpose_pose( pose1, pose2 );
+		for ( core::Size i_ca = 1; i_ca <= pose1.total_residue(); ++i_ca ) {
+			if ( !loopres.contains( i_ca ) ) continue;
+			if ( !pose1.residue( i_ca ).has( "CA" ) ) continue;
+			crd1.push_back( pose1.residue( i_ca ).xyz("CA") );
+			crd2.push_back( pose2.residue( i_ca ).xyz("CA") );
+		}
 
-	// don't know why, rmsd above not works... let's calculate again
+	} else {
+		ObjexxFCL::FArray2D< numeric::Real > FAcrd1 = ss1->get_CA_xyz();
+		ObjexxFCL::FArray2D< numeric::Real > FAcrd2 = ss2->get_CA_xyz();
+		core::Size const n = FAcrd1.size()/3;
+
+		for ( core::Size i_ca = 1; i_ca <= n; ++i_ca ) {
+			core::Vector xyz1, xyz2;
+			for ( core::Size j = 0; j < 3; ++j ) {
+				xyz1[j] = FAcrd1(j,i_ca);
+				xyz2[j] = FAcrd2(j,i_ca);
+			}
+			crd1.push_back( xyz1 );
+			crd2.push_back( xyz2 );
+		}
+	}
 
 	// Get Sscore
 	core::Real Sscore( 0.0 );
 	rmsd = 0.0;
 	core::Size m( loopres.size() );
-	for ( int i_ca = 1; i_ca <= n; ++i_ca ) {
-		if ( !loopres.contains( i_ca ) ) continue;
-		if ( !pose1.residue( i_ca ).has( "CA" ) ) continue;
-
+	for ( core::Size i_ca = 1; i_ca <= crd1.size(); ++i_ca ) {
 		core::Real d2( 0.0 );
-		core::Vector const xyz1 = pose1.residue( i_ca ).xyz("CA");
-		core::Vector const xyz2 = pose2.residue( i_ca ).xyz("CA");
-		for ( int j = 1; j <= 3; ++j ) {
-			//core::Real const xyz1 = crd1(j,i_ca);
-			//core::Real const xyz2 = crd2(j,i_ca);
-			//d2 += ( xyz1 - xyz2 ) * ( xyz1 - xyz2 );
+		core::Vector const &xyz1 = crd1[i_ca];
+		core::Vector const &xyz2 = crd2[i_ca];
+		for ( core::Size j = 1; j <= 3; ++j ) {
 			d2 += ( xyz1[j] - xyz2[j] ) * ( xyz1[j] - xyz2[j] );
 		}
 
-		//std::cout << i_ca << " " << std::sqrt(d2) << std::endl;
 		rmsd += d2;
 		Sscore += 1.0/(1.0 + d2/dbase2);
 	}
@@ -720,15 +725,13 @@ core::Real CA_Sscore( core::io::silent::SilentStructOP ss1,
 	rmsd /= (core::Real)(m);
 	Sscore /= (core::Real)(m);
 	rmsd = std::sqrt( rmsd );
-
-	//std::cout << "rmsd,sscore: " << rmsd << " " << Sscore << std::endl;
-
 	return (Sscore);
 }
 
 core::Real CA_Sscore( core::io::silent::SilentStructOP ss1,
 	core::io::silent::SilentStructOP ss2,
 	core::Real &rmsd,
+	bool const superimpose,
 	core::Real const dbase
 )
 {
@@ -737,70 +740,147 @@ core::Real CA_Sscore( core::io::silent::SilentStructOP ss1,
 	utility::vector1< core::Size > loopres;
 	for ( core::Size ires = 1; ires <= n; ++ires ) loopres.push_back( ires );
 
-	return CA_Sscore( ss1, ss2, rmsd, loopres, dbase );
+	return CA_Sscore( ss1, ss2, rmsd, loopres, superimpose, dbase );
 }
 
-/*
-inline
-void filter_similar( protocols::wum::SilentStructStore &structs,
-std::string const measure,
-core::Real const criteria,
-std::string const score_for_priority
+core::Real
+distance( core::io::silent::SilentStructOP ss1,
+	core::io::silent::SilentStructOP ss2,
+	std::string const similarity_measure,
+	bool const superimpose )
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	std::string ssname = ss2->decoy_tag();
+	core::Real dist( 0.0 ), dumm;
+
+	if ( ssname.compare( ss1->decoy_tag() ) == 0 ) {
+		dist = 0.0;
+	} else {
+		if ( similarity_measure.compare( "Sscore" ) == 0 ) {
+			dist = CA_Sscore( ss1, ss2, dumm, superimpose, 2.0 );
+
+		} else if ( similarity_measure.compare( "rmsd" ) == 0 ) {
+			dumm = CA_Sscore( ss1, ss2, dist, superimpose, 2.0 );
+
+		} else if ( similarity_measure.compare( "looprmsd" ) == 0 ) {
+			std::string loopstr = option[ lh::loop_string ]();
+			utility::vector1< core::Size > loopres = loopstring_to_loopvector( loopstr );
+			dumm = CA_Sscore( ss1, ss2, dist, loopres, superimpose, 2.0 );
+		} else { }
+	}
+	return dist;
+}
+
+
+void
+add_init_dev_penalty( core::io::silent::SilentStructOP ss,
+	ObjexxFCL::FArray2D< core::Real > const init_xyz,
+	std::string const mode,
+	core::Real const iha_cut,
+	core::Real const iha_penalty_slope
+)
+
+{
+	core::Real igdttm, igdtha;
+
+	// in case init_pose undefined
+	core::Real const score( ss->get_energy("score") );
+	core::Real penalty( 0.0 );
+
+	// use crd (instead of pose) to reduce enumeration time
+	ObjexxFCL::FArray2D< core::Real > xyz_tmp = ss->get_CA_xyz();
+
+	// in case when nres do not match
+	if ( xyz_tmp.size() != init_xyz.size() ) {
+		igdtha = 10.0; // assign very small number
+
+	} else {
+		core::scoring::xyz_gdttm( init_xyz, xyz_tmp, igdttm, igdtha );
+
+		if ( igdtha < iha_cut ) {
+			core::Real dha(iha_cut-igdtha);
+			if ( mode.compare( "absolute" ) == 0 ) {
+				penalty = std::min(1.0, iha_penalty_slope*dha*dha );
+			} else if ( mode.compare( "relative" ) == 0 ) {
+				core::Real f = (dha/iha_cut - 0.03);
+				if ( f < 0.0 ) {
+					penalty = 0.0;
+				} else {
+					penalty = std::min(1.0, iha_penalty_slope*f*f );
+				}
+			}
+		}
+	}
+
+	ss->add_energy( "penaltysum", score*(1.0-penalty) );
+	ss->add_energy( "igdtha", igdtha );
+}
+
+// support for pose0 instead of FArray2D
+void
+add_init_dev_penalty( core::io::silent::SilentStructOP ss,
+	core::pose::Pose pose0,
+	std::string const mode,
+	core::Real const iha_cut,
+	core::Real const iha_penalty_slope
 )
 {
+	core::Size nres( 0 );
+	for ( core::Size ires = 1; ires <= pose0.total_residue(); ++ires ) {
+		if ( !pose0.residue(ires).is_virtual_residue() ) nres++;
+	}
+	ObjexxFCL::FArray2D< core::Real > init_xyz( 3, nres );
 
-using namespace core::io::silent;
+	for ( core::Size ires = 1; ires <= pose0.total_residue(); ++ires ) {
+		if ( pose0.residue(ires).is_virtual_residue() ) continue;
+		core::Vector const &xyz = pose0.residue(ires).xyz("CA");
+		for ( core::Size k = 1; k <= 3; ++k ) init_xyz(k,ires) = xyz[k-1];
+	}
 
-core::Size const nstruct( structs.size() );
-utility::vector0< bool > filtered( nstruct, false );
-<
-for( core::Size i = 0; i < nstruct; ++i ){
-SilentStructOP ss1 = structs.get_struct( i );
-core::Real score1 = ss1->get_energy( score_for_priority );
-
-for( core::Size j = 1; j < i; ++j ){
-SilentStructOP ss2 = structs.get_struct( j );
-core::Real score2 = ss2->get_energy( score_for_priority );
-if( filtered[j] ) continue;
-
-// only Sscore for now
-bool is_similar( false );
-core::Real dist( 0.0 );
-if( measure.compare( "Sscore" ) == 0 ){
-core::Real dist = CA_Sscore( ss1, ss2 );
-if( dist < criteria ) is_similar = true;
+	add_init_dev_penalty( ss, init_xyz, mode, iha_cut, iha_penalty_slope );
 }
 
-std::cout << "i/j/dist/dE/sim" << i << " " << j << " " << dist;
-std::cout << " " << score2 - score1;
-std::cout << " " << is_similar << std::endl;
+// support for multiple poses
+void
+add_init_dev_penalty( protocols::wum::SilentStructStore &structs,
+	core::pose::Pose const pose0,
+	std::string const mode,
+	core::Real const iha_cut,
+	core::Real const iha_penalty_slope
+)
+{
+	using namespace ObjexxFCL::format;
 
-if( !is_similar ) continue;
+	// fill FArray2D init_xyz
+	core::Size nres( pose0.total_residue() );
 
-if( score1 < score2 ){
-filtered[j] = true;
-std::cout << "remove " << j << std::endl;
-break;
-} else {
-filtered[i] = true;
+	ObjexxFCL::FArray2D< core::Real > init_xyz( 3, nres );
+	core::Vector xyz( 0.0 );
+	for ( core::Size ires = 1; ires <= pose0.total_residue(); ++ires ) {
+		// I know this is dangerous; hack way to match nres to ss->get_CA_xyz()
+		// as it adds virtual residue "CA" (don't know what it is...)
+		if ( pose0.residue(ires).is_virtual_residue() ) {
+			for ( core::Size k = 1; k <= 3; ++k ) init_xyz(k,ires) = xyz[k-1];
+		} else {
+			xyz = pose0.residue(ires).xyz("CA");
+			for ( core::Size k = 1; k <= 3; ++k ) init_xyz(k,ires) = xyz[k-1];
+		}
+	}
+
+	//
+	for ( core::Size iss = 0; iss < structs.size(); ++iss ) {
+		core::io::silent::SilentStructOP ss = structs.get_struct( iss );
+
+		add_init_dev_penalty( ss, init_xyz, mode, iha_cut, iha_penalty_slope );
+
+		core::Real fpenalty = 1.0 - (ss->get_energy("penaltysum"))/(ss->get_energy("score"));
+		TR << "Penalty for " << A(30,ss->decoy_tag()) << ": "
+			<< F(6,2,ss->get_energy("igdtha")) << " "
+			<< F(8,3,fpenalty) << std::endl;
+	}
 }
-
-} // j
-} // i
-
-core::Size i( 0 );
-for( protocols::wum::SilentStructStore::iterator it = structs.begin();
-it != structs.end(); ++it, ++i ){
-if( filtered[i] ) structs.erase( it );
-}
-
-// Debug
-for( core::Size i = 0; i < structs.size(); ++i ){
-SilentStructOP ss1 = structs.get_struct( i );
-}
-
-}
-*/
 
 // ss2 format parser
 std::map< core::Size, utility::vector1< core::Real > >

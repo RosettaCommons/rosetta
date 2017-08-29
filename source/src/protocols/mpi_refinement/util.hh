@@ -151,18 +151,63 @@ void mean_and_stdev( utility::vector1< core::Real > values,
 	core::Real &mean,
 	core::Real &stdev );
 
+void
+superimpose_all( core::io::silent::SilentStructCOP ss_ref,
+	protocols::wum::SilentStructStore &structs,
+	utility::vector1< std::string > const columns_copy = utility::vector1< std::string >( 0 )
+);
+
+core::Real
+distance( core::io::silent::SilentStructOP ss1,
+	core::io::silent::SilentStructOP ss2,
+	std::string const similarity_measure,
+	bool const superimpose );
+
 core::Real CA_Sscore( core::io::silent::SilentStructOP ss1,
 	core::io::silent::SilentStructOP ss2,
 	core::Real &rmsd,
 	utility::vector1< core::Size > const loopres,
+	bool const superimpose = true,
 	core::Real const dbase = 1.0
 );
 
 core::Real CA_Sscore( core::io::silent::SilentStructOP ss1,
 	core::io::silent::SilentStructOP ss2,
 	core::Real &rmsd,
+	bool const superimpose = true,
 	core::Real const dbase = 1.0
 );
+
+core::Real
+distance( core::io::silent::SilentStructOP ss1,
+	core::io::silent::SilentStructOP ss2,
+	std::string const similarity_measure,
+	bool const superimpose );
+
+void
+add_init_dev_penalty( core::io::silent::SilentStructOP ss,
+	ObjexxFCL::FArray2D< core::Real > const init_xyz,
+	std::string const mode = "absolute",
+	core::Real const iha_cut = -1.0,
+	core::Real const iha_penalty_slope = 0.004
+);
+
+void
+add_init_dev_penalty( core::io::silent::SilentStructOP ss,
+	core::pose::Pose const pose0,
+	std::string const mode = "absolute",
+	core::Real const iha_cut = -1.0,
+	core::Real const iha_penalty_slope = 0.004
+);
+
+void
+add_init_dev_penalty( protocols::wum::SilentStructStore &structs,
+	core::pose::Pose const pose0,
+	std::string const mode = "absolute",
+	core::Real const iha_cut = -1.0,
+	core::Real const iha_penalty_slope = 0.004
+);
+
 // ss2 format parser
 std::map< core::Size, utility::vector1< core::Real > >
 read_ss2( std::string ssfile );
