@@ -13,6 +13,7 @@ from __future__ import absolute_import
 import os, sys, platform, os.path, json, random
 
 import pyrosetta.rosetta as rosetta
+import pyrosetta.method_bindings
 
 import logging
 logger = logging.getLogger("rosetta")
@@ -162,7 +163,6 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     # Only set the logging handler if a notebook is detected or if requested
     if (( set_logging_handler is None) and notebook) or set_logging_handler:
         logging_support.set_logging_handler(notebook=notebook)
-                    
 
     args = ['PyRosetta'] + options.split() + extra_options.split()
 
@@ -189,18 +189,6 @@ def version():
            "\n(C) Copyright Rosetta Commons Member Institutions." + \
            "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"
 
-
-###############################################################################
-# Modifications to Rosetta.
-# Add iter property to Pose.
-def _Pose_residue_iterator(obj):
-    def __pose_iter():
-        for i in range(obj.total_residue()):
-            yield obj.residue(i + 1)
-    return __pose_iter()
-
-
-Pose.__iter__ = _Pose_residue_iterator
 
 # if config['core']:
 #     Pose.__iter__ = _Pose_residue_iterator
