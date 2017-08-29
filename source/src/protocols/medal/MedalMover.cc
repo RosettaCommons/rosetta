@@ -54,7 +54,6 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/util/ChainbreakUtil.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
@@ -184,6 +183,9 @@ void MedalMover::apply(core::pose::Pose& pose) {
 	}
 	const unsigned num_residues = pose.size();
 
+	// A ChainbreakUtil object, used below.
+	core::util::ChainbreakUtil chainbreak_util;
+
 	// Load the native structure (if available) to compute trajectory analytics
 	PoseOP native;
 	if ( option[OptionKeys::in::file::native].user() ) {
@@ -240,14 +242,14 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
 	// Loop closure
 	builder.tear_down(&pose);
-	do_loop_closure(&pose);
+	do_loop_closure(&pose, chainbreak_util);
 
 	// Return to centroid representation and rescore
 	core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID_t);
 	score->show(TR, pose);
 }
 
-void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
+void MedalMover::do_loop_closure(core::pose::Pose* pose, core::util::ChainbreakUtil const &chainbreak_util ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using core::kinematics::FoldTree;
@@ -256,7 +258,7 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
 	using protocols::loops::LoopsOP;
 	debug_assert(pose);
 
-	if ( !option[OptionKeys::rigid::close_loops]() || !ChainbreakUtil::has_chainbreak(*pose) ) {
+	if ( !option[OptionKeys::rigid::close_loops]() || !chainbreak_util.has_chainbreak(*pose) ) {
 		return;
 	}
 

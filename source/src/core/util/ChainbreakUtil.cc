@@ -17,6 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/util.hh>
+#include <core/scoring/Energies.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -24,10 +25,7 @@
 namespace core {
 namespace util {
 
-// Static member initialization
-core::scoring::ScoreFunctionOP ChainbreakUtil::score_ = nullptr;
-
-bool ChainbreakUtil::has_chainbreak(const core::pose::Pose& pose) {
+bool ChainbreakUtil::has_chainbreak(const core::pose::Pose& pose) const {
 	using core::pose::Pose;
 
 	if ( !score_ ) {
@@ -39,7 +37,7 @@ bool ChainbreakUtil::has_chainbreak(const core::pose::Pose& pose) {
 	core::pose::correctly_add_cutpoint_variants(copy);
 
 	score_->score(copy);
-	return (*score_)[core::scoring::linear_chainbreak] > 0;
+	return copy.energies().total_energy() > 1.0e-10;
 }
 
 }  // namesapce util

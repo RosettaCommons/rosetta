@@ -28,6 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
+#include <core/util/ChainbreakUtil.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -52,7 +53,7 @@ public:
 
 protected:
 	/// @brief Closes chainbreaks in <pose>
-	void do_loop_closure(core::pose::Pose* pose) const;
+	void do_loop_closure(core::pose::Pose* pose, core::util::ChainbreakUtil const &chainbreak_util ) const;
 
 	/// @brief Computes per-residue sampling probabilities
 	void compute_per_residue_probabilities(
