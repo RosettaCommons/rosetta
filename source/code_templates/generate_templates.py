@@ -14,6 +14,7 @@
 
 from __future__ import print_function
 
+from __future__ import absolute_import
 import os
 work_dir = os.getcwd()
 
@@ -109,7 +110,7 @@ class GenerateRosettaTemplates(object):
         if not os.path.exists(outdir):
             os.makedirs(outdir)
 
-        matches = self.replacement.keys()
+        matches = list(self.replacement.keys())
 
         for template in sorted(files):
             extension = "."+".".join(os.path.basename(template).split(".")[1:])
@@ -131,7 +132,8 @@ class GenerateRosettaTemplates(object):
                 newline = line
                 for key in matches:
                     if re.search(key, line):
-                        newline = newline.replace(key, self.replacement[key]())
+
+                        newline = newline.replace(key, str(self.replacement[key]()))
 
                 out_lines.append(newline)
 
@@ -210,11 +212,11 @@ class GenerateRosettaTemplates(object):
     ######## Replacement Functions#############
     def get_option(self, option_name, fail_on_none = True):
         opts = vars(self.options)
-        if not opts.has_key(option_name) and fail_on_none:
+        if option_name not in opts and fail_on_none:
             sys.exit(option_name+" is necessary.  Pass it as an argument.")
         elif not opts[option_name] and fail_on_none:
             sys.exit(option_name+" is necessary.  Pass it as an argument.")
-        elif opts.has_key(option_name):
+        elif option_name in opts:
             return opts[option_name]
         else:
             return None

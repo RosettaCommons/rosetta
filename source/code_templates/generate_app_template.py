@@ -13,6 +13,7 @@
 #See Readme for use.
 from __future__ import print_function
 
+from __future__ import absolute_import
 import os
 work_dir = os.getcwd()
 if os.path.dirname(__file__): os.chdir(os.path.dirname(__file__))
@@ -171,7 +172,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
         all_opts = vars(self.options)
         for opt_type in self.option_type_names:
             opt_name = self.option_type_names[opt_type]
-            if all_opts.has_key(opt_name) and all_opts[opt_name]:
+            if opt_name in all_opts and all_opts[opt_name]:
                 for opt in all_opts[opt_name]:
                     optSP = opt.split("::")
                     if len(optSP) == 1:
@@ -197,7 +198,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
         all_opts = vars(self.options)
         for opt_type in self.option_type_names:
             opt_name = self.option_type_names[opt_type]
-            if all_opts.has_key(opt_name) and all_opts[opt_name]:
+            if opt_name in all_opts and all_opts[opt_name]:
                 for opt in all_opts[opt_name]:
                     line = line_fmt.format(opt_name=opt)
                     opt_lines.append(line)

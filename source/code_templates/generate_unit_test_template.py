@@ -13,6 +13,7 @@
 #See Readme for use.
 from __future__ import print_function
 
+from __future__ import absolute_import
 import os
 work_dir = os.getcwd()
 if os.path.dirname(__file__): os.chdir(os.path.dirname(__file__))
