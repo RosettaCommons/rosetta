@@ -1,7 +1,7 @@
 ## Actylated Peptoid N Terminus Patch by Doug Renfrew (renfrew@nyu.edu)
 
 NAME AcetylatedPeptoidNterm
-TYPES LOWER_TERMINUS_VARIANT ACETYLATED_NTERMINUS_VARIANT
+TYPES ACETYLATED_NTERMINUS_VARIANT
 
 #############################################################################################
 ## general requirements

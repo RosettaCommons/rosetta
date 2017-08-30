@@ -103,12 +103,8 @@ private:
 	void
 	determine_residue_branching_info(
 		Size seqpos,
-		std::string const & name3,
-		bool & same_chain_prev,
-		bool & same_chain_next,
-		utility::vector1< std::string > & branch_points_on_this_residue,
-		bool & is_branch_point,
-		bool & is_branch_lower_terminus );
+		utility::vector1< std::string > & known_connect_atoms_on_this_residue,
+		std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & explicit_link_mapping );
 
 	bool
 	is_residue_type_recognized(
@@ -127,12 +123,10 @@ private:
 	get_rsd_type(
 		std::string const & name3,
 		Size seqpos,
-		utility::vector1< std::string > const &  branch_points_on_this_residue,
+		utility::vector1< std::string > const & known_connect_atoms_on_this_residue,
 		std::string const & resid,
 		bool const is_lower_terminus,
 		bool const is_upper_terminus,
-		bool const is_branch_point,
-		bool const is_branch_lower_terminus,
 		bool const is_d_aa,
 		bool const is_l_aa
 	);
@@ -165,6 +159,8 @@ private:
 	id::AtomID_Mask missing_;
 
 	utility::vector1< core::io::ResidueInformation > rinfos_;
+	std::map< std::string, core::Size > resid_to_index_;
+
 	id::NamedAtomID_Mask coordinates_assigned_;
 	utility::vector1< Size > pose_to_rinfo_;
 	utility::vector1< StructFileRep::ResidueTemps> pose_temps_;
@@ -175,15 +171,16 @@ private:
 	utility::vector1< chemical::merge_residue_behavior > merge_behaviors_;
 	utility::vector1< std::map< std::string, std::string > > merge_atom_maps_;
 
-	utility::vector1< std::string > rosetta_residue_name3s_;
 	utility::vector1< core::Size > glycan_positions_;
 	utility::vector1< std::string > glycan_tree_roots_;
 	utility::vector1< chemical::ResidueTypeCOP > residue_types_;
 	utility::vector1< NameBimap > remapped_atom_names_;
 	utility::vector1< bool > is_lower_terminus_;
-	utility::vector1< bool > is_branch_lower_terminus_;
 	utility::vector1< bool > same_chain_prev_;
 	utility::vector1< bool > residue_was_recognized_;
+
+	// What links have been explicitly called? Entry for each direction, by resid and atom name on residue
+	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > known_links_;
 
 	bool outputted_ignored_water_warning_;
 };

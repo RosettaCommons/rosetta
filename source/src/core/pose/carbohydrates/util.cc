@@ -157,8 +157,8 @@ create_glycan_movemap_from_residue_selector(
 					movemap->set_branches( parent_res, true);
 				}
 			} else {
-				//Branch Linkage
-				if ( parent_res != 0 && pose.residue(i).is_branch_lower_terminus() ) {
+				// Branch Linkage
+				if ( parent_res != 0 && pose.residue(parent_res).connected_residue_at_upper() != i ) {
 					core::Size total_connections = pose.residue( parent_res ).n_possible_residue_connections();
 					core::Size mainchain_connections = pose.residue( parent_res).n_polymeric_residue_connections();
 					for ( core::Size connection_id = 1; connection_id <= total_connections; ++connection_id ) {
@@ -291,9 +291,6 @@ glycosylate_pose(
 		TR.Warning << "No saccharide residues in sequence to append to pose!" << endl;
 		return;
 	}
-
-	// We need to reorder the ResidueTypes, such that each chain is complete before a new branch is added.
-	reorder_saccharide_residue_types( residue_types );
 
 	// Prepare the glycosylation site for branching.
 	// TODO: Add code to attach to lipids.

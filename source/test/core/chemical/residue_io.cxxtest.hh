@@ -171,7 +171,6 @@ public:
 		TS_ASSERT(! LG1_RTOP->is_lower_terminus());
 		TS_ASSERT(! LG1_RTOP->is_upper_terminus());
 		TS_ASSERT(! LG1_RTOP->is_branch_point());
-		TS_ASSERT(! LG1_RTOP->is_branch_lower_terminus());
 		TS_ASSERT(! LG1_RTOP->is_acetylated_nterminus());
 		TS_ASSERT(! LG1_RTOP->is_methylated_cterminus());
 		TS_ASSERT(! LG1_RTOP->is_virtual_residue());

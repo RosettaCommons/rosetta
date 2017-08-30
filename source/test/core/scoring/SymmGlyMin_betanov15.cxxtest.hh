@@ -96,7 +96,7 @@ public:
 	/// @brief Construct repeat sequences with poly-glycine, and confirm that mirror-image conformations
 	/// minimize identically with a given scorefunction.
 	void repeat_structure_test( core::scoring::ScoreFunctionOP sfxn, bool const cartesian ) {
-		int count = 0; //DELETE ME
+		//int count = 0; //DELETE ME
 
 		core::pose::PoseOP pose( new core::pose::Pose() );
 		core::pose::make_pose_from_sequence(*pose, "GGGGGGGG", "fa_standard", cartesian);
@@ -104,13 +104,14 @@ public:
 		for ( int iphi=-180; iphi<180; iphi+=60 ) {
 			for ( int ipsi=-180; ipsi<=180; ipsi+=60 ) {
 				//The following lines may be deleted:
-				++count;
+				/*++count;
 				char fname1[256];
 				char fname2[256];
 				char fname3[256];
 				sprintf(fname1, "vsymmglytest_pose1_%04i.pdb", count);
 				sprintf(fname2, "vsymmglytest_pose2_%04i.pdb", count);
 				sprintf(fname3, "vsymmglytest_pose3_%04i.pdb", count);
+				*/
 
 				for ( core::Size ir=1; ir<=8; ++ir ) {
 					pose->set_omega(ir, 180.0);
@@ -153,9 +154,9 @@ public:
 				do_minimization(*pose3, sfxn, cartesian);
 
 				//Delete the following:
-				pose->dump_pdb(std::string(fname1));
+				/*pose->dump_pdb(std::string(fname1));
 				pose2->dump_pdb(std::string(fname2));
-				pose3->dump_pdb(std::string(fname3));
+				pose3->dump_pdb(std::string(fname3));*/
 
 				bool const skip_pose3_tests( sfxn->get_weight( core::scoring::rama ) && ( iphi == 0 || ipsi == 0 ) ); //The phi=0 || psi=0 lines have a known Rama discontinuity.  Blargh.
 

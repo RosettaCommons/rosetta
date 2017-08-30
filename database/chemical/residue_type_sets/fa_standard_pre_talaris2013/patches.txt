@@ -18,9 +18,6 @@ patches/RepulsiveOnly_fa.txt
 patches/VirtualProteinResidue.txt
 patches/disulfide.txt
 
-## uncomment this Brian
-patches/CtermConnect.txt
-
 ##fpd
 #patches/CtermTruncation.txt
 #patches/NtermTruncation.txt
@@ -73,7 +70,6 @@ patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
 ## glycosylation/branching
 patches/carbohydrates/N-linked_glycosylation.txt
-patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
 patches/carbohydrates/6-branch.txt
 ## modifications

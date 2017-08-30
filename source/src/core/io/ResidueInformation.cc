@@ -15,6 +15,7 @@
 // Unit headers
 #include <core/io/ResidueInformation.hh>
 #include <core/io/AtomInformation.hh>
+#include <core/io/NomenclatureManager.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -32,11 +33,11 @@ ResidueInformation::ResidueInformation() :
 	atoms_(),
 	xyz_(),
 	temps_(),
-	segmentID_( "    " )
+	segmentID_( "    " ),
+	rosetta_resName_( "" )
 {}
 
 ResidueInformation::ResidueInformation( AtomInformation const & ai ) :
-	resName_( ai.resName ),
 	chainID_( ai.chainID ),
 	resSeq_( ai.resSeq ),
 	iCode_( ai.iCode ),
@@ -45,7 +46,9 @@ ResidueInformation::ResidueInformation( AtomInformation const & ai ) :
 	xyz_(),
 	temps_(),
 	segmentID_( ai.segmentID )
-{}
+{
+	resName( ai.resName ); // Needed to properly set name-dependent variables
+}
 
 bool
 ResidueInformation::operator==( ResidueInformation const & that) const
@@ -71,9 +74,13 @@ char ResidueInformation::iCode()    const { return iCode_; }
 int  ResidueInformation::terCount() const { return terCount_; }
 std::string const & ResidueInformation::segmentID() const { return segmentID_; }
 
+std::string const & ResidueInformation::rosetta_resName() const { return rosetta_resName_; }
+
 void ResidueInformation::resName(  std::string const & setting )
 {
 	resName_ = setting;
+	rosetta_resName_ = core::io::NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( setting ).first;
+
 	for ( Size ii = 1 ; ii <= atoms_.size(); ++ii ) atoms_[ ii ].resName = setting;
 }
 void ResidueInformation::chainID(  char setting ) { chainID_ = setting; }

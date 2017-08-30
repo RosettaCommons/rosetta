@@ -12,8 +12,6 @@ patches/C_methylamidated.txt
 patches/RepulsiveOnly_centroid.txt
 patches/ser_phosphorylated.txt
 patches/thr_phosphorylated.txt
-patches/CtermConnect.txt
-patches/NtermConnect.txt
 
 # Command-line selected.
 patches/ShoveBB.txt
@@ -50,7 +48,6 @@ patches/carbohydrates/cutpoint_upper.txt
 ### branching
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/C-linked_glycosylation.txt
-patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
 patches/carbohydrates/3-branch.txt
 patches/carbohydrates/4-branch.txt

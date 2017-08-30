@@ -26,11 +26,12 @@
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
+#include <core/id/TorsionID.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSetObserver.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
-
+#include <core/pose/util.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/UTracer.hh>
@@ -355,5 +356,72 @@ public:
 		TS_ASSERT( clone_conf.residue_type_set_for_conf( FULL_ATOM_t )->has_name("U31") );
 
 	}
+
+	/// @brief Check that the horrible Conformation::backbone_torsion_angle_atoms() function returns the correct
+	/// atoms for a cutpoint variant.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_Conformation_backbone_torsion_angle_atoms_cutpoint() {
+		pose::Pose pose( create_test_in_pdb_pose() );
+		core::Size const nres(pose.total_residue());
+		core::pose::correctly_add_cutpoint_variants( pose, nres, false, 1 );
+		pose.conformation().declare_chemical_bond( 1, "N", nres, "C" );
+
+		core::id::TorsionID phi_upper( 1, core::id::BB, 1 );
+		core::id::TorsionID psi_upper( 1, core::id::BB, 2 );
+		core::id::TorsionID omega_upper( 1, core::id::BB, 3 );
+		core::id::TorsionID phi_lower( nres, core::id::BB, 1 );
+		core::id::TorsionID psi_lower( nres, core::id::BB, 2 );
+		core::id::TorsionID omega_lower( nres, core::id::BB, 3 );
+
+		utility::vector1< core::id::AtomID > lower_phi_atoms(4);
+		utility::vector1< core::id::AtomID > lower_psi_atoms(4);
+		utility::vector1< core::id::AtomID > lower_omega_atoms(4);
+		utility::vector1< core::id::AtomID > upper_phi_atoms(4);
+		utility::vector1< core::id::AtomID > upper_psi_atoms(4);
+		utility::vector1< core::id::AtomID > upper_omega_atoms(4);
+
+		TS_ASSERT( ! pose.conformation().backbone_torsion_angle_atoms( phi_upper, upper_phi_atoms[1], upper_phi_atoms[2], upper_phi_atoms[3], upper_phi_atoms[4] ) );
+		TS_ASSERT( ! pose.conformation().backbone_torsion_angle_atoms( psi_upper, upper_psi_atoms[1], upper_psi_atoms[2], upper_psi_atoms[3], upper_psi_atoms[4] ) );
+		TS_ASSERT( ! pose.conformation().backbone_torsion_angle_atoms( omega_upper, upper_omega_atoms[1], upper_omega_atoms[2], upper_omega_atoms[3], upper_omega_atoms[4] ) );
+		TS_ASSERT( ! pose.conformation().backbone_torsion_angle_atoms( phi_lower, lower_phi_atoms[1], lower_phi_atoms[2], lower_phi_atoms[3], lower_phi_atoms[4] ) );
+		TS_ASSERT( ! pose.conformation().backbone_torsion_angle_atoms( psi_lower, lower_psi_atoms[1], lower_psi_atoms[2], lower_psi_atoms[3], lower_psi_atoms[4] ) );
+		TS_ASSERT( ! pose.conformation().backbone_torsion_angle_atoms( omega_lower, lower_omega_atoms[1], lower_omega_atoms[2], lower_omega_atoms[3], lower_omega_atoms[4] ) );
+
+		core::conformation::Residue const &res1(pose.residue(1));
+		core::conformation::Residue const &res2(pose.residue(2));
+		core::conformation::Residue const &resn_minus_1(pose.residue(nres-1));
+		core::conformation::Residue const &resn(pose.residue(nres));
+
+		TS_ASSERT_EQUALS( upper_phi_atoms[1], core::id::AtomID(res1.atom_index("OVU1"), 1) );
+		TS_ASSERT_EQUALS( upper_phi_atoms[2], core::id::AtomID(res1.atom_index("N"), 1) );
+		TS_ASSERT_EQUALS( upper_phi_atoms[3], core::id::AtomID(res1.atom_index("CA"), 1) );
+		TS_ASSERT_EQUALS( upper_phi_atoms[4], core::id::AtomID(res1.atom_index("C"), 1) );
+
+		TS_ASSERT_EQUALS( upper_psi_atoms[1], core::id::AtomID(res1.atom_index("N"), 1) );
+		TS_ASSERT_EQUALS( upper_psi_atoms[2], core::id::AtomID(res1.atom_index("CA"), 1) );
+		TS_ASSERT_EQUALS( upper_psi_atoms[3], core::id::AtomID(res1.atom_index("C"), 1) );
+		TS_ASSERT_EQUALS( upper_psi_atoms[4], core::id::AtomID(res2.atom_index("N"), 2) );
+
+		TS_ASSERT_EQUALS( upper_omega_atoms[1], core::id::AtomID(res1.atom_index("CA"), 1) );
+		TS_ASSERT_EQUALS( upper_omega_atoms[2], core::id::AtomID(res1.atom_index("C"), 1) );
+		TS_ASSERT_EQUALS( upper_omega_atoms[3], core::id::AtomID(res2.atom_index("N"), 2) );
+		TS_ASSERT_EQUALS( upper_omega_atoms[4], core::id::AtomID(res2.atom_index("CA"), 2) );
+
+		TS_ASSERT_EQUALS( lower_phi_atoms[1], core::id::AtomID(resn_minus_1.atom_index("C"), nres - 1) );
+		TS_ASSERT_EQUALS( lower_phi_atoms[2], core::id::AtomID(resn.atom_index("N"), nres) );
+		TS_ASSERT_EQUALS( lower_phi_atoms[3], core::id::AtomID(resn.atom_index("CA"), nres) );
+		TS_ASSERT_EQUALS( lower_phi_atoms[4], core::id::AtomID(resn.atom_index("C"), nres) );
+
+		TS_ASSERT_EQUALS( lower_psi_atoms[1], core::id::AtomID(resn.atom_index("N"), nres) );
+		TS_ASSERT_EQUALS( lower_psi_atoms[2], core::id::AtomID(resn.atom_index("CA"), nres) );
+		TS_ASSERT_EQUALS( lower_psi_atoms[3], core::id::AtomID(resn.atom_index("C"), nres) );
+		TS_ASSERT_EQUALS( lower_psi_atoms[4], core::id::AtomID(resn.atom_index("OVL1"), nres) );
+
+		TS_ASSERT_EQUALS( lower_omega_atoms[1], core::id::AtomID(resn.atom_index("CA"), nres) );
+		TS_ASSERT_EQUALS( lower_omega_atoms[2], core::id::AtomID(resn.atom_index("C"), nres) );
+		TS_ASSERT_EQUALS( lower_omega_atoms[3], core::id::AtomID(resn.atom_index("OVL1"), nres) );
+		TS_ASSERT_EQUALS( lower_omega_atoms[4], core::id::AtomID(resn.atom_index("OVL2"), nres) );
+
+	} //test_Conformation_backbone_torsion_angle_atoms_cutpoint
 
 };

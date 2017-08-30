@@ -54,7 +54,7 @@ CHI 1  N    CA   CB   CG
 CHI 2  CA   CB   CG   CD 
 CHI 3  CB   CG   CD   CE 
 CHI 4  CG   CD   CE   NZ 
-PROPERTIES PROTEIN POLAR CHARGED L_AA
+PROPERTIES PROTEIN ALPHA_AA POLAR CHARGED L_AA
 NBR_ATOM CB
 # APL CB to side chain heavyatom distance --  max observed in residue 74 of ubiquitin
 NBR_RADIUS 5.0084

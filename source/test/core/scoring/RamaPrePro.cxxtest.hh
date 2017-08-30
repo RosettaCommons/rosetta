@@ -39,6 +39,7 @@
 
 // Basic Headers
 #include <basic/Tracer.hh>
+#include <sstream>
 
 static THREAD_LOCAL basic::Tracer TR("RamaPreProTests");
 
@@ -49,7 +50,7 @@ class RamaPreProTests : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init();
+		core_init_with_additional_options("-output_virtual true -write_all_connect_info true");
 	}
 
 	void tearDown(){
@@ -157,6 +158,8 @@ public:
 		core::scoring::RamaPrePro const &rama( score_man.get_RamaPrePro() );
 		utility::vector1< core::Real > gradient; //Unused, but needed below.
 
+		core::Real old_score2(0), old_score3(0);
+
 		for ( core::Size ir=2, irmax=pose.total_residue(); ir<irmax; ++ir ) {
 			core::Real direct_calc(0.0), direct_calc_2(0.0);
 
@@ -174,7 +177,32 @@ public:
 			// Note that there is a subtlety, here: because the rama_prepro energy is a two-body energy computed between residue i and i+1, the score is the sum of the rama_prepro score for
 			// residue i and residue i-1.
 			TS_ASSERT_DELTA( pose.energies().residue_total_energies(ir)[ core::scoring::rama_prepro ], (direct_calc+direct_calc_2) / 2.0, 0.0001 );
+
+			//Store scores for residue 2 and 3
+			if ( ir==2 ) {
+				old_score2 = pose.energies().residue_total_energies(ir)[core::scoring::rama_prepro];
+			} else if ( ir==3 ) {
+				old_score3 = pose.energies().residue_total_energies(ir)[core::scoring::rama_prepro];
+			}
 		}
+
+		//Now check that residues 2 and 3 still have the same score if we add a cutpoint variant.
+		//pose.dump_scored_pdb( "rama_pdb_before.pdb", sfxn ); //DELETE ME
+		core::Real const old_psi2(pose.psi(2)), old_omega2(pose.omega(2)), old_phi3(pose.phi(3));
+		core::pose::correctly_add_cutpoint_variants(pose, 2, false, 3);
+		core::kinematics::FoldTree new_foldtree;
+		std::istringstream foldtree_setup;
+		foldtree_setup.clear();
+		foldtree_setup.str("FOLD_TREE EDGE 2 1 -1 EDGE 2 3 1 EDGE 3 9 -1");
+		foldtree_setup >> new_foldtree;
+		pose.conformation().fold_tree(new_foldtree);
+		pose.set_psi(2, old_psi2);
+		pose.set_omega(2, old_omega2);
+		pose.set_phi(3, old_phi3);
+		(sfxn)(pose);
+		TS_ASSERT_DELTA( old_score2, pose.energies().residue_total_energies(2)[ core::scoring::rama_prepro ], 0.001);
+		TS_ASSERT_DELTA( old_score3, pose.energies().residue_total_energies(3)[ core::scoring::rama_prepro ], 0.001);
+		//pose.dump_scored_pdb( "rama_pdb_after.pdb", sfxn ); //DELETE ME
 	}
 
 

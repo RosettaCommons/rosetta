@@ -9,8 +9,6 @@
 # and ResidueTypes, simply add a string to this list and run
 # update_ResidueType_enum_files.py.
 
-# This is Part 2 of a major refactor of the properties system.
-
 # Comments added inline with a variant type will be converted to C++ comments,
 # so please feel free to add clarifications/definitions here.
 
@@ -18,76 +16,148 @@
 
 ##############################################################################
 
+# A variant is a particular way of modifying a ResidueType
+# This differs from a property, in that variants describe the modification as a whole
+# whereas properties describe particular characteristics of a ResidueType (modified or not)
 
-# POLYMERIC VARIANTS (VariantTypes having to do with polymers)
-## Termini
-UPPER_TERMINUS_VARIANT  # C-terminus cap
-LOWER_TERMINUS_VARIANT  # N-terminus cap
-UPPERTERM_TRUNC_VARIANT  # C-terminus truncation
-LOWERTERM_TRUNC_VARIANT  # N-terminus truncation
-NTERM_CONNECT  # for cyclic peptides
-CTERM_CONNECT  # for cyclic peptides
+# The current set of variants fall under three general categories
+#
+# * Modification of connectivity
+# * Modification of chemistry
+# * Alteration of representation 
+#
+# This isn't a strictly exclusive enumeration, though, as many variants 
+# will descibe modification of connectivity by addition of additional chemistry
+#
+# One thing to keep in mind when adding new variant types is that variants
+# should be somewhat context independant -- that is, the variant should describe
+# the modification to the ResidueType as it is, rather than describing where it's going to be used.
+# (Or in other words, variants describe how the ResidueType is modified,
+# not in which contexts the modifications are intended to be used.)
+# Some of the names don't live up to that standard, but are kept around for historical reasons
 
-BRANCH_LOWER_TERMINUS_VARIANT  # used for branched polymers and glycosylations
+# NOTE: The variants here are organized based on their underlying meaning, rather than current implementation. 
+# Some variants are actually only implemented for protein/RNA/etc, though theoretically could be broader.
+
+##############################################################################
+
+
+# POLYMERIC VARIANTS (VariantTypes which modify UPPER/LOWER connectivity)
+## Chain ends
+UPPER_TERMINUS_VARIANT  # Remove the UPPER connect, replacing it with "standard" monomer chemistry
+LOWER_TERMINUS_VARIANT  # Remove the LOWER connect, replacing it with "standard" monomer chemistry
+UPPERTERM_TRUNC_VARIANT  # Remove the UPPER connect, with no addition/deletion of atoms
+LOWERTERM_TRUNC_VARIANT  # Remove the LOWER connect, with no addition/deletion of atoms
+
+PHOSPHONATE_UPPER_VARIANT  # Remove the UPPER connect for phosphonate residues, replacing it with "standard" monomer chemistry
+## TODO: Can't we just re-use the UPPER_TERMINUS_VARIANT type?
 
 ## Cutpoints
-CUTPOINT_LOWER  # for use during loop modeling, at positions before a cutpoint
-CUTPOINT_UPPER  # for use during loop modeling, at positions after a cutpoint
+CUTPOINT_LOWER  # Annotate the *UPPER* connect (lower side of a cutpoint) with additional info helpful for closing chainbreak
+CUTPOINT_UPPER  # Annotate the *LOWER* connect (upper side of a cutpoint) with additional info helpful for closing chainbreak 
+
+## Cyclic peptide variants
+NTERM_CONNECT  # for cyclic peptides -- REMOVE ME
+CTERM_CONNECT  # for cyclic peptides -- REMOVE ME
+
+# NON-POLYMERIC CONNECTION VARIANTS (Variant types which modify non-UPPER/LOWER connects)
+
+DISULFIDE # Add a connection for (sidechain) disulfides
 
 ## Branch Points
 SC_BRANCH_POINT  # for branched polymers and glycosylations from amino acid side chains
-C1_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C2_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C3_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C4_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C5_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C6_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C7_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C8_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
-C9_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
+C1_BRANCH_POINT  # Add a connection with standard chemistry at position 1 of saccharide residues
+C2_BRANCH_POINT  # Add a connection with standard chemistry at position 2 of saccharide residues
+C3_BRANCH_POINT  # Add a connection with standard chemistry at position 3 of saccharide residues
+C4_BRANCH_POINT  # Add a connection with standard chemistry at position 4 of saccharide residues
+C5_BRANCH_POINT  # Add a connection with standard chemistry at position 5 of saccharide residues
+C6_BRANCH_POINT  # Add a connection with standard chemistry at position 6 of saccharide residues
+C7_BRANCH_POINT  # Add a connection with standard chemistry at position 7 of saccharide residues
+C8_BRANCH_POINT  # Add a connection with standard chemistry at position 8 of saccharide residues
+C9_BRANCH_POINT  # Add a connection with standard chemistry at position 9 of saccharide residues
 
 SIDECHAIN_CONJUGATION  # for chemically conjugatable residues and side-chain conjugation (like ubiquitination)
+## TODO: What's the difference between SC_BRANCH_POINT and SIDECHAIN_CONJUGATION?
 
+## METAL-BINDING VARIANTS
+SG_CONNECT   # Add a connection to the SG sidechain atom
+NE2_CONNECT  # Adds a connection to the NE2 sidechain atom
+ZN_CONNECT   # Adds a connect to the ZN atom
+## TODO: Can we convert these purpose-driven connects to more general forms
 
-# PROTONATION STATES
-PROTONATED
-DEPROTONATED
-ALTERNATIVE_PROTONATION
+# JOINT CHEMICAL/CONNECTIVITY CHANGES
 
+## POLYMERIC
 
-# METAL-BINDING VARIANTS
-SG_CONNECT
-NE2_CONNECT
-ZN_CONNECT
+METHYLATED_NTERM_VARIANT  # Replace the LOWER connect with an attached methyl group
+ACETYLATED_NTERMINUS_VARIANT  # Replace the LOWER connect with an attached acetyl group
 
+METHYLATED_CTERMINUS_VARIANT  # Replace the UPPER connect with an attached methyl group
+
+## NON UPPER/LOWER
+
+### Non-canonical backbones
+OOP_PRE   # oligooxopiperazines (OOPs), first residue connection & chemistry
+OOP_POST  # oligooxopiperazines (OOPs), second residue connection & chemistry
+HBS_PRE   # hydrogen bond surrogates, first residue (will also be a terminus)
+HBS_POST  # hydrogen bond surrogates, second residue
+A3B_HBS_PRE   # a3b hydrogen bond surrogates, first residue (will also be a terminus)
+A3B_HBS_POST  # a3b hydrogen bond surrogates, second residue
+
+# CHEMICAL CHANGES
+
+## PROTONATION STATES (pH)
+PROTONATED    # Convert a residue to its normal (pH-dependent) protonated form
+DEPROTONATED  # Convert a residue to its normal (pH-dependent) deprotonated form
+ALTERNATIVE_PROTONATION # A non-standard (but still pH-dependent) protonated form
 
 # POST-TRANSLATIONAL MODIFICATIONS
-METHYLATION
+METHYLATION    # Add a single methyl group to the "standard" (sidechain) location
+DIMETHYLATION  # Add two methyl groups to the "standard" (sidechain) location
+TRIMETHYLATION # Add three methyl groups to the "standard" (sidechain) location
+ACETYLATION    # Add an acetyl group to the "standard" (sidechain) location
+PHOSPHORYLATION  # Add a phosphate group to the "standard" (sidechain) location
+SULFATION      # Add a sulfate group to the "standard" (sidechain) location
+HYDROXYLATION  # Add a hydroxyl group to the "standard" (sidechain) location
+HYDROXYLATION1 # Add a hydroxyl group to the "primary" (sidechain) location for residues with multiple hydroxylations (e.g. Pro)
+HYDROXYLATION2 # Add a hydroxyl group to the "primary" (sidechain) location for residues with multiple hydroxylations (e.g. Pro)
+CARBOXYLATION  # Add a carboxy (COO-) group the "standard" (sidechain) location
+DIIODINATION   # Add two iodines to the "standard" (sidechain) locations
 
-METHYLATED_NTERM_VARIANT  # N-terminal methylation
-PHOSPHORYLATION  # used for PTM patches
-ACETYLATION  # used for PTM patches
-SULFATION  # used for PTM patches
-CARBOXYLATION  # used for PTM patches
-HYDROXYLATION  # used for PTM patches
-DIMETHYLATION  # used for PTM patches
-TRIMETHYLATION  # used for PTM patches
-DIIODINATION  # used for PTM patches
+N_METHYLATION  # Add a methyl group to an A.A. backbone nitrogen *without* altering the LOWER connect
 
-N_METHYLATION # Methylation on the peptide bond nitrogen
+# REPRESENTATIONAL VARIANTS
 
-ACETYLATED_NTERMINUS_VARIANT  # for creating amino acid dipeptides for NCAA rotamer libraries
-METHYLATED_CTERMINUS_VARIANT  # for creating amino acid dipeptides for NCAA rotamer libraries
-PHOSPHONATE_UPPER_VARIANT  # for terminal amino phosphonic acids
+## VIRTUALIZATION 
 
+VIRTUAL_BB              # Turn backbone atoms virtual
+VIRTUAL_SIDE_CHAIN      # Turn sidechain atoms virtual
+VIRTUAL_RESIDUE_VARIANT # Turn all atoms in the residue virtual 
+
+### PROTEIN
+
+VIRTUAL_NTERM # Take a residue which is already LOWER_TERMINUS_VARIANT, and makes the Nterm (including hydrogens) virtual
+
+### NUCLEIC ACID
+
+VIRTUAL_PHOSPHATE # Virtualize a nucleic acid phosphate -- in wide use for RNA -- 'default' 5' ending for fragment assembly & stepwise
+VIRTUAL_DNA_PHOSPHATE # Vitualize DNA phosphate
+# TODO: Can VIRTUAL_DNA_PHOSPHATE be removed in favor of VIRTUAL_PHOPHATE?
+
+## REPULSIVE
+
+# Only repulsive energy will be considered for the residues
+
+REPLS_BB  # Turn all backbbone atoms into repulsive-only
+REPLONLY  # Turn all the atoms in the residue into repulsive-only 
+
+
+##############################################################################
 
 # NUCLEIC-ACID-SPECIFIC VARIANTS
-VIRTUAL_DNA_PHOSPHATE
-VIRTUAL_PHOSPHATE # in wide use for RNA -- 'default' 5' ending for fragment assembly & stepwise
 REPL_PHOSPHATE # in wide use for RNA to represent steric but 'unstructured' atoms
 VIRTUAL_RIBOSE    # in use for RNA during stepwise assembly
 
-VIRTUAL_BB               # useful for docking nucleobases
 VIRTUAL_BACKBONE_EXCEPT_C1PRIME   # not in use, may deprecated along with turner_rules_test
 VIRTUAL_BASE             # not in wide use, may deprecated in future
 VIRTUAL_BASE_HEAVY_ATOM  # not in use, may deprecated along with old swa_rna_main in 2015
@@ -96,7 +166,6 @@ VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE  # not in use, may deprecated along with o
 BULGE   # not in use, may deprecated along with old swa_rna_main in 2015
 
 VIRTUAL_O2PRIME_HYDROGEN # important for stepwise RNA code
-VIRTUAL_SIDE_CHAIN       # important for stepwise protein code.
 THREE_PRIME_END_OH         # alternative terminal variant in real RNAs, keep this.
 THREE_PRIME_PHOSPHATE      # alternative terminal variant in real RNAs, keep this.
 FIVE_PRIME_END_OH          # alternative terminal variant in real RNAs, keep this.
@@ -213,17 +282,10 @@ METHYL_GLYCOSIDE  # for methylated saccharide lower termini
 
 
 # PEPTIDOMIMETICS VARIANTS
-OOP_PRE  # used for oligooxopiperazines (OOPs)
-OOP_POST  # used for oligooxopiperazines (OOPs)
-HBS_PRE  # used for hydrogen bond surrogates
-HBS_POST  # used for hydrogen bond surrogates
-A3B_HBS_PRE  # used for a3b hydrogen bond surrogates
-A3B_HBS_POST  # used for a3b hydrogen bond surrogates
 TRIAZOLAMERN
 TRIAZOLAMERC
 
 # MISCELLANEOUS VARIANTS
-DISULFIDE
 
 ADDUCT_VARIANT
 
@@ -231,14 +293,7 @@ CENTROID_WITH_HA # used in NOE apps.
 
 SPECIAL_ROT  # generic VariantType that allows for differential scoring of a set of residues/rotamers
 
-HYDROXYLATION1  # used specifically for hydroxylated Pro
-HYDROXYLATION2  # used specifically for hydroxylated Pro
-
-REPLONLY  # Only the repulsive energy will be considered during structure calculations on this residue.
-REPLS_BB
 
 SC_FRAGMENT  # used by PlaceProbeMover.cc and hotspot hashing
 SHOVE_BB  # used by MapHotSpot.cc, HotspotStubSet.cc, ShoveResidueMover.cc, and TryRotamers.cc
 
-VIRTUAL_RESIDUE_VARIANT
-VIRTUAL_NTERM

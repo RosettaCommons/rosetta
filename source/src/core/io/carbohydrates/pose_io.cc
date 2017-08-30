@@ -147,9 +147,11 @@ residue_gws_string( core::pose::Pose const & pose, core::uint const seqpos )
 			gws_string << '?';
 		} else /* parent is cabohydrate */ {
 			CarbohydrateInfoCOP parent_info( parent.carbohydrate_info() );
-			if ( ! res.is_branch_lower_terminus() ) {
+			if ( parent.connected_residue_at_upper() == seqpos ) {
+				// Mainchain connectivity
 				gws_string << parent_info->mainchain_glycosidic_bond_acceptor();
-			} else /* residue is branch lower terminus */ {
+			} else {
+				// Branch connectivity
 				Size const n_branches( parent_info->n_branches() );
 				Size const n_non_branch_residue_connections( parent.n_possible_residue_connections() - n_branches );
 				for ( core::uint i( 1 ); i <= n_branches; ++i ) {

@@ -149,6 +149,13 @@ SetPolymerConnectAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
+bool
+SetPolymerConnectAtom::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const
+{
+	return rsd_type.has( atom ) && rsd_type.has( atom_name_ ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( atom_name_ );
+}
+
+
 /// @brief Return the name of this PatchOperation ("SetPolymerConnectAtom").
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 std::string
@@ -181,6 +188,12 @@ AddConnect::apply( ResidueType & rsd ) const
 	Size const connid( rsd.add_residue_connection( connect_atom_ ) );
 	rsd.set_icoor( "CONN"+ObjexxFCL::string_of( connid ), phi_, theta_, d_, parent_atom_, angle_atom_, torsion_atom_ );
 	return false;
+}
+
+bool
+AddConnect::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const
+{
+	return rsd_type.has( atom ) && rsd_type.has( connect_atom_ ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( connect_atom_ );
 }
 
 /// @brief Return the name of this PatchOperation ("AddConnect").
@@ -1291,9 +1304,9 @@ NCAARotLibNumRotamerBins::name() const {
 /// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
 bool
 ConnectSulfurAndMakeVirtualProton::apply( ResidueType & rsd ) const {
-	std::string disulfide_atom_name = rsd.get_disulfide_atom_name();
-	std::string CB_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_index( disulfide_atom_name ) ) );
-	std::string CA_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_index( CB_equivalent ) ) );
+	std::string const & disulfide_atom_name = rsd.get_disulfide_atom_name();
+	std::string const & CB_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_index( disulfide_atom_name ) ) );
+	std::string const & CA_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_index( CB_equivalent ) ) );
 	AddConnect ad(
 		disulfide_atom_name,
 		180, 68.374, 1.439,
@@ -1311,6 +1324,13 @@ ConnectSulfurAndMakeVirtualProton::apply( ResidueType & rsd ) const {
 	rsd.atom( HG_name ).is_virtual( true );
 
 	return x;
+}
+
+bool
+ConnectSulfurAndMakeVirtualProton::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const
+{
+	std::string const & disulfide_atom_name = rsd_type.get_disulfide_atom_name();
+	return rsd_type.has( atom ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( disulfide_atom_name );
 }
 
 /// @brief Return the name of this PatchOperation ("ConnectSulfurAndMakeVirtualProton").
@@ -2315,6 +2335,12 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+bool
+AddConnectAndTrackingVirt::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const
+{
+	return rsd_type.has( atom ) && rsd_type.has( atom_ ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( atom_ );
+}
+
 /// @brief Return the name of this PatchOperation ("AddConnectAndTrackingVirt").
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 std::string
@@ -2325,8 +2351,15 @@ AddConnectAndTrackingVirt::name() const {
 bool
 AddConnectDeleteChildProton::apply( ResidueType & rsd ) const {
 	if ( !rsd.has( atom_ ) ) return true; // failure!
+	if (  rsd.atom( atom_ ).is_hydrogen() ) return true; // Can't delete child proton from a proton
 	rsd.add_metapatch_connect( atom_ );
 	return false;
+}
+
+bool
+AddConnectDeleteChildProton::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const
+{
+	return rsd_type.has( atom ) && rsd_type.has( atom_ ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( atom_ );
 }
 
 /// @brief Return the name of this PatchOperation ("AddConnectDeleteChildProton").

@@ -533,19 +533,27 @@ AtomTree::torsion_angle_dof_id(
 			TR.Error << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << ", ";
 			TR.Error << atom4_in_id.rsd() << "-" << atom4_in_id.atomno() << "!" << std::endl;
 
-			/*
-			TR.Error << "What condition failed?" << std::endl;
-			TR.Error << "!atom4->is_jump() = " << !atom4->is_jump() << std::endl;
-			TR.Error << "!atom4->keep_dof_fixed( id::PHI ) = " << !atom4->keep_dof_fixed( id::PHI ) << std::endl;
-			TR.Error << "atom4->raw_input_stub_atom1() == ( atom3 = " << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << " ) = " << ( atom4->raw_input_stub_atom1() == atom3 ) << std::endl;
-			TR.Error << "atom4->raw_input_stub_atom2() == ( atom2 = " << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << " ) = " << ( atom4->raw_input_stub_atom2() == atom2 ) << std::endl;
-			TR.Error << " or... " << std::endl;
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "What condition failed?" << std::endl;
+				TR.Debug << "!atom4->is_jump() = " << !atom4->is_jump() << std::endl;
+				TR.Debug << "!atom4->keep_dof_fixed( id::PHI ) = " << !atom4->keep_dof_fixed( id::PHI ) << std::endl;
+				if ( !atom4->is_jump() ) {
+					TR.Debug << "(atom4->raw_input_stub_atom1() ~ " << atom4->raw_input_stub_atom1()->id().rsd() << "-" << atom4->raw_input_stub_atom1()->id().atomno()
+						<< ") == ( atom3 ~ " << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << " ) = " << ( atom4->raw_input_stub_atom1() == atom3 ) << std::endl;
+					TR.Debug << "(atom4->raw_input_stub_atom2() ~ " << atom4->raw_input_stub_atom2()->id().rsd() << "-" << atom4->raw_input_stub_atom2()->id().atomno()
+						<< ") == ( atom2 ~ " << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << " ) = " << ( atom4->raw_input_stub_atom2() == atom2 ) << std::endl;
+				}
+				TR.Debug << " or... " << std::endl;
 
-			TR.Error << "!atom1->is_jump() = " << !atom1->is_jump() << std::endl;
-			TR.Error << "!atom1->keep_dof_fixed( id::PHI ) = " << !atom1->keep_dof_fixed( id::PHI ) << std::endl;
-			TR.Error << "atom1->raw_input_stub_atom1() == ( atom2 = " << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << " ) = " << ( atom1->raw_input_stub_atom1() == atom2 ) << std::endl;
-			TR.Error << "atom1->raw_input_stub_atom2() == ( atom3 = " << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << " ) = " << ( atom1->raw_input_stub_atom2() == atom3 ) << std::endl;
-			*/
+				TR.Debug << "!atom1->is_jump() = " << !atom1->is_jump() << std::endl;
+				TR.Debug << "!atom1->keep_dof_fixed( id::PHI ) = " << !atom1->keep_dof_fixed( id::PHI ) << std::endl;
+				if ( !atom1->is_jump() ) {
+					TR.Debug << "atom1->raw_input_stub_atom1() ~ " << atom1->raw_input_stub_atom1()->id().rsd() << "-" << atom1->raw_input_stub_atom1()->id().atomno()
+						<< ") == ( atom2 ~ " << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << " ) = " << ( atom1->raw_input_stub_atom1() == atom2 ) << std::endl;
+					TR.Debug << "atom1->raw_input_stub_atom2() ~ " << atom1->raw_input_stub_atom2()->id().rsd() << "-" << atom1->raw_input_stub_atom2()->id().atomno()
+						<< ") == ( atom3 ~ " << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << " ) = " << ( atom1->raw_input_stub_atom2() == atom3 ) << std::endl;
+				}
+			}
 		}
 		return id::BOGUS_DOF_ID;
 	}

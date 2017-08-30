@@ -462,7 +462,7 @@ private:  // Private methods
 		//cout << last_cut_point << endl;
 
 		// Check the last chain to see if it is a branch.
-		while ( pose.residue( last_cut_point + 1 ).is_branch_lower_terminus() ) {
+		while ( pose.residue( last_cut_point + 1 ).has_lower_connect() && pose.residue( last_cut_point + 1 ).connected_residue_at_lower() != last_cut_point ) {
 			--chain_num_of_last_cut_point;
 			last_cut_point = chain_endings[ chain_num_of_last_cut_point ];
 			//cout << last_cut_point << endl;

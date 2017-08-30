@@ -107,12 +107,6 @@ SET_ICOOR VNT3  153.400000	57.400000	1.347000	 CT1	 CH3	1HH3
 # Needed to be able to rebuild virts
 SET_ICOOR O       0.000000	50.200000	1.347000     CT1	CH3	CT2 #NT1
 
-# Will cause
-# ERROR: Residue::conect_atom: I'm not bonded to that other residue!!
-# ERROR:: Exit from: src/core/conformation/Residue.cc line: 1116
-# due to branch_connection_torsion_angle_atoms
-#ADD_PROPERTY BRANCH_LOWER_TERMINUS
-
 END_CASE
 
 
@@ -156,11 +150,5 @@ SET_ICOOR UPPER	177.700000	55.900000	1.347000  CT2	CT1	CA
 SET_ICOOR VNT3 153.400000	57.400000	1.347000	CT1	CA  N
 # Needed to be able to rebuild virts
 SET_ICOOR O       0.000000	50.200000	1.347000  CT1	CA	CT2 #NT1
-
-# Will cause
-# ERROR: Residue::conect_atom: I'm not bonded to that other residue!!
-# ERROR:: Exit from: src/core/conformation/Residue.cc line: 1116
-# due to branch_connection_torsion_angle_atoms
-#ADD_PROPERTY BRANCH_LOWER_TERMINUS
 
 END_CASE

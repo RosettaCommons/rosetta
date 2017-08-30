@@ -85,7 +85,7 @@ public:
 
 		ScoreFunction sfxn;
 		sfxn.set_weight( linear_chainbreak, 0.5 );
-		TS_ASSERT_DELTA( sfxn( pose ), 4.564535835919134, 1e-3 );
+		TS_ASSERT_DELTA( sfxn( pose ), 4.5628, 1e-3 );
 
 		//Size old_precision = std::cout.precision();
 		//std::cout.precision( 16 );

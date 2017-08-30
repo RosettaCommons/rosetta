@@ -2,10 +2,11 @@
 patches/D_AA.txt
 patches/CtermProteinFull.txt
 patches/NtermProteinFull.txt
+patches/N_methylation.txt #Methyl group replacing amide proton in residues in the middle of a sequence (NOT N-termini).  Must precede protein_cutpoint_upper, unfortunately.
 patches/protein_cutpoint_upper.txt
+patches/peptoid_cutpoint_upper.txt #Note that there is no peptoid_cutpoint_lower.txt because the protein patch works for peptoids.
 patches/protein_cutpoint_lower.txt
 patches/disulfide.txt
-patches/N_methylation.txt #Methyl group replacing amide proton in residues in the middle of a sequence (NOT N-termini).
 patches/SidechainConjugation.txt    # SIDECHAIN_CONJUGATION
 
 ## DNA standard
@@ -71,11 +72,6 @@ patches/branching/phg_cd2_conjugation.txt
 patches/Cterm_amidation.txt
 patches/VirtualProteinResidue.txt
 patches/VirtualNterm.txt
-
-## terminal connection patches
-patches/CtermConnect.txt
-#patches/CtermConnectBP.txt
-patches/NtermConnect.txt
 
 ##fpd
 ## AMW: these two CANNOT be commented in because otherwise N and C termini
@@ -153,7 +149,6 @@ patches/carbohydrates/cutpoint_upper.txt
 ### branching
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/C-linked_glycosylation.txt
-patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
 patches/carbohydrates/3-branch.txt
 patches/carbohydrates/4-branch.txt

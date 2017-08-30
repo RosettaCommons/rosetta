@@ -27,6 +27,7 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
@@ -97,6 +98,38 @@ public:
 			bool const upperdep( pose.residue(5).atom_depends_on_upper(ia,true) );
 			TR << atomname << "\t" << (lowerdep ? "TRUE" : "FALSE") << "\t" << (upperdep ? "TRUE" : "FALSE") << "\n";
 			if ( atomname == " CN " || atomname == "1HN " || atomname == "2HN " || atomname == "3HN " ) {
+				TS_ASSERT( lowerdep );
+			} else {
+				TS_ASSERT( !lowerdep );
+			}
+			if ( atomname == " O  " ) { TS_ASSERT(upperdep); }
+			else { TS_ASSERT(!upperdep); }
+		}
+		TR << std::endl;
+		TR.flush();
+	}
+
+	void test_recursive_identification_of_connection_dependencies_peptoid() {
+		Pose pose;
+		core::import_pose::pose_from_file(pose, "core/conformation/4gatA.pdb", core::import_pose::PDB_file);
+
+		protocols::simple_moves::MutateResidue mut;
+		mut.set_target(5);
+		mut.set_res_name("601"); //A peptoid.
+		mut.apply(pose);
+
+		TR << "\nATOM\tLOWER_DEP\tUPPER_DEP\n";
+		for ( core::Size ia=1, iamax=pose.residue(5).natoms(); ia<=iamax; ++ia ) {
+			std::string const atomname( pose.residue(5).atom_name(ia) );
+			bool const lowerdep( pose.residue(5).atom_depends_on_lower(ia,true) );
+			//bool const upperdep(false);
+			bool const upperdep( pose.residue(5).atom_depends_on_upper(ia,true) );
+			TR << atomname << "\t" << (lowerdep ? "TRUE" : "FALSE") << "\t" << (upperdep ? "TRUE" : "FALSE") << "\n";
+			if ( atomname == " CA1" || atomname == " CB1" || atomname == " CB2" || atomname == " CG1" || atomname == " CG2" ||
+					atomname == " CD1" || atomname == " CD2" || atomname == " CE " || atomname == "1HA1" ||
+					atomname == "1HB1" || atomname == "2HB1" || atomname == "3HB1" || atomname == "1HG1" ||
+					atomname == "1HG2" || atomname == "1HD1" || atomname == "1HD2" || atomname == "1HE "
+					) {
 				TS_ASSERT( lowerdep );
 			} else {
 				TS_ASSERT( !lowerdep );

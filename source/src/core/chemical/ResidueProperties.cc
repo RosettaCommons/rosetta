@@ -306,6 +306,13 @@ operator<<( std::ostream & output, ResidueProperties const & object_to_output )
 	return output;
 }
 
+std::ostream &
+operator<<( std::ostream & output, ResidueProperty const & object_to_output )
+{
+	output << ResidueProperties::get_string_from_property( object_to_output );
+	return output;
+}
+
 // This allows one to use a for loop with ResidueProperty enum values.
 // This is safe, because the ResidueProperty values are set automatically before compiling.
 ResidueProperty &

@@ -142,6 +142,14 @@ private:
 	/// @brief the maximal allowed value of change in disulfide energy for the generated disulfide bonded peptide
 	core::Real max_dslf_energy_;
 
+	/// @brief A multiplier for the miniumum distance cutoff when detecting whether two positinos could possibly form
+	/// a disulfide.  Default 1.0.
+	core::Real min_dist_multiplier_;
+
+	/// @brief A multiplier for the muximum distance cutoff when detecting whether two positinos could possibly form
+	/// a disulfide.  Default 1.0.
+	core::Real max_dist_multiplier_;
+
 };
 
 }//simple_moves

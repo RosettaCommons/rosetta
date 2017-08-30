@@ -24,9 +24,12 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
+#include <basic/Tracer.hh>
+
 // C++ header
 #include <string>
 
+static THREAD_LOCAL basic::Tracer TR("core.import_pose.3-letter_code_ambiguity_resolution.cxxtest");
 
 class ThreeLetterCodeAmbiguityTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -117,13 +120,14 @@ public: // Tests //////////////////////////////////////////////////////////////
 	// branching variants.
 	void test_resolution_of_linkage_information()
 	{
+		using namespace core;
+		using namespace conformation;
+
 #ifdef MULTI_THREADED
 		try {
 #else
 		{
 #endif
-			using namespace core;
-			using namespace conformation;
 
 			std::string const Lex_Rosetta_format(
 				"HETNAM     Glc A   1  ->4)-beta-D-Glcp, 2-acetylamino-d-deoxy-\n"
@@ -215,28 +219,31 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 			pose::Pose poseA, poseB;
 
+			TR << "Making Rosetta-format pose " << std::endl;
 			import_pose::pose_from_pdbstring( poseA, Lex_Rosetta_format );
 			Residue const & resA1( poseA.residue( 1 ) );
 			Residue const & resA2( poseA.residue( 2 ) );
 			Residue const & resA3( poseA.residue( 3 ) );
+			TR << "Rosetta format: " << resA1.name() << " " << resA2.name() << " " << resA3.name() << std::endl;
 			TS_ASSERT( resA1.is_lower_terminus() );
 			TS_ASSERT( resA1.is_branch_point() );
 			TS_ASSERT( resA2.is_upper_terminus() );
-			TS_ASSERT( resA3.is_branch_lower_terminus() );
 			TS_ASSERT( resA3.is_upper_terminus() );
 
+			TR << "Making PDB-format pose " << std::endl;
 			import_pose::pose_from_pdbstring( poseB, Lex_pdb_format );
 			Residue const & resB1( poseB.residue( 1 ) );
 			Residue const & resB2( poseB.residue( 2 ) );
 			Residue const & resB3( poseB.residue( 3 ) );
+			TR << "PDB format: " << resB1.name() << " " << resB2.name() << " " << resB3.name() << std::endl;
 			TS_ASSERT( resB1.is_lower_terminus() );
 			TS_ASSERT( resB1.is_branch_point() );
 			TS_ASSERT( resB2.is_upper_terminus() );
-			TS_ASSERT( resB3.is_branch_lower_terminus() );
 			TS_ASSERT( resB3.is_upper_terminus() );
 
 			TS_ASSERT_EQUALS( poseA.size(), poseB.size() );
 			TS_ASSERT_EQUALS( poseA.fold_tree().to_string(), poseB.fold_tree().to_string() );
+
 #ifdef MULTI_THREADED
 		} catch(utility::excn::EXCN_Base& excn) {
 			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );

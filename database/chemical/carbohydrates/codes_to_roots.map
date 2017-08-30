@@ -4,7 +4,7 @@
 # * Some saccharides with trivial names include an astrerisk in the third column
 # to indicate that the stereochemistry (L or D) is inherent to this code or N/A.
 
-# Two maps are created from this data in which each key is a 3-letter code.
+# Three maps are created from this data in which each key is a 3-letter code.
 
 # The value for each key of the 1st map is the IUPAC root for that sugar.  For
 # example, the 3-letter code for any glucose residue is Glc, and the corres-
@@ -12,6 +12,8 @@
 # added, as appropriate to the specific ResidueType.
 
 # The 2nd map stores 3-letter codes with their default stereochemistries.
+
+# The third map stores info on the anomeric position (aldose, C2-ketose, C3-ketose, etc.)
 
 # The data in this file serve a dual purpose:
 # 1. The maps are used by internal CarbohydrateInfoManger code for nomenclature
@@ -29,73 +31,73 @@
 
 # ALDOSES
 # Aldotriose
-Gly glycer  D  # TODO: Deal with this special case later.
+Gly glycer  D  1 # TODO: Deal with this special case later.
 
 # Aldotetroses
-Ery erythr  D
-Thr thre  D
+Ery erythr  D  1
+Thr thre  D  1
 
 # Aldopentoses, Linear
-Rib rib  D
-Ara arabin  L
-Xyl xyl  D
-Lyx lyx  D
+Rib rib  D  1
+Ara arabin  L  1
+Xyl xyl  D  1
+Lyx lyx  D  1
 
 # Aldopentoses, Branched-chain
-Api api  *  # trivial name for 3-C-(hydroxymethyl)-D-erythrofuranose
+Api api  *  1  # trivial name for 3-C-(hydroxymethyl)-D-erythrofuranose
 
 # Aldohexoses
-All all  D
-Alt altr  L
-Glc gluc  D
-Man mann  D
-Gul gul  D
-Ido id  L
-Gal galact  D
-Tal tal  D
+All all  D  1
+Alt altr  L  1
+Glc gluc  D  1
+Man mann  D  1
+Gul gul  D  1
+Ido id  L  1
+Gal galact  D  1
+Tal tal  D  1
 
-Fuc fuc  L  # trivial name for 6-deoxygalactose
-Rha rhamn  L  # trivial name for 6-deoxymannose
-Qui quinov  D  # trivial name for 6-deoxyglucose
+Fuc fuc  L  1  # trivial name for 6-deoxygalactose
+Rha rhamn  L  1 # trivial name for 6-deoxymannose
+Qui quinov  D  1  # trivial name for 6-deoxyglucose
 
-Dau daun  D  # trivial name for 2,6-dideoxygalactose/talose; Dau is (I think) my own invention ~Labonte
-Dig digitox  D  # trivial name for 2,6-dideoxyaltrose/allose
-Oli oliv  D  # trivial name for 2,6-dideoxyglucose/mannose
+Dau daun  D  1  # trivial name for 2,6-dideoxygalactose/talose; Dau is (I think) my own invention ~Labonte
+Dig digitox  D  1  # trivial name for 2,6-dideoxyaltrose/allose
+Oli oliv  D  1  # trivial name for 2,6-dideoxyglucose/mannose
 
-Col colit  L  # trivial name for 3,6-dideoxy-L-galactose/gulose; "L-Abe"
-Abe abequ  D  # trivial name for 3,6-dideoxy-D-galactose/gulose; "D-Col"
-Tyv tyvel  *  # trivial name for 3,6-dideoxy-D-mannose/altrose
-Par parat  *  # trivial name for 3,6-dideoxy-D-glucose/allose
+Col colit  L  1  # trivial name for 3,6-dideoxy-L-galactose/gulose; "L-Abe"
+Abe abequ  D  1  # trivial name for 3,6-dideoxy-D-galactose/gulose; "D-Col"
+Tyv tyvel  *  1  # trivial name for 3,6-dideoxy-D-mannose/altrose
+Par parat  *  1  # trivial name for 3,6-dideoxy-D-glucose/allose
 
-Rho rhodin  D  # trivial name for 2,3,6-trideoxyglucose/mannose/altrose/allose; Rho is (I think) my own invention ~Labonte
+Rho rhodin  D  1  # trivial name for 2,3,6-trideoxyglucose/mannose/altrose/allose; Rho is (I think) my own invention ~Labonte
 
-Mur muram  *  # trivial name for a lactic acid derivative of D-glucosamine
-Bac bacill  *  # trivial name for 2,4,6-trideoxy-2,4-diamino-D-glucose
+Mur muram  *  1  # trivial name for a lactic acid derivative of D-glucosamine
+Bac bacill  *  1  # trivial name for 2,4,6-trideoxy-2,4-diamino-D-glucose
 
 
 # KETOSES
 # Ketotriose
-DHA dihydroxyacet  *  # TODO: Deal with this special case later.
+DHA dihydroxyacet  *  2  # TODO: Deal with this special case later.
 
 # Ketotetrose
-Eul erythrul  D  # Eul is (I think) my own invention; compare Rul and Xul. ~ Labonte
+Eul erythrul  D  2  # Eul is (I think) my own invention; compare Rul and Xul. ~ Labonte
 
 # Ketopentoses
-Rul ribul  D
-Xul xylul  D
+Rul ribul  D  2
+Xul xylul  D  2
 
 # Ketohexoses
-Psi psic  D
-Fru fruct  D
-Sor sorb  L
-Tag tagat  D
+Psi psic  D  2
+Fru fruct  D  2
+Sor sorb  L  2
+Tag tagat  D  2
 
 # Ketoheptoses
-Dha 3-deoxy-D-lyxo-hept-2-ulosar  D
+Dha 3-deoxy-D-lyxo-hept-2-ulosar  D  2
 
 # Ketooctose
-Kdo keto-deoxy-octulon  *  # D inherent
+Kdo keto-deoxy-octulon  *  2  # D inherent
 
 # Ketononoses (e.g., Sialic Acids)
-Neu neuramin  *  # D inherent
-Kdn keto-deoxy-nonulon  *  # D inherent
+Neu neuramin  *  2  # D inherent
+Kdn keto-deoxy-nonulon  *  2  # D inherent

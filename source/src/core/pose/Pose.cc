@@ -329,7 +329,7 @@ Pose::conformation_ptr() const
 	return conformation_;
 }
 
-/// @brief Returns the pose Conformation pointer (const access)
+/// @brief Returns the pose Conformation pointer (nonconst access)
 ConformationOP &
 Pose::conformation_ptr()
 {

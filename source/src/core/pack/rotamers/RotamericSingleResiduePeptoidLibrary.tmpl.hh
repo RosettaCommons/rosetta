@@ -984,25 +984,22 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_omg_from_rsd(
 
 	if ( pose.conformation().num_chains() == 2 || rsd.chain() == pose.conformation().num_chains()-1 ) {
 		// chain_end won't be the last residue, because the last residue of a conformation isn't the chain ending for some reason...
-		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.size() ).has_variant_type( chemical::CTERM_CONNECT ) ) {
-			debug_assert( pose.residue( pose.size() ).is_protein() || pose.residue( pose.size() ).is_peptoid() );
-			return pose.residue( pose.size() ).mainchain_torsion( RSD_OMG_INDEX );
-		} else if ( rsd.is_lower_terminus() ) {
+		if ( rsd.is_lower_terminus() ) {
 			return parent::NEUTRAL_OMG;
 		} else {
-			debug_assert( pose.residue( rsd.seqpos() - 1 ).is_protein() || pose.residue( rsd.seqpos() - 1 ).is_peptoid() );
-			return pose.residue( rsd.seqpos() - 1 ).mainchain_torsion( RSD_OMG_INDEX );
+			core::Size const conn_res( rsd.connected_residue_at_lower() ); //Index of the residue connected to this residue at this residue's lower terminus.
+			runtime_assert_string_msg( conn_res != 0, "The residue must be connected to something at its lower terminus." );
+			debug_assert( pose.residue( conn_res ).is_protein() || pose.residue( conn_res ).is_peptoid() );
+			return pose.residue( conn_res ).mainchain_torsion( RSD_OMG_INDEX );
 		}
 	} else {
-		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.conformation().chain_end( rsd.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) ) {
-			debug_assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
-			return pose.residue( pose.conformation().chain_end( rsd.chain() ) ).mainchain_torsion( RSD_OMG_INDEX );
-
-		} else if ( rsd.is_lower_terminus() ) {
+		if ( rsd.is_lower_terminus() ) {
 			return parent::NEUTRAL_OMG;
 		} else {
-			debug_assert( pose.residue( rsd.seqpos() - 1 ).is_protein() || pose.residue( rsd.seqpos() - 1 ).is_peptoid() );
-			return pose.residue( rsd.seqpos() - 1 ).mainchain_torsion( RSD_OMG_INDEX );
+			core::Size const conn_res( rsd.connected_residue_at_lower() ); //Index of the residue connected to this residue at this residue's lower terminus.
+			runtime_assert_string_msg( conn_res != 0, "The residue must be connected to something at its lower terminus." );
+			debug_assert( pose.residue( conn_res ).is_protein() || pose.residue( conn_res ).is_peptoid() );
+			return pose.residue( conn_res ).mainchain_torsion( RSD_OMG_INDEX );
 		}
 	}
 }
@@ -1012,16 +1009,12 @@ template < Size T, Size N >
 Real
 RotamericSingleResiduePeptoidLibrary< T, N >::get_phi_from_rsd(
 	conformation::Residue const & rsd,
-	pose::Pose const & pose
+	pose::Pose const & /*pose*/
 ) const
 {
 	debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
-	if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.conformation().chain_end( rsd.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) ) {
-		debug_assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
-		return rsd.mainchain_torsion( RSD_PHI_INDEX );
-
-	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
+	if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
 		return rsd.mainchain_torsion( RSD_PHI_INDEX );
 
 	} else if ( rsd.is_lower_terminus() ) {
@@ -1038,16 +1031,12 @@ template < Size T, Size N >
 Real
 RotamericSingleResiduePeptoidLibrary< T, N >::get_psi_from_rsd(
 	conformation::Residue const & rsd,
-	pose::Pose const & pose
+	pose::Pose const & /*pose*/
 ) const
 {
 	debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
-	if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) && pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).has_variant_type( chemical::NTERM_CONNECT ) ) {
-		debug_assert( pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_peptoid() );
-		return rsd.mainchain_torsion( RSD_PSI_INDEX );
-
-	} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
+	if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
 		return rsd.mainchain_torsion( RSD_PSI_INDEX );
 
 	} else if ( rsd.is_upper_terminus() ) {

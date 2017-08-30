@@ -61,6 +61,7 @@
 #include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <core/conformation/parametric/Parameters.hh>
 #include <core/conformation/parametric/Parameters.fwd.hh>
+#include <core/conformation/ConformationTests.fwd.hh> //Forward declaration of unit test class needed for friendship
 
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
@@ -79,7 +80,6 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
-
 namespace core {
 namespace conformation {
 
@@ -87,6 +87,8 @@ namespace conformation {
 /// @brief A container of Residues and the kinematics to manage them
 class Conformation : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Conformation >
 {
+	friend class ::ConformationTests; //Needed to allow the ConformationTests to test private member functions of the Conformation class.
+
 public:  // typedefs
 
 	typedef kinematics::Jump Jump;

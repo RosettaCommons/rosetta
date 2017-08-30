@@ -51,16 +51,11 @@ HydroxylTorsionPotential::get_restag( core::chemical::ResidueType const & restyp
 	using namespace core::chemical;
 
 	if ( core::chemical::is_canonical_D_aa(restype.aa()) ) {
-		std::string rsdname = restype.name();
-		if ( rsdname.substr(0, rsdname.find(chemical::PATCH_LINKER)) == "DHIS_D" ) rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
-		else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
-		return rsdname;
+		return core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
 	} else if ( !restype.is_protein() && !restype.is_NA() ) {
 		return restype.name3();
 	} else {
-		std::string rsdname = restype.name();
-		rsdname = rsdname.substr( 0, rsdname.find(chemical::PATCH_LINKER) );
-		return rsdname;
+		return restype.base_name();
 	}
 }
 
@@ -100,11 +95,9 @@ HydroxylTorsionPotential::read_database( std::string filename )
 		}
 		*/
 
-		chemical::ResidueType const &rsd = rsd_set->name_map( restag );
-
 		TorsionParams p; p.atm.resize(4);
-		p.atm[1] = rsd.atom_index( atm1 ); p.atm[2] = rsd.atom_index( atm2 );
-		p.atm[3] = rsd.atom_index( atm3 ); p.atm[4] = rsd.atom_index( atm4 );
+		p.atm[1] = atm1; p.atm[2] = atm2;
+		p.atm[3] = atm3; p.atm[4] = atm4;
 		p.k = k; p.n = n; p.delta = delta;
 		torsion_params_.insert( std::make_pair( restag, p ) );
 		TR.Debug << "added " << restag << ", total " << torsion_params_.size() << std::endl;
@@ -125,8 +118,6 @@ HydroxylTorsionPotential::eval_residue_energy(
 	tors_iterator it = torsion_params_.find( restag );
 	if ( it == torsion_params_.end() ) return 0.0;
 
-	Size const natm( rsd.natoms() );
-
 	for ( it = torsion_params_.begin(); it != torsion_params_.end();
 			it = torsion_params_.equal_range(it->first).second ) {
 
@@ -140,8 +131,8 @@ HydroxylTorsionPotential::eval_residue_energy(
 		for ( it2 = range.first; it2 != range.second; ++it2 ) {
 			TorsionParams const &p = it2->second;
 
-			debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-				(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+			debug_assert( rsd.has(p.atm[1]) && rsd.has(p.atm[2]) &&
+				rsd.has(p.atm[3]) && rsd.has(p.atm[4]) );
 
 			Real tors = numeric::dihedral_radians(
 				rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
@@ -171,8 +162,6 @@ HydroxylTorsionPotential::eval_residue_derivative(
 
 	bool const is_d( rsd.type().is_d_aa() );
 
-	Size const natm( rsd.natoms() );
-
 	tors_iterator it = torsion_params_.find( restag );
 	if ( it == torsion_params_.end() ) return;
 
@@ -188,39 +177,43 @@ HydroxylTorsionPotential::eval_residue_derivative(
 		for ( it2 = range.first; it2 != range.second; ++it2 ) {
 			TorsionParams const &p = it2->second;
 
-			debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-				(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+			debug_assert( rsd.has(p.atm[1]) && rsd.has(p.atm[2]) &&
+				rsd.has(p.atm[3]) && rsd.has(p.atm[4]) );
 
-			Real tors = numeric::dihedral_radians(
-				rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
+			core::Size const at1_index( rsd.atom_index( p.atm[1] ) );
+			core::Size const at2_index( rsd.atom_index( p.atm[2] ) );
+			core::Size const at3_index( rsd.atom_index( p.atm[3] ) );
+			core::Size const at4_index( rsd.atom_index( p.atm[4] ) );
+
+			Vector const &xyz1( rsd.xyz( at1_index ) );
+			Vector const &xyz2( rsd.xyz( at2_index ) );
+			Vector const &xyz3( rsd.xyz( at3_index ) );
+			Vector const &xyz4( rsd.xyz( at4_index ) );
+
+			Real tors = numeric::dihedral_radians( xyz1, xyz2, xyz3, xyz4 );
 			if ( is_d ) tors *= -1.0;
 			Real dE_dtors = -p.k * p.n *( std::sin( p.n*tors - p.delta ) );
 			if ( is_d ) dE_dtors *= -1.0;
 
-			Vector const &xyz1( rsd.xyz( p.atm[1] ) );
-			Vector const &xyz2( rsd.xyz( p.atm[2] ) );
-			Vector const &xyz3( rsd.xyz( p.atm[3] ) );
-			Vector const &xyz4( rsd.xyz( p.atm[4] ) );
-
 			Vector f1( 0.0 ), f2( 0.0 );
 			numeric::deriv::dihedral_p1_cosine_deriv( xyz1, xyz2, xyz3, xyz4, tors, f1, f2 );
-			atom_derivs[ p.atm[1] ].f1() += dE_dtors * f1;
-			atom_derivs[ p.atm[1] ].f2() += dE_dtors * f2;
+			atom_derivs[ at1_index ].f1() += dE_dtors * f1;
+			atom_derivs[ at1_index ].f2() += dE_dtors * f2;
 
 			f1 = f2 = Vector(0.0);
 			numeric::deriv::dihedral_p2_cosine_deriv( xyz1, xyz2, xyz3, xyz4, tors, f1, f2 );
-			atom_derivs[ p.atm[2] ].f1() += dE_dtors * f1;
-			atom_derivs[ p.atm[2] ].f2() += dE_dtors * f2;
+			atom_derivs[ at2_index ].f1() += dE_dtors * f1;
+			atom_derivs[ at2_index ].f2() += dE_dtors * f2;
 
 			f1 = f2 = Vector(0.0);
 			numeric::deriv::dihedral_p2_cosine_deriv( xyz4, xyz3, xyz2, xyz1, tors, f1, f2 );
-			atom_derivs[ p.atm[3] ].f1() += dE_dtors * f1;
-			atom_derivs[ p.atm[3] ].f2() += dE_dtors * f2;
+			atom_derivs[ at3_index ].f1() += dE_dtors * f1;
+			atom_derivs[ at3_index ].f2() += dE_dtors * f2;
 
 			f1 = f2 = Vector(0.0);
 			numeric::deriv::dihedral_p1_cosine_deriv( xyz4, xyz3, xyz2, xyz1, tors, f1, f2 );
-			atom_derivs[ p.atm[4] ].f1() += dE_dtors * f1;
-			atom_derivs[ p.atm[4] ].f2() += dE_dtors * f2;
+			atom_derivs[ at4_index ].f1() += dE_dtors * f1;
+			atom_derivs[ at4_index ].f2() += dE_dtors * f2;
 		}
 	}
 }

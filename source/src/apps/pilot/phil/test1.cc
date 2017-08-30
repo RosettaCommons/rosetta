@@ -2580,7 +2580,9 @@ bk_test2()
 
 
 	core::pose::remove_variant_type_from_pose_residue( pose2, UPPER_TERMINUS_VARIANT, nres2 );
-	core::pose::add_variant_type_to_pose_residue( pose2, CTERM_CONNECT, nres2 );
+	//VKM, 11 June 2017: Taking out CTERM_CONNECT.  Anything that you would have done with that should work now with
+	//conventional termini.
+	//core::pose::add_variant_type_to_pose_residue( pose2, CTERM_CONNECT, nres2 );
 
 
 	// determine the desired connection points

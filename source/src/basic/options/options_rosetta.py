@@ -4821,6 +4821,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'c_cyd_seqpos', 'Integer', desc='The sequential position of the residue in the c-ter of the putative disulfide; 0 signals the peptide c-ter', default='0.0' ),
 		Option( 'max_dslf_pot', 'Real', desc='The maximum allowed match score for disulfide rotation and translation', default='2.0'),
 		Option( 'max_dslf_energy', 'Real', desc='The maximum allowed change in disulfide energy upon peptide disulfide bridge formation', default='1.0'),
+		Option( 'min_dslf_dist_multiplier', 'Real', desc='A multiplier for the minimum allowed distance between residues that might form a disulfide.', default='1.0'),
+		Option( 'max_dslf_dist_multiplier', 'Real', desc='A multiplier for the maximum allowed distance between residues that might form a disulfide.', default='1.0'),
 		Option( 'scorefxn', 'String', desc='The scorefunction to be used in disulfideInsertion'),
 		Option( 'constraint_weight', 'Real', desc='Weight of the constraints on disulfide bonds formed by the DisulfideInsertionMover; EXPERIMENTAL', default='0.0'),
 	), # optionGroup

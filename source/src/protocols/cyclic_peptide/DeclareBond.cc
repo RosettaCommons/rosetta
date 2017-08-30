@@ -88,15 +88,6 @@ void DeclareBond::apply( core::pose::Pose & pose )
 {
 	using namespace core::chemical;
 
-	for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
-		if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
-			core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, ir );
-		}
-		if ( pose.residue(ir).has_variant_type(CUTPOINT_UPPER) ) {
-			core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, ir );
-		}
-	}
-
 	//printf("Stripping termini.\n"); fflush(stdout); //DELETE ME
 	if ( atom1_=="N" && (pose.residue(res1_).type().is_alpha_aa() || pose.residue(res1_).type().is_beta_aa()) && pose.residue(res1_).has_variant_type(LOWER_TERMINUS_VARIANT) ) {
 		core::pose::remove_variant_type_from_pose_residue(pose, LOWER_TERMINUS_VARIANT, res1_);
@@ -170,33 +161,26 @@ void DeclareBond::apply( core::pose::Pose & pose )
 		}
 	}
 
-	//protocols::loops::add_cutpoint_variants( pose );
-	for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
-		if ( pose.residue_type(ir).lower_connect_id() != 0 ) {
-			if ( pose.residue(ir).connected_residue_at_resconn(pose.residue_type(ir).lower_connect_id()) == 0 ) {
-				if ( !pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
-					if ( add_termini_ ) {
-						core::pose::add_variant_type_to_pose_residue(pose, LOWER_TERMINUS_VARIANT, ir);
-					} else {
-						core::pose::add_variant_type_to_pose_residue(pose, CUTPOINT_LOWER, ir);
+	if ( add_termini_ ) {
+		for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
+			if ( pose.residue_type(ir).lower_connect_id() != 0 ) {
+				if ( pose.residue(ir).connected_residue_at_lower() == 0 ) {
+					if ( pose.residue(ir).has_variant_type(CUTPOINT_UPPER) ) {
+						core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, ir );
 					}
+					core::pose::add_variant_type_to_pose_residue(pose, LOWER_TERMINUS_VARIANT, ir);
 				}
 			}
-		}
-		if ( pose.residue_type(ir).upper_connect_id() != 0 ) {
-			if ( pose.residue(ir).connected_residue_at_resconn(pose.residue_type(ir).upper_connect_id()) == 0 ) {
-				if ( !pose.residue(ir).has_variant_type(CUTPOINT_UPPER) ) {
-					if ( add_termini_ ) {
-						core::pose::add_variant_type_to_pose_residue(pose, UPPER_TERMINUS_VARIANT, ir);
-					} else {
-						core::pose::add_variant_type_to_pose_residue(pose, CUTPOINT_UPPER, ir);
+			if ( pose.residue_type(ir).upper_connect_id() != 0 ) {
+				if ( pose.residue(ir).connected_residue_at_upper() == 0 ) {
+					if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
+						core::pose::remove_variant_type_from_pose_residue(pose, CUTPOINT_LOWER, ir);
 					}
+					core::pose::add_variant_type_to_pose_residue(pose, UPPER_TERMINUS_VARIANT, ir);
 				}
 			}
 		}
 	}
-
-	//pose.fold_tree().show(std::cout);
 
 	//Kinematic closure to build the rest of the peptide:
 	if ( run_kic_ ) {

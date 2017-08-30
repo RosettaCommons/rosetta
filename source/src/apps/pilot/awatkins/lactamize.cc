@@ -130,7 +130,7 @@ find_lactams( Pose & pose ) {
 	Size num_NC( 0 );
 	for ( Size ii = 1; ii <= pose.conformation().size(); ++ii ) {
 		if ( pose.residue(ii).type().name3() == "LYS" || pose.residue(ii).type().name3() == "ASP" || pose.residue(ii).type().name3() == "GLU" ) {
-			if ( pose.residue(ii).has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) || pose.residue(ii).has_property( "BRANCH_POINT" ) ) continue;
+			if ( pose.residue(ii).has_property( "BRANCH_POINT" ) ) continue;
 
 			++num_NC;
 			resid_2_NC[ ii ] = num_NC;
@@ -168,7 +168,7 @@ find_lactams( Pose & pose ) {
 	for ( Size ii = 1; ii <= num_NC; ++ii ) {
 		Size const ii_resid = NC_2_resid[ ii ];
 		Residue const & ii_res( pose.residue( ii_resid ) );
-		if ( ii_res.has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) || ii_res.has_property( "BRANCH_POINT" ) ) continue;
+		if ( ii_res.has_property( "BRANCH_POINT" ) ) continue;
 
 		if ( ii_res.type().name().find("N-conjugated")!= std::string::npos ) continue;
 		if ( ii_res.type().name().find("sidechain_carb")!= std::string::npos ) continue;
@@ -196,7 +196,7 @@ find_lactams( Pose & pose ) {
 
 			Residue const & neighb( pose.residue( neighb_resid ) );
 
-			if ( neighb.has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) || neighb.has_property( "BRANCH_POINT" ) ) continue;
+			if ( neighb.has_property( "BRANCH_POINT" ) ) continue;
 			if ( neighb.type().name().find("N-conjugated")!= std::string::npos ) continue;
 			if ( neighb.type().name().find("sidechain_carb")!= std::string::npos ) continue;
 

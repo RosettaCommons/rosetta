@@ -668,5 +668,16 @@ public: // tests
 		}
 	}
 
+	void test_reasonable_foldtree() {
+		// Check that C-term conjugation is handled appropriately.
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence( pose, "AS[SER:O-conjugated]D/ELF[PHE]", "fa_standard" );
+		TS_ASSERT_EQUALS( pose.fold_tree().to_string(), "FOLD_TREE  EDGE 1 3 -1  EDGE 1 4 1  EDGE 4 6 -1 " );
+
+		pose.conformation().declare_chemical_bond(2, "OG", 6, "C" ); // Connect chain 2 to sidechain via C-term
+		core::pose::set_reasonable_fold_tree( pose );
+		TS_ASSERT_EQUALS( pose.fold_tree().to_string(), "FOLD_TREE  EDGE 1 3 -1  EDGE 2 6 -2  OG   C    EDGE 6 4 -1 " );
+	}
+
 }; // class PoseUtilTests
 

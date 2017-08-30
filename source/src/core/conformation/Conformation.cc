@@ -1656,7 +1656,7 @@ Conformation::sever_chemical_bond(
 	residue_( seqpos2 ).mark_connect_incomplete( res2_resconn_index );
 }
 
-// Declare that a chemical bond exists between two residues
+/// @brief Declare that a chemical bond exists between two residues.
 void
 Conformation::declare_chemical_bond(
 	Size const seqpos1,
@@ -1692,6 +1692,10 @@ Conformation::declare_chemical_bond(
 	//A new chemical bond might result in new torsion angles that need to be updated.  Update now:
 	residue_torsions_need_updating_ = true;
 	update_residue_torsions();
+
+	//If this is a cutpoint, then the position of cutpoint virtual atoms may need to be updated.
+	update_cutpoint_virtual_atoms_if_connected( *this, seqpos1, false );
+	update_cutpoint_virtual_atoms_if_connected( *this, seqpos2, false );
 }
 
 /// @brief Rebuilds the atoms that are depenent on polymer bonds for the specified residue only.
@@ -2689,6 +2693,19 @@ Conformation::torsion_angle(
 	AtomID const & atom4
 ) const
 {
+	DOF_ID const dof_id( atom_tree_->torsion_angle_dof_id( atom1, atom2, atom3, atom4, /*quiet* =*/ true ) );
+	if ( dof_id == core::id::BOGUS_DOF_ID ) {
+		// Not in the AtomTree, but we can possibly calculate it.
+		if ( !atoms_are_bonded( atom2, atom3 ) ) {
+			// Only require that the center two atoms are bonded.
+			// We can have improper torsions where the end atoms aren't bonded directly to their torsion neighbor
+			TR.Warning << "Asked for torsion with non-bonded center atoms " << atom2 << " and " << atom3 << " - returning 0" << std::endl;
+			return 0;
+		}
+		TR.Debug << "Calculating torsion for non-AtomTree torsion." << std::endl;
+		update_residue_coordinates(); // Make sure coordinates are updated.
+		return numeric::dihedral_radians(xyz(atom1), xyz(atom2), xyz(atom3), xyz(atom4));
+	}
 	return atom_tree_->torsion_angle( atom1, atom2, atom3, atom4 );
 }
 
@@ -3401,15 +3418,20 @@ Conformation::rebuild_polymer_bond_dependent_atoms( Size const seqpos, int const
 	update_residue_coordinates();
 	Residue const & rsd( residue_(seqpos) );
 
-	for ( Size i=1, ie=rsd.natoms(); i<= ie; ++i ) {
-		// OP1 and OP2 could in principle be figured out to 'depend on polymer lower'; they
-		// currently depend on atoms which themselves can depend on LOWER. Following has hacks
-		// until a general fix is tested and checked in. --rhiju.
-		if ( ( upper_lower == -1 && rsd.atom_depends_on_lower(i, rsd.type().has_polymer_dependent_groups()) && rsd.connected_residue_at_lower() != 0 ) ||
-				( upper_lower == -1 && rsd.atom_name( i ) == " OP1" ) || // hack1
-				( upper_lower == -1 && rsd.atom_name( i ) == " OP2" ) || // hack2
-				( upper_lower ==  1 && rsd.atom_depends_on_upper(i, rsd.type().has_polymer_dependent_groups()) && rsd.connected_residue_at_upper() != 0 ) ) {
-			set_xyz( AtomID(i,seqpos), rsd.icoor(i).build( rsd, *this ) );
+	for ( core::Size j=1; j<=2; ++j ) {
+		//VKM 13 June 2017: This is very silly, but you sometimes have to do this twice for patched cases in
+		//which backbone heavyatoms (e.g. cutpoint virtuals) depend on positions of higher-numbered atoms
+		//like the amide proton.
+		for ( Size i=1, ie=rsd.natoms(); i<= ie; ++i ) {
+			// OP1 and OP2 could in principle be figured out to 'depend on polymer lower'; they
+			// currently depend on atoms which themselves can depend on LOWER. Following has hacks
+			// until a general fix is tested and checked in. --rhiju.
+			if ( ( upper_lower == -1 && rsd.atom_depends_on_lower(i, rsd.type().has_polymer_dependent_groups()) && rsd.connected_residue_at_lower() != 0 ) ||
+					( upper_lower == -1 && rsd.atom_name( i ) == " OP1" ) || // hack1
+					( upper_lower == -1 && rsd.atom_name( i ) == " OP2" ) || // hack2
+					( upper_lower ==  1 && rsd.atom_depends_on_upper(i, rsd.type().has_polymer_dependent_groups()) && rsd.connected_residue_at_upper() != 0 ) ) {
+				set_xyz( AtomID(i,seqpos), rsd.icoor(i).build( rsd, *this ) );
+			}
 		}
 	}
 }
@@ -3823,41 +3845,41 @@ Conformation::setup_atom_tree()
 }
 
 
-// messy... could perhaps keep this cached if speed is an issue
-// but then have to keep sync'ed with changes in the residues
-//
-// I don't think this is going to be performance critical
-//
-// consider that in current rosetta we routinely re-evaluate all the
-// backbone and sidechain torsion angles from the xyz coordinates...
-//
-// This was hacky to begin with, but I feel that I have made it more hacky now.
-// I am currently working on a more elegent method to handle residue types that
-// have a a non-standard number of backbone torsions (ie. beta-peptides, beta-peptoids,
-// and the dipeptides ACE-X-NME I use for making rotamers) --Doug
-//
-// Dear 2010 Doug,
-// Sorry, I have completely forgoton what we were talking about in your comment. Very Fermat
-// of you. I have a few vauge ideas about what this miraculous solution could possibly be
-// but we probably had more brain cells then so who knows. Basically defining the atoms
-// that comprise the backbone torsions in the params files themselves and storing that in
-// the ResidueType, like is currently done for the chi angles. I guess it is just the cacheing
-// idea in the comments before mine. That way, patches could modify which atoms make up backbone
-// torsions and we would not need special if checks to look at varient types if we want to
-// have 4 backbone torsions. Until then however I am just going to make this function more
-// hacky, sorry.
-// Love, 2012 Doug
-//
-// Dear all Dougs,
-// I am making this somewhat more elegant, maybe, at least for the ACE-X-NME case,
-// because unless torsion is 1, ntorsions, or ntorsions-1 all the atoms are part of the mainchain
-// Best, Andy
-//
-// Dear Dougs & Andy,
-// Thank you for a most enjoyable dialog.
-// Sincerely,
-// Labonte
-//
+/// @details messy... could perhaps keep this cached if speed is an issue
+/// but then have to keep sync'ed with changes in the residues
+///
+/// I don't think this is going to be performance critical
+///
+/// consider that in current rosetta we routinely re-evaluate all the
+/// backbone and sidechain torsion angles from the xyz coordinates...
+///
+/// This was hacky to begin with, but I feel that I have made it more hacky now.
+/// I am currently working on a more elegent method to handle residue types that
+/// have a a non-standard number of backbone torsions (ie. beta-peptides, beta-peptoids,
+/// and the dipeptides ACE-X-NME I use for making rotamers) --Doug
+///
+/// Dear 2010 Doug,
+/// Sorry, I have completely forgoton what we were talking about in your comment. Very Fermat
+/// of you. I have a few vauge ideas about what this miraculous solution could possibly be
+/// but we probably had more brain cells then so who knows. Basically defining the atoms
+/// that comprise the backbone torsions in the params files themselves and storing that in
+/// the ResidueType, like is currently done for the chi angles. I guess it is just the cacheing
+/// idea in the comments before mine. That way, patches could modify which atoms make up backbone
+/// torsions and we would not need special if checks to look at varient types if we want to
+/// have 4 backbone torsions. Until then however I am just going to make this function more
+/// hacky, sorry.
+/// Love, 2012 Doug
+///
+/// Dear all Dougs,
+/// I am making this somewhat more elegant, maybe, at least for the ACE-X-NME case,
+/// because unless torsion is 1, ntorsions, or ntorsions-1 all the atoms are part of the mainchain
+/// Best, Andy
+///
+/// Dear Dougs & Andy,
+/// Thank you for a most enjoyable dialog.
+/// Sincerely,
+/// Labonte
+///
 /// @note returns TRUE for FAILURE
 bool
 Conformation::backbone_torsion_angle_atoms(
@@ -3985,17 +4007,9 @@ Conformation::backbone_torsion_angle_atoms(
 			id1.rsd() = seqpos;
 			id1.atomno() = mainchain[ torsion -1 ];
 		} else {
-			Residue const & cterm_res =  *residues_[ chain_end( rsd.chain() ) ];
-			if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) &&
-					cterm_res.has_variant_type( chemical::CTERM_CONNECT ) ) {
-				// Assume that they are connected as a cyclic polymer.
-				// phi is defined even though it is first residue, only used for torsion 1.
-				// TR << "HI MOM, NTERM_CONN 1" << std::endl;
-				AtomIndices const & cyclic_partner_mainchain( cterm_res.mainchain_atoms() );
-				id1.rsd() = cterm_res.seqpos(); // last residue in chain
-				id1.atomno() = cyclic_partner_mainchain[
-					cyclic_partner_mainchain.size() ]; // last mainchain atom in last residue in chain
-			} else if ( fold_tree_->is_cutpoint( seqpos - 1 ) && // seems like this should be a bug if seqpos==1
+			if ( fold_tree_->is_cutpoint( seqpos - 1 ) && // seems like this should be a bug if seqpos==1.
+					// VKM, 11 June 2017: The above works because is_cutpoint( 0 ) always returns true.  Gah.
+
 					// These extra conditions cause issues in rna_denovo
 					// Added the hack rsd.is_RNA() for now to solve this
 					// Eventually the thing to do would be to have terminal RNA variants
@@ -4064,26 +4078,7 @@ Conformation::backbone_torsion_angle_atoms(
 			id3.rsd() = seqpos; id3.atomno() = mainchain[ torsion+1 ];
 			id4.rsd() = seqpos; id4.atomno() = mainchain[ torsion+2 ];
 		} else {
-			if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) &&
-					residues_[ chain_begin( rsd.chain() ) ]->has_variant_type( chemical::NTERM_CONNECT ) ) {
-				// Assume that they are connected as a cyclic polymer.
-				// psi and omega are defined even though it is the last residue.
-				AtomIndices const & cyclic_partner_mainchain(
-					const_residue_( chain_begin( rsd.chain() ) ).mainchain_atoms() );
-				if ( torsion == 2 ) {
-					//TR << "HI MOM, CTERM, 2" << std::endl;
-					id3.rsd() = seqpos; id3.atomno() = mainchain[ 3 ];
-					id4.rsd() = chain_begin( rsd.chain() ); id4.atomno() = cyclic_partner_mainchain[ 1 ];
-				} else if ( torsion == 3 ) {
-					//TR << "HI MOM, CTERM, 3" << std::endl;
-					id3.rsd() = chain_begin( rsd.chain() ); id3.atomno() = cyclic_partner_mainchain[ 1 ];
-					id4.rsd() = chain_begin( rsd.chain() ); id4.atomno() = cyclic_partner_mainchain[ 2 ];
-				} // Shouldn't there be an else here for if torsion is not 2 or 3? ~Labonte
-
-				// As far as I can tell, this next else if statement covers a whole bunch of very special cases.
-				// It's exceptionally ugly, and I'm trying to isolate it as much as possible to keep it from being invoked
-				// accidentally (as it seems to be).
-			} else if (  fold_tree_->is_cutpoint( seqpos ) &&
+			if (  fold_tree_->is_cutpoint( seqpos ) &&
 					// These extra conditions cause issues in rna_denovo
 					// Added the hack rsd.is_RNA() for now to solve this
 					// Eventually the thing to do would be to have terminal RNA variants
@@ -4440,34 +4435,7 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 	for ( Size j=1, j_end = rsd.mainchain_torsions().size(); j<= j_end; ++j ) {
 		// these hacks are for cyclization
 		// phi of first residue in cycle
-		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && residues_[ chain_end( rsd.chain() ) ]->has_variant_type( chemical::CTERM_CONNECT ) && j == 1 ) {
-			// calc torsion from xyz since those DOFs are not in atom tree
-			// not sure how well this will work since the xyz might not be up to date
-
-			TorsionID tid(seqpos,BB,j);
-			AtomID id1, id2, id3, id4;
-			get_torsion_angle_atom_ids( tid, id1, id2, id3, id4 );
-
-			rsd.mainchain_torsions()[ j ] = numeric::dihedral_degrees(
-				residues_[ id1.rsd() ]->xyz( id1.atomno() ),
-				residues_[ id2.rsd() ]->xyz( id2.atomno() ),
-				residues_[ id3.rsd() ]->xyz( id3.atomno() ),
-				residues_[ id4.rsd() ]->xyz( id4.atomno() ) );
-		} else if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) && residues_[ chain_begin( rsd.chain() ) ]->has_variant_type( chemical::NTERM_CONNECT ) && ( j == 2 || j == 3 ) ) {
-			// psi and omg of last residue in cycle
-			// calc torsion from xyz since those DOFs are not in atom tree
-			// not sure how well this will work since the xyz might not be up to date
-			TorsionID tid(seqpos,BB,j);
-			AtomID id1, id2, id3, id4;
-			get_torsion_angle_atom_ids( tid, id1, id2, id3, id4 );
-			//TR << "amw torsion " << j << " has atoms " << id1.atomno() << "-" << id2.atomno() << "-" << id3.atomno() << "-" << id4.atomno() << "." << std::endl;
-
-			rsd.mainchain_torsions()[ j ] = numeric::dihedral_degrees(
-				residues_[ id1.rsd() ]->xyz( id1.atomno() ),
-				residues_[ id2.rsd() ]->xyz( id2.atomno() ),
-				residues_[ id3.rsd() ]->xyz( id3.atomno() ),
-				residues_[ id4.rsd() ]->xyz( id4.atomno() ) );
-		} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) && rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
+		if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) && rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
 			// make rot lib case
 			if ( j < rsd.mainchain_torsions().size() ) {
 				//TR << "amw in update_residue_torsions, considering running get_torsion_angle_atom_ids on torsion " << j << std::endl;

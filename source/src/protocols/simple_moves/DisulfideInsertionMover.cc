@@ -82,6 +82,8 @@ DisulfideInsertionMover::DisulfideInsertionMover() :
 	c_cyd_seqpos_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::n_cyd_seqpos ]();
 	max_dslf_pot_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::max_dslf_pot ]();
 	max_dslf_energy_ = basic::options::option [ basic::options::OptionKeys::DisulfideInsertion::max_dslf_energy ]();
+	min_dist_multiplier_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::min_dslf_dist_multiplier ]();
+	max_dist_multiplier_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::max_dslf_dist_multiplier ]();
 	constraint_weight_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::constraint_weight ]();
 
 	if ( movemap_ == nullptr ) {
@@ -161,19 +163,21 @@ DisulfideInsertionMover::determine_cyclization_viability(
 		if ( (n_putative_cyd.name1() == 'G') ||
 				(c_putative_cyd.name1() == 'G') ) {
 			atom_to_check = "CA";
-			min_distance = 4.5;
-			max_distance = 6.5;
+			min_distance = 4.5*min_dist_multiplier_;
+			max_distance = 6.5*max_dist_multiplier_;
 		} else {
 			atom_to_check = "CB";
-			min_distance = 3;
-			max_distance = 5;
+			min_distance = 3*min_dist_multiplier_;
+			max_distance = 5*max_dist_multiplier_;
 		}
 
 		core::Length distance = n_putative_cyd.xyz( atom_to_check ).distance(c_putative_cyd.xyz( atom_to_check ));
 
 		if ( distance > max_distance || distance < min_distance ) {
-			TR.Debug << " requested positions " << n_putative_cyd_idx << " and " << c_putative_cyd_idx << " are not in the required distance range " << std::endl;
+			TR.Debug << " requested positions " << n_putative_cyd_idx << " and " << c_putative_cyd_idx << " are not in the required distance range (distance = " << distance << ", max = " << max_distance << ", min = " << min_distance << " )"  << std::endl;
 			return DCV_NOT_CYCLIZABLE;
+		} else {
+			TR.Debug << " requested positions " << n_putative_cyd_idx << " and " << c_putative_cyd_idx << " ARE in the required distance range (distance = " << distance << ", max = " << max_distance << ", min = " << min_distance << " )"  << std::endl;
 		}
 
 		core::scoring::disulfides::DisulfideMatchingPotential disulfPot;
@@ -182,7 +186,7 @@ DisulfideInsertionMover::determine_cyclization_viability(
 		core::Energy match_rt = 0.0;
 		// TODO check this for dcys too?
 		disulfPot.score_disulfide( n_putative_cyd, c_putative_cyd, match_t, match_r, match_rt, false /*mirror score for D-cys potential*/ );
-		TR << " positions " << n_putative_cyd_idx << " and " << c_putative_cyd_idx << " have a match potential of " << match_rt << std::endl;
+		TR << " positions " << n_putative_cyd_idx << " and " << c_putative_cyd_idx << " have a match potential of " << match_rt << " (cutoff = " << max_dslf_pot_ << " )" << std::endl;
 		if ( match_rt <= max_dslf_pot_ ) {
 			return DCV_CYCLIZABLE;
 		}

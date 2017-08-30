@@ -59,37 +59,37 @@ public:
 		basic::datacache::DataMap dm;
 
 		BondedResidueSelectorOP rs( new BondedResidueSelector );
-		TS_TRACE( "Resnums and selector" );
+		TR << "Resnums and selector" << std::endl;
 		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::EXCN_Msg_Exception );
 
 		std::stringstream ss_two_selectors;
 		ss_two_selectors << "<Bonded name=\"bonded\" residue_selector=\"dummy\"><Index name=\"index\" resnums=\"2,3\" /></Bonded>";
 		tag->read( ss_two_selectors );
-		TS_TRACE( "Two selectors" );
+		TR << "Two selectors";
 		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::EXCN_Msg_Exception );
 
 		std::stringstream ssgood_resnums;
 		ssgood_resnums << "<Bonded name=\"bonded\" resnums=\"2,3\" />";
 		tag->read( ssgood_resnums );
-		TS_TRACE( "Resnums only" );
+		TR << "Resnums only";
 		TS_ASSERT_THROWS_NOTHING( rs->parse_my_tag( tag, dm ) );
 
 		std::stringstream ss_good_selector;
 		ss_good_selector << "<Bonded name=\"bonded\" ><Index name=\"index\" resnums=\"2,3\" /></Bonded>";
 		tag->read( ss_good_selector );
-		TS_TRACE( "Selector subtag" );
+		TR << "Selector subtag";
 		TS_ASSERT_THROWS_NOTHING( rs->parse_my_tag( tag, dm ) );
 
 		std::stringstream ss_undefined_selector;
 		ss_undefined_selector << "<Bonded name=\"bonded\" residue_selector=\"dummy\" />";
 		tag->read( ss_undefined_selector );
-		TS_TRACE( "Undefined selector" );
+		TR << "Undefined selector";
 		TS_ASSERT_THROWS_ANYTHING( rs->parse_my_tag( tag, dm ) )
 
 			core::select::residue_selector::ResidueIndexSelectorOP dummy( new core::select::residue_selector::ResidueIndexSelector );
 		dummy->set_index( "2,3" );
 		dm.add( "ResidueSelector", "dummy", dummy );
-		TS_TRACE( "Undefined selector after defining the selector" );
+		TR << "Undefined selector after defining the selector";
 		std::stringstream ss_defined_selector;
 		ss_defined_selector << "<Bonded name=\"bonded\" residue_selector=\"dummy\" />";
 		tag->read( ss_defined_selector );

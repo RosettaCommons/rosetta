@@ -1,7 +1,7 @@
 ## By Kevin Drew, October 2012, kdrew@nyu.edu
 
 NAME hbs_pre
-TYPES HBS_PRE LOWER_TERMINUS_VARIANT
+TYPES HBS_PRE
 ## general requirements for this patch
 
 BEGIN_SELECTOR

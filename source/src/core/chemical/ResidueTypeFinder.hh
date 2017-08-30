@@ -41,15 +41,25 @@ public:
 
 public:
 
+	///////////////////////////////////////
+	// Methods which return ResidueTypes
+
+	/// @brief Find *a* residue which matches all the requirement criteria.
+	/// Typically this will be the "simplest" type that does so, though that's not guaranteed.
+	/// Will ignore preferences/discouragements.
 	ResidueTypeCOP
 	get_representative_type() const;
 
+	/// @brief Find all residues which match the requirement criteria
+	/// Will apply preferences/discouragements.
 	ResidueTypeCOPs
 	get_all_possible_residue_types( bool const allow_extra_variants = false ) const;
 
+	/// @brief Find all base residue types which match the relevant requirement criteria
 	ResidueTypeCOPs
 	get_possible_base_residue_types( bool const include_unpatchable = true ) const;
 
+	/// @brief Find all unpatchable residue types which match the relevant requirement criteria
 	ResidueTypeCOPs
 	get_possible_unpatchable_residue_types() const;
 
@@ -61,6 +71,9 @@ public:
 
 	ResidueTypeCOP
 	get_best_match_residue_type_for_atom_names( utility::vector1< std::string > const & atom_names );
+
+	////////////////////////////////////////////
+	// Methods which set properties to filter by
 
 	ResidueTypeFinder &
 	aa( core::chemical::AA const & setting ) {
@@ -145,9 +158,13 @@ public:
 		return *this;
 	}
 
+	/// @brief Variant exceptions are variants which are excluded from consideration
+	/// during the `allow_extra_variants = false` filtering
 	ResidueTypeFinder &
 	variant_exceptions( utility::vector1< std::string > const & setting );
 
+	/// @brief Variant exceptions are variants which are excluded from consideration
+	/// during the `allow_extra_variants = false` filtering
 	ResidueTypeFinder &
 	variant_exceptions( utility::vector1< VariantType > const & setting ) {
 		variant_exceptions_ = setting;
@@ -167,8 +184,27 @@ public:
 	}
 
 	ResidueTypeFinder &
+	preferred_properties( utility::vector1< ResidueProperty > const & setting ) {
+		preferred_properties_ = setting;
+		return *this;
+	}
+
+	ResidueTypeFinder &
+	discouraged_properties( utility::vector1< ResidueProperty > const & setting ) {
+		discouraged_properties_ = setting;
+		return *this;
+	}
+
+	ResidueTypeFinder &
 	patch_names( utility::vector1< std::string > const & setting ) {
 		patch_names_ = setting;
+		return *this;
+	}
+
+	/// @brief Attempt to find ResidueTypes with connection points on the given atoms
+	ResidueTypeFinder &
+	connect_atoms( utility::vector1< std::string > const & setting ) {
+		connect_atoms_ = setting;
 		return *this;
 	}
 
@@ -184,12 +220,6 @@ public:
 		return *this;
 	}
 
-	ResidueTypeFinder &
-	disallow_carboxyl_conjugation_at_glu_asp( bool const setting ) {
-		disallow_carboxyl_conjugation_at_glu_asp_ = setting;
-		return *this;
-	}
-
 private:
 
 	ResidueTypeCOPs
@@ -198,6 +228,9 @@ private:
 	ResidueTypeCOPs
 	apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 		bool const allow_extra_variants = false ) const;
+
+	ResidueTypeCOPs
+	apply_preferences_and_discouragements( ResidueTypeCOPs const & rsd_types ) const;
 
 	utility::vector1< ResidueTypeCOP >
 	apply_patches_recursively( utility::vector1< ResidueTypeCOP > const & rsd_types,
@@ -218,7 +251,6 @@ private:
 
 	ResidueTypeCOPs
 	filter_by_aa( ResidueTypeCOPs const & rsd_types ) const;
-
 
 	ResidueTypeCOPs
 	filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd_types ) const;
@@ -253,6 +285,9 @@ private:
 	filter_disallow_properties( ResidueTypeCOPs const & rsd_types )  const;
 
 	ResidueTypeCOPs
+	filter_connections( ResidueTypeCOPs const & rsd_types )  const;
+
+	ResidueTypeCOPs
 	filter_special_cases( ResidueTypeCOPs const & rsd_types )  const;
 
 	bool
@@ -267,6 +302,10 @@ private:
 
 	bool
 	fixes_interchangeability_group( PatchCOP patch, ResidueTypeCOP rsd_type ) const;
+
+	/// @details Does the patch any desired property or any soft desired property
+	bool
+	fixes_connects( PatchCOP patch, ResidueTypeCOP rsd_type ) const;
 
 	bool
 	adds_any_property( PatchCOP patch,
@@ -297,25 +336,27 @@ private:
 
 	core::chemical::ResidueTypeSet const & residue_type_set_;
 
-	core::chemical::AA aa_;
-	char name1_;
-	std::string name3_;
-	std::string residue_type_base_name_;
-	ResidueTypeCOP base_type_;
-	std::string interchangeability_group_;
+	core::chemical::AA aa_ = aa_none;
+	char name1_ = '?';
+	std::string name3_ = "";
+	std::string residue_type_base_name_ = "";
+	ResidueTypeCOP base_type_ = nullptr;
+	std::string interchangeability_group_ = "";
 	utility::vector1< std::string > atom_names_soft_;
+	// When filtering, the ResidueType must have at least one Variant in each inner vector, for every entry in the outer vector.
 	utility::vector1< utility::vector1< VariantType > > variants_in_sets_;
 	utility::vector1< std::string > custom_variants_;
 	utility::vector1< VariantType > disallow_variants_;
 	utility::vector1< VariantType > variant_exceptions_;
-	utility::vector1< ResidueProperty > properties_;
-	utility::vector1< ResidueProperty > disallow_properties_;
+	utility::vector1< ResidueProperty > properties_; // Required properties
+	utility::vector1< ResidueProperty > disallow_properties_; // Properties which must not be present
+	utility::vector1< ResidueProperty > preferred_properties_; // Does not affect filtering, but may cause additional patches to be applied
+	utility::vector1< ResidueProperty > discouraged_properties_; // Only affects filtering if alternatives are present.
 	utility::vector1< std::string > patch_names_;
-	ResidueProperty base_property_;
-	bool ignore_atom_named_H_;
-	bool disallow_carboxyl_conjugation_at_glu_asp_; // special case
-	bool check_nucleic_acid_virtual_phosphates_; // special case (could be generalized to match virtual atoms to missing atoms)
-
+	utility::vector1< std::string > connect_atoms_;
+	ResidueProperty base_property_ = NO_PROPERTY;
+	bool ignore_atom_named_H_ = false;
+	bool check_nucleic_acid_virtual_phosphates_ = false; // special case (could be generalized to match virtual atoms to missing atoms)
 };
 
 } //chemical

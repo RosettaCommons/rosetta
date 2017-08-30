@@ -37,6 +37,9 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <test/util/pose_funcs.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/angle.functions.hh>
+#include <numeric/constants.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -92,7 +95,7 @@ public: //setup
 
 	// Shared initialization.
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-output_virtual -write_all_connect_info" );
 	}
 
 
@@ -327,6 +330,250 @@ public: // tests
 		Pose pose;
 		core::import_pose::pose_from_file( pose, "core/pose/pdbinfo_test_in.pdb" , core::import_pose::PDB_file);
 		pose.update_residue_neighbors();
+	}
+
+	/// @brief Test that the cutpoint virtuals are updated properly when the cutpoint variant type is added.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_update_cutpoint_virtual_atoms_when_cutpoint_variant_added() {
+		core::pose::Pose pose;
+		make_pose_from_sequence( pose, "AAAAAAAAAA", "fa_standard" );
+		for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+			pose.set_phi(i,-135);
+			pose.set_psi(i,135);
+			pose.set_omega(i,180);
+		}
+		core::kinematics::FoldTree ft;
+		ft.add_edge( 1, 5, core::kinematics::Edge::PEPTIDE );
+		ft.add_edge( 1, 10, 1  );
+		ft.add_edge( 10, 6, core::kinematics::Edge::PEPTIDE );
+		pose.fold_tree(ft);
+
+		//Translate part of the pose
+		numeric::xyzVector< core::Real > transvect(2, 7, 12);
+		for ( core::Size ir(6), irmax(pose.total_residue()); ir<=irmax; ++ir ) {
+			for ( core::Size ia(1), iamax(pose.residue_type(ir).natoms()); ia<=iamax; ++ia ) {
+				core::id::AtomID curat( ia, ir );
+				pose.set_xyz( curat, transvect + pose.xyz( curat ) );
+			}
+		}
+		//Arbitrarily move alpha carbon to make non-ideal geometry.
+		numeric::xyzVector< core::Real > randvect1(0.5,0.7,0.25);
+		pose.set_xyz(core::id::NamedAtomID("CA", 6), pose.xyz(core::id::NamedAtomID("CA",6)) + randvect1);
+		pose.update_residue_neighbors();
+
+		core::Real const N_CA_dist( pose.residue(6).xyz("N").distance( pose.residue(6).xyz("CA") ) );
+		core::Real const LOWER_N_dist( pose.residue(6).lower_connect().icoor().d() );
+		core::Real const LOWER_N_angle( pose.residue(6).lower_connect().icoor().theta() );
+		core::Real const C_UPPER_dist( pose.residue(5).upper_connect().icoor().d() );
+
+		//Add the modified variant types.  Should call update_cutpoint_virtual_atoms_if_connected():
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, 5 );
+		//pose.dump_pdb("vtemp5.pdb"); //DELETE ME
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, 6 );
+
+		//Check that virtuals have been updated properly:
+		core::Real const C_OVL1_dist( pose.residue(5).xyz("OVL1").distance( pose.residue(5).xyz("C") ) );
+		core::Real const OVL1_OVL2_dist( pose.residue(5).xyz("OVL2").distance( pose.residue(5).xyz("OVL1") ) );
+		core::Real const OVL2_angle( numeric::constants::d::pi - numeric::angle_radians( pose.residue(5).xyz("C"), pose.residue(5).xyz("OVL1"), pose.residue(5).xyz("OVL2") ) );
+		core::Real const OVU1_N_dist( pose.residue(6).xyz("OVU1").distance( pose.residue(6).xyz("N") ) );
+
+		TR << "\nN_CA_dist:\t" << N_CA_dist << "\n";
+		TR << "OVL1_OVL2_dist:\t" << OVL1_OVL2_dist << "\n";
+		TR << "LOWER_N_dist:\t" << LOWER_N_dist << "\n";
+		TR << "C_OVL1_dist:\t" << C_OVL1_dist << "\n";
+		TR << "LOWER_N_angle:\t" << LOWER_N_angle << "\n";
+		TR << "OVL2_angle:\t" << OVL2_angle << "\n";
+		TR << "C_UPPER_dist:\t" << C_UPPER_dist << "\n";
+		TR << "OVU1_N_dist:\t" << OVU1_N_dist << "\n";
+		TR.flush();
+
+		TS_ASSERT_DELTA( N_CA_dist, OVL1_OVL2_dist, 0.001 );
+		TS_ASSERT_DELTA( LOWER_N_dist, C_OVL1_dist, 0.001 );
+		TS_ASSERT_DELTA( LOWER_N_angle, OVL2_angle, 0.001 );
+		TS_ASSERT_DELTA( C_UPPER_dist, OVU1_N_dist, 0.001 );
+
+		//pose.dump_pdb("vtemp6.pdb"); //DELETE ME
+	}
+
+	/// @brief Test that cutpoint virtuals are updated properly when a bond is declared.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_update_cutpoint_virtual_atoms_when_bond_declared() {
+		core::pose::Pose pose;
+		make_pose_from_sequence( pose, "AAAAAAAAAA", "fa_standard" );
+		for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+			pose.set_phi(i,-135);
+			pose.set_psi(i,135);
+			pose.set_omega(i,180);
+		}
+		core::kinematics::FoldTree ft;
+		ft.add_edge( 1, 5, core::kinematics::Edge::PEPTIDE );
+		ft.add_edge( 1, 10, 1  );
+		ft.add_edge( 10, 6, core::kinematics::Edge::PEPTIDE );
+		pose.fold_tree(ft);
+
+		//Translate part of the pose
+		numeric::xyzVector< core::Real > transvect(2, 7, 12);
+		for ( core::Size ir(6), irmax(pose.total_residue()); ir<=irmax; ++ir ) {
+			for ( core::Size ia(1), iamax(pose.residue_type(ir).natoms()); ia<=iamax; ++ia ) {
+				core::id::AtomID curat( ia, ir );
+				pose.set_xyz( curat, transvect + pose.xyz( curat ) );
+			}
+		}
+		//Arbitrarily move alpha carbon to make non-ideal geometry.
+		numeric::xyzVector< core::Real > randvect1(0.5,0.7,0.25);
+		pose.set_xyz(core::id::NamedAtomID("CA", 6), pose.xyz(core::id::NamedAtomID("CA",6)) + randvect1);
+		pose.update_residue_neighbors();
+
+		core::Real const N_CA_dist( pose.residue(6).xyz("N").distance( pose.residue(6).xyz("CA") ) );
+		core::Real const LOWER_N_dist( pose.residue(6).lower_connect().icoor().d() );
+		core::Real const LOWER_N_angle( pose.residue(6).lower_connect().icoor().theta() );
+		core::Real const C_UPPER_dist( pose.residue(5).upper_connect().icoor().d() );
+
+		//Make sure that there's no bond there:
+		pose.conformation().sever_chemical_bond( 5, pose.residue_type(5).upper_connect_id(), 6, pose.residue_type(6).lower_connect_id() );
+
+		//Add the modified variant types WITHOUT adding a chemical bond:
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, 5 );
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, 6 );
+		//pose.dump_pdb("vtemp3.pdb"); //DELETE ME
+
+		//Re-declare the bond:
+		pose.conformation().declare_chemical_bond( 5, "C", 6, "N" );
+
+		//Check that virtuals have been updated properly:
+		core::Real const C_OVL1_dist( pose.residue(5).xyz("OVL1").distance( pose.residue(5).xyz("C") ) );
+		core::Real const OVL1_OVL2_dist( pose.residue(5).xyz("OVL2").distance( pose.residue(5).xyz("OVL1") ) );
+		core::Real const OVL2_angle( numeric::constants::d::pi - numeric::angle_radians( pose.residue(5).xyz("C"), pose.residue(5).xyz("OVL1"), pose.residue(5).xyz("OVL2") ) );
+		core::Real const OVU1_N_dist( pose.residue(6).xyz("OVU1").distance( pose.residue(6).xyz("N") ) );
+
+		TR << "\nN_CA_dist:\t" << N_CA_dist << "\n";
+		TR << "OVL1_OVL2_dist:\t" << OVL1_OVL2_dist << "\n";
+		TR << "LOWER_N_dist:\t" << LOWER_N_dist << "\n";
+		TR << "C_OVL1_dist:\t" << C_OVL1_dist << "\n";
+		TR << "LOWER_N_angle:\t" << LOWER_N_angle << "\n";
+		TR << "OVL2_angle:\t" << OVL2_angle << "\n";
+		TR << "C_UPPER_dist:\t" << C_UPPER_dist << "\n";
+		TR << "OVU1_N_dist:\t" << OVU1_N_dist << "\n";
+		TR.flush();
+
+		TS_ASSERT_DELTA( N_CA_dist, OVL1_OVL2_dist, 0.001 );
+		TS_ASSERT_DELTA( LOWER_N_dist, C_OVL1_dist, 0.001 );
+		TS_ASSERT_DELTA( LOWER_N_angle, OVL2_angle, 0.001 );
+		TS_ASSERT_DELTA( C_UPPER_dist, OVU1_N_dist, 0.001 );
+
+		//pose.dump_pdb("vtemp4.pdb"); //DELETE ME
+
+	}
+
+	/// @brief Test the function in core/pose/util.hh that updates the coordinates of virtual
+	/// atoms in cutpoint residues.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_update_cutpoint_virtual_atoms_if_connected() {
+		core::pose::Pose pose;
+		make_pose_from_sequence( pose, "AAAAAAAAAA", "fa_standard" );
+		for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+			pose.set_phi(i,-135);
+			pose.set_psi(i,135);
+			pose.set_omega(i,180);
+		}
+		core::kinematics::FoldTree ft;
+		ft.add_edge( 1, 5, core::kinematics::Edge::PEPTIDE );
+		ft.add_edge( 1, 10, 1  );
+		ft.add_edge( 10, 6, core::kinematics::Edge::PEPTIDE );
+		pose.fold_tree(ft);
+
+		//Translate part of the pose
+		numeric::xyzVector< core::Real > transvect(2, 7, 12);
+		for ( core::Size ir(6), irmax(pose.total_residue()); ir<=irmax; ++ir ) {
+			for ( core::Size ia(1), iamax(pose.residue_type(ir).natoms()); ia<=iamax; ++ia ) {
+				core::id::AtomID curat( ia, ir );
+				pose.set_xyz( curat, transvect + pose.xyz( curat ) );
+			}
+		}
+		//Arbitrarily move alpha carbon to make non-ideal geometry.
+		numeric::xyzVector< core::Real > randvect1(0.5,0.7,0.25);
+		pose.set_xyz(core::id::NamedAtomID("CA", 6), pose.xyz(core::id::NamedAtomID("CA",6)) + randvect1);
+		pose.update_residue_neighbors();
+
+		core::Real const N_CA_dist( pose.residue(6).xyz("N").distance( pose.residue(6).xyz("CA") ) );
+		core::Real const LOWER_N_dist( pose.residue(6).lower_connect().icoor().d() );
+		core::Real const LOWER_N_angle( pose.residue(6).lower_connect().icoor().theta() );
+		core::Real const C_UPPER_dist( pose.residue(5).upper_connect().icoor().d() );
+
+		core::pose::correctly_add_cutpoint_variants( pose, 5 ); //Calls the update_cutpoint_virtual_atoms_if_connected() function.
+
+		core::Real const C_OVL1_dist( pose.residue(5).xyz("OVL1").distance( pose.residue(5).xyz("C") ) );
+		core::Real const OVL1_OVL2_dist( pose.residue(5).xyz("OVL2").distance( pose.residue(5).xyz("OVL1") ) );
+		core::Real const OVL2_angle( numeric::constants::d::pi - numeric::angle_radians( pose.residue(5).xyz("C"), pose.residue(5).xyz("OVL1"), pose.residue(5).xyz("OVL2") ) );
+		core::Real const OVU1_N_dist( pose.residue(6).xyz("OVU1").distance( pose.residue(6).xyz("N") ) );
+
+		TR << "\nN_CA_dist:\t" << N_CA_dist << "\n";
+		TR << "OVL1_OVL2_dist:\t" << OVL1_OVL2_dist << "\n";
+		TR << "LOWER_N_dist:\t" << LOWER_N_dist << "\n";
+		TR << "C_OVL1_dist:\t" << C_OVL1_dist << "\n";
+		TR << "LOWER_N_angle:\t" << LOWER_N_angle << "\n";
+		TR << "OVL2_angle:\t" << OVL2_angle << "\n";
+		TR << "C_UPPER_dist:\t" << C_UPPER_dist << "\n";
+		TR << "OVU1_N_dist:\t" << OVU1_N_dist << "\n";
+		TR.flush();
+
+		TS_ASSERT_DELTA( N_CA_dist, OVL1_OVL2_dist, 0.001 );
+		TS_ASSERT_DELTA( LOWER_N_dist, C_OVL1_dist, 0.001 );
+		TS_ASSERT_DELTA( LOWER_N_angle, OVL2_angle, 0.001 );
+		TS_ASSERT_DELTA( C_UPPER_dist, OVU1_N_dist, 0.001 );
+
+		//pose.dump_pdb("vtemp2.pdb"); //DELETE ME
+	}
+
+	/// @brief Test that cutpoints allow free rotation of the virtual atoms.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_cutpoint_bond_rotation() {
+		core::pose::Pose pose;
+		make_pose_from_sequence( pose, "AAAAAAAAAA", "fa_standard" );
+		for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+			pose.set_phi(i,-135);
+			pose.set_psi(i,135);
+			pose.set_omega(i,180);
+		}
+		core::kinematics::FoldTree ft;
+		ft.add_edge( 1, 5, core::kinematics::Edge::PEPTIDE );
+		ft.add_edge( 1, 10, 1  );
+		ft.add_edge( 10, 6, core::kinematics::Edge::PEPTIDE );
+		pose.fold_tree(ft);
+		core::pose::correctly_add_cutpoint_variants( pose, 5 );
+
+		TR << "\nOMEGA\tEXPECTED\n";
+		for ( core::Size i(1); i<=36; ++i ) {
+			pose.set_omega( 5, static_cast<core::Real>(i)*10 - 5 );
+			/*char outfile [256];
+			sprintf( outfile, "out1_%04lu.pdb", i );
+			pose.dump_pdb( std::string(outfile) );*/
+			core::Real const measured_angle( numeric::dihedral_degrees(
+				pose.residue(5).xyz("CA"),
+				pose.residue(5).xyz("C"),
+				pose.residue(5).xyz("OVL1"),
+				pose.residue(5).xyz("OVL2")
+				) );
+			TR << numeric::nonnegative_principal_angle_degrees(measured_angle) << "\t" << numeric::nonnegative_principal_angle_degrees( static_cast<core::Real>(i)*10 - 5 ) << "\n";
+			TS_ASSERT_DELTA( numeric::nonnegative_principal_angle_degrees( measured_angle ), numeric::nonnegative_principal_angle_degrees( static_cast<core::Real>(i)*10 - 5 ), 0.01 );
+		}
+
+		TR << "\nPHI\tEXPECTED\n";
+		for ( core::Size i(1); i<=36; ++i ) {
+			pose.set_phi( 6, static_cast<core::Real>(i)*10 - 5 );
+			/*char outfile [256];
+			sprintf( outfile, "out2_%04lu.pdb", i );
+			pose.dump_pdb( std::string(outfile) );*/
+			core::Real const measured_angle( numeric::dihedral_degrees(
+				pose.residue(6).xyz("OVU1"),
+				pose.residue(6).xyz("N"),
+				pose.residue(6).xyz("CA"),
+				pose.residue(6).xyz("C")
+				) );
+			TR << numeric::nonnegative_principal_angle_degrees(measured_angle) << "\t" << numeric::nonnegative_principal_angle_degrees( static_cast<core::Real>(i)*10 - 5 ) << "\n";
+			TS_ASSERT_DELTA( numeric::nonnegative_principal_angle_degrees( measured_angle ), numeric::nonnegative_principal_angle_degrees( static_cast<core::Real>(i)*10 - 5 ), 0.01 );
+		}
+		TR.flush();
 	}
 
 	void test_serialize_pose() {

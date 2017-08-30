@@ -57,6 +57,8 @@ public:
 	int  terCount() const;
 	std::string const & segmentID() const;
 
+	std::string const & rosetta_resName() const;
+
 	void resName(  std::string const & setting );
 	void chainID(  char setting );
 	void resSeq(   int setting );
@@ -91,6 +93,12 @@ private:
 	std::map< std::string, double > temps_; //< map of names to B-factors;  redundant but used a lot in reader
 
 	std::string segmentID_;
+
+	// Additional annotations
+
+	/// @brief Some Residues have a different three letter code in Rosetta versus the PDB. Store that here.
+	std::string rosetta_resName_;
+
 };  // class ResidueInformation
 
 } // namespace io

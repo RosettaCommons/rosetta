@@ -85,7 +85,6 @@ sources = {
 		"indel",
 		"just_parse_a_script",
 		"lactamize",
-		"macrocycles",
 		"macrocycle_sampling",
 		"make_a3b_bundle",
 		"make_ideal_a3b_fragment",

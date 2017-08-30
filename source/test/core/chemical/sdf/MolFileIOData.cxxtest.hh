@@ -275,7 +275,6 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 			rsd1.is_terminus() != rsd2.is_terminus()  ||
 			rsd1.is_lower_terminus() != rsd2.is_lower_terminus()  ||
 			rsd1.is_upper_terminus() != rsd2.is_upper_terminus()  ||
-			rsd1.is_branch_lower_terminus() != rsd2.is_branch_lower_terminus()  ||
 			rsd1.is_acetylated_nterminus() != rsd2.is_acetylated_nterminus()  ||
 			rsd1.is_virtual_residue() != rsd2.is_virtual_residue()  ||
 			rsd1.is_adduct() != rsd2.is_adduct() ) {

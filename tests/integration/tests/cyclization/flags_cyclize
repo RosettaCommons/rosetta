@@ -5,10 +5,7 @@
 -cyclization::num_min_rebuild 10
 -cyclization::add_constraints true
 
--chemical:patch_selectors NTERM_CONNECT CTERM_CONNECT
-
 -out:suffix _cyclize
--extra_patch_fa ../../../../database/chemical/residue_type_sets/fa_standard/patches/branching/C-terminal_conjugation.txt
 
 #Temporarily added by VKM since this is one of the integration tests showing instability on the test server.  Delete the following later:
 -out:level 500

@@ -77,23 +77,6 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 
 	using namespace core::chemical;
 
-	if ( pose.size() != 0 ) {
-		for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
-			if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
-				core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, ir );
-			}
-			if ( pose.residue(ir).has_variant_type(CUTPOINT_UPPER) ) {
-				core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, ir );
-			}
-			if ( pose.residue_type(ir).has_variant_type(UPPER_TERMINUS_VARIANT) ) {
-				core::pose::remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, ir );
-			}
-			if ( pose.residue_type(ir).has_variant_type(LOWER_TERMINUS_VARIANT) ) {
-				core::pose::remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, ir );
-			}
-		}
-		pose.update_residue_neighbors();
-	}
 	for ( core::Size istub=1; istub<=stub_rsd_names_.size(); ++istub ) {
 		core::conformation::ResidueOP new_rsd( nullptr );
 		new_rsd = core::conformation::ResidueFactory::create_residue( standard_residues->name_map(stub_rsd_names_[istub]) );
@@ -138,6 +121,22 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 						TR << "Error! Residue " << stub_rsd_names_[anchor_rsd] << " Atom " << stub_anchor_rsd_connecting_atom_[istub] << " cannot be connected" << std::endl;
 					}
 				}
+				if ( anchor_connecting_id == pose.residue_type(anchor_rsd).upper_connect_id() ) {
+					if ( pose.residue_type(anchor_rsd).is_upper_terminus() ) {
+						core::pose::remove_upper_terminus_type_from_pose_residue(pose, anchor_rsd);
+					}
+					if ( pose.residue_type(anchor_rsd).has_variant_type(core::chemical::CUTPOINT_LOWER) ) {
+						core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_LOWER, anchor_rsd);
+					}
+				}
+				if ( anchor_connecting_id == pose.residue_type(anchor_rsd).lower_connect_id() ) {
+					if ( pose.residue_type(anchor_rsd).is_lower_terminus() ) {
+						core::pose::remove_lower_terminus_type_from_pose_residue(pose, anchor_rsd);
+					}
+					if ( pose.residue_type(anchor_rsd).has_variant_type(core::chemical::CUTPOINT_UPPER) ) {
+						core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_UPPER, anchor_rsd);
+					}
+				}
 
 				if ( stub_mode_[istub] == append ) {
 					pose.append_residue_by_bond(*new_rsd, true, connecting_id, anchor_rsd, anchor_connecting_id, false);
@@ -176,24 +175,6 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 
 		}
 		if ( TR.Debug.visible() ) TR.Debug << "Done appending " << stub_rsd_names_[istub] << std::endl;
-	}
-
-	//protocols::loops::add_cutpoint_variants( pose );
-	for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
-		if ( pose.residue_type(ir).lower_connect_id() != 0 ) {
-			if ( pose.residue(ir).connected_residue_at_resconn(pose.residue_type(ir).lower_connect_id()) == 0 ) {
-				if ( pose.residue(ir).is_protein() && !pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
-					core::pose::add_variant_type_to_pose_residue(pose, CUTPOINT_LOWER, ir);
-				}
-			}
-		}
-		if ( pose.residue_type(ir).upper_connect_id() != 0 ) {
-			if ( pose.residue(ir).connected_residue_at_resconn(pose.residue_type(ir).upper_connect_id()) == 0 ) {
-				if ( pose.residue(ir).is_protein() && !pose.residue(ir).has_variant_type(CUTPOINT_UPPER) ) {
-					core::pose::add_variant_type_to_pose_residue(pose, CUTPOINT_UPPER, ir);
-				}
-			}
-		}
 	}
 
 	//pose.dump_pdb("test.pdb");

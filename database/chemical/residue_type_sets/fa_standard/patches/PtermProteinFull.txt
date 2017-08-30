@@ -1,7 +1,7 @@
 ## fullatom protein c-terminus patch
 
 NAME PtermProteinFull
-TYPES PHOSPHONATE_UPPER_VARIANT UPPER_TERMINUS_VARIANT
+TYPES PHOSPHONATE_UPPER_VARIANT
 
 ## general requirements for this patch
 

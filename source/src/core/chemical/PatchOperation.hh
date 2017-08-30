@@ -83,6 +83,13 @@ public:
 	bool
 	may_change_aa(){ return false; }
 
+	/// @brief Can this case change connections for the atom on the residue?
+	/// @details - Be a little careful, as the passed atom name string may not have the same
+	/// whitespace padding as any internal atom name.
+	virtual
+	bool
+	changes_connections_on( ResidueType const &, std::string const & /*atom*/ ) const { return false; }
+
 	/// @brief Generates name3.
 	virtual
 	std::string
@@ -189,6 +196,9 @@ public:
 	bool
 	apply( ResidueType & rsd ) const override;
 
+	bool
+	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
+
 	/// @brief Return the name of this PatchOperation ("SetPolymerConnectAtom").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	std::string
@@ -226,6 +236,9 @@ public:
 	/// add a property
 	bool
 	apply( ResidueType & rsd ) const override;
+
+	bool
+	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
 
 	/// @brief Return the name of this PatchOperation ("AddConnect").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1532,6 +1545,9 @@ public:
 	bool
 	apply( ResidueType & rsd ) const override;
 
+	bool
+	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
+
 	/// @brief Return the name of this PatchOperation ("ConnectSulfurAndMakeVirtualProton").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	std::string
@@ -1876,6 +1892,9 @@ public:
 	bool
 	apply( ResidueType & rsd ) const override;
 
+	bool
+	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
+
 	/// @brief Return the name of this PatchOperation ("AddConnectAndTrackingVirt").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	std::string
@@ -1904,6 +1923,9 @@ public:
 
 	bool
 	apply( ResidueType & rsd ) const override;
+
+	bool
+	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
 
 	/// @brief Return the name of this PatchOperation ("AddConnectDeleteChildProton").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

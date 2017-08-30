@@ -1,7 +1,7 @@
 ## By Andrew Watkins, March 2015, amw579@nyu.edu
 
 NAME a3b_hbs_pre
-TYPES LOWER_TERMINUS_VARIANT A3B_HBS_PRE
+TYPES A3B_HBS_PRE
 
 ## general requirements for this patch
 

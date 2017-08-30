@@ -778,8 +778,8 @@ void build_pose_as_is2(
 			if ( !pose.residue_type( edge1.start() ).is_polymer() ) continue;
 			if ( !pose.residue_type( edge2.stop()  ).is_polymer() ) continue;
 
-			if ( pose.residue_type( edge1.start() ).is_lower_terminus() ) continue;
-			if ( pose.residue_type( edge2.stop()  ).is_upper_terminus() ) continue;
+			if ( pose.residue_type( edge1.start() ).lower_connect_id() == 0 ) continue;
+			if ( pose.residue_type( edge2.stop()  ).upper_connect_id() == 0 ) continue;
 
 			id::AtomID lower( pose.residue_type( edge1.start() ).lower_connect_atom(), edge1.start() );
 			id::AtomID upper( pose.residue_type( edge2.stop()  ).upper_connect_atom(),  edge2.stop() );

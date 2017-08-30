@@ -1028,6 +1028,18 @@ public: // residue accessors en masse
 	void
 	show( std::ostream & out ) const;
 
+	/// @brief Returns a short description of the contents of the PDBInfo.
+	/// The current format of this is something like "A:1-3 B:9-11"
+	///
+	/// example(s);
+	///     pose.pdb_info().short_desc()
+	///
+	/// See Also:
+	///     PDBInfo
+	///     PDBInfo.show
+	///     Pose.pdb_info
+	std::string
+	short_desc() const;
 
 public: // residue mutators en masse
 

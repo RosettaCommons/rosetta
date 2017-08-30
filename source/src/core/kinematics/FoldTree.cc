@@ -2282,13 +2282,31 @@ FoldTree::jump_edge( Size const jump_number )
 	return edge_list_[ jump_edge_[ jump_number ] ];
 }
 
+bool
+FoldTree::residue_is_in_fold_tree( Size seqpos ) const {
+	if ( seqpos == root() ) {
+		return true;
+	}
+	// I wonder if copying the logic of get_residue_edge() is fully appropriate
+	// or if we should also be checking if the residue is reachable from the root.
+	for ( auto const & it: *this ) {
+		if ( seqpos == it.stop() ||
+				( it.is_peptide() &&
+				( ( seqpos > it.start() && seqpos <= it.stop() ) ||
+				( seqpos < it.start() && seqpos >= it.stop() ) ) ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 
 Edge const &
 FoldTree::get_residue_edge( Size const seqpos ) const
 {
 	if ( seqpos == root() ) utility_exit_with_message( "FoldTree:: residue_edge is undefined for root vertex" );
 
-	for ( const auto & it : *this ) {
+	for ( auto const & it : *this ) {
 		if ( seqpos == it.stop() ||
 				( it.is_peptide() &&
 				( ( seqpos > it.start() && seqpos <= it.stop() ) ||

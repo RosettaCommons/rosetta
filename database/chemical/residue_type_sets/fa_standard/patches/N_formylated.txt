@@ -1,5 +1,5 @@
 NAME N_formylated
-TYPES N_FORMYLATION LOWER_TERMINUS_VARIANT
+TYPES N_FORMYLATION
 
 ## general requirements for this patch
 

@@ -55,17 +55,6 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TR <<  "Testing if the CHI Energy Functions return the correct energies."  << std::endl;
 
-#ifdef MULTI_THREADED
-		try {
-			core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction();
-		} catch( utility::excn::EXCN_Base& excn )  {
-			TR << excn.msg() << std::endl;
-			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
-			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
-		}
-		return;
-#endif
-
 		CHIEnergyFunction const & E( core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction() );
 		core::Angle x;
 
@@ -126,17 +115,6 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::scoring::carbohydrates;
 
 		TR <<  "Testing if the CHI Energy Function derivatives return the correct values."  << std::endl;
-
-#ifdef MULTI_THREADED
-		try {
-			core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction();
-		} catch( utility::excn::EXCN_Base& excn )  {
-			TR << excn.msg() << std::endl;
-			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
-			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
-		}
-		return;
-#endif
 
 		CHIEnergyFunction const & E( core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction() );
 		core::Angle x;
@@ -202,7 +180,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 			core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction( true, .1 );
 		} catch( utility::excn::EXCN_Base& excn )  {
 			TR << excn.msg() << std::endl;
-			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
+			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction with setup_for_sampling is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jared Adolf-Bryfogle (jadolfbr@gmail.com) to complain about this." );
 			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
 		}
 		return;

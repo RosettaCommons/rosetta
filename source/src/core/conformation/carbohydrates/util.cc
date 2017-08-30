@@ -645,9 +645,13 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		uint const HOZ( res->atom_index( "HO" + string( 1, z + '0' ) ) );
 		uint const branch_connection_id( res->type().residue_connection_id_for_atom( OZ ) );
 		uint const branch_res_seqpos( res->residue_connection_partner( branch_connection_id ) );
-		ResidueCOP branch_res( conf.residue( branch_res_seqpos ).get_self_ptr() );
-		uint const HOZ_ref( branch_res->atom_index( branch_res->carbohydrate_info()->anomeric_carbon_name() ) );
-		conf.set_xyz( AtomID( HOZ, sequence_position ), conf.xyz( AtomID( HOZ_ref, branch_res_seqpos ) ) );
+		if ( branch_res_seqpos != 0 ) {
+			ResidueCOP branch_res( conf.residue( branch_res_seqpos ).get_self_ptr() );
+			uint const HOZ_ref( branch_res->atom_index( branch_res->carbohydrate_info()->anomeric_carbon_name() ) );
+			conf.set_xyz( AtomID( HOZ, sequence_position ), conf.xyz( AtomID( HOZ_ref, branch_res_seqpos ) ) );
+		} else {
+			TR << "Branch connection " << branch_connection_id << " on residue " << res->seqpos() << " is not chemically connected." << std::endl;
+		}
 	}
 
 	if ( TR.Debug.visible() ) {
@@ -924,15 +928,22 @@ get_branching_residues( conformation::Conformation const & conf,
 	Size parent_residue,
 	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
-	utility::vector1< Size > & tips )
+	utility::vector1< Size > & tips,
+	std::set< Size > const & ancestors )
 {
 	for ( core::Size i =1; i <= children_residues.size(); ++i ) {
 		Size res = children_residues[ i ];
+		if ( ancestors.count( res ) == 1 ) {
+			TR.Debug << "In get_branching_residues, skipping residue " << res << " because it leads to a cycle." << std::endl;
+			continue;
+		}
 		utility::vector1< Size > children;
 		fill_upstream_children_res_and_tips( conf, res, parent_residue, children, list_of_residues, tips );
 
 		if ( children.size() != 0 ) {
-			get_branching_residues( conf, res, children, list_of_residues, tips);
+			std::set< Size > childs_ancestors( ancestors );
+			childs_ancestors.insert( res );
+			get_branching_residues( conf, res, children, list_of_residues, tips, childs_ancestors);
 		}
 	}
 }

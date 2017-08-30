@@ -11,9 +11,6 @@ patches/VirtualDNAPhosphate.txt
 patches/RepulsiveOnly_fa.txt
 patches/disulfide.txt
 
-## uncomment this Brian
-patches/CtermConnect.txt
-
 ##fpd
 #CtermTruncation.txt
 #NtermTruncation.txt

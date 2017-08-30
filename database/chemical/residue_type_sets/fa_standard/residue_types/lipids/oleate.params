@@ -1,7 +1,7 @@
 NAME oleate                # cis-9-octadecenoate
 IO_STRING OLA Z            # stupid 3-letter code from the PDB
 TYPE POLYMER               # POLYMER is selected here, because this is a "cap" for polymers such as glycolipids.
-VARIANT BRANCH_LOWER_TERMINUS_VARIANT UPPER_TERMINUS_VARIANT
+VARIANT UPPER_TERMINUS_VARIANT
 AA UNK
 
 # Main-chain atoms:
@@ -60,7 +60,7 @@ ATOM 1H18 Hapo  HA   0.09
 ATOM 2H18 Hapo  HA   0.09
 ATOM 3H18 Hapo  HA   0.09
 
-CONNECT  C1  CAN_ROTATE   # CONN1  A fatty acyl group will always be an UPPER_TERMINUS of its BRANCH; there is no UPPER_CONNECT or LOWER_CONNECT.  If one wants the free acid, he or she will need to write a patch file for that.
+LOWER_CONNECT C1 # A fatty acyl group will always be an UPPER_TERMINUS of its BRANCH; If one wants the free acid, he or she will need to write a patch file for that.
 
 BOND  C1   C2
 BOND_TYPE  C1   O1  DOUBLE
@@ -114,7 +114,7 @@ BOND  C18 1H18
 BOND  C18 2H18
 BOND  C18 3H18
 
-PROPERTIES  LIPID BRANCH_LOWER_TERMINUS UPPER_TERMINUS
+PROPERTIES  LIPID UPPER_TERMINUS
 
 NBR_ATOM  C9
 NBR_RADIUS 13.953002
@@ -141,7 +141,7 @@ ICOOR_INTERNAL    C15  180.000000   70.572484    1.538424   C14   C13   C12
 ICOOR_INTERNAL    C16  180.000000   70.615365    1.538801   C15   C14   C13
 ICOOR_INTERNAL    C17  180.000000   70.615365    1.538424   C16   C15   C14
 ICOOR_INTERNAL    C18  180.000000   70.571291    1.540031   C17   C16   C15
-ICOOR_INTERNAL  CONN1  180.000000   58.353742    1.407492   C1    C2    C3
+ICOOR_INTERNAL  LOWER  180.000000   58.353742    1.407492   C1    C2    C3
 # then the rest of the backbone heavy atoms
 ICOOR_INTERNAL    O1  -179.991404   60.817377    1.236024   C1    C2    C3
 # now all the Hs (improper torsions used for hydrogens so that placement is good no matter the backbone conformation)

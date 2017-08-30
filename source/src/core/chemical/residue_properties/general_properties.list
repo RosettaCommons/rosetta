@@ -50,17 +50,17 @@ VIRTUAL_RESIDUE
 INVERTED_VIRTUAL_RESIDUE #Used by the symmetry machinery for mirror symmetry. ~Vmulligan
 
 ## Variants
-LOWER_TERMINUS  # first residue in a chain
-UPPER_TERMINUS  # last residue in a chain
-BRANCH_LOWER_TERMINUS
-BRANCH_POINT
+LOWER_TERMINUS  # polymeric residue which cannot be connected through the lower connect
+UPPER_TERMINUS  # polymeric residue which cannot be connected through the upper connect
+BRANCH_POINT    # A polymeric residue which contains a non-polymeric connection, or a nonpolymeric residue which contains three or more
+TERMINUS	# Contains a single (non-polymeric) connection
+# (Do we need a non-polymeric type with two connections, or is that an oxymoron?)
 LOWERTERM_TRUNC
 UPPERTERM_TRUNC
 COARSE  # currently for coarse_RNA only
 ADDUCT
 SC_ORBITALS
 FRAGMENT # shows up in GrowLigand
-TERMINUS
 UPPERTERM_CAP
 LOWERTERM_CAP
 

@@ -587,7 +587,6 @@ PoseToStructFileRepConverter::get_ssbond_record( core::pose::Pose const & pose, 
 
 /// @brief Get connectivity annotation information from the Pose object and create LinkInformation and
 /// SSBondInformation data as appropriate.
-/// @author Watkins
 void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose::Pose const & pose, pose::PDBInfoOP const & fresh_pdb_info ) {
 
 	using namespace utility;
@@ -606,67 +605,26 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		conformation::Residue const & ii_res = pose.residue( ii );
 
-		if ( ii_res.has_lower_connect() ) {
-			Size lower = ii_res.lower_connect().index();
-
-			// if bonded to not ii - 1 or bonded to not ii - 1's upper
-			if ( ii == 1 || ii_res.connected_residue_at_resconn( lower ) != ii - 1 ||
-					ii_res.residue_connection_conn_id( lower ) != static_cast<Size>(pose.residue( ii - 1 ).upper_connect().index()) ) {
-
-				LinkInformation link = get_link_record( pose, ii, lower, fresh_pdb_info );
-				if ( link.name1 != "ABORT" ) {
-					vector1<LinkInformation> links;
-					// If key is found in the links map, add this new linkage information to the links already keyed to
-					// this residue.
-					if ( sfr_->link_map().count(link.resID1) ) {
-						links = sfr_->link_map()[link.resID1];
-					}
-					links.push_back(link);
-
-					sfr_->link_map()[link.resID1] = links;
-				}
-			}
-		}
-
-		if ( ii_res.has_upper_connect() ) {
-			Size upper = ii_res.upper_connect().index();
-
-			// if bonded to not ii + 1 or bonded to not ii + 1's lower
-			if ( ii == pose.total_residue() || ii_res.connected_residue_at_resconn( upper ) != ii + 1 ||
-					( !pose.residue( ii + 1 ).has_lower_connect() || ii_res.residue_connection_conn_id( upper ) != static_cast<Size>( pose.residue( ii + 1 ).lower_connect().index()) ) ) {
-
-				// Escape if it's bonded to residue 1's lower--we don't want to double-count cyclization here.
-				// If jj < ii, we already counted it
-				if ( ii_res.connected_residue_at_resconn( upper ) < ii ) continue;
-
-				LinkInformation link = get_link_record( pose, ii, upper, fresh_pdb_info );
-				if ( link.name1 != "ABORT" ) {
-					vector1<LinkInformation> links;
-
-					// If key is found in the links map, add this new linkage information to the links already keyed to
-					// this residue.
-					if ( sfr_->link_map().count(link.resID1) ) {
-						links = sfr_->link_map()[link.resID1];
-					}
-					links.push_back(link);
-
-					sfr_->link_map()[link.resID1] = links;
-				}
-			}
-		}
-
-		if ( ii_res.n_non_polymeric_residue_connections() == 0 ) continue;
-
-		for ( Size conn = ii_res.n_polymeric_residue_connections()+1; conn <= ii_res.n_possible_residue_connections(); ++conn ) {
-
+		// Iterate through all connections -- upper and lower included.
+		for ( Size conn = 1; conn <= ii_res.n_possible_residue_connections(); ++conn ) {
 			Size jj = ii_res.connected_residue_at_resconn( conn );
+			if ( jj == 0 ) { continue; } // Unconnected -- don't bother with LINK record
 			Size jj_conn = ii_res.residue_connection_conn_id( conn );
 
-			// Either LINK or SSBOND
-			// Note that it's not an SSBOND if you are a cysteine bonded
-			// to the UPPER of another cysteine!
-			// Are the two atoms both the get_disulfide_atom_name() of the
-			// connected residue types?
+			// If this is a lower connect to the upper connect of the previous residue, skip it.
+			if ( ii_res.has_lower_connect() && conn == ii_res.type().lower_connect_id() &&
+					jj == ii - 1 && pose.residue(jj).has_upper_connect() && jj_conn == pose.residue_type( jj ).upper_connect_id() ) {
+				continue;
+			}
+
+			// If this is a upper connect to the lowe connect of the next residue, skip it.
+			if ( ii_res.has_upper_connect() && conn == ii_res.type().upper_connect_id() &&
+					jj == ii + 1 && pose.residue(jj).has_lower_connect() && jj_conn == pose.residue_type( jj ).lower_connect_id() ) {
+				continue;
+			}
+
+			// Special case disulfides
+			// It's a disulfide if we're connected to the disulfide bondable atom of the other residue
 			if ( ( pose.residue_type( ii ).has_property( chemical::DISULFIDE_BONDED ) || pose.residue_type( ii ).has_property( chemical::SIDECHAIN_THIOL ) ) &&
 					( pose.residue_type( jj ).has_property( chemical::DISULFIDE_BONDED ) || pose.residue_type( jj ).has_property( chemical::SIDECHAIN_THIOL ) ) &&
 					pose.residue_type( ii ).residue_connect_atom_index( conn ) ==
@@ -690,45 +648,26 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 
 				sfr_->ssbond_map()[ssbond.resID1] = ssbonds;
 
-			} else {
+				continue;
+			}
 
-				LinkInformation link = get_link_record( pose, ii, conn, fresh_pdb_info );
-				if ( link.name1 != "ABORT" ) {
-					vector1<LinkInformation> links;
-					// If key is found in the links map, add this new linkage information to the links already keyed to
-					// this residue.
-					if ( sfr_->link_map().count(link.resID1) ) {
-						links = sfr_->link_map()[link.resID1];
-					}
-					// If this link is found under the OTHER record...
-					bool skip = false;
-					if ( sfr_->link_map().count( link.resID2 ) ) {
-						for ( Size i = 1; i <= sfr_->link_map()[link.resID2].size(); ++i ) {
-							if ( link.resID1 == sfr_->link_map()[link.resID2][i].resID2 ) {
-								skip = true;
-								break;
-							}
-						}
-					}
-					if ( skip )  continue;
-					// Make sure it isn't a dupe--for example, make sure that
-					// we didn't already push this back as a lower to upper thing.
-					// Right now, we assume you can't have two noncanonical connections to the same residue.
-					// This is not strictly necessarily true, but until we implement
-					// LinkInformation ==, it's good enough.
-					bool push_it = true;
-					for ( Size i = 1; i <= links.size(); ++i ) {
-						if ( ( link.resID1 == links[i].resID1 && link.resID2 == links[i].resID2 )
-								|| ( link.resID2 == links[i].resID1 && link.resID1 == links[i].resID2 ) ) {
-							push_it = false;
-						}
-					}
-					if ( push_it ) {
-						links.push_back(link);
-					}
-
-					sfr_->link_map()[link.resID1] = links;
+			// We're just a "regular" connection
+			LinkInformation link = get_link_record( pose, ii, conn, fresh_pdb_info );
+			if ( link.name1 != "ABORT" ) { // Safety check - should never trigger as we've checked it above
+				// Skip if we've already made a link to the (presumably lower-numbered) OTHER record...
+				if ( sfr_->link_map().count( link.resID2 ) && link_in_vector( sfr_->link_map()[link.resID2], link ) ) {
+					continue;
 				}
+
+				// At this point we either already have it in the vector or will add it.
+				// (We don't need special casing to avoid adding a vector we don't need.)
+				// Accessing with [] will create empty vector if it doesn't already exist
+				vector1<LinkInformation> & ii_res_links( sfr_->link_map()[link.resID1] );
+				if ( link_in_vector( ii_res_links, link ) ) {
+					continue;
+				}
+				ii_res_links.push_back( link ); // By reference, so will update sfr_ contents.
+
 			}
 		}
 	}

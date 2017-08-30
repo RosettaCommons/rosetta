@@ -49,7 +49,7 @@ BOND  CE2  HE2
 BOND  CZ   HZ 
 CHI 1  N    CA   CB   CG 
 CHI 2  CA   CB   CG   CD1
-PROPERTIES PROTEIN AROMATIC SC_ORBITALS L_AA
+PROPERTIES PROTEIN ALPHA_AA AROMATIC SC_ORBITALS L_AA
 NBR_ATOM CB
 # APL CB to side chain heavyatom distance -- max as observed on residue 74 of ubiquitin
 NBR_RADIUS 4.2832

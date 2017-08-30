@@ -270,7 +270,7 @@ public:
 	ConformationCOP
 	conformation_ptr() const;
 
-	/// @brief Returns the pose Conformation pointer (const access)
+	/// @brief Returns the pose Conformation pointer (nonconst access)
 	/// @details WHOA: This is not cool.  The Pose cannot hand out access to the OP directly. Do not use.
 	ConformationOP &
 	conformation_ptr();

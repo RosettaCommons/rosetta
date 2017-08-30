@@ -78,7 +78,7 @@ namespace rigid {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RigidBodyMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rigid.RigidBodyMover" );
 static THREAD_LOCAL basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
 
 // Large rotational perturbations produce a distribution of orientations

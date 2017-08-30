@@ -12,7 +12,6 @@
 -single_loop_ensemble_size 2 #10 for production
 -loop_generator_trials 10 #100 for production
 -run:nblist_autoupdate true
--correct
 -use_input_sc
 -output_matchres_only false
 -mute protocols.BumpGrid protocols.forge.components.VarLengthBuild protocols.moves.MonteCarlo protocols.packstat.SimplePDB protocols.match.Matcher protocols.toolbox.RotamerSetOperations.RigidBodyMoveRotSetOps core.scoring.NeighborList core.pack.dunbrack.SingleLigandRotamerLibrary protocols.match.downstream.LigandConformerBuilder core.mm.MMBondAngleLibrary protocols.idealize core.fragment.picking_old

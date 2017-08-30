@@ -1,6 +1,6 @@
 NAME LowerConnectRNA
 # I know it's not a _SC_ branch point but that's okay.
-TYPES SC_BRANCH_POINT LOWER_TERMINUS_VARIANT
+TYPES SC_BRANCH_POINT
 
 BEGIN_SELECTOR
 PROPERTY RNA

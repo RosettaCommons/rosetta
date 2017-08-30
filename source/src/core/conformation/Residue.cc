@@ -767,44 +767,18 @@ Residue::orient_onto_residue_peptoid (
 
 	// the order that these are called in is important
 
-	//std::cout << "DEBUG DEBUG DEBUG " << src.type().name() << " " << src.seqpos() << " " << src.type().is_lower_terminus() << " "
-	//          << ( src.has_variant_type( chemical::NTERM_CONNECT ) && conformation.residue( conformation.chain_end( src.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) )
-	//          << std::endl;
-
 	// AMW: I am recombining these conditionals in a relatively byzantine way to attempt to maintain their order
 	// I don't know the last time they should have worked, but various checks in here break in the current state
 	// first residue of chain
 	//TR << " orienting " << src.type().name() << " onto " << type().name() << std::endl;
-	if ( src.type().is_lower_terminus() || src.has_variant_type( chemical::NTERM_CONNECT ) ) {
+	if ( src.type().is_lower_terminus() ) {
 		//std::cout << "DEBUG LT" << std::endl;
 		// NtermConnect (cyclic)
 		//std::cout << "Num chains is " << conformation.num_chains() << " src.chain() is " << src.chain() << " conformation.size() is " << conformation.size() << " this chain end is " << conformation.chain_end( src.chain() )  << std::endl;
 		Residue const cterm_residue = ( conformation.num_chains() == 2 || src.chain() == conformation.num_chains() - 1 ) ?
 			conformation.residue( conformation.size() ) :
 			conformation.residue( conformation.chain_end( src.chain() ) );
-		if ( /*!(*this).type().is_lower_terminus() && */src.has_variant_type( chemical::NTERM_CONNECT ) && cterm_residue.has_variant_type( chemical::CTERM_CONNECT ) ) {
-			//std::cout << "DEBUG LT CYCLIC" << std::endl;
-			// cent: peptoid N, src N
-			cent_xyz = atom( atom_index( bb_nx ) ).xyz();
-			src_cent_xyz = src.atom( src.atom_index( bb_nx ) ).xyz();
-
-			// nbr2; peptoid CA, src CA
-			nbr2_xyz = atom( atom_index( bb_ca ) ).xyz();
-			src_nbr2_xyz = src.atom( src.atom_index( bb_ca ) ).xyz();
-
-			// nbr1: peptoid lower connect, C of the cyclic paterner of src
-			//Residue const cyclic_src( conformation.residue( conformation.chain_end( src.chain() ) ) );
-			src_nbr1_xyz = cterm_residue.atom( cterm_residue.atom_index( bb_co ) ).xyz();
-
-			Stub stub( atom( atom_index( bb_nx ) ).xyz(), atom( atom_index( bb_ca ) ).xyz(), atom( atom_index( bb_co ) ).xyz() );
-			//AtomICoor icoor ( (*this).type().lower_connect().icoor() );
-			// Put it where the lower connect WOULD be put...
-			// we can't actually summon lower connect because it's a lower terminal type!
-			// AMW: nonsense! we have cterm_residue for that!
-			nbr1_xyz = cterm_residue.atom( cterm_residue.atom_index( bb_co ) ).xyz(); //stub.spherical( 167.209, 52.954, 1.367000 );
-
-			// AcetylatedPeptoidNterm
-		} else if ( src.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
+		if ( src.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
 			//std::cout << "DEBUG LT ACE" << std::endl;
 			// cent: peptoid N, src N
 			cent_xyz = atom( atom_index( bb_nx ) ).xyz();
@@ -859,7 +833,9 @@ Residue::orient_onto_residue_peptoid (
 		src_nbr2_xyz = src.atom( src.atom_index( bb_ca ) ).xyz();
 
 		// nbr1: peptoid lower connect, C of the residue before src
-		Residue const prev_src( conformation.residue( src.seqpos() - 1 ) );
+		core::Size const prev_res_index( connected_residue_at_lower() );
+		runtime_assert_string_msg( prev_res_index > 0, "A non-terminal peptoid residue was found with nothing connected at its lower terminus.  Unable to proceed.  Crashing." );
+		Residue const prev_src( conformation.residue( prev_res_index ) );
 		src_nbr1_xyz = prev_src.atom( prev_src.atom_index( bb_co ) ).xyz();
 
 		Stub stub( atom( atom_index( bb_nx ) ).xyz(), atom( atom_index( bb_ca ) ).xyz(), atom( atom_index( bb_co ) ).xyz() );
@@ -937,18 +913,21 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		// coded more robustly by modifying orient_onto_residue() properly.
 
 		if ( !rsd_type_.atom_is_backbone(i) &&
-				!(rsd_type_.atom_name(i) == " O2'") &&
-				!(rsd_type_.atom_name(i) == "HO2'") &&
+				!(rsd_type_.is_NA() && rsd_type_.atom_name(i) == " O2'") && //Special nucleic acid case
+				!(rsd_type_.is_NA() && rsd_type_.atom_name(i) == "HO2'") && //Special nucleic acid case
 				!( atom_depends_on_lower(i, rsd_type_.has_polymer_dependent_groups()) ) &&
 				!( atom_depends_on_upper(i, rsd_type_.has_polymer_dependent_groups()) )
 				) {
 			continue;
 		}
+		// VKM, 1 Aug 2017: The special-case logic for peptoids, below, is necessary to keep their side-chains from
+		// getting messed up during design.  If you change it, pay close attention to the ncaa_fixbb integration test.
 		if ( src.has( rsd_type_.atom_name(i) ) &&
 				( (!rsd_type_.is_polymer() ) ||
-				(!rsd_type_.atom_is_hydrogen(i)) ||
-				rsd_type_.icoor(i).depends_on_polymer_lower() ||
-				rsd_type_.icoor(i).depends_on_polymer_upper() ||
+				(rsd_type_.is_peptoid() && !rsd_type_.atom_is_hydrogen(i) && rsd_type_.atom_is_backbone(i)) ||
+				(!rsd_type_.is_peptoid() && !rsd_type_.atom_is_hydrogen(i)) ||
+				(!rsd_type_.is_peptoid() && atom_depends_on_lower(i, rsd_type_.has_polymer_dependent_groups() ) ) ||
+				atom_depends_on_upper(i, rsd_type_.has_polymer_dependent_groups() ) ||
 				(rsd_type_.is_lower_terminus() && rsd_type_.icoor(i).stub_atom1().atomno() == 1)
 				/*Force rebuild of mainchain hydrogens that don't depend on polymer lower or upper and aren't N-terminal amide protons.  Logic below ensures that hydrogen positions are preserved if they don't deviate by more than a threshold from ideal. VKM 21 Aug 2015.*/
 				)
@@ -960,7 +939,11 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		}
 	}
 
-	if ( any_missing ) fill_missing_atoms( missing, conformation );
+	if ( any_missing ) {
+		//utility::vector1< core::Real > chivals( chi() );
+		fill_missing_atoms( missing, conformation ); //Rebuild the missing atoms.
+		//chi( chivals ); //Ensure that chi values are still the same
+	}
 
 	//Check mainchain hydrogens, which are currently in idealized positions distinct from the input position.
 	//If they deviate from less than a threshold value from the input position, preserve the input position;
@@ -983,10 +966,20 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		}
 	}
 
-	if ( preserve_c_beta ) {
+	if ( preserve_c_beta && (
+			( is_peptoid() && src.is_peptoid() ) || //Don't do anything if there's a peptoid/non-peptoid mismatch, since the CB comes off of a different atom.
+			( !is_peptoid() && !src.is_peptoid() )
+			)
+			) {
 		// after superposition, adjust the sidechain atoms by aligning the CA-CB bond
-		//  std::cout << "preserving c-beta... " << std::endl;
+		// std::cout << "preserving c-beta... " << std::endl;
 		std::string root("CA"), mobile_new("CB"), mobile_src("CB");
+
+		if ( is_peptoid() && src.is_peptoid() ) {
+			root = "N";
+			mobile_new = "CA1";
+			mobile_src = "CA1";
+		}
 
 		if ( is_RNA() ) {
 			root = " C1'";
@@ -1003,19 +996,18 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 				cross( xyz( mobile_new ) - xyz( root ), src.xyz( mobile_src ) - src.xyz( root ) ) + xyz( root )
 			);
 
-			if ( pseudoatom==xyz(root) ) return;
-
-			Stub new_stub(     xyz( root ), pseudoatom,     xyz( mobile_new ) ),
-				src_stub( src.xyz( root ), pseudoatom, src.xyz( mobile_src ) );
-			// adjust sidechain coordinates by superposition of the bond 'stubs'
-			// would need a smarter way to propagate through all child atoms of 'root' to generalize this
-			for ( Size atom_index(1); atom_index <= type().natoms(); ++atom_index ) {
-				if ( type().atom_is_backbone( atom_index ) ) continue;
-				//special case for RNA
-				if ( type().atom_name( atom_index ) == " O2'" || type().atom_name( atom_index ) == "HO2'" ) continue;
-				Vector const old_xyz( atoms()[ atom_index ].xyz() );
-				Vector const new_xyz( src_stub.local2global( new_stub.global2local( old_xyz ) ) );
-				atoms()[ atom_index ].xyz( new_xyz );
+			if ( pseudoatom!=xyz(root) ) {
+				Stub new_stub( xyz( root ), pseudoatom, xyz( mobile_new ) ), src_stub( src.xyz( root ), pseudoatom, src.xyz( mobile_src ) );
+				// adjust sidechain coordinates by superposition of the bond 'stubs'
+				// would need a smarter way to propagate through all child atoms of 'root' to generalize this
+				for ( Size atom_index(1); atom_index <= type().natoms(); ++atom_index ) {
+					if ( type().atom_is_backbone( atom_index ) ) continue;
+					//special case for RNA
+					if ( type().atom_name( atom_index ) == " O2'" || type().atom_name( atom_index ) == "HO2'" ) continue;
+					Vector const old_xyz( atoms()[ atom_index ].xyz() );
+					Vector const new_xyz( src_stub.local2global( new_stub.global2local( old_xyz ) ) );
+					atoms()[ atom_index ].xyz( new_xyz );
+				}
 			}
 		}
 	}

@@ -80,11 +80,12 @@ void find_cutpoint_variants(
 	std::sort(cutpoints.begin(), cutpoints.end());
 }
 
-/// helper function for looking at residue connections to get lower/upper partners
+/// @brief Helper function for looking at residue connections to get lower/upper partners
 bool
 lower_upper_connected_across_cutpoint( core::conformation::Residue const & lower_rsd,
 	core::conformation::Residue const & upper_rsd )
 {
+	if ( !lower_rsd.has_upper_connect() || !upper_rsd.has_lower_connect() ) return false;
 	for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
 		if ( lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
 		Size upper( lower_rsd.connected_residue_at_resconn( k ) );

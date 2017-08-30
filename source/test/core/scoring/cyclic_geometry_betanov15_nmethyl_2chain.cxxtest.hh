@@ -95,6 +95,9 @@ public:
 		mutres17->set_update_polymer_dependent( true );
 		mutres17->apply(*initial_pose_2chain);
 
+		poses_2chain_.clear();
+		mirror_poses_2chain_.clear();
+
 		poses_2chain_.push_back(initial_pose_2chain);
 		mirror_poses_2chain_.push_back( mirror_pose_with_disulfides( poses_2chain_[1] ) );
 		for ( core::Size i=1; i<=23; ++i ) {
@@ -125,7 +128,7 @@ public:
 		scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
 		TR << "Testing cart_bonded score term." << std::endl;
 		CyclicGeometryTestHelper helper;
-		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_, false);
 		return;
 	}
 

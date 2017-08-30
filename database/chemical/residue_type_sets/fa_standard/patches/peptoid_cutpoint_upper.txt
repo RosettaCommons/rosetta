@@ -1,0 +1,21 @@
+## Patch for the upper cutpoint on a peptoid residue.
+## File created 10 June 2017 by Vikram K. Mulligan (vmullig@uw.edu) as part of the 2017
+## Noncanonicals Hackathon in New York City. 
+
+NAME peptoid_cutpoint_upper
+TYPES CUTPOINT_UPPER
+
+BEGIN_SELECTOR
+PROPERTY PEPTOID
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE CUTPOINT_UPPER
+END_SELECTOR
+
+BEGIN_CASE ################################# general
+
+ADD_ATOM OVU1 VIRT VIRT 0.0
+ADD_BOND N OVU1
+SET_BACKBONE_HEAVYATOM OVU1
+SET_ICOOR OVU1 180.0 58.3 1.329 N CA CA1
+
+END_CASE

@@ -346,7 +346,8 @@ PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true *
 		if ( !instantiate && !operation->applies_to_placeholder() ) { continue; }
 		bool const fail( operation->apply( *rsd ) );
 		if ( fail ) {
-			utility_exit_with_message( "Failed to apply a PatchOperation to " + rsd->name() + ".\nThe PatchOperation was: " + operation->name() + "." );
+			tr.Debug << "Failed when applying PatchOperation " << operation->name() << " to residue " << rsd->name() << std::endl;
+			// A more explicit message will be printed in Patch::apply()
 			return nullptr;
 		}
 	}
@@ -448,6 +449,14 @@ bool
 PatchCase::may_change_aa() const {
 	for ( auto const & operation : operations_ ) {
 		if ( operation->may_change_aa() ) return true;
+	}
+	return false;
+}
+
+bool
+PatchCase::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const {
+	for ( auto const & operation : operations_ ) {
+		if ( operation->changes_connections_on( rsd_type, atom ) ) return true;
 	}
 	return false;
 }
@@ -555,43 +564,38 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
 			ResidueTypeOP patched_rsd_type( iter->apply( rsd_type, instantiate ) );
-			if ( patched_rsd_type ) {
-				// patch succeeded!
-				if ( !replaces_residue_type_ ) { // This is bananas. Shouldn't just forget that patch was applied. -- rhiju.
-					for ( auto const & type : types_ ) {
-						// Custom variant type--must account for.
-						// Issue: this means that variants in Patch files that are misspelled or
-						// something won't be caught--they'll just silently and ineffectually
-						// be added.
-						// AMW: No longer an issue. Check if this Patch is metapatch-derived
-						// if so, enable custom variant types. if not, let it burn!
-						if ( name_.substr( 0, 3 ) == "MP-" ) {
-							// Need custom variant types.
-							patched_rsd_type->enable_custom_variant_types();
-						}
-						patched_rsd_type->add_variant_type( type );
-					}
-					// AMW: Special case for the chiral flip patches. In ONLY THESE CASE,
-					// application PREpends the letter D or L. No ':'.
-					std::string name_new;
-					if ( name_ == "D" ) {
-						name_new = "D" + patched_rsd_type->name();
-					} else if ( name_ == "L" ) {
-						name_new = "L" + patched_rsd_type->name();
-					} else {
-						name_new = patched_rsd_type->name() + PATCH_LINKER + name_;
-					}
-					patched_rsd_type->name( name_new );
-				}
 
-				if ( instantiate ) {
-					patched_rsd_type->finalize();
-					tr.Debug << "successfully patched: " << rsd_type.name() <<
-						" to: " << patched_rsd_type->name() << std::endl;
-				}
-
-				return patched_rsd_type;
+			if ( ! patched_rsd_type ) {
+				tr.Warning << "Patch " << name() << " implies it can apply to residue type " << rsd_type.name() << ", but actually applying it fails." << std::endl;
+				tr.Warning << "   You may want to check your patch definitions." << std::endl;
+				continue;
 			}
+
+			// patch succeeded!
+			if ( !replaces_residue_type_ ) { // This is bananas. Shouldn't just forget that patch was applied. -- rhiju.
+				for ( auto const & type : types_ ) {
+					// Custom variant type--must account for.
+					// Issue: this means that variants in Patch files that are misspelled or
+					// something won't be caught--they'll just silently and ineffectually
+					// be added.
+					// AMW: No longer an issue. Check if this Patch is metapatch-derived
+					// if so, enable custom variant types. if not, let it burn!
+					if ( name_.substr( 0, 3 ) == "MP-" ) {
+						// Need custom variant types.
+						patched_rsd_type->enable_custom_variant_types();
+					}
+					patched_rsd_type->add_variant_type( type );
+				}
+				patched_rsd_type->name( patched_name(*patched_rsd_type) );
+			}
+
+			if ( instantiate ) {
+				patched_rsd_type->finalize();
+				tr.Debug << "successfully patched: " << rsd_type.name() <<
+					" to: " << patched_rsd_type->name() << std::endl;
+			}
+
+			return patched_rsd_type;
 		}
 	}
 
@@ -603,6 +607,19 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 	// patching, so I believe this is completely safe. ~Labonte
 	//utility_exit_with_message( "no patch applied? " + name_ + " to " + rsd_type.name() );
 	return nullptr;
+}
+
+std::string
+Patch::patched_name( ResidueType const & rsd ) const {
+	// AMW: Special case for the chiral flip patches. In ONLY THESE CASE,
+	// application PREpends the letter D or L. No ':'.
+	if ( name_ == "D" ) {
+		return "D" + rsd.name();
+	} else if ( name_ == "L" ) {
+		return "L" + rsd.name();
+	} else {
+		return rsd.name() + PATCH_LINKER + name_;
+	}
 }
 
 /// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
@@ -713,6 +730,22 @@ Patch::deletes_variants( ResidueType const & rsd_type ) const
 	}
 
 	return variants;
+}
+
+bool
+Patch::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const {
+	if ( !applies_to( rsd_type ) ) return false;  // Can't change what you can't alter
+
+	for ( auto const & iter : cases_ ) {
+		if ( iter->applies_to( rsd_type ) ) {
+			// this patch case applies to this rsd_type
+			if ( iter->changes_connections_on( rsd_type, atom ) ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 /// @details loop through the cases in this patch and if it is applicable to this ResidueType, discover

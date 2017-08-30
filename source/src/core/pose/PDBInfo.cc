@@ -568,6 +568,20 @@ PDBInfo::show(
 	out << "                           TOTAL | " << I(6,4,nres()) << " residues; " << I(8,5,atm_tot) << " atoms" << std::endl;
 }
 
+std::string
+PDBInfo::short_desc() const {
+	utility::vector1< int > res_vector;
+	utility::vector1< char > chain_vector;
+
+	for ( core::Size ii(1); ii <= nres(); ++ii ) {
+		res_vector.push_back( number(ii) );
+		chain_vector.push_back( chain(ii) );
+	}
+
+	return utility::make_tag_with_dashes( res_vector, chain_vector );
+}
+
+
 /// @brief set chain/pdb/insertion code for residue simultaneously
 /// @note convenience method; more efficient than doing each individually
 ///  due to map updates

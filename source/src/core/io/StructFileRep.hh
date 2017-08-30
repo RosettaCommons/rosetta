@@ -75,6 +75,11 @@ struct LinkInformation {
 	core::Distance length;
 };  // struct LinkInformation
 
+/// @brief Do these link information correspond to the same connection (ignoring order)
+bool same_link( LinkInformation const & link1, LinkInformation const & link2 );
+
+/// @brief Is the LinkInformation in the given vector?
+bool link_in_vector( utility::vector1< LinkInformation > const & link_vector, LinkInformation const & link1 );
 
 // A structure for storing information from .pdb SSBOND records.
 /// @author Watkins
@@ -391,6 +396,9 @@ std::ostream & operator<<( std::ostream & os, AtomInformation const & ai );
 
 /// @brief  Output StructFileRep object to TR-like stream in human-readable format.
 std::ostream & operator<<( std::ostream & os, StructFileRep const & sfr );
+
+/// @brief Debugging output for LinkInformation
+std::ostream & operator<<( std::ostream & os, LinkInformation const & li );
 
 } // namespace io
 } // namespace core

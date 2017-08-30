@@ -70,11 +70,6 @@ patches/Cterm_amidation.txt
 patches/VirtualProteinResidue.txt
 patches/VirtualNterm.txt
 
-## terminal connection patches
-patches/CtermConnect.txt
-#patches/CtermConnectBP.txt
-patches/NtermConnect.txt
-
 ##fpd
 ## AMW: these two CANNOT be commented in because otherwise N and C termini
 ## will never be filled in. Really, they do not belong in this file at all
@@ -151,7 +146,6 @@ patches/carbohydrates/cutpoint_upper.txt
 ### branching
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/C-linked_glycosylation.txt
-patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
 patches/carbohydrates/3-branch.txt
 patches/carbohydrates/4-branch.txt

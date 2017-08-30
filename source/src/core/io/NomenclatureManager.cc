@@ -62,7 +62,7 @@ NomenclatureManager::rosetta_names_from_pdb_code( std::string const & pdb_code )
 			std::string name3 = std::get<0>(alt_code_tuple->second);
 			std::string base_name = std::get<1>(alt_code_tuple->second);
 			pair< string, string > const & rosetta_names = std::make_pair( name3, base_name );
-			TR << "Accepting alternate code " << pdb_code << " for " << rosetta_names.first << '.' << endl;
+			TR.Debug << "Accepting alternate code " << pdb_code << " for " << rosetta_names.first << '.' << endl;
 			return rosetta_names;
 		}
 	}

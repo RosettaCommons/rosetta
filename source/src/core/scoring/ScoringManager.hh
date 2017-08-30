@@ -883,6 +883,16 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	static mm::MMBondLengthLibraryOP create_mm_bondlength_library_instance();
 
+	/// @brief Create a (default) instance of the CHIEnergyFunction object, by owning pointer.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	static carbohydrates::CHIEnergyFunctionOP create_chi_energy_function_instance();
+
+	/// @brief Create a (default) instance of the OmegaPreferencesFunction object, by owning pointer.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	static carbohydrates::OmegaPreferencesFunctionOP create_omega_preferences_function_instance();
+
 	/// @brief Create an instance of the NVlookup object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 	/// @note Not intended for use outside of ScoringManager.

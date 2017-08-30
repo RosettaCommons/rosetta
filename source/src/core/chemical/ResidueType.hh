@@ -371,7 +371,7 @@ public:
 	Size
 	number_bonded_hydrogens( Size const atomno ) const
 	{
-		if ( attached_H_end_[ atomno ] == 0 ) return 0;
+		if ( attached_H_end_[ atomno ] == 0 || atomno > attached_H_end_.size() ) return 0;
 		else return attached_H_end_[ atomno ] - attached_H_begin_[ atomno ] + 1;
 	}
 
@@ -1746,9 +1746,6 @@ public:
 
 	/// @brief is a branch-point residue?
 	bool is_branch_point() const;
-
-	/// @brief is lower terminus of a branch?
-	bool is_branch_lower_terminus() const;
 
 	/// @brief is acetylated n terminus
 	bool is_acetylated_nterminus() const;

@@ -997,20 +997,19 @@ ScoringManager::get_DisulfideMatchingPotential() const
 carbohydrates::CHIEnergyFunction const &
 ScoringManager::get_CHIEnergyFunction( bool const setup_for_sampling /* false */, core::Real const & step_size /* 0.1 */ ) const
 {
+	boost::function< carbohydrates::CHIEnergyFunctionOP () > creator( boost::bind( &ScoringManager::create_chi_energy_function_instance ) );
+	utility::thread::safely_create_load_once_object_by_OP( creator, CHI_energy_function_, SAFELY_PASS_MUTEX( carb_chienergy_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( carb_chienergy_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
+
+	if ( setup_for_sampling ) {
 #ifdef MULTI_THREADED
-	utility_exit_with_message( "Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
+		utility_exit_with_message( "Error in ScoringManager: the carbohydrate CHIEnergyFunction with setup_for_sampling is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jared Adolf-Bryfogle (jadolfbr@gmail.com) to complain about this." );
 #endif
-
-	if ( CHI_energy_function_ == nullptr ) {
-		TR << "Creating CHI Energy Function." << std::endl;
-		CHI_energy_function_ = carbohydrates::CHIEnergyFunctionOP( new carbohydrates::CHIEnergyFunction );
-	}
-
-	// VKM 20 July 2017: The following is fundamentally not threadsafe, since different threads could simultaneously
-	// be trying to configure the global CHI energy function for sampling or not for sampling.
-	if ( setup_for_sampling && ( ! CHI_energy_function_->sampling_data_setup() ) ) {
-		TR << "should be setting up for sampling..." << std::endl;
-		CHI_energy_function_->setup_for_sampling( step_size );
+		// VKM 20 July 2017: The following is fundamentally not threadsafe, since different threads could simultaneously
+		// be trying to configure the global CHI energy function for sampling or not for sampling.
+		if ( ! CHI_energy_function_->sampling_data_setup() ) {
+			TR << "should be setting up for sampling..." << std::endl;
+			CHI_energy_function_->setup_for_sampling( step_size );
+		}
 	}
 
 	return *CHI_energy_function_;
@@ -1021,22 +1020,19 @@ ScoringManager::get_CHIEnergyFunction( bool const setup_for_sampling /* false */
 carbohydrates::OmegaPreferencesFunction const &
 ScoringManager::get_OmegaPreferencesFunction(  bool const setup_for_sampling /* false */, core::Real const & step_size /* 0.1 */ ) const
 {
+	boost::function< carbohydrates::OmegaPreferencesFunctionOP () > creator( boost::bind( &ScoringManager::create_omega_preferences_function_instance ) );
+	utility::thread::safely_create_load_once_object_by_OP( creator, carbohydrate_omega_preferences_function_, SAFELY_PASS_MUTEX( carb_omegapref_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( carb_omegapref_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
+
+	if ( setup_for_sampling ) {
 #ifdef MULTI_THREADED
-	utility_exit_with_message( "Error in ScoringManager: the carbohydrate OmegaPreferencesFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
+		utility_exit_with_message( "Error in ScoringManager: the carbohydrate OmegaPreferencesFunction with setup_for_sampling is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jared Adolf-Bryfogle (jadolfbr@gmail.com) to complain about this." );
 #endif
-
-	if ( carbohydrate_omega_preferences_function_ == nullptr ) {
-		TR << "Creating carbohydrate omega preferences function." << std::endl;
-		carbohydrate_omega_preferences_function_ =
-			carbohydrates::OmegaPreferencesFunctionOP( new carbohydrates::OmegaPreferencesFunction );
-
-	}
-
-	// VKM 20 July 2017: The following is fundamentally not threadsafe, since different threads could simultaneously
-	// be trying to configure the global OmegaPreferences energy function for sampling or not for sampling.
-	if ( setup_for_sampling && ( ! carbohydrate_omega_preferences_function_->sampling_data_setup() ) ) {
-		TR << "should be setting up for sampling..." << std::endl;
-		carbohydrate_omega_preferences_function_->setup_for_sampling( step_size );
+		// VKM 20 July 2017: The following is fundamentally not threadsafe, since different threads could simultaneously
+		// be trying to configure the global OmegaPreferences energy function for sampling or not for sampling.
+		if ( ! carbohydrate_omega_preferences_function_->sampling_data_setup() ) {
+			TR << "should be setting up for sampling..." << std::endl;
+			carbohydrate_omega_preferences_function_->setup_for_sampling( step_size );
+		}
 	}
 
 	return *carbohydrate_omega_preferences_function_;
@@ -1733,6 +1729,23 @@ ScoringManager::create_mm_bondlength_library_instance() {
 		chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD )
 		)
 	);
+}
+
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+carbohydrates::CHIEnergyFunctionOP
+ScoringManager::create_chi_energy_function_instance() {
+	TR << "Creating CHI Energy Function." << std::endl;
+	return carbohydrates::CHIEnergyFunctionOP( new carbohydrates::CHIEnergyFunction );
+}
+
+/// @brief Create a (default) instance of the OmegaPreferencesFunction object, by owning pointer.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+carbohydrates::OmegaPreferencesFunctionOP
+ScoringManager::create_omega_preferences_function_instance() {
+	TR << "Creating carbohydrate omega preferences function." << std::endl;
+	return carbohydrates::OmegaPreferencesFunctionOP( new carbohydrates::OmegaPreferencesFunction );
 }
 
 /// @brief Create an instance of the NVlookup object, by owning pointer.

@@ -33,7 +33,7 @@ namespace scoring {
 
 struct TorsionParams
 {
-	utility::vector1< Size > atm;
+	utility::vector1< std::string > atm;
 	Real n, k, delta;
 };
 

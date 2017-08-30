@@ -104,7 +104,6 @@ public:
 		core::Size is_lower_terminus(0);
 		core::Size is_upper_terminus(0);
 		core::Size is_branch_point(0);
-		core::Size is_branch_lower_terminus(0);
 		core::Size is_acetylated_nterminus(0);
 		core::Size is_methylated_cterminus(0);
 		core::Size is_virtual_residue(0);
@@ -147,7 +146,6 @@ public:
 			if ( pose.residue_type(i).is_lower_terminus() ) ++is_lower_terminus;
 			if ( pose.residue_type(i).is_upper_terminus() ) ++is_upper_terminus;
 			if ( pose.residue_type(i).is_branch_point() ) ++is_branch_point;
-			if ( pose.residue_type(i).is_branch_lower_terminus() ) ++is_branch_lower_terminus;
 			if ( pose.residue_type(i).is_acetylated_nterminus() ) ++is_acetylated_nterminus;
 			if ( pose.residue_type(i).is_methylated_cterminus() ) ++is_methylated_cterminus;
 			if ( pose.residue_type(i).is_virtual_residue() ) ++is_virtual_residue;
@@ -194,7 +192,6 @@ public:
 		job_me->add_string_real_pair("is_lower_terminus", is_lower_terminus);
 		job_me->add_string_real_pair("is_upper_terminus", is_upper_terminus);
 		job_me->add_string_real_pair("is_branch_point", is_branch_point);
-		job_me->add_string_real_pair("is_branch_lower_terminus", is_branch_lower_terminus);
 		job_me->add_string_real_pair("is_acetylated_nterminus", is_acetylated_nterminus);
 		job_me->add_string_real_pair("is_methylated_cterminus", is_methylated_cterminus);
 		job_me->add_string_real_pair("is_virtual_residue", is_virtual_residue);

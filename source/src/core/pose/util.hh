@@ -966,18 +966,60 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map, core:
 /// @brief Create std::map from PDBPoseMap
 std::map< std::string, core::Size > get_pdb2pose_numbering_as_stdmap ( core::pose::Pose const & pose );
 
-/// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
+/// @brief Add cutpoint variants to all residues annotated as cutpoints in the FoldTree in the Pose.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose );
 
+/// @brief Add CUTPOINT_LOWER and CUTPOINT_UPPER types to two residues, remove incompatible types, and declare
+/// a chemical bond between them.
+/// @param[in] pose The pose to modify.
+/// @param[in] cutpoint_res The index of the CUTPOINT_LOWER residue.
+/// @param[in] check_fold_tree If true, a check is performed to confirm that the residues in question represent a
+/// cutpoint in the foldtree in the pose.
+/// @param[in] next_res_in The index of the CUTPOINT_UPPER residue.  If not provided, or if set to 0, this defaults
+/// to the cutpoint_res + 1 residue.  Must be specified for cyclic geometry.
 void
-correctly_add_cutpoint_variants( core::pose::Pose & pose,
+correctly_add_cutpoint_variants(
+	core::pose::Pose & pose,
 	Size const cutpoint_res,
 	bool const check_fold_tree = true,
 	Size const next_res_in = 0 );
 
+/// @brief Remove variant types incompatible with CUTPOINT_LOWER from a position in a pose.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+/// @param[in,out] pose The pose on which to operate.
+/// @param[in] res_index The index of the residue on which to operate.
+void
+correctly_remove_variants_incompatible_with_lower_cutpoint_variant( core::pose::Pose & pose, Size const res_index );
+
+/// @brief Remove variant types incompatible with CUTPOINT_UPPER from a position in a pose.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+/// @param[in,out] pose The pose on which to operate.
+/// @param[in] res_index The index of the residue on which to operate.
+void
+correctly_remove_variants_incompatible_with_upper_cutpoint_variant( core::pose::Pose & pose, Size const res_index );
+
+/// @brief Create a chemical bond from lower to upper residue across CUTPOINT_LOWER/CUTPOINT_UPPER.
+/// @details This will prevent steric repulsion.
+/// @param[in] pose The pose to modify.
+/// @param[in] cutpoint_res The index of the CUTPOINT_LOWER residue.
+/// @param[in] next_res_in The index of the CUTPOINT_UPPER residue.  If not provided, or if set to 0, this defaults
+/// to the cutpoint_res + 1 residue.  Must be specified for cyclic geometry.
 void
 declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res, Size const next_res_in = 0 );
+
+/// @brief Given a pose and a position that may or may not be CUTPOINT_UPPER or CUTPOINT_LOWER, determine whether this
+/// position has either of these variant types, and if it does, determine whether it's connected to anything.  If it is,
+/// update the C-OVL1-OVL2 bond lengths and bond angle (for CUTPOINT_LOWER) or OVU1-N bond length (for CUTPOINT_UPPER) to
+/// match any potentially non-ideal geometry in the residue to which it's bonded.
+/// @details Requires a little bit of special-casing for gamma-amino acids.  Throws an exception if the residue to which
+/// a CUTPOINT_LOWER is bonded does not have an "N" and a "CA" or "C4".  Safe to call repeatedly, or if cutpoint variant
+/// types are absent; in these cases, the function does nothing.
+/// @note By default, this function calls itself again once on residues to which this residue is connected, to update their
+/// geometry.  Set recurse=false to disable this.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+update_cutpoint_virtual_atoms_if_connected( core::pose::Pose & pose, core::Size const cutpoint_res, bool recurse = true );
 
 void
 get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep const & sfr );

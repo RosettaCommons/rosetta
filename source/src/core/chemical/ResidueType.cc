@@ -711,13 +711,6 @@ ResidueType::branch_connect_atoms() const
 	}
 	debug_assert( atoms.size() == n_non_polymeric_residue_connections_ );
 
-	// Branch lower connects should be treated like lower connects, so remove them from this list.
-	if ( is_branch_lower_terminus() ) {
-		// If this is a branch lower terminus, the branch lower connection SHOULD be at the first of the atoms found
-		// above.  So return all but the first element of the vector.
-		return utility::vector1< uint >( atoms.begin() + 1, atoms.end() );
-	}
-
 	return atoms;
 }
 
@@ -2322,7 +2315,12 @@ ResidueType::is_gamma_aa() const {
 ///
 bool
 ResidueType::has_polymer_dependent_groups() const {
-	return is_n_methylated(); //TODO: Update this if other polymer-dependent types are added.
+	return
+		is_n_methylated() ||
+		is_peptoid() ||
+		has_variant_type(core::chemical::CUTPOINT_LOWER) ||
+		has_variant_type(core::chemical::CUTPOINT_UPPER)
+		; //TODO: Update this if other polymer-dependent types are added.
 }
 
 /// @brief Is this one of SRI's special heteropolymer building blocks?
@@ -2553,12 +2551,6 @@ bool
 ResidueType::is_branch_point() const
 {
 	return properties_->has_property( BRANCH_POINT );
-}
-
-bool
-ResidueType::is_branch_lower_terminus() const
-{
-	return properties_->has_property( BRANCH_LOWER_TERMINUS );
 }
 
 bool
@@ -2849,7 +2841,13 @@ ResidueType::add_metapatch_connect( std::string const & atom ) {
 		AtomICoor aicoor = icoor( atom_index( atom ) );
 
 		// These coordinates are generic.
-		set_icoor( "CONN"+ObjexxFCL::string_of( connid ), 3.14159, 70.600000*3.14159/180.000000, 1.37, atom, atom_name( aicoor.stub_atom1().atomno() ), atom_name( aicoor.stub_atom2().atomno() ) );
+		set_icoor( "CONN"+ObjexxFCL::string_of( connid ),
+			3.14159,
+			70.600000*3.14159/180.000000,
+			1.37,
+			ICoorAtomID( atom, *this),
+			aicoor.stub_atom1(),  // Reuse the ICoorAtomID, as they might not be real atoms
+			aicoor.stub_atom2() );
 	} else {
 		Size proton_index = attached_H_begin( atom_index( atom ) );
 		AtomICoor aicoor = icoor( proton_index );
@@ -2859,9 +2857,9 @@ ResidueType::add_metapatch_connect( std::string const & atom ) {
 			aicoor.phi()+radians(180.0),
 			aicoor.theta(),
 			1.37,
-			atom_name( aicoor.stub_atom1().atomno() ),
-			atom_name( aicoor.stub_atom2().atomno() ),
-			atom_name( aicoor.stub_atom3().atomno() ) );
+			aicoor.stub_atom1(), // Reuse the ICoorAtomID, as they might not be real atoms
+			aicoor.stub_atom2(),
+			aicoor.stub_atom3() );
 	}
 
 	update_derived_data();
@@ -3803,10 +3801,10 @@ ResidueType::atom_index( std::string const & name ) const
 		if ( name == "CA" && !is_protein() ) return 1;
 #endif
 		if ( name == "CA" && is_membrane() ) return 2;
-		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
+		tr.Error << "atom name : " << name << " not available in residue " << this->name() << std::endl;
 		show_all_atom_names( tr.Error );
 		tr.Error << std::endl;
-		utility_exit_with_message("unknown atom_name: '" + name + "' in residue " + this->name3() );
+		utility_exit_with_message("unknown atom_name: '" + name + "'  in residue " + this->name() );
 	}
 	VD const & vd = graph_iter->second;
 

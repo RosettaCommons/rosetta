@@ -150,8 +150,6 @@ RamaPreProEnergy::residue_pair_energy(
 	conformation::Residue const &res_lo = (res1_is_lo) ? rsd1 : rsd2;
 	conformation::Residue const &res_hi = (res2_is_lo) ? rsd1 : rsd2;
 
-	if ( res_lo.has_variant_type(core::chemical::CUTPOINT_LOWER) ) return;
-	if ( res_hi.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;
 	if ( res_lo.is_terminus() || !res_lo.has_lower_connect() || !res_lo.has_upper_connect() ) return; // Rama not defined.  Note that is_terminus() checks for UPPER_TERMINUS or LOWER_TERMINUS variant types; it knows nothing about sequence position.
 
 	utility::vector1 < core::Real > mainchain_torsions( res_lo.type().mainchain_atoms().size() - 1 );
@@ -183,9 +181,11 @@ RamaPreProEnergy::eval_intraresidue_dof_derivative(
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
 		if ( tor_id.rsd() != res_lo.seqpos() ) return 0.0;
 		if ( res_lo.is_terminus() || !res_lo.has_lower_connect() || !res_lo.has_upper_connect() ) return 0.0;
-		if ( pose.fold_tree().is_cutpoint( res_lo.seqpos() ) ) return 0.0;
 
-		conformation::Residue const &res_hi( pose.residue( res_lo.residue_connection_partner( res_lo.upper_connect().index() ) ) );
+		core::Size const conn_partner( res_lo.connected_residue_at_lower() );
+		if ( !conn_partner ) return 0.0;
+
+		conformation::Residue const &res_hi( pose.residue( conn_partner ) );
 
 		if ( tor_id.torsion() == res_lo.type().mainchain_atoms().size() ) return 0.0; //No derivative for omega, the inter-residue torsion.
 

@@ -1,0 +1,119 @@
+﻿HEADER    Lipid monolayer from topfl_h            07-JUL-17   XXXX
+AUTHOR    Labonte
+HETNAM     GOL GLYCEROL-3-PHOSPHATE
+HETNAM     CHT CHOLINE
+HETNAM     PLM PALMITATE
+HETNAM     OLA OLEATE
+LINK        3PO  GOL A   1                 C2  CHT A   2     1555   1555  1.49  
+LINK         O1  GOL A   1                 C1  PLM A   3     1555   1555  1.39  
+LINK         O2  GOL A   1                 C1  OLA A   4     1555   1555  1.39  
+LINK        3PO  GOL A   5                 C2  CHT A   6     1555   1555  1.49  
+LINK         O1  GOL A   5                 C1  PLM A   7     1555   1555  1.39  
+LINK         O2  GOL A   5                 C1  OLA A   8     1555   1555  1.39  
+HETATM       C1  GOL A   1     -25.125 -13.714  33.260  1.00  0.00           C  
+HETATM       C2  GOL A   1     -25.490 -14.800  32.201  1.00  0.00           C  
+HETATM       C3  GOL A   1     -25.922 -16.051  32.801  1.00  0.00           C  
+HETATM       O1  GOL A   1     -24.846 -12.488  32.499  1.00  0.00           O  
+HETATM       O2  GOL A   1     -24.381 -15.049  31.294  1.00  0.00           O  
+HETATM       O3  GOL A   1     -26.374 -17.111  31.943  1.00  0.00           O  
+HETATM      3OP  GOL A   1     -27.736 -15.962  30.019  1.00  0.00           O  
+HETATM      1OP  GOL A   1     -28.744 -16.888  32.124  1.00  0.00           O1-
+HETATM      2OP  GOL A   1     -27.623 -18.424  30.311  1.00  0.00           O  
+HETATM       P   GOL A   1     -27.698 -17.141  31.077  1.00  0.00           P  
+HETATM       C2  CHT A   2     -28.982 -15.191  29.746  1.00  0.00           C  
+HETATM       C1  CHT A   2     -29.974 -16.106  28.970  1.00  0.00           C  
+HETATM      1CN  CHT A   2     -28.545 -17.300  27.371  1.00  0.00           C  
+HETATM      2CN  CHT A   2     -29.606 -15.278  26.663  1.00  0.00           C  
+HETATM      3CN  CHT A   2     -30.763 -17.193  27.005  1.00  0.00           C  
+HETATM       N1  CHT A   2     -29.667 -16.477  27.595  1.00  0.00           N1+
+HETATM       C10 PLM A   3     -28.626  -3.972  30.264  1.00  0.00           C  
+HETATM       C11 PLM A   3     -28.912  -3.218  28.928  1.00  0.00           C  
+HETATM       C12 PLM A   3     -27.945  -2.073  28.636  1.00  0.00           C  
+HETATM       C13 PLM A   3     -28.237  -1.324  27.327  1.00  0.00           C  
+HETATM       C14 PLM A   3     -29.276  -0.194  27.456  1.00  0.00           C  
+HETATM       C15 PLM A   3     -29.395   0.421  26.051  1.00  0.00           C  
+HETATM       C16 PLM A   3     -30.806   1.108  25.976  1.00  0.00           C  
+HETATM       C1  PLM A   3     -25.793 -11.472  32.397  1.00  0.00           C  
+HETATM       C2  PLM A   3     -27.278 -11.716  32.191  1.00  0.00           C  
+HETATM       C3  PLM A   3     -27.880 -11.386  30.794  1.00  0.00           C  
+HETATM       C4  PLM A   3     -28.225  -9.893  30.708  1.00  0.00           C  
+HETATM       C5  PLM A   3     -29.088  -9.829  29.378  1.00  0.00           C  
+HETATM       C6  PLM A   3     -29.100  -8.488  28.766  1.00  0.00           C  
+HETATM       C7  PLM A   3     -29.684  -7.451  29.753  1.00  0.00           C  
+HETATM       C8  PLM A   3     -28.798  -6.217  29.614  1.00  0.00           C  
+HETATM       C9  PLM A   3     -29.350  -5.289  30.565  1.00  0.00           C  
+HETATM       O1  PLM A   3     -25.378 -10.290  32.462  1.00  0.00           O  
+HETATM       C10 OLA A   4     -23.523  -3.979  30.263  1.00  0.00           C  
+HETATM       C11 OLA A   4     -22.633  -3.543  29.100  1.00  0.00           C  
+HETATM       C12 OLA A   4     -22.098  -2.236  29.500  1.00  0.00           C  
+HETATM       C13 OLA A   4     -23.230  -1.162  29.509  1.00  0.00           C  
+HETATM       C14 OLA A   4     -23.745  -0.642  28.204  1.00  0.00           C  
+HETATM       C15 OLA A   4     -24.585   0.488  28.551  1.00  0.00           C  
+HETATM       C16 OLA A   4     -24.842   1.447  27.361  1.00  0.00           C  
+HETATM       C17 OLA A   4     -25.553   2.753  27.680  1.00  0.00           C  
+HETATM       C18 OLA A   4     -26.000   3.465  26.414  1.00  0.00           C  
+HETATM       C1  OLA A   4     -24.672 -14.845  29.947  1.00  0.00           C  
+HETATM       C2  OLA A   4     -25.059 -13.580  29.179  1.00  0.00           C  
+HETATM       C3  OLA A   4     -23.850 -12.776  28.653  1.00  0.00           C  
+HETATM       C4  OLA A   4     -24.063 -11.331  28.134  1.00  0.00           C  
+HETATM       C5  OLA A   4     -24.238 -10.346  29.263  1.00  0.00           C  
+HETATM       C6  OLA A   4     -23.652  -9.017  29.024  1.00  0.00           C  
+HETATM       C7  OLA A   4     -23.998  -7.807  29.982  1.00  0.00           C  
+HETATM       C8  OLA A   4     -23.305  -6.496  29.505  1.00  0.00           C  
+HETATM       C9  OLA A   4     -23.817  -5.326  30.479  1.00  0.00           C  
+HETATM       O1  OLA A   4     -24.610 -15.868  29.285  1.00  0.00           O  
+TER
+HETATM       C1  GOL A   5     -35.066 -12.578  32.014  1.00  0.00           C  
+HETATM       C2  GOL A   5     -35.105 -14.102  32.402  1.00  0.00           C  
+HETATM       C3  GOL A   5     -33.846 -14.460  33.132  1.00  0.00           C  
+HETATM       O1  GOL A   5     -34.355 -12.333  30.707  1.00  0.00           O  
+HETATM       O2  GOL A   5     -35.128 -14.860  31.176  1.00  0.00           O  
+HETATM       O3  GOL A   5     -33.765 -15.937  33.398  1.00  0.00           O  
+HETATM      3OP  GOL A   5     -33.436 -17.715  31.619  1.00  0.00           O  
+HETATM      1OP  GOL A   5     -31.814 -17.609  33.588  1.00  0.00           O1-
+HETATM      2OP  GOL A   5     -31.914 -15.915  31.687  1.00  0.00           O  
+HETATM       P   GOL A   5     -32.676 -16.763  32.637  1.00  0.00           P  
+HETATM       C2  CHT A   6     -33.353 -19.173  31.643  1.00  0.00           C  
+HETATM       C1  CHT A   6     -34.260 -19.629  32.829  1.00  0.00           C  
+HETATM      1CN  CHT A   6     -36.002 -18.312  33.870  1.00  0.00           C  
+HETATM      2CN  CHT A   6     -36.230 -20.479  33.237  1.00  0.00           C  
+HETATM      3CN  CHT A   6     -36.284 -18.880  31.492  1.00  0.00           C  
+HETATM       N1  CHT A   6     -35.664 -19.250  32.793  1.00  0.00           N1+
+HETATM       C10 PLM A   7     -31.559  -4.572  38.203  1.00  0.00           C  
+HETATM       C11 PLM A   7     -30.956  -4.516  39.569  1.00  0.00           C  
+HETATM       C12 PLM A   7     -30.449  -3.047  39.903  1.00  0.00           C  
+HETATM       C13 PLM A   7     -29.501  -3.157  41.085  1.00  0.00           C  
+HETATM       C14 PLM A   7     -29.128  -1.808  41.627  1.00  0.00           C  
+HETATM       C15 PLM A   7     -28.223  -1.579  42.792  1.00  0.00           C  
+HETATM       C16 PLM A   7     -27.511  -0.152  42.757  1.00  0.00           C  
+HETATM       C1  PLM A   7     -33.801 -11.091  30.274  1.00  0.00           C  
+HETATM       C2  PLM A   7     -33.780  -9.741  30.995  1.00  0.00           C  
+HETATM       C3  PLM A   7     -32.769  -9.565  32.034  1.00  0.00           C  
+HETATM       C4  PLM A   7     -32.662  -8.095  32.466  1.00  0.00           C  
+HETATM       C5  PLM A   7     -31.716  -7.951  33.611  1.00  0.00           C  
+HETATM       C6  PLM A   7     -31.121  -6.568  33.551  1.00  0.00           C  
+HETATM       C7  PLM A   7     -30.444  -5.971  34.773  1.00  0.00           C  
+HETATM       C8  PLM A   7     -31.339  -5.475  35.879  1.00  0.00           C  
+HETATM       C9  PLM A   7     -30.581  -4.834  37.053  1.00  0.00           C  
+HETATM       O1  PLM A   7     -33.261 -11.143  29.137  1.00  0.00           O  
+HETATM       C10 OLA A   8     -37.160  -9.047  30.476  1.00  0.00           C  
+HETATM       C11 OLA A   8     -38.679  -9.056  30.442  1.00  0.00           C  
+HETATM       C12 OLA A   8     -39.222  -9.633  31.773  1.00  0.00           C  
+HETATM       C13 OLA A   8     -38.806 -11.096  32.079  1.00  0.00           C  
+HETATM       C14 OLA A   8     -39.334 -11.629  33.387  1.00  0.00           C  
+HETATM       C15 OLA A   8     -38.964 -13.083  33.507  1.00  0.00           C  
+HETATM       C16 OLA A   8     -39.034 -13.359  35.069  1.00  0.00           C  
+HETATM       C17 OLA A   8     -38.866 -14.807  35.547  1.00  0.00           C  
+HETATM       C18 OLA A   8     -39.290 -14.985  37.036  1.00  0.00           C  
+HETATM       C1  OLA A   8     -36.255 -15.337  30.522  1.00  0.00           C  
+HETATM       C2  OLA A   8     -36.279 -15.546  29.021  1.00  0.00           C  
+HETATM       C3  OLA A   8     -35.760 -14.234  28.385  1.00  0.00           C  
+HETATM       C4  OLA A   8     -36.267 -14.002  26.928  1.00  0.00           C  
+HETATM       C5  OLA A   8     -36.034 -12.510  26.542  1.00  0.00           C  
+HETATM       C6  OLA A   8     -36.787 -11.514  27.461  1.00  0.00           C  
+HETATM       C7  OLA A   8     -36.501 -10.100  26.951  1.00  0.00           C  
+HETATM       C8  OLA A   8     -36.943  -8.930  27.869  1.00  0.00           C  
+HETATM       C9  OLA A   8     -36.450  -8.992  29.282  1.00  0.00           C  
+HETATM       O1  OLA A   8     -37.287 -15.537  31.236  1.00  0.00           O  
+TER
+END

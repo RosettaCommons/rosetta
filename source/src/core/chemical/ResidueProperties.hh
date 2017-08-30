@@ -308,6 +308,8 @@ public:
 // Insertion operator (overloaded so that ResidueProperties can be "printed" in PyRosetta).
 std::ostream & operator<<( std::ostream & output, ResidueProperties const & object_to_output );
 
+std::ostream & operator<<( std::ostream & output, ResidueProperty const & object_to_output );
+
 // This allows one to use a for loop with ResidueProperty enum values.
 ResidueProperty & operator++( ResidueProperty & property );
 

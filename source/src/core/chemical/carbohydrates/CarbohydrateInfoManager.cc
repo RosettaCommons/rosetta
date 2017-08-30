@@ -54,16 +54,21 @@ CarbohydrateInfoManager::root_from_code( std::string const & code )
 			code + " is not a valid 3-letter code for carbohydrates.  " +
 			"Has it been added to database/chemical/carbohydrates/codes_to_roots.map?");
 	}
-	return get_instance()->code_to_root_map().find( code )->second.first;
+	return get_instance()->code_to_root_map().at( code ).root;
 }
 
 /// @return  L, D, or *, where * indicates that the stereochemistry is inherent to the name.
 char
 CarbohydrateInfoManager::default_stereochem_from_code( std::string const & code )
 {
-	return get_instance()->code_to_root_map().find( code )->second.second;
+	return get_instance()->code_to_root_map().at( code ).DL;
 }
 
+char
+CarbohydrateInfoManager::anomeric_position_from_code( std::string const & code )
+{
+	return get_instance()->code_to_root_map().at( code ).anomeric;
+}
 
 bool
 CarbohydrateInfoManager::is_valid_ring_affix( char affix )
@@ -187,7 +192,7 @@ CarbohydrateInfoManager::CarbohydrateInfoManager() {}
 // Get the map of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root requested,
 // creating them if necessary.
 // Called by the public static method root_from_code().
-std::map< std::string, std::pair< std::string, char > > const &
+std::map< std::string, RootData > const &
 CarbohydrateInfoManager::code_to_root_map()
 {
 #ifdef MULTI_THREADED

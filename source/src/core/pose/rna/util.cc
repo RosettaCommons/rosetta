@@ -215,8 +215,9 @@ virtualize_5prime_phosphates( pose::Pose & pose ){
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( i==1 || ( pose.fold_tree().is_cutpoint( i-1 ) &&
 				!pose.residue_type( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-				!pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
-			if ( pose.residue_type(i).is_RNA() ) {
+				!pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_UPPER )
+				) ) {
+			if ( pose.residue_type(i).is_RNA() && !pose.residue_type(i).has_variant_type( chemical::FIVEPRIME_CAP ) ) {
 				pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i );
 			}
 		}

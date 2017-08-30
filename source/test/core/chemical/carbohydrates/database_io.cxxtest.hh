@@ -25,7 +25,7 @@
 
 // Project header
 #include <core/types.hh>
-
+#include <utility/excn/EXCN_Base.hh>
 #include <basic/Tracer.hh>
 
 
@@ -56,7 +56,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TR << "Testing read_codes_and_roots_from_database_file() method."  << std::endl;
 
-		map< string, pair< string, char > > map(
+		map< string, RootData > map(
 			read_codes_and_roots_from_database_file( "core/chemical/carbohydrates/codes_to_roots.map" ) );
 
 		TS_ASSERT_EQUALS( map.size(), 3 );

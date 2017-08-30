@@ -31,6 +31,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/import_pose/import_pose.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -113,10 +114,23 @@ public:
 		pose::Pose pose;
 		builder.build_pose( sfr, pose );
 
+		TR << "Pose residue 1: " << pose.residue_type(1).name() << std::endl;
+
 		TS_ASSERT_EQUALS( pose.size(), 1 );
 		TS_ASSERT_EQUALS( pose.residue(1).aa(), chemical::aa_ala );
 		TS_ASSERT( pose.residue_type(1).has_property( "ACETYLATED_NTERMINUS" ));
 		TS_ASSERT( pose.residue_type(1).has_property( "METHYLATED_CTERMINUS" ));
+	}
+
+	/// @brief This tests the ability for Rosetta to read in a cyclic peptide that has a LINK
+	/// record connecting the termini.  It should automatically set up a covalent bond and
+	/// cyclization variants.
+	void test_read_cyclic_peptide_with_link_record() {
+		core::pose::PoseOP pose( core::import_pose::pose_from_file( "core/io/pose_from_sfr/cyclic_pep_with_link.pdb", false ) );
+		TS_ASSERT( pose->residue_type(1).has_variant_type( core::chemical::CUTPOINT_UPPER ) );
+		TS_ASSERT( pose->residue_type(pose->total_residue()).has_variant_type( core::chemical::CUTPOINT_LOWER ) );
+		TS_ASSERT( pose->residue(1).connected_residue_at_lower() == pose->total_residue() );
+		TS_ASSERT( pose->residue(pose->total_residue()).connected_residue_at_upper() == 1 );
 	}
 
 };

@@ -37,6 +37,7 @@
 #include <core/chemical/Patch.hh>
 #include <core/chemical/PatchOperation.hh>
 #include <core/chemical/util.hh>
+#include <core/chemical/AtomICoor.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -321,62 +322,55 @@ pdbslice(
 }
 
 
-/// @brief  Convert a jump to the given Residue in a FoldTree to a chemical Edge.
-/// @param  <end_resnum>: the Residue index of the end of the Jump\n
+/// @brief  Create a chemical edge between two Residues
+/// @param  <start_resnum>: the Residue index of the start of the chemical edge
+/// @param  <end_resnum>: the Residue index of the end of the chemical edge
 /// @param  <ft>: the FoldTree being modified
 /// @return true if a chemical connection was found and the passed FoldTree was changed
 /// @note   This function is used by set_reasonable_foldtree() for the primary purpose of rebuilding default FoldTrees
 /// in cases of branching or chemical conjugation.
-/// @author Labonte <JWLabonte@jhu.edu>
-/// @author Joseph Harrison
 bool
-change_jump_to_this_residue_into_chemical_edge(
+create_chemical_edge(
+	core::uint start_resnum,
 	core::uint end_resnum,
 	core::pose::Pose const & pose,
 	core::kinematics::FoldTree & ft )
 {
-	using namespace std;
 	using namespace core::chemical;
 	using namespace conformation;
 
+	Residue const & start_residue( pose.residue( start_resnum ) );
 	Residue const & end_residue( pose.residue( end_resnum ) );
-	bool found_chemical_connection( false );
+	// Don't attempt to make a connection which isn't actually in the connection map
+	if ( ! end_residue.is_bonded( start_resnum ) ) {
+		return false;
+	}
+	debug_assert( start_residue.is_bonded( end_resnum ) );
+
+	utility::vector1< Size > const & end_connections( end_residue.connections_to_residue(start_resnum) );
+	debug_assert( end_connections.size() >= 1 );
+
+	// We arbitrarily pick the first connection - if we get double connections for a pair of residues,
+	// the FoldTree only *slightly* cares about which one we use.
+	core::Size end_connid( end_connections[1] );
+	debug_assert( end_residue.connected_residue_at_resconn(end_connid) == start_resnum );
+
+	// Get the partner via the connid in case there's a double connection
+	core::Size start_connid( end_residue.residue_connection_conn_id(end_connid) );
+	debug_assert( start_residue.connected_residue_at_resconn(start_connid) == end_resnum );
+
+	uint start_atm_index = start_residue.residue_connection( start_connid ).atomno();
+	uint end_atm_index = end_residue.residue_connection( end_connid ).atomno();
+	std::string const & start_atm_name = start_residue.atom_name( start_atm_index );
+	std::string const & end_atm_name = end_residue.atom_name( end_atm_index );
 
 	if ( TR.Trace.visible() ) {
-		TR.Trace << "Searching for ResidueConnection from residue " << end_resnum << endl;
+		TR.Trace << "Adding  EDGE " <<
+			start_resnum << ' ' << end_resnum << ' ' << start_atm_name << ' ' << end_atm_name <<
+			" to the new FoldTree." << std::endl;
 	}
-	// Loop through the ResidueConnections of the end Residue of the old Jump to find and attach the other end of the
-	// new chemical Edge.
-	Size const n_connections( end_residue.type().n_possible_residue_connections() );
-	for ( uint conn_index( 1 ); conn_index <= n_connections; ++conn_index ) {
-		if ( end_residue.connection_incomplete( conn_index ) ) {
-			continue;  // Allow incomplete connections for design.
-		}
-		uint const start_resnum( end_residue.connect_map( conn_index ).resid() );
-		if ( start_resnum < end_resnum ) {
-			Residue const & start_residue( pose.residue( start_resnum ) );
-			// Ensure that the connection is either a polymer branch or a ligand of the same chain.
-			if ( ( start_residue.is_branch_point() && end_residue.is_branch_lower_terminus() ) ||
-					( ( ! end_residue.is_polymer() ) && start_residue.chain() == end_residue.chain() ) ) {
-				uint start_atm_index = start_residue.connect_atom( end_residue );
-				uint end_atm_index = end_residue.connect_atom( start_residue );
-
-				string start_atm_name = start_residue.atom_name( start_atm_index );
-				string end_atm_name = end_residue.atom_name( end_atm_index );
-
-				if ( TR.Trace.visible() ) {
-					TR.Trace << "Adding  EDGE " <<
-						start_resnum << ' ' << end_resnum << ' ' << start_atm_name << ' ' << end_atm_name <<
-						" to the new FoldTree." << endl;
-				}
-				ft.add_edge( start_resnum, end_resnum, start_atm_name, end_atm_name );
-
-				found_chemical_connection = true;
-				break;
-			}
-		}
-	}
-	return found_chemical_connection;
+	ft.add_edge( start_resnum, end_resnum, start_atm_name, end_atm_name );
+	return true;
 }
 
 
@@ -408,74 +402,80 @@ set_reasonable_fold_tree( pose::Pose & pose )
 	for ( auto i( origft.begin() ), i_end( origft.end() ); i != i_end; ++i ) {
 		Edge e( *i );
 		if ( TR.Trace.visible() ) {
-			TR.Trace << "checking if if " << e << " is reasonable for this Pose..." << endl;
+			TR.Trace << "checking if " << e << " is reasonable for this Pose..." << endl;
 		}
+
+		if ( prevent_forward_edge ) {
+			if ( TR.Trace.visible() ) {
+				TR.Trace << "skipping edge, as we've already added the reverse version" << endl;
+			}
+			prevent_forward_edge = false;
+			continue;
+		}
+
 		if ( e.is_jump() ) {
-			uint const ii( e.stop() );  // the residue position at the end of the jump
-			// Is this jump to a covalent ligand residue or forward-direction polymer branch?
-			if ( ( pose.residue( ii ).is_branch_lower_terminus() ) /* polymer branch in forward direction */ ||
-					( ! pose.residue( ii ).is_polymer() ) /* covalent ligand residue */ ) {
+			uint const jump_stop( e.stop() );  // the residue position at the end of the jump
+			uint const jump_start( e.start() );
+
+			// Does this jump represent a direct (chemical) connection between the two residues?
+			if ( pose.residue( jump_stop ).is_bonded( jump_start ) ) {
 				if ( TR.Trace.visible() ) {
-					TR.Trace << e << " was initially set as a Jump to a branch lower terminus or ligand." << endl;
+					TR.Trace << e << " was initially set as a Jump that matches a chemical connection." << endl;
 				}
-				bool jump_was_changed( change_jump_to_this_residue_into_chemical_edge( ii, pose, newft ) );
+				create_chemical_edge( jump_start, jump_stop, pose, newft );
+				continue;  // The Edge has already been added to newft by the function above.
+			}
 
-				if ( jump_was_changed ) {
-					continue;  // The Edge has already been added to newft by the function above.
-				} else /* We couldn't find a chemical connection. */ {
-					if ( pose.residue_type( ii ).n_possible_residue_connections() > 0 ) {
-						TR.Warning << "Can't find a chemical connection for residue " << ii << " " <<
-							pose.residue_type( ii ).name() << endl;
-					}
-				}
-			} else {
+			// Do we have a lower connect to a residue already in the new FoldTree? If so, connect it by a chemical edge rather than a jump edge.
+			if ( pose.residue( jump_stop ).has_lower_connect() && newft.residue_is_in_fold_tree( pose.residue( jump_stop ).connected_residue_at_lower() ) ) {
 				if ( TR.Trace.visible() ) {
-					TR.Trace << e << " was initially set as a Jump to a lower terminus." << endl;
+					TR.Trace << e << " was initially set as a Jump to a residue with a lower connection to a previously defined residue." << std::endl;
 				}
-				// Figure out if the jump should connect to the LAST residue of this Edge/chain and not the 1st,
-				// i.e., is this a C-terminal connection?
+				create_chemical_edge( pose.residue( jump_stop ).connected_residue_at_lower(), jump_stop, pose, newft );
+				continue;
+			}
 
-				Edge const next_e( *(i + 1) );
-				if ( ii == uint( next_e.start() ) && pose.residue( ii ).is_lower_terminus() ) {
-					uint const jj( next_e.stop() );  // the residue position at the end of the next Edge
-					if ( pose.residue_type( jj ).is_branch_lower_terminus() ) {
-						bool jump_was_changed( change_jump_to_this_residue_into_chemical_edge( jj, pose, newft ) );
+			// Is this jump to the lower end of a polymeric edge,
+			// which has it's upper end chemically connected to something that's already in the fold-tree?
+			// i.e., is this a C-terminal connection?
 
-						if ( jump_was_changed ) {
-							// The CHEMICAL Edge has already been added to newft by the function above.
-							// Now, we must add a reverse-direction Edge and skip making the usual forward-direction
-							// Edge.
-							// The Edge has already been added to newft by the function above.
-							if ( TR.Trace.visible() ) {
-								TR.Trace << "Adding  EDGE " << jj << ' ' << ii << " -1  to the new FoldTree." << endl;
-							}
-							newft.add_edge( jj, ii, Edge::PEPTIDE);
-							prevent_forward_edge = true;
-							continue;  // Skip the add_edge() method below; we are done here.
-						} else /* We couldn't find a chemical connection. */ {
-							if ( pose.residue_type( jj ).n_possible_residue_connections() > 0 ) {
-								TR.Warning << "Can't find a chemical connection for residue " << jj << " " <<
-									pose.residue_type( jj ).name() << endl;
-							}
-						}
+			// RM: Assuming that it's the *next* edge which is the associated polymeric edge is slightly off,
+			// But the current way we're skipping adding the polymeric edge means it's hard to do it otherwise.
+			Edge const next_e( *(i + 1) );
+			if ( next_e.is_polymer() && jump_stop == uint( next_e.start() ) ) {
+				if ( TR.Trace.visible() ) {
+					TR.Trace << e << " was initially set as a Jump to end of a polymeric connection." << endl;
+				}
+
+				uint const polymer_stop( next_e.stop() );  // the residue position at the end of the next Edge
+
+				if ( pose.residue( polymer_stop ).has_upper_connect() && newft.residue_is_in_fold_tree( pose.residue( polymer_stop ).connected_residue_at_upper() ) ) {
+					if ( TR.Trace.visible() ) {
+						TR.Trace << "Adding chemical edge from " << jump_start << " to " << polymer_stop << " to the new FoldTree, along with reverse polymeric edge from " << polymer_stop << " to " << jump_stop << endl;
 					}
+					create_chemical_edge(  pose.residue( polymer_stop ).connected_residue_at_upper(), polymer_stop, pose, newft );
+					// The CHEMICAL Edge has already been added to newft by the function above.
+					// Now, we must add a reverse-direction Edge and skip making the usual forward-direction Edge.
+					newft.add_edge( polymer_stop, jump_stop, Edge::PEPTIDE);
+					prevent_forward_edge = true;
+					continue;  // Skip the add_edge() method below; we are done here.
 				}
 			}
-			// It's just a normal inter-chain jump or we couldn't find a chemical bond to make. Increment the label.
+
+			// RM: Should we be doing something if it's a jump to a polymeric edge that connects withing the *middle* of the polymeric edge?
+			// (That is, an H-shaped topology?)
+
+			// If we made it here, it's just a normal inter-chain jump or we couldn't find a chemical bond to make. Increment the label.
 			e.label() = ++last_jump_id;
 		} else {
 			if ( TR.Trace.visible() ) {
 				TR.Trace << e << " was not a Jump." << endl;
 			}
 		}
-		if ( ! prevent_forward_edge ) {
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Adding " << e << " to the new FoldTree." << endl;
-			}
-			newft.add_edge( e );
-		} else {
-			prevent_forward_edge = false;  // Adding forward Edge was skipped; reset for next Edge.
+		if ( TR.Trace.visible() ) {
+			TR.Trace << "Adding " << e << " to the new FoldTree." << endl;
 		}
+		newft.add_edge( e );
 	}  // next Edge
 
 	runtime_assert( newft.size() > 0 || pose.size() == 0 );  // A valid fold tree must have >= 1 edges.
@@ -1979,6 +1979,10 @@ add_variant_type_to_pose_residue(
 			pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
 		}
 	}
+
+	if ( variant_type == core::chemical::CUTPOINT_LOWER || variant_type == core::chemical::CUTPOINT_UPPER ) {
+		update_cutpoint_virtual_atoms_if_connected( pose, seqpos, true );
+	}
 }
 
 
@@ -2221,7 +2225,6 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 		// finally, any branch connection torsions
 		Size const n_branch_torsions( rsd.n_non_polymeric_residue_connections() );
 		for ( uint j( 1 ); j <= n_branch_torsions; ++j ) {
-			if ( j == 1 && rsd.is_branch_lower_terminus() ) { continue; }  // Only an "outgoing" connection matters.
 			// Note: If one has multiple incoming connections on some crazy residue, she or he is still going to get a
 			// warning triggered below, but it won't hurt anything, and I can't think of another way to silence such a
 			// warning at the moment. ~Labonte
@@ -3116,17 +3119,26 @@ get_pdb2pose_numbering_as_stdmap( core::pose::Pose const & pose ) {
 	return pdb2pose_map;
 }
 
-// @brief chemical bond from lower to upper residue across CUTPOINT_LOWER/CUTPOINT_UPPER will prevent steric repulsion.
+
+/// @brief Create a chemical bond from lower to upper residue across CUTPOINT_LOWER/CUTPOINT_UPPER.
+/// @details This will prevent steric repulsion.
+/// @param[in] pose The pose to modify.
+/// @param[in] cutpoint_res The index of the CUTPOINT_LOWER residue.
+/// @param[in] next_res_in The index of the CUTPOINT_UPPER residue.  If not provided, or if set to 0, this defaults
+/// to the cutpoint_res + 1 residue.  Must be specified for cyclic geometry.
 void
-declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res, Size const next_res_in /* = 0 */ )
-{
+declare_cutpoint_chemical_bond(
+	core::pose::Pose & pose,
+	Size const cutpoint_res,
+	Size const next_res_in /* = 0 */
+) {
 	using namespace core::conformation;
 
 	Size const next_res = ( next_res_in == 0 ) ? ( cutpoint_res + 1 ) : next_res_in; // user might specify a different "next_res" to cyclize.
 
 	// Need to clear out any chemical bonds that might have been previously tied to upper/lower of these residues.
-	// check simple loop, like  in get_upper_cutpoint_partner_for_lower() in chainbreak_util.hh
 	Residue const & lower_rsd( pose.conformation().residue( cutpoint_res ) );
+
 	for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
 		if ( lower_rsd.has_upper_connect() && lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
 		// If there isn't an upper connect, one of the few valid options is ZO3'
@@ -3175,7 +3187,26 @@ declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res
 	}
 }
 
-/// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
+/// @brief Given a pose and a position that may or may not be CUTPOINT_UPPER or CUTPOINT_LOWER, determine whether this
+/// position has either of these variant types, and if it does, determine whether it's connected to anything.  If it is,
+/// update the C-OVL1-OVL2 bond lengths and bond angle (for CUTPOINT_LOWER) or OVU1-N bond length (for CUTPOINT_UPPER) to
+/// match any potentially non-ideal geometry in the residue to which it's bonded.
+/// @details Requires a little bit of special-casing for gamma-amino acids.  Throws an exception if the residue to which
+/// a CUTPOINT_LOWER is bonded does not have an "N" and a "CA" or "C4".  Safe to call repeatedly, or if cutpoint variant
+/// types are absent; in these cases, the function does nothing.
+/// @note By default, this function calls itself again once on residues to which this residue is connected, to update their
+/// geometry.  Set recurse=false to disable this.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+update_cutpoint_virtual_atoms_if_connected(
+	core::pose::Pose & pose,
+	core::Size const cutpoint_res,
+	bool recurse /*= true*/
+) {
+	core::conformation::update_cutpoint_virtual_atoms_if_connected( pose.conformation(), cutpoint_res, recurse );
+}
+
+/// @brief Add cutpoint variants to all residues annotated as cutpoints in the FoldTree in the Pose.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 	core::kinematics::FoldTree const & tree( pose.fold_tree() );
@@ -3186,36 +3217,70 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// try to unify all cutpoint addition into this function.
+/// @brief Add CUTPOINT_LOWER and CUTPOINT_UPPER types to two residues, remove incompatible types, and declare
+/// a chemical bond between them.
+/// @param[in,out] pose The pose to modify.
+/// @param[in] cutpoint_res The index of the CUTPOINT_LOWER residue.
+/// @param[in] check_fold_tree If true, a check is performed to confirm that the residues in question represent a
+/// cutpoint in the foldtree in the pose.
+/// @param[in] next_res_in The index of the CUTPOINT_UPPER residue.  If not provided, or if set to 0, this defaults
+/// to the cutpoint_res + 1 residue.  Must be specified for cyclic geometry.
 void
-correctly_add_cutpoint_variants( core::pose::Pose & pose,
+correctly_add_cutpoint_variants(
+	core::pose::Pose & pose,
 	Size const cutpoint_res,
 	bool const check_fold_tree /* = true*/,
-	Size const next_res_in /* = 0 */ )
-{
+	Size const next_res_in /* = 0 */
+) {
 	using namespace core::chemical;
 
 	Size const next_res = ( next_res_in == 0 ) ? ( cutpoint_res + 1 ) : next_res_in; // user might specify a different "next_res" to cyclize.
 
 	if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( cutpoint_res ) );
 
-	remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, cutpoint_res );
-	remove_variant_type_from_pose_residue( pose, THREE_PRIME_PHOSPHATE, cutpoint_res );
-	remove_variant_type_from_pose_residue( pose, C_METHYLAMIDATION, cutpoint_res );
+	correctly_remove_variants_incompatible_with_lower_cutpoint_variant( pose, cutpoint_res );
+	correctly_remove_variants_incompatible_with_upper_cutpoint_variant( pose, next_res );
 
-	remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, next_res );
-	remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, next_res );
-	remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, next_res );
-	remove_variant_type_from_pose_residue( pose, N_ACETYLATION, next_res);
+	if ( pose.residue_type( cutpoint_res ).is_RNA() ) rna::position_cutpoint_phosphate_torsions( pose, cutpoint_res, next_res );
 
-	if ( pose.residue_type( cutpoint_res ).is_RNA() )  rna::position_cutpoint_phosphate_torsions( pose, cutpoint_res, next_res );
-
-	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res   );
+	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res );
 	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, next_res );
 
 	// important -- to prevent artificial penalty from steric clash.
 	declare_cutpoint_chemical_bond( pose, cutpoint_res, next_res );
+
+	// Update positions of virtual atoms:
+	update_cutpoint_virtual_atoms_if_connected( pose, cutpoint_res, false );
+	update_cutpoint_virtual_atoms_if_connected( pose, next_res, false );
+}
+
+/// @brief Remove variant types incompatible with CUTPOINT_LOWER from a position in a pose.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+/// @param[in,out] pose The pose on which to operate.
+/// @param[in] res_index The index of the residue on which to operate.
+void
+correctly_remove_variants_incompatible_with_lower_cutpoint_variant(
+	core::pose::Pose & pose,
+	Size const res_index
+) {
+	remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, res_index );
+	remove_variant_type_from_pose_residue( pose, core::chemical::THREE_PRIME_PHOSPHATE, res_index );
+	remove_variant_type_from_pose_residue( pose, core::chemical::C_METHYLAMIDATION, res_index );
+}
+
+/// @brief Remove variant types incompatible with CUTPOINT_UPPER from a position in a pose.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+/// @param[in,out] pose The pose on which to operate.
+/// @param[in] res_index The index of the residue on which to operate.
+void
+correctly_remove_variants_incompatible_with_upper_cutpoint_variant(
+	core::pose::Pose & pose,
+	Size const res_index
+) {
+	remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, res_index );
+	remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_index );
+	remove_variant_type_from_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, res_index );
+	remove_variant_type_from_pose_residue( pose, core::chemical::N_ACETYLATION, res_index);
 }
 
 void

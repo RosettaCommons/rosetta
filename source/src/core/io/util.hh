@@ -101,39 +101,55 @@ void pose_from_pose(
 	StructFileRepOptions const & options
 );
 
-/// @brief Identify residues that are branch points (have more than one downstream neighbor)
-/// One eneighbpr will be considered as the mainchain continuations. All others are branches.
+/////////////////////////////////////////
+
+/// @brief Reorganize the given glycan residues such that they're in tree order
+/// @details Not 100% great, as it won't move any non-glycan residue, which may result in
+/// a funky order if there are non-glycans interspersed with the glycan residues
+/// Return the positions (in the rinfos) of the known (non-reducing) ends of the glycan chains
+utility::vector1< core::Size >
+fix_glycan_order( utility::vector1< core::io::ResidueInformation > & rinfos,
+	utility::vector1< core::Size > const & glycan_positions,
+	StructFileRepOptions const & options );
+
+/// @brief Find the order of glycan residues for all glycan positions
+utility::vector1< core::Size >
+find_carbohydrate_order(
+	utility::vector1< core::io::ResidueInformation > const & rinfos,
+	utility::vector1< core::Size > const & glycan_positions,
+	utility::vector1< core::Size > & chain_ends, // return-by-reference of (rinfos) positions of (non-reducing) end sugars
+	// map of anomeric positions to where they are connected to
+	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map );
+
+/// @brief Find the order of all the glycans connected to current_res, as indicated by the connectivity map.
+utility::vector1< core::Size >
+find_carbohydrate_subbranch_order( core::Size current_res,
+	utility::vector1< core::Size > & chain_ends, // return-by-reference for (non-reducing) end sugars
+	// Nested map positions & (non-anomeric) positions to attached anomeric position
+	std::map< core::Size, std::map< std::string, std::pair< core::Size, std::string > > > const & connectivity,
+	std::set< core::Size > & addressed );
+
+/// @brief Bring glycans into the correct order, which corresponds to connectivity of each glycan tree
+/// This requires reordering rinfos and rosetta_residue_name3s.
+void reorder_glycan_residues( utility::vector1< core::io::ResidueInformation > & rinfos,
+	utility::vector1< core::Size > const & correct_order,
+	utility::vector1< core::Size > const & glycan_positions );
+
+/// @brief Determine links between glycan residues based on coordinates
+/// Returns a map keyed on anomeric positions to the atom it's nominally attached to
+std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > >
+determine_glycan_links( utility::vector1< core::io::ResidueInformation > const & rinfos,
+	StructFileRepOptions const & options );
+
+std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > >
+explicit_links_from_sfr_linkage( std::map< std::string, utility::vector1< LinkInformation > > const & link_map,
+	utility::vector1< core::io::ResidueInformation > const & rinfos );
+
 void
-find_branch_points( Size const & seqpos, chemical::ResidueTypeCOP & RT, bool & is_branch_point, utility::vector1< std::string > & branch_points_on_this_residue, utility::vector1< std::string > const & rosetta_residue_name3s, Size mainchain_neighbor, utility::vector1< core::io::ResidueInformation > & rinfos_, StructFileRep::Strings& branch_lower_termini_, utility::vector1< Size >& glycan_positions_, core::io::StructFileRepOptions const & options );
-
-/// @brief Helper function to find connected residues.
-void
-find_downstream_neighbor( core::Size const seqpos, Vector const & upstream_atom_xyz, std::pair<core::Size, std::string> &neighbor, utility::vector1< core::io::ResidueInformation > const & rinfos_, utility::vector1< Size > const & glycan_positions_, utility::vector1< std::string > const & rosetta_residue_name3s, core::io::StructFileRepOptions const & options );
-
-/// @detail Loop through a residue's atoms to see if there are othe residues connected to it.
-/// Then the residue position that contiues the main chain (if any) is returned.
-Size
-find_mainchain_connection( utility::vector1< core::io::ResidueInformation >& rinfos_, core::io::StructFileRep& sfr_,  std::string const & resid, Size const & seqpos, utility::vector1< std::string > const & rosetta_residue_name3s, bool & same_chain_next, bool & is_upper_terminus, int const CARB_MAINCHAIN_CONN_POS, utility::vector1< Size >& glycan_positions_, core::io::StructFileRepOptions const & options );
-
-/// @brief Recursively find a child residue and it's children and it's children ....
-/// This function figures out in which order glycan residues are connected
-void
-find_children( Size const seqpos, utility::vector1< core::io::ResidueInformation > const & rinfos_, chemical::ResidueTypeSetCOP residue_type_set_, utility::vector1< std::string > const & rosetta_residue_name3s_, utility::vector1< core::Size > & correct_order_, utility::vector1< Size > const & glycan_positions_, utility::vector1< core::Size > & glycan_positions_temp_, core::io::StructFileRepOptions const & options );
-
-/// @brief Test if a glycan residue is the first of it's tree
-/// This is done by checking if there is anything conncted at the C1 position
-bool is_root( core::Size const seqpos, utility::vector1< core::io::ResidueInformation > const & rinfos_, utility::vector1< Size > const & glycan_positions_, StructFileRep::Strings & branch_lower_termini_extra_, core::io::StructFileRepOptions const & options );
-
-/// @brief Function to identify glycans and fix their rosetta names
-/// This function determines the correct name3s and fills in the glycan_positions_ vector
-void
-fix_residue_info_and_order( utility::vector1< core::io::ResidueInformation >& rinfos, core::io::StructFileRep& sfr, chemical::ResidueTypeSetCOP residue_type_set, utility::vector1< std::string >& rosetta_residue_name3s, core::io::StructFileRep::Strings & branch_lower_termini_extra, utility::vector1< std::string > & glycan_tree_roots, utility::vector1< core::Size >& glycan_positions, core::io::StructFileRepOptions const & options );
-/// @brief Bring glycans into the correct order, which corresponds to connectivity of ech glycan tree
-/// This requires reordering rinfos_ and rosetta_residue_name3s_.
-void reorder_glycan_residues( utility::vector1< core::io::ResidueInformation >& rinfos_, utility::vector1< std::string >& rosetta_residue_name3s_, utility::vector1< core::Size >& correct_order_, utility::vector1< core::Size > const & glycan_positions_  );
-
-/// @brief sort link records in srf.link_map()
-void sort_link_records( utility::vector1<core::io::LinkInformation> & link_records );
+add_glycan_links_to_map(
+	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > & known_links,
+	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map,
+	utility::vector1< core::io::ResidueInformation > const & rinfos );
 
 } //core
 } //io

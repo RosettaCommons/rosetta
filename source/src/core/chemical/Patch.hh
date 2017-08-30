@@ -116,6 +116,10 @@ public:
 	bool
 	may_change_aa() const;
 
+	/// @brief Can the patch case change the connections for atom on the ResidueType?
+	bool
+	changes_connections_on( ResidueType const & rsd_in, std::string const & atom ) const;
+
 	// data:
 private:
 	/// @brief to which ResidueTypes this PatchCase applies to?
@@ -183,6 +187,11 @@ public:
 		return name_;
 	}
 
+	/// @brief Returns the name of the residueType after applying the patch
+	/// (Theoretical - doesn't actually check if the patch would be applied.)
+	std::string
+	patched_name( ResidueType const & rsd ) const;
+
 	void set_selector( ResidueTypeSelector const & selector ) { selector_ = selector; }
 
 	void set_name( std::string name ) { name_ = name; }
@@ -222,6 +231,10 @@ public:
 	/// @brief returns list of deleted variant names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
 	deletes_variants( ResidueType const & rsd_in ) const;
+
+	/// @brief Does the patch potentially change the connections for the given atom on the ResidueType
+	bool
+	changes_connections_on( ResidueType const & rsd_in, std::string const & atom ) const;
 
 	inline void
 	add_case( PatchCaseOP pcase ) { cases_.push_back( pcase ); }

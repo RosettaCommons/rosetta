@@ -58,7 +58,7 @@
 namespace core {
 namespace pose {
 
-static THREAD_LOCAL basic::Tracer tr( "core.pose" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose" );
 
 using namespace core;
 using namespace core::conformation;
@@ -119,8 +119,8 @@ void parse_sequence(
 	} // finish reading in the whole sequence.
 	// Warn if an old CYD was found
 	if ( old_cyd_found ) {
-		tr.Warning << "Found old-style CYD nomenclature!  ";
-		tr.Warning << "Renaming as CYS for Conformation::detect_disulfides to resolve" << std::endl;
+		TR.Warning << "Found old-style CYD nomenclature!  ";
+		TR.Warning << "Renaming as CYS for Conformation::detect_disulfides to resolve" << std::endl;
 	}
 
 	oneletter_to_fullname_index.push_back( last_index );
@@ -134,47 +134,6 @@ Size get_sequence_len( std::string const & sequence_in ) {
 	std::string one_letter_sequence;
 	parse_sequence( sequence_in, fullname_list, oneletter_to_fullname_index, one_letter_sequence );
 	return one_letter_sequence.size();
-}
-
-
-// This is a subroutine/helper function to reorder saccharide ResidueTypes generated from an IUPAC sequence.
-/// @details  An IUPAC sequence lists residues in reverse order, with residue 1 to the right.  This subroutine reverses
-/// that order.  In addition, it reorders such that each chain is complete before a new branch is added.
-void
-reorder_saccharide_residue_types( chemical::ResidueTypeCOPs & residue_types )
-{
-	using namespace chemical;
-
-	// Loop backwards through list, since the lower terminus (reducing end) is the last residue given in an annotated
-	// polysaccharide sequence.
-	uint const last_index( residue_types.size() );
-	utility::vector1< ResidueTypeCOPs > branch_sequences;
-	uint branch_index( 0 );
-	for ( uint i( last_index ); i >= 1; --i ) {
-		ResidueTypeCOP residue_type( residue_types[ i ] );
-		if ( residue_type->is_branch_lower_terminus() ) {  // Residue 1 will also be a branch_lower_terminus here.
-			// Start a new list of branch residues.
-			++branch_index;
-			if ( branch_sequences.size() < branch_index ) {
-				branch_sequences.resize( branch_index );
-			}
-		}
-		debug_assert( branch_index > 0 );
-		branch_sequences[ branch_index ].push_back( residue_type );
-		if ( residue_type->is_upper_terminus() ) {
-			// We've just added the last residue to the branch. Now the branch is complete. Do not add to it again.
-			--branch_index;
-		}
-	}
-	debug_assert( branch_index == 0 );
-
-	// Now append the residues into a single sorted vector.
-	residue_types.clear();
-	uint const last_branch_sequences_index( branch_sequences.size() );
-	for ( uint i( 1 ); i <= last_branch_sequences_index; ++i ) {
-		residue_types.append( branch_sequences[ i ] );
-	}
-	debug_assert( residue_types.size() == last_index );
 }
 
 
@@ -205,8 +164,8 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 	std::string one_letter_sequence;
 	parse_sequence( sequence_in, fullname_list, oneletter_to_fullname_index, one_letter_sequence );
 
-	tr.Debug << "one_letter: " << one_letter_sequence << std::endl;
-	tr.Debug << "seq_in: " << sequence_in << std::endl;
+	TR.Debug << "one_letter: " << one_letter_sequence << std::endl;
+	TR.Debug << "seq_in: " << sequence_in << std::endl;
 
 	// setup the pose by appending the appropriate residues
 	for ( Size seqpos = 1; seqpos <= one_letter_sequence.length(); ++seqpos ) {
@@ -248,19 +207,25 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 			requested_types.push_back( rsd_type );
 		}
 
-		tr.Trace << "residue_types_from_sequence():  seqpos: " << seqpos << " aa " << aa << " " << my_aa << std::endl;
+		TR.Trace << "residue_types_from_sequence():  seqpos: " << seqpos << " aa " << aa << " " << my_aa << std::endl;
 
 	} // for seqpos
 
 	return requested_types;
 }
 
+/// @brief Internal implementation detail of residue_types_from_saccharide_sequence()
+/// Returns the reorganized (but not reversed) set of residuetypes
+chemical::ResidueTypeCOPs
+residue_types_from_saccharide_sequence_recursive( std::string const & sequence, chemical::ResidueTypeSet const & residue_set );
 
 // Return a list of carbohydrate ResidueTypes corresponding to an annotated, linear, IUPAC polysaccharide sequence.
 /// @param[in] <sequence>: an annotated IUPAC polysaccharide sequence,
 /// e.g., "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp"
 /// @param[in] <residue_set>: the desired residue set
-/// @return    a 1-indexed vector of ResidueType owning pointers, from left-to-right, as indicated by the sequence
+/// @return    a 1-indexed vector of ResidueType owning pointers, in Rosetta order.
+/// That is, the first residue will be the reducing end (the last residue in the sequence),
+/// and all branches will be consecutive, with earlier branches earlier in set of residue types.
 /// @details   Format for <sequence>:\n
 /// Prefixes apply to the residue to which they are attached, below indicated by residue n.\n
 /// Residues are listed from N to 1, where N is the total number of residues in the saccharide.\n
@@ -281,21 +246,31 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 /// beta-D-Galp-(1->4)-D-GlcpNAc\n
 ///                       |\n
 ///     alpha-L-Fucp-(1->3)
-/// @note      The final ResidueType in the vector will always be a BRANCH_LOWER_TERMINUS_VARIANT.
-/// make_pose_from_saccharide_sequence() will generate a pose with a proper lower terminus.
+/// @note make_pose_from_saccharide_sequence() will generate a pose with a proper lower terminus.
 /// glycosylate_pose() will append the fragment by bond.
 chemical::ResidueTypeCOPs
 residue_types_from_saccharide_sequence( std::string const & sequence, chemical::ResidueTypeSet const & residue_set )
+{
+	core::chemical::ResidueTypeCOPs residue_types = residue_types_from_saccharide_sequence_recursive( sequence, residue_set );
+
+	std::reverse(residue_types.begin(), residue_types.end());
+
+	return residue_types;
+}
+
+chemical::ResidueTypeCOPs
+residue_types_from_saccharide_sequence_recursive( std::string const & sequence, chemical::ResidueTypeSet const & residue_set )
 {
 	using namespace std;
 	using namespace utility;
 	using namespace chemical;
 	using namespace chemical::carbohydrates;
 
-	ResidueTypeCOPs residue_types;
+	ResidueTypeCOPs main_residue_types;
+	ResidueTypeCOPs branch_residue_types;
 
 	if ( ! sequence.size() ) {
-		return residue_types;
+		return main_residue_types;
 	}
 
 	// Add delimiter to end of sequence.
@@ -338,7 +313,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 				branch_sequence += character;
 			}
 			// Now recurse.
-			residue_types.append( residue_types_from_saccharide_sequence( branch_sequence, residue_set ) );
+			branch_residue_types.append( residue_types_from_saccharide_sequence_recursive( branch_sequence, residue_set ) );
 		} else if ( character != '-' ) {  // '-' is the morpheme delimiter
 			morpheme += character;
 		} else {  // Hyphen: The morpheme is complete; interpret it....
@@ -454,7 +429,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 						suffix = suffix.substr( 1 );  // Strip ring-size designation from suffix.
 					} else {
 						// If it's not a valid ring affix, we assume that a linear saccharide is intended.
-						tr.Debug << "Ring size not specified for residue " << code << ": assuming linear.";
+						TR.Debug << "Ring size not specified for residue " << code << ": assuming linear.";
 					}
 
 					// Now check for valid sugar modifications.
@@ -499,7 +474,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 						CarbohydrateInfoManager::branch_variant_type_from_position( branch_points[ i ] ) );
 					residue = residue_set.get_residue_type_with_variant_added( *residue, variant ).get_self_ptr();
 				}
-				residue_types.push_back( residue );
+				main_residue_types.push_back( residue );
 
 				// Reset variables.
 				morpheme = "";
@@ -518,12 +493,11 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 
 	// Set the termini.
 	// (Remember, the residues are in reverse order.)
-	residue_types.front() = residue_set.get_residue_type_with_variant_added(
-		*residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
-	residue_types.back() = residue_set.get_residue_type_with_variant_added(
-		*residue_types.back(), BRANCH_LOWER_TERMINUS_VARIANT ).get_self_ptr();
+	main_residue_types.front() = residue_set.get_residue_type_with_variant_added(
+		*main_residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
 
-	return residue_types;
+	branch_residue_types.append( main_residue_types );
+	return branch_residue_types;
 }  // residue_types_from_saccharide_sequence()
 
 
@@ -551,16 +525,16 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 	list< pair< uint, string > > branch_points;
 
 	if ( pose.empty() ) {
-		tr.Debug << "Creating new oligosaccharide from provided ResidueTypes..." << endl;
+		TR.Debug << "Creating new oligosaccharide from provided ResidueTypes..." << endl;
 	} else {
 		Residue const & last_residue( pose.residue( pose.size() ) );
 		if ( ! last_residue.is_carbohydrate() ) {
-			tr.Warning << "append_pose_with_glycan_residues( " <<
+			TR.Warning << "append_pose_with_glycan_residues( " <<
 				"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
 				"The last residue of <pose> must be a carbohydrate to append." << endl;
 			return;
 		}
-		tr.Debug << "Appending Pose with provided ResidueTypes..." << endl;
+		TR.Debug << "Appending Pose with provided ResidueTypes..." << endl;
 
 		// Check the terminal residue of the input Pose to see if it has unsatisfied branch points.
 		if ( last_residue.is_branch_point() ) {
@@ -579,18 +553,23 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 		chemical::ResidueType const & rsd_type( *residue_types[ i ] );
 		ResidueOP new_rsd( ResidueFactory::create_residue( rsd_type ) );
 
-		tr.Debug << "Connecting current residue " << new_rsd->name3();
-		if ( new_rsd->is_branch_lower_terminus() ) {
+		TR.Debug << "Connecting current residue " << new_rsd->name3();
+		// The residue_types are in a correct order here, so the lower of residue N is connected to the upper of residue N-1
+		// If the upper of N-1 doesn't exist, we're a branch connected elsewhere
+		if ( branch_points.size() && ( i == 1 || residue_types[ i-1 ]->is_upper_terminus() ) ) {
 			uint const anchor_residue( branch_points.front().first );  // First branch made is first branch connected.
 			string const anchor_atom( branch_points.front().second );
 			string const upper_atom( new_rsd->carbohydrate_info()->anomeric_carbon_name() );
-			tr.Debug << " as branch from " << anchor_atom << " on residue " << anchor_residue <<
+			TR.Debug << " as branch from " << anchor_atom << " on residue " << anchor_residue <<
 				" to " << upper_atom << "..." << endl;
 			pose.append_residue_by_atoms( *new_rsd, true, upper_atom, anchor_residue, anchor_atom, true );
 			branch_points.pop_front();
-		} else {
-			tr.Debug << " by extending the current main chain or branch..." << endl;
+		} else if ( pose.size() != 0 && pose.residue_type( pose.size() ).upper_connect_id() != 0 ) {
+			TR.Debug << " by extending the current main chain or branch..." << endl;
 			pose.append_residue_by_bond( *new_rsd, true );
+		} else {
+			TR << " by appending by jump..." << endl;
+			pose.append_residue_by_jump( *new_rsd, pose.size() );
 		}
 		if ( new_rsd->is_branch_point() ) {
 			vector1< string > const branch_atom_names( new_rsd->type().branch_connect_atom_names() );
@@ -621,7 +600,7 @@ void make_pose_from_sequence(
 		core::conformation::ResidueOP new_rsd( nullptr );
 		new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
 
-		tr.Trace << "make_pose_from_sequence():  seqpos: " << i << " " << new_rsd->aa() << std::endl;
+		TR.Trace << "make_pose_from_sequence():  seqpos: " << i << " " << new_rsd->aa() << std::endl;
 
 		// do the actual append
 		// AMW: you may want to append a polymer UNK, like a ncaa, by a bond!
@@ -633,7 +612,7 @@ void make_pose_from_sequence(
 				jump_to_next ) {
 			if ( ( new_rsd->aa() == chemical::aa_unk && !rsd_type.is_polymer() ) ||
 					new_rsd->aa() == chemical::aa_vrt ) {
-				//fpd tr.Warning << "found unknown aminoacid or X in sequence at position " << i <<  std::endl;
+				//fpd TR.Warning << "found unknown aminoacid or X in sequence at position " << i <<  std::endl;
 				//fpd if ( i< ie ) {
 				//fpd  utility_exit_with_message(
 				//fpd "found unknown aminoacid or X in sequence\n this leads to a seg-fault if we keep going...\n");
@@ -649,7 +628,7 @@ void make_pose_from_sequence(
 			} else if ( jump_to_next ) {
 				jump_to_next = false;
 				if ( !rsd_type.is_lower_terminus(  ) ) {
-					tr.Debug << "Residue! following X, Z, or an upper terminus is _not_ a lower terminus type!  " <<
+					TR.Debug << "Residue! following X, Z, or an upper terminus is _not_ a lower terminus type!  " <<
 						"Continuing ..." << std::endl;
 				}
 			}
@@ -666,8 +645,8 @@ void make_pose_from_sequence(
 		}
 	}
 
-	tr.Debug << "sequence in pose: " << pose.sequence() << std::endl;
-	tr.Debug << "annotated seq: " << pose.annotated_sequence() << std::endl;
+	TR.Debug << "sequence in pose: " << pose.sequence() << std::endl;
+	TR.Debug << "annotated seq: " << pose.annotated_sequence() << std::endl;
 
 } // core::pose::make_pose_from_sequence
 
@@ -792,19 +771,14 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 	// Get list of carbohydrate ResidueTypes from which to construct the Pose.
 	ResidueTypeCOPs residue_types( residue_types_from_saccharide_sequence( sequence, residue_set ) );
 
-	if ( tr.Debug.visible() ) {
-		tr.Debug << "Residues to connect: ";
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Residues to connect: ";
 		for ( auto residue_type : residue_types ) {
-			tr.Debug << residue_type->name() << ' ' << endl;
+			TR.Debug << residue_type->name() << ' ' << endl;
 		}
 	}
 
-	// We need to reorder the ResidueTypes, such that each chain is complete before a new branch is added.
-	reorder_saccharide_residue_types( residue_types );
-
 	// Fix the termini.
-	residue_types.front() = residue_set.get_residue_type_with_variant_removed(
-		*residue_types.front(), BRANCH_LOWER_TERMINUS_VARIANT ).get_self_ptr();
 	if ( auto_termini ) {
 		residue_types.front() = residue_set.get_residue_type_with_variant_added(
 			*residue_types.front(), LOWER_TERMINUS_VARIANT ).get_self_ptr();
@@ -832,12 +806,12 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 	}
 
 	if ( idealize_linkages ) {
-		tr.Debug << "Idealizing glycosidic torsions." << endl;
+		TR.Debug << "Idealizing glycosidic torsions." << endl;
 		Size const n_glycans_added( residue_types.size() );
 		pose::carbohydrates::idealize_last_n_glycans_in_pose( pose, n_glycans_added );
 	}
 
-	tr.Debug << "Created carbohydrate pose with main-chain sequence: " << pose.chain_sequence( 1 ) << endl;
+	TR.Debug << "Created carbohydrate pose with main-chain sequence: " << pose.chain_sequence( 1 ) << endl;
 }
 
 // Creates a Pose from an annotated, linear, IUPAC polysaccharide sequence <sequence> with residue type set name

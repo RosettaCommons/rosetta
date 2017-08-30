@@ -100,7 +100,7 @@ public:
 	PeptideDeriverFilterTests() {}
 
 	void setUp() {
-		protocols_init_with_additional_options("-in:missing_density_to_jump 1");
+		protocols_init_with_additional_options("-in:missing_density_to_jump 1 -DisulfideInsertion:max_dslf_dist_multiplier 0.9");
 		test_pose_ = core::pose::PoseOP( new core::pose::Pose() );
 		cyclic_test_pose_ = core::pose::PoseOP( new core::pose::Pose() );
 

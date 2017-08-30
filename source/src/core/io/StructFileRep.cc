@@ -30,6 +30,46 @@
 namespace core {
 namespace io {
 
+/// @brief Do these link information correspond to the same connection (ignoring order)
+bool same_link( LinkInformation const & l1, LinkInformation const & l2 ) {
+	// Order quick compares (char/int) before string compares
+	if ( l1.resSeq1 == l2.resSeq1 &&
+			l1.chainID1 == l2.chainID1 &&
+			l1.iCode1 == l2.iCode1 &&
+			l1.resSeq2 == l2.resSeq2 &&
+			l1.chainID2 == l2.chainID2 &&
+			l1.iCode2 == l2.iCode2 &&
+			l1.name1 == l2.name1 &&
+			l1.resName1 == l2.resName1 &&
+			l1.name2 == l2.name2 &&
+			l1.resName2 == l2.resName2 ) {
+		return true;
+	}
+	// Test flipped.
+	if ( l1.resSeq1 == l2.resSeq2 &&
+			l1.chainID1 == l2.chainID2 &&
+			l1.iCode1 == l2.iCode2 &&
+			l1.resSeq2 == l2.resSeq1 &&
+			l1.chainID2 == l2.chainID1 &&
+			l1.iCode2 == l2.iCode1 &&
+			l1.name1 == l2.name2 &&
+			l1.resName1 == l2.resName2 &&
+			l1.name2 == l2.name1 &&
+			l1.resName2 == l2.resName1 ) {
+		return true;
+	}
+	return false;
+}
+
+bool link_in_vector( utility::vector1< LinkInformation > const & link_vector, LinkInformation const & link ) {
+	for ( LinkInformation const & vect_link: link_vector ) {
+		if ( same_link( vect_link, link ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 // Standard Methods ///////////////////////////////////////////////////////////
 StructFileRep::StructFileRep() : utility::pointer::ReferenceCount(),
 	filename_( "" ),
@@ -97,6 +137,15 @@ StructFileRep::append_to_additional_string_output(
 	additional_string_output_ = additional_string_output_ + input_string;
 }
 
+/// @brief Debugging output for LinkInformation
+std::ostream & operator<<( std::ostream & os, LinkInformation const & li ) {
+	// Debugging-style output - we're not overly concerned with column alignment
+	os << "LINK ";
+	os << li.name1 << " " << li.resName1 << " " << li.chainID1 << " " << li.resSeq1 << li.iCode1 << "   ";
+	os << li.name2 << " " << li.resName2 << " " << li.chainID2 << " " << li.resSeq2 << li.iCode2 << "   ";
+	os << li.length;
+	return os;
+}
 
 } // namespace io
 } // namespace core

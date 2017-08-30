@@ -696,9 +696,10 @@ residue_types/carbohydrates/to4-alpha-L-Fucp.params
 residue_types/carbohydrates/to4-alpha-D-Abep.params
 residue_types/carbohydrates/to4-alpha-Daup.params
 #### Mannoses
-residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to2-alpha-D-Manp.params
+residue_types/carbohydrates/to2-beta-D-Manp.params
 residue_types/carbohydrates/to3-alpha-D-Manp.params
+residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to4-alpha-D-Manp.params
 residue_types/carbohydrates/to4-beta-D-Manp.params
 residue_types/carbohydrates/to4-beta-L-Manp.params

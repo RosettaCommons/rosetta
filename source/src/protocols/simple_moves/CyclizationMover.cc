@@ -141,8 +141,14 @@ CyclizationMover::setup_connections( core::pose::Pose & pose )
 	runtime_assert( pose.residue( cterm_rsd_num_ ).type().is_protein() || pose.residue( cterm_rsd_num_ ).type().is_peptoid() );
 
 	// get types name for N-terminus and C-terminus (manipulating strings like this is a little hacky)
-	std::string nterm_connect_type_name( pose.residue( nterm_rsd_num_ ).type().name3() + ":NtermConnect" );
-	std::string cterm_connect_type_name( pose.residue( cterm_rsd_num_ ).type().name3() + ":CtermConnect" );
+	std::string nterm_connect_type_name(
+		pose.residue_type( nterm_rsd_num_ ).is_peptoid() ?
+		pose.residue( nterm_rsd_num_ ).type().name3() + ":peptoid_cutpoint_upper" :
+		pose.residue( nterm_rsd_num_ ).type().name3() + ":protein_cutpoint_upper"
+	);
+	std::string cterm_connect_type_name(
+		pose.residue( cterm_rsd_num_ ).type().name3() + ":protein_cutpoint_lower" //Both peptoids and proteins use the protein_cutpoint_lower patch.
+	);
 
 	// remove spaces if the name3 really only has 2 letters, Damn it Tim!
 	nterm_connect_type_name.erase( std::remove( nterm_connect_type_name.begin(), nterm_connect_type_name.end(), ' ' ), nterm_connect_type_name.end() );

@@ -49,10 +49,6 @@ void parse_sequence(
 Size get_sequence_len( std::string const & sequence_in );
 
 
-/// @brief  This is a subroutine/helper function to reorder saccharide ResidueTypes generated from an IUPAC sequence.
-void reorder_saccharide_residue_types( chemical::ResidueTypeCOPs & residue_types );
-
-
 /// @brief return a list of ResidueTypes corresponding to an annotated protein sequence
 /// @param[in] sequence_in an annotated sequence
 /// @param[in] residue_set the desired residue set
@@ -64,11 +60,37 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 );
 
 
-/// @brief  Return a list of carbohydrate ResidueTypes corresponding to an annotated, linear, IUPAC polysaccharide
-/// sequence.
+/// @brief Return a list of carbohydrate ResidueTypes corresponding to an annotated, linear, IUPAC polysaccharide sequence.
+/// @param[in] <sequence>: an annotated IUPAC polysaccharide sequence,
+/// e.g., "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp"
+/// @param[in] <residue_set>: the desired residue set
+/// @return    a 1-indexed vector of ResidueType owning pointers, in Rosetta order.
+/// That is, the first residue will be the reducing end (the last residue in the sequence),
+/// and all branches will be consecutive, with earlier branches earlier in set of residue types.
+/// @details   Format for <sequence>:\n
+/// Prefixes apply to the residue to which they are attached, below indicated by residue n.\n
+/// Residues are listed from N to 1, where N is the total number of residues in the saccharide.\n
+/// The sequence is parsed by reading to the next hyphen, so hyphens are crucial.\n
+/// Linkage indication: "(a->x)-" specifies the linkage of residue n, where a is the anomeric carbon number of residue
+/// (n+1) and x is the oxygen number of residue n.  The first residue listed in the annotated sequence (residue N)
+/// need not have the linkage prefix.  A ->4) ResidueType will automatically be assigned by default if not specified.\n
+/// Anomer indication: The strings "alpha-" or "beta-" are supplied next, which determines the stereochemistry of the
+/// anomeric carbon of the residue to which it is prefixed.  An alpha ResidueType will automatically be assigned by
+/// default.\n
+/// Stereochemical indication: "L-" or "D-" specifies whether residue n is an L- or D-sugar.  The default is "D-".\n
+/// 3-Letter code: A three letter code (in sentence case) MUST be supplied next.  This specifies the "base sugar name",
+/// e.g., Glc is for glucose.  (A list of all recognized 3-letter codes for sugars can be found in the database.)\n
+/// 1-Letter suffix: If no suffix follows, residue n will be linear.  If a letter is present, it indicates the ring
+/// size, where "f" is furanose, "p" is pyranose, and "s" is septanose.\n
+/// Branches are indicated using nested brackets and are best explained by example:\n
+/// beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc is:\n
+/// beta-D-Galp-(1->4)-D-GlcpNAc\n
+///                       |\n
+///     alpha-L-Fucp-(1->3)
+/// @note make_pose_from_saccharide_sequence() will generate a pose with a proper lower terminus.
+/// glycosylate_pose() will append the fragment by bond.
 chemical::ResidueTypeCOPs residue_types_from_saccharide_sequence( std::string const & sequence,
 	chemical::ResidueTypeSet const & residue_set );
-
 
 /// @brief  Append an empty or current Pose with saccharide residues, building branches as necessary.
 void append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs residue_types );

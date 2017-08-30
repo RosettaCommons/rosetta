@@ -1,4 +1,6 @@
 # Amine submonomer: beta-methyl benzyl amine/ S phenylethyl-1-amine (Nspe )
+# This resembles a phenylalanine side-chain (coming off of the nitrogen, of course), but with an extra
+# methyl group on what would be the methylene (CB) atom.
 NAME 601
 IO_STRING 601 X
 TYPE POLYMER
@@ -62,7 +64,7 @@ ICOOR_INTERNAL    CA     0.000000  180.000000    1.443416   N     CA    C
 ICOOR_INTERNAL    C      0.000000   67.581165    1.532179   CA    N     C  
 ICOOR_INTERNAL   LOWER  -70.737646   64.906725    1.363204   N     CA    C  
 ICOOR_INTERNAL   UPPER  167.337683   63.440671    1.359313   C     CA    N  
-ICOOR_INTERNAL    O    -15.607595   59.171826    1.201009   C     CA    N  
+ICOOR_INTERNAL    O   -180.000000   59.200005    1.231015   C     CA  UPPER
 ICOOR_INTERNAL   1HA2 -120.292481   71.047970    1.082759   CA    N     C  
 ICOOR_INTERNAL   2HA2 -117.198118   71.035483    1.078238   CA    N    1HA2
 ICOOR_INTERNAL    CA1 -173.250791   54.947153    1.464413   N    LOWER   CA 

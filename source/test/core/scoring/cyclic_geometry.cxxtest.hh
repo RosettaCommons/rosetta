@@ -55,7 +55,7 @@ class CyclicGeometryTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
+		core_init_with_additional_options( "-symmetric_gly_tables true -output_virtual true -write_all_connect_info -connect_info_cutoff 0.0" );
 
 		// Pull in the cyclic peptide pose (9 residues):
 		core::pose::PoseOP initial_pose( new core::pose::Pose );
@@ -69,8 +69,12 @@ public:
 		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_LOWER, 9 );
 		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_UPPER, 9 );
 		initial_pose->conformation().declare_chemical_bond(1, "N", 9, "C");
-		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
-		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(9);
+		for ( core::Size i(1); i<=9; ++i ) {
+			initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(i);
+		}
+
+		poses_.clear();
+		mirror_poses_.clear();
 
 		poses_.push_back(initial_pose);
 		mirror_poses_.push_back( mirror_pose_with_disulfides( poses_[1] ) );
@@ -91,7 +95,7 @@ public:
 		scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
 		TR << "Testing cart_bonded score term." << std::endl;
 		CyclicGeometryTestHelper helper;
-		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_, false);
 		return;
 	}
 

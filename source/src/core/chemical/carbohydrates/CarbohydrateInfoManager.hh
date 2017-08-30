@@ -44,6 +44,12 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
+struct RootData {
+	std::string root; // The root of the name
+	char DL; // The D/L specification
+	char anomeric; // The location of the anomeric carbon (aldose/2-ketose/3-ketose, etc.)
+};
+
 /// @details  This class is a singleton and manages CarbohydrateInfo data that should only be read from the database
 /// one time and shared among all instances of CarbohydrateInfo.
 class CarbohydrateInfoManager : public utility::SingletonBase< CarbohydrateInfoManager > {
@@ -61,6 +67,8 @@ public:  // Static constant data access ///////////////////////////////////////
 	/// @brief  Get the default stereochemistry from the given Rosetta/IUPAC 3-letter code.
 	static char default_stereochem_from_code( std::string const & code );
 
+	/// @brief  Get the position of the anomeric carbon from the given Rosetta/IUPAC 3-letter code.
+	static char anomeric_position_from_code( std::string const & code );
 
 	/// @brief  Is the given 1-letter code valid for designating carbohydrate ring size?
 	static bool is_valid_ring_affix( char affix );
@@ -109,7 +117,7 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Get the map of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root and default
 	// stereochemistry, creating it if necessary.
 	// Called by the public static method root_from_code() and default_stereochem_from_code().
-	std::map< std::string, std::pair< std::string, char > > const & code_to_root_map();
+	std::map< std::string, RootData > const & code_to_root_map();
 
 
 	// Get the map of carbohydrate ring sizes and their 1-letter affixes and morphemes, creating it if
@@ -147,6 +155,7 @@ private:  // Private methods //////////////////////////////////////////////////
 	std::map< std::string, std::string> const & short_name_to_iupac_strings_map();
 
 private:  // Private data /////////////////////////////////////////////////////
+
 #ifdef MULTI_THREADED
 	utility::thread::ReadWriteMutex code_to_root_map_mutex_;
 	utility::thread::ReadWriteMutex ring_size_to_morphemes_mutex_;
@@ -159,7 +168,7 @@ private:  // Private data /////////////////////////////////////////////////////
 	utility::thread::ReadWriteMutex short_name_to_iupac_strings_mutex_;
 #endif
 
-	std::map< std::string, std::pair< std::string, char > > code_to_root_map_;  // also stores default stereochemistry
+	std::map< std::string, RootData > code_to_root_map_;  // also stores default stereochemistry
 
 	std::map< core::Size, std::pair< char, std::string > > ring_size_to_morphemes_map_;
 	utility::vector1< char > ring_affixes_;

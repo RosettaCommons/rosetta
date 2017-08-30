@@ -35,6 +35,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/kinematics/FoldTree.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -768,6 +769,45 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TR.flush();
 	}
+
+	void test_glycosylate_pose() {
+		core::pose::Pose N_linked_14_mer;
+		core::pose::make_pose_from_sequence( N_linked_14_mer, "ANASA", "fa_standard" );
+		core::pose::carbohydrates::glycosylate_pose( N_linked_14_mer, 2,
+			"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
+			"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
+			"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" );
+
+		// Saccharide gets reversed and reordered, such that it's
+		//  14-13-12-11-10-9-
+		//  [17-16-[19-18]-15]-8-
+		// 7-6-
+		TS_ASSERT_EQUALS( N_linked_14_mer.size(), 19 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(2).name(), "ASN:N-glycosylated");
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(6).name(), "->4)-beta-D-Glcp:2-AcNH");
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(8).name(), "->3)-beta-D-Manp:->6)-branch");
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(9).name(), "->2)-alpha-D-Manp");
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(14).name(), "->4)-alpha-D-Glcp:non-reducing_end");
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(15).name(), "->3)-alpha-D-Manp:->6)-branch");
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(17).name(), "->4)-alpha-D-Manp:non-reducing_end");
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(19).name(), "->4)-alpha-D-Manp:non-reducing_end");
+
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(6).connected_residue_at_lower(), 2 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(9).connected_residue_at_lower(), 8 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(15).connected_residue_at_lower(), 8 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(16).connected_residue_at_lower(), 15 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(18).connected_residue_at_lower(), 15 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(8).connected_residue_at_upper(), 9 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(15).connected_residue_at_upper(), 16 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(2).connected_residue_at_resconn(3), 6 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(8).connected_residue_at_resconn(3), 15 );
+		TS_ASSERT_EQUALS( N_linked_14_mer.residue(15).connected_residue_at_resconn(3), 18 );
+
+		TS_ASSERT_EQUALS( N_linked_14_mer.fold_tree().to_string(),
+			"FOLD_TREE  EDGE 1 5 -1  EDGE 2 6 -2  ND2  C1   EDGE 6 14 -1  EDGE 8 15 -2  O6   C1   EDGE 15 17 -1  EDGE 15 18 -2  O6   C1   EDGE 18 19 -1 ");
+
+	}
+
 
 private:  // Private data /////////////////////////////////////////////////////
 	core::pose::Pose Lex_;  // Lewisx: beta-D-Galp-(1->4)-[alpha-D-Fucp-(1->3)]-D-GlcpNAc

@@ -123,6 +123,26 @@ copy_residue_coordinates_and_rebuild_missing_atoms(
 	Conformation const & conformation
 );
 
+/// @brief Given two residues, check that they are compatible types to be connected via a cutpoint.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+check_good_cutpoint_neighbour(
+	core::conformation::Residue const &thisres,
+	core::conformation::Residue const &other_res
+);
+
+/// @brief Given a conformation and a position that may or may not be CUTPOINT_UPPER or CUTPOINT_LOWER, determine whether this
+/// position has either of these variant types, and if it does, determine whether it's connected to anything.  If it is,
+/// update the C-OVL1-OVL2 bond lengths and bond angle (for CUTPOINT_LOWER) or OVU1-N bond length (for CUTPOINT_UPPER) to
+/// match any potentially non-ideal geometry in the residue to which it's bonded.
+/// @details Requires a little bit of special-casing for gamma-amino acids.  Throws an exception if the residue to which
+/// a CUTPOINT_LOWER is bonded does not have an "N" and a "CA" or "C4".  Safe to call repeatedly, or if cutpoint variant
+/// types are absent; in these cases, the function does nothing.
+/// @note By default, this function calls itself again once on residues to which this residue is connected, to update their
+/// geometry.  Set recurse=false to disable this.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+update_cutpoint_virtual_atoms_if_connected( core::conformation::Conformation & conformation, core::Size const cutpoint_res, bool recurse = true );
 
 void
 show_atom_tree( kinematics::tree::Atom const & atom, Conformation const & conf, std::ostream & os );

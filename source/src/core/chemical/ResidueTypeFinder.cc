@@ -64,17 +64,8 @@ namespace chemical {
 
 //Constructor
 ResidueTypeFinder::ResidueTypeFinder( core::chemical::ResidueTypeSet const & residue_type_set ):
-	residue_type_set_( residue_type_set ),
-	aa_( aa_none ),
-	name1_( '?' ),
-	name3_(""),
-	residue_type_base_name_(""),
-	base_type_(),
-	interchangeability_group_(""),
-	base_property_( NO_PROPERTY ),
-	ignore_atom_named_H_( false ),
-	disallow_carboxyl_conjugation_at_glu_asp_( false ),
-	check_nucleic_acid_virtual_phosphates_( false )
+	residue_type_set_( residue_type_set )
+	// Simple type defaults are set in-class
 {}
 
 //Destructor
@@ -124,6 +115,8 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 
 	// Filter for rsd_types that strictly obey requirements
 	rsd_types = apply_filters_after_patches( rsd_types, allow_extra_variants );
+
+	rsd_types = apply_preferences_and_discouragements( rsd_types );
 
 	return rsd_types;
 }
@@ -240,24 +233,102 @@ ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 		return rsd_types;
 	}
 	rsd_types = filter_by_name3( rsd_types, false /* keep_if_base_type_generates_name3 */ );
-	//TR.Trace << " ...filtering by name3: " << rsd_types.size() << std::endl;
 	rsd_types = filter_by_interchangeability_group( rsd_types, false /* keep_if_base_type_generates_interchangeability */ );
-	//TR.Trace << " ...filtering by interchangeability group: " << rsd_types.size() << std::endl;
 	rsd_types = filter_disallow_variants( rsd_types );
-	//TR.Trace << " ...filtering by disallowed variants: " << rsd_types.size() << std::endl;
 	rsd_types = filter_all_variants_matched( rsd_types, allow_extra_variants );
-	//TR.Trace << " ...filtering by all matched variants: " << rsd_types.size() << std::endl;
 	rsd_types = filter_all_properties( rsd_types );
-	//TR.Trace << " ...filtering by all properties: " << rsd_types.size() << std::endl;
 	rsd_types = filter_disallow_properties( rsd_types );
-	//TR.Trace << " ...filtering by disallowed properties: " << rsd_types.size() << std::endl;
 	rsd_types = filter_all_patch_names( rsd_types );
-	//TR.Trace << " ...filtering by all patch names: " << rsd_types.size() << std::endl;
+	rsd_types = filter_connections( rsd_types );
 	rsd_types = filter_special_cases( rsd_types );
-	//TR.Trace << " ...filtering by special cases: " << rsd_types.size() << std::endl;
 
 	return rsd_types;
 }
+
+ResidueTypeCOPs
+ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const & rsd_types ) const {
+	if ( rsd_types.empty() ) return rsd_types;
+
+	if ( preferred_properties_.empty() && discouraged_properties_.empty() ) {
+		return rsd_types; // nothing to do
+	}
+
+	ResidueTypeCOPs current_type_list( rsd_types );
+	ResidueTypeCOPs new_type_list;
+
+	// Discouragement before encouragment
+
+	// keep the ResidueTypes in order
+	if ( ! discouraged_properties_.empty() ) {
+		utility::vector1< core::Size > property_counts;
+		for ( ResidueTypeCOP const & rsd_type: current_type_list ) {
+			core::Size prop_count = 0;
+			for ( ResidueProperty prop: discouraged_properties_ ) {
+				if ( rsd_type->has_property( prop ) ) {
+					++prop_count;
+				}
+			}
+			property_counts.push_back( prop_count );
+		}
+		debug_assert( ! property_counts.empty() );
+		core::Size min_count = *std::min_element( property_counts.begin(), property_counts.end() );
+		new_type_list.clear();
+		for ( core::Size ii(1); ii <= current_type_list.size(); ++ii ) {
+			if ( property_counts[ ii ] == min_count ) {
+				new_type_list.push_back( current_type_list[ ii ] );
+			}
+		}
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Discouraging " << discouraged_properties_.size() << " properties, "
+				<< "going from " << current_type_list.size() << " types to " << new_type_list.size() << " types." << std::endl;
+			TR.Debug << "Discouraged: " <<  discouraged_properties_ << std::endl;
+			TR.Debug << "Going from ";
+			for ( auto rt: current_type_list ) { TR.Debug << " " << rt->name(); }
+			TR.Debug << std::endl;
+			TR.Debug << "To ";
+			for ( auto rt: new_type_list ) { TR.Debug << " " << rt->name(); }
+			TR.Debug << std::endl;
+		}
+		current_type_list = new_type_list;
+	}
+
+	if ( ! preferred_properties_.empty() ) {
+		utility::vector1< core::Size > property_counts;
+		for ( ResidueTypeCOP const & rsd_type: current_type_list ) {
+			core::Size prop_count = 0;
+			for ( ResidueProperty prop: preferred_properties_ ) {
+				if ( rsd_type->has_property( prop ) ) {
+					++prop_count;
+				}
+			}
+			property_counts.push_back( prop_count );
+		}
+		debug_assert( ! property_counts.empty() );
+		core::Size max_count = *std::max_element( property_counts.begin(), property_counts.end() );
+		new_type_list.clear();
+		for ( core::Size ii(1); ii <= current_type_list.size(); ++ii ) {
+			if ( property_counts[ ii ] == max_count ) {
+				new_type_list.push_back( current_type_list[ ii ] );
+			}
+		}
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Encouraging " << preferred_properties_.size() << " properties, "
+				<< "going from " << current_type_list.size() << " types to " << new_type_list.size() << " types." << std::endl;
+			TR.Debug << "Encouraged: " << preferred_properties_ << std::endl;
+			TR.Debug<< "Going from ";
+			for ( auto rt: current_type_list ) { TR.Debug << " " << rt->name(); }
+			TR.Debug << std::endl;
+			TR.Debug << "To ";
+			for ( auto rt: new_type_list ) { TR.Debug << " " << rt->name(); }
+			TR.Debug << std::endl;
+		}
+
+		current_type_list = new_type_list;
+	}
+
+	return current_type_list;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Instantiates ResidueType (and gets exponentially slower), based on the number
@@ -310,14 +381,14 @@ ResidueTypeFinder::apply_patches_recursively(
 			matches_any_patch_name( patch )      ||
 			matches_any_atom_name( patch, rsd_type ) ||
 			fixes_name3( patch, rsd_type ) ||
-			fixes_interchangeability_group( patch, rsd_type ) );
+			fixes_interchangeability_group( patch, rsd_type ) ||
+			fixes_connects( patch, rsd_type ) );
 
 		if ( apply_patch ) {
-			// following just gets the right name of the patched residue
-			ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
-			// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
-			ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( rsd_type_new_placeholder->name() ) );
-			rsd_types_new.push_back( rsd_type_new );
+			ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( patch->patched_name( *rsd_type ) ) );
+			if ( rsd_type_new ) {
+				rsd_types_new.push_back( rsd_type_new );
+			}
 		}
 
 	} // end loop
@@ -369,14 +440,20 @@ ResidueTypeFinder::apply_metapatches_recursively(
 				matches_any_patch_name( patch )      ||
 				matches_any_atom_name( patch, rsd_type ) ||
 				fixes_name3( patch, rsd_type ) ||
-				fixes_interchangeability_group( patch, rsd_type ) );
+				fixes_interchangeability_group( patch, rsd_type ) // ||
+				// fixes_connects( patch, rsd_type ) // Currently an issue, as the connect metapatch plays havoc
+			);
 
 			if ( apply_patch ) {
 				// following just gets the right name of the patched residue
 				ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
-				// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
-				ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( rsd_type_new_placeholder->name() ) );
-				rsd_types_new.push_back( rsd_type_new );
+				if ( rsd_type_new_placeholder ) {
+					// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
+					ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( rsd_type_new_placeholder->name() ) );
+					if ( rsd_type_new ) {
+						rsd_types_new.push_back( rsd_type_new );
+					}
+				}
 			}
 		}
 
@@ -581,9 +658,11 @@ ResidueTypeFinder::fixes_name3( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 {
 	if ( name3_.size() > 0 &&
 			rsd_type->name3() != name3_ &&
-			residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) &&
-			patch->apply( *rsd_type, false /*instantiate*/ )->name3() == name3_ ) {
-		return true;
+			residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) ) {
+		ResidueTypeCOP new_type( patch->apply( *rsd_type, false /*instantiate*/ ) );
+		if ( new_type && new_type->name3() == name3_ ) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -595,9 +674,33 @@ ResidueTypeFinder::fixes_interchangeability_group( PatchCOP patch, ResidueTypeCO
 	if ( interchangeability_group_.size() > 0 &&
 			rsd_type->interchangeability_group() != interchangeability_group_ &&
 			residue_type_set_.generates_patched_residue_type_with_interchangeability_group( residue_type_base_name( *rsd_type ),
-			interchangeability_group_ ) &&
-			patch->apply( *rsd_type, false /*instantiate*/ )->interchangeability_group() == interchangeability_group_ ) {
+			interchangeability_group_ ) ) {
+		ResidueTypeCOP new_type( patch->apply( *rsd_type, false /*instantiate*/ ) );
+		if ( new_type && new_type->interchangeability_group() == interchangeability_group_ ) {
+			return true;
+		}
 		return true;
+	}
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+ResidueTypeFinder::fixes_connects( PatchCOP patch, ResidueTypeCOP rsd_type ) const {
+	if ( connect_atoms_.empty() ) return false; // Can't fix what isn't broken.
+	for ( std::string const & atom: connect_atoms_ ) {
+		if ( rsd_type->has(atom) ) {
+			// patch->changes_connections_on() should be whitespace padding insensitive.
+			if ( rsd_type->residue_connections_for_atom( rsd_type->atom_index(atom) ).empty() &&
+					patch->changes_connections_on( *rsd_type, atom ) ) {
+				return true;
+			}
+		} else {
+			// Don't have the atom -- get patches which may add the atom.
+			if ( patch->adds_atoms( *rsd_type ).has_value( atom ) ) {
+				return true;
+			}
+		}
 	}
 	return false;
 }
@@ -611,7 +714,7 @@ ResidueTypeFinder::adds_any_property( PatchCOP patch, ResidueTypeCOP rsd_type ) 
 	for ( Size n = 1; n <= added_properties.size(); n++ ) {
 		// convert string to ResidueProperty
 		ResidueProperty const added_property( rsd_type->properties().get_property_from_string( added_properties[ n ] ) );
-		if ( properties_.has_value( added_property ) ) return true;
+		if ( properties_.has_value( added_property ) || preferred_properties_.has_value( added_property ) ) return true;
 	}
 	return false;
 }
@@ -886,6 +989,29 @@ ResidueTypeFinder::filter_disallow_properties( ResidueTypeCOPs const & rsd_types
 
 ////////////////////////////////////////////////////////////////////////
 ResidueTypeCOPs
+ResidueTypeFinder::filter_connections( ResidueTypeCOPs const & rsd_types )  const
+{
+	if ( connect_atoms_.empty() || rsd_types.empty() ) { return rsd_types; }
+
+	ResidueTypeCOPs filtered_rsd_types;
+	for ( ResidueTypeCOP rsd: rsd_types ) {
+		bool has_all_required_connections = true;
+		for ( std::string const & atom: connect_atoms_ ) {
+			if ( !rsd->has( atom ) ||
+					rsd->residue_connections_for_atom( rsd->atom_index(atom) ).empty() ) {
+				has_all_required_connections = false;
+				break;
+			}
+		}
+		if ( has_all_required_connections ) {
+			filtered_rsd_types.push_back( rsd );
+		}
+	}
+	return filtered_rsd_types;
+}
+
+////////////////////////////////////////////////////////////////////////
+ResidueTypeCOPs
 ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  const
 {
 	ResidueTypeCOPs filtered_rsd_types;
@@ -896,11 +1022,6 @@ ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  co
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
 
-		if ( disallow_carboxyl_conjugation_at_glu_asp_ ) {
-			if ( ( rsd_type->aa() == aa_glu || rsd_type->aa() == aa_asp ) &&
-					rsd_type->has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) ) continue;
-		}
-
 		if ( actually_check_nucleic_acid_virtual_phosphates ) {
 			if ( rsd_type->is_DNA() && !rsd_type->has_variant_type( VIRTUAL_DNA_PHOSPHATE ) ) continue;
 			if ( rsd_type->is_RNA() && !rsd_type->has_variant_type( VIRTUAL_PHOSPHATE ) ) continue;
@@ -910,15 +1031,13 @@ ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  co
 	}
 	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
 		TR << "No ResidueTypes remain after filtering for special cases:" << std::endl;
-		if ( disallow_carboxyl_conjugation_at_glu_asp_ ) {
-			TR << "    * No carboxyl conjugation at GLU/ASP." << std::endl;
-		}
 		if ( actually_check_nucleic_acid_virtual_phosphates ) {
 			TR << "    * Nucleic acid has virtual phosphates." << std::endl;
 		}
 	}
 	return filtered_rsd_types;
 }
+
 ////////////////////////////////////////////////////////////////////
 /// @brief   set function for variants
 /// @details actually updates variants_in_sets_.

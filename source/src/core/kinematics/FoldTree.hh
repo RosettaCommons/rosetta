@@ -560,6 +560,12 @@ public:
 	int
 	get_polymer_residue_direction( Size const seqpos ) const;
 
+	/// @brief Check if the seqpos is covered by an edge in the FoldTree
+	/// (Mainly useful for FoldTrees as they are being built.)
+	/// @details If true, seqpos is either the root or get_residue_edge() will return an edge.
+	bool
+	residue_is_in_fold_tree( Size seqpos ) const;
+
 	/// @brief Returns the edge that builds the residue  <seqpos>
 	/// Does not work for root atom (will fail)
 	Edge const &

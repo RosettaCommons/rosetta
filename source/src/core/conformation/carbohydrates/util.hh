@@ -29,6 +29,7 @@
 #include <utility/vector1.hh>
 
 // C++ Header
+#include <set>
 #include <string>
 #include <utility>
 
@@ -155,7 +156,8 @@ get_branching_residues(
 	Size parent_residue,
 	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
-	utility::vector1< Size > & tips );
+	utility::vector1< Size > & tips,
+	std::set< Size > const & ancestors = {} );
 
 
 /// @brief  Find all children residues, list of residues, and any found tips from a given residue not including parent
