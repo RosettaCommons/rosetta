@@ -5,20 +5,19 @@
 		<IncludeCurrent	  name="keep_curr"/>
 	</TASKOPERATIONS>
 	<SCOREFXNS>
-		<ScoreFunction name="xtal" weights="talaris2013" symmetric="1">
+		<ScoreFunction name="xtal" weights="ref2015" symmetric="1">
    			<Reweight scoretype="cart_bonded" weight="0.5"/>
    			<Reweight scoretype="pro_close" weight="0.0"/>
 		</ScoreFunction>
-		<ScoreFunction name="dens_soft" weights="soft_rep" symmetric="1">
-   			<Reweight scoretype="fa_elec" weight="0.7"/>
+		<ScoreFunction name="dens_soft" weights="ref2015_soft" symmetric="1">
    			<Reweight scoretype="cart_bonded" weight="0.5"/>
    			<Reweight scoretype="pro_close" weight="0.0"/>
-   			<Reweight scoretype="elec_dens_fast" weight="20.0"/>
+   			<Reweight scoretype="elec_dens_fast" weight="30.0"/>
 		</ScoreFunction>
-		<ScoreFunction name="dens" weights="talaris2013" symmetric="1">
+		<ScoreFunction name="dens" weights="ref2015" symmetric="1">
    			<Reweight scoretype="cart_bonded" weight="0.5"/>
    			<Reweight scoretype="pro_close" weight="0.0"/>
-			<Reweight scoretype="elec_dens_fast" weight="20.0"/>
+			<Reweight scoretype="elec_dens_fast" weight="30.0"/>
 		</ScoreFunction>
 	</SCOREFXNS>
 	<MOVERS>
