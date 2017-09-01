@@ -44,8 +44,10 @@ namespace crosslinker {
 /////////////////////
 
 /// @brief Default constructor
-CrosslinkerMoverHelper::CrosslinkerMoverHelper() //:
-//TODO initialize data here
+CrosslinkerMoverHelper::CrosslinkerMoverHelper() :
+	symm_type_('A'),
+	symm_count_(1)
+	//TODO initialize data here
 {
 
 }
@@ -53,8 +55,10 @@ CrosslinkerMoverHelper::CrosslinkerMoverHelper() //:
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
 ////////////////////////////////////////////////////////////////////////////////
-CrosslinkerMoverHelper::CrosslinkerMoverHelper( CrosslinkerMoverHelper const & /*src*/ ) //:
-//TODO copy data here
+CrosslinkerMoverHelper::CrosslinkerMoverHelper( CrosslinkerMoverHelper const & src ) :
+	symm_type_(src.symm_type_),
+	symm_count_(src.symm_count_)
+	//TODO copy data here
 {
 
 }
@@ -69,44 +73,56 @@ CrosslinkerMoverHelper::~CrosslinkerMoverHelper(){}
 /// Public Methods ///
 //////////////////////
 
-/// @brief Given a ResidueSubset with exactly three residues selected, pull out the three indices.
-/// @details Overwrites res1, res2, and res3.
+/// @brief Set the symmetry for this crosslinker helper.
+void
+CrosslinkerMoverHelper::set_symmetry(
+	char const symm_type_in,
+	core::Size const symm_count_in
+) {
+	runtime_assert( symm_type_in == 'A' || symm_type_in == 'C' || symm_type_in == 'D' || symm_type_in == 'S' );
+	symm_type_ = symm_type_in;
+	if ( symm_type_ == 'A' ) {
+		runtime_assert( symm_count_in == 1 );
+	} else {
+		runtime_assert( symm_count_in > 1 );
+		if ( symm_type_ == 'S' ) {
+			runtime_assert( symm_count_in % 2 == 0 );
+		}
+	}
+	symm_count_ = symm_count_in;
+}
+
+/// @brief Given a ResidueSubset with N residues selected, pull out the indices into a vector.
+/// @details Overwrites res_indices.
 void
 CrosslinkerMoverHelper::get_sidechain_indices(
 	core::select::residue_selector::ResidueSubset const & selection,
-	core::Size &res1,
-	core::Size &res2,
-	core::Size &res3
+	utility::vector1< core::Size > & res_indices
 ) const {
 	core::Size const nres( selection.size() );
-	runtime_assert_string_msg( nres>=3, "Error in protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelper::get_sidechain_indices(): Fewer than three residues are in the pose." );
-	res1=0; res2=0; res3=0;
+	res_indices.clear();
 	for ( core::Size i=1; i<=nres; ++i ) {
 		if ( selection[i] ) {
-			if ( res1==0 ) { res1 = i; }
-			else if ( res2==0 ) { res2 = i; }
-			else if ( res3==0 ) { res3 = i; }
-			else {
-				utility_exit_with_message( "Error in protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelper::get_sidechain_indices(): More than three residues were selected." );
-			}
+			res_indices.push_back(i);
 		}
 	}
 
-	runtime_assert_string_msg( res1>0 && res2>0 && res3>0, "Error in protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelper::get_sidechain_indices(): Fewer than three residues were selected." );
+	runtime_assert_string_msg( res_indices.size(), "Error in protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelper::get_sidechain_indices(): No residues were selected." );
 }
 
 /// @brief Determine whether a selection is symmetric.
-/// @details Returns true if and only if (a) the pose is symmetric, (b) there are three symmetry copies, and (c) the selected residues are equivalent residues in different
-/// symmetry copies.  Note that, ideally, I'd like to test for c3 symmetry, but this is as close as was feasible.
+/// @details Returns true if and only if (a) the pose is symmetric, (b) there are the expected number of symmetry copies, and (c) the selected residues are equivalent residues in different
+/// symmetry copies.  Note that, ideally, I'd like to test for CN or SN symmetry, but this is as close as was feasible.
 /// @note Can be overriden.
 bool
 CrosslinkerMoverHelper::selection_is_symmetric(
 	core::select::residue_selector::ResidueSubset const & selection,
-	core::pose::Pose const &pose
+	core::pose::Pose const &pose,
+	core::Size const expected_subunit_count
 ) const {
 	//First, get the indices (checking in the process that exactly three residues are selected).
-	core::Size r1, r2, r3;
-	get_sidechain_indices( selection, r1, r2, r3 );
+	utility::vector1< core::Size > res_indices;
+	get_sidechain_indices( selection, res_indices );
 
 	//Check whether this is a symmetric pose.
 	core::conformation::symmetry::SymmetricConformationCOP conf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::SymmetricConformation const >( pose.conformation_ptr() ) );
@@ -114,22 +130,19 @@ CrosslinkerMoverHelper::selection_is_symmetric(
 
 	//Get the symmetry information object, which can tell us about relationships between residues:
 	core::conformation::symmetry::SymmetryInfoCOP symminfo( conf->Symmetry_Info() );
-	if ( symminfo->subunits() != 3 ) return false;
+	if ( symminfo->subunits() != expected_subunit_count ) return false;
+	if ( res_indices.size() != expected_subunit_count ) return false;
 
-	if ( symminfo->bb_is_independent( r1 ) ) {
-		if ( symminfo->bb_follows( r2 ) == r1 && symminfo->bb_follows( r3 ) == r1 ) { return true; }
-		else { return false; }
+	for ( core::Size i(1), imax(res_indices.size()); i<=imax; ++i ) {
+		if ( symminfo->bb_is_independent( res_indices[i] ) ) {
+			for ( core::Size j(1), jmax(res_indices.size()); j<=jmax; ++j ) {
+				if ( i==j ) continue;
+				if ( symminfo->bb_follows( res_indices[j] ) != res_indices[i] ) return false;
+			}
+			return true;
+		}
 	}
-	if ( symminfo->bb_is_independent( r2 ) ) {
-		if ( symminfo->bb_follows( r1 ) == r2 && symminfo->bb_follows( r3 ) == r2 ) { return true; }
-		else { return false; }
-	}
-	if ( symminfo->bb_is_independent( r3 ) ) {
-		if ( symminfo->bb_follows( r1 ) == r3 && symminfo->bb_follows( r2 ) == r3 ) { return true; }
-		else { return false; }
-	}
-	core::Size const bb_follows_r1( symminfo->bb_follows( r1 ) );
-	if ( symminfo->bb_follows( r2 ) == bb_follows_r1 && symminfo->bb_follows( r3 ) == bb_follows_r1 ) { return true; /*Though this shouldn't really be possible.*/ }
+
 	return false;
 }
 

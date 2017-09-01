@@ -91,7 +91,10 @@ TMA_Helper::add_linker_asymmetric(
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
 	core::Size res1, res2, res3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, res1, res2, res3 );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert( res_indices.size() == 3 );
+	res1 = res_indices[1]; res2 = res_indices[2]; res3 = res_indices[3];
 
 	runtime_assert_string_msg( is_allowed_residue_type( pose.residue_type(res1) ),
 		"Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::add_linker_asymmetric(): The first residue selected by the ResidueSelector is not of the following types: " + list_allowed_residue_types() + ".");
@@ -115,7 +118,7 @@ TMA_Helper::add_linker_asymmetric(
 	core::Size const tma_res( pose.total_residue() );
 
 	//Declare covalent bonds:
-	add_linker_bonds_asymmetric( pose, res1, res2, res3, tma_res );
+	add_linker_bonds_asymmetric( pose, res_indices, tma_res );
 }
 
 /// @brief Given a pose and a linker, add bonds between the linker and the residues that coordinate the linker.
@@ -123,16 +126,16 @@ TMA_Helper::add_linker_asymmetric(
 void
 TMA_Helper::add_linker_bonds_asymmetric(
 	core::pose::Pose &pose,
-	core::Size const res1,
-	core::Size const res2,
-	core::Size const res3,
+	utility::vector1< core::Size > const & res_indices,
 	core::Size const linker_index
 ) const {
+	runtime_assert( res_indices.size() == 3 );
+
 	//Declare covalent bonds:
 	protocols::cyclic_peptide::DeclareBond bond1, bond2, bond3;
-	bond1.set( linker_index, "CM1", res1, get_sidechain_amide_name( pose.residue_type(res1) ), false );
-	bond2.set( linker_index, "CM2", res2, get_sidechain_amide_name( pose.residue_type(res2) ), false );
-	bond3.set( linker_index, "CM3", res3, get_sidechain_amide_name( pose.residue_type(res3) ), false );
+	bond1.set( linker_index, "CM1", res_indices[1], get_sidechain_amide_name( pose.residue_type(res_indices[1]) ), false );
+	bond2.set( linker_index, "CM2", res_indices[2], get_sidechain_amide_name( pose.residue_type(res_indices[2]) ), false );
+	bond3.set( linker_index, "CM3", res_indices[3], get_sidechain_amide_name( pose.residue_type(res_indices[3]) ), false );
 	bond1.apply(pose);
 	bond2.apply(pose);
 	bond3.apply(pose);
@@ -147,9 +150,17 @@ TMA_Helper::add_linker_symmetric(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
-
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in Error in protocols::cyclic_peptide::TMA_Helper::add_linker_symmetric(): TMA requires a C3-symmetric pose."
+	);
 	core::Size res1, res2, res3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, res1, res2, res3 );
+	{
+		utility::vector1< core::Size > res_indices;
+		CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+		runtime_assert( res_indices.size() == 3 );
+		res1 = res_indices[1]; res2 = res_indices[2]; res3 = res_indices[3];
+	}
 
 	runtime_assert_string_msg( is_allowed_residue_type( pose.residue_type(res1) ),
 		"Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::add_linker_symmetric(): The first residue selected by the ResidueSelector is not of the following types: " + list_allowed_residue_types() + ".");
@@ -195,6 +206,10 @@ TMA_Helper::add_linker_bonds_symmetric(
 	core::Size const linker_index1,
 	core::Size const linker_index2
 ) const {
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in Error in protocols::cyclic_peptide::TMA_Helper::add_linker_bonds_symmetric(): TMA requires a C3-symmetric pose."
+	);
 	protocols::cyclic_peptide::DeclareBond bond1, bond2;
 	bond1.set( res1, get_sidechain_amide_name(pose.residue_type(res1)), linker_index1, "CM1", false );
 	bond2.set( linker_index2, "C1", linker_index1, "C2", false );
@@ -212,8 +227,11 @@ TMA_Helper::add_linker_constraints_asymmetric(
 ) const {
 	//Get indices of residues
 	core::Size res1, res2, res3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, res1, res2, res3 );
-	core::Size const tma_index( get_linker_index_asymmetric( pose, res1, res2, res3) );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert( res_indices.size() == 3 );
+	res1 = res_indices[1]; res2 = res_indices[2]; res3 = res_indices[3];
+	core::Size const tma_index( get_linker_index_asymmetric( pose, res_indices) );
 
 	//Set up distance constraints:
 	{ //Begin scope
@@ -315,25 +333,30 @@ TMA_Helper::add_linker_constraints_symmetric(
 	core::select::residue_selector::ResidueSubset const & selection,
 	bool const linker_was_added
 ) const {
-
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in Error in protocols::cyclic_peptide::TMA_Helper::add_linker_constraints_symmetric(): TMA requires a C3-symmetric pose."
+	);
 	//Get indices of residues
-	core::Size res1, res2, res3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, res1, res2, res3 );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert( res_indices.size() == 3 );
 	if ( linker_was_added ) {
-		res2 += 1;
-		res3 += 2;
+		res_indices[2] += 1;
+		res_indices[3] += 2;
 	}
-	core::Size tma_index1, tma_index2, tma_index3;
-	get_linker_indices_symmetric( pose, res1, res2, res3, tma_index1, tma_index2, tma_index3 );
+	utility::vector1< core::Size > tma_indices;
+	get_linker_indices_symmetric( pose, res_indices, tma_indices );
+	runtime_assert( tma_indices.size() == 3 );
 
 	std::string const dist_cst_string("HARMONIC 0.0 0.02");
 
 	//Set up distance constraints (redundantly, repeating for all symmetry repeats)
 	for ( core::Size isymm(1); isymm<=3; ++isymm ) { //Begin scope
 		core::Size r1, t1, t2;
-		if ( isymm==1 ) { r1=res1; t1=tma_index1; t2=tma_index2; }
-		else if ( isymm==2 ) { r1=res2; t1=tma_index2; t2=tma_index3; }
-		else { r1=res3; t1=tma_index3; t2=tma_index1; }
+		if ( isymm==1 ) { r1=res_indices[1]; t1=tma_indices[1]; t2=tma_indices[2]; }
+		else if ( isymm==2 ) { r1=res_indices[2]; t1=tma_indices[2]; t2=tma_indices[3]; }
+		else { r1=res_indices[3]; t1=tma_indices[3]; t2=tma_indices[1]; }
 		protocols::cyclic_peptide::CreateDistanceConstraint dist_csts;
 		utility::vector1< core::Size > resindex1(4), resindex2(4);
 		utility::vector1< std::string > atom1(4), atom2(4);
@@ -384,12 +407,12 @@ TMA_Helper::add_linker_constraints_symmetric(
 		for ( core::Size isymm(1); isymm<=3; ++isymm ) {
 
 			utility::vector1< std::string > atom1(1), atom2(1), atom3(1), atom4(1);
-			atom1[1] = "C2"; atom2[1] = "C1"; atom3[1] = "CM1"; atom4[1] = get_sidechain_amide_name( pose.residue_type(res1) );
+			atom1[1] = "C2"; atom2[1] = "C1"; atom3[1] = "CM1"; atom4[1] = get_sidechain_amide_name( pose.residue_type(res_indices[1]) );
 
 			utility::vector1 < core::Size > r1(1), r2(1), r3(1), r4(1);
-			if ( isymm == 1 ) { r1[1] = tma_index1; r2[1] = tma_index1; r3[1] = tma_index1; r4[1] = res1; }
-			else if ( isymm == 2 ) { r1[1] = tma_index2; r2[1] = tma_index2; r3[1] = tma_index2; r4[1] = res2; }
-			else { r1[1] = tma_index3; r2[1] = tma_index3; r3[1] = tma_index3; r4[1] = res3; }
+			if ( isymm == 1 ) { r1[1] = tma_indices[1]; r2[1] = tma_indices[1]; r3[1] = tma_indices[1]; r4[1] = res_indices[1]; }
+			else if ( isymm == 2 ) { r1[1] = tma_indices[2]; r2[1] = tma_indices[2]; r3[1] = tma_indices[2]; r4[1] = res_indices[2]; }
+			else { r1[1] = tma_indices[3]; r2[1] = tma_indices[3]; r3[1] = tma_indices[3]; r4[1] = res_indices[3]; }
 
 			for ( core::Size i=1; i<=5; ++i ) {
 				protocols::cyclic_peptide::CreateTorsionConstraint tors_csts;
@@ -405,17 +428,17 @@ TMA_Helper::add_linker_constraints_symmetric(
 		std::string const cst_string( "AMBERPERIODIC 3.141592654 2.0 400.0" );
 		utility::vector1< std::string > cst_strings( 3, cst_string );
 		utility::vector1< core::Size > r1(3), r2(3), r3(3), r4(3);
-		r1[1] = r2[1] = tma_index1;
-		r1[2] = r2[2] = tma_index2;
-		r1[3] = r2[3] = tma_index3;
-		r3[1] = r4[1] = res1;
-		r3[2] = r4[2] = res2;
-		r3[3] = r4[3] = res3;
+		r1[1] = r2[1] = tma_indices[1];
+		r1[2] = r2[2] = tma_indices[2];
+		r1[3] = r2[3] = tma_indices[3];
+		r3[1] = r4[1] = res_indices[1];
+		r3[2] = r4[2] = res_indices[2];
+		r3[3] = r4[3] = res_indices[3];
 
 		utility::vector1< std::string > atom1(3), atom2(3), atom3(3), atom4(3);
-		atom1[1] = "C1"; atom2[1] = "CM1"; atom3[1] = get_sidechain_amide_name( pose.residue_type(res1) ); atom4[1] = get_last_sidechain_carbon_name( pose.residue_type(res1) );
-		atom1[2] = "C1"; atom2[2] = "CM1"; atom3[2] = get_sidechain_amide_name( pose.residue_type(res2) ); atom4[2] = get_last_sidechain_carbon_name( pose.residue_type(res2) );
-		atom1[3] = "C1"; atom2[3] = "CM1"; atom3[3] = get_sidechain_amide_name( pose.residue_type(res3) ); atom4[3] = get_last_sidechain_carbon_name( pose.residue_type(res3) );
+		atom1[1] = "C1"; atom2[1] = "CM1"; atom3[1] = get_sidechain_amide_name( pose.residue_type(res_indices[1]) ); atom4[1] = get_last_sidechain_carbon_name( pose.residue_type(res_indices[1]) );
+		atom1[2] = "C1"; atom2[2] = "CM1"; atom3[2] = get_sidechain_amide_name( pose.residue_type(res_indices[2]) ); atom4[2] = get_last_sidechain_carbon_name( pose.residue_type(res_indices[2]) );
+		atom1[3] = "C1"; atom2[3] = "CM1"; atom3[3] = get_sidechain_amide_name( pose.residue_type(res_indices[3]) ); atom4[3] = get_last_sidechain_carbon_name( pose.residue_type(res_indices[3]) );
 
 		protocols::cyclic_peptide::CreateTorsionConstraint tors_csts;
 		tors_csts.set( r1, atom1, r2, atom2, r3, atom3, r4, atom4, cst_strings );
@@ -430,23 +453,23 @@ TMA_Helper::add_linker_constraints_symmetric(
 core::Size
 TMA_Helper::get_linker_index_asymmetric(
 	core::pose::Pose const &pose,
-	core::Size const res1,
-	core::Size const res2,
-	core::Size const res3
+	utility::vector1 < core::Size > const & res_indices
 ) const {
-	core::Size const sidechain_connect_index_1( get_sidechain_connect_index( pose.residue(res1) ) );
-	core::Size const sidechain_connect_index_2( get_sidechain_connect_index( pose.residue(res2) ) );
-	core::Size const sidechain_connect_index_3( get_sidechain_connect_index( pose.residue(res3) ) );
+	runtime_assert(res_indices.size() == 3);
+
+	core::Size const sidechain_connect_index_1( get_sidechain_connect_index( pose.residue(res_indices[1]) ) );
+	core::Size const sidechain_connect_index_2( get_sidechain_connect_index( pose.residue(res_indices[2]) ) );
+	core::Size const sidechain_connect_index_3( get_sidechain_connect_index( pose.residue(res_indices[3]) ) );
 
 	runtime_assert_string_msg( sidechain_connect_index_1 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric(): The first residue does not have a sidechain connection." );
 	runtime_assert_string_msg( sidechain_connect_index_2 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric(): The second residue does not have a sidechain connection." );
 	runtime_assert_string_msg( sidechain_connect_index_3 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric(): The third residue does not have a sidechain connection." );
 
-	core::Size const tma_index( pose.residue(res1).connected_residue_at_resconn( sidechain_connect_index_1 ) );
+	core::Size const tma_index( pose.residue(res_indices[1]).connected_residue_at_resconn( sidechain_connect_index_1 ) );
 	runtime_assert_string_msg( tma_index != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric():  The first sidechain is connected to nothing!" );
 	runtime_assert_string_msg(
-		pose.residue(res2).connected_residue_at_resconn( sidechain_connect_index_2 ) == tma_index &&
-		pose.residue(res2).connected_residue_at_resconn( sidechain_connect_index_2 ) == tma_index,
+		pose.residue(res_indices[2]).connected_residue_at_resconn( sidechain_connect_index_2 ) == tma_index &&
+		pose.residue(res_indices[3]).connected_residue_at_resconn( sidechain_connect_index_3 ) == tma_index,
 		"Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric():  The same reside is not connected to all three side-chains."
 	);
 
@@ -459,27 +482,29 @@ TMA_Helper::get_linker_index_asymmetric(
 void
 TMA_Helper::get_linker_indices_symmetric(
 	core::pose::Pose const &pose,
-	core::Size const res1,
-	core::Size const res2,
-	core::Size const res3,
-	core::Size &linker_index1,
-	core::Size &linker_index2,
-	core::Size &linker_index3
+	utility::vector1< core::Size > const & res_indices,
+	utility::vector1< core::Size > & linker_indices
 ) const {
-	core::Size const sidechain_connect_index_1( get_sidechain_connect_index( pose.residue(res1) ) );
-	core::Size const sidechain_connect_index_2( get_sidechain_connect_index( pose.residue(res2) ) );
-	core::Size const sidechain_connect_index_3( get_sidechain_connect_index( pose.residue(res3) ) );
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in Error in protocols::cyclic_peptide::TMA_Helper::get_linker_indices_symmetric(): TMA requires a C3-symmetric pose."
+	);
+	runtime_assert( res_indices.size() == 3 );
+	core::Size const sidechain_connect_index_1( get_sidechain_connect_index( pose.residue(res_indices[1]) ) );
+	core::Size const sidechain_connect_index_2( get_sidechain_connect_index( pose.residue(res_indices[2]) ) );
+	core::Size const sidechain_connect_index_3( get_sidechain_connect_index( pose.residue(res_indices[3]) ) );
 
-	runtime_assert_string_msg( sidechain_connect_index_1 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_symmetric(): The first residue does not have a sidechain connection." );
-	runtime_assert_string_msg( sidechain_connect_index_2 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_symmetric(): The second residue does not have a sidechain connection." );
-	runtime_assert_string_msg( sidechain_connect_index_3 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_symmetric(): The third residue does not have a sidechain connection." );
+	runtime_assert_string_msg( sidechain_connect_index_1 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_indices_symmetric(): The first residue does not have a sidechain connection." );
+	runtime_assert_string_msg( sidechain_connect_index_2 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_indices_symmetric(): The second residue does not have a sidechain connection." );
+	runtime_assert_string_msg( sidechain_connect_index_3 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_indices_symmetric(): The third residue does not have a sidechain connection." );
 
-	linker_index1 = pose.residue(res1).connected_residue_at_resconn( sidechain_connect_index_1 );
-	runtime_assert_string_msg( linker_index1 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric():  The first sidechain is connected to nothing!" );
-	linker_index2 = pose.residue(res2).connected_residue_at_resconn( sidechain_connect_index_2 );
-	runtime_assert_string_msg( linker_index2 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric():  The second sidechain is connected to nothing!" );
-	linker_index3 = pose.residue(res3).connected_residue_at_resconn( sidechain_connect_index_3 );
-	runtime_assert_string_msg( linker_index3 != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric():  The third sidechain is connected to nothing!" );
+	linker_indices.resize(3);
+	linker_indices[1] = pose.residue(res_indices[1]).connected_residue_at_resconn( sidechain_connect_index_1 );
+	runtime_assert_string_msg( linker_indices[1] != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric():  The first sidechain is connected to nothing!" );
+	linker_indices[2] = pose.residue(res_indices[2]).connected_residue_at_resconn( sidechain_connect_index_2 );
+	runtime_assert_string_msg( linker_indices[2] != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric():  The second sidechain is connected to nothing!" );
+	linker_indices[3] = pose.residue(res_indices[3]).connected_residue_at_resconn( sidechain_connect_index_3 );
+	runtime_assert_string_msg( linker_indices[3] != 0, "Error in protocols::cyclic_peptide::crosslinker::TMA_Helper::get_linker_index_asymmetric():  The third sidechain is connected to nothing!" );
 }
 
 
@@ -493,23 +518,24 @@ TMA_Helper::filter_by_sidechain_distance_asymmetric(
 	core::Real const & filter_multiplier
 ) const {
 	//Get indices of residues
-	core::Size res1, res2, res3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, res1, res2, res3 );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert( res_indices.size() == 3 );
 
 	core::Real const tma_dist( 8.0 ); //The max distance between atoms bonded to different CM atoms in TMA (slightly padded -- I measure 7.2 A in Avogadro).
-	core::Real const maxlen1( get_max_sidechain_length( pose.residue_type(res1) ) );
-	core::Real const maxlen2( get_max_sidechain_length( pose.residue_type(res2) ) );
-	core::Real const maxlen3( get_max_sidechain_length( pose.residue_type(res3) ) );
+	core::Real const maxlen1( get_max_sidechain_length( pose.residue_type(res_indices[1]) ) );
+	core::Real const maxlen2( get_max_sidechain_length( pose.residue_type(res_indices[2]) ) );
+	core::Real const maxlen3( get_max_sidechain_length( pose.residue_type(res_indices[3]) ) );
 
-	core::Real const one_two_dist( (pose.residue(res1).xyz("CA") - pose.residue(res2).xyz("CA")).length() );
+	core::Real const one_two_dist( (pose.residue(res_indices[1]).xyz("CA") - pose.residue(res_indices[2]).xyz("CA")).length() );
 	core::Real const one_two_dist_max( ( maxlen1 + maxlen2 + tma_dist ) * filter_multiplier );
 	if ( one_two_dist > one_two_dist_max ) return true;
 
-	core::Real const two_three_dist( (pose.residue(res2).xyz("CA") - pose.residue(res3).xyz("CA")).length() );
+	core::Real const two_three_dist( (pose.residue(res_indices[2]).xyz("CA") - pose.residue(res_indices[3]).xyz("CA")).length() );
 	core::Real const two_three_dist_max( ( maxlen2 + maxlen3 + tma_dist ) * filter_multiplier );
 	if ( two_three_dist > two_three_dist_max ) return true;
 
-	core::Real const one_three_dist( (pose.residue(res1).xyz("CA") - pose.residue(res3).xyz("CA")).length() );
+	core::Real const one_three_dist( (pose.residue(res_indices[1]).xyz("CA") - pose.residue(res_indices[3]).xyz("CA")).length() );
 	core::Real const one_three_dist_max( ( maxlen1 + maxlen3 + tma_dist ) * filter_multiplier );
 	if ( one_three_dist > one_three_dist_max ) return true;
 
@@ -527,9 +553,15 @@ TMA_Helper::filter_by_sidechain_distance_symmetric(
 	core::select::residue_selector::ResidueSubset const & selection,
 	core::Real const & filter_multiplier
 ) const {
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in Error in protocols::cyclic_peptide::TMA_Helper::filter_by_sidechain_distance_symmetric(): TMA requires a C3-symmetric pose."
+	);
 	//Get indices of residues
-	core::Size res1, res2, res3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, res1, res2, res3 );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert(res_indices.size() == 3);
+	core::Size res1(res_indices[1]), res2(res_indices[2]), res3(res_indices[3]);
 
 	debug_assert( pose.residue_type(res1).name3() == pose.residue_type(res2).name3() );
 	debug_assert( pose.residue_type(res1).name3() == pose.residue_type(res3).name3() );
@@ -564,6 +596,10 @@ TMA_Helper::filter_by_constraints_energy_symmetric(
 	bool const linker_was_added,
 	core::Real const & filter_multiplier
 ) const {
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in Error in protocols::cyclic_peptide::TMA_Helper::filter_by_constraints_energy_symmetric(): TMA requires a C3-symmetric pose."
+	);
 	return filter_by_constraints_energy( pose, selection, true, linker_was_added, 5*filter_multiplier );
 }
 
@@ -783,6 +819,10 @@ TMA_Helper::place_tma_symmetric(
 	core::pose::Pose &symm_pose,
 	core::pose::Pose const &asymm_pose
 ) const {
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in Error in protocols::cyclic_peptide::TMA_Helper::place_tma_symmetric(): TMA requires a C3-symmetric pose."
+	);
 	using namespace core::id;
 
 	symm_pose.clear();
@@ -828,9 +868,10 @@ TMA_Helper::update_tma_amide_bond_dependent_atoms_asymmetric(
 	core::select::residue_selector::ResidueSubset const &selection
 ) const {
 	runtime_assert_string_msg( !core::pose::symmetry::is_symmetric(pose), "Error in protocols::cyclic_peptide::TMA_Helper::update_tma_amide_bond_dependent_atoms_asymmetric(): The asymmetric version of this function was called on a symmetric pose." );
-	utility::vector1< core::Size > res_indices(3);
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices[1], res_indices[2], res_indices[3] );
-	core::Size const tma_index( get_linker_index_asymmetric( pose, res_indices[1], res_indices[2], res_indices[3] ) );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert(res_indices.size() == 3);
+	core::Size const tma_index( get_linker_index_asymmetric( pose, res_indices ) );
 
 	for ( core::Size i=1; i<=3; ++i ) {
 		pose.conformation().rebuild_residue_connection_dependent_atoms( tma_index, i ); //Rebuild the carbonyl oxygen on the TMA.
@@ -849,14 +890,20 @@ TMA_Helper::update_tma_amide_bond_dependent_atoms_symmetric(
 	core::select::residue_selector::ResidueSubset const &selection,
 	bool const tma_was_added
 ) const {
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in Error in protocols::cyclic_peptide::TMA_Helper::update_tma_amide_bond_dependent_atoms_symmetric(): TMA requires a C3-symmetric pose."
+	);
 	runtime_assert_string_msg( core::pose::symmetry::is_symmetric(pose), "Error in protocols::cyclic_peptide::TMA_Helper::update_tma_amide_bond_dependent_atoms_symmetric(): The symmetric version of this function was called on an asymmetric pose." );
 	utility::vector1< core::Size > res_indices(3), tma_index(3);
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices[1], res_indices[2], res_indices[3] );
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert(res_indices.size() == 3);
 	if ( tma_was_added ) {
 		res_indices[2] += 1;
 		res_indices[3] += 2;
 	}
-	get_linker_indices_symmetric( pose, res_indices[1], res_indices[2], res_indices[3], tma_index[1], tma_index[2], tma_index[3] );
+	get_linker_indices_symmetric( pose, res_indices, tma_index );
+	runtime_assert(tma_index.size() == 3);
 
 	pose.conformation().rebuild_residue_connection_dependent_atoms( tma_index[1], 1 ); //Rebuild the carbonyl oxygen on the TMA.
 	core::Size const res_connid( pose.residue( tma_index[1] ).residue_connection_conn_id(1) ); //The connection ID on the residue that connects to the TMA

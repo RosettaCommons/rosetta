@@ -66,7 +66,6 @@ CrosslinkerMover::CrosslinkerMover():
 	constrain_linker_(true),
 	pack_and_minimize_linker_and_sidechains_(true),
 	do_final_fastrelax_(false),
-	threefold_symmetric_(false),
 	sfxn_(),
 	sidechain_frlx_rounds_(3),
 	final_frlx_rounds_(3),
@@ -75,7 +74,9 @@ CrosslinkerMover::CrosslinkerMover():
 	filter_by_total_score_(false),
 	filter_by_total_score_cutoff_energy_(0.0),
 	sidechain_distance_filter_multiplier_(1.0),
-	constraints_energy_filter_multiplier_(1.0)
+	constraints_energy_filter_multiplier_(1.0),
+	symm_type_('A'),
+	symm_count_(1)
 {
 
 }
@@ -91,7 +92,6 @@ CrosslinkerMover::CrosslinkerMover( CrosslinkerMover const & src ):
 	constrain_linker_(src.constrain_linker_),
 	pack_and_minimize_linker_and_sidechains_(src.pack_and_minimize_linker_and_sidechains_),
 	do_final_fastrelax_(src.do_final_fastrelax_),
-	threefold_symmetric_(src.threefold_symmetric_),
 	sfxn_(src.sfxn_),
 	sidechain_frlx_rounds_(src.sidechain_frlx_rounds_),
 	final_frlx_rounds_(src.final_frlx_rounds_),
@@ -100,7 +100,9 @@ CrosslinkerMover::CrosslinkerMover( CrosslinkerMover const & src ):
 	filter_by_total_score_(src.filter_by_total_score_),
 	filter_by_total_score_cutoff_energy_(src.filter_by_total_score_cutoff_energy_),
 	sidechain_distance_filter_multiplier_(src.sidechain_distance_filter_multiplier_),
-	constraints_energy_filter_multiplier_(src.constraints_energy_filter_multiplier_)
+	constraints_energy_filter_multiplier_(src.constraints_energy_filter_multiplier_),
+	symm_type_(src.symm_type_),
+	symm_count_(src.symm_count_)
 {
 
 }
@@ -139,6 +141,8 @@ CrosslinkerMover::apply( core::pose::Pose& pose){
 	default :
 		utility_exit_with_message( "Error in protocols::cyclic_peptide::CrosslinkerMover::apply(): Invalid crosslinker specified." );
 	}
+
+	helper->set_symmetry( symm_type(), symm_count() );
 
 	// Decide whether to call symmetric or asymmetric functions from here on:
 	if ( core::conformation::symmetry::is_symmetric( pose.conformation() ) ) {
@@ -210,12 +214,13 @@ CrosslinkerMover::parse_my_tag(
 	runtime_assert_string_msg( tag->hasOption("linker_name"), "Error in protocols::cyclic_peptide::CrosslinkerMover::parse_my_tag(): The name of the linker residue MUST be supplied with the \"linker_name\" option." );
 	set_linker_name( tag->getOption<std::string>("linker_name") );
 
+	set_symmetry( tag->getOption<std::string>("symmetry", "A1") );
+
 	set_behaviour(
 		tag->getOption<bool>( "add_linker", add_linker() ),
 		tag->getOption<bool>( "constrain_linker", constrain_linker() ),
 		tag->getOption<bool>( "pack_and_minimize_linker_and_sidechains", pack_and_minimize_linker_and_sidechains() ),
-		tag->getOption<bool>( "do_final_fastrelax", do_final_fastrelax() ),
-		tag->getOption<bool>( "threefold_symmetric", threefold_symmetric() )
+		tag->getOption<bool>( "do_final_fastrelax", do_final_fastrelax() )
 	);
 
 	set_filter_behaviour(
@@ -252,13 +257,13 @@ CrosslinkerMover::provide_xml_schema(
 	attlist
 		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "A unique name for this instance of the CrosslinkerMover." )
 		+ XMLSchemaAttribute::required_attribute( "linker_name", xs_string, "The name of the type of linker to use.  For example, use TBMB for 1,3,5-tris(bromomethyl)benzene. (Allowed options are " + linker_possibles + ".)" )
+		+ XMLSchemaAttribute( "symmetry", xs_string, "The symmetry of the input pose.  For example, \"C3\" for cyclic, threefold symmetry.  The symmetry must be a character followed by an integer.  Allowed characters are 'A' (asymmetric), 'C' (cyclic), 'D' (dihedral), and 'S' (mirror cyclic)." )
 		+ XMLSchemaAttribute( "add_linker", xsct_rosetta_bool, "Should the linker geometry be added to the pose?  Default true." )
 		+ XMLSchemaAttribute( "constrain_linker", xsct_rosetta_bool, "Should constraints for the linker be added to the pose?  Default true." )
 		+ XMLSchemaAttribute( "pack_and_minimize_linker_and_sidechains", xsct_rosetta_bool, "Should the linker and the connecting sidechains be repacked, and should the jump to the linker, and the linker and connnecting side-chain degrees of torsional freedom, be energy-minimized?  Default true." )
 		+ XMLSchemaAttribute( "sidechain_fastrelax_rounds", xs_integer, "The number of rounds of FastRelax to apply when packing and minimizing side-chains and the liker.  Default 3." )
 		+ XMLSchemaAttribute( "do_final_fastrelax", xsct_rosetta_bool, "Should the whole pose be subjected to a FastRelax?  Default false." )
 		+ XMLSchemaAttribute( "final_fastrelax_rounds", xs_integer, "The number of rounds of FastRelax to apply when relaxing the whole pose.  Default 3." )
-		+ XMLSchemaAttribute( "threefold_symmetric", xsct_rosetta_bool, "Is this a threefold-symmetric pose being connected by a threefold-symmetric crosslinker?  Default false." )
 		+ XMLSchemaAttribute( "filter_by_sidechain_distance", xsct_rosetta_bool, "Prior to adding the linker geometry, should this mover abort with failure status if the selected side-chains are too far apart to connect to the linker?  Default true." )
 		+ XMLSchemaAttribute( "sidechain_distance_filter_multiplier", xsct_real, "This is a multiplier for the sidechain distance cutoff filter.  Higher values make the filter less stringent.  Default 1.0." )
 		+ XMLSchemaAttribute( "filter_by_constraints_energy", xsct_rosetta_bool, "After adding the linker geometry, adding constraints, and repacking and minimizing the linker and the connecting side-chains, should ths mover abort with failure status if the constraints energy is too high (i.e. the energy-minimized linker geometry is bad)?  Default true." )
@@ -344,14 +349,12 @@ CrosslinkerMover::set_behaviour(
 	bool const add_linker,
 	bool const constrain_linker,
 	bool const pack_and_minimize_linker_and_sidechains,
-	bool const do_final_fastrelax,
-	bool const threefold_symmetric
+	bool const do_final_fastrelax
 ) {
 	add_linker_ = add_linker;
 	constrain_linker_ = constrain_linker;
 	pack_and_minimize_linker_and_sidechains_ = pack_and_minimize_linker_and_sidechains;
 	do_final_fastrelax_ = do_final_fastrelax;
-	threefold_symmetric_ = threefold_symmetric;
 }
 
 /// @brief Set the filtering behaviour of this mover.
@@ -410,6 +413,47 @@ CrosslinkerMover::set_final_frlx_rounds(
 	final_frlx_rounds_ = rounds_in;
 }
 
+/// @brief Parse a string with a symmetry type (e.g. "C3") and set the symmetry accordingly.
+///
+void
+CrosslinkerMover::set_symmetry(
+	std::string const &symmetry_in
+) {
+	runtime_assert( symmetry_in.length() > 1 );
+	set_symm_type( symmetry_in.c_str()[0] );
+	set_symm_count( static_cast< int >( std::atoi( &(symmetry_in.c_str()[1]) ) ) );
+}
+
+/// @brief Set the symmety type.
+/// @details 'C' for cylic, 'S' for mirror cyclic, 'D' for dihedral, 'A' for asymmetric.
+/// @note 'A' (asymmetric) by default.
+void
+CrosslinkerMover::set_symm_type(
+	char const type_in
+) {
+	runtime_assert_string_msg( type_in == 'A' || type_in == 'C' || type_in == 'S' || type_in == 'D',
+		"Error in protocols::cyclic_peptide::CrosslinkerMover::set_symm_type(): The type must be one of 'A' (aymmetric), 'C' (cyclic), 'D' (dihedral), or 'S' (mirror cyclic).");
+	symm_type_ = type_in;
+}
+
+/// @brief Set the symmetry copy count.
+/// @details For example, symm_type_='C' and symm_count_=3 would
+/// specify C3 symmetry.  A value of 1 means asymmetry.  1 by default.
+/// @note Deliberately an int.
+void
+CrosslinkerMover::set_symm_count(
+	signed int const count_in
+) {
+	if ( symm_type() == 'A' ) {
+		runtime_assert_string_msg( count_in == 1, " Error in protocols::cyclic_peptide::CrosslinkerMover::set_symm_count(): The symmetry count must be 1 for the asymmetric ('A'-type) case." );
+	} else {
+		runtime_assert_string_msg( count_in > 1,
+			"Error in protocols::cyclic_peptide::CrosslinkerMover::set_symm_count(): The symmetry count must be greater than 1 for non-asymmetric types ('C', 'D', or 'S')." );
+		if ( symm_type() == 'S' ) { runtime_assert_string_msg( count_in % 2 == 0, "Error in protocols::cyclic_peptide::CrosslinkerMover::set_symm_count(): With 'S'-type symmetry, the symmetry count must be divisible by two." ); }
+	}
+	symm_count_ = static_cast< core::Size >( count_in );
+}
+
 std::ostream &
 operator<<( std::ostream & os, CrosslinkerMover const & mover )
 {
@@ -444,15 +488,15 @@ CrosslinkerMoverCreator::provide_xml_schema(
 ///////////////////////
 
 /// @brief Apply the mover to a symmetric pose.
-/// @details Requires threefold symmetry in the pose, and threefold_symmetric_ = true.
+/// @details Requires symmetry in the pose matching the expected symmetry.
 void
 CrosslinkerMover::symmetric_apply(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
 	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) {
-	runtime_assert_string_msg(threefold_symmetric(), "Error in protocols::cyclic_peptide::CrosslinkerMover::symmetric_apply(): The function was called, but the mover's \"threefold_symmetric\" option is not set.");
-	runtime_assert_string_msg( helper->selection_is_symmetric( selection, pose ), "Error in protocols::cyclic_peptide::CrosslinkerMover::symmetric_apply(): The selector does not select three equivalent, symmetric residues." );
+	runtime_assert_string_msg( symm_type() != 'A' && symm_count() > 1, "Error in protocols::cyclic_peptide::CrosslinkerMover::symmetric_apply(): The function was called, but the mover has not been set for symmetry.");
+	runtime_assert_string_msg( helper->selection_is_symmetric( selection, pose, symm_count() ), "Error in protocols::cyclic_peptide::CrosslinkerMover::symmetric_apply(): Either the pose lacks symmetry matching the expected symmetry, or the selector does not select equivalent, symmetric residues." );
 
 	core::pose::PoseOP pose_copy( pose.clone() );
 
@@ -550,14 +594,15 @@ CrosslinkerMover::add_linker_constraints_symmetric(
 }
 
 /// @brief Apply the mover to an asymmetric pose.
-/// @details Requires and asymmetric pose, and threefold_symmetric_ = false.
+/// @details Requires and asymmetric pose, and no symmetry.
 void
 CrosslinkerMover::asymmetric_apply(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection,
 	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) {
-	runtime_assert_string_msg(!threefold_symmetric(), "Error in protocols::cyclic_peptide::CrosslinkerMover::asymmetric_apply(): The function was called, but the mover's \"threefold_symmetric\" option is set.");
+	runtime_assert_string_msg( symm_type() == 'A' && symm_count() == 1,
+		"Error in protocols::cyclic_peptide::CrosslinkerMover::asymmetric_apply(): The function was called, but the mover is set up for symmetry.");
 
 	core::pose::PoseOP pose_copy( pose.clone() );
 
@@ -702,41 +747,40 @@ CrosslinkerMover::pack_and_minimize_linker_and_sidechains(
 		protocols::relax::FastRelax frlx( sfxn, 1 );
 
 		if ( !whole_structure ) {
-			core::Size res1, res2, res3, linker_index1, linker_index2, linker_index3;
+			utility::vector1< core::Size > res_indices, linker_indices;
 
-			helper->get_sidechain_indices( selection, res1, res2, res3 );
+			helper->get_sidechain_indices( selection, res_indices );
 			if ( symmetric ) {
 				if ( add_linker() ) {
-					res2 += 1;
-					res3 += 2;
+					for ( core::Size i(2), imax(res_indices.size()); i<=imax; ++i ) {
+						res_indices[i] += (i-1);
+					}
 				}
-				helper->get_linker_indices_symmetric(pose, res1, res2, res3, linker_index1, linker_index2, linker_index3);
+				helper->get_linker_indices_symmetric(pose, res_indices, linker_indices);
 			} else {
-				linker_index1 = helper->get_linker_index_asymmetric( pose, res1, res2, res3);
+				linker_indices.resize(1);
+				linker_indices[1] = helper->get_linker_index_asymmetric( pose, res_indices );
 			}
 
 			core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 			movemap->set_bb(false);
 			movemap->set_chi(false);
 			movemap->set_jump(false);
-			movemap->set_chi( res1, true );
-			movemap->set_chi( res2, true );
-			movemap->set_chi( res3, true );
-			movemap->set_chi( linker_index1, true );
+			for ( core::Size i(1), imax(res_indices.size()); i<=imax; ++i ) {
+				movemap->set_chi( res_indices[i], true );
+			}
+
+			for ( core::Size i(1), imax(linker_indices.size()); i<=imax; ++i ) {
+				movemap->set_chi(linker_indices[i], true);
+			}
 			if ( symmetric ) {
-				movemap->set_chi( linker_index2, true );
-				movemap->set_chi( linker_index3, true );
-				utility::vector1< core::Size > jump_indices(3);
-				utility::vector1< core::Size > linker_indices(3);
-				linker_indices[1] = linker_index1;
-				linker_indices[2] = linker_index2;
-				linker_indices[3] = linker_index3;
+				utility::vector1< core::Size > jump_indices;
 				get_jump_indices_for_symmetric_crosslinker( pose, linker_indices, jump_indices );
 				for ( core::Size i(1), imax(jump_indices.size()); i<=imax; ++i ) {
 					movemap->set_jump(jump_indices[i], true);
 				}
 			} else {
-				movemap->set_jump( get_jump_index_for_crosslinker( pose, linker_index1 ), true );
+				movemap->set_jump( get_jump_index_for_crosslinker( pose, linker_indices[1] ), true );
 			}
 
 			frlx.set_movemap(movemap);

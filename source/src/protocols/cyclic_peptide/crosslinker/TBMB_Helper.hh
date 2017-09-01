@@ -55,7 +55,7 @@ public: // public methods
 
 	/// @brief Given a pose and a linker, add bonds between the linker and the residues that coordinate the linker.
 	/// @details Called by add_linker_asymmetric().  Version for asymmetric poses.
-	void add_linker_bonds_asymmetric(core::pose::Pose &pose, core::Size const res1, core::Size const res2, core::Size const res3, core::Size const linker_index ) const override;
+	void add_linker_bonds_asymmetric(core::pose::Pose &pose, utility::vector1< core::Size > const &res_indices, core::Size const linker_index ) const override;
 
 	/// @brief Given a pose and a selection of exactly three residues, add the TBMB linker,
 	/// align it crudely to the selected residues, and set up covalent bonds.
@@ -77,12 +77,12 @@ public: // public methods
 	/// @brief Given indices of three cysteine residues that are already linked to a TBMB, get the index
 	/// of the TBMB residue.
 	/// @details Throws an error if the three cysteines are not all linked to the same TBMB residue.
-	core::Size get_linker_index_asymmetric( core::pose::Pose const &pose, core::Size const res1, core::Size const res2, core::Size const res3 ) const override;
+	core::Size get_linker_index_asymmetric( core::pose::Pose const &pose, utility::vector1< core::Size > const & res_indices ) const override;
 
 	/// @brief Given indices of three cysteine residues that are already linked to pieces of a linker, get
 	/// of the indices of the symmetric pieces of the linker.
 	/// @details Throws an error if a residue is not linked to something.
-	void get_linker_indices_symmetric( core::pose::Pose const &pose, core::Size const res1, core::Size const res2, core::Size const res3, core::Size &linker_index1, core::Size &linker_index2, core::Size &linker_index3 ) const override;
+	void get_linker_indices_symmetric( core::pose::Pose const &pose, utility::vector1< core::Size > const & res_indices, utility::vector1< core::Size > & linker_indices ) const override;
 
 	/// @brief Given a pose with residues selected to be linked by a 1,3,5-tris(bromomethyl)benzene crosslinker,
 	/// determine whether the residues are too far apart.

@@ -28,7 +28,7 @@
 			residue_selector="select_connecting"
 			linker_name="TMA" scorefxn="bnv_symm"
 			filter_by_constraints_energy="true"
-			threefold_symmetric="true"
+			symmetry="C3"
 		/>
 
 		<FastRelax name="relax" scorefxn="bnv_cst" repeats="1" />

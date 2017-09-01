@@ -1989,7 +1989,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			protocols::cyclic_peptide::CrosslinkerMoverOP threelinker( new protocols::cyclic_peptide::CrosslinkerMover );
 			threelinker->set_residue_selector(index_selector);
 			threelinker->set_linker_name("TBMB");
-			threelinker->set_behaviour( true, true, true, false, false );
+			threelinker->set_behaviour( true, true, true, false );
 			threelinker->set_filter_behaviour( use_tbmb_filters_, use_tbmb_filters_, false, 0.0, tbmb_sidechain_distance_filter_multiplier_, tbmb_constraints_energy_filter_multiplier_ );
 			threelinker->set_scorefxn( sfxn_highhbond );
 			threelinker->set_sidechain_frlx_rounds(3);
@@ -2013,7 +2013,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			protocols::cyclic_peptide::CrosslinkerMoverOP threelinker( new protocols::cyclic_peptide::CrosslinkerMover );
 			threelinker->set_residue_selector(index_selector);
 			threelinker->set_linker_name("TMA");
-			threelinker->set_behaviour( true, true, true, false, false );
+			threelinker->set_behaviour( true, true, true, false );
 			threelinker->set_filter_behaviour( use_tma_filters_, use_tma_filters_, false, 0.0, tma_sidechain_distance_filter_multiplier_, tma_constraints_energy_filter_multiplier_ );
 			threelinker->set_scorefxn( sfxn_highhbond );
 			threelinker->set_sidechain_frlx_rounds(3);
@@ -2937,15 +2937,15 @@ SimpleCycpepPredictApplication::re_append_linker_residues(
 			helper = protocols::cyclic_peptide::crosslinker::TMA_HelperOP( new protocols::cyclic_peptide::crosslinker::TMA_Helper );
 		}
 
-		core::Size res1, res2, res3;
+		utility::vector1< core::Size > res_indices(3);
 		if ( offset >= linker_positions[i][3] || offset < linker_positions[i][1] ) {
-			res1 = linker_positions[i][1]; res2 = linker_positions[i][2]; res3 = linker_positions[i][3];
+			res_indices[1] = linker_positions[i][1]; res_indices[2] = linker_positions[i][2]; res_indices[3] = linker_positions[i][3];
 		} else if ( offset >= linker_positions[i][2] ) {
-			res1 = linker_positions[i][3]; res2 = linker_positions[i][1]; res3 = linker_positions[i][2];
+			res_indices[1] = linker_positions[i][3]; res_indices[2] = linker_positions[i][1]; res_indices[3] = linker_positions[i][2];
 		} else {
-			res1 = linker_positions[i][2]; res2 = linker_positions[i][3]; res3 = linker_positions[i][1];
+			res_indices[1] = linker_positions[i][2]; res_indices[2] = linker_positions[i][3]; res_indices[3] = linker_positions[i][1];
 		}
-		helper->add_linker_bonds_asymmetric( *newpose, res1, res2, res3, newpose->total_residue() );
+		helper->add_linker_bonds_asymmetric( *newpose, res_indices, newpose->total_residue() );
 	}
 }
 

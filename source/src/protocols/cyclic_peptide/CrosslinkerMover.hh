@@ -147,7 +147,7 @@ public:
 
 	/// @brief Set the behaviour of this mover.
 	///
-	void set_behaviour( bool const add_linker, bool const constrain_linker, bool const pack_and_minimize_linker_and_sidechains, bool const do_final_fastrelax, bool const threefold_symmetric );
+	void set_behaviour( bool const add_linker, bool const constrain_linker, bool const pack_and_minimize_linker_and_sidechains, bool const do_final_fastrelax );
 
 	/// @brief Set the filtering behaviour of this mover.
 	///
@@ -168,10 +168,6 @@ public:
 	/// @brief Get whether we're doing a final FastRelax on the whole structure.
 	///
 	inline bool do_final_fastrelax() const { return do_final_fastrelax_; }
-
-	/// @brief Get whether this is being applied to a threefold-symmetric system.
-	///
-	inline bool threefold_symmetric() const { return threefold_symmetric_; }
 
 	/// @brief Set the scorefunction to use for packing and minimization.
 	/// @details Cloned at apply time.  (That is, the scorefunction is shared until apply time).
@@ -197,11 +193,36 @@ public:
 	///
 	inline core::Size final_frlx_rounds() const { return final_frlx_rounds_; }
 
+	/// @brief Parse a string with a symmetry type (e.g. "C3") and set the symmetry accordingly.
+	///
+	void set_symmetry( std::string const &symmetry_in );
+
+	/// @brief Set the symmety type.
+	/// @details 'C' for cylic, 'S' for mirror cyclic, 'D' for dihedral, 'A' for asymmetric.
+	/// @note 'A' (asymmetric) by default.
+	void set_symm_type( char const type_in );
+
+	/// @brief Set the symmetry copy count.
+	/// @details For example, symm_type_='C' and symm_count_=3 would
+	/// specify C3 symmetry.  A value of 1 means asymmetry.  1 by default.
+	/// @note Deliberately a signed int.
+	void set_symm_count( signed int const count_in);
+
+	/// @brief Get the symmetry type.
+	/// @details 'C' for cylic, 'S' for mirror cyclic, 'D' for dihedral, 'A' for asymmetric.
+	/// @note 'A' (asymmetric) by default.
+	inline char symm_type() const { return symm_type_; }
+
+	/// @brief Get the symmetry copy count.
+	/// @details For example, symm_type_='C' and symm_count_=3 would
+	/// specify C3 symmetry.  A value of 1 means asymmetry.  1 by default.
+	inline core::Size symm_count() const { return symm_count_; }
+
 
 private: // methods
 
 	/// @brief Apply the mover to a symmetric pose.
-	/// @details Requires threefold symmetry in the pose, and threefold_symmetric_ = true.
+	/// @details Requires symmetry in the pose matching the expected symmetry.
 	void symmetric_apply( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const & selection, protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper );
 
 	/// @brief Determine whether the residues to be crosslinked are too far apart.  This version is for symmetric poses.
@@ -221,7 +242,7 @@ private: // methods
 	void add_linker_constraints_symmetric( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const & selection, protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper, bool const linker_was_added ) const;
 
 	/// @brief Apply the mover to an asymmetric pose.
-	/// @details Requires and asymmetric pose, and threefold_symmetric_ = false.
+	/// @details Requires and asymmetric pose, and no symmetry.
 	void asymmetric_apply( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const & selection, protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper );
 
 	/// @brief Determine whether the residues to be crosslinked are too far apart.
@@ -310,10 +331,6 @@ private: // data
 	/// @details Default false.
 	bool do_final_fastrelax_;
 
-	/// @brief Is this a threefold-symmetric system?
-	/// @details Default false.
-	bool threefold_symmetric_;
-
 	/// @brief The scorefunction to use for packing and minimization.
 	/// @details Cloned at apply time.
 	core::scoring::ScoreFunctionCOP sfxn_;
@@ -351,6 +368,14 @@ private: // data
 	/// @details Default 1.0.
 	core::Real constraints_energy_filter_multiplier_;
 
+	/// @brief The symmetry type.
+	/// @details 'C' for cylic, 'S' for mirror cyclic, 'D' for dihedral, 'A' for asymmetric.
+	/// @note 'A' (asymmetric) by default.
+	char symm_type_;
+
+	/// @brief The symmetry copy count.  For example, symm_type_='C' and symm_count_=3 would
+	/// specify C3 symmetry.  A value of 1 means asymmetry.  1 by default.
+	core::Size symm_count_;
 
 };
 

@@ -87,7 +87,10 @@ TBMB_Helper::add_linker_asymmetric(
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
 	core::Size cys1, cys2, cys3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert( res_indices.size() == 3);
+	cys1=res_indices[1]; cys2=res_indices[2]; cys3=res_indices[3];
 
 	runtime_assert_string_msg( pose.residue_type(cys1).aa() == core::chemical::aa_cys || pose.residue_type(cys1).aa() == core::chemical::aa_dcs,
 		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The first residue selected by the ResidueSelector is not an L- or D-cysteine.");
@@ -128,7 +131,7 @@ TBMB_Helper::add_linker_asymmetric(
 	core::Size const tbmb_res( pose.total_residue() );
 
 	//Declare covalent bonds:
-	add_linker_bonds_asymmetric( pose, cys1, cys2, cys3, tbmb_res );
+	add_linker_bonds_asymmetric( pose, res_indices, tbmb_res );
 }
 
 /// @brief Given a pose and a linker, add bonds between the linker and the residues that coordinate the linker.
@@ -136,16 +139,16 @@ TBMB_Helper::add_linker_asymmetric(
 void
 TBMB_Helper::add_linker_bonds_asymmetric(
 	core::pose::Pose &pose,
-	core::Size const res1,
-	core::Size const res2,
-	core::Size const res3,
+	utility::vector1< core::Size > const &res_indices,
 	core::Size const linker_index
 ) const {
+	runtime_assert_string_msg( res_indices.size() == 3, "Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_bonds_asymmetric(): The wrong number of residues was passed to this function.  A vector of exactly three residues is expected." );
+
 	//Declare covalent bonds:
 	protocols::cyclic_peptide::DeclareBond bond1, bond2, bond3;
-	bond1.set( linker_index, "CM1", res1, "SG", false );
-	bond2.set( linker_index, "CM2", res2, "SG", false );
-	bond3.set( linker_index, "CM3", res3, "SG", false );
+	bond1.set( linker_index, "CM1", res_indices[1], "SG", false );
+	bond2.set( linker_index, "CM2", res_indices[2], "SG", false );
+	bond3.set( linker_index, "CM3", res_indices[3], "SG", false );
 	bond1.apply(pose);
 	bond2.apply(pose);
 	bond3.apply(pose);
@@ -160,8 +163,18 @@ TBMB_Helper::add_linker_symmetric(
 	core::pose::Pose &pose,
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_symmetric(): TBMB requires a C3-symmetric pose."
+	);
+
 	core::Size cys1, cys2, cys3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	{
+		utility::vector1< core::Size > res_indices;
+		CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+		runtime_assert( res_indices.size() == 3);
+		cys1=res_indices[1]; cys2=res_indices[2]; cys3=res_indices[3];
+	}
 
 	runtime_assert_string_msg( pose.residue_type(cys1).aa() == core::chemical::aa_cys || pose.residue_type(cys1).aa() == core::chemical::aa_dcs,
 		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The first residue selected by the ResidueSelector is not an L- or D-cysteine.");
@@ -213,6 +226,11 @@ TBMB_Helper::add_linker_bonds_symmetric(
 	core::Size const linker_index1,
 	core::Size const linker_index2
 ) const {
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_bonds_symmetric(): TBMB requires a C3-symmetric pose."
+	);
+
 	//Declare covalent bonds:
 	protocols::cyclic_peptide::DeclareBond bond1, bond4;
 	bond1.set( linker_index1, "CM1", res1, "SG", false );
@@ -230,9 +248,10 @@ TBMB_Helper::add_linker_constraints_asymmetric(
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
 	//Get indices of residues
-	core::Size cys1, cys2, cys3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
-	core::Size const tbmb_index( get_linker_index_asymmetric( pose, cys1, cys2, cys3) );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert( res_indices.size() == 3 );
+	core::Size const tbmb_index( get_linker_index_asymmetric( pose, res_indices) );
 
 	//Set up distance constraints:
 	{ //Begin scope
@@ -241,9 +260,9 @@ TBMB_Helper::add_linker_constraints_asymmetric(
 		utility::vector1< core::Size > res1(6), res2(6);
 		utility::vector1< std::string > atom1(6), atom2(6);
 		utility::vector1< std::string > cst_fxn(6);
-		res1[1] = cys1; res1[2] = cys2; res1[3] = cys3;
+		res1[1] = res_indices[1]; res1[2] = res_indices[2]; res1[3] = res_indices[3];
 		atom2[1] = "V1"; atom2[2] = "V2"; atom2[3] = "V3";
-		res1[4] = cys1; res1[5] = cys2; res1[6] = cys3;
+		res1[4] = res_indices[1]; res1[5] = res_indices[2]; res1[6] = res_indices[3];
 		atom2[4] = "CM1"; atom2[5] = "CM2"; atom2[6] = "CM3";
 		for ( core::Size i=1; i<=3; ++i ) {
 			atom1[i]="SG"; res2[i]=tbmb_index; cst_fxn[i]=dist_cst_string;
@@ -274,35 +293,35 @@ TBMB_Helper::add_linker_constraints_asymmetric(
 		utility::vector1 < std::string > cst_fxns(9);
 
 		//CM#-SG-CB-CA should be three-well potential:
-		res1[1] = tbmb_index; res2[1] = cys1; res3[1] = cys1; res4[1] = cys1;
+		res1[1] = tbmb_index; res2[1] = res_indices[1]; res3[1] = res_indices[1]; res4[1] = res_indices[1];
 		atom1[1] = "CM1"; atom2[1] = "SG"; atom3[1] = "CB"; atom4[1] = "CA";
 		cst_fxns[1] = "AMBERPERIODIC 0 3 2"; //AMBERPERIODIC has maximum at x=x0; params are x0 (offset), N (periodicity), K (amplitude)
-		res1[2] = tbmb_index; res2[2] = cys2; res3[2] = cys2; res4[2] = cys2;
+		res1[2] = tbmb_index; res2[2] = res_indices[2]; res3[2] = res_indices[2]; res4[2] = res_indices[2];
 		atom1[2] = "CM2"; atom2[2] = "SG"; atom3[2] = "CB"; atom4[2] = "CA";
 		cst_fxns[2] = "AMBERPERIODIC 0 3 2"; //AMBERPERIODIC has maximum at x=x0; params are x0 (offset), N (periodicity), K (amplitude)
-		res1[3] = tbmb_index; res2[3] = cys3; res3[3] = cys3; res4[3] = cys3;
+		res1[3] = tbmb_index; res2[3] = res_indices[3]; res3[3] = res_indices[3]; res4[3] = res_indices[3];
 		atom1[3] = "CM3"; atom2[3] = "SG"; atom3[3] = "CB"; atom4[3] = "CA";
 		cst_fxns[3] = "AMBERPERIODIC 0 3 2"; //AMBERPERIODIC has maximum at x=x0; params are x0 (offset), N (periodicity), K (amplitude)
 
 		//C#-C#-CM#-SG should be two-well potential (above/below plane).
-		res1[4] = tbmb_index; res2[4] = tbmb_index; res3[4] = tbmb_index; res4[4] = cys1;
+		res1[4] = tbmb_index; res2[4] = tbmb_index; res3[4] = tbmb_index; res4[4] = res_indices[1];
 		atom1[4] = "C2"; atom2[4] = "C1"; atom3[4] = "CM1"; atom4[4] = "SG";
 		cst_fxns[4] = "AMBERPERIODIC 0 2 2"; //AMBERPERIODIC has maximum at x=x0; params are x0 (offset), N (periodicity), K (amplitude)
-		res1[5] = tbmb_index; res2[5] = tbmb_index; res3[5] = tbmb_index; res4[5] = cys2;
+		res1[5] = tbmb_index; res2[5] = tbmb_index; res3[5] = tbmb_index; res4[5] = res_indices[2];
 		atom1[5] = "C4"; atom2[5] = "C3"; atom3[5] = "CM2"; atom4[5] = "SG";
 		cst_fxns[5] = "AMBERPERIODIC 0 2 2"; //AMBERPERIODIC has maximum at x=x0; params are x0 (offset), N (periodicity), K (amplitude)
-		res1[6] = tbmb_index; res2[6] = tbmb_index; res3[6] = tbmb_index; res4[6] = cys3;
+		res1[6] = tbmb_index; res2[6] = tbmb_index; res3[6] = tbmb_index; res4[6] = res_indices[3];
 		atom1[6] = "C6"; atom2[6] = "C5"; atom3[6] = "CM3"; atom4[6] = "SG";
 		cst_fxns[6] = "AMBERPERIODIC 0 2 2"; //AMBERPERIODIC has maximum at x=x0; params are x0 (offset), N (periodicity), K (amplitude)
 
 		//C#-CM#-SG-CB should be three-well potential:
-		res1[7] = tbmb_index; res2[7] = tbmb_index; res3[7] = cys1; res4[7] = cys1;
+		res1[7] = tbmb_index; res2[7] = tbmb_index; res3[7] = res_indices[1]; res4[7] = res_indices[1];
 		atom1[7] = "C1"; atom2[7] = "CM1"; atom3[7] = "SG"; atom4[7] = "CB";
 		cst_fxns[7] = "AMBERPERIODIC 0 3 2"; //AMBERPERIODIC has maximum at x=x0; params are x0 (offset), N (periodicity), K (amplitude)
-		res1[8] = tbmb_index; res2[8] = tbmb_index; res3[8] = cys2; res4[8] = cys2;
+		res1[8] = tbmb_index; res2[8] = tbmb_index; res3[8] = res_indices[2]; res4[8] = res_indices[2];
 		atom1[8] = "C3"; atom2[8] = "CM2"; atom3[8] = "SG"; atom4[8] = "CB";
 		cst_fxns[8] = "AMBERPERIODIC 0 3 2"; //AMBERPERIODIC has maximum at x=x0; params are x0 (offset), N (periodicity), K (amplitude)
-		res1[9] = tbmb_index; res2[9] = tbmb_index; res3[9] = cys3; res4[9] = cys3;
+		res1[9] = tbmb_index; res2[9] = tbmb_index; res3[9] = res_indices[3]; res4[9] = res_indices[3];
 		atom1[9] = "C5"; atom2[9] = "CM3"; atom3[9] = "SG"; atom4[9] = "CB";
 		cst_fxns[9] = "AMBERPERIODIC 0 3 2"; //AMBERPERIODIC has maximum at x=x0; params are x0 (offset), N (periodicity), K (amplitude)
 
@@ -336,22 +355,29 @@ TBMB_Helper::add_linker_constraints_symmetric(
 	core::select::residue_selector::ResidueSubset const & selection,
 	bool const linker_was_added
 ) const {
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_constraints_symmetric(): TBMB requires a C3-symmetric pose."
+	);
+
 	//Get indices of residues
-	core::Size cys1, cys2, cys3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert( res_indices.size() == 3 );
 	if ( linker_was_added ) {
-		cys2 += 1;
-		cys3 += 2;
+		res_indices[2] += 1;
+		res_indices[3] += 2;
 	}
-	core::Size tbmb_index1, tbmb_index2, tbmb_index3;
-	get_linker_indices_symmetric( pose, cys1, cys2, cys3, tbmb_index1, tbmb_index2, tbmb_index3 );
+	utility::vector1< core::Size > tbmb_indices;
+	get_linker_indices_symmetric( pose, res_indices, tbmb_indices );
+	runtime_assert( tbmb_indices.size() == 3 );
 
 	//Set up distance constraints:
 	for ( core::Size i=1; i<=3; ++i ) {
 		core::Size r1, t1, t2;
-		if ( i==1 ) { r1=cys1; t1=tbmb_index1; t2=tbmb_index2; }
-		else if ( i==2 ) { r1=cys2; t1=tbmb_index2; t2=tbmb_index3; }
-		else { r1=cys3; t1=tbmb_index3; t2=tbmb_index1; }
+		if ( i==1 ) { r1=res_indices[1] ; t1=tbmb_indices[1]; t2=tbmb_indices[2]; }
+		else if ( i==2 ) { r1=res_indices[2]; t1=tbmb_indices[2]; t2=tbmb_indices[3]; }
+		else { r1=res_indices[3]; t1=tbmb_indices[3]; t2=tbmb_indices[1]; }
 		std::string const dist_cst_string("HARMONIC 0.0 0.01");
 		protocols::cyclic_peptide::CreateDistanceConstraint dist_csts;
 		utility::vector1< core::Size > res1(6), res2(6);
@@ -385,9 +411,9 @@ TBMB_Helper::add_linker_constraints_symmetric(
 	//Set up torsion constraints:
 	for ( core::Size i=1; i<=3; ++i ) {
 		core::Size r1, t1;
-		if ( i==1 ) { r1=cys1; t1=tbmb_index1; }
-		else if ( i==2 ) { r1=cys2; t1=tbmb_index2; }
-		else { r1=cys3; t1=tbmb_index3; }
+		if ( i==1 ) { r1=res_indices[1]; t1=tbmb_indices[1]; }
+		else if ( i==2 ) { r1=res_indices[2]; t1=tbmb_indices[2]; }
+		else { r1=res_indices[3]; t1=tbmb_indices[3]; }
 
 		protocols::cyclic_peptide::CreateTorsionConstraint tors_csts;
 		utility::vector1 < core::Size > res1(3), res2(3), res3(3), res4(3);
@@ -437,23 +463,22 @@ TBMB_Helper::add_linker_constraints_symmetric(
 core::Size
 TBMB_Helper::get_linker_index_asymmetric(
 	core::pose::Pose const &pose,
-	core::Size const res1,
-	core::Size const res2,
-	core::Size const res3
+	utility::vector1< core::Size > const & res_indices
 ) const {
 	std::string const errmsg( "Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::get_linker_index_asymmetric(): " );
+	runtime_assert_string_msg( res_indices.size() == 3, errmsg + "The wrong number of residues was passed to this function.  A vector of exactly three residues is expected." );
 
-	core::Size const nconn1( pose.residue(res1).n_possible_residue_connections() );
-	core::Size const nconn2( pose.residue(res2).n_possible_residue_connections() );
-	core::Size const nconn3( pose.residue(res3).n_possible_residue_connections() );
+	core::Size const nconn1( pose.residue(res_indices[1]).n_possible_residue_connections() );
+	core::Size const nconn2( pose.residue(res_indices[2]).n_possible_residue_connections() );
+	core::Size const nconn3( pose.residue(res_indices[3]).n_possible_residue_connections() );
 
-	core::Size tbmb_index( pose.residue(res1).residue_connection_partner(nconn1) );
+	core::Size tbmb_index( pose.residue(res_indices[1]).residue_connection_partner(nconn1) );
 
 	runtime_assert_string_msg( !pose.residue(tbmb_index).name3().compare("TBM"),
 		errmsg + "The residue connected to the side-chain of the first cysteine is not TBMB." );
-	runtime_assert_string_msg( pose.residue(res2).residue_connection_partner(nconn2) == tbmb_index,
+	runtime_assert_string_msg( pose.residue(res_indices[2]).residue_connection_partner(nconn2) == tbmb_index,
 		errmsg + "The residue connected to the side-chain of the first cysteine is not the same as the residue connected to the side-chain of the second cysteine." );
-	runtime_assert_string_msg( pose.residue(res3).residue_connection_partner(nconn3) == tbmb_index,
+	runtime_assert_string_msg( pose.residue(res_indices[3]).residue_connection_partner(nconn3) == tbmb_index,
 		errmsg + "The residue connected to the side-chain of the first cysteine is not the same as the residue connected to the side-chain of the second cysteine." );
 
 	return tbmb_index;
@@ -465,35 +490,33 @@ TBMB_Helper::get_linker_index_asymmetric(
 void
 TBMB_Helper::get_linker_indices_symmetric(
 	core::pose::Pose const &pose,
-	core::Size const res1,
-	core::Size const res2,
-	core::Size const res3,
-	core::Size &linker_index1,
-	core::Size &linker_index2,
-	core::Size &linker_index3
+	utility::vector1< core::Size > const & res_indices,
+	utility::vector1< core::Size > & linker_indices
 ) const {
 	std::string const errmsg( "Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::get_linker_indices_symmetric(): " );
 
-	core::Size const nconn1( pose.residue(res1).n_possible_residue_connections() );
-	core::Size const nconn2( pose.residue(res2).n_possible_residue_connections() );
-	core::Size const nconn3( pose.residue(res3).n_possible_residue_connections() );
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		errmsg + "TBMB requires a C3-symmetric pose."
+	);
 
-	linker_index1 = pose.residue(res1).residue_connection_partner(nconn1) ;
-	linker_index2 = pose.residue(res2).residue_connection_partner(nconn2) ;
-	linker_index3 = pose.residue(res3).residue_connection_partner(nconn3) ;
+	runtime_assert_string_msg( res_indices.size() == 3, errmsg + "The wrong number of residues was passed to this function.  A vector of exactly three residues is expected." );
 
-	runtime_assert_string_msg( linker_index1 > 0, errmsg + "The first cysteine is not connected to anything!" );
-	runtime_assert_string_msg( linker_index2 > 0, errmsg + "The second cysteine is not connected to anything!" );
-	runtime_assert_string_msg( linker_index3 > 0, errmsg + "The third cysteine is not connected to anything!" );
+	core::Size const nconn1( pose.residue(res_indices[1]).n_possible_residue_connections() );
+	core::Size const nconn2( pose.residue(res_indices[2]).n_possible_residue_connections() );
+	core::Size const nconn3( pose.residue(res_indices[3]).n_possible_residue_connections() );
 
-	runtime_assert_string_msg( !pose.residue(linker_index1).name3().compare("TBS"),
-		errmsg + "The residue connected to the side-chain of the first cysteine is not a symmetric fragment of TBMB." );
-	runtime_assert_string_msg( !pose.residue(linker_index2).name3().compare("TBS"),
-		errmsg + "The residue connected to the side-chain of the second cysteine is not a symmetric fragment of TBMB." );
-	runtime_assert_string_msg( !pose.residue(linker_index3).name3().compare("TBS"),
-		errmsg + "The residue connected to the side-chain of the third cysteine is not a symmetric fragment of TBMB." );
+	linker_indices.resize(3);
+	linker_indices[1] = pose.residue(res_indices[1]).residue_connection_partner(nconn1);
+	linker_indices[2] = pose.residue(res_indices[2]).residue_connection_partner(nconn2);
+	linker_indices[3] = pose.residue(res_indices[3]).residue_connection_partner(nconn3);
+
+	for ( core::Size i(1); i<=3; ++i ) {
+		runtime_assert_string_msg( linker_indices[i] > 0, errmsg + "One of the cysteine residues is not connected to anything!" );
+		runtime_assert_string_msg( !pose.residue(linker_indices[i]).name3().compare("TBS"),
+			errmsg + "The residue connected to the side-chain of one of the cysteine residues is not a symmetric fragment of TBMB." );
+	}
 }
-
 
 /// @brief Given a pose with residues selected to be linked by a 1,3,5-tris(bromomethyl)benzene crosslinker,
 /// determine whether the residues are too far apart.
@@ -509,28 +532,29 @@ TBMB_Helper::filter_by_sidechain_distance_asymmetric(
 	core::Real const hardcoded_cutoff_sq( hardcoded_cutoff*hardcoded_cutoff );
 
 	//Get indices of residues
-	core::Size cys1, cys2, cys3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert( res_indices.size() == 3 );
 
-	runtime_assert_string_msg( pose.residue_type(cys1).aa() == core::chemical::aa_cys || pose.residue_type(cys1).aa() == core::chemical::aa_dcs,
+	runtime_assert_string_msg( pose.residue_type(res_indices[1]).aa() == core::chemical::aa_cys || pose.residue_type(res_indices[1]).aa() == core::chemical::aa_dcs,
 		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The first residue selected is not D- or L-cysteine." );
-	runtime_assert_string_msg( pose.residue_type(cys2).aa() == core::chemical::aa_cys || pose.residue_type(cys2).aa() == core::chemical::aa_dcs,
+	runtime_assert_string_msg( pose.residue_type(res_indices[2]).aa() == core::chemical::aa_cys || pose.residue_type(res_indices[2]).aa() == core::chemical::aa_dcs,
 		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The second residue selected is not D- or L-cysteine." );
-	runtime_assert_string_msg( pose.residue_type(cys3).aa() == core::chemical::aa_cys || pose.residue_type(cys3).aa() == core::chemical::aa_dcs,
+	runtime_assert_string_msg( pose.residue_type(res_indices[3]).aa() == core::chemical::aa_cys || pose.residue_type(res_indices[3]).aa() == core::chemical::aa_dcs,
 		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The third residue selected is not D- or L-cysteine." );
 
-	core::Real const d1( pose.residue(cys1).xyz("CB").distance_squared( pose.residue(cys2).xyz("CB") ) );
+	core::Real const d1( pose.residue(res_indices[1]).xyz("CB").distance_squared( pose.residue(res_indices[2]).xyz("CB") ) );
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "D1: " << sqrt(d1) << " MAX: " << hardcoded_cutoff << std::endl;
 	}
 	if ( d1 > hardcoded_cutoff_sq ) return true;
 
-	core::Real const d2( pose.residue(cys2).xyz("CB").distance_squared( pose.residue(cys3).xyz("CB") ) );
+	core::Real const d2( pose.residue(res_indices[2]).xyz("CB").distance_squared( pose.residue(res_indices[3]).xyz("CB") ) );
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "D2: " << sqrt(d2) << " MAX: " << hardcoded_cutoff << std::endl;
 	}
 	if ( d2 > hardcoded_cutoff_sq ) return true;
-	core::Real const d3( pose.residue(cys2).xyz("CB").distance_squared( pose.residue(cys3).xyz("CB") ) );
+	core::Real const d3( pose.residue(res_indices[3]).xyz("CB").distance_squared( pose.residue(res_indices[1]).xyz("CB") ) );
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "D3: " << sqrt(d3) << " MAX: " << hardcoded_cutoff << std::endl;
 	}
@@ -551,19 +575,25 @@ TBMB_Helper::filter_by_sidechain_distance_symmetric(
 	core::Real const &filter_multiplier
 ) const {
 
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_symmetric(): TBMB requires a C3-symmetric pose."
+	);
+
 	core::Real const hardcoded_cutoff( 12.0 * filter_multiplier );
 	core::Real const hardcoded_cutoff_sq( hardcoded_cutoff*hardcoded_cutoff );
 
 	//Get indices of residues
-	core::Size cys1, cys2, cys3;
-	CrosslinkerMoverHelper::get_sidechain_indices( selection, cys1, cys2, cys3 );
+	utility::vector1< core::Size > res_indices;
+	CrosslinkerMoverHelper::get_sidechain_indices( selection, res_indices );
+	runtime_assert( res_indices.size() == 3 );
 
-	runtime_assert_string_msg( pose.residue_type(cys1).aa() == core::chemical::aa_cys || pose.residue_type(cys1).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The first residue selected is not D- or L-cysteine." );
-	runtime_assert_string_msg( pose.residue_type(cys2).aa() == core::chemical::aa_cys || pose.residue_type(cys2).aa() == core::chemical::aa_dcs,
-		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_asymmetric(): The second residue selected is not D- or L-cysteine." );
+	runtime_assert_string_msg( pose.residue_type(res_indices[1]).aa() == core::chemical::aa_cys || pose.residue_type(res_indices[1]).aa() == core::chemical::aa_dcs,
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_symmetric(): The first residue selected is not D- or L-cysteine." );
+	runtime_assert_string_msg( pose.residue_type(res_indices[2]).aa() == core::chemical::aa_cys || pose.residue_type(res_indices[2]).aa() == core::chemical::aa_dcs,
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_sidechain_distance_symmetric(): The second residue selected is not D- or L-cysteine." );
 
-	core::Real const d1( pose.residue(cys1).xyz("CB").distance_squared( pose.residue(cys2).xyz("CB") ) );
+	core::Real const d1( pose.residue(res_indices[1]).xyz("CB").distance_squared( pose.residue(res_indices[2]).xyz("CB") ) );
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "D1: " << sqrt(d1) << " MAX: " << hardcoded_cutoff << std::endl;
 	}
@@ -592,6 +622,12 @@ TBMB_Helper::filter_by_constraints_energy_symmetric(
 	bool const linker_was_added,
 	core::Real const &filter_multiplier
 ) const {
+
+	runtime_assert_string_msg(
+		symm_count() == 3 && symm_type() == 'C',
+		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::filter_by_constraints_energy_symmetric(): TBMB requires a C3-symmetric pose."
+	);
+
 	return filter_by_constraints_energy( pose, selection, true, linker_was_added, filter_multiplier );
 }
 

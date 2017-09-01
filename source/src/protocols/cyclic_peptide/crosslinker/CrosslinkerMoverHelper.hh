@@ -57,7 +57,7 @@ public: // public pure virtual methods
 
 	/// @brief Given a pose and a linker, add bonds between the linker and the residues that coordinate the linker.
 	/// @details Can be called by add_linker_asymmetric().  Must be defined by derived classes (pure virtual).  Version for asymmetric poses.
-	virtual void add_linker_bonds_asymmetric(core::pose::Pose &pose, core::Size const res1, core::Size const res2, core::Size const res3, core::Size const linker_index ) const = 0;
+	virtual void add_linker_bonds_asymmetric(core::pose::Pose &pose, utility::vector1< core::Size > const & res_indices, core::Size const linker_index ) const = 0;
 
 	/// @brief Given a pose and a selection of exactly three residues, add the linker,
 	/// align it crudely to the selected residues, and set up covalent bonds.
@@ -81,12 +81,12 @@ public: // public pure virtual methods
 	/// @brief Given indices of three residues that are already linked to a linker, get the index
 	/// of the linker.
 	/// @details Throws an error if the three residues are not all linked to the same linker residue.  Must be defined by derived classes.
-	virtual core::Size get_linker_index_asymmetric( core::pose::Pose const &pose, core::Size const res1, core::Size const res2, core::Size const res3 ) const = 0;
+	virtual core::Size get_linker_index_asymmetric( core::pose::Pose const &pose, utility::vector1< core::Size > const & res_indices ) const = 0;
 
 	/// @brief Given indices of three cysteine residues that are already linked to pieces of a linker, get
 	/// of the indices of the symmetric pieces of the linker.
 	/// @details Throws an error if a residue is not linked to something.  Must be defined by derived classes.
-	virtual void get_linker_indices_symmetric( core::pose::Pose const &pose, core::Size const res1, core::Size const res2, core::Size const res3, core::Size &linker_index1, core::Size &linker_index2, core::Size &linker_index3 ) const = 0;
+	virtual void get_linker_indices_symmetric( core::pose::Pose const &pose, utility::vector1< core::Size > const & res_indices, utility::vector1< core::Size > & linker_indices ) const = 0;
 
 	/// @brief Given a pose with residues selected to be linked by a linker, determine whether the residues are too far apart.
 	/// @details Returns TRUE for failure (residues too far apart) and FALSE for success.
@@ -110,15 +110,18 @@ public: // public pure virtual methods
 
 public: // public defined methods
 
-	/// @brief Given a ResidueSubset with exactly three residues selected, pull out the three indices.
-	/// @details Overwrites res1, res2, and res3.
-	virtual void get_sidechain_indices( core::select::residue_selector::ResidueSubset const & selection, core::Size &res1, core::Size &res2, core::Size &res3 ) const;
+	/// @brief Set the symmetry for this crosslinker helper.
+	void set_symmetry( char const symm_type_in, core::Size const symm_count_in );
+
+	/// @brief Given a ResidueSubset with N residues selected, pull out the indices into a vector.
+	/// @details Overwrites res_indices.
+	virtual void get_sidechain_indices( core::select::residue_selector::ResidueSubset const & selection, utility::vector1< core::Size > & res_indices ) const;
 
 	/// @brief Determine whether a selection is symmetric.
-	/// @details Returns true if and only if (a) the pose is symmetric, (b) there are three symmetry copies, and (c) the selected residues are equivalent residues in different
-	/// symmetry copies.  Note that, ideally, I'd like to test for c3 symmetry, but this is as close as was feasible.
+	/// @details Returns true if and only if (a) the pose is symmetric, (b) there are the expected number of symmetry copies, and (c) the selected residues are equivalent residues in different
+	/// symmetry copies.  Note that, ideally, I'd like to test for CN or SN symmetry, but this is as close as was feasible.
 	/// @note Can be overriden.
-	virtual bool selection_is_symmetric( core::select::residue_selector::ResidueSubset const & selection, core::pose::Pose const &pose ) const;
+	virtual bool selection_is_symmetric( core::select::residue_selector::ResidueSubset const & selection, core::pose::Pose const &pose, core::Size const expected_subunit_count ) const;
 
 	/// @brief Optional steps that the helper can apply before every relaxation round.
 	/// @details Defaults to doing nothing; can be overriden.  (One example is the TMA helper, which uses this to update amide bond-dependent atom positions).
@@ -134,13 +137,28 @@ protected: // protected methods
 	/// @details Returns TRUE for failure (too high a constraints score) and FALSE for success.
 	virtual bool filter_by_constraints_energy( core::pose::Pose const &pose, core::select::residue_selector::ResidueSubset const & selection, bool const symmetric, bool const linker_was_added, core::Real const &filter_multiplier ) const;
 
+	/// @brief Get the symmetry type.
+	/// @details 'C' for cylic, 'S' for mirror cyclic, 'D' for dihedral, 'A' for asymmetric.
+	/// @note 'A' (asymmetric) by default.
+	inline char symm_type() const { return symm_type_; }
+
+	/// @brief Get the symmetry copy count.  For example, symm_type_='C' and symm_count_=3 would
+	/// specify C3 symmetry.  A value of 1 means asymmetry.  1 by default.
+	inline core::Size symm_count() const { return symm_count_; }
 
 private: // private methods
 
 
 private: // data
 
+	/// @brief The symmetry type.
+	/// @details 'C' for cylic, 'S' for mirror cyclic, 'D' for dihedral, 'A' for asymmetric.
+	/// @note 'A' (asymmetric) by default.
+	char symm_type_;
 
+	/// @brief The symmetry copy count.  For example, symm_type_='C' and symm_count_=3 would
+	/// specify C3 symmetry.  A value of 1 means asymmetry.  1 by default.
+	core::Size symm_count_;
 
 };
 
