@@ -17,7 +17,7 @@
 
 from __future__ import print_function
 
-import os, sys, argparse, platform, subprocess, imp, shutil, codecs, distutils.dir_util
+import os, sys, argparse, platform, subprocess, imp, shutil, codecs, distutils.dir_util, json
 
 from collections import OrderedDict
 
@@ -128,44 +128,72 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
     release = 'release_40'
     prefix += '/llvm-4.0'
 
-    git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
-
-    if os.path.isdir(prefix) and  (not os.path.isdir(prefix+'/.git')): shutil.rmtree(prefix)  # removing old style checkoiut
-
-    if not os.path.isdir(prefix): os.makedirs(prefix)
-
-    if not os.path.isdir(prefix+'/.git'): execute('Clonning llvm...', 'cd {} && git clone https://github.com/llvm-mirror/llvm.git .'.format(prefix) )
-    execute('Checking out LLVM revision: {}...'.format(release), 'cd {prefix} && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
-
-    if not os.path.isdir(prefix+'/tools/clang'): execute('Clonning clang...', 'cd {}/tools && git clone https://github.com/llvm-mirror/clang.git clang'.format(prefix) )
-    execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
-
-    if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
-
-    tool_link_path = '{prefix}/tools/clang/tools/extra/{name}'.format(prefix=prefix, name=name)
-    if os.path.islink(tool_link_path): os.unlink(tool_link_path)
-    os.symlink(source_location, tool_link_path)
-
-    cmake_lists = prefix + '/tools/clang/tools/extra/CMakeLists.txt'
-    tool_build_line = 'add_subdirectory({})'.format(name)
-
-    if not os.path.isfile(cmake_lists):
-        with open(cmake_lists, 'w') as f: f.write(tool_build_line + '\n')
-
     build_dir = prefix+'/build_' + release + '.' + Platform + '.' +_machine_name_ + ('.debug' if debug else '.release')
-    if not os.path.isdir(build_dir): os.makedirs(build_dir)
-    execute(
-        'Building tool: {}...'.format(name),
-        'cd {build_dir} && cmake -G Ninja -DCMAKE_BUILD_TYPE={build_type} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja {jobs}'.format(
-            build_dir=build_dir,
-            jobs="-j{}".format(Options.jobs) if Options.jobs else "",
-            build_type='Debug' if debug else 'Release',
-            gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
-        silence_output=True)
-    print()
-    # build_dir = prefix+'/build-ninja-' + release
-    # if not os.path.isdir(build_dir): os.makedirs(build_dir)
-    # execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -DCMAKE_BUILD_TYPE={build_type} .. -G Ninja && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release')) )
+
+    binder_head = execute('Getting binder HEAD commit SHA1...', 'cd {} && git rev-parse HEAD'.format(source_location), return_='output', silent=True).split('\n')[0]
+
+    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.0', binder = binder_head)
+    signature_file_name = build_dir + '/.signature.json'
+
+    disk_signature = dict(config = 'unknown', binder = 'unknown')
+    if os.path.isfile(signature_file_name):
+        with open(signature_file_name) as f: disk_signature = json.load(f)
+
+    if signature == disk_signature:
+        print('LLVM:{} + Binder install is detected at {}, skipping LLVM installation Binder building procedures...\n'.format(release, build_dir))
+
+    else:
+        if signature['config'] != disk_signature['config']:
+            print( 'LLVM build detected, but config version mismatched: was:"{}" current:"{}", perfoming a clean rebuild...'.format(disk_signature['config'], signature['config']) )
+            if os.path.isdir(build_dir): shutil.rmtree(build_dir)
+
+        else: print( 'Binder build detected, but source version mismatched: was:{} current:{}, rebuilding...'.format(disk_signature['binder'], signature['binder']) )
+
+        if not os.path.isdir(build_dir): os.makedirs(build_dir)
+
+        git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
+
+        if os.path.isdir(prefix) and  (not os.path.isdir(prefix+'/.git')): shutil.rmtree(prefix)  # removing old style checkoiut
+
+        if not os.path.isdir(prefix):
+            print( 'No LLVM:{} + Binder install is detected! Going to check out LLVM and install Binder. This procedure will require ~3Gb of free disk space and will only be needed to be done once...\n'.format(release) )
+            os.makedirs(prefix)
+
+        if not os.path.isdir(prefix+'/.git'): execute('Clonning llvm...', 'cd {} && git clone https://github.com/llvm-mirror/llvm.git .'.format(prefix) )
+        execute('Checking out LLVM revision: {}...'.format(release), 'cd {prefix} && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+        if not os.path.isdir(prefix+'/tools/clang'): execute('Clonning clang...', 'cd {}/tools && git clone https://github.com/llvm-mirror/clang.git clang'.format(prefix) )
+        execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+        if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
+
+        tool_link_path = '{prefix}/tools/clang/tools/extra/{name}'.format(prefix=prefix, name=name)
+        if os.path.islink(tool_link_path): os.unlink(tool_link_path)
+        os.symlink(source_location, tool_link_path)
+
+        cmake_lists = prefix + '/tools/clang/tools/extra/CMakeLists.txt'
+        tool_build_line = 'add_subdirectory({})'.format(name)
+
+        if not os.path.isfile(cmake_lists):
+            with open(cmake_lists, 'w') as f: f.write(tool_build_line + '\n')
+
+
+        config = '-DCMAKE_BUILD_TYPE={build_type}'.format(build_type='Debug' if debug else 'Release')
+        if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
+
+        execute(
+            'Building tool: {}...'.format(name),
+            'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja {jobs}'.format(
+                build_dir=build_dir, config=config,
+                jobs="-j{}".format(Options.jobs) if Options.jobs else "",
+                gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
+            silence_output=True)
+        print()
+        # build_dir = prefix+'/build-ninja-' + release
+        # if not os.path.isdir(build_dir): os.makedirs(build_dir)
+        # execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -DCMAKE_BUILD_TYPE={build_type} .. -G Ninja && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release')) )
+
+        with open(signature_file_name, 'w') as f: json.dump(signature, f, sort_keys=True, indent=2)
 
     executable = build_dir + '/bin/' + name
     if not os.path.isfile(executable): print("\nEncounter error while running install_llvm_tool: Build is complete but executable {} is not there!!!".format(executable) ); sys.exit(1)
@@ -217,7 +245,6 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
 def setup_source_directory_links(rosetta_source_path):
     prefix = get_binding_build_root(rosetta_source_path, source=True)
 
-
     for d in ['src', 'external']:
         source_path = os.path.relpath(os.path.join(rosetta_source_path, d), prefix)
         s = os.path.join(prefix, d)
@@ -241,6 +268,7 @@ def setup_source_directory_links(rosetta_source_path):
         if os.path.islink(s):
             os.unlink(s)
         os.symlink(database_path, s)
+
 
 def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
     libs = OrderedDict([ ('cppdb', ['dbio/cppdb/atomic_counter', 'dbio/cppdb/conn_manager', 'dbio/cppdb/driver_manager', 'dbio/cppdb/frontend', 'dbio/cppdb/backend',
@@ -442,7 +470,7 @@ def generate_bindings(rosetta_source_path):
 
     generate_cmake_file(rosetta_source_path, sources)
 
-def  build_generated_bindings(rosetta_source_path):
+def build_generated_bindings(rosetta_source_path):
     ''' Build generate bindings '''
     prefix = get_binding_build_root(rosetta_source_path, build=True) + '/'
 
@@ -522,6 +550,7 @@ def create_package(rosetta_source_path, path):
     distutils.dir_util.copy_tree(build_prefix + '/pyrosetta', package_prefix + '/pyrosetta', update=False)
     distutils.dir_util.copy_tree(build_prefix + '/rosetta', package_prefix + '/rosetta', update=False)
 
+
 def main(args):
     ''' PyRosetta building script '''
 
@@ -572,11 +601,9 @@ def main(args):
     else:
         if not Options.pybind11: Options.pybind11 = install_pybind11(rosetta_source_path + '/build/prefix')
         if not Options.binder:
-            if os.path.isfile(rosetta_source_path + '/../.release.json'): print('Release package detected, skipping Binder submodule update...')
-            else:
-                execute('Updating Binder and other Git submodules...', 'cd {}/.. && git submodule update --init --recursive'.format(rosetta_source_path) )
-                output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)
-                if 'source/src/python/PyRosetta/binder' not in output: print('ERROR: Binder submodule is not found... terminating...'); sys.exit(1)
+            execute('Updating Binder and other Git submodules...', 'cd {}/.. && git submodule update --init --recursive'.format(rosetta_source_path) )
+            output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)
+            if 'source/src/python/PyRosetta/binder' not in output: print('ERROR: Binder submodule is not found... terminating...'); sys.exit(1)
             Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder/source', rosetta_source_path + '/build/prefix', Options.binder_debug)
 
         generate_bindings(rosetta_source_path)
