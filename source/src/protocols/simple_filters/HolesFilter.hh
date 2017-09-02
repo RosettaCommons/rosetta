@@ -24,6 +24,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
 
@@ -98,7 +99,7 @@ public:// accessor
 public:// parser
 
 	void parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap &,
+		basic::datacache::DataMap & data,
 		filters::Filters_map const &,
 		Movers_map const &,
 		Pose const & ) override;
@@ -131,7 +132,10 @@ public:// virtual main operation
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-
+	void
+	set_residue_selector( core::select::residue_selector::ResidueSelectorOP residue_selector ) {
+		residue_selector_ = residue_selector;
+	}
 
 private:
 
@@ -140,7 +144,12 @@ private:
 
 	String cmd_;
 
+	// options for resisdue selector case
+	bool exclude_bb_atoms_;
+	bool normalize_per_atom_;
+	bool normalize_per_residue_;
 
+	core::select::residue_selector::ResidueSelectorOP residue_selector_;
 };
 
 } // filters
