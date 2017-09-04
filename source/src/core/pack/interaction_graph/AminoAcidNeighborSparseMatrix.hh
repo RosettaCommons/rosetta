@@ -611,6 +611,21 @@ public:
 		return;
 	}
 
+	/// @brief delcare every submatrix to be not worth keeping
+	/// @author Jack Maguire, jack@med.unc.edu
+	void drop_all_submatrices()
+	{
+		ObjexxFCL::FArray2D_bool submatrix_worth_keeping( num_aa_, num_aa_, false);
+
+		ObjexxFCL::FArray1D_float old_sparse_matrix;
+		old_sparse_matrix.swap( sparse_matrix_ );
+
+		ObjexxFCL::FArray2D_int old_aa_offsets( aa_offsets_ ); //deep copy
+		set_sparse_aa_info( submatrix_worth_keeping );
+		copy_old_data_into_new_table( old_aa_offsets, old_sparse_matrix );
+
+		return;
+	}
 
 protected:
 

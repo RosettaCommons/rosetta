@@ -77,11 +77,14 @@ StoreResidueSubsetMover::~StoreResidueSubsetMover()
 void
 StoreResidueSubsetMover::apply( core::pose::Pose & pose )
 {
-	runtime_assert( selector_ );
+	runtime_assert( selector_ || subset_ );
 	if ( subset_name_.empty() ) {
 		utility_exit_with_message( "No subset_name specified to StoreResidueSubset mover.  You must specify one." );
 	}
-	core::select::residue_selector::ResidueSubsetCOP const subset( new core::select::residue_selector::ResidueSubset( selector_->apply( pose ) ) );
+	if ( selector_ ) {
+		subset_.reset( new core::select::residue_selector::ResidueSubset( selector_->apply( pose ) ) );
+	}
+	//core::select::residue_selector::ResidueSubsetCOP const subset( new core::select::residue_selector::ResidueSubset( selector_->apply( pose ) ) );
 	/*
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 	core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
@@ -101,7 +104,7 @@ StoreResidueSubsetMover::apply( core::pose::Pose & pose )
 	if ( !overwrite_ && stored_subsets.has_subset( subset_name_ ) ) {
 		utility_exit_with_message( "A stored residue subset with the name " + subset_name_ + " already exists; you must set overwrite flag to true to overwrite." );
 	}
-	stored_subsets.set_subset( subset, subset_name_ );
+	stored_subsets.set_subset( subset_, subset_name_ );
 }
 
 void
@@ -187,4 +190,3 @@ void StoreResidueSubsetMoverCreator::provide_xml_schema( utility::tag::XMLSchema
 
 } // residue_selectors
 } // protocols
-

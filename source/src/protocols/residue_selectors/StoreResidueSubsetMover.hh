@@ -40,6 +40,7 @@ public:
 	~StoreResidueSubsetMover() override;
 
 	void apply( core::pose::Pose & pose  ) override;
+
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -63,9 +64,15 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void set_subset( core::select::residue_selector::ResidueSubsetCOP subset, std::string name, bool overwrite ){
+		subset_.reset( new core::select::residue_selector::ResidueSubset(*subset) );
+		subset_name_ = name;
+		overwrite_ = overwrite;
+	}
 
 private:
 	core::select::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSubsetCOP subset_;
 	std::string subset_name_;
 	bool overwrite_;
 };
@@ -75,4 +82,3 @@ private:
 } // protocols
 
 #endif
-

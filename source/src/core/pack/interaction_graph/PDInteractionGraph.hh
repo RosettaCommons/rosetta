@@ -340,6 +340,7 @@ protected:
 	void declare_energies_final_no_deletion();
 	void prepare_for_simulated_annealing_no_deletion();
 	bool pd_edge_table_all_zeros() const;
+	AminoAcidNeighborSparseMatrix< core::PackerEnergy > & two_body_energies() { return two_body_energies_; }
 
 private:
 

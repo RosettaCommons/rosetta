@@ -72,6 +72,7 @@ static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobics
 static FilterRegistrator< protocols::denovo_design::filters::PreProlineFilterCreator > reg_PreProlineFilterCreator;
 static FilterRegistrator< protocols::denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;
 
+static FilterRegistrator< protocols::hbnet::HBNetScoreFilterCreator > reg_HBNetScoreFilterCreator;
 static FilterRegistrator< protocols::helical_bundle::BundleReporterFilterCreator > reg_BundleReporterFilterCreator;
 
 static FilterRegistrator< protocols::indexed_structure_store::filters::FragmentLookupFilterCreator > reg_FragmentLookupFilterCreator;

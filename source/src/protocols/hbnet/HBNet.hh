@@ -40,6 +40,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
@@ -51,6 +52,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/hbnet/HBondGraph.hh>
 //#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 
 namespace protocols {
@@ -295,6 +297,88 @@ struct compare_net_vec : public std::binary_function< HBondNetStructOP, HBondNet
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+//MONTE CARLO STRUCTS///////////////////////////////////////////////////////////////////////////////////
+
+struct polar_atom {
+	polar_atom( unsigned int sequence_position, numeric::xyzVector< float > const & atom_position ){
+		seqpos = sequence_position;
+		xyz = atom_position;
+	}
+
+	bool operator < ( polar_atom const & rhs ) const {
+		//x is the primary metric for sorting. The y and z parts are just to make sure that two atoms with the same x value are still included
+		if ( xyz.x() != rhs.xyz.x() ) return xyz.x() < rhs.xyz.x();
+		if ( xyz.y() != rhs.xyz.y() ) return xyz.y() < rhs.xyz.y();
+		return xyz.z() < rhs.xyz.z();
+	}
+
+	unsigned int seqpos;
+	numeric::xyzVector< float > xyz;
+};
+
+struct compare_by_x {
+	inline bool operator() ( std::pair< unsigned int, numeric::xyzVector< float > > const & lhs, std::pair< unsigned int, numeric::xyzVector< float > > const & rhs ) const {
+		//sorts by x first, then y, then z
+		if ( lhs.second.x() != rhs.second.x() ) {
+			return lhs.second.x() < rhs.second.x();
+		}
+
+		//tiebreaker 1
+		if ( lhs.second.y() != rhs.second.y() ) {
+			return lhs.second.y() < rhs.second.y();
+		}
+
+		//tiebreaker 2
+		return lhs.second.z() < rhs.second.z();
+	}
+};
+
+struct NetworkState;
+inline void add_polar_atoms_to_network_state( NetworkState &, HBondNode const *, core::pack::rotamer_set::RotamerSetsOP );
+
+struct NetworkState{
+	NetworkState( HBondEdge const * monte_carlo_seed_in, HBondGraphOP hbond_graph, core::pack::rotamer_set::RotamerSetsOP rotsets ){
+		monte_carlo_seed = monte_carlo_seed_in;
+		full_twobody_energy = monte_carlo_seed->energy();
+		score = 0;
+		edges.push_back( monte_carlo_seed );
+
+		nodes.clear();
+		nodes.push_back( static_cast< HBondNode *  > ( hbond_graph->get_node( monte_carlo_seed->get_first_node_ind() ) ) );
+		add_polar_atoms_to_network_state( *this, nodes.back(), rotsets );
+
+		if ( monte_carlo_seed->get_first_node_ind() != monte_carlo_seed->get_second_node_ind() ) {
+			nodes.push_back( static_cast< HBondNode *  > ( hbond_graph->get_node( monte_carlo_seed->get_second_node_ind() ) ) );
+			add_polar_atoms_to_network_state( *this, nodes.back(), rotsets );
+		}
+	}
+
+	bool operator < ( NetworkState const & rhs) const {
+		return full_twobody_energy < rhs.full_twobody_energy;
+	}
+
+	utility::vector1< HBondNode const * > nodes;
+	utility::vector1< HBondEdge const * > edges;
+
+	HBondEdge const * monte_carlo_seed;//"Seed" hbond to branch off of
+	core::Real full_twobody_energy;//Sum of hbond score + clash score for all residue pairs in "residues" data object
+	core::Real score;//This holds whatever metric is used for sorting
+
+	std::set< polar_atom > sc_donor_atoms;
+	std::set< polar_atom > sc_acceptor_atoms;
+
+};
+
+struct NetworkStateScoreComparator{
+	static bool compare( NetworkState const & a, NetworkState const & b ){
+		return a.score < b.score;
+	}
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 static core::Real const MIN_HB_E_CUTOFF = { -0.1 };
 //static core::Real const HB_DIST_CUTOFF = { 3.0 };
 static core::Real const SC_RMSD_CUTOFF = { 0.5 };
@@ -531,6 +615,32 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public: //Monte Carlo Protocol Public methods
+	///@brief turn on or off the monte carlo branching protocol
+	inline void set_monte_carlo_branch( bool setting ){
+		monte_carlo_branch_ = setting;
+	}
+
+	///@brief set number of monte carlo runs to be divided over all the seed hbonds. A single monte carlo run appears to take roughly 1 ms (very loose estimate).
+	inline void set_total_num_mc_runs( core::Size setting ){
+		total_num_mc_runs_ = setting;
+	}
+
+	///@brief Maybe you only want to branch from strong hbonds. If this value is -1.2, then only hbonds with a strength of -1.2 or lower will be branched from.
+	inline void set_monte_carlo_seed_threshold( core::Real setting ){
+		monte_carlo_seed_threshold_ = setting;
+	}
+
+	///@brief Only branch from hbonds where at least one residue is buried. Effectively, this results in only finding networks that have at least one buried residue.
+	inline void set_monte_carlo_seed_must_be_buried( bool setting ){
+		monte_carlo_seed_must_be_buried_ = setting;
+	}
+
+	///@brief Only branch from hbonds where both residues are buried. This results in only finding networks that have at least one buried hbond but this does not prevent having additional exposed hbonds.
+	inline void set_monte_carlo_seed_must_be_fully_buried( bool setting ){
+		monte_carlo_seed_must_be_fully_buried_ = setting;
+	}
+
 	// functions to be accessed by classes that inherit from HBNet
 protected:
 
@@ -558,6 +668,9 @@ protected:
 	void recursive_traverse( int const new_node_ind, int const newstate, core::Size const newres, core::Size const prevres, utility::vector1< HBondResStructCOP > residues,
 		core::Size network_rec_count, core::Real init_sc, core::Real const hb_threshold, bool const second_search=false );
 
+	///@brief A monte carlo alternative to traverse_IG() and recursive_traverse(). Basically just populates hbond_graph_
+	void MC_traverse_IG( );
+
 	///@breif for efficiency, makes sure that an equivalent network has not already been stored
 	bool network_already_stored( utility::vector1< HBondResStructCOP > & residues, utility::vector1< HBondResStructCOP > & i_residues );
 
@@ -573,8 +686,11 @@ protected:
 	bool check_clash(utility::vector1< HBondResStructCOP > const & residues, platform::uint my_node_ind,
 		core::Size mystate, core::Size myres, core::Real & init_score, bool & cycle);
 
-	///@breif used by net_clash( hbond_net_struct & i, hbond_net_struct & j ), should not be called externally!
+	///@brief used by net_clash( hbond_net_struct & i, hbond_net_struct & j ), should not be called externally!
 	bool net_clash(utility::vector1< HBondResStructCOP > const & residues_i, utility::vector1< HBondResStructCOP > const & residues_j);
+
+	///@brief monte carlo protocol needs to use a different net_clash call because its IG is not populated
+	bool monte_carlo_net_clash( utility::vector1< HBondResStructCOP > const & residues_i, utility::vector1< HBondResStructCOP > const & residues_j ) const;
 
 	bool rotamer_state_compatible( HBondResStructCOP i, HBondResStructCOP j );
 
@@ -586,6 +702,10 @@ protected:
 	//void alternative_branch_overlapping_networks();
 	//void recursive_branch_networks( hbond_net_struct const & original_network, hbond_net_struct const & new_network, HBondNetStructOP output_network, std::set< core::Size > & sets_of_networks_already_added );
 	//used by branch_overlapping_networks() to efficiently search for all combinations of compatible networks that can be merged
+
+	///@brief monte carlo alternative to branch_overlapping_networks(). Requires MC_traverse_IG() to be called ahead of time. Theoretically O( total_num_mc_runs_ )
+	void MC_branch_overlapping_networks();
+
 
 	///@brief Merges 2 networks (i,j) into a single h-bond network, new_network.
 	void merge_2_branched_networks( hbond_net_struct const & i, hbond_net_struct const & j, HBondNetStructOP new_network );
@@ -629,7 +749,63 @@ protected:
 	// ///@brief turns on .cst contraints for the network
 	// void turn_on_enzdes_cst( Pose & pose, std::string cst_fname );
 
+protected://Monte Carlo Protocol Protected Methods
+
+	inline
+	core::Size chain_for_resid( core::Size resid ) const {
+		return orig_pose_->chain( resid );
+	}
+
+	inline
+	core::Size chain_for_moltenres( core::Size mres ) const {
+		return chain_for_resid( rotamer_sets_->moltenres_2_resid( mres ) );
+	}
+
+	inline void set_monte_carlo_data_to_default();
+
+	///@brief This transfers rotamer sets data to hbond_graph_. Need to call this before traversing the IG.
+	void initialize_hbond_graph();
+
+	HBondEdge * register_hbond( core::Size rotamerA, core::Size rotamerB, core::Real score );
+	void register_clash( core::Size rotamerA, core::Size rotamerB );
+
+	///@brief The edge_can_yield_monte_carlo_seed() methods determine if a hydrogen bond can be used as a seed for monte carlo branching. Examples of when this might fail include when the hbond does not cross the interface (for HBNetStapleInterface) or when the hbond is not buried to the level of the user's specifications
+	virtual bool edge_can_yield_monte_carlo_seed( core::Size resid1, core::Size resid2 ) const;
+	virtual bool edge_can_yield_monte_carlo_seed( core::pack::interaction_graph::EdgeBase const * ) const;
+
+	///@brief get_next_node() randomly decides how the current_state will grow during the monte carlo branching protocol
+	HBondNode * get_next_node( NetworkState & current_state );
+
+	///@brief returns true if this hbond can not create a network
+	bool monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed );
+
+	///@brief called at the end of the monte carlo branching protocol. Adds all of the monte carlo networks to the data elements used by the traditional HBNet protocol
+	void append_to_network_vector( std::list< NetworkState > & designed_networks );
+
+	void add_residue_to_network_state( NetworkState & current_state, HBondNode * node_being_added ) const;
+
+	///@brief quick and dirty satisfaction check
+	bool network_state_is_satisfied( NetworkState & current_state ) const;
+
+	///@brief evaluates state and stores the score in state.score
+	void score_network_state( NetworkState & state ) const;
+
+	bool register_new_network(
+		NetworkState & current_network_state,
+		utility::vector0< std::list< utility::vector1< core::Size > > > & hash_table,//hash of elements in current_network_state. hash key is based on sum of rotamer_ids
+		std::list< NetworkState > & designed_networks
+	) const;
+
+	///@brief returns false if there is a clash between the node_being_added and any node currently in the current_state
+	static bool node_is_compatible( NetworkState const & current_state, HBondNode const * node_being_added );
+
+	///@brief This is only being used for debug purposes right now. Makes sure that there are no possible nodes that can be added to current_state
+	static bool network_state_is_done_growing( NetworkState const & current_state, HBondGraphCOP hbond_graph );
+
 private:
+	///@collect data on heavy polar atoms that will be used for quick and dirty satisfaction check during the monte carlo protocol
+	void init_atom_indices_data();
+
 	core::pose::Pose & nonconst_get_orig_pose() { return *orig_pose_; }
 
 private:
@@ -707,8 +883,55 @@ private:
 	core::select::residue_selector::ResidueSubset input_hbnet_info_residues_;
 	utility::graph::GraphOP packer_neighbor_graph_;
 	core::scoring::hbonds::HBondDatabaseCOP hb_database_;
+
+	//MONTE CARLO DATA:
+	bool monte_carlo_branch_;
+	core::Size total_num_mc_runs_;
+	core::Size max_mc_nets_;
+
+	HBondGraphOP hbond_graph_;
+
+	//"init state" == "seed hbond"
+	utility::vector1< HBondEdge const * > monte_carlo_seeds_;
+	core::Real monte_carlo_seed_threshold_;//twobody energy threshold
+	bool monte_carlo_seed_must_be_buried_;//only branch from hbonds where both residues are in the core
+	bool monte_carlo_seed_must_be_fully_buried_;//only branch from hbonds where both residues are in the core
+
+	std::set< polar_atom > fixed_and_bb_donor_atoms_;
+	std::set< polar_atom > fixed_and_bb_acceptor_atoms_;
 };
 // end HBNet
+
+inline void HBNet::set_monte_carlo_data_to_default(){
+	monte_carlo_branch_ = false;
+	total_num_mc_runs_ = 10000;
+	monte_carlo_seeds_.reserve( 1024 );
+	monte_carlo_seed_threshold_ = 0;
+
+	monte_carlo_seed_must_be_buried_ = false;
+	monte_carlo_seed_must_be_fully_buried_ = false;
+	max_mc_nets_ = 100;
+}
+
+inline void add_polar_atoms_to_network_state( NetworkState & network_state, HBondNode const * node, core::pack::rotamer_set::RotamerSetsOP rotsets ){
+	core::conformation::Residue const & res = * rotsets->rotamer( node->get_node_index() );
+	//Acceptors
+	for ( const auto & acc_pos : res.accpt_pos() ) {
+		//numeric::xyzVector<float> acc_xyz( res.atom( acc_pos ).xyz() );
+		network_state.sc_acceptor_atoms.insert( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz() ) );
+	}
+
+	//Donors
+	std::set< core::Size > heavy_donors;//used to eliminate duplicates
+	for ( const auto & don_H_pos : res.Hpos_polar() ) {
+		heavy_donors.insert( res.atom_base( don_H_pos ) );
+	}
+
+	for ( core::Size atomno : heavy_donors ) {
+		network_state.sc_donor_atoms.insert( polar_atom( res.seqpos(), res.atom( atomno ).xyz() ) );
+	}
+
+}
 
 } // hbnet
 } // protocols

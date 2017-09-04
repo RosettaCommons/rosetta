@@ -701,10 +701,10 @@ HBNetStapleInterface::pair_meets_starting_criteria( core::Size const res1, core:
 Real
 HBNetStapleInterface::scale_twobody_energy( core::Real input_twobody_energy, char res1, char res2 )
 {
-	Real scale_factor_1(1.0);
-	Real scale_factor_2(1.0);
-
 	if ( use_aa_dependent_weights_ ) {
+		Real scale_factor_1(1.0);
+		Real scale_factor_2(1.0);
+
 		if ( res1 == 'S' || res1 == 'T' || res1 == 'Y' ) scale_factor_1 = 1.3;
 		else if ( res1 == 'N' || res1 == 'H' || res1 == 'W' ) scale_factor_1 = 1.15;
 		else if ( res1 == 'Q' ) scale_factor_1 = 0.85;
@@ -716,11 +716,13 @@ HBNetStapleInterface::scale_twobody_energy( core::Real input_twobody_energy, cha
 		else if ( res2 == 'Q' ) scale_factor_2 = 0.85;
 		else if ( res2 == 'D' ) scale_factor_2 = 0.8;
 		else if ( res2 == 'E' || res2 == 'K' || res2 == 'R' ) scale_factor_2 = 0.7;
+
+		return scale_factor_1*scale_factor_2*input_twobody_energy;
 	}
 	//TR << "input_twobody = " << input_twobody_energy << std::endl;
 	//TR << "scale_factor_1*scale_factor_2*input_twobody_energy = " << scale_factor_1*scale_factor_2*input_twobody_energy << std::endl;
 
-	return scale_factor_1*scale_factor_2*input_twobody_energy;
+	return input_twobody_energy;
 }
 
 void

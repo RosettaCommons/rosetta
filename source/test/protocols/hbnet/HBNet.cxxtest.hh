@@ -86,6 +86,8 @@ public:
 
 		TR << "End Test" << std::endl;
 	}
+
 };
+
 }
 

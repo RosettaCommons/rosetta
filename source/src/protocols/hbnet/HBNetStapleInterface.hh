@@ -28,7 +28,6 @@
 
 // CORE INCLUDES
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SequenceProfile.hh>
@@ -36,7 +35,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 
@@ -119,6 +118,14 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	//core::Size symm_num_intermolecular_hbonds( hbond_net_struct & i, core::pose::Pose & pose );
+
+protected://Monte Carlo Protocol
+
+	inline bool edge_can_yield_monte_carlo_seed( core::Size resid1, core::Size resid2 ) const override{
+		if ( !symmetric() && chain_for_resid( resid1 ) == chain_for_resid( resid2 ) ) return false;
+		else return HBNet::edge_can_yield_monte_carlo_seed( resid1, resid2 );
+	}
+
 
 private:
 	bool all_helices_;
