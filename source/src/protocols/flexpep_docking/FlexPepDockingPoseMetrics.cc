@@ -143,11 +143,11 @@ FlexPepDockingPoseMetrics::calc_frac_atoms_kA_to_native(
 		if ( !res_subset(i) ) {
 			continue;
 		}
-		// Calculate phi psi RMSd only for the positions that actually have these properties defined
 		core::chemical::ResidueType residue_type = pose1.conformation().residue_type(i);
-		if ( !residue_type.is_protein() && !residue_type.is_peptoid() && !residue_type.is_carbohydrate() ) {
-			continue;
-		}
+
+		//if ( !residue_type.is_protein() && !residue_type.is_peptoid() && !residue_type.is_carbohydrate() ) {
+		// continue;
+		//}
 		core::Size natoms_res ( pose1.residue(i).natoms() );
 		if ( predicate == &is_ligand_heavyatom ||
 				predicate == &is_polymer_heavyatom ||
@@ -228,7 +228,8 @@ FlexPepDockingPoseMetrics::calc_phipsi_RMSD
 	Real sumSqr = 0.0; // MSD = sum square deviation
 	Size n = 0;
 	for ( Size i = 1 ; i <= nres ; ++i ) {
-		if ( !res_subset(i) ) {
+		// Calculate phi psi RMSd only for the positions that actually have these properties defined
+		if ( !res_subset(i) || (!pose1.residue_type(i).is_protein() && !pose1.residue_type(i).is_peptoid() && !pose1.residue_type(i).is_carbohydrate() ) ) {
 			continue;
 		}
 		Real phidiff = subtract_degree_angles(pose1.phi(i), pose2.phi(i));
