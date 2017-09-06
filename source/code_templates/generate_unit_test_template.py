@@ -61,7 +61,7 @@ class GenerateUnitTestTemplate(GenerateRosettaTemplates):
 
 
         GenerateRosettaTemplates.__init__(self, "unit_test", parser)
-        self.options.namespace = self.options.outdirs
+        self.options.dir_override = self.options.outdirs
 
         self.replacement["--test_functions--"] = lambda: self.get_test_function_block()
 

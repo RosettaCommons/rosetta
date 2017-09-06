@@ -270,11 +270,25 @@ class GenerateRosettaTemplates(object):
         :rtype: list
         """
         if hasattr(self.options, "dir_override") and self.options.dir_override:
-            return self.options.dir_override
+
+            #Catching things like protocols/antibody
+            if len(self.options.dir_override) == 1:
+                self.options.dir_override = self.options.dir_override[0]
+
+                #Check to make sure someone did not try to use src/test to set directory.  Helps new users.
+                if re.search('src', "/".join(self.options.dir_override)):
+                    sys.exit("\nERROR. Please check your path.  Path is relative, src directory not needed. ( Ex - protocols/antibody )")
+
+                #Not split.  We don't fail here, but instead give it as a list.
+                if (re.search('/', self.options.dir_override)):
+                    return self.options.dir_override.strip().split('/')
+            else:
+                return self.options.dir_override
+
         elif hasattr(self.options, "namespace") and self.options.namespace:
             return self.options.namespace
         else:
-            sys.exit("Path not defined.  Either set the path override or pass a namespace")
+            sys.exit("Path not defined.  Either set the path/outdirs or pass a namespace")
 
     #def get_res_sel_creator_path(self):
     #    """
