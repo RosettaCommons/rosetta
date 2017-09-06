@@ -25,33 +25,25 @@
 #import os
 settings = {
     "site" : {
-        "prepends" : {
+      "prepends" : {
            "include_path" : ["/dnas/apps/openmpi/current/include"],
            "library_path" : ["/dnas/apps/openmpi/current/lib"],
-			"flags" : {
-				"link" : []
-			}
-        },
-        "appends" : {
-            "defines"    : [],        
-            # Uncomment the line below and the "import os" line above
-            # to let SCons find ICC (assuming it's on your PATH already)
-            #"program_path"  : os.environ["PATH"].split(":"),
-
-            # Uncomment the line below to begin building the "devel" project too.
-            #"projects": { "src" : [ "devel", ], },
-            "flags" : {
-              "link" : [],
-              },
-        },
-        "overrides" : {
-		"cxx": "/dnas/apps/openmpi/current/bin/mpicxx",
-		"cc": "/dnas/apps/openmpi/current/bin/mpicc",    
-        },
-        "removes" : {
+      },
+      "appends" : {
+      },
+      "removes" : {
           "flags" : {
-            "compile" : ["fno-exceptions",],
-            },
+              "compile" : [
+                  "fno-exceptions",
+              ],
+              "warn" : [
+                  "Werror",
+              ],
+          },
+      },
+      "overrides" : {
+		      "cxx": "/dnas/apps/openmpi/current/bin/mpicxx",
+		      "cc": "/dnas/apps/openmpi/current/bin/mpicc",    
         },
     }
 }
