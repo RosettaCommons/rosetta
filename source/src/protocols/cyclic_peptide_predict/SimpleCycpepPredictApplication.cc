@@ -1143,9 +1143,9 @@ SimpleCycpepPredictApplication::run() const {
 			iselector->set_index( pep_indices.str() );
 			symmfilter3->set_selector( iselector );
 			if ( symmfilter3->apply( *pose ) ) {
-				TR << "Final symmetry filter passes.  This peptide has c" << required_symmetry_repeats_ << (required_symmetry_mirroring_ ? "/m " : " " ) << "symmetry." << std::endl;
+				TR << "Final symmetry filter passes.  This peptide has " << ( required_symmetry_mirroring_ ? "s" : "c" ) << required_symmetry_repeats_ << "symmetry." << std::endl;
 			} else {
-				TR << "Final symmetry filter failed.  This peptide lost c" << required_symmetry_repeats_ << (required_symmetry_mirroring_ ? "/m " : " " ) << "symmetry during the final relaxation." << std::endl;
+				TR << "Final symmetry filter failed.  This peptide lost " << ( required_symmetry_mirroring_ ? "s" : "c") << required_symmetry_repeats_ << "symmetry during the final relaxation." << std::endl;
 				if ( irepeat < irepeat_max ) {
 					TR << "Continuing to next job." << std::endl;
 					checkpoint( irepeat, success_count ) ;

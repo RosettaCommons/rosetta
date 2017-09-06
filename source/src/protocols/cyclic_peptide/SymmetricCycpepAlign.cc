@@ -193,8 +193,8 @@ SymmetricCycpepAlign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 	attlist
 		+ XMLSchemaAttribute( "auto_detect_symmetry", xsct_rosetta_bool, "If true, the symmetry of this peptide will be detected automatically.  False by default.  (Note that if this is set to \"true\", the \"symmetry_repeats\" and \"mirror_symmetry\" options cannot be used.)" )
-		+ XMLSchemaAttribute( "symmetry_repeats", xsct_non_negative_integer, "The number of symmetry repeats.  For example, to specify c6 or c6/m symmetry, set this to \"6\".  Defaults to \"2\" (for c2 symmetry)." )
-		+ XMLSchemaAttribute( "mirror_symmetry", xsct_rosetta_bool, "If true, this indicates that the pose possesses mirror symmetry.  For example, to specify c6/m symmetry, set \"symmetry_repeats\" to \"6\" and \"mirror_symmetry\" to \"true\".  If set to \"false\", this would indicate c6 symmetry.  Defaults to \"false\" (for c2 symmetry with no mirroring)." )
+		+ XMLSchemaAttribute( "symmetry_repeats", xsct_non_negative_integer, "The number of symmetry repeats.  For example, to specify c6 or s6 symmetry, set this to \"6\".  Defaults to \"2\" (for c2 symmetry)." )
+		+ XMLSchemaAttribute( "mirror_symmetry", xsct_rosetta_bool, "If true, this indicates that the pose possesses mirror symmetry.  For example, to specify s6 symmetry, set \"symmetry_repeats\" to \"6\" and \"mirror_symmetry\" to \"true\".  If set to \"false\", this would indicate c6 symmetry.  Defaults to \"false\" (for c2 symmetry with no mirroring)." )
 		+ XMLSchemaAttribute( "angle_threshold", xsct_real, "The cutoff, in degrees, for considering two dihedral values to be equal.  Defaults to 10 degrees.  This is used when confirming that a quasi-symmetric peptide has the indicated symmetry, or for detecting the symmetry of the peptide." )
 		+ XMLSchemaAttribute( "trim_to_single_repeat", xsct_rosetta_bool, "If true, all geometry in the peptide (including all crosslinkers) will be deleted, except for the polypeptide part of a single symmetry repeat.  Defaults to \"false\".  (This is useful for setting up a peptide for the SetupForSymmetry mover)." )
 		+ XMLSchemaAttribute( "repeat_to_preserve", xsct_non_negative_integer, "If \"trim_to_single_repeat\" is true, then this is the symmetry repeat that will NOT be deleted (i.e. the one that will be preserved).  Defaults to \"1\"." )
@@ -205,7 +205,7 @@ SymmetricCycpepAlign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 }
 
 /// @brief Set the number of symmetry repeats and whether we're using mirror symmetry.  For example, for c4
-/// symmetry, inputs are "4", "false".  For c4/m, they'd be "4", "true".
+/// symmetry, inputs are "4", "false".  For s4, they'd be "4", "true".
 void
 SymmetricCycpepAlign::set_symmetry(
 	core::Size const repeats_in,
@@ -267,7 +267,7 @@ SymmetricCycpepAlign::set_last_symmetry(
 /// @details Starts with the maximum possible, and tries every possible symmetry type, favouring mirror symmetry over non-mirror symmetry.
 /// @param[in] pose The quasi-symmetric pose.
 /// @param[out] symmrepeats The number of symmetry repeats.
-/// @param[out] mirrorsymm Is this a mirror symmetry type (cN/m) or not (cN)?
+/// @param[out] mirrorsymm Is this a mirror symmetry type (sN) or not (cN)?
 bool
 SymmetricCycpepAlign::do_auto_detection_of_symmetry(
 	core::pose::Pose const &pose,
@@ -304,7 +304,7 @@ SymmetricCycpepAlign::do_auto_detection_of_symmetry(
 	} else {
 		symmrepeats = symfilt.symm_repeats();
 		mirrorsymm = symfilt.mirror_symm();
-		TR << "The peptide was found to have c" << symmrepeats << (mirrorsymm ? "/m " : " ") << " symmetry." << std::endl;
+		TR << "The peptide was found to have " << (mirrorsymm ? "s" : "c" ) << symmrepeats << " symmetry." << std::endl;
 	}
 
 	return found;
@@ -319,9 +319,7 @@ SymmetricCycpepAlign::do_symmetry_checks(
 	bool const mirrorsymm
 ) const {
 	std::stringstream symmtype;
-	symmtype << "c" << symmrepeats;
-	if ( mirrorsymm ) symmtype << "/m";
-
+	symmtype << (mirrorsymm ? "s" : "c") << symmrepeats;
 
 	core::Size const protrescount( count_protein_residues( pose ) );
 	core::select::residue_selector::ResidueSelectorCOP selector( select_protein_residues( pose ) );
@@ -413,7 +411,7 @@ SymmetricCycpepAlign::align_to_zaxis(
 	core::Size const symmrepeats,
 	bool const mirrorsymm
 ) const {
-	if ( symmrepeats == 2 && mirrorsymm ) return; //Special case: any axis can be considered the symmetry axis in the c2/m symmetric case.
+	if ( symmrepeats == 2 && mirrorsymm ) return; //Special case: any axis can be considered the symmetry axis in the s2 symmetric case.
 
 	core::Size const protein_residues( count_protein_residues(pose) ); //Get the number of protein residues in the peptide.
 

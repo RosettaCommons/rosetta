@@ -72,7 +72,7 @@ CycpepSymmetryFilter::parse_my_tag(
 }
 
 /// @brief Sets the repeats in the symmetry that we're looking for
-/// (e.g. 2 for c2 or c2/m symmetry, 3 for c3, etc.).
+/// (e.g. 2 for c2 or s2 symmetry, 3 for c3, etc.).
 void
 CycpepSymmetryFilter::set_symm_repeats(
 	core::Size const repeats_in
@@ -127,8 +127,8 @@ CycpepSymmetryFilter::apply( core::pose::Pose const &pose ) const
 	runtime_assert_string_msg( is_cyclic_peptide( pose, reslist ), "Error in protocols::cyclic_peptide::CycpepSymmetryFilter::apply(): The pose or selected residues do NOT represent a cyclic peptide." ); //Check that these residues represent a cyclic peptide.
 
 	if ( reslist.size() % symm_repeats() != 0 ) {
-		TR.Warning << "The CycpepSymmetryFilter was applied with c"
-			<< symm_repeats() << ( mirror_symm() ? "/m " : " ") << "symmetry to a " << (selector() ? "selection" : "pose" )
+		TR.Warning << "The CycpepSymmetryFilter was applied with " << (mirror_symm() ? "s" : "c")
+			<< symm_repeats() << " symmetry to a " << (selector() ? "selection" : "pose" )
 			<< " with " << reslist.size() << " residues.  The number of residues is not an integer multiple of the symmetry repeats.  Pose MUST be asymmetric.  Returning FALSE."
 			<< std::endl;
 		return false;
@@ -171,7 +171,7 @@ CycpepSymmetryFilter::report( std::ostream &outstream, core::pose::Pose const &p
 	} else {
 		outstream << "is not";
 	}
-	outstream << " c" << symm_repeats() << (mirror_symm() ? "/m " : " ") << "symmetric." << std::endl;
+	outstream << (mirror_symm() ? " s" : " c") << symm_repeats() << " symmetric." << std::endl;
 }
 
 std::string CycpepSymmetryFilter::name() const {
@@ -189,7 +189,7 @@ void CycpepSymmetryFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 	attlist
 		+ XMLSchemaAttribute( "symmetry_repeats", xsct_non_negative_integer, "The number of repeats in this type of symmetry.  For example, for c3 symmetry, one would provide \"3\" as input.  Defaults to 2 (for c2 symmetry)." )
-		+ XMLSchemaAttribute( "mirror_symmetry", xsct_rosetta_bool, "Is this a type of cyclic symmetry with mirror operations, such as c2/m, c4/m, or c6/m symmetry?  If true, symmetry_repeats must be a multiple of 2.  Defaults to false (for c2 symmetry -- i.e. not c2/m symmetry)." )
+		+ XMLSchemaAttribute( "mirror_symmetry", xsct_rosetta_bool, "Is this a type of cyclic symmetry with mirror operations, such as s2, s4, or s6 symmetry?  If true, symmetry_repeats must be a multiple of 2.  Defaults to false (for c2 symmetry -- i.e. not s2 symmetry)." )
 		+ XMLSchemaAttribute( "angle_threshold", xsct_real, "The cutoff, in degrees, for the difference between two dihedral angles before they are considered \"different\" angles.  This is used when comparing mainchain torsion values of differet residues.  Defaults to 10.0 degrees." )
 		;
 
@@ -198,7 +198,7 @@ void CycpepSymmetryFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	protocols::filters::xsd_type_definition_w_attributes(
 		xsd,
 		class_name(),
-		"The CycpepSymmetryFilter examines a cyclic peptide for internal backbone symmetry matching a particular cyclic symmetry type (e.g. c2, c3, c4, etc.) or mirror symmetry type (e.g. c2/m, c4/m, etc.), and returns true if and only if the backbone is symmetric.",
+		"The CycpepSymmetryFilter examines a cyclic peptide for internal backbone symmetry matching a particular cyclic symmetry type (e.g. c2, c3, c4, etc.) or mirror symmetry type (e.g. s2, s4, etc.), and returns true if and only if the backbone is symmetric.",
 		attlist );
 }
 

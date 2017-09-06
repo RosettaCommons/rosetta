@@ -99,11 +99,11 @@ public:
 
 public: // setters and getters
 
-	/// @brief Get the number of symmetry repeats.  For example, for c4 or c4/m symmetry,
+	/// @brief Get the number of symmetry repeats.  For example, for c4 or s4 symmetry,
 	/// this would be "4".  Defaults to "2".
 	inline core::Size symmetry_repeats() const { return symmetry_repeats_; }
 
-	/// @brief Get whether we're using mirror symmetry (e.g. c2/m symmetry vs. c2 symmetry).
+	/// @brief Get whether we're using mirror symmetry (e.g. s2 symmetry vs. c2 symmetry).
 	///
 	inline bool mirror_symmetry() const { return mirror_symmetry_; }
 
@@ -137,7 +137,7 @@ public: // setters and getters
 	inline bool invert() const {return invert_;}
 
 	/// @brief Set the number of symmetry repeats and whether we're using mirror symmetry.  For example, for c4
-	/// symmetry, inputs are "4", "false".  For c4/m, they'd be "4", "true".
+	/// symmetry, inputs are "4", "false".  For s4, they'd be "4", "true".
 	void set_symmetry( core::Size const repeats_in, bool const mirror_in );
 
 	/// @brief Set whether we're auto-detecting symmetry.
@@ -169,7 +169,7 @@ private: // methods
 	/// @details Starts with the maximum possible, and tries every possible symmetry type, favouring mirror symmetry over non-mirror symmetry.
 	/// @param[in] pose The quasi-symmetric pose.
 	/// @param[out] symmrepeats The number of symmetry repeats.
-	/// @param[out] mirrorsymm Is this a mirror symmetry type (cN/m) or not (cN)?
+	/// @param[out] mirrorsymm Is this a mirror symmetry type (sN) or not (cN)?
 	bool do_auto_detection_of_symmetry( core::pose::Pose const &pose, core::Size &symmrepeats, bool &mirrorsymm ) const;
 
 	/// @brief Given a quasi-symmetric pose, confirm that it has the specified symmetry.
@@ -198,7 +198,7 @@ private: // methods
 
 private: // data
 
-	/// @brief The number of symmetry repeats.  For example, for c4 or c4/m symmetry,
+	/// @brief The number of symmetry repeats.  For example, for c4 or s4 symmetry,
 	/// this would be "4".  Defaults to "2".
 	core::Size symmetry_repeats_;
 

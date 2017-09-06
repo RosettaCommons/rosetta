@@ -72,10 +72,10 @@ public:
 		core::pose::Pose const & pose ) override;
 
 	/// @brief Sets the repeats in the symmetry that we're looking for
-	/// (e.g. 2 for c2 or c2/m symmetry, 3 for c3, etc.).
+	/// (e.g. 2 for c2 or s2 symmetry, 3 for c3, etc.).
 	void set_symm_repeats( core::Size const repeats_in );
 
-	/// @brief Sets whether we're considering mirror (e.g. c4/m, c6/m) or non-mirror
+	/// @brief Sets whether we're considering mirror (e.g. s4, s6) or non-mirror
 	/// (e.g. c4, c6) symmetry.
 	inline void set_mirror_symm( bool const symm_in ) { mirror_symm_ = symm_in; }
 
@@ -88,10 +88,10 @@ public:
 	void set_angle_threshold( core::Real const &setting );
 
 	/// @brief Gets the repeats in the symmetry that we're looking for
-	/// (e.g. 2 for c2 or c2/m symmetry, 3 for c3, etc.).
+	/// (e.g. 2 for c2 or s2 symmetry, 3 for c3, etc.).
 	inline core::Size symm_repeats() const { return symm_repeats_; }
 
-	/// @brief Gets whether we're considering mirror (e.g. c4/m, c6/m) or non-mirror
+	/// @brief Gets whether we're considering mirror (e.g. s4, s6) or non-mirror
 	/// (e.g. c4, c6) symmetry.
 	inline bool mirror_symm() const { return mirror_symm_; }
 
@@ -134,7 +134,7 @@ private:
 	PRIVATE VARIABLES
 	*****************************************/
 
-	/// @brief The number of symmetry repeats (e.g. 2 for c2 or c2/m symmetry, 3 for c3, etc.).
+	/// @brief The number of symmetry repeats (e.g. 2 for c2 or s2 symmetry, 3 for c3, etc.).
 	/// @details Defaults to 2.
 	core::Size symm_repeats_;
 

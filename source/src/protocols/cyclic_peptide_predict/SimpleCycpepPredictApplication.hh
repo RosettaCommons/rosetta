@@ -868,7 +868,7 @@ private:
 	/// @details Default 1.0.
 	core::Real tma_constraints_energy_filter_multiplier_;
 
-	/// @brief If this option is used, then only backbones that are cN (or cN/m, if mirror symmetry is required) symmetric will be accepted.
+	/// @brief If this option is used, then only backbones that are cN (or sN, if mirror symmetry is required) symmetric will be accepted.
 	/// For example, if set to 2, then only c2-symmetric backbones will be accepted.
 	core::Size required_symmetry_repeats_;
 
