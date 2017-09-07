@@ -101,7 +101,6 @@ process()
 		using namespace basic::options::OptionKeys;
 
 		if ( option[ in::include_sugars ] ) {
-			option[ chemical::override_rsd_type_limit ].value( true );
 			option[ score::no_pro_close_ring_closure ].value( true );
 			//option[ score::ring_close_shadow_constraint ].value( 0.1 );
 		}
