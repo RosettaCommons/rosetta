@@ -78,6 +78,7 @@ namespace calibur {
 *  This is what fast_rmsd() does.
 *****************************************************************************/
 
+#define cubic_roots(a,b,c,z) cubic_roots2(a,b,c,z)
 
 double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n, double R[3][3] )
 {

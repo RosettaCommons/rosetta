@@ -1694,8 +1694,8 @@ Conformation::declare_chemical_bond(
 	update_residue_torsions();
 
 	//If this is a cutpoint, then the position of cutpoint virtual atoms may need to be updated.
-	update_cutpoint_virtual_atoms_if_connected( *this, seqpos1, false );
-	update_cutpoint_virtual_atoms_if_connected( *this, seqpos2, false );
+	if ( !residue( seqpos1 ).is_RNA() ) update_cutpoint_virtual_atoms_if_connected( *this, seqpos1, false );
+	if ( !residue( seqpos2 ).is_RNA() ) update_cutpoint_virtual_atoms_if_connected( *this, seqpos2, false );
 }
 
 /// @brief Rebuilds the atoms that are depenent on polymer bonds for the specified residue only.
@@ -3418,7 +3418,7 @@ Conformation::rebuild_polymer_bond_dependent_atoms( Size const seqpos, int const
 	update_residue_coordinates();
 	Residue const & rsd( residue_(seqpos) );
 
-	for ( core::Size j=1; j<=2; ++j ) {
+	for ( core::Size j=1; j<=( rsd.is_RNA() ? 1 : 2 ); ++j ) {
 		//VKM 13 June 2017: This is very silly, but you sometimes have to do this twice for patched cases in
 		//which backbone heavyatoms (e.g. cutpoint virtuals) depend on positions of higher-numbered atoms
 		//like the amide proton.

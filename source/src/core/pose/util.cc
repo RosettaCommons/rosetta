@@ -3250,8 +3250,8 @@ correctly_add_cutpoint_variants(
 	declare_cutpoint_chemical_bond( pose, cutpoint_res, next_res );
 
 	// Update positions of virtual atoms:
-	update_cutpoint_virtual_atoms_if_connected( pose, cutpoint_res, false );
-	update_cutpoint_virtual_atoms_if_connected( pose, next_res, false );
+	if ( !pose.residue( cutpoint_res ).is_RNA() ) update_cutpoint_virtual_atoms_if_connected( pose, cutpoint_res, false );
+	if ( !pose.residue( next_res     ).is_RNA() ) update_cutpoint_virtual_atoms_if_connected( pose, next_res, false );
 }
 
 /// @brief Remove variant types incompatible with CUTPOINT_LOWER from a position in a pose.

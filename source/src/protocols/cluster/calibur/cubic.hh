@@ -27,10 +27,6 @@ namespace protocols {
 namespace cluster {
 namespace calibur {
 
-#define cubic_roots(a,b,c,z) cubic_roots2(a,b,c,z)
-
-#define PI 3.14159265358979323846
-
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
 #ifdef __TEST_CUBIC__

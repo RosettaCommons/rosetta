@@ -662,6 +662,7 @@ update_cutpoint_virtual_atoms_if_connected(
 	bool recurse /*= true*/
 ) {
 	core::conformation::Residue const &thisres( conf.residue(cutpoint_res) );
+	if ( thisres.is_RNA() ) return;
 	if ( !thisres.has_variant_type(core::chemical::CUTPOINT_LOWER) && !thisres.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return; //Do nothing if no upper or lower cutpoint type.
 
 	if ( thisres.has_variant_type(core::chemical::CUTPOINT_LOWER) ) {
