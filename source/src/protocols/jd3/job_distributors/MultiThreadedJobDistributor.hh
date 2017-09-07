@@ -17,17 +17,20 @@
 
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 // Unit headers
 #include <protocols/jd3/job_distributors/MultiThreadedJobDistributor.fwd.hh>
 
 // Package headers
-#include <protocols/jd3/JobDistributor.hh>
-#include <protocols/jd3/JobQueen.fwd.hh>
+#include <protocols/jd3/CompletedJobOutput.hh>
 #include <protocols/jd3/Job.fwd.hh>
+#include <protocols/jd3/JobDistributor.hh>
+#include <protocols/jd3/JobDigraph.fwd.hh>
+#include <protocols/jd3/JobQueen.fwd.hh>
 #include <protocols/jd3/JobResult.fwd.hh>
+#include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
+#include <protocols/jd3/job_distributors/JobExtractor.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -39,6 +42,10 @@
 
 // C++ headers
 #include <atomic>
+#include <map>
+
+// CTPL headers
+#include <CTPL/ctpl_stl.fwd.h>
 
 namespace protocols {
 namespace jd3 {
@@ -47,6 +54,11 @@ namespace job_distributors {
 class MultiThreadedJobDistributor : public JobDistributor {
 public:
 	typedef utility::vector1< LarvalJobOP > LarvalJobVector;
+
+	typedef std::list< core::Size > SizeList;
+	typedef std::map< JobResultID, std::pair< LarvalJobOP, JobResultOP > > JobResultMap;
+
+	typedef utility::pointer::shared_ptr< ctpl::thread_pool > ThreadPoolOP;
 
 public:
 
@@ -62,42 +74,65 @@ public:
 
 protected:
 
-	/// @brief Poll the running jobs, and if there are any that have completed,
-	/// process their output, and then return true.
 	bool
-	capacity_for_another_thread();
+	prepare_next_job( LarvalJobOP larval_job, core::Size attempt_count );
 
 	bool
 	unfinished_jobs_remain();
 
 	void
-	process_finished_job( core::Size ii );
+	process_completed_job( JobRunnerOP runner );
+
+	void potentially_output_some_job_results();
+	void potentially_discard_some_job_results();
 
 	void
 	start_job( LarvalJobOP, JobOP );
 
 private:
 
+	JobQueenOP job_queen_;
+	JobDigraphOP job_dag_;
+	JobExtractorOP job_extractor_;
+
+	// The big old map that stores all the JobResults that are generated
+	// over the course of execution
+	JobResultMap job_results_;
+
 	core::Size nthreads_;
-	core::Size count_since_last_job_finished_;
-	utility::vector1< JobRunnerOP > jobs_running_in_each_thread_;
+	std::list< JobRunnerOP > jobs_running_;
+
+	Size default_retry_limit_;
+
+	ThreadPoolOP thread_pool_;
 
 };
 
 class JobRunner {
 public:
-	JobRunner( LarvalJobOP, JobOP );
-	void run();
+	JobRunner( LarvalJobOP, JobOP, core::Size attempt_count, core::Size retry_limit );
+
+	/// @brief The main function for this unit of work.
+	void run( int thread_index );
+
 	bool exited_w_exception() const;
 	std::string const & exception_message() const;
-	LarvalJobOP larval_job();
-	JobOP mature_job();
-	JobResultOP job_result();
-	bool complete();
+	LarvalJobOP larval_job() const;
+	JobOP mature_job() const;
+	core::Size attempt_count() const;
+
+	CompletedJobOutput const & job_output() const;
+	bool complete() const;
+	int running_thread() const;
 private:
+	core::Size attempt_count_;
+	core::Size retry_limit_;
+	int  running_thread_;
+
 	LarvalJobOP larval_job_;
 	JobOP       mature_job_;
-	JobResultOP job_result_;
+
+	CompletedJobOutput job_result_;
 
 	std::string exception_message_;
 	bool        exited_w_exception_;

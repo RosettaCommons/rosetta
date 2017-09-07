@@ -85,6 +85,9 @@ public:
 
 	~RandomGenerator() override;
 
+	/// @brief Return whether the RandomGenerator has been initialized (by a call to set_seed)
+	bool initialized() const;
+
 	/// Return from range [0, 1] (?) uniform random number
 	///
 	/// The implementation of random_range leads me to believe this is

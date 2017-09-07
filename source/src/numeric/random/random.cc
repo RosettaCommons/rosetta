@@ -75,6 +75,8 @@ RandomGenerator::RandomGenerator() :
 
 RandomGenerator::~RandomGenerator() = default;
 
+/// @details The RNG has not been intiliaed if the generator_ object points at null.
+bool RandomGenerator::initialized() const { return generator_ != nullptr; }
 
 double
 RandomGenerator::uniform() {

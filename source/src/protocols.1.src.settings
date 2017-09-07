@@ -149,9 +149,10 @@ sources = {
 		"InputPoseDeallocationMessage",
 	],
 	"protocols/jd3/job_distributors": [
+		"JobExtractor",
 	#	"MPIWorkPartitionJobDistributor",
 		"MPIWorkPoolJobDistributor",
-		# not yet "MultiThreadedJobDistributor",
+		"MultiThreadedJobDistributor",
 		"VanillaJobDistributor",
 	],
 	"protocols/jd3/pose_inputters": [

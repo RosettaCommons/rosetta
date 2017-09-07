@@ -361,6 +361,8 @@ using basic::Warning;
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/CSI_Sequence.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 
 #ifdef UNICODE
@@ -899,25 +901,77 @@ report_application_command(int argc, char * argv []){
 	TR << std::endl;
 }
 
+RandomGeneratorSettings::RandomGeneratorSettings() :
+	seed_( 1111111 ),
+	seed_offset_( 0 ),
+	const_seed_( false ),
+	use_time_as_seed_( false ),
+	random_device_name_( "/dev/urandom" ),
+	rng_type_( "mt19937" ),
+	mpi_bcast_seed_from_node0_( true )
+{}
+
+void RandomGeneratorSettings::initialize_from_options( utility::options::OptionCollection const & options )
+{
+	if ( options[ run::constant_seed ].active() )  const_seed_ = options[ run::constant_seed ]();
+	if ( options[ run::jran ].active() )  seed_ = options[ run::jran ]();
+	if ( options[ run::seed_offset ].active() )  seed_offset_ = options[ run::seed_offset ]();
+	if ( options[ run::use_time_as_seed ].active() )  use_time_as_seed_ = options[ run::use_time_as_seed ]();
+
+	random_device_name_ = options[ run::rng_seed_device ](); // typically /dev/urandom or /dev/random
+	rng_type_ = options[ run::rng ];
+}
+
+void RandomGeneratorSettings::list_options_read( utility::options::OptionKeyList & opt_keys )
+{
+	opt_keys
+		+ run::constant_seed
+		+ run::jran
+		+ run::seed_offset
+		+ run::use_time_as_seed
+		+ run::rng_seed_device
+		+ run::rng;
+}
+
+int RandomGeneratorSettings::seed() const { return seed_; }
+int RandomGeneratorSettings::seed_offset() const { return seed_offset_; }
+bool RandomGeneratorSettings::const_seed() const { return const_seed_; }
+bool RandomGeneratorSettings::use_time_as_seed() const { return use_time_as_seed_; }
+std::string const & RandomGeneratorSettings::random_device_name() const { return random_device_name_; }
+std::string const & RandomGeneratorSettings::rng_type() const { return rng_type_; }
+bool RandomGeneratorSettings::mpi_bcast_seed_from_node0() const { return mpi_bcast_seed_from_node0_; }
+
+void RandomGeneratorSettings::seed( int setting ) { seed_ = setting; }
+void RandomGeneratorSettings::seed_offset( int setting ) { seed_offset_ = setting; }
+void RandomGeneratorSettings::const_seed( bool setting ) { const_seed_ = setting; }
+void RandomGeneratorSettings::use_time_as_seed( bool setting ) { use_time_as_seed_ = setting; }
+void RandomGeneratorSettings::random_device_name( std::string const & setting ) { random_device_name_ = setting; }
+void RandomGeneratorSettings::rng_type( std::string const & setting ) { rng_type_ = setting; }
+void RandomGeneratorSettings::mpi_bcast_seed_from_node0( bool setting ) { mpi_bcast_seed_from_node0_ = setting; }
+
 void
-init_random_number_generators(){
+init_random_number_generators()
+{
+	RandomGeneratorSettings random_generator_settings;
+	random_generator_settings.initialize_from_options( basic::options::option );
+	int real_seed = determine_random_number_seed( random_generator_settings );
+	init_random_generators(real_seed, random_generator_settings.rng_type() );
+
+	// seed default random generator, this will hopefully expose all code that use
+	// non-approved random methods -- assuming that code is invoked in an integration
+	// test
+	srand( time(nullptr) );
+}
+
+int determine_random_number_seed( RandomGeneratorSettings const & rgs )
+{
 	using namespace numeric::random;
 
-	int seed = 1111111;
-	int seed_offset = 0;
-	bool const_seed = false;
-	bool use_time_as_seed = false;
-	if ( option[ run::constant_seed ].active() )  const_seed = option[ run::constant_seed ]();
-	if ( option[ run::jran ].active() )  seed = option[ run::jran ]();
-	if ( option[ run::seed_offset ].active() )  seed_offset = option[ run::seed_offset ]();
-	if ( option[ run::use_time_as_seed ].active() )  use_time_as_seed = option[ run::use_time_as_seed ]();
-
-	std::string random_device_name( option[ run::rng_seed_device ]() ); // typically /dev/urandom or /dev/random
-
 	int real_seed;
+	int seed = rgs.seed();
 
-	if ( const_seed ) {
-		real_seed = seed + seed_offset;
+	if ( rgs.const_seed() ) {
+		real_seed = rgs.seed() + rgs.seed_offset();
 #ifdef USEMPI
 		{ // scope
 			/// Give a different RNG seed to each processor
@@ -926,7 +980,7 @@ init_random_number_generators(){
 			real_seed += mpi_rank;
 		}
 #endif
-		T("core.init") << utility::CSI_Red() << utility::CSI_Underline() << "Constant seed mode" << utility::CSI_Reset() << ", seed=" << seed << " seed_offset=" << seed_offset
+		T("core.init") << utility::CSI_Red() << utility::CSI_Underline() << "Constant seed mode" << utility::CSI_Reset() << ", seed=" << seed << " seed_offset=" << rgs.seed_offset()
 			<< " real_seed=" << real_seed << std::endl;
 	} else {
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
@@ -935,9 +989,9 @@ init_random_number_generators(){
 		bool const on_windows_platform = false;
 #endif
 		// attempt to open rng device, if failure then fallback to time
-		std::ifstream random_device( random_device_name.c_str(), std::ios::in | std::ios::binary );
-		if ( ( random_device.fail() && !on_windows_platform ) || use_time_as_seed ) {
-			if ( !use_time_as_seed ) {
+		std::ifstream random_device( rgs.random_device_name().c_str(), std::ios::in | std::ios::binary );
+		if ( ( random_device.fail() && !on_windows_platform ) || rgs.use_time_as_seed() ) {
+			if ( !rgs.use_time_as_seed() ) {
 				// notify user that opening rng device has failed
 				T("core.init") << "NOTICE: rng device failure, using time as seed" << std::endl;
 			}
@@ -950,8 +1004,8 @@ init_random_number_generators(){
 			//iwd  (Rosetta++ used a multiplier of 20, which helps some, but is nonetheless too small.)
 			seed = time(nullptr);
 			//seed = seed%10000; // PB-- USE THIS ON OUR CLUSTER TO GET UNIQUE RUNS
-			//real_seed = seed + seed_offset;
-			real_seed = 1000*seed + seed_offset;
+			//real_seed = seed + rgs.seed_offset();
+			real_seed = 1000*seed + rgs.seed_offset();
 
 #ifdef USEMPI
 			// When we use MPI and time-based seeds on a cluster, adjust the RNG seed so that it is the seed of the head node
@@ -961,17 +1015,27 @@ init_random_number_generators(){
 			/// get the processor rank
 			int mpi_rank( 0 );
 			MPI_Comm_rank( MPI_COMM_WORLD, &mpi_rank );
-			// set the real_seed of each processor to the real seed of the head node
-			MPI_Bcast( &real_seed, 1, MPI_INT, 0, MPI_COMM_WORLD );
+
+			// To avoid deadlock, this should only be called if the calling code has not disabled the
+			// mpi_bcast call -- this code will be invoked in the initial core::init(...) call, but
+			// should not be called in a context in which the RNG needs to be set mid-run (e.g. in
+			// a multi-threaded-MPI context.)
+			if ( rgs.mpi_bcast_seed_from_node0() ) {
+				// set the real_seed of each processor to the real seed of the head node
+				MPI_Bcast( &real_seed, 1, MPI_INT, 0, MPI_COMM_WORLD );
+			}
+
 			// adjust the real seed based on the rank
 			real_seed += mpi_rank;
 #endif
 
-			T("core.init") << "'Time' seed mode, seed=" << seed << " seed_offset=" << seed_offset
+			T("core.init") << "'Time' seed mode, seed=" << seed << " seed_offset=" << rgs.seed_offset()
 				<< " real_seed=" << real_seed << std::endl;
 		} else {
 			// grab seeds from device
 			uint32_t unsigned_32bit_seed;
+
+			std::string random_device_name = rgs.random_device_name();
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 			// windows random device name
@@ -1022,7 +1086,7 @@ init_random_number_generators(){
 
 			// calculate actual seeds
 			seed = static_cast< int >( unsigned_32bit_seed );
-			real_seed = seed + seed_offset;
+			real_seed = seed + rgs.seed_offset();
 
 #ifdef USEMPI
 			// Although not as critical with device-based seeding as with time-based clusters, when we use MPI and
@@ -1034,33 +1098,32 @@ init_random_number_generators(){
 			/// get the processor rank
 			int mpi_rank( 0 );
 			MPI_Comm_rank( MPI_COMM_WORLD, &mpi_rank );
-			// set the real_seed of each processor to the real seed of the head node
-			MPI_Bcast( &real_seed, 1, MPI_INT, 0, MPI_COMM_WORLD );
+
+			// To avoid deadlock, this should only be called if the calling code has not disabled the
+			// mpi_bcast call -- this code will be invoked in the initial core::init(...) call, but
+			// should not be called in a context in which the RNG needs to be set mid-run (e.g. in
+			// a multi-threaded-MPI context.)
+			if ( rgs.mpi_bcast_seed_from_node0() ) {
+				// set the real_seed of each processor to the real seed of the head node
+				MPI_Bcast( &real_seed, 1, MPI_INT, 0, MPI_COMM_WORLD );
+			}
+
 			// adjust the real seed based on the rank
 			real_seed += mpi_rank;
 #endif
 
 			// log seeds
-			T("core.init") << "'RNG device' seed mode, using '" << random_device_name << "', seed=" << seed << " seed_offset=" << seed_offset
+			T("core.init") << "'RNG device' seed mode, using '" << random_device_name << "', seed=" << seed << " seed_offset=" << rgs.seed_offset()
 				<< " real_seed=" << real_seed << std::endl;
 		}
 
 	}
 
-	/*numeric::random::RandomGenerator::initializeRandomGenerators(
-	real_seed, numeric::random::_RND_ConstantSeed_,
-	option[ run::rng ]  );
-	*/
-	init_random_generators(real_seed, option[ run::rng ]);
-
-	// seed default random generator, this will hopefully expose all code that use
-	// non-approved random methods -- assuming that code is invoked in an integration
-	// test
-	srand( time(nullptr) );
+	return real_seed;
 }
 
 /// @brief Initialize random generator systems (and send debug io to tracer with seed/mode info).
-void init_random_generators(int const start_seed, std::string const & RGtype)
+void init_random_generators( int const start_seed, std::string const & RGtype )
 {
 	TR_random << "RandomGenerator:init: Normal mode, seed=" << start_seed <<
 		" RG_type=" << RGtype << std::endl;

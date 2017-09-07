@@ -32,6 +32,7 @@
 #include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/JobQueen.fwd.hh>
 #include <protocols/jd3/deallocation/DeallocationMessage.fwd.hh>
+#include <protocols/jd3/job_distributors/JobExtractor.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -179,20 +180,20 @@ private:
 	void
 	potentially_discard_some_job_results();
 
-	void
-	query_job_queen_for_more_jobs_for_current_node();
+	//void
+	//query_job_queen_for_more_jobs_for_current_node();
 
-	void
-	mark_node_as_complete( Size digraph_node );
+	//void
+	//mark_node_as_complete( Size digraph_node );
 
-	void
-	find_jobs_for_next_node();
+	//void
+	//find_jobs_for_next_node();
 
 	void
 	queue_jobs_for_next_node_to_run();
 
-	void
-	queue_initial_digraph_nodes_and_jobs();
+	//void
+	//queue_initial_digraph_nodes_and_jobs();
 
 	bool
 	not_done();
@@ -310,15 +311,9 @@ private:
 
 	JobQueenOP job_queen_;
 	JobDigraphOP job_dag_;
-	SizeList digraph_nodes_ready_to_be_run_;
+	JobExtractorOP job_extractor_;
 
 	SizeList worker_nodes_waiting_for_jobs_;
-
-	/// @brief The digraph node for which we are currently
-	/// assigning new jobs -- it is possible for multiple
-	/// digraph nodes to have their jobs running concurrently.
-	Size current_digraph_node_;
-	LarvalJobs jobs_for_current_digraph_node_;
 
 	// The big old map that stores all the JobResults that are generated
 	// over the course of execution.  Held on Node-0 and on the archival
@@ -333,15 +328,8 @@ private:
 	// number of JobResults
 	utility::heap n_results_per_archive_;
 
-	// The set of all currently running jobs
-	JobMap running_jobs_;
-
-	// the job-digraph node that each job was spawned as part of
-	DigraphNodeForJobMap digraph_node_for_job_;
 	// the worker node that is currently running each job
 	WorkerNodeForJobMap  worker_node_for_job_;
-	// the list of jobs for each digraph node that have not yet completed
-	OutstandingJobsForDigraphNodeMap jobs_running_for_digraph_nodes_;
 
 	// indexes 1..mpi_nproc_-1 because node0 does not track itself.
 	utility::vector1< bool > nodes_spun_down_;
@@ -354,12 +342,11 @@ private:
 	utility::vector1< std::string > deallocation_messages_;
 	utility::vector1< core::Size > n_remaining_nodes_for_deallocation_message_;
 
-	numeric::DiscreteIntervalEncodingTree< core::Size > job_indices_seen_;
 	//numeric::DiscreteIntervalEncodingTree< core::Size > output_jobs_;
 	//numeric::DiscreteIntervalEncodingTree< core::Size > discarded_jobs_;
 
 	Size default_retry_limit_;
-	bool complete_;
+
 };
 
 }//job_distributors

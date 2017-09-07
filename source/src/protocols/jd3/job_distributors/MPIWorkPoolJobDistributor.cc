@@ -31,6 +31,7 @@
 #include <protocols/jd3/JobSummary.hh>
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/deallocation/DeallocationMessage.hh>
+#include <protocols/jd3/job_distributors/JobExtractor.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -51,7 +52,7 @@
 #include <cereal/types/utility.hpp>
 #include <cereal/details/helpers.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.MPIWorkPoolJobDistributor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.job_distributors..MPIWorkPoolJobDistributor" );
 
 namespace protocols {
 namespace jd3 {
@@ -63,12 +64,11 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 	n_archives_( basic::options::option[ basic::options::OptionKeys::jd3::n_archive_nodes ] ),
 	store_on_node0_( n_archives_ == 0 && ! basic::options::option[ basic::options::OptionKeys::jd3::do_not_archive_on_node0 ]() ),
 	n_results_per_archive_( n_archives_ + 1 ),
-	first_call_to_determine_job_list_( true ),
-	default_retry_limit_( 1 ),
-	complete_( false )
+	default_retry_limit_( 1 )
 {
 	mpi_rank_ = utility::mpi_rank();
 	mpi_nprocs_ = utility::mpi_nprocs();
+	job_extractor_.reset( new JobExtractor );
 
 	if ( mpi_rank_ == 0 ) {
 		nodes_spun_down_.resize( mpi_nprocs_-1, false );
@@ -83,6 +83,7 @@ void
 MPIWorkPoolJobDistributor::go( JobQueenOP queen )
 {
 	job_queen_ = queen;
+	job_extractor_->set_job_queen( queen );
 	if ( mpi_rank_ == 0 ) {
 		go_master();
 	} else if ( mpi_rank_ <= n_archives_ ) {
@@ -245,8 +246,7 @@ MPIWorkPoolJobDistributor::go_worker()
 void
 MPIWorkPoolJobDistributor::master_setup()
 {
-	job_dag_ = job_queen_->initial_job_dag();
-	queue_initial_digraph_nodes_and_jobs();
+	job_dag_ = job_extractor_->create_initial_job_dag();
 
 	// initialize the n_results_per_archive_ heap
 	bool err( false );
@@ -277,8 +277,7 @@ MPIWorkPoolJobDistributor::process_job_failed_w_message_from_node( int worker_no
 {
 	Size job_id = utility::receive_size_from_node( worker_node );
 	std::string error_message = utility::receive_string_from_node( worker_node );
-	debug_assert( running_jobs_.count( job_id ) );
-	LarvalJobOP failed_job = running_jobs_[ job_id ];
+	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
 	TR.Error << "Job " << job_id << " named " << failed_job <<
 		" has exited with the message:\n" << error_message << std::endl;
 
@@ -290,7 +289,7 @@ void
 MPIWorkPoolJobDistributor::process_job_failed_do_not_retry( int worker_node )
 {
 	Size job_id = utility::receive_size_from_node( worker_node );
-	LarvalJobOP failed_job = running_jobs_[ job_id ];
+	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
 	job_queen_->note_job_completed( failed_job, jd3_job_status_failed_do_not_retry, 1 /*dummy*/ );
 	note_job_no_longer_running( job_id );
 }
@@ -299,8 +298,9 @@ void
 MPIWorkPoolJobDistributor::process_job_failed_bad_input( int worker_node )
 {
 	Size job_id = utility::receive_size_from_node( worker_node );
-	LarvalJobOP failed_job = running_jobs_[ job_id ];
+	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
 	job_queen_->note_job_completed( failed_job, jd3_job_status_inputs_were_bad, 1 /*dummy*/ );
+
 	// TO DO: add code that purges all other jobs with the same inner job as this one
 	note_job_no_longer_running( job_id );
 }
@@ -309,8 +309,9 @@ void
 MPIWorkPoolJobDistributor::process_job_failed_retry_limit_exceeded( int worker_node )
 {
 	Size job_id = utility::receive_size_from_node( worker_node );
-	LarvalJobOP failed_job = running_jobs_[ job_id ];
+	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
 	job_queen_->note_job_completed( failed_job, jd3_job_status_failed_max_retries, 1 /*dummy*/ );
+
 	// TO DO: add code that purges all other jobs with the same inner job as this one
 	note_job_no_longer_running( job_id );
 }
@@ -545,7 +546,7 @@ MPIWorkPoolJobDistributor::send_error_message_to_node0( std::string const & erro
 void
 MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 {
-	debug_assert( ! jobs_for_current_digraph_node_.empty() );
+	debug_assert( ! job_extractor_->job_queue_empty() );
 
 	if ( ! deallocation_messages_for_node_[ worker_node ].empty() ) {
 		send_deallocation_messages_to_node( worker_node );
@@ -558,8 +559,7 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 	// NOTE: Popping jobs_for_current_digraph_node_: we might violate the
 	// invariant that this queue is never empty so long as nodes remain in the
 	// digraph_nodes_ready_to_be_run_ queue.  Address that below
-	LarvalJobOP larval_job = jobs_for_current_digraph_node_.front();
-	jobs_for_current_digraph_node_.pop_front();
+	LarvalJobOP larval_job = job_extractor_->pop_job_from_queue();
 
 	// serialize the LarvalJob and ship it to the worker node.
 	// Note that this could leave the worker hanging where it expects
@@ -587,23 +587,7 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 	}
 	utility::send_sizes_to_node( worker_node, archival_nodes_for_job );
 
-	running_jobs_[ larval_job->job_index() ] = larval_job;
-	digraph_node_for_job_[ larval_job->job_index() ] = current_digraph_node_;
 	worker_node_for_job_[ larval_job->job_index() ] = worker_node;
-	if ( jobs_running_for_digraph_nodes_.count( current_digraph_node_ ) == 0 ) {
-		jobs_running_for_digraph_nodes_[ current_digraph_node_ ] = JobSetOP( new JobSet );
-	}
-	jobs_running_for_digraph_nodes_[ current_digraph_node_ ]->insert( larval_job->job_index() );
-
-
-	// Now ensure the invariant that the jobs_for_current_digraph_node_ should
-	// never be empty so long as there are job-nodes listed in the
-	// digraph_nodes_ready_to_be_run_ queue.  Since we just popped a job off the
-	// jobs_for_current_digraph_node_ queue, we need to check if it's empty, and
-	// if so, ask the JobQueen for more jobs.
-	if ( jobs_for_current_digraph_node_.empty() ) {
-		query_job_queen_for_more_jobs_for_current_node();
-	}
 }
 
 void
@@ -625,26 +609,17 @@ MPIWorkPoolJobDistributor::note_job_no_longer_running( Size job_id )
 {
 	// ok, now remove the completed/failed job from the maps keeping track of
 	// outstanding jobs
-	running_jobs_.erase( job_id );
-	Size digraph_node = digraph_node_for_job_[ job_id ];
-	digraph_node_for_job_.erase( job_id );
 	worker_node_for_job_.erase( job_id );
+	job_extractor_->note_job_no_longer_running( job_id );
 
-	JobSetOP digraph_nodes_remaining_jobs =
-		jobs_running_for_digraph_nodes_[ digraph_node ];
-	debug_assert( digraph_nodes_remaining_jobs );
-	digraph_nodes_remaining_jobs->erase( job_id );
-
-	if ( digraph_nodes_remaining_jobs->empty() ) {
-		// previously, when we ran out of jobs in the jobs_for_current_digraph_node_
-		// list to dispense for this node, we queried the JobQueen for more jobs, and
-		// she told us there were none.
-		// Now, we have completed the last job for this node, and the JobQueen has
-		// seen the JobSummary for that last job.
-		// At this point, it is appropriate to ask the JobQueen if there should
-		// be any new nodes added to the JobDigraph, and to otherwise update
-		// the internal set of job nodes which are ready to be run.
-		mark_node_as_complete( digraph_node );
+	if ( job_extractor_->retrieve_and_reset_node_recently_completed() ) {
+		std::list< deallocation::DeallocationMessageOP > messages = job_queen_->deallocation_messages();
+		if ( ! messages.empty() ) {
+			store_deallocation_messages( messages );
+		}
+		if ( ! worker_nodes_waiting_for_jobs_.empty() && ! job_extractor_->job_queue_empty() ) {
+			assign_jobs_to_idling_nodes();
+		}
 	}
 }
 
@@ -764,254 +739,49 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 	}
 }
 
-/// @details We have run out of jobs for the digraph node indicated; ask the
-/// JobQueen for more jobs, and if she doesn't give us any, then consider
-/// the node in the digraph exhausted.
-void
-MPIWorkPoolJobDistributor::query_job_queen_for_more_jobs_for_current_node()
-{
-	debug_assert( current_digraph_node_ );
+//void
+//MPIWorkPoolJobDistributor::queue_jobs_for_next_node_to_run()
+//{
+//	debug_assert( jobs_for_current_digraph_node_.empty() );
+//	debug_assert( ! digraph_nodes_ready_to_be_run_.empty() );
+//
+//	job_extractor_->queue_jobs_for_next_node_to_run();
+//
+//	if ( ! worker_nodes_waiting_for_jobs_.empty() &&
+//			! job_extractor_->jobs_for_current_digraph_node_empty() ) {
+//		assign_jobs_to_idling_nodes();
+//		// at the end of this call, either we have run out of jobs to assign
+//		// or we have run out of idling nodes
+//	}
+//
+//}
 
-	if ( ! first_call_to_determine_job_list_ ) {
-		std::list< deallocation::DeallocationMessageOP > messages = job_queen_->deallocation_messages();
-		if ( ! messages.empty() ) {
-			store_deallocation_messages( messages );
-		}
-	}
-
-	first_call_to_determine_job_list_ = false;
-
-	int const maximum_jobs_to_hold_in_memory = 1000; // TODO: this becomes an option.
-	LarvalJobs jobs_for_current_node = job_queen_->determine_job_list(
-		current_digraph_node_, maximum_jobs_to_hold_in_memory );
-
-	// Make sure that we haven't encountered any previous jobs that have the same job index as this job.
-	// TO DO: refactor into JobDistributor base class.
-	for ( LarvalJobs::const_iterator iter = jobs_for_current_node.begin();
-			iter != jobs_for_current_node.end(); ++iter ) {
-		if ( ! *iter ) {
-			throw utility::excn::EXCN_Msg_Exception( "determine_job_list has returned a null-pointer" );
-		}
-		if ( job_indices_seen_.member( (*iter)->job_index() )) {
-			throw utility::excn::EXCN_Msg_Exception( "determine_job_list has returned two jobs with the same job index: " +
-				utility::to_string( (*iter)->job_index() ) + ". The job distributor requires that all jobs are given a unique job index." );
-		}
-		job_indices_seen_.insert( (*iter)->job_index() );
-	}
-
-	if ( jobs_for_current_node.empty() ) {
-		// mark this node as complete
-		job_dag_->get_job_node( current_digraph_node_ )->all_jobs_started();
-		// recursive call here:
-		// walk through the digraph_nodes_ready_to_be_run_ list to find a node
-		// that the JobQueen has jobs for
-		find_jobs_for_next_node();
-	} else {
-		jobs_for_current_digraph_node_.splice( jobs_for_current_digraph_node_.end(), jobs_for_current_node );
-	}
-}
-
-/// @details Once the JobQueen has informed the JobDistributor that no more
-/// jobs remain for a particular node, then we are in a position where we
-/// need to check the Job DAG to see if there were nodes waiting for this particular
-/// node to complete.  So we iterate across all of the edges leaving the completed
-/// node, and for each node downstream, we look at all of its upstream parents.
-/// If each of the upstream parents has completed (all of its jobs have completed),
-/// then the node is ready to be queued.
-void
-MPIWorkPoolJobDistributor::mark_node_as_complete( Size digraph_node )
-{
-
-	// we no longer have to look at this node in the call to not_done(), so
-	// delete it from the jobs_running_for_digraph_ map.
-	// scope the running_jobs_iter
-	{
-		// If we never got any jobs for this node, then its index was
-		// never inserted into the jobs_running_for_digraph_nodes_ map,
-		// so look to see if it's there before calling erase.
-		OutstandingJobsForDigraphNodeMap::iterator running_jobs_iter =
-			jobs_running_for_digraph_nodes_.find( digraph_node );
-		if ( running_jobs_iter != jobs_running_for_digraph_nodes_.end () ) {
-			jobs_running_for_digraph_nodes_.erase( running_jobs_iter );
-		}
-	}
-
-	JobDirectedNode * done_node = job_dag_->get_job_node( digraph_node );
-	// trigger the update of the n_precessors_w_outstanding_jobs counter
-	// for all nodes downstream of this node.
-	done_node->all_jobs_completed( true );
-
-	bool job_node_queue_was_empty = digraph_nodes_ready_to_be_run_.empty();
-
-	// look at all children of the node that just completed and ask them
-	// if all of their parent's have completed, and if so, then mark those
-	// nodes as ready to launch. The JobDirectedNode maintains the invariant
-	// that its n_predecessors_w_outstanding_jobs() counter exactly matches
-	// the number of incoming edges that connect the node to any upstream
-	// node with its "all_jobs_complete_" status set as false; this gives
-	// us an O( E ) expense of visiting nodes in the JobDigraph.
-	bool found_any_nodes_ready_to_run = false;
-	for ( auto done_child_iter = done_node->const_outgoing_edge_list_begin();
-			done_child_iter != done_node->const_outgoing_edge_list_end();
-			++done_child_iter ) {
-		JobDirectedNode const * done_child = dynamic_cast< JobDirectedNode const * >
-			((*done_child_iter)->get_head_node());
-		if ( done_child->n_predecessors_w_outstanding_jobs() == 0 ) {
-			digraph_nodes_ready_to_be_run_.push_back( done_child->get_node_index() );
-			found_any_nodes_ready_to_run = true;
-		}
-	}
-
-	// now, if we found a newly active node, and we previously had no
-	// active nodes, then perhaps we need to send jobs to the idle nodes
-	// waiting for their next job!
-	if ( job_node_queue_was_empty && found_any_nodes_ready_to_run ) {
-		queue_jobs_for_next_node_to_run();
-	}
-
-}
-
-/// @details We need to find the next set of jobs to run, and so we'll look at the
-/// nodes in the digraph_nodes_ready_to_be_run_queue_. Pop one of the nodes off
-/// and ask the job queen if there are any nodes for this job.  It is entirely
-/// possible that the job queen will return an empty list of jobs for this node,
-/// (which we'll detect by looking at the current_digraph_node_ index), in which
-/// case, we need to mark the node as complete, which could in turn repopulate
-/// the digraph_nodes_read_to_be_run_ queue.
-///
-/// The call to query_job_queen_for_more_jobs_for_current_node function itself
-/// may call find_jobs_for_next_node: infinite recursion is avoided by the following
-/// two facts: 1) if the digraph_nodes_ready_to_be_run_ queue is not empty, then
-/// we decrease its size by one by popping an element off of it, and 2) each node
-/// is only put into the digraph_nodes_ready_to_be_run_ queue a single time.
-void
-MPIWorkPoolJobDistributor::find_jobs_for_next_node()
-{
-	if ( ! digraph_nodes_ready_to_be_run_.empty() ) {
-		Size next_node_to_check = digraph_nodes_ready_to_be_run_.front();
-		current_digraph_node_ = next_node_to_check;
-		digraph_nodes_ready_to_be_run_.pop_front();
-
-		// Possibly recursive call to end up back at find_jobs_for_next_node.
-		// After this exits, we will have to check whether we actually received
-		// any jobs from the JobQueen for this node.
-		query_job_queen_for_more_jobs_for_current_node();
-
-		if ( current_digraph_node_ != next_node_to_check ) {
-			// ok -- then we know that the JobQueen did not request any
-			// new jobs for this node!  HA!
-			// go ahead and mark all of this node's jobs as having completed.
-			mark_node_as_complete( next_node_to_check );
-		}
-	} else {
-		// OK! We have exhausted the full set of digraph_nodes_waiting_to_be_run
-		// without having found any jobs to run.  Set the current_digraph_node_
-		// to 0 (which is not a legal digraph node index) so that recursive
-		// calls to this function, as they recover control of flow, will know
-		// that the nodes they queued for checking turned up no jobs.
-		current_digraph_node_ = 0;
-	}
-}
-
-
-void
-MPIWorkPoolJobDistributor::queue_jobs_for_next_node_to_run()
-{
-	debug_assert( jobs_for_current_digraph_node_.empty() );
-	debug_assert( ! digraph_nodes_ready_to_be_run_.empty() );
-
-	find_jobs_for_next_node();
-
-	if ( ! worker_nodes_waiting_for_jobs_.empty() &&
-			! jobs_for_current_digraph_node_.empty() ) {
-		assign_jobs_to_idling_nodes();
-		// at the end of this call, either we have run out of jobs to assign
-		// or we have run out of idling nodes
-	}
-
-	// post condition: if there are any nodes that say they are ready
-	// to have their jobs run, then the jobs_for_current_digraph_node_
-	// queue is not empty.  If there are any jobs that are ready to be run,
-	// then we should have queued their jobs in this function call.
-	debug_assert( digraph_nodes_ready_to_be_run_.empty() ||
-		! jobs_for_current_digraph_node_.empty() );
-}
-
-void
-MPIWorkPoolJobDistributor::queue_initial_digraph_nodes_and_jobs()
-{
-	runtime_assert( digraph_is_a_DAG( *job_dag_ ) );
-
-	// iterate across all nodes in the job_digraph, and note every
-	// node with an indegree of 0
-	for ( Size ii = 1; ii <= job_dag_->num_nodes(); ++ii ) {
-		if ( job_dag_->get_node(ii)->indegree() == 0 ) {
-			digraph_nodes_ready_to_be_run_.push_back( ii );
-		}
-	}
-	debug_assert( ! digraph_nodes_ready_to_be_run_.empty() );
-	queue_jobs_for_next_node_to_run();
-}
+//void
+//MPIWorkPoolJobDistributor::queue_initial_digraph_nodes_and_jobs()
+//{
+//	runtime_assert( digraph_is_a_DAG( *job_dag_ ) );
+//
+//	// iterate across all nodes in the job_digraph, and note every
+//	// node with an indegree of 0
+//	for ( Size ii = 1; ii <= job_dag_->num_nodes(); ++ii ) {
+//		if ( job_dag_->get_node(ii)->indegree() == 0 ) {
+//			digraph_nodes_ready_to_be_run_.push_back( ii );
+//		}
+//	}
+//	debug_assert( ! digraph_nodes_ready_to_be_run_.empty() );
+//	queue_jobs_for_next_node_to_run();
+//}
 
 bool
 MPIWorkPoolJobDistributor::not_done()
 {
-	// we aren't done if
-	// 1. There are jobs in the jobs_for_current_digraph_node_ list
-	// 2. The JobQueen adds new nodes to the JobDigraph.
-	// 3. There are jobs that have been started but have not completed
-	//    which would be found in the jobs_running_for_digraph_nodes_ map
-
-	// Precondition:
-	// There should never be a situation in which the jobs_for_current_digraph_node_
-	// list is empty, but the digraph_nodes_ready_to_be_run_ list has elements.
-	// queue_jobs_for_next_node_to_run() should enforce that.
-
-	debug_assert( digraph_nodes_ready_to_be_run_.empty() ||
-		! jobs_for_current_digraph_node_.empty() );
-
-
-	if ( ! jobs_for_current_digraph_node_.empty() ) return true;
-
-
-	// ok -- in here, the JD asks the JQ to update the JobDigraph by adding
-	// new nodes and edges to those new nodes.  If she does add new nodes, then
-	// this function should look at those nodes to see if they are ready to be run.
-	JobDigraphUpdater updater( job_dag_ );
-	job_queen_->update_job_dag( updater );
-	if ( job_dag_->num_nodes() != updater.orig_num_nodes() ) {
-		bool found_digraph_node_ready_to_run = false;
-		for ( Size ii = updater.orig_num_nodes() + 1;
-				ii <= job_dag_->num_nodes(); ++ii ) {
-			if ( job_dag_->get_job_node( ii )->n_predecessors_w_outstanding_jobs() == 0 ) {
-				digraph_nodes_ready_to_be_run_.push_back( ii );
-				found_digraph_node_ready_to_run = true;
-			}
-		}
-		if ( found_digraph_node_ready_to_run ) {
-			queue_jobs_for_next_node_to_run();
-		}
-		return true;
+	// The JobExtractor may have found a job that's ready to run, so, if there are idling nodes
+	// launch that job.
+	bool we_are_not_done = job_extractor_->not_done();
+	if ( ! worker_nodes_waiting_for_jobs_.empty() && ! job_extractor_->job_queue_empty() ) {
+		assign_jobs_to_idling_nodes();
 	}
-
-	// ok -- the JQ is perhaps not ready to add new nodes to the JobDigraph
-	// and we should guarantee her the chance to do so, as long as there are
-	// jobs outstanding.  Moreover, we must keep listening to worker nodes
-	// that have not finished, so the listener loop must continue.  But if the
-	// JQ has not added any new nodes, and we have no running jobs, then
-	// that's it -- we're done.
-	bool any_jobs_running = ! running_jobs_.empty();
-
-	if ( ! any_jobs_running ) {
-		// ok! we're completely done:
-		// there were no still-running jobs, and yet the JobQueen did not
-		// put any new nodes into the JobDigraph
-		complete_ = true;
-	}
-
-	return any_jobs_running;
-
-
+	return we_are_not_done;
 }
 
 bool
@@ -1032,7 +802,7 @@ MPIWorkPoolJobDistributor::any_nodes_not_yet_spun_down()
 bool
 MPIWorkPoolJobDistributor::jobs_ready_to_go()
 {
-	return ! jobs_for_current_digraph_node_.empty();
+	return ! job_extractor_->job_queue_empty();
 }
 
 /// @brief Are there any jobs that have not yet been executed, but perhaps are not
@@ -1050,7 +820,7 @@ MPIWorkPoolJobDistributor::jobs_ready_to_go()
 bool
 MPIWorkPoolJobDistributor::jobs_remain()
 {
-	return ! complete_;
+	return ! job_extractor_->complete();
 }
 
 void
@@ -1066,32 +836,10 @@ MPIWorkPoolJobDistributor::send_spin_down_signal_to_node( int worker_node )
 	nodes_spun_down_[ worker_node ] = true;
 }
 
-
-
-//		SizeList nodes_ready_to_be_run = find_job_nodes_w_no_unfinished_ancestors();
-//		for ( SizeList::const_iterator node_iter = nodes_ready_to_be_run.begin();
-//				node_iter != job_total_order.end(); ++node_iter ) {
-//			Size job_node = *node_iter;
-//			run_jobs_for_dag_node( job_node );
-//		}
-//
-//		// ok -- in here, the VJD asks the JQ to update the JobDigraph by adding
-//		// new nodes and edges to those new nodes.  If the JQ does not add any new nodes,
-//		// then the JD will exit this loop
-//		JobDigraphUpdater updater( job_dag_ );
-//		job_queen_->update_job_dag( updater );
-//		if ( job_dag->num_nodes() == updater.orig_num_nodes() ) {
-//			// no new nodes in the graph, therefore, we are done
-//			break;
-//		}
-//	}
-//}
-
 void
 MPIWorkPoolJobDistributor::assign_jobs_to_idling_nodes()
 {
-	while ( ! worker_nodes_waiting_for_jobs_.empty() &&
-			! jobs_for_current_digraph_node_.empty() ) {
+	while ( ! worker_nodes_waiting_for_jobs_.empty() && ! job_extractor_->job_queue_empty() ) {
 		Size worker_node = worker_nodes_waiting_for_jobs_.front();
 		worker_nodes_waiting_for_jobs_.pop_front();
 		send_next_job_to_node( worker_node );

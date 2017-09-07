@@ -20,6 +20,7 @@
 // #include <numeric/DiscreteIntervalEncodingTree.fwd.hh>
 
 // Utility headers
+#include <utility/assert.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 
@@ -94,7 +95,7 @@ public:
 	/// nodes in the tree.
 	void
 	join_left( Value new_lower ) {
-		assert( new_lower + 1 == lower_ );
+		debug_assert( new_lower + 1 == lower_ );
 		if ( ! left_ ) {
 			lower_ = new_lower;
 		} else {
@@ -119,7 +120,7 @@ public:
 	void
 	join_right( Value new_upper )
 	{
-		assert( new_upper == upper_ + 1 );
+		debug_assert( new_upper == upper_ + 1 );
 		if ( ! right_ ) {
 			upper_ = new_upper;
 		} else {

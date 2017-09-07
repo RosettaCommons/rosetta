@@ -18,7 +18,7 @@
 #include <protocols/jd3/JobDistributor.hh>
 //#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
 #include <protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh>
-// not yet #include <protocols/jd3/job_distributors/MultiThreadedJobDistributor.hh>
+#include <protocols/jd3/job_distributors/MultiThreadedJobDistributor.hh>
 #include <protocols/jd3/job_distributors/VanillaJobDistributor.hh>
 
 #include <basic/Tracer.hh>
@@ -43,18 +43,20 @@ JobDistributorFactory::create_job_distributor()
 	// if ( basic::options::option[ basic::options::OptionKeys::jd3::mpi_work_partition_job_distributor ].value() ) {
 	// 	return JobDistributorOP( new job_distributors::MPIWorkPartitionJobDistributor );
 	// } else {
+	TR << "Creating MPIWorkPoolJobDistributor" << std::endl;
 	return JobDistributorOP( new job_distributors::MPIWorkPoolJobDistributor );
 	//}
 #else
 	TR.Error << "JD3 cannot be used with MPI but without serialization; you must add \"extras=mpi,serlization\" to your ./scons.py build command" << std::endl;
 	return nullptr;
 #endif // SERIALIZATION
+#endif // USEMPI
 
 #ifdef MULTI_THREADED
-	// not yet return JobDistributorOP( new job_distributors::MultiThreadedJobDistributor );
-#endif
-
+	TR << "Creating MultiThreadedJobDistributor" << std::endl;
+	return JobDistributorOP( new job_distributors::MultiThreadedJobDistributor );
 #else
+	TR << "Creating VanillaJobDistributor" << std::endl;
 	return JobDistributorOP( new job_distributors::VanillaJobDistributor );
 #endif
 
