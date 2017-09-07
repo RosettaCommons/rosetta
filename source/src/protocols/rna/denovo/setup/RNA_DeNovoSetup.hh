@@ -49,6 +49,21 @@ public:
 	void
 	initialize_from_command_line();
 
+	/// @brief Initialize particular inputs first -- like PDB files.
+	/// @details the idea is that these are most likely to be unspecified on the
+	/// command line in a pyrosetta type of context, and this way we could re-spec
+	/// them later.
+	void
+	initialize_inputs_from_options( utility::options::OptionCollection const & opts );
+
+	void set_fasta_files( utility::vector1< std::string > const & fasta_files ) { fasta_files_ = fasta_files; }
+	void set_input_pdbs( utility::vector1< std::string > const & input_pdbs ); // This must propagate to options
+	void set_input_silent_files( utility::vector1< std::string > const & input_silent_files ); // This must propagate to options
+	void set_sequence_strings( utility::vector1< std::string > const & sequence_strings ) { sequence_strings_ = sequence_strings; }
+	void set_minimize_rna( bool const minimize_rna ) { minimize_rna_ = minimize_rna; minimize_rna_has_been_specified_ = true; }
+	void set_native_pose( core::pose::PoseOP native_pose ) { native_pose_ = native_pose; }
+	void set_align_pdb( std::string const & align_pdb );
+
 	protocols::rna::denovo::options::RNA_DeNovoProtocolOptionsCOP options() const { return  options_; }
 	protocols::rna::denovo::setup::RNA_DeNovoParametersCOP rna_params() const { return rna_params_; }
 	utility::vector1< core::pose::PoseOP > const & refine_pose_list() const { return refine_pose_list_; }
@@ -123,6 +138,12 @@ private:
 
 	utility::vector1< core::pose::PoseOP > refine_pose_list_; // does this belong here?
 
+	utility::vector1< std::string > fasta_files_;
+	utility::vector1< std::string > input_pdbs_;
+	utility::vector1< std::string > input_silent_files_;
+	utility::vector1< std::string > sequence_strings_;
+	bool minimize_rna_;
+	bool minimize_rna_has_been_specified_ = false;
 };
 
 } //setup

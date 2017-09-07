@@ -31,8 +31,8 @@
 #include <core/pose/util.hh>
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/import_pose/FullModelPoseBuilder.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
@@ -131,17 +131,23 @@ thermal_sampler()
 		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
 	}
 
-	Pose pose;
-	input->fill_pose( pose, *rsd_set );
+	PoseOP pose( new Pose );
+	input->fill_pose( *pose, *rsd_set );
 
-	utility::vector1< pose::PoseOP > other_poses;
-	if ( !option[ in::file::silent ].user() ) cleanup( pose );
+	if ( !option[ in::file::silent ].user() ) cleanup( *pose );
 
-	if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ) {
-		fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+	if ( !full_model_info_defined( *pose ) || option[ in::file::fasta ].user() ) {
+		FullModelPoseBuilder builder;
+		utility::vector1< pose::PoseOP > input_poses;
+		input_poses.push_back( pose );
+		builder.set_input_poses( input_poses );
+		builder.set_options( option );
+		builder.initialize_further_from_options();
+		builder.build(); // updates pose...
+		//fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 	}
 
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
+	protocols::viewer::add_conformation_viewer( pose->conformation(), "current", 600, 600 );
 
 	using namespace protocols::recces;
 
@@ -149,7 +155,7 @@ thermal_sampler()
 	ts->set_dumping_app( true );
 	ts->set_recces_turner_mode( option[ recces_turner_mode ] );
 
-	ts->apply( pose );
+	ts->apply( *pose );
 }
 
 

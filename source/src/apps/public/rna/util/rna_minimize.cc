@@ -37,6 +37,7 @@
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/import_pose/FullModelPoseBuilder.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
@@ -155,7 +156,8 @@ rna_fullatom_minimize_test()
 	utility::vector1< pose::PoseOP > other_poses;
 	if ( option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
 
-	pose::Pose pose,start_pose;
+	pose::PoseOP pose( new pose::Pose );
+	pose::Pose start_pose;
 
 	Size i( 0 );
 
@@ -163,12 +165,21 @@ rna_fullatom_minimize_test()
 
 	while ( input->has_another_pose() ) {
 
-		input->fill_pose( pose, *rsd_set );
+		input->fill_pose( *pose, *rsd_set );
 		i++;
 
 		if ( !option[ in::file::silent ].user() ) {
-			cleanup( pose );
-			fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+			cleanup( *pose );
+
+			utility::vector1< pose::PoseOP > input_poses;
+			input_poses.push_back( pose );
+			FullModelPoseBuilder builder;
+			builder.set_input_poses( input_poses );
+			builder.set_options( option );
+			builder.initialize_further_from_options();
+			builder.build(); // should update input_poses[1] which is pose
+
+			//fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 		}
 
 		if ( option[OptionKeys::constraints::cst_fa_file].user() ) {
@@ -176,10 +187,10 @@ rna_fullatom_minimize_test()
 			// Not sure why but the constraint depends on the start pose given.
 			// Initialize a new pose to avoid the instability.
 			core::pose::Pose test_pose;
-			core::pose::make_pose_from_sequence( test_pose, pose.annotated_sequence(), *rsd_set );
+			core::pose::make_pose_from_sequence( test_pose, pose->annotated_sequence(), *rsd_set );
 			ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints(
 				option[OptionKeys::constraints::cst_fa_file][1], ConstraintSetOP( new ConstraintSet ), test_pose );
-			pose.constraint_set( cst_set );
+			pose->constraint_set( cst_set );
 		}
 
 		// RNA_DeNovoPoseInitializer parameters;
@@ -194,7 +205,7 @@ rna_fullatom_minimize_test()
 		//  //rna_minimizer.set_atom_level_domain_map( parameters.atom_level_domain_map() );
 		// }
 
-		AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );
+		AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( *pose ) );
 		if ( option[ in::file::minimize_res ].user() ) {
 			// don't allow anything to move, and then supply minimize_res as 'extra' minimize_res.
 			atom_level_domain_map->set( false );
@@ -212,14 +223,14 @@ rna_fullatom_minimize_test()
 		rna_minimizer.set_atom_level_domain_map( atom_level_domain_map );
 
 		// graphics viewer.
-		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose->conformation(), "current", 400, 400 );
 
 		// do it
-		pose::Pose pose_init = pose;
-		rna_minimizer.apply( pose );
+		pose::Pose pose_init = *pose;
+		rna_minimizer.apply( *pose );
 
 		// tag
-		std::string tag = tag_from_pose( pose );
+		std::string tag = tag_from_pose( *pose );
 		Size pos = tag.find( ".pdb" );   // remove ".pdb"
 		if ( pos != std::string::npos ) tag.replace( pos, 4, "" );
 		tag += "_minimize";
@@ -227,18 +238,18 @@ rna_fullatom_minimize_test()
 		// Do alignment to native
 		if ( native_exists ) {
 			utility::vector1< Size > superimpose_res;
-			for ( Size k = 1; k <= pose.size(); ++k ) superimpose_res.push_back( k );
+			for ( Size k = 1; k <= pose->size(); ++k ) superimpose_res.push_back( k );
 			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-				protocols::stepwise::modeler::align::create_alignment_id_map_legacy( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
-			core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
+				protocols::stepwise::modeler::align::create_alignment_id_map_legacy( *pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+			core::scoring::superimpose_pose( *pose, native_pose, alignment_atom_id_map_native );
 			core::scoring::superimpose_pose( pose_init, native_pose, alignment_atom_id_map_native );
 		}
 
-		BinarySilentStruct s( opts, pose, tag );
+		BinarySilentStruct s( opts, *pose, tag );
 
 		if ( native_exists ) {
 			Real const rmsd_init = all_atom_rmsd( native_pose, pose_init );
-			Real const rmsd      = all_atom_rmsd( native_pose, pose );
+			Real const rmsd      = all_atom_rmsd( native_pose, *pose );
 			std::cout << "All atom rmsd: " << rmsd_init  << " to " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
 			s.add_energy( "rms_init", rmsd_init );
@@ -259,7 +270,7 @@ rna_fullatom_minimize_test()
 
 		std::string const out_file =  tag + ".pdb";
 		if ( is_dump_pdb ) {
-			dump_pdb( pose, out_file );
+			dump_pdb( *pose, out_file );
 		}
 
 	}

@@ -83,7 +83,9 @@ namespace protocols {
 namespace stepwise {
 namespace setup {
 
-
+// AMW TODO: version that takes an OptionsCollection
+// AMW: for now, create version that leaves
+// alone if it has already been initialized.
 ///////////////////////////////////////////////////////////////
 void
 initialize_native_and_align_pose( PoseOP & native_pose,
@@ -92,12 +94,19 @@ initialize_native_and_align_pose( PoseOP & native_pose,
 	PoseCOP start_pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	if ( option[ in::file::native ].user() )  {
+	if ( ( !native_pose || native_pose->size() == 0 ) && option[ in::file::native ].user() )  {
+		// If native is on the command line, stuff all that in align_pose.
 		align_pose = native_pose = core::import_pose::get_pdb_with_full_model_info( option[ in::file::native ](), rsd_set );
+	} else if ( ( !align_pose || align_pose->size() == 0 ) && native_pose ) {
+		// If native wasn't specified on the command line but it is already set up
+		// nonetheless...
+		align_pose = native_pose;
 	}
-	if ( option[ OptionKeys::stepwise::align_pdb ].user() ) {
+
+	if ( ( !align_pose || align_pose->size() == 0 )  && option[ OptionKeys::stepwise::align_pdb ].user() ) {
 		align_pose = core::import_pose::get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::align_pdb ](), rsd_set );
 	}
+
 	if ( align_pose == 0 && option[ in::file::s ].user() ) {
 		align_pose = start_pose->clone();
 	}

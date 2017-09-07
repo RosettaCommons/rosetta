@@ -15,6 +15,7 @@
 
 // Unit headers
 #include <core/import_pose/import_pose.hh>
+#include <core/import_pose/FullModelPoseBuilder.hh>
 #include <core/import_pose/import_pose_options.hh>
 
 // Project headers
@@ -829,69 +830,24 @@ void build_pose_as_is2(
 
 // Initialization from command line -- everything that doesn't require protocols
 ///////////////////////////////////////////////////////////////////////////////////////
+
+
+
 pose::PoseOP
 initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set ) {
+
 	return initialize_pose_and_other_poses_from_options( rsd_set, basic::options::option );
 }
 
 PoseOP
 initialize_pose_and_other_poses_from_options( core::chemical::ResidueTypeSetCAP rsd_set, utility::options::OptionCollection const & options ) {
-
-	using namespace basic::options::OptionKeys;
-	using namespace core::io::silent;
-	using namespace core::pose;
-	using namespace utility;
-
-	utility::vector1< std::string > const & input_pdb_files    = options[ in::file::s ]();
-	utility::vector1< std::string > const & input_silent_files = options[ in::file::silent ]();
-
-	utility::vector1< pose::PoseOP > input_poses;
-	for ( Size n = 1; n <= input_pdb_files.size(); n++ ) {
-		input_poses.push_back( get_pdb_and_cleanup( input_pdb_files[ n ], rsd_set ) );
-	}
-	for ( Size n = 1; n <= input_silent_files.size(); n++ ) {
-		PoseOP pose( new Pose );
-		SilentFileOptions opts;
-		SilentFileData silent_file_data(opts);
-		core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
-		silent_file_data.read_file( input_silent_files[n] );
-		silent_file_data.begin()->fill_pose( *pose, *rsd_set_op );
-		input_poses.push_back( pose );
-	}
-
-	std::pair< vector1< Size >, vector1< char > > const & input_resnum_and_chain = options[ in::file::input_res ].resnum_and_chain();
-	vector1< Size > const & input_res_list = input_resnum_and_chain.first;
-	if ( input_res_list.size() ) {
-		vector1< char > input_chain_list = input_resnum_and_chain.second;
-		Size input_res_count = 0;
-		for ( Size n = 1; n <= input_poses.size(); n++ ) {
-			Pose & pose = *input_poses[ n ];
-			PDBInfoOP pdb_info( new PDBInfo( pose ) );
-			vector1< Size > input_res_for_pose;
-			vector1< char > input_chain_for_pose;
-			for ( Size k = 1; k <= pose.size(); k++ ) {
-				input_res_count++;
-				runtime_assert( input_res_count <= input_res_list.size() );
-				Size const & number_in_full_model = input_res_list[ input_res_count ];
-				input_res_for_pose.push_back( number_in_full_model );
-				input_chain_for_pose.push_back( input_chain_list[ input_res_count ] );
-			}
-			pdb_info->set_numbering( input_res_for_pose );
-			pdb_info->set_chains(    input_chain_for_pose );
-			pose.pdb_info( pdb_info );
-		}
-		runtime_assert( input_res_count == input_res_list.size() );
-	}
-
-	if ( input_poses.size() == 0 ) input_poses.push_back( core::pose::PoseOP( new Pose ) ); // just a blank pose for now.
-
-	if ( options[ full_model::other_poses ].user() ) {
-		get_other_poses( input_poses, options[ full_model::other_poses ](), rsd_set );
-	}
-
-	fill_full_model_info_from_options( input_poses, options );  //FullModelInfo (minimal object needed for add/delete)
-	return input_poses[1];
+	FullModelPoseBuilder builder;
+	builder.set_options( options );
+	builder.initialize_input_poses_from_options( rsd_set );
+	builder.initialize_further_from_options();
+	return builder.build();
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
@@ -901,258 +857,6 @@ get_other_poses( utility::vector1< pose::PoseOP > & other_poses,
 
 	for ( Size n = 1; n <= other_files.size(); n++ ) {
 		other_poses.push_back( get_pdb_and_cleanup( other_files[ n ], rsd_set ) );
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////
-void
-fill_full_model_info_from_command_line( pose::Pose & pose ) {
-	fill_full_model_info_from_options( pose, basic::options::option );
-}
-
-///////////////////////////////////////////////////////////////////////////////////////
-void
-fill_full_model_info_from_options( pose::Pose & pose, utility::options::OptionCollection const & options ) {
-	utility::vector1< PoseOP > other_pose_ops; // dummy
-	fill_full_model_info_from_options( pose, other_pose_ops, options );
-}
-
-///////////////////////////////////////////////////////////////////////////////////////
-void
-fill_full_model_info_from_command_line( vector1< PoseOP > & pose_ops ) {
-	fill_full_model_info_from_options( pose_ops, basic::options::option );
-}
-
-void
-fill_full_model_info_from_options( vector1< PoseOP > & pose_ops, utility::options::OptionCollection const & options ) {
-
-	runtime_assert( pose_ops.size() > 0 );
-
-	utility::vector1< PoseOP > other_pose_ops;
-	for ( Size n = 2; n <= pose_ops.size(); n++ ) other_pose_ops.push_back( pose_ops[n] );
-
-	fill_full_model_info_from_options( *(pose_ops[1]), other_pose_ops, options );
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-// this is needed so that first pose holds pointers to other poses.
-void
-fill_full_model_info_from_command_line( pose::Pose & pose, vector1< PoseOP > & other_pose_ops ) {
-	fill_full_model_info_from_options( pose, other_pose_ops, basic::options::option );
-}
-
-void
-fill_full_model_info_from_options( pose::Pose & pose, vector1< PoseOP > & other_pose_ops, utility::options::OptionCollection const & options ) {
-
-	utility::vector1< Pose * > pose_pointers;
-	pose_pointers.push_back( & pose );
-	for ( Size n = 1; n <= other_pose_ops.size(); n++ ) pose_pointers.push_back( & (*other_pose_ops[ n ]) );
-
-	fill_full_model_info_from_options( pose_pointers, options );
-
-	core::pose::full_model_info::nonconst_full_model_info( pose ).set_other_pose_list( other_pose_ops );
-}
-
-///////////////////////////////////////////////////////////////////////////////////////
-void
-fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
-	fill_full_model_info_from_options( pose_pointers, basic::options::option );
-}
-void
-fill_full_model_info_from_options( vector1< Pose * > & pose_pointers, utility::options::OptionCollection const & options ) {
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::pose::full_model_info;
-
-	FullModelParametersOP full_model_parameters;
-	vector1< Size > cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
-	if ( option[ in::file::fasta ].user() ) {
-		std::string const fasta_file = option[ in::file::fasta ]()[1];
-		full_model_parameters = get_sequence_information( fasta_file, cutpoint_open_in_full_model );
-	} else {
-		// guess sequence, chain, resnum from pose; not specified in fasta.
-		runtime_assert( pose_pointers.size() > 0 );
-		vector1< Size > dummy;
-		full_model_parameters = FullModelParametersOP( new FullModelParameters( *pose_pointers[1], dummy ) );
-		if ( pose_pointers.size() > 1 ) {
-			utility_exit_with_message( "Currently need to specify -fasta if dealing with multiple poses. Would not be hard to fix this, by merging resnum/chain across poses! Ask rhiju." );
-		}
-	}
-
-	std::string const & desired_sequence = full_model_parameters->full_sequence();
-
-	// calebgeniesse: setup for edensity scoring, if map is provided via cmd-line
-	if ( option[ edensity::mapfile ].user() ) {
-		// update pose
-		if ( pose_pointers[1]->total_residue() > 0 ) {
-			setup_for_density_scoring( *pose_pointers[1] );
-		}
-	}
-
-	if ( options[ full_model::cutpoint_open ].user() ) {
-		cutpoint_open_in_full_model =
-			full_model_parameters->conventional_to_full( options[ full_model::cutpoint_open ].resnum_and_chain() );
-	}
-
-	vector1< Size > extra_minimize_res =
-		full_model_parameters->conventional_to_full( options[ full_model::extra_min_res ].resnum_and_chain() );
-	vector1< Size > sample_res         =
-		full_model_parameters->conventional_to_full( options[ full_model::sample_res ].resnum_and_chain() ); //stuff that can be resampled.
-	vector1< Size > working_res        =
-		full_model_parameters->conventional_to_full( options[ full_model::working_res ].resnum_and_chain() ); //all working stuff
-	vector1< Size > terminal_res       =
-		full_model_parameters->conventional_to_full( options[ full_model::rna::terminal_res ].resnum_and_chain() );
-	vector1< Size > block_stack_above_res  =
-		full_model_parameters->conventional_to_full( options[ full_model::rna::block_stack_above_res ].resnum_and_chain() );
-	vector1< Size > block_stack_below_res  =
-		full_model_parameters->conventional_to_full( options[ full_model::rna::block_stack_below_res ].resnum_and_chain() );
-	vector1< Size > preferred_root_res =
-		full_model_parameters->conventional_to_full( options[ full_model::root_res ].resnum_and_chain() );
-	vector1< Size > jump_res           =
-		full_model_parameters->conventional_to_full( options[ full_model::jump_res ].resnum_and_chain() );
-	vector1< Size > const cutpoint_closed          =
-		full_model_parameters->conventional_to_full( options[ full_model::cutpoint_closed ].resnum_and_chain() );
-	if ( options[ full_model::cyclize ].user() ) utility_exit_with_message( "Cannot handle cyclize yet in stepwise." );
-	vector1< Size > const fiveprime_res  =
-		full_model_parameters->conventional_to_full( options[ full_model::fiveprime_cap ].resnum_and_chain() );
-	vector1< Size > const bulge_res                =
-		full_model_parameters->conventional_to_full( options[ full_model::rna::bulge_res ].resnum_and_chain() );
-	vector1< Size > const extra_minimize_jump_res  =
-		full_model_parameters->conventional_to_full( options[ full_model::extra_min_jump_res ].resnum_and_chain() );
-	vector1< Size > const virtual_sugar_res        =
-		full_model_parameters->conventional_to_full( options[ full_model::virtual_sugar_res ].resnum_and_chain() );
-	vector1< Size > const alignment_anchor_res     =
-		full_model_parameters->conventional_to_full( options[ OptionKeys::stepwise::alignment_anchor_res ].resnum_and_chain() );
-	update_jump_res( jump_res, extra_minimize_jump_res );
-
-	// calebgeniesse: override preferred_root_res if mapfile provided via cmd-line (hacky)
-	if ( option[ edensity::mapfile ].user() ) {
-		preferred_root_res = full_model_parameters->conventional_to_full(
-			std::make_pair(
-			utility::tools::make_vector1< int >(1),
-			utility::tools::make_vector1< char >('z')
-			)
-		);
-	}
-
-	// Figure out res_list and input_domain_map.
-	vector1< vector1< Size > > pose_res_lists;
-	std::string const clean_desired_seq = core::pose::rna::remove_bracketed( desired_sequence );
-	Size const desired_nres = clean_desired_seq.size();
-	vector1< Size > input_domain_map( desired_nres, 0 );
-	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
-		Pose & pose = *pose_pointers[n];
-		vector1< Size > res_list = full_model_parameters->conventional_to_full( make_pair( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ) ) );
-		reorder_pose( pose, res_list );
-		pose_res_lists.push_back( res_list );
-		for ( Size k = 1; k <= pose.size(); k++ ) {
-			if ( !sample_res.has_value( res_list[ k ] ) ) input_domain_map[ res_list[ k ] ] = n;
-		}
-	}
-
-	// calebgeniesse: override input_domain_map if mapfile provided via cmd-line (hacky)
-	if ( desired_sequence[desired_sequence.size()-1] == 'X' ) {
-		input_domain_map[desired_sequence.size()] = 1;// input_domain_map.size() ? max(input_domain_map) + 1 : 1; // or just 1?
-	}
-
-	if ( option[ full_model::motif_mode ]() ) figure_out_motif_mode( extra_minimize_res, terminal_res, working_res, input_domain_map, cutpoint_open_in_full_model );
-	add_block_stack_variants( pose_pointers, pose_res_lists, block_stack_above_res, block_stack_below_res );
-
-	// calebgeniesse: hacky way of making sure virt root is not included in terminal_res/extra_minimize_res
-	if ( desired_sequence[desired_sequence.size()-1] == 'X' ) {
-		if ( terminal_res.has_value( desired_sequence.size() ) ) {
-			terminal_res.erase( std::remove(terminal_res.begin(), terminal_res.end(), desired_sequence.size()), terminal_res.end());
-		}
-		if ( extra_minimize_res.has_value( desired_sequence.size() ) ) {
-			extra_minimize_res.erase( std::remove(extra_minimize_res.begin(), extra_minimize_res.end(), desired_sequence.size()), extra_minimize_res.end());
-		}
-	}
-
-	// everything that is not fixed is sampleable (unless -sample_res explicitly specified).
-	if ( sample_res.size() == 0 )  sample_res  = figure_out_sample_res( input_domain_map, working_res );
-	if ( working_res.size() == 0 ) working_res = figure_out_working_res( input_domain_map, sample_res );
-	vector1< Size > fixed_domain_map = figure_out_fixed_domain_map( input_domain_map, extra_minimize_res ); //remove extra_minimize_res.
-
-	setup_fold_trees( pose_pointers, cutpoint_open_in_full_model /* can update */, fixed_domain_map /* can update */,
-		cutpoint_closed, extra_minimize_res, extra_minimize_jump_res,
-		sample_res, working_res, jump_res,
-		preferred_root_res, virtual_sugar_res,
-		*full_model_parameters, pose_res_lists );
-
-	vector1< Size > const dock_domain_map = figure_out_dock_domain_map( cutpoint_open_in_full_model /* can be updated */,
-		pose_res_lists, working_res, sample_res, desired_nres );
-
-	// some checks
-	check_working_res( working_res, input_domain_map, sample_res );
-	check_extra_minimize_res_are_input( extra_minimize_res,      input_domain_map );
-	check_extra_minimize_res_are_input( extra_minimize_jump_res, input_domain_map );
-
-	full_model_parameters->set_parameter( INPUT_DOMAIN,  input_domain_map );
-	full_model_parameters->set_parameter( FIXED_DOMAIN,  fixed_domain_map );
-	full_model_parameters->set_parameter( DOCK_DOMAIN,   dock_domain_map  );
-	full_model_parameters->set_parameter_as_res_list( CUTPOINT_OPEN, cutpoint_open_in_full_model );
-	full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
-	full_model_parameters->set_parameter_as_res_list( SAMPLE, sample_res );
-	full_model_parameters->set_parameter_as_res_list( WORKING, working_res );
-	full_model_parameters->set_parameter_as_res_list( CALC_RMS,
-		full_model_parameters->conventional_to_full( option[ full_model::calc_rms_res ].resnum_and_chain() ) );
-	full_model_parameters->set_parameter_as_res_list( PREFERRED_ROOT, preferred_root_res );
-	full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,
-		full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
-	full_model_parameters->set_parameter_as_res_list( RNA_ANTI_CHI,
-		full_model_parameters->conventional_to_full( option[ full_model::rna::force_anti_chi_res_list ].resnum_and_chain() ) );
-	full_model_parameters->set_parameter_as_res_list( RNA_NORTH_SUGAR,
-		full_model_parameters->conventional_to_full( option[ full_model::rna::force_north_sugar_list ].resnum_and_chain() ) );
-	full_model_parameters->set_parameter_as_res_list( RNA_SOUTH_SUGAR,
-		full_model_parameters->conventional_to_full( option[ full_model::rna::force_south_sugar_list ].resnum_and_chain() ) );
-	full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, terminal_res );
-	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_ABOVE, block_stack_above_res );
-	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_BELOW, block_stack_below_res );
-	full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
-	full_model_parameters->set_parameter_as_res_list( ALIGNMENT_ANCHOR_RES,  alignment_anchor_res );
-	full_model_parameters->set_parameter_as_res_list( RNA_SAMPLE_SUGAR,
-		full_model_parameters->conventional_to_full( option[ full_model::rna::sample_sugar_res ].resnum_and_chain() ) );
-
-	// Temporary. 'res_list_in_pairs' assumes that different pairs involve different residues, but that's
-	//  not the case, actually. Also, jump_res is not apparently used elsewhere in the code except to
-	//  as a sanity check in ResampleMover.
-	// full_model_parameters->set_parameter_as_res_list_in_pairs( full_model_info::JUMP, jump_res );
-
-	full_model_parameters->set_parameter_as_res_list_in_pairs( EXTRA_MINIMIZE_JUMP, extra_minimize_jump_res );
-	full_model_parameters->set_parameter_as_res_list_in_pairs( FIVEPRIME_CAP,  fiveprime_res );
-	full_model_parameters->read_disulfides( options[ OptionKeys::stepwise::protein::disulfide_file]() );
-	if ( options[ constraints::cst_file ].user() ) full_model_parameters->read_cst_file( options[ constraints::cst_file ]()[ 1 ] );
-
-	// move this code block somewhere else when ready.
-	if ( options[ basic::options::OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ] > 0.0 ) {
-		// placeholder -- testing if loops can be 'evaporated'.
-		vector1< Size > full_model_res_no_loops;
-		for ( Size n = 1; n <= desired_nres; ++n ) {
-			if ( clean_desired_seq[ n-1 ] != 'n' || input_domain_map[ n ] ) full_model_res_no_loops.push_back( n );
-		}
-		full_model_parameters = full_model_parameters->slice( full_model_res_no_loops );
-		for ( Size n = 1; n <= pose_res_lists.size(); n++ ) {
-			vector1< Size > const & pose_res_list = pose_res_lists[ n ];
-			vector1< Size > pose_res_list_new;
-			for ( Size i = 1; i <= pose_res_list.size(); i++ ) {
-				if ( full_model_res_no_loops.has_value( pose_res_list[ i ] ) ) {
-					pose_res_list_new.push_back( full_model_res_no_loops.index( pose_res_list[ i ] ) );
-				}
-			}
-			pose_res_lists[ n ] = pose_res_list_new;
-		}
-	}
-
-	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
-		Pose & pose = *pose_pointers[n];
-		FullModelInfoOP full_model_info_for_pose( new FullModelInfo( full_model_parameters ) );
-		full_model_info_for_pose->set_res_list( pose_res_lists[ n ] );
-		full_model_info_for_pose->update_submotif_info_list();
-		set_full_model_info( pose, full_model_info_for_pose );
-		update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file (residue numbering), constraints, disulfides
-		pose::fix_up_residue_type_variants( pose ); // for sample sugars...
 	}
 }
 
@@ -2005,32 +1709,6 @@ figure_out_motif_mode( utility::vector1< Size > & extra_min_res,
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// An 'advanced' version of terminal_res -- places 'repulsion atoms' above or below base faces to
-// prevent stacking during both sampling and minimization.
-void
-add_block_stack_variants( vector1< pose::Pose * > const & pose_pointers,
-	vector1< vector1< Size > > const & pose_res_lists,
-	vector1< Size > const & block_stack_above_res,
-	vector1< Size > const & block_stack_below_res ) {
-	using namespace core::chemical;
-	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
-		pose::Pose & pose = *( pose_pointers[ n ] ) ;
-		vector1 < Size > const & pose_res_list = pose_res_lists[ n ] ;
-		for ( Size i = 1; i <= pose_res_list.size(); i++ ) {
-			if ( block_stack_above_res.has_value( pose_res_list[ i ] ) ) {
-				runtime_assert( pose.residue_type( i ).is_RNA() );
-				add_variant_type_to_pose_residue( pose, BLOCK_STACK_ABOVE, i );
-			}
-			if ( block_stack_below_res.has_value( pose_res_list[ i ] ) ) {
-				runtime_assert( pose.residue_type( i ).is_RNA() );
-				add_variant_type_to_pose_residue( pose, BLOCK_STACK_BELOW, i );
-			}
-		}
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
 void
 update_jump_res( utility::vector1< Size > & jump_res,
 	utility::vector1< Size > const & extra_minimize_jump_res ) {
@@ -2054,6 +1732,31 @@ update_jump_res( utility::vector1< Size > & jump_res,
 		if ( matches_existing ) continue;
 		jump_res.push_back( res1 );
 		jump_res.push_back( res2 );
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// An 'advanced' version of terminal_res -- places 'repulsion atoms' above or below base faces to
+// prevent stacking during both sampling and minimization.
+void
+add_block_stack_variants( vector1< pose::Pose * > const & pose_pointers,
+	vector1< vector1< Size > > const & pose_res_lists,
+	vector1< Size > const & block_stack_above_res,
+	vector1< Size > const & block_stack_below_res ) {
+	using namespace core::chemical;
+	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
+		pose::Pose & pose = *( pose_pointers[ n ] ) ;
+		vector1 < Size > const & pose_res_list = pose_res_lists[ n ] ;
+		for ( Size i = 1; i <= pose_res_list.size(); i++ ) {
+			if ( block_stack_above_res.has_value( pose_res_list[ i ] ) ) {
+				runtime_assert( pose.residue_type( i ).is_RNA() );
+				add_variant_type_to_pose_residue( pose, BLOCK_STACK_ABOVE, i );
+			}
+			if ( block_stack_below_res.has_value( pose_res_list[ i ] ) ) {
+				runtime_assert( pose.residue_type( i ).is_RNA() );
+				add_variant_type_to_pose_residue( pose, BLOCK_STACK_BELOW, i );
+			}
+		}
 	}
 }
 

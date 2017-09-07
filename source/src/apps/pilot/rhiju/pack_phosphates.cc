@@ -86,29 +86,29 @@ fix_alpha_for_pack_phosphate( pose::Pose & pose, Size const res ){
 	using namespace core::id;
 
 	Real const current_alpha = dihedral(pose.xyz( NamedAtomID( "XO3'", res ) ),
-																			pose.xyz( NamedAtomID( "XP  ", res ) ),
-																			pose.xyz( NamedAtomID( "XO5'", res ) ),
-																			pose.xyz( NamedAtomID( " C5'", res ) ) );
+		pose.xyz( NamedAtomID( "XP  ", res ) ),
+		pose.xyz( NamedAtomID( "XO5'", res ) ),
+		pose.xyz( NamedAtomID( " C5'", res ) ) );
 
 	Real const current_OP2_torsion = dihedral(pose.xyz( NamedAtomID( "XOP2", res ) ),
-																						pose.xyz( NamedAtomID( "XP  ", res ) ),
-																						pose.xyz( NamedAtomID( "XO5'", res ) ),
-																						pose.xyz( NamedAtomID( " C5'", res ) ) );
+		pose.xyz( NamedAtomID( "XP  ", res ) ),
+		pose.xyz( NamedAtomID( "XO5'", res ) ),
+		pose.xyz( NamedAtomID( " C5'", res ) ) );
 
 	Real const desired_OP2_torsion = dihedral(pose.xyz( NamedAtomID( " OP2", res ) ),
-																						pose.xyz( NamedAtomID( " P  ", res ) ),
-																						pose.xyz( NamedAtomID( " O5'", res ) ),
-																						pose.xyz( NamedAtomID( " C5'", res ) ) );
+		pose.xyz( NamedAtomID( " P  ", res ) ),
+		pose.xyz( NamedAtomID( " O5'", res ) ),
+		pose.xyz( NamedAtomID( " C5'", res ) ) );
 
 	Real const new_alpha = current_alpha + (desired_OP2_torsion - current_OP2_torsion);
 	Size const chi_number_pseudoalpha = pose.residue_type( res ).RNA_info().chi_number_pseudoalpha();
 	pose.set_chi( chi_number_pseudoalpha /*pseudo-alpha for packable phosphate*/, res,
-								principal_angle_degrees( new_alpha ) );
+		principal_angle_degrees( new_alpha ) );
 
 	Real const new_alpha_check = dihedral(pose.xyz( NamedAtomID( "XO3'", res ) ),
-																				pose.xyz( NamedAtomID( "XP  ", res ) ),
-																				pose.xyz( NamedAtomID( "XO5'", res ) ),
-																				pose.xyz( NamedAtomID( " C5'", res ) ) );
+		pose.xyz( NamedAtomID( "XP  ", res ) ),
+		pose.xyz( NamedAtomID( "XO5'", res ) ),
+		pose.xyz( NamedAtomID( " C5'", res ) ) );
 
 	TR << current_alpha << " " << current_OP2_torsion << " " << desired_OP2_torsion << " " << new_alpha << " " << new_alpha_check <<  std::endl;
 
@@ -119,15 +119,15 @@ fix_alpha_for_pack_phosphate( pose::Pose & pose, Size const res ){
 void
 pack_phosphates()
 {
-  using namespace core::pose;
-  using namespace core::scoring;
-  using namespace core::chemical;
-  using namespace core::chemical::rna;
-  using namespace core::pose::full_model_info;
-  using namespace protocols::stepwise;
-  using namespace protocols::stepwise::monte_carlo;
-  using namespace protocols::stepwise::monte_carlo::rna;
-  using namespace utility::file;
+	using namespace core::pose;
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace core::chemical::rna;
+	using namespace core::pose::full_model_info;
+	using namespace protocols::stepwise;
+	using namespace protocols::stepwise::monte_carlo;
+	using namespace protocols::stepwise::monte_carlo::rna;
+	using namespace utility::file;
 
 	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
@@ -138,12 +138,15 @@ pack_phosphates()
 
 	// Following could go to a FullModelSetup class.
 	// read starting pose(s) from disk
+	core::import_pose::FullModelPoseBuilder builder;
 	utility::vector1< std::string > const & input_files = option[ in::file::s ]();
 	utility::vector1< pose::PoseOP > input_poses;
 	if ( input_files.size() == 0 ) input_poses.push_back( new Pose ); // just a blank pose for now.
-	for ( Size n = 1; n <= input_files.size(); n++ ) 	input_poses.push_back( get_pdb_and_cleanup( input_files[ n ], rsd_set ) );
+	for ( Size n = 1; n <= input_files.size(); n++ )  input_poses.push_back( get_pdb_and_cleanup( input_files[ n ], rsd_set ) );
 	if ( option[ full_model::other_poses ].user() ) get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
-	fill_full_model_info_from_command_line( input_poses ); 	//FullModelInfo (minimal object needed for add/delete)
+	builder.set_input_poses( input_poses );
+	builder.initialize_further_from_options();
+	//fill_full_model_info_from_command_line( input_poses );  //FullModelInfo (minimal object needed for add/delete)
 
 
 	// scorefunction
@@ -152,7 +155,7 @@ pack_phosphates()
 	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
 
 	// actual pose to be sampled...
-	pose::Pose & pose = *input_poses[ 1 ];
+	pose::Pose & pose = builder.build();//*input_poses[ 1 ];
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500 );
 
 
@@ -169,19 +172,19 @@ pack_phosphates()
 	bool pack_all_ = option[ pack_all_phosphates ]();
 	utility::vector1< Size > five_prime_phosphate_pack_res_list, three_prime_phosphate_pack_res_list;
 
-	if ( pack_all_ ){
+	if ( pack_all_ ) {
 		Size const nres_full_model = const_full_model_info( pose ).size();
-		for ( Size n = 1; n <= pose.size(); n++ ){
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			Size const seqpos_in_full_model = res_list[ n ];
 			if ( ( n == 1 || pose.fold_tree().is_cutpoint( n - 1 ) ) &&
-					 seqpos_in_full_model > 1 &&
-					 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) ){
+					seqpos_in_full_model > 1 &&
+					!cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) ) {
 				five_prime_phosphate_pack_res_list.push_back( res_list[ n ] );
 			}
 			if ( ( n == pose.size() || pose.fold_tree().is_cutpoint( n ) ) &&
-						 seqpos_in_full_model < nres_full_model &&
-						 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model ) ){
-						 three_prime_phosphate_pack_res_list.push_back( res_list[ n ] );
+					seqpos_in_full_model < nres_full_model &&
+					!cutpoint_open_in_full_model.has_value( seqpos_in_full_model ) ) {
+				three_prime_phosphate_pack_res_list.push_back( res_list[ n ] );
 			}
 		}
 	} else {
@@ -197,7 +200,7 @@ pack_phosphates()
 	TR << "FIVE_PRIME_PHOSPHATE_PACK_RES_LIST: " << five_prime_phosphate_pack_res_list << std::endl;
 	TR << "THREE_PRIME_PHOSPHATE_PACK_RES_LIST: " << three_prime_phosphate_pack_res_list << std::endl;
 
-	for ( Size n = 1; n <= five_prime_phosphate_pack_res_list.size(); n++ ){
+	for ( Size n = 1; n <= five_prime_phosphate_pack_res_list.size(); n++ ) {
 		Size const sample_res = five_prime_phosphate_pack_res_list[ n ];
 		Size const working_sample_res = get_res_list_from_full_model_info( pose ).index( sample_res );
 
@@ -216,7 +219,7 @@ pack_phosphates()
 
 		fix_alpha_for_pack_phosphate( pose, working_sample_res );
 
-		if ( native_pose ){
+		if ( native_pose ) {
 			TR << "Copying in conformation from native" << std::endl;
 			TR << "alpha?" << native_pose->residue(sample_res).mainchain_torsion(1) << std::endl;
 			pose.set_chi( 4 + 1, working_sample_res, native_pose->residue(sample_res).mainchain_torsion(3) );
@@ -225,13 +228,13 @@ pack_phosphates()
 		}
 	}
 
-	for ( Size n = 1; n <= three_prime_phosphate_pack_res_list.size(); n++ ){
+	for ( Size n = 1; n <= three_prime_phosphate_pack_res_list.size(); n++ ) {
 		Size const sample_res = three_prime_phosphate_pack_res_list[ n ];
 		Size const working_sample_res = get_res_list_from_full_model_info( pose ).index( sample_res );
 		add_variant_type_to_pose_residue( pose, "THREE_PRIME_PACKABLE_PHOSPHATE", working_sample_res);
 		RNA_Info const & rna_type =  pose.residue_type( working_sample_res ).RNA_info();
 
-		if ( native_pose ){
+		if ( native_pose ) {
 			TR << "Copying in conformation from native" << std::endl;
 			pose.set_chi( rna_type.chi_number_pseudoepsilon(), working_sample_res, native_pose->residue(sample_res).mainchain_torsion(5) );
 			pose.set_chi( rna_type.chi_number_pseudozeta(), working_sample_res, native_pose->residue(sample_res).mainchain_torsion(6) );
@@ -248,7 +251,7 @@ pack_phosphates()
 	scorefxn->show( pose );
 	protocols::rna::denovo::print_hbonds( pose );
 
-	if ( false ){
+	if ( false ) {
 		// do minimizing
 		protocols::rna::denovo::RNA_Minimizer rna_minimizer;
 		rna_minimizer.deriv_check( option[ OptionKeys::rna::deriv_check ]() );
@@ -259,10 +262,10 @@ pack_phosphates()
 	}
 
 	pack::task::PackerTaskOP pack_task = pack::task::TaskFactory::create_packer_task( pose );
-	for ( Size i = 1; i <= pose.size(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		pack_task->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
-		//		pack_task->nonconst_residue_task( i ).or_ex4( true ); //extra O2prime modeler
-		//		pack_task->nonconst_residue_task( i ).or_include_current( true );
+		//  pack_task->nonconst_residue_task( i ).or_ex4( true ); //extra O2prime modeler
+		//  pack_task->nonconst_residue_task( i ).or_include_current( true );
 		if ( pose.residue_type( i ).has_variant_type( "FIVE_PRIME_PACKABLE_PHOSPHATE" ) ) {
 			pack_task->nonconst_residue_task( i ).nonconst_rna_task().set_sample_five_prime_phosphate( true );
 		}
@@ -273,7 +276,7 @@ pack_phosphates()
 		pack_task->nonconst_residue_task( i ).nonconst_rna_task().set_allow_phosphate_virtualization( true );
 	}
 
-	pack::rotamer_trials( pose,	*scorefxn,	pack_task );
+	pack::rotamer_trials( pose, *scorefxn, pack_task );
 
 	TR << "AFTER PACK " << std::endl;
 	scorefxn->show( pose );
@@ -286,10 +289,10 @@ pack_phosphates()
 void
 get_icoor(){
 	using namespace core::pose;
-  using namespace core::scoring;
-  using namespace core::chemical;
-  using namespace core::kinematics;
-  using namespace protocols::rna::denovo;
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace core::kinematics;
+	using namespace protocols::rna::denovo;
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	Pose pose;
@@ -310,7 +313,7 @@ void*
 my_main( void* )
 {
 	clock_t const my_main_time_start( clock() );
-	if ( option[ icoor_test ]() ){
+	if ( option[ icoor_test ]() ) {
 		get_icoor();
 	} else {
 		pack_phosphates();
@@ -318,7 +321,7 @@ my_main( void* )
 
 	protocols::viewer::clear_conformation_viewers();
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
-  exit( 0 );
+	exit( 0 );
 }
 
 

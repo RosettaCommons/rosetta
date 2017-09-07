@@ -67,6 +67,7 @@ rna_denovo_test()
 	using namespace protocols::rna::denovo;
 
 	RNA_DeNovoSetupOP rna_de_novo_setup( new RNA_DeNovoSetup );
+	rna_de_novo_setup->initialize_inputs_from_options( basic::options::option );
 	rna_de_novo_setup->initialize_from_command_line();
 	Pose & pose = *( rna_de_novo_setup->pose() );
 

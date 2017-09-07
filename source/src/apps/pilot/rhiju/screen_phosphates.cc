@@ -16,6 +16,7 @@
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/import_pose/FullModelPoseBuilder.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/Energies.hh>
@@ -117,7 +118,13 @@ screen_phosphates()
 	if ( input_files.size() == 0 ) input_poses.push_back( core::pose::PoseOP( new Pose ) ); // just a blank pose for now.
 	for ( Size n = 1; n <= input_files.size(); n++ )  input_poses.push_back( get_pdb_and_cleanup( input_files[ n ], rsd_set ) );
 	if ( option[ full_model::other_poses ].user() ) get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
-	fill_full_model_info_from_command_line( input_poses );  //FullModelInfo (minimal object needed for add/delete)
+
+	FullModelPoseBuilder builder;
+	builder.set_input_poses( input_poses );
+	builder.set_options( option );
+	builder.initialize_further_from_options();
+	builder.build(); // should update input_poses
+	//fill_full_model_info_from_command_line( input_poses );  //FullModelInfo (minimal object needed for add/delete)
 
 	// scorefunction
 	core::scoring::ScoreFunctionOP scorefxn;

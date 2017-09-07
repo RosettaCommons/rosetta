@@ -25,12 +25,14 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/rna/util.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/import_pose/FullModelPoseBuilder.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/rna/movers/RNA_HelixAssembler.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/rna/denovo/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
 #include <protocols/rna/util.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
 
 #include <utility/io/ozstream.hh>
 
@@ -111,12 +113,28 @@ pose_setup_turner(
 core::pose::PoseOP
 pose_setup_from_file( options::RECCES_Options const & options )
 {
+	using namespace core::chemical;
 	using namespace core::chemical::rna;
 
-	PoseOP pose = core::import_pose::get_pdb_and_cleanup( options.infile() );
+
+	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	//PoseOP pose = core::import_pose::get_pdb_and_cleanup( options.infile() );
 	// // needs to accept command-line input -- need to guess sequence info if fasta not specified!
 	// // also -- force sample_res all on if not specified from command-line. [different from stepwise default behavior]
-	core::import_pose::fill_full_model_info_from_command_line( *pose );
+	// a GREAT builder use case. We need to be able to intervene with the builder and override its idea of sample_res.
+	core::import_pose::FullModelPoseBuilder builder;
+
+	utility::vector1< pose::PoseOP > input_poses;
+	input_poses.push_back( core::import_pose::get_pdb_and_cleanup( options.infile() ) );
+
+	//std::pair< vector1< Size >, vector1< char > > const & input_resnum_and_chain = options[ in::file::input_res ].resnum_and_chain();
+
+	builder.set_input_poses( input_poses );
+	builder.set_options( basic::options::option );
+	builder.initialize_further_from_options();
+
+	PoseOP pose = builder.build();
+
 	core::pose::fix_up_residue_type_variants( *pose ); //virtualizes phosphates, etc.
 
 	TR << "Annotated sequence of pose from " << options.infile() << ": " << pose->annotated_sequence() << std::endl;

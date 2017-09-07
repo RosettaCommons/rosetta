@@ -135,7 +135,8 @@ dump_stems( RNA_SecStruct const & working_secstruct, std::string const & working
 
 
 //Constructor
-RNA_DeNovoSetup::RNA_DeNovoSetup()
+RNA_DeNovoSetup::RNA_DeNovoSetup():
+	options_( options::RNA_DeNovoProtocolOptionsOP( new options::RNA_DeNovoProtocolOptions ) )
 {}
 
 //Destructor
@@ -150,7 +151,6 @@ RNA_DeNovoSetup::initialize_from_command_line()
 	using namespace core::chemical;
 	using namespace protocols::rna::denovo::options;
 
-	options_ = RNA_DeNovoProtocolOptionsOP( new RNA_DeNovoProtocolOptions);
 	options_->initialize_from_command_line();
 
 	rsd_set_ = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -176,7 +176,6 @@ RNA_DeNovoSetup::initialize_from_options( utility::options::OptionCollection con
 	using namespace core::chemical;
 	using namespace protocols::rna::denovo::options;
 
-	options_ = RNA_DeNovoProtocolOptionsOP( new RNA_DeNovoProtocolOptions);
 	options_->initialize_from_options( opts );
 
 	rsd_set_ = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -188,6 +187,42 @@ RNA_DeNovoSetup::initialize_from_options( utility::options::OptionCollection con
 	// refine_pose is a seldom-used functionality at the moment -- not well tested.
 	setup_refine_pose_list( opts );
 }
+
+void RNA_DeNovoSetup::initialize_inputs_from_options( utility::options::OptionCollection const & opts ) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	fasta_files_ = opts[ in::file::fasta ]();
+	input_pdbs_ = opts[ in::file::s ]();
+	input_silent_files_ = opts[ in::file::silent ]();
+	sequence_strings_ = opts[ OptionKeys::rna::denovo::sequence ]();
+	if ( opts[ OptionKeys::rna::denovo::minimize_rna ].user() ) {
+		minimize_rna_ = opts[ OptionKeys::rna::denovo::minimize_rna ]();
+		minimize_rna_has_been_specified_ = true;
+	}
+
+}
+
+void RNA_DeNovoSetup::set_input_pdbs( utility::vector1< std::string > const & input_pdbs ) {
+	input_pdbs_ = input_pdbs;
+	runtime_assert( options_ );
+	// This must propagate to options.
+	options_->set_chunk_pdb_files( input_pdbs_ );
+}
+
+void RNA_DeNovoSetup::set_input_silent_files( utility::vector1< std::string > const & input_silent_files ) {
+	input_silent_files_ = input_silent_files;
+	runtime_assert( options_ );
+	// This must propagate to options.
+	options_->set_chunk_silent_files( input_silent_files_ );
+}
+
+void RNA_DeNovoSetup::set_align_pdb( std::string const & align_pdb ) {
+	runtime_assert( options_ );
+	// This must propagate to options.
+	options_->set_align_pdb( align_pdb );
+}
+
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
@@ -210,7 +245,6 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 void
 RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection const & opts )
 {
-
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::rna::denovo::options;
@@ -226,8 +260,6 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	////////////////////
 	// Step 1
 	////////////////////
-	vector1< std::string > sequence_strings  = opts[ OptionKeys::rna::denovo::sequence ]();
-	vector1< std::string > fasta_files = opts[ in::file::fasta ]();
 	int const offset = opts[ OptionKeys::rna::denovo::offset ]();
 
 	// Sequence setup:
@@ -235,12 +267,12 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	// and what chains and residue numbers to use.
 	FullModelParametersOP full_model_parameters;
 	vector1< Size > cutpoint_open_in_full_model;
-	if ( fasta_files.size() > 0 ) {
+	if ( !fasta_files_.empty() ) {
 		// use fasta readin developed for stepwise application -- also reads in
 		// numbers & chains based on fasta header lines.
-		if ( sequence_strings.size() > 0 ) utility_exit_with_message( "Cannot specify both -sequence and -fasta" );
-		if ( fasta_files.size() != 1 ) utility_exit_with_message( "Please specify exactly one fasta file." );
-		full_model_parameters = core::import_pose::get_sequence_information( fasta_files[ 1 ], cutpoint_open_in_full_model );
+		if ( sequence_strings_.size() > 0 ) utility_exit_with_message( "Cannot specify both -sequence and -fasta" );
+		if ( fasta_files_.size() != 1 ) utility_exit_with_message( "Please specify exactly one fasta file." );
+		full_model_parameters = core::import_pose::get_sequence_information( fasta_files_[ 1 ], cutpoint_open_in_full_model );
 		if ( offset != 0 ) {
 			vector1< int > new_numbering = full_model_parameters->conventional_numbering();
 			for ( Size n = 1; n <= new_numbering.size(); n++ ) { new_numbering[ n ] += offset; }
@@ -249,9 +281,9 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 
 	} else {
 		// basic read-in of sequence from command line
-		if ( sequence_strings.size() == 0 ) utility_exit_with_message( "Must specify -sequence or -fasta" );
-		std::string sequence( sequence_strings[1] );
-		for ( Size n = 2; n <= sequence_strings.size(); n++ ) sequence += std::string( " " + sequence_strings[ n ] );
+		if ( sequence_strings_.size() == 0 ) utility_exit_with_message( "Must specify -sequence or -fasta" );
+		std::string sequence( sequence_strings_[1] );
+		for ( Size n = 2; n <= sequence_strings_.size(); n++ ) sequence += std::string( " " + sequence_strings_[ n ] );
 		cutpoint_open_in_full_model = core::sequence::strip_spacers( sequence );
 		std::map< Size, std::string > non_standard_residue_map = core::sequence::parse_out_non_standard_residues( sequence );
 		vector1< int > res_numbers_in_pose;
@@ -331,8 +363,6 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	// Step 4
 	////////////////////
 	/////////////
-	vector1< std::string > input_pdbs = opts[ in::file::s ]();
-	vector1< std::string > input_silent_files = opts[ in::file::silent ]();
 	std::string const working_native_pdb = opts[ OptionKeys::rna::denovo::working_native ]();
 	vector1< std::string > obligate_pair_explicit = opts[ OptionKeys::rna::denovo::obligate_pair_explicit ]();
 	vector1< std::string > chain_connections = opts[ OptionKeys::rna::denovo::chain_connection ]();
@@ -349,7 +379,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	vector1< vector1< int > > resnum_list;
 	vector1< Size > input_res;
 	Size input_res_user_defined_count( 0 );
-	for ( std::string const & pdb : input_pdbs ) {
+	for ( std::string const & pdb : input_pdbs_ ) {
 		std::string pdb_seq;
 		vector1< int > resnum;
 		vector1< char >  chain;
@@ -408,7 +438,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		input_silent_res_user_defined_count = input_res_user_defined_count;
 	}
 
-	for ( std::string const & silent : input_silent_files ) {
+	for ( std::string const & silent : input_silent_files_ ) {
 		std::string seq = get_silent_seq( silent );
 		Size len_seq = seq.size();
 		vector1< Size > resnum_in_full_model;
@@ -981,7 +1011,12 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	// runtime_assert( !opts[ OptionKeys::rna::denovo::refine_native ]() );
 	//}
 
-	if ( !opts[ OptionKeys::rna::denovo::minimize_rna ].user() ) utility_exit_with_message( "Please specify either '-minimize_rna true' or '-minimize_rna false'." );
+	if ( !opts[ OptionKeys::rna::denovo::minimize_rna ].user() && !minimize_rna_has_been_specified_ ) utility_exit_with_message( "Please specify either '-minimize_rna true' or '-minimize_rna false'." );
+
+	if ( minimize_rna_has_been_specified_ ) {
+		options_->set_minimize_structure( minimize_rna_ );
+	}
+
 	// runtime_assert( opts[ OptionKeys::score::include_neighbor_base_stacks ].user() ); // user should specify -include_neighbor_base_stacks true or -include_neighbor_base_stacks false.
 
 	// some stuff to update in *options*

@@ -34,6 +34,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/import_pose/FullModelPoseBuilder.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -101,15 +102,23 @@ resample_full_model_test()
 	PDBPoseInputStream input( option[ in::file::s ]() );
 
 	// setup poses
-	Pose start_pose, seq_rebuild_pose;
+	PoseOP start_pose( new Pose );
+	Pose seq_rebuild_pose;
 
 
 	// iterate over input stream
-	input.fill_pose( start_pose, *rsd_set );
-	fill_full_model_info_from_command_line( start_pose/*, other_ops */);
-	(*scorefxn)(start_pose);
+	input.fill_pose( *start_pose, *rsd_set );
+	utility::vector1< PoseOP > input_poses;
+	input_poses.push_back( start_pose );
+	FullModelPoseBuilder builder;
+	builder.set_options( option );
+	builder.set_input_poses( input_poses );
+	builder.initialize_further_from_options();
+	builder.build(); // this will update input_poses[1]
+	//fill_full_model_info_from_command_line( start_pose/*, other_ops */);
+	( *scorefxn )( *start_pose );
 
-	seq_rebuild_pose = start_pose;
+	seq_rebuild_pose = *start_pose;
 	protocols::viewer::add_conformation_viewer(seq_rebuild_pose.conformation(), "current", 500, 500);
 
 
@@ -123,7 +132,7 @@ resample_full_model_test()
 
 	// run StepWiseMasterMover::resample_full_model
 	mover::StepWiseMasterMover master_mover( scorefxn, options );
-	master_mover.resample_full_model( start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/ );
+	master_mover.resample_full_model( *start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/ );
 
 	// score seq_rebuild pose
 	(*scorefxn)(seq_rebuild_pose);
@@ -131,7 +140,7 @@ resample_full_model_test()
 	// show scores of start_pose and full_model_pose
 	//if ( option[ show_scores ]() ) {
 	std::cout << "\n Score before seq_rebuild:" << std::endl;
-	scorefxn->show( std::cout, start_pose );
+	scorefxn->show( std::cout, *start_pose );
 	std::cout << "\n Score after seq_rebuild:" << std::endl;
 	scorefxn->show( std::cout, seq_rebuild_pose );
 	//}

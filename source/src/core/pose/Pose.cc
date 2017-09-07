@@ -28,6 +28,8 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/metrics/PoseMetricContainer.hh>
 
 // Project headers
@@ -2099,6 +2101,12 @@ std::ostream & operator << ( std::ostream & os, Pose const & pose)
 	if ( pose.conformation().is_membrane() ) {
 		os << pose.conformation().membrane_info() << std::endl;
 	}
+
+	// AMW TODO: full model info specific output?
+	if ( full_model_info::full_model_info_defined( pose ) ) {
+		os << *(full_model_info::const_full_model_info( pose ).full_model_parameters()) << std::endl;
+	}
+
 	return os;
 }
 

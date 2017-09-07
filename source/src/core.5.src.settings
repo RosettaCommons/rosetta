@@ -60,6 +60,7 @@ sources = {
 		"VallFragmentGen",
 	],
 	"core/import_pose": [
+		"FullModelPoseBuilder",
 		"import_pose",
 		"import_pose_options",
 		"PDBSilentStruct",
