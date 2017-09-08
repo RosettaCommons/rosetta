@@ -46,6 +46,7 @@ StoredRotamerLibraryCreator::create( core::chemical::ResidueType const & restype
 
 	SingleLigandRotamerLibraryOP rotamer_lib( new SingleLigandRotamerLibrary() );
 	rotamer_lib->init_from_vector( stored_libspec->coordinates() );
+	rotamer_lib->set_reference_energy( stored_libspec->get_reference_energy() );
 	return rotamer_lib;
 }
 
@@ -57,4 +58,3 @@ StoredRotamerLibraryCreator::keyname() const {
 } //namespace rotamers
 } //namespace pack
 } //namespace core
-

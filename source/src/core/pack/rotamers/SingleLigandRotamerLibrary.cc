@@ -102,52 +102,8 @@ SingleLigandRotamerLibrary::init_from_file(
 	if ( !data.good() ) {
 		utility_exit_with_message( "Unable to open file: " + filename + '\n' );
 	}
-	atom_positions_.clear();
 
-	NamePosMap name_map;
-	bool found_ref_energy = false;
-	std::string line;
-	// This code is not currently as smart as the general-purpose PDB reader.
-	// Any atoms in the residue that don't have coordinate entries will be
-	// left with their default values, leading to really weird bugs.
-	// We can do a limited building from ideal coordinates, for hydrogens and virtual atoms.
-	while ( std::getline( (std::istream&)data, line) ) {
-		if ( utility::startswith(line, "ATOM  ") || utility::startswith(line, "HETATM") ) {
-			if ( line.length() < 54 ) {
-				TR << "ATOM/HETATM line too short in PDB-format rotamer file!" << std::endl;
-				continue; // to next line
-			}
-			std::string atom_name = line.substr(12,4);
-			core::Real x, y, z;
-			x = std::atof( line.substr(30,8).c_str() );
-			y = std::atof( line.substr(38,8).c_str() );
-			z = std::atof( line.substr(46,8).c_str() );
-			//std::cout << x << " " << y << " " << z << "\n";
-
-			if ( name_map.count( atom_name ) != 0 ) {
-				//TODO: cache so we only print this once.
-				TR.Warning << "ATOM name " << atom_name << " found more than once in rotamer - using later position. " << std::endl;
-			}
-			name_map[ atom_name ] = core::Vector( x, y, z );
-
-		} else if ( utility::startswith(line, "REF_EN") ) {
-			if ( found_ref_energy ) {
-				TR.Error << "Reference energy specified more than once in PDB-format rotamer file!" << std::endl;
-			}
-			found_ref_energy = true;
-			ref_energy_ = std::atof( line.substr(6).c_str() );
-			TR << "Reference energy for " << restype.name() << " is " << ref_energy_ << std::endl;
-		} else { // e.g. TER lines
-			if ( name_map.size() ) {
-				atom_positions_.push_back( name_map );
-			}
-			name_map.clear();
-		}
-	}
-	// Catch the last entry if we don't end with a TER
-	if ( name_map.size() ) {
-		atom_positions_.push_back( name_map );
-	}
+	rotamer_information_from_PDB_stream(data, restype, atom_positions_, ref_energy_);
 
 	TR << "Read in " << atom_positions_.size() << " rotamers from " << filename << " !" << std::endl;
 	data.close();
@@ -616,6 +572,67 @@ SingleLigandRotamerLibrary::write_to_file( utility::io::ozstream & /*out*/ ) con
 //}
 
 
+/// @brief read a PDB-formatted string of conformers into the data types held by SingleLigandRotamerLibrary
+/// atom_positions and e_ref are return values
+/// @details This function was refactored out of init_from_file of this class
+/// its purpose is to allow PDB-formatted conformers to come from stream objects rather than necessarily files
+/// it is a separate utility function instead of a member function so that the data can be held in a StoredRotamerLibrarySpecification until needed
+void rotamer_information_from_PDB_stream(
+	std::istream & conformers_stream,
+	chemical::ResidueType const & restype,
+	utility::vector1< NamePosMap > & atom_positions,
+	core::Real & e_ref) {
+
+	//not completely clear to me that we should clear this vector - certainly init_from_vector just appends instead.  Open to either idea.
+	atom_positions.clear();
+
+	NamePosMap name_map;
+	bool found_ref_energy = false;
+	std::string line;
+	// This code is not currently as smart as the general-purpose PDB reader.
+	// Any atoms in the residue that don't have coordinate entries will be
+	// left with their default values, leading to really weird bugs.
+	// We can do a limited building from ideal coordinates, for hydrogens and virtual atoms.
+	while ( std::getline( conformers_stream, line) ) {
+		if ( utility::startswith(line, "ATOM  ") || utility::startswith(line, "HETATM") ) {
+			if ( line.length() < 54 ) {
+				TR << "ATOM/HETATM line too short in PDB-format rotamer file!" << std::endl;
+				continue; // to next line
+			}
+			std::string atom_name = line.substr(12,4);
+			core::Real x, y, z;
+			x = std::atof( line.substr(30,8).c_str() );
+			y = std::atof( line.substr(38,8).c_str() );
+			z = std::atof( line.substr(46,8).c_str() );
+			//std::cout << x << " " << y << " " << z << "\n";
+
+			if ( name_map.count( atom_name ) != 0 ) {
+				//TODO: cache so we only print this once.
+				TR.Warning << "ATOM name " << atom_name << " found more than once in rotamer - using later position. " << std::endl;
+			}
+			name_map[ atom_name ] = core::Vector( x, y, z );
+
+		} else if ( utility::startswith(line, "REF_EN") ) {
+			if ( found_ref_energy ) {
+				TR.Error << "Reference energy specified more than once in PDB-format rotamer file!" << std::endl;
+			}
+			found_ref_energy = true;
+			e_ref = std::atof( line.substr(6).c_str() );
+			TR << "Reference energy for " << restype.name() << " is " << e_ref << std::endl;
+		} else { // e.g. TER lines
+			if ( name_map.size() ) {
+				atom_positions.push_back( name_map );
+			}
+			name_map.clear();
+		}
+	}
+	// Catch the last entry if we don't end with a TER
+	if ( name_map.size() ) {
+		atom_positions.push_back( name_map );
+	}
+
+}
+
 } // namespace rotamers
-} // namespace scoring
+} // namespace pack
 } // namespace core

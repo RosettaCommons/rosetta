@@ -63,6 +63,7 @@ StoredRotamerLibrarySpecificationCreator::keyname() const {
 StoredRotamerLibrarySpecification::StoredRotamerLibrarySpecification()
 {}
 
+//NOTE You can use SingleLigandRotamerLibrary's utility function rotamer_information_from_PDB_stream to get objects you can pass to add_rotamers and set_reference_energy; see this class's unit test for an example.  The utility function can't be called here due to library level rules.
 StoredRotamerLibrarySpecification::StoredRotamerLibrarySpecification(std::istream & ) {
 	utility_exit_with_message("Cannot currently instantiate a StoredRotamerLibrarySpecification from an input stream.");
 }
@@ -73,6 +74,12 @@ StoredRotamerLibrarySpecification::~StoredRotamerLibrarySpecification() {}
 void
 StoredRotamerLibrarySpecification::add_rotamer( std::map< std::string, core::Vector > const & rotamer ) {
 	coordinates_.push_back( rotamer );
+}
+
+/// @brief Add a vector of rotamers to the list
+void
+StoredRotamerLibrarySpecification::add_rotamers( utility::vector1< std::map< std::string, core::Vector > > const & rotamers ) {
+	for ( auto const & rotamer : rotamers ) coordinates_.push_back( rotamer );
 }
 
 std::string
@@ -97,6 +104,7 @@ void
 core::chemical::rotamers::StoredRotamerLibrarySpecification::save( Archive & arc ) const {
 	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
 	arc( CEREAL_NVP( coordinates_ ) ); // utility::vector1<std::map<std::string, core::Vector> >
+	arc( CEREAL_NVP( ref_energy_  ) ); // core::Real
 }
 
 /// @brief Automatically generated deserialization method
@@ -105,6 +113,7 @@ void
 core::chemical::rotamers::StoredRotamerLibrarySpecification::load( Archive & arc ) {
 	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
 	arc( coordinates_ ); // utility::vector1<std::map<std::string, core::Vector> >
+	arc( ref_energy_  ); // core::Real
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::rotamers::StoredRotamerLibrarySpecification );

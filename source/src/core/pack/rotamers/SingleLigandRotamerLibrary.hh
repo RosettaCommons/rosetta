@@ -26,6 +26,7 @@
 #include <utility/vector1.hh>
 
 #include <map>
+#include <istream>
 
 namespace core {
 namespace pack {
@@ -123,13 +124,18 @@ public:
 		return ref_energy_;
 	}
 
-	void set_reference_energy( Real ref_E_in){
+	void set_reference_energy( Real ref_E_in ){
 		ref_energy_ = ref_E_in;
 	}
 
 	/// @brief Build a set of rotamers for the given ResidueType
 	void
 	build_base_rotamers( chemical::ResidueType const & restype, RotamerVector & base_rotamers ) const;
+
+	/// @ brief getter for our contained data.  Not meant for use by Rosetta proper; this enables a simpler unit test.
+	utility::vector1< NamePosMap > const & get_atom_positions() const {
+		return atom_positions_;
+	}
 
 private:
 
@@ -180,9 +186,17 @@ private:
 
 }; // SingleLigandRotamerLibrary
 
+/// @brief read an istream containing conformers (formatted as concatenated PDBs) into the data types held by SingleLigandRotamerLibrary
+/// atom_positions and e_ref are return values
+/// @author refactored by Steven Lewis smlewi@gmail.com
+void rotamer_information_from_PDB_stream(
+	std::istream & conformers_stream,
+	chemical::ResidueType const & restype,
+	utility::vector1< NamePosMap > & atom_positions,
+	core::Real & e_ref);
 
 } // namespace rotamers
-} // namespace scoring
+} // namespace pack
 } // namespace core
 
 #endif // INCLUDED_core_pack_rotamers_SingleLigandRotamerLibrary_hh

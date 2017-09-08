@@ -60,6 +60,19 @@ public:
 	void
 	add_rotamer( std::map< std::string, core::Vector > const & rotamer );
 
+	/// @brief Add vector of rotamers to list
+	void
+	add_rotamers( utility::vector1< std::map< std::string, core::Vector > > const & rotamers );
+
+	core::Real
+	get_reference_energy() const {
+		return ref_energy_;
+	}
+
+	void set_reference_energy( core::Real ref_E_in ) {
+		ref_energy_ = ref_E_in;
+	}
+
 	virtual
 	std::string
 	keyname() const;
@@ -69,6 +82,7 @@ public:
 private:
 
 	utility::vector1< std::map< std::string, core::Vector > > coordinates_;
+	core::Real ref_energy_;
 
 #ifdef    SERIALIZATION
 public:

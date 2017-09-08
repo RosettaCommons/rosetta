@@ -202,6 +202,8 @@ sources = {
 	],
 	"pack/rotamers" : [
 		"SingleResidueRotamerLibrary",
+		"SingleLigandRotamerLibrary",
+		"StoredRotamerLibrarySpecification",
 	],
 	"pack/task" : [
 		"PackerTask",
@@ -873,6 +875,8 @@ testinputfiles = [
 	"pack/rotamer_set/glycerol.pdb",
 	"pack/rotamer_set/GOL.params",
 	"pack/rotamers/6SA.params",
+	"pack/rotamers/4tim.params",
+	"pack/rotamers/4tim_confs.pdb",
 	"pack/task/EX_test.resfile",
 	"pack/task/resfile_test.pdb",
 	"pack/task/resfile_test_mut.pdb",

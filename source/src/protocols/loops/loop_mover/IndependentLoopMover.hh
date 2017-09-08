@@ -73,6 +73,7 @@ public:
 	bool get_build_all_loops() const { return build_all_loops_; }
 	bool get_loop_combine_rate() const { return loop_combine_rate_; }
 	bool get_all_loops_closed() const {return all_loops_closed_; }
+	LoopResult get_last_LoopResult() const {return result_of_loopModel_;}
 
 private:
 
@@ -102,6 +103,10 @@ private:
 	bool all_loops_closed_;
 	/// Loop combine rate
 	core::Real loop_combine_rate_;
+
+	///Track the LoopResult status from apply - this allows Movers calling this one to learn what happened
+	//enum is 0 success, 1-3 flavors of failure
+	LoopResult result_of_loopModel_ = Success;
 
 protected:
 	virtual
