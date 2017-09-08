@@ -288,8 +288,10 @@ sources = {
 		"resample_full_model",
 	],
 	"public/rosetta_scripts": [
+		"parse_rosetta_script",
 		"revert_design_to_native",
 		"rosetta_scripts",
+		"validate_rosetta_script",
 	],
 	"public/rosettaDNA": [
 		"rosettaDNA",

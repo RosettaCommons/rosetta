@@ -83,7 +83,6 @@ sources = {
 		"hbs_dock_design",
 		"hbs_creator",
 		"indel",
-		"just_parse_a_script",
 		"lactamize",
 		"macrocycle_sampling",
 		"make_a3b_bundle",

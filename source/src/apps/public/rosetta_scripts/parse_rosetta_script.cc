@@ -7,9 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file apps/public/rosetta_scripts/rosetta_scripts.cc
-/// @brief The application file for rosetta_scripts, aka jd2_scripting or the parser
-/// @author Sarel Fleishman (sarelf@u.washington.edu)
+/// @file apps/public/rosetta_scripts/parse_rosetta_script.cc
+/// @brief  Using the same command line arguments as the rosetta_scripts application,
+///         create all of the objects defined within a RosettaScript using the parse-my-tag
+///         and parse-tag functions of those objects -- but do not call apply on the resulting
+///         ParsedProtocolMover that is produced.
+/// @author Andy Watkins (andy.watkins2@gmail.com)
 
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -39,24 +42,11 @@
 #include <basic/Tracer.hh>
 
 // Tracer
-static THREAD_LOCAL basic::Tracer TR( "apps.public.rosetta_scripts.rosetta_scripts" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.rosetta_scripts.parse_rosetta_script" );
 
-// FUNCTION PROTOTYPES
-void* my_main( void *);
-
-// FUNCTION DECLARATIONS
-void*
-my_main( void *)
-{
-	protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it. That means that this can only be used with parser=true
-	protocols::jd2::JobDistributor::get_instance()->go(mover);
-	return 0 ;
-}
-
-/// @details dock_design_scripting provides an xml-based scripting capability
-/// to run rosetta movers and filters defined in a text file provided by the
-/// user. A full documentation of dock_design_scripting is available at:
-/// manual_doxygen/applications/app_dock_design.dox
+/// @details Validate an input XML script against the internally-generated XSD and then construct
+/// all of the Movers/Filters/etc. that are defined within that script. Exits with a 0 exit status
+/// if it succeeds and an exit status of 1 if not.
 int
 main( int argc, char * argv [] )
 {
@@ -67,18 +57,15 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		using namespace protocols::jd2;
 		using namespace core::pose;
-
-		protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
 
 		protocols::rosetta_scripts::RosettaScriptsParser rs;
 		rs.generate_mover_and_apply_to_pose( *PoseOP( new Pose), option[ parser::protocol ].value());
-
+		TR << "Successfully constructed and initialized all objects specified in the " << option[ parser::protocol ]() << " script" << std::endl;
 
 	} catch( utility::excn::EXCN_Base& excn ) {
 		basic::Error()
-			<< "ERROR: Exception caught by rosetta_scripts application:"
+			<< "ERROR: Exception caught by parse_rosetta_script application:"
 			<< excn << std::endl;
 		std::exit( 1 );
 	}
