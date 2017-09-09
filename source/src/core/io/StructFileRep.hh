@@ -403,4 +403,9 @@ std::ostream & operator<<( std::ostream & os, LinkInformation const & li );
 } // namespace io
 } // namespace core
 
+#ifdef PYROSETTA
+template class utility::vector0< core::io::AtomInformation >;
+#endif
+
+
 #endif // INCLUDED_core_io_pdb_StructFileRep_HH

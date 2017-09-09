@@ -55,4 +55,5 @@ for pose in poses:
 
 import pyrosetta.toolbox
 
-pyrosetta.toolbox.pose_from_rcsb('1brs')
+# commenting this out for now to avoid release failures during debug builds when network is out
+# pyrosetta.toolbox.pose_from_rcsb('1brs')
