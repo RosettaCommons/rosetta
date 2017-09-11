@@ -11,6 +11,7 @@
 ## @brief  Script to parallelize run of arbitrary command lines
 ## @author Sergey Lyskov
 
+from __future__ import print_function
 
 import sys, signal
 
@@ -24,23 +25,27 @@ class OI:
 
 
 class Runner:
-    def __init__(self):
+    def __init__(self, jobs, quiet=False, quiet_errors=False):
+        self.njobs = jobs
+        self.quiet = quiet
+        self.quiet_errors = quiet_errors
+
         self.jobs = []    # list of spawned process pid's
         self.output = ''  # output of current job
 
     def log(self, message):
         self.output += message
-        if not Options.quiet: print message
+        if not self.quiet: print(message)
 
     def log_error(self, message):
         self.output += message
-        if not Options.quiet_errors:
+        if not self.quiet_errors:
             sys.stderr.write( message + "\n")
 
     def mfork(self):
-        ''' Check if number of child process is below Options.jobs. And if it is - fork the new process and return its pid.
+        ''' Check if number of child process is below self.njobs. And if it is - fork the new process and return its pid.
         '''
-        while len(self.jobs) >= Options.jobs :
+        while len(self.jobs) >= self.njobs :
             for p in self.jobs[:] :
                 r = os.waitpid(p, os.WNOHANG)
                 if r == (p, 0):  # process has ended without error
@@ -50,7 +55,7 @@ class Runner:
                     sys.stderr.write('Some of the processes terminated abnormally!\n')
                     sys.exit(1)
 
-            if len(self.jobs) >= Options.jobs: time.sleep(.5)
+            if len(self.jobs) >= self.njobs: time.sleep(.5)
 
         #pid = os.fork()
 
@@ -102,6 +107,72 @@ class Runner:
         return exit_code
 
 
+    def run_commands_lines(self, name, commands_lines, working_dir, delete_intermediate_files=True):
+        ''' Accept dict of command lines, run them in paralell (constarained by int in `jobs`) and and return dict of results
+
+            name - name prefix for intermediate results file names (ie Job Name)
+
+            working_dir - path to working directory
+
+            Example commands_lines:
+            {
+                "name-of-job1" : "<command line for job1>",
+                "job2"         : "<command line for job2>",
+            }
+
+            return value:
+            {
+                  "name-of-job1": {
+                    "output": "stdout + stderr of job1 command line",
+                    "result": <int exit code>
+                  },
+                  "job2": {
+                    "output": "stdout + stderr of job2 command line",,
+                    "result": <int exit code>
+                  },
+            }
+
+        '''
+        signal.signal(signal.SIGINT, self.signal_handler)
+
+        file_name = os.path.join(working_dir, name)
+
+        results = {}
+
+        for c in commands_lines:
+            results[c] = {}
+
+            output_file = os.path.abspath( file_name + '.{}.output'.format(c) )
+            result_file = os.path.abspath( file_name + '.{}.result'.format(c) )
+
+            results[c]['output_file'] = output_file
+            results[c]['result_file'] = result_file
+
+            if os.path.isfile(output_file): os.remove(output_file)
+
+            pid = self.mfork()
+            if not pid:  # we are the child process
+                result = self.runCommandLine('', '', commands_lines[c], output_file=output_file) # + ' 2>&1 1>>{0} 2>>{0}'.format(output_file) )
+                with file(result_file, 'w') as fh: fh.write( '{}'.format(result) )
+                sys.exit(0)
+
+        for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
+
+        r = {}
+        for c in results:
+            with open( results[c]['result_file'] ) as f: result = json.load(f)
+            with open( results[c]['output_file'] ) as f: output = f.read()
+
+            r[c] = dict(result = result, output = output)
+
+            if not self.quiet: print(c, r[c]['result'], r[c]['output'])
+
+            if delete_intermediate_files:
+                if os.path.isfile(results[c]['result_file']): os.remove(results[c]['result_file'])
+                if os.path.isfile(results[c]['output_file']): os.remove(results[c]['output_file'])
+
+        return r
+
 
 
     def run(self, files):
@@ -136,7 +207,7 @@ class Runner:
 
                 results = { c: dict(result=json.load(file(results[c]['result_file'])), output=file(results[c]['output_file']).read()) for c in results }
 
-                for c in results: print c, results[c]['result'], results[c]['output']
+                for c in results: print( c, results[c]['result'], results[c]['output'] )
 
                 with file( file_name + '.results.json', 'w') as fh: json.dump(results, fh, sort_keys=True, indent=2)
 
@@ -245,7 +316,7 @@ def main(args):
         sys.stderr("Must specify file name with command lines to run!\n")
         sys.exit(1)
 
-    R = Runner()
+    R = Runner(options.jobs, options.quiet, options.quiet_errors)
     R.run(args)
 
 

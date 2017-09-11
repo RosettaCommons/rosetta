@@ -71,3 +71,7 @@ class MultiCore_HPC_Driver(HPC_Driver):
         self.cpu_usage += cpu_usage * jobs_to_queue  # approximation...
 
         signal.signal(signal.SIGINT, previous_handler)
+
+
+    def __repr__(self):
+        return 'MultiCore_HPC_Driver<>'

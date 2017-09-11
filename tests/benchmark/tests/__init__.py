@@ -72,7 +72,7 @@ def Tracer(verbose=False):
     return print_ if verbose else lambda x: None
 
 
-def execute(message, commandline, return_=False, until_successes=False, terminate_on_failure=True):
+def execute(message, commandline, return_=False, until_successes=False, terminate_on_failure=True, add_message_and_command_line_to_output=False):
     TR = Tracer()
     TR(message);  TR(commandline)
     while True:
@@ -92,11 +92,13 @@ def execute(message, commandline, return_=False, until_successes=False, terminat
         print "Sleeping 60s... then I will retry..."
         time.sleep(60)
 
+    if add_message_and_command_line_to_output: output = message + '\nCommand line: ' + commandline + '\n' + output
+
     if return_ == 'tuple': return(res, output)
 
     if res and terminate_on_failure:
         TR("\nEncounter error while executing: " + commandline)
-        if return_==True: return True
+        if return_==True: return res
         else:
             print("\nEncounter error while executing: " + commandline + '\n' + output);
             raise BenchmarkError("\nEncounter error while executing: " + commandline + '\n' + output)
@@ -348,3 +350,20 @@ def get_path_to_python_executable(platform, config):
     #print(python_include_dir, python_lib_dir)
 
     return NT(python=executable, python_root_dir=root, python_include_dir=python_include_dir, python_lib_dir=python_lib_dir)
+
+
+def setup_python_virtual_environment(working_dir, python_or_NT, packages=''):
+    ''' Deploy Python virtual environment at working_dir
+    '''
+
+    python = python_or_NT.python if isinstance(python_or_NT, NT) else python_or_NT
+
+    execute('Setting up Python virtual environment...', '{python} -m venv {working_dir}'.format(**vars()) )
+
+    activate = working_dir + '/bin/activate'
+
+    bin=working_dir+'/bin'
+
+    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip install {packages}'.format(**vars()) )
+
+    return NT(activate=activate, root=working_dir, bin=bin)

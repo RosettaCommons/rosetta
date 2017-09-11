@@ -1,3 +1,9 @@
 [submodule "source/src/python/PyRosetta/binder"]
 	path = source/src/python/PyRosetta/binder
 	url = git@github.com:RosettaCommons/binder.git
+[submodule "pyrosetta_scripts"]
+	path = pyrosetta_scripts
+	url = git@github.com:RosettaCommons/pyrosetta_scripts.git
+[submodule "rosetta_scripts_scripts"]
+	path = rosetta_scripts_scripts
+	url = git@github.com:RosettaCommons/rosetta_scripts_scripts.git
