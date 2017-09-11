@@ -46,7 +46,19 @@ get_ligand_travel(
 	char chain,
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
-	std::string const & prefix = ""
+	std::string const & prefix = "",
+	bool use_ensemble_best = false
+);
+
+
+/// @brief Another interesting metric -- how far does the ligand centroid move?
+/// Returns the smallest distance from any of the residues in the reference structure.
+core::Real
+get_ligand_travel_ensemble_best(
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
+	core::Size test_residue_id,
+	utility::vector1< core::Size > const & ref_residue_ids
 );
 
 /// @details normalizaton_function will only be used if the Grids do not have their own normalization
@@ -94,7 +106,8 @@ get_ligand_RMSDs(
 	char chain,
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
-	std::string const & prefix = ""
+	std::string const & prefix = "",
+	bool use_ensemble_best = false
 );
 
 std::map< std::string, core::Real >
@@ -102,7 +115,7 @@ get_automorphic_RMSDs(
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
 	core::Size test_residue_id,
-	core::Size ref_residue_id,
+	utility::vector1< core::Size > const & ref_residue_ids,
 	std::string const & prefix = ""
 );
 

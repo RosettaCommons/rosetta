@@ -2482,5 +2482,23 @@ inv_virtual_type_for_conf( core::conformation::Conformation const &conformation 
 	return rsd_type;
 }
 
+core::Vector
+all_atom_center(
+	core::conformation::Residue const & rsd
+) {
+
+	utility::vector1< core::Vector > coords;
+
+	for ( Size jj(1); jj <= rsd.natoms(); ++ jj ) {
+		coords.push_back( rsd.xyz( jj ) );
+	}
+
+	if ( ! coords.size() ) { utility_exit_with_message( "Cannot compute center of mass for no atoms!" ); }
+
+	return numeric::center_of_mass( coords );
+}
+
+
+
 } // namespace conformation
 } // namespace core

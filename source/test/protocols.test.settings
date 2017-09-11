@@ -331,6 +331,7 @@ sources = {
 	],
 
 	"ligand_docking": [
+		"ligand_scores",
 		"LigandDockingLoaders",
 		"ResidueTorsionRestraints",
 		"StartFrom",

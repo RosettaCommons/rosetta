@@ -457,6 +457,14 @@ virtual_type_for_conf( core::conformation::Conformation const &conformation );
 chemical::ResidueTypeCOP
 inv_virtual_type_for_conf( core::conformation::Conformation const &conformation );
 
+/// @brief Get the center of the Residue
+///
+/// This computes an equally-weighted, all-atom (including virtuals and hydrogens) center
+core::Vector
+all_atom_center(
+	core::conformation::Residue const & residue
+);
+
 } // conformation
 } // core
 

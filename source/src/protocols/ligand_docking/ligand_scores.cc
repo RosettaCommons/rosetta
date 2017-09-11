@@ -29,6 +29,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/util.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
@@ -162,7 +163,8 @@ get_ligand_travel(
 	char chain,
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
-	std::string const & prefix
+	std::string const & prefix,
+	bool use_ensemble_best /*= false */
 ) {
 
 	utility::vector1< core::Size > test_resi( core::pose::get_resnums_for_chain( test_pose, chain ) );
@@ -175,8 +177,17 @@ get_ligand_travel(
 		utility_exit_with_message( "In get_ligand_travel: reference pose does not have a chain " + utility::to_string( chain ) );
 	}
 
-	core::Vector test_center( core::pose::all_atom_center( test_pose, test_resi ) );
-	core::Vector ref_center( core::pose::all_atom_center( ref_pose, ref_resi ) );
+	core::Real ligand_travel = 0;
+	if ( use_ensemble_best ) {
+		if ( test_resi.size() != 1 ) {
+			utility_exit_with_message( "In get_ligand_travel: cannot use ensemble best method with multi-residue working chain." );
+		}
+		ligand_travel = get_ligand_travel_ensemble_best( test_pose, ref_pose, test_resi[1], ref_resi );
+	} else {
+		core::Vector test_center( core::pose::all_atom_center( test_pose, test_resi ) );
+		core::Vector ref_center( core::pose::all_atom_center( ref_pose, ref_resi ) );
+		ligand_travel = ref_center.distance( test_center );
+	}
 
 	std::string label("ligand_centroid_travel_");
 	label += chain;
@@ -185,8 +196,29 @@ get_ligand_travel(
 	}
 
 	std::map< std::string, core::Real > retval;
-	retval[ label ] = ref_center.distance( test_center );
+	retval[ label ] = ligand_travel;
 	return retval;
+}
+
+core::Real
+get_ligand_travel_ensemble_best(
+	core::pose::Pose const & test_pose,
+	core::pose::Pose const & ref_pose,
+	core::Size test_residue_id,
+	utility::vector1< core::Size > const & ref_residue_ids
+) {
+
+	core::Real min_travel = 999999999;
+	core::Vector test_center( core::conformation::all_atom_center( test_pose.residue( test_residue_id ) ) );
+	for ( core::Size const & ref_residue_id: ref_residue_ids ) {
+		core::Vector ref_center( core::conformation::all_atom_center( ref_pose.residue( ref_residue_id ) ) );
+		core::Real travel( ref_center.distance( test_center ) );
+		if ( travel < min_travel ) {
+			min_travel = travel;
+		}
+	}
+
+	return min_travel;
 }
 
 std::map< std::string, core::Real >
@@ -336,7 +368,8 @@ get_ligand_RMSDs(
 	char chain,
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
-	std::string const & prefix
+	std::string const & prefix,
+	bool use_ensemble_best
 ){
 
 	utility::vector1<core::Size> ref_resi( core::pose::get_resnums_for_chain( ref_pose, chain ) );
@@ -349,18 +382,25 @@ get_ligand_RMSDs(
 		utility_exit_with_message( std::string("get_ligand_RMSD: Cannot find chain ") + chain + " in reference pose.");
 	}
 
+	if ( use_ensemble_best ) {
+		if ( test_resi.size() != 1 ) {
+			utility_exit_with_message( "get_ligand_RMSD: Cannot use ensemble best method with multi-residue working chain." );
+		}
+		return get_automorphic_RMSDs( test_pose, ref_pose, test_resi[1], ref_resi, prefix );
+	}
+
 	if ( test_resi.size() != ref_resi.size() ) {
 		TR.Error << "In get_ligand_RMSD: test and reference poses have a different number of residues for chain " << chain << std::endl;
 		TR.Error << "  test pose has " << test_resi.size() << " residues to the reference pose's " << ref_resi.size() << std::endl;
-		utility_exit_with_message("Cannot compute ligand RMSD - different number of residues in the two structures.");
+		utility_exit_with_message("Cannot compute (non-ensemble-best) ligand RMSD - different number of residues in the two structures.");
 	}
 
-	if ( test_resi.size() != 1 || ref_resi.size() != 1 ) {
-		TR.Debug << "get_ligand_RMSDs: Chain " << chain << " has multiple (" << test_resi.size() << ") residues in each pose. Using multi-residue version of RMSD calculation." << std::endl;
-		return get_multi_residue_ligand_RMSDs( test_pose, ref_pose, test_resi, ref_resi, chain, prefix );
+	if ( test_resi.size() == 1 && ref_resi.size() == 1 ) {
+		return get_automorphic_RMSDs( test_pose, ref_pose, test_resi[1], ref_resi, prefix );
 	}
 
-	return get_automorphic_RMSDs( test_pose, ref_pose, test_resi[1], ref_resi[1], prefix );
+	TR.Debug << "get_ligand_RMSDs: Chain " << chain << " has multiple (" << test_resi.size() << ") residues in each pose. Using multi-residue version of RMSD calculation." << std::endl;
+	return get_multi_residue_ligand_RMSDs( test_pose, ref_pose, test_resi, ref_resi, chain, prefix );
 }
 
 std::map< std::string, core::Real >
@@ -368,19 +408,26 @@ get_automorphic_RMSDs(
 	core::pose::Pose const & test_pose,
 	core::pose::Pose const & ref_pose,
 	core::Size test_residue_id,
-	core::Size ref_residue_id,
+	utility::vector1<core::Size> const & ref_residue_ids,
 	std::string const & prefix
 ){
+	debug_assert( ! ref_residue_ids.empty() );
 
 	std::map< std::string, core::Real > retval;
 
 	char const ligand_chain = test_pose.pdb_info()->chain(test_residue_id);
 	{
-		core::Real ligand_rms_no_super = core::scoring::automorphic_rmsd(
-			ref_pose.residue(ref_residue_id),
-			test_pose.residue(test_residue_id),
-			false /*don't superimpose*/
-		);
+		core::Real ligand_rms_no_super = 9999999999;
+		for ( core::Size ref_residue_id: ref_residue_ids ) {
+			core::Real current_rmsd = core::scoring::automorphic_rmsd(
+				ref_pose.residue(ref_residue_id),
+				test_pose.residue(test_residue_id),
+				false /*don't superimpose*/
+			);
+			if ( current_rmsd < ligand_rms_no_super ) {
+				ligand_rms_no_super = current_rmsd;
+			}
+		}
 
 		std::string no_super_label("ligand_rms_no_super_");
 		no_super_label += ligand_chain;
@@ -391,11 +438,17 @@ get_automorphic_RMSDs(
 		retval[ no_super_label ] = ligand_rms_no_super;
 	}
 	{
-		core::Real ligand_rms_with_super = core::scoring::automorphic_rmsd(
-			ref_pose.residue(ref_residue_id),
-			test_pose.residue(test_residue_id),
-			true /*superimpose*/
-		);
+		core::Real ligand_rms_with_super = 9999999999;
+		for ( core::Size ref_residue_id: ref_residue_ids ) {
+			core::Real current_rmsd = core::scoring::automorphic_rmsd(
+				ref_pose.residue(ref_residue_id),
+				test_pose.residue(test_residue_id),
+				true /*superimpose*/
+			);
+			if ( current_rmsd < ligand_rms_with_super ) {
+				ligand_rms_with_super = current_rmsd;
+			}
+		}
 
 		std::string with_super_label("ligand_rms_with_super_");
 		with_super_label += ligand_chain;

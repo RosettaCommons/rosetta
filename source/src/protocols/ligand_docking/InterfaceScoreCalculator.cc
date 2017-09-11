@@ -131,6 +131,9 @@ InterfaceScoreCalculator::parse_my_tag(
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_file(*native_, native_str, core::import_pose::PDB_file);
 	}
+
+	native_ensemble_best( tag->getOption<bool>("native_ensemble_best", false) );
+
 	if ( tag->hasOption("normalize") ) {
 		std::string const & normalization_mode = tag->getOption<std::string>("normalize");
 		normalization_function_ = protocols::qsar::scoring_grid::get_score_normalization_function(normalization_mode);
@@ -259,9 +262,9 @@ InterfaceScoreCalculator::get_ligand_docking_scores(
 			utility_exit_with_message("The native pose does not have chain " + utility::to_string( chain ) );
 		}
 
-		utility::map_merge( retval, get_ligand_travel( chain, after, *native_, prefix_ ) );
+		utility::map_merge( retval, get_ligand_travel( chain, after, *native_, prefix_, native_ensemble_best_ ) );
 		utility::map_merge( retval, get_radius_of_gyration( chain, after, prefix_ ) );
-		utility::map_merge( retval, get_ligand_RMSDs(chain, after, *native_, prefix_ ) );
+		utility::map_merge( retval, get_ligand_RMSDs(chain, after, *native_, prefix_, native_ensemble_best_ ) );
 	}
 
 	if ( compute_grid_scores_ ) {
@@ -288,6 +291,7 @@ void InterfaceScoreCalculator::provide_xml_schema( utility::tag::XMLSchemaDefini
 	attlist + XMLSchemaAttribute::required_attribute( "chains", xs_string , "Comma separated chains to dock." )
 		+ XMLSchemaAttribute::required_attribute( "scorefxn", xs_string , "Scorefxn of choice." )
 		+ XMLSchemaAttribute( "native", xs_string , "This is your native pdb without interface mutations. If a native structure is specified, 4 additional score terms are calculated: ligand_centroid_travel, ligand_radious_of_gyration, ligand_rms_no_super, and ligand_rms_with_super." )
+		+ XMLSchemaAttribute::attribute_w_default( "native_ensemble_best", xsct_rosetta_bool , "If true, the native pose has multiple residues for the given chains, and the travel and rmsd metrics will be computed as the best (lowest) value from any of them.", "false" )
 		+ XMLSchemaAttribute( "normalize", xs_string , "The normalization function you wish to use." )
 		+ XMLSchemaAttribute::attribute_w_default( "compute_grid_scores", xsct_rosetta_bool , "If compute_grid_scores is true, the scores for each grid will be calculated. This may result in the regeneration of the scoring grids, which can be slow.", "false" );
 

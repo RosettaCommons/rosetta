@@ -52,6 +52,10 @@ public:
 
 	void chains(std::vector<std::string> const & chains);
 
+	void set_native(core::pose::PoseOP setting ) { native_ = setting; }
+
+	void native_ensemble_best( bool setting ) { native_ensemble_best_ = setting; }
+
 	void score_fxn(core::scoring::ScoreFunctionOP const & score_fxn);
 
 	void grid_set_prototype(protocols::qsar::scoring_grid::GridSetCOP grid_prototype);
@@ -98,6 +102,7 @@ private:
 private:
 	utility::vector1<std::string> chains_;
 	core::pose::PoseOP native_;
+	bool native_ensemble_best_;
 	core::scoring::ScoreFunctionOP score_fxn_;
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function_;
 	bool compute_grid_scores_;
