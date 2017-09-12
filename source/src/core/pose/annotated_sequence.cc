@@ -185,10 +185,14 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 		// is there an annotated fullname defined for this one-letter code?
 		Size index = oneletter_to_fullname_index[ seqpos-1 ];
 		if ( index ) { // fullname defined and get it directly from name_map
-			// The next call requires reference -> COP because ResidueTypeSet's
-			// methods are not yet consistent in handing out ref vs COP.
 			ResidueTypeCOP rsd_type;
 			rsd_type = residue_set.name_mapOP( fullname_list[ index ] );
+
+			if ( rsd_type == nullptr ) {
+				utility_exit_with_message( " can't find residue type for " + fullname_list[ index ] + " at pos " + ObjexxFCL::string_of(seqpos) +
+					" in sequence "+ sequence_in);
+			}
+
 			requested_types.push_back( rsd_type );
 
 		} else {
@@ -199,7 +203,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 			ResidueTypeCOP rsd_type = get_rsd_type_from_aa( residue_set, my_aa, is_lower_terminus, is_upper_terminus );
 
 			if ( rsd_type == nullptr ) {
-				utility_exit_with_message( " can't find residue type at pos " + ObjexxFCL::string_of(seqpos) +
+				utility_exit_with_message( " can't find residue type for " + std::string(1,aa) + " at pos " + ObjexxFCL::string_of(seqpos) +
 					" in sequence "+ sequence_in);
 			}
 
@@ -468,6 +472,9 @@ residue_types_from_saccharide_sequence_recursive( std::string const & sequence, 
 
 				// Select a matching ResidueType and add to list (or exit without a match).
 				ResidueTypeCOP residue( residue_set.name_mapOP( residue_type_name.str() ) );
+				if ( residue == nullptr ) {
+					utility_exit_with_message("Unrecognized residue " + residue_type_name.str() + " when building saccharide sequence " + sequence );
+				}
 				Size const n_branches( branch_points.size() );
 				for ( uint i( 1 ); i <= n_branches; ++i ) {
 					VariantType const variant(
@@ -596,6 +603,11 @@ void make_pose_from_sequence(
 	bool jump_to_next = false;
 	for ( Size i = 1, ie = requested_types.size(); i <= ie; ++i ) {
 		// grab the new residue
+		if ( requested_types[ i ] == nullptr ) {
+			// Gaps in the sequence can result in this, so we skip them.
+			TR.Warning << "When making pose from sequence, position " << i << " can't be handled by Rosetta. Ignoring." << std::endl;
+			continue;
+		}
 		chemical::ResidueType const & rsd_type = *requested_types[ i ];
 		core::conformation::ResidueOP new_rsd( nullptr );
 		new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
