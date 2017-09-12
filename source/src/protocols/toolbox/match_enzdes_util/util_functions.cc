@@ -26,6 +26,7 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
@@ -69,16 +70,27 @@ replace_residue_keeping_all_atom_positions(
 	pose.replace_residue( res_pos, new_res, true);
 
 	//and resetting the xyz positions
+
+	// We may have new virtual atoms (or hydrogens) we need to place.
+	core::id::AtomID_Mask missing(false);
+
 	for ( core::Size at_ct = 1; at_ct <= pose.residue(res_pos).natoms(); at_ct++ ) {
 
 		std::map< std::string, core::PointPosition>::iterator xyz_map_it = atom_name_to_xyz.find( pose.residue(res_pos).atom_name(at_ct) );
 
-		if ( xyz_map_it == atom_name_to_xyz.end() ) {
+
+		if ( xyz_map_it != atom_name_to_xyz.end() ) {
+			pose.set_xyz( core::id::AtomID(at_ct, res_pos), xyz_map_it->second );
+		} else if ( pose.residue(res_pos).is_virtual(at_ct) || pose.residue(res_pos).atom_is_hydrogen(at_ct) ) {
+			missing.set( core::id::AtomID(at_ct, res_pos), true );
+		} else {
 			std::cerr << "ERROR: when trying to make dsflkj constraint covalent, atom " << pose.residue(res_pos).atom_name(at_ct) << " was not found for residue " << pose.residue(res_pos).name3() << " at position " << res_pos << std::endl;
 			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-		} else {
-			pose.set_xyz( core::id::AtomID (at_ct, res_pos), xyz_map_it->second );
 		}
+	}
+
+	if ( ! missing.empty() ) {
+		pose.conformation().fill_missing_atoms( missing );
 	}
 
 } //replace_residues_keeping_positions

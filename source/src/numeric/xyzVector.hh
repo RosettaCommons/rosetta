@@ -662,7 +662,7 @@ public: // Methods
 		Value const length_ = length();
 		//assert ( length_ != Value ( 0 ));
 		if ( length_ == Value ( 0 ) ) {
-			throw utility::excn::EXCN_BadInput("Cannot normalize xyzVector of length() zero");
+			throw utility::excn::EXCN_Msg_Exception("Cannot normalize xyzVector of length() zero");
 		}
 
 		Value const inv_length( Value( 1 ) / length_ );

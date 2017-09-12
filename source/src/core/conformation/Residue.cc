@@ -655,11 +655,30 @@ Residue::orient_onto_residue( Residue const & src )
 
 	Size center, nbr1, nbr2;
 	select_orient_atoms( center, nbr1, nbr2 );
+
+	if (
+			! src.type().has( rsd_type_.atom_name( center ) ) ||
+			! src.type().has( rsd_type_.atom_name( nbr1 ) ) ||
+			! src.type().has( rsd_type_.atom_name( nbr2 ) )
+			) {
+		// If the src residue doesn't have these atoms, try using src's orient atoms
+		src.select_orient_atoms( center, nbr1, nbr2 );
+		if (
+				! rsd_type_.has( src.type().atom_name( center ) ) ||
+				! rsd_type_.has( src.type().atom_name( nbr1 ) ) ||
+				! rsd_type_.has( src.type().atom_name( nbr2 ) )
+				) {
+			TR.Error << "Names for " << name() << ":" << std::endl;
+			rsd_type_.show_all_atom_names( TR.Error );
+			TR.Error << "Names for " << src.name() << ":" << std::endl;
+			src.type().show_all_atom_names( TR.Error );
+			utility_exit_with_message("Cannot orient residues " + name() + " and " + src.name() + " as they don't have the the appropriately matched atom names.");
+		}
+	}
+
 	// std::cout << " CENTER " << atom_name( center ) << "   NBR1 " << atom_name( nbr1 ) << "    NBR2 " << atom_name( nbr2 ) << std::endl;
 
 	debug_assert( center && nbr1 && nbr2 );
-	// this will fail if src doesnt have these atoms -- think more about this!
-	//
 	orient_onto_residue(
 		src,
 		center,

@@ -34,6 +34,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/types.hh>
 #include <utility/vector1.hh>
+#include <numeric/xyzVector.io.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -479,12 +480,20 @@ Atom_::get_input_stub() const
 		//   std::cout << "(1: " << input_stub_atom1()->atom_id().rsd() << ", "<< input_stub_atom1()->atom_id().atomno() << ") ";
 		//   std::cout << "(2: " << input_stub_atom2()->atom_id().rsd() << ", "<< input_stub_atom2()->atom_id().atomno() << ") ";
 		//   std::cout << "(3: " << input_stub_atom3()->atom_id().rsd() << ", "<< input_stub_atom3()->atom_id().atomno() << ") " << std::endl;
-		return Stub(
-			input_stub_atom0()->position(),
-			input_stub_atom1()->position(),
-			input_stub_atom2()->position(),
-			input_stub_atom3()->position()
-		);
+		try {
+			return Stub(
+				input_stub_atom0()->position(),
+				input_stub_atom1()->position(),
+				input_stub_atom2()->position(),
+				input_stub_atom3()->position()
+			);
+		} catch ( utility::excn::EXCN_Msg_Exception const & ) {
+			TR.Error << "Issue getting stub for atom " << atom_id() << " -- possibly due to degenerate/colinear atoms:" << std::endl;
+			TR.Error << "\t " << input_stub_atom1_id() << " -- " << input_stub_atom1()->position() << std::endl;
+			TR.Error << "\t " << input_stub_atom2_id() << " -- " << input_stub_atom2()->position() << std::endl;
+			TR.Error << "\t " << input_stub_atom3_id() << " -- " << input_stub_atom3()->position() << std::endl;
+			throw; // Make sure to re-throw error. This is not recoverable.
+		}
 	} else {
 		return default_stub;
 	}

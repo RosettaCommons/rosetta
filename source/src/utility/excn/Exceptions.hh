@@ -84,6 +84,8 @@ protected:
 	EXCN_IO() {};
 };
 
+/// @brief EXCN_BadInput, as an IO error, should only be used for bad *user* input.
+/// Do not use for something which is just bad function input.
 class EXCN_BadInput : public EXCN_IO {
 public:
 	EXCN_BadInput( std::string const& msg ) : EXCN_Msg_Exception( msg ) {};

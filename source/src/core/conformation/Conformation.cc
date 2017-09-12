@@ -1794,7 +1794,7 @@ Conformation::fill_missing_atoms(
 		// Loop through atoms in residue, annotate those missing
 		for ( Size j=1; j<= natoms; ++j ) {
 			AtomID const id( j, i );
-			if ( missing[ id ] ) {
+			if ( missing.get( id ) ) {
 				// Virtual atoms don't get written to the PDB file, so we shouldn't expect them in input.
 				if ( rsd.atom_type(j).is_heavyatom() && ! rsd.is_virtual(j) ) {
 					TR.Warning << "missing heavyatom: " << rsd.atom_name(j) <<
@@ -1821,7 +1821,7 @@ Conformation::fill_missing_atoms(
 			}
 			for ( Size j=1; j<= natoms; ++j ) {
 				AtomID const id( j, i );
-				if ( ! missing[ id ] ) { continue; }
+				if ( ! missing.get( id ) ) { continue; }
 
 				// check if our stub atoms are all present
 				AtomID const
@@ -1829,12 +1829,12 @@ Conformation::fill_missing_atoms(
 					stub_atom2( rsd.icoor( j ).stub_atom2().atom_id( rsd, *this ) ),
 					stub_atom3( rsd.icoor( j ).stub_atom3().atom_id( rsd, *this ) );
 
-				if ( natoms-num_missing < 3 && !( stub_atom1 == id::BOGUS_ATOM_ID || missing[ stub_atom1 ] ) ) {
+				if ( natoms-num_missing < 3 && !( stub_atom1 == id::BOGUS_ATOM_ID || missing.get( stub_atom1 ) ) ) {
 					// with < 3 atoms present, we can't build any stubs, so we're stuck forever unless we punt:
 					using numeric::random::uniform;
 					Vector xyz1( xyz( stub_atom1 ) ), xyz2( xyz( stub_atom2 ) ), xyz3( xyz( stub_atom3 ) );
-					if ( stub_atom2 == id::BOGUS_ATOM_ID || missing[ stub_atom2 ] ) xyz2 = Vector( uniform(), uniform(), uniform() );
-					if ( stub_atom3 == id::BOGUS_ATOM_ID || missing[ stub_atom3 ] ) xyz3 = Vector( uniform(), uniform(), uniform() );
+					if ( stub_atom2 == id::BOGUS_ATOM_ID || missing.get( stub_atom2 ) ) xyz2 = Vector( uniform(), uniform(), uniform() );
+					if ( stub_atom3 == id::BOGUS_ATOM_ID || missing.get( stub_atom3 ) ) xyz3 = Vector( uniform(), uniform(), uniform() );
 					kinematics::Stub const stub( xyz1, xyz2, xyz3 );
 					set_xyz( id, stub.spherical( rsd.icoor(j).phi(), rsd.icoor(j).theta(), rsd.icoor(j).d() ) );
 					if ( ! rsd.is_virtual(j) ) { // Metal ions rely on this -- don't warn for virtuals
@@ -1842,7 +1842,7 @@ Conformation::fill_missing_atoms(
 							") from residue " << rsd.name() << " " << i << " from faked coordinates, due to too few atoms being present." <<
 							"\nThis probably means that this residue should be further optimized..." << std::endl;
 					}
-					missing[id] = false;
+					missing.set(id,false);
 					atm_missing[ j ] = false;
 					num_missing -= 1;
 
@@ -1867,7 +1867,7 @@ Conformation::fill_missing_atoms(
 							new_stub_atom2( rsd_tree.atom( id ).input_stub_atom2_id() ),
 							new_stub_atom3( rsd_tree.atom( id ).input_stub_atom3_id() );
 
-						if ( !missing[ new_stub_atom1 ] && !missing[ new_stub_atom2 ] && !missing[ new_stub_atom3 ] ) {
+						if ( !missing.get( new_stub_atom1 ) && !missing.get( new_stub_atom2 ) && !missing.get( new_stub_atom3 ) ) {
 							TR.Warning << "Building missing atom (" << rsd.atom_name( j ) <<
 								") at root of residue tree, using stubs: " <<
 								rsd.atom_name( new_stub_atom1.atomno() ) << ' ' <<
@@ -1882,7 +1882,7 @@ Conformation::fill_missing_atoms(
 							set_xyz( id, stub.spherical( rsd_tree.dof( DOF_ID( id, id::PHI ) ),
 								rsd_tree.dof( DOF_ID( id, id::THETA ) ),
 								rsd_tree.dof( DOF_ID( id, id::D ) ) ) );
-							missing[ id ] = false;
+							missing.set( id, false);
 							atm_missing[ j ] = false;
 							num_missing -= 1;
 							break;
@@ -1895,7 +1895,7 @@ Conformation::fill_missing_atoms(
 		// Setting the xyz in the Residue object is insufficient - we need to update things in the atom tree/scoring etc.
 		for ( Size j=1; j<= natoms; ++j ) {
 			AtomID id( j, i );
-			if ( missing[ id ] ) {
+			if ( missing.get( id ) ) {
 				set_xyz( id, rsd.xyz(j) );
 			}
 		}
