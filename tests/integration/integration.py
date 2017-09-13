@@ -316,14 +316,14 @@ EXAMPLES For Running Demos/Tutorials
     #Print the current SHA1 for demos, main, and tools.
 
     print("\nCurrent Versions Tested:")
-    print("MAIN:  " + get_git_sha1(Options.mini_home).decode('utf-8'))
+    print("MAIN:  " + get_git_sha1(Options.mini_home).decode('utf-8', errors="replace"))
     if get_git_sha1(Options.mini_home) != get_git_sha1(Options.database):
         print("\n====== WARNING WARNING WARNING ========")
         print("\t Rosetta database version doesn't match source version!")
-        print("\t DATABASE: " + get_git_sha1(Options.database).decode('utf-8'))
+        print("\t DATABASE: " + get_git_sha1(Options.database).decode('utf-8', errors="replace"))
         print("====== WARNING WARNING WARNING ========\n")
-    print("TOOLS: " + get_git_sha1(root_tools_dir).decode('utf-8'))
-    print("DEMOS: " + get_git_sha1(root_demos_dir).decode('utf-8'))
+    print("TOOLS: " + get_git_sha1(root_tools_dir).decode('utf-8', errors="replace"))
+    print("DEMOS: " + get_git_sha1(root_demos_dir).decode('utf-8', errors="replace"))
     print("\n")
 
     #All tests are in a subdirectory.  We set these up here.
@@ -817,8 +817,8 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         output = ''
         for line in f:
             #po.poll()
-            if print_output: print(line.decode('utf-8'), end='')
-            output += line.decode('utf-8')
+            if print_output: print(line.decode('utf-8', errors="replace"), end='')
+            output += line.decode('utf-8', errors="replace")
             sys.stdout.flush()
         f.close()
         while po.returncode is None: po.wait()

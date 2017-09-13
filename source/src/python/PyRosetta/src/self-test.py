@@ -22,7 +22,7 @@ def execute(message, command_line, return_='status', until_successes=False, term
         p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, errors = p.communicate()
 
-        output = output.decode('utf-8') + errors.decode('utf-8')
+        output = output.decode('utf-8', errors="replace") + errors.decode('utf-8', errors="replace")
         exit_code = p.returncode
 
         if exit_code  or  not silent: print(output)

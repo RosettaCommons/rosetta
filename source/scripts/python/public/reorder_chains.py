@@ -22,7 +22,7 @@ def _fill_chain_data(fdata, cd):
 
 def _read_gzipped_pdb_file(fname, cd):
     with gzip.open(fname, 'rb') as f:
-        _fill_chain_data([l.decode('utf-8') for l in f.readlines()], cd)
+        _fill_chain_data([l.decode('utf-8', errors="replace") for l in f.readlines()], cd)
 
 
 def _read_pdb_file(fname, cd):

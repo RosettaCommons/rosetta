@@ -86,7 +86,7 @@ class Tester:
         if Options.cxx_ver:
             cmd_str += " cxx_ver=%s" % (Options.cxx_ver)
 
-        pl = subprocess.check_output(cmd_str, shell=True).decode('utf-8')
+        pl = subprocess.check_output(cmd_str, shell=True).decode('utf-8', errors="replace")
         lines = pl.split('\n')
         for s in lines:
             if  len( s.split() ) > 1 and s.split()[0] == 'Platform:':
@@ -171,7 +171,7 @@ class Tester:
     def parseOneLib(self, f, output):
         '''Parse output for OneLib run for regular unit tests.'''
         for line in f:
-            l = line.decode('utf-8')
+            l = line.decode('utf-8', errors="replace")
             print(l, end='')
             output.append(l)
             sys.stdout.flush()
@@ -233,7 +233,7 @@ class Tester:
 
     def parseOneSuite(self, f, output):
         for line in f:
-            l = line.decode('utf-8')
+            l = line.decode('utf-8', errors="replace")
             if l != 'All tests passed!\n':
                 print(l, end='')
                 output.append(l)
@@ -282,7 +282,7 @@ class Tester:
                                  stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, shell=True)
             command_output, _ = p.communicate()
-            command_output = command_output.decode('utf-8')
+            command_output = command_output.decode('utf-8', errors="replace")
             status = p.returncode
 
             if status != 0:

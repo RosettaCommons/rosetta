@@ -53,7 +53,7 @@ def retrieve_version_information():
 
         try:
             ver = subprocess.check_output("git rev-parse HEAD", shell=True).strip()
-            ver = ver.decode('utf-8') if type(ver) == bytes else ver
+            ver = ver.decode('utf-8', errors="replace") if type(ver) == bytes else ver
             url = subprocess.check_output("git remote -v | grep fetch | awk '{print $2}' | head -n1", shell=True).strip()
             commit_date = subprocess.check_output("git log {} -1 --format='%ci'".format(ver), shell=True).strip()
         except subprocess.CalledProcessError:
