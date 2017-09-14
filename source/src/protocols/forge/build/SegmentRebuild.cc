@@ -655,8 +655,17 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 			// following ensures changes in dihedral below do not shift the
 			// conformation
-			ft.jump_edge( new_jump_number ).start_atom() = "N";
-			ft.jump_edge( new_jump_number ).stop_atom() = "C";
+            if (pose.residue( interval_.left).aa() != core::chemical::aa_vrt){
+                ft.jump_edge( new_jump_number ).start_atom() = "N";
+            } else {
+                ft.jump_edge( new_jump_number ).start_atom() = "X";
+            }
+            
+            if (pose.residue( interval_.right).aa() != core::chemical::aa_vrt){
+                ft.jump_edge( new_jump_number ).stop_atom() = "C";
+            } else {
+                ft.jump_edge( new_jump_number ).stop_atom() = "Y";
+            }
 
 		} else { // check/modify existing jump
 
@@ -674,7 +683,11 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 				order( jump_edge );
 
 				if ( static_cast< Size >( jump_edge.start() ) == interval_.left ) {
-					jump_edge.start_atom() = "N";
+                    if (pose.residue( interval_.left).aa() != core::chemical::aa_vrt){
+                        jump_edge.start_atom() = "N";
+                    } else {
+                        jump_edge.start_atom() = "X";
+                    }
 				} else if ( jump_edge.start_atom().empty() ) {
 					// if no existing jump atom, need to fill it in, otherwise
 					// edge will not be recognized as having specific atom
@@ -685,7 +698,11 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 				}
 
 				if ( static_cast< Size >( jump_edge.stop() ) == interval_.right ) {
-					jump_edge.stop_atom() = "C";
+                    if (pose.residue( interval_.right).aa() != core::chemical::aa_vrt){
+                        jump_edge.stop_atom() = "C";
+                    } else {
+                        jump_edge.stop_atom() = "Y";
+                    }
 				} else if ( jump_edge.stop_atom().empty() ) {
 					// if no existing jump atom, need to fill it in, otherwise
 					// edge will not be recognized as having specific atom
@@ -749,14 +766,22 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 			bool start_changed = false;
 			if ( static_cast< Size >( tmp.start() ) == interval_.left - 1 ) {
-				tmp.start_atom() = "N";
-				start_changed = true;
+                if (pose.residue( tmp.start()).aa() != core::chemical::aa_vrt){
+                    tmp.start_atom() = "N";
+                } else {
+                    tmp.start_atom() = "X";
+                }
+                start_changed = true;
 			}
 
 			bool stop_changed = false;
 			if ( static_cast< Size >( tmp.stop() ) == interval_.right + 1 ) {
-				tmp.stop_atom() = "C";
-				stop_changed = true;
+                if (pose.residue( tmp.stop()).aa() != core::chemical::aa_vrt){
+                    tmp.stop_atom() = "C";
+                } else {
+                    tmp.stop_atom() = "Y";
+                }
+                stop_changed = true;
 			}
 
 			// Must set opposing atom if it's not already set, otherwise
