@@ -51,8 +51,8 @@ MultiConstraint::MultiConstraint( ConstraintCOPs const & cst_in, ScoreType const
 	Constraint( t ),  //this is temporary, multi constraint shouldn't have a score type
 	report_this_as_effective_sequence_separation_( 0 )
 {
-	for ( ConstraintCOPs::const_iterator it = cst_in.begin(); it != cst_in.end(); ++it ) {
-		add_individual_constraint( *it );
+	for ( auto const elem : cst_in ) {
+		add_individual_constraint( elem );
 	} //loop over all input csts that make up this multi constraint
 }// constructor
 
@@ -240,9 +240,9 @@ MultiConstraint::fill_f1_f2(
 		ConstraintCOPs cur_csts = map_it->second;
 		//std::cout << "now taking deriv of atom " << map_it->first.atomno() << " , vector 1 element before is " << F1[1];
 
-		for ( ConstraintCOPs::const_iterator cst_it = cur_csts.begin(), end = cur_csts.end(); cst_it != end; ++cst_it ) {
+		for ( auto const & cst : cur_csts ) {
 			//std::cout << ", type of cst is " << (*cst_it)->score_type() << ",  ";
-			(*cst_it)->fill_f1_f2(atom, xyz, F1, F2, weights);
+			cst->fill_f1_f2(atom, xyz, F1, F2, weights);
 		}
 		//std::cout << " and after " << F1[1] << std::endl;
 
@@ -254,8 +254,8 @@ MultiConstraint::show( std::ostream& out) const
 {
 	out << "MultiConstraint containing the following " << member_constraints_.size() << " constraints: "
 		<< std::endl;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(), end = member_constraints_.end(); cst_it != end; ++cst_it ) {
-		(*cst_it)->show(out);
+	for ( auto const & cst : member_constraints_ ) {
+		cst->show(out);
 	}
 
 	out << " ...all member constraints of this MultiConstraint shown." << std::endl;
@@ -263,8 +263,8 @@ MultiConstraint::show( std::ostream& out) const
 
 void MultiConstraint::show_def( std::ostream& out, pose::Pose const& pose ) const {
 	out << type() << std::endl;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
-		(*cst_it)->show_def( out, pose );
+	for ( auto const & cst : member_constraints() ) {
+		cst->show_def( out, pose );
 	}
 	out << "End_"<< type() << std::endl;
 }
@@ -275,8 +275,8 @@ MultiConstraint::show_violations( std::ostream& out, pose::Pose const& pose, Siz
 	if ( verbose_level > 80 ) out << "Violations for MultiConstraint: " << std::endl;
 
 	core::Size biggest_violation(0);
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(), end = member_constraints_.end(); cst_it != end; ++cst_it ) {
-		core::Size cur_viol = (*cst_it)->show_violations( out, pose, verbose_level, threshold);
+	for ( auto const & cst : member_constraints_ ) {
+		core::Size cur_viol = cst->show_violations( out, pose, verbose_level, threshold);
 		if ( cur_viol > biggest_violation ) biggest_violation = cur_viol;
 	}
 	return biggest_violation;
@@ -289,9 +289,9 @@ MultiConstraint::choose_effective_sequence_separation(
 ) {
 	utility::vector1< core::Size > collected_seq_separations;
 	ConstraintCOPs const& cst_list( member_constraints() );
-	for ( ConstraintCOPs::const_iterator cst_it = cst_list.begin(), end = cst_list.end(); cst_it != end; ++cst_it ) {
+	for ( auto const & cst_const : cst_list ) {
 		Size seq_sep( 0 );
-		Constraint& cst = const_cast< Constraint& >( **cst_it );
+		Constraint& cst = const_cast< Constraint& >( *cst_const );
 		seq_sep = cst.choose_effective_sequence_separation( sp, RG );
 		collected_seq_separations.push_back( seq_sep );
 	}
@@ -304,8 +304,8 @@ MultiConstraint::MultiConstraint( MultiConstraint const & src ) :
 	Constraint( src ),
 	report_this_as_effective_sequence_separation_( src.report_this_as_effective_sequence_separation_ )
 {
-	for ( ConstraintCOPs::const_iterator it = src.member_constraints_.begin(); it != src.member_constraints_.end(); ++it ) {
-		add_individual_constraint( (*it)->clone() );
+	for ( auto const & cst : src.member_constraints_ ) {
+		add_individual_constraint( cst->clone() );
 	}
 }
 

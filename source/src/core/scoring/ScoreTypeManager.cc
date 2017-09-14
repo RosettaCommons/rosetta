@@ -480,6 +480,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "geom_sol_fast"    ] = geom_sol_fast;
 	name2score_type_[ "geom_sol_fast_intra_RNA"    ] = geom_sol_fast_intra_RNA;
 
+	name2score_type_[ "alignment" ] = alignment;
+
 	name2score_type_[ "dna_bb_torsion"] = dna_bb_torsion;
 	name2score_type_[ "dna_sugar_close"] = dna_sugar_close;
 	name2score_type_[ "dna_base_distance"] = dna_base_distance;

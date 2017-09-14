@@ -100,6 +100,9 @@ utility::vector1< Size >
 get_moving_res_from_full_model_info( pose::Pose & pose );
 
 utility::vector1< Size >
+get_moving_res_from_full_model_info_const( pose::Pose const & pose );
+
+utility::vector1< Size >
 get_fixed_domain_from_full_model_info_const( pose::Pose const & pose );
 
 utility::vector1< Size >

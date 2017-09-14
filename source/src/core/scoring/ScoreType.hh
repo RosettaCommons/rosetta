@@ -216,6 +216,8 @@ enum ScoreType {
 	stack_elec_base_base,
 	stack_elec_base_bb,
 
+	alignment,     // Alignment to a reference pose, with derivatives
+
 	// DNA constraints-based torsional potentials
 	dna_bb_torsion,
 	dna_sugar_close,

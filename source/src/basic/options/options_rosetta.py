@@ -7301,6 +7301,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'atr_rep_screen', 'Boolean', desc='In sampling, screen for contacts (but no clash) between partitions before packing',default='true' ),
 		Option( 'atr_rep_screen_for_docking', 'Boolean', desc='In just docking moves, screen for contacts (but no clash) between partitions before packing',default='false' ),
 		Option( 'align_pdb', 'String', desc='PDB to align to. Default will be -native, or no alignment', default='' ),
+		Option( 'new_align_pdb', 'String', desc='PDB to align to with the new RNA_AlignmentEnergy.', default='' ),
 		Option( 'enumerate', 'Boolean', desc="For SWM. Force enumeration (SWA-like) instead of random", default="false" ),
 		Option( 'preminimize', 'Boolean', desc="For SWM. Just prepack and minimize", default="false" ),
 		Option( 'skip_preminimize', 'Boolean', desc="Skip preminimize before stepwise monte carlo", default="false" ),

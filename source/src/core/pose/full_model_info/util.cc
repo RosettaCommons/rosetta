@@ -512,6 +512,23 @@ get_moving_res_from_full_model_info( pose::Pose & pose ){
 
 ///////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
+get_moving_res_from_full_model_info_const( pose::Pose const & pose ){
+
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & fixed_domain_map =  full_model_info.fixed_domain_map();
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+
+	utility::vector1< Size > moving_res;
+	for ( Size i = 1; i <= res_list.size(); i++ ) {
+		if ( fixed_domain_map[ res_list[i] ] == 0 ) moving_res.push_back( i );
+	}
+
+	return moving_res;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
 get_fixed_domain_from_full_model_info_const( pose::Pose const & pose ) {
 
 	FullModelInfo const & full_model_info = const_full_model_info( pose );

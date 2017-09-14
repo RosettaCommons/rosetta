@@ -17,6 +17,7 @@
 namespace protocols {
 
 using core::scoring::methods::EnergyMethodRegistrator;
+static EnergyMethodRegistrator< rna::AlignmentEnergyCreator > AlignmentEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ResidualDipolarCouplingEnergyRigidSegmentsCreator > ResidualDipolarCouplingEnergyRigidSegmentsCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SpecialRotamerEnergyCreator > SpecialRotamerEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::pcs::PseudocontactShiftEnergyCreator > PseudoconstactShiftEnergyCreator_registrator;

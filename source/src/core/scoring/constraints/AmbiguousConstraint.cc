@@ -226,8 +226,8 @@ AmbiguousConstraint::show( std::ostream& out) const
 	//out << "AmbiguousConstraint Active constraint:" << std::endl;
 	//active_constraint()->show(out);
 	out << "AmbiguousConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
-		(*cst_it)->show(out);
+	for ( auto const & cst : member_constraints() ) {
+		cst->show(out);
 	}
 
 	out << " ...all member constraints of this AmbiguousConstraint shown." << std::endl;
@@ -270,18 +270,16 @@ AmbiguousConstraint::show_violations( std::ostream& out, pose::Pose const& pose,
 	if ( verbose_level >= 70 ) {
 		Size total_viol( 0 );
 		if ( verbose_level >=80 ) { out << type() << " " << member_constraints().size() << " "; }
-		for ( ConstraintCOPs::const_iterator
-				cst_it = member_constraints().begin(), end = member_constraints().end();
-				cst_it != end; ++cst_it ) {
+		for ( auto const & cst : member_constraints() ) {
 			if ( active_constraint_ ) {
-				if ( (*cst_it).get() == active_constraint_.get() ) {
+				if ( cst.get() == active_constraint_.get() ) {
 					// figure out if it's inter-res, residue_pair, or 3+body
-					utility::vector1< int > pos_list( (*cst_it)->residues() );
+					utility::vector1< int > pos_list( cst->residues() );
 					if ( pos_list.size() == 2 ) {
 						out << "ResiduePairConstraints ( " << pos_list[ 1 ] << " , " << pos_list[ 2 ] << " ) ";
 						if ( verbose_level>80 ) out << std::endl;
 						//out << "active ";
-						total_viol += (*cst_it)->show_violations( out, pose, verbose_level, threshold );
+						total_viol += cst->show_violations( out, pose, verbose_level, threshold );
 						out << " of total: " << 1 << " ";
 					}
 				} else {

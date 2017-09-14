@@ -388,6 +388,7 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 
 	Vector centroid( 0.0 );
 	Size numatoms = 0;
+	//std::cout << "mid of get centroid: " << centroid.x() << " " << centroid.y() << " "  << centroid.z() << std::endl;
 
 	//Consistency check:
 	//if(rsd.type().atom_name(rsd.first_sidechain_atom()) !=" O2'") utility_exit_with_message( "rsd.type().atom_name(rsd.first_sidechain_atom()) !=\" O2'\" " );
@@ -416,15 +417,19 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 		if ( verbose ) std::cout << std::endl;
 
 		centroid += rsd.xyz( i );
+		//std::cout << "rsd " << rsd.seqpos() << " ATOM " << rsd.atom_name( i ) << centroid.x() << " " << centroid.y() << " "  << centroid.z() << std::endl;
+
 		numatoms++;
 	}
 
-	if ( numatoms == 0 ) { //Centroid not well defined in this case...probably because rsd is a virtual residue...just return 0
+	// kludge... where are these atoms going???
+	if ( numatoms == 0 || centroid.x() > 100000 || centroid.x() < -100000 ) { //Centroid not well defined in this case...probably because rsd is a virtual residue...just return 0
 		Vector dummy_centroid( 0.0 );
 		return dummy_centroid;
 	}
 
 	centroid /= static_cast< Real > ( numatoms );
+	//std::cout << "bottom of get centroid: " << centroid.x() << " " << centroid.y() << " "  << centroid.z() << std::endl;
 
 	return centroid;
 }
@@ -435,6 +440,8 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 numeric::xyzMatrix< core::Real >
 get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid ){
 
+	//std::cout << "in get_rna_base_coordinate_system head Residue number " << rsd.seqpos() << " name " << rsd.type().name() << std::endl;
+	//std::cout << "centroid: " << centroid.x() << " " << centroid.y() << " "  << centroid.z() << std::endl;
 	// AMW TODO: similarly, don't call this RNA FUNCTION for non RNA residues.
 	// I suppose ligands with planar bits with H-bond donors/acceptors can have
 	// 'edges' in the same way, perhaps. Separate function!
@@ -480,19 +487,26 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 		if ( !rsd.has( H_atom ) && rsd.name3() == "7DA" ) H_atom = "C7";
 		if ( res_type == na_rcy || res_type == na_ura ) H_atom = "C5";
 		if ( res_type == na_ura && rsd.name3() == "PSU" ) H_atom = "N1"; // pseudoU is flipped
+		//std::cout << "WC_atom " << WC_atom << std::endl;
 
 		WC_coord = rsd.xyz( WC_atom );
 		H_coord = rsd.xyz( H_atom );
 	}
 
+	//std::cout << "WC_coord: " << WC_coord.x() << " " << WC_coord.y() << " "  << WC_coord.z() << std::endl;
+
 	x = WC_coord - centroid;
+	//std::cout << "x: " << x.x() << " " << x.y() << " "  << x.z() << std::endl;
 	x.normalize();
 
 	y = H_coord - centroid; //not orthonormal yet...
+	//std::cout << "y: " << y.x() << " " << y.y() << " "  << y.z() << std::endl;
 	z = cross( x, y );
+	//std::cout << "z: " << z.x() << " " << z.y() << " "  << z.z() << std::endl;
 	z.normalize(); // Should point roughly 5' to 3' if in a double helix.
 
 	y = cross( z, x );
+	//std::cout << "y: " << y.x() << " " << y.y() << " "  << y.z() << std::endl;
 	y.normalize(); //not necessary but doesn't hurt.
 
 	numeric::xyzMatrix< core::Real > M = numeric::xyzMatrix< core::Real > ::cols( x, y, z );

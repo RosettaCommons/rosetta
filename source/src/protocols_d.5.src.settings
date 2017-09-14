@@ -11,6 +11,7 @@
 
 sources = {
     "protocols/rna/": [
+		"AlignmentEnergy",
 		"util",
     ],
     "protocols/rna/denovo": [

@@ -150,11 +150,6 @@ sources = {
 		"GlycosyltransferaseMover",
 	],
 
-	"rna" : [
-		"RNA_DeNovoOptimizerTest",
-		"RNA_DeNovoProtocolTest",
-	],
-
 	"features" : [
 		"BetaTurnDetectionFeatures",
 		"FeaturesReporterTests",
@@ -491,6 +486,12 @@ sources = {
 		"RigidBodyMover",
 		"RotateJumpAxisMover",
 		"UniformRigidBody",
+	],
+	
+	"rna" : [
+		"AlignmentEnergy",
+		"RNA_DeNovoOptimizerTest",
+		"RNA_DeNovoProtocolTest",
 	],
 
 	"rosetta_scripts" : [

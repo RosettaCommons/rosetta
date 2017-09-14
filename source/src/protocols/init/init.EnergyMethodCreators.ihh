@@ -13,6 +13,7 @@
 
 //EnergyMethodCreator #includes
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
+#include <protocols/rna/AlignmentEnergyCreator.hh>
 #include <protocols/scoring/methods/ResidualDipolarCouplingEnergyRigidSegmentsCreator.hh>
 #include <protocols/scoring/methods/SpecialRotamerEnergyCreator.hh>
 #include <protocols/scoring/methods/pcs/PseudocontactShiftEnergyCreator.hh>
