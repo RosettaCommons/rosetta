@@ -545,19 +545,19 @@ void
 EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const &pose)
 {
 	using namespace core::scoring;
-	is_cstE_ = false;
+	is_cstE_ = default_value_for_is_cstE();
 	if ( tag->hasOption( "pdb_num" ) ) resnum_ = core::pose::get_resnum(tag, pose);
 	else if ( tag->hasOption( "res_num" ) ) resnum_ =  tag->getOption<core::Size>( "res_num", 0 );
-	cstid_ = tag->getOption<std::string>( "cstid", "" );
+	cstid_ = tag->getOption<std::string>( "cstid", default_value_for_cstid() );
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function(tag, data)->clone();
-	std::string sco_name = tag->getOption<std::string>( "score_type", "total_score" );
+	std::string sco_name = tag->getOption<std::string>( "score_type", default_value_for_score_type() );
 	if ( sco_name == "cstE" ) {
 		is_cstE_ = true;
 		score_type_=atom_pair_constraint; //dummy assignment, never actually used.
 	} else score_type_ = core::scoring::score_type_from_name( sco_name );
-	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
-	whole_pose_ = tag->getOption<bool>( "whole_pose" , 0 );
+	threshold_ = tag->getOption<core::Real>( "energy_cutoff", default_value_for_threshold() );
+	whole_pose_ = tag->getOption<bool>( "whole_pose" , default_value_for_whole_pose() );
 
 	//check to make sure one and only one of resnum, cstid and whole_pose are specified
 	runtime_assert(tag->hasOption( "res_num" )|| tag->hasOption( "pdb_num" ) || tag->hasOption( "cstid" ) || whole_pose_==1 );
@@ -1455,9 +1455,9 @@ void EnzScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
 
-	attlist + XMLSchemaAttribute::attribute_w_default("score_type", xs_string, "type of score to be evaluated; default is total_score", "total_score")
-		+ XMLSchemaAttribute::attribute_w_default("energy_cutoff", xsct_real, "filters the energy based upon this cutoff value", "0.0")
-		+ XMLSchemaAttribute::attribute_w_default("whole_pose", xsct_rosetta_bool, "determines whether to evalue the score based upon the whole pose or not", "0");
+	attlist + XMLSchemaAttribute::attribute_w_default("score_type", xs_string, "type of score to be evaluated; default is total_score", default_value_for_score_type())
+		+ XMLSchemaAttribute::attribute_w_default("energy_cutoff", xsct_real, "filters the energy based upon this cutoff value", utility::to_string( default_value_for_threshold() ))
+		+ XMLSchemaAttribute::attribute_w_default("whole_pose", xsct_rosetta_bool, "determines whether to evalue the score based upon the whole pose or not", utility::to_string( default_value_for_whole_pose() ));
 	core::pose::attributes_for_get_resnum( attlist );
 	// can't add sfxn again
 	//protocols::rosetta_scripts::attributes_for_get_score_function_name( attlist );

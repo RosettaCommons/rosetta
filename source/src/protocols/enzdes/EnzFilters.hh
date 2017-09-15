@@ -223,14 +223,56 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	static inline
+	core::Size
+	default_value_for_resnum()
+	{
+		return 1000000;
+	}
+
+	static inline
+	std::string
+	default_value_for_cstid()
+	{
+		return "";
+	}
+
+	static inline
+	std::string
+	default_value_for_score_type()
+	{
+		return "total_score";
+	}
+
+	static inline
+	core::Real
+	default_value_for_threshold()
+	{
+		return static_cast< core::Real > ( 0.0 );
+	}
+
+	static inline
+	bool
+	default_value_for_whole_pose()
+	{
+		return false;
+	}
+
+	static inline
+	bool
+	default_value_for_is_cstE()
+	{
+		return false;
+	}
+
 private:
-	core::Size resnum_;
-	std::string cstid_;
+	core::Size resnum_ = default_value_for_resnum();
+	std::string cstid_ = default_value_for_cstid();
 	core::scoring::ScoreFunctionOP scorefxn_;
-	core::scoring::ScoreType score_type_;
-	core::Real threshold_;
-	bool whole_pose_;
-	bool is_cstE_;
+	core::scoring::ScoreType score_type_ = core::scoring::score_type_from_name( default_value_for_score_type() );
+	core::Real threshold_ = default_value_for_threshold();
+	bool whole_pose_ = default_value_for_whole_pose();
+	bool is_cstE_ = default_value_for_is_cstE();
 };
 
 class DiffAtomSasaFilter : public protocols::filters::Filter
