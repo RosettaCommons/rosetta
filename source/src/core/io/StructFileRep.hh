@@ -404,7 +404,13 @@ std::ostream & operator<<( std::ostream & os, LinkInformation const & li );
 } // namespace core
 
 #ifdef PYROSETTA
-template class utility::vector0< core::io::AtomInformation >;
+namespace utility {
+
+//template class utility::vector0< core::io::AtomInformation >;
+inline utility::vector0< core::io::AtomInformation > __dummy__() { return utility::vector0< core::io::AtomInformation >(); }  // <- since this class never explicitly used in headers LLVM just silently remove it so we have to make it 'useful'
+template class utility::vector0< utility::vector0< core::io::AtomInformation > >;
+
+}
 #endif
 
 

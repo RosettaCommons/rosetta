@@ -240,12 +240,12 @@ public:
 		//cl.def("insert", [](Vector &v, SizeType i, const T&t) {v.insert(v.begin()+i, t);}, "insert an item at a given position");
 		cl.def("extend", [](Vector &v, Vector &src) { v.reserve( v.size() + src.size() ); v.insert(v.end(), src.begin(), src.end()); }, "extend the list by appending all the items in the given vector");
 		cl.def("pop", [](Vector &v) {
-				if(v.size()) {
+				if( v.empty() ) throw pybind11::index_error();
+				else {
 					T t = v.back();
 					v.pop_back();
 					return t;
 				}
-				else throw pybind11::index_error();
 			}, "remove and return last item");
 
 		cl.def("pop", [](Vector &v, SizeType i) {
@@ -405,6 +405,37 @@ void stringstream_add_on_binder(CL &cl)
 		// cl.def("at", (const class core::scoring::rna::data::RNA_Reactivity & (utility::vectorL<1,core::scoring::rna::data::RNA_Reactivity,std::allocator<core::scoring::rna::data::RNA_Reactivity>>::*)(const unsigned long) const) &utility::vectorL<1, core::scoring::rna::data::RNA_Reactivity, std::allocator<core::scoring::rna::data::RNA_Reactivity> >::at, "doc", pybind11::arg("i"));
 		// cl.def("at", (class core::scoring::rna::data::RNA_Reactivity & (utility::vectorL<1,core::scoring::rna::data::RNA_Reactivity,std::allocator<core::scoring::rna::data::RNA_Reactivity>>::*)(const unsigned long)) &utility::vectorL<1, core::scoring::rna::data::RNA_Reactivity, std::allocator<core::scoring::rna::data::RNA_Reactivity> >::at, "doc", pybind11::arg("i"));
 		// cl.def("swap", (void (utility::vectorL<1,core::scoring::rna::data::RNA_Reactivity,std::allocator<core::scoring::rna::data::RNA_Reactivity>>::*)(class utility::vectorL<1, class core::scoring::rna::data::RNA_Reactivity, class std::allocator<class core::scoring::rna::data::RNA_Reactivity> > &)) &utility::vectorL<1, core::scoring::rna::data::RNA_Reactivity, std::allocator<core::scoring::rna::data::RNA_Reactivity> >::swap, "doc", pybind11::arg("v"));
+
+
+
+template< typename T >
+void set_add_on_binder(pybind11::class_<std::set<T>, std::shared_ptr< std::set<T> > > &cl)
+{
+
+
+    cl.def("add", [](std::set<T> &s, T const &v) { s.insert(v); } );
+
+	cl.def("discard", [](std::set<T> &s, T const &v) {
+			s.erase(v);
+		}, "discard element");
+
+	cl.def("__bool__", [](std::set<T> const &s) -> bool {
+			return !s.empty();
+		},
+		"Check whether the list is nonempty");
+
+
+	cl.def("__len__", [](std::set<T> const &s) { return s.size(); } );
+
+	cl.def("__iter__", [](std::set<T> &s) {
+			using ItType = typename std::set<T>::iterator;
+
+			return pybind11::make_iterator<pybind11::return_value_policy::reference_internal, ItType, ItType, T>(s.begin(), s.end());
+		},
+		pybind11::keep_alive<0, 1>() /* Essential: keep list alive while iterator exists */
+		);
+
+}
 
 
 
