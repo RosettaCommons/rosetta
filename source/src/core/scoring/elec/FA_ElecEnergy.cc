@@ -234,7 +234,7 @@ FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
 	eval_intrares_ST_only_( src.eval_intrares_ST_only_ ),
-	cp_rep_map_( src.cp_rep_map_ ),
+	cp_rep_map_( new CountPairRepMap ), //Do not copy the cp_rep_map_.  This is scratch space, and should exist on a per-instance basis.
 	nres_monomer_( 0 )
 {
 	initialize();

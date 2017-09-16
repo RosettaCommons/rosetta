@@ -237,9 +237,9 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 		//using add_variant_type_to_pose_residue;
 		//core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, second_start-1);
 		//core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, second_start);
-        core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, second_start-1);
-        core::pose::add_variant_type_to_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, second_start);
-        pose.conformation().chains_from_termini();
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, second_start-1);
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, second_start);
+		pose.conformation().chains_from_termini();
 
 		protocols::loops::Loops chain_def_loops;
 		chain_def_loops.add_loop(protocols::loops::Loop(second_start-1,second_start, second_start-1));
