@@ -129,7 +129,9 @@ AtomLevelDomainMap::get( core::id::TorsionID const & torsion_id, core::conformat
 
 	if ( fail ) return false;
 
-	if  ( !get( id1 ) && !get( id4 ) && ( get_domain( id1 ) == get_domain( id4 ) ) ) return false;
+	if  ( ( !get( id1 ) && !get( id4 ) && ( get_domain( id1 ) == get_domain( id4 ) ) )
+			|| ( get_domain( id1 ) == FIXED_DOMAIN && get_domain( id4 ) != 0 )
+			|| ( get_domain( id4 ) == FIXED_DOMAIN && get_domain( id1 ) != 0 ) ) return false;
 
 	return true;
 
@@ -188,9 +190,9 @@ AtomLevelDomainMap::get_domain( core::id::NamedAtomID const & named_atom_id, pos
 //////////////////////////////////////////////////////////////////
 void
 AtomLevelDomainMap::set_domain( Size const & i, Size const & setting  ){
-	utility::vector1< AtomID > atom_ids_in_res( atom_id_mapper_->atom_ids_in_res( i ) );
-	for ( Size j = 1; j <= atom_ids_in_res.size(); j++ ) {
-		set_domain( atom_ids_in_res[ j ], setting );
+	utility::vector1< AtomID > const & atom_ids_in_res( atom_id_mapper_->atom_ids_in_res( i ) );
+	for ( auto const & aid : atom_ids_in_res ) {
+		set_domain( aid, setting );
 	}
 }
 
@@ -236,8 +238,8 @@ AtomLevelDomainMap::set_phosphate_domain( Size const & i,
 	} else {
 
 		utility::vector1< std::string > const & atoms_involved = core::chemical::rna::atoms_involved_in_phosphate_torsion;
-		for ( Size n = 1; n <= atoms_involved.size(); n++ ) {
-			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( atoms_involved[ n ], i ), pose ) ), setting );
+		for ( std::string const & atom : atoms_involved ) {
+			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( atom, i ), pose ) ), setting );
 		}
 
 	}
@@ -251,8 +253,8 @@ AtomLevelDomainMap::set_sugar_domain( Size const & i,
 
 	runtime_assert( !pose.residue(i).is_coarse() );
 	utility::vector1< std::string > const & atoms_involved = core::chemical::rna::sugar_atoms;
-	for ( Size n = 1; n <= atoms_involved.size(); n++ ) {
-		set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( atoms_involved[ n ], i ), pose ) ), setting );
+	for ( std::string const & atom : atoms_involved ) {
+		set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( atom, i ), pose ) ), setting );
 	}
 
 }
@@ -378,8 +380,7 @@ AtomLevelDomainMap::setup_movemap( core::kinematics::MoveMap & mm,
 			torsion_ids.push_back( TorsionID( i, id::CHI, torsion_number ) );
 		}
 
-		for ( Size n = 1; n <= torsion_ids.size(); n++ ) {
-			TorsionID const & torsion_id  = torsion_ids[ n ];
+		for ( TorsionID const & torsion_id : torsion_ids ) {
 			if ( get( torsion_id, pose.conformation() ) ) mm.set( torsion_id, true );
 		}
 	}

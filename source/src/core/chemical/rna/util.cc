@@ -376,6 +376,12 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 	// instead call something else!
 	if ( !rsd.is_polymer() ) return rsd.xyz(1);
 
+	// Rats... what if it is a 'polymer residue' like protein but not
+	// in a polymer context?
+	if ( rsd.is_polymer() && !rsd.has_lower_connect() && !rsd.has_upper_connect() ) {
+		return rsd.xyz(1);
+	}
+
 	//SML PHENIX conference
 	if ( !rsd.is_RNA() ) {
 		std::cout << "name " << rsd.type().name() << std::endl;
@@ -454,6 +460,10 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 	//SML PHENIX conference
 	if ( !rsd.is_RNA() && rsd.type().name() != "pdb_GAI" ) {
 		if ( basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
+			return numeric::xyzMatrix< core::Real > ::identity();
+		} else if ( rsd.is_polymer() && !rsd.has_lower_connect() && !rsd.has_upper_connect() ) {
+			return numeric::xyzMatrix< core::Real > ::identity();
+		} else if ( rsd.is_ligand() ) {
 			return numeric::xyzMatrix< core::Real > ::identity();
 		} else { //if not option
 			utility_exit_with_message( "non - RNA residue inside get_rna_base_coordinate_system, abort" );

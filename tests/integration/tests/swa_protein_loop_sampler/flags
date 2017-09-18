@@ -12,7 +12,7 @@
 -out:file:silent_struct_type binary  
 -fasta 2it7.fasta  
 -n_sample 12
--sampler_num_pose_kept 400  
+-sampler_num_pose_kept 40  
 -cluster:radius 0.100  
 -extrachi_cutoff 0  
 -ex1  

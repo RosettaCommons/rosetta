@@ -63,6 +63,8 @@ public:
 	void set_minimize_rna( bool const minimize_rna ) { minimize_rna_ = minimize_rna; minimize_rna_has_been_specified_ = true; }
 	void set_native_pose( core::pose::PoseOP native_pose ) { native_pose_ = native_pose; }
 	void set_align_pdb( std::string const & align_pdb );
+	void set_nstruct( Size const nstruct );
+	void set_silent_file( std::string const & silent_file );
 
 	protocols::rna::denovo::options::RNA_DeNovoProtocolOptionsCOP options() const { return  options_; }
 	protocols::rna::denovo::setup::RNA_DeNovoParametersCOP rna_params() const { return rna_params_; }

@@ -15,3 +15,4 @@
 
 -superimpose_over_all false
 -score:weights stepwise/rna/rna_res_level_energy.wts
+-submotif_frequency 0.0

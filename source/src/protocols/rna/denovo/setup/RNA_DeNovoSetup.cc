@@ -223,6 +223,18 @@ void RNA_DeNovoSetup::set_align_pdb( std::string const & align_pdb ) {
 	options_->set_align_pdb( align_pdb );
 }
 
+void RNA_DeNovoSetup::set_nstruct( Size const nstruct ) {
+	runtime_assert( options_ );
+	// This must propagate to options.
+	options_->set_nstruct( nstruct );
+}
+
+void RNA_DeNovoSetup::set_silent_file( std::string const & silent_file ) {
+	runtime_assert( options_ );
+	// This must propagate to options.
+	options_->set_silent_file( silent_file );
+}
+
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////

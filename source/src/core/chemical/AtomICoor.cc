@@ -217,6 +217,12 @@ ICoorAtomID::atom_id( Residue const & rsd, Conformation const & conformation ) c
 		{ // variable scoping
 		debug_assert( ! rsd.is_lower_terminus() );
 		core::Size const lowerID = rsd.type().lower_connect_id(); //The index of the lower connection of THIS residue.
+		// lowerID may be zero even if the residue is not lower terminus, in which case we can't
+		// even USE rsd.residue_connection_partner
+		if ( lowerID == 0 || lowerID > rsd.connect_map_size() ) {
+			TR.Warning << "IcoorAtomID::atom_id(): Cannot get atom_id for POLYMER_LOWER of residue " << rsd.name() << " " << rsd.seqpos() << " because it has no lower_connect_id(). Returning BOGUS ID instead." << std::endl;
+			return id::BOGUS_ATOM_ID;
+		}
 		core::Size const partner_seqpos( rsd.residue_connection_partner( lowerID ) ); //Get the index of the residue connected to this one at the lower connection.
 		if ( partner_seqpos == 0 || partner_seqpos > conformation.size() ) {
 			TR.Warning << "IcoorAtomID::atom_id(): Cannot get atom_id for POLYMER_LOWER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS ID instead." << std::endl;
@@ -232,6 +238,12 @@ ICoorAtomID::atom_id( Residue const & rsd, Conformation const & conformation ) c
 		{ // variable scoping
 		debug_assert(!rsd.is_upper_terminus());
 		core::Size const upperID = rsd.type().upper_connect_id(); //The index of the upper connection of THIS residue.
+		// upperID may be zero even if the residue is not lower terminus, in which case we can't
+		// even USE rsd.residue_connection_partner
+		if ( upperID == 0 || upperID > rsd.connect_map_size() ) {
+			TR.Warning << "IcoorAtomID::atom_id(): Cannot get atom_id for POLYMER_UPPER of residue " << rsd.name() << " " << rsd.seqpos() << " because it has no upper_connect_id(). Returning BOGUS ID instead." << std::endl;
+			return id::BOGUS_ATOM_ID;
+		}
 		core::Size const partner_seqpos( rsd.residue_connection_partner( upperID ) ); //Get the index of the residue connected to this one at the upper connection.
 		if ( partner_seqpos == 0 || partner_seqpos > conformation.size() ) {
 			TR.Warning << "IcoorAtomID::atom_id(): Cannot get atom_id for POLYMER_UPPER of residue " << rsd.name() << " " << rsd.seqpos() << ". BOGUS ID instead." << std::endl;

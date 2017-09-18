@@ -491,7 +491,9 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( root_partition_res_.size() > 0 && !root_partition_res_.has_value( n ) ) continue;
 			Size const d = domain_map[ n ];
+			//TR << "d         now " << d << std::endl;
 			if ( d > 0 && ( d_primary == 0 || d < d_primary ) ) d_primary = d;
+			//TR << "d_primary now " << d_primary << std::endl;
 		}
 	}
 
