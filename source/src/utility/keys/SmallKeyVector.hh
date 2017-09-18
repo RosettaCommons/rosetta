@@ -532,7 +532,7 @@ public: // Indexers
 	ConstReference
 	operator []( Key const & key ) const
 	{
-		debug_assert( active( key ) );
+		runtime_assert( active( key ) );
 		return v_[ m_[ key ] ];
 	}
 
@@ -542,7 +542,7 @@ public: // Indexers
 	Reference
 	operator []( Key const & key )
 	{
-		debug_assert( active( key ) );
+		runtime_assert( active( key ) );
 		return v_[ m_[ key ] ];
 	}
 

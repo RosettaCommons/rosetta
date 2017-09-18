@@ -28,10 +28,13 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <string>
 #include <map>
+
+static THREAD_LOCAL basic::Tracer TR("protocolstoolbox.task_operations.DsspDesignOperationTests.cxxtest");
 
 using namespace protocols::toolbox::task_operations;
 using namespace core::pack::task;
@@ -53,14 +56,12 @@ public:
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, "protocols/toolbox/task_operations/dssp_in.pdb" , core::import_pose::PDB_file);
 
-		basic::otstreamOP UT( new test::UTracer( "protocols/toolbox/task_operations/DsspDesignOperation.u" ) );
-		basic::Tracer::set_ios_hook( UT, "protocols.toolbox.TaskOperations.DsspDesignOperation" );
-
 		TaskFactory Dssp_factory;
 		Dssp_factory.push_back( core::pack::task::operation::TaskOperationCOP( new DsspDesignOperation ) );
-		Dssp_factory.create_task_and_apply_taskoperations( pose );
+		core::pack::task::PackerTaskOP task( Dssp_factory.create_task_and_apply_taskoperations( pose ) );
 
-		basic::Tracer::set_ios_hook( 0, "" );
+		test::UTracer UT( "protocols/toolbox/task_operations/DsspDesignOperation.u" );
+		UT << *task << std::endl;
 	}
 
 	void test_copy_constructor() {

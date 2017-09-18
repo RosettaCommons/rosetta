@@ -351,6 +351,34 @@ settings = {
         },
     },
 
+    "gcc, release_symbols" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [
+                    "O3",
+                    "ffast-math",
+                    "fno-finite-math-only", # Needed with -ffast-math for proper handling of NaN and Inf
+                    "funroll-loops",
+                    "finline-functions",
+                    "finline-limit=20000",
+                    "s"
+                ],
+                "mode" : [
+                    "g",
+                    "ggdb",
+                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            "defines" : [ "NDEBUG" ],
+        },
+    },
+
     "gcc, release_debug" : {
         "appends" : {
             "flags" : {
@@ -1287,6 +1315,16 @@ settings = {
         },
     },
 
+    "icc, linux, release_symbols" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [ "ip" ],
+                "mode" : [ "O3", "g" ],
+            },
+            "defines" : [ "NDEBUG" ],
+        },
+    },
+
 
     #"icc, windows, debug" : {
     #    "appends" : {
@@ -1902,6 +1940,25 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [ "O3" ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            "defines" : [ "NDEBUG" ],
+        },
+    },
+
+    "clang, release_symbols" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [ "O3" ],
+                "mode" : [
+                    "g",
+                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+		],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
                 "warn" : [

@@ -37,8 +37,9 @@ options = {
     "mode" : [
         "debug",
         "release",
-        "release_debug",
-        "release_debug_no_symbols",
+        "release_symbols",  # Like release, but with debugging symbols attached
+        "release_debug",    # Debug mode, but with release optimizations
+        "release_debug_no_symbols", # release_debug, with symbols removed
         "profile",
         "coverage",
         "pyrosetta",

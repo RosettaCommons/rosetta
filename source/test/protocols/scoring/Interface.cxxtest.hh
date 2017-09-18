@@ -88,12 +88,10 @@ public:
 		// use an 8 A cutoff for the iface calculation
 		iface->distance( 8.0 );
 
-		// monitor the output from the iface calculation
-		basic::otstreamOP ut( new test::UTracer("protocols/scoring/Interface.u") );
-		basic::Tracer::set_ios_hook(ut, "core.conformation.Interface");
 		iface->calculate( *the_pose );
-		iface->print( *the_pose );
-		basic::Tracer::set_ios_hook(0, "");
+
+		test::UTracer ut("protocols/scoring/Interface.u");
+		iface->show( ut, *the_pose );
 	}
 };
 

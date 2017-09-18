@@ -211,12 +211,12 @@ public:
 			mover.max_per_move_torsion_delta_per_residue( 'w' );
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			// ok -- let's break the error message into two lines.
-			std::string msg = e.msg();
-			std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
-			TS_ASSERT_EQUALS( msg_lines.size(), 3 );
-			TS_ASSERT_EQUALS( msg_lines[1], "ERROR: CCDLoopClosureMover::max_per_move_delta_per_residue( char secstruct ): "
-				"secstruct must be 'H', 'E', or 'L'. 'w' is not valid." );
+			// We get a PyAssert in debug mode, and a regular message exception in release mode
+			// These have different formats -- just check for contents we need
+			TR << "Error message is:\n";
+			TR << e.msg() << std::endl;
+			TS_ASSERT( e.msg().find("CCDLoopClosureMover::max_per_move_delta_per_residue( char secstruct ): "
+				"secstruct must be 'H', 'E', or 'L'. 'w' is not valid.") != std::string::npos );
 		}
 		TR << "------------ The previous error message was expected -------------" << std::endl;
 
@@ -226,11 +226,12 @@ public:
 			mover.max_total_torsion_delta_per_residue( '!' );
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
-			std::string msg = e.msg();
-			std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
-			TS_ASSERT_EQUALS( msg_lines.size(), 3 );
-			TS_ASSERT_EQUALS( msg_lines[1], "ERROR: CCDLoopClosureMover::max_total_delta_per_residue( char secstruct ): "
-				"secstruct must be 'H', 'E', or 'L'. '!' is not valid." );
+			// We get a PyAssert in debug mode, and a regular message exception in release mode
+			// These have different formats -- just check for contents we need
+			TR << "Error message is:\n";
+			TR << e.msg() << std::endl;
+			TS_ASSERT( e.msg().find("CCDLoopClosureMover::max_total_delta_per_residue( char secstruct ): "
+				"secstruct must be 'H', 'E', or 'L'. '!' is not valid.") != std::string::npos );
 		}
 		TR << "------------ The previous error message was expected -------------" << std::endl;
 

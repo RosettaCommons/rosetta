@@ -298,18 +298,24 @@ Interface::print( core::pose::Pose const & pose )
 void
 Interface::show( core::pose::Pose const & pose )
 {
-	TR << "Interface residues:" << std::endl;
+	show( TR, pose );
+}
+
+void
+Interface::show( std::ostream & out, core::pose::Pose const & pose )
+{
+	out << "Interface residues:" << std::endl;
 
 	std::string selection;
 	for ( Size i=1; i<=max_interchain_sites; ++i ) {
-		TR << "Site " << i << std::endl;
+		out << "Site " << i << std::endl;
 		for ( Size j=1; j<= pair_list_[i].size(); ++j ) {
 			core::conformation::Residue const & rsd = pose.residue( pair_list_[i][j] );
-			TR << "     " << rsd.aa() << ' ' << rsd.seqpos() << std::endl;
+			out << "     " << rsd.aa() << ' ' << rsd.seqpos() << std::endl;
 			selection += string_of(rsd.seqpos()) + '+';
 		}
 		if ( pair_list_[i].size() > 0 ) {
-			TR << "     sele interface" << i << ", resi " << selection << std::endl;
+			out << "     sele interface" << i << ", resi " << selection << std::endl;
 		}
 		if ( i==1 ) selection.clear();
 	}

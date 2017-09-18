@@ -89,6 +89,8 @@ public:
 	void calculate( core::pose::Pose const & pose );
 	void print( core::pose::Pose const & pose );
 	void show( core::pose::Pose const & pose );
+	void show( std::ostream & out, core::pose::Pose const & pose );
+
 	void set_pack( core::pose::Pose const & pose, PackerTaskOP task );
 
 	core::Size closest_interface_residue( core::pose::Pose const & pose, core::Size src_rsd, core::Real & distance );
