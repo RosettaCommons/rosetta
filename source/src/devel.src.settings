@@ -64,7 +64,6 @@ sources = {
 		"CavityVolumeFilter",
 		"CoreResiduesPerElementFilter",
 		"FoldabilityFilter",
-		"SSShapeComplementarityFilter",
 	],
 	"devel/denovo_design/scoring": [
 		"SideChainNeighborsEnergy",

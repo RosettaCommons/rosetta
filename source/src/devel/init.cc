@@ -55,7 +55,6 @@
 #include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
 #include <devel/denovo_design/filters/CoreResiduesPerElementFilterCreator.hh>
 #include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
-#include <devel/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 #include <devel/replica_docking/InteractionScoreFilterCreator.hh>
 #include <devel/matdes/GenericSymmetricSamplerCreator.hh>
 #include <devel/replica_docking/IrmsdFilterCreator.hh>
@@ -127,7 +126,6 @@ core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnC
 static protocols::filters::FilterRegistrator< denovo_design::filters::CavityVolumeFilterCreator > reg_CavityVolumeFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::CoreResiduesPerElementFilterCreator > reg_CoreResiduesPerElementFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::FoldabilityFilterCreator > reg_FoldabilityFilterCreator;
-static protocols::filters::FilterRegistrator< denovo_design::filters::SSShapeComplementarityFilterCreator > reg_SSShapeComplementarityFilterCreator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::InteractionScoreFilterCreator > IscCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::IrmsdFilterCreator > IrmsdCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::FnatFilterCreator > FnatCreator_registrator;

@@ -6,17 +6,17 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
-/// @file    src/devel/denovo_design/filters/SSShapeComplementarityFilterCreator.fwd.hh
+/// @file    src/protocols/denovo_design/filters/SSShapeComplementarityFilterCreator.fwd.hh
 /// @brief   Creator for Tom's denovo protocol
 /// @author  Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilterCreator_hh
-#define INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilterCreator_hh
+#ifndef INCLUDED_protocols_denovo_design_filters_SSShapeComplementarityFilterCreator_hh
+#define INCLUDED_protocols_denovo_design_filters_SSShapeComplementarityFilterCreator_hh
 
 // Project headers
 #include <protocols/filters/FilterCreator.hh>
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 

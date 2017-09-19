@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/devel/denovo_design/filters/SSShapeComplementarityFilter.cc
+/// @file src/protocols/denovo_design/filters/SSShapeComplementarityFilter.cc
 /// @brief Tom's Denovo design protocol
 /// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
 /// @author Vikram K. Mulligan (vmullig@uw.edu -- added threshold option)
 
 // Unit headers
-#include <devel/denovo_design/filters/SSShapeComplementarityFilter.hh>
-#include <devel/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
+#include <protocols/denovo_design/filters/SSShapeComplementarityFilter.hh>
+#include <protocols/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 
 // Protocol Headers
 #include <protocols/fldsgn/topology/HelixPairing.hh>
@@ -46,11 +46,11 @@
 //C++ Headers
 
 
-static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.SSShapeComplementarityFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.SSShapeComplementarityFilter" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 
@@ -583,6 +583,6 @@ void SSShapeComplementarityFilterCreator::provide_xml_schema( utility::tag::XMLS
 
 } // namespace filters
 } // namespace denovo_design
-} // namespace devel
+} // namespace protocols
 
 

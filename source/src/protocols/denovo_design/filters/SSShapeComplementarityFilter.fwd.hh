@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/devel/denovo_design/filters/SSShapeComplementarityFilter.fwd.hh
+/// @file   src/protocols/denovo_design/filters/SSShapeComplementarityFilter.fwd.hh
 /// @brief  Fwd declarations for Tom's denovo design protocol
 /// @author Tom Linsky
 
 
-#ifndef INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilter_fwd_hh
-#define INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilter_fwd_hh
+#ifndef INCLUDED_protocols_denovo_design_filters_SSShapeComplementarityFilter_fwd_hh
+#define INCLUDED_protocols_denovo_design_filters_SSShapeComplementarityFilter_fwd_hh
 
 
 // Utility headers
@@ -21,7 +21,7 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 // Forward
@@ -36,6 +36,6 @@ typedef  utility::pointer::weak_ptr< SSShapeComplementarityFilter const >  SSSha
 
 } // namespace filters
 } // namespace denovo_design
-} // namespace devel
+} // namespace protocols
 
 #endif

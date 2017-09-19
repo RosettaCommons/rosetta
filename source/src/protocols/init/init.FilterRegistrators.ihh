@@ -71,6 +71,7 @@ static FilterRegistrator< protocols::fold_from_loops::RmsdFromResidueSelectorFil
 static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobicsFilterCreator > reg_ExposedHydrophobicsFilterCreator;
 static FilterRegistrator< protocols::denovo_design::filters::PreProlineFilterCreator > reg_PreProlineFilterCreator;
 static FilterRegistrator< protocols::denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;
+static FilterRegistrator< protocols::denovo_design::filters::SSShapeComplementarityFilterCreator > reg_SSShapeComplementarityFilterCreator;
 
 static FilterRegistrator< protocols::hbnet::HBNetScoreFilterCreator > reg_HBNetScoreFilterCreator;
 static FilterRegistrator< protocols::helical_bundle::BundleReporterFilterCreator > reg_BundleReporterFilterCreator;

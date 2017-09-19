@@ -74,6 +74,7 @@ sources = {
 		"ExposedHydrophobicsFilter",
 		"PreProlineFilter",
 		"SSPredictionFilter",
+    "SSShapeComplementarityFilter",
 	],
 	"protocols/denovo_design/movers" : [
 		"AlignResiduesMover",

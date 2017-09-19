@@ -55,6 +55,7 @@
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>
 #include <protocols/denovo_design/filters/PreProlineFilterCreator.hh>
 #include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>
+#include <protocols/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 
 #include <protocols/hbnet/HBNetScoreFilterCreator.hh>
 #include <protocols/helical_bundle/BundleReporterFilterCreator.hh>

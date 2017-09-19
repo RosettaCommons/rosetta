@@ -65,6 +65,7 @@
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>
 #include <protocols/denovo_design/filters/PreProlineFilterCreator.hh>
 #include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>
+#include <protocols/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 #include <protocols/helical_bundle/BundleReporterFilterCreator.hh>
 #include <protocols/indexed_structure_store/filters/FragmentLookupFilterCreator.hh>
 #include <protocols/ligand_docking/AtomCountFilterCreator.hh>
@@ -287,6 +288,9 @@ public:
 
 	void test_protocols_denovo_design_filters_SSPredictionFilterCreator_name()
 	{ protocols::denovo_design::filters::SSPredictionFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SSPrediction" ); }
+
+	void test_protocols_denovo_design_filters_SSShapeComplementarityFilterCreator_name()
+	{ protocols::denovo_design::filters::SSShapeComplementarityFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SSShapeComplementarity" ); }
 
 	void test_protocols_helical_bundle_BundleReporterFilterCreator_name()
 	{ protocols::helical_bundle::BundleReporterFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "BundleReporter" ); }

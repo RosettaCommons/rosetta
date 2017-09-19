@@ -28,7 +28,6 @@
 #include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
 #include <devel/denovo_design/filters/CoreResiduesPerElementFilterCreator.hh>
 #include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
-#include <devel/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 #include <devel/replica_docking/InteractionScoreFilterCreator.hh>
 #include <devel/replica_docking/IrmsdFilterCreator.hh>
 #include <devel/replica_docking/FnatFilterCreator.hh>
@@ -49,9 +48,6 @@ public:
 
 	void test_devel_denovo_design_filters_FoldabilityFilterCreator_name()
 	{ devel::denovo_design::filters::FoldabilityFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Foldability" ); }
-
-	void test_devel_denovo_design_filters_SSShapeComplementarityFilterCreator_name()
-	{ devel::denovo_design::filters::SSShapeComplementarityFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SSShapeComplementarity" ); }
 
 	void test_devel_replica_docking_InteractionScoreFilterCreator_name()
 	{ devel::replica_docking::InteractionScoreFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "I_sc" ); }
@@ -83,9 +79,6 @@ public:
 	//
 	//void test_devel_denovo_design_filters_FoldabilityFilterCreator()
 	//{ devel::denovo_design::filters::FoldabilityFilterCreator cr; std::cout << "devel::denovo_design::filters::FoldabilityFilterCreator " << cr.keyname() << std::endl; }
-	//
-	//void test_devel_denovo_design_filters_SSShapeComplementarityFilterCreator()
-	//{ devel::denovo_design::filters::SSShapeComplementarityFilterCreator cr; std::cout << "devel::denovo_design::filters::SSShapeComplementarityFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_devel_replica_docking_InteractionScoreFilterCreator()
 	//{ devel::replica_docking::InteractionScoreFilterCreator cr; std::cout << "devel::replica_docking::InteractionScoreFilterCreator " << cr.keyname() << std::endl; }

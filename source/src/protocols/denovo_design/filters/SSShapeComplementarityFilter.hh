@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/devel/denovo_design/filters/SSShapeComplementarityFilter.hh
+/// @file src/protocols/denovo_design/filters/SSShapeComplementarityFilter.hh
 /// @brief Tom's Denovo Protocol. This is freely mutable and used for playing around with stuff
 /// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 
-#ifndef INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilter_hh
-#define INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilter_hh
+#ifndef INCLUDED_protocols_denovo_design_filters_SSShapeComplementarityFilter_hh
+#define INCLUDED_protocols_denovo_design_filters_SSShapeComplementarityFilter_hh
 
 // Unit headers
-#include <devel/denovo_design/filters/SSShapeComplementarityFilter.fwd.hh>
+#include <protocols/denovo_design/filters/SSShapeComplementarityFilter.fwd.hh>
 
 // Project headers
 #include <protocols/filters/Filter.hh>
@@ -42,7 +42,7 @@
 #include <utility/vector1.hh>
 
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 
@@ -150,6 +150,6 @@ private:   // other data
 
 } // filters
 } // denovo_design
-} // devel
+} // protocols
 
 #endif
