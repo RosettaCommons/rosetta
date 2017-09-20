@@ -143,11 +143,13 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
         print('LLVM:{} + Binder install is detected at {}, skipping LLVM installation Binder building procedures...\n'.format(release, build_dir))
 
     else:
-        if signature['config'] != disk_signature['config']:
-            print( 'LLVM build detected, but config version mismatched: was:"{}" current:"{}", perfoming a clean rebuild...'.format(disk_signature['config'], signature['config']) )
-            if os.path.isdir(build_dir): shutil.rmtree(build_dir)
+        print('LLVM build detected, but config/binder version has changed, perfoming a clean rebuild...')
+        if os.path.isdir(build_dir): shutil.rmtree(build_dir)
 
-        else: print( 'Binder build detected, but source version mismatched: was:{} current:{}, rebuilding...'.format(disk_signature['binder'], signature['binder']) )
+        # if signature['config'] != disk_signature['config']:
+        #     print( 'LLVM build detected, but config version mismatched: was:"{}" current:"{}", perfoming a clean rebuild...'.format(disk_signature['config'], signature['config']) )
+        #     if os.path.isdir(build_dir): shutil.rmtree(build_dir)
+        # else: print( 'Binder build detected, but source version mismatched: was:{} current:{}, rebuilding...'.format(disk_signature['binder'], signature['binder']) )
 
         if not os.path.isdir(build_dir): os.makedirs(build_dir)
 
