@@ -125,7 +125,7 @@ LigandMetalContactSelector::parse_my_tag(
 		}
 		// grab the ResidueSelector from the selector option
 		// and then grab each of the indicated residue selectors from the datamap.
-		std::string selector_str;
+		std::string selector_str = "";
 		try {
 			selector_str = tag->getOption< std::string >( "residue_selector" );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -159,7 +159,6 @@ LigandMetalContactSelector::parse_my_tag(
 			datamap
 		);
 		set_input_set_selector( rs );
-
 	} else { // do not get input_set from ResidueSelectors but load resnums string instead
 		try {
 			set_resnum_string ( tag->getOption< std::string >( "resnums" ) );
@@ -171,7 +170,7 @@ LigandMetalContactSelector::parse_my_tag(
 		}
 	}
 
-	dist_cutoff_multiplier_ = tag->getOption< core::Real >( "dist_cutoff_multiplier", 1 );
+	dist_cutoff_multiplier_ = tag->getOption< core::Real >( "dist_cutoff_multiplier", 1.0 );
 
 }
 

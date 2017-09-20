@@ -106,10 +106,10 @@ private:
 
 private:
 
-	std::string resnum_string_;
-	core::select::residue_selector::ResidueSelectorCOP input_set_selector_;
-	bool using_a_resselect_;
-	core::Real dist_cutoff_multiplier_;
+	std::string resnum_string_="";
+	core::select::residue_selector::ResidueSelectorCOP input_set_selector_ = nullptr;
+	bool using_a_resselect_=false;
+	core::Real dist_cutoff_multiplier_=1.0;
 
 #ifdef    SERIALIZATION
 public:
