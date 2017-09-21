@@ -105,7 +105,7 @@ def run_pyrosetta_test(rosetta_dir, working_dir, platform, config, hpc_driver=No
 
         report = working_dir + '/.report.json'
 
-        res, test_output = execute('Running py.test for pyrosetta_scripts repository...', 'cd {rosetta_dir}/pyrosetta_scripts && {ve.bin}/py.test --continue-on-collection-errors -vv --jsonapi --json={report}'.format(**vars()), return_='tuple', add_message_and_command_line_to_output=True)
+        res, test_output = execute('Running py.test for pyrosetta_scripts repository...', 'cd {rosetta_dir}/pyrosetta_scripts && {ve.bin}/py.test --continue-on-collection-errors -vv --jsonapi --json={report}'.format(**vars()), return_='tuple', add_message_and_command_line_to_output=True)  # --capture=no
         codecs.open(working_dir+'/test-log.txt', 'w', encoding='utf-8', errors='replace').write(test_output)
 
         output += '\n' + test_output
@@ -119,7 +119,9 @@ def run_pyrosetta_test(rosetta_dir, working_dir, platform, config, hpc_driver=No
                 test = a['attributes']
                 name = test['name'].replace('.py::test_', '.')
                 if test['outcome'] == 'passed': sub_tests_results[name] = {_StateKey_:_S_passed_, _LogKey_ : '' }
-                else: sub_tests_results[name] = {_StateKey_ : _S_failed_,  _LogKey_ : test['call']['longrepr'] }
+                else:
+                    log = '{}\n---- stdout ----\n{}\n---- stderr ----\n'.format(test['call']['longrepr'], test['call'].get('stdout', ''), test['call'].get('stdout', 'stderr')  )
+                    sub_tests_results[name] = {_StateKey_ : _S_failed_,  _LogKey_ : log }
 
             res_code = _S_failed_ if res else _S_passed_
 
