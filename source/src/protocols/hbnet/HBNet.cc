@@ -180,7 +180,7 @@ HBNet::HBNet( ) :
 	min_connectivity_(0.5),
 	task_factory_( /* NULL */ ),
 	init_scorefxn_(core::scoring::ScoreFunctionFactory::create_score_function( "HBNet" )),
-	scorefxn_( /* NULL */ ),
+	scorefxn_( core::scoring::get_score_function() ),
 	rotamer_sets_( /* NULL */ ),
 	ig_( /* NULL */ ),
 	rotamer_links_(0),
@@ -195,16 +195,7 @@ HBNet::HBNet( ) :
 	boundary_residues_(0),
 	input_hbnet_info_residues_(0)
 {
-	//need to be able to use beta if called from code or another mover
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::beta ]() ) {
-		init_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "HBNet_beta" );
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "beta_cst" );
-	} else {
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "talaris2014_cst" );
-	}
-
 	set_monte_carlo_data_to_default();
-
 }
 
 HBNet::HBNet( std::string const name ) :
@@ -254,7 +245,7 @@ HBNet::HBNet( std::string const name ) :
 	min_connectivity_(0.5),
 	task_factory_( /* NULL */ ),
 	init_scorefxn_(core::scoring::ScoreFunctionFactory::create_score_function( "HBNet" )),
-	scorefxn_( /* NULL */ ),
+	scorefxn_( core::scoring::get_score_function() ),
 	rotamer_sets_( /* NULL */ ),
 	ig_( /* NULL */ ),
 	rotamer_links_(0),
@@ -269,14 +260,6 @@ HBNet::HBNet( std::string const name ) :
 	boundary_residues_(0),
 	input_hbnet_info_residues_(0)
 {
-	//need to be able to use beta if called from code or another mover
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::beta ]() ) {
-		init_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "HBNet_beta" );
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "beta_cst" );
-	} else {
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "talaris2014_cst" );
-	}
-
 	set_monte_carlo_data_to_default();
 }
 
@@ -356,13 +339,6 @@ HBNet::HBNet( core::scoring::ScoreFunctionCOP scorefxn,
 	boundary_residues_(0),
 	input_hbnet_info_residues_(0)
 {
-	//need to be able to use beta if called from code or another mover
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::beta ]() ) {
-		init_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "HBNet_beta" );
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "beta_cst" );
-	} else {
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "talaris2014_cst" );
-	}
 	//lkb_ = new core::scoring::lkball::LK_BallEnergy(init_scorefxn_->energy_method_options());
 	//lkb_(init_scorefxn_->energy_method_options());
 	if ( only_native_ ) find_native_ = true;
@@ -522,10 +498,6 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 		runtime_assert( selector );
 		boundary_selector_ = selector->clone();
 	}
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::beta ].value(true) ) {
-		init_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "HBNet_beta" );
-	}
-
 	core::scoring::ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	if ( new_score_function == nullptr ) return;
 	set_score_function( new_score_function );
@@ -2142,7 +2114,7 @@ HBNet::remove_replicate_networks( Size same_max/*=1*/ )
 					**vit = *i;
 					auto vit2 = vit+1;
 					for ( ; vit2 != temp_net_vec.end(); ) {
-						if ( is_sub_residues( i->residues, (*vit)->residues ) ) {
+						if ( is_sub_residues( i->residues, (*vit2)->residues ) ) {
 							vit2 = temp_net_vec.erase(vit2);
 						} else {
 							++vit2;
@@ -3377,9 +3349,15 @@ HBNet::setup( Pose const & pose )
 	//keep_start_selector_rotamers_fixed_
 	if ( keep_start_selector_rotamers_fixed_ ) {
 		for ( const auto & start_res : start_res_vec_ ) {
-			task_->nonconst_residue_task( start_res ).reset(); // in case previously set to prevent_repacking()
-			task_->nonconst_residue_task( start_res ).or_optimize_h( true );
-			task_->nonconst_residue_task( start_res ).or_include_current( true );
+			if ( !task_->being_packed( start_res ) ) {
+				//TR << "Residue " << start_res << " was set to not repack,
+				//only the input rotamer will be used."<< std::endl;
+				const chemical::AA aa = task_->nonconst_residue_task( start_res ).get_original_residue();
+				task_->nonconst_residue_task( start_res ).reset(); // in case previously set to prevent_repacking()
+				task_->nonconst_residue_task( start_res ).allow_aa( aa );
+				task_->nonconst_residue_task( start_res ).or_optimize_h( true );
+				task_->nonconst_residue_task( start_res ).or_include_current( true );
+			}
 		}
 	}
 	utility::vector1<Size>  residues_to_ala(0);
@@ -3518,11 +3496,7 @@ HBNet::apply( Pose & pose )
 
 	//shouldn't ever be NULL
 	if ( scorefxn_ == nullptr ) {
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::beta ].value(true) ) {
-			scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "beta_cst" );
-		} else {
-			scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "talaris2013_cst" );
-		}
+		scorefxn_ = core::scoring::get_score_function(); // set to default
 	}
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		set_symmetry(pose);
