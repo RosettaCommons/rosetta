@@ -2549,7 +2549,7 @@ CartesianBondedEnergy::eval_singleres_angle_energies(
 		bool skip_this_angle=false;
 		for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
 			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-					&& rsd.type().is_ring_atom( i, atids[2] ) ) {
+					&& rsd.type().is_ring_atom( i, atids[3] ) ) {
 				skip_this_angle=true;
 			}
 		}
