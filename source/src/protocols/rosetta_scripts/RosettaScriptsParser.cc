@@ -133,7 +133,7 @@ RosettaScriptsParser::set_recursion_limit(const utility::options::OptionCollecti
 ParsedProtocolOP
 RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, std::string const & xml_fname){
 	bool modified_pose;
-	return generate_mover_and_apply_to_pose(pose, modified_pose, xml_fname);
+	return generate_mover_and_apply_to_pose(pose, basic::options::option, modified_pose, xml_fname);
 }
 
 
