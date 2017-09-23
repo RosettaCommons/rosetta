@@ -180,6 +180,8 @@ def upgrade_submodule(submodule_path, rosetta_dir, working_dir, platform, config
     author = '{user_name} <{user_email}>'.format(user_name=config['user_name'], user_email=config['user_email'])
     output += execute('Committing changes into main and pushing results to GitHub...', "cd {rosetta_dir} && git commit --author='{author}' -m 'RosettaAI: Setting {submodule_path} submodule to latest origin/master version.' -- {submodule_path} && git fetch && git rebase && git push".format(**vars()), add_message_and_command_line_to_output=True, return_='output')
 
+    output = output.replace( '<{}>'.format(config['user_email']), '<rosetta@university.edu>' )
+
     with open(working_dir+'/output-upgrade-submodule.txt', 'w') as f: f.write(output)
 
     return {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : output }
