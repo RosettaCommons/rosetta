@@ -716,8 +716,8 @@ HBNet::MC_traverse_IG( ){
 
 	///////////
 	//Symmetry
+	core::Size const scmult_1b( symmetric_ ? symm_info_->score_multiply_factor() : 1 );
 	if ( symmetric_ && core::pose::symmetry::is_symmetric( *orig_pose_ ) ) {
-		core::Size const scmult_1b( symmetric_ ? symm_info_->score_multiply_factor() : 1 );
 
 		for ( core::Size mres = 1; mres <= rotamer_sets_->nmoltenres(); ++mres ) {
 			core::Size const resid_raw = rotamer_sets_->moltenres_2_resid( mres );
@@ -749,6 +749,15 @@ HBNet::MC_traverse_IG( ){
 			}//rot
 		}//mres
 	}//symmetric
+
+	//Do not consider hbonds where one side clashes with the background
+	for ( core::Size node_id = 1; node_id <= hbond_graph_->num_nodes(); ++node_id ) {
+		HBondNode const * const node = static_cast< HBondNode * > ( hbond_graph_->get_node( node_id ) );
+		core::Real const one_body_1 = ig_->get_one_body_energy_for_node_state( node->moltenres(), node->local_rotamer_id() ) / scmult_1b;
+		if ( one_body_1 > clash_threshold_ ) {
+			hbond_graph_->drop_all_edges_for_node( node_id );
+		}
+	}
 
 	for ( utility::graph::EdgeListConstIterator it = hbond_graph_->const_edge_list_begin();
 			it != hbond_graph_->const_edge_list_end(); ++it ) {
@@ -1000,10 +1009,30 @@ HBNet::net_clash(utility::vector1< HBondResStructCOP > const & residues_i, utili
 	return false;
 }//net_clash
 
+bool one_network_is_subset_of_other( utility::vector1< HBondResStructCOP > const & residues_i, utility::vector1< HBondResStructCOP > const & residues_j ){
+
+	utility::vector1< HBondResStructCOP > const & larger =  ( residues_i.size() > residues_j.size() ? residues_i : residues_j );
+	utility::vector1< HBondResStructCOP > const & smaller = ( residues_i.size() > residues_j.size() ? residues_j : residues_i );
+
+	for ( HBondResStructCOP small_guy : smaller ) {
+		bool exists_in_larger = false;
+		for ( HBondResStructCOP big_guy : larger ) {
+			if ( *small_guy == *big_guy ) {
+				exists_in_larger = true;
+				break;
+			}
+		}
+		if ( ! exists_in_larger ) return false;
+	}
+
+	return true;
+}
+
 bool
 HBNet::monte_carlo_net_clash( utility::vector1< HBondResStructCOP > const & residues_i, utility::vector1< HBondResStructCOP > const & residues_j ) const {
 
 	if ( residues_i.size() == 0 || residues_j.size() == 0 ) return false;
+	if ( one_network_is_subset_of_other( residues_i, residues_j) ) return true;
 
 	utility::vector1< core::Size > global_rots1;
 	global_rots1.reserve( residues_i.size() );
@@ -3879,7 +3908,7 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"max_mc_nets", xsct_non_negative_integer,
 		"(if monte_carlo_branch) maximum number of networks that the monte carlo protocol will store. Loose rule of thumb is to make this 10x the max number of nets you want to end up with. 100 (default) is on the conservative end of the spectrum for this value. The reason you do not want this to be too large is that each of these networks goes through a relatively expensive quality check. A value of zero results in no limit.",
-		"100" )
+		"0" )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"total_num_mc_runs", xsct_non_negative_integer,
 		"(if monte_carlo_branch) number of monte carlo runs to be divided over all the seed hbonds. A single monte carlo run appears to take roughly 1 ms (very loose estimate).",
@@ -4132,9 +4161,9 @@ void HBNet::append_to_network_vector( std::list< NetworkState > & designed_netwo
 
 void HBNet::add_residue_to_network_state( NetworkState & current_network_state, HBondNode * node_being_added ) const {
 
-	for ( HBondNode const * const existing_node : current_network_state.nodes ) {
+	add_polar_atoms_to_network_state( current_network_state, node_being_added, rotamer_sets_ );
 
-		add_polar_atoms_to_network_state( current_network_state, node_being_added, rotamer_sets_ );
+	for ( HBondNode const * const existing_node : current_network_state.nodes ) {
 
 		//check for hbond
 		HBondEdge const * const hbond_edge = static_cast< HBondEdge * > ( node_being_added->find_edge( existing_node->get_node_index() ) );

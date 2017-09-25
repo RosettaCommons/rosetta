@@ -910,7 +910,7 @@ inline void HBNet::set_monte_carlo_data_to_default(){
 
 	monte_carlo_seed_must_be_buried_ = false;
 	monte_carlo_seed_must_be_fully_buried_ = false;
-	max_mc_nets_ = 100;
+	max_mc_nets_ = 0;
 }
 
 inline void add_polar_atoms_to_network_state( NetworkState & network_state, HBondNode const * node, core::pack::rotamer_set::RotamerSetsOP rotsets ){

@@ -48,8 +48,8 @@ public:
 	void print() const override;
 
 	///@brief get molten residue id for this rotamer
-	inline core::Size moltenres() const{
-		return core::Size( mres_id_ );
+	inline unsigned int moltenres() const{
+		return mres_id_;
 	}
 
 	///@brief set molten residue id for this rotamer.
@@ -59,8 +59,8 @@ public:
 
 	///@brief get local rotamer id (local to the residue position)
 	///@details this is equivalent to core::pack::rotamer_set::RotamerSetsBase::rotid_on_moltenresidue( this->get_node_index() )
-	inline core::Size local_rotamer_id() const{
-		return core::Size( rotamer_id_ );
+	inline unsigned int local_rotamer_id() const{
+		return rotamer_id_;
 	}
 
 	///@brief set local rotamer id (local to the residue position).
@@ -160,9 +160,9 @@ protected:
 
 	utility::graph::Node * create_new_node( platform::Size node_index ) override;
 
-	utility::graph::Edge* create_new_edge( core::Size index1, core::Size index2 ) override;
+	utility::graph::Edge * create_new_edge( core::Size index1, core::Size index2 ) override;
 
-	utility::graph::Edge* create_new_edge( utility::graph::Edge const * example_edge ) override;
+	utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge ) override;
 
 public:
 	void delete_edge( utility::graph::Edge * edge ) override;

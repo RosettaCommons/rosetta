@@ -128,12 +128,12 @@ HBondGraph::create_new_node( platform::Size node_index ){
 	return new HBondNode( this, node_index );
 }
 
-utility::graph::Edge*
+utility::graph::Edge *
 HBondGraph::create_new_edge( core::Size index1, core::Size index2 ){
 	return hbond_edge_pool_->construct( this, index1, index2 );
 }
 
-utility::graph::Edge*
+utility::graph::Edge *
 HBondGraph::create_new_edge( utility::graph::Edge const * example_edge ){
 	return hbond_edge_pool_->construct(
 		this,
