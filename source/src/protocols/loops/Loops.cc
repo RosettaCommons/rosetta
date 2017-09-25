@@ -602,6 +602,11 @@ void Loops::verify_against( core::pose::Pose const & pose ) const {
 			tr.Error << "invalid loop " << loopbegin_i << " " << loopend_i << " " << cutpt_i << std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
 		}
+		if ( pose.chain(it.start()) != pose.chain(it.stop()) ) {
+			//ranges safe: we already exited above if ranges bad
+			tr.Error << "invalid loop " << it.start() << " " << it.stop() << " " << it.cut() << ": crosses a chain boundary within the Pose" <<  std::endl;
+			utility_exit_with_message("Loops::Error, loop crosses chain boundary" );
+		}
 	}
 }
 

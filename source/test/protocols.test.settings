@@ -25,7 +25,7 @@ sources = {
 	],
 	"analysis": [
 		"InterfaceDdGMoverTests",
-
+		"LoopAnalyzerMoverTests",
 	],
 	"antibody": [
 		"AntibodyInfo",
@@ -449,7 +449,7 @@ sources = {
 	"pmut_scan" : [
 		"PointMutScanDriver",
 	],
-	
+
 	"peptide_deriver" : [
 		"PeptideDeriverFilterTests",
 	],

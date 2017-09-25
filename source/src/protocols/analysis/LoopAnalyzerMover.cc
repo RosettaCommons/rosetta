@@ -185,6 +185,8 @@ void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 		core::pose::symmetry::extract_asymmetric_unit(input_pose, pose, false); //don't need VIRTs
 	}
 
+	loops_->verify_against(pose);
+
 	find_positions(pose);
 	calculate_all_chainbreaks(pose);
 	(*sf_)(pose);
@@ -323,9 +325,25 @@ void LoopAnalyzerMover::find_positions( core::pose::Pose const & pose ){
 	for ( auto const & it : *loops_ ) {
 		core::Size start(it.start());
 		core::Size end(it.stop());
-		if ( !pose.residue(start).is_terminus() && start != 1 ) --start;
-		if ( !pose.residue(end).is_terminus() && end != pose.size() ) ++end;
-		for ( core::Size i(start); i <= end; ++i ) positions_.push_back(i);
+		//in here we are about to grow the analysis area by moving start and end each "out" one residue, unless we hit cases where we cannot/should not (because there is not residue there), or we're at a terminus (in which case the next residue is not the same chain), or we're adjacent to the terminus (in which case the chainbreak on the terminus cannot be calculated).
+		if ( !pose.residue(start).is_terminus() //if this is not a terminus,
+				&& start != 1 //AND there are residues before it,
+				/*&& !pose.residue(start-1).is_terminus()*/ ) { //if the previous residue is not a terminus (actually ok)
+			--start;   //grow the analysis area
+		}
+		if ( pose.residue(end).is_terminus() //if this is a terminus,
+				|| end == pose.size() ) { //or if there are no residues after it,
+			--end; //move end IN one, so that the i+1 activity in add/remove variant type in calculate_all_chainbreaks won't fail
+		} else if ( !pose.residue(end+1).is_terminus()  //if the next residue is not a terminus (note this end+1 is a safe check because if end=pose.size we triggered the preceding if instead, and this is never checked)
+				&& pose.size() != (end+1) ) { //and the next residue is not the end of the pose
+			++end;  //grow the analysis area
+		} //implicitly - if "end" is not a terminus but end+1 is - do nothing.
+		TR << "LoopAnalyzerMover will consider these positions (Rosetta numbering) - remember that it includes an extra residue on both sides of each loop, conditions permitting: ";
+		for ( core::Size i(start); i <= end; ++i ) {
+			TR << i << " ";
+			positions_.push_back(i);
+		}
+		TR << std::endl;
 	}//for all loops
 	scores_.clear();
 	scores_.resize(positions_.size(), 0);
@@ -351,6 +369,7 @@ void LoopAnalyzerMover::calculate_all_chainbreaks( core::pose::Pose & pose )
 
 		//create chainbreak variant
 		core::pose::add_variant_type_to_pose_residue(pose, CUTPOINT_LOWER, pos);
+		runtime_assert_string_msg((pose.size() >= pos+1), "LoopAnalyzerMover: cannot analyze the last position of a pose, as residue i+1 does not exist");
 		core::pose::add_variant_type_to_pose_residue(pose, CUTPOINT_UPPER, pos+1);
 
 		//create cut in fold tree
@@ -359,7 +378,9 @@ void LoopAnalyzerMover::calculate_all_chainbreaks( core::pose::Pose & pose )
 		ft.add_edge(Edge(1, pos, Edge::PEPTIDE));
 		ft.add_edge(Edge(pos+1, pose.size(), Edge::PEPTIDE));
 		ft.add_edge(Edge(pos, pos+1, 1)); //a jump and therefore a cut
+		ft.delete_self_edges(); //needed if loop ends adjacent to a pose's end
 		ft.reorder(1);
+		runtime_assert_string_msg(ft.check_fold_tree(), "FoldTree in LoopAnalyzerMover invalid: aborting");
 		pose.fold_tree(ft);
 
 		//score the sucker

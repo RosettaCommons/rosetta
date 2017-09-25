@@ -52,6 +52,14 @@ public:
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	///@brief set the score function.  NOTICE: you will want to also use the companion configure_score_fxn afterwards to add backrub terms to the SF, if you did not do so yourself!
+	void set_score_fxn( core::scoring::ScoreFunctionOP const sf ) { score_fxn_ = sf; }
+
+	///@brief set the task factory.  Note that the ctor sets InitializeFromCommandline plus either ReadResfile or RestrictToRepacking.
+	void set_main_task_factory( core::pack::task::TaskFactoryOP const tf ) { main_task_factory_ = tf; }
+
+	///@brief adds terms for the backrub step to the scorefunction.  Used by ctor; also useful when using set_score_fxn
+	void configure_score_fxn();
 
 private:
 	core::scoring::ScoreFunctionOP score_fxn_;

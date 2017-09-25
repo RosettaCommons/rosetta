@@ -166,6 +166,7 @@ sources = {
 	],
 	"core/pack/task/operation": [
 		"EnableMultiCoolAnnealer",
+		"FillAUTOTaskOperation",
 		"NoRepackDisulfides",
 		"OperateOnCertainResidues",
 		"OperateOnResidueSubset",

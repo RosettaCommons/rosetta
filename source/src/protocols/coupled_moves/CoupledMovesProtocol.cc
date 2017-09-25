@@ -153,14 +153,8 @@ CoupledMovesProtocol::CoupledMovesProtocol(): Mover(),
 	// C-beta atoms should not be altered during packing because branching atoms are optimized
 	//main_task_factory_->push_back( new operation::PreserveCBeta );
 
-	// set up the score function and add the bond angle energy term
 	score_fxn_ = core::scoring::get_score_function();
-	score_fxn_->set_weight(core::scoring::mm_bend, option[ OptionKeys::coupled_moves::mm_bend_weight ]);
-	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
-	core::scoring::methods::EnergyMethodOptions energymethodoptions(score_fxn_->energy_method_options());
-	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
-	energymethodoptions.bond_angle_central_atoms_to_score(option[ OptionKeys::backrub::pivot_atoms ]);
-	score_fxn_->set_energy_method_options(energymethodoptions);
+	configure_score_fxn();
 }
 
 CoupledMovesProtocol::CoupledMovesProtocol(CoupledMovesProtocol const & cmp): Mover(cmp),
@@ -198,6 +192,23 @@ core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
 	return ligand_score_bonus;
 }
 
+void CoupledMovesProtocol::configure_score_fxn() {
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	//SML moved from ctor without close inspection
+	// set up the score function and add the bond angle energy term
+	score_fxn_->set_weight(core::scoring::mm_bend, option[ OptionKeys::coupled_moves::mm_bend_weight ]);
+	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
+	core::scoring::methods::EnergyMethodOptions energymethodoptions(score_fxn_->energy_method_options());
+	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
+	energymethodoptions.bond_angle_central_atoms_to_score(option[ OptionKeys::backrub::pivot_atoms ]);
+	score_fxn_->set_energy_method_options(energymethodoptions);
+	return;
+}
+
+
 void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -231,8 +242,9 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	core::pack::task::residue_selector::ClashBasedRepackShellSelectorOP rs( new core::pack::task::residue_selector::ClashBasedRepackShellSelector(task, score_fxn_) );
 	utility::vector1< bool > to_repack = rs->apply( *pose_copy );
 
+	//This block converts the selection from ClashBasedRepackShellSelector into the PackerTask.  It would ultimately be beter to replace it with a ClashBasedRepackShellTaskOperation.  It was originally written on the assumption that the user was using a resfile, and that all residues either had AUTO or PIKAA/NATAA/NATRO set.  If you are not using a resfile, you can use the FillAUTOTaskOperation to make this logic useful.  The !task->design_residue call has been added so that designing residues that are "fake AUTO" from the task operation will not be affected by this logic.  - SML 8/5/17
 	for ( core::Size i = 1; i <= to_repack.size(); ++i ) {
-		if ( task->residue_task(i).has_behavior("AUTO") ) {
+		if ( task->residue_task(i).has_behavior("AUTO") && !(task->design_residue(i)) ) {
 			if ( to_repack[i] ) {
 				task->nonconst_residue_task(i).restrict_to_repacking();
 			} else {
@@ -498,6 +510,8 @@ CoupledMovesProtocol::parse_my_tag(
 
 	main_task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data_map );
 	score_fxn_ = protocols::rosetta_scripts::parse_score_function( tag, data_map );
+
+	configure_score_fxn(); //SML this will add the extra bells and whistles to the scorefunction that the constructor used to do.  If the user actually sets those up in their scorefunction externally - this is a bad idea.  If the user has just passed REF15 as their scorefunction - this is necessary.  Anum approved at RosettaCON 2017.
 
 }
 
