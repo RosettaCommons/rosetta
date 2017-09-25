@@ -11,6 +11,7 @@
 			 enrichment_threshold="0.4" use_dssp="true" />
     <ConsensusLoopDesign name="disallow_nonnative_loop_sequences_3" include_adjacent_residues="false" residue_selector=""
                          enrichment_threshold="0.0"  secstruct="LHHHHHHHHHHHHHHHHHHLLHHHHHHHLLLLLEEEELLEEEELHHHHHHHHHHHHHHLLEEEEEEEEEEEELLEEEEEEEEEEEELLEEEEEEEEEEEEEELLEEEEEEEEELHHHHHHHHHHHL" use_dssp="false" />
+    <DisallowIfNonnative name="disallow_stuff_test" disallow_aas="ACDEFIKLMPQRSTVWY" />
   </TASKOPERATIONS>
   <FILTERS>
     <TaskAwareScoreType name="test1" task_operations="disallow_nonnative_loop_sequences_1" scorefxn="ref"
@@ -18,6 +19,8 @@
     <TaskAwareScoreType name="test2" task_operations="disallow_nonnative_loop_sequences_2" scorefxn="ref"
                         score_type="total_score" threshold="100000" mode="total"/>
     <TaskAwareScoreType name="test3" task_operations="disallow_nonnative_loop_sequences_3" scorefxn="ref"
+                        score_type="total_score" threshold="100000" mode="total"/>
+    <TaskAwareScoreType name="test4" task_operations="disallow_stuff_test,disallow_nonnative_loop_sequences_2" scorefxn="ref"
                         score_type="total_score" threshold="100000" mode="total"/>
   </FILTERS>
   <MOVERS>
@@ -28,6 +31,7 @@
     <Add filter_name="test1"/>
     <Add filter_name="test2"/>
     <Add filter_name="test3"/>
+    <Add filter_name="test4"/>
   </PROTOCOLS>
   <OUTPUT />
 </ROSETTASCRIPTS>

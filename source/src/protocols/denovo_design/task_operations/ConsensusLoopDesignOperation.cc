@@ -306,6 +306,10 @@ ConsensusLoopDesignOperation::compute_best_allowed_aas(
 			no_freq.push_back( (*t)->name1() );
 			continue;
 		}
+		if ( (*t)->name() == "HIS_D" ) {
+			TR.Debug << "Omitting HIS_D, as it would cause double counting of H" << std::endl;
+			continue;
+		}
 		core::Real const enrichment = aa_freqs.frequency( (*t)->name1() ).enrichment();
 		if ( best_aas.first == 0 ) {
 			best_aas.first = (*t)->name1();
