@@ -66,6 +66,9 @@ public:
 	create_coordinate_constraints( core::pose::Pose & pose,
 		core::Real const rmsd_screen );
 
+	std::map< core::id::AtomID, core::id::AtomID>
+	create_coordinate_constraint_atom_id_map( core::pose::Pose const & pose );
+
 	void set_superimpose_over_all_instantiated( bool const & setting ){ superimpose_over_all_instantiated_ = setting; }
 	bool superimpose_over_all_instantiated() const{ return superimpose_over_all_instantiated_; }
 

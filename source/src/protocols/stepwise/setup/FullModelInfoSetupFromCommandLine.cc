@@ -103,7 +103,9 @@ initialize_native_and_align_pose( PoseOP & native_pose,
 		align_pose = native_pose;
 	}
 
-	if ( ( !align_pose || align_pose->size() == 0 )  && option[ OptionKeys::stepwise::align_pdb ].user() ) {
+	if ( option[ OptionKeys::stepwise::new_align_pdb ].user() ) {
+		align_pose = core::import_pose::get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::new_align_pdb ](), rsd_set );
+	} else if ( ( !align_pose || align_pose->size() == 0 )  && option[ OptionKeys::stepwise::align_pdb ].user() ) {
 		align_pose = core::import_pose::get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::align_pdb ](), rsd_set );
 	}
 
@@ -114,9 +116,6 @@ initialize_native_and_align_pose( PoseOP & native_pose,
 		if ( native_pose != nullptr )  modeler::rna::virtualize_free_rna_moieties( *native_pose );
 		if ( align_pose  != nullptr ) modeler::rna::virtualize_free_rna_moieties( *align_pose );
 	}
-
-	// really? -- this results in rms and rms_fill calculation even without native -- confusing. rhiju, dec. 2016
-	// if ( native_pose == 0 && align_pose != 0 ) native_pose = align_pose;
 }
 
 

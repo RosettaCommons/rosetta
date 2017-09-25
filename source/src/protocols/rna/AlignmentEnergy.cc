@@ -46,6 +46,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.rna.AlignmentEnergy" );
 
@@ -82,14 +83,15 @@ AlignmentEnergy::AlignmentEnergy(
 
 	if ( option[ OptionKeys::stepwise::rmsd_screen ].user() ) {
 		rmsd_screen_ = option[ OptionKeys::stepwise::rmsd_screen ].value();
-		func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( 0, 1, rmsd_screen_ ) );
+		func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( 0, option[ OptionKeys::score::alignment_sharpness ].value(), rmsd_screen_ ) );
 	}
 }
 
 void AlignmentEnergy::rmsd_screen( core::Real const setting ) {
 	rmsd_screen_ = setting;
 	// Update func too...
-	func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( 0, 1, rmsd_screen_ ) );
+	using namespace basic::options;
+	func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( 0, option[ OptionKeys::score::alignment_sharpness ].value(), rmsd_screen_ ) );
 }
 
 // copy constructor (not needed unless you need deep copies)
@@ -137,21 +139,28 @@ AlignmentEnergy::eval_atom_derivative(
 	Vector our_f1( 0 );
 	Vector our_f2( 0 );
 
+	// Slow but sure to work.
+	//auto pose_aligner_ = stepwise::modeler::align::StepWisePoseAlignerOP( new stepwise::modeler::align::StepWisePoseAligner( *align_pose_ ) );
+
 	utility::vector1< Size > root_partition_res = stepwise::modeler::figure_out_root_partition_res( pose, core::pose::full_model_info::get_moving_res_from_full_model_info_const( pose ) );
 	pose_aligner_->set_root_partition_res( root_partition_res );
 	pose_aligner_->initialize( pose );
-	if ( pose_aligner_->superimpose_atom_id_map().size() == 0 ) return;
+	auto coord_cst_aid_map = pose_aligner_->create_coordinate_constraint_atom_id_map( pose );
+	//if ( pose_aligner_->superimpose_atom_id_map().size() == 0 ) return;
+	if ( coord_cst_aid_map.size() == 0 ) return;
 
-	Real const rmsd = core::scoring::rms_at_corresponding_atoms_no_super( pose, *align_pose_, pose_aligner_->superimpose_atom_id_map() );
+	Real const rmsd = core::scoring::rms_at_corresponding_atoms_no_super( pose, *align_pose_, coord_cst_aid_map );
 	if ( rmsd == 0 ) return;
-	Size const n = pose_aligner_->superimpose_atom_id_map().size();
+	//Size const n = pose_aligner_->superimpose_atom_id_map().size();
+	Size const n = coord_cst_aid_map.size();
 	Real const dfunc = func_->dfunc( rmsd );
 	if ( dfunc == 0 ) return;
 	Real const factor =  dfunc / ( 2 * n * rmsd );
 	if ( factor == 0 ) return;
 
 	auto func = FuncOP( new HarmonicFunc( 0, 1 ) );
-	for ( auto const & elem : pose_aligner_->superimpose_atom_id_map() ) {
+	//for ( auto const & elem : pose_aligner_->superimpose_atom_id_map() ) {
+	for ( auto const & elem : coord_cst_aid_map ) {
 
 		if ( id.rsd() != elem.first.rsd() ) continue;
 		if ( id.atomno() != elem.first.atomno() ) continue;
@@ -190,20 +199,25 @@ AlignmentEnergy::finalize_total_energy(
 ) const {
 	// OK. The energy ought to be a FlatHarmonicFunc of RMSD to the reference pose.
 	// No penalty from 0 to rmsd_screen_.
-	// wtf might
-	/*moving_res_list_ = */
+
+	// Slow but sure to work.
+	//auto pose_aligner_ = stepwise::modeler::align::StepWisePoseAlignerOP( new stepwise::modeler::align::StepWisePoseAligner( *align_pose_ ) );
 
 	utility::vector1< Size > root_partition_res = stepwise::modeler::figure_out_root_partition_res( pose, core::pose::full_model_info::get_moving_res_from_full_model_info( pose ) );
 	//TR << "root_partition_res is " << root_partition_res << std::endl;
 	pose_aligner_->set_root_partition_res( root_partition_res );
 
-	//Pose pose_save = pose;
-	// don't apply!!!
-	pose_aligner_->initialize( pose );
-	if ( pose_aligner_->superimpose_atom_id_map().size() == 0 ) return;
-	Real const rmsd = core::scoring::rms_at_corresponding_atoms_no_super( pose, *align_pose_, pose_aligner_->superimpose_atom_id_map() );
+	auto coord_cst_aid_map = pose_aligner_->create_coordinate_constraint_atom_id_map( pose );
+	//if ( pose_aligner_->superimpose_atom_id_map().size() == 0 ) return;
+	if ( coord_cst_aid_map.size() == 0 ) return;
+	Real const rmsd = core::scoring::rms_at_corresponding_atoms_no_super( pose, *align_pose_, coord_cst_aid_map );
 
 	totals[ alignment ] = func_->func( rmsd );
+	TR.Trace << "pose (piece?) with sequence " << pose.sequence() << std::endl;
+	TR.Trace << "RMSD: " << rmsd << " score " << totals[ alignment ] << " over " << pose_aligner_->rmsd_res_in_pose() << std::endl;
+	for ( auto const & elem : coord_cst_aid_map ) {
+		TR.Trace << "\t" << elem.first << " " << elem.second << std::endl;
+	}
 }
 
 core::scoring::methods::EnergyMethodOP

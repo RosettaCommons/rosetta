@@ -25,6 +25,9 @@
 #include <utility/stream_util.hh>
 #include <core/scoring/rms_util.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.align.util" );
@@ -103,7 +106,12 @@ align_pose_and_add_rmsd_constraints( pose::Pose & pose,
 		TR.Debug << "Not reorienting because rmsd_over_alignment_atoms is very small." << std::endl;
 		pose = pose_save; // to avoid floating point deviations.
 	}
-	if ( rmsd_screen > 0.0 ) pose_aligner.create_coordinate_constraints( pose, rmsd_screen );
+
+	// Don't do this if we have new_align_pdb!!
+	using namespace basic::options;
+	if ( !option[ basic::options::OptionKeys::stepwise::new_align_pdb ].user() ) {
+		if ( rmsd_screen > 0.0 ) pose_aligner.create_coordinate_constraints( pose, rmsd_screen );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

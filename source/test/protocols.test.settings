@@ -758,6 +758,8 @@ testinputfiles = [
 	"rna/farna_rebuild.params",
 	"rna/bps_test.params",
 	"rna/srl_fixed_START1_1q9a_RNA.pdb",
+	"rna/VS_rbzm_P2P3P6_align_ALIGN_4r4v.pdb",
+	"rna/swm_rebuild.out.1.pdb",
 	"features/2J88.pdb",
 	"features/3B83_nochain.pdb", # needed for SandwichFeaturesTests.cxxtest, I can't use 2J88 for this
 	"fldsgn/filters/ss_filter_test.pdb",

@@ -1438,6 +1438,7 @@ Options = Option_Group( '',
 		Option( 'rama_power', 'Real', desc='If rama > 0.0, raise to the nth power.  This has been useful for Foldit design.  Note that this creates derivative discontinuities, so it should be used with caution!  If not specified, the default rama behaviour (no power function) is preserved.', default='1.0' ),
     Option( 'hbond_fade',"Real", desc="fade_factor for hbond geometry softmax", default='2.5' ),
     Option( 'hbond_new_sp3_acc',"Boolean", desc="fade_factor for hbond geometry softmax", default='false' ),
+    Option( 'alignment_sharpness',"Real", desc="When computing a harmonic function of RMSD for the alignment score, what should the standard deviation be?", default='1.0' ),
 		Option( 'rna_torsion_potential', 'String', desc="In RNA torsion calculation, directory containing 1D torsional potentials" , default="ps_04282011"), # probably should be in score:rna namespace, but hardwired as score:rna_torsion_potential in ERRASER, etc.
 	  Option_Group( 'rna',
 		    Option( 'disable_orientation_dependent_rna_ch_o_bonds',   'Boolean', desc="Do not use orientation-dependent potential for RNA carbon hydrogen bonds" , default="false"),

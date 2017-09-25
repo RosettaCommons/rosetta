@@ -535,7 +535,6 @@ StepWisePoseAligner::add_coordinate_constraints_from_map( pose::Pose & pose, pos
 
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
 	FuncOP constraint_func( new FlatHarmonicFunc( constraint_x0, 1.0, constraint_tol ) );
-	//FuncOP constraint_func = new FadeFunc( -0.7, 1.5, 0.8, -1.0, 0.0)) );
 
 	for ( auto const & elem : atom_id_map ) {
 		id::AtomID const mapped_atom = elem.second;
@@ -548,18 +547,10 @@ StepWisePoseAligner::add_coordinate_constraints_from_map( pose::Pose & pose, pos
 	pose.constraint_set( cst_set );
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-StepWisePoseAligner::create_coordinate_constraints( pose::Pose & pose,
-	Real const rmsd_screen ){
-
-	using namespace core::pose::full_model_info;
-
-	if ( rmsd_screen == 0.0 ) return;
-	runtime_assert( reference_pose_local_ != 0 ); // needs to be setup by apply() above.
-
-	utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
+std::map< id::AtomID, id::AtomID>
+StepWisePoseAligner::create_coordinate_constraint_atom_id_map( pose::Pose const & pose ) {
 	std::map< id::AtomID, id::AtomID> coordinate_constraint_atom_id_map;
+	utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
 			if ( mod_reference_pose_local_ ) {
@@ -575,6 +566,21 @@ StepWisePoseAligner::create_coordinate_constraints( pose::Pose & pose,
 			}
 		}
 	}
+	return coordinate_constraint_atom_id_map;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWisePoseAligner::create_coordinate_constraints( pose::Pose & pose,
+	Real const rmsd_screen ){
+
+	using namespace core::pose::full_model_info;
+
+	if ( rmsd_screen == 0.0 ) return;
+	runtime_assert( reference_pose_local_ != 0 ); // needs to be setup by apply() above.
+
+	std::map< id::AtomID, id::AtomID> coordinate_constraint_atom_id_map =
+		create_coordinate_constraint_atom_id_map( pose );
 
 	Real const constraint_x0  = 0.0; // stay near native.
 	Real const constraint_tol = rmsd_screen; // no penalty for deviations up to this amount. After that, (x - tol)^2.
