@@ -23,6 +23,7 @@
 // Unit headers
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
+#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
 
 // Package headers
 #include <core/chemical/AtomTypeSet.hh>

@@ -23,6 +23,7 @@
 // Unit headers
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
 #include <core/scoring/etable/etrie/EtableAtom.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_2.hh>
 #include <core/scoring/etable/EtableOptions.hh>
