@@ -134,7 +134,7 @@ public:
 		Real start_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << start_score << std::endl;
-		TS_ASSERT_DELTA(start_score, 47.9850902912855, 1e-8);
+		TS_ASSERT_DELTA(start_score, 47.9850902912855, 1e-6);
 	}
 
 	void test_cen_rot_repack()
@@ -171,7 +171,7 @@ public:
 		Real final_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << final_score << std::endl;
-		TS_ASSERT_DELTA( final_score, -12.9057864339961, 1e-8 );
+		TS_ASSERT_DELTA( final_score, -12.9057864339961, 1e-6 );
 	}
 
 	void test_cen_rot_atomtree_min()
