@@ -55,6 +55,11 @@ attributes_for_get_resnum( utility::tag::AttributeList & attlist, std::string co
 core::Size
 parse_resnum(std::string const& resnum, core::pose::Pose const& pose, bool const check_for_refpose=false);
 
+///@brief Companion function for parse_resnum
+///@details Appends relevant XMLSchemaAttributes to the AttributeList
+void
+attributes_for_parse_resnum( utility::tag::AttributeList & attlist, std::string const & att_name, std::string const & description = "");
+
 /// @brief Extracts a list of residue numbers from a tag.
 /// @details The tag should contain a comma-separated list of numbers, in either
 ///   pdb or rosetta format (@see parse_resnum for details)

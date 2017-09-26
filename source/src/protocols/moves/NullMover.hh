@@ -41,7 +41,7 @@ public:
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 	void set_movemap( core::kinematics::MoveMapCOP ) override {}
-	core::kinematics::MoveMapCOP movemap() const override { return core::kinematics::MoveMapCOP( new core::kinematics::MoveMap ); }
+	core::kinematics::MoveMapCOP movemap( core::pose::Pose const & ) const override { return core::kinematics::MoveMapCOP( new core::kinematics::MoveMap ); }
 	~NullMover() override;
 	void test_move( core::pose::Pose &  ) override{};
 

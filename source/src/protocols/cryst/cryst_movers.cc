@@ -44,6 +44,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/Remarks.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/jump_selector/JumpIndexSelector.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -595,14 +598,16 @@ void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
 		//    use score_function_ref_ to do the scaling
 		core::Real auto_weight = 0;
 		if ( cartesian_ ) {
-			if ( mm_ ) {
-				auto_weight = core::util::getMLweight_cart( *score_function_ref_, pose, *mm_  );
+			if ( mmf_ ) {
+				core::kinematics::MoveMapOP mm( mmf_->create_movemap_from_pose( pose ) );
+				auto_weight = core::util::getMLweight_cart( *score_function_ref_, pose, *mm );
 			} else {
 				auto_weight = core::util::getMLweight_cart( *score_function_ref_, pose );
 			}
 		} else {
-			if ( mm_ ) {
-				auto_weight = core::util::getMLweight( *score_function_ref_, pose, *mm_  );
+			if ( mmf_ ) {
+				core::kinematics::MoveMapOP mm( mmf_->create_movemap_from_pose( pose ) );
+				auto_weight = core::util::getMLweight( *score_function_ref_, pose, *mm );
 			} else {
 				auto_weight = core::util::getMLweight( *score_function_ref_, pose );
 			}
@@ -624,7 +629,7 @@ void SetCrystWeightMover::parse_my_tag(
 	basic::datacache::DataMap &data,
 	filters::Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose ) {
+	core::pose::Pose const & ) {
 
 	score_function_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 
@@ -638,43 +643,42 @@ void SetCrystWeightMover::parse_my_tag(
 		score_function_ref_ = score_function_->clone();
 	}
 
-	if ( tag->hasOption("MoveMap") ) {
-		protocols::rosetta_scripts::parse_movemap( tag, pose, mm_ );
-	}
+	mmf_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data );
 
 	// also can specify defaults
 	if ( tag->hasOption("jump") ) {
-		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
+		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 		// string 'ALL' makes all jumps movable
 		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all") ) {
-			mm_->set_jump( true );
+			mmf_->all_jumps( true );
 		} else {
 			for ( std::vector<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
 				Size const value = std::atoi( it->c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
-				mm_->set_jump( value, true );
+				core::select::jump_selector::JumpIndexSelectorOP jumpselect( new core::select::jump_selector::JumpIndexSelector( value ) );
+				mmf_->add_jump_action( core::select::movemap::mm_enable, jumpselect );
 			}
 		}
 	}
 	if ( tag->hasOption("chi") ) {
 		bool const value( tag->getOption<bool>("chi") );
-		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
-		mm_->set_chi(value);
+		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		mmf_->all_chi(value);
 	}
 	if ( tag->hasOption("bb") ) {
 		bool const value( tag->getOption<bool>("bb") );
-		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
-		mm_->set_bb(value);
+		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		mmf_->all_bb(value);
 	}
 	if ( tag->hasOption("bondangle") ) {
 		bool const value( tag->getOption<bool>("bondangle") );
-		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
-		mm_->set( core::id::THETA, value );
+		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		mmf_->all_bondangles( value );
 	}
 	if ( tag->hasOption("bondlength") ) {
 		bool const value( tag->getOption<bool>("bondlength") );
-		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
-		mm_->set( core::id::D, value );
+		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		mmf_->all_bondlengths( value );
 	}
 
 	if ( tag->hasOption("weight") ) {
@@ -713,7 +717,7 @@ void SetCrystWeightMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	//empty SubelementList for MoveMap util function
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.complex_type_naming_func( & SetCrystWeightMover_subelement_ct_name );
-	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, subelements);
 
 	//argument legality checker for "jump":
 	XMLSchemaRestriction jump_type;

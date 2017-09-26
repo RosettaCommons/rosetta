@@ -38,6 +38,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/options/option.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/pose/Pose.hh>
@@ -142,8 +143,8 @@ void PrepackMover::apply( pose::Pose & pose )
 
 	TR << "Pre-minimizing structure..." << std::endl;
 	core::kinematics::MoveMapOP mm_general;
-	if ( min_bb() && mm() ) {
-		mm_general = mm()->clone();
+	if ( min_bb() ) {
+		mm_general = mm(pose)->clone();
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( !pose.residue(i).is_protein() ) {
 				mm_general->set_chi( i, false );
@@ -152,14 +153,12 @@ void PrepackMover::apply( pose::Pose & pose )
 			// Check for disulfide bonded cysteines
 			if ( pose.residue(i).type().is_disulfide_bonded() ) mm_general->set_chi( i, false );
 		}
+
+		protocols::simple_moves::MinMover min_bb_mover( mm_general, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
+		min_bb_mover.apply( pose );
 	} else {
 		mm_general = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		mm_general->clear();
-	}
-	if ( min_bb() ) { //premin bb+sc
-		if ( !mm() ) mm_general->set_bb( true );
-		protocols::simple_moves::MinMover min_bb_mover( mm_general, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
-		min_bb_mover.apply( pose );
 	}
 
 	// separate any bound partners
@@ -207,16 +206,14 @@ void PrepackMover::apply( pose::Pose & pose )
 // XRW TEMP }
 
 void
-PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>("jump_number", 1 );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	min_bb( tag->getOption< bool >( "min_bb", 0 ));
 	if ( min_bb() ) {
-		mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
-		mm()->clear();
-		protocols::rosetta_scripts::parse_movemap( tag, pose, mm_, data );
+		mmf_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data );
 	}
 	TR << "Prepack mover with scorefxn " << rosetta_scripts::get_score_function_name(tag) << " over jump number " << jump_num_ << "with min_bb "<<min_bb()<<std::endl;
 }
@@ -232,14 +229,28 @@ PrepackMover::min_bb() const{
 }
 
 core::kinematics::MoveMapOP
-PrepackMover::mm() const{
+PrepackMover::mm(core::pose::Pose const & pose) const{
 	if ( !min_bb() ) TR.Warning << "movemap requested but min_bb is set to false. This is probably wrong!"<<std::endl;
-	return mm_;
+	if ( mm_ != nullptr ) {
+		return mm_;
+	} else if ( mmf_  != nullptr ) {
+		return mmf_->create_movemap_from_pose( pose );
+	} else {
+		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+		mm->clear();
+		mm->set_bb( true );
+		return mm;
+	}
 }
 
 void
 PrepackMover::mm( core::kinematics::MoveMapOP mm ){
 	mm_ = mm;
+}
+
+void
+PrepackMover::mmf( core::select::movemap::MoveMapFactoryCOP mmf ){
+	mmf_ = mmf;
 }
 
 std::string PrepackMover::get_name() const {
@@ -261,7 +272,7 @@ void PrepackMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute::attribute_w_default( "min_bb", xsct_rosetta_bool, "Minimize the backbone", "0" );
 
 	XMLSchemaSimpleSubelementList ssl;
-	rosetta_scripts::append_subelement_for_parse_movemap( xsd, ssl );
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, ssl );
 
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );

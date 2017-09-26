@@ -21,7 +21,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -43,7 +43,9 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	bool min_bb() const;
 	void min_bb( bool const m );
-	core::kinematics::MoveMapOP mm() const;
+	core::kinematics::MoveMapOP mm( core::pose::Pose const & pose ) const;
+
+	void mmf( core::select::movemap::MoveMapFactoryCOP mmf );
 	void mm( core::kinematics::MoveMapOP mm );
 
 	std::string
@@ -61,6 +63,8 @@ private:
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	core::Size jump_num_;
 	bool min_bb_; //dflt false
+
+	core::select::movemap::MoveMapFactoryCOP mmf_;
 	core::kinematics::MoveMapOP mm_; // only activated if min_bb is on.
 };
 

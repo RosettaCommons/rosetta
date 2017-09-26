@@ -32,6 +32,7 @@
 #include <core/fragment/FrameIterator.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/moves/Mover.hh>
@@ -73,7 +74,7 @@ void SingleFragmentMover::initialize(const core::fragment::FragSetOP& fragments,
 	const core::kinematics::MoveMapOP& movable,
 	const PolicyOP& policy) {
 	debug_assert(fragments);
-	debug_assert(movable);
+	//debug_assert(movable); // Can be nullptr
 	debug_assert(policy);
 
 	// Initialize member variables
@@ -101,12 +102,14 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 	// bool was_fullatom = // Unused variable causes warning.
 	to_centroid(&pose);
 
+	MoveMapOP movable( movemap( pose ) );
+
 	// reuse <chunks_> when possible
 	const FoldTree& current_tree = pose.fold_tree();
 	if ( !previous_tree_ || *previous_tree_ != current_tree ) {
 		chunks_.clear();
 		probs_.clear();
-		initialize_chunks(current_tree);
+		initialize_chunks(current_tree, movable);
 		previous_tree_ = FoldTreeOP( new core::kinematics::FoldTree(current_tree) );
 	}
 
@@ -119,13 +122,13 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 
 	Size insertion_pos = chunk->choose();
 
-	while ( !movable_->get_bb(insertion_pos) )
+	while ( !movable->get_bb(insertion_pos) )
 			insertion_pos = chunk->choose();
 
 	// delegate responsibility for choosing the fragment to the policy
 	const Frame& frame = library_[insertion_pos];
 	Size fragment_pos = policy_->choose(frame, pose);
-	frame.apply(*movable_, fragment_pos, pose);
+	frame.apply(*movable, fragment_pos, pose);
 	TR.Debug << "Inserted fragment at position " << insertion_pos << std::endl;
 }
 
@@ -145,7 +148,7 @@ void SingleFragmentMover::parse_my_tag(const utility::tag::TagCOP tag,
 	basic::datacache::DataMap& data,
 	const protocols::filters::Filters_map&,
 	const protocols::moves::Movers_map&,
-	const core::pose::Pose& pose) {
+	const core::pose::Pose& ) {
 	using core::fragment::FragmentIO;
 	using core::fragment::FragSetOP;
 	using core::kinematics::MoveMap;
@@ -158,19 +161,19 @@ void SingleFragmentMover::parse_my_tag(const utility::tag::TagCOP tag,
 	FragSetOP fragments = FragmentIO().read_data(fragments_file);
 
 	// initially, all backbone torsions are movable
-	MoveMapOP movable( new MoveMap() );
-	protocols::rosetta_scripts::parse_movemap(tag, pose, movable, data);
+	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data ) );
 
 	// optional flags
 	// policy -- default => uniform
 	string policy_type = tag->getOption<string>("policy", "uniform");
 	PolicyOP policy = PolicyFactory::get_policy(policy_type, fragments);
 
-	initialize(fragments, movable, policy);
+	// Movable is set by the movemap_factory
+	initialize(fragments, /*movable=*/nullptr, policy);
 }
 
 bool SingleFragmentMover::valid() const {
-	return fragments_ && movable_ && policy_;
+	return fragments_ && ( movable_ || movemap_factory_ ) && policy_;
 }
 
 void SingleFragmentMover::initialize_library() {
@@ -181,7 +184,19 @@ void SingleFragmentMover::initialize_library() {
 	}
 }
 
-void SingleFragmentMover::initialize_chunks(const core::kinematics::FoldTree& tree) {
+core::kinematics::MoveMapOP
+SingleFragmentMover::movemap( core::pose::Pose const & pose ) {
+	if ( movable_ ) {
+		return movable_;
+	} else if ( movemap_factory_ ) {
+		return movemap_factory_->create_movemap_from_pose( pose );
+	} else {
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
+		return movemap;
+	}
+}
+
+void SingleFragmentMover::initialize_chunks(const core::kinematics::FoldTree& tree, MoveMapOP const & movable) {
 	using core::Size;
 	using core::Real;
 
@@ -204,7 +219,7 @@ void SingleFragmentMover::initialize_chunks(const core::kinematics::FoldTree& tr
 		if ( region->increasing() ) {
 			// Ensure that the chunk is valid before adding it to the list. Mainly, this
 			// means that there must be at least 1 movable residue.
-			Chunk chunk(region, movable_);
+			Chunk chunk(region, movable);
 
 			if ( chunk.is_movable() ) {
 				TR.Debug << "Added chunk: " << region->start() << "-" << region->stop() << std::endl;
@@ -285,7 +300,7 @@ void SingleFragmentMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	subelements.complex_type_naming_func( [] (std::string const& name) {
 		return "SingleFragmentMover_subelement_" + name + "Type";
 		});
-	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, subelements);
 
 	XMLSchemaRestriction policy_type_enum;
 	policy_type_enum.name("policy_type");

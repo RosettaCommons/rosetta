@@ -31,6 +31,7 @@
 #include <string>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -60,7 +61,7 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	void apply_on_pose( core::pose::Pose & pose );
+	void apply_on_pose( core::pose::Pose & pose, core::kinematics::MoveMapOP movemap );
 
 	/// Virtual functions from Mover
 	protocols::moves::MoverOP fresh_instance() const override { return clone(); };
@@ -76,11 +77,6 @@ public:
 	void set_default();
 
 	/// Setters
-	virtual
-	void set_movemap(
-		core::pose::Pose const & pose,
-		core::kinematics::MoveMapCOP movemap );
-
 	void set_harmonic_constants( core::Real const k_uniform );
 
 	void set_harmonic_constants( core::Real const k_connected,
@@ -131,6 +127,11 @@ public:
 
 
 private:
+	virtual
+	void initialize_NM_for_movemap(
+		core::pose::Pose const & pose,
+		core::kinematics::MoveMap const & movemap );
+
 	void
 	gen_coord_constraint( core::pose::Pose &pose,
 		utility::vector1< core::Vector > const &excrd ) const;
@@ -170,6 +171,7 @@ private:
 	utility::vector1< core::Size > mode_using_;
 	utility::vector1< core::Real > mode_scale_;
 
+	core::select::movemap::MoveMapFactoryCOP mmf_;
 	core::kinematics::MoveMapOP mm_;
 	core::scoring::ScoreFunctionOP sfxn_;
 	core::scoring::ScoreFunctionOP sfxn_cen_;

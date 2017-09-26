@@ -22,6 +22,7 @@
 #include <core/types.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -83,7 +84,10 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 
 public: // Accessors/Mutators /////////////////////////////////////////////////
 	/// @brief  Get the current MoveMap.
-	core::kinematics::MoveMapCOP movemap() const;
+	core::kinematics::MoveMapCOP movemap( core::pose::Pose const & pose ) const;
+
+	/// @brief  Set the MoveMapFactory.
+	void movemap_factory(core::select::movemap::MoveMapFactoryCOP new_movemap_factory);
 
 	/// @brief  Set the MoveMap.
 	void movemap( core::kinematics::MoveMapOP new_movemap );
@@ -112,7 +116,7 @@ private:  // Private methods //////////////////////////////////////////////////
 	void set_commandline_options();
 
 	// Initialize data members from arguments.
-	void init( core::kinematics::MoveMapOP movemap );
+	void init();
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 	void copy_data( RingConformationMover & object_to_copy_to, RingConformationMover const & object_to_copy_from);
@@ -122,6 +126,7 @@ private:  // Private methods //////////////////////////////////////////////////
 
 
 private:  // Private data /////////////////////////////////////////////////////
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 	core::kinematics::MoveMapOP movemap_;
 	utility::vector1<core::Size> residue_list_;  // list of movable cyclic residues by residue number
 	bool locked_;  // Is this mover locked from the command line?

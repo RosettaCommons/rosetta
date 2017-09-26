@@ -21,6 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MinMover.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 //#include <core/pack/task/PackerTask.fwd.hh>
@@ -92,6 +93,8 @@ public:
 private:
 	/// @brief OP for MinMover
 	protocols::simple_moves::MinMoverOP minmover_;
+	/// @brief Default movemap to use (Will be altered by the task info).
+	core::kinematics::MoveMapCOP base_movemap_;
 	/// @brief OP for constant task factory for nonconstant tasks, if present
 	core::pack::task::TaskFactoryCOP factory_;
 	bool chi_, bb_, jump_;

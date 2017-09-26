@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -165,6 +166,8 @@ private:
 	core::Real temp_initial_, temp_final_;
 
 	core::kinematics::FoldTreeOP original_fold_tree_;
+	/// @brief If set, the move_map_factory_ will reset the move_map_ (as a user-defined) at the start of every apply()
+	core::select::movemap::MoveMapFactoryCOP move_map_factory_;
 	core::kinematics::MoveMapOP move_map_;
 	core::scoring::ScoreFunctionOP ramping_scorefxn_;
 }; // LoopMover_Refine_CCD

@@ -27,6 +27,8 @@
 
 // Project headers
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/jump_selector/JumpIndexSelector.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -73,7 +75,12 @@ NormalModeMinimizer::~NormalModeMinimizer() = default;
 
 void
 NormalModeMinimizer::apply( pose::Pose & pose ) {
-	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
+	core::kinematics::MoveMapOP movemap;
+	if ( movemap_factory_ ) {
+		movemap = movemap_factory_->create_movemap_from_pose( pose );
+	} else {
+		movemap = core::kinematics::MoveMapOP( new MoveMap );
+	}
 	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
 
 	if ( options_->deriv_check() ) {
@@ -88,7 +95,7 @@ NormalModeMinimizer::apply( pose::Pose & pose ) {
 
 	Real const start_score( (*scorefxn_)( pose ) );
 	MinimizerMap min_map;
-	min_map.setup( pose, *movemap_ );
+	min_map.setup( pose, *movemap );
 
 	if ( use_nblist ) {
 		pose.energies().set_use_nblist( pose, min_map.domain_map(), options_->nblist_auto_update() );
@@ -158,33 +165,11 @@ void NormalModeMinimizer::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {
-	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
 	scorefxn_ = data.get_ptr<ScoreFunction>( "scorefxns", scorefxn_name );
-
-	// high-level movemap
-	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
-	movemap_->set_chi( chi );
-	movemap_->set_bb( bb );
-	if ( tag->hasOption("jump") ) {
-		if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
-		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
-
-		// string 'ALL' makes all jumps movable
-		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all") ) {
-			movemap_->set_jump( true );
-		} else if ( tag->getOption< core::Size > ( "jump" ) == 0 ) {
-			movemap_->set_jump( false );
-		} else {
-			for ( std::string const & jump : jumps ) {
-				Size const value = std::atoi( jump.c_str() );
-				movemap_->set_jump( value, true );
-			}
-		}
-	}
 
 	// minimizer
 	options_->max_iter( tag->getOption< int >( "max_iter", 200 ) );
@@ -194,8 +179,32 @@ void NormalModeMinimizer::parse_my_tag(
 	// nma-min specific
 	dampen_ = tag->getOption< core::Real >( "dampen", 0.05 );
 
+	// high-level movemap factory
+	core::select::movemap::MoveMapFactoryOP mmf( new core::select::movemap::MoveMapFactory );
+
+	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
+	mmf->all_chi( chi );
+	mmf->all_bb( bb );
+
+	if ( tag->hasOption("jump") ) {
+		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
+
+		// string 'ALL' makes all jumps movable
+		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all") ) {
+			mmf->all_jumps( true );
+		} else if ( tag->getOption< core::Size > ( "jump" ) == 0 ) {
+			mmf->all_jumps( false );
+		} else {
+			for ( std::string const & jump : jumps ) {
+				Size const value = std::atoi( jump.c_str() );
+				core::select::jump_selector::JumpIndexSelectorOP jumpselect( new core::select::jump_selector::JumpIndexSelector( value ) );
+				mmf->add_jump_action( core::select::movemap::mm_enable, jumpselect );
+			}
+		}
+	}
+
 	// fine-grained movemap control
-	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data, false );
+	movemap_factory_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false, mmf );
 }
 
 
@@ -265,7 +274,7 @@ void NormalModeMinimizer::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	subelements.complex_type_naming_func( [] (std::string const& name) {
 		return mover_name() + "_subelement_" + name + "Type";
 		});
-	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, subelements);
 
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default(

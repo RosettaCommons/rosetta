@@ -25,6 +25,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 
 // utility headers
 #include <utility>
@@ -63,9 +64,12 @@ RandomOmegaFlipMover::RandomOmegaFlipMover( core::kinematics::MoveMapOP move_map
 {}
 
 RandomOmegaFlipMover::RandomOmegaFlipMover( RandomOmegaFlipMover const & other ) :
-	Mover("RandomOmegaFlipMover"),
-	move_map_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap( *other.move_map_ ) ) )
-{}
+	Mover("RandomOmegaFlipMover")
+{
+	if ( other.move_map_ ) {
+		move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( *other.move_map_ ) );
+	}
+}
 
 RandomOmegaFlipMover::~RandomOmegaFlipMover()= default;
 
@@ -111,6 +115,7 @@ RandomOmegaFlipMover::setup_torsion_list( core::pose::Pose & pose )
 	// clear existing list
 	torsion_id_list_.clear();
 
+	core::kinematics::MoveMapCOP move_map( movemap( pose ) );
 	// make list
 	for ( Size i( 1 ); i <= pose.size(); ++i ) {
 
@@ -121,7 +126,7 @@ RandomOmegaFlipMover::setup_torsion_list( core::pose::Pose & pose )
 			TorsionID omg_tor_id( i, BB, omega_torsion );
 
 			// add moveable torsions to torsion id list
-			if ( move_map_->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
 		}
 	}
 
@@ -149,10 +154,9 @@ RandomOmegaFlipMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
-	if ( !move_map_ ) move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
-	protocols::rosetta_scripts::parse_movemap( tag, pose, move_map_, data, false );
+	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data ) );
 }
 
 /// @brief RandomOmegaFlipMoverCreator interface, name of the mover
@@ -178,12 +182,24 @@ std::string RandomOmegaFlipMover::mover_name() {
 	return "RandomOmegaFlipMover";
 }
 
+core::kinematics::MoveMapCOP
+RandomOmegaFlipMover::movemap( core::pose::Pose const & pose ) {
+	if ( move_map_ ) {
+		return move_map_;
+	} else if ( movemap_factory_ ) {
+		return movemap_factory_->create_movemap_from_pose( pose );
+	} else {
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
+		return movemap;
+	}
+}
+
 void RandomOmegaFlipMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
 	XMLSchemaSimpleSubelementList subelements;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelements );
 	//All it has is a movemap parsed using parse_movemap
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW_TODO", attlist, subelements );
 }

@@ -65,7 +65,10 @@ public:
 	/// @brief setter for the movemap
 	void set_movemap( core::kinematics::MoveMapCOP movemap ) override;
 
-	core::kinematics::MoveMapCOP movemap() const override;
+	core::kinematics::MoveMapCOP movemap( core::pose::Pose const & ) const override;
+
+	// We only have an explicit movemap for FragmentMover, so we don't actually need the Pose
+	core::kinematics::MoveMapCOP movemap() const;
 
 	core::fragment::InsertMap const& insert_map() const {
 		return insert_map_;

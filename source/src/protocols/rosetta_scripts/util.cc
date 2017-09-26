@@ -20,7 +20,6 @@
 #include <core/types.hh>
 #include <core/init/score_function_corrections.hh>
 #include <protocols/filters/Filter.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
@@ -35,6 +34,12 @@
 #include <core/id/types.hh>
 #include <core/chemical/VariantType.hh>
 
+#include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/movemap/util.hh>
+#include <core/select/jump_selector/JumpIndexSelector.hh>
+#include <core/select/residue_selector/ResidueSpanSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
 
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
@@ -510,61 +515,61 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 void
 foreach_movemap_tag(
 	utility::tag::TagCOP const in_tag,
-	core::pose::Pose const & pose,
-	core::kinematics::MoveMapOP mm
+	core::select::movemap::MoveMapFactoryOP mmf
 ){
-	using namespace core::kinematics;
 	using namespace utility::tag;
+	using namespace core::select;
+	using namespace core::select::movemap;
 
 	for ( TagCOP const tag : in_tag->getTags() ) {
 		std::string const name( tag->getName() );
 		runtime_assert( name == "Jump" || name == "Chain" || name == "Span" );
 		if ( name == "Jump" ) {
-			core::Size const num( tag->getOption< core::Size >( "number" ) );
+			int const num( tag->getOption< int >( "number" ) );
 			bool const setting( tag->getOption< bool >( "setting" ) );
-			if ( num == 0 ) mm->set_jump( setting ); // set all jumps if number==0
-			else mm->set_jump( num, setting );
+			if ( num == 0 ) { // set all jumps if number==0
+				mmf->all_jumps( setting );
+			} else {
+				move_map_action action( setting ? mm_enable : mm_disable );
+				// We set soft_error here, as existing usage can sometime set jumps that don't exist in the pose.
+				jump_selector::JumpSelectorCOP jump( new jump_selector::JumpIndexSelector( num, /* soft_error= */ true ) );
+				mmf->add_jump_action( action, jump );
+			}
 		}
 		if ( name == "Chain" ) {
-			core::Size const num( tag->getOption< core::Size >( "number" ) );
+			std::string const chain( tag->getOption< std::string >( "number" ) );
 			bool const chi( tag->getOption< bool >( "chi" ) );
 			bool const bb( tag->getOption< bool >( "bb" ) );
-			core::Size const chain_begin( pose.conformation().chain_begin( num ) );
-			core::Size const chain_end( pose.conformation().chain_end( num ) );
-			for ( core::Size i( chain_begin ); i <= chain_end; ++i ) {
-				mm->set_chi( i, chi );
-				mm->set_bb( i, bb );
-			}
 			bool const bondangle( tag->getOption< bool >( "bondangle", false ) );
 			bool const bondlength( tag->getOption< bool >( "bondlength", false ) );
+
+			residue_selector::ResidueSelectorCOP chain_select( new residue_selector::ChainSelector( chain ) );
+
+			mmf->add_bb_action( (bb ? mm_enable : mm_disable), chain_select );
+			mmf->add_chi_action( (chi ? mm_enable : mm_disable), chain_select );
 			if ( bondangle || bondlength ) {
-				for ( core::Size i( chain_begin ); i <= chain_end; ++i ) {
-					for ( core::Size j=1; j<=pose.residue_type(i).natoms(); ++j ) {
-						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::THETA ), bondangle );
-						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::D ), bondlength );
-					}
-				}
+				mmf->add_bondangles_action( (bondlength ? mm_enable : mm_disable), chain_select );
+				mmf->add_bondlengths_action( (bondlength ? mm_enable : mm_disable), chain_select );
 			}
 		}
 		if ( name == "Span" ) {
-			core::Size const begin( tag->getOption< core::Size >( "begin" ) );
-			core::Size const end( tag->getOption< core::Size >( "end" ) );
-			runtime_assert( end >= begin );
+			std::string const begin( tag->getOption< std::string >( "begin" ) );
+			std::string const end( tag->getOption< std::string >( "end" ) );
 			bool const chi( tag->getOption< bool >( "chi" ) );
 			bool const bb( tag->getOption< bool >( "bb" ) );
-			for ( core::Size i( begin ); i <= end; ++i ) {
-				mm->set_chi( i, chi );
-				mm->set_bb( i, bb );
-			}
 			bool const bondangle( tag->getOption< bool >( "bondangle", false ) );
 			bool const bondlength( tag->getOption< bool >( "bondlength", false ) );
+
+			runtime_assert( ! begin.empty() );
+			runtime_assert( ! end.empty() );
+			// For backward compatibility, ResidueSpan selector allows ranges outside the pose
+			residue_selector::ResidueSelectorCOP span_select( new residue_selector::ResidueSpanSelector( begin, end ) );
+
+			mmf->add_bb_action( (bb ? mm_enable : mm_disable), span_select );
+			mmf->add_chi_action( (chi ? mm_enable : mm_disable), span_select );
 			if ( bondangle || bondlength ) {
-				for ( core::Size i( begin ); i <= end; ++i ) {
-					for ( core::Size j=1; j<=pose.residue_type(i).natoms(); ++j ) {
-						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::THETA ), bondangle );
-						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::D ), bondlength );
-					}
-				}
+				mmf->add_bondangles_action( (bondlength ? mm_enable : mm_disable), span_select );
+				mmf->add_bondlengths_action( (bondlength ? mm_enable : mm_disable), span_select );
 			}
 		}
 	}//for tag
@@ -573,91 +578,103 @@ foreach_movemap_tag(
 void
 parse_movemap_tag(
 	utility::tag::TagCOP const in_tag,
-	core::kinematics::MoveMapOP mm )
-{
-	if ( in_tag->hasOption( "bb" ) ) mm->set_bb( in_tag->getOption< bool >( "bb" ) );
-	if ( in_tag->hasOption( "chi" ) ) mm->set_chi( in_tag->getOption< bool >( "chi" ) );
-	if ( in_tag->hasOption( "jump" ) ) mm->set_jump( in_tag->getOption< bool >( "jump" ) );
+	core::select::movemap::MoveMapFactoryOP mmf
+) {
+	if ( in_tag->hasOption( "bb" ) ) mmf->all_bb( in_tag->getOption< bool >( "bb" ) );
+	if ( in_tag->hasOption( "chi" ) ) mmf->all_chi( in_tag->getOption< bool >( "chi" ) );
+	if ( in_tag->hasOption( "jump" ) ) mmf->all_jumps( in_tag->getOption< bool >( "jump" ) );
 }
 
-// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps
-void
-parse_movemap(
-	utility::tag::TagCOP const in_tag,
-	core::pose::Pose const & pose,
-	core::kinematics::MoveMapOP & mm,
+
+core::select::movemap::MoveMapFactoryOP
+parse_movemap_factory_legacy(
+	utility::tag::TagCOP in_tag,
 	basic::datacache::DataMap & data,
-	bool const reset_map
-){
-	using utility::tag::TagCOP;
-	using namespace core::kinematics;
-
-	if ( in_tag == nullptr ) return;
-	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
-	utility::vector1< TagCOP >::const_iterator tag_it;
-	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
-		if ( (*tag_it)->getName() =="MoveMap" ) {
-			break;
-		}
-	}
-	if ( reset_map ) {
-		mm->set_bb( true );
-		mm->set_chi( true );
-		mm->set_jump( true );
-	}
-	if ( tag_it == branch_tags.end() ) return;
-
-	if ( (*tag_it)->hasOption("name") ) {
-		std::string const name( (*tag_it)->getOption< std::string >( "name" ) );
-		if ( data.has( "movemaps", name ) ) {
-			mm = data.get_ptr<MoveMap>( "movemaps", name );
-			TR<<"Found movemap "<<name<<" on datamap"<<std::endl;
-		} else {
-			data.add( "movemaps", name, mm );
-			TR<<"Adding movemap "<<name<<" to datamap"<<std::endl;
-		}
-	}
-	parse_movemap_tag( *tag_it, mm );
-	foreach_movemap_tag( *tag_it, pose, mm );
-}
-
-/// @details modifies an existing movemap according to tag
-/// the movemap defaults to move all bb, chi, and jumps.
-void
-parse_movemap(
-	utility::tag::TagCOP const in_tag,
-	core::pose::Pose const & pose,
-	core::kinematics::MoveMapOP mm,
-	bool const reset_movemap)
+	bool const reset_movemap, /*= true // should we turn everything to true at start?*/
+	core::select::movemap::MoveMapFactoryOP mmf_to_modify /* = nullptr */)
 {
 	using utility::tag::TagCOP;
-	using namespace core::kinematics;
 
-	if ( in_tag == nullptr ) return;
+	TagCOP movemap_tag;
+
+	if ( in_tag->getName() != "MoveMap" ) {
+		utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
+		utility::vector1< TagCOP >::const_iterator tag_it;
+		for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
+			if ( (*tag_it)->getName() =="MoveMap" ) {
+				break;
+			}
+		}
+		if ( tag_it == branch_tags.end() ) return mmf_to_modify; // No MoveMap specification in tag
+		movemap_tag = *tag_it;
+	} else {
+		movemap_tag = in_tag;
+	}
+
+	core::select::movemap::MoveMapFactoryOP mmf( mmf_to_modify );
+	bool from_datamap( false );
+
+	// If we already have the factory, then make a copy for potential further alteration.
+	// (I'd prefer to return it directly, but the legacy code allowed further alterations.
+	// The one thing I'm *not* doing is re-injecting the alterations back into the datamap,
+	// which is something the legacy code (inadvertantly?) did.)
+	if ( movemap_tag->hasOption("name") ) {
+		std::string const name( movemap_tag->getOption< std::string >( "name" ) );
+		if ( data.has( core::select::movemap::movemap_factory_category(), name ) ) {
+			from_datamap = true;
+			if ( mmf ) {
+				TR.Warning << "Ignoring 'default' MoveMapFactory in parse_movemap_factory_legacy(), using existing MoveMapFactory " << name << " instead" << std::endl;
+			}
+			mmf = core::select::movemap::get_movemap_factory(name, data)->clone(); // Clone!
+		}
+	}
+	if ( mmf == nullptr ) {
+		mmf = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+	}
+
+	if ( reset_movemap && ! from_datamap ) {
+		mmf->all_bb( true );
+		mmf->all_chi( true );
+		mmf->all_jumps( true );
+	}
+
+	parse_movemap_tag( movemap_tag, mmf );
+	foreach_movemap_tag( movemap_tag, mmf );
+
+	if ( ! from_datamap && movemap_tag->hasOption("name") ) {
+		std::string const name( movemap_tag->getOption< std::string >( "name" ) );
+		data.add( core::select::movemap::movemap_factory_category(), name, mmf->clone() ); // Store clone, such that return value can be modified
+	}
+
+	return mmf;
+}
+
+core::select::movemap::MoveMapFactoryOP
+parse_named_movemap_factory_legacy(
+	utility::tag::TagCOP in_tag,
+	std::string const & name,
+	basic::datacache::DataMap & data,
+	bool const reset_movemap, /*= true // should we turn everything to true at start?*/
+	core::select::movemap::MoveMapFactoryOP mmf_to_modify /* = nullptr */)
+{
+	using utility::tag::TagCOP;
+
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
-		if ( (*tag_it)->getName() =="MoveMap" ) {
+		if ( (*tag_it)->getName() =="MoveMap" &&
+				(*tag_it)->hasOption("name") &&
+				(*tag_it)->getOption< std::string >( "name" ) == name ) {
 			break;
 		}
 	}
-	if ( reset_movemap ) {
-		mm->set_bb( true );
-		mm->set_chi( true );
-		mm->set_jump( true );
-	}
-	if ( tag_it == branch_tags.end() ) return;
-	if ( (*tag_it)->hasOption( "name" ) ) {
-		TR<<"ERROR in "<<*tag_it<<'\n';
-		throw utility::excn::EXCN_RosettaScriptsOption("Tag called with option name but this option is not available to this mover. Note that FastRelax cannot work with a prespecified movemap b/c its movemap is parsed at apply time. Sorry." );
-	}
+	if ( tag_it == branch_tags.end() ) return nullptr; // No MoveMapFactory in tag
 
-	parse_movemap_tag( *tag_it, mm );
-	foreach_movemap_tag( *tag_it, pose, mm );
+	return parse_movemap_factory_legacy(*tag_it, data, reset_movemap, mmf_to_modify);
+
 }
 
 std::string move_map_tag_namer( std::string const & subelement_name ) { return "move_map_" + subelement_name + "_type"; }
-std::string unnamed_move_map_ct_namer( std::string const & ) { return "unnamed_move_map_type"; }
 std::string optionally_named_move_map_ct_namer( std::string const & ) { return "optionally_named_move_map_type"; }
 
 void
@@ -706,29 +723,8 @@ common_movemap_complex_type_def( utility::tag::XMLSchemaComplexTypeGenerator & c
 
 }
 
-/// @brief Edits the complex type for an object that parses a MoveMap subtag
-/// and which calls parse_movemap (without passing a DataMap parameter)
 void
-append_subelement_for_parse_movemap(
-	utility::tag::XMLSchemaDefinition & xsd,
-	utility::tag::XMLSchemaSimpleSubelementList & subelements,
-	std::string const & description
-)
-{
-	using namespace utility::tag;
-	XMLSchemaComplexTypeGenerator unnamed_move_map;
-	common_movemap_complex_type_def( unnamed_move_map );
-	unnamed_move_map
-		.description( description == "" ? "MoveMap specification" : description )
-		.complex_type_naming_func( & unnamed_move_map_ct_namer )
-		.write_complex_type_to_schema( xsd );
-
-	subelements.add_already_defined_subelement( "MoveMap", & unnamed_move_map_ct_namer );
-}
-
-
-void
-append_subelement_for_parse_movemap_w_datamap(
+append_subelement_for_parse_movemap_factory_legacy(
 	utility::tag::XMLSchemaDefinition & xsd,
 	utility::tag::XMLSchemaSimpleSubelementList & subelements,
 	std::string const & description
@@ -745,42 +741,6 @@ append_subelement_for_parse_movemap_w_datamap(
 
 	subelements.add_already_defined_subelement( "MoveMap", & optionally_named_move_map_ct_namer );
 }
-
-
-void
-add_movemaps_to_datamap(
-	utility::tag::TagCOP in_tag,
-	core::pose::Pose const & pose,
-	basic::datacache::DataMap & data,
-	bool initialize_mm_as_true)
-{
-	using utility::tag::TagCOP;
-	using namespace core::kinematics;
-
-	if ( in_tag == nullptr ) return;
-	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
-	utility::vector1< TagCOP >::const_iterator tag_it;
-	for ( auto const & branch_tag : branch_tags ) {
-		if ( branch_tag->getName() =="MoveMap" ) {
-
-			if ( ! branch_tag->hasOption("name") ) continue;
-			std::string const name( branch_tag->getOption< std::string >( "name" ) );
-			if ( data.has("movemaps", name) ) continue;
-
-
-			MoveMapOP mm( new MoveMap() );
-			if ( initialize_mm_as_true ) {
-				mm->set_bb( true );
-				mm->set_chi( true );
-				mm->set_jump( true );
-			}
-			foreach_movemap_tag( branch_tag, pose, mm );
-			data.add("movemaps", name, mm);
-		}
-
-	}
-}
-
 
 /////////////////////////////////////////////////////////
 //////////////////// Filter ////////////////////////////

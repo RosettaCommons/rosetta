@@ -22,6 +22,7 @@
 #include <core/chemical/rings/RingConformerSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/conformation/Residue.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
@@ -63,11 +64,7 @@ RingConformationMover::RingConformationMover(): Mover()
 {
 	using namespace kinematics;
 
-	// Set default MoveMap.
-	MoveMapOP default_movemap( new MoveMap() );
-	default_movemap->set_nu( true );
-
-	init( default_movemap );
+	init();
 }
 
 // Copy constructor
@@ -80,9 +77,10 @@ RingConformationMover::RingConformationMover( RingConformationMover const & obje
 /// @param    <input_movemap>: a MoveMap with desired nu torsions set to true
 /// @remarks  Movable cyclic residues will generally be a subset of residues in the MoveMap whose nu
 /// torsions are set to true.
-RingConformationMover::RingConformationMover( core::kinematics::MoveMapOP input_movemap )
+RingConformationMover::RingConformationMover( core::kinematics::MoveMapOP input_movemap ):
+	movemap_( input_movemap )
 {
-	init( input_movemap );
+	init();
 }
 
 // Assignment operator
@@ -128,7 +126,6 @@ RingConformationMover::show(std::ostream & output) const
 		output << "This Mover was locked from the command line with the -lock_rings flag " <<
 			"and will not do anything!" << endl;
 	} else {
-		output << "Current MoveMap:" << endl << *movemap_ << endl;
 		if ( sample_all_conformers_ ) {
 			output << "Sampling from all ideal ring conformations." << endl;
 		} else {
@@ -157,14 +154,12 @@ RingConformationMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
-	Pose const & pose )
+	Pose const & )
 {
 	using namespace core::kinematics;
 
 	// Parse the MoveMap tag.
-	MoveMapOP mm( new MoveMap );
-	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data );
-	movemap_ = mm;
+	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data ) );
 
 	// Parse option specific to rings.
 	if ( tag->hasOption( "sample_high_energy_conformers" ) ) {
@@ -234,15 +229,29 @@ RingConformationMover::apply( Pose & input_pose )
 
 // Accessors/Mutators
 kinematics::MoveMapCOP
-RingConformationMover::movemap() const
+RingConformationMover::movemap( core::pose::Pose const & pose ) const
 {
-	return movemap_;
+	if ( movemap_ ) {
+		return movemap_;
+	} else if ( movemap_factory_ ) {
+		return movemap_factory_->create_movemap_from_pose( pose );
+	} else {
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
+		movemap->set_nu( true );
+		return movemap;
+	}
 }
 
 void
 RingConformationMover::movemap( kinematics::MoveMapOP new_movemap )
 {
 	movemap_ = new_movemap;
+}
+
+void
+RingConformationMover::movemap_factory( select::movemap::MoveMapFactoryCOP new_movemap_factory )
+{
+	movemap_factory_ = new_movemap_factory;
 }
 
 
@@ -260,11 +269,10 @@ RingConformationMover::set_commandline_options()
 
 // Initialize data members from arguments.
 void
-RingConformationMover::init( core::kinematics::MoveMapOP movemap )
+RingConformationMover::init()
 {
 	type( "RingConformationMover" );
 
-	movemap_ = movemap;
 	locked_ = false;
 	sample_all_conformers_ = false;
 
@@ -277,6 +285,7 @@ RingConformationMover::copy_data(
 	RingConformationMover & object_to_copy_to,
 	RingConformationMover const & object_to_copy_from )
 {
+	object_to_copy_to.movemap_factory_ = object_to_copy_from.movemap_factory_;
 	object_to_copy_to.movemap_ = object_to_copy_from.movemap_;
 	object_to_copy_to.residue_list_ = object_to_copy_from.residue_list_;
 	object_to_copy_to.locked_ = object_to_copy_from.locked_;
@@ -291,11 +300,12 @@ RingConformationMover::setup_residue_list( core::pose::Pose & pose )
 
 	residue_list_.clear();
 
+	core::kinematics::MoveMapCOP my_movemap( movemap(pose) );
 	Size const last_res_num( pose.size() );
 	for ( core::uint res_num( 1 ); res_num <= last_res_num; ++res_num ) {
 		Residue const & residue( pose.residue( res_num ) );
 		if ( residue.type().is_cyclic() ) {
-			if ( movemap_->get_nu( res_num ) == true ) {
+			if ( my_movemap->get_nu( res_num ) == true ) {
 				residue_list_.push_back( res_num );
 			}
 		}
@@ -327,7 +337,7 @@ void RingConformationMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	subelements.complex_type_naming_func( [] (std::string const& name) {
 		return "RingConformationMover_subelement_" + name + "Type";
 		});
-	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, subelements);
 
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute(

@@ -23,7 +23,8 @@
 
 //Core
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 
@@ -271,12 +272,6 @@ protected:
 	void movemap(core::kinematics::MoveMapOP movemap);
 	core::kinematics::MoveMapOP movemap() const;
 
-	void scaffold_movemap(core::kinematics::MoveMapCOP scaffold_movemap);
-	core::kinematics::MoveMapCOP scaffold_movemap() const;
-
-	void insert_movemap(core::kinematics::MoveMapCOP insert_movemap);
-	core::kinematics::MoveMapCOP insert_movemap() const;
-
 	core::scoring::ScoreFunctionOP cen_scorefxn() const;
 	core::scoring::ScoreFunctionOP fa_scorefxn() const;
 
@@ -310,6 +305,8 @@ private:
 	core::kinematics::MoveMapOP movemap_;
 	core::kinematics::MoveMapCOP scaffold_movemap_;
 	core::kinematics::MoveMapCOP insert_movemap_;
+	core::select::movemap::MoveMapFactoryCOP scaffold_movemap_factory_;
+	core::select::movemap::MoveMapFactoryCOP insert_movemap_factory_;
 
 	core::scoring::ScoreFunctionOP cen_scorefxn_;
 	core::scoring::ScoreFunctionOP fa_scorefxn_;

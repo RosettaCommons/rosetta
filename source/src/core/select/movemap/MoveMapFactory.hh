@@ -45,8 +45,8 @@ namespace movemap {
 
 /// @brief Are we turning on or turning off these torsions?
 enum move_map_action {
-	mm_disable,
-	mm_enable
+	mm_disable = 0, // To be convertable with "false"
+	mm_enable = 1 // To be convertable with "true"
 };
 
 
@@ -58,6 +58,8 @@ public:
 	MoveMapFactory();
 	MoveMapFactory( MoveMapFactory const & src );
 	MoveMapFactory & operator = ( MoveMapFactory const & rhs );
+
+	MoveMapFactoryOP clone() const;
 
 	/// @brief Destructor.
 	///
@@ -78,6 +80,12 @@ public:
 
 	void all_jumps( bool setting );
 	void add_jump_action( move_map_action action, jump_selector::JumpSelectorCOP selector );
+
+	void all_bondangles( bool setting );
+	void add_bondangles_action( move_map_action action, residue_selector::ResidueSelectorCOP selector );
+
+	void all_bondlengths( bool setting );
+	void add_bondlengths_action( move_map_action action, residue_selector::ResidueSelectorCOP selector );
 
 	/// @brief Construct a MoveMap from the internally held ResidueSelectors and JumpSelectors
 	kinematics::MoveMapOP
@@ -136,27 +144,35 @@ private:
 
 
 private:
-	bool use_all_bb_; // true if the all_bb_setting_ should be used
-	bool all_bb_setting_;
+	bool use_all_bb_ = false; // true if the all_bb_setting_ should be used
+	bool all_bb_setting_ = false;
 	std::list< MMResAction > bb_actions_;
 	std::list< MMResIndexAction > bb_index_actions_;
 
-	bool use_all_chi_; // true if the all_chi_setting_ should be used
-	bool all_chi_setting_;
+	bool use_all_chi_ = false; // true if the all_chi_setting_ should be used
+	bool all_chi_setting_ = false;
 	std::list< MMResAction > chi_actions_;
 	//std::list< MMResIndexAction > chi_index_actions_;
 
-	bool use_all_nu_; // true if the all_nu_setting_ should be used
-	bool all_nu_setting_;
+	bool use_all_nu_ = false; // true if the all_nu_setting_ should be used
+	bool all_nu_setting_ = false;
 	std::list< MMResAction > nu_actions_;
 
-	bool use_all_branches_; // true if the all_branches_setting_ should be used
-	bool all_branches_setting_;
+	bool use_all_branches_ = false; // true if the all_branches_setting_ should be used
+	bool all_branches_setting_ = false;
 	std::list< MMResAction > branches_actions_;
 
-	bool use_all_jumps_; // true if the all_jumps_setting_ should be used
-	bool all_jumps_setting_;
+	bool use_all_jumps_ = false; // true if the all_jumps_setting_ should be used
+	bool all_jumps_setting_ = false;
 	std::list< MMJumpAction > jump_actions_;
+
+	bool use_all_bondangles_ = false; // true if the all_bondangles_setting_ should be used
+	bool all_bondangles_setting_ = false;
+	std::list< MMResAction > bondangles_actions_;
+
+	bool use_all_bondlengths_ = false; // true if the all_bondlengths_setting_ should be used
+	bool all_bondlengths_setting_ = false;
+	std::list< MMResAction > bondlengths_actions_;
 
 	// TO DO:
 	// Specific torsion selectors!

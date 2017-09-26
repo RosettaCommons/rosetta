@@ -25,6 +25,8 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/residue_selector/util.hh>
 
 // utility headers
 #include <utility>
@@ -54,12 +56,20 @@ namespace simple_moves {
 
 RandomTorsionMover::RandomTorsionMover() :
 	Mover("RandomTorsionMover"),
-	move_map_( /* 0 */ ),
+	movemap_factory_( /* nullptr */ ),
+	move_map_( /* nullptr */ ),
 	max_angle_( 0 ),
 	num_moves_( 0 )
 {}
 
-RandomTorsionMover::RandomTorsionMover( core::kinematics::MoveMapOP move_map, core::Real max_angle, core::Size num_moves = 1) :
+RandomTorsionMover::RandomTorsionMover( core::select::movemap::MoveMapFactoryCOP movemap_factory, core::Real max_angle, core::Size num_moves ) :
+	Mover("RandomTorsionMover"),
+	movemap_factory_(std::move( movemap_factory )),
+	max_angle_( max_angle ),
+	num_moves_( num_moves )
+{}
+
+RandomTorsionMover::RandomTorsionMover( core::kinematics::MoveMapOP move_map, core::Real max_angle, core::Size num_moves ) :
 	Mover("RandomTorsionMover"),
 	move_map_(std::move( move_map )),
 	max_angle_( max_angle ),
@@ -68,10 +78,14 @@ RandomTorsionMover::RandomTorsionMover( core::kinematics::MoveMapOP move_map, co
 
 RandomTorsionMover::RandomTorsionMover( RandomTorsionMover const & other ) :
 	Mover("RandomTorsionMover"),
-	move_map_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap( *other.move_map_ ) ) ),
+	movemap_factory_( other.movemap_factory_),
 	max_angle_( other.max_angle_ ),
 	num_moves_( other.num_moves_ )
-{}
+{
+	if ( other.move_map_ ) { // Don't clone null ptr
+		move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( *other.move_map_ ) );
+	}
+}
 
 
 RandomTorsionMover::~RandomTorsionMover()= default;
@@ -119,6 +133,7 @@ RandomTorsionMover::setup_torsion_list( core::pose::Pose & pose )
 	// clear existing list
 	torsion_id_list_.clear();
 
+	core::kinematics::MoveMapCOP move_map( movemap( pose ) );
 	// make list
 	for ( Size i( 1 ); i <= pose.size(); ++i ) {
 
@@ -131,9 +146,9 @@ RandomTorsionMover::setup_torsion_list( core::pose::Pose & pose )
 			TorsionID omg_tor_id( i, BB, omega_torsion );
 
 			// add moveable torsions to torsion id list
-			if ( move_map_->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
-			if ( move_map_->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
-			if ( move_map_->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+			if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+			if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
 		}
 	}
 
@@ -161,14 +176,12 @@ RandomTorsionMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
-	if ( !move_map_ ) move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
-
 	max_angle_ = tag->getOption< core::Real >( "max_angle", max_angle_ );
 	num_moves_ = tag->getOption< core::Size >( "num_moves", num_moves_ );
 
-	protocols::rosetta_scripts::parse_movemap( tag, pose, move_map_, data, false );
+	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data ) );
 }
 
 /// @brief RandomTorsionMoverCreator interface, name of the mover
@@ -194,6 +207,18 @@ std::string RandomTorsionMover::mover_name() {
 	return "RandomTorsionMover";
 }
 
+core::kinematics::MoveMapCOP
+RandomTorsionMover::movemap( core::pose::Pose const & pose ) {
+	if ( move_map_ ) {
+		return move_map_;
+	} else if ( movemap_factory_ ) {
+		return movemap_factory_->create_movemap_from_pose( pose );
+	} else {
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
+		return movemap;
+	}
+}
+
 void RandomTorsionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 
@@ -204,7 +229,7 @@ void RandomTorsionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute( "num_moves", xsct_non_negative_integer, "XRW_TODO" );
 
 	XMLSchemaSimpleSubelementList subelements;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelements );
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW_TODO", attlist, subelements );
 }
 

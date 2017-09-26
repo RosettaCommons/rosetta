@@ -26,6 +26,7 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -194,30 +195,7 @@ FlxbbDesign::FlxbbDesign(
 }
 
 /// @brief copy constructor
-FlxbbDesign::FlxbbDesign( FlxbbDesign const & rval ) :
-	//utility::pointer::ReferenceCount(),
-	Super( rval ),
-	scorefxn_design_( rval.scorefxn_design_ ),
-	scorefxn_relax_( rval.scorefxn_relax_ ),
-	nflxbb_cycles_( rval.nflxbb_cycles_ ),
-	layer_mode_( rval.layer_mode_ ),
-	use_origseq_for_not_dsgned_layer_( rval.use_origseq_for_not_dsgned_layer_ ),
-	no_relax_( rval.no_relax_ ),
-	no_design_( rval.no_design_ ),
-	design_taskset_( rval.design_taskset_ ),
-	filter_during_design_( rval.filter_during_design_ ),
-	blueprint_ ( rval.blueprint_ ),
-	resfile_( rval.resfile_ ),
-	constraints_sheet_( rval.constraints_sheet_ ),
-	constraints_NtoC_( rval.constraints_NtoC_ ),
-	movemap_from_blueprint_( rval.movemap_from_blueprint_ ),
-	movemap_( rval.movemap_ ),
-	task_operations_( rval.task_operations_ ),
-	use_fast_relax_( rval.use_fast_relax_ ),
-	clear_all_residues_( rval.clear_all_residues_ ),
-	relax_constraint_to_design_( rval.relax_constraint_to_design_ ),
-	limit_aroma_chi2_( rval.limit_aroma_chi2_ )
-{}
+FlxbbDesign::FlxbbDesign( FlxbbDesign const & ) = default;
 
 /// @brief destructor
 FlxbbDesign::~FlxbbDesign()= default;
@@ -347,6 +325,11 @@ void FlxbbDesign::movemap_from_blueprint( bool const value )
 	movemap_from_blueprint_ = value;
 }
 
+/// @brief set movemap factory for relax
+void FlxbbDesign::set_movemap_factory( core::select::movemap::MoveMapFactoryCOP movemap_factory )
+{
+	movemap_factory_ = movemap_factory;
+}
 /// @brief set movemap for relax
 void FlxbbDesign::set_movemap( MoveMapOP const movemap )
 {
@@ -405,7 +388,11 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 	} else {
 		rlx_mover = RelaxProtocolBaseOP( new ClassicRelax( scorefxn_relax_ ) );
 	}
-	if ( movemap_ ) rlx_mover->set_movemap( movemap_ ); // movemap can be controled by blueprint
+	if ( movemap_ ) {
+		rlx_mover->set_movemap( movemap_ ); // movemap can be controled by blueprint
+	} else if ( movemap_factory_ ) {
+		rlx_mover->set_movemap( movemap_factory_->create_movemap_from_pose( pose ) );
+	}
 	if ( relax_constraint_to_design_ ) rlx_mover->constrain_relax_to_start_coords( true );
 	if ( limit_aroma_chi2_ ) { // default true
 		TaskFactoryOP tf( new TaskFactory );
@@ -414,7 +401,11 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 		tf->push_back(TaskOperationCOP( new InitializeFromCommandline ));
 		tf->push_back(TaskOperationCOP( new RestrictToRepacking ) );
 		tf->push_back( TaskOperationCOP( new LimitAromaChi2Operation ) );
-		if ( movemap_ ) tf->push_back( TaskOperationCOP( new RestrictToMoveMapChiOperation(movemap_) ) );
+		if ( movemap_ ) {
+			tf->push_back( TaskOperationCOP( new RestrictToMoveMapChiOperation(movemap_) ) );
+		} else if ( movemap_factory_ ) {
+			tf->push_back( TaskOperationCOP( new RestrictToMoveMapChiOperation( movemap_factory_->create_movemap_from_pose( pose ) ) ) );
+		}
 		rlx_mover->set_task_factory( tf );
 	}
 
@@ -515,7 +506,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 
 	// set movemap from blueprint for relax
 	if ( movemap_from_blueprint_ ) {
-		if ( movemap_ ) {
+		if ( movemap_ || movemap_factory_ ) {
 			TR << "Movemap will be overrided by the definition of movemap in blueprint " << std::endl;
 		}
 		runtime_assert( blueprint_ != nullptr );
@@ -622,7 +613,7 @@ FlxbbDesign::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {
 	scorefxn_design_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn_design", data );
 	scorefxn_relax_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn_relax", data );
@@ -650,19 +641,8 @@ FlxbbDesign::parse_my_tag(
 
 	// do not perform relax after design
 	no_relax_ = tag->getOption<bool>( "no_relax", 0 );
-	bool movemap_defined( false );
-	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	utility::vector1< TagCOP >::const_iterator tag_it;
-	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
-		if ( (*tag_it)->getName() == "MoveMap" ) {
-			movemap_defined = true;
-			break;
-		}
-	}
-	if ( movemap_defined ) {
-		movemap_ = MoveMapOP( new core::kinematics::MoveMap );
-		protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data );
-	}
+	movemap_factory_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data );
+
 	// do not perform design
 	no_design_ = tag->getOption<bool>( "no_design", 0 );
 
@@ -726,7 +706,7 @@ void FlxbbDesign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute::attribute_w_default( "no_relax", xsct_rosetta_bool, "XRW TO DO", "0" );
 
 	XMLSchemaSimpleSubelementList ssl;
-	rosetta_scripts::append_subelement_for_parse_movemap( xsd, ssl );
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, ssl );
 	attlist + XMLSchemaAttribute::attribute_w_default( "no_design", xsct_rosetta_bool, "XRW TO DO", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "clear_all_residues", xsct_rosetta_bool, "XRW TO DO", "0" )
 		+ XMLSchemaAttribute( "resfile", xs_string, "XRW TO DO" )

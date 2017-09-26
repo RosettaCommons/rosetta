@@ -26,6 +26,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/id/DOF_ID_Range.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
@@ -98,10 +99,11 @@ public:
 
 	core::Size nmoves() const { return nmoves_; }
 
-	core::kinematics::MoveMapCOP movemap() const { return movemap_; }
-
 	void movemap(core::kinematics::MoveMapOP new_movemap) { movemap_= new_movemap; }
+	void movemap_factory(core::select::movemap::MoveMapFactoryCOP new_movemap_factory) { movemap_factory_= new_movemap_factory; }
 
+	/// @brief Get the movemap for this pose
+	core::kinematics::MoveMapCOP movemap( core::pose::Pose const & pose );
 
 	/// @brief returns the residue selector which can be used to dynamically select residues to perturb
 	/// at runtime
@@ -200,6 +202,7 @@ protected:
 
 
 private:
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 	core::kinematics::MoveMapOP movemap_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 

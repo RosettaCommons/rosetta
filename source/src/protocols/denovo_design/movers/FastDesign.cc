@@ -308,6 +308,7 @@ FastDesign::create_default_task_factory() const
 		}
 
 		// turn off packing on residues that can't move
+		// (Note that this function *doesn't* see any MoveMap info that's set via parse_my_tag().)
 		if ( get_movemap() ) {
 			core::pack::task::operation::PreventRepackingOP turn_off_packing( new core::pack::task::operation::PreventRepacking() );
 			core::kinematics::MoveMap const & mm = *get_movemap();

@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -50,6 +51,8 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
+	void movemap_factory(core::select::movemap::MoveMapFactoryCOP new_movemap_factory) { movemap_factory_= new_movemap_factory; }
+
 	std::string
 	get_name() const override;
 
@@ -66,7 +69,12 @@ protected:
 	// mover specific
 	void setup_torsion_list( core::pose::Pose & pose );
 
+	/// @brief Get the movemap for this pose
+	core::kinematics::MoveMapCOP movemap( core::pose::Pose const & pose );
+
 private:
+	// the movemap factory
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 	// the movemap
 	core::kinematics::MoveMapOP move_map_;
 

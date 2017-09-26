@@ -24,6 +24,8 @@
 #include <core/optimization/CartesianMinimizerMap.hh>
 #include <core/optimization/types.hh>
 
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
+
 #ifdef WIN32
 #include <time.h>
 #include <WinSock2.h>
@@ -149,6 +151,10 @@ private:
 		bool const report_trj );
 
 private:
+
+	/// @brief MoveMapFactory, for XML-based parsing
+	/// Will override any manually set MoveMaps
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 
 	core::optimization::CartesianMinimizerMap min_map_;
 	timeval inittime_;

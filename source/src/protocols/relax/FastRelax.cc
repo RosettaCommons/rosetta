@@ -260,8 +260,7 @@ FastRelax::FastRelax(
 	core::Size                     standard_repeats
 ) :
 	RelaxProtocolBase( std::string("FastRelax" ) ),
-	checkpoints_( std::string("FastRelax") ),
-	movemap_tag_( /* NULL */ )
+	checkpoints_( std::string("FastRelax") )
 {
 	set_to_default();
 	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
@@ -278,8 +277,7 @@ FastRelax::FastRelax(
 	core::Size                     standard_repeats
 ) :
 	RelaxProtocolBase("FastRelax", scorefxn_in ),
-	checkpoints_("FastRelax"),
-	movemap_tag_( /* NULL */ )
+	checkpoints_("FastRelax")
 {
 	set_to_default();
 	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
@@ -296,8 +294,7 @@ FastRelax::FastRelax(
 	const std::string &          script_file
 ) :
 	RelaxProtocolBase("FastRelax", scorefxn_in ),
-	checkpoints_("FastRelax"),
-	movemap_tag_( /* NULL */ )
+	checkpoints_("FastRelax")
 {
 	set_to_default();
 	read_script_file( script_file );
@@ -309,8 +306,7 @@ FastRelax::FastRelax(
 	const std::string &          script_file
 ) :
 	RelaxProtocolBase("FastRelax", scorefxn_in ),
-	checkpoints_("FastRelax"),
-	movemap_tag_( /* NULL */ )
+	checkpoints_("FastRelax")
 {
 	set_to_default();
 	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
@@ -344,18 +340,14 @@ FastRelax::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 ) {
 	using namespace basic::options;
 	using core::pack::task::operation::TaskOperationCOP;
 
+	bool nonideal = false; // Are we setup for non-ideal Relax?
+
 	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data )->clone() );
-
-	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	mm->set_chi( true );
-	mm->set_bb( true );
-	mm->set_jump( true );
-
 
 	//Make sure we have a taskfactory before we overwrite our null in the base class.
 	set_enable_design( !( tag->getOption<bool>("disable_design", !enable_design_ ) ) );
@@ -368,16 +360,37 @@ FastRelax::parse_my_tag(
 		set_task_factory( tf );
 	}
 
-	core::select::movemap::MoveMapFactoryOP mmf = core::select::movemap::parse_movemap_factory( tag, data );
-	if ( mmf ) {
-		set_movemap_factory( mmf );
-		if ( tag->hasTag( "MoveMap" ) ) {
-			TR.Warning << "Unintended behavior may result from using both a MoveMapFactory and a MoveMap in the " << tag->getOption< std::string >( "name", "(unnamed FastRelaxMover)" ) << " FastRelaxMover; the MoveMapFatory has the potential to overwrite the settings provided by MoveMap" << std::endl;
-		}
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+	mm->set_chi( true );
+	mm->set_bb( true );
+	mm->set_jump( true );
+
+	if ( tag->getOption< bool >( "bondangle", false ) ) {
+		// minimize_bond_angles( true ); // Don't set here, to avoid warning later
+		nonideal = true;
+		mm->set( core::id::THETA, true );
 	}
 
-	// initially, all backbone torsions are movable
-	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false);
+	if ( tag->getOption< bool >( "bondlength", false ) ) {
+		// minimize_bond_lengths( true ); // Don't set here, to avoid warning later
+		nonideal = true;
+		mm->set( core::id::D, true );
+	}
+
+	set_movemap(mm); // Set the base movemap - The MoveMapFactories will modify this
+
+	core::select::movemap::MoveMapFactoryOP mmf_legacy = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false );
+	core::select::movemap::MoveMapFactoryOP mmf = core::select::movemap::parse_movemap_factory( tag, data );
+
+	// If we've used the newer MoveMapFactory syntax, use that - otherwise use the legacy syntax.
+	if ( mmf ) {
+		set_movemap_factory( mmf );
+		if ( mmf_legacy ) {
+			TR.Warning << "Unintended behavior may result from using both a MoveMapFactory and a MoveMap in the " << tag->getOption< std::string >( "name", "(unnamed FastRelaxMover)" ) << " FastRelaxMover; the MoveMapFatory has the potential to overwrite the settings provided by MoveMap" << std::endl;
+		}
+	} else if ( mmf_legacy ) {
+		set_movemap_factory( mmf_legacy );
+	} // else don't bother setting mmf
 
 	default_repeats_ = tag->getOption< int >( "repeats", option[ OptionKeys::relax::default_repeats ]() );
 	std::string script_file("");
@@ -397,24 +410,13 @@ FastRelax::parse_my_tag(
 
 	ramp_down_constraints( tag->getOption< bool >( "ramp_down_constraints", ramp_down_constraints() ) );
 
-	if ( tag->getOption< bool >( "bondangle", false ) ) {
-		minimize_bond_angles( true );
-		mm->set( core::id::THETA, true );
-	}
-
-	if ( tag->getOption< bool >( "bondlength", false ) ) {
-		minimize_bond_lengths( true );
-		mm->set( core::id::D, true );
-	}
-
-	set_movemap(mm);
 
 	if ( tag->hasOption( "min_type" ) ) {
 		min_type( tag->getOption< std::string >( "min_type" ) );
 	} else {
 		//fpd if no minimizer is specified, and we're doing flexible bond minimization
 		//fpd   we should use lbfgs (dfpmin is way too slow)
-		if ( cartesian() || minimize_bond_angles() || minimize_bond_lengths() ) {
+		if ( cartesian() || nonideal ) {
 			min_type( "lbfgs_armijo_nonmonotone" );
 		}
 	}
@@ -471,6 +473,7 @@ void FastRelax::set_to_default( )
 
 ///Make sure correct mintype for cartesian or dualspace during apply
 void FastRelax::check_nonideal_mintype() {
+	// This should probably look at the movemap too -- We can set variable lengths/angles in the movemap rather than directly in the Mover
 	if ( dualspace() || cartesian() || minimize_bond_lengths() || minimize_bond_angles() ) {
 		if ( !basic::options::option[ basic::options::OptionKeys::relax::min_type ].user() ) {
 			min_type("lbfgs_armijo_nonmonotone");
@@ -578,9 +581,6 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		TR.Warning << "Pose has no residues. Doing a FastRelax would be pointless. Skipping." << std::endl;
 		return;
 	}
-
-	// TL: This needs to be here because parse_my_tag uses the pose at parsetime
-	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() ); //Didn't we already set this in parse_my_tag?
 
 #if defined GL_GRAPHICS
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "TESTING");
@@ -1733,7 +1733,7 @@ FastRelax::complex_type_generator_for_fast_relax( utility::tag::XMLSchemaDefinit
 		" dihedrals will be free, not even dihedral 3 on residue 15." );
 
 	XMLSchemaSimpleSubelementList subelements;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap(xsd, subelements);
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, subelements);
 
 	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
 	ct_gen->add_attributes( attlist )

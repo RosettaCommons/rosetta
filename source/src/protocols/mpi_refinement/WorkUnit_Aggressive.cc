@@ -346,7 +346,7 @@ WorkUnit_NormalMode::run()
 			core::Real const scale = scales[i];
 
 			NM->set_extrapolate_scale( scale );
-			NM->apply_on_pose( pose_tmp );
+			NM->apply_on_pose( pose_tmp, mm );
 
 			// Always store in full atom!
 			if ( pose_tmp.is_centroid() ) {

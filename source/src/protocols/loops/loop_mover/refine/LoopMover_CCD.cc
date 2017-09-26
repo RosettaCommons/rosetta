@@ -31,6 +31,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
@@ -256,11 +257,11 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		break;
 	}
 	if ( specified_movemap ) {
-		move_map( LoopMover::MoveMapOP( new core::kinematics::MoveMap ) );
-		move_map_->set_bb( false );
-		move_map_->set_chi( false );
-		move_map_->set_jump( false );
-		protocols::rosetta_scripts::parse_movemap( tag, pose, move_map_, data, false/*don't reset movemap, keep falses, unless stated otherwise*/ );
+		core::select::movemap::MoveMapFactoryOP mmf( new core::select::movemap::MoveMapFactory );
+		mmf->all_bb( false );
+		mmf->all_chi( false );
+		mmf->all_jumps( false );
+		move_map_factory_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false /*don't reset movemap, keep falses, unless stated otherwise*/, mmf );
 	}
 	if ( tag->hasOption( "loops" ) ) {
 		loops( loops_definers::load_loop_definitions(tag, data, pose) );
@@ -284,6 +285,10 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 {
 	using namespace scoring;
 	using namespace basic::options;
+
+	if ( move_map_factory_ ) {
+		move_map( move_map_factory_->create_movemap_from_pose( pose ) );
+	}
 
 	// scheduler
 	int const fast( option[ OptionKeys::loops::fast ] ); // why is this an int?
@@ -509,7 +514,7 @@ void LoopMover_Refine_CCD::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 	AttributeList subelement_attributes;
 	XMLSchemaSimpleSubelementList subelement_list;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelement_list );
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelement_list );
 	subelement_list.add_simple_subelement("MoveMap", subelement_attributes, "Define the move map.");
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),

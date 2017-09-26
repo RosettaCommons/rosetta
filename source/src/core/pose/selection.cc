@@ -166,6 +166,14 @@ parse_resnum(
 	}
 }
 
+void
+attributes_for_parse_resnum( utility::tag::AttributeList & attlist, std::string const & att_name, std::string const & description ) {
+	using namespace utility::tag;
+	attlist
+			+ XMLSchemaAttribute( att_name, xsct_refpose_enabled_residue_number,
+			( description.empty() ?	"Residue number in PDB numbering (residue number + chain ID)" : description ) );
+}
+
 /// @brief Extracts residue numbers from a 'selection'.
 /// @detail Recognizes two forms of numbering:
 ///   - Rosetta residue numbers (numbered sequentially from 1 to the last residue

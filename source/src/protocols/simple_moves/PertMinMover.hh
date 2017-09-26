@@ -24,7 +24,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
@@ -54,14 +54,14 @@ public:
 	bool sc_only() const { return sc_only_; }
 	core::select::residue_selector::ResidueSelectorCOP residues() const { return residues_; }
 	core::scoring::ScoreFunctionCOP scorefxn() const { return scorefxn_; }
-	core::kinematics::MoveMapCOP movemap() const { return movemap_; }
+	core::select::movemap::MoveMapFactoryCOP movemap() const { return movemap_factory_; }
 
 	void pert_size(core::Real setting) { pert_size_ = setting; }
 	void uniform(bool setting) { uniform_ = setting; }
 	void sc_only(bool setting) { sc_only_ = setting; }
 	void residues(core::select::residue_selector::ResidueSelectorCOP setting) { residues_ = setting; }
 	void scorefxn(core::scoring::ScoreFunctionCOP setting) { scorefxn_ = setting; }
-	void movemap(core::kinematics::MoveMapCOP setting) { movemap_ = setting; }
+	void movemap_factory(core::select::movemap::MoveMapFactoryCOP setting) { movemap_factory_ = setting; }
 
 	virtual void
 	apply( core::pose::Pose & pose );
@@ -113,8 +113,8 @@ private:
 
 	/// @brief the score function to use in minimization
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	/// @brief The movemap to be used in minimization
-	core::kinematics::MoveMapCOP movemap_;
+	/// @brief The movemap factory to be used in minimization
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 };
 
 std::ostream &operator<< (std::ostream &os, PertMinMover const &mover);

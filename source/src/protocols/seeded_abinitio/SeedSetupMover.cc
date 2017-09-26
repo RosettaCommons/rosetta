@@ -39,6 +39,7 @@
 
 #include <basic/Tracer.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <protocols/scoring/Interface.hh>
 
 // Project headers
@@ -351,7 +352,14 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 	utility::vector1 <Size> norepack_residues = adjust_des_residues( pose, norepack_res_ );
 
 	/// 2. set movemap
-	define_movemap_chains( pose , movemap_ , all_seeds_, chi_chain1_, chi_chain2_, interface_chi1_, interface_chi2_, interface_distance_cutoff_ );
+	debug_assert( movemap_factory_ );
+	core::kinematics::MoveMapOP movemap;
+	if ( movemap_factory_ ) {
+		movemap = movemap_factory_->create_movemap_from_pose( pose );
+	} else {
+		movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	}
+	define_movemap_chains( pose , movemap , all_seeds_, chi_chain1_, chi_chain2_, interface_chi1_, interface_chi2_, interface_distance_cutoff_ );
 
 	/// 3. compute new task operations for seeds and target
 
@@ -365,7 +373,7 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 
 		//TR<<"at the end of apply movemap:"<<std::endl;
 		for ( Size i = 1 ; i <= pose.size(); ++i ) {
-			TR.Debug <<"position: "<< i <<", bb: "<< movemap_->get_bb(i)<< ", chi: "<<movemap_->get_chi(i)<<std::endl;
+			TR.Debug <<"position: "<< i <<", bb: "<< movemap->get_bb(i)<< ", chi: "<<movemap->get_chi(i)<<std::endl;
 		}
 
 		PackerTaskOP ptask = task_factory_->create_task_and_apply_taskoperations( pose );
@@ -387,13 +395,12 @@ SeedSetupMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const &,
-	core::pose:: Pose const & pose){
+	core::pose:: Pose const & ){
 
 	TR<<"SeedSetupMover has been invoked"<<std::endl;
 
 	//adding the movemap to the datamap
-	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
-	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data );
+	movemap_factory_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data );
 
 	//adding the taskfactory to the datamap
 	//task_factory_ = new core::pack::task::TaskFactory;

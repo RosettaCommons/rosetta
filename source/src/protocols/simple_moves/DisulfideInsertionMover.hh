@@ -24,7 +24,7 @@
 // core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 
 // utility headers
 #include <utility/tag/Tag.fwd.hh>
@@ -74,8 +74,11 @@ public:
 	void set_scorefxn ( core::scoring::ScoreFunctionOP const score_function) { scorefxn_ = score_function; }
 	core::scoring::ScoreFunctionOP get_scorefxn() const { return scorefxn_;}
 
-	void set_movemap (core::kinematics::MoveMapOP const mm) {movemap_ = mm;}
-	core::kinematics::MoveMapOP get_movemap() const {return movemap_;}
+	void set_movemap_factory (core::select::movemap::MoveMapFactoryCOP const mm) {movemap_factory_ = mm;}
+	core::select::movemap::MoveMapFactoryCOP get_movemap_factory() const {return movemap_factory_;}
+
+	//void set_movemap (core::kinematics::MoveMapOP const mm) {movemap_ = mm;}
+	//core::kinematics::MoveMapOP get_movemap() {return movemap_;}
 
 	void set_peptide_chain(core::Size const value) { peptide_chain_num_ = value; }
 	core::Size get_peptide_chain () const {return peptide_chain_num_;}
@@ -123,7 +126,9 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 	/// @brief the movemap for minimization upon call to rebuild_disulfide() (after mutation)
-	core::kinematics::MoveMapOP movemap_;
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
+	///// @brief the movemap for minimization upon call to rebuild_disulfide() (after mutation)
+	//core::kinematics::MoveMapOP movemap_;
 
 	/// @brief together with c_cyd_seqpos_, the residue numbers to be mutated into Cys
 	///        and modeled as having a disulfide bond.

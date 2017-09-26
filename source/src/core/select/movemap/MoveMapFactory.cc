@@ -20,6 +20,8 @@
 #include <core/select/residue_selector/util.hh>
 #include <core/select/jump_selector/JumpSelector.hh>
 #include <core/select/jump_selector/util.hh>
+#include <core/pose/Pose.hh>
+#include <core/chemical/ResidueType.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
@@ -60,22 +62,15 @@ MoveMapFactory::MMJumpAction::MMJumpAction( move_map_action act, jump_selector::
 {}
 MoveMapFactory::MMJumpAction::~MMJumpAction() {}
 
-MoveMapFactory::MoveMapFactory() :
-	use_all_bb_( false ),
-	all_bb_setting_( false ),
-	use_all_chi_( false ),
-	all_chi_setting_( false ),
-	use_all_nu_( false ),
-	all_nu_setting_( false ),
-	use_all_branches_( false ),
-	all_branches_setting_( false ),
-	use_all_jumps_( false ),
-	all_jumps_setting_( false )
-{}
+MoveMapFactory::MoveMapFactory() = default;
 
 MoveMapFactory::MoveMapFactory( MoveMapFactory const & ) = default;
 
 MoveMapFactory & MoveMapFactory::operator = ( MoveMapFactory const & ) = default;
+
+MoveMapFactoryOP MoveMapFactory::clone() const {
+	return MoveMapFactoryOP( new MoveMapFactory( *this ) );
+}
 
 MoveMapFactory::~MoveMapFactory() = default;
 
@@ -135,6 +130,26 @@ void MoveMapFactory::add_jump_action(
 ) {
 	MMJumpAction jump_action{ action, selector };
 	jump_actions_.push_back( jump_action );
+}
+
+void MoveMapFactory::all_bondangles( bool setting ) { use_all_bondangles_ = true; all_bondangles_setting_ = setting; }
+
+void MoveMapFactory::add_bondangles_action(
+	move_map_action action,
+	residue_selector::ResidueSelectorCOP selector
+) {
+	MMResAction res_action{ action, selector };
+	bondangles_actions_.push_back( res_action );
+}
+
+void MoveMapFactory::all_bondlengths( bool setting ) { use_all_bondlengths_ = true; all_bondlengths_setting_ = setting; }
+
+void MoveMapFactory::add_bondlengths_action(
+	move_map_action action,
+	residue_selector::ResidueSelectorCOP selector
+) {
+	MMResAction res_action{ action, selector };
+	bondlengths_actions_.push_back( res_action );
 }
 
 /// @brief Construct a MoveMap from the internally held ResidueSelectors and JumpSelectors
@@ -265,6 +280,48 @@ MoveMapFactory::edit_movemap_given_pose(
 		for ( Size ii = 1; ii <= selection.size(); ++ii ) {
 			if ( selection[ ii ] ) {
 				mm.set_jump( ii, jump_act.action );
+			}
+		}
+	}
+
+	///////// BondAngles /////////
+	if ( use_all_bondangles_ ) mm.set( core::id::THETA, all_bondangles_setting_ );
+	for ( auto const & bondangles_act : bondangles_actions_ ) {
+		ResidueSubset selection;
+		if ( res_selections.count( bondangles_act.selector ) ) {
+			selection = res_selections[ bondangles_act.selector ];
+		} else {
+			selection = bondangles_act.selector->apply( pose );
+			res_selections[ bondangles_act.selector ] = selection;
+		}
+
+		for ( Size ii = 1; ii <= selection.size(); ++ii ) {
+			if ( selection[ ii ] ) {
+				// Set for all atoms in the residue
+				for ( core::Size jj=1; jj <= pose.residue_type(ii).natoms(); ++jj ) {
+					mm.set( core::id::DOF_ID(core::id::AtomID(jj,ii), core::id::THETA ), bondangles_act.action );
+				}
+			}
+		}
+	}
+
+	///////// BondLengths /////////
+	if ( use_all_bondlengths_ ) mm.set( core::id::THETA, all_bondlengths_setting_ );
+	for ( auto const & bondlengths_act : bondlengths_actions_ ) {
+		ResidueSubset selection;
+		if ( res_selections.count( bondlengths_act.selector ) ) {
+			selection = res_selections[ bondlengths_act.selector ];
+		} else {
+			selection = bondlengths_act.selector->apply( pose );
+			res_selections[ bondlengths_act.selector ] = selection;
+		}
+
+		for ( Size ii = 1; ii <= selection.size(); ++ii ) {
+			if ( selection[ ii ] ) {
+				// Set for all atoms in the residue
+				for ( core::Size jj=1; jj <= pose.residue_type(ii).natoms(); ++jj ) {
+					mm.set( core::id::DOF_ID(core::id::AtomID(jj,ii), core::id::D ), bondlengths_act.action );
+				}
 			}
 		}
 	}

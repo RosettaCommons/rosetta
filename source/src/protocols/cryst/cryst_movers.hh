@@ -22,7 +22,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
@@ -109,7 +109,7 @@ private:
 
 	core::scoring::ScoreFunctionOP score_function_;
 	core::scoring::ScoreFunctionOP score_function_ref_;
-	core::kinematics::MoveMapOP mm_;
+	core::select::movemap::MoveMapFactoryOP mmf_;
 };
 
 

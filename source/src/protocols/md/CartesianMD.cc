@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Constraints
@@ -454,6 +455,11 @@ CartesianMD::cst_on_pose_dynamic( core::pose::Pose &pose,
 
 void CartesianMD::apply( core::pose::Pose & pose ) {
 	using namespace core::optimization;
+
+	if ( movemap_factory_ ) {
+		// reset the movemap if we have a valid MoveMapFactory
+		set_movemap( pose, movemap_factory_->create_movemap_from_pose( pose ) );
+	}
 
 	//fpd we have to do this here since this the first time "seeing" the symm pose
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -922,17 +928,15 @@ void CartesianMD::parse_movemap(
 	basic::datacache::DataMap & data,
 	//Filters_map const &,
 	//protocols::moves::Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {
 	// set initial guess
-	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
+	core::select::movemap::MoveMapFactoryOP mmf( new core::select::movemap::MoveMapFactory );
 	bool const chi( tag->getOption< bool >( "chi", true ) ), bb( tag->getOption< bool >( "bb", true ) );
-	movemap->set_chi( chi );
-	movemap->set_bb( bb );
+	mmf->all_chi( chi );
+	mmf->all_bb( bb );
 
-	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap, data, false );
-
-	set_movemap( pose, movemap );
+	movemap_factory_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false, mmf );
 }
 
 std::string CartesianMD::get_name() const {

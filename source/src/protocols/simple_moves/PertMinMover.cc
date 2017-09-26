@@ -18,6 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/id/AtomID.hh>
@@ -69,7 +70,7 @@ void PertMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
 
 	utility::tag::XMLSchemaSimpleSubelementList subelements;
-	protocols::rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	protocols::rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelements );
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
 		"Do a Roberto Chica inspired random atom coordinate perturbation followed by (Cartesian) minimization.",
@@ -82,7 +83,7 @@ PertMinMover::parse_my_tag(
 	basic::datacache::DataMap& data,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
-	core::pose::Pose const & pose)
+	core::pose::Pose const & )
 {
 	pert_size( tag->getOption< core::Real >( "pert_size", pert_size() ) );
 	uniform( tag->getOption< bool >( "uniform", uniform() ) );
@@ -90,9 +91,7 @@ PertMinMover::parse_my_tag(
 	residues( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 
-	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, true);
-	movemap( mm );
+	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data ) );
 }
 
 protocols::moves::MoverOP
@@ -174,14 +173,15 @@ PertMinMover::pert( core::pose::Pose & pose, utility::vector1< bool > const & re
 
 void
 PertMinMover::min( core::pose::Pose & pose ) const {
-	core::kinematics::MoveMapCOP mm( movemap() );
-	if ( ! mm ) {
+	core::kinematics::MoveMapOP mm;
+	if ( movemap_factory_ ) {
+		mm = movemap_factory_->create_movemap_from_pose( pose );
+	} else {
 		TR << "Using a default MoveMap." << std::endl;
-		core::kinematics::MoveMapOP new_mm( new core::kinematics::MoveMap );
-		new_mm->set_bb( true );
-		new_mm->set_chi( true );
-		new_mm->set_jump( true );
-		mm = new_mm;
+		mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		mm->set_bb( true );
+		mm->set_chi( true );
+		mm->set_jump( true );
 	}
 
 	core::scoring::ScoreFunctionCOP sfxn( scorefxn() );

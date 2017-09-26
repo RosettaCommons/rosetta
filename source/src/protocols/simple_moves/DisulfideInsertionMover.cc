@@ -39,6 +39,7 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/types.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/util/disulfide_util.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
@@ -86,10 +87,6 @@ DisulfideInsertionMover::DisulfideInsertionMover() :
 	max_dist_multiplier_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::max_dslf_dist_multiplier ]();
 	constraint_weight_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::constraint_weight ]();
 
-	if ( movemap_ == nullptr ) {
-		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
-	}
-
 	if ( scorefxn_ == nullptr ) {
 		scorefxn_ = core::scoring::get_score_function();
 	}
@@ -102,7 +99,7 @@ DisulfideInsertionMover::DisulfideInsertionMover(DisulfideInsertionMover const &
 	set_c_cyd_seqpos(other.get_c_cyd_seqpos());
 	// TODO : should we clone this? simply calling ->clone() didn't work for some reason (at least, get_name() on the new scorefxn returned an empty string)
 	set_scorefxn(other.get_scorefxn());
-	set_movemap(other.get_movemap());
+	set_movemap_factory(other.get_movemap_factory());
 	set_constraint_weight(other.get_constraint_weight());
 }
 
@@ -269,15 +266,21 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 
 	// TODO : No matter if movemap is provided or initialized, peptide backbone is free to move
 	// probably a must for the disulfide to be properly rebuilt, but need to think about this forced DOF
-	movemap_->set_bb_true_range(this_pose_n_cyd, this_pose_c_cyd);
+	core::kinematics::MoveMapOP movemap;
+	if ( movemap_factory_ != nullptr ) {
+		movemap = movemap_factory_->create_movemap_from_pose( peptide_receptor_pose );
+	} else {
+		movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	}
+	movemap->set_bb_true_range(this_pose_n_cyd, this_pose_c_cyd);
 	core::util::rebuild_disulfide(peptide_receptor_pose, this_pose_n_cyd, this_pose_c_cyd,
 		/*packer_task=*/nullptr,
 		/*packer_score=*/scorefxn_,
-		/*mm=*/movemap_,
+		/*mm=*/movemap,
 		/*minimizer_score=*/scorefxn_);
 
 	// add our dfpmin minimization - increases number of cases where successful closure is achieved compared to lbfgs_armijo_nonmonotone
-	protocols::simple_moves::MinMover minimizer( movemap_, scorefxn_, "dfpmin_armijo_atol", 0.01 /*tolerance*/, true /*nb_list*/ );
+	protocols::simple_moves::MinMover minimizer( movemap, scorefxn_, "dfpmin_armijo_atol", 0.01 /*tolerance*/, true /*nb_list*/ );
 	minimizer.apply( peptide_receptor_pose );
 
 	if ( constraint_weight_ > 0 ) { // save some code-running if no constraint it set
@@ -360,14 +363,14 @@ void DisulfideInsertionMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose ) {
+	core::pose::Pose const & ) {
 
 	if ( tag->hasOption("scorefxn") ) {
 		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", data, "" ) );
 	}
 
 	// TODO : check if such a check is neccesary: if ( tag->hasOption("MoveMap") ) {
-	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_ );
+	set_movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data ) );
 
 	if ( tag->hasOption("n_cyd") ) {
 		set_n_cyd_seqpos(tag->getOption<core::Size>("n_cyd"));
@@ -406,7 +409,7 @@ void DisulfideInsertionMover::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	rosetta_scripts::attributes_for_parse_score_function(attlist);
 
 	XMLSchemaSimpleSubelementList ssl;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap(xsd, ssl);
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, ssl);
 
 	attlist + XMLSchemaAttribute(
 		"n_cyd", xsct_non_negative_integer,

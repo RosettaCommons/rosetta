@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -36,6 +37,9 @@ public:
 	RandomTorsionMover();
 
 	// ctor
+	RandomTorsionMover( core::select::movemap::MoveMapFactoryCOP movemap_factory, core::Real max_angle, core::Size num_moves );
+
+	// ctor
 	RandomTorsionMover( core::kinematics::MoveMapOP move_map, core::Real max_angle, core::Size num_moves );
 
 	// cctor
@@ -43,6 +47,8 @@ public:
 
 	// dtor
 	~RandomTorsionMover() override;
+
+	void movemap_factory(core::select::movemap::MoveMapFactoryCOP new_movemap_factory) { movemap_factory_= new_movemap_factory; }
 
 	// mover interface
 	void apply( core::pose::Pose & pose ) override;
@@ -66,7 +72,12 @@ protected:
 	// mover specific
 	void setup_torsion_list( core::pose::Pose & pose );
 
+	core::kinematics::MoveMapCOP
+	movemap( core::pose::Pose const & pose );
+
 private:
+	// the movemap_factory (used if move_map_ is empty
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 	// the movemap
 	core::kinematics::MoveMapOP move_map_;
 

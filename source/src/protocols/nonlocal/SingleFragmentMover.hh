@@ -32,6 +32,7 @@
 #include <core/fragment/Frame.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -109,6 +110,8 @@ public:
 	/// @brief Returns true if this instance is in a usable state, false otherwise
 	bool valid() const;
 
+	void movemap_factory(core::select::movemap::MoveMapFactoryCOP new_movemap_factory) { movemap_factory_= new_movemap_factory; }
+
 	std::string
 	get_name() const override;
 
@@ -132,7 +135,10 @@ private:
 
 	/// @brief Creates a set of chunks by examining the stored MoveMap and FragSet
 	/// in conjunction with <tree>
-	void initialize_chunks(const FoldTree& tree);
+	void initialize_chunks(const FoldTree& tree, MoveMapOP const & movable);
+
+	/// @brief Get the movemap for this pose
+	MoveMapOP movemap( core::pose::Pose const & pose );
 
 	/// @brief Returns a randomly chosen chunk with uniform probability
 	const Chunk* random_chunk() const;
@@ -147,6 +153,7 @@ private:
 
 	/// @brief Defines restrictions on which degrees of freedom in the system can
 	/// be modified.
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 	MoveMapOP movable_;
 
 	/// @brief Selects the fragment to be inserted at <insertion_pos> given

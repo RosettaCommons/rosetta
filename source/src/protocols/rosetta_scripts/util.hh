@@ -31,6 +31,7 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 
 // Utillity Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -224,58 +225,37 @@ attributes_for_parse_score_function_w_description_when_required( utility::tag::A
 /////////////////////////////////////////////////////////
 //////////////////// MoveMap ////////////////////////////
 
-/// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps
-/// Still resets movemap if MoveMap branch not found!
-void
-parse_movemap(
+/// @brief Parse a MoveMap factory from tags using the old MoveMap specification syntax.
+/// @details Will return nullptr if the tag doesn't contain a MoveMap specification.
+core::select::movemap::MoveMapFactoryOP
+parse_movemap_factory_legacy(
 	utility::tag::TagCOP in_tag,
-	core::pose::Pose const & pose,
-	core::kinematics::MoveMapOP & mm,
-	basic::datacache::DataMap &,
-	bool const reset_movemap = true /* should we turn everything to true at start?*/);
+	basic::datacache::DataMap & data,
+	bool const reset_movemap = true, /* should we turn everything to true at start?*/
+	core::select::movemap::MoveMapFactoryOP mmf_to_modify = nullptr );
 
-/// @details modifies an existing movemap according to tag
-/// the movemap defaults to move all bb, chi, and jumps.
-/// Still resets movemap if MoveMap branch not found!
-void
-parse_movemap(
+
+/// @brief Parse a MoveMap factory from tags using the old MoveMap specification syntax.
+/// Will look for a MoveMap entry with a particular name entry.
+/// @details Will return nullptr if the tag doesn't contain a MoveMap specification.
+core::select::movemap::MoveMapFactoryOP
+parse_named_movemap_factory_legacy(
 	utility::tag::TagCOP in_tag,
-	core::pose::Pose const & pose,
-	core::kinematics::MoveMapOP mm,
-	bool const reset_movemap = true /* should we turn everything to true at start?*/);
-
+	std::string const & name,
+	basic::datacache::DataMap & data,
+	bool const reset_movemap = true, // should we turn everything to true at start?
+	core::select::movemap::MoveMapFactoryOP mmf_to_modify = nullptr );
 
 ///////////////////// Attributes ///////////////////////////
 
 /// @brief Adds a subelement to an input subelement list describing a MoveMap subtag
-/// that will be used by the parse_movemap function that does not take a DataMap parameter.
+/// that will be used by the parse_movemap_legacy function.
 void
-append_subelement_for_parse_movemap(
+append_subelement_for_parse_movemap_factory_legacy(
 	utility::tag::XMLSchemaDefinition & xsd,
 	utility::tag::XMLSchemaSimpleSubelementList & subelements,
 	std::string const & description = ""
 );
-
-/// @brief Adds a subelement to an input subelement list describing a MoveMap subtag
-/// that will be used by the parse_movemap function that takes a DataMap parameter.
-void
-append_subelement_for_parse_movemap_w_datamap(
-	utility::tag::XMLSchemaDefinition & xsd,
-	utility::tag::XMLSchemaSimpleSubelementList & subelements,
-	std::string const & description = ""
-);
-
-
-/// @brief Parses in_tag, adding any MoveMaps specified in branches with names to the datamap for use after.
-/// Skips any mm names that are already loaded.
-/// This should allow multiple MoveMaps to be specified and loaded in a mover.
-void
-add_movemaps_to_datamap(
-	utility::tag::TagCOP in_tag,
-	core::pose::Pose const & pose,
-	basic::datacache::DataMap & data,
-	bool initialize_mm_as_true = false);
-
 
 ///////////////////////////////////////////////////////////
 //////////////////// Reference Pose ///////////////////////

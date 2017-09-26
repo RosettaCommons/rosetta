@@ -260,7 +260,6 @@ private:   // other data
 	protocols::checkpoint::CheckPointer checkpoints_;
 
 	std::vector <RelaxScriptCommand> script_;
-	utility::tag::TagCOP movemap_tag_; // this cannot be parsed before apply b/c the fold tree is likely to change during a run
 };
 
 

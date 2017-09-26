@@ -34,6 +34,7 @@
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 //Relax, optimization
@@ -154,7 +155,11 @@ NormalModeRelaxMover::NormalModeRelaxMover(
 	NM_ = NormalMode( "CA", distcut );
 	if ( !cartesian_ ) NM_.torsion( true );
 
-	mm_ = mm->clone();
+	if ( mm ) {
+		mm_ = mm->clone();
+	} else {
+		mm = nullptr;
+	}
 
 	// Scorefunction
 	sfxn_ = sfxn->clone();
@@ -182,14 +187,18 @@ NormalModeRelaxMover::set_default()
 void
 NormalModeRelaxMover::apply( pose::Pose &pose )
 {
-
-	if ( !mm_ ) {
-		kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+	core::kinematics::MoveMapOP mm;
+	if ( mm_ ) {
+		mm = mm_;
+	} else if ( mmf_ ) {
+		mm = mmf_->create_movemap_from_pose( pose );
+	} else {
+		mm = kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		mm->set_bb( true );
 		mm->set_chi( true );
 		mm->set_jump( true );
-		set_movemap( pose, mm ); // do it this way so that NM_ instance gets its mm initialized
 	}
+	initialize_NM_for_movemap( pose, *mm );
 
 	if ( centroid_ ) {
 		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
@@ -232,7 +241,7 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 
 		pose::Pose pose_tmp( pose );
 		set_extrapolate_scale( pertscale_ );
-		apply_on_pose( pose_tmp );
+		apply_on_pose( pose_tmp, mm );
 
 		Real score;
 		if ( centroid_ ) {
@@ -334,15 +343,13 @@ NormalModeRelaxMover::set_random_mode(std::string const select_option,
 }
 
 void
-NormalModeRelaxMover::set_movemap(core::pose::Pose const & pose,
-	core::kinematics::MoveMapCOP movemap )
+NormalModeRelaxMover::initialize_NM_for_movemap(core::pose::Pose const & pose,
+	core::kinematics::MoveMap const & movemap )
 {
-	mm_ = movemap->clone();
-
 	// For Torsional NormalMode
 	NM_.clear_torsions_using();
 	for ( Size ires = 1; ires <= pose.size(); ++ires ) {
-		if ( mm_->get_bb( ires ) ) {
+		if ( movemap.get_bb( ires ) ) {
 			NM_.set_torsions_using( ires );
 		}
 	}
@@ -363,7 +370,7 @@ NormalModeRelaxMover::set_harmonic_constants( Real const k_connected,
 }
 
 void
-NormalModeRelaxMover::apply_on_pose( pose::Pose &pose )
+NormalModeRelaxMover::apply_on_pose( pose::Pose &pose, core::kinematics::MoveMapOP mm )
 {
 	pose::Pose const pose_init( pose );
 
@@ -399,7 +406,7 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose )
 		runtime_assert( !pose.is_centroid() );
 
 		protocols::relax::FastRelax relax_prot( sfxn_min, 1 );
-		relax_prot.set_movemap( mm_ );
+		relax_prot.set_movemap( mm );
 		relax_prot.min_type("lbfgs_armijo_nonmonotone");
 
 		relax_prot.cartesian( cartesian_minimize_ );
@@ -421,11 +428,11 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose )
 		// Minimize
 		if ( cartesian_minimize_ ) {
 			optimization::CartesianMinimizer minimizer;
-			minimizer.run( pose, *mm_, *sfxn_loc, *minoption_ );
+			minimizer.run( pose, *mm, *sfxn_loc, *minoption_ );
 
 		} else {
 			optimization::AtomTreeMinimizer minimizer;
-			minimizer.run( pose, *mm_, *sfxn_loc, *minoption_ );
+			minimizer.run( pose, *mm, *sfxn_loc, *minoption_ );
 		}
 
 	} else if ( relaxmode_.compare("extrapolate") == 0 ) {
@@ -596,7 +603,7 @@ void NormalModeRelaxMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {
 	cartesian_ = tag->getOption< bool >( "cartesian", true );
 	centroid_ = tag->getOption< bool >( "centroid", false );
@@ -642,13 +649,11 @@ void NormalModeRelaxMover::parse_my_tag(
 	if ( !cartesian_ ) NM_.torsion( true );
 	if ( weighted_k ) set_harmonic_constants( k_short, k_hbond, k_long );
 
-	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
+	core::select::movemap::MoveMapFactoryOP mmf( new core::select::movemap::MoveMapFactory );
 	bool const chi( tag->getOption< bool >( "chi", true ) ), bb( tag->getOption< bool >( "bb", true ) );
-	movemap->set_chi( chi );
-	movemap->set_bb( bb );
-	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap, data, false);
-
-	set_movemap( pose, movemap );
+	mmf->all_chi( chi );
+	mmf->all_bb( bb );
+	mmf_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false, mmf );
 }
 
 std::string NormalModeRelaxMover::get_name() const {
@@ -666,7 +671,7 @@ void NormalModeRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	subelements.complex_type_naming_func( [] (std::string const& name) {
 		return mover_name() + "_subelement_" + name + "Type";
 		});
-	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, subelements);
 
 
 	XMLSchemaRestriction relaxmode_enum;

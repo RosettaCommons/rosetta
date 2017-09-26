@@ -140,6 +140,11 @@ FragmentMover::set_movemap( core::kinematics::MoveMapCOP movemap ) {
 }
 
 core::kinematics::MoveMapCOP
+FragmentMover::movemap(core::pose::Pose const &) const {
+	return movemap_;
+}
+
+core::kinematics::MoveMapCOP
 FragmentMover::movemap() const {
 	return movemap_;
 }

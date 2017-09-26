@@ -28,6 +28,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -175,6 +176,9 @@ public:// mutators
 	/// @brief set movemap for relax
 	void movemap_from_blueprint( bool const value );
 
+	/// @brief set movemapi_factory for relax
+	void set_movemap_factory( core::select::movemap::MoveMapFactoryCOP movemap_factory );
+
 	/// @brief set movemap for relax
 	void set_movemap( MoveMapOP const movemap );
 
@@ -275,7 +279,9 @@ private:
 	/// @brief set movemap from blueprint ( default false )
 	bool movemap_from_blueprint_;
 
-	/// @brief mavemap for relax ( defalut NULL )
+	/// @brief movemap Factory for relax ( default NULL )
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
+	/// @brief movemap for relax ( default NULL )
 	MoveMapOP movemap_;
 
 	/// @brief task operations

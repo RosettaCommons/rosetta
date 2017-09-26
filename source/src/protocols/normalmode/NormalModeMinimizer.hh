@@ -23,7 +23,7 @@
 #include <core/optimization/NumericalDerivCheckResult.hh>
 
 // Project headers
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/Mover.hh>
@@ -101,7 +101,8 @@ private:
 private:
 	utility::vector1< core::Size > modes_using_;
 
-	core::kinematics::MoveMapOP movemap_;
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
+
 	ScoreFunctionCOP scorefxn_;
 	MinimizerOptionsOP options_;
 

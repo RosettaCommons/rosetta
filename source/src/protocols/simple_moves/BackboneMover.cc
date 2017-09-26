@@ -17,6 +17,7 @@
 // Project Headers
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -84,9 +85,6 @@ BackboneMover::BackboneMover() :
 	selector_()
 {
 	moves::Mover::type( "BackboneMoverBase" );
-	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
-	movemap->set_bb( true ); // allow all backbone residues to move
-	movemap_=movemap; // and make this a constant object
 	angle_max( 'H', 0.0 ); // helix
 	angle_max( 'L', 6.0 ); // other
 	angle_max( 'E', 5.0 ); // strand
@@ -122,7 +120,8 @@ BackboneMover::BackboneMover(
 /// @brief Copy constructor
 BackboneMover::BackboneMover( BackboneMover const &src ) :
 	protocols::canonical_sampling::ThermodynamicMover( src ),
-	movemap_(), // Copied below
+	movemap_factory_( src.movemap_factory_ ),
+	movemap_( src.movemap_ ),
 	scorefxn_(), // Cloned below
 	temperature_( src.temperature_ ),
 	nmoves_( src.nmoves_ ),
@@ -140,13 +139,6 @@ BackboneMover::BackboneMover( BackboneMover const &src ) :
 {
 	if ( src.scorefxn_ ) {
 		scorefxn_ = src.scorefxn_->clone();
-	}
-	if ( src.movemap_ ) {
-		movemap_ = src.movemap_;
-	} else {
-		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
-		movemap->set_bb( true ); // allow all backbone residues to move
-		movemap_=movemap; // and make this a constant object
 	}
 	if ( src.selector_ ) {
 		selector_ = src.selector_->clone();
@@ -201,7 +193,7 @@ BackboneMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	if ( tag->hasOption( "residue_selector" ) ) {
@@ -221,9 +213,7 @@ BackboneMover::parse_my_tag(
 		scorefxn( sfx->clone() );
 	}
 
-	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data );
-	movemap( mm );
+	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data ) );
 	temperature( tag->getOption<core::Real>( "temperature", temperature_ ) );
 	nmoves( tag->getOption<core::Size>( "nmoves", nmoves_ ) );
 	angle_max( tag->getOption<core::Real>( "angle_max", 6.0 ) );
@@ -235,17 +225,6 @@ BackboneMover::apply( core::pose::Pose & pose )
 {
 	// clear everything to start from clean
 	clear();
-
-	// what if symmetry input
-	// will not run for now, can change this to true if symmetry desired
-	// potential problem with incoming modified symmetric movemaps, this will
-	// reset any changes to the input movemap
-	if ( false ) {
-		if ( core::pose::symmetry::is_symmetric( pose )  )  {
-			//TR << "Pose is symmetric, making backbone movemap symmetric."<< std::endl;
-			core::pose::symmetry::make_symmetric_movemap( pose, *movemap_);
-		}
-	}
 
 	setup_list( pose );
 
@@ -318,8 +297,6 @@ BackboneMover::show( std::ostream & output ) const
 		"\nMax angle for loops (L):   " << get_angle_max( 'L' ) <<
 		"\nTemperature factor (kT):   " << temperature() <<
 		"\nNumber of moves:           " << nmoves() << std::endl;
-	output << "MoveMap:" << std::endl;
-	movemap()->show( output );
 }
 
 void
@@ -340,6 +317,18 @@ BackboneMover::check_rama()
 	return true;
 }
 
+core::kinematics::MoveMapCOP
+BackboneMover::movemap( core::pose::Pose const & pose ) {
+	if ( movemap_ ) {
+		return movemap_;
+	} else if ( movemap_factory_ ) {
+		return movemap_factory_->create_movemap_from_pose( pose );
+	} else {
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
+		movemap->set_bb( true ); // allow all backbone residues to move
+		return movemap;
+	}
+}
 
 utility::tag::XMLSchemaComplexTypeGeneratorOP
 BackboneMover::complex_type_generator_for_backbone_mover( utility::tag::XMLSchemaDefinition & xsd ) {
@@ -370,7 +359,7 @@ BackboneMover::complex_type_generator_for_backbone_mover( utility::tag::XMLSchem
 		"(Alternatively, a MoveMap may be used -- see below)" );
 	//get subelement for parse movemap
 	XMLSchemaSimpleSubelementList subelements;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelements );
 
 
 	ct_gen->complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
@@ -450,13 +439,14 @@ SmallMover::setup_list( core::pose::Pose & pose )
 	//Mask by ResidueSelector:
 	core::select::residue_selector::ResidueSubset const subset = compute_selected_residues( pose );
 
+	core::kinematics::MoveMapCOP my_movemap( movemap( pose ) );
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! subset[ i ] ) { continue; } //Skip residues masked by the ResidueSelector.
 		conformation::Residue const & rsd( pose.residue( i ) );
 
 		// Check if the residue is protein and has a free psi and phi angle as determined by the MoveMap.
-		if ( rsd.is_protein() && movemap()->get( TorsionID( i, BB, phi_torsion ) ) &&
-				movemap()->get( TorsionID( i, BB, psi_torsion ) ) ) {
+		if ( rsd.is_protein() && my_movemap->get( TorsionID( i, BB, phi_torsion ) ) &&
+				my_movemap->get( TorsionID( i, BB, psi_torsion ) ) ) {
 			//Gets the secondary structure nature of the residue
 			char const ss( pose.secstruct( i ) );
 			if ( angle_max_.count( ss ) ) {
@@ -476,9 +466,9 @@ SmallMover::setup_list( core::pose::Pose & pose )
 			DOF_ID const phi_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_phi( pose, i ) ) );
 			DOF_ID const psi_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_psi( pose, i ) ) );
 			DOF_ID const omega_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_1st_omega( pose, i ) ) );
-			if ( movemap()->get( phi_dof_id ) && movemap()->get( psi_dof_id ) ) {
+			if ( my_movemap->get( phi_dof_id ) && my_movemap->get( psi_dof_id ) ) {
 				// If we have an omega, but we cannot move it, continue.
-				if ( ( omega_dof_id != BOGUS_DOF_ID ) && ( ! movemap()->get( omega_dof_id ) ) ) {
+				if ( ( omega_dof_id != BOGUS_DOF_ID ) && ( ! my_movemap->get( omega_dof_id ) ) ) {
 					continue;
 				}
 				// Carbohydrates are always considered loops for now.
@@ -706,6 +696,7 @@ ShearMover::setup_list( core::pose::Pose & pose )
 	//Mask by ResidueSelector:
 	core::select::residue_selector::ResidueSubset const subset = compute_selected_residues( pose );
 
+	core::kinematics::MoveMapCOP my_movemap( movemap( pose ) );
 	using namespace id;
 	// Compare code below to that for SmallMover above.
 	for ( core::Size i = 2; i <= pose.size(); ++i ) {
@@ -721,8 +712,9 @@ ShearMover::setup_list( core::pose::Pose & pose )
 			if ( ! pose.residue( i - 1 ).is_protein() ) { continue; }
 			if ( std::abs( pose.omega( i - 1 ) ) < 165 ) { continue; }  // arbitrarily picking a +-15 degree cut-off
 
-			if ( movemap()->get( TorsionID( i, BB, phi_torsion ) /*phi of i*/) &&
-					movemap()->get( TorsionID( i-1, BB, psi_torsion ) /*psi of i-1*/ ) ) {
+
+			if ( my_movemap->get( TorsionID( i, BB, phi_torsion ) /*phi of i*/) &&
+					my_movemap->get( TorsionID( i-1, BB, psi_torsion ) /*psi of i-1*/ ) ) {
 				char const ss( pose.secstruct( i ) );
 				if ( angle_max_.count( ss ) ) {
 					Real const mx( angle_max_.find( ss )->second );

@@ -866,6 +866,7 @@ sources = {
 		"RandomGlycanFoliageSelector",
 		"ResidueIndexSelector",
 		"ResidueNameSelector",
+		"ResidueSpanSelector",
 		"ResiduePDBInfoHasLabelSelector",
 		"ResidueRanges",
 		"ResidueSelector",

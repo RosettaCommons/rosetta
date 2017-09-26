@@ -22,6 +22,7 @@
 #include <basic/basic.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/bbg.OptionKeys.gen.hh>
@@ -108,6 +109,7 @@ BBGaussianMover::clone() const {
 	mp->factorA(factorA_);
 	mp->factorB(factorB_);
 	mp->movemap(movemap_);
+	mp->movemap_factory(movemap_factory_);
 	return static_cast< protocols::moves::MoverOP >(mp);
 }
 
@@ -130,9 +132,6 @@ void BBGaussianMover::resize(Size n_end_atom, Size n_dof_angle, Size n_pert_res)
 void BBGaussianMover::init()
 {
 	protocols::moves::Mover::type("BBGaussianMover");
-	//default fix everything
-	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
-	movemap_=movemap;
 
 	//build end atom list
 	end_atom_list_.push_back(std::pair<Size, std::string>(0,"CA"));
@@ -276,14 +275,27 @@ void BBGaussianMover::setup_list(Pose const &pose)
 	}
 }
 
-core::kinematics::MoveMapCOP BBGaussianMover::movemap()
+core::kinematics::MoveMapCOP BBGaussianMover::movemap(core::pose::Pose const & pose) const
 {
-	return movemap_;
+	if ( movemap_ ) {
+		return movemap_;
+	} else if ( movemap_factory_ ) {
+		return movemap_factory_->create_movemap_from_pose( pose );
+	} else {
+		// default fixes everything
+		return core::kinematics::MoveMapCOP( new core::kinematics::MoveMap );
+	}
 }
 
 void BBGaussianMover::movemap(core::kinematics::MoveMapCOP new_movemap)
 {
 	movemap_=new_movemap;
+	available_seg_list_.erase(available_seg_list_.begin(),available_seg_list_.end());
+}
+
+void BBGaussianMover::movemap_factory(core::select::movemap::MoveMapFactoryCOP new_movemap_factory)
+{
+	movemap_factory_=new_movemap_factory;
 	available_seg_list_.erase(available_seg_list_.begin(),available_seg_list_.end());
 }
 
@@ -624,7 +636,7 @@ void BBGaussianMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {
 	factorA_ = tag->getOption< Real >("factorA", 1.0);
 	factorB_ = tag->getOption< Real >("factorB", 10.0);
@@ -690,9 +702,7 @@ void BBGaussianMover::parse_my_tag(
 	}
 
 	//reset movemap, default is empty (no move)
-	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false );
-	movemap(mm);
+	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false ) );
 
 	//allocate the vector and matrix
 	resize(end_atom_list_.size(), n_dof_angle_, n_pert_res_);

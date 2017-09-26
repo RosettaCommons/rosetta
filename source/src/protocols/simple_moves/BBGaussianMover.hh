@@ -28,6 +28,7 @@
 #include <protocols/moves/Mover.hh>
 //movemap
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 //
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
@@ -94,8 +95,12 @@ public:
 	Real get_L_move(Pose &);
 	void get_VdRdPhi(Pose const &);
 
-	core::kinematics::MoveMapCOP movemap();
+	/// @brief Generates the movemap used by this mover for the given pose
+	core::kinematics::MoveMapCOP movemap(core::pose::Pose const &) const;
+
 	void movemap(core::kinematics::MoveMapCOP new_movemap);
+	/// @brief The movemap_factory will be used to generate a movemap, if an explcit one hasn't already been set.
+	void movemap_factory(core::select::movemap::MoveMapFactoryCOP new_movemap_factory);
 
 	//stat Nall N<0.6, if N/Nall>0.4, factorA/=2
 	void update_counting_last_PDR(Real);
@@ -187,6 +192,7 @@ protected:
 
 	//movemap
 	core::kinematics::MoveMapCOP movemap_;
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 
 	//move up
 	Vector dphi;

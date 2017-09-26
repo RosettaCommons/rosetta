@@ -17,7 +17,6 @@
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
-#include <protocols/grafting/AnchoredGraftMover.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>
 #include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
 #include <protocols/grafting/simple_movers/InsertPoseIntoPoseMover.hh>

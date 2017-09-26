@@ -100,15 +100,6 @@ CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover& src ):
 
 CCDEndsGraftMover::~CCDEndsGraftMover() = default;
 
-
-void
-CCDEndsGraftMover::set_movemaps(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm){
-
-	scaffold_movemap(scaffold_mm);
-	insert_movemap(insert_mm);
-
-}
-
 // XRW TEMP std::string
 // XRW TEMP CCDEndsGraftMover::get_name() const { return "CCDEndsGraftMover"; }
 

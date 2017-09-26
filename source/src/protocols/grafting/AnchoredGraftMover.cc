@@ -30,6 +30,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 
@@ -146,6 +147,8 @@ AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
 	if ( src.movemap_ ) movemap_ = src.movemap_->clone();
 	if ( src.scaffold_movemap_ ) scaffold_movemap_ = src.scaffold_movemap_->clone();
 	if ( src.insert_movemap_ ) insert_movemap_ = src.insert_movemap_->clone();
+	scaffold_movemap_factory_ = src.scaffold_movemap_factory_; //COP, so won't alter
+	insert_movemap_factory_ = src.insert_movemap_factory_; //COP, so won't alter
 	if ( src.cen_scorefxn_ ) cen_scorefxn_ = src.cen_scorefxn_->clone();
 	if ( src.fa_scorefxn_ ) fa_scorefxn_ = src.fa_scorefxn_->clone();
 	if ( src.tag_ ) tag_ = src.tag_->clone();
@@ -160,6 +163,8 @@ AnchoredGraftMover::set_defaults(){
 	movemap_ = nullptr;
 	scaffold_movemap_ =nullptr;
 	insert_movemap_ = nullptr;
+	scaffold_movemap_factory_ = nullptr;
+	insert_movemap_factory_ = nullptr;
 	tag_ = nullptr;
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
 
@@ -196,7 +201,7 @@ AnchoredGraftMover::parse_my_tag(
 	basic::datacache::DataMap& data,
 	const Filters_map& ,
 	const moves::Movers_map& ,
-	const Pose& pose)
+	const Pose& )
 {
 
 	set_cycles(tag->getOption<core::Size>("cycles", cycles_));
@@ -233,14 +238,11 @@ AnchoredGraftMover::parse_my_tag(
 		fa_scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", fa_scorefxn);
 	}
 
-	if ( tag->hasTag("MoveMap") ) {
-		protocols::rosetta_scripts::add_movemaps_to_datamap(tag, pose, data, false);
+	scaffold_movemap_factory_ = protocols::rosetta_scripts::parse_named_movemap_factory_legacy(tag, "scaffold_movemap", data, false);
+	insert_movemap_factory_ = protocols::rosetta_scripts::parse_named_movemap_factory_legacy(tag, "scaffold_movemap", data, false);
 
-	}
-	// AMW: cppcheck notes that this was the same condition on both sides of an &&
-	if ( data.has("movemaps", "scaffold_movemap") ) { //&& data.has("movemaps", "scaffold_movemap")){
-		scaffold_movemap_ = data.get_ptr<MoveMap>("movemaps", "scaffold_movemap");
-		insert_movemap_ = data.get_ptr<MoveMap>("movemaps", "insert_movemap");
+	if ( scaffold_movemap_factory_ != nullptr && insert_movemap_factory_ != nullptr ) {
+		// Correctly specified user-defined movemaps
 	} else if ( tag->hasTag( "MoveMap") ) {
 		utility_exit_with_message("Movemaps must be specified using the names scaffold_movemap and insert_movemap");
 	} else {
@@ -388,6 +390,13 @@ void
 AnchoredGraftMover::setup_movemap_and_regions(Pose & pose){
 	if ( scaffold_movemap_ && insert_movemap_ ) {
 		movemap_ = protocols::grafting::combine_movemaps_post_insertion(scaffold_movemap_, insert_movemap_,
+			end(), original_end(), insertion_length());
+
+		set_regions_from_movemap(pose);
+	} else if ( scaffold_movemap_factory_ && insert_movemap_factory_ ) {
+		core::kinematics::MoveMapOP scaffold_movemap( scaffold_movemap_factory_->create_movemap_from_pose( pose ) );
+		core::kinematics::MoveMapOP insert_movemap( insert_movemap_factory_->create_movemap_from_pose( pose ) );
+		movemap_ = protocols::grafting::combine_movemaps_post_insertion(scaffold_movemap, insert_movemap,
 			end(), original_end(), insertion_length());
 
 		set_regions_from_movemap(pose);
@@ -662,20 +671,6 @@ AnchoredGraftMover::apply(Pose & pose){
 void AnchoredGraftMover::movemap(MoveMapOP movemap){movemap_ = movemap;}
 MoveMapOP AnchoredGraftMover::movemap() const {return movemap_;}
 
-void AnchoredGraftMover::scaffold_movemap(MoveMapCOP scaffold_movemap){
-	scaffold_movemap_ = scaffold_movemap;
-}
-
-MoveMapCOP AnchoredGraftMover::scaffold_movemap() const {
-	return scaffold_movemap_;
-}
-
-void AnchoredGraftMover::insert_movemap(MoveMapCOP insert_movemap){
-	insert_movemap_ = insert_movemap;
-}
-MoveMapCOP AnchoredGraftMover::insert_movemap() const {
-	return insert_movemap_;
-}
 ScoreFunctionOP AnchoredGraftMover::cen_scorefxn() const {
 	return cen_scorefxn_;
 }
@@ -772,7 +767,7 @@ AnchoredGraftMover::complex_type_generator_for_anchored_graft_mover( utility::ta
 
 	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
 	XMLSchemaSimpleSubelementList movemaps;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, movemaps ); //we can just call this once and set that you need 2 or 0
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, movemaps ); //we can just call this once and set that you need 2 or 0
 
 	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
 	ct_gen->

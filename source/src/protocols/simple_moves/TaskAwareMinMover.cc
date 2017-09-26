@@ -74,8 +74,9 @@ namespace simple_moves {
 
 TaskAwareMinMover::TaskAwareMinMover()
 : protocols::moves::Mover("TaskAwareMinMover"),
-	minmover_(/* 0 */),
-	factory_(/* 0 */),
+	minmover_(/* nullptr */),
+	base_movemap_(/* nullptr */),
+	factory_(/* nullptr */),
 	chi_(true),
 	bb_(false),
 	jump_(false)
@@ -93,6 +94,9 @@ TaskAwareMinMover::TaskAwareMinMover(
 	jump_(false)
 {
 	protocols::moves::Mover::type( "TaskAwareMinMover" );
+	if ( minmover_ ) {
+		base_movemap_ = minmover_->explicitly_set_movemap(); // Not ideal, as MinMover::movemap() should really be called with a Pose
+	}
 }
 
 TaskAwareMinMover::~TaskAwareMinMover()= default;
@@ -105,12 +109,13 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 	using core::kinematics::MoveMapOP;
 	using core::kinematics::MoveMap;
 
-	// non-initialization failsafe
-	if ( ! minmover_->movemap() ) minmover_->movemap( core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap ) ) );
-
-	//clone the MinMover's MoveMap
-	MoveMapOP mm( new MoveMap( *( minmover_->movemap() ) ) );
-	MoveMapOP mm_copy( new MoveMap( *( minmover_->movemap() ) ) );
+	// Make a default MoveMap
+	MoveMapOP mm;
+	if ( base_movemap_ ) {
+		mm = base_movemap_->clone();
+	} else {
+		mm = MoveMapOP( new MoveMap );
+	}
 
 	//generate task
 	using core::pack::task::PackerTaskOP;
@@ -138,9 +143,7 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 	//now run MinMover
 	minmover_->apply( pose );
 
-	//restore MinMover's original movemap to prevent accumulation of state
-	minmover_->movemap( mm_copy );
-
+	// We don't bother resetting the MinMover's original movemap, as we'll be resetting it later from the stored base
 
 }//apply
 
@@ -172,8 +175,8 @@ TaskAwareMinMover::parse_my_tag(
 	}
 	jump_ = tag->getOption< bool >( "jump", false );
 	minmover_ = protocols::simple_moves::MinMoverOP( new MinMover );
-	// call to MinMover::parse_my_tag avoided here to prevent collision of chi and bb tag options
-	minmover_->parse_opts( tag, datamap, filters, movers, pose );
+	// call to MinMover::parse_my_tag avoided here to prevent collision of movemap tag options
+	minmover_->parse_opts( tag, datamap, filters, movers );
 	parse_task_operations( tag, datamap, filters, movers, pose );
 	minmover_->score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap) );
 }
@@ -206,11 +209,7 @@ void TaskAwareMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 {
 	// AMW: Some of below relates to options parsed by MinMover::parse_opts
 	// which is called in this parse_my_tag in an effort to avoid reparsing
-	// chi and bb, which would NOT be a problem, but which IS a problem for the
-	// definition of the jump element, which is re-parsed by parse_opts as a real string
-	// that can have a lot of different values (basically ALL|\d+).
-	// Instead of opening that can of nasty, I am going to just provide a schema
-	// for the options supported
+	// chi and bb.
 
 	using namespace utility::tag;
 	AttributeList attlist;

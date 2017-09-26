@@ -23,15 +23,13 @@
 #include <core/kinematics/FoldTree.hh>
 
 // Utility Headers
+#include <utility/assert.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-
-// C++ headers
-#include <utility/assert.hh>
-
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -45,33 +43,40 @@ namespace core {
 namespace select {
 namespace jump_selector {
 
-JumpIndexSelector::JumpIndexSelector():
-	jump_(0) {}
+static THREAD_LOCAL basic::Tracer TR("core.select.jump_selector.JumpIndexSelector");
+
+JumpIndexSelector::JumpIndexSelector() = default;
 
 /// @brief Copy constructor
 ///
-JumpIndexSelector::JumpIndexSelector( JumpIndexSelector const &src) :
-	jump_( src.jump_ )
-{}
+JumpIndexSelector::JumpIndexSelector( JumpIndexSelector const & ) = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 JumpSelectorOP JumpIndexSelector::clone() const { return JumpSelectorOP( new JumpIndexSelector(*this) ); }
 
-JumpIndexSelector::JumpIndexSelector( int jump )
-{
-	jump_ = jump;
-}
+JumpIndexSelector::JumpIndexSelector( int jump, bool soft_error ):
+	jump_( jump ),
+	soft_error_( soft_error )
+{}
 
-
-JumpIndexSelector::~JumpIndexSelector() {}
+JumpIndexSelector::~JumpIndexSelector() = default;
 
 JumpSubset
 JumpIndexSelector::apply( core::pose::Pose const & pose ) const
 {
-	debug_assert( jump_ > 0 );
 	JumpSubset subset( pose.fold_tree().num_jump(), false );
-	runtime_assert( jump_ > 0 && Size( jump_ ) <= subset.size() );
+
+	if ( jump_ <= 0 || core::Size( jump_ ) > pose.fold_tree().num_jump() ) {
+		TR.Warning << "Pose does not contain a jump number of " << jump_ << std::endl;
+		if ( soft_error_ ) {
+			return subset;
+		} else {
+			utility_exit_with_message("Attempted to access a jump that does not exist.");
+		}
+	}
+
+	debug_assert( jump_ > 0 && Size( jump_ ) <= subset.size() );
 	subset[ jump_ ] = true;
 	return subset;
 }

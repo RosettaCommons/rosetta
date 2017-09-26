@@ -21,7 +21,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
@@ -75,8 +75,8 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::pack::task::PackerTaskOP task_;
 
-	/// movemap
-	core::kinematics::MoveMapOP movemap_;
+	/// movemap factory
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 
 	/// switches for folding and desing behavior:
 	bool repack_target_;

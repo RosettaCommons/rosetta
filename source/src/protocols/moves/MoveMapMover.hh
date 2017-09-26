@@ -23,6 +23,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 
 // Project headers
+#include <core/pose/Pose.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -45,7 +46,9 @@ public:
 
 	virtual void set_movemap( core::kinematics::MoveMapCOP ) = 0;
 
-	virtual core::kinematics::MoveMapCOP movemap() const = 0;
+	/// @brief Get a movemap for the given pose
+	/// (As the movemap may vary based on the Pose (e.g. MoveMapFactory), we need the Pose information)
+	virtual core::kinematics::MoveMapCOP movemap( core::pose::Pose const & ) const = 0;
 
 	virtual void initialize( core::pose::Pose& ) {}
 

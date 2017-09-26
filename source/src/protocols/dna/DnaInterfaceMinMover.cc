@@ -95,8 +95,10 @@ DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceMinMover const & src ) :
 DnaInterfaceMinMover &
 DnaInterfaceMinMover::operator = ( DnaInterfaceMinMover const & src )
 {
+	MinMover::operator=(src); // Remember to invoke the base class assignment operator
 	if ( src.interface_ ) interface_ = src.interface_->clone();
 	else interface_.reset();
+	reset_from_interface(); // Just to be sure.
 	chi_ = src.chi_;
 	bb_ = src.bb_;
 	return *this;
@@ -149,14 +151,13 @@ DnaInterfaceMinMover::apply( pose::Pose & pose )
 		interface_->determine_protein_interface( pose );
 		reset_from_interface();
 	}
-	if ( ! movemap() ) reset_from_interface(); // just in case
 	if ( ! score_function() ) {
 		score_function( get_score_function() );
 	}
 
 	AtomTreeMinimizer minimizer;
 	// (*score_function())(pose_);
-	minimizer.run( pose, *movemap(), *score_function(), *min_options() );
+	minimizer.run( pose, *movemap( pose ), *score_function(), *min_options() );
 }
 
 /// @brief parse XML (in the context of the parser/scripting scheme)

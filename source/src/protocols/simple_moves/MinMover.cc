@@ -25,6 +25,8 @@
 #include <core/id/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/jump_selector/JumpIndexSelector.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -166,7 +168,6 @@ MinMover::min_options( MinimizerOptionsOP min_options) {
 void
 MinMover::movemap( MoveMapCOP movemap_in )
 {
-	runtime_assert( movemap_in != nullptr );
 	movemap_ = core::kinematics::MoveMapOP( new MoveMap( *movemap_in ) );
 }
 
@@ -174,9 +175,26 @@ void MinMover::set_movemap( MoveMapCOP movemap_in ){
 	movemap( movemap_in );
 }
 
+void
+MinMover::movemap_factory( core::select::movemap::MoveMapFactoryCOP mmf ) {
+	movemap_factory_ = mmf;
+}
+
 MoveMapCOP
-MinMover::movemap() const
-{
+MinMover::movemap( core::pose::Pose const & pose ) const {
+	if ( movemap_ ) {
+		return movemap_;
+	} else if ( movemap_factory_ ) {
+		return movemap_factory_->create_movemap_from_pose( pose );
+	} else {
+		return core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	}
+}
+
+/// @brief Get the explicitly set movemap object, if present, nullptr if not
+/// Will not create a default or look at the MoveMapFactory
+core::kinematics::MoveMapCOP
+MinMover::explicitly_set_movemap() const {
 	return movemap_;
 }
 
@@ -216,7 +234,6 @@ bool MinMover::nb_list() const { return min_options_->use_nblist(); }
 
 void MinMover::deriv_check( bool deriv_check_in ) { min_options_->deriv_check( deriv_check_in ); }
 bool MinMover::deriv_check() const { return min_options_->deriv_check(); }
-
 
 /// @details restrict the move map by the packer task:
 ///If a residue is not designable, the backbone is fixes
@@ -302,10 +319,7 @@ MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMa
 void
 MinMover::apply(pose::Pose & pose) {
 	// lazy default initialization
-	MoveMapOP active_movemap;
-	if ( ! movemap() ) set_movemap( MoveMapOP( new MoveMap ) );
-
-	active_movemap = movemap()->clone();
+	MoveMapOP active_movemap( movemap(pose)->clone() );
 
 	apply_dof_tasks_to_movemap(pose, *active_movemap);
 
@@ -324,8 +338,8 @@ MinMover::show(std::ostream & output) const
 	} else { output << "none" << std::endl; }
 	output << "Score tolerance:\t" << tolerance() << "\nNb list:\t\t" << (nb_list() ? "True" : "False") <<
 		"\nDeriv check:\t\t" << (deriv_check() ? "True" : "False") << std::endl << "Movemap:" << std::endl;
-	if ( movemap() != nullptr ) {
-		movemap()->show(output);
+	if ( movemap_ != nullptr ) {
+		movemap_->show(output);
 	}
 }
 
@@ -337,45 +351,21 @@ void MinMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
-	Pose const & pose )
+	Pose const & )
 {
-	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
-	parse_opts( tag, data, filters, movers, pose );
-	parse_chi_and_bb( tag );
+	parse_opts( tag, data, filters, movers );
+	parse_movemap_factory( tag, data );
 	parse_dof_tasks( tag, data );
-
-	/// parse_movemap will reset the movemap to minimize all if nothing is stated on it. The following section ensures that the protocol specifies a MoveMap before going that way
-	// utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	// utility::vector1< TagCOP >::const_iterator tag_it;
-	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data, false );
-
 }
 
 void MinMover::parse_opts(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
 	Filters_map const &,
-	protocols::moves::Movers_map const &,
-	Pose const & )
+	protocols::moves::Movers_map const & )
 {
 	score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 
-	if ( tag->hasOption("jump") ) {
-		if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
-		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
-		// string 'ALL' makes all jumps movable
-		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all" || jumps[1] == "*") ) {
-			movemap_->set_jump( true );
-		} else if ( tag->getOption< core::Size > ( "jump" ) == 0 ) {
-			movemap_->set_jump( false );
-		} else {
-			for ( std::string const & jump : jumps ) {
-				Size const value = std::atoi( jump.c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
-				TR << "Setting min on jump " << value << std::endl;
-				movemap_->set_jump( value, true );
-			}
-		}
-	}
 	max_iter( tag->getOption< int >( "max_iter", 200 ) );
 	min_type( tag->getOption< std::string >( "type", "lbfgs_armijo_nonmonotone" ) );
 	tolerance( tag->getOption< core::Real >( "tolerance", 0.01 ) );
@@ -392,22 +382,44 @@ void MinMover::parse_opts(
 	}
 }
 
-void MinMover::parse_chi_and_bb( TagCOP const tag )
+void MinMover::parse_movemap_factory( TagCOP const tag, basic::datacache::DataMap & data )
 {
-	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
+	using namespace core::select::movemap;
+
+	MoveMapFactoryOP mmf( new MoveMapFactory );
+
+	if ( tag->hasOption("jump") ) {
+		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
+		// string 'ALL' makes all jumps movable
+		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all" || jumps[1] == "*") ) {
+			mmf->all_jumps( true );
+		} else if ( tag->getOption< core::Size > ( "jump" ) == 0 ) {
+			mmf->all_jumps( false );
+		} else {
+			for ( std::string const & jump : jumps ) {
+				int const value = std::atoi( jump.c_str() ); // convert to C string, then convert to integer (phew!)
+				core::select::jump_selector::JumpSelectorCOP jump_select( new core::select::jump_selector::JumpIndexSelector( value ) );
+				TR << "Setting min on jump " << value << std::endl;
+				mmf->add_jump_action( mm_enable, jump_select );
+			}
+		}
+	}
+
 	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
 	omega_ = tag->getOption< bool >( "omega", true );
-	movemap_->set_chi( chi );
-	movemap_->set_bb( bb );
+	mmf->all_chi( chi );
+	mmf->all_bb( bb );
 	TR<<"Options chi, bb: "<<chi<<", "<<bb<<" omega: "<<omega_<<std::endl;
 	if ( tag->hasOption("bondangle") ) {
 		bool const value( tag->getOption<bool>("bondangle") );
-		movemap_->set( core::id::THETA, value );
+		mmf->all_bondangles( value );
 	}
 	if ( tag->hasOption("bondlength") ) {
 		bool const value( tag->getOption<bool>("bondlength") );
-		movemap_->set( core::id::D, value );
+		mmf->all_bondlengths( value );
 	}
+
+	movemap_factory( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false, mmf ) );
 }
 
 /// @detail helper function for parse_of_tasks
@@ -525,7 +537,7 @@ MinMover::complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute( "bondlength_task_operations", xsct_task_operation_comma_separated_list , "Task operation specifying residues for bond length minimization" );
 	rosetta_scripts::attributes_for_parse_score_function( attributes );
 	XMLSchemaSimpleSubelementList subelements;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelements );
 
 	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
 	ct_gen->complex_type_naming_func( & moves::complex_type_name_for_mover )

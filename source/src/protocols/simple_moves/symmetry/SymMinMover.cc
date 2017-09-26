@@ -114,9 +114,7 @@ void
 SymMinMover::apply( pose::Pose & pose )
 {
 	// lazy default initialization
-	core::kinematics::MoveMapOP symmetric_movemap;
-	if ( ! movemap() ) symmetric_movemap = core::kinematics::MoveMapOP( new MoveMap );
-	else symmetric_movemap = movemap()->clone();
+	core::kinematics::MoveMapOP symmetric_movemap( movemap(pose)->clone() );
 
 	apply_dof_tasks_to_movemap(pose, *symmetric_movemap);
 

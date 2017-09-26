@@ -50,7 +50,8 @@ public:
 	/// @details Copy this object and return an owning pointer to the new object.
 	JumpSelectorOP clone() const override;
 
-	JumpIndexSelector( int jump );
+	/// @details If soft_error is true, ignore jumps that are outside the Pose.
+	JumpIndexSelector( int jump, bool soft_error=false );
 	virtual ~JumpIndexSelector();
 
 	JumpSubset apply( core::pose::Pose const & pose ) const override;
@@ -69,7 +70,9 @@ public:
 	void jump( int jump );
 
 private: // data members
-	int jump_;
+	int jump_ = 0;
+	/// @brief If soft_error is true, ignore jumps that are outside the Pose.
+	bool soft_error_ = false;
 
 };
 

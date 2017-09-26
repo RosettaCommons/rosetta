@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -144,10 +145,9 @@ public:
 		TagCOP,
 		basic::datacache::DataMap & data_map,
 		Filters_map const &,
-		protocols::moves::Movers_map const &,
-		Pose const & );
+		protocols::moves::Movers_map const & );
 
-	void parse_chi_and_bb( TagCOP );
+	void parse_movemap_factory( TagCOP, basic::datacache::DataMap & );
 
 	void parse_dof_tasks(
 		TagCOP tag,
@@ -181,7 +181,18 @@ public:
 	///     MoveMap
 	virtual void movemap( core::kinematics::MoveMapCOP movemap_in );
 	void set_movemap( core::kinematics::MoveMapCOP movemap_in ) override;
-	core::kinematics::MoveMapCOP movemap() const override;
+
+	/// @brief Sets the MoveMapFactory
+	/// The MoveMapFactory will be used to construct a MoveMap if an explicit one isn't set
+	virtual void movemap_factory( core::select::movemap::MoveMapFactoryCOP mmf );
+
+	/// @brief Get the movemap for the pose
+	/// @details This is the preferred version to call.
+	core::kinematics::MoveMapCOP movemap( core::pose::Pose const & pose ) const override;
+
+	/// @brief Get the explicitly set movemap object, if present, nullptr if not
+	/// Will not create a default or look at the MoveMapFactory
+	core::kinematics::MoveMapCOP explicitly_set_movemap() const;
 
 	/// @brief Sets the ScoreFunction to  <scorefxn_in>
 	/// determines which function to minimize
@@ -220,6 +231,7 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 protected:
+
 	/// @brief for use with RosettaScripts current method of using
 	///TaskOperations to specify residue sets.
 	void
@@ -239,6 +251,9 @@ private:
 	inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMap & active_movemap );
 
 	// data
+
+	// The MoveMapFactory will be overridden by an explicitly set movemap_.
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 	core::kinematics::MoveMapOP movemap_;
 	bool omega_; //dflt true ; minimize omega?
 	ScoreFunctionCOP scorefxn_;

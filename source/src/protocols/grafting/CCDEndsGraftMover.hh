@@ -91,22 +91,6 @@ public:
 
 public:
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief Advanced way to set flexibility.
-	/// @details Will combine the movemaps for apply, and renumber everything. Flexible residues in multiple chains not recommended.
-	/// One arm Will go from first flexible N terminal residue to after start_+any contiguous residues on in the movemap from there. Opposite for Cter side.
-	/// This way any loop regions within a chain on either side can be used as flexible residues to close full graft.
-	///
-	/// Note: Will disregard flexibility settings, as the movemaps will be used as primary way to define flexibility.
-	/// May want to consider turning off the sampling step when passing crazy movemaps.
-	///
-	void
-	set_movemaps(core::kinematics::MoveMapCOP const scaffold_mm, core::kinematics::MoveMapCOP const insert_mm) override;
-
-
-public:
-
-
 	protocols::moves::MoverOP
 	clone() const override;
 
