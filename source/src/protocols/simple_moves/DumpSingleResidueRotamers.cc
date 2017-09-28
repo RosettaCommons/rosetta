@@ -119,7 +119,6 @@ DumpSingleResidueRotamers::apply( core::pose::Pose & pose ){
 	using namespace core::chemical;
 	using namespace core::pose;
 
-	runtime_assert( pose.residue( rsd_index_ ).type().is_canonical_aa() );
 	runtime_assert( rsd_index_ >= 1 && rsd_index_ <= pose.total_residue() );
 
 	// Set up the single residue dunbrack library
