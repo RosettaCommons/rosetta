@@ -1,0 +1,31 @@
+# #file: mpframework_smooth_fa_2014.wts
+# @desc: All atom energy function for membrane proteins: combines Rosetta's
+# all atom energy function with membrane environment and solvation from the
+# lazaridis-karplus implicit membrane model.
+# @note: supported by the membrane framework - continuous for minimization
+# @cite: Barth, 2007, PNAS
+METHOD_WEIGHTS ref  0.16 1.7 -0.67 -0.81 0.63 -0.17 0.56 0.24 -0.65 -0.1 -0.34 -0.89 0.02 -0.97 -0.98 -0.37 -0.27 0.29 0.91 0.51
+fa_atr 0.8
+fa_rep 0.44
+fa_sol 0.00
+fa_intra_rep 0.004
+fa_pair 0.49
+fa_plane 0
+fa_dun 0.56
+fa_mpenv 0.3
+fa_mpsolv 0.35
+fa_mpenv_smooth 0.5
+ref 1
+hbond_lr_bb 1.17
+hbond_sr_bb 1.17
+hbond_bb_sc 2.34
+hbond_sc 2.2
+p_aa_pp 0.32
+dslf_ss_dst 0.5
+dslf_cs_ang 2
+dslf_ss_dih 5
+dslf_ca_dih 5
+pro_close 0
+rama  0.2
+omega  0.5
+cart_bonded 1.0

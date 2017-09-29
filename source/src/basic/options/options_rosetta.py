@@ -2992,6 +2992,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( "optimize_embedding", 'Boolean', desc="Use the scorefunction to optimize the embedding after an initial coarse grained setting" ),
 		),
 
+		# For transforming protein into the membrane
+		Option_Group( "assembly",
+			Option( "TM_pose_number", 'Integer', desc="Number of the PDB file in the -in:file:l list which is located in the membrane. Integer" ),
+			Option( "poses", 'StringVector', desc="Filenames of the PDB files to consider. StringVector." ),
+		),
+
 		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
 		Option_Group( 'dock',
 
@@ -6327,6 +6333,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'rename',             'Boolean',                  desc='rename checkpoint files after genetic algorithm completes', default='false' ),
 		), # -ms:checkpoint
 	), # -ms:
+
+	#mutate relax Option group - JKLeman (julia.koehler1982@gmail.com)
+	Option_Group( 'mutate',
+		Option( 'mutation', 'String', desc='Single mutation: Format: One-letter code / residue number / one-letter code. Example: A163F'),
+	),
 
 	# NonlocalAbinitio
 	Option_Group('nonlocal',

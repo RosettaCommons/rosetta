@@ -501,7 +501,6 @@ sources = {
 		"mp_quick_relax",
 		"mp_qrtest",
 		"mp_relax_partners_separately",
-		"mutate",
 		"per_residue_sc_sasa",
 		"range_relax",
 		"simple_rotamer_recovery",
