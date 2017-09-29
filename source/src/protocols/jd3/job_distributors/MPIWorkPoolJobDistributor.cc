@@ -559,7 +559,15 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 	// NOTE: Popping jobs_for_current_digraph_node_: we might violate the
 	// invariant that this queue is never empty so long as nodes remain in the
 	// digraph_nodes_ready_to_be_run_ queue.  Address that below
-	LarvalJobOP larval_job = job_extractor_->pop_job_from_queue();
+	LarvalJobOP larval_job;
+	while ( true ) {
+		larval_job = job_extractor_->pop_job_from_queue();
+		if ( job_queen_->has_job_completed( larval_job ) ) {
+			job_queen_->note_job_completed( larval_job, jd3_job_previously_executed, 0 );
+			continue;
+		}
+		break;
+	}
 
 	// serialize the LarvalJob and ship it to the worker node.
 	// Note that this could leave the worker hanging where it expects
