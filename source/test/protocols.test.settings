@@ -326,6 +326,7 @@ sources = {
 	],
 
 	"ligand_docking": [
+		"HighResEnsemble",
 		"ligand_scores",
 		"LigandDockingLoaders",
 		"ResidueTorsionRestraints",
@@ -463,8 +464,10 @@ sources = {
 	],
 
 	"qsar/scoring_grid" : [
+		"ClassicGrid",
 		"ScoreNormalization",
 		"ScoringGridLoader",
+		"SiteGrid",
 	],
 
 	"relax" : [
@@ -910,6 +913,8 @@ testinputfiles = [
 	"pmut_scan/mutants.txt",
 	"pmut_scan/shortloop.01.pdb.gz",
 	"pmut_scan/shortloop.02.pdb.gz",
+	"qsar/scoring_grid/2JJC.pdb",
+	"qsar/scoring_grid/LIG.params",
 	"relax/1a19.pdb",
 	"relax/1a19_trunc.pdb",
 	"relax/AtomCoordinateCstMover_native.pdb",

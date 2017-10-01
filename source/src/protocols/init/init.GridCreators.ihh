@@ -15,6 +15,7 @@
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
 #include <protocols/qsar/scoring_grid/AtrGridCreator.hh>
 #include <protocols/qsar/scoring_grid/ClassicGridCreator.hh>
+#include <protocols/qsar/scoring_grid/SiteGridCreator.hh>
 #include <protocols/qsar/scoring_grid/RepGridCreator.hh>
 #include <protocols/qsar/scoring_grid/HbdGridCreator.hh>
 #include <protocols/qsar/scoring_grid/HbaGridCreator.hh>

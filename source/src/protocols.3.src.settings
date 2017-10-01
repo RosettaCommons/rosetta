@@ -430,6 +430,7 @@ sources = {
 		"ScoringGridLoader",
 		"ScoreNormalization",
 		"ShapeGrid",
+		"SiteGrid",
 		"SolvationGrid",
 		"SolvationMetaGrid",
 		"RepGrid",

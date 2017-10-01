@@ -20,6 +20,7 @@ using namespace qsar::scoring_grid;
 static GridRegistrator<AtrGridCreator> reg_AtrGridCreator;
 static GridRegistrator<RepGridCreator> reg_RepGridCreator;
 static GridRegistrator<ClassicGridCreator> reg_ClassicGridCreator;
+static GridRegistrator<SiteGridCreator> reg_SiteGridCreator;
 static GridRegistrator<HbaGridCreator> reg_HbaGridCreator;
 static GridRegistrator<HbdGridCreator> reg_HbdGridCreator;
 static GridRegistrator<VdwGridCreator> reg_VdwGridCreator;
