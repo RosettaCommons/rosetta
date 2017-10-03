@@ -1,5 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
+import re
 from optparse import OptionParser
 import os.path
 import sets
@@ -29,22 +33,14 @@ def boost_path( top_dir, filename ):
 
 def boost_includes( filename ):
 	incl = []
-	f = open( filename )
-	for line in f:
-		line = line.strip()
-		if len( line ) > 0 and line[ 0 ] == '#':
-			# spacing can be somewhat variable, incrementally
-			# trim down the line to get the desired result
-			line = line[ 1: ].strip()
-			if line[ 0:7 ] == "include":
-				line = line[ 7: ].strip().split()[ 0 ] # take filename only
-				line = line.lstrip( '<' )
-				line = line.rstrip( '>' )
-				line = line.lstrip( '"' )
-				line = line.rstrip( '"' )
-				if line[ 0:6 ] == "boost/":
-					incl.append( line )
-	f.close()
+        with open(filename) as f:
+            flines = f.readlines()
+
+        for l in flines:
+            imatch = re.match(r"\s*#include <(boost[^>]*)>", l)
+            if imatch:
+                incl.append(imatch.groups()[0])
+        logging.debug("File %r sub-includes:\n%s" % (filename, "\n".join(incl)))
 	return incl
 
 ###########################################
@@ -70,6 +66,8 @@ class BoostLib:
 			if not os.path.exists( filename ):	
 				sys.stderr.write( "ERROR: missing %s\n" % ( filename ) )
 				return False
+                self.find_components(top_dir)
+
 		return True
 
 	def find_components( self, top_dir ):
@@ -100,6 +98,9 @@ class BoostLib:
 				# so fail-fast
 				sys.stderr.write( "ERROR: encountered symbolic link, handling not formalized: %s\n" % ( component ) )
 				sys.exit( 1 )
+                        else:
+				sys.stderr.write( "ERROR: Unable to locate required include. top-dir: %s include: %s\n" % (top_dir, component ) )
+
 		return processed # the set of all includes
 
 ## To add a boost library, add a BoostLib object below to BOOST with the
@@ -116,6 +117,7 @@ BOOST = [
         BoostLib( "assign", [ "assign/", "assign/std/", "assign.hpp" ] ),
         BoostLib( "bind", [ "bind.hpp" ] ),
         BoostLib( "config", [ "config.hpp", "config/", "config/compiler/","config/stdlib/","config/platform/"  ] ),
+        BoostLib( "container", [ "container/"] ),
         BoostLib( "cstdint", [ "cstdint.hpp" ] ),
         BoostLib( "date_time", [ "date_time/posix_time/posix_time_types.hpp" ] ),
         BoostLib( "detail", [ "detail/atomic_count.hpp" ] ),
@@ -123,9 +125,13 @@ BOOST = [
         BoostLib( "foreach", [ "foreach.hpp" ] ),
         BoostLib( "format", [ "format.hpp" ] ),
         BoostLib( "function", [ "function.hpp" ] ),
-        BoostLib( "functional", [ "functional/factory.hpp", "functional/hash.hpp" ] ),
+        BoostLib( "function_types", [ "function_types/" ] ),
+        BoostLib( "functional", [ "functional.hpp", "functional/"] ),
+        BoostLib( "fusion", [ "fusion/" ] ),
+        BoostLib( "geometry", [ "geometry/", "geometry.hpp" ] ),
         BoostLib( "graph", [ "graph/" ] ),
         BoostLib( "io", [ "io/" ] ),
+        BoostLib( "intrusive", [ "intrusive/" ] ),
         BoostLib( "lexical_cast", [ "lexical_cast.hpp" ] ),
         BoostLib( "math", [ "math/constants", "math/distributions", "math/distributions.hpp", "math/special_functions" ] ),
         BoostLib( "mpi", [ "mpi.hpp", "mpi/" ] ),
@@ -135,6 +141,7 @@ BOOST = [
         BoostLib( "optional", [ "optional.hpp" ] ),
         BoostLib( "phoenix", [ "phoenix/bind/bind_function.hpp" ] ),
         BoostLib( "pool", [ "pool/", "pool/detail/" ] ), 
+        BoostLib( "polygon", [ "polygon/" ] ), 
         BoostLib( "preprocessor", [ "preprocessor.hpp" ] ),
         BoostLib( "progress", [ "progress.hpp" ] ),
         BoostLib( "python", [ "python.hpp", "python/" ] ),
@@ -147,6 +154,7 @@ BOOST = [
         BoostLib( "tokenizer", [ "tokenizer.hpp" ] ),
         BoostLib( "tuple", [ "tuple" ] ),
         BoostLib( "type_traits", [ "type_traits/", "type_traits.hpp" ] ),
+        BoostLib( "type_erasure", [ "type_erasure/"] ),
         BoostLib( "unordered", [ "unordered/", "unordered_map.hpp", "unordered_set.hpp" ] ),
         BoostLib( "utility", [ "utility/", "utility.hpp" ] ),
         BoostLib( "uuid", [ "uuid" ] ),

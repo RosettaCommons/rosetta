@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+set -x
+
+NDARRAY_EXTERNAL_SRC=https://github.com/asford/ndarray.git
+NDARRAY_EXTERNAL_REVISION=74b5b66
+
+INSTALL_LOCATION=`git rev-parse --show-toplevel`/source/external
+
+git clone $NDARRAY_EXTERNAL_SRC ndarray_src
+cd ndarray_src
+git checkout $NDARRAY_EXTERNAL_REVISION
+
+mkdir build
+cd build
+EIGEN_DIR=$INSTALL_LOCATION
+cmake -DNDARRAY_FFTW=OFF -DNDARRAY_EIGEN=ON -DNDARRAY_PYBIND11=OFF -DCMAKE_INSTALL_PREFIX=$INSTALL_LOCATION ..
+make
+make test
+
+rm -rf $INSTALL_LOCATION/include/ndarray*
+make install
+
+rm $INSTALL_LOCATION/include/ndarray/pybind11.h
+rm $INSTALL_LOCATION/include/ndarray/converter.h
