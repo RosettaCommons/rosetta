@@ -275,7 +275,7 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
             branch = branches.pop()
             output += 'Beautifying branch: {}\n'.format(branch)
 
-            execute('Checking out branch...', 'cd {} && git checkout {} && git pull'.format(rosetta_dir, branch) )
+            execute('Checking out branch...', 'cd {} && git fetch && git update-ref refs/heads/{branch} origin/{branch} && git reset --hard {branch} && git checkout {branch}'.format(rosetta_dir, branch=branch) )
 
             res, o = execute('Beautifying...', 'cd {}/source && python ../../tools/python_cc_reader/beautify_changed_files_in_branch.py -j {}'.format(rosetta_dir, jobs), return_='tuple')
             if res:
@@ -286,7 +286,7 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
                 if res:
                     output += execute('Calculating changes...', "cd {} && git diff".format(rosetta_dir), return_='output')
-                    execute('Committing and pushing changes...', "cd {} && git commit -a -m 'beautifying' --author='{user_name} <{user_email}>' && git push".format(rosetta_dir, branch, user_name=config['user_name'], user_email=config['user_email']), return_='output')
+                    execute('Committing and pushing changes...', "cd {} && git commit -a -m 'beautifying' --author='{user_name} <{user_email}>' && git fetch && git rebase && git push".format(rosetta_dir, branch, user_name=config['user_name'], user_email=config['user_email']), return_='output')
                 else: output += '\nBeautification script finished: no beautification required for branch {}!\n'.format(branch)
 
                 state =_S_passed_
