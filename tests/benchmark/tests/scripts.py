@@ -13,7 +13,7 @@
 ## @author Sergey Lyskov
 
 
-import os, imp, json, shutil, distutils.dir_util
+import os, imp, json, shutil, distutils.dir_util, codecs
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
 _api_version_ = '1.0'
@@ -173,7 +173,7 @@ def upgrade_submodule(submodule_path, rosetta_dir, working_dir, platform, config
         for test in 'parse verify validate'.split():
             name = 'scripts.rosetta.' + test
             res = run_rosetta_scripts_test(test,  rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-            with open(name+'.log', 'w') as f: f.write(res[_LogKey_])
+            with codecs.open(name+'.log', 'w', encoding='utf-8', errors='replace') as f: f.write(res[_LogKey_])
             res[_LogKey_] += '\n\nTest {name} test failed! Refusing submodule update...'.format( **vars() )
             if res[_StateKey_] != _S_passed_: return res
 

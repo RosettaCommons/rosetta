@@ -244,7 +244,7 @@ def run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driv
 
 
 def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    ''' Find out to which branch current commit belong and try to beautify it
+    ''' Find out to which branch current commit belong to and try to beautify it
     '''
     jobs = config['cpu_count']
 
@@ -261,12 +261,15 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
             br = line.replace('*', '').split()[0]
             if br.startswith('origin/'):
                 br = br[len('origin/'):]
-                if br != 'master': branches.add(br)
+                #if br != 'master': branches.add(br)
+                branches.add(br)
             #if br != 'HEAD': branches.add(br)
+
+        if 'master' in branches: branches = set( ['master'] )
 
         if len(branches) != 1:
             commit = execute('Getting current commit sha1...', 'cd {} && git rev-parse HEAD'.format(rosetta_dir), return_='output')
-            state, output = _S_failed_, 'Could not figure out which branch to beautify, commit {} belong to following branches (expecting exactly one branch):\n{}\nAborting...\n'.format(commit, o)
+            state, output = _S_failed_, 'Could not figure out which branch to beautify, commit {} belong to following branches (expecting exactly one origin/<branch> or origin/master to be present):\n{}\nAborting...\n'.format(commit, o)
 
         else:
             branch = branches.pop()
