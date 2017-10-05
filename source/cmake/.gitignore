@@ -1,0 +1,12 @@
+CMakeFiles
+CMakeCache.txt
+/build/apps
+/build/*.cmake
+/build/*.ninja
+/build_*/*
+
+!CMakeLists.txt
+!/build/build.*.cmake
+!build/finders/*
+!build/modules/*
+!build_*/buildme.sh

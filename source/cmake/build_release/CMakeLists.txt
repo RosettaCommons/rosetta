@@ -10,6 +10,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 ############ Build Type, Mode, Link Rules, Compiler, Extras
 SET(MODE release)
 SET(LINK_RULES shared)
+SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 ############ Build Rules
 INCLUDE(../build/compiler.cmake)

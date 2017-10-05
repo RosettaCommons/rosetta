@@ -23,16 +23,6 @@ external/DAlpahBall/DAlphaBall.*
 /tools/build/user.options
 /tools/build/site.settings
 /tools/build/site.options
-*.cmake
-CMakeFiles
-/cmake/build/*
-/cmake/build_*/*
-!CMakeLists.txt
-!/cmake/build/build.pre.cmake
-!/cmake/build/build.post.cmake
-!/cmake/build/finders
-!/cmake/build/modules
-!/cmake/build_*/buildme.sh
 /xcode/build
 /xcode/Rosetta.xcodeproj/project.xcworkspace/
 /xcode/Rosetta.xcodeproj/xcuserdata

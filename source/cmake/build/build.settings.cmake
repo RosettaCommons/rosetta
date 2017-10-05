@@ -2,6 +2,10 @@
 # for CMake + Ninja builds. These settings attempt to match those found in
 # tools/build/basic.settings, which are used for building with scons.
 #
+# Optional extra dependencies, which may be activated via cmake options, are
+# included in this file. This may correspond to extras defined in
+# basic.settings.
+#
 # Currently, this file only includes settings for CMake + Ninja release, debug,
 # and graphics builds. This file is included in the CMakeLists.txt files found
 # in the build_release, build_debug, and build_graphics directories. The
@@ -361,6 +365,13 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release_bluegene" )
 	)
 endif()
 
+###########################################################################
+# Optional build components
+###########################################################################
+
+SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../build/finders)
+INCLUDE(../build/modules/mysql.cmake)
+INCLUDE(../build/modules/hdf5.cmake)
 
 # Pyrosetta build options
 set(WITH_PYROSETTA OFF CACHE BOOL "Build rosetta libraries with pyrosetta-specific build configuration.")
