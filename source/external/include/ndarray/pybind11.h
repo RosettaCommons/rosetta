@@ -42,26 +42,18 @@ public:
             for (int i = 0; i < C; ++i) {
               ndarray::Offset actualStride = buf.strides(N-i-1);
                 if (actualStride != requiredStride) {
-                    //PyErr_SetString(
-                        //PyExc_ValueError,
-                        //"numpy.ndarray does not have enough row-major contiguous dimensions"
-                    //);
                     return false;
                 }
-                requiredStride *= buf.strides(N-i-1);
+                requiredStride = buf.shape(N-i-1) * buf.strides(N-i-1);
             }
         } else if (C < 0) {
           ndarray::Offset requiredStride = sizeof(Element);
             for (int i = 0; i < -C; ++i) {
               ndarray::Offset actualStride = buf.strides(i);
                 if (actualStride != requiredStride) {
-                    //PyErr_SetString(
-                        //PyExc_ValueError,
-                        //"numpy.ndarray does not have enough column-major contiguous dimensions"
-                    //);
                     return false;
                 }
-                requiredStride *= buf.strides(i);
+                requiredStride = buf.shape(i) * buf.strides(i);
             }
         }
 
