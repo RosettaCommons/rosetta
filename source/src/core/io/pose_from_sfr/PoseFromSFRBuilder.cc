@@ -40,6 +40,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomICoor.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -375,7 +376,11 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 
 	known_links_ = core::io::explicit_links_from_sfr_linkage( sfr_.link_map(), rinfos_ );
 	if ( options_.auto_detect_glycan_connections() ) {
-		utility::vector1< core::Size > chain_ends = core::io::fix_glycan_order( rinfos_, glycan_positions_, options_ );
+		//This clears the links before fix_glycan_order call which makes the clear in add_glycan_links_to_map redundant but I'm leaving it for now.
+		if ( !basic::options::option[ basic::options::OptionKeys::in::maintain_links ].value() ) {
+			known_links_.clear();
+		}
+		utility::vector1< core::Size > chain_ends = core::io::fix_glycan_order( rinfos_, glycan_positions_, options_, known_links_ );
 		// Reset correspondences for reordered glycans
 		for ( core::Size pos: glycan_positions_ ) {
 			resid_to_index_[ rinfos_[ pos ].resid() ] = pos;
@@ -902,6 +907,23 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 
 	// Step 5. Reconcile connectivity data.
 
+	//Store atoms with ambiguous lower connect so that we can regenerate coordinates after lower connects are resolved.
+	utility::vector1< core::id::AtomID > lower_connect_atoms;
+	for ( Size ii=1; ii<=pose.size(); ++ii ) {
+		for ( Size jj=1; jj<=pose.residue(ii).natoms(); ++jj ) {
+			if ( ( pose.residue(ii).icoor(jj).depends_on_polymer_lower() && !pose.residue(ii).is_lower_terminus() ) ||
+					( pose.residue(ii).icoor(jj).depends_on_polymer_upper() && !pose.residue(ii).is_upper_terminus() ) ) {
+				core::id::AtomID const
+					stub_atom1( pose.residue(ii).icoor( jj ).stub_atom1().atom_id( pose.residue(ii), pose.conformation() ) ),
+					stub_atom2( pose.residue(ii).icoor( jj ).stub_atom2().atom_id( pose.residue(ii), pose.conformation() ) ),
+					stub_atom3( pose.residue(ii).icoor( jj ).stub_atom3().atom_id( pose.residue(ii), pose.conformation() ) );
+				if ( stub_atom1 == id::BOGUS_ATOM_ID || stub_atom2 == id::BOGUS_ATOM_ID || stub_atom3 == id::BOGUS_ATOM_ID ) {
+					lower_connect_atoms.push_back( core::id::AtomID(jj,ii) );
+				}
+			}
+		}
+	}
+
 	// Add any links from the known link data (e.g. the link map)
 	// that isn't already in the pose.
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
@@ -969,6 +991,17 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	// This requires up-to-data connectivity information and is required to be in the pose if glycan residues are present.
 	if ( pose.conformation().contains_carbohydrate_residues() ) {
 		pose.conformation().setup_glycan_trees();
+	}
+
+	//rebuild the atoms that were placed with an ambiguous lower connect
+	for ( core::Size ii=1; ii<=lower_connect_atoms.size(); ii++ ) {
+		core::Size resno = lower_connect_atoms[ii].rsd();
+		core::Size atomno = lower_connect_atoms[ii].atomno();
+		core::chemical::AtomICoor icoor = pose.residue(resno).type().icoor(atomno);
+		if ( icoor.stub_atom1().atom_id( pose.residue(resno), pose.conformation()) == id::BOGUS_ATOM_ID || icoor.stub_atom2().atom_id(pose.residue(resno), pose.conformation()) == id::BOGUS_ATOM_ID
+				|| icoor.stub_atom3().atom_id( pose.residue(resno), pose.conformation()) == id::BOGUS_ATOM_ID ) continue;
+		numeric::xyzVector<core::Real> icoor_xyz = icoor.build(pose.residue(resno), pose.conformation());
+		pose.conformation().set_xyz( lower_connect_atoms[ii], icoor_xyz);
 	}
 
 	// Step 6. Addition of automatic constraints, bfactor repair, and comment reading.

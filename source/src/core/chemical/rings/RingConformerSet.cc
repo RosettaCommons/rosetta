@@ -19,6 +19,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -301,6 +303,9 @@ RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > 
 	Size const n_conformers( size() );
 	Angle best_match_score( limit * n_angles );  // the highest possible sum of angle deviations halved
 	uint best_conformer( 0 );
+	if ( basic::options::option[ basic::options::OptionKeys::in::only_chairs ].value() ) {
+		best_conformer = 1;
+	}
 	for ( uint i( 1 ); i <= n_conformers; ++i ) {
 		RingConformer const & conformer( nondegenerate_conformers_[ i ] );
 		Angle match_score( 0.0 );

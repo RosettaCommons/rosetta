@@ -46,6 +46,7 @@
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -238,12 +239,14 @@ pose_from_pose(
 utility::vector1< core::Size >
 fix_glycan_order( utility::vector1< core::io::ResidueInformation > & rinfos,
 	utility::vector1< core::Size > const & glycan_positions,
-	StructFileRepOptions const & options )
+	StructFileRepOptions const & options,
+	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > known_links )
+
 {
 	utility::vector1< core::Size > chain_ends;
 	// Note that we shouldn't re-use the found glycan link map, as the ordering can/will change
 	utility::vector1< core::Size > correct_order( find_carbohydrate_order( rinfos, glycan_positions, chain_ends,
-		determine_glycan_links( rinfos, options ) ) );
+		determine_glycan_links( rinfos, options ), known_links ) );
 	reorder_glycan_residues( rinfos, correct_order, glycan_positions );
 
 	utility::vector1< core::Size > reorganized_ends;
@@ -258,7 +261,8 @@ find_carbohydrate_order( utility::vector1< core::io::ResidueInformation > const 
 	utility::vector1< core::Size > const & glycan_positions,
 	utility::vector1< core::Size > & chain_ends, // return-by-reference for (non-reducing) end sugars
 	// map of anomeric positions to where they are connected to
-	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map )
+	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map,
+	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > known_links )
 {
 	std::set< core::Size > roots; // Sorted!
 	for ( core::Size resi: glycan_positions ) {
@@ -272,6 +276,16 @@ find_carbohydrate_order( utility::vector1< core::io::ResidueInformation > const 
 				break;
 			}
 		}
+		//Add all the known link records
+		std::string rinfo1 = rinfos[resi].resid();
+		for ( auto const & link1: known_links ) {
+			for ( auto const & link2: link1.second ) {
+				if ( (link1.first == rinfo1 && link2.first == " C1 " ) || (link2.second.first == rinfo1 && link2.second.second == " C1 ") ) {
+					is_root = false;
+					break;
+				}
+			}
+		}
 		if ( is_root ) { roots.insert( resi ); }
 	}
 
@@ -281,6 +295,27 @@ find_carbohydrate_order( utility::vector1< core::io::ResidueInformation > const 
 	std::map< core::Size, std::map< std::string, std::pair< core::Size, std::string > > > connectivity;
 	for ( auto const & link: link_map ) {
 		connectivity[ link.second.first ][ link.second.second ] = link.first;
+	}
+	//this will override any auto detected links with the links for the input
+	for ( auto const & link: known_links ) {
+		core::Size res1 = 1;
+		for ( core::Size i=1; i<=rinfos.size(); i++ ) {
+			if ( link.first == rinfos[i].resid() ) {
+				res1 = i;
+			}
+		}
+		for ( auto const & link2: link.second ) {
+			core::Size res2 = 1;
+			for ( core::Size i=1; i<=rinfos.size(); i++ ) {
+				if ( link2.second.first == rinfos[i].resid() ) {
+					res2 = i;
+				}
+			}
+			//Only add the connection lower->upper
+			if ( res1 < res2 ) {
+				connectivity[ res1 ][ link2.first ] = std::make_pair(res2,link2.second.second);
+			}
+		}
 	}
 
 	// Now find the chains, prefering the roots with lower numbers
@@ -392,6 +427,7 @@ determine_glycan_links( utility::vector1< core::io::ResidueInformation > const &
 			if ( linkage_map.count( anomeric_pair ) ) { break; } // Only one link is needed.
 			std::map< std::string, Vector > XYZs(rinfos[ jj ].xyz());
 			for ( auto pair: XYZs ) {
+				//if( (res_name == "ASN" || rinfos[jj].rosetta_resName() == "ASN") && pair.first != "ND2" ) continue;
 				// TODO: only check oxygens ??
 				Vector const & pos( pair.second );
 				core::Real distance = pos.distance( anomeric_coords );
@@ -434,7 +470,10 @@ add_glycan_links_to_map(
 	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map,
 	utility::vector1< core::io::ResidueInformation > const & rinfos )
 {
-	known_links.clear(); // Ignore existing links, as they may be garbage -- we may want to reconsider this
+
+	if ( !basic::options::option[ basic::options::OptionKeys::in::maintain_links ].value() ) {
+		known_links.clear(); // Ignore existing links, as they may be garbage -- we may want to reconsider this
+	}
 
 	std::map< std::string, core::Size > resid_to_pos;
 	for ( core::Size ii(1); ii <= rinfos.size(); ++ii ) {

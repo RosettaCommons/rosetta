@@ -82,7 +82,7 @@
 #include <core/pose/PDBInfo.hh>
 
 // cutoff for reporting outliers
-#define CUTOFF 1
+#define CUTOFF -1
 
 namespace boost {
 namespace tuples {
@@ -192,6 +192,8 @@ std::string get_restag( core::chemical::ResidueType const & restype ) {
 		std::string rsdname = restype.name();
 		rsdname = rsdname.substr( 0, rsdname.find(chemical::PATCH_LINKER) );
 		return rsdname;
+	} else if ( restype.is_carbohydrate() ) {
+		return restype.name3();
 	} else {
 		// If we're not a protein or nucleic acid, there's no guarantees that anything that
 		// shares the same three letter code is reasonably similar.
@@ -3303,7 +3305,7 @@ CartesianBondedEnergy::eval_singleres_angle_derivatives(
 		bool skip_this_angle=false;
 		for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
 			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-					&& rsd.type().is_ring_atom( i, atids[2] ) ) {
+					&& rsd.type().is_ring_atom( i, atids[3] ) ) {
 				skip_this_angle=true;
 			}
 		}

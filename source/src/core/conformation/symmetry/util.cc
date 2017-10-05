@@ -500,10 +500,11 @@ set_fold_tree_from_symm_data(
 		for ( Size i = 0; i < subunits; ++i ) {
 			for ( Size j = 1; j <= num_jumps_subunit; ++j ) {
 				++njumps;
-				int new_cut_pos( i*num_res_subunit + cuts_subunit.at( j ) );
-				cuts( njumps ) = new_cut_pos;
+				//int new_cut_pos( i*num_res_subunit + cuts_subunit.at( j ) );
+				//cuts( njumps ) = new_cut_pos;
 				int new_jump_pos1( i*num_res_subunit + jump_points_subunit(1,j) );
 				int new_jump_pos2( i*num_res_subunit + jump_points_subunit(2,j) );
+				//TR << " jump as jump " << new_jump_pos1 << " " << new_jump_pos2 << " " << new_cut_pos << std::endl;
 				jumps(1, njumps ) = std::min(new_jump_pos1,new_jump_pos2);
 				jumps(2, njumps ) = std::max(new_jump_pos1,new_jump_pos2);
 			}
@@ -511,12 +512,17 @@ set_fold_tree_from_symm_data(
 			// They are replaced with true chemical edges later
 			for ( Size j = 1; j <= num_edges_subunit; ++j ) {
 				++njumps;
-				int new_cut_pos( i*num_res_subunit + edges_subunit.at( j ).stop()-1 );
-				cuts( njumps ) = new_cut_pos;
+				//int new_cut_pos( i*num_res_subunit + edges_subunit.at( j ).stop()-1 );
+				//cuts( njumps ) = new_cut_pos;
 				int new_jump_pos1( i*num_res_subunit + edges_subunit.at(j).start() );
 				int new_jump_pos2( i*num_res_subunit + edges_subunit.at(j).stop() );
+				//TR << " edge as jump " << new_jump_pos1 << " " << new_jump_pos2 << " " << new_cut_pos << std::endl;
 				jumps(1, njumps ) = std::min(new_jump_pos1,new_jump_pos2);
 				jumps(2, njumps ) = std::max(new_jump_pos1,new_jump_pos2);
+			}
+			//Add the cuts
+			for ( Size j=1; j<=cuts_subunit.size(); j++ ) {
+				cuts( i*cuts_subunit.size()+j ) = i*num_res_subunit + cuts_subunit[j];
 			}
 		}
 
