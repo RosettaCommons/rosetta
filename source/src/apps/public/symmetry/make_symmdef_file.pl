@@ -280,6 +280,8 @@ if ($cryst_mode == 1) {
 						($cheshire->[2][0]+$cheshire->[2][1])/2 ];
 		my $fake_cX = mapply( $f2c , $fake_fX );
 		push @chaintrace, $fake_cX;
+
+		# make pdb file with Ca-trace
 		my $fakePDBline = sprintf "ATOM      1  CA  ALA A   1     %7.3f %7.3f %7.3f  1.00  0.00           C  ",
 								  $fake_cX->[0], $fake_cX->[1], $fake_cX->[2];
 		push @filebuf, $fakePDBline;
@@ -1199,9 +1201,19 @@ if ($cryst_mode == 1) {
 	my $chnidx = 0;
 	print OUTMDL "MODEL $mdlidx\n";
 	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+;:,.<>";
+	my $first_ASU = 1; #True
+	my $max_chain_index = -1;
 	foreach my $symmkey (@syminterfaces_all) {
 		my ($j_symm,$shiftX,$shiftY,$shiftZ) = split '_',$symmkey;
+		my $prev_chain_ID = $primary_chain;
+		my $current_chain_ID = $primary_chain;
 		foreach my $line (@filebuf) {
+			# Update current chain ID in original line
+			$current_chain_ID = substr ($line, 21, 1);
+			if ($current_chain_ID ne $prev_chain_ID) {
+				$chnidx++;
+			}
+			$prev_chain_ID = $current_chain_ID;
 			my $linecopy = $line;
 
 			my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
@@ -1213,11 +1225,21 @@ if ($cryst_mode == 1) {
 			substr ($linecopy, 30, 8) = sprintf ("%8.3f", $sX->[0]);
 			substr ($linecopy, 38, 8) = sprintf ("%8.3f", $sX->[1]);
 			substr ($linecopy, 46, 8) = sprintf ("%8.3f", $sX->[2]);
-			substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
-
+			# keep chain IDs of first ASU
+			if (!$first_ASU) {
+				substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
+			} else { #is first ASU
+				# get chain's chnidx
+				my $chain_index = index($chains, $current_chain_ID);
+				# store the greater index
+				$max_chain_index = $chain_index > $max_chain_index ? $chain_index : $max_chain_index;
+			}
 			print OUTPDB $linecopy."\n";
 		}
 		print OUTPDB "TER   \n";
+		if ($first_ASU) {
+			$chnidx	= $max_chain_index;
+		}
 		$chnidx++;
 		if ($chnidx >= length($chains)) {
 			$chnidx=0;
@@ -1225,6 +1247,7 @@ if ($cryst_mode == 1) {
 			print OUTPDB "ENDMDL\n";
 			print OUTPDB "MODEL $mdlidx\n";
 		}
+		$first_ASU = 0;
 	}
 	close(OUTPDB);
 }
