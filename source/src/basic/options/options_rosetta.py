@@ -169,13 +169,13 @@ Options = Option_Group( '',
 				legal=["true","false"],
 				default="false"),
 		Option("max_bond_length", "Real",
-				desc='Sets maximum O-C distance for glycan connection search. Default is 1.6 Angstroms.',
+				desc='Sets maximum O-C distance for glycan connection search. Default is 1.65 Angstroms.',
 				short='Max distance for glycan C-O bond',
-				default="1.6"),
+				default="1.65"),
 		Option("min_bond_length", "Real",
-				desc='Sets minimum O-C distance for glycan connection search. Default is 1.3 Angstroms.',
+				desc='Sets minimum O-C distance for glycan connection search. Default is 1.15 Angstroms.',
 				short='Min. distance for glycan C-O bond',
-				default="1.3"),
+				default="1.15"),
 
 
 		## Membrane JD2 Option

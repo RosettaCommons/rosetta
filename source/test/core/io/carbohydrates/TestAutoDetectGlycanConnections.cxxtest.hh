@@ -68,8 +68,8 @@ public:
 			});
 
 		std::map< std::string, std::string > residue_orders ( {
-			{ "1ioo", "A:1-199 A:201 B:1-199 B:201-203" }, // Missing XYP because of -ignore_unrecognized_res
-			{ "1x38", "A:1-602 A:2211-2213 A:4981 A:4984 A:4982-4983 A:4985-4986 A:6001 A:6004 A:6002-6003" },
+			{ "1ioo", "A:1-199 A:201 A:200 B:1-199 B:201-203 B:200" },
+			{ "1x38", "A:1-602 A:2211-2213 A:4981 A:4984 A:4982-4983 A:4985-4987 A:6001 A:6004 A:6002-6003 A:6005" },
 			{ "3uue", "A:26-304 A:501-506" },
 			{ "2cl2", "A:1-298 A:1299-1302 A:1305 A:1303-1304" },
 			{ "1jnd", "A:2-141 A:161-420 A:3100-3103" },
@@ -80,11 +80,11 @@ public:
 
 		std::map< std::string, std::string > fold_trees ( {
 			// Foldtree for 1ioo is a bit messed up because of the missing XYP -- The 199-200 edge is a chemical connection, instead of being a backbone one, and the 399-400 one is technically being listed as cutpoints in the ResidueTypes
-			{ "1ioo", "FOLD_TREE  EDGE 1 196 -1  EDGE 28 197 -2  ND2  C1   EDGE 197 199 -1  EDGE 199 200 -2  O6   C1   EDGE 1 201 1  EDGE 201 396 -1  EDGE 228 397 -2  ND2  C1   EDGE 397 399 -1  EDGE 399 400 -2  O3   C1   EDGE 400 401 -1  EDGE 399 402 -2  O6   C1  " },
-			{ "1x38", "FOLD_TREE  EDGE 1 602 -1  EDGE 221 603 -2  ND2  C1   EDGE 603 605 -1  EDGE 498 606 -2  ND2  C1   EDGE 606 607 -1  EDGE 606 608 -2  O4   C1   EDGE 608 611 -1  EDGE 600 612 -2  ND2  C1   EDGE 612 613 -1  EDGE 612 614 -2  O4   C1   EDGE 614 615 -1 " },
+			{ "1ioo", "FOLD_TREE  EDGE 1 196 -1  EDGE 28 197 -2  ND2  C1   EDGE 197 200 -1  EDGE 1 201 1  EDGE 1 202 2  EDGE 202 397 -1  EDGE 229 398 -2  ND2  C1   EDGE 398 402 -1  EDGE 400 403 -2  O6   C1   EDGE 1 404 3 " },
+			{ "1x38", "FOLD_TREE  EDGE 1 602 -1  EDGE 221 603 -2  ND2  C1   EDGE 603 605 -1  EDGE 498 606 -2  ND2  C1   EDGE 606 607 -1  EDGE 606 608 -2  O4   C1   EDGE 608 611 -1  EDGE 1 612 1  EDGE 600 613 -2  ND2  C1   EDGE 613 614 -1  EDGE 613 615 -2  O4   C1   EDGE 615 616 -1  EDGE 1 617 2 " },
 			{ "3uue", "FOLD_TREE  EDGE 1 279 -1  EDGE 228 280 -2  ND2  C1   EDGE 280 284 -1  EDGE 7 285 -2  OG1  C1  " },
 			{ "2cl2", "FOLD_TREE  EDGE 1 298 -1  EDGE 43 299 -2  ND2  C1   EDGE 299 303 -1  EDGE 302 304 -2  O6   C1   EDGE 304 305 -1 " },
-			{ "1jnd", "FOLD_TREE  EDGE 1 400 -1  EDGE 180 401 -2  ND2  C1   EDGE 401 403 -1  EDGE 1 404 1 " },
+			{ "1jnd", "FOLD_TREE  EDGE 1 400 -1  EDGE 180 401 -2  ND2  C1   EDGE 401 404 -1 " },
 			{ "4q56", "FOLD_TREE  EDGE 1 100 -1  EDGE 1 101 1  EDGE 1 102 2  EDGE 34 103 -2  ND2  C1   EDGE 103 106 -1  EDGE 103 107 -2  O4   C1   EDGE 107 108 -1  EDGE 1 109 3 " },
 			{ "4nyq", "FOLD_TREE  EDGE 1 153 -1  EDGE 35 154 -2  ND2  C1   EDGE 154 156 -1  EDGE 79 157 -2  ND2  C1   EDGE 157 158 -1  EDGE 145 159 -2  ND2  C1  " },
 			{ "4f8x", "FOLD_TREE  EDGE 1 335 -1  EDGE 311 336 -2  ND2  C1   EDGE 336 339 -1  EDGE 338 340 -2  O6   C1   EDGE 63 341 -2  ND2  C1  " }
