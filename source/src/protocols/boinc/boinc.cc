@@ -124,6 +124,7 @@ Boinc::initialize_worker( void )
 double Boinc::get_project_pref_max_gfx_fps() { return project_pref_max_gfx_fps_; }
 double Boinc::get_project_pref_max_gfx_cpu() { return project_pref_max_gfx_cpu_; }
 int Boinc::get_project_pref_max_cpu_run_time() { return project_pref_max_cpu_run_time_; }
+background_type Boinc::get_project_pref_bg() { return project_pref_bg_; }
 
 void Boinc::set_project_pref_max_gfx_fps( double project_pref_max_gfx_fps ) {
 	project_pref_max_gfx_fps_ = project_pref_max_gfx_fps;
@@ -159,6 +160,7 @@ See http://boinc.berkeley.edu/trac/wiki/BasicApi
 	double max_gfx_fpstmp = 0.0;
 	double max_gfx_cputmp = 0.0;
 	int cpu_run_timetmp = 0;
+	int bgtmp = 0;
 	parse_double(app_init_data.project_preferences, "<max_fps>", max_gfx_fpstmp);
 	if (max_gfx_fpstmp > 0) project_pref_max_gfx_fps_ = max_gfx_fpstmp;
 	parse_double(app_init_data.project_preferences, "<max_cpu>", max_gfx_cputmp);
@@ -166,6 +168,15 @@ See http://boinc.berkeley.edu/trac/wiki/BasicApi
 	parse_int(app_init_data.project_preferences, "<cpu_run_time>", cpu_run_timetmp);
 	if (cpu_run_timetmp > 0 && cpu_run_timetmp != project_pref_max_cpu_run_time_) {
 		project_pref_max_cpu_run_time_ = cpu_run_timetmp;
+	}
+	parse_int(app_init_data.project_preferences, "<bg>", bgtmp);
+	switch (bgtmp) {
+	case 1:
+		project_pref_bg_ = BLACK_BG; break;
+	case 2:
+		project_pref_bg_ = BLUE_GRADIENT_BG; break;
+	default:
+		project_pref_bg_ = BLUE_GRADIENT_BG; break;
 	}
 }
 
@@ -641,7 +652,7 @@ void Boinc::create_shared_memory() {
 /// @details The shared memory object must be fully created and initialized before calling this.
 /// @author Vikram K. Mulligan, Baker lab.
 void Boinc::set_shared_memory_fully_initialized() {
-	runtime_assert_string_msg( shmem_, "Error in protocols::boinc::set_shared_memory_fully_initialized(): The shared memory object must be created before calling this function!" );
+	if (!shmem_) return; // lets not crash if for some reason the shared memory cannot be created	
 	shmem_->fully_initialized = true;
 	return;
 }
@@ -650,8 +661,9 @@ void Boinc::set_shared_memory_fully_initialized() {
 /// so that the graphics app may read from it.
 /// @author Vikram K. Mulligan, Baker lab.
 void Boinc::wait_for_shared_memory_initialization() {
-	runtime_assert_string_msg( shmem_, "Error in protocols::boinc::wait_for_shared_memory_initialization(): The shared memory object must be created before calling this function!" );
-	while(true) {
+	if (!shmem_) return; // lets not crash if for some reason the shared memory cannot be created
+	int attempts = 60;
+	while(attempts>1) {
 		if(!wait_semaphore()) {
 			if( shmem_->fully_initialized ) {
 				unlock_semaphore();
@@ -659,13 +671,20 @@ void Boinc::wait_for_shared_memory_initialization() {
 			}
 			unlock_semaphore();
 		}
+#ifdef _WIN32
+		Sleep( 1000 );
+#else
+		sleep(1);
+#endif
+		attempts--;
 	}
+
 	return;
 }
 
 void Boinc::attach_shared_memory() {
 	if (shmem_ == NULL) {
-		int attempts = 60;
+		int attempts = 10;
 		while (attempts>1) {
 			shmem_ = (BoincSharedMemory*)boinc_graphics_get_shmem(BOINC_SHMEM_NAME);
 			if (!shmem_) {
@@ -711,7 +730,7 @@ void Boinc::get_sema_name( char * name ) {
 	APP_INIT_DATA aid;
 	int retval = boinc_get_init_data(aid);
 	if (retval) aid.slot = 0;
-	sprintf(name, "boinc_minirosetta_sema_%d", aid.slot);
+	sprintf(name, "boinc_rosetta_sema_%d", aid.slot);
 }
 
 #else
@@ -1092,6 +1111,7 @@ bool Boinc::worker_running_ = false;
 double Boinc::project_pref_max_gfx_fps_ = BOINC_MAX_GFX_FPS;
 double Boinc::project_pref_max_gfx_cpu_ = BOINC_MAX_GFX_CPU;
 int Boinc::project_pref_max_cpu_run_time_ = BOINC_DEFAULT_MAX_CPU_RUN_TIME;
+background_type Boinc::project_pref_bg_ = BLUE_GRADIENT_BG;
 
 } // namespace boinc
 } // namespace protocols

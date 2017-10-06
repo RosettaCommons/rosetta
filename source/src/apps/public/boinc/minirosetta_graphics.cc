@@ -162,6 +162,23 @@ int native_viewport_x,  native_viewport_y,  native_viewport_width,  native_viewp
 int best_viewport_x,  best_viewport_y,  best_viewport_width,  best_viewport_height;
 int current_viewport_x, current_viewport_y, current_viewport_width, current_viewport_height;
 
+static protocols::boinc::background_type boinc_bg = protocols::boinc::BLUE_GRADIENT_BG;
+
+}
+
+void draw_bg() {
+	using namespace graphics;
+	switch (boinc_bg) {
+	case protocols::boinc::BLUE_GRADIENT_BG:
+		protocols::viewer::draw_gradient_bg();
+		return;
+	case protocols::boinc::BLACK_BG:
+		protocols::viewer::draw_black_bg();
+		return;
+	default:
+		protocols::viewer::draw_gradient_bg();
+		return;
+	}
 }
 
 void scale(const int & iw, const int & ih) {
@@ -554,6 +571,11 @@ void app_graphics_init() {
 	protocols::boinc::Boinc::read_and_set_project_prefs();
 	boinc_max_fps = protocols::boinc::Boinc::get_project_pref_max_gfx_fps();
 	boinc_max_gfx_cpu_frac = protocols::boinc::Boinc::get_project_pref_max_gfx_cpu()/100.0;
+	boinc_bg = protocols::boinc::Boinc::get_project_pref_bg();
+
+	if (boinc_bg == protocols::boinc::BLACK_BG) {
+		protocols::viewer::set_bg_color(core::Vector(0.0, 0.0, 0.0));
+	}
 
 	// for testing
 	if ( option[ OptionKeys::boinc::max_fps ].user() ) {
@@ -760,7 +782,7 @@ Structure_display ( const graphics::GraphicsPoseType & graphics_pose_type, const
 	float x_max_screen = + this_window_size;
 	float zmax = 300.0;
 
-	protocols::viewer::draw_gradient_bg();
+	draw_bg();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1063,7 +1085,7 @@ void draw_rosetta_screensaver( int & width, int & height )
 	current_viewport_width  = current_viewport_height = dim_main;
 	glViewport( current_viewport_x, current_viewport_y, current_viewport_width, current_viewport_height );
 	mode_ortho_start();
-	protocols::viewer::draw_gradient_bg();
+	draw_bg();
 	mode_ortho_done();
 
 	// ACCEPTED BOX -- INITIALIZATION
@@ -1072,7 +1094,7 @@ void draw_rosetta_screensaver( int & width, int & height )
 	best_viewport_width  = best_viewport_height = dim_main;
 	glViewport( best_viewport_x, best_viewport_y, best_viewport_width, best_viewport_height );
 	mode_ortho_start();
-	protocols::viewer::draw_gradient_bg();
+	draw_bg();
 	mode_ortho_done();
 
 	if ( native_exists ) {
@@ -1082,7 +1104,7 @@ void draw_rosetta_screensaver( int & width, int & height )
 		low_viewport_width  = low_viewport_height = small_box;
 		glViewport( low_viewport_x, low_viewport_y, low_viewport_width, low_viewport_height );
 		mode_ortho_start();
-		protocols::viewer::draw_gradient_bg();
+		draw_bg();
 		mode_ortho_done();
 		// NATIVE BOX (SMALL) -- INITIALIZATION
 		native_viewport_x      = 2 * dim_main;
@@ -1090,7 +1112,7 @@ void draw_rosetta_screensaver( int & width, int & height )
 		native_viewport_width  = native_viewport_height = small_box;
 		glViewport( native_viewport_x, native_viewport_y, native_viewport_width, native_viewport_height );
 		mode_ortho_start();
-		protocols::viewer::draw_gradient_bg();
+		draw_bg();
 		mode_ortho_done();
 	} else {
 		// LOW ENERGY BOX (LARGE WITHOUT NATIVE) -- INITIALIZATION
@@ -1099,7 +1121,7 @@ void draw_rosetta_screensaver( int & width, int & height )
 		low_viewport_width  = low_viewport_height = dim_main;
 		glViewport( 2*dim_main, height-dim_main, dim_main, dim_main );
 		mode_ortho_start();
-		protocols::viewer::draw_gradient_bg();
+		draw_bg();
 		mode_ortho_done();
 	}
 

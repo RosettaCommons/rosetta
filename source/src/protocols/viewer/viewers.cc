@@ -120,11 +120,12 @@ int click_y;
 std::map< int , GraphicsState* > gs_map_;
 
 // Vector bg_color( 1.0f, 1.0f, 1.0f ); // white
-// Vector bg_color( 0.01f, 0.03f, 0.4f ); // dark blue
-// Vector bg_color2( 0.0f, 0.0f, 0.2f ); // darker blue
-Vector bg_color( 0.01f, 0.01f, 0.01f ); // dark gray
-Vector bg_color2( 0.0f, 0.0f, 0.0f ); // black
+//Vector bg_color( 0.01f, 0.01f, 0.01f ); // dark gray
+//Vector bg_color2( 0.0f, 0.0f, 0.0f ); // black
+Vector bg_color( 0.01f, 0.03f, 0.4f ); // dark blue
+Vector bg_color2( 0.0f, 0.0f, 0.2f ); // darker blue
 Vector border_color( 0.02f, 0.08f, 0.75f ); // lighter blue
+Vector border_color_gray( 0.5f, 0.5f, 0.5f ); // original gray
 Vector ghost_color_vect( 0.95f, 0.85f, 0.7f); //Orange-grey
 Vector atom_specular_color(0.4f, 0.37f, 0.35f); //Grey-orange
 
@@ -2174,12 +2175,12 @@ void clear_bg()
 
 /// @brief Draw a frame for a window.
 ///
-void draw_frame()
+void draw_frame( Vector const & bordercolor )
 {
 	using namespace graphics;
 
 	glLineWidth(2.5);
-	glColor3f(border_color.x(), border_color.y(), border_color.z());
+	glColor3f(bordercolor.x(), bordercolor.y(), bordercolor.z());
 	glBegin(GL_LINES);
 	glVertex2f(-1.0, -1.0);
 	glVertex2f(1.0, -1.0);
@@ -2219,7 +2220,7 @@ void draw_black_bg()
 	glVertex2f(1.0,-1.0);
 	glEnd();
 
-	draw_frame();
+	draw_frame( border_color_gray );
 }
 
 /// @brief Draw a gradient for the window background.
@@ -2242,7 +2243,7 @@ void draw_gradient_bg()
 	glVertex2f(1.0,-1.0);
 	glEnd();
 
-	draw_frame();
+	draw_frame( border_color );
 
 	return;
 }

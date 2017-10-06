@@ -63,12 +63,13 @@
 #define BOINC_INIT_COUNT_FILE "boinc_init_count.txt"
 
 #ifdef BOINC_GRAPHICS
-#define BOINC_SHMEM_NAME  "minirosetta"
+#define BOINC_SHMEM_NAME  "rosetta"
 #endif
 
 namespace protocols {
 namespace boinc {
 
+	enum background_type { BLACK_BG=1, BLUE_GRADIENT_BG };
 
 class Boinc {
 
@@ -90,6 +91,8 @@ public:
 	static double get_project_pref_max_gfx_cpu( void );
 	/// @brief Get maximum target cpu run time user preference
 	static int get_project_pref_max_cpu_run_time( void );
+	/// @brief Get graphics background type user preference
+	static background_type get_project_pref_bg(void);
 	/// @brief Set maximum graphics frames per second. Standalone mode only.
 	static void set_project_pref_max_gfx_fps( double project_pref_max_gfx_fps );
 	/// @brief Set maximum percent cpu for graphics. Standalone mode only.
@@ -235,6 +238,7 @@ private:
 	static double project_pref_max_gfx_fps_;
 	static double project_pref_max_gfx_cpu_;
 	static int project_pref_max_cpu_run_time_;
+	static background_type project_pref_bg_;
 
 #ifdef BOINC_GRAPHICS
 

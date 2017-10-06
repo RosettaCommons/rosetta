@@ -750,6 +750,7 @@ settings = {
                 #"/usr/include/GL"
             ],
             "libraries" : [
+		"pthread",
                 "boinc_graphics2",
             ],
             "library_path" : [
@@ -757,7 +758,7 @@ settings = {
                 "#external/boinc/lib",
                 "#external/boinc/zip",
             ],
-            #"defines"  : [ "BOINC_GRAPHICS" ],
+            "defines"  : [ "BOINC_GRAPHICS" ],
             "flags" : {
                 "warn" : [
                     "Wno-unused-variable",
