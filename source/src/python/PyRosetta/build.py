@@ -457,8 +457,8 @@ def generate_bindings(rosetta_source_path):
     defines  = ''.join( [' -D'+d for d in get_defines()] )
 
     if Platform == 'macos':
-        includes += '-isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1 '
-        includes += '-isystem /Library/Developer/CommandLineTools/usr/include/c++/v1 '
+        includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1'
+        includes += ' -isystem /Library/Developer/CommandLineTools/usr/include/c++/v1'
 
     execute(
     'Generating bindings...',
