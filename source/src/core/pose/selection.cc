@@ -265,7 +265,10 @@ get_resnum_list(
 			if ( str_limits.size() == 2 ) {
 				core::Size const start ( parse_resnum( str_limits[1], pose ) );
 				core::Size const end ( parse_resnum( str_limits[2], pose ) );
-				if ( start && end && start > end ) {
+				if ( start == 0 || end == 0 ) {
+					utility_exit_with_message("Invalid residue range: " + res);
+				}
+				if ( start > end ) {
 					utility_exit_with_message("Invalid residue range: " + res);
 				}
 				for ( core::Size i = start; i <= end; ++i ) {
@@ -304,7 +307,10 @@ get_resnum_list_ordered(
 			if ( str_limits.size() == 2 ) {
 				core::Size const start ( parse_resnum( str_limits[1], pose ) );
 				core::Size const end ( parse_resnum( str_limits[2], pose ) );
-				if ( start && end && start > end ) {
+				if ( start == 0 || end == 0 ) {
+					utility_exit_with_message("Invalid residue range: " + res);
+				}
+				if ( start > end ) {
 					utility_exit_with_message("Invalid residue range: " + res);
 				}
 				for ( core::Size i = start; i <= end; ++i ) {

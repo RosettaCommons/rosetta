@@ -161,4 +161,26 @@ public:
 		}
 	}
 
+	// pdb-numbered range starts in the pose, finishes outside of it
+	void test_ResidueIndexSelector_pdb_numbered_ranges() {
+		core::pose::Pose trpcage = create_trpcage_ideal_pose();
+		//goes from 1A-20A
+		std::string bad_index = "15A-25A";
+		std::string bad_index2 = "25A-35A";
+
+		std::string good_index = "10A-15A";
+
+		ResidueSelectorOP index_fail( new ResidueIndexSelector( bad_index ) );
+		ResidueSelectorOP index_fail2( new ResidueIndexSelector( bad_index2 ) );
+		ResidueSelectorOP index_good( new ResidueIndexSelector( good_index ) );
+
+		set_throw_on_next_assertion_failure();
+		TS_ASSERT_THROWS_ANYTHING( index_fail->apply( trpcage) );
+		set_throw_on_next_assertion_failure();
+		TS_ASSERT_THROWS_ANYTHING( index_fail2->apply( trpcage) );
+		set_throw_on_next_assertion_failure();
+		TS_ASSERT_THROWS_NOTHING( index_good->apply( trpcage ) );
+
+	}
+
 };
