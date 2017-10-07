@@ -105,7 +105,6 @@ inline
 int
 viewer_main( VoidFunc worker_main ){ worker_main(nullptr); return 0; }
 
-void set_bg_color( core::Vector new_bg_color );
 
 #else // GL_GRAPHICS ////////////////////////////////////////////////////
 
@@ -147,6 +146,8 @@ display_residues(
 // utility::vector1< core::conformation::ResidueCOP > const & residues,
 // core::id::AtomID const & anchor_id
 //);
+
+void set_bg_color( core::Vector new_bg_color );
 
 void
 display_residues_wireframe(

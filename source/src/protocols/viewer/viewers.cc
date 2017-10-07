@@ -610,14 +610,6 @@ glVertex3fxyz( Vector const & coord )
 	glVertex3f((float)coord.x(), (float)coord.y(), (float)coord.z() );
 }
 
-void
-set_bg_color( Vector new_bg_color ) {
-	runtime_assert( new_bg_color.x() >= 0 );
-	runtime_assert( new_bg_color.y() >= 0 );
-	runtime_assert( new_bg_color.z() >= 0 );
-	graphics::bg_color = new_bg_color;
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // helper function
 void
@@ -872,6 +864,15 @@ Vector get_atom_color(
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+set_bg_color( Vector new_bg_color ) {
+	runtime_assert( new_bg_color.x() >= 0 );
+	runtime_assert( new_bg_color.y() >= 0 );
+	runtime_assert( new_bg_color.z() >= 0 );
+	graphics::bg_color = new_bg_color;
+}
+
 void
 display_residues_wireframe(
 	GraphicsState & gs,
