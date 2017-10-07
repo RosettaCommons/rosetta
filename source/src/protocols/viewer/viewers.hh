@@ -208,7 +208,6 @@ draw_sphere(
 core::Vector
 get_center( utility::vector1< core::conformation::ResidueCOP > const & residues );
 
-#endif ////////////////////////////////////////////////////////////////
 
 void
 add_monte_carlo_silent_viewer(
@@ -217,6 +216,7 @@ add_monte_carlo_silent_viewer(
 	bool fullatom
 );
 
+#endif ////////////////////////////////////////////////////////////////
 
 
 /// @brief Allows for graceful exit of graphics viewers.

@@ -2267,7 +2267,6 @@ void draw_pose(
 	draw_conformation( residues, ss, gs, center_of_mass );
 }
 
-#endif
 
 /// @brief
 utility::vector1< SilentObserverOP > silent_observers; // quick hack to eliminate OPs being destroyed!
@@ -2288,6 +2287,8 @@ add_monte_carlo_silent_viewer(
 	silent_observers.push_back( viewer1 );
 	silent_observers.push_back( viewer2 );
 }
+
+#endif
 
 ///////////////////////////////////////
 void
