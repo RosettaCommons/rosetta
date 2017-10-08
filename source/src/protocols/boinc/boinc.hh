@@ -69,7 +69,7 @@
 namespace protocols {
 namespace boinc {
 
-	enum background_type { BLACK_BG=1, BLUE_GRADIENT_BG };
+enum background_type { BLACK_BG=1, BLUE_GRADIENT_BG };
 
 class Boinc {
 

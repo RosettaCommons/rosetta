@@ -169,13 +169,13 @@ static protocols::boinc::background_type boinc_bg = protocols::boinc::BLUE_GRADI
 void draw_bg() {
 	using namespace graphics;
 	switch (boinc_bg) {
-	case protocols::boinc::BLUE_GRADIENT_BG:
+	case protocols::boinc::BLUE_GRADIENT_BG :
 		protocols::viewer::draw_gradient_bg();
 		return;
-	case protocols::boinc::BLACK_BG:
+	case protocols::boinc::BLACK_BG :
 		protocols::viewer::draw_black_bg();
 		return;
-	default:
+	default :
 		protocols::viewer::draw_gradient_bg();
 		return;
 	}
@@ -573,7 +573,7 @@ void app_graphics_init() {
 	boinc_max_gfx_cpu_frac = protocols::boinc::Boinc::get_project_pref_max_gfx_cpu()/100.0;
 	boinc_bg = protocols::boinc::Boinc::get_project_pref_bg();
 
-	if (boinc_bg == protocols::boinc::BLACK_BG) {
+	if ( boinc_bg == protocols::boinc::BLACK_BG ) {
 		protocols::viewer::set_bg_color(core::Vector(0.0, 0.0, 0.0));
 	}
 
