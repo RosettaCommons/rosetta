@@ -264,8 +264,8 @@ get_glycosidic_bond_residues( Conformation const & conf, uint const sequence_pos
 	ResidueCOP res_n( conf.residue( sequence_position ).get_self_ptr() );
 
 	if ( res_n->is_lower_terminus() ) {
-		if ( TR.Info.visible() ) {
-			TR.Info << "Glycosidic torsions are undefined for the first polysaccharide residue of a chain unless part "
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Glycosidic torsions are undefined for the first polysaccharide residue of a chain unless part "
 				"of a branch." << endl;
 		}
 		return make_pair( res_n, res_n );
@@ -821,7 +821,7 @@ get_downstream_residue_that_this_torsion_moves( Conformation const & conf, id::T
 		next_rsd = find_seqpos_of_saccharides_child_residue_at( rsd, torsion_id.torsion() );
 	}
 	if ( ! next_rsd ) {
-		TR.Error << "Torsion " << torsion_id << " does not move any downstream residues!  Returning 0." << std::endl;
+		TR.Debug << "Torsion " << torsion_id << " does not move any downstream residues!  Returning 0." << std::endl;
 	}
 	return next_rsd;
 }

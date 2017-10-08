@@ -81,7 +81,9 @@ GlycanTreeRelax::GlycanTreeRelax( GlycanTreeRelax const & src ):
 	glycan_relax_rounds_(src.glycan_relax_rounds_),
 	refine_(src.refine_),
 	quench_mode_(src.quench_mode_),
-	final_min_pack_min_(src.final_min_pack_min_)
+	final_min_pack_min_(src.final_min_pack_min_),
+	cartmin_(src.cartmin_),
+	min_rings_(src.min_rings_)
 
 {
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
@@ -134,6 +136,9 @@ GlycanTreeRelax::parse_my_tag(
 	if ( tag->hasOption("scorefxn") ) {
 		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
 	}
+	
+	min_rings_ = tag->getOption< core::Real >("min_rings", min_rings_);
+	cartmin_ = tag->getOption< bool >("cartmin", cartmin_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -194,6 +199,8 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool, "Do a refinement instead of a denovo model", "false")
 		+ XMLSchemaAttribute::attribute_w_default("quench_mode", xsct_rosetta_bool, "Do quench mode for each glycan tree?", "false")
 		+ XMLSchemaAttribute::attribute_w_default("final_min_pack_min", xsct_rosetta_bool, "Do a final set of cycles of min/pack", "true")
+		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false")
+		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
 		+ XMLSchemaAttribute::attribute_w_default("glycan_relax_rounds", xsct_non_negative_integer, "Round Number for the internal GlycanRelax.  Default is the default of GlycanRelax.", "25");
 
 
@@ -311,7 +318,8 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	using namespace core::select::residue_selector;
 	using namespace core::kinematics;
 	using namespace core::pack::task;
-
+	using namespace protocols::moves;
+	
 	debug_assert( layer_size_ != window_size_ );
 
 	//Setup everything we need.
@@ -319,19 +327,21 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	// Setup Selectors
 	GlycanResidueSelectorOP glycan_selector = GlycanResidueSelectorOP( new GlycanResidueSelector() );
 	GlycanLayerSelectorOP modeling_layer_selector = GlycanLayerSelectorOP( new GlycanLayerSelector() );
-	GlycanLayerSelectorOP virtual_layer_selector = GlycanLayerSelectorOP( new GlycanLayerSelector() );
+	GlycanLayerSelectorOP virtual_layer_selector =  GlycanLayerSelectorOP( new GlycanLayerSelector() );
 	ReturnResidueSubsetSelectorOP store_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
+	ReturnResidueSubsetSelectorOP store_subset2 =ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
 	ReturnResidueSubsetSelectorOP store_to_de_virt_subset =  ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
-	AndResidueSelectorOP and_selector = AndResidueSelectorOP( new AndResidueSelector() );
+	AndResidueSelectorOP and_selector =      AndResidueSelectorOP( new AndResidueSelector() );
 	AndResidueSelectorOP and_selector_virt = AndResidueSelectorOP( new AndResidueSelector() );
 
 
-
+	Pose starting_pose = pose;
+	
 
 	ResidueSubset starting_subset;
 	//ResidueSubset current_subset;
 
-	if ( selector_ && ! quench_mode_ ) {
+	if ( selector_ ) {
 		starting_subset = selector_->apply( pose );
 
 	} else {
@@ -343,22 +353,29 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	if ( ! scorefxn_ ) {
 		scorefxn_ = get_score_function();
 	}
-
-	core::Real starting_score = scorefxn_->score( pose );
-	TR << "Starting Score: " << starting_score << std::endl;
-
-
+	scorefxn_->score( pose );
+	
+	
 	// Setup GlycanRelax
 	GlycanRelaxMover glycan_relax = GlycanRelaxMover();
 	if ( scorefxn_ ) {
 		glycan_relax.set_scorefunction( scorefxn_ );
 	}
-	glycan_relax.set_refine( refine_ );
-
-	if ( glycan_relax_rounds_ != 0 ) {
+	glycan_relax.set_refine( false );
+	
+	if (! refine_ ){
+		glycan_relax.randomize_glycan_torsions(pose, starting_subset);
+		
+	}
+	
+	//Only override cmd-line settings of GlycanRelax if it is set here.  Otherwise, cmd-line controls do not work.
+	if (glycan_relax_rounds_ != 0){
 		glycan_relax.set_rounds(glycan_relax_rounds_);
 	}
-
+	
+	glycan_relax.use_cartmin( cartmin_ );
+	glycan_relax.set_min_rings( min_rings_ );
+	
 	ConvertRealToVirtualMover real_to_virt = ConvertRealToVirtualMover();
 	ConvertVirtualToRealMover virt_to_real = ConvertVirtualToRealMover();
 
@@ -367,23 +384,26 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	utility::vector1< core::Size > all_trees = pose.glycan_tree_set()->get_start_points();
 	utility::vector1< core::Size > tree_subset;
 
+	
+	core::Size max_end = pose.glycan_tree_set()->get_largest_glycan_tree_layer( starting_subset );
+	TR << "Largest glycan layer: " << max_end << std::endl;
 	//Setup for quench mode
-	if ( quench_mode_ ) {
-		if ( selector_ ) {
-			utility::vector1< bool > tree_subset = selector_->apply( pose );
-			for ( core::Size tree_start : all_trees ) {
-				if ( tree_subset[ tree_start ] ) {
-					tree_subset.push_back( tree_start );
-				}
+	if ( selector_ ) {
+		for ( core::Size tree_start : all_trees ) {
+			if ( starting_subset[ tree_start ] ) {
+				tree_subset.push_back( tree_start );
 			}
-		} else {
-			tree_subset = all_trees;
 		}
-		trees_to_model_ = tree_subset.size();
+	} else {
+		tree_subset = all_trees;
 	}
-
-
-
+	trees_to_model_ = tree_subset.size();
+	
+	core::Real starting_score = scorefxn_->score( pose );
+	TR << "Starting Score: " << starting_score << std::endl;
+	
+	ResidueSubset mask = starting_subset; //All the glycan residues we will be modeling
+	
 	while ( ! is_quenched() ) {
 
 		if ( quench_mode_ ) {
@@ -396,8 +416,21 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 
 			glycan_selector->set_include_root(true);
 			glycan_selector->set_select_from_branch_residue( tree_start );
+			
+			
 			starting_subset = glycan_selector->apply( pose );
-
+			store_subset->set_residue_subset( starting_subset );
+			store_subset2->set_residue_subset( mask );
+			and_selector->clear();
+			
+			and_selector->add_residue_selector( store_subset );
+			and_selector->add_residue_selector( store_subset2 );
+			
+			starting_subset = and_selector->apply( pose ); //Combine the particular Tree and the overall glycan Mask.
+			
+			and_selector->clear();
+			
+			
 			//Remove the tree from the list to model.
 			tree_subset.pop( tree_start );
 
@@ -410,11 +443,6 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 			} else {
 				current_direction = forward;
 			}
-			if ( i > 1 ) {
-
-				///Don't randomize if we already have something.  Just try to make it better.
-				glycan_relax.set_refine( true );
-			}
 
 			switch ( current_direction ) {
 			case forward :
@@ -425,8 +453,16 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 				core::Size current_start = 0;
 				core::Size current_end = layer_size_ - 1;
 
-				core::Size max_end = pose.glycan_tree_set()->get_largest_glycan_tree_layer();
 				TR << "Modeling up to max end: " << max_end << std::endl;
+				
+				if (max_end + 1 <= layer_size_ ){
+					if (! quench_mode_){
+						TR.Error << "Maximum number of layers smaller than the layer size.  Either decrease the layer_size or use GlycanRelax instead.  Layer-based sampling does not make sense here." << std::endl;
+						set_last_move_status(FAIL_DO_NOT_RETRY);
+						pose = starting_pose;
+						return;
+					}
+				}
 				ResidueSubset pre_virtualized( pose.total_residue(), false );
 				ResidueSubset needed_virtualization( pose.total_residue(), false );
 
@@ -457,7 +493,7 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 					///De-virtualize only those residues that were virtualized before and shouldn't still be virtualized.
 					/// This is to make the visualization of the protocol clean.
 					if ( ! first_modeling ) {
-						TR << "De-Virtualizing foliage" << std::endl;
+						TR << "De-Virtualizing current foliage layer" << std::endl;
 						ResidueSubset to_de_virtualize( pose.total_residue(), false );
 						for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 							if ( pre_virtualized[ i ] == true && needed_virtualization[ i ] == false ) {
@@ -469,12 +505,12 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 						virt_to_real.apply( pose );
 					}
 
-					TR << "Virtualizing foliage " << std::endl;
+					TR << "Virtualizing new foliage layer" << std::endl;
 					pre_virtualized = and_selector_virt->apply( pose );
 					real_to_virt.set_residue_selector( and_selector_virt );
 					real_to_virt.apply( pose );
 
-					TR << "Running GlycanRelax on layer: " << current_start << " " << current_end << std::endl;
+					TR << "Running GlycanRelax on layer [ start -> end (including) ]: " << current_start << " " << current_end << std::endl;
 					glycan_relax.set_selector( and_selector );
 					glycan_relax.apply( pose );
 

@@ -128,6 +128,19 @@ GlycanTreeSet::get_largest_glycan_tree_layer() const {
 	return utility::max( layer_sizes );
 }
 
+///@brief Get the largest glycan tree layer (from 0 to N). of the glycan tree starts passed in.
+core::Size
+GlycanTreeSet::get_largest_glycan_tree_layer( utility::vector1< bool > const & subset) const {
+	utility::vector1< core::Size > layer_sizes;
+	for ( core::Size node_residue = 1; node_residue <= subset.size(); ++node_residue  ) {
+		if (subset[ node_residue ]){
+			layer_sizes.push_back( get_node( node_residue )->get_distance_to_start() );
+		}
+	}
+	return utility::max( layer_sizes );
+}
+
+
 bool
 GlycanTreeSet::has_tree(const core::Size glycan_start_position) const {
 	bool result = glycan_tree_set_.count(glycan_start_position) != 0;

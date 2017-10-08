@@ -173,7 +173,10 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-
+	///@brief Randomize all torsions of the subset.  Used to start the protocol.
+	void
+	randomize_glycan_torsions( core::pose::Pose & pose, utility::vector1< bool > const & subset ) const;
+	
 private:
 
 	void
@@ -199,9 +202,7 @@ private:
 	void
 	setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const;
 
-	///@brief Randomize all torsions of the subset.  Used to start the protocol.
-	void
-	randomize_glycan_torsions( core::pose::Pose & pose, utility::vector1< bool > const & subset ) const;
+
 
 
 	//Setup the final WeightedMover from our subsets and movemap.

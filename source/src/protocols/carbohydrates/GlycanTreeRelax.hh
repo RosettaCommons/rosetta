@@ -223,15 +223,18 @@ private: // data
 	core::Size rounds_ = 1;
 	core::Size completed_quenches_ = 0;
 	core::Size trees_to_model_ = 0;
-	core::Size glycan_relax_rounds_ = 0; //Set at zero to indicate being unset.
+	core::Size glycan_relax_rounds_ = 0;
 
 	bool refine_ = false;
 	bool quench_mode_ = false;
 	bool final_min_pack_min_ = true;
-
+	
+	bool cartmin_ = false;
+	bool min_rings_ = false;
+	
 	core::scoring::ScoreFunctionOP scorefxn_ = nullptr;
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
-
+	
 };
 
 std::ostream &

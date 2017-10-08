@@ -8,7 +8,7 @@
 	<FILTERS>
 	</FILTERS>
 	<MOVERS>
-		<GlycanTreeRelax name="tree_relax_default" quench_mode="true" rounds="2" layer_size="2" window_size="1"/>
+		<GlycanTreeRelax name="tree_relax_default" quench_mode="true" rounds="2" layer_size="3" window_size="0"/>
 		<Dssp name="dssp" />
 	</MOVERS>
 	<APPLY_TO_POSE>
