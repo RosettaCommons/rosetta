@@ -267,27 +267,37 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
         if 'master' in branches: branches = set( ['master'] )
 
+        commit = execute('Getting current commit sha1...', 'cd {} && git rev-parse HEAD'.format(rosetta_dir), return_='output')
         if len(branches) != 1:
-            commit = execute('Getting current commit sha1...', 'cd {} && git rev-parse HEAD'.format(rosetta_dir), return_='output')
             state, output = _S_failed_, 'Could not figure out which branch to beautify, commit {} belong to following branches (expecting exactly one origin/<branch> or origin/master to be present):\n{}\nAborting...\n'.format(commit, o)
 
         else:
             branch = branches.pop()
-            output += 'Beautifying branch: {}\n'.format(branch)
+            output += 'Beautifying branch: {} at {} \n'.format(branch, commit)
 
-            execute('Checking out branch...', 'cd {} && git fetch && git update-ref refs/heads/{branch} origin/{branch} && git reset --hard {branch} && git checkout {branch}'.format(rosetta_dir, branch=branch) )
+            output += execute('Checking out branch...', 'cd {} && git fetch && git update-ref refs/heads/{branch} origin/{branch} && git reset --hard {branch} && git checkout {branch}'.format(rosetta_dir, branch=branch), return_='output', add_message_and_command_line_to_output=True)
 
-            res, o = execute('Beautifying...', 'cd {}/source && python ../../tools/python_cc_reader/beautify_changed_files_in_branch.py -j {}'.format(rosetta_dir, jobs), return_='tuple')
+            if branch == 'master': res, o = execute('Beautifying...', 'cd {}/source && python ../../tools/python_cc_reader/beautify_rosetta.py --overwrite -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
+            else: res, o = execute('Beautifying...', 'cd {}/source && python ../../tools/python_cc_reader/beautify_changed_files_in_branch.py -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
+
             if res:
                 state, output = _S_failed_, 'Beautification script failed with output: {}\nAborting...\n'.format(o)
 
             else:
+                output += o
+
                 res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null && git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
 
                 if res:
                     output += execute('Calculating changes...', "cd {} && git diff".format(rosetta_dir), return_='output')
-                    execute('Committing and pushing changes...', "cd {} && git commit -a -m 'beautifying' --author='{user_name} <{user_email}>' && git fetch && git rebase && git push".format(rosetta_dir, branch, user_name=config['user_name'], user_email=config['user_email']), return_='output')
+                    res, o = execute('Committing and pushing changes...', "cd {} && git commit -a -m 'beautifying' --author='{user_name} <{user_email}>' && git fetch && git rebase && git push".format(rosetta_dir, branch, user_name=config['user_name'], user_email=config['user_email']), return_='tuple')
+
+                    output += o
+                    if res: state = _S_failed_
+
                 else: output += '\nBeautification script finished: no beautification required for branch {}!\n'.format(branch)
+
+                output = output.replace( '<{}>'.format(config['user_email']), '<rosetta@university.edu>' )
 
                 state =_S_passed_
 
