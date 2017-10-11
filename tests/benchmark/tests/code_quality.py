@@ -275,7 +275,7 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
             branch = branches.pop()
             output += 'Beautifying branch: {} at {} \n'.format(branch, commit)
 
-            output += execute('Checking out branch...', 'cd {} && git fetch && git update-ref refs/heads/{branch} origin/{branch} && git reset --hard {branch} && git checkout {branch} && git branch --set-upstream-to=origin/{branch}'.format(rosetta_dir, branch=branch), return_='output', add_message_and_command_line_to_output=True)
+            output += execute('Checking out branch...', 'cd {} && git fetch && git update-ref refs/heads/{branch} origin/{branch} && git reset --hard {branch} && git checkout {branch} && git branch --set-upstream-to=origin/{branch} {branch}'.format(rosetta_dir, branch=branch), return_='output', add_message_and_command_line_to_output=True)
 
             if branch == 'master': res, o = execute('Beautifying...', 'cd {}/source && python ../../tools/python_cc_reader/beautify_rosetta.py --overwrite -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
             else: res, o = execute('Beautifying...', 'cd {}/source && python ../../tools/python_cc_reader/beautify_changed_files_in_branch.py -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
