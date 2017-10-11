@@ -21,6 +21,7 @@
 #include <protocols/jd3/JobQueen.hh>
 #include <protocols/jd3/Job.fwd.hh>
 #include <protocols/jd3/JobDigraph.fwd.hh>
+#include <protocols/jd3/JobOutputIndex.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputSource.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterCreator.fwd.hh>
@@ -379,6 +380,23 @@ protected:
 	virtual
 	LarvalJobs
 	next_batch_of_larval_jobs_for_job_node( core::Size job_dag_node_index, core::Size max_njobs );
+
+	/// @brief The derived job queen may assign her own numbering to output Poses if she chooses.
+	///
+	/// @details Just before a job result is written to disk, the %StandardJobQueen asks the derived
+	/// job queen what indices should be used to identify the soon-to-be-output Pose. The default
+	/// behavior is to use the nstruct index for the primary output index, and if there are multiple
+	/// result Poses from a job, to use the result index (as is) for the secondary output index.
+	/// These values will already have been loaded into the output_index before this function is
+	/// called.
+	virtual
+	void
+	assign_output_index(
+		protocols::jd3::LarvalJobCOP larval_job,
+		Size result_index_for_job,
+		Size n_results_for_job,
+		JobOutputIndex & output_index
+	);
 
 	/// @brief If the derived class has deallocation messages that it needs to broadcast to
 	/// remote nodes and then to process on those remote nodes, then the %StanardJobQueen will

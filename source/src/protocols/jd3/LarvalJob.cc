@@ -16,6 +16,7 @@
 
 // Package headers
 #include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/JobOutputIndex.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
@@ -103,10 +104,14 @@ std::string LarvalJob::job_tag() const {
 /// @details The number of leading zeros is determined by the maximum number of jobs for the inner-job
 /// that this job points at.  For 9999  nstruct, there should be 4 digits: 1 + int(log10( 9999 )) = 1 + int( 3.9999 ) = 4
 /// For 10K nstruct, there should be 5 digits; 1 + int( log10( 10K )) = 5
-std::string LarvalJob::nstruct_suffixed_job_tag() const
+
+std::string LarvalJob::job_tag_with_index_suffix( JobOutputIndex const & output_index ) const
 {
 	return inner_job_->job_tag() + "_" +
-		ObjexxFCL::lead_zero_string_of( nstruct_index_, std::max( 4, 1 + int( std::log10( nstruct_max() ))) );
+		ObjexxFCL::lead_zero_string_of( output_index.primary_output_index, std::max( 4, 1 + int( std::log10( output_index.n_primary_outputs ))) ) +
+		( output_index.secondary_output_index == 1 && output_index.n_secondary_outputs == 1 ?
+		"" : "_" + ObjexxFCL::lead_zero_string_of( output_index.secondary_output_index, std::max( 4, 1 + int( std::log10( output_index.n_secondary_outputs ))))) ;
+
 
 }
 

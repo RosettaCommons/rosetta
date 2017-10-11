@@ -19,6 +19,7 @@
 #include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
+#include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/standard/MoverAndPoseJob.hh>
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.hh>
@@ -570,16 +571,23 @@ void StandardJobQueen::completed_job_result(
 			outputter_tag = tag->getTag( "Output" )->getTags()[ 0 ];
 		}
 	}
-	std::pair< core::Size, core::Size > pose_of_total =
-		{ result_index, results_processed_for_job_[ job->job_index() ].n_results };
 
-	outputter->write_output_pose( *job, pose_of_total, *job_options, outputter_tag, *pose_result->pose() );
+	Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
+	JobOutputIndex output_index;
+	output_index.primary_output_index   = job->nstruct_index();
+	output_index.n_primary_outputs      = job->nstruct_max();
+	output_index.secondary_output_index = result_index;
+	output_index.n_secondary_outputs    = n_results_for_job;
+
+	assign_output_index( job, result_index, n_results_for_job, output_index );
+
+	outputter->write_output_pose( *job, output_index, *job_options, outputter_tag, *pose_result->pose() );
 
 	std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters = secondary_outputters_for_job( *inner_job, *job_options );
 	for ( std::list< pose_outputters::SecondaryPoseOutputterOP >::const_iterator
 			iter = secondary_outputters.begin(), iter_end = secondary_outputters.end();
 			iter != iter_end; ++iter ) {
-		(*iter)->write_output_pose( *job, *job_options, *pose_result->pose() );
+		(*iter)->write_output_pose( *job, output_index, *job_options, *pose_result->pose() );
 	}
 
 	note_job_result_output_or_discarded( job, result_index );
@@ -902,6 +910,16 @@ StandardJobQueen::next_batch_of_larval_jobs_for_job_node( core::Size, core::Size
 {
 	return LarvalJobs(); // default ctor to give an empty list
 }
+
+/// @brief No-op implementation -- leave the indices the way they were initialized
+void
+StandardJobQueen::assign_output_index(
+	protocols::jd3::LarvalJobCOP,
+	Size,
+	Size,
+	JobOutputIndex &
+)
+{}
 
 void
 StandardJobQueen::derived_process_deallocation_message(

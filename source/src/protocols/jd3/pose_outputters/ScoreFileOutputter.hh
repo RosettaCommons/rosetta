@@ -63,6 +63,7 @@ public:
 	virtual
 	void write_output_pose(
 		LarvalJob const & job,
+		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const & options,
 		core::pose::Pose const & pose
 	);

@@ -19,6 +19,7 @@
 #include <protocols/jd3/full_model/FullModelInnerLarvalJob.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
+#include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/full_model/MoverAndFullModelJob.hh>
 #include <protocols/jd3/InputSource.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputSource.hh>
@@ -591,14 +592,19 @@ void FullModelJobQueen::completed_job_result( LarvalJobCOP job, core::Size resul
 			outputter_tag = tag->getTag( "Output" )->getTags()[ 0 ];
 		}
 	}
-	std::pair< core::Size, core::Size > pose_of_total =
-		{ result_index, results_processed_for_job_[ job->job_index() ].n_results };
 
-	outputter->write_output_pose( *job, pose_of_total, *job_options, outputter_tag, *pose_result->pose() );
+	Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
+	JobOutputIndex output_index;
+	output_index.primary_output_index   = job->nstruct_index();
+	output_index.n_primary_outputs      = job->nstruct_max();
+	output_index.secondary_output_index = result_index;
+	output_index.n_secondary_outputs    = n_results_for_job;
+
+	outputter->write_output_pose( *job, output_index, *job_options, outputter_tag, *pose_result->pose() );
 
 	std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters = secondary_outputters_for_job( *inner_job, *job_options );
 	for ( auto const & secondary_outputter : secondary_outputters ) {
-		secondary_outputter->write_output_pose( *job, *job_options, *pose_result->pose() );
+		secondary_outputter->write_output_pose( *job, output_index, *job_options, *pose_result->pose() );
 	}
 
 	note_job_result_output_or_discarded( job, result_index );

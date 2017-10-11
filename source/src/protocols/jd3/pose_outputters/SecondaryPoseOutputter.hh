@@ -19,6 +19,7 @@
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh>
 
 //package headers
+#include <protocols/jd3/JobOutputIndex.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
 
@@ -63,6 +64,7 @@ public:
 	virtual
 	void write_output_pose(
 		LarvalJob const & job,
+		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const & options,
 		core::pose::Pose const & pose
 	) = 0;

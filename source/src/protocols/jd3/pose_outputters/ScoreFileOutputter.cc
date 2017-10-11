@@ -62,6 +62,7 @@ ScoreFileOutputter::outputter_specified_by_command_line()
 void
 ScoreFileOutputter::write_output_pose(
 	LarvalJob const & job,
+	JobOutputIndex const & output_index,
 	utility::options::OptionCollection const & options,
 	core::pose::Pose const & pose
 )
@@ -89,7 +90,7 @@ ScoreFileOutputter::write_output_pose(
 	// buffer the score file output and then write out the contents
 	// in "flush," which is called only sporadically
 
-	sfd.write_pose( pose, score_map, job.status_prefix() + job.nstruct_suffixed_job_tag() + job.status_suffix(), string_map );
+	sfd.write_pose( pose, score_map, job.status_prefix() + job.job_tag_with_index_suffix( output_index ) + job.status_suffix(), string_map );
 
 }
 

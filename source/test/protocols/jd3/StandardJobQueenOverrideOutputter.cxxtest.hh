@@ -23,6 +23,7 @@
 #include <protocols/jd3/standard/MoverAndPoseJob.hh>
 #include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
+#include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
@@ -134,13 +135,16 @@ public:
 
 	void write_output_pose(
 		LarvalJob const & job,
-		std::pair< core::Size, core::Size > const &,
+		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const &,
 		utility::tag::TagCOP,
 		core::pose::Pose const & pose
 	) override {
 		using namespace core::pose;
-		outputs[ job.nstruct_suffixed_job_tag() ] = PoseOP( new Pose( pose ) );
+		std::string name = job.job_tag_with_index_suffix( output_index );
+		std::cout << "Saving Pose with name: " << name << " ";
+		std::cout << output_index.secondary_output_index << " " << output_index.n_secondary_outputs << std::endl;
+		outputs[ name ] = PoseOP( new Pose( pose ) );
 	}
 
 	void flush() override {}
@@ -231,6 +235,7 @@ public:
 		JobOP job1 = djq2.mature_larval_job( larval_job1, results );
 		CompletedJobOutput output1 = job1->run();
 		TS_ASSERT_EQUALS( output1.job_results.size(), 1 );
+		djq2.note_job_completed( larval_job1, output1.status, 1 );
 		djq2.completed_job_result( larval_job1, 1, output1.job_results[1].second );
 		PoseOutputterOP outputter = djq2.outputter( larval_job1 );
 		DummyPoseOutputterOP dummy_outputter = utility::pointer::dynamic_pointer_cast< DummyPoseOutputter > ( outputter );
@@ -265,6 +270,7 @@ public:
 			JobOP job = djq2.mature_larval_job( larval_job, results );
 			CompletedJobOutput output = job->run();
 			TS_ASSERT_EQUALS( output.job_results.size(), 1 );
+			djq2.note_job_completed( larval_job, output.status, 1 );
 			djq2.completed_job_result( larval_job, 1, output.job_results[1].second );
 		}
 

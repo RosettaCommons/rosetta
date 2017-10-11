@@ -20,6 +20,7 @@
 // Package headers
 #include <protocols/jd3/CompletedJobOutput.fwd.hh>
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
+#include <protocols/jd3/JobOutputIndex.fwd.hh>
 
 // utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -95,9 +96,9 @@ public:
 	/// XML file.
 	std::string job_tag() const;
 
-	/// @brief The nstruct_suffixed_job_tag is the job_tag followed by the index for the job to
-	/// distinguish it from the other jobs with the same job_tag but a different nstruct index
-	std::string nstruct_suffixed_job_tag() const;
+	/// @brief For output purposes, construct a string for a particular output of this job given
+	/// a JobOutputIndex.
+	std::string job_tag_with_index_suffix( JobOutputIndex const & output_index ) const;
 
 	/// @brief The index used to identify which job this is out of many that have identical inputs
 	/// but different random number seeds (controlled by the command-line flag "nstruct")

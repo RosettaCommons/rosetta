@@ -114,7 +114,7 @@ SilentFilePoseOutputter::class_key() const
 void
 SilentFilePoseOutputter::write_output_pose(
 	LarvalJob const & job,
-	std::pair< core::Size, core::Size > const & pose_ind_of_total,
+	JobOutputIndex const & output_index,
 	utility::options::OptionCollection const & job_options,
 	utility::tag::TagCOP tag, // possibly null-pointing tag pointer
 	core::pose::Pose const & pose
@@ -125,11 +125,7 @@ SilentFilePoseOutputter::write_output_pose(
 	}
 	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose, *opts_ );
 	std::string output_tag = ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
-		+ job.nstruct_suffixed_job_tag();
-	if ( pose_ind_of_total.second != 1 ) {
-		output_tag = output_tag + "_" + ObjexxFCL::lead_zero_string_of( pose_ind_of_total.first,
-			std::max( 4, 1 + int( std::log10( pose_ind_of_total.second ))));
-	}
+		+ job.job_tag_with_index_suffix( output_index );
 
 	ss->fill_struct( pose, output_tag );
 	buffered_structs_.push_back( ss );

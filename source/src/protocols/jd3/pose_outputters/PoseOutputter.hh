@@ -19,6 +19,7 @@
 #include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 
 // Package headers
+#include <protocols/jd3/JobOutputIndex.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
 
@@ -83,7 +84,7 @@ public:
 	virtual
 	void write_output_pose(
 		LarvalJob const & job,
-		std::pair< core::Size, core::Size > const & pose_ind_of_total,
+		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const & options,
 		utility::tag::TagCOP tag, // possibly null-pointing tag pointer
 		core::pose::Pose const & pose

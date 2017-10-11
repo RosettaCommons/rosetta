@@ -61,7 +61,7 @@ public:
 
 	void write_output_pose(
 		LarvalJob const & job,
-		std::pair< core::Size, core::Size > const & pose_ind_of_total,
+		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const & job_options,
 		utility::tag::TagCOP tag, // possibly null-pointing tag pointer
 		core::pose::Pose const & pose
@@ -75,10 +75,19 @@ public:
 	std::string
 	class_key() const override;
 
+	/// @brief Guess on the name of the output PDB using just the LarvalJob -- i.e. in the absence of
+	/// the JobOutputIndex
 	std::string
 	output_pdb_name(
 		LarvalJob const & job,
-		std::pair< core::Size, core::Size > const & pose_ind_of_total,
+		utility::options::OptionCollection const & options,
+		utility::tag::TagCOP tag // possibly null-pointing tag pointer
+	) const;
+
+	std::string
+	output_pdb_name(
+		LarvalJob const & job,
+		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const & options,
 		utility::tag::TagCOP tag // possibly null-pointing tag pointer
 	) const;
