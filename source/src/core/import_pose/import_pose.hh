@@ -437,7 +437,7 @@ setup_jumps( core::pose::Pose const & pose,
 	utility::vector1< core::Size > & jump_partners2,
 	utility::vector1< std::pair< core::Size, core::Size > > & chain_connections,
 	utility::vector1< utility::vector1< core::Size > > const & all_res_in_chain,
-	std::pair< utility::vector1< int >, utility::vector1< char > > const & resnum_and_chain_in_pose );
+	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & resnum_and_chain_and_segid_in_pose );
 
 core::kinematics::FoldTree
 get_tree( core::pose::Pose const & pose,
@@ -538,13 +538,15 @@ setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_re
 void
 get_conventional_chains_and_numbering( utility::vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	utility::vector1< char > & conventional_chains,
-	utility::vector1< int  > & conventional_numbering );
+	utility::vector1< int  > & conventional_numbering,
+	utility::vector1< std::string > & conventional_segids );
 
 utility::vector1< Size >
 get_cutpoints( utility::vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	std::map< Size, std::string > const & non_standard_residue_map,
 	utility::vector1< char > const & conventional_chains,
-	utility::vector1< int  > const & conventional_numbering );
+	utility::vector1< int  > const & conventional_numbering,
+	utility::vector1< std::string > const & conventional_segids );
 
 } // namespace import_pose
 } // namespace core

@@ -26,6 +26,7 @@
 #include <core/types.hh>
 #include <core/pose/rna/BasePair.hh>
 #include <utility/options/OptionCollection.fwd.hh>
+#include <tuple>
 
 namespace protocols {
 namespace rna {
@@ -87,7 +88,7 @@ private:
 
 	utility::vector1< core::pose::PoseOP >
 	get_refine_pose_list( std::string const & input_silent_file,
-		std::pair< utility::vector1< int >, utility::vector1< char > > const & output_res_and_chain,
+		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_res_and_chain_segid,
 		core::chemical::ResidueTypeSetCOP rsd_set ) const;
 
 	utility::vector1< core::Size >
@@ -108,12 +109,13 @@ private:
 	get_seq_and_resnum( std::string const & pdb,
 		std::string & seq,
 		utility::vector1< int > & resnum,
-		utility::vector1< char > & chain ) const;
+		utility::vector1< char > & chain,
+		utility::vector1< std::string > & segid ) const;
 
 	std::string
 	get_silent_seq( std::string const & silent_file ) const;
 
-	std::pair< utility::vector1< int >, utility::vector1< char > >
+	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
 	get_silent_resnum( std::string const & silent_file ) const;
 
 	bool

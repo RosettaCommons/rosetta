@@ -106,8 +106,9 @@ RNA_StubCoordinateEnergy::RNA_StubCoordinateEnergy() :
 	}
 
 	jump_resnum_and_chain_ = option[ denovo::out::output_jump_res ].resnum_and_chain();
-	runtime_assert( jump_resnum_and_chain_.first.size() == 2 );
-	runtime_assert( jump_resnum_and_chain_.second.size() == 2 );
+	runtime_assert( std::get< 0 >( jump_resnum_and_chain_ ).size() == 2 );
+	runtime_assert( std::get< 1 >( jump_resnum_and_chain_ ).size() == 2 );
+	runtime_assert( std::get< 2 >( jump_resnum_and_chain_ ).size() == 2 );
 
 	runtime_assert( option[ denovo::out::target_xyz ]().size() == 3 );
 	utility::vector1< Real > const & xyz = option[ denovo::out::target_xyz ]();
@@ -154,13 +155,13 @@ RNA_StubCoordinateEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction co
 
 	using namespace core::pose::full_model_info;
 	if ( full_model_info_defined( pose ) ) {
-		res1_ = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( jump_resnum_and_chain_.first[1],
-			jump_resnum_and_chain_.second[1] );
-		res2_ = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( jump_resnum_and_chain_.first[2],
-			jump_resnum_and_chain_.second[2] );
+		res1_ = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( std::get< 0 >( jump_resnum_and_chain_ )[1],
+			std::get< 1 >( jump_resnum_and_chain_ )[1], std::get< 2 >( jump_resnum_and_chain_ )[1] );
+		res2_ = const_full_model_info( pose ).full_model_parameters()->conventional_to_full( std::get< 0 >( jump_resnum_and_chain_ )[2],
+			std::get< 1 >( jump_resnum_and_chain_ )[2], std::get< 2 >( jump_resnum_and_chain_ )[2] );
 	} else {
-		res1_ = jump_resnum_and_chain_.first[ 1 ];
-		res2_ = jump_resnum_and_chain_.first[ 2 ];
+		res1_ = std::get< 0 >( jump_resnum_and_chain_ )[ 1 ];
+		res2_ = std::get< 0 >( jump_resnum_and_chain_ )[ 2 ];
 	}
 
 }

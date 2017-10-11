@@ -118,7 +118,7 @@ public:
 		// Sarcin-ricin loop modeling run
 		options->set_rna_params_file("protocols/rna/farna_rebuild.params");
 		options->set_chunk_pdb_files( make_vector1( "protocols/rna/srl_fixed_START1_1q9a_RNA.pdb") );
-		options->set_input_res( utility::vector1< int >( utility::get_resnum_and_chain( "1-2 8-13 18-19" ).first ) );
+		options->set_input_res( utility::vector1< int >( std::get< 0 >( utility::get_resnum_and_chain( "1-2 8-13 18-19" ) ) ) );
 		options->set_nstruct( 3 ); // by making > 1 models we actually test that atom_level_domain_map gets updated from model to model.
 		RNA_DeNovoProtocol rna_de_novo_protocol( options );
 

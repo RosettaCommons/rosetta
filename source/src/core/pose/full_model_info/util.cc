@@ -710,6 +710,21 @@ get_chains_from_pdb_info( pose::Pose const & pose ) {
 	}
 	return chains;
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< std::string >
+get_segids_from_pdb_info( pose::Pose const & pose ) {
+
+	utility::vector1< std::string > chains;
+
+	PDBInfoCOP pdb_info = pose.pdb_info();
+
+	if ( ( pdb_info != 0 ) && !pdb_info->obsolete() ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( pdb_info->segmentID( n ) );
+	} else {
+		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( "    " );
+	}
+	return chains;
+}
 //////////////////////////////////////////////////////////////////////////////////////////
 Size
 get_chain_for_full_model_resnum( Size const & resnum, pose::Pose const & pose ){
@@ -967,12 +982,16 @@ append_virtual_residue_to_full_model_info( pose::Pose & pose )
 	vector1< char > new_conventional_chains( full_model_parameters->conventional_chains() );
 	new_conventional_chains.push_back( ' ' );
 
+	vector1< std::string > new_conventional_segids( full_model_parameters->conventional_segids() );
+	new_conventional_segids.push_back( "    " );
+
 	std::map< Size, std::string > new_non_standard_residue_map( full_model_parameters->non_standard_residue_map() );
 	new_non_standard_residue_map[ new_full_sequence.size() ] = "VRT";
 
 	FullModelParametersOP new_full_model_parameters( new FullModelParameters( new_full_sequence ) );
 	new_full_model_parameters->set_conventional_numbering( new_conventional_numbering );
 	new_full_model_parameters->set_conventional_chains( new_conventional_chains );
+	new_full_model_parameters->set_conventional_segids( new_conventional_segids );
 	new_full_model_parameters->set_non_standard_residue_map( new_non_standard_residue_map );
 	for ( Size n = 1; n < LAST_TYPE; n++ ) {
 		FullModelParameterType type = static_cast< FullModelParameterType >( n );

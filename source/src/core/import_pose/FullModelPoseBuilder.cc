@@ -160,9 +160,9 @@ FullModelPoseBuilder::initialize_further_from_options() {
 	using namespace core::pose;
 	using namespace utility;
 
-	std::pair< vector1< Size >, vector1< char > > const & input_resnum_and_chain = options_[ in::file::input_res ].resnum_and_chain();
+	std::tuple< vector1< Size >, vector1< char >, vector1< std::string > > const & input_resnum_and_chain_and_segid = options_[ in::file::input_res ].resnum_and_chain();
 
-	set_input_resnum_and_chain( input_resnum_and_chain );
+	set_input_resnum_and_chain_and_segid( input_resnum_and_chain_and_segid );
 	set_cutpoint_open_in_full_model( options_[ full_model::cutpoint_open ]() );
 
 
@@ -205,24 +205,28 @@ FullModelPoseBuilder::initialize_further_from_options() {
 
 PoseOP FullModelPoseBuilder::build() { // can't be const because it can change input_poses_
 
-	vector1< Size > const & input_res_list = input_resnum_and_chain_.first;
+	vector1< Size > const & input_res_list = std::get< 0 >( input_resnum_and_chain_and_segid_ );
 	if ( input_res_list.size() ) {
-		vector1< char > input_chain_list = input_resnum_and_chain_.second;
+		vector1< char > const & input_chain_list = std::get< 1 >( input_resnum_and_chain_and_segid_ );
+		vector1< std::string > const & input_segid_list = std::get< 2 >( input_resnum_and_chain_and_segid_ );
 		Size input_res_count = 0;
 		for ( Size n = 1; n <= input_poses_.size(); n++ ) {
 			Pose & pose = *input_poses_[ n ];
 			PDBInfoOP pdb_info( new PDBInfo( pose ) );
 			vector1< Size > input_res_for_pose;
 			vector1< char > input_chain_for_pose;
+			vector1< std::string> input_segid_for_pose;
 			for ( Size k = 1; k <= pose.size(); k++ ) {
 				input_res_count++;
 				runtime_assert( input_res_count <= input_res_list.size() );
 				Size const & number_in_full_model = input_res_list[ input_res_count ];
 				input_res_for_pose.push_back( number_in_full_model );
 				input_chain_for_pose.push_back( input_chain_list[ input_res_count ] );
+				input_segid_for_pose.push_back( input_segid_list[ input_res_count ] );
 			}
 			pdb_info->set_numbering( input_res_for_pose );
 			pdb_info->set_chains(    input_chain_for_pose );
+			pdb_info->set_segment_ids(    input_segid_for_pose );
 			pose.pdb_info( pdb_info );
 		}
 		runtime_assert( input_res_count == input_res_list.size() );
@@ -298,9 +302,10 @@ FullModelPoseBuilder::fill_full_model_info( vector1< Pose * > & pose_pointers ) 
 	// calebgeniesse: override preferred_root_res if mapfile provided via cmd-line (hacky)
 	if ( options_[ edensity::mapfile ].user() ) {
 		preferred_root_res_ = full_model_parameters_->conventional_to_full(
-			std::make_pair(
+			std::make_tuple(
 			utility::tools::make_vector1< int >(1),
-			utility::tools::make_vector1< char >('z')
+			utility::tools::make_vector1< char >('z'),
+			utility::tools::make_vector1< std::string >("    ")
 			)
 		);
 	}
@@ -312,7 +317,7 @@ FullModelPoseBuilder::fill_full_model_info( vector1< Pose * > & pose_pointers ) 
 	vector1< Size > input_domain_map( desired_nres, 0 );
 	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 		Pose & pose = *pose_pointers[n];
-		vector1< Size > res_list = full_model_parameters_->conventional_to_full( make_pair( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ) ) );
+		vector1< Size > res_list = full_model_parameters_->conventional_to_full( make_tuple( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ), get_segids_from_pdb_info( pose ) ) );
 		reorder_pose( pose, res_list );
 		pose_res_lists.push_back( res_list );
 		for ( Size k = 1; k <= pose.size(); k++ ) {

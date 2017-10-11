@@ -110,7 +110,7 @@ public:
 		TS_ASSERT(  pose.residue_type(4).has_variant_type( CUTPOINT_LOWER ) );
 		TS_ASSERT(  pose.residue_type(5).has_variant_type( CUTPOINT_UPPER ) );
 		TS_ASSERT( !pose.residue_type(5).has_variant_type( CUTPOINT_LOWER ) );
-		TS_ASSERT( const_full_model_info( pose ).res_list() == utility::vector1< Size >( utility::get_resnum_and_chain( "1-2 8-13 18-19" ).first ) );
+		TS_ASSERT( const_full_model_info( pose ).res_list() == utility::vector1< Size >( std::get< 0 >( utility::get_resnum_and_chain( "1-2 8-13 18-19" ) ) ) );
 
 		Pose start_pose = pose;
 		{

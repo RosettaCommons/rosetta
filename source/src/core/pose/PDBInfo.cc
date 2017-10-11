@@ -572,13 +572,15 @@ std::string
 PDBInfo::short_desc() const {
 	utility::vector1< int > res_vector;
 	utility::vector1< char > chain_vector;
+	utility::vector1< std::string > segid_vector;
 
 	for ( core::Size ii(1); ii <= nres(); ++ii ) {
 		res_vector.push_back( number(ii) );
 		chain_vector.push_back( chain(ii) );
+		segid_vector.push_back( segmentID(ii) );
 	}
 
-	return utility::make_tag_with_dashes( res_vector, chain_vector );
+	return utility::make_tag_with_dashes( res_vector, chain_vector, segid_vector );
 }
 
 

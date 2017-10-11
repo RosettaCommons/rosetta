@@ -37,12 +37,12 @@ using std::stringstream;
 //static THREAD_LOCAL basic::Tracer TR("StringUtil");
 
 class StringUtilTests : public CxxTest::TestSuite {
- public:
+public:
 
 	// duplicated implementation in FileName... now it's just an alias for utility::basename
 	void test_file_basename() {
 		TS_ASSERT_EQUALS(utility::file_basename("core/scoring/ScoreFunction.cc"),
-						 "ScoreFunction.cc");
+			"ScoreFunction.cc");
 	}
 
 	void test_filename() {
@@ -79,17 +79,27 @@ class StringUtilTests : public CxxTest::TestSuite {
 	void test_reschain_to_string() {
 		utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, -3, 1, 2, 3, 1, 2);
 		utility::vector1< char > chain_vector = utility::tools::make_vector1( 'A','A','A','A','A','A',' ','B' );
-		std::string tag = make_tag_with_dashes( res_vector, chain_vector );
+		utility::vector1< std::string > segid_vector = utility::tools::make_vector1( "    ", "    ", "    ", "    ", "    ", "    ", "    ", "    " );
+		std::string tag = make_tag_with_dashes( res_vector, chain_vector, segid_vector );
 		TS_ASSERT_EQUALS( tag, "A:-5--3 A:1-3 1 B:2" );
+	}
+
+	void test_reschainseg_to_string() {
+		utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, -3, 1, 2, 3, 1, 2);
+		utility::vector1< char > chain_vector = utility::tools::make_vector1( 'A','A','A','A','A','A',' ','B' );
+		utility::vector1< std::string > segid_vector = utility::tools::make_vector1( " CA ", " CA ", " CA ", " CB ", " CB ", " CB ", "    ", "    " );
+		std::string tag = make_tag_with_dashes( res_vector, chain_vector, segid_vector );
+		TS_ASSERT_EQUALS( tag, "A:CA:-5--3 A:CB:1-3 1 B:2" );
 	}
 
 	void run_test_of_get_resnum_and_chain( std::string const & tag ) {
 		bool ok;
-		std::pair< std::vector<int>, std::vector<char> > resnum_chain = utility::get_resnum_and_chain( tag, ok );
+		std::tuple< std::vector<int>, std::vector<char>, std::vector<std::string> > resnum_chain = utility::get_resnum_and_chain_and_segid( tag, ok );
 
 		TS_ASSERT( ok );
-		utility::vector1<int>  resnum( resnum_chain.first );
-		utility::vector1<char> chains( resnum_chain.second );
+		utility::vector1<int>         resnum( std::get<0>(resnum_chain) );
+		utility::vector1<char>        chains( std::get<1>(resnum_chain) );
+		utility::vector1<std::string> segids( std::get<2>(resnum_chain) );
 		TS_ASSERT_EQUALS( resnum.size(), 8 );
 		TS_ASSERT_EQUALS( resnum[1], -5 );
 		TS_ASSERT_EQUALS( resnum[2], -4 );
@@ -109,12 +119,18 @@ class StringUtilTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS( chains[6], 'A' );
 		TS_ASSERT_EQUALS( chains[7], ' ' );
 		TS_ASSERT_EQUALS( chains[8], 'B' );
+
+		TS_ASSERT_EQUALS( segids.size(), 8 );
+		for ( auto const & segid : segids ) {
+			TS_ASSERT_EQUALS( segid, "    " );
+		}
 	}
 
+	// AMW: Remember to write an analogous test for translating where segids are non "    "
 	void test_string_to_reschain() {
 		std::string tag( "hello world" );
 		bool ok;
-		utility::get_resnum_and_chain( tag, ok );
+		utility::get_resnum_and_chain_and_segid( tag, ok );
 		TS_ASSERT( !ok );
 
 		tag = "A:-5--3 A:1-3 1 B:2";
@@ -128,9 +144,9 @@ class StringUtilTests : public CxxTest::TestSuite {
 	void test_make_segtag() {
 		utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, 2, 3, 0, 0, 1, 2);
 		utility::vector1< std::string > segid_vector = utility::tools::make_vector1( "    ","    ",
-																																								 "   A","   A",
-																																								 "X   ","Y   ",
-																																								 "BLAH","BLAH" );
+			"   A","   A",
+			"X   ","Y   ",
+			"BLAH","BLAH" );
 		std::string tag = make_segtag_with_dashes( res_vector, segid_vector );
 		// comma delimiters would be easier to see...
 		TS_ASSERT_EQUALS( tag, "    :-5--4    A:2-3 X   :0 Y   :0 BLAH:1-2" );

@@ -96,7 +96,9 @@ mg_modeler_test()
 
 		// mg_res usually is alist of all mg(2+) in one pose. But if there are multiple poses, assume a single res specified
 		// for each -- makes benchmark code easy.
-		vector1< Size > pdb_mg_res( input_pdb_mg_res );
+		// AMW: This has to be a vector1< int > -- that's what the intended version of pdb_to_pose requires (for negative resnum!)
+		// and we can't use Size because the implicit conversion to either the tuple or vector1< int > overload is possible.
+		vector1< int > pdb_mg_res( input_pdb_mg_res );
 		if ( input_pdb_files.size() > 0 && pdb_mg_res.size() > 0 ) {
 			runtime_assert( input_pdb_files.size() == input_pdb_mg_res.size() );
 			pdb_mg_res = utility::tools::make_vector1( input_pdb_mg_res[ q ] );

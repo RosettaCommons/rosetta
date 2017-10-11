@@ -3461,11 +3461,11 @@ utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, utility::vector1<
 }
 
 /// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
-utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, std::pair< utility::vector1< int >, utility::vector1<char> > const & pdb_res ){
+utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, std::tuple< utility::vector1< int >, utility::vector1<char>, utility::vector1<std::string> > const & pdb_res ){
 	utility::vector1< Size > pose_res;
-	runtime_assert( pdb_res.first.size() == pdb_res.second.size() );
-	for ( Size n = 1; n <= pdb_res.first.size(); n++ ) {
-		pose_res.push_back( pdb_to_pose( pose, pdb_res.first[ n ], pdb_res.second[ n ] ) );
+	runtime_assert( std::get<0>( pdb_res ).size() == std::get<1>( pdb_res ).size() );
+	for ( Size n = 1; n <= std::get<0>( pdb_res ).size(); n++ ) {
+		pose_res.push_back( pdb_to_pose( pose, std::get<0>( pdb_res )[ n ], std::get<1>( pdb_res )[ n ] ) );
 	}
 	return pose_res;
 }

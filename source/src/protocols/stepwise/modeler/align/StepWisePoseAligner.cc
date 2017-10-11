@@ -260,11 +260,12 @@ StepWisePoseAligner::get_res_list_in_reference( pose::Pose const & pose ) const 
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 
 		bool found_it( false );
-		std::pair< int, char > const resnum_and_chain = full_model_parameters.full_to_conventional_resnum_and_chain( res_list[ n ] );
-		Size const resnum( resnum_and_chain.first );
-		Size const chain( resnum_and_chain.second );
-		if ( reference_full_model_parameters.has_conventional_residue( resnum, chain ) ) {
-			Size const reference_resnum = reference_full_model_parameters.conventional_to_full( resnum, chain );
+		std::tuple< int, char, std::string > const resnum_and_chain = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( res_list[ n ] );
+		Size const resnum( std::get< 0 >( resnum_and_chain ) );
+		char const chain( std::get< 1 >( resnum_and_chain ) );
+		std::string const & segid( std::get< 2 >( resnum_and_chain ) );
+		if ( reference_full_model_parameters.has_conventional_residue( resnum, chain, segid ) ) {
+			Size const reference_resnum = reference_full_model_parameters.conventional_to_full( resnum, chain, segid );
 			if ( reference_pose_res_list.has_value( reference_resnum ) ) {
 				found_it = true;
 				res_list_in_reference.push_back( reference_pose_res_list.index( reference_resnum ) );

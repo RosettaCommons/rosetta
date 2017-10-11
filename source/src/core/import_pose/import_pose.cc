@@ -82,6 +82,9 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <cifparse/CifFile.h>
 #include <cifparse/CifParserBase.h>
+
+#include <tuple>
+
 typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
 typedef utility::pointer::shared_ptr< CifParser > CifParserOP;
 
@@ -933,15 +936,17 @@ get_sequence_information(
 
 	FullModelParametersOP full_model_parameters( new FullModelParameters( desired_sequence ) );
 	vector1< char > conventional_chains;
+	vector1< std::string > conventional_segids;
 	vector1< int  > conventional_numbering;
-	get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering );
+	get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering, conventional_segids );
 
 	full_model_parameters->set_conventional_numbering( conventional_numbering );
+	full_model_parameters->set_conventional_segids( conventional_segids );
 	full_model_parameters->set_conventional_chains( conventional_chains );
 
 	full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 	cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences, non_standard_residue_map,
-		conventional_chains, conventional_numbering );
+		conventional_chains, conventional_numbering, conventional_segids );
 	return full_model_parameters;
 }
 
@@ -962,6 +967,7 @@ setup_for_density_scoring( core::pose::Pose & pose ) {
 vector1< Size >
 get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	vector1< char > const & conventional_chains,
+	vector1< std::string > const & conventional_segids,
 	vector1< int  > const & conventional_numbering ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -980,6 +986,8 @@ get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fas
 	for ( Size k = 1; k < ntot; k++ ) {
 		if ( cutpoints.has_value( k ) ) continue;
 		if ( conventional_chains[ k ] != conventional_chains[ k+1 ] ) {
+			cutpoints.push_back( k );
+		} else if ( conventional_segids[ k ] != conventional_segids[ k+1 ] ) {
 			cutpoints.push_back( k );
 		} else { // break within chain.
 			if ( conventional_numbering[ k+1 ] > conventional_numbering[ k ] + 1  ) {
@@ -1017,8 +1025,9 @@ vector1< Size >
 get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	std::map< Size, std::string > const & non_standard_residue_map,
 	vector1< char > const & conventional_chains,
-	vector1< int  > const & conventional_numbering ) {
-	vector1< Size > cutpoints = get_cutpoints_from_numbering( fasta_sequences, conventional_chains, conventional_numbering );
+	vector1< int  > const & conventional_numbering,
+	vector1< std::string > const & conventional_segids ) {
+	vector1< Size > cutpoints = get_cutpoints_from_numbering( fasta_sequences, conventional_chains, conventional_segids, conventional_numbering );
 	get_extra_cutpoints_from_names( conventional_numbering.size(), cutpoints, non_standard_residue_map );
 	return cutpoints;
 }
@@ -1030,25 +1039,28 @@ get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 void
 get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	vector1< char > & conventional_chains,
-	vector1< int  > & conventional_numbering ) {
+	vector1< int > & conventional_numbering,
+	vector1< std::string > & conventional_segids ) {
 	using utility::string_split;
 	bool found_info_in_previous_sequence( false );
 	Size count( 0 );
 	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
 		utility::vector1< char > chains;
 		vector1< int > resnum;
+		vector1< std::string > segids;
 		bool found_info( false );
 		std::string tag;
 		std::stringstream ss( fasta_sequences[n]->id() );
 		while ( ss.good() ) {
 			ss >> tag;
 			bool string_is_ok( false );
-			pair< std::vector< int >, std::vector< char > > resnum_and_chain = utility::get_resnum_and_chain( tag, string_is_ok );
+			std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > > resnum_and_chain_and_segid = utility::get_resnum_and_chain_and_segid( tag, string_is_ok );
 			if ( !string_is_ok ) continue;
-			for ( Size n = 0; n < resnum_and_chain.first.size(); n++ ) {
-				if ( resnum_and_chain.second[n] == ' ' ) continue; // there better be a chain. accept "A:1" but not just "1"
-				resnum.push_back( resnum_and_chain.first[n] );
-				chains.push_back( resnum_and_chain.second[n] );
+			for ( Size n = 0; n < std::get< 0 >( resnum_and_chain_and_segid ).size(); n++ ) {
+				if ( std::get< 1 >( resnum_and_chain_and_segid )[n] == ' ' ) continue; // there better be a chain. accept "A:1" but not just "1"
+				resnum.push_back( std::get< 0 >( resnum_and_chain_and_segid )[n] );
+				chains.push_back( std::get< 1 >( resnum_and_chain_and_segid )[n] );
+				segids.push_back( std::get< 2 >( resnum_and_chain_and_segid )[n] );
 			}
 			found_info = true;
 		}
@@ -1060,12 +1072,14 @@ get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > co
 			for ( Size q = 1; q <= clean_len; ++q ) {
 				resnum.push_back( ++count );
 				chains.push_back( ' ' ); // unknown chain
+				segids.push_back( "    " ); // unknown chain
 			}
 		}
 		std::string const sequence = fasta_sequences[n]->sequence();
 		runtime_assert( clean_len == resnum.size() ); //sequence.size() == resnum.size() );
 		for ( Size q = 1; q <= clean_len; q++ ) conventional_chains.push_back( chains[ q ] );
 		for ( Size q = 1; q <= clean_len; q++ ) conventional_numbering.push_back( resnum[q] );
+		for ( Size q = 1; q <= clean_len; q++ ) conventional_segids.push_back( segids[q] );
 
 		found_info_in_previous_sequence  = found_info;
 	}
@@ -1267,7 +1281,7 @@ update_pose_fold_tree( pose::Pose & pose,
 	runtime_assert( jump_partners1.size() < nchains );
 
 	// needed to determine preferences for chain connections
-	pair< vector1< int >, vector1< char > > const resnum_and_chain_in_pose = full_model_parameters.full_to_conventional_resnum_and_chain( res_list );
+	std::tuple< vector1< int >, vector1< char >, vector1< std::string > > const resnum_and_chain_in_pose = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( res_list );
 
 	// choose fixed_res as jump partners first.
 	setup_jumps( pose, jump_partners1, jump_partners2, chain_connections, all_fixed_res_in_chain, resnum_and_chain_in_pose );
@@ -1349,7 +1363,7 @@ setup_jumps( core::pose::Pose const & pose,
 	vector1< Size > & jump_partners2,
 	vector1< pair< Size, Size > > & chain_connections,
 	vector1< vector1< Size > > const & all_res_in_chain,
-	pair< vector1< int >, vector1< char > > const & resnum_and_chain_in_pose ) {
+	std::tuple< vector1< int >, vector1< char >, vector1< std::string > > const & resnum_and_chain_and_segid_in_pose ) {
 
 	using namespace std;
 
@@ -1365,8 +1379,9 @@ setup_jumps( core::pose::Pose const & pose,
 	//
 	// For jump connection residues, prefer residues that have the most contacts.
 	//
-	vector1< int  > const & conventional_numbering_in_pose = resnum_and_chain_in_pose.first;
-	vector1< char > const & conventional_chains_in_pose = resnum_and_chain_in_pose.second;
+	vector1< int  > const & conventional_numbering_in_pose = std::get< 0 >( resnum_and_chain_and_segid_in_pose );
+	vector1< char > const & conventional_chains_in_pose = std::get< 1 >( resnum_and_chain_and_segid_in_pose );
+	vector1< std::string > const & conventional_segids_in_pose = std::get< 2 >( resnum_and_chain_and_segid_in_pose );
 
 	// Data structure set up for sorting...
 	//
@@ -1424,7 +1439,8 @@ setup_jumps( core::pose::Pose const & pose,
 			Size sequence_separation( max_seq_separation );
 			Size const chain_i_end   = fixed_res_in_chain_i[ fixed_res_in_chain_i.size() ];
 			Size const chain_j_begin = fixed_res_in_chain_j[ 1 ];
-			if ( conventional_chains_in_pose[ chain_i_end ] == conventional_chains_in_pose[ chain_j_begin ] ) {
+			if ( conventional_chains_in_pose[ chain_i_end ] == conventional_chains_in_pose[ chain_j_begin ]
+					&& conventional_segids_in_pose[ chain_i_end ] == conventional_segids_in_pose[ chain_j_begin ] ) {
 				//runtime_assert( conventional_numbering_in_pose[ chain_j_begin ] > conventional_numbering_in_pose[ chain_i_end ] );
 				sequence_separation = std::abs( conventional_numbering_in_pose[ chain_j_begin ] - conventional_numbering_in_pose[ chain_i_end ] );
 			}

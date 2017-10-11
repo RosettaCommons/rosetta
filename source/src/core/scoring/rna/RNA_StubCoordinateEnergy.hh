@@ -26,6 +26,7 @@
 #include <core/pose/rna/StubStubType.fwd.hh>
 
 #include <numeric/xyzVector.hh>
+#include <tuple>
 
 namespace core {
 namespace scoring {
@@ -99,7 +100,7 @@ public:
 private:
 
 	mutable Size res1_, res2_;
-	std::pair< utility::vector1<int>, utility::vector1<char> > jump_resnum_and_chain_;
+	std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1< std::string > > jump_resnum_and_chain_;
 	Vector target_xyz_in_takeoff_frame_;
 	scoring::func::FuncOP func_;
 	pose::rna::StubStubType stub_stub_type_;

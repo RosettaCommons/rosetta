@@ -1083,7 +1083,7 @@ SilentStruct::full_model_info_into_pose( pose::Pose & pose ) const {
 
 	FullModelInfoOP full_model_info( new FullModelInfo( full_model_parameters_ ) );
 	if ( residue_numbers_.size() > 0 ) {
-		full_model_info->set_res_list( full_model_parameters_->conventional_to_full( std::make_pair( residue_numbers_, chains_ ) ) );
+		full_model_info->set_res_list( full_model_parameters_->conventional_to_full( std::make_tuple( residue_numbers_, chains_, segment_IDs_ ) ) );
 	} else {
 		utility::vector1< Size > res_list;
 		for ( Size n = 1; n <= pose.size(); n++ ) res_list.push_back( n );
@@ -1117,7 +1117,7 @@ SilentStruct::print_residue_numbers( std::ostream & out ) const {
 		//  utility_exit_with_message( "Problem with residue_numbers in silent_struct!" );
 	}
 
-	out << "RES_NUM " << make_tag_with_dashes( residue_numbers_, chains_ ) <<  " " << decoy_tag() << std::endl;
+	out << "RES_NUM " << make_tag_with_dashes( residue_numbers_, chains_, segment_IDs_ ) <<  " " << decoy_tag() << std::endl;
 
 	if ( segment_IDs_.size() == 0 ) return;
 
@@ -1136,9 +1136,11 @@ void
 SilentStruct::figure_out_residue_numbers_from_line( std::istream & line_stream ) {
 	utility::vector1< int > residue_numbers;
 	utility::vector1< char > chains;
-	core::io::silent::figure_out_residue_numbers_from_line( line_stream, residue_numbers, chains );
+	utility::vector1< std::string > segids;
+	core::io::silent::figure_out_residue_numbers_from_line( line_stream, residue_numbers, chains, segids );
 	set_residue_numbers( residue_numbers );
 	set_chains( chains );
+	set_segment_IDs( segids );
 }
 
 void

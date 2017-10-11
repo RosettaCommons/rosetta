@@ -589,10 +589,10 @@ public:
 		TS_ASSERT( local_options[ rcv1 ].user() );
 		utility::vector1< int > rcv1_expected( 1, 1 );
 		TS_ASSERT( local_options[ rcv1 ]() == rcv1_expected );
-		std::pair< utility::vector1<int>, utility::vector1<char> > rcv1_resnum_and_chain = local_options[ rcv1 ].resnum_and_chain();
+		std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1< std::string > > rcv1_resnum_and_chain = local_options[ rcv1 ].resnum_and_chain();
 		utility::vector1< char > rcv1_expected_chain( 1, 'A' );
-		TS_ASSERT_EQUALS( rcv1_resnum_and_chain.first,  rcv1_expected );
-		TS_ASSERT_EQUALS( rcv1_resnum_and_chain.second, rcv1_expected_chain );
+		TS_ASSERT_EQUALS( std::get<0>( rcv1_resnum_and_chain ), rcv1_expected );
+		TS_ASSERT_EQUALS( std::get<1>( rcv1_resnum_and_chain ), rcv1_expected_chain );
 
 		TS_ASSERT( local_options.has( rcv2 ));
 		TS_ASSERT( local_options[ rcv2 ].active() );
@@ -609,11 +609,11 @@ public:
 		rcv2_expected[  9 ] = 14;
 		rcv2_expected[ 10 ] = 15;
 		TS_ASSERT( local_options[ rcv2 ]() == rcv2_expected );
-		std::pair< utility::vector1<int>, utility::vector1<char> > rcv2_resnum_and_chain = local_options[ rcv2 ].resnum_and_chain();
+		std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1< std::string > > rcv2_resnum_and_chain = local_options[ rcv2 ].resnum_and_chain();
 		utility::vector1< char > rcv2_expected_chain( 10 );
 		for ( int ii = 1; ii <= 10; ++ii ) rcv2_expected_chain[ ii ] = ii <= 5 ? 'A' : 'B';
-		TS_ASSERT_EQUALS( rcv2_resnum_and_chain.first,  rcv2_expected );
-		TS_ASSERT_EQUALS( rcv2_resnum_and_chain.second, rcv2_expected_chain );
+		TS_ASSERT_EQUALS( std::get<0>( rcv2_resnum_and_chain ), rcv2_expected );
+		TS_ASSERT_EQUALS( std::get<1>( rcv2_resnum_and_chain ), rcv2_expected_chain );
 
 		TS_ASSERT( local_options.has( rcv3 ));
 		TS_ASSERT( local_options[ rcv3 ].active() );

@@ -629,8 +629,10 @@ std::string
 make_tag_with_dashes( utility::vector1< int > res_vector,
 	char const delimiter /* = ' ' */){
 	utility::vector1< char > chains;
+	utility::vector1< std::string > segids;
 	for ( platform::Size n = 0; n < res_vector.size(); n++ ) chains.push_back( ' ' );
-	return make_tag_with_dashes( res_vector, chains, delimiter );
+	for ( platform::Size n = 0; n < res_vector.size(); n++ ) segids.push_back( "    " );
+	return make_tag_with_dashes( res_vector, chains, segids, delimiter );
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -640,6 +642,7 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 std::string
 make_tag_with_dashes( utility::vector1< int > res_vector,
 	utility::vector1< char > chain_vector,
+	utility::vector1< std::string > segid_vector,
 	char const delimiter /* = ' ' */){
 
 	using namespace ObjexxFCL;
@@ -650,20 +653,25 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 
 	int start_segment = res_vector[1];
 	int last_res = res_vector[1];
-	int last_chain = chain_vector[1];
+	char last_chain = chain_vector[1];
+	std::string last_segid = segid_vector.empty() ? "    " : segid_vector[1];
 	utility::vector1< std::pair<int,int> > res_vector_segments;
 	utility::vector1< char > chains_for_segments;
+	utility::vector1< std::string > segids_for_segments;
 	for ( platform::Size n = 2; n<= res_vector.size(); n++ ) {
 		if ( res_vector[n] != last_res+1  || chain_vector[n] != last_chain ) {
 			res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
 			chains_for_segments.push_back( last_chain );
+			segids_for_segments.push_back( last_segid );
 			start_segment = res_vector[n];
 		}
 		last_res = res_vector[n];
 		last_chain = chain_vector[n];
+		last_segid = segid_vector.empty() ? "    " : segid_vector[n];
 	}
 	res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
 	chains_for_segments.push_back( last_chain );
+	segids_for_segments.push_back( last_segid );
 
 	for ( platform::Size n = 1; n <= res_vector_segments.size(); n++ ) {
 		if ( n > 1 ) tag += delimiter;
@@ -671,6 +679,7 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 		if ( chains_for_segments[n] != '\0' &&
 				chains_for_segments[n] != ' '  &&
 				chains_for_segments[n] != '_' ) tag += std::string(1,chains_for_segments[n]) + ":";
+		if ( segids_for_segments[n] != "    " ) tag += strip(segids_for_segments[n]) + ":";
 		if ( segment.first == segment.second ) {
 			tag += string_of( segment.first );
 		} else {
@@ -747,26 +756,30 @@ make_tag( utility::vector1< int > res_vector ){
 //
 //  #detailed  several kinds of tags are OK, including "A:1-5 B:20-22" and "A1-5 B20,21,22".
 //
-std::pair< std::vector< int >, std::vector< char > >
-get_resnum_and_chain( std::string const & s, bool & string_is_ok ){
+std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > >
+get_resnum_and_chain_and_segid( std::string const & s, bool & string_is_ok ){
 
 	string_is_ok = true;
 	std::vector< int  > resnum;
 	std::vector< char > chain;
+	std::vector< std::string > segid;
 
 	std::string s_nocommas = replace_in( s, ",", " " ); // order of operations issue?
 	utility::vector1< std::string > const tags = utility::string_split( s_nocommas );
 	for ( platform::Size n = 1; n <= tags.size(); n++ ) {
-		string_is_ok = get_resnum_and_chain_from_one_tag( tags[n], resnum, chain );
+		string_is_ok = get_resnum_and_chain_from_one_tag( tags[n], resnum, chain, segid );
 		if ( !string_is_ok ) break;
 	}
-	return std::make_pair( resnum,chain );
+	return std::make_tuple( resnum,chain,segid );
 }
 
-std::pair< std::vector< int >, std::vector< char > >
+/// @brief for those who have a legacy interface that can't touch segids.
+std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > >
 get_resnum_and_chain( std::string const & s ){
 	bool string_is_ok;
-	return get_resnum_and_chain( s, string_is_ok );
+	//auto tuple = get_resnum_and_chain_and_segid( s, string_is_ok );
+	//return std::make_pair( std::get<0>( tuple ), std::get<1>( tuple ) );
+	return get_resnum_and_chain_and_segid( s, string_is_ok );
 }
 
 std::pair< std::vector< int >, std::vector< std::string > >
@@ -815,37 +828,64 @@ get_resnum_and_segid( std::string const & s, bool & string_is_ok ){
 bool
 get_resnum_and_chain_from_one_tag( std::string const & tag,
 	std::vector< int > & resnum,
-	std::vector< char > & chains ){
+	std::vector< char > & chains,
+	std::vector< std::string > & segids ){
 	bool string_is_ok( false );
 	std::vector< int > resnum_from_tag;
 	char chain( ' ' );
+	std::string segid = "    ";
 	std::string const numerical("-0123456789");
 
 	if ( tag.size() == 0 ) return true;
 
-	size_t found_colon = tag.find( ":" );
-	if ( found_colon == std::string::npos ) {
-		if ( numerical.find( tag[0] ) == std::string::npos ) { // looks like a chain character at beginning
-			chain= tag[0];
-			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
-		} else {
-			resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
+	// QUIET ASSUMPTION HERE: chains cannot be numbers; this allows you to support 'resnum-only notation'
+
+	/// UNIT TEST THIS SHIT.
+
+	// There can be one or two colons.
+	size_t colon_count = std::count( tag.begin(), tag.end(), ':' );
+	if ( colon_count == 2 ) {
+		// OK: first part is chain; second part is segid; final part is resnum.
+		// First part will be one character; second part may be 1-4.
+		chain = tag[0];
+		size_t second = tag.substr(2).find(':');
+		segid = tag.substr( 2,second );
+		if ( segid.size() == 1 ) {
+			segid = segid + "   ";
+		} else if ( segid.size() == 2 ) {
+			segid = segid + "  ";
+		} if ( segid.size() == 3 ) {
+			segid = segid + " ";
 		}
+		//std::cout << " about to ints of " << tag.substr(second+3) << std::endl;
+		resnum_from_tag = ObjexxFCL::ints_of( tag.substr(second+3), string_is_ok );
+		//std::cout << " ayy resnum " << resnum_from_tag << " chain \'" << chain << "\' segid \"" << segid << "\"" << std::endl;
 	} else {
-		if ( found_colon == 0 ) {
-			chain = ' ';
-			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
-		} else if ( found_colon == 1 ) {
-			chain = tag[0];
-			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(2), string_is_ok );
+		size_t found_colon = tag.find( ":" );
+		if ( found_colon == std::string::npos ) {
+			if ( numerical.find( tag[0] ) == std::string::npos ) { // looks like a chain character at beginning
+				chain = tag[0];
+				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
+			} else {
+				resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
+			}
 		} else {
-			return false;
+			if ( found_colon == 0 ) {
+				chain = ' ';
+				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
+			} else if ( found_colon == 1 ) {
+				chain = tag[0];
+				resnum_from_tag = ObjexxFCL::ints_of( tag.substr(2), string_is_ok );
+			} else {
+				return false;
+			}
 		}
 	}
 
 	for ( platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
 		resnum.push_back( resnum_from_tag[ n ] );
 		chains.push_back( chain );
+		segids.push_back( segid );
 	}
 
 	return string_is_ok;

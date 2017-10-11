@@ -36,7 +36,8 @@ initialize_tag_is_done( std::string const & silent_file );
 void
 figure_out_residue_numbers_from_line( std::istream & line_stream,
 	utility::vector1< int > & residue_numbers,
-	utility::vector1< char > & chains );
+	utility::vector1< char > & chains,
+	utility::vector1< std::string > & segids );
 
 /// @brief Changes blah.out to blah_LORES.out (if tag is "_LORES")
 std::string

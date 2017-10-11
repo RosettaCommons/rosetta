@@ -139,6 +139,9 @@ get_res_num_from_pdb_info( pose::Pose const & pose );
 utility::vector1< char >
 get_chains_from_pdb_info( pose::Pose const & pose );
 
+utility::vector1< std::string >
+get_segids_from_pdb_info( pose::Pose const & pose );
+
 Size
 get_chain_for_full_model_resnum( Size const & resnum, pose::Pose const & pose );
 

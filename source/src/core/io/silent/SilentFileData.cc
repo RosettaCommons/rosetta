@@ -167,7 +167,7 @@ SilentFileData::get_sequence( std::string const & filename )
 }
 
 
-std::pair< utility::vector1< int >, utility::vector1< char > >
+std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
 SilentFileData::get_resnum( std::string const & filename )
 {
 	utility::io::izstream data( filename.c_str() );
@@ -179,6 +179,7 @@ SilentFileData::get_resnum( std::string const & filename )
 
 	utility::vector1< int > resnum;
 	utility::vector1< char > chain;
+	utility::vector1< std::string > segid;
 
 	std::string line;
 	getline( data, line ); // sequence line
@@ -186,17 +187,17 @@ SilentFileData::get_resnum( std::string const & filename )
 	while ( getline(data,line) ) {
 		if ( line.substr(0,8) == "RES_NUM "  ) {
 			std::stringstream line_stream( line );
-			figure_out_residue_numbers_from_line( line_stream, resnum, chain );
+			figure_out_residue_numbers_from_line( line_stream, resnum, chain, segid );
 			break;
 		}
 	}
 	if ( resnum.size() == 0 ) {
 		std::string sequence  = get_sequence( filename );
 		for ( Size n = 1; n <= sequence.size(); n++ ) {
-			resnum.push_back( n ); chain.push_back( 'A' );
+			resnum.push_back( n ); chain.push_back( 'A' ); segid.push_back( "    " );
 		}
 	}
-	return std::make_pair( resnum, chain );
+	return std::make_tuple( resnum, chain, segid );
 }
 
 bool SilentFileData::read_tags_fast(

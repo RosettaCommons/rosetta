@@ -26,6 +26,7 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <map>
+#include <tuple>
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////
@@ -106,9 +107,11 @@ public:
 
 	utility::vector1< int >  const & conventional_numbering() const { return conventional_numbering_;}
 	utility::vector1< char > const & conventional_chains() const { return conventional_chains_;}
+	utility::vector1< std::string > const & conventional_segids() const { return conventional_segids_;}
 
 	void set_conventional_numbering( utility::vector1< int > const & setting ) { conventional_numbering_  = setting; }
 	void set_conventional_chains( utility::vector1< char > const & setting ) { conventional_chains_  = setting; }
+	void set_conventional_segids( utility::vector1< std::string > const & setting ) { conventional_segids_  = setting; }
 	void set_non_standard_residue_map(  std::map< Size, std::string > const & setting ) { non_standard_residue_map_  = setting; }
 
 	// this is res_at_value
@@ -147,7 +150,7 @@ public:
 	conventional_to_full( utility::vector1< int > const & res_list ) const;
 
 	utility::vector1< Size >
-	conventional_to_full( std::pair< utility::vector1< int >, utility::vector1< char > > const & resnum_and_chain ) const;
+	conventional_to_full( std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & resnum_and_chain_and_segid ) const;
 
 	//utility::vector1< Size >
 	// conventional_to_full( std::pair< std::vector< int >, std::vector< char > > const & resnum_and_chain ) const;
@@ -156,13 +159,13 @@ public:
 	has_conventional_residue( int const res_num ) const;
 
 	bool
-	has_conventional_residue( int const res_num, char const chain ) const;
+	has_conventional_residue( int const res_num, char const chain, std::string const & segid = "    ") const;
 
 	Size
 	conventional_to_full( int const res_num ) const;
 
 	Size
-	conventional_to_full( int const res_num, char const chain ) const;
+	conventional_to_full( int const res_num, char const chain, std::string const & segid = "    ") const;
 
 	utility::vector1< int >
 	full_to_conventional( utility::vector1< Size > const & res_list ) const;
@@ -170,11 +173,13 @@ public:
 	int
 	full_to_conventional( Size const res_num ) const;
 
-	std::pair< utility::vector1< int >, utility::vector1< char > >
-	full_to_conventional_resnum_and_chain( utility::vector1< Size > const & res_list ) const;
+	//    std::pair< utility::vector1< int >, utility::vector1< char > >
+	//    full_to_conventional_resnum_and_chain( utility::vector1< Size > const & res_list ) const;
+	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
+	full_to_conventional_resnum_and_chain_and_segid( utility::vector1< Size > const & res_list ) const;
 
-	std::pair< int, char >
-	full_to_conventional_resnum_and_chain( Size const res_num ) const;
+	std::tuple< int, char, std::string >
+	full_to_conventional_resnum_and_chain_and_segid( Size const res_num ) const;
 
 	utility::vector1< Size >
 	chains_in_full_model() const;
@@ -223,6 +228,7 @@ private:
 		std::string & sequence,
 		utility::vector1< int  > & conventional_numbering,
 		utility::vector1< char > & conventional_chains,
+		utility::vector1< std::string > & conventional_segids,
 		utility::vector1< Size > & res_list ) const;
 
 	utility::vector1< Size >
@@ -260,6 +266,7 @@ private:
 	std::string full_sequence_;
 	utility::vector1< int >  conventional_numbering_; // permits user to use numbering other than 1, 2, 3...
 	utility::vector1< char > conventional_chains_;    // permits user to use chains other than A, B, C, ..
+	utility::vector1< std::string > conventional_segids_;    // permits user to use segids (i.e., for large structures. subsets of a chain)
 	std::map< Size, std::string > non_standard_residue_map_; // for DNA, non-natural protein/RNA, ligands, ions, etc.
 
 	std::string cst_string_; // constraints in text format, with atom names.

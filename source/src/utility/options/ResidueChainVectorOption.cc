@@ -43,20 +43,22 @@ ResidueChainVectorOption::cl_value( std::string const & value_str ){
 }
 
 // @brief Specialized function that converts tags like A:1-4 B:1-3 into a pair of  [1 2 3 4 1 2 3], [A A A A B B B]
-std::pair< utility::vector1<int>, utility::vector1<char> >
+std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1< std::string > >
 ResidueChainVectorOption::resnum_and_chain() const {
 	bool string_is_ok;
 	utility::vector1<int> resnum;
 	utility::vector1<char> chains;
+	utility::vector1<std::string> segids;
 	for ( Size n = 1; n <= value_strings_.size(); n++ ) {
-		std::pair< std::vector< int >, std::vector< char > > const resnum_and_chain = get_resnum_and_chain( value_strings_[n], string_is_ok );
+		std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > > const resnum_and_chain = get_resnum_and_chain_and_segid( value_strings_[n], string_is_ok );
 		runtime_assert( string_is_ok );
-		for ( Size n = 0; n < resnum_and_chain.first.size(); n++ ) {
-			resnum.push_back( resnum_and_chain.first[n] );
-			chains.push_back( resnum_and_chain.second[n] );
+		for ( Size n = 0; n < std::get< 0 >( resnum_and_chain ).size(); n++ ) {
+			resnum.push_back( std::get<0>(resnum_and_chain)[n] );
+			chains.push_back( std::get<1>(resnum_and_chain)[n] );
+			segids.push_back( std::get<2>(resnum_and_chain)[n] );
 		}
 	}
-	return std::make_pair( resnum, chains );
+	return std::make_tuple( resnum, chains, segids );
 }
 
 /// @brief Value of a string
@@ -65,7 +67,8 @@ ResidueChainVectorOption::value_of( std::string const & value_str ) const
 {
 	std::vector< int >  resnum;
 	std::vector< char > chains;
-	bool string_is_ok = get_resnum_and_chain_from_one_tag( value_str, resnum, chains );
+	std::vector< std::string > segids;
+	bool string_is_ok = get_resnum_and_chain_from_one_tag( value_str, resnum, chains, segids );
 	if ( ( value_str.empty() ) || ( ! string_is_ok ) || resnum.size() == 0 ) {
 		std::cerr << "ERROR: Illegal value for resnum/chain option -" << id()
 			<< " specified: " << value_str << std::endl;
@@ -80,7 +83,7 @@ utility::vector1< int >
 ResidueChainVectorOption::values_of( std::string const & value_str ) const
 {
 	bool string_is_ok( false );
-	std::pair< std::vector< int >, std::vector< char > > const resnum_and_chain_info = get_resnum_and_chain( value_str, string_is_ok );
+	std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > > const resnum_and_chain_info = get_resnum_and_chain_and_segid( value_str, string_is_ok );
 	if ( !string_is_ok ) {
 		std::cerr << "ERROR: Illegal value for resnum/chain option -" << id()
 			<< " specified: {";
@@ -94,7 +97,7 @@ ResidueChainVectorOption::values_of( std::string const & value_str ) const
 
 	//convert to utility vector1. This is a workaround to prevent ObjexxFCL from knowing about vector1.
 	Values vector1_ints;
-	std::vector< int > const & resnum = resnum_and_chain_info.first;
+	std::vector< int > const & resnum = std::get<0>(resnum_and_chain_info);
 	for ( int n : resnum ) {
 		vector1_ints.push_back( n );
 	}
