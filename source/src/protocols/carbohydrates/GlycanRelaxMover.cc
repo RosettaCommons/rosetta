@@ -453,7 +453,7 @@ GlycanRelaxMover::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
 
 void
 GlycanRelaxMover::randomize_glycan_torsions(core::pose::Pose &pose, utility::vector1<bool> const & subset) const{
-	
+
 	TR << "Randomizing glycan torsions " << std::endl;
 	SmallBBSampler random_sampler = SmallBBSampler(  360.0 ); // +/- 180 degrees
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
@@ -462,7 +462,7 @@ GlycanRelaxMover::randomize_glycan_torsions(core::pose::Pose &pose, utility::vec
 		core::Size n_dihedrals = get_n_glycosidic_torsions_in_res( pose, i );
 		core::Size parent_res = pose.glycan_tree_set()->get_parent( i ) ;
 		for ( core::Size torsion_id = 1; torsion_id <= n_dihedrals; ++torsion_id ) {
-			
+
 			if ( parent_res != 0 ) {
 				//TR << "Attempting " << i << " torsion " << torsion_id << std::endl;
 				random_sampler.set_torsion_type( static_cast< core::id::MainchainTorsionType >( torsion_id ) );
@@ -675,7 +675,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 	setup_score_function();
 	scorefxn_->score(pose);
-	
+
 	if ( ! selector_ ) selector_ = GlycanResidueSelectorOP( new GlycanResidueSelector());
 
 	// Our selector is now all setup.  Lets use it and check to make sure it only applies to glycan residues!
@@ -753,9 +753,9 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 	mc_ = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, kt_) );
 	mc_->set_last_accepted_pose(pose);
 	core::Real energy_pre_move = 0;
-	
+
 	//pose.dump_pdb("Pre-relax-structure.pdb");
-	
+
 	for ( core::Size round = 1; round <= total_rounds; ++round ) {
 
 		if ( round % 10 == 0 ) {
