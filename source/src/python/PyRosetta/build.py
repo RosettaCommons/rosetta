@@ -456,9 +456,9 @@ def generate_bindings(rosetta_source_path):
     includes = ''.join( [' -isystem '+i for i in get_rosetta_system_include_directories()] ) + ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
     defines  = ''.join( [' -D'+d for d in get_defines()] )
 
-    if Platform == 'macos':
-        includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1'
-        includes += ' -isystem /Library/Developer/CommandLineTools/usr/include/c++/v1'
+    if Platform == 'macos': includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1'
+
+    if Options.binder_extra_options: includes += ' ' + Options.binder_extra_options
 
     execute(
     'Generating bindings...',
@@ -586,6 +586,8 @@ def main(args):
     parser.add_argument('--gcc-install-prefix', default=None, help='Path to GCC install prefix which will be used to determent location of libstdc++ for Binder build. Default is: auto-detected. Use this option if you would like to build Binder with compiler that was side-installed and which LLVM build system failed to identify. To see what path Binder uses for libstdc++ run `binder -- -xc++ -E -v`.')
 
     parser.add_argument('--serialization', action="store_true", help="Build PyRosetta with serialization enabled (off by default)")
+
+    parser.add_argument('--binder-extra-options', default=None, help='Specify Binder extra (LLVM) options. Use this to point Binder to additional include dir or add/change LLVM flags. For example on Mac with no Xcode install set this to "-isystem /Library/Developer/CommandLineTools/usr/include/c++/v1" to point Binder to correct location of system includes.')
 
     global Options
     Options = parser.parse_args()
