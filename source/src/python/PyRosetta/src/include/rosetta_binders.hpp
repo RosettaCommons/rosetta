@@ -151,7 +151,9 @@ class utility_vector_binder
 
 	template<typename U = T, typename std::enable_if< std::is_default_constructible<U>::value >::type * = nullptr>
 	void maybe_default_constructible(Class_ &cl) {
-		cl.def(pybind11::init<SizeType>());
+		//cl.def(pybind11::init<SizeType>());
+		cl.def( pybind11::init( [](SizeType s) { return new Vector(s); } ) );
+
 		cl.def("resize", (void (Vector::*)(SizeType count)) &Vector::resize, "changes the number of elements stored");
 	}
 	template<typename U = T, typename std::enable_if< !std::is_default_constructible<U>::value >::type * = nullptr>
@@ -160,7 +162,8 @@ class utility_vector_binder
 
 	template<typename U = T, typename std::enable_if< std::is_copy_constructible<U>::value >::type * = nullptr>
 	void maybe_copy_constructible(Class_ &cl) {
-		cl.def(pybind11::init< Vector const &>());
+		//cl.def(pybind11::init< Vector const &>());
+		cl.def( pybind11::init( [](Vector const &v) { return new Vector(v); } ) );
 	}
 	template<typename U = T, typename std::enable_if< !std::is_copy_constructible<U>::value >::type * = nullptr>
 	void maybe_copy_constructible(Class_ &) {}
@@ -226,14 +229,21 @@ public:
 			}, "access the last element ");
 		// Not needed, the operator[] is already providing bounds checking cl.def("at", (T& (Vector::*)(SizeType i)) &Vector::at, "access specified element with bounds checking");
 
+		// have to use lambda due to Pybind11-2.2 restrictions on binding memeber function from private base classes with lifted access
+		// cl.def("max_size",      &Vector::max_size,      "returns the maximum possible number of elements");
+		// cl.def("reserve",       &Vector::reserve,       "reserves storage");
+		// cl.def("capacity",      &Vector::capacity,      "returns the number of elements that can be held in currently allocated storage");
+		// cl.def("shrink_to_fit", &Vector::shrink_to_fit, "reduces memory usage by freeing unused memory");
+
 		// Capacity, C++ style
-		cl.def("max_size",      &Vector::max_size,      "returns the maximum possible number of elements");
-		cl.def("reserve",       &Vector::reserve,       "reserves storage");
-		cl.def("capacity",      &Vector::capacity,      "returns the number of elements that can be held in currently allocated storage");
-		cl.def("shrink_to_fit", &Vector::shrink_to_fit, "reduces memory usage by freeing unused memory");
+		cl.def("max_size",      [](Vector &v) { return v.max_size(); }, "returns the maximum possible number of elements");
+		cl.def("reserve",       [](Vector &v, SizeType s) { return v.reserve(s); }, "reserves storage");
+		cl.def("capacity",      [](Vector &v) { return v.capacity(); }, "returns the number of elements that can be held in currently allocated storage");
+		cl.def("shrink_to_fit", [](Vector &v) { v.shrink_to_fit(); }, "reduces memory usage by freeing unused memory");
+
 
 		// Modifiers, C++ style
-		cl.def("clear", &Vector::clear, "clears the contents");
+		cl.def("clear", [](Vector &v) { v.clear(); }, "clears the contents");
 
 		// Modifiers, Python style
 		cl.def("append", [](Vector &v, const T &value) { v.push_back(value); }, "adds an element to the end");

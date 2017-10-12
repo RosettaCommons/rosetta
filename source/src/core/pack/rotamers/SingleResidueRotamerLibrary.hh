@@ -47,7 +47,15 @@ namespace rotamers {
 /// @brief  SingleResidueRotamerLibrary pure virtual base class
 class SingleResidueRotamerLibrary : public utility::pointer::ReferenceCount
 {
+	SingleResidueRotamerLibrary& operator=(SingleResidueRotamerLibrary const & other) = delete;
+	SingleResidueRotamerLibrary ( SingleResidueRotamerLibrary const & ) = delete;
 public:
+
+	SingleResidueRotamerLibrary() {}
+
+	// PyRosetta debug helper
+	//virtual std::string who_am_i() { return "SingleResidueRotamerLibrary"; }
+
 	virtual
 	~SingleResidueRotamerLibrary();
 

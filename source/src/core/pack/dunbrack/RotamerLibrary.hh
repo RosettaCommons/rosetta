@@ -400,5 +400,4 @@ private:
 } // pack
 } // core
 
-
 #endif // INCLUDED_core_pack_dunbrack_RotamerLibrary_HH

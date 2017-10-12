@@ -43,7 +43,13 @@ class SingleResidueDunbrackLibrary : public rotamers::SingleResidueRotamerLibrar
 public:
 	typedef chemical::AA AA;
 
+	SingleResidueDunbrackLibrary& operator=(SingleResidueDunbrackLibrary const & other) = delete;
+	SingleResidueDunbrackLibrary ( SingleResidueDunbrackLibrary const & ) = delete;
 public:
+
+	//std::string who_am_i() override { return "SingleResidueDunbrackLibrary"; }
+
+
 	/// constants
 
 	/// A good "phi" value to use for N-term residues
@@ -70,8 +76,6 @@ public:
 		core::Real prob_buried, // 0.98
 		core::Real prob_nonburied // 0.95
 	);
-
-	virtual ~SingleResidueDunbrackLibrary();
 
 public:
 
@@ -423,4 +427,3 @@ private:
 } // core
 
 #endif // INCLUDED_core_pack_dunbrack_SingleResidueDunbrackLibrary_HH
-

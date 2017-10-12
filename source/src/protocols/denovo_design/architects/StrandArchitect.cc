@@ -233,11 +233,11 @@ StrandArchitect::int_to_orientation( int const orient )
 StrandBulges
 StrandArchitect::retrieve_bulges( StructureData const & sd ) const
 {
-	return retrieve_bulges( sd, id() );
+	return retrieve_bulges_s( sd, id() );
 }
 
 StrandBulges
-StrandArchitect::retrieve_bulges( StructureData const & sd, std::string const & segment_id )
+StrandArchitect::retrieve_bulges_s( StructureData const & sd, std::string const & segment_id )
 {
 	std::string const value = sd.get_data_str( segment_id, bulge_keyname() );
 	utility::vector1< std::string > const fields = utility::string_split( value, ';' );

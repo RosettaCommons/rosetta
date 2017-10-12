@@ -110,7 +110,7 @@ public:
 	int_to_orientation( int const integer );
 
 	static StrandBulges
-	retrieve_bulges( StructureData const & sd, std::string const & segment_id );
+	retrieve_bulges_s( StructureData const & sd, std::string const & segment_id ); // Fix for PyRosetta: renaming static version to retrieve_bulges_s to avoid name clashed with member function
 
 public:
 	StrandBulges
@@ -154,4 +154,3 @@ private:
 } //architects
 
 #endif //INCLUDED_protocols_denovo_design_architects_StrandArchitect_hh
-

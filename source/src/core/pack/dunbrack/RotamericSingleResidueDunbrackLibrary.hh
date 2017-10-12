@@ -44,6 +44,10 @@ class RotamericSingleResidueDunbrackLibrary : public SingleResidueDunbrackLibrar
 public:
 	typedef SingleResidueDunbrackLibrary parent;
 
+	// PyRosetta debug helper
+	//std::string who_am_i() override { return "RotamericSingleResidueDunbrackLibrary<" + std::to_string(T) + ", " + std::to_string(N) + ">"; }
+
+
 private:
 	/// No default ctor
 	///RotamericSingleResidueDunbrackLibrary();
@@ -70,14 +74,14 @@ public:
 	rotamer_energy(
 		conformation::Residue const & rsd,
 		RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
 	virtual
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
 		RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
 	/// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
 	/// (based on e.g. its current phi and psi values).
@@ -89,7 +93,7 @@ public:
 		conformation::Residue const & rsd,
 		bool curr_rotamer_only,
 		RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
 	virtual
 	void
@@ -100,7 +104,7 @@ public:
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center
-	) const;
+	) const override;
 
 	virtual
 	void
@@ -114,7 +118,7 @@ public:
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
 		rotamers::RotamerVector & rotamers
-	) const;
+	) const override;
 
 	/// @brief Return all of the rotamer sample data given a particular backbone bin.
 	/// For N-terminus residues, hand in the first bb value SingleResidueDunbrackLibrary::PHI_NEUTRAL and
@@ -126,7 +130,7 @@ public:
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
 		utility::fixedsizearray1< Real, 5 > bbs
-	) const;
+	) const override;
 
 	virtual
 	Real
@@ -148,7 +152,7 @@ public:
 		Real phi,
 		Real psi,
 		Size rot_ind
-	) const;
+	) const override;
 
 	virtual
 	DunbrackRotamerSampleData
@@ -156,36 +160,36 @@ public:
 		Real phi,
 		Real psi,
 		Size rot_ind
-	) const;
+	) const override;
 
 	virtual
-	Size nchi() const;
+	Size nchi() const override;
 
 	virtual
-	Size nbb() const;
+	Size nbb() const override;
 
 	virtual
-	Size n_rotamer_bins() const;
+	Size n_rotamer_bins() const override;
 
 	virtual
 	void
-	write_to_file( utility::io::ozstream &out ) const;
+	write_to_file( utility::io::ozstream &out ) const override;
 
-	virtual void write_to_binary( utility::io::ozstream & out ) const;
-	virtual void read_from_binary( utility::io::izstream & in );
+	virtual void write_to_binary( utility::io::ozstream & out ) const override;
+	virtual void read_from_binary( utility::io::izstream & in ) override;
 
 	/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
 	/// Values tested should parallel those used in the read_from_binary() function.
 	virtual
 	bool
-	operator ==( SingleResidueRotamerLibrary const & ) const;
+	operator ==( SingleResidueRotamerLibrary const & ) const override;
 
 	virtual
 	void
 	get_rotamer_from_chi(
 		ChiVector const & chi,
 		RotVector & rot
-	) const;
+	) const override;
 
 protected:
 
@@ -250,8 +254,8 @@ protected:
 protected:
 	/// Worker functions
 
-	virtual Size memory_usage_static() const;
-	virtual Size memory_usage_dynamic() const;
+	virtual Size memory_usage_static() const override;
+	virtual Size memory_usage_dynamic() const override;
 
 	/// @brief  Evaluates the score and chi-deviation penalty for the rotameric
 	/// chi (in this class, that means all the chi) and stores the answers in
@@ -323,12 +327,12 @@ protected:
 	Real
 	get_phi_from_rsd(
 		conformation::Residue const & rsd
-	) const;
+	) const override;
 
 	Real
 	get_psi_from_rsd(
 		conformation::Residue const & rsd
-	) const;
+	) const override;
 
 	void
 	get_bb_bins(

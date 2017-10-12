@@ -121,8 +121,6 @@ SingleResidueDunbrackLibrary::set_n_chi_bins( utility::vector1< Size > const & n
 	std::fill( rotno_2_packed_rotno_.begin(), rotno_2_packed_rotno_.end(), 0 );
 }
 
-SingleResidueDunbrackLibrary::~SingleResidueDunbrackLibrary() {}
-
 /// @details the number of wells defined for the 08 library; includes
 /// the number of wells for the semi-rotameric chi (arbitrarily chosen).
 void
@@ -833,4 +831,3 @@ INIT(  FIVE,  FIVE )
 } // namespace dunbrack
 } // namespace scoring
 } // namespace core
-

@@ -206,6 +206,9 @@ public:
 	// Don't replace this typedef with a direct reference
 	typedef typename RotamericSingleResidueDunbrackLibrary< T, N >::parent grandparent;
 
+
+	//std::string who_am_i() override { return "SemiRotamericSingleResidueDunbrackLibrary<" + std::to_string(T) + ", " + std::to_string(N) + ">"; }
+
 public:
 
 	/// @brief The constructor determines the path the library takes: whether
@@ -225,7 +228,7 @@ public:
 		core::Real prob_nonburied
 	);
 
-	virtual ~SemiRotamericSingleResidueDunbrackLibrary() throw();
+	virtual ~SemiRotamericSingleResidueDunbrackLibrary() throw() override;
 
 	friend class SingleResidueDunbrackLibrary;
 public:
@@ -236,14 +239,14 @@ public:
 	rotamer_energy(
 		conformation::Residue const & rsd,
 		RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
 	virtual
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
 		RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
 
 	/// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
@@ -256,7 +259,7 @@ public:
 		conformation::Residue const & rsd,
 		bool curr_rotamer_only,
 		RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
 	virtual
 	void
@@ -267,7 +270,7 @@ public:
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center
-	) const;
+	) const override;
 
 
 	void
@@ -291,7 +294,7 @@ public:
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
 		rotamers::RotamerVector & rotamers
-	) const;
+	) const override;
 
 	/// @brief Return all of the rotamer sample data given a particular phi/psi.
 	/// For N-terminus residues, hand in the phi value SingleResidueDunbrackLibrary::PHI_NEUTRAL and
@@ -303,46 +306,46 @@ public:
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
 		utility::fixedsizearray1< Real, 5 > bbs
-	) const;
+	) const override;
 
 	virtual
 	Real
 	get_probability_for_rotamer(
 		utility::fixedsizearray1< Real, N > bbs,
 		Size rot_ind
-	) const;
+	) const override;
 
 	virtual
 	DunbrackRotamerSampleData
 	get_rotamer(
 		utility::fixedsizearray1< Real, N > bbs,
 		Size rot_ind
-	) const;
+	) const override;
 
 	virtual
-	Size nchi() const;
+	Size nchi() const override;
 
 	virtual
-	Size nbb() const;
+	Size nbb() const override;
 
 	virtual
-	Size n_rotamer_bins() const;
+	Size n_rotamer_bins() const override;
 
 	// stubbed out
 	virtual
 	void
-	write_to_file( utility::io::ozstream & out ) const;
+	write_to_file( utility::io::ozstream & out ) const override;
 
-	virtual void write_to_binary( utility::io::ozstream & out ) const;
+	virtual void write_to_binary( utility::io::ozstream & out ) const override;
 
 	/// @brief Initialize either a backbone-independent or a backbone-dependent SRSRDL
 	/// from the set of four files which describe both (not all files are read).
-	void read_from_files(
-		utility::io::izstream & in_rotdef,
-		utility::io::izstream & in_rotameric,
-		utility::io::izstream & in_continmin_bbdep,
-		utility::io::izstream & in_continmin_bbind
-	);
+	// void read_from_files(
+	// 	utility::io::izstream & in_rotdef,
+	// 	utility::io::izstream & in_rotameric,
+	// 	utility::io::izstream & in_continmin_bbdep,
+	// 	utility::io::izstream & in_continmin_bbind
+	// );
 
 	/// @brief Initialize a backbone-dependent SRSRDL from the set of three files
 	/// which describe it.
@@ -353,20 +356,20 @@ public:
 		utility::io::izstream & in_continmin_bbdep
 	);
 
-	virtual void read_from_binary( utility::io::izstream & in );
+	virtual void read_from_binary( utility::io::izstream & in ) override;
 
 	/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
 	/// Values tested should parallel those used in the read_from_binary() function.
 	virtual
 	bool
-	operator ==( rotamers::SingleResidueRotamerLibrary const & ) const;
+	operator ==( rotamers::SingleResidueRotamerLibrary const & ) const override;
 
 	virtual
 	void
 	get_rotamer_from_chi(
 		ChiVector const & chi,
 		RotVector & rot
-	) const;
+	) const override;
 
 public:
 	/// Initialization functions that must be called before reading the input libraries.
@@ -389,8 +392,8 @@ public:
 
 protected:
 
-	virtual Size memory_usage_static() const;
-	virtual Size memory_usage_dynamic() const;
+	virtual Size memory_usage_static() const override;
+	virtual Size memory_usage_dynamic() const override;
 
 	Real
 	rotamer_energy_deriv_bbdep(
@@ -461,7 +464,7 @@ protected:
 		utility::vector1< int  > & total_rot,
 		utility::vector1< Real > & total_ex_steps,
 		utility::vector1< Real > & chisample_prob
-	) const;
+	) const override;
 
 
 private:

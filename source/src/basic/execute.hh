@@ -23,13 +23,8 @@ namespace basic {
 
 /// @brief Struct that hold result code + output of external process
 struct ExecutionResult {
-public:
 	int result; // result code, zero if no error and otherwise will contain error code
 	std::string output;
-
-#ifdef HAS_MOVE_SEMANTICS
-	ExecutionResult(ExecutionResult &&r) =default; //{ result=r.result; output=std::move(r.output); }
-#endif
 };
 
 /// @brief excute provided command_line though shell and return exit_code and output
