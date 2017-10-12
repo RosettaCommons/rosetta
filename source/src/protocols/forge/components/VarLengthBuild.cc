@@ -724,11 +724,11 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		// setup regions
 		if ( interval.left != 1 && interval.right != pose.size() ) { //internal loop
 			Size cutpoint = find_cutpoint( pose, interval.left, interval.right );
-            loops::LoopOP tempLoop( new Loop( interval.left, interval.right, cutpoint, 0.0, true ) );
-            if ( cutpoint == 0 ) {
-                tempLoop->choose_cutpoint( pose );
-            }
-      loops->add_loop( *tempLoop );
+			loops::LoopOP tempLoop( new Loop( interval.left, interval.right, cutpoint, 0.0, true ) );
+			if ( cutpoint == 0 ) {
+				tempLoop->choose_cutpoint( pose );
+			}
+			loops->add_loop( *tempLoop );
 
 		} else if ( n_cuts == 0 ) { // fragment only region
 

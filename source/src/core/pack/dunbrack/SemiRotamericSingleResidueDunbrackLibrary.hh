@@ -341,10 +341,10 @@ public:
 	/// @brief Initialize either a backbone-independent or a backbone-dependent SRSRDL
 	/// from the set of four files which describe both (not all files are read).
 	// void read_from_files(
-	// 	utility::io::izstream & in_rotdef,
-	// 	utility::io::izstream & in_rotameric,
-	// 	utility::io::izstream & in_continmin_bbdep,
-	// 	utility::io::izstream & in_continmin_bbind
+	//  utility::io::izstream & in_rotdef,
+	//  utility::io::izstream & in_rotameric,
+	//  utility::io::izstream & in_continmin_bbdep,
+	//  utility::io::izstream & in_continmin_bbind
 	// );
 
 	/// @brief Initialize a backbone-dependent SRSRDL from the set of three files
