@@ -31,7 +31,7 @@ def run_rosetta_scripts_test(name, rosetta_dir, working_dir, platform, config, h
     rosetta_scripts_revision = 'rosetta_scripts submodule revision: {rosetta_scripts_revision}\n'.format(**vars())
 
     # Building Rosetta binaries
-    res, output, build_command_line = build_rosetta(rosetta_dir, platform, jobs, debug=debug)
+    res, output, build_command_line = build_rosetta(rosetta_dir, platform, config)
     if res: return { _StateKey_ : _S_build_failed_,  _ResultsKey_ : {},
                      _LogKey_ : '{}Building rosetta failed!\n{}\n{}\n'.format(rosetta_scripts_revision, build_command_line, output) }
 

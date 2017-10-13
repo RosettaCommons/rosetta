@@ -44,7 +44,7 @@ def main(args):
     ''' Script to Run arbitrary Rosetta test
     '''
     parser = argparse.ArgumentParser(usage="Main testing script to run tests in the tests directory. "
-                                           "Use the --debug command to skip the build phase when testing locally. "
+                                           "Use the --skip-compile to skip the build phase when testing locally. "
                                            "Example Command: /benchmark.py -j2 integration.valgrind")
 
     parser.add_argument('-j', '--jobs',
@@ -72,6 +72,8 @@ def main(args):
     parser.add_argument("--compare", nargs=2, help="Do not run the tests but instead compare previous results. Use --compare suffix1 suffix2" )
 
     parser.add_argument("--config", default='benchmark.ini', action="store", help="Location of .ini file with additional options configuration. Optional.")
+
+    parser.add_argument("--skip-compile", dest='skip_compile', default=None, action="store_true", help="Skip the compilation phase. Assumes the binaries are already compiled locally.")
 
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
@@ -115,6 +117,8 @@ def main(args):
     config = Config.items('config')
     config = dict(config, cpu_count=Options.jobs, memory=memory)
     if 'prefix' not in config: config['prefix'] = os.path.abspath('./results/prefix')
+    if Options.skip_compile is not None:
+        config['skip_compile'] = Options.skip_compile
 
     print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True), Platform))
 

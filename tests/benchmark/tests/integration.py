@@ -22,6 +22,8 @@ import codecs
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
+_api_version_ = '1.0'
+
 ignore_files = 'command.sh command.mpi.sh observers'.split()
 
 #tests = ['i']
@@ -46,23 +48,6 @@ def get_tests():
 def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
     raise BenchmarkError('Integration Test script does not support run_test! Use run_test_suite instead!')
 
-
-def do_compile(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, TR=None):
-    compiler = platform['compiler']
-    extras   = ','.join(platform['extras'])
-
-    build_command = './scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(jobs=jobs, mode=mode, compiler=compiler, extras=extras)
-    # removing all symlinks from bin/ and then building binaries...
-    full_build_command_line = 'find bin -type l ! -name ".*" -exec rm {} \\; && ' + build_command
-
-    if debug:
-        res, output = 0, 'integration.py: debug is enabled, skipping build...\n'
-    else:
-        if TR is not None:
-            TR("Compiling with " + build_command)
-        res, output = execute('Compiling ...', 'cd {}/source && {}'.format(rosetta_dir, full_build_command_line), return_='tuple')
-
-    return res, output, full_build_command_line
 
 def copy_files(files_location, working_dir):
     """
@@ -140,10 +125,12 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
 
 
 ######################################################
-def run_integration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, additional_flags=''):
+def run_integration_tests(mode, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False, additional_flags=''):
     ''' Run TestSuite.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
+
+    jobs = config['cpu_count']
 
     TR = Tracer(verbose)
     full_log = ''
@@ -153,7 +140,7 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_
     results = defaultdict()
 
     TR('Compiling...')
-    res, output, build_command_line = do_compile(mode, rosetta_dir, working_dir, platform, jobs, hpc_driver, verbose, debug, TR=TR)
+    res, output, build_command_line = build_rosetta(rosetta_dir, platform, config, mode=mode, verbose=verbose)
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -179,13 +166,15 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_
     return results
 
 
-def run_demo_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, additional_flags='', diff_causes_failure=False):
+def run_demo_tests(mode, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False, additional_flags='', diff_causes_failure=False):
     ''' Run TestSuite for the Demos and Tutorials
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
 
         IF  diff_causes_failure=True, this indicates to use the DIFF for failure.  Here, we check to make sure it all runs without error.
         Integration tests proper should check the diffs.  If a demo or tutorial is not covered sufficiently in integration and unit tests, so be it.
     '''
+
+    jobs = config['cpu_count']
 
     TR = Tracer(verbose)
     full_log = ''
@@ -195,7 +184,7 @@ def run_demo_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=
     results = defaultdict()
 
     TR('Compiling...')
-    res, output, build_command_line = do_compile(mode, rosetta_dir, working_dir, platform, jobs, hpc_driver, verbose, debug, TR=TR)
+    res, output, build_command_line = build_rosetta(rosetta_dir, platform, config, mode=mode, verbose=verbose)
     full_log += output
 
     if res:
@@ -223,10 +212,12 @@ def run_demo_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=
         return results
 
 
-def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False, additional_flags=''):
+def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False, additional_flags=''):
     ''' Run TestSuite under valgrind
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
+
+    jobs = config['cpu_count']
 
     TR = Tracer(verbose)
     full_log = ''
@@ -236,7 +227,7 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
     results = {}
 
     TR('Compiling...')
-    res, output, build_command_line = do_compile(mode, rosetta_dir, working_dir, platform, jobs, hpc_driver, verbose, debug, TR=TR)
+    res, output, build_command_line = build_rosetta(rosetta_dir, platform, config, mode=mode, verbose=verbose)
 
     full_log += output
 
@@ -292,20 +283,20 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
 
 
 
-def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
-    if not test:                             return run_integration_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'debug':                    return run_integration_tests('debug',   rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'release_debug':            return run_integration_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'release_debug_no_symbols': return run_integration_tests('release_debug_no_symbols', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'mpi':                      return run_integration_tests('debug',   rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--mpi-tests')
-    elif test == 'addsan':                   return run_integration_tests('addsan',  rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    if not test:                             return run_integration_tests('release', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'debug':                    return run_integration_tests('debug',   rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'release_debug':            return run_integration_tests('release_debug', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'release_debug_no_symbols': return run_integration_tests('release_debug_no_symbols', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'mpi':                      return run_integration_tests('debug',   rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--mpi-tests')
+    elif test == 'addsan':                   return run_integration_tests('addsan',  rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'ubsan':
         os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan
-        return run_integration_tests('ubsan',   rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'valgrind':          return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml') # 'release_debug' for line # information
-    elif test == 'valgrind_detailed': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml --trackorigins') # 'release_debug' for line # information
-    elif test == 'demos':                    return run_demo_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--demos')
-    elif test == 'tutorials':                return run_demo_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--tutorials')
+        return run_integration_tests('ubsan',   rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'valgrind':          return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml') # 'release_debug' for line # information
+    elif test == 'valgrind_detailed': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml --trackorigins') # 'release_debug' for line # information
+    elif test == 'demos':                    return run_demo_tests('release', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--demos')
+    elif test == 'tutorials':                return run_demo_tests('release', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--tutorials')
     else: raise BenchmarkError('Integration Test script does not support run with test="{}"!'.format(test))
 
     #if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)

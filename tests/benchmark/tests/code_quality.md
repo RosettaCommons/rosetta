@@ -1,5 +1,5 @@
 # code quality test suite
-These tests are focused on checking that Rosetta's codebase does not have obvious issues.
+These tests are focused on checking that Rosetta's codebase does not have any obvious issues.
 
 -----
 

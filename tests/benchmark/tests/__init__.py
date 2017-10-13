@@ -156,22 +156,26 @@ def platform_to_pretty_string(platform):
     return '{}.{}{}{}'.format(platform['os'], platform['compiler'], ('.'+'.'.join(platform['extras']) if 'extras' in platform  and  platform['extras'] else ''), ('.'+platform['python'].split('/')[-1] if 'python' in platform else ''))
 
 
-def build_rosetta(rosetta_dir, platform, jobs, mode='release', verbose=False, debug=False):
+def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=False, verbose=False):
     ''' Compile Rosetta binaries on a given platform return (res, output, build_command_line) '''
 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
+    jobs = config['cpu_count']
+    skip_compile = config.get('skip_compile', False)
 
     # removing all symlinks from bin/ and then building binaries...
     build_command_line = 'find bin -type l ! -name ".*" -exec rm {{}} \\; && ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(jobs=jobs, mode=mode, compiler=compiler, extras=extras)
+    if build_unit:
+        build_command_line += ' && ./scons.py cxx={compiler} mode={mode} extras={extras} cat=test -j{jobs}'.format(jobs=jobs, compiler=compiler, extras=extras, mode=mode)
 
-    if debug:
-        res, output = 0, '__init__.py:build_rosetta: debug is enabled, skipping build...\n'
+    if skip_compile:
+        build_command_line = "SKIPPED: " + build_command_line
+        res, output = 0, 'build_rosetta: skip_compile is enabled, skipping build...\n'
     else:
         res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, build_command_line), return_='tuple')
 
     return res, output, build_command_line
-
 
 
 def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verbose=False, debug=False):

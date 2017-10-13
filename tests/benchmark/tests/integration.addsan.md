@@ -1,4 +1,4 @@
-# integration.addsan  and integration.ubsan tests
+# integration.addsan and integration.ubsan tests
 
 -----
 ### integration.addsan

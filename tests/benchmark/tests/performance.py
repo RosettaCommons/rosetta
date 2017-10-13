@@ -33,13 +33,7 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
 
     TR('Running Performance benchmark at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    compiler = platform['compiler']
-    extras   = ','.join(platform['extras'])
-
-    build_command_line = './scons.py bin cxx={compiler} extras={extras} mode={mode} -j{jobs}'.format( **vars() )
-
-    if debug: res, output = 0, 'run_performance_tests: debug is enabled, skippig build phase...\n'
-    else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, build_command_line), return_='tuple')
+    res, output, build_command_line = build_rosetta(rosetta_dir, platform, config, mode=mode, verbose=verbose)
 
     codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write( 'Running: {}\n{}\n'.format(build_command_line, output) )
 

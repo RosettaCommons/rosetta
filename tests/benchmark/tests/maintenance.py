@@ -59,7 +59,7 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
     # We assume that the test system hooks have already updated both branches to the latest from GitHub.
 
     # Compile Rosetta - will also update the options documentation.
-    res, output, build_command_line = build_rosetta(rosetta_dir, platform, jobs, mode, verbose, debug)
+    res, output, build_command_line = build_rosetta(rosetta_dir, platform, config, mode=mode, verbose=verbose)
 
     if res:
         results[_StateKey_] = _S_build_failed_
