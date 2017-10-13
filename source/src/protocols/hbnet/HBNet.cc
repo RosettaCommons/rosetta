@@ -420,6 +420,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 
 	//MONTE CARLO/////////
 	monte_carlo_branch_ = tag->getOption< bool >( "monte_carlo_branch", monte_carlo_branch_ );
+	only_get_satisfied_nodes_ = tag->getOption< bool >( "only_get_satisfied_nodes", only_get_satisfied_nodes_ );
 	max_mc_nets_ = tag->getOption<Size>( "max_mc_nets", max_mc_nets_ );
 	total_num_mc_runs_ = tag->getOption<Size>( "total_num_mc_runs", total_num_mc_runs_ );
 	monte_carlo_seed_threshold_ = tag->getOption< Real >( "seed_hbond_threshold", monte_carlo_seed_threshold_ );
@@ -754,6 +755,7 @@ HBNet::MC_traverse_IG( ){
 	for ( core::Size node_id = 1; node_id <= hbond_graph_->num_nodes(); ++node_id ) {
 		HBondNode const * const node = static_cast< HBondNode * > ( hbond_graph_->get_node( node_id ) );
 		core::Real const one_body_1 = ig_->get_one_body_energy_for_node_state( node->moltenres(), node->local_rotamer_id() ) / scmult_1b;
+		debug_assert( one_body_1 <= clash_threshold_ );
 		if ( one_body_1 > clash_threshold_ ) {
 			hbond_graph_->drop_all_edges_for_node( node_id );
 		}
@@ -2405,6 +2407,11 @@ HBNet::create_ptask(core::pose::Pose const & pose, bool initialize_from_commandl
 		task_factory_->push_back( core::pack::task::operation::TaskOperationOP( new operation::InitializeFromCommandline ) );
 	}
 	PackerTaskOP task = task_factory_->create_task_and_apply_taskoperations( pose );
+	for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
+		if ( task->being_designed( resid ) ) {
+			task->nonconst_residue_task( resid ).allow_aa( core::chemical::aa_gly );
+		}
+	}
 	return task;
 }
 
@@ -2770,13 +2777,14 @@ HBNet::search_IG_for_networks( Pose & )
 			TR << " ==================================================================" << std::endl;
 			TR << " ============     PERFORMING H-BOND NETWORK DESIGN     ============" << std::endl;
 			TR << " ==================================================================" << std::endl;
-
-			if ( monte_carlo_branch_ ) {
-				MC_traverse_IG( );
-			} else {
-				traverse_IG( hydrogen_bond_threshold_ );
-			}
 		}
+
+		if ( monte_carlo_branch_ ) {
+			MC_traverse_IG( );
+		} else {
+			traverse_IG( hydrogen_bond_threshold_ );
+		}
+
 	}
 }
 
@@ -3898,6 +3906,10 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		"Step right up and try your luck with this stochastic HBNet protocol",
 		"false" )
 		+ XMLSchemaAttribute::attribute_w_default(
+		"only_get_satisfied_nodes", xsct_rosetta_bool,
+		"during monte carlo network search, only grow networks with nodes that satisfy a current unsat",
+		"false" )
+		+ XMLSchemaAttribute::attribute_w_default(
 		"monte_carlo_seed_must_be_buried", xsct_rosetta_bool,
 		"(If monte_carlo_branch) only branch from hbonds where at least one residue is buried. Effectively, this results in only finding networks that have at least one buried residue.",
 		"false" )
@@ -3907,16 +3919,16 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		"false" )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"max_mc_nets", xsct_non_negative_integer,
-		"(if monte_carlo_branch) maximum number of networks that the monte carlo protocol will store. Loose rule of thumb is to make this 10x the max number of nets you want to end up with. 100 (default) is on the conservative end of the spectrum for this value. The reason you do not want this to be too large is that each of these networks goes through a relatively expensive quality check. A value of zero results in no limit.",
+		"(if monte_carlo_branch) This is experimental and so far it does not look super useful. Maximum number of networks that the monte carlo protocol will store. Loose rule of thumb is to make this 10x the max number of nets you want to end up with. 100 (default) is on the conservative end of the spectrum for this value. The reason you do not want this to be too large is that each of these networks goes through a relatively expensive quality check. A value of zero results in no limit.",
 		"0" )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"total_num_mc_runs", xsct_non_negative_integer,
 		"(if monte_carlo_branch) number of monte carlo runs to be divided over all the seed hbonds. A single monte carlo run appears to take roughly 1 ms (very loose estimate).",
-		"1000000" )
+		"100000" )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"seed_hbond_threshold", xsct_real,
-		"(if monte_carlo_branch) Maybe you only want to branch from strong hbonds. If this value is -1.2, then only hbonds with a strength of -1.2 or lower will be branched from.",
-		"-0.75" );
+		"(if monte_carlo_branch) Maybe you only want to branch from strong hbonds. If this value is -1.2, for example, then only hbonds with a strength of -1.2 or lower will be branched from.",
+		"0" );
 
 
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
@@ -3938,6 +3950,8 @@ void HBNet::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 }
 
 void HBNet::initialize_hbond_graph(){
+
+	monte_carlo_seeds_.clear();
 
 	debug_assert( rotamer_sets_ );
 	core::Size const nrot = rotamer_sets_->nrotamers();
@@ -4005,7 +4019,29 @@ HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 	std::list< std::pair< core::Size, HBondNode * > > num_nbrs_per_node;
 	core::Size total_num_nbrs = 0;
 
+	bool all_nodes_satisfied( true );
+	std::set< core::Size > unsat_positions;
+	if ( only_get_satisfied_nodes_ ) {
+		for ( auto const & network_donor : current_state.sc_donor_atoms ) {
+			if ( ! network_donor.is_satisfied ) {
+				all_nodes_satisfied = false;
+				unsat_positions.insert( network_donor.seqpos );
+			}
+		}
+		for ( auto const & network_acc : current_state.sc_acceptor_atoms ) {
+			if ( ! network_acc.is_satisfied ) {
+				all_nodes_satisfied = false;
+				unsat_positions.insert( network_acc.seqpos );
+			}
+		}
+	}
+
 	for ( HBondNode const * const current_node : current_state.nodes ) {
+
+		// only happens when only_get_satisfied_nodes_=true
+		if ( !all_nodes_satisfied && unsat_positions.find( rotamer_sets_->moltenres_2_resid(current_node->moltenres()) ) == unsat_positions.end() ) {
+			continue;
+		}
 		core::Size const current_node_ind = current_node->global_rotamer_id();
 
 		for ( utility::graph::EdgeListConstIterator it = current_node->const_edge_list_begin(); it != current_node->const_edge_list_end(); ++it ) {
@@ -4015,7 +4051,49 @@ HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 			if ( ! node_is_compatible( current_state, proposed_new_node ) ) {
 				continue;
 			} else {
+
+				// only happens when only_get_satisfied_nodes_=true
+				if ( !all_nodes_satisfied ) { // check if this edge satisfies a current unsat atom in the network
+
+					bool hbonds_to_usnat = false;
+
+					// make sure sc atom of new node satisfies a current unsat
+					core::conformation::Residue const & res = * rotamer_sets_->rotamer( proposed_new_node->get_node_index() );
+					for ( core::Size heavy_atomno = res.first_sidechain_atom(); heavy_atomno <= res.nheavyatoms(); ++heavy_atomno ) {
+
+						bool const is_donor = res.heavyatom_has_polar_hydrogens( heavy_atomno );
+						bool const is_acc = res.heavyatom_is_an_acceptor( heavy_atomno );
+
+						if ( !( is_donor || is_acc ) ) continue;
+
+						polar_atom atom( res.seqpos(), res.atom( heavy_atomno ).xyz(), res.atom_type( heavy_atomno ).name() == "OH" );
+
+						if ( is_acc ) {
+							for ( auto const & network_donor : current_state.sc_donor_atoms ) {
+								if ( ! network_donor.is_satisfied && heavy_atoms_are_within_cutoff( atom.xyz, network_donor.xyz ) ) {
+									hbonds_to_usnat = true;
+									break;
+								}
+							}
+						}
+
+						if ( ! hbonds_to_usnat && is_donor ) {
+							for ( auto const & network_acc : current_state.sc_acceptor_atoms ) {
+								if ( ! network_acc.is_satisfied && heavy_atoms_are_within_cutoff( atom.xyz, network_acc.xyz ) ) {
+									hbonds_to_usnat = true;
+									break;
+								}
+							}
+						}
+						if ( hbonds_to_usnat ) break;
+					}
+					// if we have current unstas and this Node doesn't satisfy one, skip it!
+					if ( ! hbonds_to_usnat ) continue;
+				}
+				// if everything is satisfied, we'll still try to grow (and network state will have already been stored)
+
 				core::Size num_nbrs = 1;//add dummy of 1
+
 				for ( utility::graph::EdgeListConstIterator it2 = proposed_new_node->const_edge_list_begin(); it2 != proposed_new_node->const_edge_list_end(); ++it2 ) {
 					HBondNode const * const proposed_nbr_node = static_cast< HBondNode * > ( hbond_graph_->get_node( (*it2)->get_other_ind( proposed_new_node_ind ) ) );
 
@@ -4034,8 +4112,10 @@ HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 	}//current_residue
 
 	if ( total_num_nbrs == 0 ) {
-		debug_assert( num_nbrs_per_node.size() == 0 );
-		debug_assert( network_state_is_done_growing( current_state, hbond_graph_ ) );
+		if ( !only_get_satisfied_nodes_ ) { // these asserts won't hold true otherwise
+			debug_assert( num_nbrs_per_node.size() == 0 );
+			debug_assert( network_state_is_done_growing( current_state, hbond_graph_ ) );
+		}
 		return 0;
 	}
 
@@ -4057,11 +4137,7 @@ HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 		}
 	}
 
-	debug_assert( false );
-	//#ifndef NDEBUG
-	TR << "Error: reached code that should be dead at line: " << __LINE__ << " of HBNet::get_next_node_weighted_by_path_potential()" << std::endl;
-	//#endif
-
+	utility_exit_with_message( "Dead code has been reached" );
 	return 0;
 }
 
@@ -4183,106 +4259,193 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 	current_network_state.score = current_network_state.full_twobody_energy / current_network_state.nodes.size();
 }
 
-inline bool atoms_are_within_cutoff(
-	numeric::xyzVector< core::Real > const & atom1,
-	numeric::xyzVector< float > const & atom2
-){
-	float const cutoff = 3.5;
-	float const cutoff_squared = 3.5*3.5;
-
-	//do quick Manhatten check
-	//assuming we already checked x
-	if ( std::abs( atom1.y() - atom2.y() ) > cutoff ) return false;
-	if ( std::abs( atom1.z() - atom2.z() ) > cutoff ) return false;
-
-	return atom1.distance_squared( atom2 ) < cutoff_squared;
-}
-
 bool HBNet::network_state_is_satisfied( NetworkState & current_state ) const {
 	if ( symmetric_ ) return true;
 	//modelled after quick_and_dirty_network_has_heavy_atom_unsat()
 	//core::Real const heavy_atom_don_acc_cutoff( 3.5 );
 	//core::Real const heavy_atom_don_acc_cutoff_squared = heavy_atom_don_acc_cutoff * heavy_atom_don_acc_cutoff;
 
-	for ( HBondNode const * hbond_node : current_state.nodes ) {
-		core::conformation::ResidueCOP network_residue = rotamer_sets_->rotamer( hbond_node->get_node_index() );
-		if ( core_residues_[ network_residue->seqpos() ] ) {
+	bool network_is_satisfied( true );
 
-			for ( core::Size heavy_atomno = network_residue->first_sidechain_atom(); heavy_atomno <= network_residue->nheavyatoms(); ++heavy_atomno ) {
-
-				bool const is_donor = network_residue->heavyatom_has_polar_hydrogens( heavy_atomno );
-				bool const is_acc = network_residue->heavyatom_is_an_acceptor( heavy_atomno );
-
-				bool satisfied = !( is_donor || is_acc );//automatically satisfied if not polar
-				if ( satisfied ) continue;
-
-				polar_atom atom ( network_residue->seqpos(), network_residue->atom( heavy_atomno ).xyz() );
-
-				//FIRST: check network atoms
-				if ( is_acc ) {
-					//I think these will be small enough where we don't need to find the upper and lower bounds -Jack
-					for ( auto const & network_donor : current_state.sc_donor_atoms ) {
-						if ( network_donor.seqpos != atom.seqpos && atoms_are_within_cutoff( atom.xyz, network_donor.xyz ) ) {
-							satisfied = true;
-							break;
-						}
-					}
-				}//end if is_acc
-
-				if ( ! satisfied && is_donor ) {
-					//I think these will be small enough where we don't need to find the upper and lower bounds -Jack
-					for ( auto const & network_acc : current_state.sc_acceptor_atoms ) {
-						if ( network_acc.seqpos != atom.seqpos && atoms_are_within_cutoff( atom.xyz, network_acc.xyz ) ) {
-							satisfied = true;
-							break;
-						}
+	// all network donors
+	for ( auto & network_donor : current_state.sc_donor_atoms ) {
+		// if already satisfied, no need to check it
+		if ( !(network_donor.is_satisfied) ) {
+			//FIRST: check network atoms
+			if ( core_residues_[ network_donor.seqpos ] ) {
+				for ( auto const & network_acc : current_state.sc_acceptor_atoms ) {
+					if ( network_acc.seqpos != network_donor.seqpos && heavy_atoms_are_within_cutoff( network_donor.xyz, network_acc.xyz ) ) {
+						network_donor.is_satisfied = true;
+						break;
 					}
 				}
+			} else {
+				network_donor.is_satisfied = true;
+			}
+			//SECOND: check bb and fixed sc atoms
+			if ( !(network_donor.is_satisfied) ) {
+				//Calc bounds for sampling:
+				polar_atom dummy_atom = network_donor;
+				dummy_atom.xyz.x( dummy_atom.xyz.x() - 3.5 );
+				std::set< polar_atom >::const_iterator lower = fixed_and_bb_acceptor_atoms_.lower_bound( dummy_atom );
 
-				//SECOND: check bb and fixed sc atoms
-				if ( ! satisfied && is_acc ) {
-					//Calc bounds for sampling:
-					polar_atom dummy_atom = atom;
-					dummy_atom.xyz.x( dummy_atom.xyz.x() - 3.5 );
-					std::set< polar_atom >::const_iterator lower = fixed_and_bb_donor_atoms_.lower_bound( dummy_atom );
+				dummy_atom.xyz.x( dummy_atom.xyz.x() + 7 );
+				std::set< polar_atom >::const_iterator upper = fixed_and_bb_acceptor_atoms_.upper_bound( dummy_atom );
 
-					dummy_atom.xyz.x( dummy_atom.xyz.x() + 7 );
-					std::set< polar_atom >::const_iterator upper = fixed_and_bb_donor_atoms_.upper_bound( dummy_atom );
-
-					//iterate over all donor atoms that are within 3.5 A of acc in the x dimension
-					for ( auto it = lower; it != upper; ++it ) {
-						if ( atoms_are_within_cutoff( it->xyz, atom.xyz ) ) {
-							satisfied = true;
-							break;
-						}
+				//iterate over all donor atoms that are within 3.5 A of acc in the x dimension
+				for ( auto it = lower; it != upper; ++it ) {
+					if ( heavy_atoms_are_within_cutoff( network_donor.xyz, it->xyz ) ) {
+						network_donor.is_satisfied = true;
+						break;
 					}
 				}
-
-				if ( ! satisfied && is_donor ) {
-					//Calc bounds for sampling:
-					polar_atom dummy_atom = atom;
-					dummy_atom.xyz.x( dummy_atom.xyz.x() - 3.5 );
-					std::set< polar_atom >::const_iterator lower = fixed_and_bb_acceptor_atoms_.lower_bound( dummy_atom );
-
-					dummy_atom.xyz.x( dummy_atom.xyz.x() + 7 );
-					std::set< polar_atom >::const_iterator upper = fixed_and_bb_acceptor_atoms_.upper_bound( dummy_atom );
-
-					//iterate over all donor atoms that are within 3.5 A of acc in the x dimension
-					for ( auto it = lower; it != upper; ++it ) {
-						if ( atoms_are_within_cutoff( atom.xyz, it->xyz ) ) {
-							satisfied = true;
-							break;
-						}
+			}
+			// if detected as staisfied and is hydroxyl, set hydroxyl acc.is_satisfied=true; worth it because we only have to do it once ever
+			if ( network_donor.is_satisfied && network_donor.is_hydroxyl ) {
+				for ( auto & network_acc : current_state.sc_acceptor_atoms ) {
+					// this check could be better; originally had network_acc.x() == network_don.x() but probably bad idea to == floats
+					//   same seqpos, OH should be same atom, but need dist check for NCAAs and ligands
+					if ( network_donor.seqpos == network_acc.seqpos && network_donor.xyz.distance_squared( network_acc.xyz ) < 0.001  ) {
+						network_acc.is_satisfied = true;
 					}
 				}
+			}
+			// if heavy atom still not satisfied, then the network is not satisfied
+			if ( !(network_donor.is_satisfied) ) {
+				network_is_satisfied = false;
+			}
+		}
+	}
+	// all network acceptors
+	for ( auto & network_acc : current_state.sc_acceptor_atoms ) {
+		// if already satisfied, no need to check it
+		if ( !(network_acc.is_satisfied) ) {
+			//FIRST: check network atoms
+			if ( core_residues_[ network_acc.seqpos ] ) {
+				for ( auto const & network_don : current_state.sc_donor_atoms ) {
+					if ( network_acc.seqpos != network_don.seqpos && heavy_atoms_are_within_cutoff( network_acc.xyz, network_don.xyz ) ) {
+						network_acc.is_satisfied = true;
+						break;
+					}
+				}
+			} else {
+				network_acc.is_satisfied = true;
+			}
+			//SECOND: check bb and fixed sc atoms
+			if ( !(network_acc.is_satisfied) ) {
+				//Calc bounds for sampling:
+				polar_atom dummy_atom = network_acc;
+				dummy_atom.xyz.x( dummy_atom.xyz.x() - 3.5 );
+				std::set< polar_atom >::const_iterator lower = fixed_and_bb_donor_atoms_.lower_bound( dummy_atom );
 
-				if ( ! satisfied ) return false;
+				dummy_atom.xyz.x( dummy_atom.xyz.x() + 7 );
+				std::set< polar_atom >::const_iterator upper = fixed_and_bb_donor_atoms_.upper_bound( dummy_atom );
 
-			}//for heavy atomno
-		}//if is core
-	}//for hbond_node
+				//iterate over all donor atoms that are within 3.5 A of acc in the x dimension
+				for ( auto it = lower; it != upper; ++it ) {
+					if ( heavy_atoms_are_within_cutoff( network_acc.xyz, it->xyz ) ) {
+						network_acc.is_satisfied = true;
+						break;
+					}
+				}
+			}
+			// if detected as staisfied and is hydroxyl, set hydroxyl acc.is_satisfied=true; worth it because we only have to do it once ever
+			if ( network_acc.is_satisfied && network_acc.is_hydroxyl ) {
+				for ( auto & network_don : current_state.sc_donor_atoms ) {
+					// this check could be better; originally had network_acc.x() == network_don.x() but probably bad idea to == floats
+					//   same seqpos, OH should be same atom, but need dist check for NCAAs and ligands
+					if ( network_acc.seqpos == network_don.seqpos && network_acc.xyz.distance_squared( network_don.xyz ) < 0.001  ) {
+						network_acc.is_satisfied = true;
+					}
+				}
+			}
+			// if heavy atom still not satisfied, then the network is not satisfied
+			if ( !(network_acc.is_satisfied) ) {
+				network_is_satisfied = false;
+			}
+		}
+	}
+	return network_is_satisfied;
 
-	return true;
+	// for ( HBondNode const * hbond_node : current_state.nodes ) {
+	//  core::conformation::ResidueCOP network_residue = rotamer_sets_->rotamer( hbond_node->get_node_index() );
+	//  if ( core_residues_[ network_residue->seqpos() ] ) {
+	//
+	//   for ( core::Size heavy_atomno = network_residue->first_sidechain_atom(); heavy_atomno <= network_residue->nheavyatoms(); ++heavy_atomno ) {
+	//
+	//    bool const is_donor = network_residue->heavyatom_has_polar_hydrogens( heavy_atomno );
+	//    bool const is_acc = network_residue->heavyatom_is_an_acceptor( heavy_atomno );
+	//
+	//    bool satisfied = !( is_donor || is_acc );//automatically satisfied if not polar
+	//    if ( satisfied ) continue;
+	//
+	//    polar_atom atom ( network_residue->seqpos(), network_residue->atom( heavy_atomno ).xyz() );
+	//
+	//    //FIRST: check network atoms
+	//    if ( is_acc ) {
+	//     //I think these will be small enough where we don't need to find the upper and lower bounds -Jack
+	//     for ( auto const & network_donor : current_state.sc_donor_atoms ) {
+	//      if ( network_donor.seqpos != atom.seqpos && atoms_are_within_cutoff( atom.xyz, network_donor.xyz ) ) {
+	//       satisfied = true;
+	//       break;
+	//      }
+	//     }
+	//    }//end if is_acc
+	//
+	//    if ( ! satisfied && is_donor ) {
+	//     //I think these will be small enough where we don't need to find the upper and lower bounds -Jack
+	//     for ( auto const & network_acc : current_state.sc_acceptor_atoms ) {
+	//      if ( network_acc.seqpos != atom.seqpos && atoms_are_within_cutoff( atom.xyz, network_acc.xyz ) ) {
+	//       satisfied = true;
+	//       break;
+	//      }
+	//     }
+	//    }
+	//
+	//    //SECOND: check bb and fixed sc atoms
+	//    if ( ! satisfied && is_acc ) {
+	//     //Calc bounds for sampling:
+	//     polar_atom dummy_atom = atom;
+	//     dummy_atom.xyz.x( dummy_atom.xyz.x() - 3.5 );
+	//     std::set< polar_atom >::const_iterator lower = fixed_and_bb_donor_atoms_.lower_bound( dummy_atom );
+	//
+	//     dummy_atom.xyz.x( dummy_atom.xyz.x() + 7 );
+	//     std::set< polar_atom >::const_iterator upper = fixed_and_bb_donor_atoms_.upper_bound( dummy_atom );
+	//
+	//     //iterate over all donor atoms that are within 3.5 A of acc in the x dimension
+	//     for ( auto it = lower; it != upper; ++it ) {
+	//      if ( atoms_are_within_cutoff( it->xyz, atom.xyz ) ) {
+	//       satisfied = true;
+	//       break;
+	//      }
+	//     }
+	//    }
+	//
+	//    if ( ! satisfied && is_donor ) {
+	//     //Calc bounds for sampling:
+	//     polar_atom dummy_atom = atom;
+	//     dummy_atom.xyz.x( dummy_atom.xyz.x() - 3.5 );
+	//     std::set< polar_atom >::const_iterator lower = fixed_and_bb_acceptor_atoms_.lower_bound( dummy_atom );
+	//
+	//     dummy_atom.xyz.x( dummy_atom.xyz.x() + 7 );
+	//     std::set< polar_atom >::const_iterator upper = fixed_and_bb_acceptor_atoms_.upper_bound( dummy_atom );
+	//
+	//     //iterate over all donor atoms that are within 3.5 A of acc in the x dimension
+	//     for ( auto it = lower; it != upper; ++it ) {
+	//      if ( atoms_are_within_cutoff( atom.xyz, it->xyz ) ) {
+	//       satisfied = true;
+	//       break;
+	//      }
+	//     }
+	//    }
+	//
+	//    if ( ! satisfied ) return false;
+	//
+	//   }//for heavy atomno
+	//  }//if is core
+	// }//for hbond_node
+	//
+	// return true;
 }
 
 void HBNet::score_network_state( NetworkState & state ) const {
@@ -4357,6 +4520,9 @@ bool HBNet::network_state_is_done_growing( NetworkState const & current_state, H
 
 void HBNet::init_atom_indices_data(){
 
+	fixed_and_bb_donor_atoms_.clear();
+	fixed_and_bb_acceptor_atoms_.clear();
+
 	for ( core::Size resid = 1; resid <= orig_pose_->size(); ++resid ) {
 		core::conformation::Residue const & res = orig_pose_->residue( resid );
 		if ( task_->being_packed( resid ) ) {
@@ -4366,8 +4532,9 @@ void HBNet::init_atom_indices_data(){
 			//Acceptors first
 			for ( const auto & acc_pos : res.accpt_pos() ) {
 				if ( acc_pos > num_bb_atoms ) break;
-				fixed_and_bb_acceptor_atoms_.insert( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz() ) );
+				fixed_and_bb_acceptor_atoms_.insert( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz(), res.atom_type( acc_pos ).name() == "OH", !(core_residues_[ res.seqpos() ]) ) ); // if not buried, set to satisfied
 			}
+
 
 			//Donors
 			std::set< core::Size > heavy_bb_donors;//used to eliminate duplicates
@@ -4377,7 +4544,7 @@ void HBNet::init_atom_indices_data(){
 			}
 
 			for ( core::Size atomno : heavy_bb_donors ) {
-				fixed_and_bb_donor_atoms_.insert( polar_atom( res.seqpos(), res.atom( atomno ).xyz() ) );
+				fixed_and_bb_donor_atoms_.insert( polar_atom( res.seqpos(), res.atom( atomno ).xyz(), res.atom_type( atomno ).name() == "OH", !(core_residues_[ res.seqpos() ]) ) );
 			}
 
 		} else {
@@ -4395,9 +4562,8 @@ void HBNet::init_atom_indices_data(){
 
 			//Acceptors
 			for ( const auto & acc_pos : res.accpt_pos() ) {
-				fixed_and_bb_acceptor_atoms_.insert( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz() ) );
+				fixed_and_bb_acceptor_atoms_.insert( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz(), res.atom_type( acc_pos ).name() == "OH", !(core_residues_[ res.seqpos() ]) ) );
 			}
-
 			//Donors
 			std::set< core::Size > heavy_donors;//used to eliminate duplicates
 			for ( const auto & don_H_pos : res.Hpos_polar() ) {
@@ -4405,9 +4571,8 @@ void HBNet::init_atom_indices_data(){
 			}
 
 			for ( core::Size atomno : heavy_donors ) {
-				fixed_and_bb_donor_atoms_.insert( polar_atom( res.seqpos(), res.atom( atomno ).xyz() ) );
+				fixed_and_bb_donor_atoms_.insert( polar_atom( res.seqpos(), res.atom( atomno ).xyz(), res.atom_type( atomno ).name() == "OH", !(core_residues_[ res.seqpos() ]) ) );
 			}
-
 		}
 	}//resid
 

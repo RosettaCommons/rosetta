@@ -301,9 +301,11 @@ struct compare_net_vec : public std::binary_function< HBondNetStructOP, HBondNet
 //MONTE CARLO STRUCTS///////////////////////////////////////////////////////////////////////////////////
 
 struct polar_atom {
-	polar_atom( unsigned int sequence_position, numeric::xyzVector< float > const & atom_position ){
+	polar_atom( unsigned int sequence_position, numeric::xyzVector< float > const & atom_position, bool hydroxyl, bool satisfied=false /*, bool buried */ ){
 		seqpos = sequence_position;
 		xyz = atom_position;
+		is_hydroxyl = hydroxyl; // worth it to store here, because so many special cases revolve around OH's
+		is_satisfied = satisfied;
 	}
 
 	bool operator < ( polar_atom const & rhs ) const {
@@ -315,6 +317,8 @@ struct polar_atom {
 
 	unsigned int seqpos;
 	numeric::xyzVector< float > xyz;
+	bool is_hydroxyl;
+	bool is_satisfied;
 };
 
 struct compare_by_x {
@@ -365,8 +369,8 @@ struct NetworkState{
 	core::Real full_twobody_energy;//Sum of hbond score + clash score for all residue pairs in "residues" data object
 	core::Real score;//This holds whatever metric is used for sorting
 
-	std::set< polar_atom > sc_donor_atoms;
-	std::set< polar_atom > sc_acceptor_atoms;
+	std::list< polar_atom > sc_donor_atoms;
+	std::list< polar_atom > sc_acceptor_atoms;
 
 };
 
@@ -619,6 +623,11 @@ public: //Monte Carlo Protocol Public methods
 	///@brief turn on or off the monte carlo branching protocol
 	inline void set_monte_carlo_branch( bool setting ){
 		monte_carlo_branch_ = setting;
+	}
+
+	///@brief turn on or off the only_get_satisfied_nodes option
+	inline void set_only_get_satisfied_nodes( bool setting ){
+		only_get_satisfied_nodes_ = setting;
 	}
 
 	///@brief set number of monte carlo runs to be divided over all the seed hbonds. A single monte carlo run appears to take roughly 1 ms (very loose estimate).
@@ -886,6 +895,7 @@ private:
 
 	//MONTE CARLO DATA:
 	bool monte_carlo_branch_;
+	bool only_get_satisfied_nodes_;
 	core::Size total_num_mc_runs_;
 	core::Size max_mc_nets_;
 
@@ -904,7 +914,8 @@ private:
 
 inline void HBNet::set_monte_carlo_data_to_default(){
 	monte_carlo_branch_ = false;
-	total_num_mc_runs_ = 10000;
+	only_get_satisfied_nodes_ = false;
+	total_num_mc_runs_ = 100000;
 	monte_carlo_seeds_.reserve( 1024 );
 	monte_carlo_seed_threshold_ = 0;
 
@@ -918,7 +929,8 @@ inline void add_polar_atoms_to_network_state( NetworkState & network_state, HBon
 	//Acceptors
 	for ( const auto & acc_pos : res.accpt_pos() ) {
 		//numeric::xyzVector<float> acc_xyz( res.atom( acc_pos ).xyz() );
-		network_state.sc_acceptor_atoms.insert( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz() ) );
+		//network_state.sc_acceptor_atoms.insert( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz(), res.atom_type( acc_pos).name() == "OH" ) );
+		network_state.sc_acceptor_atoms.push_back( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz(), res.atom_type( acc_pos).name() == "OH" ) );
 	}
 
 	//Donors
@@ -928,9 +940,25 @@ inline void add_polar_atoms_to_network_state( NetworkState & network_state, HBon
 	}
 
 	for ( core::Size atomno : heavy_donors ) {
-		network_state.sc_donor_atoms.insert( polar_atom( res.seqpos(), res.atom( atomno ).xyz() ) );
+		//network_state.sc_donor_atoms.insert( polar_atom( res.seqpos(), res.atom( atomno ).xyz(), res.atom_type( atomno ).name() == "OH"  ) );
+		network_state.sc_donor_atoms.push_back( polar_atom( res.seqpos(), res.atom( atomno ).xyz(), res.atom_type( atomno ).name() == "OH"  ) );
 	}
 
+}
+
+inline bool heavy_atoms_are_within_cutoff(
+	numeric::xyzVector< core::Real > const & atom1,
+	numeric::xyzVector< float > const & atom2
+){
+	float const cutoff = 3.25;
+	float const cutoff_squared = 3.25*3.25;
+
+	//do quick Manhatten check
+	//assuming we already checked x
+	if ( std::abs( atom1.y() - atom2.y() ) > cutoff ) return false;
+	if ( std::abs( atom1.z() - atom2.z() ) > cutoff ) return false;
+
+	return atom1.distance_squared( atom2 ) < cutoff_squared;
 }
 
 } // hbnet
