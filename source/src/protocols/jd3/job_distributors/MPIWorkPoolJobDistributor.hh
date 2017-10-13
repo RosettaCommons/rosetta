@@ -42,12 +42,14 @@
 
 // Utility headers
 #include <utility/heap.hh>
+#include <utility/string_util.hh>
 
 // C++ headers
 #include <list>
 #include <map>
 #include <set>
 #include <string>
+#include <fstream>
 
 namespace protocols {
 namespace jd3 {
@@ -88,7 +90,7 @@ class MPIWorkPoolJobDistributor : public JobDistributor
 public:
 	typedef std::list< core::Size > SizeList;
 	typedef std::pair< LarvalJobOP, JobResultOP > LarvalJobAndResult;
-	typedef std::map< JobResultID, std::string > SerializedJobResultMap;
+	typedef std::map< JobResultID, utility::pointer::shared_ptr< std::string > > SerializedJobResultMap;
 	typedef std::map< JobResultID, Size > JobResultLocationMap;
 	typedef std::map< Size, LarvalJobOP > JobMap;
 	typedef utility::pointer::shared_ptr< JobMap > JobMapOP;
@@ -302,12 +304,24 @@ private:
 		utility::vector1< JobSummaryOP > const & job_summaries
 	) const;
 
+	inline std::string get_string_from_disk( Size job_id, Size result_index ) const {
+		return utility::file_contents( filename_for_archive( job_id, result_index ) );
+	}
+
+	inline std::string filename_for_archive( Size job_id, Size result_index ) const {
+		return archive_dir_name_ + "/archive." + std::to_string( job_id ) + "." + std::to_string( result_index );
+	}
+
 private:
 
 	int mpi_rank_;
 	int mpi_nprocs_;
 	int n_archives_;
 	bool store_on_node0_;
+	bool compress_job_results_;
+
+	bool archive_on_disk_;
+	std::string archive_dir_name_;
 
 	JobQueenOP job_queen_;
 	JobDigraphOP job_dag_;

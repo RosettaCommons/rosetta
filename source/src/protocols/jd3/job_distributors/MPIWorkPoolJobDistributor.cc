@@ -44,6 +44,7 @@
 #include <utility/assert.hh>
 #include <utility/mpi_util.hh>
 #include <utility/vector1.srlz.hh>
+#include <utility/io/zipstream.hpp>
 
 // Cereal headers
 #include <cereal/archives/binary.hpp>
@@ -63,6 +64,9 @@ using core::Size;
 MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 	n_archives_( basic::options::option[ basic::options::OptionKeys::jd3::n_archive_nodes ] ),
 	store_on_node0_( n_archives_ == 0 && ! basic::options::option[ basic::options::OptionKeys::jd3::do_not_archive_on_node0 ]() ),
+	compress_job_results_( basic::options::option[ basic::options::OptionKeys::jd3::compress_job_results ]() ),
+	archive_on_disk_( basic::options::option[ basic::options::OptionKeys::jd3::archive_on_disk ].user() ),
+	archive_dir_name_( basic::options::option[ basic::options::OptionKeys::jd3::archive_on_disk ]() ),
 	n_results_per_archive_( n_archives_ + 1 ),
 	default_retry_limit_( 1 )
 {
@@ -178,7 +182,7 @@ MPIWorkPoolJobDistributor::go_master()
 		case mpi_work_pool_jd_new_job_request :
 			process_job_request_from_node( worker_node );
 			break;
-		default:
+		default :
 			// error -- we should not have gotten here
 			throw utility::excn::EXCN_Msg_Exception( "recieved inappropriate signal "
 				"on node 0 from node " + utility::to_string( worker_node )
@@ -338,13 +342,13 @@ MPIWorkPoolJobDistributor::process_job_succeeded( int worker_node )
 	}
 
 	// changing this if ( archival_node == 0 ) {
-	// changing this 	// NOTE: when worker nodes are sending the larval job / job result pair
-	// changing this 	// they do not need to first send an archival-request message or the job id.
-	// changing this 	// Store serialized larval job & job result pair
-	// changing this 	std::string serialized_job_result_string =
-	// changing this 		utility::receive_string_from_node( worker_node );
-	// changing this 	job_results_[ job_id ] = serialized_job_result_string;
-	// changing this 	utility::send_integer_to_node( worker_node, mpi_work_pool_jd_archival_completed );
+	// changing this  // NOTE: when worker nodes are sending the larval job / job result pair
+	// changing this  // they do not need to first send an archival-request message or the job id.
+	// changing this  // Store serialized larval job & job result pair
+	// changing this  std::string serialized_job_result_string =
+	// changing this   utility::receive_string_from_node( worker_node );
+	// changing this  job_results_[ job_id ] = serialized_job_result_string;
+	// changing this  utility::send_integer_to_node( worker_node, mpi_work_pool_jd_archival_completed );
 	// changing this }
 }
 
@@ -404,12 +408,12 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 			utility::to_string( job_id ) + "\nError message from the cereal library:\n" + e.what() + "\n" );
 	}
 
-	// Inform the JobQueen of the completed job.
-	// This step had to be delayed until after the archival process completed,
-	// as it assumes that the JobResult is present on the node where we
-	// wrote down it would be stored. Otherwise, jobs could be launched that
-	// would produce a race condition by asking for JobResults as inputs that
-	// either had or had not yet completed the archival process.
+// Inform the JobQueen of the completed job.
+// This step had to be delayed until after the archival process completed,
+// as it assumes that the JobResult is present on the node where we
+// wrote down it would be stored. Otherwise, jobs could be launched that
+// would produce a race condition by asking for JobResults as inputs that
+// either had or had not yet completed the archival process.
 	Size const nsummaries = job_summaries.size();
 	if ( job_queen_->larval_job_needed_for_note_job_completed() ||
 			job_queen_->larval_job_needed_for_completed_job_summary() ) {
@@ -438,8 +442,32 @@ MPIWorkPoolJobDistributor::process_retrieve_job_result_request( int worker_node 
 	Size result_index = receive_size_from_node( worker_node );
 	JobResultID result_id = { job_id, result_index };
 
-	SerializedJobResultMap::const_iterator iter = job_results_.find( result_id );
-	if ( iter == job_results_.end() ) {
+	bool archive_does_not_exist = false;
+
+	if ( archive_on_disk_ ) {
+		std::string const filename = filename_for_archive( job_id, result_index );
+		std::ifstream in ( filename );
+		if ( ! in.good() ) {
+			archive_does_not_exist = true;
+		} else {
+			std::string const content = utility::file_contents( filename );
+			send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
+			send_string_to_node( worker_node, content );
+		}
+		in.close();
+	} else {
+		SerializedJobResultMap::const_iterator iter = job_results_.find( result_id );
+		if ( iter == job_results_.end() ) {
+			archive_does_not_exist = true;
+		} else {
+			// ok -- we have found the (serialized) JobResult
+			send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
+			send_string_to_node( worker_node, * iter->second );
+			return;
+		}
+	}
+
+	if ( archive_does_not_exist ) {
 		// fatal error: the requested job result is not present at this node.
 		// inform node 0 (if this isn't node 0 )
 		if ( mpi_rank_ == 0 ) {
@@ -455,10 +483,6 @@ MPIWorkPoolJobDistributor::process_retrieve_job_result_request( int worker_node 
 			return;
 		}
 	}
-
-	// ok -- we have found the (serialized) JobResult
-	send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
-	send_string_to_node( worker_node, iter->second );
 }
 
 void
@@ -484,19 +508,34 @@ MPIWorkPoolJobDistributor::process_retrieve_and_discard_job_result_request( int 
 
 	JobResultID job_result_id = { job_id, result_index };
 
-	SerializedJobResultMap::iterator iter = job_results_.find( job_result_id );
-	if ( iter == job_results_.end() ) {
-		// fatal error: the requested job result is not present at this node.
-		// inform node 0 (this isn't node 0, as this function is only called by archive nodes)
-		send_integer_to_node( worker_node, mpi_work_pool_jd_failed_to_retrieve_job_result );
-		return;
+	if ( archive_on_disk_ ) {
+		std::string const filename = filename_for_archive( job_id, result_index );
+		std::ifstream in ( filename );//as of now, this only checks to see if filename is good
+		if ( ! in.good() ) {
+			send_integer_to_node( worker_node, mpi_work_pool_jd_failed_to_retrieve_job_result );
+		} else {
+			std::string const content = utility::file_contents( filename );
+			remove( filename.c_str() );
+
+			send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
+			send_string_to_node( worker_node, content );
+		}
+		in.close();
+
+	} else {
+		SerializedJobResultMap::iterator iter = job_results_.find( job_result_id );
+		if ( iter == job_results_.end() ) {
+			// fatal error: the requested job result is not present at this node.
+			// inform node 0 (this isn't node 0, as this function is only called by archive nodes)
+			send_integer_to_node( worker_node, mpi_work_pool_jd_failed_to_retrieve_job_result );
+			return;
+		}
+
+		// ok -- we have found the (serialized) JobResult
+		send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
+		send_string_to_node( worker_node, * iter->second );
+		job_results_.erase( iter );
 	}
-
-	// ok -- we have found the (serialized) JobResult
-	send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
-	send_string_to_node( worker_node, iter->second );
-
-	job_results_.erase( iter );
 }
 
 void
@@ -505,6 +544,14 @@ MPIWorkPoolJobDistributor::process_discard_job_result_request( int remote_node )
 	using namespace utility;
 	Size job_id = receive_size_from_node( remote_node ); // node 0
 	Size result_index = receive_size_from_node( remote_node );
+
+	if ( archive_on_disk_ ) {
+		std::string const filename = filename_for_archive( job_id, result_index );
+		if ( remove( filename.c_str() ) ) { //remove's name is not intuitive for its return value. non-zero return value means the remove failed
+			std::cerr << "Failed to discard job result (" << job_id << ", " << result_index << ") on node " << mpi_rank_ << std::endl;
+		}
+		return;
+	}
 
 	JobResultID job_result_id = { job_id, result_index };
 	SerializedJobResultMap::iterator iter = job_results_.find( job_result_id );
@@ -524,7 +571,15 @@ MPIWorkPoolJobDistributor::process_archive_job_result_request( int remote_node )
 	Size result_index = receive_size_from_node( remote_node );
 	JobResultID result_id = { job_id, result_index };
 	std::string serialized_larval_job_and_result = receive_string_from_node( remote_node );
-	job_results_[ result_id ] = serialized_larval_job_and_result;
+	if ( archive_on_disk_ ) {
+		std::string const filename = filename_for_archive( job_id, result_index );
+		std::ofstream out ( filename );
+		debug_assert( out.is_open() );
+		out << serialized_larval_job_and_result;
+		out.close();
+	} else {
+		job_results_[ result_id ] = std::make_shared< std::string > ( serialized_larval_job_and_result );
+	}
 	utility::send_integer_to_node( remote_node, mpi_work_pool_jd_archival_completed );
 }
 
@@ -651,13 +706,21 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 		if ( node_housing_result == 0 ) {
 			// ok, we have the result on this node
 			try {
-				job_and_result = deserialize_larval_job_and_result( job_results_[ result_id ] );
+				if ( archive_on_disk_ ) {
+					job_and_result = deserialize_larval_job_and_result( get_string_from_disk( result_id.first, result_id.second ) );
+				} else {
+					job_and_result = deserialize_larval_job_and_result( * job_results_[ result_id ] );
+				}
 			} catch ( cereal::Exception & e ) {
 				throw utility::excn::EXCN_Msg_Exception( "Failed to deserialize LarvalJob & JobResult pair for job #" +
 					utility::to_string( result_id.first ) + " result index #" + utility::to_string( result_id.second ) +
 					"\nError message from the cereal library:\n" + e.what() + "\n" );
 			}
-			job_results_.erase( result_id );
+			if ( archive_on_disk_ ) {
+				remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
+			} else {
+				job_results_.erase( result_id );
+			}
 		} else {
 			utility::send_integer_to_node( node_housing_result, 0 ); // say "I need to talk to you"
 			utility::send_integer_to_node( node_housing_result,
@@ -719,7 +782,11 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 		LarvalJobAndResult job_and_result;
 		if ( node_housing_result == 0 ) {
 			// ok, we have the result on this node
-			job_results_.erase( result_id );
+			if ( archive_on_disk_ ) {
+				remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
+			} else {
+				job_results_.erase( result_id );
+			}
 		} else {
 			utility::send_integer_to_node( node_housing_result, 0 ); // say "I need to talk to you"
 			utility::send_integer_to_node( node_housing_result,
@@ -750,34 +817,34 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 //void
 //MPIWorkPoolJobDistributor::queue_jobs_for_next_node_to_run()
 //{
-//	debug_assert( jobs_for_current_digraph_node_.empty() );
-//	debug_assert( ! digraph_nodes_ready_to_be_run_.empty() );
+// debug_assert( jobs_for_current_digraph_node_.empty() );
+// debug_assert( ! digraph_nodes_ready_to_be_run_.empty() );
 //
-//	job_extractor_->queue_jobs_for_next_node_to_run();
+// job_extractor_->queue_jobs_for_next_node_to_run();
 //
-//	if ( ! worker_nodes_waiting_for_jobs_.empty() &&
-//			! job_extractor_->jobs_for_current_digraph_node_empty() ) {
-//		assign_jobs_to_idling_nodes();
-//		// at the end of this call, either we have run out of jobs to assign
-//		// or we have run out of idling nodes
-//	}
+// if ( ! worker_nodes_waiting_for_jobs_.empty() &&
+//   ! job_extractor_->jobs_for_current_digraph_node_empty() ) {
+//  assign_jobs_to_idling_nodes();
+//  // at the end of this call, either we have run out of jobs to assign
+//  // or we have run out of idling nodes
+// }
 //
 //}
 
 //void
 //MPIWorkPoolJobDistributor::queue_initial_digraph_nodes_and_jobs()
 //{
-//	runtime_assert( digraph_is_a_DAG( *job_dag_ ) );
+// runtime_assert( digraph_is_a_DAG( *job_dag_ ) );
 //
-//	// iterate across all nodes in the job_digraph, and note every
-//	// node with an indegree of 0
-//	for ( Size ii = 1; ii <= job_dag_->num_nodes(); ++ii ) {
-//		if ( job_dag_->get_node(ii)->indegree() == 0 ) {
-//			digraph_nodes_ready_to_be_run_.push_back( ii );
-//		}
-//	}
-//	debug_assert( ! digraph_nodes_ready_to_be_run_.empty() );
-//	queue_jobs_for_next_node_to_run();
+// // iterate across all nodes in the job_digraph, and note every
+// // node with an indegree of 0
+// for ( Size ii = 1; ii <= job_dag_->num_nodes(); ++ii ) {
+//  if ( job_dag_->get_node(ii)->indegree() == 0 ) {
+//   digraph_nodes_ready_to_be_run_.push_back( ii );
+//  }
+// }
+// debug_assert( ! digraph_nodes_ready_to_be_run_.empty() );
+// queue_jobs_for_next_node_to_run();
 //}
 
 bool
@@ -887,17 +954,17 @@ MPIWorkPoolJobDistributor::throw_after_failed_to_retrieve_job_result(
 
 	JobResultID result_id = { job_id, result_index };
 
-	if ( worker_node_for_job_.count( job_id )) {
+	if ( worker_node_for_job_.count( job_id ) ) {
 		oss << "Internal Error in the MPIWorkPoolJobDistributor: JobDistrutor thinks that this job is still running on node " <<
 			worker_node_for_job_[ job_id ] << "\n";
 	} else if ( job_result_location_map_.count( result_id ) ) {
 		oss << "JobDistributor on node 0 thinks the result should have been on node ";
 		oss << job_result_location_map_[ result_id ] << "\n";
-	//} else if ( output_jobs_.member( job_id ) ) {
-	//	oss << "JobDistributor has already output this job (and does not keep jobs ";
-	//	oss << "that have already been output).\n";
-	//} else if ( discarded_jobs_.member( job_id ) ) {
-	//	oss << "JobDistributor has discarded this job per the JobQueen's request\n";
+		//} else if ( output_jobs_.member( job_id ) ) {
+		// oss << "JobDistributor has already output this job (and does not keep jobs ";
+		// oss << "that have already been output).\n";
+		//} else if ( discarded_jobs_.member( job_id ) ) {
+		// oss << "JobDistributor has discarded this job per the JobQueen's request\n";
 	} else {
 		oss << "This job is not listed as still running nor as having its JobResult stored on any"
 			" archive node; it perhaps has been output or discarded already.\n";
@@ -1151,17 +1218,17 @@ MPIWorkPoolJobDistributor::worker_send_job_result_to_master_and_archive(
 		// send an error message to node 0 and return
 		std::ostringstream oss;
 		oss << "Failed to serialize JobSummary; all objects stored in this class (or that are derived from" <<
-			" it) must implement save & load serialization functions\nJob #" <<	larval_job->job_index() <<
+			" it) must implement save & load serialization functions\nJob #" << larval_job->job_index() <<
 			" failed. Error message from the cereal library:\n" << e.what() << "\n";
 		send_error_message_to_node0( oss.str() );
 		return;
 	}
 
-	// Ok -- everything that needs to be serialized can be; proceed to report a
-	// successful job completion.
+// Ok -- everything that needs to be serialized can be; proceed to report a
+// successful job completion.
 
-	// now, notify node 0 that the job is complete -- node 0 will tell us where
-	// to send the JobResult for archival.
+// now, notify node 0 that the job is complete -- node 0 will tell us where
+// to send the JobResult for archival.
 	utility::send_integer_to_node( 0, mpi_rank_ );
 	utility::send_integer_to_node( 0, mpi_work_pool_jd_job_success );
 	utility::send_size_to_node( 0, larval_job->job_index() );
@@ -1257,9 +1324,16 @@ MPIWorkPoolJobDistributor::deserialize_larval_job_and_result(
 ) const
 {
 	LarvalJobAndResult job_and_result;
-	std::istringstream iss( job_and_result_string );
-	cereal::BinaryInputArchive arc( iss );
-	arc( job_and_result );
+	if ( compress_job_results_ ) {
+		std::istringstream compressed_ss( job_and_result_string );
+		zlib_stream::zip_istream unzipper( compressed_ss );
+		cereal::BinaryInputArchive arc( unzipper );
+		arc( job_and_result );
+	} else {
+		std::istringstream iss( job_and_result_string );
+		cereal::BinaryInputArchive arc( iss );
+		arc( job_and_result );
+	}
 	return job_and_result;
 }
 
@@ -1275,7 +1349,17 @@ MPIWorkPoolJobDistributor::serialize_larval_job_and_result(
 		cereal::BinaryOutputArchive arc( oss );
 		arc( job_and_result );
 	}
-	return oss.str();
+	std::string const uncompressed_string = oss.str();
+
+	if ( compress_job_results_ ) {
+		std::ostringstream compressed_ss;
+		zlib_stream::zip_ostream zipper( compressed_ss );
+		zipper << uncompressed_string;
+		zipper.zflush();
+		return compressed_ss.str();
+	} else {
+		return uncompressed_string;
+	}
 }
 
 /// @throws Potentially throws a cereal::Exception; it is much more likely that errors are
