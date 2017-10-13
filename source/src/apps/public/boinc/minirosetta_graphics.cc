@@ -82,7 +82,6 @@
 #include "GL/glut.h"
 #endif
 
-//#include "txf_util.h" //Deprecated in latest BOINC.
 #include "ttfont.h"
 
 #ifdef __APPLE__
@@ -603,10 +602,8 @@ void app_graphics_init() {
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glEnable(GL_NORMALIZE);
 
-	// Expects a .txf file to exist in run directory
-	// TEXT WILL NOT DISPLAY IF .txf FILE IS MISSING!!
-	//txf_load_fonts(".");
-	TTFont::ttf_load_fonts(".");
+	// Expects a .ttf file to exist in project directory or run directory. Fonts will not display if this is missing.
+	TTFont::ttf_load_fonts(strlen(app_init_data.project_dir)?app_init_data.project_dir:".");
 }
 
 void
@@ -1328,16 +1325,16 @@ int main(int argc, char** argv) {
 		option.add_relevant( OptionKeys::boinc::noshmem );
 
 #ifdef _DEBUG
-	// DIAGNOSTICS
-	// http://boinc.berkeley.edu/trac/wiki/DiagnosticsApi
-	boinc_init_graphics_diagnostics(
-		BOINC_DIAG_DUMPCALLSTACKENABLED |
-		BOINC_DIAG_HEAPCHECKENABLED |
-		BOINC_DIAG_MEMORYLEAKCHECKENABLED |
-		BOINC_DIAG_REDIRECTSTDERR |
-		BOINC_DIAG_REDIRECTSTDOUT |
-		BOINC_DIAG_TRACETOSTDERR
-	);
+		// DIAGNOSTICS
+		// http://boinc.berkeley.edu/trac/wiki/DiagnosticsApi
+		boinc_init_graphics_diagnostics(
+			BOINC_DIAG_DUMPCALLSTACKENABLED |
+			BOINC_DIAG_HEAPCHECKENABLED |
+			BOINC_DIAG_MEMORYLEAKCHECKENABLED |
+			BOINC_DIAG_REDIRECTSTDERR |
+			BOINC_DIAG_REDIRECTSTDOUT |
+			BOINC_DIAG_TRACETOSTDERR
+		);
 #else
 		boinc_init_graphics_diagnostics(BOINC_DIAG_DEFAULTS);
 #endif
@@ -1354,8 +1351,8 @@ int main(int argc, char** argv) {
 
 
 #ifdef __APPLE__
-	// mac icon
-	setMacIcon(argv[0], MacAppIconData, sizeof(MacAppIconData));
+		// mac icon
+		setMacIcon(argv[0], MacAppIconData, sizeof(MacAppIconData));
 #endif
 
 		// create boinc object
