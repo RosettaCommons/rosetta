@@ -80,7 +80,8 @@ static THREAD_LOCAL basic::Tracer TR( "core.io.pose_to_sfr.PoseToStructFileRepCo
 /// (using the sfr() object).  The options_ object is created and initialized from the options system.
 PoseToStructFileRepConverter::PoseToStructFileRepConverter() :
 	utility::pointer::ReferenceCount(),
-	options_() //Initialize from options system.
+	options_(), //Initialize from options system.
+	atom_indices_initialized_( false )
 {
 	new_sfr();
 }
@@ -90,7 +91,8 @@ PoseToStructFileRepConverter::PoseToStructFileRepConverter() :
 /// (using the sfr() object).  The options_ object is duplicated from the input options object.
 PoseToStructFileRepConverter::PoseToStructFileRepConverter( StructFileRepOptions const & options_in ) :
 	utility::pointer::ReferenceCount(),
-	options_( options_in )
+	options_( options_in ),
+	atom_indices_initialized_( false )
 {
 	new_sfr();
 }
@@ -101,6 +103,7 @@ PoseToStructFileRepConverter::PoseToStructFileRepConverter( StructFileRepOptions
 /// new object.
 core::io::StructFileRepOP
 PoseToStructFileRepConverter::new_sfr() {
+	atom_indices_initialized_ = false;
 	sfr_ = StructFileRepOP( new core::io::StructFileRep() );
 	return sfr_;
 }
@@ -111,6 +114,24 @@ StructFileRepOP
 PoseToStructFileRepConverter::sfr() {
 	return sfr_;
 }
+
+void PoseToStructFileRepConverter::determine_atom_indices( pose::Pose const & pose )
+{
+	pose::initialize_atomid_map( atom_indices_, pose, Size( 0 ) );
+	atom_indices_initialized_ = true;
+	Size count( 0 );
+	bool const write_virtuals( options_.output_virtual() );
+
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		chemical::ResidueType const & iirestype( pose.residue_type( ii ) );
+		for ( Size jj = 1, jjend = iirestype.natoms(); jj <= jjend; ++jj ) {
+			if ( !write_virtuals && iirestype.atom_type(jj).is_virtual() ) continue;
+			++count;
+			atom_indices_[ id::AtomID( jj, ii ) ] = count;
+		}
+	}
+}
+
 
 
 /// @details Read atoms/residue information from Pose object and put it in StructFileRep object.
@@ -831,54 +852,54 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 	core::Size const res_index,
 	core::Size const atom_index_in_rsd,
 	core::io::AtomInformation &ai
-) const {
+) {
 
 	if ( options_.skip_connect_info() ) return;
 	if ( pose.size() == 0 ) return; //Probably unnecesary, but why not?
+
+	if ( ! atom_indices_initialized_ ) determine_atom_indices( pose );
 
 	debug_assert( res_index <= pose.size() );
 	debug_assert( atom_index_in_rsd <= pose.residue( res_index ).natoms() );
 
 	bool const write_virtuals( options_.output_virtual() );
 
+	chemical::ResidueType const & target_restype( pose.residue_type( res_index ));
+
 	//Return if this is virtual and we're not writing virtuals:
-	if ( ( pose.residue_type(res_index).is_virtual_residue() || pose.residue_type(res_index).atom_type(atom_index_in_rsd).is_virtual() ) && !write_virtuals ) return;
+	if ( ( target_restype.is_virtual_residue() || target_restype.atom_type(atom_index_in_rsd).is_virtual() ) && !write_virtuals ) return;
 
 	bool const writeall( options_.write_all_connect_info() );
-	bool const this_res_is_canonical_or_solvent( pose.residue_type(res_index).is_canonical() || pose.residue_type(res_index).is_solvent() );
+	bool const target_res_is_canonical_or_solvent( target_restype.is_canonical() || target_restype.is_solvent() );
 	core::Real const dist_cutoff_sq( options_.connect_info_cutoff()*options_.connect_info_cutoff() );
-	core::Size count(0);
-	core::id::AtomID const this_atom_id( atom_index_in_rsd, res_index ); //The AtomID of this atom.
-	utility::vector1<core::id::AtomID> const & bonded_ids(  pose.conformation().bonded_neighbor_all_res( this_atom_id, write_virtuals ) ); //List of AtomIDs of atoms bound to this atom.
+	core::id::AtomID const target_atom_id( atom_index_in_rsd, res_index ); //The AtomID of this atom.
+	utility::vector1< core::id::AtomID > const bonded_ids(  pose.conformation().bonded_neighbor_all_res( target_atom_id, write_virtuals, ! writeall ) ); //List of AtomIDs of atoms bound to this atom.
 
-	for ( core::Size i=1; i<=res_index; ++i ) { //Loop through all residues
-		for ( core::Size j=1, jmax=pose.residue_type(i).natoms(); j<=jmax; ++j ) { //Loop through all atoms in this residue
-			if ( i == res_index && j == atom_index_in_rsd ) {
-				break;
-			}
+	Vector target_atom_xyz( pose.xyz( target_atom_id ) );
+	for ( Size ii = 1; ii <= bonded_ids.size(); ++ii ) {
 
-			if ( !write_virtuals && pose.residue_type(i).atom_type(j).is_virtual() ) continue; //Skip writing virtuals if we should do so.
-			++count;
-			if ( !writeall ) {
-				if ( i == res_index ) { //If this is an intra-residue bond:
-					if ( pose.residue_type(i).is_canonical() || pose.residue_type(i).is_solvent() ) continue; //Skip canonical and solvent intra-res bonds.
-				} else { //If this is an inter-residue bond:
-					if ( this_res_is_canonical_or_solvent && ( pose.residue_type(i).is_canonical() || pose.residue_type(i).is_solvent() ) ) continue; //Skip canonical or solvent inter-res bonds.
+		// If we're not writing out all possible conect data, then skip intra-residue bonds if the
+		// target residue is a canonical residue type or solvent, and skip inter-residue bonds if
+		// the target residue is canonical or solvent and the other residue is too.
+		if ( ! writeall ) {
+			if ( bonded_ids[ ii ].rsd() == res_index ) {
+				if ( target_restype.is_canonical() || target_restype.is_solvent() ) {
+					continue;
+				}
+			} else {
+				chemical::ResidueType const & iirestype( pose.residue_type( bonded_ids[ ii ].rsd() ));
+				if ( target_res_is_canonical_or_solvent && ( iirestype.is_canonical() || iirestype.is_solvent() ) ) {
+					continue;
 				}
 			}
+		}
 
-			core::id::AtomID const other_atom_id( j, i ); //Candidate other atom to which this one might be bonded.
-			for ( core::Size n=1, nmax=bonded_ids.size(); n<=nmax; ++n ) {
-				if ( bonded_ids[n] == other_atom_id ) { //If the candidate atom is in the list of bonded atoms for this atom, add CONECT data.
-					if ( pose.xyz( this_atom_id ).distance_squared( pose.xyz( other_atom_id ) ) >= dist_cutoff_sq ) { //Are we over the distance cutoff?
-						ai.connected_indices.push_back( count );
-					}
-					break;
-				}
-			} //Loop through bonded atoms
+		if ( target_atom_xyz.distance_squared( pose.xyz( bonded_ids[ii] ) ) >= dist_cutoff_sq ) {
+			ai.connected_indices.push_back( atom_indices_[ bonded_ids[ ii ] ] );
+		}
+	}
 
-		} //Loop through all atoms
-	} //Loop through all residues
+	std::sort( ai.connected_indices.begin(), ai.connected_indices.end() );
 
 }
 

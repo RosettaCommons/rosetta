@@ -1745,18 +1745,22 @@ Conformation::inter_residue_connection_partner(
 utility::vector1<id::AtomID>
 Conformation::bonded_neighbor_all_res(
 	id::AtomID atomid,
-	bool virt // = false
+	bool virt, // = false
+	bool skip_canonical_and_solvent // = false
 ) const
 {
 	conformation::Residue const & primary_residue(residue(atomid.rsd()));
+	bool primary_is_canonical_or_solvent = primary_residue.type().is_canonical() || primary_residue.type().is_solvent();
 
-	utility::vector1<id::AtomID> neighbors;
+	utility::vector1< id::AtomID > neighbors;
 
 	// add all the atoms in the same residue
-	chemical::AtomIndices const & intrares_atomnos(primary_residue.bonded_neighbor(atomid.atomno()));
-	for ( Size i = 1; i <= intrares_atomnos.size(); ++i ) {
-		if ( virt || ! primary_residue.is_virtual(intrares_atomnos[i]) ) {
-			neighbors.push_back(id::AtomID(intrares_atomnos[i], atomid.rsd()));
+	if ( ! skip_canonical_and_solvent || ! primary_is_canonical_or_solvent ) {
+		chemical::AtomIndices const & intrares_atomnos(primary_residue.bonded_neighbor(atomid.atomno()));
+		for ( Size i = 1; i <= intrares_atomnos.size(); ++i ) {
+			if ( virt || ! primary_residue.is_virtual(intrares_atomnos[i]) ) {
+				neighbors.push_back(id::AtomID(intrares_atomnos[i], atomid.rsd()));
+			}
 		}
 	}
 
@@ -1767,7 +1771,15 @@ Conformation::bonded_neighbor_all_res(
 				!primary_residue.connection_incomplete(i) ) {
 			chemical::ResConnID resconid(primary_residue.actual_residue_connection(i));
 			Size connected_atomno(residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
-			if ( virt || ! residue(resconid.resid()).is_virtual(connected_atomno) ) {
+			chemical::ResidueType const & other_restype( residue( resconid.resid() ).type() );
+
+			// only report inter-residue bonds to non-canonicals, if requested
+			if ( skip_canonical_and_solvent && primary_is_canonical_or_solvent &&
+					( other_restype.is_canonical() || other_restype.is_solvent() ) ) {
+				continue;
+			}
+
+			if ( virt || ! other_restype.is_virtual(connected_atomno) ) {
 				neighbors.push_back(id::AtomID(connected_atomno, resconid.resid()));
 			}
 		}

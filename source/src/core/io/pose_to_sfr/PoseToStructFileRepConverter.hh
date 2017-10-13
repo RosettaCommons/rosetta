@@ -31,6 +31,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
+#include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
@@ -145,6 +146,9 @@ public:
 
 private:
 
+	/// @brief Determines the atom indices, which are needed for CONECT info
+	void determine_atom_indices( pose::Pose const & pose );
+
 	/// @brief Should this atom be [added]?
 	bool add_atom_to_sfr(
 		pose::Pose const & pose,
@@ -187,6 +191,8 @@ private:
 
 private: //PRIVATE FUNCTIONS:
 
+
+
 	/// @brief Set whether to write the fold tree, in the
 	/// StructFileRepOptions object (options_).
 	void set_fold_tree_io( bool const setting);
@@ -219,7 +225,7 @@ private: //PRIVATE FUNCTIONS:
 		core::Size const res_index,
 		core::Size const atom_index_in_rsd,
 		core::io::AtomInformation &ai
-	) const;
+	);
 
 	/// @brief Get the foldtree from the pose and store it in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
@@ -306,6 +312,10 @@ private: // PRIVATE DATA:
 	/// @brief The StructFileRepOptions object.
 	/// @details Created at PoseToStructFileRepConverter object creation; not read-accessible outside of this object.
 	StructFileRepOptions options_;
+
+	/// @brief The index for every atom in the Pose -- used for generating CONECT records
+	id::AtomID_Map< Size > atom_indices_;
+	bool atom_indices_initialized_;
 
 }; // class PoseToStructFileRep
 

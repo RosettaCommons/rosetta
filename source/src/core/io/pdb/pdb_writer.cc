@@ -449,10 +449,16 @@ create_records_from_sfr(
 				if ( current_L == max_L ) {
 					current_L = 0;
 					VR.push_back(R);
+					R = RecordCollection::record_from_record_type( CONECT );
+					R["type"].value = "CONECT";
+					R["serial0"].value = pad_left( ai.serial + (no_chainend_ter ? 0 : ai.terCount) , 5);
 					continue;
 				}
 			}
-			VR.push_back(R);
+			if ( current_L != 0 ) {
+				// if current_L == 0, then we have already pushed back this line and we shouldn't do it again
+				VR.push_back(R);
+			}
 		}
 	}
 

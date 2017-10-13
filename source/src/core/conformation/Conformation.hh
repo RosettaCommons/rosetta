@@ -755,7 +755,8 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	utility::vector1<core::id::AtomID>
 	bonded_neighbor_all_res(
 		core::id::AtomID atomid,
-		bool virt = false
+		bool virt = false,
+		bool skip_canonical_and_solvent = false
 	) const;
 
 	void
