@@ -1074,6 +1074,9 @@ sources = {
 	"pilot/zhezhang" : [
 		"extract_CA_coords",
 	],
+    "pilot/zibochen" : [
+        "pad_helices",
+    ],
 	"pilot/shirst" : [
 		"TestTopologySampler",
 		"LoophashFilter"
