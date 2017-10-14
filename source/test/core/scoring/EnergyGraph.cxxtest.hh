@@ -94,7 +94,7 @@ public:
 					TS_ASSERT_EQUALS( (*ee)[ fa_atr ], -1.125 * ii );
 					TS_ASSERT_EQUALS( (*ee)[ fa_rep ],  1.125 * jj );
 					TS_ASSERT_EQUALS( ee->square_distance(), ii * jj );
-					TS_ASSERT_EQUALS( ee->energies_not_yet_computed(), ii % 2 == 0 )
+					TS_ASSERT_EQUALS( ee->energies_not_yet_computed(), ii % 2 == 0 );
 				}
 			}
 		}
@@ -177,7 +177,7 @@ public:
 					TS_ASSERT_EQUALS( (*ee)[ fa_atr ], -1.125 * ii );
 					TS_ASSERT_EQUALS( (*ee)[ fa_rep ],  1.125 * jj );
 					TS_ASSERT_EQUALS( ee->square_distance(), ii * jj );
-					TS_ASSERT_EQUALS( ee->energies_not_yet_computed(), ii % 2 == 0 )
+					TS_ASSERT_EQUALS( ee->energies_not_yet_computed(), ii % 2 == 0 );
 				}
 			}
 		}
