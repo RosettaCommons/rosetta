@@ -805,6 +805,8 @@ testinputfiles = [
 	"loops/4DZM.pdb",
 	"loop_modeling/inputs/2pia.pdb",
 	"loop_modeling/inputs/2pia.loop",
+	"loop_modeling/inputs/loophash_db/backbone.db",
+	"loop_modeling/inputs/loophash_db/loopdb.6.db",
 	"make_rot_lib/all_dist_rotamers.txt",
 	"make_rot_lib/calc_centroids.txt",
 	"make_rot_lib/cluster_rotamers.txt",

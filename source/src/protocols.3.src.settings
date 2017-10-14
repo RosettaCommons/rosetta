@@ -261,6 +261,7 @@ sources = {
             "perturbers/WalkingPerturber",
             "pivot_pickers/EndToEndPivots",
             "pivot_pickers/FixedOffsetPivots",
+            "pivot_pickers/FixedOffsetsPivots",
             "pivot_pickers/FixedPivots",
             "pivot_pickers/LoopPivots",
             "pivot_pickers/StandardPivots",
@@ -335,7 +336,6 @@ sources = {
 	],
 	"protocols/loop_modeling": [
 		"LoopMover",
-		"LoopModeler",
 		"LoopBuilder",
 		"LoopProtocol",
 		"refiners/MinimizationRefiner",

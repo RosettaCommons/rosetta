@@ -20,9 +20,11 @@
 // Protocols headers
 #include <protocols/filters/Filter.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
+#include <protocols/kinematic_closure/pivot_pickers/FixedOffsetsPivots.hh>
 #include <protocols/kinematic_closure/perturbers/OmegaPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/Rama2bPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
+#include <protocols/kinematic_closure/perturbers/LoopHashPerturber.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
@@ -33,6 +35,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
+#include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
@@ -70,6 +73,7 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <boost/algorithm/string.hpp>
@@ -175,6 +179,9 @@ void LoopModeler::parse_my_tag( // {{{1
 		setup_kic_config();
 	} else if ( config == "kic_with_frags" ) {
 		setup_kic_with_fragments_config();
+	} else if ( config == "loophash_kic" ) {
+		bool loophash_perturb_sequence = tag->getOption<bool>("loophash_perturb_sequence", false);
+		setup_loophash_kic_config(loophash_perturb_sequence);
 	} else {
 		stringstream message;
 		message << "Unknown <LoopModeler> config option: '" << config << "'";
@@ -424,6 +431,68 @@ void LoopModeler::setup_kic_with_fragments_config() { // {{{1
 	// must be created.
 }
 
+void LoopModeler::setup_loophash_kic_config(bool perturb_sequence) { // {{{1
+	using namespace basic::options;
+	using namespace protocols::kinematic_closure;
+	using namespace protocols::kinematic_closure::perturbers;
+	using namespace protocols::kinematic_closure::pivot_pickers;
+	using namespace protocols::loophash;
+
+	setup_kic_config();
+
+	// Initialize the loop hash library from command line
+	// I don't like command line options, but this is the quick way to do things
+
+	if ( !option[ OptionKeys::lh::loopsizes ].user() ) {
+		std::stringstream message;
+		message << "Must specify the -lh:loopsizes and -lh:db_path ";
+		message << "options in order to use the LoopHashPerturber." << std::endl;
+		throw utility::excn::EXCN_Msg_Exception(message.str());
+	}
+
+	utility::vector1<core::Size> loop_sizes = option[ OptionKeys::lh::loopsizes ].value();
+	LoopHashLibraryOP lh_library(new LoopHashLibrary( loop_sizes ));
+	lh_library->load_mergeddb();
+
+	// Set the offsets for pivot picking
+	utility::vector1 <core::Size> pp_offsets;
+	for ( auto s : loop_sizes ) {
+		// We need right_pivot - left_pivot > 2. Otherwise nothing is really changed
+		if ( s > 5 ) {
+			pp_offsets.push_back(s - 3);
+		}
+	}
+
+	runtime_assert(pp_offsets.size() > 0);
+
+	// Create a centroid "loophash KIC" mover (see note).
+
+	KicMoverOP centroid_kic_mover( new KicMover );
+	centroid_kic_mover->set_pivot_picker(pivot_pickers::PivotPickerOP( new FixedOffsetsPivots(pp_offsets) ));
+	perturbers::LoopHashPerturberOP centroid_loophash_perturber_(new LoopHashPerturber(lh_library) );
+	centroid_loophash_perturber_->perturb_sequence(perturb_sequence);
+	centroid_kic_mover->add_perturber(centroid_loophash_perturber_);
+	centroid_stage()->add_mover(centroid_kic_mover);
+	centroid_stage()->mark_as_default();
+
+	// Create a fullatom "loophash KIC" mover (see note).
+
+	KicMoverOP fullatom_kic_mover( new KicMover );
+	fullatom_kic_mover->set_pivot_picker(pivot_pickers::PivotPickerOP( new FixedOffsetsPivots(pp_offsets) ));
+	perturbers::LoopHashPerturberOP fullatom_loophash_perturber_(new LoopHashPerturber(lh_library) );
+	fullatom_loophash_perturber_->perturb_sequence(perturb_sequence);
+	fullatom_kic_mover->add_perturber(fullatom_loophash_perturber_);
+	fullatom_stage()->add_mover(fullatom_kic_mover);
+	fullatom_stage()->mark_as_default();
+
+	// Note: Because loop movers can query their parents for attributes like
+	// score functions and task operations, no loop mover can have more than one
+	// parent.  This is why two separate centroid and fullatom KicMover objects
+	// must be created.
+
+}
+
+
 LoopBuilderOP LoopModeler::build_stage() { // {{{1
 	return build_stage_;
 }
@@ -498,7 +567,7 @@ void LoopModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	XMLSchemaRestriction restriction_type;
 	restriction_type.name( "config_options" );
 	restriction_type.base_type( xs_string );
-	restriction_type.add_restriction( xsr_pattern, "kic|kic_with_frags|empty" );
+	restriction_type.add_restriction( xsr_pattern, "kic|kic_with_frags|loophash_kic|empty" );
 	xsd.add_top_level_element( restriction_type );
 
 	AttributeList attlist;
@@ -511,7 +580,8 @@ void LoopModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"to specify your own refinement moves", "true")
 		+ XMLSchemaAttribute("scorefxn_fa", xs_string, "Score function for full atom modeling.")
 		+ XMLSchemaAttribute("scorefxn_cen", xs_string, "Score function for modeling in centroid representation.")
-		+ XMLSchemaAttribute::attribute_w_default("fast", xsct_rosetta_bool, "Only test run (fewer cycles)", "false");
+		+ XMLSchemaAttribute::attribute_w_default("fast", xsct_rosetta_bool, "Only test run (fewer cycles)", "false")
+		+ XMLSchemaAttribute::attribute_w_default("loophash_perturb_sequence", xsct_rosetta_bool, "Let LoopHashKIC also perturb the amino acid sequence", "false");
 
 	// Use helper function in ./utilities/rosetta_scripts.cc to parse task operations
 	utilities::attributes_for_set_task_factory_from_tag( attlist );

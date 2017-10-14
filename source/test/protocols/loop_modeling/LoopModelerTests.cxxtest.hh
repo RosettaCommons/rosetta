@@ -40,6 +40,10 @@
 #include <utility/exit.hh>
 #include <boost/foreach.hpp>
 
+// Basic headers
+#include <basic/options/keys/lh.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 // C++ headers
 #include <string>
 #include <iostream>
@@ -571,6 +575,33 @@ public:
 		// Just checking to make sure no exceptions get thrown.
 
 		modeler->apply(pose);
+	}
+
+	void test_loophash_kic() {
+		basic::options::option[basic::options::OptionKeys::lh::loopsizes].value(utility::vector1 <int> {6});
+		basic::options::option[basic::options::OptionKeys::lh::db_path].value(string("protocols/loop_modeling/inputs/loophash_db"));
+
+		//cout << basic::options::option[basic::options::OptionKeys::lh::db_path].user() << basic::options::option[basic::options::OptionKeys::lh::db_path].value() << endl;
+
+		string pdb_path = "protocols/loop_modeling/inputs/2pia.pdb";
+		string loops_path = "protocols/loop_modeling/inputs/2pia.loop";
+
+		LoopModelerOP modeler( new LoopModeler() );
+		modeler->setup_loophash_kic_config(true);
+		Pose pose; pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
+		LoopsOP loops( new Loops(loops_path) );
+
+		modeler->set_loops(loops);
+		modeler->centroid_stage()->set_sfxn_cycles(1);
+		modeler->centroid_stage()->set_temp_cycles(1);
+		modeler->centroid_stage()->set_mover_cycles(1);
+		modeler->disable_fullatom_stage(); // Repacking before fullatom too slow.
+
+		// Just checking to make sure no exceptions get thrown.
+
+		modeler->apply(pose);
+
+		//pose.dump_file("loophashKIC.pdb");///DEBUG
 	}
 	// }}}1
 

@@ -29,9 +29,12 @@
 #include <core/conformation/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
+#include <core/util/kinematics_util.hh>
 
 // Protocols headers
 #include <protocols/loops/Loop.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
@@ -90,6 +93,15 @@ void ClosureProblem::frame( // {{{1
 	perturbed_torsions_ = ParameterList(unperturbed_torsions_);
 	perturbed_angles_ = ParameterList(unperturbed_angles_);
 	perturbed_lengths_ = ParameterList(unperturbed_lengths_);
+
+	// Store the sequence of the residues between pivots (including pivots)
+
+	unperturbed_sequence_.clear();
+	for ( core::Size i=pivots_.start(); i<=pivots_.stop(); ++i ) {
+		unperturbed_sequence_.push_back(pose.residue(i).name3());
+	}
+	perturbed_sequence_ = unperturbed_sequence_;
+
 }
 
 SolutionList ClosureProblem::solve() const { // {{{1
@@ -140,6 +152,7 @@ void ClosureProblem::restore(Pose & pose) const {
 	runtime_assert(frame_called_);
 	apply_internal_coordinates(
 		unperturbed_lengths_, unperturbed_angles_, unperturbed_torsions_, pose);
+	mutate_residues(pose, unperturbed_sequence_);
 }
 // }}}1
 
@@ -354,6 +367,27 @@ IndexList ClosureProblem::pivot_atoms() const { // {{{1
 
 	return pivot_atoms;
 }
+
+void ClosureProblem::perturbed_sequence(utility::vector1<std::string> const &values){
+	perturbed_sequence_ = values;
+}
+
+utility::vector1<std::string> ClosureProblem::perturbed_sequence() const{
+	return perturbed_sequence_;
+}
+
+utility::vector1<std::string> ClosureProblem::unperturbed_sequence() const{
+	return unperturbed_sequence_;
+}
+
+bool ClosureProblem::sequence_mutated() const{
+	bool mutation_made = false;
+	for ( core::Size i=1; i<=unperturbed_sequence_.size(); i++ ) {
+		mutation_made = mutation_made || perturbed_sequence_[i] != unperturbed_sequence_[i];
+	}
+	return mutation_made;
+}
+
 // }}}1
 
 // {{{1
@@ -659,6 +693,32 @@ AtomID ClosureProblem::id_from_index(Size index) const {
 		((index - 1) / 3) + first_residue() - 1);
 }
 // }}}1
+
+void ClosureProblem::mutate_residues(core::pose::Pose &pose, utility::vector1<std::string> sequence) const{
+	runtime_assert(frame_called_);
+	protocols::simple_moves::MutateResidue mutater;
+
+	// Change the fold tree such that the residue at the cutpoint won't cause problems
+	core::util::remove_cutpoint_variants(pose);
+	core::kinematics::FoldTree original_ft(pose.fold_tree());
+	core::kinematics::FoldTree ft(pose.size());
+	pose.fold_tree(ft);
+
+	for ( core::Size i=1; i<=pivots_.stop() - pivots_.start() + 1; ++i ) {
+		core::Size seqpos = pivots_.start() + i - 1;
+
+		// Apply mutation at positions where AA is changed
+		if ( pose.residue(i).name3() != sequence[i] ) {
+			mutater.set_res_name(sequence[i]);
+			mutater.set_target(seqpos);
+			mutater.apply(pose);
+		}
+	}
+
+	// Restore the fold tree
+	pose.fold_tree(original_ft);
+	protocols::loops::add_cutpoint_variants(pose);
+}
 
 } // end namespace kinematic_closure
 } // end namespace protocols

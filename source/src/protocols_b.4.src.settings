@@ -68,6 +68,10 @@ sources = {
                 "RemodelLigandHandler",
                 "ResidueVicinityRCG",
         ],
+        
+  "protocols/kinematic_closure" : [
+    "perturbers/LoopHashPerturber",
+  ],
 	"protocols/loophash": [
 		"BackboneDB",
 		"FastGapMover",
@@ -87,7 +91,10 @@ sources = {
 		"MPI_LoopHashRefine_Master",
 		"WorkUnit_LoopHash",
 	],
-	"protocols/pockets": [
+	"protocols/loop_modeling": [
+		"LoopModeler",
+	],
+  "protocols/pockets": [
 		"Fingerprint",
 		"FingerprintMultifunc",
 		"PocketConstraint",

@@ -115,6 +115,15 @@ bool ClosureSolution::apply_if_reasonable( // {{{1
 		return false;
 	}
 
+	// Mutate residues. Strictly speaking, the loop sequence affects the rama
+	// check and bump check. However, because rama distribution are not very
+	// different for different AAs and bump check only considers C beta, the result
+	// won't be very different. Mutate afterward would save a lot of computation.
+
+	if ( problem_->sequence_mutated() ) {
+		problem_->mutate_residues(pose, problem_->perturbed_sequence());
+	}
+
 	return true;
 }
 

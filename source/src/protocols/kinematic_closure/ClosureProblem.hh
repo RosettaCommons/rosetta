@@ -197,6 +197,18 @@ public:
 	/// @brief Return the indices of all three pivot atoms.
 	IndexList pivot_atoms() const;
 
+	/// @brief Set AA sequence from left pivot to the right pivot (including the pivots)
+	void perturbed_sequence(utility::vector1<std::string> const& values);
+
+	/// @brief Get perturbed AA sequence from left pivot to the right pivot (including the pivots)
+	utility::vector1<std::string> perturbed_sequence() const;
+
+	/// @brief Get unperturbed AA sequence from left pivot to the right pivot (including the pivots)
+	utility::vector1<std::string> unperturbed_sequence() const;
+
+	/// @brief Return if mutations have been made to the sequence
+	bool sequence_mutated() const;
+
 	// Private Helpers {{{1
 private:
 
@@ -248,6 +260,9 @@ private:
 	/// relative to the start of the loop.
 	core::id::AtomID id_from_index(Size index) const;
 
+	/// @brief Mutate the residues between pivots to the sequence_ (including pivots)
+	void mutate_residues(core::pose::Pose &pose, utility::vector1 <std::string> sequence) const;
+
 	// Data Members {{{1
 private:
 
@@ -262,6 +277,10 @@ private:
 	ParameterList unperturbed_angles_;
 	ParameterList unperturbed_torsions_;
 	CoordinateList unperturbed_xyzs_;
+
+	// 3 letter amino acid names from the left pivot to the right pivot (including the pivots)
+	utility::vector1 <std::string> unperturbed_sequence_;
+	utility::vector1 <std::string> perturbed_sequence_;
 
 	// }}}1
 

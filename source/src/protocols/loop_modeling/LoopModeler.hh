@@ -91,6 +91,9 @@ public:
 	/// configuration.
 	void setup_kic_with_fragments_config();
 
+	/// @brief Setup the LoopModeler using the LoopHashKIC configuration
+	void setup_loophash_kic_config(bool perturb_sequence);
+
 	/// @brief Return a pointer to the build stage mover.
 	LoopBuilderOP build_stage();
 
