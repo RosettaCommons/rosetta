@@ -424,6 +424,7 @@ make_centroid( ResidueType const & res ) {
 		{"Npro","Nbb" },
 		{"Nhis","OCbb"}, // No, this is not a typo (apparently) - it's an unprotonated hbond acceptor
 		{"OH"  ,"OCbb"},
+		{"OW"  ,"OCbb"},
 		{"ONH2","OCbb"},
 		{"OOC" ,"OCbb"},
 		{"Oaro","OCbb"},

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-//Part of the flatland docking protocol, symmetrizies sequence onto other modular parts of the building blocks. Rejects a building block if it is not modular. 
-//Also generates the full lattice 
+//Part of the flatland docking protocol, symmetrizies sequence onto other modular parts of the building blocks. Rejects a building block if it is not modular.
+//Also generates the full lattice
 
 #include <string>
 #include <sstream>
@@ -17,7 +17,7 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
-//#include "boost/filesystem.hpp" 
+//#include "boost/filesystem.hpp"
 //#include <boost/algorithm/string.hpp>
 
 #include <basic/datacache/DataMap.hh>
@@ -178,17 +178,17 @@ main( int argc, char ** argv ) {
 	utility::vector1< Size > src_pose_1_start_ind;
 	utility::vector1< Size > target_pose_start_ind;
 	utility::vector1<std::string> src_pose_1_start_in=utility::string_split_multi_delim(option[src_pose_1_start],",");
-	for (Size i=1;i<=src_pose_1_start_in.size();i++){
+	for ( Size i=1; i<=src_pose_1_start_in.size(); i++ ) {
 		src_pose_1_start_ind.push_back(utility::string2int(src_pose_1_start_in[i]));
 	}
 	utility::vector1<std::string> target_pose_start_in=utility::string_split_multi_delim(option[target_pose_start],",");
-	for (Size i=1;i<=target_pose_start_in.size();i++){
+	for ( Size i=1; i<=target_pose_start_in.size(); i++ ) {
 		target_pose_start_ind.push_back(utility::string2int(target_pose_start_in[i]));
 	}
 
 	//replace residues
-	for (Size i=1;i<=src_pose_1_start_ind.size();i++){
-		for (int j=0;j<=option[span]-1;j++){
+	for ( Size i=1; i<=src_pose_1_start_ind.size(); i++ ) {
+		for ( int j=0; j<=option[span]-1; j++ ) {
 			target_pose.replace_residue(target_pose_start_ind[i]+j, src_pose.residue(src_pose_1_start_ind[i]+j), option[align_bb]);
 			// target_pose.delete_polymer_residue(target_pose_start_ind[i]+j);
 			// //target_pose.append_residue_by_bond(src_pose.residue(src_pose_1_start_ind[i]+j));
@@ -198,18 +198,18 @@ main( int argc, char ** argv ) {
 	}
 
 	//check if there is an additional heptad to be padded
-	if (option[pad_3_heptads]){
+	if ( option[pad_3_heptads] ) {
 		//string to size
 		utility::vector1< Size > target_pose_start_2_ind;
 		utility::vector1<std::string> target_pose_start_2_in=utility::string_split_multi_delim(option[target_pose_start_2],",");
-		for (Size i=1;i<=target_pose_start_2_in.size();i++){
+		for ( Size i=1; i<=target_pose_start_2_in.size(); i++ ) {
 			target_pose_start_2_ind.push_back(utility::string2int(target_pose_start_2_in[i]));
 		}
 		core::pose::Pose src_pose_2;
 		core::import_pose::pose_from_file(src_pose_2, design_filenames[3] );
 		//replace residues
-		for (Size i=1;i<=target_pose_start_2_ind.size();i++){
-			for (int j=0;j<=option[span]-1;j++){
+		for ( Size i=1; i<=target_pose_start_2_ind.size(); i++ ) {
+			for ( int j=0; j<=option[span]-1; j++ ) {
 				target_pose.replace_residue(target_pose_start_2_ind[i]+j, src_pose_2.residue(src_pose_1_start_ind[i]+j), option[align_bb]);
 				// target_pose.delete_polymer_residue(target_pose_start_ind[i]+j);
 				// //target_pose.append_residue_by_bond(src_pose.residue(src_pose_1_start_ind[i]+j));

@@ -278,7 +278,7 @@ protocols::scoring::VDW_CachedRepScreenInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
- protocols::scoring::VDW_CachedRepScreenInfo::load( Archive & arc ) {
+protocols::scoring::VDW_CachedRepScreenInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( VDW_rep_screen_info_list_ ); // utility::vector1<core::pose::rna::VDW_RepScreenInfo>
 	std::shared_ptr< core::pose::rna::VDW_Grid > local_VDW_screen_bin;

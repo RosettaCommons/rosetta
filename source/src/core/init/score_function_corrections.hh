@@ -64,6 +64,10 @@ void init_nonideal_correction( utility::options::OptionCollection & options );
 /// @brief restore the the score function to the Score12prime version
 void init_restore_score12prime( utility::options::OptionCollection & options );
 
+/// @brief Alter the water/water and water/non-water solvation potential if the score:water_hybrid_sf flag is
+/// on the command line
+void init_spades_score_function_correction( utility::options::OptionCollection & options );
+
 /// @brief Initialize the latest and greatest score function parameters
 void init_score_function_corrections( utility::options::OptionCollection & options );
 

@@ -126,7 +126,7 @@ public:
 
 #ifdef SERIALIZATION
 
-		/// @brief Serialize this object
+	/// @brief Serialize this object
 	template < class Archive >
 	void
 	save( Archive & arc ) const;

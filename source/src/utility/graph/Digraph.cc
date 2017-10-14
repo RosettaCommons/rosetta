@@ -858,41 +858,41 @@ DirectedEdge* Digraph::create_new_edge( DirectedEdge const * example_edge )
 template < class Archive >
 void Digraph::save( Archive & archive ) const
 {
-  archive( num_nodes_ );
+	archive( num_nodes_ );
 
 	// DirectedNodes and edges will be freshly created when this graph is deserialized
 	// EXEMPT nodes_ edge_pool_ edge_list_element_pool_ edge_list_ focused_edge_
 
-  // for ( Size ii = 1; ii <= num_nodes_; ++ii ) {
-  //   nodes_[ ii ]->save( archive );
-  // }
-  archive( num_edges_ );
-  for ( DirectedEdgeListConstIter iter = const_edge_list_begin(), iter_end = const_edge_list_end(); iter != iter_end; ++iter ) {
-    archive( (*iter)->get_tail_node_ind(), (*iter)->get_head_node_ind() );
-    // (*iter)->save( archive );
-  }
+	// for ( Size ii = 1; ii <= num_nodes_; ++ii ) {
+	//   nodes_[ ii ]->save( archive );
+	// }
+	archive( num_edges_ );
+	for ( DirectedEdgeListConstIter iter = const_edge_list_begin(), iter_end = const_edge_list_end(); iter != iter_end; ++iter ) {
+		archive( (*iter)->get_tail_node_ind(), (*iter)->get_head_node_ind() );
+		// (*iter)->save( archive );
+	}
 }
 
 template < class Archive >
 void Digraph::load( Archive & archive )
 {
-  Size num_nodes(0); archive( num_nodes );
-  set_num_nodes( num_nodes );
+	Size num_nodes(0); archive( num_nodes );
+	set_num_nodes( num_nodes );
 	// EXEMPT num_nodes_
 	// The nodes will be freshly instantiated on this end
 	// so they will not be deserialized.  Same for edges.
 	// EXEMPT nodes_ num_edges_ edge_pool_ edge_list_element_pool_ edge_list_ focused_edge_
 
-  // for ( Size ii = 1; ii <= num_nodes; ++ii ) {
-  //   nodes_[ ii ]->load( archive );
-  // }
+	// for ( Size ii = 1; ii <= num_nodes; ++ii ) {
+	//   nodes_[ ii ]->load( archive );
+	// }
 
-  Size num_edges(0); archive( num_edges );
-  for ( Size ii = 1; ii <= num_edges; ++ii ) {
-    Size tail_node(0), head_node(0); archive( tail_node, head_node );
-    /* DirectedEdge * new_edge = */ add_edge( tail_node, head_node );
-    // new_edge->load( archive );
-  }
+	Size num_edges(0); archive( num_edges );
+	for ( Size ii = 1; ii <= num_edges; ++ii ) {
+		Size tail_node(0), head_node(0); archive( tail_node, head_node );
+		/* DirectedEdge * new_edge = */ add_edge( tail_node, head_node );
+		// new_edge->load( archive );
+	}
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( utility::graph::Digraph );

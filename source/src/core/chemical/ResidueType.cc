@@ -4820,7 +4820,7 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	// when we reconstruct the graph. To circumvent this, we serialize atoms directly
 	// in index order (as atom names might not be unique ... theoretically).
 	arc( CEREAL_NVP_( "natoms", ordered_atoms_.size() ) );
-	for( VD vd : ordered_atoms_ ) {
+	for ( VD vd : ordered_atoms_ ) {
 		SERIALIZE_VD( arc, vd );
 		arc( graph_[ vd ] ); // EXEMPT graph_ ordered_atoms_ vd_to_index_ atom_name_to_vd_
 	}
@@ -4828,7 +4828,7 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	//std::cout << "DONE ATOMS" << std::endl;
 
 	arc( CEREAL_NVP_( "bonds", boost::num_edges(graph_) ) );
-	for( EIterPair biter_pair( boost::edges(graph_) ); biter_pair.first != biter_pair.second; ++biter_pair.first ) {
+	for ( EIterPair biter_pair( boost::edges(graph_) ); biter_pair.first != biter_pair.second; ++biter_pair.first ) {
 		ED ed( *biter_pair.first );
 		VD source( boost::source( ed, graph_ ) ), target( boost::target( ed, graph_ ) );
 		SERIALIZE_VD( arc, source );
@@ -4836,7 +4836,7 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 		arc( graph_[ ed ] );
 	}
 
-	for( VD vd : ordered_atoms_ ) {
+	for ( VD vd : ordered_atoms_ ) {
 		arc( icoor_.at( vd ) ); // EXEMPT icoor_
 	}
 
@@ -4984,7 +4984,7 @@ core::chemical::ResidueType::load( Archive & arc ) {
 
 	// EXEMPT graph_
 	core::Size natoms; arc( natoms );
-	for( core::Size ii(1); ii <= natoms; ++ii ) {
+	for ( core::Size ii(1); ii <= natoms; ++ii ) {
 		VD old_vd; DESERIALIZE_VD( arc, old_vd );
 		Atom atom; arc( atom );
 		atom.update_typesets( *this );
@@ -5002,7 +5002,7 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	//std::map< ED, ED > old_to_new_bonds;
 
 	core::Size nbonds; arc( nbonds );
-	for( core::Size ii(1); ii <= nbonds; ++ii ) {
+	for ( core::Size ii(1); ii <= nbonds; ++ii ) {
 		VD source, target;
 		DESERIALIZE_VD( arc, source );
 		source = old_to_new.at(source);
@@ -5016,7 +5016,7 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	}
 
 	// Now we have a completely set old_to_nes
-	for( core::Size ii(1); ii <= natoms; ++ii ) {
+	for ( core::Size ii(1); ii <= natoms; ++ii ) {
 		VD vd( ordered_atoms_[ii] );
 
 		AtomICoor icoor; arc( icoor );
@@ -5026,11 +5026,11 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	}
 
 	arc( residue_connections_ ); // utility::vector1<ResidueConnection>
-	for( ResidueConnection & rescon : residue_connections_ ) {
+	for ( ResidueConnection & rescon : residue_connections_ ) {
 		rescon.remap_atom_vds( old_to_new );
 	}
 	arc( orbitals_ ); // utility::vector1<Orbital>
-	for( Orbital & orbital : orbitals_ ) {
+	for ( Orbital & orbital : orbitals_ ) {
 		orbital.remap_atom_vds( old_to_new );
 	}
 

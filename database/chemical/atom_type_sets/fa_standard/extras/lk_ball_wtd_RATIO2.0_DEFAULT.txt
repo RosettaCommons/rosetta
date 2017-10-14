@@ -8,6 +8,7 @@ NtpH     0.769    -0.231  ## ratio= 2.00   q3ratio= 0.300
 NtpR     0.758    -0.242  ## ratio= 2.00   q3ratio= 0.320
 Ntrp     0.769    -0.231  ## ratio= 2.00   q3ratio= 0.300
   OH     0.599    -0.401  ## ratio= 2.00   q3ratio= 0.670
+  OW     0.599    -0.401  ## ratio= 2.00   q3ratio= 0.670
  OHY     0.592    -0.408  ## ratio= 2.00   q3ratio= 0.690
 ONH2     0.671    -0.329  ## ratio= 2.00   q3ratio= 0.490
 OCbb     0.671    -0.329  ## stolen from ONH2

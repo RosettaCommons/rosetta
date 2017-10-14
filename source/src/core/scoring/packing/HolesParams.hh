@@ -70,6 +70,7 @@ public:
 		atype2holes_[ ats->atom_type_index("Narg") ] = 11;
 		atype2holes_[ ats->atom_type_index("Npro") ] = 12;
 		atype2holes_[ ats->atom_type_index("OH"  ) ] = 13;
+		atype2holes_[ ats->atom_type_index("OW"  ) ] = 13;
 		atype2holes_[ ats->atom_type_index("ONH2") ] = 14;
 		atype2holes_[ ats->atom_type_index("OOC" ) ] = 15;
 		atype2holes_[ ats->atom_type_index("Oaro") ] = 16;

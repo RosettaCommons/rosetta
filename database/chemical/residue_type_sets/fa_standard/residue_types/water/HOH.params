@@ -9,7 +9,7 @@ IO_STRING HOH w
 TYPE LIGAND
 AA H2O
 
-ATOM  O   OH   OH1  -0.834 ## HACK: USING OH ATOMTYPE, amber uses OW atomtype
+ATOM  O   OW   OH1  -0.834 ## HACK: USING OH ATOMTYPE, amber uses OW atomtype
 ATOM  H1  Hpol H    0.417
 ATOM  H2  Hpol H    0.417
 

@@ -8,6 +8,7 @@ OOC   2.14
 ONH2  1.98
 Nlys  1.74
 OH    1.51
+OW    1.51
 ****  2.0
 #NtpR  3.26
 #OPdd  2.14 ## copied

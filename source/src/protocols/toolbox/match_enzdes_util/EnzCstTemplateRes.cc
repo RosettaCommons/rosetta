@@ -729,8 +729,8 @@ protocols::toolbox::match_enzdes_util::EnzCstTemplateRes::save( Archive & arc ) 
 
 	//arc( CEREAL_NVP( atom_inds_for_restype_ ) ); // RestypeToTemplateAtomsMap
 	arc( atom_inds_for_restype_.size() );
-	for( RestypeToTemplateAtomsMap::const_iterator iter = atom_inds_for_restype_.begin();
-			 iter != atom_inds_for_restype_.end(); ++iter ) {
+	for ( RestypeToTemplateAtomsMap::const_iterator iter = atom_inds_for_restype_.begin();
+			iter != atom_inds_for_restype_.end(); ++iter ) {
 		arc( iter->first );
 		arc( iter->second );
 	}

@@ -91,7 +91,7 @@ public:
 			sol_weight_ * solv;
 	}
 
-	// special case for hydrate/SPaDES protocol
+	//// special case for hydrate/SPaDES protocol
 	inline
 	Energy
 	sum_energies_wat_wat( Real atr, Real rep ) const {
@@ -403,7 +403,7 @@ public:
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2 );
 
-		// hydrate/SPaDES protocol
+		//// hydrate/SPaDES protocol
 		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
 			if ( at1.is_wat() && at2.is_wat() ) {
 				return sum_energies_wat_wat( atr, rep );
@@ -425,7 +425,7 @@ public:
 		Energy atr(0.0), rep(0.0), solv(0.0), d2dummy(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
 
-		// hydrate/SPaDES protocol
+		//// hydrate/SPaDES protocol
 		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
 			if ( at1.is_wat() && at2.is_wat() ) {
 				return sum_energies_wat_wat( atr, rep );
@@ -447,7 +447,7 @@ public:
 		Energy atr(0.0), rep(0.0), solv(0.0), d2dummy(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
 
-		// hydrate/SPaDES protocol
+		//// hydrate/SPaDES protocol
 		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
 			if ( at1.is_wat() && at2.is_wat() ) {
 				return sum_energies_wat_wat( atr, rep );
@@ -469,7 +469,7 @@ public:
 		Energy atr(0.0), rep(0.0), solv(0.0), d2dummy(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
 
-		// hydrate/SPaDES protocol
+		//// hydrate/SPaDES protocol
 		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
 			if ( at1.is_wat() && at2.is_wat() ) {
 				return sum_energies_wat_wat( atr, rep );
@@ -668,7 +668,7 @@ public:
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2 );
 
-		// hydrate/SPaDES protocol
+		//// hydrate/SPaDES protocol
 		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
 			if ( at1.is_wat() && at2.is_wat() ) {
 				return sum_energies_wat_wat( atr, rep );
@@ -690,7 +690,7 @@ public:
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		pair_energy_H( at1, at2, 1.0, atr, rep, solv );
 
-		// hydrate/SPaDES protocol
+		//// hydrate/SPaDES protocol
 		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
 			if ( at1.is_wat() && at2.is_wat() ) {
 				return sum_energies_wat_wat( atr, rep );
@@ -712,7 +712,7 @@ public:
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		pair_energy_H( at1, at2, 1.0, atr, rep, solv );
 
-		// hydrate/SPaDES protocol
+		//// hydrate/SPaDES protocol
 		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
 			if ( at1.is_wat() && at2.is_wat() ) {
 				return sum_energies_wat_wat( atr, rep );
@@ -734,7 +734,7 @@ public:
 		Energy atr(0.0), rep(0.0), solv(0.0);
 		pair_energy_H( at1, at2, 1.0, atr, rep, solv );
 
-		// hydrate/SPaDES protocol
+		//// hydrate/SPaDES protocol
 		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
 			if ( at1.is_wat() && at2.is_wat() ) {
 				return sum_energies_wat_wat( atr, rep );

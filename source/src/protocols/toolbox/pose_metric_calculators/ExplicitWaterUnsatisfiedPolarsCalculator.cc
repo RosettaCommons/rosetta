@@ -237,7 +237,7 @@ find_res_unsat_polars(
 		//behavior copied from Florian!
 		std::string atom_type( rsd.type().atom_type( atm ).name() );
 		Size satisfac_cut = 3;
-		if ( atom_type == "OH" || atom_type == "OCbb" || atom_type == "S" ) {
+		if ( atom_type == "OH" || atom_type == "OW" || atom_type == "OCbb" || atom_type == "S" ) {
 			satisfac_cut = 2;
 		}
 		Size bonded_heavyatoms = rsd.n_bonded_neighbor_all_res( atm )

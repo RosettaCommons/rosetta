@@ -155,6 +155,7 @@ void revert_to_pre_talaris_2013_defaults( utility::options::OptionCollection & o
 		params.push_back("fa_standard:NH2O:LK_DGFREE:-10.0000");
 		params.push_back("fa_standard:Narg:LK_DGFREE:-11.0000");
 		params.push_back("fa_standard:OH:LK_DGFREE:-6.7700" );
+		params.push_back("fa_standard:OW:LK_DGFREE:-6.7700" );
 		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
 	}
 
@@ -247,6 +248,10 @@ init_pre_beta_nov15_etable( utility::options::OptionCollection & options ){
 		params.push_back("fa_standard:OH:LJ_WDEPTH:0.1591");
 		//params.push_back("fa_standard:OH:LK_DGFREE:-6.7000");
 		params.push_back("fa_standard:OH:LK_VOLUME:10.8000");
+		params.push_back("fa_standard:OW:LJ_RADIUS:1.5500");
+		params.push_back("fa_standard:OW:LJ_WDEPTH:0.1591");
+		//params.push_back("fa_standard:OW:LK_DGFREE:-6.7000");
+		params.push_back("fa_standard:OW:LK_VOLUME:10.8000");
 		params.push_back("fa_standard:ONH2:LJ_RADIUS:1.5500");
 		params.push_back("fa_standard:ONH2:LJ_WDEPTH:0.1591");
 		//params.push_back("fa_standard:ONH2:LK_DGFREE:-5.8500");
@@ -297,11 +302,13 @@ init_pre_beta_nov15_etable( utility::options::OptionCollection & options ){
 			params.push_back("fa_standard:NH2O:LK_DGFREE:-10.0000");
 			params.push_back("fa_standard:Narg:LK_DGFREE:-11.0000");
 			params.push_back("fa_standard:OH:LK_DGFREE:-6.7700" );
+			params.push_back("fa_standard:OW:LK_DGFREE:-6.7700" );
 		} else { // talaris
 			params.push_back("fa_standard:ONH2:LK_DGFREE:-5.8500");
 			params.push_back("fa_standard:NH2O:LK_DGFREE:-7.8000");
 			params.push_back("fa_standard:Narg:LK_DGFREE:-10.0000");
 			params.push_back("fa_standard:OH:LK_DGFREE:-6.7000");
+			params.push_back("fa_standard:OW:LK_DGFREE:-6.7000");
 		}
 
 		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
@@ -907,6 +914,10 @@ init_beta_july15_correction( utility::options::OptionCollection & options ) {
 		params.push_back( "fa_standard:OH:LJ_WDEPTH:0.160120148452043");
 		params.push_back( "fa_standard:OH:LK_DGFREE:-6.38881994292366");
 		params.push_back( "fa_standard:OH:LK_VOLUME:10.722");
+		params.push_back( "fa_standard:OW:LJ_RADIUS:1.55048059380817");
+		params.push_back( "fa_standard:OW:LJ_WDEPTH:0.160120148452043");
+		params.push_back( "fa_standard:OW:LK_DGFREE:-6.38881994292366");
+		params.push_back( "fa_standard:OW:LK_VOLUME:10.722");
 		params.push_back( "fa_standard:OHT:LJ_RADIUS:1.55048059380817");
 		params.push_back( "fa_standard:OHT:LJ_WDEPTH:0.160120148452043");
 		params.push_back( "fa_standard:OHT:LK_DGFREE:-8.67363943218534");
@@ -1065,6 +1076,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 		params.push_back("fa_standard:NtrR:LK_DGFREE:-4.92802");
 		params.push_back("fa_standard:OCbb:LK_DGFREE:-9.52921");
 		params.push_back("fa_standard:OH:LK_DGFREE:-5.46060");
+		params.push_back("fa_standard:OW:LK_DGFREE:-5.46060");
 		params.push_back("fa_standard:ONH2:LK_DGFREE:-5.03501");
 		params.push_back("fa_standard:OOC:LK_DGFREE:-10.20822");
 		params.push_back("fa_standard:S:LK_DGFREE:-4.89802");
@@ -1158,6 +1170,10 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 		params.push_back("fa_standard:OH:LJ_WDEPTH:0.16194");
 		params.push_back("fa_standard:OH:LK_DGFREE:-5.46060");
 		params.push_back("fa_standard:OH:LK_VOLUME:10.722");
+		params.push_back("fa_standard:OW:LJ_RADIUS:1.54274");
+		params.push_back("fa_standard:OW:LJ_WDEPTH:0.16194");
+		params.push_back("fa_standard:OW:LK_DGFREE:-5.46060");
+		params.push_back("fa_standard:OW:LK_VOLUME:10.722");
 		params.push_back("fa_standard:ONH2:LJ_RADIUS:1.54866");
 		params.push_back("fa_standard:ONH2:LJ_WDEPTH:0.18292");
 		params.push_back("fa_standard:ONH2:LK_DGFREE:-5.03501");
@@ -2182,6 +2198,28 @@ init_restore_score12prime( utility::options::OptionCollection & options ) {
 	}
 }
 
+void init_spades_score_function_correction( utility::options::OptionCollection & options )
+{
+	if ( options[ score::water_hybrid_sf ] ) {
+		utility::vector1< std::string > params;
+		if ( options[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+			TR.Warning << "Flag -score::water_hybrid_sf is set, but -set_atom_properties (or another flag such as -beta_nov16 that modifies this flag) is also set. Adding additional properties." << std::endl;
+			params = options[ basic::options::OptionKeys::chemical::set_atom_properties ]();
+			//for ( auto param : params ) {
+			// TR << "Before spades adjustment: parameter " << param << std::endl;
+			//}
+		}
+		params.push_back("fa_standard:OW:LK_DGFREE:0" );
+		params.push_back("fa_standard:OW:LK_VOLUME:0" );
+		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value( params );
+		//params = options[ basic::options::OptionKeys::chemical::set_atom_properties ]();
+		//for ( auto param : params ) {
+		// TR << "After spades adjustment: parameter " << param << std::endl;
+		//}
+	}
+}
+
+
 //MaximCode:
 void
 init_score_function_corrections( utility::options::OptionCollection & options ){
@@ -2197,6 +2235,7 @@ init_score_function_corrections( utility::options::OptionCollection & options ){
 	init_nonideal_correction( options ); // keep after beta
 	init_shapovalov_lib_fixes_enable_correction( options ); // keep after beta
 	init_dna_correction( options );
+	init_spades_score_function_correction( options );
 }
 
 bool

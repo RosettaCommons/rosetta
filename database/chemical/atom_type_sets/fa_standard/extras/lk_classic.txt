@@ -3,5 +3,6 @@ DEFAULT        LK_DGFREE												LK_VOLUME
 NH2O          -7.80															11.2 ## was -10.0, 11.2
 Narg         -10.00															11.2 ## was -11.0, 11.2
 OH            -6.70															10.8 ## was -6.77, 10.8
+OW            -6.70															10.8 ## was -6.77, 10.8
 ONH2          -5.85															10.8 ## was -10.0, 10.8
 Phos					-4.1															14.7 ## ~Jim H. values; trunk was -24.0, 34.8

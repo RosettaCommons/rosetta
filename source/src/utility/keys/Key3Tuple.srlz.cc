@@ -25,7 +25,7 @@
 namespace utility {
 namespace keys {
 
-	template < class Archive > void save( Archive & arc, Key3Tuple< platform::Size, platform::Size, platform::Size > const & k3t )
+template < class Archive > void save( Archive & arc, Key3Tuple< platform::Size, platform::Size, platform::Size > const & k3t )
 { save_key3tuple( arc, k3t ); }
 
 template < class Archive > void load( Archive & arc, Key3Tuple< platform::Size, platform::Size, platform::Size > & k3t )

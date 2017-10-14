@@ -1385,8 +1385,12 @@ Etable::precalc_etable_coefficients(
 				if ( ( atom_type(i).is_acceptor() && atom_type(j).is_donor() ) ||
 						( atom_type(i).is_donor() && atom_type(j).is_acceptor() ) ) {
 					// fpd this is bad ... can this be a property instead?
-					if ( ( atom_type(j).is_donor() && atom_type(j).name().substr(0,2) == "OH" ) ||
+					// apl -- yep, it sure is
+					if (
+							( atom_type(j).is_donor() && atom_type(j).name().substr(0,2) == "OH" ) ||
 							( atom_type(i).is_donor() && atom_type(i).name().substr(0,2) == "OH" ) ||
+							( atom_type(j).is_donor() && atom_type(j).name().substr(0,2) == "OW" ) ||
+							( atom_type(i).is_donor() && atom_type(i).name().substr(0,2) == "OW" ) ||
 							( atom_type(j).is_donor() && atom_type(j).name() == "Oet3" ) || // "Oet3" is ester atom (used for nucleic acid O4', used to be "OH")
 							( atom_type(i).is_donor() && atom_type(i).name() == "Oet3" ) ) {
 						sigma = lj_hbond_OH_donor_dis_;

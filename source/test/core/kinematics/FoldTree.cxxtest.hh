@@ -528,7 +528,7 @@ public:
 		ft.add_edge( 20, 16, Edge::PEPTIDE );
 		ft.add_edge( 20, 26, Edge::PEPTIDE );
 
-				// Now serialize the coordinates
+		// Now serialize the coordinates
 		std::ostringstream oss;
 		{
 			cereal::BinaryOutputArchive arch( oss );

@@ -39,7 +39,7 @@ namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.DatabaseOccSolEne" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.geometric_solvation.DatabaseOccSolEne" );
 
 /// @details ctor, reads data file. Need to configure to allow alternate tables/atom_sets
 DatabaseOccSolEne::DatabaseOccSolEne( std::string const & etable_name, Real const & min_occ_energy ):
@@ -100,6 +100,7 @@ void DatabaseOccSolEne::init_don_mapping(chemical::AtomTypeSet const & atom_set)
 
 	don_type_mapping_[ atom_set.atom_type_index("Oet3") ] = atom_set.atom_type_index("OH");
 	don_type_mapping_[ atom_set.atom_type_index("HOH") ] = atom_set.atom_type_index("OH");
+	don_type_mapping_[ atom_set.atom_type_index("OW") ] = atom_set.atom_type_index("OH");
 	don_type_mapping_[ atom_set.atom_type_index("OHha") ] = atom_set.atom_type_index("OH");
 
 	// hpark: below is added for beta_nov15
@@ -135,6 +136,7 @@ void DatabaseOccSolEne::init_acc_mapping(chemical::AtomTypeSet const & atom_set)
 	acc_type_mapping_[ atom_set.atom_type_index("Oet2") ] = atom_set.atom_type_index("OH");
 	acc_type_mapping_[ atom_set.atom_type_index("Oet3") ] = atom_set.atom_type_index("OH");
 	acc_type_mapping_[ atom_set.atom_type_index("HOH") ] = atom_set.atom_type_index("OH");
+	acc_type_mapping_[ atom_set.atom_type_index("OW") ] = atom_set.atom_type_index("OH");
 	acc_type_mapping_[ atom_set.atom_type_index("OPha") ] = atom_set.atom_type_index("OH");
 	acc_type_mapping_[ atom_set.atom_type_index("OHha") ] = atom_set.atom_type_index("OH");
 	acc_type_mapping_[ atom_set.atom_type_index("OC3") ] = atom_set.atom_type_index("ONH2");

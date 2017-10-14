@@ -56,7 +56,7 @@ extern template void T::load( typename cereal::XMLInputArchive &); \
 extern template void T::load( typename cereal::JSONInputArchive &)
 
 
-#define EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( T )						\
+#define EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( T )      \
 template void save( typename cereal::BinaryOutputArchive &, T const & ); \
 template void save( typename cereal::XMLOutputArchive &, T const & ); \
 template void save( typename cereal::JSONOutputArchive &, T const & ); \
@@ -80,7 +80,7 @@ template void T::load_and_construct( typename cereal::JSONInputArchive &, cereal
 // be "param."  Perhaps alternative flavors of this macro will be necessary.
 // The idea would be for the given function to somehow serialize the second
 // parameter into the archive.
-#define INSTANTIATE_FOR_OUTPUT_ARCHIVES( return_type, func, param )	\
+#define INSTANTIATE_FOR_OUTPUT_ARCHIVES( return_type, func, param ) \
 template return_type func( typename cereal::BinaryOutputArchive &, param ); \
 template return_type func( typename cereal::XMLOutputArchive &, param ); \
 template return_type func( typename cereal::JSONOutputArchive &, param )
@@ -93,7 +93,7 @@ template return_type func( typename cereal::JSONOutputArchive &, param )
 // be "param."  Perhaps alternative flavors of this macro will be necessary.
 // The idea would be for the given function to somehow deserialize an object into
 // the second parameter from the archive.
-#define INSTANTIATE_FOR_INPUT_ARCHIVES( return_type, func, param )	\
+#define INSTANTIATE_FOR_INPUT_ARCHIVES( return_type, func, param ) \
 template return_type func( typename cereal::BinaryInputArchive &, param ); \
 template return_type func( typename cereal::XMLInputArchive &, param ); \
 template return_type func( typename cereal::JSONInputArchive &, param  )

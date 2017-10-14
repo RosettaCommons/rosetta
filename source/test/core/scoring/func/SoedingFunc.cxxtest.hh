@@ -42,7 +42,7 @@ public:
 
 		std::string definition_string = "1.2 2.3 3.4 4.5 5.6 6.7";
 		std::istringstream def_stream( definition_string );
-		FuncOP instance( new SoedingFunc() ); 		// serialize this through a pointer to the base class
+		FuncOP instance( new SoedingFunc() );   // serialize this through a pointer to the base class
 		instance->read_data( def_stream );
 
 		std::ostringstream oss;

@@ -4718,7 +4718,7 @@ core::conformation::Conformation::load( Archive & arc ) {
 	arc( chain_endings_ ); // utility::vector1<Size>
 	arc( membrane_info_ ); // membrane::MembraneInfoOP
 	arc(tree_set_observer_);
-	if (tree_set_observer_ ){
+	if ( tree_set_observer_ ) {
 		tree_set_observer_->attach_impl( *this );
 	}
 	arc( fold_tree_ ); // FoldTreeOP

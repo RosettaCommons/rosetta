@@ -5973,9 +5973,9 @@ protocols::pockets::PocketGrid::save( Archive & arc ) const {
 	arc( CEREAL_NVP( markpsp_ ) ); // _Bool
 	arc( CEREAL_NVP( marksps_ ) ); // _Bool
 	arc( CEREAL_NVP( exemplarRestriction_ ) ); // _Bool
-    arc( CEREAL_NVP( dumpExemplars_ ) ); // _Bool
-    arc( CEREAL_NVP( filterExemplars_ ) ); // _Bool
-    arc( CEREAL_NVP( limitExemplars_ ) ); // _Bool
+	arc( CEREAL_NVP( dumpExemplars_ ) ); // _Bool
+	arc( CEREAL_NVP( filterExemplars_ ) ); // _Bool
+	arc( CEREAL_NVP( limitExemplars_ ) ); // _Bool
 	arc( CEREAL_NVP( search13_ ) ); // _Bool
 	arc( CEREAL_NVP( minPockSize_ ) ); // core::Real
 	arc( CEREAL_NVP( maxPockSize_ ) ); // core::Real
@@ -6025,9 +6025,9 @@ protocols::pockets::PocketGrid::load( Archive & arc ) {
 	arc( markpsp_ ); // _Bool
 	arc( marksps_ ); // _Bool
 	arc( exemplarRestriction_ ); // _Bool
-    arc( dumpExemplars_ ); // _Bool
-    arc( filterExemplars_ ); // _Bool
-    arc( limitExemplars_ ); // _Bool
+	arc( dumpExemplars_ ); // _Bool
+	arc( filterExemplars_ ); // _Bool
+	arc( limitExemplars_ ); // _Bool
 	arc( search13_ ); // _Bool
 	arc( minPockSize_ ); // core::Real
 	arc( maxPockSize_ ); // core::Real

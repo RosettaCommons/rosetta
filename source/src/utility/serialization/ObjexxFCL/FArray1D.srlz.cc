@@ -26,52 +26,52 @@ namespace ObjexxFCL {
 
 template < class Archive > void save( Archive & archive, FArray1D< std::string    > const & farray1d )
 {
-  save_farray1d( archive, farray1d );
+	save_farray1d( archive, farray1d );
 }
 
 template < class Archive > void save( Archive & archive, FArray1D< int            > const & farray1d )
 {
-  save_farray1d( archive, farray1d );
+	save_farray1d( archive, farray1d );
 }
 
 template < class Archive > void save( Archive & archive, FArray1D< platform::Size > const & farray1d )
 {
-  save_farray1d( archive, farray1d );
+	save_farray1d( archive, farray1d );
 }
 
 template < class Archive > void save( Archive & archive, FArray1D< float          > const & farray1d )
 {
-  save_farray1d( archive, farray1d );
+	save_farray1d( archive, farray1d );
 }
 
 template < class Archive > void save( Archive & archive, FArray1D< double         > const & farray1d )
 {
-  save_farray1d( archive, farray1d );
+	save_farray1d( archive, farray1d );
 }
 
 template < class Archive > void load( Archive & archive, FArray1D< std::string    > & farray1d )
 {
-  load_farray1d( archive, farray1d );
+	load_farray1d( archive, farray1d );
 }
 
 template < class Archive > void load( Archive & archive, FArray1D< int            > & farray1d )
 {
-  load_farray1d( archive, farray1d );
+	load_farray1d( archive, farray1d );
 }
 
 template < class Archive > void load( Archive & archive, FArray1D< platform::Size > & farray1d )
 {
-  load_farray1d( archive, farray1d );
+	load_farray1d( archive, farray1d );
 }
 
 template < class Archive > void load( Archive & archive, FArray1D< float          > & farray1d )
 {
-  load_farray1d( archive, farray1d );
+	load_farray1d( archive, farray1d );
 }
 
 template < class Archive > void load( Archive & archive, FArray1D< double         > & farray1d )
 {
-  load_farray1d( archive, farray1d );
+	load_farray1d( archive, farray1d );
 }
 
 EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( FArray1D< std::string    > );

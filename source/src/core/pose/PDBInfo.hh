@@ -93,7 +93,7 @@ private:
 #ifdef    SERIALIZATION
 	//public:
 	/// @brief Default constructor for the purpose of serialization only. Do not use.
-	//	UnrecognizedAtomRecord();
+	// UnrecognizedAtomRecord();
 
 public:
 	template< class Archive > void save( Archive & arc ) const;
@@ -168,8 +168,8 @@ private: // structs
 		Real temperature;
 
 #ifdef    SERIALIZATION
-	template< class Archive > void save( Archive & arc ) const;
-	template< class Archive > void load( Archive & arc );
+		template< class Archive > void save( Archive & arc ) const;
+		template< class Archive > void load( Archive & arc );
 #endif // SERIALIZATION
 	};
 
@@ -201,8 +201,8 @@ private: // structs
 
 
 #ifdef    SERIALIZATION
-	template< class Archive > void save( Archive & arc ) const;
-	template< class Archive > void load( Archive & arc );
+		template< class Archive > void save( Archive & arc ) const;
+		template< class Archive > void load( Archive & arc );
 #endif // SERIALIZATION
 	};
 

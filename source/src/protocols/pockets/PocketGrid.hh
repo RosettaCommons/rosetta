@@ -158,8 +158,8 @@ public:
 		std::string atom_type;
 
 #ifdef    SERIALIZATION
-	template< class Archive > void save( Archive & arc ) const;
-	template< class Archive > void load( Archive & arc );
+		template< class Archive > void save( Archive & arc ) const;
+		template< class Archive > void load( Archive & arc );
 #endif // SERIALIZATION
 	};
 	std::list < Cxyz > points_;

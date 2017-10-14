@@ -903,8 +903,8 @@ public:
 
 		//std::ostrinstream oss;
 		//{
-		//	cereal::BinaryOutputArchive arc( oss );
-		//	arc( trpcage_job_output );
+		// cereal::BinaryOutputArchive arc( oss );
+		// arc( trpcage_job_output );
 		//}
 		//std::string serialized_trpcage_job_output = oss.str();
 
@@ -1018,8 +1018,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -1128,7 +1128,7 @@ public:
 			return;
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -1254,8 +1254,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -1305,8 +1305,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -1356,8 +1356,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -1406,8 +1406,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -1456,7 +1456,7 @@ public:
 			return;
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -1501,7 +1501,7 @@ public:
 			return;
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -1546,7 +1546,7 @@ public:
 			return;
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -1592,7 +1592,7 @@ public:
 			return;
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -1640,7 +1640,7 @@ public:
 			return;
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -1869,8 +1869,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -2218,8 +2218,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 2 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -2528,8 +2528,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 1
+// OK!
+// Now we read the mail we got from node 1
 
 		SimulateMPI::set_mpi_rank( 2 );
 
@@ -2676,8 +2676,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 2
+// OK!
+// Now we read the mail we got from node 2
 
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 2 starts by requesting a job
@@ -2737,7 +2737,7 @@ public:
 		SimulateMPI::set_mpi_rank( 1 );
 
 		// Let's see what node 2 sent to the archive node.
- 		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"I have a message for you, archive\"", 2 ); // node 2 says "I have a message for you, archive"
+		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"I have a message for you, archive\"", 2 ); // node 2 says "I have a message for you, archive"
 		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"please archive this job result\"", mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says this job result is for job #1", 1 ); // job_id
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says this job result is for job #1 result #1", 1 ); // result index
@@ -2763,7 +2763,7 @@ public:
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says that it wants the job with index 1 result #1", 1 ); // result index 1
 
 		// finally, node 2 sends the job results from job 2
- 		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"I have a message for you, archive\" B", 2 ); // node 2 says "I have a message for you, archive"
+		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"I have a message for you, archive\" B", 2 ); // node 2 says "I have a message for you, archive"
 		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"please archive this job result\" B", mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says that the job id is 2", 2 ); // job_ib
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says that the job id is 2 result index 1", 1 ); // result index
@@ -2846,8 +2846,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -2919,7 +2919,7 @@ public:
 			return;
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -3339,7 +3339,7 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK -- what message did nodes 0 and 2 receive?
+// OK -- what message did nodes 0 and 2 receive?
 		SimulateMPI::set_mpi_rank( 0 );
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 tells node 0 that it needs to talk with it", 1 );
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it failed to retrieve a job result", mpi_work_pool_jd_failed_to_retrieve_job_result );
@@ -3494,7 +3494,7 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// And now we read the mail we got from node 0
+// And now we read the mail we got from node 0
 		SimulateMPI::set_mpi_rank( 1 );
 
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -3596,7 +3596,7 @@ public:
 			return;
 		}
 
-		// node 0 has a job for node 1
+// node 0 has a job for node 1
 		SimulateMPI::set_mpi_rank( 0 );
 		send_integer_to_node( 1, mpi_work_pool_jd_new_job_available );
 		send_string_to_node( 1, undeserializable_larval_job );
@@ -3617,7 +3617,7 @@ public:
 			TS_ASSERT( false );
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -3676,7 +3676,7 @@ public:
 			TS_ASSERT( false );
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -3726,7 +3726,7 @@ public:
 			TS_ASSERT( false );
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -3777,7 +3777,7 @@ public:
 			TS_ASSERT( false );
 		}
 
-		// NOW let's make sure that node 1 has been sending its messages the way it should have
+// NOW let's make sure that node 1 has been sending its messages the way it should have
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 1 starts by requesting a job
 		ts_assert_mpi_buffer_has_integer( 1, "node 1 says to node 0: I have a request A", 1 );
@@ -4132,8 +4132,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
@@ -4397,8 +4397,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 2
+// OK!
+// Now we read the mail we got from node 2
 
 		SimulateMPI::set_mpi_rank( 0 );
 		// Node 2 starts by requesting a job
@@ -4458,7 +4458,7 @@ public:
 		SimulateMPI::set_mpi_rank( 1 );
 
 		// Let's see what node 2 sent to the archive node.
- 		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"I have a message for you, archive\"", 2 ); // node 2 says "I have a message for you, archive"
+		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"I have a message for you, archive\"", 2 ); // node 2 says "I have a message for you, archive"
 		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"please archive this job result\"", mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says this job result is for job #1", 1 ); // job_id
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says this job result is for job #1 result #1", 1 ); // result index
@@ -4484,7 +4484,7 @@ public:
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says that it wants the job 1 with result index 1", 1 ); // retrieve the result from job #1 result #1
 
 		// finally, node 2 sends the job results from job 2
- 		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"I have a message for you, archive\" B", 2 ); // node 2 says "I have a message for you, archive"
+		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"I have a message for you, archive\" B", 2 ); // node 2 says "I have a message for you, archive"
 		ts_assert_mpi_buffer_has_integer( 2, "node 2 says \"please archive this job result\" B", mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says that the job id is 2", 2 ); // job_ib
 		ts_assert_mpi_buffer_has_size( 2, "node 2 says that the job id is 2", 1 ); // result index 1

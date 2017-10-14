@@ -378,40 +378,40 @@ void EnergyNode::load_from_archive( Archive & arc )
 template < class Archive >
 void EnergyEdge::save_to_archive( Archive & archive ) const
 {
-  archive( energies_not_yet_computed_, dsqr_ );
-  std::vector< Real > energies( array_.size() );
-  for ( Size ii = 0; ii < array_.size(); ++ii ) {
-    energies[ ii ] = array_[ ii ];
-  }
-  archive( energies );
+	archive( energies_not_yet_computed_, dsqr_ );
+	std::vector< Real > energies( array_.size() );
+	for ( Size ii = 0; ii < array_.size(); ++ii ) {
+		energies[ ii ] = array_[ ii ];
+	}
+	archive( energies );
 }
 
 template < class Archive >
 void EnergyEdge::load_from_archive( Archive & archive )
 {
-  archive( energies_not_yet_computed_, dsqr_ );
-  std::vector< Real > energies( array_.size() );
-  archive( energies );
-  for ( Size ii = 0; ii < array_.size(); ++ii ) {
-    array_[ ii ] = energies[ ii ];
-  }
+	archive( energies_not_yet_computed_, dsqr_ );
+	std::vector< Real > energies( array_.size() );
+	archive( energies );
+	for ( Size ii = 0; ii < array_.size(); ++ii ) {
+		array_[ ii ] = energies[ ii ];
+	}
 }
 
 template < class Archive >
 void EnergyGraph::save( Archive & arc ) const
 {
-  arc( active_2b_score_types_ );
+	arc( active_2b_score_types_ );
 
-  arc( num_nodes() );
-  for ( Size ii = 1; ii <= num_nodes(); ++ii ) {
-    get_energy_node( ii )->save_to_archive( arc );
-  }
-  arc( num_edges() );
-  for ( EdgeListConstIter iter = const_edge_list_begin(), iter_end = const_edge_list_end(); iter != iter_end; ++iter ) {
-    arc( (*iter)->get_first_node_ind(), (*iter)->get_second_node_ind() );
+	arc( num_nodes() );
+	for ( Size ii = 1; ii <= num_nodes(); ++ii ) {
+		get_energy_node( ii )->save_to_archive( arc );
+	}
+	arc( num_edges() );
+	for ( EdgeListConstIter iter = const_edge_list_begin(), iter_end = const_edge_list_end(); iter != iter_end; ++iter ) {
+		arc( (*iter)->get_first_node_ind(), (*iter)->get_second_node_ind() );
 		EnergyEdge const * eeptr = static_cast< EnergyEdge const * > (*iter);
-    eeptr->save_to_archive( arc );
-  }
+		eeptr->save_to_archive( arc );
+	}
 	// The pools are not serialized;
 	// EXEMPT energy_edge_pool_ energy_array_pool_
 	// score_type_2_active_ is essentially derived from active_2b_score_types_
@@ -422,25 +422,25 @@ void EnergyGraph::save( Archive & arc ) const
 template < class Archive >
 void EnergyGraph::load( Archive & arc )
 {
-  ScoreTypes sts; arc( sts );
-  active_score_types( sts );
+	ScoreTypes sts; arc( sts );
+	active_score_types( sts );
 	// The above line stores the active score types, and that in turn initializes score_type_2_active_
 	// EXEMPT active_2b_score_types_ score_type_2_active_
 
-  Size num_nodes(0); arc( num_nodes );
-  set_num_nodes( num_nodes );
+	Size num_nodes(0); arc( num_nodes );
+	set_num_nodes( num_nodes );
 
-  for ( Size ii = 1; ii <= num_nodes; ++ii ) {
-    get_energy_node( ii )->load_from_archive( arc );
-  }
+	for ( Size ii = 1; ii <= num_nodes; ++ii ) {
+		get_energy_node( ii )->load_from_archive( arc );
+	}
 
-  Size num_edges(0); arc( num_edges );
-  for ( Size ii = 1; ii <= num_edges; ++ii ) {
-    Size node1(0), node2(0); arc( node1, node2 );
-    Edge * new_edge = add_edge( node1, node2 );
+	Size num_edges(0); arc( num_edges );
+	for ( Size ii = 1; ii <= num_edges; ++ii ) {
+		Size node1(0), node2(0); arc( node1, node2 );
+		Edge * new_edge = add_edge( node1, node2 );
 		EnergyEdge * eeptr = static_cast< EnergyEdge * > ( new_edge );
-    eeptr->load_from_archive( arc );
-  }
+		eeptr->load_from_archive( arc );
+	}
 	// The pools are not serialized;
 	// EXEMPT energy_edge_pool_ energy_array_pool_
 }

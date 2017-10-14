@@ -33,6 +33,7 @@ Nlys      1.55
 Narg      1.55
 Npro      1.55
 OH        1.4
+OW        1.4
 ONH2      1.4
 OOC       1.4
 Oaro      1.4

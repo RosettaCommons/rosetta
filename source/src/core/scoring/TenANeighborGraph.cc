@@ -262,14 +262,14 @@ template< class Archive >
 void
 core::scoring::TenANeighborGraph::save( Archive & arc ) const
 {
-  arc( num_nodes() );
-  for ( Size ii = 1; ii <= num_nodes(); ++ii ) {
-    (static_cast< TenANeighborNode const * > ( get_node( ii ) ))->save_to_archive( arc );
-  }
-  arc( num_edges() );
-  for ( EdgeListConstIter iter = const_edge_list_begin(), iter_end = const_edge_list_end(); iter != iter_end; ++iter ) {
-    arc( (*iter)->get_first_node_ind(), (*iter)->get_second_node_ind() );
-  }
+	arc( num_nodes() );
+	for ( Size ii = 1; ii <= num_nodes(); ++ii ) {
+		(static_cast< TenANeighborNode const * > ( get_node( ii ) ))->save_to_archive( arc );
+	}
+	arc( num_edges() );
+	for ( EdgeListConstIter iter = const_edge_list_begin(), iter_end = const_edge_list_end(); iter != iter_end; ++iter ) {
+		arc( (*iter)->get_first_node_ind(), (*iter)->get_second_node_ind() );
+	}
 	// Don't serialize the pool
 	// EXEMPT tenA_edge_pool_
 
@@ -280,18 +280,18 @@ template< class Archive >
 void
 core::scoring::TenANeighborGraph::load( Archive & arc )
 {
-  Size num_nodes(0); arc( num_nodes );
-  set_num_nodes( num_nodes );
+	Size num_nodes(0); arc( num_nodes );
+	set_num_nodes( num_nodes );
 
-  for ( Size ii = 1; ii <= num_nodes; ++ii ) {
-    (static_cast< TenANeighborNode * > ( get_node( ii ) ))->load_from_archive( arc );
-  }
+	for ( Size ii = 1; ii <= num_nodes; ++ii ) {
+		(static_cast< TenANeighborNode * > ( get_node( ii ) ))->load_from_archive( arc );
+	}
 
-  Size num_edges(0); arc( num_edges );
-  for ( Size ii = 1; ii <= num_edges; ++ii ) {
-    Size node1(0), node2(0); arc( node1, node2 );
-    /*Edge * new_edge =*/ add_edge( node1, node2 );
-  }
+	Size num_edges(0); arc( num_edges );
+	for ( Size ii = 1; ii <= num_edges; ++ii ) {
+		Size node1(0), node2(0); arc( node1, node2 );
+		/*Edge * new_edge =*/ add_edge( node1, node2 );
+	}
 	// Don't deserialize the pool, either
 	// EXEMPT tenA_edge_pool_
 }

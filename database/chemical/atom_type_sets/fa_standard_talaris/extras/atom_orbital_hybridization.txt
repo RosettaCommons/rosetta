@@ -12,6 +12,7 @@ Nlys    0                         0              0
 Narg    2                         1              0.65
 Npro    0                         0              0
 OH      3                         3              0.6
+OW      3                         3              0.6
 Oaro    2                         0              0.6
 ONH2    2                         2              0.6
 OOC     2                         2              0.6

@@ -29,7 +29,7 @@ template< class Archive >
 void
 core::pack::rotamer_set::RotamerLinks::save( Archive & arc ) const {
 	arc( CEREAL_NVP( links_ ) ); // utility::vector1<utility::vector1<int> >
-    arc( CEREAL_NVP( template_residues_ ) );
+	arc( CEREAL_NVP( template_residues_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -37,7 +37,7 @@ template< class Archive >
 void
 core::pack::rotamer_set::RotamerLinks::load( Archive & arc ) {
 	arc( links_ ); // utility::vector1<utility::vector1<int> >
-    arc( template_residues_);
+	arc( template_residues_);
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::RotamerLinks );

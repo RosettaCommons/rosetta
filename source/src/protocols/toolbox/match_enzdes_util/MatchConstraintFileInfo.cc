@@ -1022,7 +1022,7 @@ protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoList::save( Archiv
 
 	arc( mcfis_for_restype_.size() );
 	for ( std::map<core::chemical::ResidueTypeCOP, utility::vector1<MatchConstraintFileInfoCOP> >::const_iterator
-					iter = mcfis_for_restype_.begin(), iter_end = mcfis_for_restype_.end(); iter != iter_end; ++iter ) {
+			iter = mcfis_for_restype_.begin(), iter_end = mcfis_for_restype_.end(); iter != iter_end; ++iter ) {
 		arc( iter->first );
 		arc( iter->second );
 	}

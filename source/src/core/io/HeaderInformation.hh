@@ -33,7 +33,7 @@
 
 #ifdef    SERIALIZATION
 // Cereal headers
-	#include <cereal/types/polymorphic.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
 
 #ifdef PYROSETTA
 		#include <cereal/types/polymorphic.hpp>

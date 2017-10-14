@@ -67,7 +67,7 @@ load(
 }
 
 typedef Histogram< float, float > his_ff;
-typedef	Histogram< double, double > his_dd;
+typedef Histogram< double, double > his_dd;
 
 EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( his_ff );
 EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( his_dd  );

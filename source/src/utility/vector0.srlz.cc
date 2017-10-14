@@ -26,71 +26,71 @@ namespace utility {
 
 template < class Archive > void save( Archive & archive, utility::vector0< std::string    > const & vect )
 {
-  utility::save_vector( archive, vect );
+	utility::save_vector( archive, vect );
 }
 
 template < class Archive > void save( Archive & archive, utility::vector0< int            > const & vect )
 {
-  utility::save_vector( archive, vect );
+	utility::save_vector( archive, vect );
 }
 
 template < class Archive > void save( Archive & archive, utility::vector0< platform::Size > const & vect )
 {
-  utility::save_vector( archive, vect );
+	utility::save_vector( archive, vect );
 }
 
 template < class Archive > void save( Archive & archive, utility::vector0< float          > const & vect )
 {
-  utility::save_vector( archive, vect );
+	utility::save_vector( archive, vect );
 }
 
 template < class Archive > void save( Archive & archive, utility::vector0< double         > const & vect )
 {
-  utility::save_vector( archive, vect );
+	utility::save_vector( archive, vect );
 }
 
 template < class Archive > void save( Archive & archive, utility::vector0< bool           > const & vect )
 {
-  archive( vect.size() );
-  for ( platform::Size ii = 0; ii < vect.size(); ++ii ) {
+	archive( vect.size() );
+	for ( platform::Size ii = 0; ii < vect.size(); ++ii ) {
 		bool iival = vect[ii];
-    archive( iival );
-  }
+		archive( iival );
+	}
 }
 
 template < class Archive > void load( Archive & archive, utility::vector0< std::string    > & vect )
 {
-  utility::load_vector( archive, vect );
+	utility::load_vector( archive, vect );
 }
 
 template < class Archive > void load( Archive & archive, utility::vector0< int            > & vect )
 {
-  utility::load_vector( archive, vect );
+	utility::load_vector( archive, vect );
 }
 
 template < class Archive > void load( Archive & archive, utility::vector0< platform::Size > & vect )
 {
-  utility::load_vector( archive, vect );
+	utility::load_vector( archive, vect );
 }
 
 template < class Archive > void load( Archive & archive, utility::vector0< float          > & vect )
 {
-  utility::load_vector( archive, vect );
+	utility::load_vector( archive, vect );
 }
 
 template < class Archive > void load( Archive & archive, utility::vector0< double         > & vect )
 {
-  utility::load_vector( archive, vect );
+	utility::load_vector( archive, vect );
 }
 
 template < class Archive > void load( Archive & archive, utility::vector0< bool           > & vect )
 {
 	platform::Size n; archive( n );
 	vect.resize( n );
-  for ( platform::Size ii = 0; ii < vect.size(); ++ii ) {
+	for ( platform::Size ii = 0; ii < vect.size(); ++ii ) {
 		bool iival; archive( iival );
-    vect[ii] = iival;
-  }
+		vect[ii] = iival;
+	}
 }
 
 EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( utility::vector0< int            > );

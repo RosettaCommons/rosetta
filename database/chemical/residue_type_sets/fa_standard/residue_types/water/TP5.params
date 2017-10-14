@@ -8,7 +8,7 @@ IO_STRING TP5 w
 TYPE LIGAND
 AA HOH
 
-ATOM  O   OH   OH1  0.0 ## HACK: USING OH ATOMTYPE, amber uses OW atomtype
+ATOM  O   OW   OH1  0.0 
 ATOM  H1  Hpol H    0.241
 ATOM  H2  Hpol H    0.241
 ATOM  EP1 VIRT VIRT -0.2410

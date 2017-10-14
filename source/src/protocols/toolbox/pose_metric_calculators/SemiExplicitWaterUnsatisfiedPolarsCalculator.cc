@@ -593,7 +593,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::satisfaction_cutoff( std::string a
 {
 
 	//according to jk, buried hydroxyls are often seen making only one hydrogen bond. also, ether oxygens often are bad h-bond acceptors
-	if ( atom_type == "OH" ) return 2;
+	if ( atom_type == "OH" || atom_type == "OW" ) return 2;
 
 	//backbone oxygens also only have one h-bbond in most secondary structure elements
 	else if ( atom_type == "OCbb" ) return 2;
