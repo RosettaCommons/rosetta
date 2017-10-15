@@ -47,6 +47,8 @@
 
 // Basic headers
 #include <basic/datacache/ConstDataMap.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/jd3.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/SimulateMPI.hh>
@@ -744,6 +746,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init();
+		basic::options::option[ basic::options::OptionKeys::jd3::compress_job_results ]( false );
 	}
 
 	// Shared finalization goes here.
@@ -2031,7 +2034,7 @@ public:
 		TS_ASSERT( true );
 
 #ifdef SERIALIZATION
-		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0" );
+		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0" );
 
 		EnergyJobSummaryOP trpcage_job_summary( new EnergyJobSummary );
 		trpcage_job_summary->energy( 1234 );
@@ -2405,7 +2408,7 @@ public:
 		TS_ASSERT( true );
 
 #ifdef SERIALIZATION
-		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0" );
+		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0" );
 
 		EnergyJobSummaryOP trpcage_job_summary( new EnergyJobSummary );
 		trpcage_job_summary->energy( 1234 );
@@ -2617,7 +2620,7 @@ public:
 		TS_ASSERT( true );
 
 #ifdef SERIALIZATION
-		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0" );
+		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0" );
 
 		EnergyJobSummaryOP trpcage_job_summary( new EnergyJobSummary );
 		trpcage_job_summary->energy( 1234 );
@@ -2988,7 +2991,7 @@ public:
 
 #ifdef SERIALIZATION
 
-		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0" );
+		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0" );
 
 		SimulateMPI::initialize_simulation( 3 );
 
@@ -3062,7 +3065,7 @@ public:
 
 #ifdef SERIALIZATION
 
-		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0" );
+		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0" );
 
 		SimulateMPI::initialize_simulation( 4 );
 
@@ -3180,7 +3183,7 @@ public:
 
 #ifdef SERIALIZATION
 
-		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0" );
+		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0" );
 
 		SimulateMPI::initialize_simulation( 4 );
 
@@ -3309,7 +3312,7 @@ public:
 
 #ifdef SERIALIZATION
 
-		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0" );
+		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0" );
 
 		SimulateMPI::initialize_simulation( 4 );
 
@@ -4333,7 +4336,7 @@ public:
 		TS_ASSERT( true );
 
 #ifdef SERIALIZATION
-		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0" );
+		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0" );
 
 		EnergyJobSummaryOP trpcage_job_summary( new EnergyJobSummary );
 		trpcage_job_summary->energy( 1234 );
