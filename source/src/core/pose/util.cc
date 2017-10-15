@@ -316,6 +316,13 @@ pdbslice(
 	core::pose::Pose & pose,
 	utility::vector1< core::Size > const & slice_res
 ) {
+	// If slice_res is 'every residue in pose' just return
+	// This happens in rna_denovo where working_res is empty (then
+	// filled to 'everything' in creating the working_native.
+	utility::vector1< Size > identity_slice_res( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) identity_slice_res[ ii ] = ii;
+	if ( slice_res == identity_slice_res ) return;
+	
 	pose::Pose mini_pose;
 	pdbslice( mini_pose, pose, slice_res );
 	pose = mini_pose;

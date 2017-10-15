@@ -716,6 +716,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		if ( opts[ OptionKeys::rna::denovo::refine_native ]() ) {
 			full_pose = *(native_pose_->clone());
 		}
+		// AMW: this function will ensure that it just copies the native pose if in fact working_res is 'everything'
 		pdbslice( *native_pose_, working_res );
 	} else if ( opts[ OptionKeys::rna::denovo::working_native ].user() ) {
 		std::string native_pdb_file  = opts[ OptionKeys::rna::denovo::working_native ];
