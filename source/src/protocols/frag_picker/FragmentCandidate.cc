@@ -36,6 +36,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/fragment/util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/kinematics/MoveMap.hh>

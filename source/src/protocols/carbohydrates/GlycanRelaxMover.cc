@@ -22,6 +22,7 @@
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <core/kinematics/MoveMap.hh>

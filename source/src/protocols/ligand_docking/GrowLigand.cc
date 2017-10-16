@@ -17,6 +17,7 @@
 
 #include <protocols/ligand_docking/LigandDesign.hh> // For helper functions.  Refactor this
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 
 #include <protocols/moves/Mover.hh>

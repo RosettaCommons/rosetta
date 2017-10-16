@@ -39,6 +39,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <basic/Tracer.hh>
 

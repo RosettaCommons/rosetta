@@ -19,6 +19,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/AtomTree.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>

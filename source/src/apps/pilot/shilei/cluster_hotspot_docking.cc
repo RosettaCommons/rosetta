@@ -20,6 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/id/AtomID.hh>

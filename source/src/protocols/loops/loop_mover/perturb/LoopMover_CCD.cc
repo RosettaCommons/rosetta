@@ -59,7 +59,7 @@
 
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>

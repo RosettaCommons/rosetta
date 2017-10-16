@@ -26,6 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 #include <basic/Tracer.hh>
 

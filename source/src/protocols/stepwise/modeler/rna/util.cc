@@ -39,7 +39,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/rna/util.hh>
 #include <core/import_pose/import_pose.hh>

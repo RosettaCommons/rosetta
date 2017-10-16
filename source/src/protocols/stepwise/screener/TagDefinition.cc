@@ -15,7 +15,7 @@
 
 #include <protocols/stepwise/screener/TagDefinition.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.TagDefinition" );

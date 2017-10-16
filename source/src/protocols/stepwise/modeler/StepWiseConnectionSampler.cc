@@ -80,7 +80,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/types.hh>
 

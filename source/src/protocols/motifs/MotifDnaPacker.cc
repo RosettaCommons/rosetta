@@ -47,7 +47,7 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/dna/BasePartner.hh>
 #include <core/scoring/ScoreFunction.hh>

@@ -27,7 +27,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <numeric/conversions.hh>

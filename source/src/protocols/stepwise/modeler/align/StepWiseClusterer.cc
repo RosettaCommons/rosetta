@@ -21,6 +21,7 @@
 #include <protocols/stepwise/monte_carlo/util.hh> // for output_to_silent_file
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>

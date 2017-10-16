@@ -15,7 +15,7 @@
 
 #include <protocols/rna/denovo/libraries/BasePairStepLibrary.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/chemical/util.hh>
 #include <utility/tools/make_vector1.hh>

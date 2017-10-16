@@ -21,7 +21,8 @@
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/SilentStruct.hh>

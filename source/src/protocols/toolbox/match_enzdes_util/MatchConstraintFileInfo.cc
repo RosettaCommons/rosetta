@@ -27,7 +27,7 @@
 #include <core/chemical/ResidueTypeSet.srlz.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 // Basic headers
 #include <basic/basic.hh>

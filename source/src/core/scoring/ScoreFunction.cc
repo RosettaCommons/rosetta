@@ -1893,6 +1893,13 @@ ScoreFunction::set_weight_if_zero(const ScoreType& t, const Real& setting) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+/// @details adds to the current weight
+void
+ScoreFunction::add_to_weight(const ScoreType& t, const Real& setting) {
+	set_weight(t, get_weight(t) + setting);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 /// @details get the weight
 Real
 ScoreFunction::get_weight( ScoreType const & t) const

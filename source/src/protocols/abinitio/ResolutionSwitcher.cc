@@ -56,7 +56,7 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

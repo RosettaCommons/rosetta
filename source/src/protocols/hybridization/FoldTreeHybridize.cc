@@ -21,9 +21,10 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 

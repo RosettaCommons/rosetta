@@ -25,7 +25,7 @@
 // Project Headers
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <protocols/comparative_modeling/util.hh>

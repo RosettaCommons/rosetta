@@ -19,6 +19,7 @@
 //Core Headers
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 //Protocols Headers
 #include <protocols/features/util.hh>

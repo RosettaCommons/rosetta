@@ -18,6 +18,7 @@
 #include <protocols/ligand_docking/LigandDesign.hh>
 
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 #include <core/types.hh>
 

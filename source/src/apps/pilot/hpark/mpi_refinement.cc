@@ -12,6 +12,7 @@
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <protocols/wum/WorkUnitList.hh>
 #include <protocols/wum/WorkUnitManager.hh>
 #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>

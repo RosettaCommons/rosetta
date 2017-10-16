@@ -24,7 +24,7 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>

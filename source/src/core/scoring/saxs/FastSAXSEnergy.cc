@@ -22,7 +22,8 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>

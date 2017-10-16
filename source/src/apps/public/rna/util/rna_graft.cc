@@ -22,7 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/rna/util.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>

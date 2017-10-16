@@ -57,7 +57,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

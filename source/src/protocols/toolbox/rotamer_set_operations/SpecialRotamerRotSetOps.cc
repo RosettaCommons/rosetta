@@ -16,7 +16,7 @@
 
 //Project headers
 
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>

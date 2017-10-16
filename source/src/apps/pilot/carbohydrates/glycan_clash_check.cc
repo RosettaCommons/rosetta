@@ -19,6 +19,8 @@
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/AtomType.hh>

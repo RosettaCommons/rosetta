@@ -25,8 +25,9 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/kinematics/FoldTree.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>

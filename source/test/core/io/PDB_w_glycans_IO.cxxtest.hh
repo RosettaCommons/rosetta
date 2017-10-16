@@ -19,6 +19,7 @@
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pdb_writer.hh>
+#include <core/kinematics/FoldTree.hh>
 
 // Project Headers
 #include <core/types.hh>

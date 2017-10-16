@@ -34,8 +34,8 @@
 
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 
 #include <core/conformation/Conformation.hh>
 

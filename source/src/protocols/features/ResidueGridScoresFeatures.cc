@@ -33,6 +33,7 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

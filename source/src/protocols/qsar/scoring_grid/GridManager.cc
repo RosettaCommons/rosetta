@@ -19,6 +19,7 @@
 #include <protocols/qsar/qsarMap.hh>
 
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <basic/Tracer.hh>

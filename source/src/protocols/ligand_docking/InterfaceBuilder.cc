@@ -25,6 +25,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/types.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 #include <basic/Tracer.hh>
 

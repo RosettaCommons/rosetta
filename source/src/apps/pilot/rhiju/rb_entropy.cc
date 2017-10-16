@@ -34,7 +34,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>

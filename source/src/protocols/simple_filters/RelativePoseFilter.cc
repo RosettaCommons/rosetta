@@ -41,6 +41,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

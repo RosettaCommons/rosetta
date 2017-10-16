@@ -20,7 +20,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/rna/RNA_SecStruct.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/rna/util.hh>

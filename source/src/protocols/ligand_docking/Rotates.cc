@@ -19,6 +19,7 @@
 
 #include <basic/datacache/DataMap.hh>
 #include <core/pose/util.hh> // includes Pose.hh
+#include <core/pose/chains_util.hh>
 
 // Utility Headers
 #include <numeric/random/random.hh>

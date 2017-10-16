@@ -43,6 +43,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>

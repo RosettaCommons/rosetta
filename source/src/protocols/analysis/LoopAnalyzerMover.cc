@@ -28,7 +28,7 @@
 #include <core/scoring/EnergyMap.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <core/chemical/AtomType.hh>

@@ -32,6 +32,7 @@ static THREAD_LOCAL basic::Tracer TR("devel.splice.AddFoldUnitMover");
 #include <utility/string_util.hh>
 //#include <sstream>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <utility/io/izstream.hh>
 #include <boost/foreach.hpp>
 #include <core/conformation/ResidueFactory.hh>

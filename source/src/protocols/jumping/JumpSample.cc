@@ -52,7 +52,7 @@
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <protocols/jumping/JumpSample.hh>
 #include <utility/vector1.hh>
 

@@ -21,84 +21,33 @@
 #include <iostream>
 #include <fstream>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/util/kinematics_util.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragData.fwd.hh>
+#include <core/fragment/FrameList.hh>
 #include <map>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/sequence/Sequence.hh>
-
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <protocols/moves/Mover.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/model_quality/rms.hh>
 #include <numeric/model_quality/maxsub.hh>
-#include <numeric/random/WeightedSampler.hh>
 
 #include <basic/Tracer.hh>
 
 #include <boost/unordered/unordered_map.hpp>
-#include <core/id/SequenceMapping.hh>
 
 //possibily duplicate includes here
-#include <basic/basic.hh>
+
 #include <basic/database/open.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/option.hh>
 
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/symmetry/util.hh>
-#include <core/fragment/FrameList.hh>
-#include <core/fragment/OrderedFragSet.hh>
-#include <core/fragment/SecondaryStructure.hh>
+#include <core/fragment/FrameList.fwd.hh>
 #include <core/fragment/JumpingFrame.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/dssp/StrandPairing.hh>
-#include <core/scoring/electron_density/util.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-
-#include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
-
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/jumping/JumpSetup.hh>
 #include <protocols/jumping/PairingLibrary.hh>
-#include <protocols/jumping/PairingLibrary.fwd.hh>
-#include <protocols/jumping/RandomSheetBuilder.hh>
-#include <protocols/jumping/SheetBuilder.hh>
 
 
 

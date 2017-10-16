@@ -43,6 +43,7 @@
 #include <protocols/simple_moves/SuperimposeMover.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -66,6 +67,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/conformation/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>

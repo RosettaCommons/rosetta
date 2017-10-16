@@ -25,10 +25,11 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <basic/database/open.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>

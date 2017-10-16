@@ -42,6 +42,7 @@
 #include <core/io/raw_data/DisulfideFile.hh>
 
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueConnection.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>

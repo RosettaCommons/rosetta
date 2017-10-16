@@ -19,6 +19,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
 #include <protocols/ligand_docking/StartFrom.hh>

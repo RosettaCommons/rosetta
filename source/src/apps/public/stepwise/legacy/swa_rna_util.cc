@@ -36,7 +36,7 @@
 #include <core/id/DOF_ID.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/annotated_sequence.hh>
 

@@ -23,7 +23,7 @@
 #include <protocols/moves/CompositionMover.hh>
 #include <protocols/simple_moves/CopyDofMover.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.AnchorSugarScreener" );

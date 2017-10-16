@@ -24,6 +24,7 @@
 #include <protocols/relax/WorkUnit_BatchRelax.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/io/silent/SilentFileData.hh>

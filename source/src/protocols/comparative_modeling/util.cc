@@ -14,6 +14,7 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/chemical/util.hh>

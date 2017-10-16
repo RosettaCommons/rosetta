@@ -29,7 +29,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.io.hh> //print 'metalsite_atoms_'

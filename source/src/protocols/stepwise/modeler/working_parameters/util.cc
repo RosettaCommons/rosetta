@@ -29,6 +29,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/full_model_info/util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <ObjexxFCL/string.functions.hh>

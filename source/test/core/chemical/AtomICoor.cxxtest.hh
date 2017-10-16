@@ -22,7 +22,7 @@
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/conformation/Residue.hh>
 
 // Project Headers

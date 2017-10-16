@@ -17,6 +17,7 @@
 #include <core/kinematics/RT.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
 #include <protocols/loophash/Exceptions.hh>
 #include <boost/lexical_cast.hpp>

@@ -27,7 +27,9 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>

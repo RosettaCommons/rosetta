@@ -48,6 +48,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
 

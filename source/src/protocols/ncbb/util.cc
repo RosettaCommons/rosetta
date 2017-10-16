@@ -25,6 +25,7 @@
 #include <core/scoring/Energies.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <protocols/jd2/util.hh>
 

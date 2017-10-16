@@ -27,6 +27,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh> //for reading in fragsets from a pdb
 
 #include <core/pose/annotated_sequence.hh>

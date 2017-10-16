@@ -28,6 +28,7 @@
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
 

@@ -24,6 +24,7 @@
 // project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <protocols/jd2/util.hh>
 

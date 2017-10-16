@@ -51,6 +51,7 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 

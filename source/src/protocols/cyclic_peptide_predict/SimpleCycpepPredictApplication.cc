@@ -34,6 +34,7 @@
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/id/TorsionID.hh>
@@ -53,7 +54,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/RamaPrePro.hh>

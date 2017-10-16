@@ -18,7 +18,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 namespace protocols {
 namespace simple_moves {

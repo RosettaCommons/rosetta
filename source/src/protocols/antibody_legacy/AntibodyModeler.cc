@@ -13,7 +13,8 @@
 
 #include <core/chemical/VariantType.hh>
 #include <core/fragment/FragData.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
@@ -35,7 +36,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rms_util.tmpl.hh>

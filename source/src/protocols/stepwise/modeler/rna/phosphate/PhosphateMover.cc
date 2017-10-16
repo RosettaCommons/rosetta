@@ -24,8 +24,9 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/TorsionID.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/Tracer.hh>

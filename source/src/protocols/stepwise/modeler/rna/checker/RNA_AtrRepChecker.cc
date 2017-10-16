@@ -19,7 +19,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/sampler/rna/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 

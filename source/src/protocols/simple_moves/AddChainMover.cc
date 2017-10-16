@@ -19,6 +19,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <numeric/random/random.hh>
 #include <utility/string_util.hh>
 
@@ -29,6 +30,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/toolbox/superimpose.hh>

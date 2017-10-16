@@ -21,7 +21,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/import_pose/pose_stream/ExtendedPoseInputStream.hh>

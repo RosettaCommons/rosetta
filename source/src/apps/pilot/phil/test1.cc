@@ -60,6 +60,7 @@
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/util.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
@@ -67,7 +68,7 @@
 #include <core/sequence/DerivedSequenceMapping.hh>
 #include <core/sequence/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/datacache/CacheableDataType.hh> // profiling
 #include <core/import_pose/import_pose.hh>

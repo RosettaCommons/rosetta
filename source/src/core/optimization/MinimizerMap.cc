@@ -18,6 +18,7 @@
 // Project headers
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/kinematics/AtomTree.hh>
 
 // Numeric headers
 // #include <numeric/all.fwd.hh>

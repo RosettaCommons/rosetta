@@ -25,6 +25,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/RamaPrePro.hh>

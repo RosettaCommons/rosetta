@@ -14,7 +14,7 @@
 // Unit headers
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>
 #include <protocols/protein_interface_design/movers/AddChainBreakCreator.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 // Package headers
 #include <core/chemical/VariantType.hh>
 // Project headers

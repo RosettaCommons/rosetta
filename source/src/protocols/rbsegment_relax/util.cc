@@ -19,7 +19,7 @@
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -54,7 +54,7 @@
 
 //Auto Headers
 #include <core/id/NamedAtomID.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/id/SequenceMapping.hh>
 
 

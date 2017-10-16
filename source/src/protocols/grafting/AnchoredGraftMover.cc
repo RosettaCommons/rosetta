@@ -21,7 +21,7 @@
 
 //Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/selection.hh>
 
 #include <core/scoring/ScoreFunction.hh>

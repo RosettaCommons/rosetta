@@ -18,7 +18,7 @@
 
 //Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh> //pba
 #include <core/scoring/MembraneTopology.hh> //pba
 #include <core/scoring/ScoreFunction.hh>

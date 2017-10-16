@@ -35,6 +35,7 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>

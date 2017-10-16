@@ -23,7 +23,7 @@
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/selection.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>

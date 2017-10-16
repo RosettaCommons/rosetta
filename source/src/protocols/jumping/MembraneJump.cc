@@ -26,7 +26,7 @@
 #include <core/id/NamedStubID.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/scoring/MembraneTopology.hh>

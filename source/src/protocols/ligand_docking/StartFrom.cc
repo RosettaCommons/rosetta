@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/io/ResidueInformation.hh>
 #include <core/io/AtomInformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>

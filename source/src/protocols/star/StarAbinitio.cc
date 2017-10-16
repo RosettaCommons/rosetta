@@ -48,7 +48,7 @@
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

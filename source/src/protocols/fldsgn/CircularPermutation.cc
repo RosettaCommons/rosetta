@@ -26,7 +26,7 @@
 
 #include <basic/Tracer.hh>
 
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
 
 

@@ -55,49 +55,24 @@
 //Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/Atom.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <utility/graph/Graph.fwd.hh>
 
-#include <core/pose/PDBInfo.fwd.hh>
-#include <core/pose/PDBPoseMap.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/pose/datacache/ObserverCache.fwd.hh>
-#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/signals/ConformationEvent.fwd.hh>
-#include <core/pose/signals/DestructionEvent.fwd.hh>
-#include <core/pose/signals/EnergyEvent.fwd.hh>
-#include <core/pose/signals/GeneralEvent.fwd.hh>
-
-#include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-#include <utility/backtrace.hh>
 #include <utility/LexicographicalIterator.hh>
-#include <utility/Bound.hh>
-#include <utility/assert.hh>
-#include <utility/down_cast.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1_bool.hh>
 #include <utility/vectorL.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/options/BooleanOption.hh>
-#include <utility/numbers.hh>
 
 #include <numeric/types.hh>
 #include <numeric/random/random.hh>
@@ -105,12 +80,6 @@
 #include <numeric/MathMatrix.hh>
 #include <numeric/MathTensor.hh>
 #include <numeric/MathNTensor.hh>
-#include <numeric/internal/ColPointers.hh>
-#include <numeric/internal/ColVectors.hh>
-#include <numeric/internal/ColsPointer.hh>
-#include <numeric/internal/RowPointers.hh>
-#include <numeric/internal/RowVectors.hh>
-#include <numeric/internal/RowsPointer.hh>
 #include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 #include <numeric/interpolation/spline/BicubicSpline.hh>
 #include <numeric/interpolation/spline/TricubicSpline.hh>

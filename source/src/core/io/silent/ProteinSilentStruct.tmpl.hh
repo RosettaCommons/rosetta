@@ -80,27 +80,10 @@
 
 #include <numeric/model_quality/rms.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/internal/ColPointers.hh>
-#include <numeric/internal/ColVectors.hh>
-#include <numeric/internal/ColsPointer.hh>
-#include <numeric/internal/RowPointers.hh>
-#include <numeric/internal/RowVectors.hh>
-#include <numeric/internal/RowsPointer.hh>
 
-#include <ObjexxFCL/FArray2.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-
-#include <complex>
-#include <cstddef>
-#include <cstdio>
-#include <iomanip>
-#include <iosfwd>
-#include <istream>
-#include <limits>
-#include <ostream>
-#include <set>
 
 // option key includes
 namespace core {

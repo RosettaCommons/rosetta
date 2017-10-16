@@ -24,6 +24,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/types.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -59,12 +60,10 @@
 #include <utility/exit.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <core/pose/util.tmpl.hh>
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.GraftMover" );
 static THREAD_LOCAL basic::Tracer TRO( "protocols.antibody.GraftOneMover" );
 

@@ -49,7 +49,7 @@
 
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes

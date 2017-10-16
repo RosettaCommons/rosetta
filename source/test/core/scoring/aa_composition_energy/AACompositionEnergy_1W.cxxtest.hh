@@ -46,7 +46,7 @@
 #include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <basic/Tracer.hh>
 
 //Auto Headers

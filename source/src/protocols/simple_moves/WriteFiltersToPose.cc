@@ -34,6 +34,7 @@
 #include <protocols/filters/filter_schemas.hh>
 #include <map>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 namespace protocols {
 namespace simple_moves {
 

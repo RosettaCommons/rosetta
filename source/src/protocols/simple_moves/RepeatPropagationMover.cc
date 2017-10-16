@@ -30,6 +30,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -41,7 +42,9 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/chains_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

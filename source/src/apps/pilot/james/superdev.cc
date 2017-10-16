@@ -19,7 +19,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/rms_util.hh>
 
@@ -42,10 +42,6 @@
 
 #include <fstream>
 #include <algorithm>
-
-//Auto Headers
-#include <core/pose/util.tmpl.hh>
-#include <core/pose/util.hh>
 
 #include <utility/excn/Exceptions.hh>
 

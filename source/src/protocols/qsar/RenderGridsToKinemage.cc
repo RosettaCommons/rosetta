@@ -20,6 +20,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

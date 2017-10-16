@@ -36,7 +36,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/chemical/AA.hh>
 
 //Protocols headers

@@ -21,7 +21,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>

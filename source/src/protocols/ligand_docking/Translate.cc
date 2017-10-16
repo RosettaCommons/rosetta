@@ -1,4 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+#include <core/pose/chains_util.hh>
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.

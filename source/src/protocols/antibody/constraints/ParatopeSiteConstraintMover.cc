@@ -24,6 +24,7 @@
 #include <core/scoring/func/FlatHarmonicFunc.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>

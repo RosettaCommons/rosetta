@@ -20,6 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 // Protocol headers
 #include <protocols/antibody/AntibodyEnumManager.hh>

@@ -766,7 +766,7 @@ Conformation::check_valid_membrane() const {
 ///////////////////////////////////////////////////////////////////////////////
 /// Rosetta Carbohydrate Data                                               ///
 /// Core data for interacting with glycan trees in Rosetta                  ///
-///                                                                         ///                                         ///
+///                                                                         ///
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -1041,16 +1041,6 @@ Conformation::append_residue_by_bond(
 	if ( polymer_connection ) anchor_pos = seqpos - 1; // polymer connection is to the preceding residue
 	if ( polymer_connection ) anchor_residue_connection_index  = residue_( anchor_pos ).type().upper_connect_id();
 	if ( polymer_connection ) residue_connection_index = new_rsd.type().lower_connect_id();
-	/*bool upper_to_upper = false;
-	if ( polymer_connection ) {
-	// AMW: account for special upper-to-upper RNA-protein connection
-	upper_to_upper = residue_( anchor_pos ).is_RNA() && new_rsd.is_protein();
-	if ( upper_to_upper ) {
-	residue_connection_index = new_rsd.type().upper_connect_id();
-	} else {
-	residue_connection_index = new_rsd.type().lower_connect_id();
-	}
-	}*/
 	Residue const & anchor_rsd( residue_( anchor_pos ) ); // no call to residue(anchor_pos)
 
 	// debug
@@ -1061,15 +1051,11 @@ Conformation::append_residue_by_bond(
 			std::stringstream err;
 			err << "Can't create a polymer bond after residue " << anchor_pos
 				<< " due to incompatible type: " << anchor_rsd.type().name();
-			//utility_exit_with_message(err.str());
 			throw utility::excn::EXCN_Msg_Exception( err.str() );
-		} else if ( !new_rsd.is_polymer() /* ||
-				( !new_rsd.type().lower_connect_id() && !upper_to_upper ) ||
-				( !new_rsd.type().upper_connect_id() && upper_to_upper )*/ ) {
+		} else if ( !new_rsd.is_polymer() ) {
 			std::stringstream err;
 			err << "Can't create a polymer bond to new residue " << seqpos
 				<< " due to incompatible type: " << new_rsd.type().name();
-			//utility_exit_with_message( err.str() );
 			throw utility::excn::EXCN_Msg_Exception( err.str() );
 		}
 	} else {
@@ -1086,7 +1072,7 @@ Conformation::append_residue_by_bond(
 
 		if ( polymer_connection ) {
 			// polymer connection
-			new_rsd_connection = /*upper_to_upper ? new_rsd.upper_connect() : */new_rsd.lower_connect();
+			new_rsd_connection = new_rsd.lower_connect();
 			anchor_rsd_connection = anchor_rsd.upper_connect();
 		} else {
 			// using a non-polymer residue-residue connection
@@ -1109,7 +1095,7 @@ Conformation::append_residue_by_bond(
 
 	if ( polymer_connection ) {
 		// connecting by a polymer bond
-		root_atomno  = /*upper_to_upper ? new_rsd.upper_connect_atom() : */new_rsd.lower_connect_atom();
+		root_atomno  = new_rsd.lower_connect_atom();
 		anchor_id.atomno() = anchor_rsd.upper_connect_atom();
 	} else {
 		// non-polymer connection
@@ -1163,8 +1149,7 @@ Conformation::append_polymer_residue_after_seqpos(
 	Residue const & new_rsd,
 	Size const seqpos,
 	bool const build_ideal_geometry // = false
-)
-{
+) {
 	pre_nresidue_change();
 	debug_assert( new_rsd.is_lower_terminus() == false );
 
@@ -1211,8 +1196,7 @@ Conformation::prepend_polymer_residue_before_seqpos(
 	Residue const & new_rsd,
 	Size const seqpos,
 	bool const build_ideal_geometry // = false
-)
-{
+) {
 	pre_nresidue_change();
 	debug_assert( !new_rsd.is_upper_terminus() );
 
@@ -1247,8 +1231,7 @@ Conformation::safely_prepend_polymer_residue_before_seqpos(
 	Residue const & new_rsd,
 	Size const seqpos,
 	bool const build_ideal_geometry // = false
-)
-{
+) {
 	core::conformation::remove_lower_terminus_type_from_conformation_residue( *this, seqpos );
 	Conformation::prepend_polymer_residue_before_seqpos( new_rsd, seqpos, build_ideal_geometry );
 }
@@ -1260,8 +1243,7 @@ Conformation::replace_residue(
 	Size const seqpos,
 	Residue const & new_rsd_in,
 	bool const orient_backbone
-)
-{
+) {
 	// temporarily hold onto the current residue
 	ResidueOP old_rsd_ptr( residues_[ seqpos ] );
 	Residue const & old_rsd( *old_rsd_ptr );
@@ -1296,8 +1278,7 @@ Conformation::replace_residue(
 	Size const seqpos,
 	Residue const & new_rsd_in,
 	utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
-)
-{
+) {
 	//first we'll set the correct atom coordinates, then we'll let
 	//the other replace residue function deal with everything else
 
@@ -1588,51 +1569,51 @@ Conformation::detect_pseudobonds()
 					TR.Info << " bond"<< (ii_res.path_distance(kk_atid, jj_atid ) == 1 ? "" : "s") <<  std::endl;
 				}
 
-				if ( kk_atid == jj_atid ) {
-					// two connections on the same atom. Look for through-2 pseudobonds.
-					utility::vector1< chemical::ResConnID > two_neighbors(2);
-					two_neighbors[1] = ii_res.actual_residue_connection( jj );
-					two_neighbors[2] = ii_res.actual_residue_connection( kk );
-					for ( Size ll = 1; ll <= 2; ++ll ) {
-						Size const ll_resid = two_neighbors[ ll ].resid();
-						if ( ll_resid < ii ) continue; // only add through-2 pseudobonds through upper residues to avoid duplication
+				if ( kk_atid != jj_atid )  continue;
 
-						Size const ll_connid = two_neighbors[ ll ].connid();
-						Residue const & ll_res = residue( ll_resid );
-						Size const ll_atid = ll_res.residue_connection( ll_connid ).atomno();
-						Size const ll_nconn = ll_res.type().n_possible_residue_connections();
-						for ( Size mm = 1; mm <= ll_nconn; ++mm ) {
-							if ( mm == ll_connid ) continue;
-							Size const mm_atid = ll_res.type().residue_connection( mm ).atomno();
-							if ( mm_atid != ll_atid ) continue;
+				// two connections on the same atom. Look for through-2 pseudobonds.
+				utility::vector1< chemical::ResConnID > two_neighbors(2);
+				two_neighbors[1] = ii_res.actual_residue_connection( jj );
+				two_neighbors[2] = ii_res.actual_residue_connection( kk );
+				for ( Size ll = 1; ll <= 2; ++ll ) {
+					Size const ll_resid = two_neighbors[ ll ].resid();
+					if ( ll_resid < ii ) continue; // only add through-2 pseudobonds through upper residues to avoid duplication
 
-							// arriving here, we've now identified that kk_atid == jj_atid and that
-							// mm_atid == ll_atid; in other words, we have two atoms that have two
-							// connections each, and these two atoms are bound to each other;  this pair of atoms
-							// forms a through-2 connection.
+					Size const ll_connid = two_neighbors[ ll ].connid();
+					Residue const & ll_res = residue( ll_resid );
+					Size const ll_atid = ll_res.residue_connection( ll_connid ).atomno();
+					Size const ll_nconn = ll_res.type().n_possible_residue_connections();
+					for ( Size mm = 1; mm <= ll_nconn; ++mm ) {
+						if ( mm == ll_connid ) continue;
+						Size const mm_atid = ll_res.type().residue_connection( mm ).atomno();
+						if ( mm_atid != ll_atid ) continue;
 
-							// add a psuedobond between the residue two_neighbors[ ll == 1 ? : 2, 1 ].resid()
-							// and ll_res.residue_conections( mm ).resid()
+						// arriving here, we've now identified that kk_atid == jj_atid and that
+						// mm_atid == ll_atid; in other words, we have two atoms that have two
+						// connections each, and these two atoms are bound to each other;  this pair of atoms
+						// forms a through-2 connection.
 
-							Size const ll_conn_res( ii_res.residue_connection_partner( ll == 1 ? kk : jj ));
-							Size const ll_conn_id(  ii_res.residue_connection_conn_id( ll == 1 ? kk : jj ));
-							Size const mm_conn_res( ll_res.residue_connection_partner( mm ));
-							Size const mm_conn_id(  ll_res.residue_connection_conn_id( mm ));
+						// add a psuedobond between the residue two_neighbors[ ll == 1 ? : 2, 1 ].resid()
+						// and ll_res.residue_conections( mm ).resid()
 
-							Size const lr  = ll_conn_res < mm_conn_res ? ll_conn_res : mm_conn_res;
-							Size const lri = ll_conn_res < mm_conn_res ? ll_conn_id  : mm_conn_id ;
-							Size const ur  = ll_conn_res < mm_conn_res ? mm_conn_res : ll_conn_res;
-							Size const uri = ll_conn_res < mm_conn_res ? mm_conn_id  : ll_conn_id ;
+						Size const ll_conn_res( ii_res.residue_connection_partner( ll == 1 ? kk : jj ));
+						Size const ll_conn_id(  ii_res.residue_connection_conn_id( ll == 1 ? kk : jj ));
+						Size const mm_conn_res( ll_res.residue_connection_partner( mm ));
+						Size const mm_conn_id(  ll_res.residue_connection_conn_id( mm ));
 
-							add_pseudobond( lr, lri, ur, uri, 3 /*nbonds*/ );
+						Size const lr  = ll_conn_res < mm_conn_res ? ll_conn_res : mm_conn_res;
+						Size const lri = ll_conn_res < mm_conn_res ? ll_conn_id  : mm_conn_id ;
+						Size const ur  = ll_conn_res < mm_conn_res ? mm_conn_res : ll_conn_res;
+						Size const uri = ll_conn_res < mm_conn_res ? mm_conn_id  : ll_conn_id ;
 
-							TR.Info << "Adding PseudoBond between residues " << lr << " " << ur << ", connecting atoms ";
-							TR.Info << residue_( lr ).type().atom_name( residue_( lr ).type().residue_connection( lri ).atomno() ) << " and ";
-							TR.Info << residue_( ur ).type().atom_name( residue_( ur ).type().residue_connection( uri ).atomno() );
-							TR.Info << " through two residues: " << ii << " and " << ll_resid << " at atoms " << ii_res.type().atom_name( jj_atid );
-							TR.Info << " & " << ll_res.type().atom_name( mm_atid );
-							TR.Info << " which are separated by 1 bond" <<  std::endl;
-						}
+						add_pseudobond( lr, lri, ur, uri, 3 /*nbonds*/ );
+
+						TR.Info << "Adding PseudoBond between residues " << lr << " " << ur << ", connecting atoms ";
+						TR.Info << residue_( lr ).type().atom_name( residue_( lr ).type().residue_connection( lri ).atomno() ) << " and ";
+						TR.Info << residue_( ur ).type().atom_name( residue_( ur ).type().residue_connection( uri ).atomno() );
+						TR.Info << " through two residues: " << ii << " and " << ll_resid << " at atoms " << ii_res.type().atom_name( jj_atid );
+						TR.Info << " & " << ll_res.type().atom_name( mm_atid );
+						TR.Info << " which are separated by 1 bond" <<  std::endl;
 					}
 				}
 			}
@@ -1757,9 +1738,9 @@ Conformation::bonded_neighbor_all_res(
 	// add all the atoms in the same residue
 	if ( ! skip_canonical_and_solvent || ! primary_is_canonical_or_solvent ) {
 		chemical::AtomIndices const & intrares_atomnos(primary_residue.bonded_neighbor(atomid.atomno()));
-		for ( Size i = 1; i <= intrares_atomnos.size(); ++i ) {
-			if ( virt || ! primary_residue.is_virtual(intrares_atomnos[i]) ) {
-				neighbors.push_back(id::AtomID(intrares_atomnos[i], atomid.rsd()));
+		for ( Size const intrares_atomno : intrares_atomnos ) {
+			if ( virt || ! primary_residue.is_virtual( intrares_atomno ) ) {
+				neighbors.push_back( id::AtomID( intrares_atomno, atomid.rsd() ) );
 			}
 		}
 	}
@@ -1780,7 +1761,7 @@ Conformation::bonded_neighbor_all_res(
 			}
 
 			if ( virt || ! other_restype.is_virtual(connected_atomno) ) {
-				neighbors.push_back(id::AtomID(connected_atomno, resconid.resid()));
+				neighbors.push_back( id::AtomID( connected_atomno, resconid.resid() ) );
 			}
 		}
 	}
@@ -1790,8 +1771,7 @@ Conformation::bonded_neighbor_all_res(
 void
 Conformation::fill_missing_atoms(
 	id::AtomID_Mask missing // make local copy
-)
-{
+) {
 	using namespace basic;
 
 	update_residue_coordinates(); //since we will be using residue_(seqpos) below
@@ -2150,8 +2130,7 @@ Conformation::fix_disulfides( utility::vector1< std::pair< Size, Size > > const 
 /// case a CB-CB distance of 3.72 A is optimal.
 /// @note Assumes full atom
 void
-//Conformation::detect_disulfides( utility::vector1< std::pair<Size, Size> > const & disulf_bonds )
-Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*= utility::vector1< Size >()*/, utility::vector1< Size > const & disulf_two /*= utility::vector1< Size >()*/ )
+Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one, utility::vector1< Size > const & disulf_two )
 {
 	basic::ProfileThis doit( basic::CONFORMATION_DETECT_DISULF );
 	using namespace utility::graph;
@@ -2530,19 +2509,17 @@ Conformation::insert_conformation_by_jump(
 				//Ensure that all of the residue pointers in the Parameters objects in the newly-created object
 				//point to residues in THIS Conformation object.
 				core::Size n_params( conf.parameters_set(iset)->n_parameters() );
-				if ( n_params > 0 ) {
-					for ( core::Size iparams=1; iparams<=n_params; ++iparams ) { //Loop through all Parameters objects in this ParametersSet
-						core::Size n_res( conf.parameters_set(iset)->parameters(iparams)->n_residue() );
-						if ( n_res>0 ) {
-							for ( core::Size ires=1; ires<=n_res; ++ires ) { //Loop through all Residue objects in this Parameters object
-								core::Size old_index( conf.parameters_set(iset)->parameters(iparams)->residue_cop(ires)->seqpos() );
-								core::Size new_index( old_index + insert_seqpos - 1 );
-								//Replace the owning pointer to the Residue object with one pointing at the corresponding residue in this Conformation object:
-								parameters_set(curset)->parameters(iparams)->set_residue(ires, residue_cop(new_index)  );
-							} // Looping through Residue objects
-						} // if(n_res) > 0
-					} // Looping through Parameters objects
-				} // if(n_params) > 0
+				if ( n_params == 0 ) continue;
+				for ( core::Size iparams=1; iparams<=n_params; ++iparams ) { //Loop through all Parameters objects in this ParametersSet
+					core::Size n_res( conf.parameters_set(iset)->parameters(iparams)->n_residue() );
+					if ( n_res == 0 ) continue;
+					for ( core::Size ires=1; ires<=n_res; ++ires ) { //Loop through all Residue objects in this Parameters object
+						core::Size old_index( conf.parameters_set(iset)->parameters(iparams)->residue_cop(ires)->seqpos() );
+						core::Size new_index( old_index + insert_seqpos - 1 );
+						//Replace the owning pointer to the Residue object with one pointing at the corresponding residue in this Conformation object:
+						parameters_set(curset)->parameters(iparams)->set_residue(ires, residue_cop(new_index)  );
+					} // Looping through Residue objects
+				} // Looping through Parameters objects
 			} // Looping through ParametersSet objects
 		} // if(n_sets) > 0
 	}
@@ -2568,8 +2545,7 @@ Conformation::copy_segment(
 	Conformation const & src,
 	Size const begin,
 	Size const src_begin
-)
-{
+) {
 	for ( Size i=0; i< size; ++i ) {
 		Size const seqpos (  begin + i );
 		Size const seqpos_src( src_begin + i );
@@ -2582,8 +2558,7 @@ Conformation::insert_fragment(
 	id::StubID const & instub_id,
 	FragRT const & outstub_transforms,
 	FragXYZ const & frag_xyz
-)
-{
+) {
 	utility::vector1< AtomID > moved_atoms;
 
 	atom_tree_->insert_fragment( instub_id, outstub_transforms, frag_xyz, moved_atoms );
@@ -2703,8 +2678,7 @@ Conformation::torsion_angle(
 	AtomID const & atom2,
 	AtomID const & atom3,
 	AtomID const & atom4
-) const
-{
+) const {
 	DOF_ID const dof_id( atom_tree_->torsion_angle_dof_id( atom1, atom2, atom3, atom4, /*quiet* =*/ true ) );
 	if ( dof_id == core::id::BOGUS_DOF_ID ) {
 		// Not in the AtomTree, but we can possibly calculate it.
@@ -2729,8 +2703,7 @@ Conformation::set_torsion_angle(
 	AtomID const & atom4,
 	Real const setting,
 	bool const quiet
-)
-{
+) {
 	residue_torsions_need_updating_ = true;
 	DOF_ID const dof_id( atom_tree_->set_torsion_angle( atom1, atom2, atom3, atom4, setting, quiet ) );
 	if ( dof_id.valid() ) {
@@ -2755,8 +2728,7 @@ Conformation::bond_angle(
 	AtomID const & atom1,
 	AtomID const & atom2,
 	AtomID const & atom3
-) const
-{
+) const {
 	return atom_tree_->bond_angle( atom1, atom2, atom3 );
 }
 
@@ -2767,8 +2739,7 @@ Conformation::set_bond_angle(
 	AtomID const & atom2,
 	AtomID const & atom3,
 	Real const setting
-)
-{
+) {
 	DOF_ID const dof_id( atom_tree_->set_bond_angle( atom1, atom2, atom3, setting ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
@@ -2781,8 +2752,7 @@ Real
 Conformation::bond_length(
 	AtomID const & atom1,
 	AtomID const & atom2
-) const
-{
+) const {
 	return atom_tree_->bond_length( atom1, atom2 );
 }
 
@@ -2791,8 +2761,7 @@ Conformation::set_bond_length(
 	AtomID const & atom1,
 	AtomID const & atom2,
 	Real const setting
-)
-{
+) {
 	DOF_ID const dof_id( atom_tree_->set_bond_length( atom1, atom2, setting ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );

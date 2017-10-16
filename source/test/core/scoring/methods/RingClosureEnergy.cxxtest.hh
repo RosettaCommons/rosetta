@@ -18,7 +18,7 @@
 #include <core/scoring/methods/RingClosureEnergy.hh>
 #include <platform/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>

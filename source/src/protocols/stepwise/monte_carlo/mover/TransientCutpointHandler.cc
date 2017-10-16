@@ -20,7 +20,7 @@
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/id/TorsionID.hh>
 #include <protocols/stepwise/modeler/util.hh>

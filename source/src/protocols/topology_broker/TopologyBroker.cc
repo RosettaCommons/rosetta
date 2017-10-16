@@ -59,7 +59,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/moves/MoverContainer.hh>

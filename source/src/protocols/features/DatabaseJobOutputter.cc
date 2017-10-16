@@ -19,7 +19,7 @@
 #include <protocols/features/ProteinSilentReport.hh>
 
 // Platform Headers
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 ///Utility headers
 #include <basic/options/option.hh>

@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <devel/init.hh>

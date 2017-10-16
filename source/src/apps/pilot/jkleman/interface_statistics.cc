@@ -42,8 +42,10 @@
 
 // Package Headers
 #include <core/scoring/sasa/SasaCalc.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/types.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -57,7 +59,6 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/sasa/util.hh>
 #include <protocols/docking/util.hh>
 #include <protocols/membrane/util.hh>

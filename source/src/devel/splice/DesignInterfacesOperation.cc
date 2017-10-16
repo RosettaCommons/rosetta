@@ -38,6 +38,7 @@
 #include <protocols/simple_moves/SwitchChainOrderMover.hh>
 #include <protocols/simple_moves/CutChainMover.hh>
 #include <core/pose/util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>

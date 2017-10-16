@@ -16,7 +16,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/scoring/Energies.hh>
 
 //Auto Headers

@@ -42,6 +42,7 @@
 
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/Energies.hh>
 
 // utility header

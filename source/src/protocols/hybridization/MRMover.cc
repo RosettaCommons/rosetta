@@ -47,7 +47,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 

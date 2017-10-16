@@ -52,7 +52,7 @@
 #include <core/chemical/VariantType.hh>
 
 #include <protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 // Utility Headers
 #include <utility/io/ozstream.hh>

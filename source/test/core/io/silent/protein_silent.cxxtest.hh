@@ -52,6 +52,7 @@
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/ContextGraph.fwd.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>

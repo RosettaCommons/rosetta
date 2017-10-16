@@ -56,6 +56,8 @@
 #include <utility/io/izstream.hh>
 #include <sstream>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <protocols/simple_filters/OperatorFilter.hh>
 #include <protocols/filters/BasicFilters.hh>
 //////////////////////////////////////////////////

@@ -24,6 +24,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>

@@ -30,14 +30,13 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/util.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <basic/Tracer.hh>
 #ifdef WIN32

@@ -31,7 +31,9 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/rna/util.hh>
@@ -78,6 +80,7 @@
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
 
+#include <ObjexxFCL/FArray2D.hh>
 // External headers
 #include <ObjexxFCL/string.functions.hh>
 #include <cifparse/CifFile.h>

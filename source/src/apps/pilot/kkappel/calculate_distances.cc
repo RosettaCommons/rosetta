@@ -20,7 +20,7 @@
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/pose/Pose.hh>

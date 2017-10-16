@@ -29,6 +29,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/pose/util.tmpl.hh>
 
 // Protocol Headers

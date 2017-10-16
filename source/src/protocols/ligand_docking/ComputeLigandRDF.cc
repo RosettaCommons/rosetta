@@ -30,6 +30,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>

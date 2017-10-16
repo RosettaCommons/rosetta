@@ -16,7 +16,7 @@
 #include <protocols/cyclic_peptide/DeclareBondCreator.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>

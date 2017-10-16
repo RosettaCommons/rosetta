@@ -17,7 +17,8 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.LoadPDBMover" );
+#include <core/pose/extra_pose_info_util.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <utility/tag/Tag.hh>
 
 #include <core/pose/Pose.hh>
@@ -25,6 +26,8 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.LoadPDBMover" );
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.LoadPDBMover" );
 
 namespace protocols {
 namespace simple_moves {

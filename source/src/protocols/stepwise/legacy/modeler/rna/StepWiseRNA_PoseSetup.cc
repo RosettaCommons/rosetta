@@ -41,7 +41,7 @@
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/rna/util.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>

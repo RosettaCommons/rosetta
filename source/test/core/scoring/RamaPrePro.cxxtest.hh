@@ -23,7 +23,7 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -33,6 +33,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <core/kinematics/FoldTree.hh>
 
 // Protocol Headers
 #include <protocols/cyclic_peptide/FlipChiralityMover.hh>

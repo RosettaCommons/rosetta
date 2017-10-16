@@ -37,6 +37,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/util.hh>

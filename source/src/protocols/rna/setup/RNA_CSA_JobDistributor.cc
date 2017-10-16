@@ -25,7 +25,7 @@
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/util.hh>
 #include <core/scoring/Energies.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/sys_util.hh>

@@ -815,7 +815,7 @@ ResidueType::abase2( Size const atomno ) const
 ///once and store the value.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 Size
-ResidueType::n_virtual_atoms () const
+ResidueType::n_virtual_atoms() const
 {
 	core::Size virtcount = 0;
 	for ( core::Size ia=1, iamax=natoms(); ia<=iamax; ++ia ) {
@@ -937,8 +937,7 @@ ResidueType::add_atom(
 	std::string const & atom_type_name,
 	std::string const & mm_atom_type_name,
 	Real const charge
-)
-{
+) {
 	// signal that we need to update the derived data
 	finalized_ = false;
 
@@ -991,8 +990,7 @@ ResidueType::add_atom(
 VD
 ResidueType::add_atom(
 	std::string const & atom_name /* = "" */
-)
-{
+) {
 	// signal that we need to update the derived data
 	finalized_ = false;
 
@@ -1207,8 +1205,7 @@ void
 ResidueType::set_gasteiger_atom_type(
 	std::string const & atom_name,
 	std::string const & gasteiger_atom_type_name
-)
-{
+) {
 	set_gasteiger_atom_type( atom_name_to_vd_[atom_name] ,gasteiger_atom_type_name);
 }
 
@@ -1217,8 +1214,7 @@ void
 ResidueType::set_gasteiger_atom_type(
 	VD atom,
 	std::string const & gasteiger_atom_type_name
-)
-{
+) {
 	gasteiger::GasteigerAtomTypeDataCOP gasteiger_type;
 	if ( gasteiger_atom_type_name == "" ) {
 		gasteiger_type = nullptr;
@@ -1310,8 +1306,7 @@ void
 ResidueType::add_orbital(
 	std::string & orbital_name,
 	std::string & orbital_type_name
-)
-{
+) {
 	// signal that we need to update the derived data
 	finalized_ = false;
 
@@ -1349,7 +1344,7 @@ ResidueType::add_metalbinding_atom (
 /// (used in patching when it kills the valence that is thus used)
 /// @author Andrew Watkins (amw579@nyu.edu)
 void
-ResidueType::delete_metalbinding_atom (
+ResidueType::delete_metalbinding_atom(
 	std::string const & atom_name
 ) {
 	if ( !has( atom_name ) ) {
@@ -1368,7 +1363,7 @@ ResidueType::delete_metalbinding_atom (
 /// (used in patching when it kills the valence that is thus used)
 /// @author Andrew Watkins (amw579@nyu.edu)
 void
-ResidueType::delete_act_coord_atom (
+ResidueType::delete_act_coord_atom(
 	std::string const & atom_name
 ) {
 	if ( !has( atom_name ) ) {
@@ -1868,20 +1863,6 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 				}
 				break;
 			}
-
-
-			// In prior versions of this code, this was necessary because we
-			// hadn't re-rooted on N in assign_internal_coordinates (generally
-			// called before this function).
-			// Now that we've properly re-rooted on N, this probably won't happen.
-			/*if ( atom_name( chi[ 4 ] ) == "N" && atom_name( chi[ 2 ] ) != "C" ) {
-			VDs reversed_chi;
-			reversed_chi.push_back( chi[ 4 ] );
-			reversed_chi.push_back( chi[ 3 ] );
-			reversed_chi.push_back( chi[ 2 ] );
-			reversed_chi.push_back( chi[ 1 ] );
-			true_chis.push_back( reversed_chi );
-			}*/
 		}
 
 		// Step 2. Get remainder of chis by asking each one to start with the
@@ -1903,16 +1884,6 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 					candidate_new_atom = atom_name( chi[ 2 ] );
 				}
 
-				// Now that we've properly re-rooted on N, this probably won't happen.
-				/*if ( atom_name( chi[ 4 ] ) == target_first_atom ) {
-				VDs reversed_chi;
-				reversed_chi.push_back( chi[ 4 ] );
-				reversed_chi.push_back( chi[ 3 ] );
-				reversed_chi.push_back( chi[ 2 ] );
-				reversed_chi.push_back( chi[ 1 ] );
-				candidate_new_atom = atom_name( reversed_chi[ 2 ] );
-				true_chis.push_back( reversed_chi );
-				}*/
 			}
 			if ( candidate_new_atom == target_first_atom ) break;
 

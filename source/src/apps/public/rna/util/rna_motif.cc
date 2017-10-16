@@ -24,6 +24,7 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <devel/init.hh>
 
 #include <protocols/viewer/viewers.hh>

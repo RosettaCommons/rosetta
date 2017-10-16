@@ -25,6 +25,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.filters.Filter" );

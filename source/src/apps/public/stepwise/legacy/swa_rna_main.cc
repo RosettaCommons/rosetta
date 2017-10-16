@@ -82,7 +82,8 @@
 #include <numeric/conversions.hh>
 
 #include <core/pose/MiniPose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/rna/util.hh>
 

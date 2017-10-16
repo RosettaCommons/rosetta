@@ -40,6 +40,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/rna/leontis_westhof_util.hh>
 #include <core/pose/rna/RNA_SecStruct.hh>
 

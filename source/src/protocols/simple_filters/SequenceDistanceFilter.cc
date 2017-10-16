@@ -21,6 +21,7 @@
 #include <core/pose/Pose.hh>
 //#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

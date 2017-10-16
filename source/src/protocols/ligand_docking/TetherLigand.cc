@@ -18,6 +18,7 @@
 // // Unit Headers
 #include <protocols/ligand_docking/TetherLigand.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 #include <core/conformation/Conformation.hh>
 

@@ -27,7 +27,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/types.hh>
 
 #include <numeric/wrap_angles.hh>

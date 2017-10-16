@@ -40,7 +40,7 @@
 
 #include <basic/options/keys/DomainAssembly.OptionKeys.gen.hh>
 
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 namespace devel {
 namespace domain_assembly {

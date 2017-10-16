@@ -22,7 +22,7 @@
 
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

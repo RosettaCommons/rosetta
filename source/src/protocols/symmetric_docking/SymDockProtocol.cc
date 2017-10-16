@@ -61,6 +61,7 @@
 #include <protocols/simple_filters/SAXSScoreFilter.hh>
 #include <basic/options/keys/filters.OptionKeys.gen.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <core/pack/task/PackerTask.hh>

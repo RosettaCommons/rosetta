@@ -15,7 +15,7 @@
 
 #include <core/import_pose/import_pose.hh>  //Read pdb in functionality
 #include <core/pose/Pose.hh>        //Creation of pose object
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/ScoreFunction.hh>

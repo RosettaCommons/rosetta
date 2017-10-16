@@ -22,7 +22,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <protocols/moves/Mover.hh>

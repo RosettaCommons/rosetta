@@ -25,6 +25,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>

@@ -22,7 +22,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/Pose.hh>
 
 // option key includes

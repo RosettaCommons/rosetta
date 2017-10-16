@@ -35,7 +35,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MergePDBMover" );
 #include <core/optimization/AtomTreeMinimizer.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/chains_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Conformation.hh>
 

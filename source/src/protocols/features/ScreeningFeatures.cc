@@ -24,6 +24,7 @@
 #include <basic/database/schema_generator/DbDataType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

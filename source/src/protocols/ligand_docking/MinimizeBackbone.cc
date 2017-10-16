@@ -48,7 +48,8 @@ using basic::Warning;
 //STL headers
 #include <algorithm> // for std::min, find_if
 
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/chains_util.hh>
 #include <protocols/ligand_docking/LigandArea.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

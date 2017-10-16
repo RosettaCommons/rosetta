@@ -17,7 +17,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

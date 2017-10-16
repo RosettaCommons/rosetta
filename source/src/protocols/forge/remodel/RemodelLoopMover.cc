@@ -49,7 +49,7 @@
 #include <core/fragment/FrameIterator.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
@@ -1822,43 +1822,8 @@ void RemodelLoopMover::set_segment_stage(
 				pose.set_psi( ires, psi[i]);
 				pose.set_omega( ires, omega[i]);
 			}
-			//mc.boltzmann( pose, "loophash" );
-			if ( !option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
-				//ccd_moves( 50, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
-			}
-			//mc.boltzmann( pose, "set segment ccd");
-		}
-		/*
-		// recover low
-		if(option[OptionKeys::remodel::repeat_structure].user()){
-		Size copy_size =0;
-		if(option[OptionKeys::remodel::repeat_structure] == 1){
-		copy_size = unit_length_-1;
-		} else {
-		copy_size = unit_length_;
-		}
-		for (Size res = 1; res<=copy_size; res++){
-		pose.set_phi(res,mc.lowest_score_pose().phi(res));
-		pose.set_psi(res,mc.lowest_score_pose().psi(res));
-		pose.set_omega(res,mc.lowest_score_pose().omega(res));
-		//mc.lowest_score_pose().dump_pdb("independent_stage.pdb");
-		}
-		} else{
-		pose = mc.lowest_score_pose();
 		}
 
-		if(option[OptionKeys::remodel::repeat_structure].user()){
-		mc.score_function().show( TR, repeat_pose_ );
-		remove_cutpoint_variants( repeat_pose_ );
-		remove_cutpoint_variants( pose );
-		} else {
-		mc.score_function().show( TR, pose );
-		remove_cutpoint_variants( pose );
-		}
-
-		TR << std::endl;
-		mc.show_state();
-		*/
 	}// for each loop
 
 	//try setting MC object so can turn on boost if want to try closure
@@ -1884,8 +1849,7 @@ void RemodelLoopMover::loophash_stage(
 	Pose & pose,
 	MonteCarlo & mc,
 	Real const cbreak_increment
-)
-{
+) {
 	using protocols::forge::methods::linear_chainbreak;
 	using protocols::loops::add_cutpoint_variants;
 	using namespace basic::options;
@@ -2098,21 +2062,14 @@ void RemodelLoopMover::loophash_stage(
 
 			// increment the chainbreak weight
 			ScoreFunctionOP sfxOP = mc.score_function().clone();
-			sfxOP->set_weight(
-				core::scoring::linear_chainbreak,
-				sfxOP->get_weight( core::scoring::linear_chainbreak ) + cbreak_increment
-				//sfxOP->get_weight( core::scoring::linear_chainbreak ) + 1
-			);
+			sfxOP->add_to_weight( core::scoring::linear_chainbreak, cbreak_increment );
 
 			if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure]() ) {
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
 			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) {
-				sfxOP->set_weight(
-					core::scoring::atom_pair_constraint,
-					sfxOP->get_weight( core::scoring::atom_pair_constraint) + cbreak_increment
-				);
+				sfxOP->add_to_weight( core::scoring::atom_pair_constraint, cbreak_increment );
 			}
 
 			if ( option[OptionKeys::remodel::lh_cbreak_selection].user() ) {
@@ -2760,12 +2717,11 @@ void RemodelLoopMover::simultaneous_stage(
 
 		// increment the chainbreak weight
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
-		sfxOP->set_weight( scoring::linear_chainbreak, sfxOP->get_weight( scoring::linear_chainbreak ) + cbreak_increment );
+		sfxOP->add_to_weight( scoring::linear_chainbreak, cbreak_increment );
 		if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure]() ) {
 			sfxOP->set_weight( scoring::linear_chainbreak, 0 );
 		}
 		if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) {
-			// sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			sfxOP->set_weight( core::scoring::atom_pair_constraint, 0);//ramping from 0
 		}
 
@@ -3016,10 +2972,7 @@ void RemodelLoopMover::independent_stage(
 		for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
 			// increment the chainbreak weight
 			ScoreFunctionOP sfxOP = mc.score_function().clone();
-			sfxOP->set_weight(
-				core::scoring::linear_chainbreak,
-				sfxOP->get_weight( core::scoring::linear_chainbreak ) + cbreak_increment
-			);
+			sfxOP->add_to_weight( core::scoring::linear_chainbreak, cbreak_increment );
 
 			if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure]() ) {
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
@@ -3031,10 +2984,7 @@ void RemodelLoopMover::independent_stage(
 
 			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) {
 				// sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
-				sfxOP->set_weight(
-					core::scoring::atom_pair_constraint,
-					sfxOP->get_weight( core::scoring::atom_pair_constraint) + cbreak_increment
-				);
+				sfxOP->add_to_weight( core::scoring::atom_pair_constraint, cbreak_increment );
 			}
 
 			mc.score_function( *sfxOP );
@@ -3268,21 +3218,14 @@ void RemodelLoopMover::boost_closure_stage(
 		for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
 			// increment the chainbreak weight
 			ScoreFunctionOP sfxOP = mc.score_function().clone();
-			sfxOP->set_weight(
-				core::scoring::linear_chainbreak,
-				sfxOP->get_weight( core::scoring::linear_chainbreak ) + cbreak_increment
-			);
+			sfxOP->add_to_weight( core::scoring::linear_chainbreak, cbreak_increment );
 
 			if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure]() ) {
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
 			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) {
-				// sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
-				sfxOP->set_weight(
-					core::scoring::atom_pair_constraint,
-					sfxOP->get_weight( core::scoring::atom_pair_constraint) + cbreak_increment
-				);
+				sfxOP->add_to_weight( core::scoring::atom_pair_constraint, cbreak_increment );
 			}
 
 			mc.score_function( *sfxOP );
@@ -3320,13 +3263,13 @@ void RemodelLoopMover::boost_closure_stage(
 				if ( (!frag1_movers.empty() && numeric::random::rg().uniform() < frag_mover_probability) || pose.fold_tree().num_cutpoint() == 0 ) { // 1-mer insertions
 
 					random_permutation( frag1_movers.begin(), frag1_movers.end(), numeric::random::rg() );
-					for ( FragmentMoverOPs::iterator i = frag1_movers.begin(), ie = frag1_movers.end(); i != ie; ++i ) {
+					for ( auto const & i : frag1_movers ) {
 						if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-							(*i)->apply( repeat_pose_ );
+							i->apply( repeat_pose_ );
 							repeat_sync(repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 							mc.boltzmann( repeat_pose_, "frag1" );
 						} else {
-							(*i)->apply( pose );
+							i->apply( pose );
 							mc.boltzmann( pose, "frag1" );
 						}
 					}
@@ -3403,19 +3346,19 @@ loops::LoopsOP RemodelLoopMover::determine_loops_to_model( Pose & pose ) {
 
 	loops::LoopsOP loops_to_model( new loops::Loops() );
 
-	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
+	for ( auto const & l : *loops_ ) {
 		bool skip_loop = false;
 		/*
 		std::cout << "loop_ start " << l->start() << " loop_ end" << l->stop() <<  " loop_ cut " << l->cut() << std::endl;
 		std::cout << "linear chainbreak " << linear_chainbreak( pose, l->cut() )  << std::endl;
 		std::cout << "eval: linear_chainbreak( pose, l->cut() ) <= max_linear_chainbreak_ " << ( linear_chainbreak( pose, l->cut() ) <= max_linear_chainbreak_ )  << std::endl;
 		*/
-		if ( !l->is_terminal( pose ) ) {
-			skip_loop |= ( linear_chainbreak( pose, l->cut() ) <= max_linear_chainbreak_ ); // loop already closed?
+		if ( !l.is_terminal( pose ) ) {
+			skip_loop |= ( linear_chainbreak( pose, l.cut() ) <= max_linear_chainbreak_ ); // loop already closed?
 		}
 
 		if ( !skip_loop ) {
-			loops_to_model->add_loop( *l );
+			loops_to_model->add_loop( l );
 		}
 	}
 
@@ -3433,8 +3376,7 @@ loops::LoopsOP RemodelLoopMover::determine_loops_to_model( Pose & pose ) {
 bool RemodelLoopMover::check_closure_criteria(
 	Pose & pose,
 	bool const show_in_tracer
-)
-{
+) {
 	using protocols::forge::methods::linear_chainbreak;
 	using namespace basic::options;
 	using namespace OptionKeys::remodel;
@@ -3498,8 +3440,7 @@ RemodelLoopMover::FragmentMoverOPs
 RemodelLoopMover::create_fragment_movers(
 	MoveMap const & movemap,
 	Size const largest_frag_size
-)
-{
+) {
 	using protocols::simple_moves::ClassicFragmentMover;
 
 	FragmentMoverOPs frag_movers;
@@ -3529,18 +3470,16 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 	bool const smoothMoves,
 	ScoreFunctionOP /*scorefxnOP*/,
 	Real fragScoreThreshold
-)
-{
-
+) {
 	using namespace protocols::simple_moves;
 	using namespace core::fragment;
 	using namespace basic::options;
 	using namespace OptionKeys::indexed_structure_store;
 	FragmentMoverOPs frag_movers;
-	for ( FragSetOPs::const_iterator f = fragsets_.begin(); f != fragsets_.end(); ++f ) {
-		if ( (*f)->max_frag_length()==frag_size || ((frag_size == 999)&&((*f)->max_frag_length()>9)) ) {
-			ConstantLengthFragSetOP tmp_frags( new ConstantLengthFragSet((*f)->max_frag_length()) );
-			for ( ConstFrameIterator frame_i = (*f)->begin(); frame_i != (*f)->end(); ++frame_i ) {
+	for ( auto const & f : fragsets_ ) {
+		if ( f->max_frag_length()==frag_size || ((frag_size == 999)&&(f->max_frag_length()>9)) ) {
+			ConstantLengthFragSetOP tmp_frags( new ConstantLengthFragSet(f->max_frag_length()) );
+			for ( ConstFrameIterator frame_i = f->begin(); frame_i != f->end(); ++frame_i ) {
 				if ( allowedPos.find((*frame_i)->start()) != allowedPos.end() ) {
 					FrameOP tmp_frame = (*frame_i)->clone();
 					Size frag_ct= 0;
@@ -3556,9 +3495,9 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 			}
 			ClassicFragmentMoverOP cfm;
 			if ( smoothMoves ) {
-				cfm = ClassicFragmentMoverOP( new SmoothFragmentMover( *f, movemap.clone(), FragmentCostOP( new GunnCost ) ) );
+				cfm = ClassicFragmentMoverOP( new SmoothFragmentMover( f, movemap.clone(), FragmentCostOP( new GunnCost ) ) );
 			} else {
-				cfm = ClassicFragmentMoverOP( new ClassicFragmentMover( *f, movemap.clone() ) );
+				cfm = ClassicFragmentMoverOP( new ClassicFragmentMover( f, movemap.clone() ) );
 			}
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );

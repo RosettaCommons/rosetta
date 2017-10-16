@@ -32,7 +32,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/RT.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
 

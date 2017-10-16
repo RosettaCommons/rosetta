@@ -15,6 +15,35 @@
 #include <protocols/fold_from_loops/SplitAndMixPoseMover.hh>
 #include <protocols/fold_from_loops/SplitAndMixPoseMoverCreator.hh>
 
+#include <utility/string_util.hh>
+#include <utility/vector1.functions.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/subpose_manipulation_util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/chains_util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/select/residue_selector/util.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/NotResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/ResidueRanges.hh>
+
+#include <protocols/hybridization/util.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
+#include <protocols/fold_from_loops/SplitAndMixPoseMover.hh>
+
+#include <utility/vector1.hh>
+
+// XSD XRW Includes
+#include <basic/datacache/DataMap.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/Filter.hh>
+
 namespace protocols {
 namespace fold_from_loops {
 

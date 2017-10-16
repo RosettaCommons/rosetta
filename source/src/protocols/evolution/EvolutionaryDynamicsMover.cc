@@ -56,6 +56,7 @@
 #include <sstream>
 #include <cmath>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <protocols/simple_filters/OperatorFilter.hh>
 #include <protocols/filters/BasicFilters.hh>
 //////////////////////////////////////////////////

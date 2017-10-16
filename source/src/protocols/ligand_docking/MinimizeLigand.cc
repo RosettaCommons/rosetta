@@ -20,6 +20,7 @@
 #include <protocols/ligand_docking/MinimizeLigand.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 // Utility Headers
 #include <utility/exit.hh>

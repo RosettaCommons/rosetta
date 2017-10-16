@@ -25,7 +25,7 @@
 #include <core/select/residue_selector/OrResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 // Project Headers
 #include <core/id/types.hh>

@@ -12,6 +12,7 @@
 /// @author Sam DeLuca <Samuel.l.deluca@vanderbilt.edu)
 
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 #include <protocols/simple_moves/AddJobPairData.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>

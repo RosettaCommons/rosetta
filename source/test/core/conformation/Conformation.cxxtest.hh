@@ -31,7 +31,7 @@
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/UTracer.hh>

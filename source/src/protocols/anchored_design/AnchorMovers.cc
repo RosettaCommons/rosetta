@@ -45,7 +45,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>

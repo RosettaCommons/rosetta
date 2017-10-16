@@ -23,7 +23,7 @@
 // Project headers
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/util.hh>

@@ -21,6 +21,7 @@
 
 #include <core/types.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>

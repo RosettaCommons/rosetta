@@ -34,6 +34,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 #include <devel/init.hh>
 

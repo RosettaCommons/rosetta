@@ -34,9 +34,10 @@
 #include <utility/assert.hh>
 
 // Numeric Headers
+#include <ObjexxFCL/FArray2D.hh>
 #include <numeric/random/random.hh>
 
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
 

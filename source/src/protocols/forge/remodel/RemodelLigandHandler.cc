@@ -31,6 +31,7 @@
 #include <core/io/Remarks.hh>
 #include <core/pose/util.hh> // for pdbinfo
 #include <core/id/AtomID.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.hh>

@@ -52,7 +52,7 @@
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

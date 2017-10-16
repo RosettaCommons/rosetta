@@ -31,7 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/ResidueFactory.hh>

@@ -41,6 +41,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Edge.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 //Basic/Utility/Numeric Headers

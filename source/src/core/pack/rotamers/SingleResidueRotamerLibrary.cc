@@ -23,7 +23,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
 

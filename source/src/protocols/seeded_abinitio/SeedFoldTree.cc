@@ -29,7 +29,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/filters/Filter.hh>

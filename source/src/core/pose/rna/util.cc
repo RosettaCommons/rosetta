@@ -12,7 +12,8 @@
 
 // Unit headers
 #include <core/pose/rna/util.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/types.hh>
 
 // Package headers
@@ -30,7 +31,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/RNA_Info.hh>

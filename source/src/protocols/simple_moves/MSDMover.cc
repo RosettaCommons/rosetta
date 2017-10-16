@@ -39,6 +39,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/string_util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

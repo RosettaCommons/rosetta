@@ -22,6 +22,7 @@
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>

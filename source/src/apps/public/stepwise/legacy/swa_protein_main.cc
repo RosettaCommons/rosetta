@@ -80,6 +80,7 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/pose_stream/ExtendedPoseInputStream.hh>

@@ -16,7 +16,7 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
@@ -37,6 +37,7 @@
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/types.hh>
 #include <core/scoring/ScoringManager.hh>

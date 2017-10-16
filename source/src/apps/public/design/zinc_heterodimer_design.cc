@@ -18,7 +18,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBPoseMap.hh>
@@ -62,7 +62,7 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 
 //tracers

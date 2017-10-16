@@ -32,7 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
@@ -636,7 +636,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_psi_only(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// Coarse -- see set_ss_from_phipsi in core/pose/util.cc.
+// Coarse -- see set_ss_from_phipsi in core/pose/variant_util.cc.
 //////////////////////////////////////////////////////////////////////////////
 Size
 StepWiseProteinBackboneSampler::get_big_bin( Real const phi, Real const psi ) const

@@ -20,7 +20,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/selection.hh>
 
 #include <protocols/moves/MonteCarlo.hh>

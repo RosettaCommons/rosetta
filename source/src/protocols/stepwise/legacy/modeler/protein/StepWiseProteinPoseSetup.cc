@@ -47,7 +47,8 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/rna/util.hh>
 #include <basic/Tracer.hh>
 #include <core/id/TorsionID.hh>

@@ -29,7 +29,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/PDBInfo.hh>

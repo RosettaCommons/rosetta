@@ -84,7 +84,7 @@
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/AtomTreeMultifunc.hh>

@@ -21,6 +21,7 @@
 #include <protocols/ligand_docking/MoveMapBuilder.hh>
 #include <protocols/ligand_docking/TetherLigand.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
 #include <protocols/moves/Mover.hh>

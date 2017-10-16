@@ -87,7 +87,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

@@ -25,6 +25,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
+#include <core/kinematics/AtomTree.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>

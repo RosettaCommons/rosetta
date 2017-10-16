@@ -23,6 +23,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>

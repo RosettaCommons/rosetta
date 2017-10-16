@@ -24,6 +24,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 

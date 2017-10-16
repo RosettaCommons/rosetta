@@ -19,13 +19,15 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueConnection.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <protocols/loops/loops_main.hh>

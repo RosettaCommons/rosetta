@@ -24,6 +24,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/ScoreType.hh>

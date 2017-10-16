@@ -82,7 +82,7 @@ using basic::Warning;
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <utility/vector1.hh>
 
 

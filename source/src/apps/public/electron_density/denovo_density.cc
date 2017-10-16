@@ -13,7 +13,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/annotated_sequence.hh>  //make_pose_from_sequence
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 
 #include <core/import_pose/import_pose.hh>
 

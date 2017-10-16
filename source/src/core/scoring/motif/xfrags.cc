@@ -34,6 +34,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/xyzStripeHashPose.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>

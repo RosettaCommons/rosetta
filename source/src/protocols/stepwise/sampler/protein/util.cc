@@ -40,7 +40,7 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/hbonds/HBondSet.hh>

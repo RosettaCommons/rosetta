@@ -17,11 +17,10 @@
 #include <basic/datacache/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/util.hh>
-using basic::T;
-using basic::Error;
-using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchChainOrderMover" );
+#include <core/pose/chains_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>
@@ -42,6 +41,11 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchChainOrderMo
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+
+using basic::T;
+using basic::Error;
+using basic::Warning;
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchChainOrderMover" );
 
 namespace protocols {
 namespace simple_moves {

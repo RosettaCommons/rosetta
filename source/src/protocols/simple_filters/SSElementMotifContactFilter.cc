@@ -23,6 +23,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 #include <core/types.hh>

@@ -16,6 +16,7 @@
 
 // Package headers
 #include <core/environment/DofPassport.hh>
+#include <core/chemical/ResidueConnection.hh>
 
 #include <protocols/environment/DofUnlock.hh>
 #include <protocols/environment/EnvExcn.hh>
@@ -27,6 +28,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
 
 // Project headers
 #include <protocols/loops/Loop.hh>

@@ -22,7 +22,8 @@
 #include <test/core/init_util.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -465,7 +466,7 @@ public: // tests
 
 	}
 
-	/// @brief Test the function in core/pose/util.hh that updates the coordinates of virtual
+	/// @brief Test the function in core/pose/variant_util.hh that updates the coordinates of virtual
 	/// atoms in cutpoint residues.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void test_update_cutpoint_virtual_atoms_if_connected() {

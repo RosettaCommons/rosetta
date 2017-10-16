@@ -18,35 +18,26 @@
 #include <basic/Tracer.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/NotResidueSelector.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/NotResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
-#include <core/select/residue_selector/util.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/hybridization/util.hh>
-#include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
+#include <protocols/grafting/simple_movers/DeleteRegionMover.fwd.hh>
 #include <protocols/fold_from_loops/SplitAndMixPoseMover.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
-#include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
 
 // XSD XRW Includes
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
-#include <protocols/moves/MoverFactory.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
 
 #include <string>
 #include <boost/tuple/tuple.hpp>

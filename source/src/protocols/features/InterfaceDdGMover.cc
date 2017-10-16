@@ -29,6 +29,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <boost/format.hpp>

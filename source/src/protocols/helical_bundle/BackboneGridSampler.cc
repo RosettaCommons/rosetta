@@ -37,6 +37,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/pose/util.tmpl.hh>
+#include <core/pose/variant_util.hh>
 #include <core/chemical/VariantType.hh>
 
 //JD2:

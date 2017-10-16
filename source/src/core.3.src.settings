@@ -108,6 +108,10 @@ sources = {
 		"ResidueIndexDescription",
 		"selection",
 		"util",
+		"chains_util",
+		"extra_pose_info_util",
+		"subpose_manipulation_util",
+		"variant_util",
 		"xyzStripeHashPose",
 	],
 	"core/pose/carbohydrates": [

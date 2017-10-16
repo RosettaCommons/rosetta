@@ -72,7 +72,9 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/Remarks.hh>
-#include <core/pose/util.hh> // for pdbinfo
+#include <core/pose/variant_util.hh> // for pdbinfo
+#include <core/pose/chains_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/annotated_sequence.hh>
 
@@ -650,35 +652,6 @@ void RemodelMover::apply( Pose & pose ) {
 				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
 				pose.set_omega(pose.total_residue()-1,180);
 			}
-			//for cases involve jxn, need to make pose longer so manager won't complain
-			//about missing residues
-			//this is pre modify, so simply extend to 2x blueprint length,
-			//The first 1/2 the pose and the second
-			/*String build_aa_type =option[OptionKeys::remodel::generic_aa]; //defaults to VAL
-			core::pose::PoseOP chain1 = pose.split_by_chain(1);
-			core::pose::PoseOP chain2 = pose.split_by_chain(2);
-			Size len_diff = remodel_data_.sequence.length() - chain1->total_residue();
-			pose.delete_residue_range_slow(chain1->total_residue()+1,pose.total_residue());
-			if ( build_aa_type.size() == 1 ) {
-			char build_aa_oneLetter= build_aa_type[0];
-			build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
-			}
-			for ( Size i = 1; i<= len_diff; ++i ) {
-			core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
-			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
-			pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-			pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-			pose.set_omega(pose.total_residue()-1,180);
-			}
-			append_pose_to_pose(pose,*chain2,false);
-			for ( Size i = 1; i<= len_diff; ++i ) {
-			core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
-			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
-			pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-			pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-			pose.set_omega(pose.total_residue()-1,180);
-			}
-			*/
 		}
 		//
 		// Pose testArc;
@@ -814,17 +787,6 @@ void RemodelMover::apply( Pose & pose ) {
 			fullatom_sfx_->set_weight( scoring::coordinate_constraint, 1.0 );
 			fullatom_sfx_->set_weight( scoring::res_type_linking_constraint, 0.3 );
 			fullatom_sfx_->set_weight( scoring::res_type_constraint, 1.0 );
-
-			//fullatom_sfx_->set_weight( core::scoring::fa_dun, 0 );
-			//fullatom_sfx_->set_weight( core::scoring::fa_sol, 0 );
-			//fullatom_sfx_->set_weight( core::scoring::fa_pair, 0 );
-			//fullatom_sfx_->set_weight( core::scoring::hbond_sc, 0 );
-			//fullatom_sfx_->set_weight( core::scoring::hbond_sc, 0 );
-			//fullatom_sfx_->set_weight( core::scoring::fa_intra_rep, 0 );
-			//fullatom_sfx_->set_weight( core::scoring::rama, 0 );
-			//fullatom_sfx_->set_weight( core::scoring::hbond_bb_sc, 0 );
-			//fullatom_sfx_->set_weight( core::scoring::p_aa_pp, 0 );
-			//fullatom_sfx_->set_weight( core::scoring::ref, 10 );
 		}
 
 		// initializes a RemodelDesignMover which will be used in the loop below
@@ -896,16 +858,6 @@ void RemodelMover::apply( Pose & pose ) {
 			);
 			//test
 			//pose.dump_pdb("check.pdb");
-			/*
-			//extract the constraint currently in Pose for later Recycling
-			ConstraintSetOP cst_set_post_built;
-			if (option[OptionKeys::remodel::repeat_structure].user() ) {
-
-			// at this stage it should hold generic cstfile and res_type_linking
-			// constraints
-			cst_set_post_built = new ConstraintSet( *pose.constraint_set());
-			}
-			*/
 
 			designMover.set_state("stage");
 
@@ -1139,9 +1091,6 @@ void RemodelMover::apply( Pose & pose ) {
 
 				}
 
-
-
-
 				TR << "apply(): calling RemodelDesignMover apply function." << std::endl;
 
 				//****Previously this loop didn't maintain the pose correctly which resulted in a difficult to track down seg fault.  Fixed, but it's questionable weather you would want to filter poses based on constraints.
@@ -1322,13 +1271,6 @@ void RemodelMover::apply( Pose & pose ) {
 				Real radius = RGF.radius();
 				Real omega = RGF.omega();
 
-				/*  currently don't use this, use SCORE_LINE_STRING instead
-				//set tags for silent file output BOINC
-				std::stringstream outtag;
-				outtag << "RISE_" << rise << "_RADIUS_" << radius << "_OMEGA_" << omega << std::endl;
-				using namespace basic::datacache;
-				(*(*it)).data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString( outtag.str() ) ) );
-				*/
 				{ //scope for string stream
 					std::stringstream outtag;
 					outtag << rise;
@@ -1412,16 +1354,6 @@ void RemodelMover::apply( Pose & pose ) {
 	pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_name(),
 		PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) ) );
-
-	/*
-	// do design-refine iteration
-	if ( dr_cycles_ > 0 ) {
-	if ( !design_refine( pose ) ) { // design-refine failed
-	set_last_move_status( FAIL_RETRY );
-	return;
-	}
-	}
-	*/
 
 	// if we've gotten to this point, then the structure has been built properly
 	set_last_move_status( MS_SUCCESS );
@@ -2047,9 +1979,6 @@ bool RemodelMover::design_refine_cart_relax(
 			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) {
 				protocols::relax::cyclize_pose(pose);
 			}
-
-			//  sfx->show(TR, pose);
-			//  TR << std::endl;
 		}
 
 		minMover->apply(pose);
@@ -2088,22 +2017,6 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	using core::pack::task::operation::TaskOperationCOP;
 	using core::pack::task::operation::ResLvlTaskOperationCOP;
 
-	//using core::pack::task::operation::RestrictResidueToRepacking;
-	//using core::pack::task::operation::RestrictResidueToRepackingOP;
-	//using core::pack::task::operation::RestrictToRepacking;
-	//using protocols::forge::build::SegmentInsert;
-	//using protocols::loops::Loops;
-	//using protocols::loops::LoopMover_Refine_CCD;
-	//using protocols::simple_moves::PackRotamersMover;
-	//using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
-
-	//using core::pose::annotated_to_oneletter_sequence;
-	//using protocols::forge::methods::intervals_to_loops;
-	//using protocols::forge::methods::linear_chainbreak;
-	//using protocols::loops::remove_cutpoint_variants;
-
-	//typedef protocols::forge::build::BuildManager::Positions Positions;
-
 	// collect new regions/positions
 	std::set< forge::build::Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
 	forge::build::BuildManager::Original2Modified original2modified_interval_endpoints = manager_.original2modified_interval_endpoints();
@@ -2112,7 +2025,6 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	loops::LoopsOP loops( new loops::Loops( forge::methods::intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ) );
 
 	// refine Mover used doesn't setup a fold tree, so do it here
-	//FoldTree loop_ft = protocols::forge::methods::fold_tree_from_loops( pose, loops );
 	kinematics::FoldTree loop_ft;
 	loops::fold_tree_from_loops( pose, *loops, loop_ft, true /*term cut*/);
 
@@ -2120,7 +2032,6 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	kinematics::FoldTree original_ft = pose.fold_tree();
 
 	// define the score function
-	//ScoreFunctionOP sfx = fullatom_sfx_->clone();
 	//for refinement always use hard repulsive
 	scoring::ScoreFunctionOP sfx = core::scoring::get_score_function();
 
@@ -2141,9 +2052,6 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	for ( Size i = 0; i < dr_cycles_; ++i ) {
 
 		// design the new section
-		//PackRotamersMover design( sfx );
-		//design.task_factory( design_tf );
-		//design.apply( pose );
 		designMover.set_state("finish");
 		designMover.apply( pose );
 
@@ -2168,9 +2076,6 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 			combined_mm->import( remodel_data_.natro_movemap_ );
 			combined_mm->import( manager_.movemap() );
 
-			//remodel_data_.natro_movemap_.show(pose.size());
-			//manager_.movemap().show(pose.size());
-			//combined_mm->show(pose.size());
 			//modify task to accept NATRO definition
 			utility::vector1<core::Size> natroPositions;
 			for ( Size i = 1; i<= pose.size(); i++ ) {
@@ -2287,7 +2192,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 
 		////// fix dna
 		for ( Size i=1; i<=pose.size() ; ++i ) {
-			if ( pose.residue( i ).is_DNA() ) {
+			if ( pose.residue_type( i ).is_DNA() ) {
 				TR << "NATRO movemap setup: turning off DNA bb and chi move for refinement stage" << std::endl;
 				remodel_data_.natro_movemap_.set_bb( i, false );
 				remodel_data_.natro_movemap_.set_chi( i, false );
@@ -2390,13 +2295,6 @@ RemodelMover::TaskFactoryOP RemodelMover::generic_taskfactory() {
 		tf->push_back( TaskOperationCOP( new LimitAromaChi2Operation() ) );
 	}
 
-	// load resfile op only if requested
-	/*if ( !resfile_.empty() ) {
-	ReadResfileOP rrf = new ReadResfile();
-	rrf->filename( resfile_ );
-	tf->push_back( rrf );
-	}
-	*/
 	return tf;
 }
 
@@ -2522,110 +2420,54 @@ RemodelMover::parse_my_tag(
 		blueprint_ = "";
 	}
 
-	if ( tag->hasOption("build_disulf") ) {
-		rosetta_scripts_build_disulfide_ = tag->getOption< bool >( "build_disulf", false );
-		if ( rosetta_scripts_build_disulfide_ ) {
-			TR << "Setting build_disulfide to true" << std::endl;
-		}
-	} else {
-		rosetta_scripts_build_disulfide_ = false;
+	rosetta_scripts_build_disulfide_ = tag->getOption< bool >( "build_disulf", false );
+	if ( rosetta_scripts_build_disulfide_ ) {
+		TR << "Setting build_disulfide to true" << std::endl;
 	}
 
-	if ( tag->hasOption("fast_disulf") ) {
-		rosetta_scripts_fast_disulfide_ = tag->getOption< bool >( "fast_disulf", false );
-		if ( rosetta_scripts_fast_disulfide_ ) {
-			TR << "Setting fast_disulfide to true" << std::endl;
-		}
-	} else {
-		rosetta_scripts_fast_disulfide_ = false;
+	rosetta_scripts_fast_disulfide_ = tag->getOption< bool >( "fast_disulf", false );
+	if ( rosetta_scripts_fast_disulfide_ ) {
+		TR << "Setting fast_disulfide to true" << std::endl;
 	}
 
-	if ( tag->hasOption("quick_and_dirty") ) {
-		rosetta_scripts_quick_and_dirty_ = tag->getOption< bool >( "quick_and_dirty", false );
-		if ( rosetta_scripts_quick_and_dirty_ ) {
-			TR << "Setting quick_and_dirty to true" << std::endl;
-		}
-	} else {
-		rosetta_scripts_quick_and_dirty_ = false;
+	rosetta_scripts_quick_and_dirty_ = tag->getOption< bool >( "quick_and_dirty", false );
+	if ( rosetta_scripts_quick_and_dirty_ ) {
+		TR << "Setting quick_and_dirty to true" << std::endl;
 	}
 
-	if ( tag->hasOption("bypass_fragments") ) {
-		rosetta_scripts_bypass_fragments_ = tag->getOption< bool >( "bypass_fragments", false );
-		if ( rosetta_scripts_bypass_fragments_ ) {
-			TR << "Setting bypass_fragments to true" << std::endl;
-		}
-	} else {
-		rosetta_scripts_bypass_fragments_ = false;
+	rosetta_scripts_bypass_fragments_ = tag->getOption< bool >( "bypass_fragments", false );
+	if ( rosetta_scripts_bypass_fragments_ ) {
+		TR << "Setting bypass_fragments to true" << std::endl;
 	}
 
-	if ( tag->hasOption("match_rt_limit") ) {
-		rosetta_scripts_match_rt_limit_ = tag->getOption< core::Real >( "match_rt_limit", 1.0 );
-	} else {
-		rosetta_scripts_match_rt_limit_ = 1.0;
-	}
+	rosetta_scripts_match_rt_limit_ = tag->getOption< core::Real >( "match_rt_limit", 1.0 );
 	TR << "Setting match_rt_limit " << rosetta_scripts_match_rt_limit_ << std::endl;
 
-	if ( tag->hasOption("min_disulfides") ) {
-		rosetta_scripts_min_disulfides_ = tag->getOption< core::Size >( "min_disulfides", 1 );
-	} else {
-		rosetta_scripts_min_disulfides_ = 1;
-	}
+	rosetta_scripts_min_disulfides_ = tag->getOption< core::Size >( "min_disulfides", 1 );
 	TR << "Setting min_disulfides " << rosetta_scripts_min_disulfides_ << std::endl;
 
-	if ( tag->hasOption("max_disulfides") ) {
-		rosetta_scripts_max_disulfides_ = tag->getOption< core::Size >( "max_disulfides", 1 );
-	} else {
-		rosetta_scripts_max_disulfides_ = 1;
-	}
+	rosetta_scripts_max_disulfides_ = tag->getOption< core::Size >( "max_disulfides", 1 );
 	TR << "Setting max_disulfides " << rosetta_scripts_max_disulfides_ << std::endl;
 
-	if ( tag->hasOption("min_loop") ) {
-		rosetta_scripts_min_loop_ = tag->getOption< core::Real >( "min_loop", 1 );
-	} else {
-		rosetta_scripts_min_loop_ = 1;
-	}
+	rosetta_scripts_min_loop_ = tag->getOption< core::Real >( "min_loop", 1 );
 	TR << "Setting min_loop " << rosetta_scripts_min_loop_ << std::endl;
 
-	if ( tag->hasOption("keep_current_disulfides") ) {
-		rosetta_scripts_keep_current_ds_ = tag->getOption< bool>( "keep_current_disulfides", false);
-	} else {
-		rosetta_scripts_keep_current_ds_ = false;
-	}
+	rosetta_scripts_keep_current_ds_ = tag->getOption< bool>( "keep_current_disulfides", false);
 	TR << "Setting keep_current_disulfides " << rosetta_scripts_keep_current_ds_ << std::endl;
 
-	if ( tag->hasOption("include_current_disulfides") ) {
-		rosetta_scripts_include_current_ds_ = tag->getOption< bool>( "include_current_disulfides", false );
-	} else {
-		rosetta_scripts_include_current_ds_ = false;
-	}
+	rosetta_scripts_include_current_ds_ = tag->getOption< bool>( "include_current_disulfides", false );
 	TR << "Setting include_current_disulfides " << rosetta_scripts_include_current_ds_ << std::endl;
 
-	if ( tag->hasOption("relax_bb_for_disulf") ) {
-		relax_bb_for_disulf_ = tag->getOption< bool>( "relax_bb_for_disulf", false );
-	} else {
-		relax_bb_for_disulf_ = false;
-	}
+	relax_bb_for_disulf_ = tag->getOption< bool>( "relax_bb_for_disulf", false );
 	TR << "Setting relax_bb_for_disulf " << relax_bb_for_disulf_ << std::endl;
 
-	if ( tag->hasOption("use_match_rt") ) {
-		use_match_rt_ = tag->getOption< bool>( "use_match_rt", false );
-	} else {
-		use_match_rt_ = true;
-	}
+	use_match_rt_ = tag->getOption< bool>( "use_match_rt", false );
 	TR << "Setting use_match_rt " << use_match_rt_ << std::endl;
 
-	if ( tag->hasOption("use_disulf_fa_score") ) {
-		use_disulf_fa_score_ = tag->getOption< bool>( "use_disulf_fa_score", false );
-	} else {
-		use_disulf_fa_score_ = false;
-	}
+	use_disulf_fa_score_ = tag->getOption< bool>( "use_disulf_fa_score", false );
 	TR << "Setting use_disulf_fa_score " << use_disulf_fa_score_ << std::endl;
 
-	if ( tag->hasOption("disulf_fa_max") ) {
-		disulf_fa_max_ = tag->getOption< core::Real>( "disulf_fa_max", -0.25 );
-	} else {
-		disulf_fa_max_ = -0.25;
-	}
+	disulf_fa_max_ = tag->getOption< core::Real>( "disulf_fa_max", -0.25 );
 	TR << "Setting disulf_fa_max " << disulf_fa_max_ << std::endl;
 }
 

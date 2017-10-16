@@ -15,7 +15,7 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/conformation/Conformation.hh>
@@ -101,7 +101,7 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <protocols/simple_filters/DdgFilter.hh>
 #include <utility/vector0.hh>
 #include <basic/options/option.hh>

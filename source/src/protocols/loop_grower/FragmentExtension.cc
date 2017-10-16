@@ -71,7 +71,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/id/AtomID.hh>
 
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>

@@ -74,7 +74,7 @@
 #include <algorithm>
 
 #include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/NumericTraits.hh>

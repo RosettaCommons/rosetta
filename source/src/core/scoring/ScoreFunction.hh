@@ -428,6 +428,21 @@ public:
 	void
 	set_weight_if_zero( ScoreType const & t, Real const & setting);
 
+
+	/// @brief Increments the weight for ScoreType  <t>  by  <setting>
+	///
+	/// example(s):
+	///     scorefxn.add_to_weight(fa_sol,.5)
+	/// See also:
+	///     ScoreFunction
+	///     ScoreFunction.get_weight
+	///     ScoreFunction.set_weight
+	///     ScoreType
+	///     name_from_score_type
+	///     score_type_from_name
+	void
+	add_to_weight( ScoreType const & t, Real const & increment );
+
 	/// @brief Returns the weight for ScoreType  <t>
 	///
 	/// examples(s):

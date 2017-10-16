@@ -35,7 +35,7 @@
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/rna/movers/RNA_DeNovoOptimizer.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
