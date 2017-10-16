@@ -320,7 +320,6 @@ def compare(test, results, files_path, previous_results, previous_files_path):
     #if test: raise BenchmarkError('Integration Test script does not support compare function for {} test!'.format(test))
 
     results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]))  # , config={}
-    has_failed_scripts = False
 
     if previous_files_path:
         for test in os.listdir(files_path):
@@ -330,8 +329,7 @@ def compare(test, results, files_path, previous_results, previous_files_path):
                 res, full_diff  = execute('Comparing {}...'.format(test), 'diff -r  {exclude} {0}/{test} {1}/{test}'.format(previous_files_path, files_path, test=test, exclude=exclude), return_='tuple')
                 diff = 'Brief Diff:\n' + brief_diff + ( ('\n\nFull Diff:\n' + full_diff[:1024*1024*1]) if full_diff != brief_diff else '' )
 
-                if os.path.isfile(files_path+'/'+test+'/.test_did_not_run.log')  or  os.path.isfile(files_path+'/'+test+'/.test_got_timeout_kill.log'): state = _S_script_failed_;  has_failed_scripts=True
-                else: state = _S_failed_ if res else _S_passed_
+                state = _S_failed_ if res else _S_passed_
                 results['tests'][test] = {_StateKey_: state, _LogKey_: diff if state != _S_passed_ else ''}
 
                 results['summary']['total'] += 1
@@ -343,8 +341,15 @@ def compare(test, results, files_path, previous_results, previous_files_path):
                 results['tests'][test] = {_StateKey_: _S_passed_, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'}
                 results['summary']['total'] += 1
 
-    #if has_failed_scripts: state = _S_script_failed_
-    #else: state = _S_failed_ if results['summary']['failed'] else _S_passed_
+    for test in os.listdir(files_path):
+        if os.path.isdir(files_path + '/' + test):
+            if os.path.isfile(files_path+'/'+test+'/.test_did_not_run.log')  or  os.path.isfile(files_path+'/'+test+'/.test_got_timeout_kill.log'):
+                results['tests'][test][_StateKey_] = _S_script_failed_
+                results['tests'][test][_LogKey_] += '\nCompare(...): Marking as "Script failed" due to presense of .test_did_not_run.log or .test_got_timeout_kill.log file!\n'
+                if test not in results['summary']['failed_tests']:
+                    results['summary']['failed'] += 1
+                    results['summary']['failed_tests'].append(test)
+
     state = _S_failed_ if results['summary']['failed'] else _S_passed_
 
     return {_StateKey_: state, _LogKey_: '', _ResultsKey_: results}
