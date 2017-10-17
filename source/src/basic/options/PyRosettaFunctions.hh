@@ -27,25 +27,28 @@ int         get_integer_option(std::string const & id);
 double      get_real_option(std::string const & id);
 std::string get_string_option(std::string const & id);
 std::string get_file_option(std::string const & id);
+std::string get_path_option(std::string const & id);
 
 void set_boolean_option(std::string const & id, bool );
 void set_integer_option(std::string const & id, int         );
 void set_real_option(std::string const & id, double      );
 void set_string_option(std::string const & id, std::string const &);
 void set_file_option(std::string const & id, std::string const &);
-
+void set_path_option(std::string const & id, std::string const &);
 
 utility::vector1<bool>        get_boolean_vector_option(std::string const & id);
 utility::vector1<int>         get_integer_vector_option(std::string const & id);
 utility::vector1<double>      get_real_vector_option(std::string const & id);
 utility::vector1<std::string> get_string_vector_option(std::string const & id);
 utility::vector1<std::string> get_file_vector_option(std::string const & id);
+utility::vector1<std::string> get_path_vector_option(std::string const & id);
 
 void set_boolean_vector_option(std::string const & id, utility::vector1<bool> const &);
 void set_integer_vector_option(std::string const & id, utility::vector1<int> const &);
 void set_real_vector_option(std::string const & id, utility::vector1<double> const &);
 void set_string_vector_option(std::string const & id, utility::vector1<std::string> const &);
 void set_file_vector_option(std::string const & id, utility::vector1<std::string> const &);
+void set_path_vector_option(std::string const & id, utility::vector1<std::string> const &);
 
 } // namespace options
 } // namespace basic

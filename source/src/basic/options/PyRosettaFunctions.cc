@@ -62,27 +62,28 @@ int         get_integer_option(std::string const & id) { return get_option<     
 double      get_real_option(std::string const & id)    { return get_option<      double, utility::options::RealOptionKey>    (id); }
 std::string get_string_option(std::string const & id)  { return get_option< std::string, utility::options::StringOptionKey>  (id); }
 std::string get_file_option(std::string const & id)    { return get_option< std::string, utility::options::FileOptionKey>    (id); }
+std::string get_path_option(std::string const & id)    { return get_option< std::string, utility::options::PathOptionKey>    (id); }
 
 void set_boolean_option(std::string const & id, bool v)                { return set_option<        bool, utility::options::BooleanOptionKey> (id, v); }
 void set_integer_option(std::string const & id, int v)                 { return set_option<         int, utility::options::IntegerOptionKey> (id, v); }
 void set_real_option(std::string const & id, double v)                 { return set_option<      double, utility::options::RealOptionKey>    (id, v); }
 void set_string_option(std::string const & id, std::string const & v)  { return set_option< std::string, utility::options::StringOptionKey>  (id, v); }
-void set_file_option(std::string const & id, std::string const & v)      { return set_option< std::string, utility::options::FileOptionKey>    (id, v); }
-
+void set_file_option(std::string const & id, std::string const & v)    { return set_option< std::string, utility::options::FileOptionKey>    (id, v); }
+void set_path_option(std::string const & id, std::string const & v)    { return set_option< std::string, utility::options::PathOptionKey>    (id, v); }
 
 utility::vector1<bool>        get_boolean_vector_option(std::string const & id) { return get_option< utility::vector1<bool>,        utility::options::BooleanVectorOptionKey> (id); }
 utility::vector1<int>         get_integer_vector_option(std::string const & id) { return get_option< utility::vector1<int>,         utility::options::IntegerVectorOptionKey> (id); }
 utility::vector1<double>      get_real_vector_option(std::string const & id)    { return get_option< utility::vector1<double>,      utility::options::RealVectorOptionKey>    (id); }
 utility::vector1<std::string> get_string_vector_option(std::string const & id)  { return get_option< utility::vector1<std::string>, utility::options::StringVectorOptionKey>  (id); }
 utility::vector1<std::string> get_file_vector_option(std::string const & id)    { return get_option< utility::vector1<std::string>, utility::options::FileVectorOptionKey>    (id); }
-
+utility::vector1<std::string> get_path_vector_option(std::string const & id)    { return get_option< utility::vector1<std::string>, utility::options::PathVectorOptionKey>    (id); }
 
 void set_boolean_vector_option(std::string const & id, utility::vector1<bool> const & v)       { return set_option< utility::vector1<bool>,        utility::options::BooleanVectorOptionKey> (id, v); }
 void set_integer_vector_option(std::string const & id, utility::vector1<int> const & v)        { return set_option< utility::vector1<int>,         utility::options::IntegerVectorOptionKey> (id, v); }
 void set_real_vector_option(std::string const & id, utility::vector1<double> const & v)        { return set_option< utility::vector1<double>,      utility::options::RealVectorOptionKey>    (id, v); }
 void set_string_vector_option(std::string const & id, utility::vector1<std::string> const & v) { return set_option< utility::vector1<std::string>, utility::options::StringVectorOptionKey>  (id, v); }
 void set_file_vector_option(std::string const & id, utility::vector1<std::string> const & v)   { return set_option< utility::vector1<std::string>, utility::options::FileVectorOptionKey>    (id, v); }
-
+void set_path_vector_option(std::string const & id, utility::vector1<std::string> const & v)   { return set_option< utility::vector1<std::string>, utility::options::PathVectorOptionKey>    (id, v); }
 
 } // namespace options
 } // namespace basic
