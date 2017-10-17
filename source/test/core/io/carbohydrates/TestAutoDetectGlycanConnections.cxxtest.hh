@@ -55,7 +55,7 @@ public:
 		TS_ASSERT( true );
 	}
 
-	void jared_fix_this_test_auto_detect_io(){
+	void test_auto_detect_io(){
 		using namespace core::pose;
 		using namespace core::import_pose;
 
