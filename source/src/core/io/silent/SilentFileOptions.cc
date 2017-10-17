@@ -33,6 +33,16 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 namespace silent {
@@ -434,3 +444,69 @@ SilentFileOptions::print_all_score_headers( bool setting )
 } // namespace
 } // namespace
 } // namespace
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::io::silent::SilentFileOptions::save( Archive & arc ) const {
+	arc( CEREAL_NVP( keep_input_scores_ ) ); // _Bool
+	arc( CEREAL_NVP( out_user_tag_set_ ) ); // _Bool
+	arc( CEREAL_NVP( out_user_tag_ ) ); // std::string
+	arc( CEREAL_NVP( out_weight_silent_scores_ ) ); // _Bool
+	arc( CEREAL_NVP( in_silent_score_prefix_ ) ); // std::string
+	arc( CEREAL_NVP( in_silent_scores_wanted_set_ ) ); // _Bool
+	arc( CEREAL_NVP( in_silent_scores_wanted_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( in_fullatom_ ) ); // _Bool
+	arc( CEREAL_NVP( write_failures_set_ ) ); // _Bool
+	arc( CEREAL_NVP( write_failures_ ) ); // _Bool
+	arc( CEREAL_NVP( in_silent_struct_type_set_ ) ); // _Bool
+	arc( CEREAL_NVP( in_silent_struct_type_ ) ); // std::string
+	arc( CEREAL_NVP( out_silent_struct_type_set_ ) ); // _Bool
+	arc( CEREAL_NVP( out_silent_struct_type_ ) ); // std::string
+	arc( CEREAL_NVP( read_through_errors_ ) ); // _Bool
+	arc( CEREAL_NVP( select_random_set_ ) ); // _Bool
+	arc( CEREAL_NVP( select_random_ ) ); // int
+	arc( CEREAL_NVP( select_range_start_ ) ); // int
+	arc( CEREAL_NVP( select_range_len_ ) ); // int
+	arc( CEREAL_NVP( select_range_mul_ ) ); // int
+	arc( CEREAL_NVP( force_silent_bitflip_on_read_set_ ) ); // _Bool
+	arc( CEREAL_NVP( force_silent_bitflip_on_read_ ) ); // _Bool
+	arc( CEREAL_NVP( print_all_score_headers_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::io::silent::SilentFileOptions::load( Archive & arc ) {
+	arc( keep_input_scores_ ); // _Bool
+	arc( out_user_tag_set_ ); // _Bool
+	arc( out_user_tag_ ); // std::string
+	arc( out_weight_silent_scores_ ); // _Bool
+	arc( in_silent_score_prefix_ ); // std::string
+	arc( in_silent_scores_wanted_set_ ); // _Bool
+	arc( in_silent_scores_wanted_ ); // utility::vector1<std::string>
+	arc( in_fullatom_ ); // _Bool
+	arc( write_failures_set_ ); // _Bool
+	arc( write_failures_ ); // _Bool
+	arc( in_silent_struct_type_set_ ); // _Bool
+	arc( in_silent_struct_type_ ); // std::string
+	arc( out_silent_struct_type_set_ ); // _Bool
+	arc( out_silent_struct_type_ ); // std::string
+	arc( read_through_errors_ ); // _Bool
+	arc( select_random_set_ ); // _Bool
+	arc( select_random_ ); // int
+	arc( select_range_start_ ); // int
+	arc( select_range_len_ ); // int
+	arc( select_range_mul_ ); // int
+	arc( force_silent_bitflip_on_read_set_ ); // _Bool
+	arc( force_silent_bitflip_on_read_ ); // _Bool
+	arc( print_all_score_headers_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::io::silent::SilentFileOptions );
+CEREAL_REGISTER_TYPE( core::io::silent::SilentFileOptions )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_io_silent_SilentFileOptions )
+#endif // SERIALIZATION

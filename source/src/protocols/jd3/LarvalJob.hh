@@ -112,7 +112,7 @@ public:
 
 	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
 	/// already-executed (Lavral)Jobs and the result_index for that job.
-	utility::vector1< JobOutputID > const &
+	utility::vector1< JobResultID > const &
 	input_job_result_indices() const;
 
 	void set_status_prefix( std::string const & prefix );

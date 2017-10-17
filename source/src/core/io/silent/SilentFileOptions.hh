@@ -32,6 +32,11 @@
 // C++ Headers
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 namespace silent {
@@ -123,12 +128,23 @@ private:
 	bool force_silent_bitflip_on_read_set_;
 	bool force_silent_bitflip_on_read_;
 	bool print_all_score_headers_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace
 } // namespace
 } // namespace
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_io_silent_SilentFileOptions )
+#endif // SERIALIZATION
 
 
 #endif

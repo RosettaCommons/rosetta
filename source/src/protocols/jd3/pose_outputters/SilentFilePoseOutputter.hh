@@ -62,16 +62,28 @@ public:
 		InnerLarvalJob const & job
 	) const override;
 
+	std::string
+	outputter_for_job(
+		PoseOutputSpecification const & spec
+	) const override;
+
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
 	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
-	void write_output_pose(
+	/// @brief Create the PoseOutputSpecification for a particular job
+	PoseOutputSpecificationOP
+	create_output_specification(
 		LarvalJob const & job,
 		JobOutputIndex const & output_index,
-		utility::options::OptionCollection const & job_options,
-		utility::tag::TagCOP tag, // possibly null-pointing tag pointer
-		core::pose::Pose const & pose
+		utility::options::OptionCollection const & options,
+		utility::tag::TagCOP tag // possibly null-pointing tag pointer
+	) override;
+
+	/// @brief Write a pose out to permanent storage (whatever that may be).
+	void write_output(
+		output::OutputSpecification const & spec,
+		JobResult const & result
 	) override;
 
 	/// @brief Write out all cached silent files -- may happen after an exception is caught by
@@ -97,13 +109,6 @@ public:
 	static
 	void
 	list_options_read( utility::options::OptionKeyList & read_options );
-
-private:
-	void
-	initialize_sf_options(
-		utility::options::OptionCollection const & job_options,
-		utility::tag::TagCOP tag // possibly null-pointing tag pointer
-	);
 
 private:
 	std::string fname_out_;

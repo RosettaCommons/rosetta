@@ -24,6 +24,11 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -59,9 +64,19 @@ struct JobOutputIndex : utility::pointer::ReferenceCount
 	// It is entirely reasonable for primary index 53 to have a different number of secondary outputs from
 	// primary index 54; 53 could have 10, 54 could have 100.
 	core::Size n_secondary_outputs = 1;
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_JobOutputIndex )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_JobOutputIndex_HH

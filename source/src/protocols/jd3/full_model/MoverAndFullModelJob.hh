@@ -22,6 +22,7 @@
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/JobSummary.hh>
+#include <protocols/jd3/standard/MoverAndPoseJob.hh>
 
 // Project headers
 #include <protocols/moves/Mover.fwd.hh>
@@ -77,19 +78,12 @@ private:
 
 };
 
-class FullModelJobResult : public JobResult
+class FullModelJobResult : public standard::PoseJobResult
 {
 public:
 	FullModelJobResult();
 	~FullModelJobResult() override;
 
-	JobStatus status() const override;
-
-	core::pose::PoseOP pose();
-	void pose( core::pose::PoseOP setting );
-private:
-
-	core::pose::PoseOP pose_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

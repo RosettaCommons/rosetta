@@ -25,6 +25,14 @@
 #include <utility/tag/Tag.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 
@@ -124,3 +132,33 @@ StructFileReaderOptions::operator < ( StructFileReaderOptions const & other ) co
 
 } // namespace io
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::io::StructFileReaderOptions::save( Archive & arc ) const {
+	arc( cereal::base_class< core::io::StructFileRepOptions >( this ) );
+	arc( CEREAL_NVP( new_chain_order_ ) ); // _Bool
+	arc( CEREAL_NVP( obey_ENDMDL_ ) ); // _Bool
+	arc( CEREAL_NVP( read_pdb_header_ ) ); // _Bool
+	arc( CEREAL_NVP( glycam_pdb_format_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::io::StructFileReaderOptions::load( Archive & arc ) {
+	arc( cereal::base_class< core::io::StructFileRepOptions >( this ) );
+	arc( new_chain_order_ ); // _Bool
+	arc( obey_ENDMDL_ ); // _Bool
+	arc( read_pdb_header_ ); // _Bool
+	arc( glycam_pdb_format_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::io::StructFileReaderOptions );
+CEREAL_REGISTER_TYPE( core::io::StructFileReaderOptions )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_io_StructFileReaderOptions )
+#endif // SERIALIZATION

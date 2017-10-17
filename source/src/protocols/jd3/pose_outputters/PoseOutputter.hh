@@ -19,9 +19,11 @@
 #include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 
 // Package headers
+#include <protocols/jd3/pose_outputters/PoseOutputSpecification.fwd.hh>
 #include <protocols/jd3/JobOutputIndex.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
+#include <protocols/jd3/output/ResultOutputter.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -39,7 +41,7 @@ namespace jd3 {
 namespace pose_outputters {
 
 /// @brief The %PoseOutputter
-class PoseOutputter : utility::pointer::ReferenceCount
+class PoseOutputter : public output::ResultOutputter
 {
 public:
 
@@ -54,6 +56,11 @@ public:
 		InnerLarvalJob & job
 	) const = 0;
 
+	/// @brief Return the stiring used to identify this class
+	virtual
+	std::string
+	class_key() const = 0;
+
 	/// @brief Return an identifier string for the specific instance of the %PoseOutputter that ought to be used
 	/// for a particular job so that the %PoseOutputter can e.g. aggregate all of the outputs for a group of jobs
 	/// and output them all at once when flush is called.  The outputter may return the empty string if all
@@ -67,39 +74,33 @@ public:
 		InnerLarvalJob const & job
 	) const = 0;
 
+	/// @brief Return an identifier string for the specific instance of the %PoseOutputter that ought to be used
+	/// for a particular job so that the %PoseOutputter can e.g. aggregate all of the outputs for a group of jobs
+	/// and output them all at once when flush is called.  The outputter may return the empty string if all
+	/// outputters (of the same type) are interchangable (e.g. the PDBPoseOutputter).
+	/// e.g., the SilentFilePoseOutputter returns the name of the file that it sends its outputs to.
+	/// This function respects the output-filename-suffix that may have been provided by the JobDistributor
+	virtual
+	std::string
+	outputter_for_job(
+		PoseOutputSpecification const & spec
+	) const = 0;
+
 	virtual
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
 
 	virtual
 	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
 
-	/// @brief Write a pose out to permanent storage (whatever that may be). The
-	/// pose_ind_of_total tag is a pair stating how many poses were generated for a particular
-	/// job; the first entry in the pair is the index, the second entry in the pair is the
-	/// total number of Poses generated for a particular job. Thus job 532 from input "1l6x" might
-	/// have produced 10 Poses; so the pair might be {4, 10} in a particular call to this function.
-	/// In such a case, the outputter ought to name the output structure "1l6x_0532_0004.pdb"
-	/// or something along those lines where a second suffix is listed for the job. If both entries
-	/// in the pair are 1, then no additional suffix needs to be given for a job.
+	/// @brief Create the PoseOutputSpecification for a particular job
 	virtual
-	void write_output_pose(
+	PoseOutputSpecificationOP
+	create_output_specification(
 		LarvalJob const & job,
 		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const & options,
-		utility::tag::TagCOP tag, // possibly null-pointing tag pointer
-		core::pose::Pose const & pose
+		utility::tag::TagCOP tag // possibly null-pointing tag pointer
 	) = 0;
-
-	/// @brief Output from a pose outputter may be held back and only flushed when requested
-	/// by the JobQueen; I/O can be expensive, so it's a good idea to gather up the
-	/// results of many outputs before flushing them to disk.
-	virtual
-	void flush() = 0;
-
-	/// @brief Return the stiring used by the PoseOutputterCreator for this class
-	virtual
-	std::string
-	class_key() const = 0;
 
 };
 

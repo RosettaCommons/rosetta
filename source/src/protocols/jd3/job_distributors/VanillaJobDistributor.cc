@@ -22,6 +22,8 @@
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/JobSummary.hh>
 #include <protocols/jd3/LarvalJob.hh>
+#include <protocols/jd3/output/OutputSpecification.hh>
+#include <protocols/jd3/output/ResultOutputter.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -179,8 +181,10 @@ void
 VanillaJobDistributor::potentially_output_some_job_results()
 {
 	// ask the job queen if she wants to output any results
-	JobResultIDList jobs_to_output = job_queen_->jobs_that_should_be_output();
-	for ( auto const result_id : jobs_to_output ) {
+	std::list< output::OutputSpecificationOP > jobs_to_output =
+		job_queen_->jobs_that_should_be_output();
+	for ( auto const output_spec : jobs_to_output ) {
+		JobResultID result_id = output_spec->result_id();
 		auto result_iter = job_results_.find( result_id );
 		if ( result_iter == job_results_.end() ) {
 			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result (" +
@@ -188,7 +192,8 @@ VanillaJobDistributor::potentially_output_some_job_results()
 				") for outputting as requested by the JobQeen. Has this job already been output?" );
 		}
 		std::pair< LarvalJobOP, JobResultOP > const & job_to_output = result_iter->second;
-		job_queen_->completed_job_result( job_to_output.first, result_id.second, job_to_output.second );
+		output::ResultOutputterOP outputter = job_queen_->result_outputter( *output_spec );
+		outputter->write_output( *output_spec, *job_to_output.second );
 
 		// and now delete storage for this job result -- once a JobQueen has requested a job for
 		// output, then the JobDistributor will discard it.

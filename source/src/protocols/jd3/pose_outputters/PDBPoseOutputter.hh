@@ -55,16 +55,28 @@ public:
 		InnerLarvalJob const & job
 	) const override;
 
+	std::string
+	outputter_for_job(
+		PoseOutputSpecification const & spec
+	) const override;
+
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
 	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
-	void write_output_pose(
+	/// @brief Create the PoseOutputSpecification for a particular job
+	PoseOutputSpecificationOP
+	create_output_specification(
 		LarvalJob const & job,
 		JobOutputIndex const & output_index,
-		utility::options::OptionCollection const & job_options,
-		utility::tag::TagCOP tag, // possibly null-pointing tag pointer
-		core::pose::Pose const & pose
+		utility::options::OptionCollection const & options,
+		utility::tag::TagCOP tag // possibly null-pointing tag pointer
+	) override;
+
+	/// @brief Write a pose out to permanent storage (whatever that may be).
+	void write_output(
+		output::OutputSpecification const & specification,
+		JobResult const & result
 	) override;
 
 	/// @brief Currently a no-op since the "write output pose" method sends all
@@ -103,6 +115,16 @@ public:
 	static
 	void
 	list_options_read( utility::options::OptionKeyList & read_options );
+
+private:
+	// NOTE THERE IS NO PRIVATE DATA AND THERE SHOULD NOT BE:
+	// The PDBPoseOutputter should not accumulate state unless the behavior of
+	// its outputter_for_job method changes. Currently, this method returns the empty string
+	// signifying to the StandardJobQueen that it has no state, and therefore, it
+	// is safe to use the same instance of the class in multiple threads. If that pledge
+	// should have to change (because this class is given state in the form of private data)
+	// then the outputter_for_job_method must be updated to respect the job-distributor
+	// assigned suffix.
 
 };
 

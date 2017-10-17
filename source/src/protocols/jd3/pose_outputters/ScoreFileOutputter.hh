@@ -46,13 +46,17 @@ public:
 	/// @brief The %ScoreFileOutputter returns the name of the scorefile that it sends its outputs to
 	/// for this particular job so that the JobQueen can send multiple outputs to the same outputter
 	/// before invoking flush()
-	virtual
 	std::string
 	outputter_for_job(
 		utility::tag::TagCOP output_tag,
 		utility::options::OptionCollection const & job_options,
 		InnerLarvalJob const & job
-	) const;
+	) const override;
+
+	std::string
+	outputter_for_job(
+		PoseOutputSpecification const & spec
+	) const override;
 
 	static
 	bool
@@ -60,21 +64,26 @@ public:
 
 	/// @brief Using the LarvalJob's job_tag (determined by the (primary) JobOutputter),
 	/// write extra data about this output Pose to its destination.
-	virtual
-	void write_output_pose(
+	PoseOutputSpecificationOP
+	create_output_specification(
 		LarvalJob const & job,
 		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const & options,
-		core::pose::Pose const & pose
-	);
+		utility::tag::TagCOP tag // possibly null-pointing tag pointer
+	) override;
 
-	virtual
-	void flush();
+	/// @brief Write out the scores for a particular Pose (held in the JobResult) to a score file
+	void
+	write_output(
+		output::OutputSpecification const & specification,
+		JobResult const & result
+	) override;
+
+	void flush() override;
 
 	/// @brief Return the stiring used by the ScoreFileOutputterCreator for this class
-	virtual
 	std::string
-	class_key() const;
+	class_key() const override;
 
 	static
 	std::string

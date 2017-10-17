@@ -34,6 +34,7 @@
 #include <protocols/stepwise/sampler/rna/RNA_KinematicCloser.fwd.hh>
 #include <protocols/stepwise/sampler/rna/RNA_ChiStepWiseSampler.fwd.hh>
 #include <protocols/stepwise/sampler/screener/RNA_TorsionScreener.fwd.hh>
+#include <core/id/TorsionID.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <numeric/random/WeightedSampler.hh>

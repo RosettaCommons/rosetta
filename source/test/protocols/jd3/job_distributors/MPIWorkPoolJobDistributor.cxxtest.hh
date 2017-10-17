@@ -19,6 +19,8 @@
 
 // Unit headers
 #include <protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh>
+
+// Package headers
 #include <protocols/jd3/standard/MoverAndPoseJob.hh>
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/JobDigraph.hh>
@@ -29,6 +31,9 @@
 #include <protocols/jd3/standard/StandardJobQueen.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
+#include <protocols/jd3/output/OutputSpecification.hh>
+#include <protocols/jd3/output/ResultOutputter.hh>
+#include <test/protocols/jd3/DummyOutputter.hh>
 
 /// Project headers
 #include <core/types.hh>
@@ -78,6 +83,8 @@ using namespace utility;
 using namespace core;
 using namespace protocols::jd3;
 using namespace protocols::jd3::job_distributors;
+using namespace protocols::jd3::output;
+using namespace protocols::jd3::pose_outputters;
 using namespace protocols::jd3::standard;
 
 // shorthand functions, sp and sp1
@@ -99,11 +106,88 @@ public:
 
 typedef utility::pointer::shared_ptr< PoolMnPJob > PoolMnPJobOP;
 
+
+//class DummyOutputter : public PoseOutputter
+//{
+//public:
+// DummyOutputter( std::map< JobResultID, JobResultOP > & results ) :
+//  ResultOutputter(),
+//  results_( results )
+// {}
+//
+// virtual
+// void determine_job_tag(
+//  utility::tag::TagCOP,
+//  utility::options::OptionCollection const &,
+//  InnerLarvalJob & job
+// ) const {
+//  job->job_tag( job->input_tag() );
+// }
+//
+// std::string class_key() const override { return keyname(); }
+// static std::string keyname() { return "Dummy"; }
+//
+// std::string
+// outputter_for_job(
+//  utility::tag::TagCOP,
+//  utility::options::OptionCollection const &,
+//  InnerLarvalJob const &
+// ) const override {
+//  return "dummy";
+// }
+//
+// std::string
+// outputter_for_job(
+//  PoseOutputSpecification const & spec
+// ) const = 0;
+//
+// virtual
+// bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
+//
+// virtual
+// void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
+//
+// PoseOutputSpecificationOP
+// create_output_specification(
+//  LarvalJob const & job,
+//  JobOutputIndex const & output_index,
+//  utility::options::OptionCollection const & options,
+//  utility::tag::TagCOP tag // possibly null-pointing tag pointer
+// )
+// {
+// }
+//
+// void write_output(
+//  OutputSpecification const & specification,
+//  JobResult const & result
+// ) override {
+//  results_[ specification.result_id() ] = JobResultOP( new PoseJobResult(
+//    static_cast< PoseJobResult const & > (result) ));
+// }
+//
+// void flush() override {}
+//
+//private:
+// std::map< JobResultID, JobResultOP > & results_;
+//};
+//
+//typedef utility::pointer::shared_ptr< DummyOutputter > DummyOutputterOP;
+
 // Dummy JobQueen //
 class PoolJQ1 : public protocols::jd3::standard::StandardJobQueen
 {
 public:
-	PoolJQ1() : njobs_( 1 ), job_list_determined_( false ), n_jobs_created_so_far_( 0 ) {}
+	PoolJQ1() :
+		njobs_( 1 ),
+		job_list_determined_( false ),
+		n_jobs_created_so_far_( 0 ),
+		results_( new std::map< JobResultID, JobResultOP > ),
+		dummy_outputter_( new DummyPoseOutputter( results_ ) )
+	{
+		do_not_accept_all_pose_outputters_from_factory();
+		allow_pose_outputter( PoseOutputterCreatorOP( new DummyOutputterCreator ));
+	}
+
 	~PoolJQ1() {}
 
 	// create a job graph with a single node; skip the SJQ's implementation of this function
@@ -118,6 +202,7 @@ public:
 		if ( job_list_determined_ ) return jobs;
 
 		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs_, job_node_index ) );
+		inner_job->outputter( DummyPoseOutputter::keyname() );
 		jobs = expand_job_list( inner_job, max_njobs );
 		n_jobs_created_so_far_ += jobs.size();
 		if ( n_jobs_created_so_far_ >= njobs_ ) {
@@ -146,8 +231,36 @@ public:
 	}
 
 	void note_job_completed( core::Size job_id, JobStatus status, core::Size nresults  ) override { status_[ job_id ] = status; StandardJobQueen::note_job_completed( job_id, status, nresults ); }
-	void completed_job_summary( core::Size job_id, core::Size result_index, JobSummaryOP summary ) override { summaries_[ sp(job_id,result_index) ] = summary; }
-	void completed_job_result( LarvalJobCOP job, core::Size result_index, JobResultOP job_result ) override { results_[ sp(job->job_index(),result_index) ] = job_result; }
+	void note_job_completed( LarvalJobCOP larval_job, JobStatus status, core::Size nresults  ) override
+	{
+		status_[ larval_job->job_index() ] = status;
+		StandardJobQueen::note_job_completed( larval_job, status, nresults );
+	}
+	//void completed_job_summary( core::Size job_id, core::Size result_index, JobSummaryOP summary ) override { summaries_[ sp(job_id,result_index) ] = summary; }
+	void completed_job_summary( LarvalJobCOP job, core::Size result_index, JobSummaryOP summary ) override { summaries_[ sp(job->job_index(),result_index) ] = summary; }
+
+	output::OutputSpecificationOP
+	create_output_specification_for_job_result(
+		LarvalJobCOP job,
+		utility::options::OptionCollection const & job_options,
+		core::Size result_index,
+		core::Size nresults
+	) override
+	{
+		output::OutputSpecificationOP spec = dummy_outputter_->create_output_specification( *job,
+			build_output_index( job, result_index, nresults ),
+			job_options, utility::tag::TagCOP() );
+		spec->result_id( { job->job_index(), result_index } );
+		return spec;
+	}
+
+	output::ResultOutputterOP
+	result_outputter( output::OutputSpecification const & ) override
+	{
+		return dummy_outputter_;
+	}
+
+	// void completed_job_result( LarvalJobCOP job, core::Size result_index, JobResultOP job_result ) override { results_[ sp(job->job_index(),result_index) ] = job_result; }
 
 	bool has_job_completed( protocols::jd3::LarvalJobCOP ) override { return false; }
 	void mark_job_as_having_begun( protocols::jd3::LarvalJobCOP /*job*/ ) override {/*TEMP*/}
@@ -161,7 +274,8 @@ public:
 	mutable utility::vector1< core::Size > jobs_matured_;
 	std::map< Size,        JobStatus    > status_;
 	std::map< JobResultID, JobSummaryOP > summaries_;
-	std::map< JobResultID, JobResultOP  > results_;
+	std::shared_ptr< std::map< JobResultID, JobResultOP > > results_;
+	DummyPoseOutputterOP dummy_outputter_;
 
 };
 
@@ -250,12 +364,14 @@ public:
 			if ( node_1_jobs_given_out_ ) return job_list;
 			node_1_jobs_given_out_ = true;
 			StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( node_1_njobs_, job_node_index ));
+			inner_job->outputter( DummyPoseOutputter::keyname() );
 			job_list = expand_job_list( inner_job, max_njobs );
 			//std::cout << "PoolJQ3 delivering round 1 jobs" << std::endl;
 		} else if ( job_node_index == 2 ) {
 			if ( node_2_jobs_given_out_ ) return job_list;
 			node_2_jobs_given_out_ = true;
 			StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( node_2_njobs_ ));
+			inner_job->outputter( DummyPoseOutputter::keyname() );
 			inner_job->add_input_job_result_index( sp1(1) );
 			job_list = expand_job_list( inner_job, max_njobs );
 
@@ -264,9 +380,9 @@ public:
 		return job_list;
 	}
 
-	std::list< JobResultID > jobs_that_should_be_output() override
+	std::list< OutputSpecificationOP > jobs_that_should_be_output() override
 	{
-		std::list< JobResultID > output_list;
+		std::list< OutputSpecificationOP > output_list;
 		if ( node_2_jobs_given_out_ && ! output_round_2_results_ ) {
 			bool all_jobs_completed = true;
 			for ( Size ii = node_1_njobs_+1; ii <= node_1_njobs_ + node_2_njobs_; ++ii ) {
@@ -276,7 +392,7 @@ public:
 				return output_list;
 			}
 			for ( Size ii = node_1_njobs_+1; ii <= node_1_njobs_ + node_2_njobs_; ++ii ) {
-				output_list.push_back( std::make_pair( ii, core::Size(1) ) );
+				output_list.push_back( OutputSpecificationOP( new DummyOutputSpecification( sp(ii, 1), JobOutputIndex() ) ));
 			}
 			output_round_2_results_ = true;
 		}
@@ -332,18 +448,23 @@ public:
 		node_1_njobs_ = node_2_njobs_ = 2;
 	}
 
-	void note_job_completed( core::Size job_id, JobStatus status, Size nresults ) override {
-		if ( job_id == node_1_njobs_ + 1 ) node_2_first_job_finished_ = true;
-		PoolJQ1::note_job_completed( job_id, status, nresults );
+	void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) override {
+		if ( job->job_index() == node_1_njobs_ + 1 ) node_2_first_job_finished_ = true;
+		PoolJQ1::note_job_completed( job, status, nresults );
 	}
 
-	std::list< JobResultID > jobs_that_should_be_output() override
+	//void note_job_completed( core::Size job_id, JobStatus status, Size nresults ) override {
+	// if ( job_id == node_1_njobs_ + 1 ) node_2_first_job_finished_ = true;
+	// PoolJQ1::note_job_completed( job_id, status, nresults );
+	//}
+
+	std::list< OutputSpecificationOP > jobs_that_should_be_output() override
 	{
 		if ( ! discard_job1_result_ && node_2_first_job_finished_ && ! discarded_job1_results_ ) {
-			discarded_job1_results_ = true;
-			std::list< JobResultID > job1_to_discard;
-			job1_to_discard.push_back( sp( 1, 1 ) );
-			return job1_to_discard;
+			discarded_job1_results_ = true; // that is: job1 will not be stored after it is output
+			std::list< OutputSpecificationOP > job1_to_output;
+			job1_to_output.push_back( OutputSpecificationOP( new DummyOutputSpecification( sp(1, 1), JobOutputIndex() ) ));
+			return job1_to_output;
 		} else {
 			return PoolJQ3::jobs_that_should_be_output();
 		}
@@ -377,13 +498,13 @@ public:
 
 	void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) override {
 		jobs_completed_through_larval_job_interface_.push_back( job->job_index() );
-		PoolJQ1::note_job_completed( job->job_index(), status, nresults );
+		PoolJQ1::note_job_completed( job, status, nresults );
 	}
 
 
 	void completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) override {
 		summaries_through_larval_job_interface_.push_back( job->job_index() );
-		PoolJQ1::completed_job_summary( job->job_index(), result_index, summary );
+		PoolJQ1::completed_job_summary( job, result_index, summary );
 	}
 
 
@@ -419,6 +540,7 @@ public:
 		if ( ! node_3_jobs_given_out_ ) {
 			node_3_jobs_given_out_ = true;
 			StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( node_3_njobs_ ));
+			inner_job->outputter( DummyPoseOutputter::keyname() );
 			job_list = expand_job_list( inner_job, max_njobs );
 		}
 		return job_list;
@@ -486,6 +608,7 @@ class PoolJQ6 : public PoolJQ1
 		if ( job_list_determined_ ) return jobs;
 
 		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs_, job_node_index ) );
+		inner_job->outputter( DummyPoseOutputter::keyname() );
 		inner_job->const_data_map().add( "testing", "testing", UnserializableOP( new Unserializable ));
 
 		jobs = expand_job_list( inner_job, max_njobs );
@@ -510,6 +633,7 @@ class PoolJQ7 : public PoolJQ1
 		if ( job_list_determined_ ) return jobs;
 
 		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs_ ) );
+		inner_job->outputter( DummyPoseOutputter::keyname() );
 		inner_job->const_data_map().add( "testing", "testing", UndeserializableOP( new Undeserializable ));
 
 		jobs = expand_job_list( inner_job, max_njobs );
@@ -735,6 +859,10 @@ public:
 	typedef core::Size   Size;
 	typedef core::Real   Real;
 
+	// Only add the DummyOutputter options once
+	bool local_options_added_;
+
+	MPIWorkPoolJobDistributorTests() : local_options_added_( false ) {}
 
 	// --------------- Fixtures --------------- //
 
@@ -746,6 +874,12 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init();
+		if ( ! local_options_added_ ) {
+			using namespace basic::options;
+			option.add( OptionKeys::dummy_outputter_arg, "" ).def(false);
+			option.add( OptionKeys::dummy_outputter, "" ).def(false);
+			local_options_added_ = true;
+		}
 		basic::options::option[ basic::options::OptionKeys::jd3::compress_job_results ]( false );
 	}
 
@@ -791,6 +925,7 @@ public:
 	)
 	{
 		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs ) );
+		inner_job->outputter( DummyPoseOutputter::keyname() );
 		return LarvalJobOP( new LarvalJob( inner_job, nstruct_id, job_index ) );
 	}
 
@@ -803,6 +938,7 @@ public:
 	)
 	{
 		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs ) );
+		inner_job->outputter( DummyPoseOutputter::keyname() );
 		inner_job->add_input_job_result_index( sp1(1) );
 		LarvalJobOP larval_job( new LarvalJob( inner_job, nstruct_id, job_index ) );
 		return larval_job;
@@ -881,6 +1017,28 @@ public:
 			msg_list.push_back( MsgOP( new InputPoseMsg( pose_id ) ) );
 		}
 		return serialized_T( msg_list );
+	}
+
+
+	std::string
+	serialized_output_specification(
+		JobResultID result_id,
+		JobOutputIndex output_index
+	){
+		OutputSpecificationOP spec( new DummyOutputSpecification( result_id, output_index ));
+		return serialized_T( spec );
+	}
+
+	output::OutputSpecificationOP
+	deserialized_output_specification( std::string const & serialized_spec )
+	{
+		return deserialized_T< OutputSpecificationOP >( serialized_spec );
+	}
+
+	JobOutputIndex joi( Size primary_index ) {
+		JobOutputIndex retval;
+		retval.primary_output_index = primary_index;
+		return retval;
 	}
 
 
@@ -1080,12 +1238,12 @@ public:
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq->summaries_[ sp1( 2 ) ])->energy(), 1234 );
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq->summaries_[ sp1( 3 ) ])->energy(), 1234 );
 
-		TS_ASSERT_EQUALS( jq->results_.count( sp1( 1 ) ), 1 );
-		TS_ASSERT_EQUALS( jq->results_.count( sp1( 2 ) ), 1 );
-		TS_ASSERT_EQUALS( jq->results_.count( sp1( 3 ) ), 1 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq->results_[ sp1( 1 ) ])->pose()->total_residue(), 20 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq->results_[ sp1( 2 ) ])->pose()->total_residue(), 20 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq->results_[ sp1( 3 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( jq->results_->count( sp1( 1 ) ), 1 );
+		TS_ASSERT_EQUALS( jq->results_->count( sp1( 2 ) ), 1 );
+		TS_ASSERT_EQUALS( jq->results_->count( sp1( 3 ) ), 1 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq->results_)[ sp1( 1 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq->results_)[ sp1( 2 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq->results_)[ sp1( 3 ) ])->pose()->total_residue(), 20 );
 
 #endif
 	}
@@ -1274,7 +1432,7 @@ public:
 		TS_ASSERT_EQUALS( jq->status_.count( 1 ), 1 );
 		TS_ASSERT_EQUALS( jq->status_[ 1 ], jd3_job_status_failed_do_not_retry );
 		TS_ASSERT_EQUALS( jq->summaries_.count( sp1(1) ), 0 );
-		TS_ASSERT_EQUALS( jq->results_.count( sp1(1) ), 0 );
+		TS_ASSERT_EQUALS( jq->results_->count( sp1(1) ), 0 );
 
 #endif
 
@@ -1325,7 +1483,7 @@ public:
 		TS_ASSERT_EQUALS( jq->status_.count( 1 ), 1 );
 		TS_ASSERT_EQUALS( jq->status_[ 1 ], jd3_job_status_inputs_were_bad );
 		TS_ASSERT_EQUALS( jq->summaries_.count( sp1(1) ), 0 );
-		TS_ASSERT_EQUALS( jq->results_.count( sp1(1) ), 0 );
+		TS_ASSERT_EQUALS( jq->results_->count( sp1(1) ), 0 );
 
 #endif
 	}
@@ -1376,7 +1534,7 @@ public:
 		TS_ASSERT_EQUALS( jq->status_.count( 1 ), 1 );
 		TS_ASSERT_EQUALS( jq->status_[ 1 ], jd3_job_status_failed_w_exception );
 		TS_ASSERT_EQUALS( jq->summaries_.count( sp1(1) ), 0 );
-		TS_ASSERT_EQUALS( jq->results_.count( sp1(1) ), 0 );
+		TS_ASSERT_EQUALS( jq->results_->count( sp1(1) ), 0 );
 
 #endif
 	}
@@ -1426,7 +1584,7 @@ public:
 		TS_ASSERT_EQUALS( jq->status_.count( 1 ), 1 );
 		TS_ASSERT_EQUALS( jq->status_[ 1 ], jd3_job_status_failed_max_retries );
 		TS_ASSERT_EQUALS( jq->summaries_.count( sp1(1) ), 0 );
-		TS_ASSERT_EQUALS( jq->results_.count( sp1(1) ), 0 );
+		TS_ASSERT_EQUALS( jq->results_->count( sp1(1) ), 0 );
 
 #endif
 	}
@@ -2015,15 +2173,15 @@ public:
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 5 ) ])->energy(), 1234 );
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 6 ) ])->energy(), 1234 );
 
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 1 ) ), 0 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 2 ) ), 0 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 3 ) ), 0 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 4 ) ), 1 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 5 ) ), 1 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 6 ) ), 1 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq3->results_[ sp1( 4 ) ])->pose()->total_residue(), 20 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq3->results_[ sp1( 5 ) ])->pose()->total_residue(), 20 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq3->results_[ sp1( 6 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 1 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 2 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 3 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 4 ) ), 1 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 5 ) ), 1 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 6 ) ), 1 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq3->results_)[ sp1( 4 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq3->results_)[ sp1( 5 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq3->results_)[ sp1( 6 ) ])->pose()->total_residue(), 20 );
 
 
 
@@ -2202,14 +2360,14 @@ public:
 		SimulateMPI::set_mpi_rank( 1 );
 		// ok, now the archive is going to receive a series of job result requests from
 		// node 0 and respond by sending back the serialized larval-jobs and job results
-		send_integer_to_node( 0, mpi_work_pool_jd_job_result_retrieved );
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 1, 4, trpcage_pose_result ));
+		send_integer_to_node( 0, 1 );
+		send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
 
-		send_integer_to_node( 0, mpi_work_pool_jd_job_result_retrieved );
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 2, 5, trpcage_pose_result ));
+		send_integer_to_node( 0, 1 );
+		send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
 
-		send_integer_to_node( 0, mpi_work_pool_jd_job_result_retrieved );
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 3, 6, trpcage_pose_result ));
+		send_integer_to_node( 0, 1 );
+		send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
 
 		//OK! Now create a PoolJQ3 and let 'er rip
 		SimulateMPI::set_mpi_rank( 0 );
@@ -2351,19 +2509,28 @@ public:
 		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 3 result 1", 1 );
 
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it wants its attention C", 0 );
-		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it needs to retrieve a job A", mpi_work_pool_jd_retrieve_and_discard_job_result );
-		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 4", 4 );
-		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 4 result 1", 1 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it needs to output a job A", mpi_work_pool_jd_output_job_result_already_available );
+		std::string ser_os4 = ts_assert_mpi_buffer_has_string( 0,
+			"node 0 sends node 1 the OutputSpecification for job result (4,1)" );
+		OutputSpecificationOP os4 = deserialized_output_specification( ser_os4 );
+		TS_ASSERT_EQUALS( os4->result_id().first, 4 );
+		TS_ASSERT_EQUALS( os4->result_id().second, 1 );
 
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it wants its attention D", 0 );
-		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it needs to retrieve a job B", mpi_work_pool_jd_retrieve_and_discard_job_result );
-		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 5", 5 );
-		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 5 result 1", 1 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it needs to output a job B", mpi_work_pool_jd_output_job_result_already_available );
+		std::string ser_os5 = ts_assert_mpi_buffer_has_string( 0,
+			"node 0 sends node 1 the OutputSpecification for job result (5,1)" );
+		OutputSpecificationOP os5 = deserialized_output_specification( ser_os5 );
+		TS_ASSERT_EQUALS( os5->result_id().first, 5 );
+		TS_ASSERT_EQUALS( os5->result_id().second, 1 );
 
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it wants its attention E", 0 );
-		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it needs to retrieve a job C", mpi_work_pool_jd_retrieve_and_discard_job_result );
-		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 6", 6 );
-		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 6 result 1", 1 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it needs to output a job B", mpi_work_pool_jd_output_job_result_already_available );
+		std::string ser_os6 = ts_assert_mpi_buffer_has_string( 0,
+			"node 0 sends node 1 the OutputSpecification for job result (6,1)" );
+		OutputSpecificationOP os6 = deserialized_output_specification( ser_os6 );
+		TS_ASSERT_EQUALS( os6->result_id().first, 6 );
+		TS_ASSERT_EQUALS( os6->result_id().second, 1 );
 
 		TS_ASSERT_EQUALS( jq3->status_.count( 1 ), 1 );
 		TS_ASSERT_EQUALS( jq3->status_.count( 2 ), 1 );
@@ -2391,15 +2558,12 @@ public:
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 5 ) ])->energy(), 1234 );
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 6 ) ])->energy(), 1234 );
 
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 1 ) ), 0 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 2 ) ), 0 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 3 ) ), 0 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 4 ) ), 1 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 5 ) ), 1 );
-		TS_ASSERT_EQUALS( jq3->results_.count( sp1( 6 ) ), 1 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq3->results_[ sp1( 4 ) ])->pose()->total_residue(), 20 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq3->results_[ sp1( 5 ) ])->pose()->total_residue(), 20 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq3->results_[ sp1( 6 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 1 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 2 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 3 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 4 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 5 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 6 ) ), 0 );
 
 #endif
 	}
@@ -2504,19 +2668,18 @@ public:
 		SimulateMPI::set_mpi_rank( 0 );
 
 		send_integer_to_node( 1, 0 ); // node 0 says "hey, I need to talk to you"
-		send_integer_to_node( 1, mpi_work_pool_jd_retrieve_and_discard_job_result ); // I need a job result
-		send_size_to_node( 1, 4 ); // job id
-		send_size_to_node( 1, 1 ); // result index
+		send_integer_to_node( 1, mpi_work_pool_jd_output_job_result_already_available );
+		send_string_to_node( 1, serialized_output_specification( JobResultID( 4, 1 ), joi(4) ) );
 
 		send_integer_to_node( 1, 0 ); // node 0 says "hey, I need to talk to you"
-		send_integer_to_node( 1, mpi_work_pool_jd_retrieve_and_discard_job_result ); // I need a job result
-		send_size_to_node( 1, 5 ); // job id
-		send_size_to_node( 1, 1 ); // result index
+		send_integer_to_node( 1, mpi_work_pool_jd_output_job_result_already_available );
+		send_string_to_node( 1, serialized_output_specification( JobResultID( 5, 1 ), joi(5) ));
 
 		send_integer_to_node( 1, 0 ); // node 0 says "hey, I need to talk to you"
-		send_integer_to_node( 1, mpi_work_pool_jd_retrieve_and_discard_job_result ); // I need a job result
-		send_size_to_node( 1, 6 ); // job id
-		send_size_to_node( 1, 1 ); // result index
+		send_integer_to_node( 1, mpi_work_pool_jd_output_job_result_already_available ); // I need a job result
+		//send_size_to_node( 1, 6 ); // job id
+		//send_size_to_node( 1, 1 ); // result index
+		send_string_to_node( 1, serialized_output_specification( JobResultID( 6, 1 ), joi(6) ));
 
 		send_integer_to_node( 1, 0 ); // node 0 says "hey, I need to talk to you"
 		send_integer_to_node( 1, mpi_work_pool_jd_spin_down ); // time to shut down
@@ -2531,8 +2694,20 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-// OK!
-// Now we read the mail we got from node 1
+// At the end, the jd should have outputs now from jobs 4-6
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 1 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 2 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 3 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 4 ) ), 1 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 5 ) ), 1 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 6 ) ), 1 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq3->results_)[ sp1( 4 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq3->results_)[ sp1( 5 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq3->results_)[ sp1( 6 ) ])->pose()->total_residue(), 20 );
+
+
+		// OK!
+		// Now we read the mail we got from node 1
 
 		SimulateMPI::set_mpi_rank( 2 );
 
@@ -2582,36 +2757,14 @@ public:
 
 		SimulateMPI::set_mpi_rank( 0 ); // the master node
 
-		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has job result 4", mpi_work_pool_jd_job_result_retrieved );
-		std::string ser_job_res4 = ts_assert_mpi_buffer_has_string( 1, "node 1 sends the serialized larval-job and job-result from job 4" );
-		MPIWorkPoolJobDistributor::LarvalJobAndResult job_res4 = deserialized_larval_job_and_job_result( ser_job_res4 );
-		TS_ASSERT( job_res4.first );
-		TS_ASSERT( job_res4.second );
-		TS_ASSERT_EQUALS( job_res4.first->job_index(), 4 );
-		TS_ASSERT_EQUALS( job_res4.first->nstruct_index(), 1 );
-		TS_ASSERT_EQUALS( job_res4.first->nstruct_max(), 3 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( job_res1a.second )->pose()->total_residue(), 20 );
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has a message", 1 );
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has output job result 4", mpi_work_pool_jd_output_completed );
 
-		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has job result 5", mpi_work_pool_jd_job_result_retrieved );
-		std::string ser_job_res5 = ts_assert_mpi_buffer_has_string( 1, "node 1 sends the serialized larval-job and job-result from job 5" );
-		MPIWorkPoolJobDistributor::LarvalJobAndResult job_res5 = deserialized_larval_job_and_job_result( ser_job_res5 );
-		TS_ASSERT( job_res5.first );
-		TS_ASSERT( job_res5.second );
-		TS_ASSERT_EQUALS( job_res5.first->job_index(), 5 );
-		TS_ASSERT_EQUALS( job_res5.first->nstruct_index(), 2 );
-		TS_ASSERT_EQUALS( job_res5.first->nstruct_max(), 3 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( job_res1a.second )->pose()->total_residue(), 20 );
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has a message, b", 1 );
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has output job result 5", mpi_work_pool_jd_output_completed );
 
-		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has job result 6", mpi_work_pool_jd_job_result_retrieved );
-		std::string ser_job_res6 = ts_assert_mpi_buffer_has_string( 1, "node 1 sends the serialized larval-job and job-result from job 6" );
-		MPIWorkPoolJobDistributor::LarvalJobAndResult job_res6 = deserialized_larval_job_and_job_result( ser_job_res6 );
-		TS_ASSERT( job_res6.first );
-		TS_ASSERT( job_res6.second );
-		TS_ASSERT_EQUALS( job_res6.first->job_index(), 6 );
-		TS_ASSERT_EQUALS( job_res6.first->nstruct_index(), 3 );
-		TS_ASSERT_EQUALS( job_res6.first->nstruct_max(), 3 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( job_res1a.second )->pose()->total_residue(), 20 );
-
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has a message, c", 1 );
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has output job result 6", mpi_work_pool_jd_output_completed );
 
 #endif
 	}
@@ -2791,7 +2944,8 @@ public:
 #endif
 	}
 
-	void test_MPIWorkPoolJobDistributor_master_node_vanilla_end_to_end_all_successes_jq_requires_larval_jobs_for_summaries() {
+	// Removing the idea that the remote node needs to send back the LarvalJobOP to node0
+	void dont_test_MPIWorkPoolJobDistributor_master_node_vanilla_end_to_end_all_successes_jq_requires_larval_jobs_for_summaries() {
 		TS_ASSERT( true ); // appease non-serialization builds
 
 
@@ -2884,13 +3038,13 @@ public:
 		TS_ASSERT_EQUALS( jq->summaries_.count( sp1(1) ), 1 );
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq->summaries_[ sp1(1) ])->energy(), 1234 );
 
-		TS_ASSERT_EQUALS( jq->results_.count( sp1(1) ), 1 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq->results_[ sp1(1) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( jq->results_->count( sp1(1) ), 1 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq->results_)[ sp1(1) ])->pose()->total_residue(), 20 );
 
 #endif
 	}
 
-	void test_workpool_jd3_worker_node_vanilla_end_to_end_all_successes_jq_requires_larval_jobs_for_summaries() {
+	void dont_test_workpool_jd3_worker_node_vanilla_end_to_end_all_successes_jq_requires_larval_jobs_for_summaries() {
 		TS_ASSERT( true );
 
 
@@ -3265,16 +3419,15 @@ public:
 
 		send_integer_to_node( 0, 2 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
-		send_size_to_node( 0, 3 ); // node 1 says it finished job #3
+		send_size_to_node( 0, 3 ); // node 2 says it finished job #3
 		send_integer_to_node( 0, jd3_job_status_success ); // node 2 says it finished job #3 successfully
 		send_string_to_node( 0, serialized_trpcage_job_summaries );
 
 		SimulateMPI::set_mpi_rank( 1 );
-		// ok, now the archive is going to receive a job result requests from
+		// ok, now the archive is going to receive a job output requests from
 		// node 0 for job 1
-		send_integer_to_node( 0, mpi_work_pool_jd_job_result_retrieved );
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 2, 1, 1, trpcage_pose_result ));
-
+		send_integer_to_node( 0, 1 );
+		send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
 
 		// And we pretend that node 3 is only just now getting started in retrieving
 		// the job inputs from the archive .. so node 3 and node 1 start talking (but we don't get
@@ -3416,7 +3569,7 @@ public:
 			TS_ASSERT( false ); // this should not be reached.
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			TS_ASSERT_EQUALS( e.msg(), "Internal Error in the MPIWorkPoolJobDistributor: "
-				"recieved inappropriate signal on node 0 from node 1: "
+				"received inappropriate signal on node 0 from node 1: "
 				+ utility::to_string( mpi_work_pool_jd_spin_down ) );
 		}
 #endif
@@ -3587,6 +3740,7 @@ public:
 		trpcage_pose_result->pose(  create_trpcage_ideal_poseop() );
 
 		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( 2 ) );
+		inner_job->outputter( DummyPoseOutputter::keyname() );
 		inner_job->const_data_map().add( "testing", "testing", UndeserializableOP( new Undeserializable ));
 		LarvalJobOP larval_job( new LarvalJob( inner_job, 1, 1 ));
 
@@ -4317,15 +4471,15 @@ public:
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq11->summaries_[ sp1( 5 ) ])->energy(), 1234 );
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq11->summaries_[ sp1( 6 ) ])->energy(), 1234 );
 
-		TS_ASSERT_EQUALS( jq11->results_.count( sp1( 1 ) ), 0 );
-		TS_ASSERT_EQUALS( jq11->results_.count( sp1( 2 ) ), 0 );
-		TS_ASSERT_EQUALS( jq11->results_.count( sp1( 3 ) ), 0 );
-		TS_ASSERT_EQUALS( jq11->results_.count( sp1( 4 ) ), 1 );
-		TS_ASSERT_EQUALS( jq11->results_.count( sp1( 5 ) ), 1 );
-		TS_ASSERT_EQUALS( jq11->results_.count( sp1( 6 ) ), 1 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq11->results_[ sp1( 4 ) ])->pose()->total_residue(), 20 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq11->results_[ sp1( 5 ) ])->pose()->total_residue(), 20 );
-		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( jq11->results_[ sp1( 6 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( jq11->results_->count( sp1( 1 ) ), 0 );
+		TS_ASSERT_EQUALS( jq11->results_->count( sp1( 2 ) ), 0 );
+		TS_ASSERT_EQUALS( jq11->results_->count( sp1( 3 ) ), 0 );
+		TS_ASSERT_EQUALS( jq11->results_->count( sp1( 4 ) ), 1 );
+		TS_ASSERT_EQUALS( jq11->results_->count( sp1( 5 ) ), 1 );
+		TS_ASSERT_EQUALS( jq11->results_->count( sp1( 6 ) ), 1 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq11->results_)[ sp1( 4 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq11->results_)[ sp1( 5 ) ])->pose()->total_residue(), 20 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( (*jq11->results_)[ sp1( 6 ) ])->pose()->total_residue(), 20 );
 
 
 

@@ -16,10 +16,12 @@
 #include <protocols/jd3/pose_outputters/SilentFilePoseOutputterCreator.hh>
 
 //package headers
+#include <protocols/jd3/pose_outputters/SilentFilePoseOutputSpecification.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
+#include <protocols/jd3/standard/MoverAndPoseJob.hh>
 
 //project headers
 #include <core/pose/Pose.hh>
@@ -94,8 +96,22 @@ SilentFilePoseOutputter::outputter_for_job(
 	}
 }
 
+
+std::string
+SilentFilePoseOutputter::outputter_for_job(
+	PoseOutputSpecification const & spec
+) const
+{
+	typedef SilentFilePoseOutputSpecification SFPOS;
+	debug_assert( dynamic_cast< SFPOS const * > ( &spec ) );
+	SFPOS const & sf_spec( static_cast< SFPOS const & > ( spec ) );
+
+	return sf_spec.out_fname();
+}
+
 bool SilentFilePoseOutputter::job_has_already_completed( LarvalJob const & /*job*/, utility::options::OptionCollection const & ) const
 {
+	// There is no "don't overwrite already generated structures" behavior for silent-file output.
 	return false;
 }
 
@@ -111,23 +127,69 @@ SilentFilePoseOutputter::class_key() const
 	return keyname();
 }
 
-void
-SilentFilePoseOutputter::write_output_pose(
+
+/// @brief Create the PoseOutputSpecification for a particular job
+PoseOutputSpecificationOP
+SilentFilePoseOutputter::create_output_specification(
 	LarvalJob const & job,
 	JobOutputIndex const & output_index,
 	utility::options::OptionCollection const & job_options,
-	utility::tag::TagCOP tag, // possibly null-pointing tag pointer
-	core::pose::Pose const & pose
+	utility::tag::TagCOP tag // possibly null-pointing tag pointer
 )
 {
-	if ( ! opts_ ) {
-		initialize_sf_options( job_options, tag );
-	}
-	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose, *opts_ );
-	std::string output_tag = ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
-		+ job.job_tag_with_index_suffix( output_index );
+	using namespace core::io::silent;
+	debug_assert( !tag || tag->getName() == keyname() ); // I expect this Tag to point to my data
 
-	ss->fill_struct( pose, output_tag );
+	core::io::silent::SilentFileOptions opts( job_options );
+	std::string fname_out;
+	core::Size buffer_limit(0);
+	if ( tag ) {
+		opts.read_from_tag( tag );
+		fname_out = tag->getOption< std::string >( "filename" );
+		if ( tag->hasOption( "buffer_limit" ) ) {
+			buffer_limit = tag->getOption< core::Size >( "buffer_limit" );
+		}
+	} else {
+		using namespace basic::options::OptionKeys;
+		fname_out = job_options[ out::file::silent ]();
+		// buffer limit? -- default of 0?
+	}
+
+	SilentFilePoseOutputSpecificationOP sf_pos( new SilentFilePoseOutputSpecification );
+	sf_pos->sf_opts( opts );
+	sf_pos->out_fname( fname_out );
+	sf_pos->buffer_limit( buffer_limit );
+	sf_pos->pose_tag( ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
+		+ job.job_tag_with_index_suffix( output_index ) );
+	return sf_pos;
+}
+
+/// @brief Write a pose out to permanent storage (whatever that may be).
+void
+SilentFilePoseOutputter::write_output(
+	output::OutputSpecification const & spec,
+	JobResult const & result
+)
+{
+	using standard::PoseJobResult;
+	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
+	PoseJobResult const & pose_result( static_cast< PoseJobResult const & > ( result ));
+	core::pose::Pose const & pose( *pose_result.pose() );
+
+	typedef SilentFilePoseOutputSpecification SFPOS;
+	debug_assert( dynamic_cast< SFPOS const * > ( &spec ) );
+	SFPOS const & sf_spec( static_cast< SFPOS const & > ( spec ) );
+
+	if ( ! opts_ ) {
+		// I.e., we are a fresh outputter
+		opts_.reset( new core::io::silent::SilentFileOptions( sf_spec.sf_opts() ) );
+		fname_out_ = sf_spec.out_fname();
+		buffer_limit_ = sf_spec.buffer_limit();
+	}
+
+	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose, sf_spec.sf_opts() );
+	ss->fill_struct( pose, sf_spec.pose_tag() );
+
 	buffered_structs_.push_back( ss );
 
 	if ( buffered_structs_.size() >= buffer_limit_ ) {
@@ -135,6 +197,26 @@ SilentFilePoseOutputter::write_output_pose(
 	}
 
 }
+
+//void
+//SilentFilePoseOutputter::write_output_pose(
+// LarvalJob const & job,
+// JobOutputIndex const & output_index,
+// utility::options::OptionCollection const & job_options,
+// utility::tag::TagCOP tag, // possibly null-pointing tag pointer
+// core::pose::Pose const & pose
+//)
+//{
+// if ( ! opts_ ) {
+//  initialize_sf_options( job_options, tag );
+// }
+//
+// std::string output_tag = ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
+//  + job.job_tag_with_index_suffix( output_index );
+//
+// ss->fill_struct( pose, output_tag );
+//
+//}
 
 void SilentFilePoseOutputter::flush()
 {
@@ -176,7 +258,15 @@ SilentFilePoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	pose_outputter_xsd_type_definition_w_attributes( xsd, keyname(),
 		"A PoseOutputter that writes structures out in a rosetta-specific format; a single "
 		" silent file can hold hundreds or thousdands of output structures, lessening the load"
-		" on file systems, and making output management easier.",
+		" on file systems, and making output management easier. Note that if two different Jobs"
+		" defined in the Job-definition file intend to write their outputs to the same file, then"
+		" the settings for the first Job will take precedence over the settings for the second Job."
+		" This situation is complicated further if using MPI and multiple output/archive nodes:"
+		" in this scenario, multiple silent files will be written (one per output node) and the first"
+		" Job to be written to a silent file will determine which settings take precedence but that"
+		" it is not knowable which of the two Jobs will be written first. To avoid confusion, it is"
+		" recommended that either each Job write their outputs to a different file, or that the"
+		" same options are used for all Jobs writing to the same file.",
 		attributes );
 }
 
@@ -192,28 +282,6 @@ SilentFilePoseOutputter::list_options_read(
 	read_options
 		+ out::silent_gz
 		+ out::file::silent;
-}
-
-void
-SilentFilePoseOutputter::initialize_sf_options(
-	utility::options::OptionCollection const & job_options,
-	utility::tag::TagCOP tag // possibly null-pointing tag pointer
-)
-{
-	using namespace core::io::silent;
-	opts_ = SilentFileOptionsOP( new SilentFileOptions( job_options ) );
-	if ( tag ) {
-		opts_->read_from_tag( tag );
-		fname_out_ = tag->getOption< std::string >( "filename" );
-		if ( tag->hasOption( "buffer_limit" ) ) {
-			buffer_limit_ = tag->getOption< core::Size >( "buffer_limit" );
-		}
-	} else {
-		using namespace basic::options::OptionKeys;
-		fname_out_ = job_options[ out::file::silent ]();
-		// buffer limit?
-	}
-
 }
 
 

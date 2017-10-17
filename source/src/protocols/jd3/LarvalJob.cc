@@ -131,7 +131,7 @@ core::Size LarvalJob::job_index() const {
 	return job_index_;
 }
 
-utility::vector1< JobOutputID > const &
+utility::vector1< JobResultID > const &
 LarvalJob::input_job_result_indices() const
 {
 	return inner_job_->input_job_result_indices();

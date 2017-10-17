@@ -21,6 +21,24 @@ namespace pose_outputters {
 SecondaryPoseOutputter::SecondaryPoseOutputter() {}
 SecondaryPoseOutputter::~SecondaryPoseOutputter() {}
 
+void SecondaryPoseOutputter::determine_job_tag(
+	utility::tag::TagCOP,
+	utility::options::OptionCollection const &,
+	InnerLarvalJob &
+) const
+{}
+
+
+bool SecondaryPoseOutputter::job_has_already_completed( LarvalJob const &, utility::options::OptionCollection const & ) const
+{
+	return false;
+}
+
+void SecondaryPoseOutputter::mark_job_as_having_started( LarvalJob const &, utility::options::OptionCollection const & ) const
+{
+}
+
+
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols

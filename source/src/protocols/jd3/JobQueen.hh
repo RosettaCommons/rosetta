@@ -26,6 +26,8 @@
 #include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/deallocation/DeallocationMessage.fwd.hh>
+#include <protocols/jd3/output/OutputSpecification.fwd.hh>
+#include <protocols/jd3/output/ResultOutputter.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -164,14 +166,18 @@ public:
 	virtual void completed_job_summary( core::Size job_id, Size result_index, JobSummaryOP summary ) = 0;
 
 	/// @brief The JobDistributor asks the JobQueen which JobResults should be queued for output.
-	/// The JobResult is indicated by a pair of Sizes: the first Size being the job index, and
-	/// the second Size being the index of the JobSummary/JobResult pair in the CompletedJob.
-	/// Each job id should be indicated by its "global" index. This is asked of each queen which
-	/// has seen the job summaries for a batch of jobs. The JobQueen should ask for a given
-	/// JobResult only once. After a job result is output, the JobDistributor will discard
+	/// The JobQueen should reply by returning a list of OutputSpecification objects. Each
+	/// OutputSpecification indicates a particular JobResult using the JobResultID object that the
+	/// Specification holds. It also indicates how the JobResult should be output by whatever object
+	/// will be doing to job outputting. The JobQueen should ask for a given JobResult to be output
+	/// only once. After a job result is output, the JobDistributor will discard
 	/// the JobResult, so the JobQueen should not tell the JobDistributor to output a job if
-	/// it will be used as an input to another job in the future.
-	virtual std::list< JobResultID > jobs_that_should_be_output() = 0;
+	/// it will be used as an input to another job in the future. Note that this method will only
+	/// be called on the master-node JobQueen (aka JQ0), but that she will not necessarily be
+	/// the JobQueen to actually return the ResultOutputter for the jobs that will be output.
+	/// The JobDistributor holds the option to distribute output to other nodes
+	virtual std::list< output::OutputSpecificationOP >
+	jobs_that_should_be_output() = 0;
 
 	/// @brief The JobDistributor, to manage memory use, asks the JobQueen which JobResults may be
 	/// discarded because they will not be used in the future.  The JobDistributor will exit with
@@ -179,10 +185,17 @@ public:
 	/// JobResults as a required input for that LarvalJob.
 	virtual std::list< JobResultID > job_results_that_should_be_discarded() = 0;
 
-	/// @brief The JobDistributor hands the JobResult for a particular larval job to a JobQueen
-	/// after it has been requested through a call to jobs_that_should_be_output, but the JobDistributor
-	/// will not necessarily give the JobResult to the JobQueen that requested the job result.
-	virtual void completed_job_result( LarvalJobCOP job, Size result_id, JobResultOP job_result ) = 0;
+	/// @brief The JobDistributor will ask the JobQueen to provide an outputter for a result
+	/// giving it an annotated-with-job-distributor-specific-prefix OutputSpecification. The
+	/// JobQueen must guarantee that a distinct ResultOutputter is given for each distinct
+	/// JD prefix and that no two ResultOutputters share non-(bitwise-)constant data as the
+	/// JobDistributor may use multiple threads to perform output. Note that the JobQueen
+	/// that creates the outputter may not have been the JobQueen to request that output be performed.
+	/// This function is thus similar to mature_larval_job: it requires that the JobQueen
+	/// make few assumptions about the state of her data in order for this behavior to translate
+	/// from the VanillaJobDistributor to the MPIWorkPoolJobDistributor.
+	virtual output::ResultOutputterOP
+	result_outputter( output::OutputSpecification const & output_specification ) = 0;
 
 	/// @brief Send all buffered output to disk -- called by the JobDistributor right before it shuts down
 	/// if it hits an error or catches an exception that it cannot ignore.

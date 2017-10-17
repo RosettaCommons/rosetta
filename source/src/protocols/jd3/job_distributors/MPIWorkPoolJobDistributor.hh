@@ -33,6 +33,7 @@
 #include <protocols/jd3/JobQueen.fwd.hh>
 #include <protocols/jd3/deallocation/DeallocationMessage.fwd.hh>
 #include <protocols/jd3/job_distributors/JobExtractor.fwd.hh>
+#include <protocols/jd3/output/OutputSpecification.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -68,7 +69,10 @@ enum mpi_tags {
 	mpi_work_pool_jd_job_failed_retry_limit_exceeded,
 	mpi_work_pool_jd_job_success_and_archival_complete,
 	mpi_work_pool_jd_archive_job_result,
+	mpi_work_pool_jd_output_job_result_already_available,
+	mpi_work_pool_jd_accept_and_output_job_result,
 	mpi_work_pool_jd_archival_completed,
+	mpi_work_pool_jd_output_completed,
 	mpi_work_pool_jd_retrieve_job_result,
 	mpi_work_pool_jd_job_result_retrieved,         // found it.
 	mpi_work_pool_jd_failed_to_retrieve_job_result, // didn't find it
@@ -150,7 +154,16 @@ private:
 	process_archival_complete_message( int worker_node );
 
 	void
+	process_output_complete_message( int archival_node );
+
+	void
 	process_retrieve_job_result_request( int worker_node );
+
+	void
+	process_output_job_result_already_available_request( int remote_node );
+
+	void
+	process_accept_and_output_job_result_request( int remote_node );
 
 	void
 	process_failed_to_retrieve_job_result_request( int archival_node );
@@ -167,7 +180,9 @@ private:
 	void
 	send_error_message_to_node0( std::string const & error_message );
 
-	void
+	/// @brief Sends the next job in the queue to the remote node that has requested a job.
+	/// Returns true if the job was sent, and false if there were no jobs that could be sent
+	bool
 	send_next_job_to_node( int worker_node );
 
 	void
@@ -274,6 +289,12 @@ private:
 		CompletedJobOutput job_output
 	);
 
+	void
+	write_output(
+		output::OutputSpecificationOP spec,
+		LarvalJobAndResult const & job_and_result
+	);
+
 	LarvalJobOP
 	deserialize_larval_job(
 		std::string const & larval_job_string
@@ -304,20 +325,25 @@ private:
 		utility::vector1< JobSummaryOP > const & job_summaries
 	) const;
 
-	inline std::string get_string_from_disk( Size job_id, Size result_index ) const {
-		return utility::file_contents( filename_for_archive( job_id, result_index ) );
-	}
+	output::OutputSpecificationOP
+	deserialize_output_specification( std::string const & spec_string ) const;
 
-	inline std::string filename_for_archive( Size job_id, Size result_index ) const {
-		return archive_dir_name_ + "/archive." + std::to_string( job_id ) + "." + std::to_string( result_index );
-	}
+	std::string
+	serialize_output_specification( output::OutputSpecificationOP output_spec ) const;
+
+	std::string get_string_from_disk( Size job_id, Size result_index ) const;
+
+	std::string filename_for_archive( Size job_id, Size result_index ) const;
+
 
 private:
 
 	int mpi_rank_;
+	std::string mpi_rank_string_;
 	int mpi_nprocs_;
 	int n_archives_;
 	bool store_on_node0_;
+	bool output_on_node0_;
 	bool compress_job_results_;
 
 	bool archive_on_disk_;
@@ -344,6 +370,8 @@ private:
 
 	// the worker node that is currently running each job
 	WorkerNodeForJobMap  worker_node_for_job_;
+	// the jobs that are currently running on remote nodes
+	JobMap in_flight_larval_jobs_;
 
 	// indexes 1..mpi_nproc_-1 because node0 does not track itself.
 	utility::vector1< bool > nodes_spun_down_;

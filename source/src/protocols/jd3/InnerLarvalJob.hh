@@ -159,7 +159,7 @@ public:
 
 	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
 	/// already-executed (Lavral)Jobs
-	utility::vector1< JobOutputID > const &
+	utility::vector1< JobResultID > const &
 	input_job_result_indices() const;
 
 	/// @brief Add a required input by the pair representing 1) the global index of the job

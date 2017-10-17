@@ -33,6 +33,16 @@
 // Tracer instance for this file
 static THREAD_LOCAL basic::Tracer TR( "core.io.StructFileRepOptions" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 
@@ -578,3 +588,115 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 
 } // namespace io
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::io::StructFileRepOptions::save( Archive & arc ) const {
+	// arc( cereal::base_class< basic::resource_manager::ResourceOptions >( this ) );
+	arc( CEREAL_NVP( check_if_residues_are_Ntermini_ ) ); // std::string
+	arc( CEREAL_NVP( check_if_residues_are_Ctermini_ ) ); // std::string
+	arc( CEREAL_NVP( skip_connect_info_ ) ); // _Bool
+	arc( CEREAL_NVP( connect_info_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( do_not_autoassign_SS_ ) ); // _Bool
+	arc( CEREAL_NVP( exit_if_missing_heavy_atoms_ ) ); // _Bool
+	arc( CEREAL_NVP( fold_tree_io_ ) ); // _Bool
+	arc( CEREAL_NVP( ignore_unrecognized_res_ ) ); // _Bool
+	arc( CEREAL_NVP( ignore_sugars_ ) ); // _Bool
+	arc( CEREAL_NVP( ignore_waters_ ) ); // _Bool
+	arc( CEREAL_NVP( ignore_zero_occupancy_ ) ); // _Bool
+	arc( CEREAL_NVP( guarantee_no_DNA_ ) ); // _Bool
+	arc( CEREAL_NVP( keep_input_protonation_state_ ) ); // _Bool
+	arc( CEREAL_NVP( preserve_header_ ) ); // _Bool
+	arc( CEREAL_NVP( preserve_crystinfo_ ) ); // _Bool
+	arc( CEREAL_NVP( missing_dens_as_jump_ ) ); // _Bool
+	arc( CEREAL_NVP( no_chainend_ter_ ) ); // _Bool
+	arc( CEREAL_NVP( no_output_cen_ ) ); // _Bool
+	arc( CEREAL_NVP( normalize_to_thk_ ) ); // _Bool
+	arc( CEREAL_NVP( output_secondary_structure_ ) ); // _Bool
+	arc( CEREAL_NVP( output_torsions_ ) ); // _Bool
+	arc( CEREAL_NVP( output_virtual_ ) ); // _Bool
+	arc( CEREAL_NVP( output_virtual_zero_occ_ ) ); // _Bool
+	arc( CEREAL_NVP( pdb_parents_ ) ); // _Bool
+	arc( CEREAL_NVP( per_chain_renumbering_ ) ); // _Bool
+	arc( CEREAL_NVP( randomize_missing_coords_ ) ); // _Bool
+	arc( CEREAL_NVP( remember_unrecognized_res_ ) ); // _Bool
+	arc( CEREAL_NVP( remember_unrecognized_water_ ) ); // _Bool
+	arc( CEREAL_NVP( renumber_pdb_ ) ); // _Bool
+	arc( CEREAL_NVP( suppress_zero_occ_pdb_output_ ) ); // _Bool
+	arc( CEREAL_NVP( auto_detect_glycan_connections_ ) ); // _Bool
+	arc( CEREAL_NVP( write_glycan_pdb_codes_ ) ); // _Bool
+	arc( CEREAL_NVP( max_bond_length_ ) ); // core::Real
+	arc( CEREAL_NVP( min_bond_length_ ) ); // core::Real
+	arc( CEREAL_NVP( use_pdb_format_HETNAM_records_ ) ); // _Bool
+	arc( CEREAL_NVP( write_pdb_link_records_ ) ); // _Bool
+	arc( CEREAL_NVP( write_pdb_parametric_info_ ) ); // _Bool
+	arc( CEREAL_NVP( write_all_connect_info_ ) ); // _Bool
+	arc( CEREAL_NVP( chains_whose_residues_are_separate_chemical_entities_ ) ); // std::string
+	arc( CEREAL_NVP( residues_for_atom_name_remapping_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( pdb_comments_ ) ); // _Bool
+	arc( CEREAL_NVP( show_all_fixes_ ) ); // _Bool
+	arc( CEREAL_NVP( constraints_from_link_records_ ) ); // _Bool
+	arc( CEREAL_NVP( output_pose_energies_table_ ) ); // _Bool
+	arc( CEREAL_NVP( output_pose_cache_data_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::io::StructFileRepOptions::load( Archive & arc ) {
+	// arc( cereal::base_class< basic::resource_manager::ResourceOptions >( this ) );
+	arc( check_if_residues_are_Ntermini_ ); // std::string
+	arc( check_if_residues_are_Ctermini_ ); // std::string
+	arc( skip_connect_info_ ); // _Bool
+	arc( connect_info_cutoff_ ); // core::Real
+	arc( do_not_autoassign_SS_ ); // _Bool
+	arc( exit_if_missing_heavy_atoms_ ); // _Bool
+	arc( fold_tree_io_ ); // _Bool
+	arc( ignore_unrecognized_res_ ); // _Bool
+	arc( ignore_sugars_ ); // _Bool
+	arc( ignore_waters_ ); // _Bool
+	arc( ignore_zero_occupancy_ ); // _Bool
+	arc( guarantee_no_DNA_ ); // _Bool
+	arc( keep_input_protonation_state_ ); // _Bool
+	arc( preserve_header_ ); // _Bool
+	arc( preserve_crystinfo_ ); // _Bool
+	arc( missing_dens_as_jump_ ); // _Bool
+	arc( no_chainend_ter_ ); // _Bool
+	arc( no_output_cen_ ); // _Bool
+	arc( normalize_to_thk_ ); // _Bool
+	arc( output_secondary_structure_ ); // _Bool
+	arc( output_torsions_ ); // _Bool
+	arc( output_virtual_ ); // _Bool
+	arc( output_virtual_zero_occ_ ); // _Bool
+	arc( pdb_parents_ ); // _Bool
+	arc( per_chain_renumbering_ ); // _Bool
+	arc( randomize_missing_coords_ ); // _Bool
+	arc( remember_unrecognized_res_ ); // _Bool
+	arc( remember_unrecognized_water_ ); // _Bool
+	arc( renumber_pdb_ ); // _Bool
+	arc( suppress_zero_occ_pdb_output_ ); // _Bool
+	arc( auto_detect_glycan_connections_ ); // _Bool
+	arc( write_glycan_pdb_codes_ ); // _Bool
+	arc( max_bond_length_ ); // core::Real
+	arc( min_bond_length_ ); // core::Real
+	arc( use_pdb_format_HETNAM_records_ ); // _Bool
+	arc( write_pdb_link_records_ ); // _Bool
+	arc( write_pdb_parametric_info_ ); // _Bool
+	arc( write_all_connect_info_ ); // _Bool
+	arc( chains_whose_residues_are_separate_chemical_entities_ ); // std::string
+	arc( residues_for_atom_name_remapping_ ); // utility::vector1<std::string>
+	arc( pdb_comments_ ); // _Bool
+	arc( show_all_fixes_ ); // _Bool
+	arc( constraints_from_link_records_ ); // _Bool
+	arc( output_pose_energies_table_ ); // _Bool
+	arc( output_pose_cache_data_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::io::StructFileRepOptions );
+CEREAL_REGISTER_TYPE( core::io::StructFileRepOptions )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_io_StructFileRepOptions )
+#endif // SERIALIZATION

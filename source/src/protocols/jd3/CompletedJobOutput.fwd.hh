@@ -36,8 +36,7 @@ typedef std::pair< JobSummaryOP, JobResultOP > SingleJobOutputPair;
 /// the same thing, but is given another name for when the JobQueen
 /// is trying to indicate which JobResult of all the JobSummary/JobResult pairs
 /// that she is interested in.
-typedef std::pair< core::Size, core::Size > JobOutputID;
-typedef JobOutputID JobResultID;
+typedef std::pair< core::Size, core::Size > JobResultID;
 
 struct CompletedJobOutput;
 

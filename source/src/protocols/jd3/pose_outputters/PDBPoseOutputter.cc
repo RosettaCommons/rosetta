@@ -16,11 +16,13 @@
 #include <protocols/jd3/pose_outputters/PDBPoseOutputterCreator.hh>
 
 //package headers
+#include <protocols/jd3/pose_outputters/PDBPoseOutputSpecification.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
+#include <protocols/jd3/standard/MoverAndPoseJob.hh>
 
 //project headers
 #include <core/pose/Pose.hh>
@@ -120,6 +122,14 @@ PDBPoseOutputter::outputter_for_job(
 	return "";
 }
 
+std::string
+PDBPoseOutputter::outputter_for_job(
+	PoseOutputSpecification const &
+) const
+{
+	return "";
+}
+
 bool PDBPoseOutputter::job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const
 {
 	using namespace basic::options::OptionKeys;
@@ -148,7 +158,7 @@ bool PDBPoseOutputter::job_has_already_completed( LarvalJob const & job, utility
 
 	bool exists = utility::file::file_exists( filename );
 	if ( exists ) {
-		TR <<std::endl << "Skipping "<< filename << ". Please pass the overwrite option/tag" << std::endl;
+		TR << std::endl << "Skipping "<< filename << ". Please pass the overwrite option/tag" << std::endl;
 	}
 	return exists;
 }
@@ -165,47 +175,36 @@ PDBPoseOutputter::class_key() const
 	return keyname();
 }
 
-void
-PDBPoseOutputter::write_output_pose(
+/// @brief Create the PoseOutputSpecification for a particular job
+PoseOutputSpecificationOP
+PDBPoseOutputter::create_output_specification(
 	LarvalJob const & job,
 	JobOutputIndex const & output_index,
 	utility::options::OptionCollection const & job_options,
-	utility::tag::TagCOP pdb_output_tag, // possibly null-pointing tag pointer
-	core::pose::Pose const & pose
+	utility::tag::TagCOP pdb_output_tag // possibly null-pointing tag pointer
 )
 {
-	std::string out_fname = output_pdb_name( job, output_index, job_options, pdb_output_tag );
+	PDBPoseOutputSpecificationOP spec( new PDBPoseOutputSpecification );
+	spec->out_fname( output_pdb_name( job, output_index, job_options, pdb_output_tag ) );
+	spec->sfr_opts( core::io::StructFileRepOptions( job_options ) );
+	return spec;
+}
 
-	// On second thought: if we have produced an output, we should write it.
-	// Don't do a second check for whether the PDB already exists.
+/// @brief Write a pose out to permanent storage (whatever that may be).
+void PDBPoseOutputter::write_output(
+	output::OutputSpecification const & spec,
+	JobResult const & result
+)
+{
+	using standard::PoseJobResult;
+	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
+	PoseJobResult const & pose_result( static_cast< PoseJobResult const & > ( result ));
+	core::pose::Pose const & pose( *pose_result.pose() );
 
-	// // We might not have checked whether the PDB file that's about to be written
-	// // already exists on disk, because we might not have known about the fact that
-	// // multiple Poses are produced by a given job. Check now, and if the PDB file
-	// // already exists then only overwrite it if we have the overwrite flag.
-	// if ( pose_ind_of_total.second != 1 && utility::file::file_exists( out_fname ) ) {
-	//
-	//  // PDB tag "overwrite" attribute takes precedence over the options system
-	//  // if the tag says "do not overwrite," then do not look at the options system.
-	//  bool skip_outputting_this_pose( false );
-	//  if ( pdb_output_tag && pdb_output_tag->hasOption( "overwrite" ) ) {
-	//   if ( pdb_output_tag->getOption< bool >( "overwrite", false ) ) {
-	//    skip_outputting_this_pose = true;
-	//   }
-	//  } else if ( ! job_options[ basic::options::OptionKeys::out::overwrite ] ) {
-	//   skip_outputting_this_pose = true;
-	//  }
-	//
-	//  if ( skip_outputting_this_pose ) {
-	//   TR << "PDB file '" + out_fname + "' already exists and neither the -overwrite flag," <<
-	//    " nor the overwrite attribute of the PDB outputter tag are set. This pose will not be" <<
-	//    " written to disk." << std::endl;
-	//   return;
-	//  }
-	// }
-
-	core::io::StructFileRepOptionsOP sfr_opts( new core::io::StructFileRepOptions( job_options ) );
-	core::io::pdb::dump_pdb( pose, out_fname, sfr_opts );
+	typedef PDBPoseOutputSpecification PDBPOS;
+	debug_assert( dynamic_cast< PDBPOS const * > ( & spec ) );
+	PDBPOS pdb_spec( static_cast< PDBPOS const & > ( spec ) );
+	core::io::pdb::dump_pdb( pose, pdb_spec.out_fname(), pdb_spec.sfr_opts() );
 }
 
 std::string
@@ -229,6 +228,7 @@ PDBPoseOutputter::output_pdb_name(
 	utility::tag::TagCOP tag
 ) const
 {
+	debug_assert( !tag || tag->getName() ==  keyname() );
 	utility::file::FileName fn;
 	if ( tag && tag->getOption< bool >( "pdb_gz", false ) ) {
 		fn.ext( ".pdb.gz" );

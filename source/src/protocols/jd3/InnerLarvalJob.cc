@@ -257,13 +257,13 @@ InnerLarvalJob::input_source( Size index ) const
 	return *input_sources_[ index ];
 }
 
-utility::vector1< JobOutputID > const &
+utility::vector1< JobResultID > const &
 InnerLarvalJob::input_job_result_indices() const
 {
 	return input_job_result_indices_;
 }
 
-void InnerLarvalJob::add_input_job_result_index( JobOutputID job_index )
+void InnerLarvalJob::add_input_job_result_index( JobResultID job_index )
 {
 	input_job_result_indices_.push_back( job_index );
 }

@@ -114,7 +114,7 @@ InvrotTree::dump_invrots_tree_as_multimodel_pdbs( std::string filename_base) con
 		}
 		tr << std::endl;
 
-		core::Size atomcounter(0), modelcount(1);
+		core::Size atomcounter(1), modelcount(1);
 		bool all_res_iterators_at_end( false );
 		std::ofstream file_out( filename.c_str() );
 		file_out << "MODEL   1\n";

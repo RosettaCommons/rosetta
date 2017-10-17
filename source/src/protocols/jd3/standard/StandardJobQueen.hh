@@ -25,6 +25,7 @@
 #include <protocols/jd3/pose_inputters/PoseInputSource.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterCreator.fwd.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputSpecification.fwd.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.fwd.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh>
@@ -122,14 +123,30 @@ public:
 	void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) override;
 	void note_job_completed( core::Size job_id, JobStatus status, Size nresults ) override;
 
+	/// @brief The SJQ needs the larval job in order to create the OutputSpecification for jobs
+	/// that should be output. Derived JobQueens should only override this method if they are not
+	/// using the PoseOutputters that the SJQ is using or if are themselves tracking the LarvalJobOPs
+	/// for currently-running jobs (a potentially memory-hogging operation, depending on the number
+	/// of jobs run at once?)
 	bool larval_job_needed_for_completed_job_summary() const override;
+
+	/// @brief If the job result that is summarized here should be output, then the SJQ needs to
+	/// have access to the LarvalJob in order to do that.
 	void completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) override;
+
+	/// @brief This method should not be called, as the SJQ needs the LarvalJob pointer when creating
+	/// OutputSpecifications.
 	void completed_job_summary( core::Size job_id, Size result_index, JobSummaryOP summary ) override;
 
-	std::list< JobResultID > jobs_that_should_be_output() override;
+	std::list< output::OutputSpecificationOP > jobs_that_should_be_output() override;
 	std::list< JobResultID > job_results_that_should_be_discarded() override;
-	void completed_job_result( LarvalJobCOP job, Size result_id, JobResultOP job_result ) override;
 
+	/// @brief Return the bag of of PoseOutputters (in the form of a MultipleOutputter) for the
+	/// Pose that has been requested and specified by a particular OutputSpecification; this
+	/// function guarantees that for each individual outputter-name (respecting the JD-provided
+	/// filename suffix) that a separate set of PoseOutputters are returned so that multiple threads
+	/// can potentially output at the same time.
+	output::ResultOutputterOP result_outputter( output::OutputSpecification const & spec ) override;
 
 	/// @brief Read from an input string representing the contents of the job-definiton XML file
 	/// and construct a set of LarvalJobs; this function is primarily useful for testing,
@@ -170,7 +187,9 @@ protected:
 	/// to the %StandardJobQueen with this function. If the derived job queen does not want to
 	/// use all of the pose inputters provided by the factory, then she must call
 	/// "do_not_accept_all_pose_inputters_from_factory()" before she calls this function.
-	/// This function must only be called in the DJQ's constructor.
+	/// This function must only be called in the DJQ's constructor. All DJQs must invoke this
+	/// method in their constructors and not simply the DJQ that lives on the "head node"
+	/// in order for distributed output to workk correctly.
 	void
 	allow_pose_inputter( pose_inputters::PoseInputterCreatorOP creator );
 
@@ -381,6 +400,54 @@ protected:
 	LarvalJobs
 	next_batch_of_larval_jobs_for_job_node( core::Size job_dag_node_index, core::Size max_njobs );
 
+	/// @brief Create an output specification for a given job + result index and store it in the
+	/// recent_successes_ list, which will be given to the JobDistributor upon request. This
+	/// function invokes the factory method create_output_specification_for_job_result which
+	/// derive job queens may override. This version of the function will create an OptionCollection
+	/// and then invoke the version of the function that expects one.
+	void
+	create_and_store_output_specification_for_job_result(
+		LarvalJobCOP job,
+		core::Size result_index,
+		core::Size nresults
+	);
+
+	/// @brief Create an output specification for a given job + result index and store it in the
+	/// recent_successes_ list, which will be given to the JobDistributor upon request. This
+	/// function invokes the factory method create_output_specification_for_job_result which
+	/// derive job queens may override. This version of the function accepts an OptionCollection
+	/// if there are multiple results for a particular job, and you can reuse the OptionCollection
+	/// between calls.
+	void
+	create_and_store_output_specification_for_job_result(
+		LarvalJobCOP job,
+		utility::options::OptionCollection const & job_options,
+		core::Size result_index,
+		core::Size nresults
+	);
+
+	/// @brief Construct the OutputSpecification for a completed successful job. Factory method that
+	/// may be overriden by the derived job queen. Invoked by
+	/// create_and_store_output_specification_for_job_result which is invoked via note_job_completed
+	/// by default, and may be invoked by the derived job queen as needed.
+	virtual
+	output::OutputSpecificationOP
+	create_output_specification_for_job_result(
+		LarvalJobCOP job,
+		utility::options::OptionCollection const & job_options,
+		core::Size result_index,
+		core::Size nresults
+	);
+
+	/// @brief Construct a JobOutputIndex for a given job based on "the obvious", but giving derived
+	/// classes the chance to assign their own indices via the assign_output_index function
+	JobOutputIndex
+	build_output_index(
+		protocols::jd3::LarvalJobCOP larval_job,
+		Size result_index_for_job,
+		Size n_results_for_job
+	);
+
 	/// @brief The derived job queen may assign her own numbering to output Poses if she chooses.
 	///
 	/// @details Just before a job result is written to disk, the %StandardJobQueen asks the derived
@@ -389,6 +456,10 @@ protected:
 	/// result Poses from a job, to use the result index (as is) for the secondary output index.
 	/// These values will already have been loaded into the output_index before this function is
 	/// called.
+	/// This function will possibly be invoked more than a single time for a single job result, so
+	/// it is important that the derived JobQueen not assume that it only happens once.
+	/// This function will only be called on JQ0; it will not be called on any other JQs, so it
+	/// is welcome to use information that would only be known on the "head node"
 	virtual
 	void
 	assign_output_index(
@@ -452,7 +523,14 @@ protected:
 	pose_outputters::PoseOutputterOP
 	pose_outputter_for_job( StandardInnerLarvalJob const & innerJob, utility::options::OptionCollection const & job_options );
 
-	std::list< pose_outputters::SecondaryPoseOutputterOP >
+	/// @brief Find the PoseOutputter for a job specification, respecting the Job-distributor
+	/// provided output file suffix. The %StandardJobQueen guarantees that a different Outputter
+	/// is used for each unique name as long as that name is not the empty string. This allows
+	/// multiple threads to write to separate files concurrently.
+	pose_outputters::PoseOutputterOP
+	pose_outputter_for_job( pose_outputters::PoseOutputSpecification const & spec );
+
+	utility::vector1< pose_outputters::SecondaryPoseOutputterOP >
 	secondary_outputters_for_job( StandardInnerLarvalJob const & innerJob, utility::options::OptionCollection const & job_options );
 
 	core::Size
@@ -495,6 +573,11 @@ private:
 		StandardInnerLarvalJob const & inner_job,
 		utility::options::OptionCollection const & job_options,
 		std::string const & secondary_outputter_type
+	);
+
+	pose_outputters::SecondaryPoseOutputterOP
+	secondary_outputter_for_job(
+		pose_outputters::PoseOutputSpecification const &
 	);
 
 	/// @brief The SJQ will keep track of all jobs in the processed_jobs_ diet, but requires
@@ -575,8 +658,9 @@ private:
 
 	std::map< core::Size, PartialOutputStatus > results_processed_for_job_;
 
-	// The jobs that have completed, but have not yet been output
-	std::list< JobResultID > recent_successes_;
+	// The jobs that have completed, but have not yet been output, and the instructions for how
+	// to output them.
+	std::list< output::OutputSpecificationOP > recent_successes_;
 
 	// A mapping from the outputter-type to a representative PoseOutputter/SecondaryPoseOutputter.
 	typedef std::map< std::string, pose_outputters::PoseOutputterOP > RepresentativeOutputterMap;

@@ -19,6 +19,14 @@
 // Unit headers
 #include <protocols/jd3/standard/StandardJobQueen.hh>
 
+
+#include <test/protocols/jd3/DummyOutputter.hh>
+#ifdef SERIALIZATON
+// Only put this into one unit test header file
+CEREAL_REGISTER_DYNAMIC_INIT( DummyOutputSpecification )
+#endif
+
+
 // Package headers
 #include <protocols/jd3/standard/MoverAndPoseJob.hh>
 #include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
@@ -28,7 +36,12 @@
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
+#include <protocols/jd3/output/MultipleOutputSpecification.hh>
+#include <protocols/jd3/output/MultipleOutputter.hh>
+#include <protocols/jd3/output/OutputSpecification.hh>
+#include <protocols/jd3/output/ResultOutputter.hh>
 #include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputSpecification.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
@@ -61,9 +74,11 @@
 // C++ headers
 #include <sstream>
 
+using core::Size;
 using namespace utility::tag;
 using namespace protocols;
 using namespace protocols::jd3;
+using namespace protocols::jd3::output;
 using namespace protocols::jd3::pose_inputters;
 using namespace protocols::jd3::pose_outputters;
 using namespace protocols::jd3::standard;
@@ -104,81 +119,6 @@ public:
 	}
 };
 
-////
-////
-
-class DummyPoseOutputter : public PoseOutputter
-{
-public:
-	std::map< std::string, core::pose::PoseOP > outputs;
-
-	void determine_job_tag(
-		utility::tag::TagCOP,
-		utility::options::OptionCollection const &,
-		InnerLarvalJob & job
-	) const override {
-		job.job_tag( job.input_tag() );
-	}
-
-	std::string
-	outputter_for_job(
-		utility::tag::TagCOP,
-		utility::options::OptionCollection const &,
-		InnerLarvalJob const &
-	) const override {
-		return "dummy";
-	}
-
-	bool job_has_already_completed( LarvalJob const &, utility::options::OptionCollection const & ) const override { return false; }
-
-	void mark_job_as_having_started( LarvalJob const &, utility::options::OptionCollection const & ) const override {}
-
-	void write_output_pose(
-		LarvalJob const & job,
-		JobOutputIndex const & output_index,
-		utility::options::OptionCollection const &,
-		utility::tag::TagCOP,
-		core::pose::Pose const & pose
-	) override {
-		using namespace core::pose;
-		std::string name = job.job_tag_with_index_suffix( output_index );
-		std::cout << "Saving Pose with name: " << name << " ";
-		std::cout << output_index.secondary_output_index << " " << output_index.n_secondary_outputs << std::endl;
-		outputs[ name ] = PoseOP( new Pose( pose ) );
-	}
-
-	void flush() override {}
-
-	std::string
-	class_key() const override { return "Dummy"; }
-
-};
-
-typedef utility::pointer::shared_ptr< DummyPoseOutputter > DummyPoseOutputterOP;
-
-// An unregistered outputter
-class DummyOutputterCreator : public PoseOutputterCreator
-{
-public:
-
-	PoseOutputterOP create_outputter() const override { return PoseOutputterOP( new DummyPoseOutputter ); }
-	std::string keyname() const override { return "Dummy"; }
-	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override {
-		AttributeList attrs;
-		attrs + XMLSchemaAttribute( "dummy_attribute", xs_string, "A dummy attribute" );
-		pose_outputter_xsd_type_definition_w_attributes( xsd, keyname(), "testing 123", attrs );
-	}
-	void list_options_read( utility::options::OptionKeyList & read_options ) const override
-	{
-		read_options + basic::options::OptionKeys::dummy_outputter_arg;
-	}
-
-	bool outputter_specified_by_command_line() const override {
-		return basic::options::option[ basic::options::OptionKeys::dummy_outputter ];
-	}
-
-
-};
 
 
 // In the construtor for this class, the override functions for the PoseOutputter
@@ -236,12 +176,20 @@ public:
 		CompletedJobOutput output1 = job1->run();
 		TS_ASSERT_EQUALS( output1.job_results.size(), 1 );
 		djq2.note_job_completed( larval_job1, output1.status, 1 );
-		djq2.completed_job_result( larval_job1, 1, output1.job_results[1].second );
-		PoseOutputterOP outputter = djq2.outputter( larval_job1 );
-		DummyPoseOutputterOP dummy_outputter = utility::pointer::dynamic_pointer_cast< DummyPoseOutputter > ( outputter );
+		std::list< OutputSpecificationOP > results_to_output = djq2.jobs_that_should_be_output();
+		MultipleOutputSpecificationOP mos = utility::pointer::dynamic_pointer_cast< MultipleOutputSpecification > ( results_to_output.front() );
+		TS_ASSERT( mos );
+		TS_ASSERT_EQUALS( mos->output_specifications().size(), 2 );
+		DummyOutputSpecificationOP dos = utility::pointer::dynamic_pointer_cast< DummyOutputSpecification > ( mos->output_specifications()[ 1 ] );
+		TS_ASSERT( dos );
+		TS_ASSERT_EQUALS( dos->out_fname(), "1ubq_0001" );
+
+		ResultOutputterOP outputter = djq2.result_outputter( *mos );
+		MultipleOutputterOP moop = utility::pointer::dynamic_pointer_cast< MultipleOutputter >( outputter );
+		TS_ASSERT( moop );
+		TS_ASSERT_EQUALS( moop->outputters().size(), 2 );
+		DummyPoseOutputterOP dummy_outputter = utility::pointer::dynamic_pointer_cast< DummyPoseOutputter > ( moop->outputters()[ 1 ] );
 		TS_ASSERT( dummy_outputter );
-		if ( ! dummy_outputter ) return;
-		TS_ASSERT_EQUALS( dummy_outputter->outputs.count( "1ubq_0001" ), 1 );
 	}
 
 	void test_sjq_allow_only_non_factory_registered_outputter_read_jobdef_file()
@@ -265,23 +213,29 @@ public:
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq2.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
+		Size count( 0 );
 		for ( auto larval_job : jobs ) {
+			++count;
 			utility::vector1< protocols::jd3::JobResultCOP > results;
 			JobOP job = djq2.mature_larval_job( larval_job, results );
 			CompletedJobOutput output = job->run();
 			TS_ASSERT_EQUALS( output.job_results.size(), 1 );
 			djq2.note_job_completed( larval_job, output.status, 1 );
-			djq2.completed_job_result( larval_job, 1, output.job_results[1].second );
-		}
+			std::list< OutputSpecificationOP > results_to_output = djq2.jobs_that_should_be_output();
+			MultipleOutputSpecificationOP mos = utility::pointer::dynamic_pointer_cast< MultipleOutputSpecification > ( results_to_output.front() );
+			TS_ASSERT( mos );
+			TS_ASSERT_EQUALS( mos->output_specifications().size(), 2 );
+			DummyOutputSpecificationOP dos = utility::pointer::dynamic_pointer_cast< DummyOutputSpecification > ( mos->output_specifications()[ 1 ] );
+			TS_ASSERT( dos );
+			TS_ASSERT_EQUALS( dos->out_fname(), "1ubq_000" + utility::to_string( count ) );
 
-		PoseOutputterOP outputter = djq2.outputter( jobs.front() );
-		DummyPoseOutputterOP dummy_outputter = utility::pointer::dynamic_pointer_cast< DummyPoseOutputter > ( outputter );
-		TS_ASSERT( dummy_outputter );
-		if ( ! dummy_outputter ) return;
-		for ( core::Size ii = 1; ii <= 5; ++ii ) {
-			TS_ASSERT_EQUALS( dummy_outputter->outputs.count( "1ubq_000" + utility::to_string( ii ) ), 1 );
+			ResultOutputterOP outputter = djq2.result_outputter( *mos );
+			MultipleOutputterOP moop = utility::pointer::dynamic_pointer_cast< MultipleOutputter >( outputter );
+			TS_ASSERT( moop );
+			TS_ASSERT_EQUALS( moop->outputters().size(), 2 );
+			DummyPoseOutputterOP dummy_outputter = utility::pointer::dynamic_pointer_cast< DummyPoseOutputter > ( moop->outputters()[ 1 ] );
+			TS_ASSERT( dummy_outputter );
 		}
-
 	}
 
 

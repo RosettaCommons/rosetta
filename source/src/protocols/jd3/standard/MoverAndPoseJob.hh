@@ -86,6 +86,7 @@ public:
 	JobStatus status() const override;
 
 	core::pose::PoseOP pose();
+	core::pose::PoseCOP pose() const;
 	void pose( core::pose::PoseOP setting );
 private:
 

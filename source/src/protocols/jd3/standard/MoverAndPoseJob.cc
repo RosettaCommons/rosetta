@@ -137,6 +137,7 @@ PoseJobResult::~PoseJobResult() = default;
 JobStatus PoseJobResult::status() const { return jd3_job_status_success; }
 
 core::pose::PoseOP PoseJobResult::pose() { return pose_; }
+core::pose::PoseCOP PoseJobResult::pose() const { return pose_; }
 void PoseJobResult::pose( core::pose::PoseOP setting ) { pose_ = setting; }
 
 EnergyJobSummary::EnergyJobSummary() : energy_( 0.0 ) {}

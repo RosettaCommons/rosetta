@@ -32,6 +32,8 @@
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/deallocation/DeallocationMessage.hh>
 #include <protocols/jd3/job_distributors/JobExtractor.hh>
+#include <protocols/jd3/output/OutputSpecification.hh>
+#include <protocols/jd3/output/ResultOutputter.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -63,7 +65,10 @@ using core::Size;
 
 MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 	n_archives_( basic::options::option[ basic::options::OptionKeys::jd3::n_archive_nodes ] ),
-	store_on_node0_( n_archives_ == 0 && ! basic::options::option[ basic::options::OptionKeys::jd3::do_not_archive_on_node0 ]() ),
+	store_on_node0_( n_archives_ == 0 ||
+	! basic::options::option[ basic::options::OptionKeys::jd3::do_not_archive_on_node0 ]() ),
+	output_on_node0_( n_archives_ == 0 || ( store_on_node0_ &&
+	! basic::options::option[ basic::options::OptionKeys::jd3::do_not_output_from_node0 ]() ) ),
 	compress_job_results_( basic::options::option[ basic::options::OptionKeys::jd3::compress_job_results ]() ),
 	archive_on_disk_( basic::options::option[ basic::options::OptionKeys::jd3::archive_on_disk ].user() ),
 	archive_dir_name_( basic::options::option[ basic::options::OptionKeys::jd3::archive_on_disk ]() ),
@@ -71,6 +76,7 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 	default_retry_limit_( 1 )
 {
 	mpi_rank_ = utility::mpi_rank();
+	mpi_rank_string_ = utility::to_string( mpi_rank_ );
 	mpi_nprocs_ = utility::mpi_nprocs();
 	job_extractor_.reset( new JobExtractor );
 
@@ -130,6 +136,9 @@ MPIWorkPoolJobDistributor::go_master()
 			// so that the JobQueen can examine it
 			process_archival_complete_message( worker_node );
 			break;
+		case mpi_work_pool_jd_output_completed :
+			process_output_complete_message( worker_node );
+			break;
 		case mpi_work_pool_jd_job_failed_w_message :
 			process_job_failed_w_message_from_node( worker_node );
 			break;
@@ -157,7 +166,7 @@ MPIWorkPoolJobDistributor::go_master()
 			break;
 		default :
 			// error -- we should not have gotten here
-			throw utility::excn::EXCN_Msg_Exception( "Internal Error in the MPIWorkPoolJobDistributor: recieved inappropriate signal "
+			throw utility::excn::EXCN_Msg_Exception( "Internal Error in the MPIWorkPoolJobDistributor: received inappropriate signal "
 				"on node 0 from node " + utility::to_string( worker_node )
 				+ ": " + utility::to_string( message ) );
 		}
@@ -184,7 +193,7 @@ MPIWorkPoolJobDistributor::go_master()
 			break;
 		default :
 			// error -- we should not have gotten here
-			throw utility::excn::EXCN_Msg_Exception( "recieved inappropriate signal "
+			throw utility::excn::EXCN_Msg_Exception( "received inappropriate signal "
 				"on node 0 from node " + utility::to_string( worker_node )
 				+ ": " + utility::to_string( message ) + " in final spin-down loop" );
 		}
@@ -205,6 +214,12 @@ MPIWorkPoolJobDistributor::go_archive()
 		case mpi_work_pool_jd_retrieve_job_result :
 			process_retrieve_job_result_request( remote_node );
 			break;
+		case mpi_work_pool_jd_output_job_result_already_available :
+			process_output_job_result_already_available_request( remote_node );
+			break;
+		case mpi_work_pool_jd_accept_and_output_job_result :
+			process_accept_and_output_job_result_request( remote_node );
+			break;
 		case mpi_work_pool_jd_retrieve_and_discard_job_result :
 			process_retrieve_and_discard_job_result_request( remote_node );
 			break;
@@ -219,7 +234,7 @@ MPIWorkPoolJobDistributor::go_archive()
 			break;
 		default :
 			send_error_message_to_node0(
-				"Archival node " + utility::to_string( mpi_rank_ ) + " recieved an "
+				"Archival node " + utility::to_string( mpi_rank_ ) + " received an "
 				"illegal message " + utility::to_string( message ) + " from node "
 				+ utility::to_string( remote_node ) );
 			break;
@@ -266,8 +281,13 @@ void
 MPIWorkPoolJobDistributor::process_job_request_from_node( int worker_node )
 {
 	if ( jobs_ready_to_go() ) {
-		send_next_job_to_node( worker_node );
-	} else if ( jobs_remain() ) {
+		bool job_sent = send_next_job_to_node( worker_node );
+		if ( job_sent ) {
+			return;
+		}
+	}
+
+	if ( jobs_remain() ) {
 		note_node_wants_a_job( worker_node );
 	} else {
 		send_spin_down_signal_to_node( worker_node );
@@ -378,26 +398,32 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 	// completed -- or even gotten started -- by the time we ask it for the
 	// result. This would produce a race condition.
 
-	LarvalJobOP larval_job;
-	Size job_id;
+	// We keep the larval jobs that are in flight, and will stop keeping them
+	// at the end of this function
+	Size job_id = utility::receive_size_from_node( worker_node );
 
-	// The remote node will also query the JobQueen to know which of the two
-	// messages it should send.
-	if ( job_queen_->larval_job_needed_for_note_job_completed() ||
-			job_queen_->larval_job_needed_for_completed_job_summary() ) {
-		std::string serialized_larval_job_string =
-			utility::receive_string_from_node( worker_node );
-		// Does this call to deserialize_larval_job need a try/catch block?
-		// No.
-		// This larval job has been deserialized previously, with no opportunity
-		// for new data to have been added to it.
-		larval_job = deserialize_larval_job( serialized_larval_job_string );
-		job_id = larval_job->job_index();
-	} else {
-		job_id = utility::receive_size_from_node( worker_node );
-	}
+	auto larval_job_iter = in_flight_larval_jobs_.find( job_id );
+	debug_assert( larval_job_iter != in_flight_larval_jobs_.end() );
+	LarvalJobOP larval_job = larval_job_iter->second;
 
-	// In either case, the remote node must send the job summaries.
+	// Older implementation: do not store the in-flight jobs on the head node.
+	// Is this a useful optimization? It's hard to imagine it is!
+	// // The remote node will also query the JobQueen to know which of the two
+	// // messages it should send.
+	// if ( job_queen_->larval_job_needed_for_note_job_completed() ||
+	//   job_queen_->larval_job_needed_for_completed_job_summary() ) {
+	//  std::string serialized_larval_job_string =
+	//   utility::receive_string_from_node( worker_node );
+	//  // Does this call to deserialize_larval_job need a try/catch block?
+	//  // No.
+	//  // This larval job has been deserialized previously, with no opportunity
+	//  // for new data to have been added to it.
+	//  larval_job = deserialize_larval_job( serialized_larval_job_string );
+	//  job_id = larval_job->job_index();
+	// } else {
+	//  job_id = utility::receive_size_from_node( worker_node );
+	// }
+
 	JobStatus status = JobStatus( utility::receive_integer_from_node( worker_node ) );
 	std::string serialized_job_summaries_string = utility::receive_string_from_node( worker_node );
 	utility::vector1< JobSummaryOP > job_summaries;
@@ -433,6 +459,26 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 	potentially_output_some_job_results();
 	potentially_discard_some_job_results();
 }
+
+void
+MPIWorkPoolJobDistributor::process_output_complete_message( int archival_node )
+{
+	// OK -- the archival node has told us that it is done outputting a job, so we can
+	// decrement the number of jobs that we are saying it as doing. There are two ways
+	// that the archival node may have been instructed to output a job:
+	// 1. The JobResult was already being archived on that node, and now that the output
+	// has been made, the archive node has discarded the result, so we decrement
+	// the number of results it is holding, or
+	// 2. The JobResult had previously been held on the master node, and the archive node
+	// was selected to perform the output. We incremented the number of jobs it was holding
+	// as a surrogate for saying the node is slightly more busy than it previously had been
+	// and now that output is complete, we will decrement that count again.
+
+	float new_result_count = n_results_per_archive_.coval_for_val( archival_node ) - 1;
+	debug_assert( new_result_count >= 0 );
+	n_results_per_archive_.heap_replace( archival_node, new_result_count );
+}
+
 
 void
 MPIWorkPoolJobDistributor::process_retrieve_job_result_request( int worker_node )
@@ -484,6 +530,142 @@ MPIWorkPoolJobDistributor::process_retrieve_job_result_request( int worker_node 
 		}
 	}
 }
+
+/// @details Called by the archive node. The archive node should already have the indicated job
+/// result stored on this node.
+void
+MPIWorkPoolJobDistributor::process_output_job_result_already_available_request( int remote_node )
+{
+	// remote node should be node 0
+	std::string output_spec_string = utility::receive_string_from_node( remote_node );
+	output::OutputSpecificationOP spec;
+	try {
+		spec = deserialize_output_specification( output_spec_string );
+	} catch ( cereal::Exception & e ) {
+		utility::send_integer_to_node( 0, mpi_rank_ );
+		utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
+		std::ostringstream oss;
+		oss << "Error on archive node " << mpi_rank_ << " trying to deserialize output specification\n";
+		oss << "Error message from cereal library:\n";
+		oss << e.what() << "\n";
+		utility::send_string_to_node( 0, oss.str() );
+		// do not exit immediately as this will cause the MPI process to exit before
+		// the head node has a chance to flush its output
+		return;
+	}
+	JobResultID result_id = spec->result_id();
+
+	std::string serialized_job_and_result;
+	//bool archive_does_not_exist = false;
+	if ( archive_on_disk_ ) {
+		std::string const filename = filename_for_archive( result_id.first, result_id.second );
+		std::ifstream in( filename );
+		if ( ! in.good() ) {
+			utility::send_integer_to_node( 0, mpi_rank_ );
+			utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
+			std::ostringstream oss;
+			oss << "Error on archive node " << mpi_rank_ << " trying to find job result archived on disk in file \"" << filename;
+			oss << "\" for result id ( " << result_id.first << ", " << result_id.second << " )\n";
+			utility::send_string_to_node( 0, oss.str() );
+			// do not exit immediately as this will cause the MPI process to exit before
+			// the head node has a chance to flush its output
+			return;
+		} else {
+			serialized_job_and_result = utility::file_contents( filename );
+			remove( filename.c_str() );
+		}
+		in.close();
+	} else {
+		auto job_and_result_iter = job_results_.find( result_id );
+		if ( job_and_result_iter == job_results_.end() ) {
+			utility::send_integer_to_node( 0, mpi_rank_ );
+			utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
+			std::ostringstream oss;
+			oss << "Error on archive node " << mpi_rank_ << " trying to find job result ";
+			oss << "for result id ( " << result_id.first << ", " << result_id.second << " )\n";
+			oss << "Job should be present in memory, but is not there. Has is already been output? ";
+			oss << "Has it already been discarded?\n";
+			utility::send_string_to_node( 0, oss.str() );
+			// do not exit immediately as this will cause the MPI process to exit before
+			// the head node has a chance to flush its output
+			return;
+		}
+		serialized_job_and_result = *job_and_result_iter->second;
+		job_results_.erase( job_and_result_iter );
+	}
+
+	LarvalJobAndResult job_and_result;
+	try {
+		job_and_result = deserialize_larval_job_and_result( serialized_job_and_result );
+	} catch ( cereal::Exception & e ) {
+		utility::send_integer_to_node( 0, mpi_rank_ );
+		utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
+		std::ostringstream oss;
+		oss << "Error on archive node " << mpi_rank_ << " trying to deserialize larval job and job result";
+		oss << " for result id ( " << result_id.first << ", " << result_id.second << " )\n";
+		oss << "Error message from cereal library:\n";
+		oss << e.what() << "\n";
+		utility::send_string_to_node( 0, oss.str() );
+		// do not exit immediately as this will cause the MPI process to exit before
+		// the head node has a chance to flush its output
+		return;
+	}
+
+	write_output( spec, job_and_result );
+
+	// now tell node0 we are done
+	utility::send_integer_to_node( 0, mpi_rank_ );
+	utility::send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
+}
+
+/// @details Called by the archive node. The archive node should already have the indicated job
+/// result stored on this node.
+void
+MPIWorkPoolJobDistributor::process_accept_and_output_job_result_request( int remote_node )
+{
+	// remote node should be node 0
+	std::string output_spec_string = utility::receive_string_from_node( remote_node );
+	output::OutputSpecificationOP spec;
+	try {
+		spec = deserialize_output_specification( output_spec_string );
+	} catch ( cereal::Exception & e ) {
+		utility::send_integer_to_node( 0, mpi_rank_ );
+		utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
+		std::ostringstream oss;
+		oss << "Error on archive node " << mpi_rank_ << " trying to deserialize output specification\n";
+		oss << "Error message from cereal library:\n";
+		oss << e.what() << "\n";
+		utility::send_string_to_node( 0, oss.str() );
+		// do not exit immediately as this will cause the MPI process to exit before
+		// the head node has a chance to flush its output
+		return;
+
+	}
+	LarvalJobAndResult job_and_result;
+	std::string job_and_result_string = utility::receive_string_from_node( remote_node );
+	try {
+		job_and_result = deserialize_larval_job_and_result( job_and_result_string );
+	} catch ( cereal::Exception & e ) {
+		utility::send_integer_to_node( 0, mpi_rank_ );
+		utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
+		std::ostringstream oss;
+		oss << "Error on archive node " << mpi_rank_ << " trying to deserialize larval job and job result";
+		oss << " for result id ( " << spec->result_id().first << ", " << spec->result_id().second << " )\n";
+		oss << "Error message from cereal library:\n";
+		oss << e.what() << "\n";
+		utility::send_string_to_node( 0, oss.str() );
+		// do not exit immediately as this will cause the MPI process to exit before
+		// the head node has a chance to flush its output
+		return;
+	}
+
+	write_output( spec, job_and_result );
+
+	// now tell node0 we are done
+	utility::send_integer_to_node( 0, mpi_rank_ );
+	utility::send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
+}
+
 
 void
 MPIWorkPoolJobDistributor::process_failed_to_retrieve_job_result_request( int archival_node )
@@ -598,7 +780,7 @@ MPIWorkPoolJobDistributor::send_error_message_to_node0( std::string const & erro
 /// @throws If the LarvalJob fails to serialize (perhaps an object stored in the
 /// const_data_map of the inner-larval-job has not implemented the save & load
 /// routines), then this function will throw a EXCN_Msg_Exception
-void
+bool
 MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 {
 	debug_assert( ! job_extractor_->job_queue_empty() );
@@ -615,13 +797,23 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 	// invariant that this queue is never empty so long as nodes remain in the
 	// digraph_nodes_ready_to_be_run_ queue.  Address that below
 	LarvalJobOP larval_job;
-	while ( true ) {
+	while ( ! job_extractor_->job_queue_empty() ) {
+
 		larval_job = job_extractor_->pop_job_from_queue();
 		if ( job_queen_->has_job_completed( larval_job ) ) {
 			job_queen_->note_job_completed( larval_job, jd3_job_previously_executed, 0 );
+			job_extractor_->note_job_no_longer_running( larval_job->job_index() );
+			larval_job = nullptr;
 			continue;
 		}
+		debug_assert( in_flight_larval_jobs_.count( larval_job->job_index() ) == 0 );
+		in_flight_larval_jobs_[ larval_job->job_index() ] = larval_job;
 		break;
+	}
+
+	if ( ! larval_job ) {
+		// i.e. the job queue is empty
+		return false;
 	}
 
 	// serialize the LarvalJob and ship it to the worker node.
@@ -651,6 +843,7 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 	utility::send_sizes_to_node( worker_node, archival_nodes_for_job );
 
 	worker_node_for_job_[ larval_job->job_index() ] = worker_node;
+	return true;
 }
 
 void
@@ -674,6 +867,7 @@ MPIWorkPoolJobDistributor::note_job_no_longer_running( Size job_id )
 	// outstanding jobs
 	worker_node_for_job_.erase( job_id );
 	job_extractor_->note_job_no_longer_running( job_id );
+	in_flight_larval_jobs_.erase( job_id );
 
 	if ( job_extractor_->retrieve_and_reset_node_recently_completed() ) {
 		std::list< deallocation::DeallocationMessageOP > messages = job_queen_->deallocation_messages();
@@ -691,9 +885,12 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 {
 
 	// ask the job queen if she wants to output any results
-	std::list< JobResultID > jobs_to_output = job_queen_->jobs_that_should_be_output();
-	for ( JobResultID result_id : jobs_to_output ) {
-		if ( job_result_location_map_.count( result_id ) == 0 ) {
+	std::list< output::OutputSpecificationOP > jobs_to_output =
+		job_queen_->jobs_that_should_be_output();
+	for ( auto spec : jobs_to_output ) {
+		JobResultID result_id = spec->result_id();
+		auto location_map_iter = job_result_location_map_.find( result_id );
+		if ( location_map_iter == job_result_location_map_.end() ) {
 			// TO DO: better diagnostic message here
 			throw utility::excn::EXCN_Msg_Exception( "Failed to find job result (" +
 				utility::to_string( result_id.first ) + ", " + utility::to_string( result_id.second ) +
@@ -701,58 +898,80 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 				" output or discarded?" );
 		}
 
-		Size node_housing_result = job_result_location_map_[ result_id ];
+		// TO DO: instead, wait until after the archive node has completed a job output,
+		// and then erase its location from the map; this will merely require that we
+		// keep track of which node is outputting which job. For now, mark the job as having
+		// been erased.
+		Size node_housing_result = location_map_iter->second;
+		job_result_location_map_.erase( location_map_iter );
+
+
 		LarvalJobAndResult job_and_result;
 		if ( node_housing_result == 0 ) {
-			// ok, we have the result on this node
-			try {
-				if ( archive_on_disk_ ) {
-					job_and_result = deserialize_larval_job_and_result( get_string_from_disk( result_id.first, result_id.second ) );
-				} else {
-					job_and_result = deserialize_larval_job_and_result( * job_results_[ result_id ] );
-				}
-			} catch ( cereal::Exception & e ) {
-				throw utility::excn::EXCN_Msg_Exception( "Failed to deserialize LarvalJob & JobResult pair for job #" +
-					utility::to_string( result_id.first ) + " result index #" + utility::to_string( result_id.second ) +
-					"\nError message from the cereal library:\n" + e.what() + "\n" );
-			}
+			// ok, we have the result on this node -- we optionally could ship the result
+			// to another node and output it there.
+
+			std::string serialized_job_and_result;
 			if ( archive_on_disk_ ) {
+				serialized_job_and_result = get_string_from_disk( result_id.first, result_id.second );
+				if ( serialized_job_and_result.empty() ) {
+					// OK -- exit
+					std::ostringstream oss;
+					oss << "Error trying to retrieve a serialized job result from disk for job result (";
+					oss << result_id.first << ", " << result_id.second << " ) which should have been in ";
+					oss << "\"" << filename_for_archive( result_id.first, result_id.second ) << "\"\n";
+					throw utility::excn::EXCN_Msg_Exception( oss.str() );
+				}
 				remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
 			} else {
-				job_results_.erase( result_id );
+				auto job_and_result_iter = job_results_.find( result_id );
+				if ( job_and_result_iter == job_results_.end() ) {
+					std::ostringstream oss;
+					oss << "Error trying to find job result ( " << result_id.first << ", ";
+					oss << result_id.second << " ); node 0 thinks it ought to have this result.\n";
+					throw utility::excn::EXCN_Msg_Exception( oss.str() );
+				}
+				serialized_job_and_result = *job_and_result_iter->second;
+				job_results_.erase( job_and_result_iter );
 			}
+
+			if ( output_on_node0_ ) {
+				try {
+					job_and_result = deserialize_larval_job_and_result( serialized_job_and_result );
+				} catch ( cereal::Exception & e ) {
+					throw utility::excn::EXCN_Msg_Exception( "Failed to deserialize LarvalJob & JobResult pair for job #" +
+						utility::to_string( result_id.first ) + " result index #" + utility::to_string( result_id.second ) +
+						"\nError message from the cereal library:\n" + e.what() + "\n" );
+				}
+				write_output( spec, job_and_result );
+			} else {
+				// Pick an archival node to perform the output -- this increments the
+				// number of results that we're saying this node is holding, and when the node
+				// reports that it is done outputting the result, then we will decrement that count
+				// again.
+
+				Size archive_node = pick_archival_node();
+				utility::send_integer_to_node( archive_node, 0 ); // say "I need to talk to you"
+				utility::send_integer_to_node( archive_node,
+					mpi_work_pool_jd_accept_and_output_job_result );
+				utility::send_string_to_node( archive_node, serialize_output_specification( spec ) );
+
+				utility::send_string_to_node( archive_node, serialized_job_and_result );
+			}
+
 		} else {
 			utility::send_integer_to_node( node_housing_result, 0 ); // say "I need to talk to you"
 			utility::send_integer_to_node( node_housing_result,
-				mpi_work_pool_jd_retrieve_and_discard_job_result );
-			utility::send_size_to_node( node_housing_result, result_id.first );
-			utility::send_size_to_node( node_housing_result, result_id.second );
-
-			int reply = utility::receive_integer_from_node( node_housing_result );
-			if ( reply == mpi_work_pool_jd_failed_to_retrieve_job_result ) {
-				// oh boy -- this should never happen.
-				throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result (" +
-					utility::to_string( result_id.first ) + ", " + utility::to_string( result_id.second ) +
-					") for outputting as requested by the "
-					+ "JobQueen; it should have been archived on node " +
-					utility::to_string( node_housing_result ) + " but was not found there." );
-			}
-			runtime_assert( reply == mpi_work_pool_jd_job_result_retrieved );
-
-			std::string serialized_job_result_string =
-				utility::receive_string_from_node( node_housing_result );
-			std::istringstream iss( serialized_job_result_string );
-			cereal::BinaryInputArchive arc( iss );
-			arc( job_and_result );
-
+				mpi_work_pool_jd_output_job_result_already_available );
+			utility::send_string_to_node( node_housing_result,
+				serialize_output_specification( spec ) );
 		}
-
-		job_queen_->completed_job_result( job_and_result.first, result_id.second, job_and_result.second );
 
 		// and now erase the record of where the job had been stored, and,
 		// for the sake of diagnosing errors, also store the fact that this job
 		// had been output (as opposed to discarded) -- but compactly within the
-		// output_jobs_ DIET
+		// output_jobs_ DIET -- (Note some day, I'll figure out how to do this efficiently.
+		// For now, the JD does not track which jobs have already been output.)
 		job_result_location_map_.erase( result_id );
 
 		// output_jobs_.insert( result_id.first );
@@ -917,7 +1136,11 @@ MPIWorkPoolJobDistributor::assign_jobs_to_idling_nodes()
 	while ( ! worker_nodes_waiting_for_jobs_.empty() && ! job_extractor_->job_queue_empty() ) {
 		Size worker_node = worker_nodes_waiting_for_jobs_.front();
 		worker_nodes_waiting_for_jobs_.pop_front();
-		send_next_job_to_node( worker_node );
+		bool job_sent = send_next_job_to_node( worker_node );
+		if ( ! job_sent ) {
+			// put this node back into the queue of nodes waiting for jobs
+			worker_nodes_waiting_for_jobs_.push_back( worker_node );
+		}
 	}
 }
 
@@ -1267,19 +1490,45 @@ MPIWorkPoolJobDistributor::worker_send_job_result_to_master_and_archive(
 	// now go back to talk again with node 0
 	utility::send_integer_to_node( 0, mpi_rank_ );
 	utility::send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
-	if ( job_queen_->larval_job_needed_for_note_job_completed() ||
-			job_queen_->larval_job_needed_for_completed_job_summary() ) {
-		// Do we need a try/catch block around the call to serialize_larval_job?
-		// No.
-		// It's the same larval job that we serialized above, so if it serialized
-		// before, it will serialize again.
-		utility::send_string_to_node( 0, serialize_larval_job( larval_job ) );
-	} else {
-		utility::send_size_to_node( 0, larval_job->job_index() );
-	}
+
+	// Old Implementation: Node0 does not keep the in-flight LarvalJobOPs, so we have to send
+	// it back.
+	// if ( job_queen_->larval_job_needed_for_note_job_completed() ||
+	//   job_queen_->larval_job_needed_for_completed_job_summary() ) {
+	//  // Do we need a try/catch block around the call to serialize_larval_job?
+	//  // No.
+	//  // It's the same larval job that we serialized above, so if it serialized
+	//  // before, it will serialize again.
+	//  utility::send_string_to_node( 0, serialize_larval_job( larval_job ) );
+	// } else {
+	//  utility::send_size_to_node( 0, larval_job->job_index() );
+	// }
+
+	utility::send_size_to_node( 0, larval_job->job_index() );
+
 	utility::send_integer_to_node( 0, job_output.status );
 	utility::send_string_to_node( 0, serialized_job_summaries );
 }
+
+void
+MPIWorkPoolJobDistributor::write_output(
+	output::OutputSpecificationOP spec,
+	LarvalJobAndResult const & job_and_result
+)
+{
+	// This is a two step process. Why? Because the MPIMultithreadedJobDistributor is going
+	// to deserializize the job results and perform output in separate threads, so the
+	// interaction with the outputters will need to be thread safe. (The JD still guarantees
+	// that only one thread will interact with the JobQueen herself at any one point in time).
+	if ( n_archives_ > 1 || ( n_archives_ == 1 && ( ! store_on_node0_ || output_on_node0_ ) ) ) {
+		TR << "Setting output suffix: " << mpi_rank_string_ << " n_archives: " << n_archives_ << " store_on_node0_ " << store_on_node0_ << " output_on_node0_ " << output_on_node0_ << std::endl;
+
+		spec->jd_output_suffix( mpi_rank_string_ );
+	}
+	output::ResultOutputterOP outputter = job_queen_->result_outputter( *spec );
+	outputter->write_output( *spec, *job_and_result.second );
+}
+
 
 /// @throws Potentially throws a cereal::Exception; it is much more likely that errors are
 /// hit during object serialization, rather than objet deserialization, because an object
@@ -1393,6 +1642,37 @@ MPIWorkPoolJobDistributor::serialize_job_summaries(
 	}
 	return job_summaries_oss.str();
 }
+
+output::OutputSpecificationOP
+MPIWorkPoolJobDistributor::deserialize_output_specification( std::string const & spec_string ) const
+{
+	output::OutputSpecificationOP spec;
+	std::istringstream iss( spec_string );
+	cereal::BinaryInputArchive arc( iss );
+	arc( spec );
+	return spec;
+
+}
+
+std::string
+MPIWorkPoolJobDistributor::serialize_output_specification( output::OutputSpecificationOP output_spec ) const
+{
+	std::ostringstream spec_oss;
+	{
+		cereal::BinaryOutputArchive arc( spec_oss );
+		arc( output_spec );
+	}
+	return spec_oss.str();
+}
+
+std::string MPIWorkPoolJobDistributor::get_string_from_disk( Size job_id, Size result_index ) const {
+	return utility::file_contents( filename_for_archive( job_id, result_index ) );
+}
+
+std::string MPIWorkPoolJobDistributor::filename_for_archive( Size job_id, Size result_index ) const {
+	return archive_dir_name_ + "/archive." + std::to_string( job_id ) + "." + std::to_string( result_index );
+}
+
 
 }//job_distributors
 }//jd3

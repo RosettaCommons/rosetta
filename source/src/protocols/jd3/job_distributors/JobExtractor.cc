@@ -115,6 +115,8 @@ JobExtractor::note_job_no_longer_running( Size job_id )
 	// ok, now remove the completed/failed job from the maps keeping track of
 	// outstanding jobs
 
+	//TR << "Job no longer running: " << job_id << std::endl;
+
 	running_jobs_.erase( job_id );
 	Size digraph_node = digraph_node_for_job_[ job_id ];
 	digraph_node_for_job_.erase( job_id );

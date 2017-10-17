@@ -35,6 +35,11 @@
 #include <string>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 
@@ -223,9 +228,20 @@ private:
 	bool output_pose_energies_table_;
 	bool output_pose_cache_data_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace io
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_io_StructFileRepOptions )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_io_StructFileRepOptions_HH

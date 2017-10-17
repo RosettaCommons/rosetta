@@ -23,6 +23,8 @@
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/job_distributors/JobExtractor.hh>
+#include <protocols/jd3/output/OutputSpecification.hh>
+#include <protocols/jd3/output/ResultOutputter.hh>
 
 // Core headers
 #include <core/init/init.hh>
@@ -87,6 +89,13 @@ MultiThreadedJobDistributor::go( JobQueenOP queen )
 	while ( n_queued < nthreads_ ) {
 		if ( job_extractor_->job_queue_empty() ) break;
 		LarvalJobOP larval_job = job_extractor_->pop_job_from_queue();
+		//TR << "Popping job " << larval_job->job_index() << std::endl;
+		if ( job_queen_->has_job_completed( larval_job ) ) {
+			job_queen_->note_job_completed( larval_job, jd3_job_previously_executed, 0 );
+			job_extractor_->note_job_no_longer_running( larval_job->job_index() );
+			continue;
+		}
+		//TR << "Preparing next job: " << larval_job->job_index() << std::endl;
 		if ( prepare_next_job( larval_job, 1 ) ) ++n_queued;
 	}
 
@@ -97,8 +106,21 @@ MultiThreadedJobDistributor::go( JobQueenOP queen )
 
 		// Queue more work if needed
 		while ( jobs_running_.size() <= 2*nthreads_ ) {
-			if ( job_extractor_->job_queue_empty() ) break;
-			LarvalJobOP larval_job = job_extractor_->pop_job_from_queue();
+			LarvalJobOP larval_job;
+			while ( ! job_extractor_->job_queue_empty() ) {
+				larval_job = job_extractor_->pop_job_from_queue();
+				//TR << "Popping job " << larval_job->job_index() << std::endl;
+				if ( job_queen_->has_job_completed( larval_job ) ) {
+					//TR << "Job " << larval_job->job_index() << " has already completed" << std::endl;
+					job_queen_->note_job_completed( larval_job, jd3_job_previously_executed, 0 );
+					job_extractor_->note_job_no_longer_running( larval_job->job_index() );
+					larval_job = nullptr;
+					continue;
+				}
+				break; // we have a job, so let's submit it
+			}
+			if ( ! larval_job ) break;
+			//TR << "Preparing next job: " << larval_job->job_index() << std::endl;
 			prepare_next_job( larval_job, 1 );
 		}
 
@@ -161,7 +183,7 @@ MultiThreadedJobDistributor::prepare_next_job( LarvalJobOP larval_job, core::Siz
 void
 MultiThreadedJobDistributor::process_completed_job( JobRunnerOP job_runner )
 {
-	TR << "Finished job in thread " << job_runner->running_thread() << std::endl;
+	TR << "Finished job " << job_runner->larval_job()->job_index() << " in thread " << job_runner->running_thread() << std::endl;
 
 	LarvalJobOP larval_job = job_runner->larval_job();
 	CompletedJobOutput const & output = job_runner->job_output();
@@ -198,20 +220,19 @@ void
 MultiThreadedJobDistributor::potentially_output_some_job_results()
 {
 
-	// ask the job queen if she wants to output any results
-	std::list< JobResultID > jobs_to_output = job_queen_->jobs_that_should_be_output();
-	for ( JobResultID result_id : jobs_to_output ) {
-
-		if ( job_results_.count( result_id ) == 0 ) {
-			// TO DO: better diagnostic message here
-			throw utility::excn::EXCN_Msg_Exception( "Failed to find job result (" +
-				utility::to_string( result_id.first ) + ", " + utility::to_string( result_id.second ) +
-				") for outputting as requested by the JobQeen. Has this job already been" +
-				" output or discarded?" );
+	std::list< output::OutputSpecificationOP > jobs_to_output =
+		job_queen_->jobs_that_should_be_output();
+	for ( auto const output_spec : jobs_to_output ) {
+		JobResultID result_id = output_spec->result_id();
+		auto result_iter = job_results_.find( result_id );
+		if ( result_iter == job_results_.end() ) {
+			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result (" +
+				utility::to_string( result_id.first )  + ", " + utility::to_string( result_id.second ) +
+				") for outputting as requested by the JobQeen. Has this job already been output?" );
 		}
-
-		std::pair< LarvalJobOP, JobResultOP > job_and_result = job_results_[ result_id ];
-		job_queen_->completed_job_result( job_and_result.first, result_id.second, job_and_result.second );
+		std::pair< LarvalJobOP, JobResultOP > const & job_to_output = result_iter->second;
+		output::ResultOutputterOP outputter = job_queen_->result_outputter( *output_spec );
+		outputter->write_output( *output_spec, *job_to_output.second );
 
 		// and now erase the job
 		job_results_.erase( result_id );

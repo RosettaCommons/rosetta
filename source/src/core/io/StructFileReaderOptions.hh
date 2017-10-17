@@ -27,6 +27,11 @@
 #include <string>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 
@@ -79,9 +84,20 @@ private:
 	bool obey_ENDMDL_;
 	bool read_pdb_header_;
 	bool glycam_pdb_format_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace io
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_io_StructFileReaderOptions )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_io_pdb_StructFileRepOptions_HH

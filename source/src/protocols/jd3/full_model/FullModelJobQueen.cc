@@ -29,8 +29,11 @@
 #include <protocols/jd3/full_model_inputters/PDBFullModelInputterCreator.hh>
 #include <protocols/jd3/full_model_inputters/SilentFileFullModelInputterCreator.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputterFactory.hh>
+#include <protocols/jd3/output/MultipleOutputSpecification.hh>
+#include <protocols/jd3/output/MultipleOutputter.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputSpecification.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.hh>
@@ -531,20 +534,19 @@ FullModelJobQueen::mature_larval_job(
 	return complete_larval_job_maturation( larval_job, job_options, input_results );
 }
 
-bool FullModelJobQueen::larval_job_needed_for_note_job_completed() const { return false; }
+bool FullModelJobQueen::larval_job_needed_for_note_job_completed() const { return true; }
 
 void FullModelJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults)
 {
-	// pass the status to the other note_job_completed function
-	note_job_completed( job->job_index(), status, nresults );
-}
-
-void FullModelJobQueen::note_job_completed( core::Size job_id, JobStatus status, Size nresults )
-{
+	Size const job_id( job->job_index() );
 	completed_jobs_.insert( job_id );
 	if ( status == jd3_job_status_success ) {
+		FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
+		if ( ! inner_job ) { throw bad_inner_job_exception(); }
+
+		utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
 		for ( Size ii = 1; ii <= nresults; ++ii ) {
-			recent_successes_.push_back( std::make_pair( job_id, ii ) );
+			create_and_store_output_specification_for_job_result( job, *job_options, ii, nresults );
 		}
 		successful_jobs_.insert( job_id );
 		PartialOutputStatus output_status;
@@ -556,16 +558,23 @@ void FullModelJobQueen::note_job_completed( core::Size job_id, JobStatus status,
 	}
 }
 
+void FullModelJobQueen::note_job_completed( core::Size , JobStatus , Size )
+{
+	throw utility::excn::EXCN_Msg_Exception( "FullModelJobQueen requires a LarvalJob when noting job completion" );
+}
+
+
 bool FullModelJobQueen::larval_job_needed_for_completed_job_summary() const { return false; }
 
 void FullModelJobQueen::completed_job_summary( LarvalJobCOP, Size, JobSummaryOP ) {}
 
 void FullModelJobQueen::completed_job_summary( core::Size, Size, JobSummaryOP ) {}
 
-std::list< JobResultID > FullModelJobQueen::jobs_that_should_be_output()
+std::list< output::OutputSpecificationOP >
+FullModelJobQueen::jobs_that_should_be_output()
 {
-	std::list< JobResultID > return_list = recent_successes_;
-	recent_successes_.clear();
+	std::list< output::OutputSpecificationOP > return_list;
+	recent_successes_.swap( return_list );
 	return return_list;
 }
 
@@ -575,40 +584,68 @@ FullModelJobQueen::job_results_that_should_be_discarded() {
 	return std::list< JobResultID >();
 }
 
-void FullModelJobQueen::completed_job_result( LarvalJobCOP job, core::Size result_index, JobResultOP job_result )
+output::ResultOutputterOP
+FullModelJobQueen::result_outputter(
+	output::OutputSpecification const & spec
+)
 {
-	FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
-	if ( ! inner_job ) { throw bad_inner_job_exception(); }
-	pose_outputters::PoseOutputterOP outputter = pose_outputter_for_job( *inner_job );
-	FullModelJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< FullModelJobResult >( job_result );
-	if ( ! pose_result ) {
-		utility::excn::EXCN_Msg_Exception( "JobResult handed to StandardJobQueen::completed_job_result is not a PoseJobResult or derived from PoseJobResult" );
-	}
-	utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
-	utility::tag::TagCOP outputter_tag;
-	if ( job->inner_job()->jobdef_tag() ) {
-		utility::tag::TagCOP tag = job->inner_job()->jobdef_tag();
-		if ( tag->hasTag( "Output" ) ) {
-			outputter_tag = tag->getTag( "Output" )->getTags()[ 0 ];
+	typedef output::MultipleOutputSpecification MOS;
+	typedef pose_outputters::PoseOutputSpecification POS;
+	typedef output::MultipleOutputter MO;
+	typedef output::MultipleOutputterOP MOOP;
+	debug_assert( dynamic_cast< MOS const * > ( &spec ) );
+	MOS const & mo_spec( static_cast< MOS const & > (spec) );
+	MOOP outputters( new MO );
+	for ( Size ii = 1; ii <= mo_spec.output_specifications().size(); ++ii ) {
+		output::OutputSpecification const & ii_spec( *mo_spec.output_specifications()[ ii ] );
+		debug_assert( dynamic_cast< POS const * > (&ii_spec) );
+		POS const & ii_pos( static_cast< POS const & > (ii_spec) );
+		// Note assumption that there is always a primary pose outputter -- return here
+		// when trying to implement the -no_output option for JD3
+		pose_outputters::PoseOutputterOP ii_outputter;
+		if ( ii == 1 ) {
+			ii_outputter = pose_outputter_for_job( ii_pos );
+		} else {
+			ii_outputter = secondary_outputter_for_job( ii_pos );
 		}
+		outputters->append_outputter( ii_outputter );
 	}
-
-	Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
-	JobOutputIndex output_index;
-	output_index.primary_output_index   = job->nstruct_index();
-	output_index.n_primary_outputs      = job->nstruct_max();
-	output_index.secondary_output_index = result_index;
-	output_index.n_secondary_outputs    = n_results_for_job;
-
-	outputter->write_output_pose( *job, output_index, *job_options, outputter_tag, *pose_result->pose() );
-
-	std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters = secondary_outputters_for_job( *inner_job, *job_options );
-	for ( auto const & secondary_outputter : secondary_outputters ) {
-		secondary_outputter->write_output_pose( *job, output_index, *job_options, *pose_result->pose() );
-	}
-
-	note_job_result_output_or_discarded( job, result_index );
+	return outputters;
 }
+
+
+// FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
+// if ( ! inner_job ) { throw bad_inner_job_exception(); }
+// pose_outputters::PoseOutputterOP outputter = pose_outputter_for_job( *inner_job );
+// FullModelJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< FullModelJobResult >( job_result );
+// if ( ! pose_result ) {
+//  utility::excn::EXCN_Msg_Exception( "JobResult handed to StandardJobQueen::completed_job_result is not a PoseJobResult or derived from PoseJobResult" );
+// }
+// utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
+// utility::tag::TagCOP outputter_tag;
+// if ( job->inner_job()->jobdef_tag() ) {
+//  utility::tag::TagCOP tag = job->inner_job()->jobdef_tag();
+//  if ( tag->hasTag( "Output" ) ) {
+//   outputter_tag = tag->getTag( "Output" )->getTags()[ 0 ];
+//  }
+// }
+//
+// Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
+// JobOutputIndex output_index;
+// output_index.primary_output_index   = job->nstruct_index();
+// output_index.n_primary_outputs      = job->nstruct_max();
+// output_index.secondary_output_index = result_index;
+// output_index.n_secondary_outputs    = n_results_for_job;
+//
+// outputter->write_output_pose( *job, output_index, *job_options, outputter_tag, *pose_result->pose() );
+//
+// std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters = secondary_outputters_for_job( *inner_job, *job_options );
+// for ( auto const & secondary_outputter : secondary_outputters ) {
+//  secondary_outputter->write_output_pose( *job, output_index, *job_options, *pose_result->pose() );
+// }
+//
+// note_job_result_output_or_discarded( job, result_index );
+//}
 
 /// @details Construct the XSD and then invoke the (private) determine_preliminary_job_list_from_xml_file method,
 /// which is also invoked by determine_preliminary_job_list.
@@ -932,6 +969,130 @@ FullModelJobQueen::next_batch_of_larval_jobs_for_job_node( core::Size, core::Siz
 }
 
 void
+FullModelJobQueen::create_and_store_output_specification_for_job_result(
+	LarvalJobCOP job,
+	core::Size result_index,
+	core::Size nresults
+)
+{
+	FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
+	if ( ! inner_job ) { throw bad_inner_job_exception(); }
+
+	utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
+	create_and_store_output_specification_for_job_result(
+		job, *job_options, result_index, nresults );
+}
+
+void
+FullModelJobQueen::create_and_store_output_specification_for_job_result(
+	LarvalJobCOP job,
+	utility::options::OptionCollection const & job_options,
+	core::Size result_index,
+	core::Size nresults
+)
+{
+	recent_successes_.push_back( create_output_specification_for_job_result( job, job_options, result_index, nresults ) );
+}
+
+
+
+/// @details Creates a MultipleOutputSpecification and packs it with one
+/// OutputSpecification per PoseOutputter / SecondaryPoseOutputter. The order
+/// of the OutputSpecifications that are given here needs to be recapitulated
+/// for the PoseMultipleOutputter that will be created by the call to
+/// result_outputter, as the OutputSpecifiations are iterated across in the
+/// same order as the PoseOutputters in the PoseMultipleOutputter.
+output::OutputSpecificationOP
+FullModelJobQueen::create_output_specification_for_job_result(
+	LarvalJobCOP job,
+	utility::options::OptionCollection const & job_options,
+	core::Size result_index,
+	core::Size nresults
+)
+{
+	FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
+	if ( ! inner_job ) { throw bad_inner_job_exception(); }
+
+	utility::tag::TagCOP outputter_tag;
+	utility::tag::TagCOP secondary_output_tag;
+	if ( inner_job->jobdef_tag() ) {
+		utility::tag::TagCOP job_tag = inner_job->jobdef_tag();
+		if ( job_tag->hasTag( "Output" ) ) {
+			utility::tag::TagCOP output_tag = job_tag->getTag( "Output" );
+			if ( output_tag->getTags().size() != 0 ) {
+				outputter_tag = output_tag->getTags()[ 0 ];
+			}
+		}
+
+		if ( job_tag->hasTag( "SecondaryOutput" ) ) {
+			secondary_output_tag = job_tag->getTag( "SecondaryOutput" );
+		}
+	}
+
+	JobOutputIndex output_index = build_output_index( job, result_index, nresults );
+
+	pose_outputters::PoseOutputterOP outputter = pose_outputter_for_job( *inner_job );
+
+	// Note assumption that there *is* a primary outputter for this job.
+	// What does -no_output look like in JD3?
+	pose_outputters::PoseOutputSpecificationOP primary_spec = outputter->create_output_specification(
+		*job, output_index, job_options, outputter_tag );
+
+	output::MultipleOutputSpecificationOP specs( new output::MultipleOutputSpecification );
+	specs->append_specification( primary_spec );
+
+	// SecondaryOutputters are ordered:
+	// 1st the set of (possibly-repeated) SecondaryOutputters that are given in the Job tag,
+	// in the same order as they appear beneath the <SecondaryOutput> subtag.
+	// 2nd the set of SecondaryOutputters that are specified on the command line and that are
+	// not present in the Job tag.
+	utility::vector1< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters =
+		secondary_outputters_for_job( *inner_job, job_options );
+	for ( core::Size ii = 1; ii <= secondary_outputters.size(); ++ii ) {
+		utility::tag::TagCOP secondary_outputter_tag;
+		if ( secondary_output_tag ) {
+			if ( secondary_output_tag->getTags().size() <= ii ) {
+				secondary_outputter_tag = secondary_output_tag->getTags()[ ii ];
+			}
+		}
+		pose_outputters::PoseOutputSpecificationOP spec =
+			secondary_outputters[ ii ]->create_output_specification(
+			*job, output_index, job_options, secondary_output_tag );
+		specs->append_specification( spec );
+	}
+	specs->output_index( output_index );
+	specs->result_id( JobResultID( job->job_index(), result_index ) );
+	return specs;
+}
+
+JobOutputIndex
+FullModelJobQueen::build_output_index(
+	protocols::jd3::LarvalJobCOP job,
+	Size result_index,
+	Size n_results_for_job
+)
+{
+	JobOutputIndex output_index;
+	output_index.primary_output_index   = job->nstruct_index();
+	output_index.n_primary_outputs      = job->nstruct_max();
+	output_index.secondary_output_index = result_index;
+	output_index.n_secondary_outputs    = n_results_for_job;
+
+	assign_output_index( job, result_index, n_results_for_job, output_index );
+	return output_index;
+}
+
+/// @brief No-op implementation -- leave the indices the way they were initialized
+void
+FullModelJobQueen::assign_output_index(
+	protocols::jd3::LarvalJobCOP,
+	Size,
+	Size,
+	JobOutputIndex &
+)
+{}
+
+void
 FullModelJobQueen::derived_process_deallocation_message(
 	deallocation::DeallocationMessageOP
 )
@@ -1073,15 +1234,56 @@ FullModelJobQueen::pose_outputter_for_job(
 	return outputter;
 }
 
+pose_outputters::PoseOutputterOP
+FullModelJobQueen::pose_outputter_for_job( pose_outputters::PoseOutputSpecification const & spec )
+{
+	std::string const & outputter_type = spec.outputter_type();
+	pose_outputters::PoseOutputterOP representative;
+	auto rep_iter = representative_pose_outputter_map_.find( outputter_type );
+	if ( rep_iter == representative_pose_outputter_map_.end() ) {
+		if ( use_factory_provided_pose_outputters_ ) {
+			representative = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( outputter_type );
+		} else {
+			runtime_assert( outputter_creators_.count( outputter_type ) != 0 );
+			auto iter = outputter_creators_.find( outputter_type );
+			representative = iter->second->create_outputter();
+		}
+		representative_pose_outputter_map_[ outputter_type ] = representative;
+	}
 
-std::list< pose_outputters::SecondaryPoseOutputterOP >
+	// This outputter name may have a job-distributor-assigned suffix, and so it may not yet
+	// have been created, even if this JobQueen has been doing some amount of output.
+	std::string actual_outputter_name = representative->outputter_for_job( spec );
+	if ( actual_outputter_name == "" ) return representative;
+
+	std::pair< std::string, std::string > outputter_key =
+		std::make_pair( outputter_type, actual_outputter_name );
+	auto iter = pose_outputter_map_.find( outputter_key );
+	if ( iter != pose_outputter_map_.end() ) {
+		return iter->second;
+	}
+
+	pose_outputters::PoseOutputterOP outputter;
+	if ( use_factory_provided_pose_outputters_ ) {
+		outputter = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( outputter_type );
+	} else {
+		debug_assert( outputter_creators_.count( outputter_type ) );
+		outputter = outputter_creators_[ outputter_type ]->create_outputter();
+	}
+	pose_outputter_map_[ outputter_key ] = outputter;
+	return outputter;
+
+}
+
+
+utility::vector1< pose_outputters::SecondaryPoseOutputterOP >
 FullModelJobQueen::secondary_outputters_for_job(
 	FullModelInnerLarvalJob const & inner_job,
 	utility::options::OptionCollection const & job_options
 )
 {
 	std::set< std::string > secondary_outputters_added;
-	std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters;
+	utility::vector1< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters;
 	if ( inner_job.jobdef_tag() ) {
 		utility::tag::TagCOP job_tag = inner_job.jobdef_tag();
 		if ( job_tag->hasTag( "SecondaryOutput" ) ) {
@@ -1089,7 +1291,8 @@ FullModelJobQueen::secondary_outputters_for_job(
 			utility::vector0< utility::tag::TagCOP > const & subtags = secondary_output_tags->getTags();
 			for ( core::Size ii = 0; ii < subtags.size(); ++ii ) {
 				utility::tag::TagCOP iitag = subtags[ ii ];
-				if ( secondary_outputters_added.count( iitag->getName() ) ) continue;
+				// allow repeats! Why not?
+				//if ( secondary_outputters_added.count( iitag->getName() ) ) continue;
 				secondary_outputters_added.insert( iitag->getName() );
 
 				// returns 0 if the secondary outputter is repressed for a particular job
@@ -1495,23 +1698,52 @@ FullModelJobQueen::secondary_outputter_for_job(
 
 }
 
+pose_outputters::SecondaryPoseOutputterOP
+FullModelJobQueen::secondary_outputter_for_job( pose_outputters::PoseOutputSpecification const & spec )
+{
+	std::string const & outputter_type = spec.outputter_type();
+	pose_outputters::SecondaryPoseOutputterOP representative;
+	auto rep_iter = representative_secondary_outputter_map_.find( outputter_type );
+	if ( rep_iter == representative_secondary_outputter_map_.end() ) {
+		representative = pose_outputters::PoseOutputterFactory::get_instance()->new_secondary_outputter( outputter_type );
+		representative_secondary_outputter_map_[ outputter_type ] = representative;
+	}
+
+	// This outputter name may have a job-distributor-assigned suffix, and so it may not yet
+	// have been created, even if this JobQueen has been doing some amount of output.
+	std::string actual_outputter_name = representative->outputter_for_job( spec );
+	if ( actual_outputter_name == "" ) return representative;
+
+	std::pair< std::string, std::string > outputter_key =
+		std::make_pair( outputter_type, actual_outputter_name );
+	auto iter = secondary_outputter_map_.find( outputter_key );
+	if ( iter != secondary_outputter_map_.end() ) {
+		return iter->second;
+	}
+
+	pose_outputters::SecondaryPoseOutputterOP outputter;
+	outputter = pose_outputters::PoseOutputterFactory::get_instance()->new_secondary_outputter( outputter_type );
+	secondary_outputter_map_[ outputter_key ] = outputter;
+	return outputter;
+}
+
 void
 FullModelJobQueen::note_job_result_output_or_discarded( LarvalJobCOP job, Size result_index )
 {
 	auto result_pos_iter = results_processed_for_job_.find( job->job_index() );
 	if ( result_pos_iter == results_processed_for_job_.end() ) {
 		std::ostringstream oss;
-		oss << "From StandardJobQueen::note_job_result_output_or_discarded:\n";
+		oss << "From FullModelJobQueen::note_job_result_output_or_discarded:\n";
 		oss << "Tried to note that job " << job->job_index() << " result # " << result_index <<
 			" was output; this job has already had all of its results output or the" <<
-			" StandardJobQueen was unaware of its existence\n";
+			" FullModelJobQueen was unaware of its existence\n";
 		throw utility::excn::EXCN_Msg_Exception( oss.str() );
 	}
 
 	if ( result_pos_iter->second.results_output_or_discarded.member( result_index ) ) {
 		// we've already output this job; the derived class has messed up here
 		std::ostringstream oss;
-		oss << "From StandardJobQueen::note_job_result_output_or_discarded:\n";
+		oss << "From FullModelJobQueen::note_job_result_output_or_discarded:\n";
 		oss << "Tried to note that job " << job->job_index() << " result # " << result_index <<
 			" was output; this result index for this job has already been output or discarded.\n";
 		throw utility::excn::EXCN_Msg_Exception( oss.str() );

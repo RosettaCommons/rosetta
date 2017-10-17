@@ -119,11 +119,6 @@ void MoverAndFullModelJob::finalize_job_summary( EnergyJobSummaryOP ) {}
 FullModelJobResult::FullModelJobResult() {}
 FullModelJobResult::~FullModelJobResult() = default;
 
-JobStatus FullModelJobResult::status() const { return jd3_job_status_success; }
-
-core::pose::PoseOP FullModelJobResult::pose() { return pose_; }
-void FullModelJobResult::pose( core::pose::PoseOP setting ) { pose_ = setting; }
-
 EnergyJobSummary::EnergyJobSummary() : energy_( 0.0 ) {}
 EnergyJobSummary::~EnergyJobSummary() {}
 
@@ -150,16 +145,16 @@ EnergyJobSummary::energy( core::Real setting )
 template< class Archive >
 void
 protocols::jd3::full_model::FullModelJobResult::save( Archive & arc ) const {
-	arc( cereal::base_class< protocols::jd3::JobResult >( this ) );
-	arc( CEREAL_NVP( pose_ ) ); // core::pose::PoseOP
+	arc( cereal::base_class< protocols::jd3::standard::PoseJobResult >( this ) );
+	//arc( CEREAL_NVP( pose_ ) ); // core::pose::PoseOP
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
 protocols::jd3::full_model::FullModelJobResult::load( Archive & arc ) {
-	arc( cereal::base_class< protocols::jd3::JobResult >( this ) );
-	arc( pose_ ); // core::pose::PoseOP
+	arc( cereal::base_class< protocols::jd3::standard::PoseJobResult >( this ) );
+	//arc( pose_ ); // core::pose::PoseOP
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::full_model::FullModelJobResult );

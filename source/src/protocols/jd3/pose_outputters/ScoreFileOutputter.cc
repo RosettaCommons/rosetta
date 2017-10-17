@@ -16,9 +16,11 @@
 #include <protocols/jd3/pose_outputters/ScoreFileOutputterCreator.hh>
 
 // package headers
+#include <protocols/jd3/pose_outputters/ScoreFileOutputSpecification.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
+#include <protocols/jd3/standard/MoverAndPoseJob.hh>
 
 #include <core/types.hh>
 #include <core/io/raw_data/ScoreFileData.hh>
@@ -53,32 +55,63 @@ ScoreFileOutputter::outputter_for_job(
 	return scorefile_name_for_job.name();
 }
 
+std::string
+ScoreFileOutputter::outputter_for_job(
+	PoseOutputSpecification const & spec
+) const
+{
+	typedef ScoreFileOutputSpecification SFOP;
+	debug_assert( dynamic_cast< SFOP const * > ( &spec ) );
+	SFOP const & sf_spec( static_cast< SFOP const & > (spec) );
+	return sf_spec.out_fname();
+}
+
 bool
 ScoreFileOutputter::outputter_specified_by_command_line()
 {
 	return ! basic::options::option[ basic::options::OptionKeys::run::no_scorefile ];
 }
 
-void
-ScoreFileOutputter::write_output_pose(
+/// @brief Using the LarvalJob's job_tag (determined by the (primary) JobOutputter),
+/// write extra data about this output Pose to its destination.
+PoseOutputSpecificationOP
+ScoreFileOutputter::create_output_specification(
 	LarvalJob const & job,
 	JobOutputIndex const & output_index,
 	utility::options::OptionCollection const & options,
-	core::pose::Pose const & pose
+	utility::tag::TagCOP // possibly null-pointing tag pointer
 )
 {
-	if ( scorefile_name_.name() == ""  ) {
-		utility::tag::TagCOP job_output_tag;
-		if ( job.inner_job()->jobdef_tag() ) {
-			utility::tag::TagCOP job_tags = job.inner_job()->jobdef_tag();
-			if ( job_tags->hasTag( "SecondaryOutput" ) ) {
-				job_output_tag = job_tags->getTag( "SecondaryOutput" );
-			}
-		}
-		scorefile_name_ = filename_for_job( job_output_tag, options, *job.inner_job() );
-	}
+	ScoreFileOutputSpecificationOP spec( new ScoreFileOutputSpecification );
 
-	core::io::raw_data::ScoreFileData sfd( scorefile_name_ );
+	utility::tag::TagCOP job_output_tag;
+	if ( job.inner_job()->jobdef_tag() ) {
+		utility::tag::TagCOP job_tags = job.inner_job()->jobdef_tag();
+		if ( job_tags->hasTag( "SecondaryOutput" ) ) {
+			job_output_tag = job_tags->getTag( "SecondaryOutput" );
+		}
+	}
+	spec->out_fname( filename_for_job( job_output_tag, options, *job.inner_job() ) );
+	spec->pose_tag( job.status_prefix() + job.job_tag_with_index_suffix( output_index ) + job.status_suffix() );
+	return spec;
+}
+
+/// @brief Write a pose out to permanent storage (whatever that may be).
+void
+ScoreFileOutputter::write_output(
+	output::OutputSpecification const & spec,
+	JobResult const & result
+)
+{
+	using standard::PoseJobResult;
+	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
+	PoseJobResult const & pose_result( static_cast< PoseJobResult const &  > ( result ));
+	core::pose::Pose const & pose( *pose_result.pose() );
+
+	typedef ScoreFileOutputSpecification SFOS;
+	debug_assert( dynamic_cast< SFOS const * > ( &spec ) );
+	SFOS const & sfspec( static_cast< SFOS const & > ( spec ) );
+	core::io::raw_data::ScoreFileData sfd( sfspec.out_fname() );
 
 	std::map < std::string, core::Real > score_map;
 	std::map < std::string, std::string > string_map;
@@ -90,10 +123,9 @@ ScoreFileOutputter::write_output_pose(
 	// buffer the score file output and then write out the contents
 	// in "flush," which is called only sporadically
 
-	sfd.write_pose( pose, score_map, job.status_prefix() + job.job_tag_with_index_suffix( output_index ) + job.status_suffix(), string_map );
+	sfd.write_pose( pose, score_map, sfspec.pose_tag(), string_map );
 
 }
-
 
 void
 ScoreFileOutputter::flush()
