@@ -260,7 +260,7 @@ static MoverRegistrator< loop_build::LoopMover_SlidingWindowCreator > reg_LoopMo
 
 static MoverRegistrator< loop_grower::FragmentExtensionCreator > reg_FragmentExtensionCreator;
 
-static MoverRegistrator< loop_modeling::LoopModelerCreator > reg_LoopModelerCreator;
+static MoverRegistrator< loop_modeler::LoopModelerCreator > reg_LoopModelerCreator;
 static MoverRegistrator< loop_modeling::LoopProtocolCreator > reg_LoopProtocolCreator;
 static MoverRegistrator< loop_modeling::LoopBuilderCreator > reg_LoopBuilderCreator;
 static MoverRegistrator< loop_modeling::refiners::MinimizationRefinerCreator > reg_MinimizationRefinerCreator;

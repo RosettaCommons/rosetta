@@ -8,13 +8,13 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 // @author Xingjie Pan (xingjiepan@gmail.com)
 
-#ifndef INCLUDED_protocols_kinematic_closure_perturbers_LoopHashPerturber_HH
-#define INCLUDED_protocols_kinematic_closure_perturbers_LoopHashPerturber_HH
+#ifndef INCLUDED_protocols_loop_modeler_perturbers_LoopHashPerturber_HH
+#define INCLUDED_protocols_loop_modeler_perturbers_LoopHashPerturber_HH
 
 // Unit headers
 #include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
-#include <protocols/kinematic_closure/perturbers/LoopHashPerturber.fwd.hh>
+#include <protocols/loop_modeler/perturbers/LoopHashPerturber.fwd.hh>
 
 // Protocol headers
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
@@ -25,11 +25,11 @@
 
 
 namespace protocols {
-namespace kinematic_closure {
+namespace loop_modeler {
 namespace perturbers {
 
 /// @brief Sample backbone torsions using loop hash
-class LoopHashPerturber : public Perturber {
+class LoopHashPerturber : public protocols::kinematic_closure::perturbers::Perturber {
 
 	typedef utility::vector1< std::pair< protocols::loophash::BackboneSegment, std::string > > BackboneSegments;
 
@@ -43,15 +43,15 @@ public:
 
 	/// @copydoc Perturber::perturb_subset()
 	void perturb_subset(
-		Pose const & pose,
-		IndexList const & residues,
-		ClosureProblemOP problem);
+		core::pose::Pose const & pose,
+		kinematic_closure::IndexList const & residues,
+		kinematic_closure::ClosureProblemOP problem);
 
 	/// @copydoc Perturber::perturb_subset_with_balance()
 	void perturb_subset_with_balance(
-		Pose const & pose,
-		IndexList const & residues,
-		ClosureProblemOP problem);
+		core::pose::Pose const & pose,
+		kinematic_closure::IndexList const & residues,
+		kinematic_closure::ClosureProblemOP problem);
 
 	///@brief Find a backbone segment from the loop hash library
 	void get_backbone_segments(core::pose::Pose const& pose,

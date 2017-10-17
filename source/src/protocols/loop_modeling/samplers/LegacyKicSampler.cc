@@ -18,7 +18,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
-#include <protocols/loop_modeling/LoopModeler.hh>
 #include <protocols/loop_modeling/LoopBuilder.hh>
 
 // C++ headers

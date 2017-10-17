@@ -7,21 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#ifndef INCLUDED_protocols_kinematic_closure_perturbers_LoopHashPerturber_FWD_HH
-#define INCLUDED_protocols_kinematic_closure_perturbers_LoopHashPerturber_FWD_HH
+#ifndef INCLUDED_protocols_loop_modeler_LoopModeler_FWD_HH
+#define INCLUDED_protocols_loop_modeler_LoopModeler_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace kinematic_closure {
-namespace perturbers {
+namespace loop_modeler {
 
-class LoopHashPerturber;
+class LoopModeler;
 
-typedef utility::pointer::shared_ptr<LoopHashPerturber> LoopHashPerturberOP;
-typedef utility::pointer::shared_ptr<LoopHashPerturber const> LoopHashPerturberCOP;
+typedef utility::pointer::shared_ptr<LoopModeler> LoopModelerOP;
+typedef utility::pointer::shared_ptr<LoopModeler const> LoopModelerCOP;
 
-}
 }
 }
 

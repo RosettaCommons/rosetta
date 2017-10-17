@@ -11,7 +11,7 @@
 // Unit headers
 #include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
-#include <protocols/kinematic_closure/perturbers/LoopHashPerturber.hh>
+#include <protocols/loop_modeler/perturbers/LoopHashPerturber.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -25,18 +25,20 @@
 // Protocol headers
 #include <protocols/loophash/LoopHashLibrary.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.kinematic_closure.perturbers.LoopHashPerturber" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loop_modeler.perturbers.LoopHashPerturber" );
 
 namespace protocols {
-namespace kinematic_closure {
+namespace loop_modeler {
 namespace perturbers {
+
+
 
 LoopHashPerturber::LoopHashPerturber(protocols::loophash::LoopHashLibraryOP lh_library){
 	lh_library_ = lh_library;
 }
 
 void LoopHashPerturber::perturb_subset(
-	Pose const &pose, IndexList const & residues, ClosureProblemOP problem) {
+	core::pose::Pose const &pose, kinematic_closure::IndexList const & residues, kinematic_closure::ClosureProblemOP problem) {
 	using namespace protocols::loophash;
 	using numeric::conversions::DEGREES;
 
@@ -177,7 +179,7 @@ LoopHashPerturber::extract_fragment(core::Size frag_index, core::Size loop_size)
 }
 
 void LoopHashPerturber::perturb_subset_with_balance(
-	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	core::pose::Pose const & pose, kinematic_closure::IndexList const & residues, kinematic_closure::ClosureProblemOP problem) {
 
 	// TODO: currently the detailed balance is not guaranteed
 	perturb_subset(pose, residues, problem);

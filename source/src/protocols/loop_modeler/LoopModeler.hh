@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#ifndef INCLUDED_protocols_loop_modeling_LoopModeler_HH
-#define INCLUDED_protocols_loop_modeling_LoopModeler_HH
+#ifndef INCLUDED_protocols_loop_modeler_LoopModeler_HH
+#define INCLUDED_protocols_loop_modeler_LoopModeler_HH
 
 // Unit headers
+#include <protocols/loop_modeler/LoopModeler.fwd.hh>
+#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
-#include <protocols/loop_modeling/LoopModeler.fwd.hh>
 #include <protocols/loop_modeling/LoopBuilder.fwd.hh>
 #include <protocols/loop_modeling/LoopProtocol.fwd.hh>
 #include <protocols/loop_modeling/utilities/PrepareForCentroid.fwd.hh>
 #include <protocols/loop_modeling/utilities/PrepareForFullatom.fwd.hh>
-#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -32,7 +32,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 namespace protocols {
-namespace loop_modeling {
+namespace loop_modeler {
 
 /// @brief Attempt to find the native structure for one or more loops.
 /// @details The typical loop modeling simulation in rosetta has three steps:
@@ -51,7 +51,7 @@ namespace loop_modeling {
 /// fact, no LoopMover does.)  This means that if a simulation breaks and
 /// nstruct > 1, the remaining simulations will probably break for weird
 /// reasons.
-class LoopModeler : public LoopMover {
+class LoopModeler : public loop_modeling::LoopMover {
 
 public:
 
@@ -95,13 +95,13 @@ public:
 	void setup_loophash_kic_config(bool perturb_sequence);
 
 	/// @brief Return a pointer to the build stage mover.
-	LoopBuilderOP build_stage();
+	loop_modeling::LoopBuilderOP build_stage();
 
 	/// @brief Return a pointer to the centroid stage mover.
-	LoopProtocolOP centroid_stage();
+	loop_modeling::LoopProtocolOP centroid_stage();
 
 	/// @brief Return a pointer to the fullatom stage mover.
-	LoopProtocolOP fullatom_stage();
+	loop_modeling::LoopProtocolOP fullatom_stage();
 
 	/// @brief Enable the build stage.
 	void enable_build_stage();
@@ -155,11 +155,11 @@ public:
 
 private:
 
-	LoopBuilderOP build_stage_;
-	LoopProtocolOP centroid_stage_;
-	LoopProtocolOP fullatom_stage_;
-	utilities::PrepareForCentroidOP prepare_for_centroid_;
-	utilities::PrepareForFullatomOP prepare_for_fullatom_;
+	loop_modeling::LoopBuilderOP build_stage_;
+	loop_modeling::LoopProtocolOP centroid_stage_;
+	loop_modeling::LoopProtocolOP fullatom_stage_;
+	loop_modeling::utilities::PrepareForCentroidOP prepare_for_centroid_;
+	loop_modeling::utilities::PrepareForFullatomOP prepare_for_fullatom_;
 
 	bool is_build_stage_enabled_;
 	bool is_centroid_stage_enabled_;

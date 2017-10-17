@@ -24,8 +24,8 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/loop_modeler/LoopModeler.hh>
 #include <protocols/loop_modeling/LoopBuilder.hh>
-#include <protocols/loop_modeling/LoopModeler.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.hh>
 #include <protocols/loop_modeling/utilities/PrepareForCentroid.hh>
@@ -54,6 +54,7 @@
 // Namespaces {{{1
 using namespace std;
 using namespace protocols::loop_modeling;
+using namespace protocols::loop_modeler;
 using namespace protocols::rosetta_scripts;
 using core::import_pose::pose_from_file;
 

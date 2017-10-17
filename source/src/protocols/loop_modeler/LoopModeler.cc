@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 // Headers {{{1
-#include <protocols/loop_modeling/LoopModeler.hh>
-#include <protocols/loop_modeling/LoopModelerCreator.hh>
+#include <protocols/loop_modeler/LoopModeler.hh>
+#include <protocols/loop_modeler/LoopModelerCreator.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/LoopBuilder.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
@@ -24,7 +24,7 @@
 #include <protocols/kinematic_closure/perturbers/OmegaPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/Rama2bPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
-#include <protocols/kinematic_closure/perturbers/LoopHashPerturber.hh>
+#include <protocols/loop_modeler/perturbers/LoopHashPerturber.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
@@ -119,9 +119,9 @@ using protocols::moves::Movers_map;
 // }}}1
 
 namespace protocols {
-namespace loop_modeling {
+namespace loop_modeler {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.loop_modeling.LoopModeler");
+static THREAD_LOCAL basic::Tracer TR("protocols.loop_modeler.LoopModeler");
 
 // XRW TEMP MoverOP LoopModelerCreator::create_mover() const { // {{{1
 // XRW TEMP  return MoverOP( new LoopModeler );
@@ -133,9 +133,9 @@ static THREAD_LOCAL basic::Tracer TR("protocols.loop_modeling.LoopModeler");
 // }}}1
 
 LoopModeler::LoopModeler() { // {{{1
-	build_stage_ = add_child( LoopBuilderOP( new LoopBuilder ) );
-	centroid_stage_ = add_child( LoopProtocolOP( new LoopProtocol ) );
-	fullatom_stage_ = add_child( LoopProtocolOP( new LoopProtocol ) );
+	build_stage_ = add_child( loop_modeling::LoopBuilderOP( new loop_modeling::LoopBuilder ) );
+	centroid_stage_ = add_child( loop_modeling::LoopProtocolOP( new loop_modeling::LoopProtocol ) );
+	fullatom_stage_ = add_child( loop_modeling::LoopProtocolOP( new loop_modeling::LoopProtocol ) );
 	prepare_for_centroid_ = add_child( PrepareForCentroidOP( new PrepareForCentroid ) );
 	prepare_for_fullatom_ = add_child( PrepareForFullatomOP( new PrepareForFullatom ) );
 
@@ -168,7 +168,7 @@ void LoopModeler::parse_my_tag( // {{{1
 ) {
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
-	utilities::set_task_factory_from_tag(*this, tag, data);
+	loop_modeling::utilities::set_task_factory_from_tag(*this, tag, data);
 
 	// Parse the 'config' option.
 
@@ -237,8 +237,8 @@ void LoopModeler::parse_my_tag( // {{{1
 			is_fullatom_stage_enabled_ = ! subtag->getOption<bool>("skip", ! is_fullatom_stage_enabled_);
 		} else {
 			// Parse LoopMover subtags.
-			LoopMoverOP centroid_mover = utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
-			LoopMoverOP fullatom_mover = utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
+			loop_modeling::LoopMoverOP centroid_mover = loop_modeling::utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
+			loop_modeling::LoopMoverOP fullatom_mover = loop_modeling::utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
 
 			centroid_stage_->add_mover(centroid_mover);
 			fullatom_stage_->add_mover(fullatom_mover);
@@ -318,7 +318,7 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 
 	// Report score and rmsd
 
-	LoopsCOP loops = get_loops();
+	loop_modeling::LoopsCOP loops = get_loops();
 	ObjexxFCL::FArray1D_bool loop_residues (pose.size(), false);
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
@@ -374,17 +374,17 @@ void LoopModeler::setup_kic_config() { // {{{1
 
 	setup_empty_config();
 
-	centroid_stage_->add_mover(LoopMoverOP( new KicMover ));
-	centroid_stage_->add_refiner(LoopMoverOP( new MinimizationRefiner ));
+	centroid_stage_->add_mover(loop_modeling::LoopMoverOP( new KicMover ));
+	centroid_stage_->add_refiner(loop_modeling::LoopMoverOP( new MinimizationRefiner ));
 	centroid_stage_->mark_as_default();
 
 	fullatom_stage_->set_temperature_ramping(true);
 	fullatom_stage_->set_rama_term_ramping(true);
 	fullatom_stage_->set_repulsive_term_ramping(true);
-	fullatom_stage_->add_mover(LoopMoverOP( new KicMover ));
-	fullatom_stage_->add_refiner(LoopMoverOP( new RepackingRefiner(40) ));
-	fullatom_stage_->add_refiner(LoopMoverOP( new RotamerTrialsRefiner ));
-	fullatom_stage_->add_refiner(LoopMoverOP( new MinimizationRefiner ));
+	fullatom_stage_->add_mover(loop_modeling::LoopMoverOP( new KicMover ));
+	fullatom_stage_->add_refiner(loop_modeling::LoopMoverOP( new RepackingRefiner(40) ));
+	fullatom_stage_->add_refiner(loop_modeling::LoopMoverOP( new RotamerTrialsRefiner ));
+	fullatom_stage_->add_refiner(loop_modeling::LoopMoverOP( new MinimizationRefiner ));
 	fullatom_stage_->mark_as_default();
 }
 
@@ -397,7 +397,7 @@ void LoopModeler::setup_kic_with_fragments_config() { // {{{1
 
 	// Read fragment data from the command line.
 
-	vector1<core::fragment::FragSetOP> frag_libs;
+	utility::vector1<core::fragment::FragSetOP> frag_libs;
 
 	if ( option[ OptionKeys::loops::frag_files ].user() ) {
 		loops::read_loop_fragments(frag_libs);
@@ -415,14 +415,14 @@ void LoopModeler::setup_kic_with_fragments_config() { // {{{1
 	// Create a centroid "KIC with fragments" mover (see note).
 
 	KicMoverOP centroid_kic_mover( new KicMover );
-	centroid_kic_mover->add_perturber(perturbers::PerturberOP( new FragmentPerturber(frag_libs) ));
+	centroid_kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs) ));
 	centroid_stage_->add_mover(centroid_kic_mover);
 	centroid_stage_->mark_as_default();
 
 	// Create a fullatom "KIC with fragments" mover (see note).
 
 	KicMoverOP fullatom_kic_mover( new KicMover );
-	fullatom_kic_mover->add_perturber(perturbers::PerturberOP( new FragmentPerturber(frag_libs) ));
+	fullatom_kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs) ));
 	fullatom_stage_->add_mover(fullatom_kic_mover);
 	fullatom_stage_->mark_as_default();
 
@@ -435,9 +435,9 @@ void LoopModeler::setup_kic_with_fragments_config() { // {{{1
 void LoopModeler::setup_loophash_kic_config(bool perturb_sequence) { // {{{1
 	using namespace basic::options;
 	using namespace protocols::kinematic_closure;
-	using namespace protocols::kinematic_closure::perturbers;
 	using namespace protocols::kinematic_closure::pivot_pickers;
 	using namespace protocols::loophash;
+	using namespace protocols::loop_modeler::perturbers;
 
 	setup_kic_config();
 
@@ -494,15 +494,15 @@ void LoopModeler::setup_loophash_kic_config(bool perturb_sequence) { // {{{1
 }
 
 
-LoopBuilderOP LoopModeler::build_stage() { // {{{1
+loop_modeling::LoopBuilderOP LoopModeler::build_stage() { // {{{1
 	return build_stage_;
 }
 
-LoopProtocolOP LoopModeler::centroid_stage() { // {{{1
+loop_modeling::LoopProtocolOP LoopModeler::centroid_stage() { // {{{1
 	return centroid_stage_;
 }
 
-LoopProtocolOP LoopModeler::fullatom_stage() { // {{{1
+loop_modeling::LoopProtocolOP LoopModeler::fullatom_stage() { // {{{1
 	return fullatom_stage_;
 }
 
@@ -531,15 +531,15 @@ void LoopModeler::disable_fullatom_stage() { // {{{1
 }
 
 TaskFactoryOP LoopModeler::get_task_factory() { // {{{1
-	return get_tool<TaskFactoryOP>(ToolboxKeys::TASK_FACTORY);
+	return get_tool<TaskFactoryOP>(loop_modeling::ToolboxKeys::TASK_FACTORY);
 }
 
 TaskFactoryOP LoopModeler::get_task_factory(TaskFactoryOP fallback) { // {{{1
-	return get_tool<TaskFactoryOP>(ToolboxKeys::TASK_FACTORY, fallback);
+	return get_tool<TaskFactoryOP>(loop_modeling::ToolboxKeys::TASK_FACTORY, fallback);
 }
 
 void LoopModeler::set_task_factory(TaskFactoryOP task_factory) { // {{{1
-	set_tool(ToolboxKeys::TASK_FACTORY, task_factory);
+	set_tool(loop_modeling::ToolboxKeys::TASK_FACTORY, task_factory);
 }
 
 void LoopModeler::set_fa_scorefxn(ScoreFunctionOP function) { // {{{1
@@ -585,7 +585,7 @@ void LoopModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute::attribute_w_default("loophash_perturb_sequence", xsct_rosetta_bool, "Let LoopHashKIC also perturb the amino acid sequence", "false");
 
 	// Use helper function in ./utilities/rosetta_scripts.cc to parse task operations
-	utilities::attributes_for_set_task_factory_from_tag( attlist );
+	loop_modeling::utilities::attributes_for_set_task_factory_from_tag( attlist );
 
 	// subelements
 	XMLSchemaSimpleSubelementList subelement_list;

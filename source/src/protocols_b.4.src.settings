@@ -69,9 +69,6 @@ sources = {
                 "ResidueVicinityRCG",
         ],
         
-  "protocols/kinematic_closure" : [
-    "perturbers/LoopHashPerturber",
-  ],
 	"protocols/loophash": [
 		"BackboneDB",
 		"FastGapMover",
@@ -91,8 +88,9 @@ sources = {
 		"MPI_LoopHashRefine_Master",
 		"WorkUnit_LoopHash",
 	],
-	"protocols/loop_modeling": [
+	"protocols/loop_modeler": [
 		"LoopModeler",
+    "perturbers/LoopHashPerturber",
 	],
   "protocols/pockets": [
 		"Fingerprint",

@@ -173,7 +173,7 @@
 #include <protocols/ligand_docking/WriteLigandMolFileCreator.hh>
 #include <protocols/loop_build/LoopmodelWrapperCreator.hh>
 #include <protocols/loop_build/LoopMover_SlidingWindowCreator.hh>
-#include <protocols/loop_modeling/LoopModelerCreator.hh>
+#include <protocols/loop_modeler/LoopModelerCreator.hh>
 #include <protocols/loop_modeling/LoopProtocolCreator.hh>
 #include <protocols/loop_modeling/LoopBuilderCreator.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefinerCreator.hh>
@@ -862,8 +862,8 @@ public:
 	void test_protocols_loop_build_LoopMover_SlidingWindowCreator_name()
 	{ protocols::loop_build::LoopMover_SlidingWindowCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoopMover_SlidingWindow" ); }
 
-	void test_protocols_loop_modeling_LoopModelerCreator_name()
-	{ protocols::loop_modeling::LoopModelerCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoopModeler" ); }
+	void test_protocols_loop_modeler_LoopModelerCreator_name()
+	{ protocols::loop_modeler::LoopModelerCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoopModeler" ); }
 
 	void test_protocols_loop_modeling_LoopProtocolCreator_name()
 	{ protocols::loop_modeling::LoopProtocolCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoopProtocol" ); }
@@ -2011,8 +2011,8 @@ public:
 	// void test_protocols_loop_build_LoopMover_SlidingWindowCreator()
 	// { protocols::loop_build::LoopMover_SlidingWindowCreator cr; std::cout << "protocols::loop_build::LoopMover_SlidingWindowCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_loop_modeling_LoopModelerCreator()
-	// { protocols::loop_modeling::LoopModelerCreator cr; std::cout << "protocols::loop_modeling::LoopModelerCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_loop_modeler_LoopModelerCreator()
+	// { protocols::loop_modeler::LoopModelerCreator cr; std::cout << "protocols::loop_modeling::LoopModelerCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_loop_modeling_LoopProtocolCreator()
 	// { protocols::loop_modeling::LoopProtocolCreator cr; std::cout << "protocols::loop_modeling::LoopProtocolCreator " << cr.keyname() << std::endl; }

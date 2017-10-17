@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#ifndef INCLUDED_protocols_loop_modeling_LoopModelerCreator_HH
-#define INCLUDED_protocols_loop_modeling_LoopModelerCreator_HH
+#ifndef INCLUDED_protocols_loop_modeler_LoopModelerCreator_HH
+#define INCLUDED_protocols_loop_modeler_LoopModelerCreator_HH
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace loop_modeling {
+namespace loop_modeler {
 
 class LoopModelerCreator : public protocols::moves::MoverCreator {
 public:
