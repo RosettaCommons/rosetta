@@ -9,7 +9,9 @@
 
 /// @file   core/scoring/methods/ProClosureEnergy.hh
 /// @brief  Proline ring closure energy method class declaration
+/// @note This energy term supports L-proline, D-proline, and L- or D-oligourea-proline.
 /// @author Andrew Leaver-Fay
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added support for D-proline and for oligoureas.
 
 
 #ifndef INCLUDED_core_scoring_methods_ProClosureEnergy_hh

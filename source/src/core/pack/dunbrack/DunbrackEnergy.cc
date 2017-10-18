@@ -26,6 +26,7 @@
 #include <core/scoring/ScoreType.hh>
 
 // Project headers
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -139,11 +140,23 @@ DunbrackEnergy::eval_residue_dof_derivative(
 
 	dunbrack::RotamerLibraryScratchSpace scratch;
 	rotlib->rotamer_energy_deriv( rsd, scratch );
-	if ( tor_id.type() == id::BB && tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
-		deriv      = scratch.dE_dbb()[ tor_id.torsion() ];
-		deriv_dev  = scratch.dE_dbb_dev()[ tor_id.torsion() ];
-		deriv_rot  = scratch.dE_dbb_rot()[ tor_id.torsion() ];
-		deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
+	if ( tor_id.type() == id::BB ) {
+		core::Size const scratch_index( get_scratch_index( tor_id.torsion(), rsd ) ); //The index of the relevant torsion, as indexed in the scratch space.
+		// Note that the scratch space indexes only the relevant backbone torsions.  So, for example, if a residue type had
+		// rotamers that were dependent on mainchain torsion indices 1, 2, and 4, the scratch space would have indices 1, 2,
+		// and 3 corresponding to mainchain indices 1, 2, and 4.
+
+		if ( scratch_index == 0 ) {
+			deriv = 0;
+			deriv_dev = 0;
+			deriv_rot = 0;
+			deriv_semi = 0;
+		} else if ( scratch_index  <= DUNBRACK_MAX_BBTOR ) {
+			deriv      = scratch.dE_dbb()[ scratch_index ];
+			deriv_dev  = scratch.dE_dbb_dev()[ scratch_index ];
+			deriv_rot  = scratch.dE_dbb_rot()[ scratch_index ];
+			deriv_semi = scratch.dE_dbb_semi()[ scratch_index ];
+		}
 	} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
 		deriv      = scratch.dE_dchi()[ tor_id.torsion() ];
 		deriv_dev  = scratch.dE_dchi_dev()[ tor_id.torsion() ];
@@ -185,11 +198,23 @@ DunbrackEnergy::eval_dof_derivative(
 	dunbrack::RotamerLibraryScratchSpace scratch;
 	rotlib->rotamer_energy_deriv( pose.residue( tor_id.rsd() ), scratch );
 
-	if ( tor_id.type() == id::BB  && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_BBTOR ) {
-		deriv      = scratch.dE_dbb()[ tor_id.torsion() ];
-		deriv_dev  = scratch.dE_dbb_dev()[ tor_id.torsion() ];
-		deriv_rot  = scratch.dE_dbb_rot()[ tor_id.torsion() ];
-		deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
+	if ( tor_id.type() == id::BB ) {
+		core::Size const scratch_index( get_scratch_index( tor_id.torsion(), pose.residue(tor_id.rsd()) ) ); //The index of the relevant torsion, as indexed in the scratch space.
+		// Note that the scratch space indexes only the relevant backbone torsions.  So, for example, if a residue type had
+		// rotamers that were dependent on mainchain torsion indices 1, 2, and 4, the scratch space would have indices 1, 2,
+		// and 3 corresponding to mainchain indices 1, 2, and 4.
+
+		if ( scratch_index == 0 ) {
+			deriv = 0;
+			deriv_dev = 0;
+			deriv_rot = 0;
+			deriv_semi = 0;
+		} else if ( scratch_index  <= dunbrack::DUNBRACK_MAX_BBTOR ) {
+			deriv      = scratch.dE_dbb()[ scratch_index ];
+			deriv_dev  = scratch.dE_dbb_dev()[ scratch_index ];
+			deriv_rot  = scratch.dE_dbb_rot()[ scratch_index ];
+			deriv_semi = scratch.dE_dbb_semi()[ scratch_index ];
+		}
 	} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
 		deriv      = scratch.dE_dchi()[ tor_id.torsion() ];
 		deriv_dev  = scratch.dE_dchi_dev()[ tor_id.torsion() ];
@@ -205,6 +230,40 @@ DunbrackEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & /*context_graphs_required*/
 ) const
 {}
+
+/// @brief Given a mainchain torsion index and a ResidueType, get the index of the corresponding torsion in the
+/// data stored in the Dunbrack scratch space.
+/// @details For most residue types, this just returns torsion_index.  The index is only different in cases in which
+/// a residue type has rotamers that depend on a subset of mainchain torsions.  For example, if a residue's rotamers
+/// depended on mainchain torsions 2, 3, and 4, then the scratch indices 1, 2, and 3 would correspond to mainchain
+/// torsions 2, 3, and 4, respectively.  This function returns 0 if torsion_index is a torsion on which rotamers do
+/// not depend.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::Size
+DunbrackEnergy::get_scratch_index(
+	core::Size const torsion_index,
+	core::conformation::Residue const &rsd
+) const {
+	core::Size scratch_index(torsion_index);
+
+	// Figure out whether this is a residue type with rotamers that depend on only a subset of mainchain torsion angles:
+	core::chemical::rotamers::RotamerLibrarySpecificationCOP rotlibspec( rsd.type().rotamer_library_specification() );
+	if ( rotlibspec != nullptr ) {
+		core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP ncaa_rotlibspec( utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const>( rotlibspec ) );
+		if ( ncaa_rotlibspec != nullptr ) {
+			debug_assert( ncaa_rotlibspec->rotamer_bb_torsion_indices().size() < rsd.mainchain_torsions().size() ); //Should always be true.
+			if ( ncaa_rotlibspec->rotamer_bb_torsion_indices().size() < rsd.mainchain_torsions().size() - 1 ) {
+				scratch_index = 0;
+				for ( core::Size i(1), imax(ncaa_rotlibspec->rotamer_bb_torsion_indices().size()); i<=imax; ++i ) {
+					if ( ncaa_rotlibspec->rotamer_bb_torsion_indices()[i] == torsion_index ) scratch_index = i;
+				}
+			}
+		}
+	}
+
+	return scratch_index;
+}
+
 core::Size
 DunbrackEnergy::version() const
 {

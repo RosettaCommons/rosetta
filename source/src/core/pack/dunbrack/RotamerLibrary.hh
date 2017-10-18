@@ -275,7 +275,8 @@ private:
 		chemical::AA aa,
 		Size const n_chi,
 		Size const n_bb,
-		bool dun02
+		bool const dun02,
+		bool const reduced_resolution_library=false
 	) const;
 
 	SingleResidueDunbrackLibraryOP
@@ -330,7 +331,8 @@ private:
 	SingleResidueDunbrackLibraryOP
 	create_srdl(
 		chemical::AA aa_in,
-		DunbrackAAParameterSet const & ps
+		DunbrackAAParameterSet const & ps,
+		bool const reduced_resolution_library=false
 	) const;
 
 public:

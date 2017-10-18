@@ -1476,6 +1476,18 @@ private:
 		AtomID & id4
 	) const;
 
+	/// @brief Get four backbone atoms which define this backbone torsion, if this residue is an oligourea.
+	/// @details I'm adding this function because backbone_torsion_angle_atoms() is an Escherian labyrinth.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool
+	backbone_torsion_angle_atoms_oligourea(
+		TorsionID const & id,
+		AtomID & id1,
+		AtomID & id2,
+		AtomID & id3,
+		AtomID & id4
+	) const;
+
 	/// @brief  Find the four atoms that define the torsion angle of this branch connection.
 	bool branch_connection_torsion_angle_atoms(
 		TorsionID const & torsion,

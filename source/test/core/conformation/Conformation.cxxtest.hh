@@ -31,6 +31,8 @@
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
+#include <core/pose/util.hh>
+#include <protocols/cyclic_peptide/PeptideStubMover.hh> //For convenience, for building poses to test.
 #include <core/pose/variant_util.hh>
 
 #include <test/util/pose_funcs.hh>
@@ -423,5 +425,67 @@ public:
 		TS_ASSERT_EQUALS( lower_omega_atoms[4], core::id::AtomID(resn.atom_index("OVL2"), nres) );
 
 	} //test_Conformation_backbone_torsion_angle_atoms_cutpoint
+
+	/// @brief Test the Conformation::backbone_torsion_angle_atoms_oligourea() function.
+	/// @author Vikram K. Mulligan();
+	void test_Conformation_backbone_torsion_angle_atoms_oligourea() {
+		protocols::cyclic_peptide::PeptideStubMover builder;
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
+		builder.add_residue("Append", "OU3_ALA", 2, false, "N", 0, 1, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		core::pose::Pose pose;
+		builder.apply(pose); //Build the peptide.
+
+		utility::vector1< core::id::AtomID > id1(5), id2(5), id3(5), id4(5);
+
+		for ( core::Size i(1); i<=5; ++i ) {
+			pose.conformation().backbone_torsion_angle_atoms( id::TorsionID(2, id::BB, i), id1[i], id2[i], id3[i], id4[i] );
+		}
+
+		TS_ASSERT_EQUALS( id1[1].rsd(), 1 );
+		TS_ASSERT_EQUALS( id1[1].atomno(), pose.residue(1).atom_index("C") );
+		TS_ASSERT_EQUALS( id2[1].rsd(), 2 );
+		TS_ASSERT_EQUALS( id2[1].atomno(), pose.residue(2).atom_index("N") );
+		TS_ASSERT_EQUALS( id3[1].rsd(), 2 );
+		TS_ASSERT_EQUALS( id3[1].atomno(), pose.residue(2).atom_index("CA") );
+		TS_ASSERT_EQUALS( id4[1].rsd(), 2 );
+		TS_ASSERT_EQUALS( id4[1].atomno(), pose.residue(2).atom_index("CM") );
+
+		TS_ASSERT_EQUALS( id1[2].rsd(), 2);
+		TS_ASSERT_EQUALS( id1[2].atomno(), pose.residue(2).atom_index("N") );
+		TS_ASSERT_EQUALS( id2[2].rsd(), 2 );
+		TS_ASSERT_EQUALS( id2[2].atomno(), pose.residue(2).atom_index("CA") );
+		TS_ASSERT_EQUALS( id3[2].rsd(), 2 );
+		TS_ASSERT_EQUALS( id3[2].atomno(), pose.residue(2).atom_index("CM") );
+		TS_ASSERT_EQUALS( id4[2].rsd(), 2 );
+		TS_ASSERT_EQUALS( id4[2].atomno(), pose.residue(2).atom_index("NU") );
+
+		TS_ASSERT_EQUALS( id1[3].rsd(), 2 );
+		TS_ASSERT_EQUALS( id1[3].atomno(), pose.residue(2).atom_index("CA") );
+		TS_ASSERT_EQUALS( id2[3].rsd(), 2 );
+		TS_ASSERT_EQUALS( id2[3].atomno(), pose.residue(2).atom_index("CM") );
+		TS_ASSERT_EQUALS( id3[3].rsd(), 2 );
+		TS_ASSERT_EQUALS( id3[3].atomno(), pose.residue(2).atom_index("NU") );
+		TS_ASSERT_EQUALS( id4[3].rsd(), 2 );
+		TS_ASSERT_EQUALS( id4[3].atomno(), pose.residue(2).atom_index("C") );
+
+		TS_ASSERT_EQUALS( id1[4].rsd(), 2 );
+		TS_ASSERT_EQUALS( id1[4].atomno(), pose.residue(2).atom_index("CM") );
+		TS_ASSERT_EQUALS( id2[4].rsd(), 2 );
+		TS_ASSERT_EQUALS( id2[4].atomno(), pose.residue(2).atom_index("NU") );
+		TS_ASSERT_EQUALS( id3[4].rsd(), 2 );
+		TS_ASSERT_EQUALS( id3[4].atomno(), pose.residue(2).atom_index("C") );
+		TS_ASSERT_EQUALS( id4[4].rsd(), 3 );
+		TS_ASSERT_EQUALS( id4[4].atomno(), pose.residue(3).atom_index("N") );
+
+		TS_ASSERT_EQUALS( id1[5].rsd(), 2 );
+		TS_ASSERT_EQUALS( id1[5].atomno(), pose.residue(2).atom_index("NU") );
+		TS_ASSERT_EQUALS( id2[5].rsd(), 2 );
+		TS_ASSERT_EQUALS( id2[5].atomno(), pose.residue(2).atom_index("C") );
+		TS_ASSERT_EQUALS( id3[5].rsd(), 3 );
+		TS_ASSERT_EQUALS( id3[5].atomno(), pose.residue(3).atom_index("N") );
+		TS_ASSERT_EQUALS( id4[5].rsd(), 3 );
+		TS_ASSERT_EQUALS( id4[5].atomno(), pose.residue(3).atom_index("CA") );
+	}
 
 };

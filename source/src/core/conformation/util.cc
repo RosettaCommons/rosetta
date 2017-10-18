@@ -619,8 +619,8 @@ check_good_cutpoint_neighbour(
 	runtime_assert_string_msg(
 		thistype.is_alpha_aa() || thistype.is_beta_aa() || thistype.is_gamma_aa() ||
 		thistype.is_sri() || thistype.has_property(core::chemical::TRIAZOLE_LINKER) ||
-		thistype.is_peptoid() || thistype.is_carbohydrate() || thistype.is_RNA(),
-		"Error in core::conformation::check_good_cutpoint_neighbour(): The selected residue is neither an alpha-, beta-, or gamma-amino acid, nor a peptoid, nor a sugar, nor a ribonucleic acid.  Nevertheless, it has a cutpoint variant type.  This should not be possible."
+		thistype.is_peptoid() || thistype.is_carbohydrate() || thistype.is_RNA() || thistype.is_oligourea(),
+		"Error in core::conformation::check_good_cutpoint_neighbour(): The selected residue is neither an alpha-, beta-, or gamma-amino acid, nor a peptoid, nor a sugar, nor a ribonucleic acid, nor an oligourea.  Nevertheless, it has a cutpoint variant type.  This should not be possible."
 	);
 
 	if ( thistype.is_carbohydrate() ) {
@@ -639,8 +639,8 @@ check_good_cutpoint_neighbour(
 		);
 	} else {
 		runtime_assert_string_msg(
-			other_res.type().is_alpha_aa() || other_res.type().is_beta_aa() || other_res.type().is_gamma_aa() || other_res.type().is_peptoid(),
-			"Error in core::conformation::check_good_cutpoint_neighbour(): The connected residue is neither a peptoid, nor an alpha-, beta-, or gamma-amino acid."
+			other_res.type().is_alpha_aa() || other_res.type().is_beta_aa() || other_res.type().is_gamma_aa() || other_res.type().is_peptoid() || other_res.type().is_oligourea(),
+			"Error in core::conformation::check_good_cutpoint_neighbour(): The connected residue is neither a peptoid, nor an oligourea, nor an alpha-, beta-, or gamma-amino acid."
 		);
 	}
 }
@@ -2498,6 +2498,41 @@ all_atom_center(
 	return numeric::center_of_mass( coords );
 }
 
+/// @brief Given a residue and a connection id, get the heavyatom adjacent to the atom that makes that connection.
+/// @details Chooses mainchain over non-mainchain, and heavyatoms over non-heavyatoms.  Returns true for FAILURE.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+get_second_atom_from_connection(
+	core::Size & resno,
+	core::Size & atomno,
+	Residue const &rsd,
+	Conformation const &conformation,
+	core::Size const &conn_id
+) {
+	core::Size conn_atom( rsd.type().residue_connect_atom_index( conn_id ) );
+	for ( core::Size i(1), imax(rsd.natoms()); i<=imax; ++i ) {
+		if ( i == conn_atom ) continue;
+		if ( rsd.type().atoms_are_bonded( i, conn_atom ) ) {
+			resno = rsd.seqpos();
+			atomno = i;
+			return false; //SUCCESS
+		}
+	}
+
+	//If we reach here, then we can't find an atom adjacent to the connection in the residue.  Could be a one-atom residue.
+	for ( core::Size i(1), imax(rsd.type().n_possible_residue_connections()); i<=imax; ++i ) {
+		if ( i == conn_id ) continue;
+		core::Size const connected_res( rsd.connected_residue_at_resconn( i ) );
+		if ( connected_res != 0 ) {
+			resno = connected_res;
+			atomno = conformation.residue( connected_res ).residue_connect_atom_index( rsd.residue_connection_conn_id( conn_id ) );
+			if ( atomno == 0 ) return true; //FAIL
+			return false; //SUCCESS
+		}
+	}
+
+	return true; //FAILURE
+}
 
 
 } // namespace conformation

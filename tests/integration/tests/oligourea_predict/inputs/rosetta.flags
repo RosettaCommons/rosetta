@@ -1,0 +1,11 @@
+-nstruct 5
+##### these are general flags
+-inout:write_all_connect_info true
+-sequence_file inputs/seq.txt
+-in:file:native inputs/native.pdb
+-genkic_closure_attempts 500
+-fast_relax_rounds 1
+-min_genkic_hbonds 2
+-min_final_hbonds 2
+-symmetric_gly_tables true
+-cyclic_peptide:rama_cutoff 3.0

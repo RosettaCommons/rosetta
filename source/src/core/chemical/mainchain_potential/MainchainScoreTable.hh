@@ -78,11 +78,15 @@ public: //Accessor functions:
 	/// @brief Access values in this MainchainScoreTable.
 	/// @details Note that the vector is deliberately not passed by reference.  The function copies the vector and ensures
 	/// that all coordinates are in the range [0, 360).
+	/// @note The full vector of mainchain torsions should be passed in.  If the potential is a function of fewer degrees of freedom,
+	/// this function will disregard the appropraite entries in the coords vector.
 	core::Real energy( utility::vector1 < core::Real > coords ) const;
 
 	/// @brief Get the gradient with respect to x1,x2,x3,...xn for this MainchainScoreTable.
 	/// @param[in] coords_in The coordinates at which to evaluate the gradient.
 	/// @param[out] gradient_out The resulting gradient.
+	/// @note The full vector of mainchain torsions should be passed in.  If the potential is a function of fewer degrees of freedom,
+	/// this function will disregard the appropraite entries in the coords vector.
 	void gradient( utility::vector1 < core::Real > coords_in, utility::vector1 < core::Real > &gradient_out ) const;
 
 	/// @brief Set whether we should symmetrize tables for glycine.
@@ -95,7 +99,16 @@ public: //Accessor functions:
 
 	/// @brief Given the cumulative distribution function (pre-calculated), draw a random set of mainchain torsion values
 	/// biased by the probability distribution.
+	/// @details output is in the range (-180, 180].
+	/// @note The dimensionality of the torsions vector will match the total degrees of freedom of the residue.  If the mainchain potential is
+	/// a function of fewer mainchain degrees of freedom, then those torsions on which the potential does NOT depend will have values of 0 in the
+	/// torsions vector.  Use the get_mainchain_torsions_covered() function to get the vector of mainchiain torsion indices that are covered.
 	void draw_random_mainchain_torsion_values( utility::vector1 < core::Real > &torsions ) const;
+
+	/// @brief Get a const reference to the vector of mainchain torsions indices that this mainchain potential covers.
+	/// @details For example, for an oligourea, this would return {1, 2, 3}, since the Rama maps for oligoureas cover
+	/// phi, theta, and psi (mainchain torsions 1, 2, and 3, respectively), but not mu or omega (mainchain torsions 4 and 5).
+	inline utility::vector1< core::Size > const & get_mainchain_torsions_covered() const { return mainchain_torsions_covered_; }
 
 private: //Private functions:
 
@@ -202,6 +215,17 @@ private: //Private variables:
 	/// @details Only used if use_polycubic_interpolation_ is true and the energies_ MathNTensor is N-dimensional, where N > 2.
 	/// Null otherwise.
 	numeric::interpolation::spline::PolycubicSplineBaseOP energies_spline_ND_;
+
+	/// @brief What is the total number of mainchain torsions for this residue type?
+	/// @details Could be different than the dimension of the tensors, if certain torsions are fixed.  Note that this excludes omega (the inter-residue torsion),
+	/// so for an alpha-amino acid, it should be "2".  In the case of an oligourea, it is "3" instead of "4", since mu is fixed at 180 and enforced (along with omega)
+	/// by the OmegaTetherEnergy.
+	core::Size n_mainchain_torsions_total_;
+
+	/// @brief If only a subset of mainchain torsions are provided, which ones are the relevant ones?
+	/// @details For oligoureas, for example, this would be {1, 2, 3}, since only phi, theta, and psi are covered by the mainchain potential, and mu and theta
+	/// (torsions 4 and 5) are covered by the omega score term.
+	utility::vector1< core::Size > mainchain_torsions_covered_;
 
 	/// @brief Symmetrize glycine tables?
 	/// @details Read from option system by default.

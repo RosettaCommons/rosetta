@@ -205,6 +205,10 @@ RamaPrePro::eval_rpp_rama_score(
 /// @param[in] res1 The current residue, for which we're drawing mainchain torsions.
 /// @param[in] res2 The next residue, used to determine whether to use pre-proline tables or not.
 /// @param[out] torsions A vector of mainchain torsions for the current residue.
+/// @note If the mainchain potential is a function of fewer than all of the mainchain torsions, the vector returned will
+/// not have random values for the torsions that the mainchain potential is not a function of.  Rather, these torsions will
+/// be set to 0.  Use the RamaPrePro::get_mainchain_torsions_covered() function to get a vector of torsion indices that were
+/// randomized based on the mainchain potential CDF.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
 RamaPrePro::random_mainchain_torsions(
@@ -245,6 +249,35 @@ RamaPrePro::random_mainchain_torsions(
 			torsions[i] *= -1.0;
 		}
 	}
+}
+
+/// @brief Get a const reference to the vector of mainchain torsions indices that the mainchain potential for a given noncanonical ResidueType covers.
+/// @details For example, for an oligourea, this would return {1, 2, 3}, since the Rama maps for oligoureas cover
+/// phi, theta, and psi (mainchain torsions 1, 2, and 3, respectively), but not mu or omega (mainchain torsions 4 and 5).
+/// @param[in] conf The current conformation, for reference.
+/// @param[in] res1 The current residue, for which we're drawing mainchain torsions.
+/// @param[in] res2 The next residue, used to determine whether to use pre-proline tables or not.
+utility::vector1< core::Size > const &
+RamaPrePro::get_mainchain_torsions_covered(
+	core::conformation::Conformation const & conf,
+	core::chemical::ResidueTypeCOP res1,
+	core::chemical::ResidueTypeCOP res2
+) const {
+	//Otherwise, this is a noncanonical, and the logic becomes more complicated.
+	//First, we must determine whether this is a D-amino acid.  (Score tables are for L-versions.)
+	bool const is_d( res1->is_d_aa() );
+
+	//Get the L-equivalent type:
+	core::chemical::ResidueTypeCOP ltype( is_d ? conf.residue_type_set_for_conf( res1->mode() )->get_mirrored_type( res1 )  : res1 );
+
+	//Get an instance of the ScoringManager, and the proper MainchainScoreTable:
+	ScoringManager* manager( ScoringManager::get_instance() );
+	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table(
+		manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, is_N_substituted( res2 ) )
+	);
+	runtime_assert_string_msg( cur_table, "Error in core::scoring::RamaPrePro::get_mainchain_torsions_covered(): No mainchain score table for residue type " + res1->name() + " exists." );
+
+	return cur_table->get_mainchain_torsions_covered();
 }
 
 /// @brief Given the current residue (res1) and the next one (res2), randomly draw mainchain torsion values for the current
@@ -288,14 +321,15 @@ RamaPrePro::random_mainchain_torsions(
 }
 
 /// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
-/// @details Also returns true for an N-methyl amino acid or peptoid.
+/// @details Also returns true for an N-methyl amino acid, peptoid, or
+/// proline-like oligourea.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 bool
 RamaPrePro::is_N_substituted(
 	core::chemical::ResidueTypeCOP restype
 ) const {
 	core::chemical::AA const aa( restype->aa() );
-	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || restype->is_n_methylated() || restype->is_peptoid() );
+	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || aa == core::chemical::ou3_pro || restype->is_n_methylated() || restype->is_peptoid() );
 }
 
 /// @brief Ensure that the RamaPrePro scoring tables for the 20 canonical amino acids are set up, and that we are storing

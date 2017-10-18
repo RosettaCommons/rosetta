@@ -1,0 +1,10 @@
+-nstruct 1
+-in:file:silent inputs/clustered.silent
+-in:file:fullatom
+-out:file:silent out.silent
+-out:file:silent_struct_type binary
+-parser:protocol xml/design.xml
+-write_all_connect_info
+-output_virtual true
+-script_vars length=8 repeat_length=4
+-jd2:failed_job_exception false

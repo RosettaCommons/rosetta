@@ -926,10 +926,10 @@ public: // test functions
 		core::Vector com_3 = protocols::membrane::chain_com( pose, chains[ 3 ] );
 		core::Vector com_4 = protocols::membrane::chain_com( pose, chains[ 4 ] );
 
-		std::cout << "core::Vector com1( " << com_1[0] << ", " << com_1[1] << ", " << com_1[2] << " );" << std::endl;
-		std::cout << "core::Vector com2( " << com_2[0] << ", " << com_2[1] << ", " << com_2[2] << " );" << std::endl;
-		std::cout << "core::Vector com3( " << com_3[0] << ", " << com_3[1] << ", " << com_3[2] << " );" << std::endl;
-		std::cout << "core::Vector com4( " << com_4[0] << ", " << com_4[1] << ", " << com_4[2] << " );" << std::endl;
+		TR << "core::Vector com1( " << com_1[0] << ", " << com_1[1] << ", " << com_1[2] << " );" << std::endl;
+		TR << "core::Vector com2( " << com_2[0] << ", " << com_2[1] << ", " << com_2[2] << " );" << std::endl;
+		TR << "core::Vector com3( " << com_3[0] << ", " << com_3[1] << ", " << com_3[2] << " );" << std::endl;
+		TR << "core::Vector com4( " << com_4[0] << ", " << com_4[1] << ", " << com_4[2] << " );" << std::endl;
 
 		// test
 		position_equal_within_delta( com1, com_1 , 0.001 );

@@ -17,6 +17,7 @@
 #include <test/UTracer.hh>
 #include <test/util/pdb1ubq.hh>
 #include <cxxtest/TestSuite.h>
+#include <test/core/scoring/RamaPrePro_util.h>
 
 // Project Headers
 #include <core/scoring/RamaPrePro.hh>
@@ -57,93 +58,54 @@ public:
 	void tearDown(){
 	}
 
-	void do_test(
-		std::string const &seq,
-		bool const add_nmethyl,
-		bool const flip_chirality
-	) {
-		core::pose::PoseOP pose( new core::pose::Pose );
-		core::pose::make_pose_from_sequence(*pose, seq, "fa_standard", false);
-
-		if ( add_nmethyl ) {
-			core::chemical::ResidueTypeSetCOP rsd_set(pose->residue_type_set_for_pose( pose->residue_type(2).mode() ));
-			core::chemical::ResidueTypeCOP rsd_type( pose->residue_type_ptr(2) );
-			core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_residue_type_with_variant_added( *rsd_type,
-				core::chemical::ResidueProperties::get_variant_from_string( "N_METHYLATION" ) ).get_self_ptr() );
-			core::pose::replace_pose_residue_copying_existing_coordinates( *pose, 2, *new_rsd_type );
-			//pose->dump_pdb("vtemp_ramaprepro.pdb"); //DELETE ME
-		}
-
-		if ( flip_chirality ) {
-			protocols::cyclic_peptide::FlipChiralityMover flipper;
-			flipper.apply( *pose );
-		}
-
-		core::scoring::RamaPrePro const & rama( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
-		TR << "\nPHI\tPSI\n";
-		core::Size leftcount(0);
-		for ( core::Size i=1; i<=1000; ++i ) {
-			utility::vector1 < core::Real > phipsi;
-			rama.random_mainchain_torsions( pose->conformation(), pose->residue_type_ptr(2), pose->residue_type_ptr(3), phipsi);
-			TR << phipsi[1] << "\t" << phipsi[2] << "\n";
-			if ( phipsi[1] <= 0 ) ++leftcount;
-		}
-		TR << "LEFT: " << leftcount << "\tRIGHT: " << 1000-leftcount << std::endl;
-		if ( flip_chirality ) {
-			TS_ASSERT( leftcount < 500 );
-		} else {
-			TS_ASSERT( leftcount > 500 );
-		}
-	}
-
 	/// @brief Test the drawing of random mainchain torsion values from the
 	/// Ramachandran probability distribution.
 	void test_random_phipsi_canonical() {
-		do_test("AAAA", false, false);
+		do_ramaprepro_test("AAAA", false, false);
 	}
 
 	/// @brief Test the drawing of random mainchain torsion values from the
 	/// Ramachandran probability distribution for a pre-proline amino acid.
 	void test_random_phipsi_canonical_prepro() {
-		do_test("AAPA", false, false);
+		do_ramaprepro_test("AAPA", false, false);
 	}
 
 	/// @brief Test the drawing of random mainchain torsion values from the
 	/// Ramachandran probability distribution for a D-amino acid.
 	void test_random_phipsi_canonical_d_aa() {
-		do_test("AAAA", false, true);
+		do_ramaprepro_test("AAAA", false, true);
 	}
 
 	/// @brief Test the drawing of random mainchain torsion values from the
 	/// Ramachandran probability distribution for a D-pre-proline amino acid.
 	void test_random_phipsi_canonical_d_aa_prepro() {
-		do_test("AAPA", false, true);
+		do_ramaprepro_test("AAPA", false, true);
 	}
 
 	/// @brief Test the drawing of random mainchain torsion values from the
 	/// Ramachandran probability distribution for a noncanonical (N-methyl-trp).
 	void test_random_phipsi_noncanonical() {
-		do_test("AWAA", true, false);
+		do_ramaprepro_test("AWAA", true, false);
 	}
 
 	/// @brief Test the drawing of random mainchain torsion values from the
 	/// Ramachandran probability distribution for a noncanonical (N-methyl-trp)
 	/// using the pre-proline map.
 	void test_random_phipsi_noncanonical_prepro() {
-		do_test("AWPA", true, false);
+		do_ramaprepro_test("AWPA", true, false);
 	}
 
 	/// @brief Test the drawing of random mainchain torsion values from the
 	/// Ramachandran probability distribution for a noncanonical D-amino acid (D-N-methyl-trp).
 	void test_random_phipsi_noncanonical_d_aa() {
-		do_test("AWAA", true, true);
+		do_ramaprepro_test("AWAA", true, true);
 	}
 
 	/// @brief Test the drawing of random mainchain torsion values from the
 	/// Ramachandran probability distribution for a noncanonical D-amino acid (D-N-methyl-trp)
 	/// using the pre-proline map.
 	void test_random_phipsi_noncanonical_d_aa_prepro() {
-		do_test("AWPA", true, true);
+		do_ramaprepro_test("AWPA", true, true);
 	}
 
 	/// @brief Checks that the rama_prepro score term is storing the value that it has calculated in the

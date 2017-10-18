@@ -91,9 +91,14 @@ public:
 	/// @brief Given the current residue (res1) and the next one (res2), randomly draw mainchain torsion values for the current
 	/// residue, biased by the Ramachandran probabilities for its type.
 	/// @details This version is general, usable for canonicals or noncanonicals.
+	/// @param[in] conf The current conformation, for reference.
 	/// @param[in] res1 The current residue, for which we're drawing mainchain torsions.
 	/// @param[in] res2 The next residue, used to determine whether to use pre-proline tables or not.
 	/// @param[out] torsions A vector of mainchain torsions for the current residue.
+	/// @note If the mainchain potential is a function of fewer than all of the mainchain torsions, the vector returned will
+	/// not have random values for the torsions that the mainchain potential is not a function of.  Rather, these torsions will
+	/// be set to 0.  Use the RamaPrePro::get_mainchain_torsions_covered() function to get a vector of torsion indices that were
+	/// randomized based on the mainchain potential CDF.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void
 	random_mainchain_torsions(
@@ -101,6 +106,19 @@ public:
 		core::chemical::ResidueTypeCOP res1,
 		core::chemical::ResidueTypeCOP res2,
 		utility::vector1 < core::Real > &torsions
+	) const;
+
+	/// @brief Get a const reference to the vector of mainchain torsions indices that the mainchain potential for a given noncanonical ResidueType covers.
+	/// @details For example, for an oligourea, this would return {1, 2, 3}, since the Rama maps for oligoureas cover
+	/// phi, theta, and psi (mainchain torsions 1, 2, and 3, respectively), but not mu or omega (mainchain torsions 4 and 5).
+	/// @param[in] conf The current conformation, for reference.
+	/// @param[in] res1 The current residue, for which we're drawing mainchain torsions.
+	/// @param[in] res2 The next residue, used to determine whether to use pre-proline tables or not.
+	utility::vector1< core::Size > const &
+	get_mainchain_torsions_covered(
+		core::conformation::Conformation const & conf,
+		core::chemical::ResidueTypeCOP res1,
+		core::chemical::ResidueTypeCOP res2
 	) const;
 
 	/// @brief Given the current residue (res1) and the next one (res2), randomly draw mainchain torsion values for the current
@@ -118,7 +136,8 @@ public:
 	) const;
 
 	/// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
-	/// @details Also returns true for an N-methyl amino acid or peptoid.
+	/// @details Also returns true for an N-methyl amino acid, peptoid, or
+	/// proline-like oligourea.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool is_N_substituted( core::chemical::ResidueTypeCOP restype ) const;
 

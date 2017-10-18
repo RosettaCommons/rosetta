@@ -238,20 +238,21 @@ CycpepSymmetryFilter::is_cyclic_peptide(
 
 	for ( core::Size i=1, imax=residues.size(); i<=imax; ++i ) {
 		core::Size const res( residues[i] );
-
-		if ( !pose.residue(res).has_lower_connect() || !pose.residue(res).has_upper_connect() ) return false;
-		if ( !pose.residue_type(res).is_alpha_aa() && !pose.residue_type(res).is_beta_aa() && !pose.residue_type(res).is_gamma_aa() && !pose.residue_type(res).is_peptoid() ) return false;
+		core::conformation::Residue const &curres( pose.residue(res) );
+		if ( !curres.has_lower_connect() || !curres.has_upper_connect() ) return false;
+		core::chemical::ResidueType const &restype( pose.residue_type(res) );
+		if ( !restype.is_alpha_aa() && !restype.is_beta_aa() && !restype.is_gamma_aa() && !restype.is_peptoid() && !restype.is_oligourea() ) return false;
 
 		if ( i == 1 ) {
-			if ( pose.residue(res).connected_residue_at_resconn( pose.residue_type(res).lower_connect_id() ) != residues[imax] ) return false;
+			if ( curres.connected_residue_at_resconn( restype.lower_connect_id() ) != residues[imax] ) return false;
 		} else { //if( i > 1 )
-			if ( pose.residue(res).connected_residue_at_resconn( pose.residue_type(res).lower_connect_id() ) != residues[i-1] ) return false;
+			if ( curres.connected_residue_at_resconn( restype.lower_connect_id() ) != residues[i-1] ) return false;
 		}
 
 		if ( i == imax ) {
-			if ( pose.residue(res).connected_residue_at_resconn( pose.residue_type(res).upper_connect_id() ) != residues[1] ) return false;
+			if ( curres.connected_residue_at_resconn( restype.upper_connect_id() ) != residues[1] ) return false;
 		} else { //if( i < imax )
-			if ( pose.residue(res).connected_residue_at_resconn( pose.residue_type(res).upper_connect_id() ) != residues[i+1] ) return false;
+			if ( curres.connected_residue_at_resconn( restype.upper_connect_id() ) != residues[i+1] ) return false;
 		}
 	}
 

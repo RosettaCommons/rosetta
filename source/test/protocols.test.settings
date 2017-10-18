@@ -542,6 +542,7 @@ sources = {
 		"MutateResidue",
                 "SetupMetalsMoverTests",
 		"SimpleThreadingMoverTests",
+		"SmallMoverTests",
 	],
 
 	#"simple_moves/chiral" : [

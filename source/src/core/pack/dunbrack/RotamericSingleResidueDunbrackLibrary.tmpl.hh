@@ -57,6 +57,7 @@
 #include <core/types.hh>
 #include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
@@ -107,13 +108,14 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 	bool use_bicubic,
 	bool dun_entropy_correction,
 	core::Real prob_buried, // 0.98
-	core::Real prob_nonburied // 0.95
+	core::Real prob_nonburied, // 0.95
+	bool const reduced_resolution_library
 ) :
 parent( aa_in, T, dun02, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied )
 {
 	// This is horrible but temporarily necessarily until we figure out how to distribute full beta rotlibs
 	// Betas automatically (if 3 BB) have phipsi binrange of 30
-	if ( N > 2 ) {
+	if ( reduced_resolution_library ) {
 		for ( Size i = 1; i <= N; ++i ) {
 			N_PHIPSI_BINS[ i ] = 12;
 			PHIPSI_BINRANGE[ i ] = 360 / N_PHIPSI_BINS[ i ];
@@ -470,21 +472,41 @@ RotamericSingleResidueDunbrackLibrary< T, N >::correct_termini_derivatives(
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
+	//Figure out indices of lower and upper torsions.
+	core::Size lower_torsion_index(1), upper_torsion_index(N);
+
+	core::chemical::rotamers::RotamerLibrarySpecificationCOP rotspec( rsd.type().rotamer_library_specification() );
+	if ( rotspec!=nullptr ) {
+		core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP ncaa_rotspec(
+			utility::pointer::dynamic_pointer_cast < core::chemical::rotamers::NCAARotamerLibrarySpecification const >( rotspec )
+		);
+		if ( ncaa_rotspec != nullptr ) {
+			if ( ncaa_rotspec->rotamer_bb_torsion_indices().size() < N ) {
+				lower_torsion_index = 0;
+				upper_torsion_index = 0;
+				for ( core::Size i(1), imax(ncaa_rotspec->rotamer_bb_torsion_indices().size()); i<=imax; ++i ) {
+					if ( ncaa_rotspec->rotamer_bb_torsion_indices()[i] == 1 ) lower_torsion_index=i;
+					if ( ncaa_rotspec->rotamer_bb_torsion_indices()[i] == N ) upper_torsion_index=i;
+				}
+			}
+		}
+	}
+
 	// mt: for the termini, these derivatives are 0, because these "pseudo"
 	// mt: torsions are kept fixed.
 	// amw: assume that we are more interested in 1 and N than PHI and PSI per se; this reduces in the 1,2 case
-	if ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) {
+	if ( lower_torsion_index != 0 && (rsd.is_lower_terminus() || !rsd.has_lower_connect()) ) {
 		// amw: now 1 is actually better here than RotamerLibraryScratchSpace::AA_PHI_INDEX because the right element to alter is always element 1 but not necessarily has the meaning of "PHI"
-		scratch.dE_dbb()[ 1 ] = 0;
-		scratch.dE_dbb_dev()[ 1 ] = 0;
-		scratch.dE_dbb_rot()[ 1 ] = 0;
-		scratch.dE_dbb_semi()[ 1 ] = 0;
+		scratch.dE_dbb()[ lower_torsion_index ] = 0;
+		scratch.dE_dbb_dev()[ lower_torsion_index ] = 0;
+		scratch.dE_dbb_rot()[ lower_torsion_index ] = 0;
+		scratch.dE_dbb_semi()[ lower_torsion_index ] = 0;
 	}
-	if ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) {
-		scratch.dE_dbb()[ N ] = 0;
-		scratch.dE_dbb_dev()[ N ] = 0;
-		scratch.dE_dbb_rot()[ N ] = 0;
-		scratch.dE_dbb_semi()[ N ] = 0;
+	if ( upper_torsion_index != 0 && (rsd.is_upper_terminus() || !rsd.has_upper_connect()) ) {
+		scratch.dE_dbb()[ upper_torsion_index ] = 0;
+		scratch.dE_dbb_dev()[ upper_torsion_index ] = 0;
+		scratch.dE_dbb_rot()[ upper_torsion_index ] = 0;
+		scratch.dE_dbb_semi()[ upper_torsion_index ] = 0;
 	}
 }
 
@@ -751,10 +773,26 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bbs_from_rsd(
 	Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
 
 	utility::fixedsizearray1< Real, N > tors;
-	for ( Size ii = 1; ii <= N; ++ii ) {
-		if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && ii == 1 ) tors[ ii ] = d_multiplier * parent::NEUTRAL_PHI;
-		else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && ii == N ) tors[ ii ] = d_multiplier * parent::NEUTRAL_PSI;
-		else tors[ ii ] = rsd.mainchain_torsion( ii );
+	debug_assert(rsd.mainchain_torsions().size() > N); //Should be at least N+1 mainchain torsions.
+	if ( rsd.mainchain_torsions().size() == (N+1) || rsd.type().rotamer_library_specification() == nullptr ) {
+		for ( Size ii = 1; ii <= N; ++ii ) {
+			if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && ii == 1 ) tors[ ii ] = d_multiplier * parent::NEUTRAL_PHI;
+			else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && ii == N ) tors[ ii ] = d_multiplier * parent::NEUTRAL_PSI;
+			else tors[ ii ] = rsd.mainchain_torsion( ii );
+		}
+	} else { //We need to look up which mainchain torsions are relevant.
+		core::chemical::rotamers::RotamerLibrarySpecificationCOP rotlib_spec( rsd.type().rotamer_library_specification() );
+		debug_assert( rotlib_spec != nullptr );
+		core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP ncaa_spec( utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const >(rotlib_spec) );
+		runtime_assert_string_msg( ncaa_spec != nullptr, "Error in core::pack::dunbrack::RotamericSingleResidueDunbrackLibrary::get_bbs_from_rsd(): Residues with rotamers dependent on a subset of backbone torsions must use NCAARotamerLibrarySpecifactions.  Could not get rotamer specification for " + rsd.type().name() + "." );
+		utility::vector1< core::Size > const &indices( ncaa_spec->rotamer_bb_torsion_indices() ); //Get the relevant mainchain torsion indices
+		debug_assert( indices.size() < rsd.mainchain_torsions().size() );
+		debug_assert( indices.size() == N );
+		for ( core::Size ii(1); ii <= N; ++ii ) {
+			if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && indices[ii] == 1 ) tors[ ii ] = d_multiplier * parent::NEUTRAL_PHI;
+			else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && indices[ii] == rsd.mainchain_torsions().size() - 1 ) tors[ ii ] = d_multiplier * parent::NEUTRAL_PSI;
+			else tors[ ii ] = rsd.mainchain_torsion( indices[ ii ] );
+		}
 	}
 	return tors;
 }

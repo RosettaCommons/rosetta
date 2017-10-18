@@ -677,6 +677,10 @@ CT2  CT1  CPH1   52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! AMW: for triazolamer from adm jr. 5/02/91, acetic acid pure solvent
 CT2  CT1  CT1   53.350    111.00    8.00   2.56100 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
+CT1  CT2  NH1   53.350    124.263    8.00   2.56100 ! ALLOW   ALI PEP POL
+                ! VKM: for oligoureas 
+CP1  CT2  NH1   53.350    124.263    8.00   2.56100 ! ALLOW   ALI PEP POL
+                ! VKM: for oligourea-proline 
 CT2  CT1  NR2   53.350    111.00    8.00   2.56100 ! ALLOW   ALI
                 ! AMW: for cys triazolamer alkane update, adm jr., 3/2/92
 CT2  CT2  C      52.000   108.0000 ! ALLOW   ALI PEP POL ARO

@@ -161,10 +161,16 @@ sources = {
 	],
 	"protocols/generalized_kinematic_closure": [
 		"GeneralizedKIC",
-		"perturber/GeneralizedKICperturber",
-		"filter/GeneralizedKICfilter",
-		"selector/GeneralizedKICselector",
 		"util",
+	],
+	"protocols/generalized_kinematic_closure/filter" : [
+		"GeneralizedKICfilter",
+	],
+	"protocols/generalized_kinematic_closure/perturber" : [
+		"GeneralizedKICperturber",
+	],
+	"protocols/generalized_kinematic_closure/selector" : [
+		"GeneralizedKICselector",
 	],
 	"protocols/helical_bundle": [
 		"BackboneGridSampler",

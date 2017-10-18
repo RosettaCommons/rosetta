@@ -56,6 +56,8 @@ MainchainScoreTable::MainchainScoreTable():
 	energies_spline_1D_(), //NULL by default
 	energies_spline_2D_(), //NULL by default
 	energies_spline_ND_(), //NULL by default
+	n_mainchain_torsions_total_(2),
+	mainchain_torsions_covered_(),
 	symmetrize_gly_(false)
 {
 	symmetrize_gly_ = basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ](); //Read from option system.
@@ -101,6 +103,8 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 
 	//Have certain setup lines been read?
 	bool n_mainchain_torsions_read(false);
+	bool n_mainchain_torsions_total_read(false);
+	bool mainchain_torsions_provided_read(false);
 	bool dimensions_read(false);
 	bool offsets_read(false);
 
@@ -127,7 +131,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 			check_linestream(linestream, filename);
 
 			//The line starts with an '@', which precedes a command indicating setup information.  Figure out what we're setting up and set it up:
-			if ( !linehead.compare("@N_MAINCHAIN_TORSIONS") ) {
+			if ( !linehead.compare("@N_MAINCHAIN_TORSIONS") ) { //The number of mainchain torsions provided in this file.
 				runtime_assert_string_msg(!n_mainchain_torsions_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains more than one \"@N_MAINCHAIN_TORSIONS\" line." );
 				runtime_assert_string_msg(!dimensions_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains an \"@N_MAINCHAIN_TORSIONS\" line after a \"@DIMENSIONS\" line." );
 				runtime_assert_string_msg(!offsets_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains an \"@N_MAINCHAIN_TORSIONS\" line after a \"@OFFSETS\" line." );
@@ -138,6 +142,23 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 				scoring_grid_indices.resize(n_mainchain_torsions, 0);
 				scoring_grid_torsion_values.resize(n_mainchain_torsions, 0.0);
 				n_mainchain_torsions_read=true;
+			} else if ( !linehead.compare("@N_MAINCHAIN_TORSIONS_TOTAL") ) { //The actual number of mainchain torsions in the residue type.  Excludes inter-residue torsions (omega).
+				runtime_assert_string_msg( n_mainchain_torsions_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains an \"@N_MAINCHAIN_TORSIONS_TOTAL\" line that occurs before any \"@N_MAINCHAIN_TORSIONS\" line. " );
+				runtime_assert_string_msg( !n_mainchain_torsions_total_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains more than one \"@N_MAINCHAIN_TORSIONS_TOTAL\" line." );
+				linestream >> n_mainchain_torsions_total_;
+				check_linestream(linestream, filename, false);
+				n_mainchain_torsions_total_read = true;
+				runtime_assert_string_msg( n_mainchain_torsions_total_ >= n_mainchain_torsions, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file specified that there are more torsions in this file than there are actual mainchain torsions." );
+			} else if ( !linehead.compare("@MAINCHAIN_TORSIONS_PROVIDED") ) { //If only a subset of mainchain torsions are covered by the table, which ones are provided?
+				runtime_assert_string_msg( n_mainchain_torsions_total_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains a \"@MAINCHAIN_TORSIONS_PROVIDED\" line that precedes any \"@N_MAINCHAIN_TORSIONS_TOTAL\" line." );
+				runtime_assert_string_msg( !mainchain_torsions_provided_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains more than one \"@MAINCHAIN_TORSIONS_PROVIDED\" line." );
+				mainchain_torsions_covered_.resize( n_mainchain_torsions );
+				for ( core::Size i(1); i<=n_mainchain_torsions; ++i ) {
+					linestream >> mainchain_torsions_covered_[i];
+					check_linestream( linestream, filename, i != n_mainchain_torsions );
+				}
+				mainchain_torsions_provided_read = true;
+				runtime_assert_string_msg( linestream.eof(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Too many dimensions were specified in a \"@MAINCHAIN_TORSIONS_PROVIDED\" line.  The number should match the @N_MAINCHAIN_TORSIONS line." );
 			} else if ( !linehead.compare("@DIMENSIONS") ) {
 				runtime_assert_string_msg(!dimensions_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains more than one \"@DIMENSIONS\" line." );
 				runtime_assert( n_mainchain_torsions == dimensions.size() ); //Should be guaranteed true.
@@ -177,8 +198,8 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 			linestream >> prob; //Get the probability.
 			check_linestream(linestream, filename);
 			linestream >> minusLogProb; //Get -k_B*T*ln(P).
-			runtime_assert_string_msg( linestream.eof(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Extra columns found in a data line in file " + filename + "." );
-			runtime_assert_string_msg( minusLogProb != 0.0 && !linestream.fail() && !linestream.bad(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Could not parse line " + line + " in file " + filename + "." );
+			runtime_assert_string_msg( linestream.eof(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Extra columns found in a data line in file " + filename + ".  Line was \"" + linestream.str() + "\"." );
+			runtime_assert_string_msg( minusLogProb != 0.0 && !linestream.fail() && !linestream.bad(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Could not parse line " + line + " in file " + filename + ".  Line was \"" + linestream.str() + "\"." );
 
 			//All the data for the line have been parsed.  Now, it's time to set up the tensors.
 			runtime_assert( scoring_grid_indices.size() /*The scoring_grid_indices vector is used to specify a position in the tensor*/ == n_mainchain_torsions); //Should be guaranteed true.
@@ -194,6 +215,20 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 			data_encountered = true;
 		}
 	} while(true);
+
+	// If the total number of mainchain torsions wasn't specified, assume that it matches the number in the file.
+	if ( !n_mainchain_torsions_total_read ) {
+		n_mainchain_torsions_total_ = n_mainchain_torsions;
+	}
+
+	// What to do if the mainchain torsions that are covered weren't specified:
+	if ( !mainchain_torsions_provided_read ) {
+		runtime_assert_string_msg( n_mainchain_torsions_total_ == n_mainchain_torsions, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The number of mainchain torsions covered by the data in " + filename + " is less than the number in the residue, but no \"@MAINCHAIN_TORSIONS_PROVIDED\" line was found." );
+		mainchain_torsions_covered_.resize( n_mainchain_torsions_total_ );
+		for ( core::Size i(1); i<=n_mainchain_torsions_total_; ++i ) {
+			mainchain_torsions_covered_[i] = i;
+		}
+	}
 
 	// Symmetrize the gly table, if we should:
 	if ( symmetrize_gly_ && res_type_name == "GLY" ) {
@@ -221,7 +256,10 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 }
 
 /// @brief Access values in this MainchainScoreTable.
-///
+/// @details Note that the vector is deliberately not passed by reference.  The function copies the vector and ensures
+/// that all coordinates are in the range [0, 360).
+/// @note The full vector of mainchain torsions should be passed in.  If the potential is a function of fewer degrees of freedom,
+/// this function will disregard the appropraite entries in the coords vector.
 core::Real
 MainchainScoreTable::energy(
 	utility::vector1 < core::Real > coords
@@ -231,8 +269,18 @@ MainchainScoreTable::energy(
 
 	runtime_assert_string_msg( initialized(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::energy(): The MainchainScoreTable has not yet been initialized!" );
 
-	runtime_assert_string_msg( coords.size() == dimension_, "Error in core::chemical::mainchain_potential::MainchainScoreTable::energy(): The dimensionality of the MainchainScoreTable and the coordinates vector must match." );
+	runtime_assert_string_msg( coords.size() == n_mainchain_torsions_total_, "Error in core::chemical::mainchain_potential::MainchainScoreTable::energy(): The dimensionality of the MainchainScoreTable and the coordinates vector must match." );
 	runtime_assert_string_msg( coords.size() > 0, "Error in core::chemical::mainchain_potential::MainchainScoreTable::energy(): The dimensionality of the coordinates vector must be greater than 0." );
+
+	//If this mainchain potential is a function of only a subset of mainchain degrees of freedom, update the coords vector to reflect that.
+	if ( dimension_ < n_mainchain_torsions_total_ ) {
+		utility::vector1< core::Real > coords_copy(dimension_);
+		debug_assert( dimension_ == mainchain_torsions_covered_.size());
+		for ( core::Size i(1); i<=dimension_; ++i ) {
+			coords_copy[i] = coords[ mainchain_torsions_covered_[i] ];
+		}
+		coords = coords_copy;
+	}
 
 	for ( core::Size i=1, imax=coords.size(); i<=imax; ++i ) coords[i] = numeric::nonnegative_principal_angle_degrees( coords[i] );
 
@@ -264,6 +312,8 @@ MainchainScoreTable::energy(
 /// @brief Get the gradient with respect to x1,x2,x3,...xn for this MainchainScoreTable.
 /// @param[in] coords_in The coordinates at which to evaluate the gradient.
 /// @param[out] gradient_out The resulting gradient.
+/// @note The full vector of mainchain torsions should be passed in.  If the potential is a function of fewer degrees of freedom,
+/// this function will disregard the appropraite entries in the coords vector.
 void
 MainchainScoreTable::gradient(
 	utility::vector1 < core::Real > coords_in,
@@ -274,7 +324,17 @@ MainchainScoreTable::gradient(
 
 	runtime_assert_string_msg( initialized(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::gradient(): The MainchainScoreTable has not yet been initialized!" );
 
-	runtime_assert_string_msg( coords_in.size() == dimension_, "Error in core::chemical::mainchain_potential::MainchainScoreTable::gradient(): The dimensionality of the MainchainScoreTable and the coordinates vector must match." );
+	runtime_assert_string_msg( coords_in.size() == n_mainchain_torsions_total_, "Error in core::chemical::mainchain_potential::MainchainScoreTable::gradient(): The dimensionality of the MainchainScoreTable and the coordinates vector must match." );
+
+	//If this mainchain potential is a function of only a subset of mainchain degrees of freedom, update the coords vector to reflect that.
+	if ( dimension_ < n_mainchain_torsions_total_ ) {
+		utility::vector1< core::Real > coords_copy(dimension_);
+		debug_assert( dimension_ == mainchain_torsions_covered_.size());
+		for ( core::Size i(1); i<=dimension_; ++i ) {
+			coords_copy[i] = coords_in[ mainchain_torsions_covered_[i] ];
+		}
+		coords_in = coords_copy;
+	}
 
 	for ( core::Size i=1, imax=coords_in.size(); i<=imax; ++i ) coords_in[i] = numeric::nonnegative_principal_angle_degrees( coords_in[i] );
 
@@ -303,6 +363,16 @@ MainchainScoreTable::gradient(
 		utility_exit_with_message( "Error in core::chemical::mainchain_potential::MainchainScoreTable::gradient(): The dimensionality of the coordinates vector must be less than 9." );
 	}
 
+	//Need to adjust the size of the gradient vector (padding with zero) if the number of degrees of freedom covered by the
+	//mainchain potential is less than the total number of mainchain degrees of freedom.
+	if ( dimension_ < n_mainchain_torsions_total_ ) {
+		utility::vector1< core::Real > gradient_out_copy( n_mainchain_torsions_total_, 0.0 );
+		debug_assert( dimension_ == mainchain_torsions_covered_.size());
+		for ( core::Size i(1); i<=dimension_; ++i ) {
+			gradient_out_copy[mainchain_torsions_covered_[i]] = gradient_out[i];
+		}
+		gradient_out = gradient_out_copy;
+	}
 }
 
 /// @brief Set whether we should symmetrize tables for glycine.
@@ -317,6 +387,9 @@ MainchainScoreTable::set_symmetrize_gly(
 /// @brief Given the cumulative distribution function (pre-calculated), draw a random set of mainchain torsion values
 /// biased by the probability distribution.
 /// @details output is in the range (-180, 180].
+/// @note The dimensionality of the torsions vector will match the degrees of freedom covered by the mainchain potential, NOT the
+/// total mainchain degrees of freedom.  Use the get_mainchain_torsions_covered() function to get the vector of mainchiain torsion
+/// indices that are covered.
 void
 MainchainScoreTable::draw_random_mainchain_torsion_values(
 	utility::vector1 < core::Real > &torsions
@@ -335,15 +408,26 @@ MainchainScoreTable::draw_random_mainchain_torsion_values(
 		if ( numeric::const_access_Real_MathNTensor( cdf_, coords ) >= randval ) break;
 	} while( increment_coords(coords, cdf_) );
 
-	//scoring_grid_indices[i] = static_cast< core::Size >( std::round( scoring_grid_torsion_values[i] / 360.0 * static_cast<core::Real>(dimensions[i] ) - offsets[i] ) /*+ 1*/ ); //Note that MathNTensors are 0-based.
-
 	//Now we've found coordinates for the bin from which we want to draw random mainchain torsions.  We need to figure out to which torsion
 	//value ranges this bin corresponds, then draw uniform random numbers in those ranges.
-	torsions.resize( dims );
-	for ( core::Size i=1; i<=dims; ++i ) { //Loop through the coordinates
-		core::Size const nbins( numeric::get_Real_MathNTensor_dimension_size( cdf_, i ) ); //Get the number of bins in the ith dimension.
+	core::Size dim_index(0);
+	torsions.resize( n_mainchain_torsions_total_ );
+	for ( core::Size i=1; i<=n_mainchain_torsions_total_; ++i ) { //Loop through the coordinates
+		bool is_covered( false );
+		for ( core::Size j(1), jmax(mainchain_torsions_covered_.size()); j<=jmax; ++j ) {
+			if ( i == mainchain_torsions_covered_[j] ) {
+				is_covered = true;
+				++dim_index;
+				break;
+			}
+		}
+		if ( !is_covered ) {
+			torsions[i] = 0.0;
+			continue;
+		}
+		core::Size const nbins( numeric::get_Real_MathNTensor_dimension_size( cdf_, dim_index ) ); //Get the number of bins in the ith dimension.
 		core::Real const binwidth( 360.0 / static_cast< core::Real >(nbins) ); //Calculate the width of a bin.
-		torsions[i] = numeric::principal_angle_degrees( numeric::random::rg().uniform() * binwidth + binwidth * static_cast<core::Real>(coords[i]) );
+		torsions[i] = numeric::principal_angle_degrees( numeric::random::rg().uniform() * binwidth + binwidth * static_cast<core::Real>(coords[dim_index]) );
 	}
 }
 
@@ -421,7 +505,7 @@ MainchainScoreTable::check_linestream(
 	std::string const &filename,
 	bool const fail_on_eof
 ) const {
-	runtime_assert_string_msg( !linestream.bad() && ( !fail_on_eof || !linestream.eof()), "Error core::chemical::mainchain_potential::MainchainScoreTable::check_linestream():  Error reading file " + filename + ".  Bad data line encountered.");
+	runtime_assert_string_msg( !linestream.bad() && ( !fail_on_eof || !linestream.eof()), "Error core::chemical::mainchain_potential::MainchainScoreTable::check_linestream():  Error reading file " + filename + ".  Bad data line encountered.  [Line was \"" + linestream.str() + "\".]");
 }
 
 /// @brief Initialize the energies_ and probabilities_ tensors to 0-containing N-tensors, of the

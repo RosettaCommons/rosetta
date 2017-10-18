@@ -196,6 +196,9 @@ public:
 private:
 	/// ------------- Methods ----------------------------
 
+	/// @brief Is a value in a vector?
+	bool is_in_list( core::Size val, utility::vector1 <core::Size> const & vect ) const;
+
 	/// @brief Count the number of cis-peptide bonds in the pose.
 	///
 	core::Size count_cis_peptide_bonds(

@@ -99,6 +99,19 @@ public:
 
 	static std::string library_name();
 
+	/// @brief Add a backbone torsion index that the rotamer library is dependent on.
+	/// @details Checks for zero or duplicated indices.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void add_rotamer_bb_torsion_index( core::Size const index );
+
+	/// @brief Get a const reference to the list of mainchain torsion indices that this rotamer library depends upon.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	inline utility::vector1< core::Size > const & rotamer_bb_torsion_indices() const { return rotamer_bb_torsion_indices_; }
+
+	/// @brief Empties the list of mainchain torsion indices that this rotamer library depends upon.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void clear_rotamer_bb_torsion_indices();
+
 private:
 
 	/// @brief path to the NCAA rotlib
@@ -113,6 +126,10 @@ private:
 
 	bool nrchi_symmetric_;
 	Real nrchi_start_angle_;
+
+	/// @brief Which mainchain torsions are the rotamers dependent on?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1< core::Size > rotamer_bb_torsion_indices_;
 
 #ifdef    SERIALIZATION
 public:

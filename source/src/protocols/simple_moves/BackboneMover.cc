@@ -80,6 +80,7 @@ BackboneMover::BackboneMover() :
 	old_phi_(0), new_phi_(0),
 	old_psi_(0), new_psi_(0),
 	old_omega_(0), new_omega_(0),
+	old_theta_(0), new_theta_(0),
 	old_rama_score_(0), new_rama_score_(0),
 	preserve_detailed_balance_( false ),
 	selector_()
@@ -106,6 +107,7 @@ BackboneMover::BackboneMover(
 	old_phi_(0), new_phi_(0),
 	old_psi_(0), new_psi_(0),
 	old_omega_(0), new_omega_(0),
+	old_theta_(0), new_theta_(0),
 	old_rama_score_(0), new_rama_score_(0),
 	preserve_detailed_balance_(false),
 	selector_()
@@ -133,6 +135,7 @@ BackboneMover::BackboneMover( BackboneMover const &src ) :
 	old_phi_(src.old_phi_), new_phi_(src.new_phi_),
 	old_psi_(src.old_psi_), new_psi_(src.new_psi_),
 	old_omega_(src.old_omega_), new_omega_(src.new_omega_),
+	old_theta_(src.old_theta_), new_theta_(src.new_theta_),
 	old_rama_score_(src.old_rama_score_), new_rama_score_(src.new_rama_score_),
 	preserve_detailed_balance_( src.preserve_detailed_balance_ ),
 	selector_() // Cloned below
@@ -234,7 +237,7 @@ BackboneMover::apply( core::pose::Pose & pose )
 	}
 
 	// how many moves to make
-	int const num_iterations = std::max<Size>( Size(1), std::min<Size>( nmoves_, pos_list_.size()/2 ) );
+	int const num_iterations = std::max<Size>( Size(1), std::min<Size>( nmoves_, pos_list_.size() ) );
 	std::set< int > already_moved;
 	int tries = 0;
 
@@ -445,7 +448,8 @@ SmallMover::setup_list( core::pose::Pose & pose )
 		conformation::Residue const & rsd( pose.residue( i ) );
 
 		// Check if the residue is protein and has a free psi and phi angle as determined by the MoveMap.
-		if ( rsd.is_protein() && my_movemap->get( TorsionID( i, BB, phi_torsion ) ) &&
+		if ( (rsd.is_protein() && !rsd.type().is_oligourea()) &&
+				my_movemap->get( TorsionID( i, BB, phi_torsion ) ) &&
 				my_movemap->get( TorsionID( i, BB, psi_torsion ) ) ) {
 			//Gets the secondary structure nature of the residue
 			char const ss( pose.secstruct( i ) );
@@ -457,9 +461,12 @@ SmallMover::setup_list( core::pose::Pose & pose )
 					pos_list_.push_back( std::make_pair( i, mx ) );
 				}
 			}
-
-			// Check if the residue is a monosaccharide and has a free phi and psi.
-		} else if ( rsd.is_carbohydrate() ) {
+		} else if ( rsd.type().is_oligourea() ) {
+			Angle const mx( angle_max_.find( 'L' )->second );
+			if ( mx > 0.0 ) {
+				pos_list_.push_back( std::make_pair( i, mx ) );
+			}
+		} else if ( rsd.is_carbohydrate() ) { // Check if the residue is a monosaccharide and has a free phi and psi.
 			// Because a saccharide i's glycosidic torsions might not even belong to residue i from Rosetta's point of
 			// view, it is more direct to get the reference atoms and convert to DOF_ID and check the MoveMap that way.
 			conformation::Conformation const & conf( pose.conformation() );
@@ -498,6 +505,8 @@ SmallMover::move_with_scorefxn( core::pose::Pose & pose )
 	if ( pose.residue( resnum_ ).is_carbohydrate() ) {
 		// If omega doesn't exist, setting it will have no adverse effects.
 		pose.set_omega( resnum_, new_omega_ );
+	} else if ( pose.residue_type(resnum_).is_oligourea() ) {
+		pose.set_theta( resnum_, new_theta_ );
 	}
 	pose.energies().clear();
 	new_rama_score_ = ( *scorefxn() )( pose );
@@ -508,8 +517,11 @@ SmallMover::move_with_scorefxn( core::pose::Pose & pose )
 
 	pose.set_phi( resnum_, old_phi_ );
 	pose.set_psi( resnum_, old_psi_ );
+	if ( pose.residue_type(resnum_).is_oligourea() ) {
+		pose.set_theta( resnum_, old_theta_ );
+	}
 	// If this residue is a carbohydrate, the move will never be rejected based on rama score,
-	// so we therefore don't need to set back to old_omega_
+	// so we therefore don't need to set back to old_omega
 	pose.energies().clear();
 	TR.Debug << "Reject: reverted score = " << ( *scorefxn() )( pose ) << std::endl;
 	return false;
@@ -522,7 +534,7 @@ SmallMover::move_with_rama( core::pose::Pose & pose )
 	conformation::Residue const & current_rsd( pose.residue(resnum_) );
 
 	// Always accept carbohydrate moves for now....
-	if ( current_rsd.is_protein() && current_rsd.aa() != chemical::aa_unk ) {
+	if ( current_rsd.is_protein() && !current_rsd.type().is_oligourea() && current_rsd.aa() != chemical::aa_unk ) {
 		old_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, old_psi_ );
 		new_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, new_psi_ );
 
@@ -533,7 +545,9 @@ SmallMover::move_with_rama( core::pose::Pose & pose )
 	// set the new values for residue resnum
 	pose.set_phi( resnum_, new_phi_ );
 	pose.set_psi( resnum_, new_psi_ );
-	if ( pose.residue( resnum_ ).is_carbohydrate() ) {
+	if ( pose.residue_type(resnum_).is_oligourea() ) {
+		pose.set_theta( resnum_, new_theta_ );
+	} else if ( pose.residue( resnum_ ).is_carbohydrate() ) {
 		// If omega doesn't exist, setting it will have no adverse effects.
 		pose.set_omega( resnum_, new_omega_ );
 	}
@@ -556,6 +570,9 @@ SmallMover::make_move( core::pose::Pose & pose )
 		old_omega_ = pose.omega( resnum_ );
 		new_omega_ = basic::periodic_range(
 			old_omega_ - small_angle_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
+	} else if ( pose.residue_type( resnum_ ).is_oligourea() ) {
+		old_theta_ = pose.theta( resnum_ );
+		new_theta_ = basic::periodic_range( old_theta_ - small_angle_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
 	}
 
 	if ( scorefxn() ) {
@@ -768,7 +785,7 @@ ShearMover::move_with_rama( core::pose::Pose & pose )
 	conformation::Residue const & prev_rsd( pose.residue( resnum_ - 1 ) );
 
 	// Always accept carbohydrate moves for now....
-	if ( current_rsd.is_protein() && current_rsd.aa() != chemical::aa_unk ) {
+	if ( current_rsd.is_protein() && !current_rsd.type().is_oligourea() && current_rsd.aa() != chemical::aa_unk ) {
 		// rama for phi of resnum and psi of resnum-1
 		old_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, pose.psi( resnum_ ) );
 		new_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, pose.psi( resnum_ ) );
@@ -776,7 +793,7 @@ ShearMover::move_with_rama( core::pose::Pose & pose )
 		// decide whether to accept the move
 		if ( !check_rama() ) { return false; }
 	}
-	if ( current_rsd.is_protein() && prev_rsd.aa() != chemical::aa_unk ) {
+	if ( current_rsd.is_protein() && prev_rsd.aa() != chemical::aa_unk && !prev_rsd.type().is_oligourea() ) {
 		// rama for residue resnum-1
 		old_rama_score_ = rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi( resnum_ - 1 ), old_psi_ );
 		new_rama_score_ = rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi( resnum_ - 1 ), new_psi_ );
@@ -788,6 +805,11 @@ ShearMover::move_with_rama( core::pose::Pose & pose )
 	// set the new values phi of resnum and psi of resnum-1
 	pose.set_phi( resnum_, new_phi_ );
 	pose.set_psi( resnum_ - 1, new_psi_ );
+
+	// additional torsion for oligoureas:
+	if ( pose.residue_type(resnum_).is_oligourea() ) {
+		pose.set_theta(resnum_, new_theta_);
+	}
 
 	return true;
 }

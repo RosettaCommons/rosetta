@@ -1627,6 +1627,9 @@ public:
 	///
 	bool is_gamma_aa() const;
 
+	/// @brief Is this an oligourea?
+	bool is_oligourea() const;
+
 	/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
 	///
 	bool has_polymer_dependent_groups() const;
@@ -2298,8 +2301,13 @@ private:
 	void
 	update_derived_data();
 
+	/// @brief If there is an NCAARotamerLibrarySpecification, ensure that the rotamer backbone dependicies have been set.
+	/// If they have not, set them to all mainchain torsions except omega (the final, inter-residue torsion).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void update_ncaa_rotamer_library_specification_if_present();
+
 	/// @brief Final check of ResidueType data, called by finalize().
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void
 	perform_checks();
 

@@ -1267,6 +1267,19 @@ SimpleCycpepPredictApplication::run() const {
 	return;
 }
 
+/// @brief Is a value in a vector?
+bool
+SimpleCycpepPredictApplication::is_in_list(
+	core::Size val,
+	utility::vector1 <core::Size> const & vect
+) const {
+	for ( core::Size i(1), imax(vect.size()); i<=imax; ++i ) {
+		if ( vect[i]==val ) return true;
+	}
+	return false;
+}
+
+
 /// @brief Count the number of cis-peptide bonds in the pose.
 /// @details Counts as cis if in the range (-90,90].
 core::Size
@@ -1674,7 +1687,7 @@ SimpleCycpepPredictApplication::set_up_native (
 	// Count residues and find the last residue.
 	core::Size last_res(0), res_count(0);
 	for ( core::Size ir=1, irmax=native_pose->total_residue(); ir<=irmax; ++ir ) {
-		if ( native_pose->residue_type(ir).is_alpha_aa() || native_pose->residue_type(ir).is_beta_aa() || native_pose->residue_type(ir).is_gamma_aa() ) {
+		if ( native_pose->residue_type(ir).is_alpha_aa() || native_pose->residue_type(ir).is_oligourea() || native_pose->residue_type(ir).is_beta_aa() || native_pose->residue_type(ir).is_gamma_aa() ) {
 			++res_count;
 			last_res = ir;
 		}
@@ -1787,20 +1800,22 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 	TR << "Randomizing mainchain torsions." << std::endl;
 	core::Size const nres(sequence_length());
 	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues
-		if ( pose->residue(i).type().is_alpha_aa() ) {
+		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() ) {
 			core::scoring::Ramachandran const & rama(core::scoring::ScoringManager::get_instance()->get_Ramachandran() ); //Get the Rama scoring function
 			core::scoring::RamaPrePro const & ramaprepro( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
-			core::Real phi(0.0), psi(0.0);
+			utility::vector1< core::Real > rand_torsions( pose->residue(i).mainchain_torsions().size() - 1, 0.0 );
 			//TR << "aa" << i << "=" << pose->residue_type(i).aa() << std::endl; //DELETE ME
 			core::Size const cur_abs_pos( original_position( i, cyclic_offset, pose->size() ) );
 			if ( custom_rama_table_defined( cur_abs_pos ) ) {
-				rama.draw_random_phi_psi_from_extra_cdf( rama_table_type_by_res(cur_abs_pos), phi, psi);
+				if ( pose->residue_type(i).is_alpha_aa() ) {
+					rama.draw_random_phi_psi_from_extra_cdf( rama_table_type_by_res(cur_abs_pos), rand_torsions[1], rand_torsions[2]);
+				}
 			} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
-				rama.draw_random_phi_psi_from_extra_cdf( default_rama_table_type(), phi, psi);
+				if ( pose->residue_type(i).is_alpha_aa() ) {
+					rama.draw_random_phi_psi_from_extra_cdf( default_rama_table_type(), rand_torsions[1], rand_torsions[2]);
+				}
 			} else {
-
 				if ( use_rama_prepro_for_sampling() ) { //Using rama_prepro tables for sampling:
-					utility::vector1< core::Real > rand_torsions;
 					core::chemical::ResidueTypeCOP following_rsd(
 						cyclization_type() == SCPA_terminal_disulfide && i == nres
 						?
@@ -1811,20 +1826,30 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 						)
 					);
 					ramaprepro.random_mainchain_torsions( pose->conformation(), pose->residue_type_ptr(i), following_rsd, rand_torsions );
-					phi=rand_torsions[1]; psi=rand_torsions[2];
+					utility::vector1< core::Size > const & covered_torsions( ramaprepro.get_mainchain_torsions_covered( pose->conformation(), pose->residue_type_ptr(i), following_rsd ) );
+					debug_assert( pose->residue(i).mainchain_torsions().size() - 1 == rand_torsions.size() ); //Should be true.
+					for ( core::Size j(1), jmax(rand_torsions.size()); j<=jmax; ++j ) {
+						if ( !is_in_list( j, covered_torsions ) ) {
+							rand_torsions[j] = pose->residue(i).mainchain_torsions()[j]; //Copy torsion values for torsions that are not covered by the mainchain potential -- i.e. don't set these to 0.
+						}
+					}
 				} else { //Using classic rama tables for sampling:
 					if ( pose->residue(i).backbone_aa() != core::chemical::aa_unk ) {
-						rama.random_phipsi_from_rama(pose->residue(i).backbone_aa(), phi, psi);
+						rama.random_phipsi_from_rama(pose->residue(i).backbone_aa(), rand_torsions[1], rand_torsions[2]);
 					} else {
-						rama.random_phipsi_from_rama( pose->residue_type(i).aa(), phi, psi);
+						runtime_assert_string_msg( pose->residue_type(i).aa() != core::chemical::aa_unk, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_mainchain_torsions(): Unable to get a suitable classic Ramachandran table for " + pose->residue_type(i).name() + "." );
+						rama.random_phipsi_from_rama( pose->residue_type(i).aa(), rand_torsions[1], rand_torsions[2]);
 					}
 				}
 
 			}
-			pose->set_phi(i,phi);
-			pose->set_psi(i,psi);
+			debug_assert(rand_torsions.size() == pose->residue(i).mainchain_torsions().size() - 1);
+			for ( core::Size j(1), jmax(rand_torsions.size()); j<=jmax; ++j ) {
+				pose->set_torsion( core::id::TorsionID( i, core::id::BB, j ), rand_torsions[j] );
+			}
 			if ( i!=nres ) pose->set_omega(i, 180.0);
-		} else { //If this is not an alpha-amino acid:
+			if ( pose->residue_type(i).is_oligourea() ) pose->set_mu(i, 180.0);
+		} else { //If this is not a recognized type:
 			for ( core::Size j=1, jmax=pose->residue(i).mainchain_torsions().size(); j<=jmax; ++j ) { //Loop through all mainchain torsions.
 				if ( i==nres && j==jmax ) continue; //Skip the last mainchain torsion (not a DOF).
 				core::Real setting(180.0);
@@ -2201,16 +2226,16 @@ SimpleCycpepPredictApplication::genkic_close(
 	//Set pivots:
 	std::string at1(""), at2(""), at3("");
 	if ( pose->residue(first_loop_res).type().is_alpha_aa() ) { at1="CA"; }
-	else if ( pose->residue(first_loop_res).type().is_beta_aa() ) { at1="CM"; }
+	else if ( pose->residue_type(first_loop_res).is_beta_aa() || pose->residue_type(first_loop_res).is_oligourea() ) { at1="CM"; }
 	else if ( pose->residue(first_loop_res).type().is_gamma_aa() ) { at1="C3"; }
 	else { utility_exit_with_message( "Unrecognized residue type at loop start.  Currently, this app only works with alpha, beta, and gamma amino acids." ); }
 	if ( cyclization_type() == SCPA_terminal_disulfide && (middle_loop_res == cyclization_point_start || middle_loop_res == cyclization_point_end )  ) { at2 = pose->residue_type(middle_loop_res).get_disulfide_atom_name(); }
 	else if ( pose->residue(middle_loop_res).type().is_alpha_aa() ) { at2="CA"; }
-	else if ( pose->residue(middle_loop_res).type().is_beta_aa() ) { at2="CM"; }
+	else if ( pose->residue_type(middle_loop_res).is_beta_aa() || pose->residue_type(middle_loop_res).is_oligourea() ) { at2="CM"; }
 	else if ( pose->residue(middle_loop_res).type().is_gamma_aa() ) { at2="C3"; }
 	else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids." ); }
 	if ( pose->residue(last_loop_res).type().is_alpha_aa() ) { at3="CA"; }
-	else if ( pose->residue(last_loop_res).type().is_beta_aa() ) { at3="CM"; }
+	else if ( pose->residue_type(last_loop_res).is_beta_aa() || pose->residue_type(last_loop_res).is_oligourea() ) { at3="CM"; }
 	else if ( pose->residue(last_loop_res).type().is_gamma_aa() ) { at3="C3"; }
 	else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids." ); }
 	genkic->set_pivot_atoms( first_loop_res, at1, middle_loop_res, at2, last_loop_res, at3 );
@@ -2261,7 +2286,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		{
 			genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
 			utility::vector1< core::id::NamedAtomID > bb_vect;
-			if ( pose->residue_type( cyclization_point_start ).is_alpha_aa() || pose->residue_type( cyclization_point_start ).is_peptoid() || pose->residue_type(cyclization_point_start).is_beta_aa() ) {
+			if ( pose->residue_type( cyclization_point_start ).is_alpha_aa() || pose->residue_type(cyclization_point_start).is_oligourea() || pose->residue_type( cyclization_point_start ).is_peptoid() || pose->residue_type(cyclization_point_start).is_beta_aa() ) {
 				bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
 				bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_start ) );
 			} else if ( pose->residue_type(cyclization_point_start).is_gamma_aa() ) {
@@ -2279,7 +2304,7 @@ SimpleCycpepPredictApplication::genkic_close(
 				bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
 				bb_vect.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
 				genkic->add_atomset_to_perturber_atomset_list( bb_vect );
-			} else if ( pose->residue_type(cyclization_point_end).is_beta_aa() ) {
+			} else if ( pose->residue_type(cyclization_point_end).is_beta_aa() || pose->residue_type(cyclization_point_end).is_oligourea() ) {
 				utility::vector1< core::id::NamedAtomID > bb_vect1, bb_vect2;
 				bb_vect1.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
 				bb_vect1.push_back( core::id::NamedAtomID( "CM", cyclization_point_end ) );
@@ -2312,9 +2337,10 @@ SimpleCycpepPredictApplication::genkic_close(
 				continue;
 			}
 		}
-		if ( pose->residue(i).type().is_alpha_aa() ) {
+		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() ) {
 			core::Size const res_in_original( original_position(i, cyclic_offset, pose->size() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
 			if ( user_set_alpha_dihedrals_.count(res_in_original) ) { //If this position is being set to a particular value...
+				runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication: dihedral setting currently only works for alpha-amino acids." );
 				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
 				core::id::NamedAtomID Natom( "N", i );
 				core::id::NamedAtomID CAatom( "CA", i );
@@ -2339,6 +2365,7 @@ SimpleCycpepPredictApplication::genkic_close(
 				}
 			} else { //If this position is not set, randomize it.
 				if ( custom_rama_table_defined( res_in_original ) ) { //If there is a custom rama table defined for sampling at this position, use it.
+					runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in SimpleCycpepPredictApplication: the use of custom old-style Ramachandran maps is limited to alpha-amino acids." );
 					genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
 					genkic->add_residue_to_perturber_residue_list(i);
 					genkic->set_perturber_custom_rama_table( rama_table_type_by_res( res_in_original ) );
@@ -2347,6 +2374,7 @@ SimpleCycpepPredictApplication::genkic_close(
 						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_backbone_by_rama_prepro );
 						genkic->add_residue_to_perturber_residue_list(i);
 					} else {
+						runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in SimpleCycpepPredictApplication: the use of old-style Ramachandran maps is limited to alpha-amino acids." );
 						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
 						genkic->add_residue_to_perturber_residue_list(i);
 						if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
@@ -2366,14 +2394,26 @@ SimpleCycpepPredictApplication::genkic_close(
 					genkic->add_residue_to_perturber_residue_list( i );
 					if ( required_symmetry_perturbation_ != 0.0 ) {
 						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::perturb_dihedral );
-						core::id::NamedAtomID Natom( "N", i );
-						core::id::NamedAtomID CAatom( "CA", i );
-						core::id::NamedAtomID Catom( "C", i );
-						utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
-						utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CAatom ); psivect.push_back( Catom );
-						genkic->add_atomset_to_perturber_atomset_list(phivect);
-						genkic->add_atomset_to_perturber_atomset_list(psivect);
-						//if ( nextres != anchor_res ) genkic->add_atomset_to_perturber_atomset_list(omegavect);
+						if ( pose->residue_type(i).is_alpha_aa() ) {
+							core::id::NamedAtomID const Natom( "N", i );
+							core::id::NamedAtomID const CAatom( "CA", i );
+							core::id::NamedAtomID const Catom( "C", i );
+							utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
+							utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CAatom ); psivect.push_back( Catom );
+							genkic->add_atomset_to_perturber_atomset_list(phivect);
+							genkic->add_atomset_to_perturber_atomset_list(psivect);
+						} else if ( pose->residue_type(i).is_oligourea() ) {
+							core::id::NamedAtomID const Natom( "N", i );
+							core::id::NamedAtomID const CAatom( "CA", i );
+							core::id::NamedAtomID const CMatom( "CM", i );
+							core::id::NamedAtomID const NUatom( "NU", i );
+							utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
+							utility::vector1< core::id::NamedAtomID > thetavect; thetavect.push_back( CAatom ); thetavect.push_back( CMatom );
+							utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CMatom ); psivect.push_back( NUatom );
+							genkic->add_atomset_to_perturber_atomset_list(phivect);
+							genkic->add_atomset_to_perturber_atomset_list(thetavect);
+							genkic->add_atomset_to_perturber_atomset_list(psivect);
+						}
 						genkic->add_value_to_perturber_value_list( required_symmetry_perturbation_ );
 					}
 				}
@@ -2703,7 +2743,7 @@ SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 	core::id::AtomID_Map< core::id::AtomID > amap;
 	core::pose::initialize_atomid_map(amap, *pose, core::id::BOGUS_ATOM_ID);
 	for ( core::Size ir=1, irmax=native_pose->total_residue(); ir<=irmax; ++ir ) {
-		if ( !native_pose->residue_type(ir).is_alpha_aa() ) continue;
+		if ( !native_pose->residue_type(ir).is_alpha_aa() && !native_pose->residue_type(ir).is_oligourea() ) continue;
 		++res_counter;
 		runtime_assert_string_msg( res_counter <= nres, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has more residues than the input sequence." );
 		for ( core::Size ia=1, iamax=native_pose->residue(ir).type().first_sidechain_atom(); ia<iamax; ++ia ) { //Loop through all mainchain heavyatoms (including atoms coming off mainchain that are not sidechain atoms, like peptide "O").

@@ -105,12 +105,25 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
+private:
+	// methods
+
+	/// @brief Given a mainchain torsion index and a ResidueType, get the index of the corresponding torsion in the
+	/// data stored in the Dunbrack scratch space.
+	/// @details For most residue types, this just returns torsion_index.  The index is only different in cases in which
+	/// a residue type has rotamers that depend on a subset of mainchain torsions.  For example, if a residue's rotamers
+	/// depended on mainchain torsions 2, 3, and 4, then the scratch indices 1, 2, and 3 would correspond to mainchain
+	/// torsions 2, 3, and 4, respectively.  This function returns 0 if torsion_index is a torsion on which rotamers do
+	/// not depend.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::Size get_scratch_index( core::Size const torsion_index, core::conformation::Residue const &rsd ) const;
+
+	virtual
+	core::Size version() const;
 
 	// data
 private:
 
-	virtual
-	core::Size version() const;
 
 };
 

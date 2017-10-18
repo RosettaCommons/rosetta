@@ -1052,8 +1052,10 @@ public:
 	void
 	set_omega( Size const seqpos, Real const setting );
 
-	/// @brief Returns the theta torsion angle of beta-amino acid residue  <seqpos>
-	/// @note  assumes residue is a beta-amino acid.
+	/// @brief Returns the theta torsion angle of beta-amino acid residue or oligourea residue <seqpos>.
+	/// @details Theta is defined as N(n)-CA(n)-CM(n)-C(n) for a beta-amino acid, and N(n)-CA(n)-CM(n)-NU(n)
+	/// for an oligourea.
+	/// @note  Assumes residue is a beta-amino acid or oligourea.
 	///
 	/// example(s):
 	///     pose.theta(21)
@@ -1066,8 +1068,10 @@ public:
 	Real
 	theta( Size const seqpos ) const;
 
-	/// @brief Sets the theta torsion angle of beta-amino acid residue  <seqpos>  to  <setting>
-	/// @note  <setting>  must be in degrees, assumes residue is a beta-amino acid.
+	/// @brief Sets the theta torsion angle of beta-amino acid residue or oligourea residue <seqpos> to <setting>.
+	/// @details Theta is defined as N(n)-CA(n)-CM(n)-C(n) for a beta-amino acid, and N(n)-CA(n)-CM(n)-NU(n)
+	/// for an oligourea.
+	/// @note  <setting>  must be in degrees.  Assumes residue is a beta-amino acid or oligourea.
 	///
 	/// example(s):
 	///     pose.set_theta(21, 58.9)
@@ -1079,6 +1083,34 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void
 	set_theta( Size const seqpos, Real const setting );
+
+	/// @brief Returns the mu torsion angle of oligourea residue <seqpos>.
+	/// @details Mu is defined as CM(n)-NU(n)-C(n)-N(n+1) for an oligourea.
+	/// @note  Assumes residue is an oligourea.
+	///
+	/// example(s):
+	///     pose.mu(21)
+	/// See also:
+	///     Pose
+	///     Pose.set_mu
+	///     Pose.residue
+	///     Residue
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	Real mu( Size const seqpos ) const;
+
+	/// @brief Sets the mu torsion angle of oligourea residue <seqpos> to <setting>.
+	/// @details Mu is defined as CM(n)-NU(n)-C(n)-N(n+1) for an oligourea.
+	/// @note  <setting>  must be in degrees.  Assumes residue is an oligourea.
+	///
+	/// example(s):
+	///     pose.set_mu(21, 58.9)
+	/// See also:
+	///     Pose
+	///     Pose.mu
+	///     Pose.residue
+	///     Residue
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void set_mu( Size const seqpos, Real const setting );
 
 	// nucleic acids
 

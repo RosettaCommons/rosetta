@@ -118,6 +118,13 @@ static Size const theta_torsion_beta_aa( 2 );
 static Size const psi_torsion_beta_aa( 3 );
 static Size const omega_torsion_beta_aa( 4 );
 
+//Torsion ids for oligoureas:
+static Size const phi_torsion_oligourea( 1 );
+static Size const theta_torsion_oligourea( 2 );
+static Size const psi_torsion_oligourea( 3 );
+static Size const mu_torsion_oligourea( 4 );
+static Size const omega_torsion_oligourea( 5 );
+
 //@brief Mainchain Torsion Types.
 //  The names could be better, but these are taken and would need a large overhaul of Rosetta.
 enum MainchainTorsionType {

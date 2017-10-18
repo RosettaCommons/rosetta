@@ -516,6 +516,9 @@ private:
 		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
 	) const;
 
+	/// @brief Is a value in a list?
+	bool is_in_list(core::Size const val, utility::vector1<core::Size> const &vect) const;
+
 };
 
 } //namespace perturber

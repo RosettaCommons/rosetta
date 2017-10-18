@@ -876,6 +876,8 @@ Pose::phi( Size const seqpos ) const
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			return residue(seqpos).mainchain_torsion(phi_torsion_beta_aa);
+		} else if ( residue_type(seqpos).is_oligourea() ) {
+			return residue(seqpos).mainchain_torsion(phi_torsion_oligourea);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(phi_torsion);
 		}
@@ -906,6 +908,8 @@ Pose::set_phi( Size const seqpos, Real const setting )
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_beta_aa ), setting );
+		} else if ( residue_type(seqpos).is_oligourea() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_oligourea ), setting );
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion ), setting );
 		}
@@ -932,6 +936,8 @@ Pose::psi( Size const seqpos ) const
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_beta_aa);
+		} else if ( residue_type(seqpos).is_oligourea() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_oligourea);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(psi_torsion);
 		}
@@ -959,6 +965,8 @@ Pose::set_psi( Size const seqpos, Real const setting )
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_beta_aa ), setting);
+		} else if  ( residue_type(seqpos).is_oligourea() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_oligourea ), setting);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion ), setting );
 		}
@@ -986,6 +994,8 @@ Real Pose::omega( Size const seqpos ) const
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_beta_aa);
+		} else if ( residue_type(seqpos).is_oligourea() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_oligourea);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(omega_torsion);
 		}
@@ -1014,6 +1024,8 @@ Pose::set_omega( Size const seqpos, Real const setting )
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_beta_aa ),  setting);
+		} else if ( residue_type(seqpos).is_oligourea() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_oligourea ),  setting);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ),  setting );
 		}
@@ -1022,35 +1034,89 @@ Pose::set_omega( Size const seqpos, Real const setting )
 	}
 }
 
-/// @brief For a beta-amino acid, get the theta backbone dihedral angle.
-/// @details Theta is defined as N(n)-CA(n)-CM(n)-C(n).
+/// @brief For a beta-amino acid or oligourea, get the theta backbone dihedral angle.
+/// @details Theta is defined as N(n)-CA(n)-CM(n)-C(n) for a beta-amino acid, and
+/// N(n)-CA(n)-CM(n)-NU(n) for an oligourea.
 Real
 Pose::theta( Size const seqpos ) const
 {
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_beta_aa() );
+	debug_assert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea() );
 	PyAssert( (seqpos<=size()), "Pose::theta( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( residue_type(seqpos).is_beta_aa(), "Pose::theta( Size const seqpos ): residue seqpos is not a beta-amino acid!" );
+	PyAssert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea(), "Pose::theta( Size const seqpos ): residue seqpos is not a beta-amino acid or oligourea residue!" );
 	if ( residue_type(seqpos).is_beta_aa() ) {
 		return residue(seqpos).mainchain_torsion(theta_torsion_beta_aa);
+	} else if ( residue_type(seqpos).is_oligourea() ) {
+		return residue(seqpos).mainchain_torsion(theta_torsion_oligourea);
 	} else {
 		// Undefined.
 		return 0.0;
 	}
 }
 
-/// @brief For a beta-amino acid, set the theta backbone dihedral angle.
+/// @brief For a beta-amino acid or oligourea residue, set the theta backbone dihedral angle.
+/// @details Theta is defined as N(n)-CA(n)-CM(n)-C(n) for a beta-amino acid, and N(n)-CA(n)-CM(n)-NU(n)
+/// for an oligourea.
 /// @details Theta is defined as N(n)-CA(n)-CM(n)-C(n).
 void
 Pose::set_theta( Size const seqpos, Real const setting)
 {
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_beta_aa() );
+	debug_assert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea() );
 	PyAssert( (seqpos<=size()), "Pose::set_theta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( residue_type(seqpos).is_beta_aa(), "Pose::set_theta( Size const seqpos, Real const setting ): residue seqpos is not a beta-amino acid!" );
-	if ( residue_type(seqpos).is_beta_aa() /*Should be true -- assertion above for debug mode.*/ ) conformation_->set_torsion( TorsionID( seqpos, BB, theta_torsion_beta_aa ), setting );
+	PyAssert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea(), "Pose::set_theta( Size const seqpos, Real const setting ): residue seqpos is not a beta-amino acid or oligourea residue!" );
+	if ( residue_type(seqpos).is_beta_aa() ) conformation_->set_torsion( TorsionID( seqpos, BB, theta_torsion_beta_aa ), setting );
+	else if ( residue_type(seqpos).is_oligourea() ) conformation_->set_torsion( TorsionID(seqpos, BB, theta_torsion_oligourea), setting);
+}
+
+
+/// @brief Returns the mu torsion angle of oligourea residue <seqpos>.
+/// @details Mu is defined as CM(n)-NU(n)-C(n)-N(n+1)
+/// for an oligourea.
+/// @note  Assumes residue is an oligourea.
+///
+/// example(s):
+///     pose.mu(21)
+/// See also:
+///     Pose
+///     Pose.set_mu
+///     Pose.residue
+///     Residue
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+Real
+Pose::mu( Size const seqpos ) const {
+	debug_assert( residue_type(seqpos).is_oligourea() );
+	PyAssert( (seqpos<=size()), "Pose::mu( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( residue_type(seqpos).is_oligourea(), "Pose::mu( Size const seqpos ): residue seqpos is not an oligourea residue!" );
+	if ( residue_type(seqpos).is_oligourea() /*Silly, redundant check*/ ) {
+		return residue(seqpos).mainchain_torsion(id::mu_torsion_oligourea);
+	}
+	return 0.0; //Undefined.
+}
+
+/// @brief Sets the mu torsion angle of oligourea residue <seqpos> to <setting>.
+/// @details Mu is defined as CM(n)-NU(n)-C(n)-N(n+1) for an oligourea.
+/// @note  <setting>  must be in degrees.  Assumes residue is an oligourea.
+///
+/// example(s):
+///     pose.set_mu(21, 58.9)
+/// See also:
+///     Pose
+///     Pose.mu
+///     Pose.residue
+///     Residue
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+Pose::set_mu(
+	Size const seqpos,
+	Real const setting
+) {
+	debug_assert( residue_type(seqpos).is_oligourea() );
+	PyAssert( (seqpos<=size()), "Pose::set_mu( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( residue_type(seqpos).is_oligourea(), "Pose::set_mu( Size const seqpos, Real const setting ): residue seqpos is not an oligourea residue!" );
+	if ( residue_type(seqpos).is_oligourea() ) conformation_->set_torsion( id::TorsionID(seqpos, id::BB, id::mu_torsion_oligourea), setting);
 }
 
 // nucleic acids

@@ -9,7 +9,11 @@
 
 /// @file   core/scoring/OmegaTether.hh
 /// @brief  OmegaTether potential class delcaration
+/// @details  This potential constrains the inter-residue torsion (omega) to be 0 or 180 degrees.
+/// It works for alpha-amino acids, beta-amino acids, and oligoureas.  In the case of oligoureas,
+/// it constrains both omega and mu (the preceding torsion) to be 180.
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- updated for oligoureas and beta-amino acids.
 
 #ifndef INCLUDED_core_scoring_OmegaTether_hh
 #define INCLUDED_core_scoring_OmegaTether_hh
@@ -73,15 +77,10 @@ public:
 		Real & energy,
 		Real & denergy_domega,
 		Real & denergy_dphi,
-		Real & denergy_dpsi
+		Real & denergy_dpsi,
+		bool const force_simple_evaluation=false //If true, skips table lookups in favour of simply constrainging to 0 or 180.
 	) const;
 
-
-	void
-	eval_omega_score_all(
-		Pose & pose,
-		ScoreFunction const & scorefxn
-	) const;
 
 	/// @brief Returns the mainchain torsion index corresponding to "phi".
 	/// @details Generally 1.  Set to 2 for beta-amino acids so that derivatives are calculated

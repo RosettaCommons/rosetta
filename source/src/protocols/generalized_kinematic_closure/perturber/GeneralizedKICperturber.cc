@@ -1010,11 +1010,14 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
 			)
 		);
 		rama.random_mainchain_torsions( loop_pose_copy.conformation(), loop_pose_copy.residue_type_ptr(loopindex), following_rsd, rand_torsions );
+		utility::vector1< core::Size > const &relevant_torsions( rama.get_mainchain_torsions_covered( loop_pose_copy.conformation(), loop_pose_copy.residue_type_ptr(loopindex), following_rsd ) );
 
 		core::Size const ntors( rand_torsions.size() );
 
 		for ( core::Size i=1; i<=ntors; ++i ) {
-			loop_pose_copy.set_torsion( core::id::TorsionID( loopindex, core::id::BB, i ), rand_torsions[i] );
+			if ( is_in_list( i, relevant_torsions ) ) {
+				loop_pose_copy.set_torsion( core::id::TorsionID( loopindex, core::id::BB, i ), rand_torsions[i] );
+			}
 		}
 
 		//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
@@ -1462,6 +1465,19 @@ void GeneralizedKICperturber::apply_sample_cis_peptide_bond(
 
 	return;
 }
+
+/// @brief Is a value in a list?
+bool
+GeneralizedKICperturber::is_in_list(
+	core::Size const val,
+	utility::vector1<core::Size> const &vect
+) const {
+	for ( core::Size i(1), imax(vect.size()); i<=imax; ++i ) {
+		if ( val==vect[i] ) return true;
+	}
+	return false;
+}
+
 
 void
 GeneralizedKICperturber::define_valid_perturber_name_enumeration( utility::tag::XMLSchemaDefinition & xsd )

@@ -42,6 +42,7 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/bond_support.hh>
 #include <core/chemical/RestypeDestructionEvent.hh>
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -2281,6 +2282,11 @@ ResidueType::is_gamma_aa() const {
 	return properties_->has_property( GAMMA_AA );
 }
 
+/// @brief Is this an oligourea?
+bool
+ResidueType::is_oligourea() const {
+	return properties_->has_property( OLIGOUREA );
+}
 
 /// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
 ///
@@ -3606,6 +3612,33 @@ ResidueType::update_derived_data()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+/// @brief If there is an NCAARotamerLibrarySpecification, ensure that the
+/// rotamer backbone dependicies have been set. If they have not, set them to
+/// all mainchain torsions except omega (the final, inter-residue torsion).
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+///////////////////////////////////////////////////////////////////////////////
+void
+ResidueType::update_ncaa_rotamer_library_specification_if_present() {
+	if ( rotamer_library_specification_ == nullptr ) return;
+
+	using namespace core::chemical::rotamers;
+	NCAARotamerLibrarySpecificationOP libspec(
+		utility::pointer::dynamic_pointer_cast< NCAARotamerLibrarySpecification >(
+		rotamer_library_specification_
+		)
+	);
+
+	if ( libspec == nullptr ) return; //This isn't an NCAARotamerLibrarySpecification
+
+	if ( libspec->rotamer_bb_torsion_indices().size() != 0 ) return; //Nothing to do -- indices have already been set.
+
+	//Add all mainchain torsion indices EXCEPT omega:
+	for ( core::Size i(1), imax(mainchain_atoms_.size()); i<imax; ++i ) {
+		libspec->add_rotamer_bb_torsion_index(i);
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
 /// @brief Final check of ResidueType data, called by finalize().
 /// @details These checks are meant to be quick and low-expense, and are only
 /// called on finalize(), so they shouldn't generally add much to Rosetta
@@ -3744,6 +3777,8 @@ ResidueType::finalize()
 	generate_atom_indices();
 
 	update_derived_data();
+
+	update_ncaa_rotamer_library_specification_if_present();
 
 	perform_checks();
 

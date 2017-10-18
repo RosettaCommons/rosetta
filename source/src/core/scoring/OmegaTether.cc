@@ -9,7 +9,11 @@
 
 /// @file   core/scoring/OmegaTether.cc
 /// @brief  OmegaTether potential class implementation
+/// @details  This potential constrains the inter-residue torsion (omega) to be 0 or 180 degrees.
+/// It works for alpha-amino acids, beta-amino acids, and oligoureas.  In the case of oligoureas,
+/// it constrains both omega and mu (the preceding torsion) to be 180.
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- updated for oligoureas and beta-amino acids.
 
 // Unit Headers
 #include <core/scoring/OmegaTether.hh>
@@ -20,6 +24,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/id/types.hh>
 #include <basic/basic.hh>
 
 // Numeric Headers
@@ -57,39 +62,15 @@ OmegaTether::OmegaTether() {
 	}
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-/// @brief evaluate omega score for each (protein) residue and store that score
-/// in the pose.energies() object
-void
-OmegaTether::eval_omega_score_all(
-	pose::Pose & pose,
-	ScoreFunction const & scorefxn
-) const
-{
-	if ( scorefxn.has_zero_weight( omega ) ) return; // unnecessary, righ?
-
-	int const total_residue = pose.size();
-
-	Energies & pose_energies( pose.energies() );
-
-	for ( int ii = 1; ii <= total_residue; ++ii ) {
-		if ( !pose.residue(ii).is_protein()  || pose.residue(ii).is_terminus() || pose.residue(ii).is_virtual_residue() ) continue;
-
-		Real omega_score,dscore_domega, dscore_dphi, dscore_dpsi ;
-		eval_omega_score_residue(pose.residue(ii),omega_score,dscore_domega, dscore_dphi, dscore_dpsi );
-		pose_energies.onebody_energies( ii )[omega] = omega_score;
-	}
-}
-
 /// @brief Returns the mainchain torsion index corresponding to "phi".
 /// @details Generally 1.  Set to 2 for beta-amino acids so that derivatives are calculated
 /// for the dihedral two spaces before the peptide bond.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 core::Size OmegaTether::phi_index( core::conformation::Residue const &rsd ) const
 {
-	if ( rsd.type().is_beta_aa() ) return 2; //Special case.
-	return 1; //Default for alpha-amino acids.
+	if ( rsd.type().is_beta_aa() ) return core::id::theta_torsion_beta_aa; //Special case.
+	else if ( rsd.type().is_oligourea() ) return core::id::theta_torsion_oligourea; //Another special case
+	return core::id::phi_torsion; //Default for alpha-amino acids.
 }
 
 /// @brief Returns the mainchain torsion index corresponding to "psi".
@@ -97,8 +78,9 @@ core::Size OmegaTether::phi_index( core::conformation::Residue const &rsd ) cons
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 core::Size OmegaTether::psi_index( core::conformation::Residue const &rsd ) const
 {
-	if ( rsd.type().is_beta_aa() ) return 3; //Special case.
-	return 2; //Default for alpha-amino acids.
+	if ( rsd.type().is_beta_aa() ) return core::id::psi_torsion_beta_aa; //Special case.
+	else if ( rsd.type().is_oligourea() ) return core::id::psi_torsion_oligourea; //Another special case.
+	return core::id::psi_torsion; //Default for alpha-amino acids.
 }
 
 /// @brief Returns the mainchain torsion index corresponding to "omega".
@@ -106,8 +88,9 @@ core::Size OmegaTether::psi_index( core::conformation::Residue const &rsd ) cons
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 core::Size OmegaTether::omega_index( core::conformation::Residue const &rsd ) const
 {
-	if ( rsd.type().is_beta_aa() ) return 4;
-	return 3; //Default for alpha-amino acids.
+	if ( rsd.type().is_beta_aa() ) return core::id::omega_torsion_beta_aa; //Special case.
+	else if ( rsd.type().is_oligourea() ) return core::id::mu_torsion_oligourea; //Another special case.
+	return core::id::omega_torsion; //Default for alpha-amino acids.
 }
 
 
@@ -180,7 +163,8 @@ OmegaTether::eval_omega_score_residue(
 	Real & score,
 	Real & dscore_domega,
 	Real & dscore_dphi,
-	Real & dscore_dpsi
+	Real & dscore_dpsi,
+	bool const force_simple_evaluation/*=false*/ //If true, skips table lookups in favour of simply constrainging to 0 or 180.
 ) const {
 	using basic::subtract_degree_angles;
 
@@ -188,7 +172,7 @@ OmegaTether::eval_omega_score_residue(
 	while ( omega_p <  -90.0 ) omega_p += 360.0;
 	while ( omega_p >  270.0 ) omega_p -= 360.0;
 
-	if ( !use_phipsi_dep_ || omega_p < 90.0 ) {  // use standard form for cis omegas
+	if ( !use_phipsi_dep_ || force_simple_evaluation || omega_p < 90.0 ) {  // use standard form for cis omegas
 		// standard form
 		core::Real dangle;
 		core::Real weight = 0.01;  // This is 1 in rosetta but divided by the number of residues oddly. we'll just assume N=100 here such

@@ -222,7 +222,7 @@ protected:
 	utility::vector1< std::pair< int, core::Real > > pos_list_;
 
 protected:
-	core::Real old_phi_, new_phi_, old_psi_, new_psi_, old_omega_, new_omega_;
+	core::Real old_phi_, new_phi_, old_psi_, new_psi_, old_omega_, new_omega_, old_theta_, new_theta_;
 	core::Real old_rama_score_, new_rama_score_;
 
 private:

@@ -29,12 +29,18 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/AA.hh>
 
+// Protocols headers -- to make it easier to build poses.
+#include <protocols/cyclic_peptide/PeptideStubMover.hh>
+
 //Minimizer
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
+
+//Numeric headers
+#include <numeric/angle.functions.hh>
 
 using namespace std;
 
@@ -56,6 +62,121 @@ public:
 	}
 
 	void tearDown() {
+	}
+
+	/// @brief Tests the omega scorefunction with alpha-amino acids.
+	void test_alpha_aa_omega() {
+		protocols::cyclic_peptide::PeptideStubMover builder;
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
+		builder.add_residue("Append", "ALA", 2, false, "N", 0, 1, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		core::pose::Pose pose;
+		builder.apply(pose); //Build the peptide.
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::omega, 0.5 );
+
+		pose.set_omega(1, 180.0);
+
+		utility::vector1< core::Real > energies_list;
+
+		for ( core::Size j(0); j<360; j+=5 ) {
+			pose.set_omega(2, static_cast<core::Real>(j));
+			pose.update_residue_neighbors();
+
+			energies_list.push_back( (*sfxn)(pose) );
+			TR << j << "\t" << pose.omega(2) << "\t" << energies_list[energies_list.size()] << std::endl;
+
+			//Delete the following: for debugging only
+			//char outfile[256];
+			//sprintf( outfile, "alpha_aa_omega_test_%03lu.pdb", j);
+			//pose.dump_pdb(std::string(outfile));
+		}
+
+		core::Real last_energy(energies_list[energies_list.size()]);
+		for ( core::Size i(1), imax(energies_list.size()); i<=imax; ++i ) {
+			TS_ASSERT( std::abs( energies_list[i] - last_energy ) > 0.00001 ); //All energies different.
+			last_energy = energies_list[i];
+		}
+	}
+
+	/// @brief Tests the omega scorefunction with oligoureas.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_oligourea_omega() {
+		protocols::cyclic_peptide::PeptideStubMover builder;
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
+		builder.add_residue("Append", "OU3_ALA", 2, false, "N", 0, 1, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		core::pose::Pose pose;
+		builder.apply(pose); //Build the peptide.
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::omega, 0.5 );
+
+		pose.set_omega(1, 180.0);
+
+		utility::vector1< core::Real > energies_list;
+
+		for ( core::Size i(0); i<360; i+=5 ) {
+			pose.set_mu( 2, static_cast<core::Real>(i)  );
+			for ( core::Size j(0); j<360; j+=5 ) {
+				pose.set_omega(2, static_cast<core::Real>(j));
+				pose.update_residue_neighbors();
+
+				energies_list.push_back( (*sfxn)(pose) );
+				TR << i << "\t" << j << "\t" << pose.mu(2) << "\t" << pose.omega(2) << "\t" << energies_list[energies_list.size()] << std::endl;
+
+				//Delete the following: for debugging only
+				//char outfile[256];
+				//sprintf( outfile, "oligourea_omega_test_%03lu_%03lu.pdb", i, j);
+				//pose.dump_pdb(std::string(outfile));
+			}
+		}
+		core::Real last_energy(energies_list[energies_list.size()]);
+		for ( core::Size i(1), imax(energies_list.size()); i<=imax; ++i ) {
+			if ( i!=73 ) { TS_ASSERT( std::abs( energies_list[i] - last_energy ) > 0.00001 ); } //All energies different.
+			else { TS_ASSERT_DELTA( energies_list[i], last_energy, 0.00001 ); } //These two are actually the same.
+			last_energy = energies_list[i];
+		}
+	}
+
+	/// @brief Tests the omega scorefunction minimization with oligoureas.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_oligourea_omega_min() {
+		protocols::cyclic_peptide::PeptideStubMover builder;
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
+		builder.add_residue("Append", "OU3_ALA", 2, false, "N", 0, 1, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		core::pose::Pose pose;
+		builder.apply(pose); //Build the peptide.
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::omega, 0.5 );
+
+		pose.set_omega(1, 180.0);
+
+		pose.set_omega(2, 173.0);
+		pose.set_mu(2, 168.0);
+
+		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+		for ( core::Size i=1; i<=3; ++i )  {
+			mm->set_bb(i, true);
+			mm->set_chi(i, false);
+		}
+		core::optimization::AtomTreeMinimizer minimizer;
+		core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "linmin_iterated", 0.0000001, true, false, false ) );
+		minimizer.run( pose, *mm, *sfxn, *min_options );
+
+		TS_ASSERT_DELTA( numeric::nonnegative_principal_angle_degrees( pose.omega(2) ), 180.0, 0.5 );
+		TS_ASSERT_DELTA( numeric::nonnegative_principal_angle_degrees( pose.mu(2) ), 180.0, 0.5 );
+
+		pose.set_omega(2, -173.0);
+		pose.set_mu(2, -168.0);
+
+		minimizer.run(pose, *mm, *sfxn, *min_options);
+
+		TS_ASSERT_DELTA( numeric::nonnegative_principal_angle_degrees( pose.omega(2) ), 180.0, 0.5 );
+		TS_ASSERT_DELTA( numeric::nonnegative_principal_angle_degrees( pose.mu(2) ), 180.0, 0.5 );
 	}
 
 	/// @brief Tests minimization of beta-amino acids with the omega scorefunction.

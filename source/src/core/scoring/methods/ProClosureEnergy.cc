@@ -8,8 +8,10 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/methods/ProClosureEnergy.cc
-/// @brief  Proline ring closure energy method class implementation
+/// @brief  Proline ring closure energy method class implementation.
+/// @note This energy term supports L-proline, D-proline, and L- or D-oligourea-proline.
 /// @author Andrew Leaver-Fay
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added support for D-proline and for oligoureas.
 
 // Unit Headers
 #include <core/scoring/methods/ProClosureEnergy.hh>
@@ -116,8 +118,8 @@ ProClosureEnergy::defines_score_for_residue_pair(
 
 	if ( !res_moving_wrt_eachother ) return false;
 
-	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
-	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
+	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) || (rsd1.aa() == ou3_pro) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
+	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) || (rsd1.aa() == ou3_pro) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
 
 	return (res1_is_upper || res2_is_upper);
 }
@@ -137,8 +139,8 @@ ProClosureEnergy::residue_pair_energy(
 	if ( rsd1.is_virtual_residue() ) return;
 	if ( rsd2.is_virtual_residue() ) return;
 
-	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
-	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
+	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) || (rsd1.aa() == ou3_pro) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
+	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) || (rsd2.aa() == ou3_pro) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
 
 	if ( res1_is_upper || res2_is_upper ) {
 
@@ -166,13 +168,13 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	using namespace conformation;
 	using namespace chemical;
 
-	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
+	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) || (rsd1.aa() == ou3_pro) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
 
 	conformation::Residue const & upper_res( res1_is_upper ? rsd1 : rsd2 );
 	conformation::Residue const & lower_res( res1_is_upper ? rsd2 : rsd1 );
 
-	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
-	const core::Real d_multiplier = ((upper_res.aa()==chemical::aa_dpr) ? -1.0 : 1.0); //A multiplier for the derivative to invert it if this is a D-amino acid.
+	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) || (rsd1.aa() == chemical::ou3_pro) );
+	const core::Real d_multiplier = (upper_res.type().is_d_aa() ? -1.0 : 1.0); //A multiplier for the derivative to invert it if this is a D-amino acid.
 
 	utility::vector1< DerivVectorPair > & upper_res_atom_derivs( res1_is_upper ? r1_atom_derivs : r2_atom_derivs );
 	utility::vector1< DerivVectorPair > & lower_res_atom_derivs( res1_is_upper ? r2_atom_derivs : r1_atom_derivs );
@@ -284,7 +286,7 @@ ProClosureEnergy::eval_intrares_energy(
 ) const
 {
 	if ( skip_ring_closure() ) return;
-	if ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) ) {
+	if ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) || (rsd.aa() == chemical::ou3_pro) ) {
 		if ( rsd.is_virtual_residue() ) return;
 
 		debug_assert( rsd.has( scNV_ ) );
@@ -311,7 +313,7 @@ ProClosureEnergy::defines_intrares_energy_for_residue(
 	conformation::Residue const & res
 ) const
 {
-	return ((res.aa() == chemical::aa_pro) || (res.aa() == chemical::aa_dpr));
+	return ((res.aa() == chemical::aa_pro) || (res.aa() == chemical::aa_dpr) || (res.aa() == chemical::ou3_pro));
 }
 
 void
@@ -324,7 +326,7 @@ ProClosureEnergy::eval_intrares_derivatives(
 ) const
 {
 	if ( skip_ring_closure() ) return;
-	debug_assert ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) );
+	debug_assert ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) || (rsd.aa() == chemical::ou3_pro) );
 
 	debug_assert( rsd.has( scNV_ ) );
 	debug_assert( rsd.has( bbN_ ) );
@@ -398,7 +400,7 @@ ProClosureEnergy::measure_chi4(
 	using namespace numeric;
 	using namespace numeric::constants::d;
 
-	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
+	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) || (upper_res.aa() == chemical::ou3_pro) );
 	debug_assert( lower_res.is_bonded( upper_res ) );
 	debug_assert( lower_res.has_upper_connect() && lower_res.residue_connection_partner( lower_res.upper_connect().index() ) == upper_res.seqpos() );
 
@@ -407,7 +409,7 @@ ProClosureEnergy::measure_chi4(
 		upper_res.xyz( bbN_ ),
 		lower_res.xyz( bbC_ ),
 		lower_res.xyz( bbO_ ));
-	if ( upper_res.aa() == chemical::aa_dpr ) chi4*= -1.0; //invert chi4 if this is a D-pro
+	if ( upper_res.type().is_d_aa() ) chi4*= -1.0; //invert chi4 if this is a D-pro
 	if ( chi4 < -pi_over_2 ) chi4 += pi_2; // wrap
 	return chi4;
 }

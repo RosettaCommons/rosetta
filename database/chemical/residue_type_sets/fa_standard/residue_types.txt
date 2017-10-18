@@ -283,6 +283,14 @@ residue_types/nucleic/rna_nonnatural/M26.params
 #3483G	wybutosine	yW	Y	Y	C21O9N6H28	508.191775	508.489181
 #34G	wyosine	imG	€	€	C14O5N5H17	335.122968	335.32024
 
+## Oligourea types
+residue_types/oligourea/OU3_ALA.params
+residue_types/oligourea/OU3_ILE.params
+residue_types/oligourea/OU3_LEU.params
+residue_types/oligourea/OU3_PHE.params
+residue_types/oligourea/OU3_PRO.params
+residue_types/oligourea/OU3_VAL.params
+
 ## Metal Ion Types
 residue_types/metal_ions/CA.params
 #residue_types/metal_ions/CD.params

@@ -9,6 +9,9 @@
 
 /// @file   core/scoring/methods/OmegaTetherEnergy.hh
 /// @brief  OmegaTether energy method class declaration
+/// @details  This score term constrains the inter-residue torsion (omega) to be 0 or 180 degrees.
+/// It works for alpha-amino acids, beta-amino acids, and oligoureas.  In the case of oligoureas,
+/// it constrains both omega and mu (the preceding torsion) to be 180.
 /// @author Phil Bradley
 
 
@@ -80,17 +83,6 @@ public:
 		id::TorsionID const & torsion_id,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
-		EnergyMap const & weights
-	) const;
-
-
-	virtual
-	Real
-	old_eval_dof_derivative(
-		id::DOF_ID const &,// dof_id,
-		id::TorsionID const & tor_id,
-		pose::Pose const & pose,
-		ScoreFunction const &,// sfxn,
 		EnergyMap const & weights
 	) const;
 

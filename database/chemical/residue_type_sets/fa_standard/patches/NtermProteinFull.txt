@@ -219,6 +219,89 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
 
+BEGIN_CASE ## D-OLIGOUREA-PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 O3P
+NOT PROPERTY L_AA
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.2142
+ADD_ATOM 2H   Hpol HC 0.2142
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H -120 70.5 1 N CA CM ## like to use CD but CD's parent is CG
+SET_ICOOR 2H -120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.0285
+SET_ATOMIC_CHARGE CA 0.1516
+SET_ATOMIC_CHARGE HA 0.0968
+SET_ATOMIC_CHARGE CB -0.1146
+SET_ATOMIC_CHARGE 1HB 0.0968
+SET_ATOMIC_CHARGE 2HB 0.0968
+SET_ATOMIC_CHARGE CG -0.1146
+SET_ATOMIC_CHARGE 1HG 0.0968
+SET_ATOMIC_CHARGE 2HG 0.0968
+SET_ATOMIC_CHARGE CD  0.0000
+SET_ATOMIC_CHARGE 1HD 0.0968
+SET_ATOMIC_CHARGE 2HD 0.0968
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## L-OLIGOUREA-PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 O3P
+NOT PROPERTY D_AA
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.2142
+ADD_ATOM 2H   Hpol HC 0.2142
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 70.5 1 N CA CM ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.0285
+SET_ATOMIC_CHARGE CA 0.1516
+SET_ATOMIC_CHARGE HA 0.0968
+SET_ATOMIC_CHARGE CB -0.1146
+SET_ATOMIC_CHARGE 1HB 0.0968
+SET_ATOMIC_CHARGE 2HB 0.0968
+SET_ATOMIC_CHARGE CG -0.1146
+SET_ATOMIC_CHARGE 1HG 0.0968
+SET_ATOMIC_CHARGE 2HG 0.0968
+SET_ATOMIC_CHARGE CD  0.0000
+SET_ATOMIC_CHARGE 1HD 0.0968
+SET_ATOMIC_CHARGE 2HD 0.0968
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
 BEGIN_CASE ## BETA-3-PROLINE ##########################################
 
 ## these define which residues match this case
@@ -634,6 +717,79 @@ SET_FORMAL_CHARGE  N  +1
 ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
+
+BEGIN_CASE ## Non-proline D-oligoureas #####################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+PROPERTY D_AA
+PROPERTY OLIGOUREA
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.2946
+ADD_ATOM 2H   Hpol HC 0.2946
+ADD_ATOM 3H   Hpol HC 0.2946
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H -180 70.5 1 N CA CM
+SET_ICOOR 2H -120 70.5 1 N CA 1H
+SET_ICOOR 3H -120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.1987
+SET_ATOMIC_CHARGE CA 0.2006
+SET_ATOMIC_CHARGE HA 0.1144
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ## Non-proline L-oligoureas #####################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+PROPERTY L_AA
+PROPERTY OLIGOUREA
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.2946
+ADD_ATOM 2H   Hpol HC 0.2946
+ADD_ATOM 3H   Hpol HC 0.2946
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA CM
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.1987
+SET_ATOMIC_CHARGE CA 0.2006
+SET_ATOMIC_CHARGE HA 0.1144
+
+SET_FORMAL_CHARGE  N  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
 
 BEGIN_CASE ## Non-proline D-amino acids #####################################
 

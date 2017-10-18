@@ -218,7 +218,7 @@ main( int argc, char ** argv ) {
 		//dump pdb
 		target_pose.dump_pdb(option[prefix]+base_name+"_padded.pdb");
 		return 0;
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -9,6 +9,9 @@
 
 /// @file   core/scoring/methods/OmegaTetherEnergy.cc
 /// @brief  OmegaTether energy method class implementation
+/// @details  This score term constrains the inter-residue torsion (omega) to be 0 or 180 degrees.
+/// It works for alpha-amino acids, beta-amino acids, and oligoureas.  In the case of oligoureas,
+/// it constrains both omega and mu (the preceding torsion) to be 180.
 /// @author Phil Bradley
 /// @author Mike Tyka (mtyka@u.washington.edu)
 
@@ -90,6 +93,12 @@ OmegaTetherEnergy::residue_energy(
 		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
 		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
 		emap[ omega ] += omega_score;
+
+		if ( rsd.type().is_oligourea() ) {
+			Real omega_score2, dscore_domega2, dscore_dphi2, dscore_dpsi2;
+			potential_.eval_omega_score_residue( core::chemical::aa_unk, rsd.mainchain_torsion( core::id::omega_torsion_oligourea ), 0, 0, omega_score2, dscore_domega2, dscore_dphi2, dscore_dpsi2, true );
+			emap[omega] += omega_score2;
+		}
 	}
 }
 
@@ -117,7 +126,7 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) || !rsd.is_protein() ) {
 		return 0.0;
 	}
 
@@ -136,39 +145,14 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 		if ( tor_id.torsion() == index_phi ) deriv = dscore_dphi;
 		if ( tor_id.torsion() == index_psi ) deriv = dscore_dpsi;
 		if ( tor_id.torsion() == index_omega ) deriv = dscore_domega;
+	} else if (
+			rsd.type().is_oligourea() &&
+			tor_id.valid() && tor_id.type() == id::BB &&
+			tor_id.torsion() == id::omega_torsion_oligourea
+			) {
+		Real omega_score, dummy1, dummy2;
+		potential_.eval_omega_score_residue( core::chemical::aa_unk, rsd.mainchain_torsion(tor_id.torsion()), 0, 0, omega_score, deriv, dummy1, dummy2, true );
 	}
-	return numeric::conversions::degrees( weights[ omega ] * deriv );
-}
-
-
-Real
-OmegaTetherEnergy::old_eval_dof_derivative(
-	id::DOF_ID const &,// dof_id,
-	id::TorsionID const & tor_id,
-	pose::Pose const & pose,
-	ScoreFunction const &,// sfxn,
-	EnergyMap const & weights
-) const
-{
-	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ) {
-		return 0.0;
-	}
-
-	Real deriv(0.0);
-	if ( tor_id.valid() && tor_id.type() == id::BB ) {
-		conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
-		if ( rsd.is_protein() &&
-				tor_id.torsion() <= 3 ) {
-			Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
-			potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
-			if ( tor_id.torsion() == 1 ) deriv = dscore_dphi;
-			if ( tor_id.torsion() == 2 ) deriv = dscore_dpsi;
-			if ( tor_id.torsion() == 3 ) deriv = dscore_domega;
-		}
-	}
-	// note that the atomtree Oomega dofs are in radians
-	// use degrees since dE/dangle has angle in denominator
 	return numeric::conversions::degrees( weights[ omega ] * deriv );
 }
 

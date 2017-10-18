@@ -107,6 +107,29 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "TAC" ] = aa_b3transACPC;
 	n2aa[ "CAH" ] = aa_b3cisACHC;
 
+	// oligoureas
+	n2aa[ "OU3_ALA" ] = ou3_ala;
+	n2aa[ "OU3_CYS" ] = ou3_cys;
+	n2aa[ "OU3_ASP" ] = ou3_asp;
+	n2aa[ "OU3_GLU" ] = ou3_glu;
+	n2aa[ "OU3_PHE" ] = ou3_phe;
+	n2aa[ "OU3_GLY" ] = ou3_gly;
+	n2aa[ "OU3_HIS" ] = ou3_his;
+	n2aa[ "OU3_ILE" ] = ou3_ile;
+	n2aa[ "OU3_LYS" ] = ou3_lys;
+	n2aa[ "OU3_LEU" ] = ou3_leu;
+	n2aa[ "OU3_MET" ] = ou3_met;
+	n2aa[ "OU3_ASN" ] = ou3_asn;
+	n2aa[ "OU3_PRO" ] = ou3_pro;
+	n2aa[ "OU3_GLN" ] = ou3_gln;
+	n2aa[ "OU3_ARG" ] = ou3_arg;
+	n2aa[ "OU3_SER" ] = ou3_ser;
+	n2aa[ "OU3_THR" ] = ou3_thr;
+	n2aa[ "OU3_VAL" ] = ou3_val;
+	n2aa[ "OU3_TRP" ] = ou3_trp;
+	n2aa[ "OU3_TYR" ] = ou3_tyr;
+	n2aa[ "OU3_AIB" ] = ou3_aib;
+
 	// Nucleic acids
 	n2aa[ "ADE" ] = na_ade;
 	n2aa[ "CYT" ] = na_cyt;
@@ -291,7 +314,7 @@ aa_from_one_or_three( std::string const & name ){
 /// canonical alpha-L-amino acid.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 bool
-is_canonical_D_aa( AA aa )
+is_canonical_D_aa( AA const aa )
 {
 	if ( aa>=first_D_aa && aa<=last_D_aa ) return true;
 	return false;
@@ -303,8 +326,19 @@ is_canonical_D_aa( AA aa )
 /// @author Steven Cobms (steven.combs1@gmail.com)
 //////////////////////////////////////////////////////////
 bool
-is_canonical_L_aa( AA aa){
+is_canonical_L_aa( AA const aa){
 	if ( aa>=first_l_aa && aa<=num_canonical_aas ) return true;
+	return false;
+}
+
+//////////////////////////////////////////////////////////
+/// @brief Given an enum type, return true if and only if
+/// it is a canonical beta-amino acid.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+//////////////////////////////////////////////////////////
+bool
+is_canonical_beta3_aa( AA const aa) {
+	if ( aa >= first_beta3_aa && aa <= last_beta3_aa ) return true;
 	return false;
 }
 
@@ -313,7 +347,7 @@ is_canonical_L_aa( AA aa){
 /// it is an unknown aa.
 /// @author Steven Cobms (steven.combs1@gmail.com)
 bool
-is_aa_name_unknown( std::string name){
+is_aa_name_unknown( std::string const & name){
 	std::map< std::string, AA >::const_iterator iter = name2aa().find( name );
 	if ( iter == name2aa().end() ) {
 		return true;
@@ -323,7 +357,7 @@ is_aa_name_unknown( std::string name){
 
 
 AA
-get_L_equivalent( AA aa ) {
+get_L_equivalent( AA const aa ) {
 	if ( aa==aa_dal ) return aa_ala;
 	else if ( aa==aa_dcs ) return aa_cys;
 	else if ( aa==aa_das ) return aa_asp;
@@ -348,7 +382,7 @@ get_L_equivalent( AA aa ) {
 }
 
 AA
-get_D_equivalent( AA aa ) {
+get_D_equivalent( AA const aa ) {
 	if ( aa==aa_ala ) return aa_dal;
 	else if ( aa==aa_cys ) return aa_dcs;
 	else if ( aa==aa_asp ) return aa_das;

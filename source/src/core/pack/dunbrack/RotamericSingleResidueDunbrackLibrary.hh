@@ -53,13 +53,16 @@ private:
 	///RotamericSingleResidueDunbrackLibrary();
 
 public:
+
+	/// @brief Creator.
 	RotamericSingleResidueDunbrackLibrary(
 		AA const aa_in,
 		bool dun02,
 		bool use_bicubic,
 		bool entropy_correction,
 		core::Real prob_buried, // 0.98
-		core::Real prob_nonburied // 0.95
+		core::Real prob_nonburied, // 0.95
+		bool const reduced_resolution_library=false
 	);
 
 	virtual ~RotamericSingleResidueDunbrackLibrary() throw();

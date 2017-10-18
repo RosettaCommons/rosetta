@@ -1,0 +1,110 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+		<ScoreFunction name="r15_symm" weights="ref2015.wts" symmetric="true" />
+		<ScoreFunction name="r15_cst_symm" weights="ref2015_cst.wts" symmetric="true" >
+			<Reweight scoretype="chainbreak" weight="100.0" />
+		</ScoreFunction>
+
+		<ScoreFunction name="r15_mod_cst_highhbond" weights="ref2015_cst.wts" symmetric="true" >
+			<Reweight scoretype="aa_composition" weight="1.0" />
+			<Reweight scoretype="aspartimide_penalty" weight="1.0" />
+			Reweight scoretype="hbnet" weight="5.0" />
+			<Reweight scoretype="aa_repeat" weight="1.0" />
+			<Reweight scoretype="chainbreak" weight="100.0" />
+			<Reweight scoretype="hbond_sr_bb" weight="10.0" />
+			<Reweight scoretype="hbond_lr_bb" weight="10.0" />
+			<Reweight scoretype="hbond_bb_sc" weight="10.0" />
+			<Reweight scoretype="hbond_sc" weight="10.0" />
+		</ScoreFunction>
+
+		<ScoreFunction name="r15_mod_cst" weights="ref2015_cst.wts" symmetric="true" >
+			<Reweight scoretype="aa_composition" weight="1.0" />
+			<Reweight scoretype="aspartimide_penalty" weight="1.0" />
+			Reweight scoretype="hbnet" weight="5.0" />
+			<Reweight scoretype="aa_repeat" weight="1.0" />
+			<Reweight scoretype="chainbreak" weight="100.0" />
+		</ScoreFunction>
+
+		<ScoreFunction name="cst_only" weights="empty.wts" symmetric="true" >
+			<Reweight scoretype="chainbreak" weight="1.0" />
+		</ScoreFunction>
+
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_full_peptide" resnums="1-%%length%%" />
+		<Index name="select_first_res" resnums="1" />
+		<Index name="select_last_res" resnums="%%length%%" />
+		<Index name="select_first_repeat" resnums="1-%%repeat_length%%" />
+		<Index name="select_L_oligourea" resnums="%%length%%" />
+		<Index name="select_D_oligourea" resnums="%%repeat_length%%" />
+		<Layer name="select_core" core_cutoff="0.75" surface_cutoff="0.5" />
+		<Not name="select_not_core" selector="select_core" />
+		<Phi name="select_pos_phi" select_positive_phi="true" />
+		<Not name="select_neg_phi" selector="select_pos_phi" />
+		<And name="select_core_pos_phi" selectors="select_core,select_pos_phi" />
+		<And name="select_core_neg_phi" selectors="select_core,select_neg_phi" />
+		<And name="select_not_core_pos_phi" selectors="select_not_core,select_pos_phi" />
+		<And name="select_not_core_neg_phi" selectors="select_not_core,select_neg_phi" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<ReadResfile name="resfile_L_oligourea" filename="inputs/L_oligourea.resfile" selector="select_L_oligourea" />
+		<ReadResfile name="resfile_D_oligourea" filename="inputs/D_oligourea.resfile" selector="select_D_oligourea" />
+		<ReadResfile name="resfile_core_pos_phi" filename="inputs/core_pos_phi.resfile" selector="select_core_pos_phi" />
+		<ReadResfile name="resfile_core_neg_phi" filename="inputs/core_neg_phi.resfile" selector="select_core_neg_phi" />
+		<ReadResfile name="resfile_boundary_surface_pos_phi" filename="inputs/boundary_surface_pos_phi.resfile" selector="select_not_core_pos_phi" />
+		<ReadResfile name="resfile_boundary_surface_neg_phi" filename="inputs/boundary_surface_neg_phi.resfile" selector="select_not_core_neg_phi" />
+		<ExtraRotamersGeneric name="ex1_ex2" ex1="false" ex2="false" extrachi_cutoff="4" />
+		<RestrictToRepacking name="no_design" />
+	</TASKOPERATIONS>
+	<FILTERS>
+		<ScoreType name="cst_filter" score_type="total_score" scorefxn="cst_only" threshold="3.0" />
+	</FILTERS>
+	<MOVERS>
+
+		<SymmetricCycpepAlign name="align_pep" auto_detect_symmetry="false" symmetry_repeats="2" mirror_symmetry="true" angle_threshold="40" trim_to_single_repeat="true" repeat_to_preserve="1" invert="true" />
+
+		<AtomTree name="foldtree1" fold_tree_file="inputs/foldtree1.txt" />
+
+		<Small name="small_perturbation" temperature="10.0" nmoves="100" angle_max="3.0" preserve_detailed_balance="false" scorefxn="r15" >
+			<MoveMap bb="true" chi="false" jump="false" />
+		</Small>
+
+
+		<SetupForSymmetry name="setup_symm" definition="inputs/S2.symm" />
+
+		<ModifyVariantType name="add_chainbreak1" add_type="CUTPOINT_LOWER" update_polymer_bond_dependent_atoms="true" residue_selector="select_last_res" />
+		<ModifyVariantType name="add_chainbreak2" add_type="CUTPOINT_UPPER" update_polymer_bond_dependent_atoms="true" residue_selector="select_first_res" />
+
+		<DeclareBond name="end_bonds" atom1="C" atom2="N" res1="%%length%%" res2="1" />
+
+		<AddCompositionConstraintMover name="comp_csts" filename="inputs/global.comp" selector="select_first_repeat" />
+
+		<FastDesign name="fdes1" scorefxn="r15_mod_cst_highhbond" task_operations="resfile_core_pos_phi,resfile_boundary_surface_pos_phi,resfile_core_neg_phi,resfile_boundary_surface_neg_phi,resfile_L_oligourea,resfile_D_oligourea,ex1_ex2" repeats="1" />
+		
+		<FastDesign name="fdes2" scorefxn="r15_mod_cst" task_operations="resfile_core_pos_phi,resfile_boundary_surface_pos_phi,resfile_core_neg_phi,resfile_boundary_surface_neg_phi,resfile_L_oligourea,resfile_D_oligourea,ex1_ex2" repeats="1" />
+
+		<FastRelax name="final_fastrelax" scorefxn="r15_cst_symm" repeats="1" task_operations="no_design,ex1_ex2" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="align_pep" />
+		<Add mover="foldtree1" />
+		<Add mover="small_perturbation" />
+		<Add mover="setup_symm" />
+		<Add mover="end_bonds" />
+		<Add mover="add_chainbreak1" />
+		<Add mover="add_chainbreak2" />
+		<Add mover="comp_csts" />
+		<Add mover="end_bonds" />
+		<Add mover="fdes1" />
+		<Add mover="end_bonds" />
+		Add mover="fdes2" />
+		Add mover="end_bonds" />
+		<Add mover="final_fastrelax" />
+		<Add filter="cst_filter" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_symm" />
+</ROSETTASCRIPTS>

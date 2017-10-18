@@ -1513,6 +1513,37 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Set the mainchain torsion indices that a noncanonical rotamer library depends upon.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+class NCAARotLibBBTorsions : public PatchOperation {
+public:
+	/// @brief Constructor.
+	NCAARotLibBBTorsions( utility::vector1< core::Size > const &torsions_in );
+
+	/// @brief Set the mainchain torsion indices that a noncanonical rotamer library depends upon.
+	bool
+	apply( ResidueType & rsd ) const override;
+
+	/// @brief Return the name of this PatchOperation ("NCAARotLibBBTorsions").
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	std::string
+	name() const override;
+
+private:
+	utility::vector1< core::Size > indices_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	NCAARotLibBBTorsions();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Set the number of rotamer bins per chi for an NCAA that is not in dunbrack.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 class NCAARotLibNumRotamerBins : public PatchOperation {

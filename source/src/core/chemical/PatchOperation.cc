@@ -1272,6 +1272,50 @@ NCAARotLibPath::name() const {
 	return "NCAARotLibPath";
 }
 
+/// @brief Constructor.
+NCAARotLibBBTorsions::NCAARotLibBBTorsions( utility::vector1< core::Size > const &indices_in ) :
+	indices_( indices_in )
+{}
+
+/// @brief Set the mainchain torsion indices that a noncanonical rotamer library depends upon.
+bool
+NCAARotLibBBTorsions::apply( ResidueType & rsd ) const
+{
+	using namespace core::chemical::rotamers;
+
+	NCAARotamerLibrarySpecificationOP ncaa_libspec;
+	if ( rsd.rotamer_library_specification() ) {
+		NCAARotamerLibrarySpecificationCOP old_libspec(
+			utility::pointer::dynamic_pointer_cast< NCAARotamerLibrarySpecification const >(
+			rsd.rotamer_library_specification() ) );
+		if ( ! old_libspec ) {
+			tr.Error << "Found existing rotamer specification " << rsd.rotamer_library_specification()->keyname() <<
+				" when attempting to patch NCAA rotlib path." << std::endl;
+			utility_exit_with_message( "Cannot have multiple rotamer specifications." );
+		}
+		ncaa_libspec = NCAARotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification( *old_libspec ) );
+	} else {
+		ncaa_libspec = NCAARotamerLibrarySpecificationOP(
+			new core::chemical::rotamers::NCAARotamerLibrarySpecification );
+	}
+	ncaa_libspec->clear_rotamer_bb_torsion_indices();
+
+	for ( core::Size i(1), imax(indices_.size()); i<=imax; ++i ) {
+		ncaa_libspec->add_rotamer_bb_torsion_index(indices_[i]);
+	}
+
+	rsd.rotamer_library_specification(ncaa_libspec);
+
+	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("NCAARotLibBBTorsions").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+NCAARotLibBBTorsions::name() const {
+	return "NCAARotLibBBTorsions";
+}
+
 /// @brief Constructor
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 NCAARotLibNumRotamerBins::NCAARotLibNumRotamerBins(
@@ -2816,6 +2860,15 @@ patch_operation_from_patch_file_line(
 		l >> path;
 		if ( l.fail() ) utility_exit_with_message( "bad NCAA_ROTLIB_PATH line in patchfile: " + line );
 		return PatchOperationOP( new NCAARotLibPath( path ) );
+	} else if ( tag == "NCAA_ROTLIB_BB_TORSIONS" ) {
+		utility::vector1< core::Size > ncaa_rotlib_bb_torsions;
+		while ( !l.eof() ) {
+			core::Size index;
+			l >> index;
+			if ( l.fail() ) utility_exit_with_message( "Bad NCAA_ROTLIB_BB_TORSIONS line in patchfile: " + line );
+			ncaa_rotlib_bb_torsions.push_back(index);
+		}
+		return PatchOperationOP( new NCAARotLibBBTorsions( ncaa_rotlib_bb_torsions ) );
 	} else if ( tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ) {
 		core::Size n_rots(0);
 		utility::vector1<core::Size> n_bins_per_rot;

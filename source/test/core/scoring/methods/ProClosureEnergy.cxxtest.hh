@@ -26,6 +26,10 @@
 #include <test/core/init_util.hh>
 
 #include <core/kinematics/DomainMap.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+
+#include <protocols/cyclic_peptide/PeptideStubMover.hh> //Convenience mover to build test peptide.
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -55,8 +59,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		using namespace core;
-		//core_init();
-		//Note -- I'm moving the core_init() function to each sub-test, here, since I have one sub-test that needs different initialization options.
+		core_init();
 	}
 
 	// Shared finalization goes here.
@@ -65,8 +68,6 @@ public:
 	// --------------- Test Cases --------------- //
 	void test_eval_energy()
 	{
-		core_init();
-
 		Pose trpcage( create_trpcage_ideal_pose() );
 
 		std::cout.precision( 16 );
@@ -373,8 +374,6 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
 	void test_eval_energy_noring()
 	{
-		core_init();
-
 		Pose trpcage( create_trpcage_ideal_pose() );
 
 		std::cout.precision( 16 );
@@ -678,10 +677,56 @@ public:
 
 	}
 
+	/// @brief Test that the pro_close energy works properly with L-oligourea-proline.
+	/// @note The OU3_PRO rotamer set is not included with Rosetta, but must be downloaded from the Git LFS.
+	/// As such, this test never invokes the packer or the fa_dun score term.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_proclose_L_oligourea() {
+		protocols::cyclic_peptide::PeptideStubMover builder;
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
+		builder.add_residue("Append", "OU3_PRO", 2, false, "N", 0, 1, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		core::pose::Pose pose;
+		builder.apply(pose); //Build the peptide.
+
+		//These chi values should result in a nasty, open proline ring:
+		pose.set_chi( 1, 2, 45.0 );
+		pose.set_chi( 2, 2, 50.0 );
+		pose.set_chi( 3, 2, 30.0 );
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::pro_close, 1.0 );
+		core::Real const proenergy( (*sfxn)(pose) );
+
+		TS_ASSERT_LESS_THAN( 0.1, proenergy ); //Confirm that the open proline produces a positive energy value.
+	}
+
+	/// @brief Test that the pro_close energy works properly with D-oligourea-proline.
+	/// @note The OU3_PRO rotamer set is not included with Rosetta, but must be downloaded from the Git LFS.
+	/// As such, this test never invokes the packer or the fa_dun score term.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_proclose_D_oligourea() {
+		protocols::cyclic_peptide::PeptideStubMover builder;
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
+		builder.add_residue("Append", "DOU3_PRO", 2, false, "N", 0, 1, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		core::pose::Pose pose;
+		builder.apply(pose); //Build the peptide.
+
+		//These chi values should result in a nasty, open proline ring:
+		pose.set_chi( 1, 2, 45.0 );
+		pose.set_chi( 2, 2, 50.0 );
+		pose.set_chi( 3, 2, 30.0 );
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::pro_close, 1.0 );
+		core::Real const proenergy( (*sfxn)(pose) );
+
+		TS_ASSERT_LESS_THAN( 0.1, proenergy ); //Confirm that the open proline produces a positive energy value.
+	}
+
 	void test_proclose_start_score_start_func_match_w_total_flexibility()
 	{
-		core_init();
-
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pro_close, 0.5 );
@@ -696,26 +741,6 @@ public:
 
 	void test_proclose_deriv_check_w_total_flexibility()
 	{
-		core_init();
-
-		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::scoring::ScoreFunction sfxn;
-		sfxn.set_weight( pro_close, 0.5 );
-		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
-		AtomDerivValidator adv;
-		adv.set_pose( pose );
-		adv.set_score_function( sfxn );
-		adv.set_movemap( movemap );
-		adv.simple_deriv_check( false, 1e-6 );
-
-	}
-
-	/// @brief Tests whether the pro_close energy evaluation is working as expected with the ring closure part of the energy term turned off.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
-	void test_proclose_deriv_check_w_total_flexibility_noring()
-	{
-		core_init_with_additional_options( "-score:no_pro_close_ring_closure" );
-
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pro_close, 0.5 );

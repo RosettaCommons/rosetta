@@ -126,6 +126,31 @@ enum AA {
 	aa_b3cisACHC,
 	last_beta3_aa = aa_b3cisACHC,
 
+	//Oligoureas.  Keep these together as a group, and ensure that first_oligourea and last_oligourea are set to whatever is first and last.
+	ou3_ala, //Keep this first in this group.
+	first_oligourea = ou3_ala, //Keep this second in this group.
+	ou3_cys,
+	ou3_asp,
+	ou3_glu,
+	ou3_phe,
+	ou3_gly,
+	ou3_his,
+	ou3_ile,
+	ou3_lys,
+	ou3_leu,
+	ou3_met,
+	ou3_asn,
+	ou3_pro,
+	ou3_gln,
+	ou3_arg,
+	ou3_ser,
+	ou3_thr,
+	ou3_val,
+	ou3_trp,
+	ou3_tyr,
+	ou3_aib, //Keep this second-to-last in this group.
+	last_oligourea = ou3_aib, //Keep this last in this group.
+
 	// h2o
 	aa_h2o,
 
@@ -157,7 +182,7 @@ aa_from_one_or_three( std::string const & name );
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 //////////////////////////////////////////////////////////
 bool
-is_canonical_D_aa( AA aa );
+is_canonical_D_aa( AA const aa );
 
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type, return true if and only if
@@ -166,14 +191,22 @@ is_canonical_D_aa( AA aa );
 /// @author Steven Cobms (steven.combs1@gmail.com)
 //////////////////////////////////////////////////////////
 bool
-is_canonical_L_aa( AA aa);
+is_canonical_L_aa( AA const aa );
+
+//////////////////////////////////////////////////////////
+/// @brief Given an enum type, return true if and only if
+/// it is a canonical beta-amino acid.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+//////////////////////////////////////////////////////////
+bool
+is_canonical_beta3_aa( AA const aa );
 
 //////////////////////////////////////////////////////////
 /// @brief Given aa three letter string, return true if
 /// it is an unknown aa.
 /// @author Steven Cobms (steven.combs1@gmail.com)
 bool
-is_aa_name_unknown( std::string name);
+is_aa_name_unknown( std::string const & name);
 
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type for a D-amino acid with a
@@ -182,7 +215,7 @@ is_aa_name_unknown( std::string name);
 /// corresponding L-amino acid cannot be determined).
 //////////////////////////////////////////////////////////
 AA
-get_L_equivalent( AA aa );
+get_L_equivalent( AA const aa );
 
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type for a L-amino acid with a
@@ -191,7 +224,7 @@ get_L_equivalent( AA aa );
 /// corresponding D-amino acid cannot be determined).
 //////////////////////////////////////////////////////////
 AA
-get_D_equivalent( AA aa );
+get_D_equivalent( AA const aa );
 
 ///////////////////////////////////////////////////////
 /// @brief give a enum type and return the string name

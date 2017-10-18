@@ -1,0 +1,15 @@
+SEQUENCE: GGGXGGGX
+SCORE:     score     fa_atr     fa_rep     fa_sol    fa_intra_rep    fa_intra_sol_xover4    lk_ball_wtd    fa_elec    pro_close    hbond_sr_bb    hbond_lr_bb    hbond_bb_sc    hbond_sc    dslf_fa13    atom_pair_constraint    dihedral_constraint      omega     fa_dun    p_aa_pp    yhh_planarity        ref    rama_prepro    CIS_PEPTIDE_BOND_COUNT    HBOND_COUNT    silent_score description
+REMARK BINARY SILENTFILE
+SCORE:  2374.464    -14.141      1.697     14.520           0.032                  1.328         -2.054     -5.296        0.000         -0.817         -0.763          0.000       0.000        0.000                   0.000               2379.809      0.556      0.000     -2.803            0.000      4.789         -2.394                     0.000          2.000           4.033       c.1.1
+REMARK BINARY SILENTFILE
+ANNOTATED_SEQUENCE: GGGX[DOU3_ALA]GGGX[OU3_ALA] c.1.1
+NONCANONICAL_CONNECTION: 8  C   1  N
+LywWU/04Y46bFc68vwHrw/Q0HMzb+eNsvsSeBA9uax+zV7DuvBlSr/o7BXAkEKVxvCyzF+mG4m8bVwh8vkGjV/MOYh3rXmyuP40NFA5Rl98Leuzlv c.1.1
+L5xlWAJBt++z14cqvi2ngANqUyA0YnLpvEMciARFQVBUtrh9v1INmA1UnOCUmA5+vJbffANPJm8jyZiov9qkXAlWQfBE/eLpPo6QoAN+FsAk/DomP c.1.1
+LgNffA9J2hAENsxCwOvZgAJFn9A0ItKIwC8LMAhBQpBUQNDJwQBALANwiGCklNPLwt9VaANF/L/jWK9Bw6yGnAVkjpBESxZIwI/+hA5KiGAkCdcJw c.1.1
+LGe73/01AmBU/8qGw5Nm9+ccbIC02UwHwo6jl+SITjBUfKFKwHoiH+kD9uBkpc2MwxkOO/i0RdBkHIxOwRRa7/qR5EBk1xNOw4lsu+OX7KCkzpqCwmwb7/cXBFBEYYODw0KCM/sX4oCUM9jIwd2kq/+Kn4BE6yFKwXdRh+WjVeAE6RxJwDkDj/MhzBC0vwMNwilzp/K/AbCElMjDwn+4M+Yu3cCUFsO/vXTWE/yheVBkmgNBw c.1.1
+LRh/l+ChknBEgdoQwHmWl/yg4XBU9pxRw8dSy/u4D0/jxy2Rw8BEO/eFwC+DH27Rwqb3J/Yaw6BkbwyQwzT7AA7Xv/BkmfsRwwn3J/SDeqBk+TsSw c.1.1
+LCLBOAT78T/TRe1RwTTVWAXAIX6zkn5RwFlpXAP8xo6rV3gQwGGycAjDPB/LCzXQwzMZYAv5XbAkrfxRwi7EjA7VEc6TS7WSwKSCMA7yue6rIdiSw c.1.1
+Lv9+SAvG8v7j8/+OwFrxSADxjay77HPMwLNV6/iKYg87HihLwT/h2/KJyv+LxMlJwUafPAjdF4+jaDWPwB+WWArEkN9zxH4KwkaUfAP/yD9bRp+Lw c.1.1
+LNOnT/aXla6Ly4GNwsuyA/IL/m97CQyMw3yZn/g6+q6LtgWKwdkEL/kb1e8LZkZHwWCTt/MaTV6bBlMDw1xaJA90Ud1jrjwDwv9Xr/kMlv8r8RTPwU93c/y9pB7zXpkOwNwIy+kJt8/bfLeMwm//DAdqf38bOhQKw4GLo/Yq7A9DeZdKwZqJd+yBVG+raQIHwthYFAhk/R+rzmBPwZXAX/cutS+LZVgQwLzIv/Q3WD7zqRqPw c.1.1

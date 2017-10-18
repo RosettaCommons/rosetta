@@ -19,6 +19,7 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
@@ -31,6 +32,12 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <utility/vector1.hh>
 
+//Basic headers
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR("core.pack.rotamer_set.ContinuousRotamerSet");
+
+#define MAX_BB_DEPENDENCIES 5 //Rotamer libraries may depend on a maximum of 5 mainchain torsions
 
 namespace core {
 namespace pack {
@@ -109,21 +116,29 @@ void ContinuousRotamerSet::build_rotamers(
 			// in which case, we need to quit (TO DO: support ligand rotamers)
 			dunbrack::SingleResidueDunbrackLibraryCOP dunlib =
 				utility::pointer::dynamic_pointer_cast<dunbrack::SingleResidueDunbrackLibrary const > ( rotlib );
-			if ( dunlib ) {
-				// amw
-				utility::fixedsizearray1< Real, 5 > bbs;
-				bbs[ 1 ] = pose.phi( resid );
-				bbs[ 2 ] = pose.psi( resid );
-				samples_[ count_restype_ind ] = dunlib->get_all_rotamer_samples(bbs );// pose.phi( resid ), pose.psi( resid ) );
-			} else {
+			if ( !dunlib ) {
 				utility_exit_with_message("ContinuousRotamerSet cannot support non-Dunbrack rotamer libraries at this time" );
 			}
 
-			utility::fixedsizearray1< Real, 5 > bbs;
-			// Explicit for alpha or beta.
-			// Otherwise... we need a mainchain torsion sense that is
-			// somehow not modified by terminal types!
-			if ( pose.residue( resid ).type().is_beta_aa() ) {
+			utility::fixedsizearray1< Real, MAX_BB_DEPENDENCIES > bbs;
+			for ( core::Size i(1); i<=MAX_BB_DEPENDENCIES; ++i ) bbs[i] = 0.0;
+			core::chemical::ResidueType const & restype(pose.residue_type(resid));
+			core::chemical::rotamers::RotamerLibrarySpecificationCOP libspec( restype.rotamer_library_specification() );
+			core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP libspec_ncaa;
+			if ( libspec != nullptr ) {
+				libspec_ncaa = utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const >(libspec);
+			}
+			if ( libspec_ncaa != nullptr ) {
+				utility::vector1< core::Size > const & relevant_tors(libspec_ncaa->rotamer_bb_torsion_indices());
+				debug_assert(relevant_tors.size() > 0 && relevant_tors.size() <= MAX_BB_DEPENDENCIES);
+				for ( core::Size i(1), imax(relevant_tors.size()); i<=imax; ++i ) {
+					bbs[ i ] = pose.residue( resid ).mainchain_torsion( relevant_tors[i] );
+				}
+			} else if ( pose.residue( resid ).type().is_beta_aa() ) {
+				// Explicit for alpha or beta.
+				// Otherwise... we need a mainchain torsion sense that is
+				// somehow not modified by terminal types!
+				// VKM, 5 Oct 2017:  OK, now we have this.  See above.  Below are the old, catch-all cases.
 				bbs[ 1 ] = pose.phi(   resid );
 				bbs[ 2 ] = pose.theta( resid );
 				bbs[ 3 ] = pose.psi(   resid );
@@ -133,6 +148,14 @@ void ContinuousRotamerSet::build_rotamers(
 			}
 			samples_[ count_restype_ind ] = dunlib->get_all_rotamer_samples( bbs );
 
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "Mainchain torsion values on which this rotamer library depends: ";
+				for ( core::Size i(1); i<=MAX_BB_DEPENDENCIES; ++i ) {
+					TR.Debug << bbs[i];
+					if ( i< MAX_BB_DEPENDENCIES ) TR.Debug << " ";
+				}
+				TR.Debug << std::endl;
+			}
 		} else {
 			// Ala or gly or something similar.
 			// noop

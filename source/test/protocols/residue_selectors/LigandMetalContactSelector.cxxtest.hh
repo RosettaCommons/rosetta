@@ -54,7 +54,7 @@ public:
 		ss_string_and_selector << "<LigandMetalContactSelector name=\"metal\" resnums=\"154,155\"><ResidueName name=\"select_metal\" residue_name3=\" ZN\"/></LigandMetalContactSelector>"<< std::endl;
 		utility::tag::TagOP tag(new utility::tag::Tag());
 		tag->read(ss_string_and_selector);
-		TS_TRACE("Tag with embedded selector and resnums");
+		TR << "Tag with embedded selector and resnums" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING(selector.parse_my_tag(tag, datamap));
 
 		//Trying to give two embedded selectors
@@ -62,7 +62,7 @@ public:
 		ss_two_embedded << "<LigandMetalContactSelector name=\"metal\"><Index resnums=\"154,155\" /><Chain chains=\"A\" /></LigandMetalContactSelector>" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_two_embedded );
-		TS_TRACE( "Tag with two embedded selectors" );
+		TR << "Tag with two embedded selectors" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( selector.parse_my_tag(tag, datamap));
 
 		//Provide a selector that isn't in the data map
@@ -70,7 +70,7 @@ public:
 		ss_bad_selector << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"dummy\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_bad_selector );
-		TS_TRACE( "Tag with undefined residue selector" );
+		TR << "Tag with undefined residue selector" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( selector.parse_my_tag( tag, datamap) );
 
 		//Add selector to the data map
@@ -82,21 +82,21 @@ public:
 		ss_good_selector << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"dummy\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_good_selector );
-		TS_TRACE( "Tag with defined residue selector" );
+		TR << "Tag with defined residue selector" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( selector.parse_my_tag( tag, datamap) );
 		//Try to provide a selector string and an embedded selector
 		std::stringstream ss_selector_two_ways;
 		ss_selector_two_ways << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"dummy\" ><Index resnums=\"154,155\" /></LigandMetalContactSelector>" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_selector_two_ways );
-		TS_TRACE( "Tag with selector two ways" );
+		TR << "Tag with selector two ways" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( selector.parse_my_tag( tag, datamap ) );
 		//Try to provide a selector string and a resnum string
 		std::stringstream ss_select_string_and_resnum_string;
 		ss_select_string_and_resnum_string << "<LigandMetalContactSelector name=\"metal\" resnums=\"154,155\" residue_selector=\"dummy\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_select_string_and_resnum_string );
-		TS_TRACE( "Tag with selector string and resnum string" );
+		TR << "Tag with selector string and resnum string" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( selector.parse_my_tag( tag, datamap) );
 	}
 
@@ -109,7 +109,7 @@ public:
 		ss_all << "<LigandMetalContactSelector name=\"metal\"><Index resnums=\"154,155,309,310\" /></LigandMetalContactSelector>" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
-		TS_TRACE( "Tag with embedded selector to select all metals" );
+		TR << "Tag with embedded selector to select all metals" << std::endl;
 		basic::datacache::DataMap datamap;
 		TS_ASSERT_THROWS_NOTHING( selector.parse_my_tag( tag, datamap ) );
 		//Apply the mover
@@ -142,7 +142,7 @@ public:
 		ss_a << "<LigandMetalContactSelector name=\"metal\"  ><Chain chains=\"A\" /></LigandMetalContactSelector>" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_a );
-		TS_TRACE( "Tag with embedded selector to select chain A" );
+		TR << "Tag with embedded selector to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( selector.parse_my_tag( tag, datamap ) );
 
 		//Apply the mover
@@ -175,7 +175,7 @@ public:
 		ss_zn << "<LigandMetalContactSelector name=\"metal\" ><ResidueName residue_name3=\" ZN\" /></LigandMetalContactSelector>" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_zn );
-		TS_TRACE( "Tag with embedded selector to select zinc ions" );
+		TR << "Tag with embedded selector to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( selector.parse_my_tag( tag, datamap) );
 
 		//Apply the mover
@@ -208,7 +208,7 @@ public:
 		ss_none << "<LigandMetalContactSelector name=\"metal\" ><Index resnums=\"1,2,3\" /></LigandMetalContactSelector>" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_none );
-		TS_TRACE( "Tag with embedded selector that should not include any of the metal ions" );
+		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( selector.parse_my_tag( tag, datamap) );
 
 		//Apply the mover
@@ -263,7 +263,7 @@ public:
 		ss_all << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"all\" />" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
-		TS_TRACE( "Tag with embedded selector to select all metals" );
+		TR << "Tag with embedded selector to select all metals" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap ) );
 
 		//Apply the mover
@@ -296,7 +296,7 @@ public:
 		ss_a << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"chain\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_a );
-		TS_TRACE( "Tag with embedded selector to select chain A" );
+		TR << "Tag with embedded selector to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap ) );
 
 		//Apply the mover
@@ -329,7 +329,7 @@ public:
 		ss_zn << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"zinc\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_zn );
-		TS_TRACE( "Tag with embedded selector to select zinc ions" );
+		TR << "Tag with embedded selector to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap ) );
 
 		//Apply the mover
@@ -362,7 +362,7 @@ public:
 		ss_none << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"none\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_none );
-		TS_TRACE( "Tag with embedded selector that should not include any of the metal ions" );
+		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
 
 		//Apply the mover
@@ -398,7 +398,7 @@ public:
 		ss_all << "<LigandMetalContactSelector name=\"metal\" resnums=\"154,155,309,310\" />" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
-		TS_TRACE( "Tag with embedded selector to select all metals" );
+		TR << "Tag with embedded selector to select all metals" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
 
 		//Apply the mover
@@ -431,7 +431,7 @@ public:
 		ss_a << "<LigandMetalContactSelector name=\"metal\" resnums=\"1-155\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_a );
-		TS_TRACE( "Tag with embedded selector to select chain A" );
+		TR << "Tag with embedded selector to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
 
 		//Apply the mover
@@ -464,7 +464,7 @@ public:
 		ss_zn << "<LigandMetalContactSelector name=\"metal\" resnums=\"155,310\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_zn );
-		TS_TRACE( "Tag with embedded selector to select zinc ions" );
+		TR << "Tag with embedded selector to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap ) );
 
 		//Apply the mover
@@ -497,7 +497,7 @@ public:
 		ss_none << "<LigandMetalContactSelector name=\"metal\"  resnums=\"1,2,3\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_none );
-		TS_TRACE( "Tag with embedded selector that should not include any of the metal ions" );
+		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
 
 		//Apply the mover
@@ -535,7 +535,7 @@ public:
 		ss_none << "<LigandMetalContactSelector name=\"metal\" resnums=\"1,2,3\" dist_cutoff_multiplier=\"3\" />" << std::endl;
 		utility::tag::TagOP tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_none );
-		TS_TRACE( "Tag with embedded selector that should not include any of the metal ions" );
+		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
 
 		//Test the values are equal
@@ -549,7 +549,7 @@ public:
 		ss_none2 << "<LigandMetalContactSelector name=\"metal\" resnums=\"1,2,3\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_none2 );
-		TS_TRACE( "Tag with embedded selector that should not include any of the metal ions" );
+		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
 
 		//Test the values are equal

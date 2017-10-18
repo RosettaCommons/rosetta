@@ -465,6 +465,12 @@ all_atom_center(
 	core::conformation::Residue const & residue
 );
 
+/// @brief Given a residue and a connection id, get the heavyatom adjacent to the atom that makes that connection.
+/// @details Chooses mainchain over non-mainchain, and heavyatoms over non-heavyatoms.  Returns true for FAILURE.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+get_second_atom_from_connection( core::Size & resno, core::Size & atomno, Residue const &rsd, Conformation const &conformation, core::Size const &conn_id );
+
 } // conformation
 } // core
 

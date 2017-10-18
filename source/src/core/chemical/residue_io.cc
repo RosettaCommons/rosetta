@@ -473,6 +473,16 @@ read_topology_file(
 /// NCAA_SEMIROTAMERIC:
 /// Indicates if a NCAA is semirotameric (this is hard coded for canonicals)
 ///
+/// NCAA_ROTLIB_BB_TORSIONS:
+/// This is followed by a series of integers indicating which of the mainchain torsions
+/// are used for backbone-dependent rotamers in sampling and scoring.  For example, in
+/// oliogureas, the line is "NCAA_ROTLIB_BB_TORSIONS 1 2 3", indicating that mainchain
+/// torsions 1, 2, and 3 (but not mainchain torsion 4 or the inter-residue torsion) are used
+/// for backbone-dependent rotamers.  If not specified, all mainchain torsions except the
+/// final, inter-residue torsion are used.  (For example, for alpha-amino acids, phi and psi,
+/// but not omega, are used, so "NCAA_ROTLIB_BB_TORSIONS 1 2" is implied and needs not be
+/// written out explicitly).
+///
 /// NRCHI_START_ANGLE:
 /// The lower bound for non rotameric chi sampling (sometimes you don't want
 /// 0 or 180 to be minimum so you get both sides of these critical values;
@@ -1059,7 +1069,7 @@ read_topology_file(
 
 			tr.Debug << "Setting up conformer library for " << rsd->name() << std::endl;
 		} else if ( tag == "NCAA_ROTLIB_PATH" || tag == "NCAA_SEMIROTAMERIC" || tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ||
-				tag == "NRCHI_SYMMETRIC" || tag == "NRCHI_START_ANGLE" ) {
+				tag == "NRCHI_SYMMETRIC" || tag == "NRCHI_START_ANGLE" || tag == "NCAA_ROTLIB_BB_TORSIONS" ) {
 
 			using namespace core::chemical::rotamers;
 			NCAARotamerLibrarySpecificationOP ncaa_libspec;
@@ -1100,6 +1110,14 @@ read_topology_file(
 				Real angle(-180);
 				l >> angle;
 				ncaa_libspec->nrchi_start_angle( angle );
+			} else if ( tag == "NCAA_ROTLIB_BB_TORSIONS" ) {
+				runtime_assert_string_msg( ncaa_libspec->rotamer_bb_torsion_indices().size() == 0, "When parsing params file " + filename + ", found multiple \"NCAA_ROTLIB_BB_TORSIONS\" lines." );
+				while ( !l.eof() ) {
+					core::Size torsindex;
+					l >> torsindex;
+					ncaa_libspec->add_rotamer_bb_torsion_index( torsindex );
+				}
+				runtime_assert_string_msg( ncaa_libspec->rotamer_bb_torsion_indices().size() != 0, "When parsing params file " + filename + ", unable to parse a \"NCAA_ROTLIB_BB_TORSIONS\" line.  Were torsion indices specified?" );
 			} else {
 				tr.Error << "Did not expect " << tag << " when reading NCAA rotamer info." << std::endl;
 				utility_exit_with_message("Logic error in params file, " + filename + " reading.");

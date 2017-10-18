@@ -56,22 +56,30 @@ NCAARotamerLibrarySpecificationCreator::keyname() const {
 // Specification Functions
 
 NCAARotamerLibrarySpecification::NCAARotamerLibrarySpecification():
+	ncaa_rotlib_path_(""),
+	ncaa_rotlib_n_bins_per_rot_(),
 	semirotameric_ncaa_rotlib_( false ),
 	nrchi_symmetric_( false ),
-	nrchi_start_angle_( 0 )
+	nrchi_start_angle_( 0 ),
+	rotamer_bb_torsion_indices_()
 {}
 
 NCAARotamerLibrarySpecification::NCAARotamerLibrarySpecification(std::string const & ncaa_rotlib_path ) :
 	ncaa_rotlib_path_( ncaa_rotlib_path ),
+	ncaa_rotlib_n_bins_per_rot_(),
 	semirotameric_ncaa_rotlib_( false ),
 	nrchi_symmetric_( false ),
-	nrchi_start_angle_( 0 )
+	nrchi_start_angle_( 0 ),
+	rotamer_bb_torsion_indices_()
 {}
 
 NCAARotamerLibrarySpecification::NCAARotamerLibrarySpecification( std::istream & input ) :
+	ncaa_rotlib_path_(""),
+	ncaa_rotlib_n_bins_per_rot_(),
 	semirotameric_ncaa_rotlib_( false ),
 	nrchi_symmetric_( false ),
-	nrchi_start_angle_( 0 )
+	nrchi_start_angle_( 0 ),
+	rotamer_bb_torsion_indices_()
 {
 	input >> ncaa_rotlib_path_;
 	if ( ! input ) {
@@ -97,6 +105,28 @@ std::string
 NCAARotamerLibrarySpecification::library_name() {
 	return "NCAA";
 }
+
+/// @brief Add a backbone torsion index that the rotamer library is dependent on.
+/// @details Checks for zero or duplicated indices.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+NCAARotamerLibrarySpecification::add_rotamer_bb_torsion_index(
+	core::Size const index
+) {
+	static std::string const errmsg( "Error in core::chemical::rotamers::NCAARotaerLibrarySpecificatoin::add_rotmaer_bb_torsion_index(): " );
+
+	runtime_assert_string_msg(index > 0, errmsg + "A mainchain torsion index cannot be zero!  Check the \"NCAA_ROTLIB_BB_TORSIONS\" line in your params or patch file for indices that are zero.");
+
+	for ( core::Size i(1), imax(rotamer_bb_torsion_indices_.size()); i<=imax; ++i ) {
+		runtime_assert_string_msg( index != rotamer_bb_torsion_indices_[i], errmsg + "A mainchain torsion index was added twice!  Check the \"NCAA_ROTLIB_BB_TORSIONS\" line in your params or patch file for duplicate indices." );
+	}
+
+	rotamer_bb_torsion_indices_.push_back(index);
+}
+
+/// @brief Empties the list of mainchain torsion indices that this rotamer library depends upon.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void NCAARotamerLibrarySpecification::clear_rotamer_bb_torsion_indices() { rotamer_bb_torsion_indices_.clear(); }
 
 std::string
 NCAARotamerLibrarySpecification::cache_tag(core::chemical::ResidueType const & restype ) const {
@@ -132,6 +162,7 @@ core::chemical::rotamers::NCAARotamerLibrarySpecification::save( Archive & arc )
 	arc( CEREAL_NVP( semirotameric_ncaa_rotlib_ ) ); // _Bool
 	arc( CEREAL_NVP( nrchi_symmetric_ ) ); // _Bool
 	arc( CEREAL_NVP( nrchi_start_angle_ ) ); // Real
+	arc( CEREAL_NVP( rotamer_bb_torsion_indices_ ) ); // utility::vector1 < core::Size >
 }
 
 /// @brief Automatically generated deserialization method
@@ -144,6 +175,7 @@ core::chemical::rotamers::NCAARotamerLibrarySpecification::load( Archive & arc )
 	arc( semirotameric_ncaa_rotlib_ ); // _Bool
 	arc( nrchi_symmetric_ ); // _Bool
 	arc( nrchi_start_angle_ ); // Real
+	arc( rotamer_bb_torsion_indices_ ); // utility::vector1 < core::Size >
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::rotamers::NCAARotamerLibrarySpecification );
