@@ -1229,7 +1229,7 @@ Options = Option_Group( '',
 		Option( 'do_not_archive_on_node0', 'Boolean', desc='Should the master node in the MPIWorkPoolJobDistributor archive any JobResults on it? Only relevant for MPI builds when using -n_archive_nodes', default='false' ),
 		Option( 'do_not_output_from_node0', 'Boolean', desc='Should the master node in the MPIWorkPoolJobDistributor perform any ouput? Only relevant for MPI builds when using -n_archive_nodes', default='false' ),
 		Option( 'nthreads', 'Integer', desc = "For the multithreaded job distributor, how many threads should be run at the same time" ),
-		Option( 'archive_on_disk', 'String', desc='Sometimes job results use a ton of memory. This option tells Rosetta to store job results on disk instead of in memory. The string you pass here should be the name of an empty or non-existant directoy where we can put all of our temporary files. You can delete this directory and everything in it when Rosetta is done running.', default='null' ),
+		Option( 'archive_on_disk', 'String', desc='Sometimes job results use a ton of memory. This option tells Rosetta to store job results on disk instead of in memory. The string you pass here should be the name of a (preferably empty) directoy where we can put all of our temporary files. You can delete this directory and everything in it when Rosetta is done running.', default='null' ),
 		Option( 'compress_job_results', 'Boolean', desc='Sometimes job results use a ton of memory. This option tells Rosetta to compress all job results so they use less memory.', default='true' ),
 	), # -jd3
 

@@ -55,6 +55,9 @@
 #include <cereal/types/utility.hpp>
 #include <cereal/details/helpers.hpp>
 
+// C++
+#include <utility>
+
 static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.job_distributors..MPIWorkPoolJobDistributor" );
 
 namespace protocols {
@@ -590,7 +593,7 @@ MPIWorkPoolJobDistributor::process_output_job_result_already_available_request( 
 			// the head node has a chance to flush its output
 			return;
 		}
-		serialized_job_and_result = *job_and_result_iter->second;
+		serialized_job_and_result = std::move( *job_and_result_iter->second );//move instead of copy
 		job_results_.erase( job_and_result_iter );
 	}
 
@@ -760,7 +763,7 @@ MPIWorkPoolJobDistributor::process_archive_job_result_request( int remote_node )
 		out << serialized_larval_job_and_result;
 		out.close();
 	} else {
-		job_results_[ result_id ] = std::make_shared< std::string > ( serialized_larval_job_and_result );
+		job_results_[ result_id ] = std::make_shared< std::string > ( std::move( serialized_larval_job_and_result ) );
 	}
 	utility::send_integer_to_node( remote_node, mpi_work_pool_jd_archival_completed );
 }
@@ -931,7 +934,7 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 					oss << result_id.second << " ); node 0 thinks it ought to have this result.\n";
 					throw utility::excn::EXCN_Msg_Exception( oss.str() );
 				}
-				serialized_job_and_result = *job_and_result_iter->second;
+				serialized_job_and_result = std::move( *job_and_result_iter->second );
 				job_results_.erase( job_and_result_iter );
 			}
 
