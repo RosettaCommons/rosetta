@@ -243,6 +243,19 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
     return p
 
 
+def copy_supplemental_files(rosetta_source_path):
+    prefix = get_binding_build_root(rosetta_source_path, build=True)
+    source = rosetta_source_path + '/src/python/PyRosetta/src'
+
+    distutils.dir_util.copy_tree(source, prefix, update=False)
+
+    database_dest = prefix + '/pyrosetta/database'
+    if os.path.islink(database_dest): os.unlink(database_dest)
+    elif os.path.isdir(database_dest): shutil.rmtree(database_dest)
+    os.symlink('../../../../../../../../../database', database_dest)
+
+    if not os.path.islink(prefix + '/apps'): os.symlink('../../../../../../../scripts/PyRosetta/public', prefix + '/apps')  # creating link to PyRosetta apps dir
+
 
 def setup_source_directory_links(rosetta_source_path):
     prefix = get_binding_build_root(rosetta_source_path, source=True)
@@ -250,8 +263,7 @@ def setup_source_directory_links(rosetta_source_path):
     for d in ['src', 'external']:
         source_path = os.path.relpath(os.path.join(rosetta_source_path, d), prefix)
         s = os.path.join(prefix, d)
-        if os.path.islink(s):
-            os.unlink(s)
+        if os.path.islink(s): os.unlink(s)
         os.symlink(source_path, s)
 
     if Options.external_link:
@@ -259,17 +271,14 @@ def setup_source_directory_links(rosetta_source_path):
             os.path.join(rosetta_source_path, "cmake", "build_{}".format(Options.external_link)), prefix)
 
         s = os.path.join(prefix, "lib")
-        if os.path.islink(s):
-            os.unlink(s)
+        if os.path.islink(s): os.unlink(s)
         os.symlink(target_lib_path, s)
 
-    if Platform not in ('windows', 'cygwin'):
-        database_path = os.path.relpath(os.path.join(rosetta_source_path, "../database"), prefix)
-
-        s = os.path.join(prefix, "database")
-        if os.path.islink(s):
-            os.unlink(s)
-        os.symlink(database_path, s)
+    # if Platform not in ('windows', 'cygwin'):
+    #     database_path = os.path.relpath(os.path.join(rosetta_source_path, "../database"), prefix)
+    #     s = os.path.join(prefix, "database")
+    #     if os.path.islink(s): os.unlink(s)
+    #     os.symlink(database_path, s)
 
 
 def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
@@ -548,11 +557,21 @@ def create_package(rosetta_source_path, path):
 
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
 
-    shutil.copy(build_prefix + '/setup.py', package_prefix)
-    shutil.copy(build_prefix + '/setup.cfg', package_prefix)
-    shutil.copy(build_prefix + '/ez_setup.py', package_prefix)
-    distutils.dir_util.copy_tree(build_prefix + '/pyrosetta', package_prefix + '/pyrosetta', update=False)
-    distutils.dir_util.copy_tree(build_prefix + '/rosetta', package_prefix + '/rosetta', update=False)
+    for f in 'setup.py setup.cfg ez_setup.py'.split(): shutil.copy(build_prefix + '/' + f, package_prefix)
+
+    for d in ['pyrosetta', 'rosetta']:
+        distutils.dir_util.copy_tree(build_prefix + '/' + d, package_prefix + '/' + d, update=False)
+
+        #symlink = path + '/' + d
+        #if os.path.islink(symlink): os.unlink(symlink)
+        os.symlink('./setup/' + d, path + '/' + d)
+
+        for dir_name, dirs, files in os.walk(package_prefix + '/' + d):
+            if '__pycache__' in dirs: shutil.rmtree(dir_name + '/__pycache__')
+            for f in files:
+                if f.endswith('.pyc'): os.remove(dir_name + '/' + f)
+
+
 
 
 def main(args):
@@ -600,6 +619,7 @@ def main(args):
 
     print('Creating PyRosetta in "{}" mode in: {}'.format(Options.type, binding_build_root))
 
+    copy_supplemental_files(rosetta_source_path)
 
     if Options.skip_generation_phase:
         print('Option --skip-generation-phase is supplied, skipping generation phase...')

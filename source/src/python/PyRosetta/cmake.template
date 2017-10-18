@@ -75,24 +75,24 @@ include_directories(${PYTHON_INCLUDE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/pybind11/include)
 
 #%__Rosetta_cmake_instructions__%#
-#
+
+# Code below moved to build.py
 # Copy source and database files into build from source directory.
-file(COPY
-  src/python/PyRosetta/src/pyrosetta
-  src/python/PyRosetta/src/rosetta
-  src/python/PyRosetta/src/test
-  src/python/PyRosetta/src/demo
-  src/python/PyRosetta/src/self-test.py
-  src/python/PyRosetta/src/setup.py
-  src/python/PyRosetta/src/setup.cfg
-  src/python/PyRosetta/src/ez_setup.py
-  DESTINATION .
-)
+# file(COPY
+#   src/python/PyRosetta/src/pyrosetta
+#   src/python/PyRosetta/src/rosetta
+#   src/python/PyRosetta/src/test
+#   src/python/PyRosetta/src/demo
+#   src/python/PyRosetta/src/self-test.py
+#   src/python/PyRosetta/src/setup.py
+#   src/python/PyRosetta/src/setup.cfg
+#   src/python/PyRosetta/src/ez_setup.py
+#   DESTINATION .
+# )
+# file(GLOB PYROSETTA_DATABASE_FILES database/*)
+# file(COPY ${PYROSETTA_DATABASE_FILES} DESTINATION pyrosetta/database)
 
-file(GLOB PYROSETTA_DATABASE_FILES database/*)
-file(COPY ${PYROSETTA_DATABASE_FILES} DESTINATION pyrosetta/database)
-
-if(PYROSETTA_EXTERNAL_LINK) 
+if(PYROSETTA_EXTERNAL_LINK)
     # Copy compiled external modules into pyrosetta module
     file(GLOB PYROSETTA_LIB_FILES lib/*.so)
     file(COPY ${PYROSETTA_LIB_FILES} DESTINATION pyrosetta/lib)
@@ -108,7 +108,7 @@ target_link_libraries(rosetta #%__Rosetta_libraries__%# z)
 # Don't add a 'lib' prefix to the shared library
 set_target_properties(rosetta PROPERTIES PREFIX "")
 
-if(PYROSETTA_EXTERNAL_LINK) 
+if(PYROSETTA_EXTERNAL_LINK)
     #Need to set rpath property directly w/ link flag, as opposed to cmake rpath handling
     #as $ORIGIN is mangled when passed in via .rsp file when linking large libraries
     set_property(TARGET rosetta APPEND PROPERTY LINK_FLAGS "-Wl,-rpath,\\$ORIGIN/lib")

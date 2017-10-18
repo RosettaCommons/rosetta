@@ -353,14 +353,14 @@ def get_path_to_python_executable(platform, config):
     #python_abi_suffix = info[2]
     #print(python_include_dir, python_lib_dir)
 
-    return NT(python=executable, python_root_dir=root, python_include_dir=python_include_dir, python_lib_dir=python_lib_dir)
+    return NT(python=executable, python_root_dir=root, python_include_dir=python_include_dir, python_lib_dir=python_lib_dir, version=python_version)
 
 
-def setup_python_virtual_environment(working_dir, python_or_NT, packages=''):
+def setup_python_virtual_environment(working_dir, python_environment, packages=''):
     ''' Deploy Python virtual environment at working_dir
     '''
 
-    python = python_or_NT.python if isinstance(python_or_NT, NT) else python_or_NT
+    python = python_environment.python
 
     execute('Setting up Python virtual environment...', '{python} -m venv {working_dir}'.format(**vars()) )
 
@@ -369,5 +369,6 @@ def setup_python_virtual_environment(working_dir, python_or_NT, packages=''):
     bin=working_dir+'/bin'
 
     if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip install {packages}'.format(**vars()) )
+    #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
 
     return NT(activate=activate, root=working_dir, bin=bin)
