@@ -751,7 +751,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 					if ( pose.residue_type(old_nres+1).is_protein() ) {
 						core::pose::add_variant_type_to_pose_residue( pose, LOWERTERM_TRUNC_VARIANT, old_nres+1 );
-					} else {
+					} else if ( !pose.residue_type(old_nres+1).is_carbohydrate() ) {
 						core::pose::add_variant_type_to_pose_residue( pose, LOWER_TERMINUS_VARIANT, old_nres+1 );
 					}
 				} else {
