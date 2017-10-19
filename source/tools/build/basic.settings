@@ -2245,7 +2245,6 @@ settings = {
             "library_path" : [
                 "#external/boinc/mac_build/build/Deployment",
                 "#external/boinc/zip",
-                "/usr/X11R6/lib",
                 "#external/boinc/api",
                 "#external/boinc/lib",
             ],
@@ -2256,15 +2255,15 @@ settings = {
                 "#external/boinc",
                 "#external/boinc/lib",
                 "#external/boinc/zip",
-		"#external/boinc/mac3rdParty/ftgl-2.1.3~rc5/src/",
-		"#external/boinc/mac3rdParty/freetype-2.6.2/include/",
+		"#external/boinc/3rdParty/mac/ftgl-2.1.3~rc5/src/",
+		"#external/boinc/3rdParty/mac/freetype-2.6.2/include/",
 		"/System/Library/Frameworks/OpenGL.framework/Headers/",
+		"/System/Library/Frameworks/IOSurface.framework/Headers/", 
             ],
             "defines" : [
                 "MAC",
 		"BOINC",
                 "BOINC_GRAPHICS",
-                "GL_GRAPHICS",
             ],
             "flags" : {
 		"warn" : [
@@ -2276,12 +2275,14 @@ settings = {
                     "framework GLUT",
                     "framework OpenGL",
                     "framework Cocoa",
+                    "framework IOSurface",
                 ],
                 "shlink" : [
 		    "stdlib=libc++",
                     "framework GLUT",
                     "framework OpenGL",
                     "framework Cocoa",
+                    "framework IOSurface",
                 ],
             },
         },
