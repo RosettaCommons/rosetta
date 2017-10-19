@@ -491,7 +491,8 @@ get_contact_devs( core::pose::Pose const &pose,
 
 void report_and_dump( protocols::wum::SilentStructStore const & library_inout,
 	core::pose::Pose const &pose0,
-	bool const dump_cst )
+	bool const dump_cst,
+	bool const is_iterative_selection )
 {
 	core::io::silent::SilentFileOptions sopt;
 	core::io::silent::SilentFileData sfd( sopt );
@@ -516,7 +517,7 @@ void report_and_dump( protocols::wum::SilentStructStore const & library_inout,
 			std::stringstream pdbname;
 			pdbname << prefix << "." << i << ".pdb";
 			ss->set_decoy_tag( pdbname.str() );
-			ss->add_energy( "poolid", i );
+			if ( !is_iterative_selection ) ss->add_energy( "poolid", i ); // add poolid
 		}
 
 		if ( dump_cst ) {
@@ -632,7 +633,7 @@ int main( int argc, char * argv [] )
 		}
 
 		// dump out into silent
-		report_and_dump( library_inout, pose0, dump_cst );
+		report_and_dump( library_inout, pose0, dump_cst, is_iterative_selection );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

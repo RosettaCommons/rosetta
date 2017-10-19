@@ -1,0 +1,44 @@
+<ROSETTASCRIPTS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <SCOREFXNS>
+        <ScoreFunction name="stage1" weights="score3" symmetric="0">
+            <Reweight scoretype="atom_pair_constraint" weight="1.0"/>
+            <Reweight scoretype="cen_hb" weight="5.0"/>
+        </ScoreFunction>
+        <ScoreFunction name="stage2" weights="score4_smooth_cart" symmetric="0">
+            <Reweight scoretype="atom_pair_constraint" weight="1.0"/>
+            <Reweight scoretype="cen_hb" weight="5.0"/>
+            <Reweight scoretype="cart_bonded" weight="0.05"/>
+        </ScoreFunction>
+        <ScoreFunction name="fullatom" weights="beta_cart" symmetric="0">
+            <Reweight scoretype="atom_pair_constraint" weight="1.0"/>
+        </ScoreFunction>
+        <ScoreFunction name="fullatom2" weights="beta_cart" symmetric="0"/>
+    </SCOREFXNS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+        <Hybridize name="hybridize" stage1_scorefxn="stage1" stage2_scorefxn="stage2" fa_scorefxn="fullatom2" fa_cst_file="../fa.cst"  batch="1" 
+		   stage1_increase_cycles="0.5" stage2_increase_cycles="0.5">
+            <Fragments small="../t000_.3mers" big="../t000_.9mers"/>
+            <Template pdb="%%template1%%" weight="1.0" cst_file="../cen.cst"/>
+            <Template pdb="%%template2%%" weight="0.0" cst_file="../cen.cst"/>
+            <Template pdb="%%template3%%" weight="0.0" cst_file="../cen.cst"/>
+            <Template pdb="%%template4%%" weight="0.0" cst_file="../cen.cst"/>
+            <Template pdb="%%template5%%" weight="0.0" cst_file="../cen.cst"/>
+        </Hybridize>
+        <FastRelax name="cartrelax" scorefxn="fullatom" min_type="lbfgs_armijo_nonmonotone" cartesian="1" repeats="2"/>
+	<ConstraintSetMover name="cst" add_constraints="0" cst_file="../fa.cst"/>
+	<AddJobPairData name="addseedinfo" key="parent" value_type="string" value="%%seed%%"/>
+    </MOVERS>
+    <APPLY_TO_POSE>
+    </APPLY_TO_POSE>
+    <PROTOCOLS>
+        <Add mover="hybridize"/>
+	<Add mover="cst"/>
+        <Add mover="cartrelax"/>
+	<Add mover="addseedinfo"/>
+    </PROTOCOLS>
+    <OUTPUT scorefxn="fullatom"/>
+</ROSETTASCRIPTS>
