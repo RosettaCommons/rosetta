@@ -176,10 +176,10 @@ void SetCatalyticResPackBehavior::provide_xml_schema( utility::tag::XMLSchemaDef
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "fix_catalytic_aa", xsct_rosetta_bool, "XRW TO DO",  "true"  )
-		+ XMLSchemaAttribute( "behavior_non_catalytic", xs_string , "XRW TO DO" );
+		+ XMLSchemaAttribute::attribute_w_default(  "fix_catalytic_aa", xsct_rosetta_bool, "If set to 1, the catalytic residues will be set to fixed (non-repacking).  Otherwise they will be set to repack only (not design).",  "true"  )
+		+ XMLSchemaAttribute( "behavior_non_catalytic", xs_string , "Pass a resfile-style command to apply to non-catalytic residues.  For example, NATRO, PIKAA, etc." );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Ensures that catalytic residues as specified in a match/constraint file do not get designed. If no option is specified the constrained residues will be set to repack only (not design).");
 }
 
 core::pack::task::operation::TaskOperationOP
