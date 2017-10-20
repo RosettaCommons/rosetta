@@ -149,14 +149,13 @@ FilterFactory::newFilter(
 	filter->parse_my_tag( tag, data, filters, movers, pose );
 	// if confidence specified, link to StochasticFilter and wrap inside CompoundFilter
 	core::Real const confidence( tag->getOption< core::Real >( "confidence", 1.0 ) );
-	if ( confidence < 0.999 ) { // fuzzy logic
-		CompoundFilter::CompoundStatement fuzzy_statement;
-		FilterCOP stochastic_filter( FilterOP( new StochasticFilter( confidence ) ) );
-		fuzzy_statement.push_back( std::make_pair( stochastic_filter->clone(), OR ) );
-		fuzzy_statement.push_back( std::make_pair( filter->clone(), OR ) );
-		FilterOP compound_filter( new CompoundFilter( fuzzy_statement ) );
-		compound_filter->set_user_defined_name( tag->getOption<std::string>("name") );
-		return compound_filter;
+	if ( confidence <= 0.999 ) { // fuzzy logic
+		// The split is `(1-confidence)` always true, `confidence` run subfilter.
+		// Which means that StochasticFilter should be in a true state `(1-confidence)` of the time,
+		// and run the subfilter when it's false.
+		FilterOP stochastic_filter( new StochasticFilter( (1.0-confidence), filter->clone(), /*run_subfilter_on*/ false ) );
+		stochastic_filter->set_user_defined_name( tag->getOption<std::string>("name") );
+		return stochastic_filter;
 	}
 	return filter;
 }

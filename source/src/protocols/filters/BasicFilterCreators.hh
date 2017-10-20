@@ -33,6 +33,7 @@ class TrueFilterCreator : public FilterCreator
 public:
 	FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class FalseFilterCreator : public FilterCreator

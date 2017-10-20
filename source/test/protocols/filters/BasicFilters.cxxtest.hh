@@ -30,6 +30,116 @@ static basic::Tracer TR("protocols.filters.BasicFilters.cxxtest.hh");
 
 // --------------- Test Class --------------- //
 
+class StochasticFilterTests : public CxxTest::TestSuite {
+
+private:
+	core::pose::PoseOP testpose_;
+public:
+
+	void setUp() {
+		core_init();
+
+		testpose_ = create_twores_1ubq_poseop(); // Identity doesn't matter
+	}
+
+	void tearDown() {
+	}
+
+	// This is a test of the direct application of StochasticFilter
+	void test_apply() {
+		utility::vector1< protocols::filters::StochasticFilter > filters = { {1.0}, {0.75}, {0.25}, {0.0} };
+		utility::vector1< core::Size > mins = { 100, 67, 17, 0 };
+		utility::vector1< core::Size > maxes = { 100, 83, 33, 0 };
+		utility::vector1< core::Size > counts = { 0, 0, 0, 0 };
+
+		for ( core::Size ii(1); ii <= 100; ++ii ) { // 100 replicates
+			for ( core::Size jj(1); jj <= filters.size(); ++jj ) {
+				counts[jj] += filters[jj].apply(*testpose_);
+			}
+		}
+
+		for ( core::Size jj(1); jj <= filters.size(); ++jj ) {
+			TR << "For StochasticFilter with confidence " << filters[jj].confidence() << " got " << counts[jj] << " true values. Expected between " << mins[jj] << " and " << maxes[jj] << std::endl;
+			TS_ASSERT( counts[jj] >= mins[ jj ] );
+			TS_ASSERT( counts[jj] <= maxes[ jj ] );
+		}
+
+	}
+
+	void test_subfilter_apply_true() {
+		using namespace protocols::filters;
+
+		utility::vector1< core::Real > confidences = { 1.0, 0.75, 0.25, 0.0 };
+		utility::vector1< core::Size > num_trues;
+		utility::vector1< core::Size > counts;
+		utility::vector1< core::Size > report_sm_counts;
+
+		for ( core::Real confidence: confidences ) {
+			StubFilterOP subfilter( new StubFilter(false, 3.5) );
+
+			FilterOP stochastic_filter( new StochasticFilter( confidence, subfilter, /*run_subfilter_on*/ true ) );
+
+			core::Size num_true=0;
+			for ( core::Size ii(1); ii <= 100; ++ii ) { // 100 replicates
+				num_true += stochastic_filter->apply(*testpose_);
+				TS_ASSERT_EQUALS( stochastic_filter->report_sm(*testpose_), 3.5 ); // Should always call the subfilter
+			}
+			num_trues.push_back( num_true );
+			counts.push_back( subfilter->num_apply );
+			report_sm_counts.push_back( subfilter->num_report_sm );
+		}
+
+		for ( core::Size jj(1); jj <= confidences.size(); ++jj ) {
+			TR << "For a confidence of " << confidences[jj] << " got " << num_trues[jj] << " true results." << std::endl;
+			TS_ASSERT_EQUALS( num_trues[jj], 0 ); // Run on true, but returns false
+
+			TR << "For a confidence of " << confidences[jj] << " got " << counts[jj] << " sub-filter applications." << std::endl;
+			TS_ASSERT( counts[jj] >= (confidences[jj]-0.08)*100 );
+			TS_ASSERT( counts[jj] <= (confidences[jj]+0.08)*100 );
+
+			TR << "For a confidence of " << confidences[jj] << " got " << report_sm_counts[jj] << " sub-filter report_sm." << std::endl;
+			TS_ASSERT_EQUALS( report_sm_counts[jj], 100 );
+		}
+	}
+
+	void test_subfilter_apply_false() {
+		using namespace protocols::filters;
+
+		utility::vector1< core::Real > confidences = { 1.0, 0.75, 0.25, 0.0 };
+		utility::vector1< core::Size > num_trues;
+		utility::vector1< core::Size > counts;
+		utility::vector1< core::Size > report_sm_counts;
+
+		for ( core::Real confidence: confidences ) {
+			StubFilterOP subfilter( new StubFilter(true, 3.5) );
+
+			FilterOP stochastic_filter( new StochasticFilter( confidence, subfilter, /*run_subfilter_on*/ false ) );
+
+			core::Size num_true=0;
+			for ( core::Size ii(1); ii <= 100; ++ii ) { // 100 replicates
+				num_true += stochastic_filter->apply(*testpose_);
+				TS_ASSERT_EQUALS( stochastic_filter->report_sm(*testpose_), 3.5 ); // Should always call the subfilter
+			}
+			num_trues.push_back( num_true );
+			counts.push_back( subfilter->num_apply );
+			report_sm_counts.push_back( subfilter->num_report_sm );
+		}
+
+		for ( core::Size jj(1); jj <= confidences.size(); ++jj ) {
+			TR << "For a confidence of " << confidences[jj] << " got " << num_trues[jj] << " true results. (run on false)" << std::endl;
+			TS_ASSERT_EQUALS( num_trues[jj], 100 ); // Run on false, but then returns true
+
+			TR << "For a confidence of " << confidences[jj] << " got " << counts[jj] << " sub-filter applications. (run on false)" << std::endl;
+			TS_ASSERT( counts[jj] <= (1.0-(confidences[jj]-0.08))*100 );
+			TS_ASSERT( counts[jj] >= (1.0-(confidences[jj]+0.08))*100 );
+
+			TR << "For a confidence of " << confidences[jj] << " got " << report_sm_counts[jj] << " sub-filter report_sm. (run on false)" << std::endl;
+			TS_ASSERT_EQUALS( report_sm_counts[jj], 100 );
+		}
+	}
+};
+
+
 class IfThenFilterTests : public CxxTest::TestSuite {
 
 private:

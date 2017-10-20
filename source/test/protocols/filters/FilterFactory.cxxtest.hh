@@ -16,6 +16,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/util/pose_funcs.hh>
+#include <test/util/rosettascripts.hh>
 #include <test/core/init_util.hh>
 
 #include <core/types.hh>
@@ -25,6 +26,7 @@
 
 // Package headers
 #include <protocols/filters/Filter.hh>
+#include <protocols/filters/BasicFilters.hh>
 #include <protocols/filters/filter_schemas.hh>
 
 // Utility headers
@@ -33,7 +35,6 @@
 
 // Test utility headers
 #include <test/util/schema_utilities.hh>
-
 using namespace protocols::filters;
 using namespace utility::tag;
 
@@ -70,6 +71,30 @@ public:
 		XMLSchemaDefinition xsd;
 		FilterFactory::get_instance()->define_filter_xml_schema( xsd );
 		ensure_rosetta_scripts_like_XSD_validates_w_group( xsd, FilterFactory::filter_xml_schema_group_name() );
+	}
+
+	void test_confidence_usage() {
+		FalseFilterOP filter1_0( parse_filter_tag<FalseFilter>( "<FalseFilter name=\"one\" confidence=\"1\" />" ) );
+		TS_ASSERT( filter1_0 != nullptr ); // No StochasticFilter wrapping
+
+		StochasticFilterOP filter0_75( parse_filter_tag<StochasticFilter>( "<FalseFilter name=\"one\" confidence=\"0.75\" />" ) );
+		TS_ASSERT_EQUALS( filter0_75->confidence(), 0.25 ); // 25% always true, 75% filter
+
+		StochasticFilterOP filter0_0( parse_filter_tag<StochasticFilter>( "<FalseFilter name=\"one\" confidence=\"0.0\" />" ) );
+		TS_ASSERT_EQUALS( filter0_0->confidence(), 1.0 ); // 100% always true, 0% filter
+
+		core::Size num_true0_75 = 0, num_true0_0 = 0;
+
+		for ( core::Size ii(1); ii <= 100; ++ii ) {
+			core::pose::Pose pose;
+			num_true0_75 += filter0_75->apply(pose);
+			num_true0_0 += filter0_0->apply(pose);
+		}
+
+		TS_ASSERT_EQUALS( num_true0_0, 100 ); // 100% ignore-filter-true, 0% FalseFilter
+		TS_ASSERT( num_true0_75 >= 25 - 8 ); // 25% ignore-filter-true, 75% FalseFilter
+		TS_ASSERT( num_true0_75 <= 25 + 8 ); // 25% ignore-filter-true, 75% FalseFilter
+
 	}
 
 

@@ -45,6 +45,18 @@ public:
 	bool apply( core::pose::Pose const & ) const override { return true; }
 	FilterOP clone() const override { return FilterOP( new TrueFilter ); }
 	FilterOP fresh_instance() const override { return FilterOP( new TrueFilter ); }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class FalseFilter : public Filter {
@@ -72,11 +84,19 @@ class StochasticFilter : public Filter {
 public:
 	StochasticFilter();
 	~StochasticFilter() override;
-	StochasticFilter( core::Real const confidence );
-	bool apply( core::pose::Pose const & pose ) const override;
+	/// @details The confidence is the fraction of the time the Filter will return *true*
+	/// If subfilter is not null, it will be called when the core calculation matched `run_subfilter_on`
+	StochasticFilter( core::Real const confidence, FilterOP subfilter = nullptr, bool run_subfilter_on = true  );
 	FilterOP clone() const override;
 	FilterOP fresh_instance() const override;
-	void report( std::ostream &, core::pose::Pose const & ) const override {}
+
+	bool calculate() const;
+
+	bool apply( core::pose::Pose const & pose ) const override;
+	/// @brief If subfilter is set, use it's report_sm, otherwise use the base class's
+	core::Real report_sm( core::pose::Pose const & ) const override;
+	/// @brief If subfilter is set, use it's report, otherwise use the base class's
+	void report( std::ostream &, core::pose::Pose const & ) const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -84,6 +104,10 @@ public:
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
+
+	/// @brief The confidence is the fraction of the time the Filter will return *true*
+	core::Real confidence() const { return confidence_; }
+	FilterCOP subfilter() const { return subfilter_; }
 
 	std::string
 	name() const override;
@@ -98,7 +122,9 @@ public:
 
 
 private:
-	core::Real confidence_;
+	core::Real confidence_ = 1.0; // The fraction fo the time the Filter will return *true*
+	FilterOP subfilter_ = nullptr;
+	bool run_subfilter_on_ = true;
 };
 
 /// @brief Used to define a compound logical statement involving other filters with
@@ -149,6 +175,13 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+protected:
+
+	/// @details We break out the subfilter evaluation into a separate method
+	/// so that we can have diagnostic output while still preserving the lazy evaluation
+	/// semantics.
+	bool
+	compute_subfilter( FilterOP const & filter, core::pose::Pose const & pose ) const;
 
 private:
 	core::Real threashold_;

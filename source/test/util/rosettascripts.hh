@@ -51,9 +51,10 @@
 #include <core/types.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
+#include <protocols/filters/Filter.hh>
+#include <protocols/filters/FilterFactory.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/moves/NullMover.hh>
 
@@ -111,6 +112,27 @@ utility::pointer::shared_ptr<MoverSubclass> parse_tag(std::string tag_string) {
 	return mover;
 }
 
+/// @brief Construct a mover from an XML string.
+template <class FilterSubclass>
+utility::pointer::shared_ptr<FilterSubclass> parse_filter_tag(std::string tag_string) {
+	std::istringstream tag_stream(tag_string);
+	utility::tag::TagCOP tag = utility::tag::Tag::create(tag_stream);
+	basic::datacache::DataMap data;
+	protocols::filters::Filters_map filters;
+	protocols::moves::Movers_map movers;
+	core::pose::Pose pose;
+
+	protocols::filters::FilterOP base_filter(
+		protocols::filters::FilterFactory::get_instance()->newFilter(
+		tag, data, filters, movers, pose ) );
+	utility::pointer::shared_ptr<FilterSubclass> filter =
+		utility::pointer::dynamic_pointer_cast<FilterSubclass>(base_filter);
+
+	TSM_ASSERT("Instantiated the wrong type of mover", filter.get());
+
+	return filter;
+}
+
 /// @brief setup filters map with some of the the RosettaScript defaults
 inline void prime_Filters( Filters_map & filters ) {
 	filters["true_filter"] = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
@@ -142,7 +164,8 @@ inline void prime_Data( basic::datacache::DataMap & data ) {
 /// @brief A simple filter for helping to test nested classes
 /// will apply() with the given truth value,
 /// report_sm() with the given value,
-/// and report() with the truth,
+/// and report() with the truth.
+/// The num_* functions will keep track of how often each are called.
 
 class StubFilter : public Filter {
 public:
@@ -154,15 +177,24 @@ public:
 	FilterOP clone() const { return FilterOP( new StubFilter( *this ) ); }
 	FilterOP fresh_instance() const { return FilterOP( new StubFilter() ); }
 	void set( bool truth, core::Real value) { truth_ = truth; value_ = value; }
-	bool apply( core::pose::Pose const & ) const { return truth_; }
-	core::Real report_sm( core::pose::Pose const & ) const { return value_;}
+	bool apply( core::pose::Pose const & ) const { ++num_apply; return truth_; }
+	core::Real report_sm( core::pose::Pose const & ) const { ++num_report_sm; return value_;}
 	void report( std::ostream & ostream, core::pose::Pose const & ) const {
+		++num_report;
 		ostream << "StubFilter " << tag_ << ": " << truth_ << " " << value_ << std::endl;
+	}
+	void reset_counts() {
+		num_apply = 0;
+		num_report_sm = 0;
+		num_report = 0;
 	}
 public: // Yes, public - deliberately so people can easily change them, if they want to
 	bool truth_;
 	core::Real value_;
 	std::string tag_;
+	mutable core::Size num_apply = 0;
+	mutable core::Size num_report_sm = 0;
+	mutable core::Size num_report = 0;
 };
 
 typedef utility::pointer::shared_ptr< StubFilter >  StubFilterOP;

@@ -58,24 +58,12 @@ typedef core::pose::Pose Pose;
 StochasticFilter::StochasticFilter() : Filter( "Stochastic" ) {}
 StochasticFilter::~StochasticFilter() = default;
 
-StochasticFilter::StochasticFilter( core::Real const confidence )
-: Filter( "Stochastic" ), confidence_( confidence )
+StochasticFilter::StochasticFilter( core::Real const confidence, FilterOP subfilter, bool run_subfilter_on ):
+	Filter( "Stochastic" ),
+	confidence_( confidence ),
+	subfilter_( subfilter ),
+	run_subfilter_on_( run_subfilter_on )
 {}
-
-bool
-StochasticFilter::apply( Pose const & ) const
-{
-	if ( confidence_ >= 0.999 ) return true;
-
-	core::Real const random_number( numeric::random::rg().uniform() );
-	if ( random_number <= confidence_ ) {
-		TR<<"stochastic filter returning false"<<std::endl;
-		return false;
-	}
-	TR<<"stochastic filter returning true"<<std::endl;
-	return true;
-}
-
 
 FilterOP
 StochasticFilter::clone() const
@@ -87,6 +75,47 @@ FilterOP
 StochasticFilter::fresh_instance() const
 {
 	return FilterOP( new StochasticFilter() );
+}
+
+bool
+StochasticFilter::calculate() const {
+	if ( confidence_ < 0.999 ) {
+		core::Real const random_number( numeric::random::rg().uniform() );
+		return ( random_number <= confidence_ );
+	} else {
+		return true;
+	}
+}
+
+bool
+StochasticFilter::apply( Pose const & pose ) const
+{
+	bool result = calculate();
+
+	if ( subfilter_ && result == run_subfilter_on_ ) {
+		return subfilter_->apply( pose );
+	} else {
+		return result;
+	}
+}
+
+
+core::Real
+StochasticFilter::report_sm( core::pose::Pose const & pose ) const {
+	if ( subfilter_ ) {
+		return subfilter_->report_sm( pose ); // Always use the sub-filter's metric.
+	} else {
+		return Filter::report_sm( pose ); // Use the base class behavior.
+	}
+}
+
+void
+StochasticFilter::report( std::ostream & ostream, core::pose::Pose const & pose) const {
+	if ( subfilter_ ) {
+		subfilter_->report( ostream, pose ); // Always use the sub-filters behavior
+	} else {
+		// Do nothing.
+	}
 }
 
 void
@@ -101,7 +130,7 @@ StochasticFilter::parse_my_tag(
 	TR<<"stochastic filter with confidence "<<confidence_<<std::endl;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief Used to define a compound logical statement involving other filters with
 // AND, OR and XOR
 CompoundFilter::CompoundFilter() :
@@ -142,16 +171,6 @@ CompoundFilter::fresh_instance() const
 void
 CompoundFilter::report( std::ostream & out, Pose const & pose ) const
 {
-	if ( compound_statement_.size() == 2 ) {
-		//special case for filters that are defined with a confidence value. In that case, we want to report the value of the filter regardless of the stochastic filter
-		bool confidence( false );
-		CompoundStatement::const_iterator non_stochastic_filter;
-		for ( auto it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
-			if ( it->first->get_type() == "Stochastic" ) confidence = true;
-			else non_stochastic_filter = it;
-		}
-		if ( confidence ) non_stochastic_filter->first->report( out, pose );
-	}
 	bool const value( compute( pose ) );
 
 	out<<"Compound filter returns: "<<value<<'\n';
@@ -160,16 +179,6 @@ CompoundFilter::report( std::ostream & out, Pose const & pose ) const
 core::Real
 CompoundFilter::report_sm( Pose const & pose ) const
 {
-	if ( compound_statement_.size() == 2 ) {
-		//special case for filters that are defined with a confidence value. In that case, we want to report the value of the filter regardless of the stochastic filter
-		bool confidence( false );
-		CompoundStatement::const_iterator non_stochastic_filter;
-		for ( auto it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
-			if ( it->first->get_type() == "Stochastic" ) confidence = true;
-			else non_stochastic_filter = it;
-		}
-		if ( confidence ) return( non_stochastic_filter->first->report_sm( pose ) );
-	}
 	bool const value( compute( pose ) );
 	return( value );
 }
@@ -184,7 +193,7 @@ CompoundFilter::compute( Pose const & pose ) const
 		if ( it - compound_statement_.begin() == 0 ) {
 			// first logical op may only be NOT
 			// ANDNOT and ORNOT are also treated as NOT (with a warning)
-			value = it->first->apply( pose );
+			value = compute_subfilter( it->first, pose );
 			if ( it->second == NOT ) value = !value;
 			if ( it->second == ORNOT ) {
 				TR.Warning << "CompoundFilter treating operator ORNOT as NOT" << std::endl;
@@ -196,22 +205,32 @@ CompoundFilter::compute( Pose const & pose ) const
 			}
 		} else {
 			switch( it->second  ) {
-			case ( AND ) : value = value && it->first->apply( pose ); break;
-			case ( OR  ) : value = value || it->first->apply( pose ); break;
-			case ( XOR ) : value = value ^ it->first->apply( pose ); break;
-			case ( ORNOT ) : value = value || !it->first->apply( pose ); break;
-			case ( ANDNOT ) : value = value && !it->first->apply( pose ); break;
-			case ( NOR ) : value = !( value || it->first->apply( pose ) ); break;
-			case (NAND ) : value = !( value && it->first->apply( pose ) ); break;
+			case ( AND ) : value = value && compute_subfilter( it->first, pose ); break;
+			case ( OR  ) : value = value || compute_subfilter( it->first, pose ); break;
+			case ( XOR ) : value = value ^ compute_subfilter( it->first, pose ); break;
+			case ( ORNOT ) : value = value || !compute_subfilter( it->first, pose ); break;
+			case ( ANDNOT ) : value = value && !compute_subfilter( it->first, pose ); break;
+			case ( NOR ) : value = !( value || compute_subfilter( it->first, pose ) ); break;
+			case (NAND ) : value = !( value && compute_subfilter( it->first, pose ) ); break;
 			case (NOT ) :
 				TR.Warning << "CompoundFilter treating operator NOT as ANDNOT" << std::endl;
-				value = value && !it->first->apply( pose );
+				value = value && !compute_subfilter( it->first, pose );
 				break;
 			}
 		}
 	}
 	if ( invert_ ) value = !value;
+	TR << "CompoundFilter as a whole " << (value ? " succeeded." : " failed." ) << std::endl;
 	return( value );
+}
+
+bool
+CompoundFilter::compute_subfilter( FilterOP const & filter, Pose const & pose ) const {
+	bool subfilter_value( filter->apply( pose ) );
+	TR << "CompoundFilter subfilter "
+		<< (filter->get_user_defined_name().empty() ? filter->get_type() : filter->get_user_defined_name() )
+		<< (subfilter_value ? " succeeded." : " failed." ) << std::endl;
+	return subfilter_value;
 }
 
 void
@@ -676,6 +695,27 @@ TrueFilterCreator::create_filter() const { return FilterOP( new TrueFilter ); }
 
 std::string
 TrueFilterCreator::keyname() const { return "TrueFilter"; }
+
+void TrueFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TrueFilter::provide_xml_schema( xsd );
+}
+
+std::string TrueFilter::name() const {
+	return class_name();
+}
+
+std::string TrueFilter::class_name() {
+	return "TrueFilter";
+}
+
+void TrueFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist; // No attributes
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filter that always returns true", attlist );
+}
 
 std::string FalseFilter::name() const {
 	return class_name();

@@ -235,7 +235,6 @@ sources = {
 	],
 	"protocols/protein_interface_design": [
 		"design_utils",
-		"DockDesignFilterFactory",
 		"ParserJobInputter",
 		"read_patchdock",
 		"ReportPSSMDifference",

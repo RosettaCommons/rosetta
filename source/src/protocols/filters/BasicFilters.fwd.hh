@@ -26,6 +26,7 @@ namespace filters {
 // Forward
 class TrueFilter;
 class FalseFilter;
+class StochasticFilter;
 class CompoundFilter;
 class CombinedFilter;
 class MoveBeforeFilter;
@@ -35,8 +36,11 @@ class IfThenFilter;
 typedef utility::pointer::shared_ptr< TrueFilter > TrueFilterOP;
 typedef utility::pointer::shared_ptr< TrueFilter const >  TrueFilterCOP;
 
-typedef utility::pointer::shared_ptr< CompoundFilter > FalseFilterOP;
-typedef utility::pointer::shared_ptr< CompoundFilter const >  FalseFilterCOP;
+typedef utility::pointer::shared_ptr< FalseFilter > FalseFilterOP;
+typedef utility::pointer::shared_ptr< FalseFilter const >  FalseFilterCOP;
+
+typedef utility::pointer::shared_ptr< StochasticFilter > StochasticFilterOP;
+typedef utility::pointer::shared_ptr< StochasticFilter const >  StochasticFilterCOP;
 
 typedef utility::pointer::shared_ptr< CompoundFilter > CompoundFilterOP;
 typedef utility::pointer::shared_ptr< CompoundFilter const >  CompoundFilterCOP;

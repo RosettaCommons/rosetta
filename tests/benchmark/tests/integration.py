@@ -80,7 +80,7 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
     :param full_log: str
     :param build_command_line: str
     :param results: dict
-    :rtype: str, str, dict
+    :rtype: str, str, dict, str
     """
 
     if re.search("--demos", additional_flags) or re.search("--tutorials", additional_flags):
@@ -121,7 +121,7 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
         results[_StateKey_] = _S_script_failed_
         results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # omitting compilation log and only including integration.py output
 
-    return command_line, output, results
+    return command_line, output, results, full_log
 
 
 ######################################################
@@ -150,11 +150,13 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, config, hpc_
         return results
 
     #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
-    command_line,output,results = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
+    command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
 
     ignore = []
     files_location = rosetta_dir+'/tests/integration/new/'
     copy_files(files_location, working_dir)
+
+    with open(working_dir + '/full-log.txt', 'w') as f: f.write(full_log)
 
     if mode in ['ubsan','addsan']:
         # Don't queue for comparison - sanitizers are hard pass/fail.
@@ -192,12 +194,14 @@ def run_demo_tests(mode, rosetta_dir, working_dir, platform, config, hpc_driver=
         results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
         return results
 
-    command_line,output,results = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
+    command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
 
     ignore = []
 
     files_location = os.path.realpath(rosetta_dir+'/../demos/new')
     copy_files(files_location, working_dir)
+
+    with open(working_dir + '/full-log.txt', 'w') as f: f.write(full_log)
 
     #Do a DIFF to indicate pass or f
     if diff_causes_failure:
@@ -238,7 +242,7 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, config, hpc_dri
 
     files_location = rosetta_dir+'/tests/integration/valgrind/'
     json_results_file = os.path.abspath( files_location +"/valgrind_results.yaml" )
-    command_line,output,results = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
+    command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
 
     ignore = []
     # Copy just the valgrind output to the archive directory - we don't need the other output
@@ -275,6 +279,8 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, config, hpc_dri
         else:
             state = _S_passed_
         json_results['tests'][test] = {_StateKey_: state, _LogKey_: log }
+
+    with open(working_dir + '/full-log.txt', 'w') as f: f.write(full_log)
 
     results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # omitting compilation log and only including integration.py output
     results[_IgnoreKey_] = ignore

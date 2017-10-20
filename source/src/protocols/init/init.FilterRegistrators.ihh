@@ -39,6 +39,7 @@ static FilterRegistrator< protocols::filters::CalculatorFilterCreator > reg_Calc
 static FilterRegistrator< protocols::filters::CombinedFilterCreator > reg_CombinedFilterCreator;
 static FilterRegistrator< protocols::filters::CompoundFilterCreator > reg_CompoundFilterCreator;
 static FilterRegistrator< protocols::filters::ContingentFilterCreator > reg_ContingentFilterCreator;
+static FilterRegistrator< protocols::filters::TrueFilterCreator > reg_TrueFilterCreator;
 static FilterRegistrator< protocols::filters::FalseFilterCreator > reg_FalseFilterCreator;
 static FilterRegistrator< protocols::filters::IfThenFilterCreator > reg_IfThenFilterCreator;
 static FilterRegistrator< protocols::filters::MoveBeforeFilterCreator > reg_MoveBeforeFilterCreator;
