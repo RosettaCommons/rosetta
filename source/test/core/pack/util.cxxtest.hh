@@ -63,7 +63,7 @@ public:
 		core::Real rot_rec( core::pack::rotamer_recovery( pose, native, difference ) );
 
 		// test
-		TS_ASSERT_DELTA( rot_rec, 0.757092, 0.00001 );
+		TS_ASSERT_DELTA( rot_rec, 0.7571998, 0.00001 );
 
 	}
 

@@ -81,13 +81,21 @@ END_SELECTOR
 ## these are the operations involved
 ADD_ATOM 1H   Hpol HC 0.2142
 ADD_ATOM 2H   Hpol HC 0.2142
-ADD_BOND N 1H
-ADD_BOND N 2H
+ADD_ATOM CAV  VIRT VIRT 0.00
+ADD_BOND NV 1H
+ADD_BOND NV 2H
+ADD_BOND NV CAV
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 70.5 1 N CA 1H
+ADD_CHI 4 CG CD NV CAV
+
+SET_ICOOR CAV  0.00000  65.86899 1.383018 NV CD CA # these icoor give an okay placement when built from NV
+#SET_ICOOR CAV  0.00000  68.42345 1.458002 NV CD CA # set 2 to mimic placement of atoms modified ICOOR in PRO.parmas
+
+SET_ICOOR 1H  120 70.5 1.0 NV CD CAV
+SET_ICOOR 2H  120 70.5 1.0 NV CD 1H
+
+SET_VIRTUAL_SHADOW CAV CA
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -121,13 +129,19 @@ END_SELECTOR
 ## these are the operations involved
 ADD_ATOM 1H   Hpol HC 0.2142
 ADD_ATOM 2H   Hpol HC 0.2142
-ADD_BOND N 1H
-ADD_BOND N 2H
+ADD_ATOM CAV  VIRT VIRT 0.00
+ADD_BOND NV 1H
+ADD_BOND NV 2H
+ADD_BOND NV CAV
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H -120 70.5 1 N CA 1H
+ADD_CHI 4 CG CD NV CAV
+
+SET_ICOOR CAV  0.00000  65.86899 1.383018 NV CD CA # these icoor give an okay placement when built from NV
+SET_ICOOR 1H -120 70.5 1.0 NV CD CAV
+SET_ICOOR 2H -120 70.5 1.0 NV CD 1H
+
+SET_VIRTUAL_SHADOW CAV CA
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -159,49 +173,21 @@ NAME3 HPR
 END_SELECTOR
 
 ## these are the operations involved
-ADD_ATOM 1H   Hpol HC 0.24
-ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1H
-ADD_BOND N 2H
+ADD_ATOM 1H   Hpol HC 0.2142
+ADD_ATOM 2H   Hpol HC 0.2142
+ADD_ATOM CAV  VIRT VIRT 0.00
+ADD_BOND NV 1H
+ADD_BOND NV 2H
+ADD_BOND NV CAV
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 70.5 1 N CA 1H
+ADD_CHI 5 CG CD1 NV CAV
 
-## modify properties of existing atoms
-SET_ATOM_TYPE N Nlys
-SET_MM_ATOM_TYPE N NP
-SET_ATOMIC_CHARGE N -0.07
-SET_ATOMIC_CHARGE CA 0.16
-SET_ATOMIC_CHARGE HA 0.09
-SET_ATOMIC_CHARGE CD1 0.16
-SET_ATOMIC_CHARGE 1HD1 0.09
-SET_ATOMIC_CHARGE 2HD1 0.09
+SET_ICOOR CAV  0.00000  65.86899 1.383018 NV CD1 CA # these icoor give an okay placement when built from NV
+SET_ICOOR 1H  120 70.5 1.0 NV CD1 CAV
+SET_ICOOR 2H  120 70.5 1.0 NV CD1 1H
 
-SET_FORMAL_CHARGE  N  +1
-
-ADD_PROPERTY LOWER_TERMINUS ## implies terminus
-
-END_CASE
-
-BEGIN_CASE ##D-HYDROXYPROLINE #################################################
-
-## these define which residues match this case
-BEGIN_SELECTOR
-NAME3 DHP
-END_SELECTOR
-
-## these are the operations involved
-ADD_ATOM 1H   Hpol HC 0.24
-ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1H
-ADD_BOND N 2H
-SET_POLYMER_CONNECT LOWER NONE
-
-## totally making these up:
-SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H -120 70.5 1 N CA 1H
+SET_VIRTUAL_SHADOW CAV CA
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -312,13 +298,19 @@ END_SELECTOR
 ## these are the operations involved
 ADD_ATOM 1H   Hpol HC 0.24
 ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1H
-ADD_BOND N 2H
+ADD_ATOM CAV  VIRT VIRT 0.00
+ADD_BOND NV 1H
+ADD_BOND NV 2H
+ADD_BOND NV CAV
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H -120 70.5 1 N CA 1H
+ADD_CHI 4 CG CD NV CAV
+
+SET_ICOOR CAV  0.00000  65.86899 1.383018 NV CD CA # these icoor give an okay placement when built from NV
+SET_ICOOR 1H  120 70.5 1.0 NV CD CAV
+SET_ICOOR 2H  120 70.5 1.0 NV CD 1H
+
+SET_VIRTUAL_SHADOW CAV CA
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -419,13 +411,19 @@ END_SELECTOR
 ## these are the operations involved
 ADD_ATOM 1H   Hpol HC 0.24
 ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1H
-ADD_BOND N 2H
+ADD_ATOM CAV  VIRT VIRT 0.00
+ADD_BOND NV 1H
+ADD_BOND NV 2H
+ADD_BOND NV CAV
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 70.5 1 N CA 1H
+ADD_CHI 4 CG CD NV CAV
+
+SET_ICOOR CAV  0.00000  65.86899 1.383018 NV CD CA # these icoor give an okay placement when built from NV
+SET_ICOOR 1H  120 70.5 1.0 NV CD CAV
+SET_ICOOR 2H  120 70.5 1.0 NV CD 1H
+
+SET_VIRTUAL_SHADOW CAV CA
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -510,13 +508,19 @@ END_SELECTOR
 ## these are the operations involved
 ADD_ATOM 1H   Hpol HC 0.24
 ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1H
-ADD_BOND N 2H
+ADD_ATOM CAV  VIRT VIRT 0.00
+ADD_BOND NV 1H
+ADD_BOND NV 2H
+ADD_BOND NV CAV
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 60 1 N CA 1H
+ADD_CHI 4 CG CD2 NV CAV
+
+SET_ICOOR CAV  0.00000  65.86899 1.383018 NV CD2 CA # these icoor give an okay placement when built from NV
+SET_ICOOR 1H  120 70.5 1.0 NV CD2 CAV
+SET_ICOOR 2H  120 70.5 1.0 NV CD2 1H
+
+SET_VIRTUAL_SHADOW CAV CA
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -544,13 +548,19 @@ END_SELECTOR
 ## these are the operations involved
 ADD_ATOM 1H   Hpol HC 0.24
 ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1H
-ADD_BOND N 2H
+ADD_ATOM CAV  VIRT VIRT 0.00
+ADD_BOND NV 1H
+ADD_BOND NV 2H
+ADD_BOND NV CAV
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 70.5 1 N CA 1H
+ADD_CHI 4 CG CD2 NV CAV
+
+SET_ICOOR CAV  0.00000  65.86899 1.383018 NV CD2 CA # these icoor give an okay placement when built from NV
+SET_ICOOR 1H  120 70.5 1.0 NV CD2 CAV
+SET_ICOOR 2H  120 70.5 1.0 NV CD2 1H
+
+SET_VIRTUAL_SHADOW CAV CA
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -568,16 +578,6 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
 
-
-BEGIN_CASE ## D-4-FLUORO-PROLINE #################################################
-
-## AMW: this isn't D-4-FLUORO-PROLINE but I don't know what it is...
-## these define which residues match this case
-BEGIN_SELECTOR
-NAME3 CHC
-END_SELECTOR
-
-END_CASE
 
 BEGIN_CASE ## SRI's Special Backbones ########################################
 
@@ -611,40 +611,6 @@ SET_ATOMIC_CHARGE H5 0.10
 SET_FORMAL_CHARGE  N1  +1
 
 ADD_PROPERTY LOWER_TERMINUS ## implies terminus
-END_CASE
-
-BEGIN_CASE ## BETA-3-PROLINE #################################################
-
-## these define which residues match this case
-BEGIN_SELECTOR
-NAME3 B3P
-END_SELECTOR
-
-## these are the operations involved
-ADD_ATOM 1H   Hpol HC 0.24
-ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1H
-ADD_BOND N 2H
-SET_POLYMER_CONNECT LOWER NONE
-
-## totally making these up:
-SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 70.5 1 N CA 1H
-
-## modify properties of existing atoms
-SET_ATOM_TYPE N Nlys
-SET_MM_ATOM_TYPE N NP
-SET_ATOMIC_CHARGE N -0.07
-SET_ATOMIC_CHARGE CA 0.16
-SET_ATOMIC_CHARGE HA 0.09
-SET_ATOMIC_CHARGE CD 0.16
-SET_ATOMIC_CHARGE 1HD 0.09
-SET_ATOMIC_CHARGE 2HD 0.09
-
-SET_FORMAL_CHARGE  N  +1
-
-ADD_PROPERTY LOWER_TERMINUS ## implies terminus
-
 END_CASE
 
 BEGIN_CASE #### BETA-3_GLYCINE ################################################
@@ -947,4 +913,3 @@ SET_FORMAL_CHARGE  N  +1
 ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
-
