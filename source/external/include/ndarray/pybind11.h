@@ -99,7 +99,7 @@ public:
           src.getData(),
           owner);
 
-        if (!boost::is_const<Element>::value) {
+        if (boost::is_const<Element>::value) {
             array_proxy(result.ptr())->flags &= ~detail::npy_api::NPY_ARRAY_WRITEABLE_;
         }
 
