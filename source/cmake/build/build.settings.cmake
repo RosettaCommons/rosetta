@@ -97,6 +97,29 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release" )
 	)
 endif()
 
+# "gcc, release_static"
+if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release_static" )
+	list( APPEND compile
+			-O3
+			-ffast-math
+			-fno-finite-math-only
+			-funroll-loops
+			-finline-functions
+			-finline-limit=20000
+			-s
+	)
+	list( APPEND warn
+			-Wno-unused-variable
+			-Wno-unused-parameter
+	)
+	list( APPEND defines
+			-DNDEBUG
+	)
+	list( REMOVE_ITEM warn
+			-Werror
+	)
+endif()
+
 # "gcc", "release_bluegene"
 # Used exclusively for compilation on the Argonne "Mira" Blue Gene supercomputer.
 # Added by Vikram K. Mulligan, Baker lab (vmullig@uw.edu) on 19 April 2016.

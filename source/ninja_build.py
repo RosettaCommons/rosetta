@@ -49,7 +49,7 @@ help_message2 = (
     "ninja.build.py debug -remake  Debug build, rerun cmake + make_project.py\n" )
 #Useful abbreviations
 #Unit and debug are now combined
-abbrev = {'r':'release', 'd':'debug', 'u':'debug'}
+abbrev = {'r':'release', 'd':'debug', 'u':'debug', 'rs':'release_static'}
 
 help_message2 += "\nbuild name abbreviations:\n"
 for key, item in list(abbrev.items()):
