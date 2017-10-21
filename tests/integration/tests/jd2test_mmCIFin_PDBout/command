@@ -30,7 +30,7 @@
 cd %(workdir)s
 [ -x %(bin)s/jd2test.%(binext)s ] || exit 1
 
-%(bin)s/jd2test.%(binext)s %(additional_flags)s @options -database %(database)s -run:no_prof_info_in_silentout -run:constant_seed -nodelay -out:prefix test1_ 2>&1 \
+%(bin)s/jd2test.%(binext)s %(additional_flags)s @options -database %(database)s -run:no_prof_info_in_silentout -run:constant_seed -nodelay -out:prefix test1_ -out:pdb true 2>&1 \
     | egrep -vf ../../ignore_list \
     > log1
 

@@ -82,33 +82,12 @@ JobOutputterFactory::get_JobOutputter_from_string( std::string const & job_outpu
 JobOutputterOP
 JobOutputterFactory::get_new_JobOutputter()
 {
-	//initial copy of this code copied at XRW2 by SML+BDW from about SVN:46190 from JobDistributorFactory.cc
-	if ( basic::options::option[ basic::options::OptionKeys::out::file::silent ].user() ) {
-		return get_JobOutputter_from_string( "SilentFileJobOutputter" );
-	} else if ( basic::options::option[basic::options::OptionKeys::out::file::atom_tree_diff].user() ) {
-		return get_JobOutputter_from_string( "AtomTreeDiffJobOutputter" );
-	} else if ( basic::options::option[basic::options::OptionKeys::out::file::score_only].user() ) {
-		return get_JobOutputter_from_string( "ScoreOnlyJobOutputter" );
-	} else if ( basic::options::option[ basic::options::OptionKeys::jd2::no_output ].value() || basic::options::option[ basic::options::OptionKeys::out::nooutput ] ) {
-		return get_JobOutputter_from_string( "NoOutputJobOutputter" );
-	} else if ( basic::options::option[ basic::options::OptionKeys::jd2::enzdes_out].user() ) {
-		return get_JobOutputter_from_string( "EnzdesJobOutputter" );
-	} else if ( basic::options::option[ basic::options::OptionKeys::out::use_database].user() ) {
-		return get_JobOutputter_from_string( "DatabaseJobOutputter" );
-	} else if ( basic::options::option[ basic::options::OptionKeys::out::mmCIF].value() ) {
-		return get_JobOutputter_from_string( "mmCIFJobOutputter" );
-	} else { //currently default; may need an if in the future
-		return get_JobOutputter_from_string( "PDBJobOutputter" );
-	}
-	return get_JobOutputter_from_string( "PDBJobOutputter" ); //default case may change in the future
-
+	return get_new_JobOutputter( nullptr );
 }
 
 /// @brief return JobOutputter defined by output parameters (contained in option system and #defines for MPI, etc).  The difference is that if the option system, etc, says nothing about output (which as of this writing defaults to PDBJobOutputter), this function leaves the input Outputter unchanged.  This allows overriding the default outputter choice in your executable (without abusing the mutability of the options system)
 JobOutputterOP
 JobOutputterFactory::get_new_JobOutputter( JobOutputterOP default_jobout ) {
-
-	//it would be really nice to figure out how to combine the logic in these two versions of the function in to one - perhaps with default NULL pointer?
 
 	if ( basic::options::option[ basic::options::OptionKeys::out::file::silent ].user() ) {
 		return get_JobOutputter_from_string( "SilentFileJobOutputter" );
@@ -124,10 +103,15 @@ JobOutputterFactory::get_new_JobOutputter( JobOutputterOP default_jobout ) {
 		return get_JobOutputter_from_string( "EnzdesJobOutputter" );
 	} else if ( basic::options::option[ basic::options::OptionKeys::out::use_database].user() ) {
 		return get_JobOutputter_from_string( "DatabaseJobOutputter" );
-	} else {
+	} else if ( basic::options::option[ basic::options::OptionKeys::out::mmCIF].value() ) {
+		return get_JobOutputter_from_string( "mmCIFJobOutputter" );
+	} else if ( default_jobout != nullptr ) {
 		return default_jobout;
+	} else {
+		// The passed default is Null - fall back to PDB output as a workable default
+		return get_JobOutputter_from_string( "PDBJobOutputter" );
 	}
-	return default_jobout;
+	return nullptr; // Should never get here.
 
 }
 
