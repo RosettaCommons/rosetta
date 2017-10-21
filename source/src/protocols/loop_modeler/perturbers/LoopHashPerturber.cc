@@ -21,6 +21,7 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
+#include <core/pose/selection.hh>
 
 // Protocol headers
 #include <protocols/loophash/LoopHashLibrary.hh>
@@ -81,11 +82,20 @@ void LoopHashPerturber::perturb_subset(
 
 	// Perturb the sequence
 
+	auto seqposes_no_mutate = core::pose::get_resnum_list(seqposes_no_mutate_str_, pose);
+
 	if ( perturb_sequence_ ) {
 		//std::cout << "sequence: " << bb_segs_[seg_id].second << std::endl;///DEBUG
 		utility::vector1 <std::string> sequence = problem->unperturbed_sequence();
 		for ( core::Size i=start; i<=stop; ++i ) {
-			sequence[i] = core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code(bb_segs_[seg_id].second[i]) );
+			bool mutate = true;
+			for ( core::Size j : seqposes_no_mutate ) {
+				mutate = mutate && ((residues.front() + i - 1) != j);
+			}
+
+			if ( mutate ) {
+				sequence[i] = core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code(bb_segs_[seg_id].second[i]) );
+			}
 		}
 		problem->perturbed_sequence(sequence);
 	}

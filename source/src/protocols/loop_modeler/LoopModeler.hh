@@ -92,7 +92,7 @@ public:
 	void setup_kic_with_fragments_config();
 
 	/// @brief Setup the LoopModeler using the LoopHashKIC configuration
-	void setup_loophash_kic_config(bool perturb_sequence);
+	void setup_loophash_kic_config(bool perturb_sequence, std::string seqposes_no_mutate_str);
 
 	/// @brief Return a pointer to the build stage mover.
 	loop_modeling::LoopBuilderOP build_stage();

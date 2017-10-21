@@ -588,7 +588,7 @@ public:
 		string loops_path = "protocols/loop_modeling/inputs/2pia.loop";
 
 		LoopModelerOP modeler( new LoopModeler() );
-		modeler->setup_loophash_kic_config(true);
+		modeler->setup_loophash_kic_config(true, "");
 		Pose pose; pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
 		LoopsOP loops( new Loops(loops_path) );
 

@@ -182,7 +182,9 @@ void LoopModeler::parse_my_tag( // {{{1
 		setup_kic_with_fragments_config();
 	} else if ( config == "loophash_kic" ) {
 		bool loophash_perturb_sequence = tag->getOption<bool>("loophash_perturb_sequence", false);
-		setup_loophash_kic_config(loophash_perturb_sequence);
+		std::string seqposes_no_mutate_str = tag->getOption<std::string>("loophash_seqposes_no_mutate", "");
+
+		setup_loophash_kic_config(loophash_perturb_sequence, seqposes_no_mutate_str);
 	} else {
 		stringstream message;
 		message << "Unknown <LoopModeler> config option: '" << config << "'";
@@ -432,7 +434,7 @@ void LoopModeler::setup_kic_with_fragments_config() { // {{{1
 	// must be created.
 }
 
-void LoopModeler::setup_loophash_kic_config(bool perturb_sequence) { // {{{1
+void LoopModeler::setup_loophash_kic_config(bool perturb_sequence, std::string seqposes_no_mutate_str) { // {{{1
 	using namespace basic::options;
 	using namespace protocols::kinematic_closure;
 	using namespace protocols::kinematic_closure::pivot_pickers;
@@ -472,6 +474,7 @@ void LoopModeler::setup_loophash_kic_config(bool perturb_sequence) { // {{{1
 	centroid_kic_mover->set_pivot_picker(pivot_pickers::PivotPickerOP( new FixedOffsetsPivots(pp_offsets) ));
 	perturbers::LoopHashPerturberOP centroid_loophash_perturber_(new LoopHashPerturber(lh_library) );
 	centroid_loophash_perturber_->perturb_sequence(perturb_sequence);
+	centroid_loophash_perturber_->seqposes_no_mutate_str(seqposes_no_mutate_str);
 	centroid_kic_mover->add_perturber(centroid_loophash_perturber_);
 	centroid_stage()->add_mover(centroid_kic_mover);
 	centroid_stage()->mark_as_default();
@@ -482,6 +485,7 @@ void LoopModeler::setup_loophash_kic_config(bool perturb_sequence) { // {{{1
 	fullatom_kic_mover->set_pivot_picker(pivot_pickers::PivotPickerOP( new FixedOffsetsPivots(pp_offsets) ));
 	perturbers::LoopHashPerturberOP fullatom_loophash_perturber_(new LoopHashPerturber(lh_library) );
 	fullatom_loophash_perturber_->perturb_sequence(perturb_sequence);
+	fullatom_loophash_perturber_->seqposes_no_mutate_str(seqposes_no_mutate_str);
 	fullatom_kic_mover->add_perturber(fullatom_loophash_perturber_);
 	fullatom_stage()->add_mover(fullatom_kic_mover);
 	fullatom_stage()->mark_as_default();
@@ -582,7 +586,8 @@ void LoopModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute("scorefxn_fa", xs_string, "Score function for full atom modeling.")
 		+ XMLSchemaAttribute("scorefxn_cen", xs_string, "Score function for modeling in centroid representation.")
 		+ XMLSchemaAttribute::attribute_w_default("fast", xsct_rosetta_bool, "Only test run (fewer cycles)", "false")
-		+ XMLSchemaAttribute::attribute_w_default("loophash_perturb_sequence", xsct_rosetta_bool, "Let LoopHashKIC also perturb the amino acid sequence", "false");
+		+ XMLSchemaAttribute::attribute_w_default("loophash_perturb_sequence", xsct_rosetta_bool, "Let LoopHashKIC also perturb the amino acid sequence", "false")
+		+ XMLSchemaAttribute::attribute_w_default("loophash_seqposes_no_mutate", xs_string, "Sequence positions that should not be mutated by LoopHashKIC.", "");
 
 	// Use helper function in ./utilities/rosetta_scripts.cc to parse task operations
 	loop_modeling::utilities::attributes_for_set_task_factory_from_tag( attlist );

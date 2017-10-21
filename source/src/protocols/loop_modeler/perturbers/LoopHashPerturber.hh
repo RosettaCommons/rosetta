@@ -82,6 +82,11 @@ public:
 		perturb_sequence_ = value;
 	}
 
+	///@brief Set the sequence positions that should not be mutated
+	void seqposes_no_mutate_str(std::string value){
+		seqposes_no_mutate_str_ = value;
+	}
+
 private:
 
 	protocols::loophash::LoopHashLibraryOP lh_library_;
@@ -92,6 +97,9 @@ private:
 	bool random_mode_ = false;
 
 	bool perturb_sequence_ = false;
+
+	// Sequence positions that do not mutate
+	std::string seqposes_no_mutate_str_;
 
 	BackboneSegments bb_segs_;
 	numeric::geometry::hashing::Real6 last_loop_transform_;
