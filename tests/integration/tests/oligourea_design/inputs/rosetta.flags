@@ -8,3 +8,4 @@
 -output_virtual true
 -script_vars length=8 repeat_length=4
 -jd2:failed_job_exception false
+-run:no_prof_info_in_silentout

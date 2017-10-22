@@ -495,7 +495,7 @@ JobDistributor::run_one_job(
 
 	// setup profiling
 	evaluation::TimeEvaluatorOP run_time(nullptr);
-	if ( !option[OptionKeys::run::no_prof_info_in_silentout] ) {
+	if ( !option[OptionKeys::run::no_prof_info_in_silentout].value() ) {
 		job_outputter_->add_evaluation(run_time = evaluation::TimeEvaluatorOP( new evaluation::TimeEvaluator )); //just don't use this in integration tests!
 	}
 
