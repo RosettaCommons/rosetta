@@ -1308,7 +1308,6 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	}
 	pose::Pose pose_after_lowres = pose;
 	set_allowed_moves(); //set the allowed dofs in the system
-	core::scoring::constraints::add_fa_constraints_from_cmdline(pose, *scorefxn_);
 	core::scoring::constraints::add_constraints_from_cmdline(pose, *scorefxn_lowres_);
 
 	if ( flags_.min_receptor_bb ) {
@@ -1385,6 +1384,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 				//option[ OptionKeys::constraints::cst_fa_weight ].user()
 				// weight is applied to:
 				// atom_pair_constraint, angle_constraint, dihedral_constraint, coordinate_constraint.
+				core::scoring::constraints::add_fa_constraints_from_cmdline(pose, *scorefxn_);
 				hires_fpdock_protocol(pose);
 			}
 			if ( ! flags_.pep_fold_only ) {
