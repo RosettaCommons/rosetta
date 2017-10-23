@@ -126,6 +126,12 @@ sources = {
 		"SetupDockingFoldTree",
 	],
 
+	"energy_based_clustering" : [
+		"EnergyBasedClusteringTests",
+		"EnergyBasedClusteringTests_alpha_aa",
+		"EnergyBasedClusteringTests_oligourea",
+	],
+
 	"environment" : [
 		"CoMTrack",
 		"EnvironmentJump",
@@ -751,6 +757,8 @@ testinputfiles = [
 	"docking/DockingSlideIntoContact.pdb",
 	"docking/DockingPacking.pdb",
 	"docking/DockingRigidBodyMinimize.pdb",
+	"energy_based_clustering/alpha_aa.silent",
+	"energy_based_clustering/oligourea.silent",
 	"enzdes/D2N.params",
 	"enzdes/ligtest_it.pdb",
 	"enzdes/ligtest_it.cst",

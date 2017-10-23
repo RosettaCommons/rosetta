@@ -98,6 +98,10 @@ sources = {
 	"protocols/denovo_design/task_operations": [
 		"ConsensusLoopDesignOperation",
 	],
+	"protocols/energy_based_clustering": [
+		"EnergyBasedClusteringOptions",
+		"EnergyBasedClusteringProtocol",
+	],
 	"protocols/fldsgn": [
 		"BluePrintBDR",
 		"CircularPermutation",

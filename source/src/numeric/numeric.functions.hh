@@ -711,8 +711,8 @@ gt_tol( T const & x, T const & y, T const & r_tol, T const & a_tol )
 }
 
 
-// You must supply 1.0 and 0.0 as arguments a and b.
-// and no you can't short cut this, because the compiler will optimize it away!
+/// @brief You must supply 1.0 and 0.0 as arguments a and b.
+/// and no you can't short cut this, because the compiler will optimize it away!
 inline
 bool
 is_a_finitenumber( double s, double  a, double b ){
@@ -720,6 +720,19 @@ is_a_finitenumber( double s, double  a, double b ){
 	if ( (a*s) != (s*cos(b)) )       return false; //  NAN!
 	if ( s * 100.0 == s * 1000.00 ) return false; //  INF!
 	return true;
+}
+
+// Prototype for below.
+template< typename T > T factorial( T const & N );
+
+/// @brief Calculate the value of N!.
+/// @details Dangerous for large values of N.  Uses a recursive algorithm -- might not be efficient and can't be inlined.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+template< typename T >
+T
+factorial( T const &N ) {
+	if ( N == 0 || N == 1 ) return 1;
+	return N*factorial(N-1);
 }
 
 

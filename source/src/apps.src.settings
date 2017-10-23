@@ -101,6 +101,7 @@ sources = {
 	"public/clustering": [
 		"calibur",
 		"cluster",
+		"energy_based_clustering",
 	],
 	"public/comparative_modeling": [
 		"cluster_alns",

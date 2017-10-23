@@ -1,0 +1,10 @@
+-in:file:silent inputs/alpha_aa.silent
+-in:file:fullatom
+-force_silent_bitflip_on_read
+-cluster:energy_based_clustering:cluster_radius 490.0
+-cluster:energy_based_clustering:silent_output
+-run:no_prof_info_in_silentout
+-cluster:energy_based_clustering:cluster_by bb_dihedral
+-cluster:energy_based_clustering:use_CB false
+-cluster:energy_based_clustering:cyclic true
+-cluster:energy_based_clustering:cluster_cyclic_permutations true

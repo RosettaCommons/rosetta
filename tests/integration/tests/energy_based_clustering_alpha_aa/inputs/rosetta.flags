@@ -1,0 +1,9 @@
+-in:file:silent inputs/alpha_aa.silent
+-in:file:fullatom
+-force_silent_bitflip_on_read
+-cluster:energy_based_clustering:cluster_radius 1.0
+-cluster:energy_based_clustering:limit_structures_per_cluster 10
+-cluster:energy_based_clustering:cluster_by bb_cartesian
+-cluster:energy_based_clustering:use_CB false
+-cluster:energy_based_clustering:cyclic true
+-cluster:energy_based_clustering:cluster_cyclic_permutations true
