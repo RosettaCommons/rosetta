@@ -46,6 +46,7 @@ basic::options::IntegerOptionKey const jumpnum("jumpnum");
 basic::options::BooleanOptionKey const compute_packstat("compute_packstat");
 basic::options::BooleanOptionKey const tracer_data_print("tracer_data_print");
 basic::options::StringVectorOptionKey const fixedchains( "fixedchains" );
+basic::options::BooleanOptionKey const compute_interface_sc("compute_interface_sc"); // sc == shape complementarity
 basic::options::BooleanOptionKey const pack_input("pack_input");
 basic::options::BooleanOptionKey const pack_separated("pack_separated");
 basic::options::BooleanOptionKey const use_jobname("use_jobname");
@@ -152,6 +153,10 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 	}
 	//IAM_->set_use_resfile(basic::options::option[use_resfile].value());
 
+	if ( ! basic::options::option[ compute_interface_sc ] ) {
+		IAM_->set_compute_interface_sc( false );
+	}
+
 	return;
 } //end assign_IA_mover
 
@@ -186,6 +191,7 @@ main( int argc, char* argv[] )
 		option.add( compute_packstat, "compute packstat (of interface residues only)" ).def(false);
 		option.add( tracer_data_print, "print to tracer, not scorefile" ).def(false);
 		option.add( fixedchains, "Which chain(s) is/are moved away from the others, for 3 or more chains" );
+		option.add( compute_interface_sc, "Compute the shape complementarity score").def(true);
 		option.add( pack_input, "pack the input pose").def(false);
 		option.add( add_regular_scores_to_scorefile, "adds default scores to scorefile").def(false);
 		option.add( pack_separated, "pack the separated chains at the separated dG phase").def(false);
