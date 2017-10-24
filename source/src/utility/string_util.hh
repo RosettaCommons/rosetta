@@ -140,6 +140,7 @@ template<class T>
 std::string join(utility::vector1<T> const & vector, std::string const & connector)
 {
 	std::ostringstream os;
+	if ( vector.empty() ) return "";
 	typename utility::vector1<T>::const_iterator begin= vector.begin();
 	os << *begin++;
 	for ( ; begin != vector.end(); ++begin ) {
@@ -155,6 +156,7 @@ std::string join(std::vector<std::string> const & s, std::string const & connect
 template< platform::SSize L>
 std::string join(vectorL<L, std::string> const & s, std::string const & connector){
 	std::ostringstream os;
+	if ( s.empty() ) return "";
 	typename utility::vectorL<L, std::string>::const_iterator begin= s.begin();
 	os << *begin++;
 	for ( ; begin != s.end(); ++begin ) {
