@@ -57,6 +57,7 @@
 
 // Utility Headers
 #include <numeric/constants.hh>
+#include <numeric/xyz.functions.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
