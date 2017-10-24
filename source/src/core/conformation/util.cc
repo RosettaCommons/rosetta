@@ -30,6 +30,7 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/IdealBondLengthSet.hh>
 #include <core/chemical/rings/util.hh>
@@ -2534,6 +2535,45 @@ get_second_atom_from_connection(
 	return true; //FAILURE
 }
 
+conformation::ResidueOP
+get_residue_from_name(
+	std::string const & name,
+	std::string const & residue_type_set /* = "fa_standard" */ ) {
+
+	core::chemical::ResidueTypeSetCOP residue_set( core::chemical::ChemicalManager::get_instance()
+		->residue_type_set( residue_type_set ) );
+	core::chemical::ResidueTypeCOP rsd_type = residue_set->name_map( name ).get_self_ptr();
+
+	return  conformation::ResidueFactory::create_residue( *rsd_type );
+}
+
+conformation::ResidueOP
+get_residue_from_name1(
+	char name1,
+	bool is_lower_terminus /*= false*/,
+	bool is_upper_terminus /*= false */,
+	bool d_aa /*= false */,
+	std::string const & residue_type_set /* = "fa_standard" */ ) {
+
+	chemical::ResidueTypeSetCOP residue_set( chemical::ChemicalManager::get_instance()
+		->residue_type_set( residue_type_set ) );
+
+	chemical::AA my_aa = chemical::aa_from_oneletter_code( name1 );
+	if ( d_aa ) {
+		my_aa = chemical::get_D_equivalent( my_aa );
+	}
+
+	// this part stolen from core/pose/annotated_sequence.cc to comply with library levels
+	chemical::ResidueTypeCOP rsd_type = chemical::ResidueTypeFinder( *residue_set ).aa( my_aa ).get_representative_type();
+	utility::vector1< chemical::VariantType > variants;
+	if ( rsd_type->is_polymer() ) {
+		if ( is_lower_terminus ) variants.push_back( chemical::LOWER_TERMINUS_VARIANT );
+		if ( is_upper_terminus ) variants.push_back( chemical::UPPER_TERMINUS_VARIANT );
+	}
+	chemical::ResidueTypeCOP res_type = chemical::ResidueTypeFinder( *residue_set ).aa( my_aa ).variants( variants ).get_representative_type();
+
+	return  conformation::ResidueFactory::create_residue( *res_type );
+}
 
 } // namespace conformation
 } // namespace core

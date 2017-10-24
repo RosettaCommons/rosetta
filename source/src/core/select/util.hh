@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_select_util_hh
 #define INCLUDED_core_select_util_hh
 
+#include <core/select/residue_selector/ResidueIndexSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
@@ -30,6 +32,14 @@ get_residues_from_subset( utility::vector1< bool > const & subset, bool select =
 /// @details If invert is true, residues *not* in the selection are true in the returned vector.
 utility::vector1< bool >
 get_subset_from_residues( utility::vector1< core::Size > const & selection, core::Size total_nres, bool invert = false);
+
+/// @brief Convert a residue subset back into a residue selector.
+/// @detail Not only does this allow one to go from a residue subset back to a selector,
+///          but by applying a selector to a pose and using this to go back to a selector,
+///          one can turn context-dependent residue selectors into context-independent residue selectors
+core::select::residue_selector::ResidueIndexSelectorOP
+get_residue_selector_from_subset(
+	core::select::residue_selector::ResidueSubset subset );
 
 /// @brief Get a boolean vector of neighbor residues given some distance < 10A
 ///

@@ -587,6 +587,10 @@ sources = {
 		"SurfaceVectorLoader",
 	],
 
+	"toolbox/pose_manipulation" : [
+		"pose_manipulation",
+	],	
+
 	"toolbox/pose_metric_calculators" : [
 		"Neighbor_Calculators",
 #		SolubilityCalculator",

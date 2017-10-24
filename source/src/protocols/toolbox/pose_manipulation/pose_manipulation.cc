@@ -29,15 +29,24 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+
+#include <core/pack/task/operation/OperateOnResidueSubset.hh>
+#include <core/pack/task/operation/ResLvlTaskOperations.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
+#include <core/select/util.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+
 #include <core/id/AtomID_Map.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 
@@ -47,6 +56,7 @@
 #include <protocols/loops/Loops.hh>
 
 // Utility Headers
+#include <numeric/constants.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
@@ -356,6 +366,170 @@ superimpose_pose_on_subset_CA(
 
 	return core::scoring::superimpose_pose( pose, ref_pose, atom_map );
 } //superimpose_pose_on_subset_CA
+
+
+void
+repack_this_residue(
+	core::Size seq_pos,
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP scorefxn,
+	bool include_current /* = true */,
+	std::string name1s_if_design /* = "" */ ) {
+
+	using namespace core::select::residue_selector;
+	using namespace core::pack::task::operation;
+
+	core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
+
+	local_tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
+	if ( include_current ) {
+		local_tf->push_back( TaskOperationCOP( new IncludeCurrent() ) );
+	}
+	if ( name1s_if_design.length() > 0 ) {
+		RestrictAbsentCanonicalAASOP restrict_absent( new RestrictAbsentCanonicalAAS() );
+		restrict_absent->keep_aas( name1s_if_design );
+		restrict_absent->include_residue( 0 ); // 0 means apply to all
+		local_tf->push_back( restrict_absent );
+	} else {
+		local_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
+	}
+
+	ResidueSelectorOP the_residue( new ResidueIndexSelector( utility::to_string( seq_pos ) ) );
+
+
+	ResLvlTaskOperationOP prevent_repacking( new PreventRepackingRLT() );
+	OperateOnResidueSubsetOP inv_subset( new OperateOnResidueSubset( prevent_repacking, the_residue, true) );
+	local_tf->push_back( inv_subset );
+
+	protocols::simple_moves::PackRotamersMoverOP repack(
+		new protocols::simple_moves::PackRotamersMover( scorefxn ) );
+	repack->task_factory( local_tf );
+	repack->apply( pose );
+}
+
+
+void
+repack_these_residues(
+	core::select::residue_selector::ResidueSubset const & subset,
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP scorefxn,
+	bool include_current /* = true */,
+	std::string name1s_if_design /* = "" */) {
+
+	using namespace core::select::residue_selector;
+	using namespace core::pack::task::operation;
+
+	core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
+
+	local_tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
+	if ( include_current ) {
+		local_tf->push_back( TaskOperationCOP( new IncludeCurrent() ) );
+	}
+	if ( name1s_if_design.length() > 0 ) {
+		RestrictAbsentCanonicalAASOP restrict_absent( new RestrictAbsentCanonicalAAS() );
+		restrict_absent->keep_aas( name1s_if_design );
+		restrict_absent->include_residue( 0 ); // 0 means apply to all
+		local_tf->push_back( restrict_absent );
+	} else {
+		local_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
+	}
+
+	ResidueSelectorCOP these_residues( core::select::get_residue_selector_from_subset( subset ) );
+
+	ResLvlTaskOperationOP prevent_repacking( new PreventRepackingRLT() );
+	OperateOnResidueSubsetOP inv_subset( new OperateOnResidueSubset( prevent_repacking, these_residues, true) );
+	local_tf->push_back( inv_subset );
+
+	protocols::simple_moves::PackRotamersMoverOP repack(
+		new protocols::simple_moves::PackRotamersMover( scorefxn ) );
+	repack->task_factory( local_tf );
+	repack->apply( pose );
+}
+
+void
+rigid_body_move(
+	numeric::xyzVector<core::Real> const & rotation_unit_vector,
+	core::Real angle_deg,
+	numeric::xyzVector<core::Real> const & translation_vector,
+	core::pose::Pose & pose,
+	core::select::residue_selector::ResidueSubset const & subset,
+	numeric::xyzVector<core::Real> center_of_rotation
+	/* = numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0) */) {
+
+	numeric::xyzMatrix<core::Real> rotation = numeric::rotation_matrix( rotation_unit_vector,
+		angle_deg * numeric::constants::r::pi / 180. );
+
+	rigid_body_move( rotation, translation_vector, pose, subset, center_of_rotation );
+}
+
+void
+rigid_body_move(
+	numeric::xyzVector<core::Real> const & rotation_unit_vector,
+	core::Real angle_deg,
+	numeric::xyzVector<core::Real> const & translation_vector,
+	core::Real translation_scalar,
+	core::pose::Pose & pose,
+	core::select::residue_selector::ResidueSubset const & subset,
+	numeric::xyzVector<core::Real> center_of_rotation
+	/* = numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0) */) {
+
+	numeric::xyzMatrix<core::Real> rotation = numeric::rotation_matrix( rotation_unit_vector,
+		angle_deg * numeric::constants::r::pi / 180. );
+
+	numeric::xyzVector<core::Real> translate = translation_vector;
+	translate *= translation_scalar;
+
+	rigid_body_move( rotation, translate, pose, subset, center_of_rotation );
+}
+
+
+void
+rigid_body_move(
+	numeric::xyzMatrix<core::Real> rotation,
+	numeric::xyzVector<core::Real> const & translation_vector,
+	core::pose::Pose & pose,
+	core::select::residue_selector::ResidueSubset const & subset,
+	numeric::xyzVector<core::Real> center_of_rotation
+	/* = numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0) */) {
+
+	if ( std::isnan( center_of_rotation.x() ) || std::isnan( center_of_rotation.y() )
+			|| std::isnan( center_of_rotation.z() ) ) {
+		center_of_rotation = core::pose::center_of_mass( pose, subset );
+	}
+
+	utility::vector1<core::Size> seq_poss = core::select::get_residues_from_subset( subset );
+
+	for ( core::Size seq_pos : seq_poss ) {
+		core::conformation::Residue const & res( pose.residue( seq_pos ) );
+		core::Size natoms = res.natoms();
+		for ( core::Size j = 1; j <= natoms; ++j ) {
+			numeric::xyzVector<core::Real> working = res.atom(j).xyz();
+			working -= center_of_rotation;
+			working = rotation*working;
+			working += center_of_rotation + translation_vector;
+			pose.set_xyz( core::id::AtomID( j, seq_pos ), working );
+		}
+
+	}
+
+}
+
+void
+rigid_body_move(
+	numeric::xyzMatrix<core::Real> rotation,
+	numeric::xyzVector<core::Real> const & translation_vector,
+	core::Real translation_scalar,
+	core::pose::Pose & pose,
+	core::select::residue_selector::ResidueSubset const & subset,
+	numeric::xyzVector<core::Real> center_of_rotation
+	/* = numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0) */) {
+
+	numeric::xyzVector<core::Real> translate = translation_vector;
+	translate *= translation_scalar;
+
+	rigid_body_move( rotation, translate, pose, subset, center_of_rotation );
+}
+
 
 
 } // namespace pose_manipulation

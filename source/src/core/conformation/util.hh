@@ -465,11 +465,27 @@ all_atom_center(
 	core::conformation::Residue const & residue
 );
 
+/// @brief Returns a new residue based on a name
+core::conformation::ResidueOP
+get_residue_from_name(
+	std::string const & name,
+	std::string const & residue_type_set = "fa_standard" );
+
+/// @brief Returns a new residue based on a name1
+core::conformation::ResidueOP
+get_residue_from_name1(
+	char name1,
+	bool is_lower_terminus = false,
+	bool is_upper_terminus = false,
+	bool d_aa = false,
+	std::string const & residue_type_set = "fa_standard" );
+
 /// @brief Given a residue and a connection id, get the heavyatom adjacent to the atom that makes that connection.
 /// @details Chooses mainchain over non-mainchain, and heavyatoms over non-heavyatoms.  Returns true for FAILURE.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 bool
 get_second_atom_from_connection( core::Size & resno, core::Size & atomno, Residue const &rsd, Conformation const &conformation, core::Size const &conn_id );
+
 
 } // conformation
 } // core

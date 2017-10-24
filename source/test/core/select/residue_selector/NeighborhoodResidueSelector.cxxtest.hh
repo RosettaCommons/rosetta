@@ -22,6 +22,7 @@
 
 // Package headers
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -102,6 +103,32 @@ public:
 		testFocus[5] = true;
 
 		TS_ASSERT( check_calculation( trpcage, subset, testFocus, 5.2 ) );
+
+	}
+
+	// Different sets of code run when we include focus vs not
+	void test_NeighborhoodResidueSelector_uninitialized_pose() {
+		core::pose::Pose pose = *( trpcage.clone() );
+		pose.energies().clear_energies();
+
+		std::string tag_string =
+			"<Neighborhood name=neighbor_rs resnums=2,3,5 distance=5.2 include_focus_in_subset=false/>";
+		std::stringstream ss( tag_string );
+		utility::tag::TagOP tag( new utility::tag::Tag() );
+		tag->read( ss );
+		basic::datacache::DataMap dm;
+
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
+		neighbor_rs->parse_my_tag( tag, dm );
+
+		ResidueSubset subset = neighbor_rs->apply( pose );
+
+		utility::vector1< core::Size > testFocus(pose.size(), false);
+		testFocus[2] = true;
+		testFocus[3] = true;
+		testFocus[5] = true;
+
+		TS_ASSERT( check_calculation( pose, subset, testFocus, 5.2, false ) );
 
 	}
 

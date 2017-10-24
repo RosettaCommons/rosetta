@@ -19,6 +19,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
@@ -57,6 +58,15 @@ get_subset_from_residues( utility::vector1< core::Size > const & residues, core:
 	return subset;
 }
 
+core::select::residue_selector::ResidueIndexSelectorOP
+get_residue_selector_from_subset(
+	core::select::residue_selector::ResidueSubset subset) {
+
+	utility::vector1<Size> seq_pos = get_residues_from_subset( subset );
+	std::string res_string = utility::join( seq_pos, "," );
+
+	return residue_selector::ResidueIndexSelectorOP( new residue_selector::ResidueIndexSelector( res_string ) );
+}
 
 utility::vector1< bool >
 get_neighbor_residues(

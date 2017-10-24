@@ -24,10 +24,13 @@
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>
 //#include <core/conformation/Residue.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/chemical/ResidueType.fwd.hh>
+#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 
 
@@ -156,6 +159,90 @@ superimpose_pose_on_subset_CA(
 	utility::vector1< core::Size > const & positions,
 	int const offset = 0
 );
+
+/// @author Brian Coventry (bcov@uw.edu)
+/// @brief Repack a single residue
+/// @detail Repacks a single residue using the command-line flags
+///         A list of amino acid name1s may be provided if one wishes to design.
+///         Leaving this "" or default implies no design
+void
+repack_this_residue(
+	core::Size seq_pos,
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP scorefxn,
+	bool include_current = true,
+	std::string name1s_if_design = "" );
+
+/// @author Brian Coventry (bcov@uw.edu)
+/// @brief Repack a subset of residues
+/// @detail Repacks a multiple residues using the command-line flags
+///         A list of amino acid name1s may be provided if one wishes to design.
+///         Leaving this "" or default implies no design
+void
+repack_these_residues(
+	core::select::residue_selector::ResidueSubset const & subset,
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP scorefxn,
+	bool include_current = true,
+	std::string name1s_if_design = "" );
+
+// 4 flavors of this function because vectors aren't easy to deal with in PyRosetta currently
+
+/// @brief Performs a rigid body rotation then translation of a section
+/// of a pose given by a ResidueSubset. By default this routine will
+/// find the CA center of mass of the subset and use that as the center
+/// of rotation.
+void
+rigid_body_move(
+	numeric::xyzVector<core::Real> const & rotation_unit_vector,
+	core::Real angle_deg,
+	numeric::xyzVector<core::Real> const & translation_vector,
+	core::pose::Pose & pose,
+	core::select::residue_selector::ResidueSubset const & subset,
+	numeric::xyzVector<core::Real> center_of_rotation
+	= numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0));
+
+/// @brief Performs a rigid body rotation then translation of a section
+/// of a pose given by a ResidueSubset. By default this routine will
+/// find the CA center of mass of the subset and use that as the center
+/// of rotation.
+void
+rigid_body_move(
+	numeric::xyzVector<core::Real> const & rotation_unit_vector,
+	core::Real angle_deg,
+	numeric::xyzVector<core::Real> const & translation_vector,
+	core::Real translation_scalar,
+	core::pose::Pose & pose,
+	core::select::residue_selector::ResidueSubset const & subset,
+	numeric::xyzVector<core::Real> center_of_rotation
+	= numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0));
+
+/// @brief Performs a rigid body rotation then translation of a section
+/// of a pose given by a ResidueSubset. By default this routine will
+/// find the CA center of mass of the subset and use that as the center
+/// of rotation.
+void
+rigid_body_move(
+	numeric::xyzMatrix<core::Real> rotation,
+	numeric::xyzVector<core::Real> const & translation_vector,
+	core::pose::Pose & pose,
+	core::select::residue_selector::ResidueSubset const & subset,
+	numeric::xyzVector<core::Real> center_of_rotation
+	= numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0));
+
+/// @brief Performs a rigid body rotation then translation of a section
+/// of a pose given by a ResidueSubset. By default this routine will
+/// find the CA center of mass of the subset and use that as the center
+/// of rotation.
+void
+rigid_body_move(
+	numeric::xyzMatrix<core::Real> rotation,
+	numeric::xyzVector<core::Real> const & translation_vector,
+	core::Real translation_scalar,
+	core::pose::Pose & pose,
+	core::select::residue_selector::ResidueSubset const & subset,
+	numeric::xyzVector<core::Real> center_of_rotation
+	= numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0));
 
 
 } //pose_manipulation

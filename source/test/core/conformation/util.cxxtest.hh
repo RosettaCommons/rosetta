@@ -78,4 +78,28 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O5_index, ring_atoms ), 5 );  // O5 is in the ring itself.
 		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O6_index, ring_atoms ), 0 );  // O6 is exocyclic.
 	}
+
+
+	void test_residue_from_name() {
+		using namespace core::conformation;
+		ResidueCOP res = get_residue_from_name1( 'Q', true, false, false );
+
+		TS_ASSERT( res->name1() == 'Q' );
+		TS_ASSERT( res->type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) );
+
+		std::string name = res->name();
+		res = get_residue_from_name( name );
+
+		TS_ASSERT( res->name1() == 'Q' );
+		TS_ASSERT( res->type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) );
+
+		utility::vector1< core::chemical::VariantType > variant { core::chemical::REPLONLY };
+		res = get_residue_from_name1( 'W', false, true, true );
+
+		TS_ASSERT( res->name1() == 'W' );
+		TS_ASSERT( res->type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) );
+		TS_ASSERT( res->type().is_d_aa() );
+		TR << "Residue from name passed" << std::endl;
+	}
+
 };  // class ConformationUtilityFunctionTests

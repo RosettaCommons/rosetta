@@ -305,11 +305,27 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 			} // focus set
 		} // subset
 	} else {
-		debug_assert(pose.energies().residue_neighbors_updated());
+		// The neighbor graph must be updated in order for these methods to work.
+		// Since pose is const, we must clone it if the neighbor graph is bad.
+		// Initializing references is a bit tricky which is why this comment is here. -bcov
+		bool using_clone = ! pose.energies().residue_neighbors_updated();
+		pose::Pose pose_clone;
+		if ( using_clone ) {
+			pose_clone = pose;
+			pose_clone.update_residue_neighbors();
+			if ( TR.Warning.visible() ) {
+				TR.Warning << "################ Cloning pose and building neighbor graph ################" << std::endl;
+				TR.Warning << "Ensure that pose is either scored or has update_residue_neighbors() called" << std::endl;
+				TR.Warning << "before using NeighborhoodResidueSelector for maximum performance!" << std::endl;
+				TR.Warning << "##########################################################################" << std::endl;
+			}
+		}
+		const pose::Pose & pose_to_use = using_clone ? pose_clone : pose;
+
 		if ( include_focus_in_subset_ ) {
-			fill_neighbor_residues( pose, subset, distance_);
+			fill_neighbor_residues( pose_to_use, subset, distance_);
 		} else {
-			subset = get_neighbor_residues(pose, focus_subset, distance_);
+			subset = get_neighbor_residues(pose_to_use, focus_subset, distance_);
 		}
 	}
 
