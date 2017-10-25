@@ -19,6 +19,7 @@
 
 // Project Headers
 #include <core/types.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/CalculatorFilter.hh>
@@ -73,16 +74,19 @@ public:
 		filters["delta"] = sf3;
 
 		protocols::filters::CalculatorFilter  testfilter;
-		TagCOP tag = tagptr_from_string("<CalculatorFilter name=test threshold=0 equation=\"min(a, b, c)/(a*b*c-d)\" >\n "
-			"<VAR name=a filter=alpha />\n"
-			"<VAR name=b filter_name=beta />\n"
-			"<VAR name=c filter=delta />\n"
+		TagCOP tag = tagptr_from_string("<CalculatorFilter name=test threshold=0 equation=\"(min(a, b, c)/(a*b*c-d)) + e\" >\n "
+			"<var name=a filter=alpha />\n"
+			"<Var name=b filter_name=beta />\n"
+			"<Var name=c filter=delta />\n"
 			"<VAR name=d value=-4.0 />\n"
+			"<VAR name=e reported=ten />\n"
 			"</CalculatorFilter>\n" );
 
 		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
+		setPoseExtraScore(*testpose_, "ten", 10.0);
 
-		TS_ASSERT_EQUALS( testfilter.report_sm( *testpose_), 1.5 );
+
+		TS_ASSERT_EQUALS( testfilter.report_sm( *testpose_), 11.5 );
 	}
 
 };

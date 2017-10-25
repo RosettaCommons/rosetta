@@ -63,6 +63,8 @@ public:
 
 	void add_filter( std::string name, protocols::filters::FilterOP filter );
 
+	void add_reported_value( std::string name, std::string report_key );
+
 	void add_constant( std::string name, core::Real value );
 
 	std::string
@@ -81,6 +83,7 @@ private:
 	numeric::CalculatorOP calc_;
 	std::map<std::string, core::Real> values_;
 	std::map<std::string, protocols::filters::FilterOP> filters_;
+	std::map<std::string, std::string> reported_values_;
 	core::Real threshold_;
 
 };

@@ -15,6 +15,7 @@
 #include <protocols/filters/CalculatorFilterCreator.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -26,9 +27,6 @@
 #include <utility/vector1.hh>
 #include <numeric/Calculator.hh>
 #include <numeric/random/random.hh>
-
-// Boost Headers
-// ?? #include <boost/foreach.hpp>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -92,6 +90,11 @@ CalculatorFilter::add_filter( std::string name, protocols::filters::FilterOP fil
 }
 
 void
+CalculatorFilter::add_reported_value( std::string name, std::string report_key ) {
+	reported_values_[name] = report_key;
+}
+
+void
 CalculatorFilter::add_constant( std::string name, core::Real value ) {
 	values_[name] = value;
 }
@@ -99,11 +102,18 @@ CalculatorFilter::add_constant( std::string name, core::Real value ) {
 core::Real
 CalculatorFilter::compute(core::pose::Pose const & pose) const {
 	debug_assert(calc_);
+
 	std::map< std::string, core::Real > vars(values_);
-	for ( auto iter(filters_.begin()); iter != filters_.end(); ++iter ) {
-		debug_assert(iter->second);
-		vars[ iter->first ] = (iter->second)->report_sm( pose );
+	for ( auto & filter : filters_ ) {
+		debug_assert(filter.second);
+		vars[ filter.first ] = (filter.second)->report_sm( pose );
 	}
+	for ( auto & reported : reported_values_ ) {
+		if ( !getPoseExtraScore(pose, reported.second, vars[reported.first]) ) {
+			utility_exit_with_message("CalculatorFilter required reported value not yet present in pose.");
+		}
+	}
+
 	numeric::Real value(999999);
 	if ( calc_->compute(vars, value) ) {
 		TR.Error << "Problem calculating equation in CalculatorFilter - resultant value likely garbage." << std::endl;
@@ -124,6 +134,17 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	for ( utility::tag::TagCOP sub_tag_ptr : tag_ptr->getTags() ) {
 		std::string varname( sub_tag_ptr->getOption<std::string>( "name" ) );
 
+		core::Size num_tags = 0;
+		for ( auto & name : {"filter", "filter_name", "reported", "value"} ) {
+			if ( sub_tag_ptr->hasOption(name) ) {
+				num_tags += 1;
+			}
+		}
+
+		if ( num_tags != 1 ) {
+			utility_exit_with_message("CalculatorFilter subtag must have one of 'filter', 'reported', or 'value' set.");
+		}
+
 		if ( sub_tag_ptr->hasOption("filter") || sub_tag_ptr->hasOption("filter_name") ) {
 			std::string filter_name;
 			if ( sub_tag_ptr->hasOption("filter_name") ) {
@@ -132,10 +153,14 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 				filter_name = sub_tag_ptr->getOption<std::string>( "filter" );
 			}
 			add_filter( varname, protocols::rosetta_scripts::parse_filter( filter_name , filters ) );
+
+			continue;
+		} else if ( sub_tag_ptr->hasOption("reported") ) {
+			add_reported_value( varname, sub_tag_ptr->getOption<std::string>( "reported" ) );
 		} else if ( sub_tag_ptr->hasOption("value") ) {
 			add_constant( varname, sub_tag_ptr->getOption<core::Real>( "value" ) );
 		} else {
-			utility_exit_with_message("CalculatorFilter subtag must have either filter or value set.");
+			utility_exit_with_message("CalculatorFilter subtag must have filter, reported, or value set.");
 		}
 	}
 
@@ -145,17 +170,15 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	for ( auto & filter : filters_ ) {
 		vars[ filter.first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations.
 	}
+	for ( auto & report : reported_values_ ) {
+		vars[ report.first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations.
+	}
 	numeric::Real dummy;
 	if ( calc_->compute(vars, dummy) ) {
 		utility_exit_with_message("Bad equation in CalculatorFilter: " + equation);
 	}
 }
 
-// XRW TEMP FilterOP
-// XRW TEMP CalculatorFilterCreator::create_filter() const { return FilterOP( new CalculatorFilter ); }
-
-// XRW TEMP std::string
-// XRW TEMP CalculatorFilterCreator::keyname() const { return "CalculatorFilter"; }
 
 std::string CalculatorFilter::name() const {
 	return class_name();
@@ -171,21 +194,22 @@ void CalculatorFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 	AttributeList subelement_attlist;
 	subelement_attlist
-		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "Unique name to identify this constant" )
-		+ XMLSchemaAttribute( "value", xsct_real, "XRW TO DO" )
-		+ XMLSchemaAttribute( "filter", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "filter_name", xs_string, "XRW TO DO" );
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "Unique name to identify value for use in equation." )
+		+ XMLSchemaAttribute( "value", xsct_real, "Specifiy a constant value." )
+		+ XMLSchemaAttribute( "filter", xs_string, "Evaluate given filter at calculator evaluation time." )
+		+ XMLSchemaAttribute( "filter_name", xs_string, "Evaluate given filter at calculator evaluation time." )
+		+ XMLSchemaAttribute( "reported", xs_string, "Retrieve reported value. See 'report_at_end=false' documentation in ParsedProtocol.");
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements
-		.add_simple_subelement( "VAR", subelement_attlist, "XRW TO DO" )
-		.add_simple_subelement( "Var", subelement_attlist, "XRW TO DO" )
-		.add_simple_subelement( "var", subelement_attlist, "XRW TO DO" );
+		.add_simple_subelement( "VAR", subelement_attlist, "Specify values to be available in equation." )
+		.add_simple_subelement( "Var", subelement_attlist, "Specify values to be available in equation." )
+		.add_simple_subelement( "var", subelement_attlist, "Specify values to be available in equation." );
 
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "equation", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "XRW TO DO", "0.0" );
+		+ XMLSchemaAttribute::required_attribute( "equation", xs_string, "Equation to evaluate filter value." )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Filter passes if equation value less than threshold, fails otherwise.", "0.0" );
 
 	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "XRW TO DO", attlist, subelements );
 }
