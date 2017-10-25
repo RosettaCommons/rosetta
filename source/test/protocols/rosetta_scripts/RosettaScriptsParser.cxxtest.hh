@@ -17,10 +17,15 @@
 #include <test/protocols/init_util.hh>
 
 // Package headers
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
+
+// Basic headers
+#include <basic/options/option.hh>
 
 // Utility headers
 #include <util/pose_funcs.hh>
@@ -127,4 +132,48 @@ public:
 
 	}
 
+	void test_report_at_end()
+	{
+		std::string report_at_end_protocol =
+			" <ROSETTASCRIPTS>"
+			"     <TASKOPERATIONS>"
+			"         <RestrictAbsentCanonicalAAS keep_aas=\"A\" name=\"to_ala\" resnum=\"0\"/>"
+			"     </TASKOPERATIONS>"
+			"     <FILTERS>"
+			"         <ResidueCount name=\"ala_pre\" residue_types=\"ALA\" />"
+			"         <ResidueCount name=\"ala_post_reported\" residue_types=\"ALA\" />"
+			"         <ResidueCount name=\"ala_post\" residue_types=\"ALA\" />"
+			"     </FILTERS>"
+			"     <MOVERS>"
+			"         <PackRotamersMover name=\"to_ala\" task_operations=\"to_ala\"/>"
+			"     </MOVERS>"
+			"     <PROTOCOLS>"
+			"         <Add filter_name=\"ala_pre\" report_at_end=\"false\"/>"
+			"         <Add filter_name=\"ala_post_reported\" />"
+			"         <Add mover_name=\"to_ala\" />"
+			"         <Add filter_name=\"ala_post\" report_at_end=\"false\"/>"
+			"     </PROTOCOLS>"
+			" </ROSETTASCRIPTS>";
+
+		core::pose::Pose test_pose;
+		core::pose::make_pose_from_sequence(test_pose, "TESTTESTTEST", "fa_standard", false);
+
+		protocols::rosetta_scripts::RosettaScriptsParser parser;
+		auto protocoltag = parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>());
+		auto parsed_mover = parser.parse_protocol_tag(
+			test_pose,
+			parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>()),
+			basic::options::option);
+
+		parsed_mover->apply(test_pose);
+
+		core::Real ala_pre, ala_post, ala_post_reported;
+		core::pose::getPoseExtraScore(test_pose, "ala_pre", ala_pre);
+		core::pose::getPoseExtraScore(test_pose, "ala_post", ala_post);
+		core::pose::getPoseExtraScore(test_pose, "ala_post_reported", ala_post_reported);
+
+		TS_ASSERT(ala_pre == 0);
+		TS_ASSERT(ala_post == 12);
+		TS_ASSERT(ala_post_reported == 12);
+	}
 };

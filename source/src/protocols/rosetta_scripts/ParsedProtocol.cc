@@ -227,26 +227,16 @@ ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job 
 }
 
 void
-ParsedProtocol::report_filters_to_pose( Pose & pose ) {
-	for ( utility::vector1< MoverFilterPair >::const_iterator mover_it = movers_.begin();
-			mover_it!=movers_.end(); ++mover_it ) {
-		core::Real const filter_value( (*mover_it).second->report_sm( pose ) );
-		if ( filter_value > -9999 ) {
-			setPoseExtraScore(pose, (*mover_it).second->get_user_defined_name(), (float)filter_value);
+ParsedProtocol::report_filters_to_pose( Pose & pose ) const {
+	for ( auto const & mover_filter_pair : movers_ ) {
+		if ( mover_filter_pair.report_filter_at_end_ ) {
+			core::Real const filter_value( mover_filter_pair.second->report_sm( pose ) );
+			if ( filter_value > -9999 ) {
+				setPoseExtraScore(pose, mover_filter_pair.second->get_user_defined_name(), (float)filter_value);
+			}
 		}
 	}
 }
-
-//void
-//ParsedProtocol::report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const {
-// for( utility::vector1< mover_filter_pair >::const_iterator mover_it = movers_.begin();
-//   mover_it!=movers_.end(); ++mover_it ) {
-//  core::Real const filter_value( (*mover_it).second->report_sm( pose ) );
-//  if( filter_value >= -9999 ) {
-//   score_map[ (*mover_it).second->get_user_defined_name() ] = filter_value;
-//  }
-// }
-//}
 
 ParsedProtocol::iterator
 ParsedProtocol::begin(){
@@ -490,6 +480,7 @@ ParsedProtocol::get_additional_output( )
 
 	// report filter values to pose DataCache
 	report_filters_to_pose( *pose );
+
 	// report filter values to tracer output
 	report_all( *pose );
 
@@ -536,7 +527,8 @@ ParsedProtocol::apply_filter( Pose & pose, MoverFilterPair const & mover_pair) {
 	bool const pass( status==protocols::moves::MS_SUCCESS  && mover_pair.filter().apply( pose ) );
 	if ( !mover_pair.report_filter_at_end_ ) { //report filter now
 		core::Real const filter_value(  mover_pair.filter().report_sm( pose ) );
-		protocols::jd2::add_string_real_pair_to_current_job( mover_pair.filter().get_user_defined_name(), filter_value );
+		setPoseExtraScore(pose, mover_pair.second->get_user_defined_name(), (float)filter_value);
+
 		TR_report << "============Begin report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
 		mover_pair.filter().report( TR_report, pose );
 		TR_report << "============End report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
@@ -690,11 +682,6 @@ void ParsedProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		"by default equal probability for all tags");
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
-		"report_at_end", xsct_rosetta_bool,
-		"XSD XRW: TO DO",
-		"true");
-
-	attlist + XMLSchemaAttribute::attribute_w_default(
 		"resume_support", xsct_rosetta_bool,
 		"XSD XRW: TO DO",
 		"false");
@@ -707,6 +694,13 @@ void ParsedProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "mover", xs_string, "The mover whose execution is desired" );
 	add_subattlist + XMLSchemaAttribute( "filter_name", xs_string, "The filter whose execution is desired" )
 		+ XMLSchemaAttribute( "filter", xs_string, "The filter whose execution is desired" );
+	add_subattlist + XMLSchemaAttribute::attribute_w_default(
+		"report_at_end", xsct_rosetta_bool,
+		"Report filter value via filter re-evaluation on final pose after "
+		"conclusion of protocol. Otherwise report filter value as evaluated "
+		"mid-protocol.",
+		"true");
+
 
 	ssl.add_simple_subelement( "Add", add_subattlist, "Elements that add a particular mover-filter pair to a ParsedProtocol"/*, 0 minoccurs*/ )
 		.complex_type_naming_func( & complex_type_name_for_parsed_protocol_subelement );

@@ -82,7 +82,7 @@ public:
 	core::scoring::ScoreFunctionCOP final_scorefxn() const;
 	void final_score(core::pose::Pose & pose) const;
 	void report_all( Pose const & pose ) const; // cycles over all filter->report methods to output their values to a common stream.
-	void report_filters_to_pose( Pose & pose ); // as above but reports to pose DataCache
+	void report_filters_to_pose( Pose & pose ) const; // as above but reports to pose DataCache
 
 	// Called directly from JobOutputter via Observer pattern
 	void add_values_to_job( Pose const & pose, protocols::jd2::Job & ) const override;
