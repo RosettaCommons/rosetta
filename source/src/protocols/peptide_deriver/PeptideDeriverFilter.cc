@@ -29,11 +29,6 @@
 #include <core/conformation/util.hh>
 #include <core/io/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
-//#include <core/pack/pack_rotamers.hh>
-//#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-//#include <core/pack/task/operation/TaskOperations.hh>
-//#include <core/pack/task/PackerTask.hh>
-//#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -64,7 +59,6 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/DisulfideInsertionMover.hh>
-//#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 
 
@@ -640,6 +634,7 @@ void PeptideDeriverFilter::parse_options() {
 	for ( std::string const & chain_string : basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_receptors_to_chains]() ) {
 		assert(chain_string.size() == 1);
 		restrict_receptors_to_chains.push_back(chain_string[0]);
+
 	}
 
 	utility::vector1<char> restrict_partners_to_chains;
@@ -724,11 +719,13 @@ PeptideDeriverFilter::minimize(core::pose::Pose & pose) const {
 
 	// TODO : consider using whatever is mentioned in -run:min_type and -run:min_tolerance
 	//        and maybe change the defaults to this for Peptiderive app
+
 	protocols::simple_moves::MinMover minimizer( movemap, scorefxn_minimizer_,
 		"dfpmin_armijo_atol", 0.01, true /*nb_list*/ );
 
 	// minimize pose
 	minimizer.apply( pose );
+	pose.remove_constraints();
 
 }
 
@@ -997,7 +994,7 @@ PeptideDeriverFilter::derive_peptide(
 	// in any case, we expect the jump to come before chain #2 (though it might NOT be second_chain_new_index)
 	core::Size const jump_id = chain_pair_pose.fold_tree().get_jump_that_builds_residue( chain_pair_pose.conformation().chain_begin(2) );
 	core::Real const total_isc( calculate_interface_score(chain_pair_pose, jump_id) );
-	core::io::pdb::dump_pdb( chain_pair_pose, "pose_for_total_isc_calc.pdb");
+
 
 	tracer << "Chain pair prepared "
 		<< chain_pair_pose.pdb_info()->chain(chain_pair_pose.conformation().chain_begin(first_chain_new_index))
@@ -1071,10 +1068,10 @@ PeptideDeriverFilter::derive_peptide(
 	disulfide_inserter->set_peptide_chain(PEPTIDE_CHAIN);
 
 	core::scoring::ScoreFunctionOP scorefxn_N2C_minimize = core::scoring::get_score_function();
-	scorefxn_N2C_minimize->set_weight(core::scoring::coordinate_constraint, 1.0);
-	scorefxn_N2C_minimize->set_weight(core::scoring::atom_pair_constraint, 1.0);
-	scorefxn_N2C_minimize->set_weight(core::scoring::dihedral_constraint, 1.0);
-	scorefxn_N2C_minimize->set_weight(core::scoring::angle_constraint, 1.0);
+	scorefxn_N2C_minimize->set_weight(core::scoring::atom_pair_constraint, 0.1);
+	scorefxn_N2C_minimize->set_weight(core::scoring::dihedral_constraint, 0.1);
+	scorefxn_N2C_minimize->set_weight(core::scoring::angle_constraint, 0.1);
+	//scorefxn_N2C_minimize->set_weight(core::scoring::coordinate_constraint, 0.001);
 
 	for ( core::Size const pep_length : pep_lengths_ ) {
 
@@ -1175,35 +1172,40 @@ PeptideDeriverFilter::derive_peptide(
 			if ( receptor_peptide_pose->residue(pep_nter_idx).is_protein() && receptor_peptide_pose->residue(pep_cter_idx).is_protein() ) {
 				core::Length N_to_C_dist = receptor_peptide_pose->residue( pep_nter_idx).xyz( "N" ).distance(receptor_peptide_pose->residue( pep_cter_idx ).xyz( "C" ));
 
-				tracer.Debug << "N to C dist between positions" << pep_start << "and " << pep_end << "is: " << N_to_C_dist << std::endl;
-				CyclizedPeptideInfoOP N2C_pep_info = current_derived_peptide->cyc_info_set[CYCLIZATION_METHOD_END_TO_END];
+				tracer.Debug << "N to C dist between positions " << pep_start << " and " << pep_end << " is: " << N_to_C_dist << std::endl;
 				if ( (N_to_C_dist < MAX_DISTANCE) && ( (linear_isc / total_isc) >= optimize_cyclic_threshold_ ) ) {
-					tracer.Debug << "calling PeptideCyclizeMover for partner positions: " << pep_start << " and " << pep_end << std::endl;
+					tracer << "calling PeptideCyclizeMover for partner positions: " << pep_start << " and " << pep_end << std::endl;
+					CyclizedPeptideInfoOP N2C_pep_info = current_derived_peptide->cyc_info_set[CYCLIZATION_METHOD_END_TO_END];
 					N2C_pep_info->is_cyclizable =true;
 					any_peptide_cyclizable_by_method[CYCLIZATION_METHOD_END_TO_END] = true;
-					core::pose::PoseOP pose_for_N2C_cyclization( new core::pose::Pose(*receptor_peptide_pose));
-					char cyclic_peptide_chain = pose_for_N2C_cyclization->pdb_info()->chain(pep_nter_idx);
-					core::select::residue_selector::ChainSelectorCOP peptide_chain_selector (new core::select::residue_selector::ChainSelector( cyclic_peptide_chain));
-					protocols::cyclic_peptide::PeptideCyclizeMoverOP cyclize_head_to_tail ( new protocols::cyclic_peptide::PeptideCyclizeMover () );
-					cyclize_head_to_tail->set_selector(peptide_chain_selector);
-					cyclize_head_to_tail->apply(*pose_for_N2C_cyclization);
-					core::kinematics::MoveMapOP N2C_minimize_movemap ( new core::kinematics::MoveMap );
-					N2C_minimize_movemap->set_bb_true_range(pep_nter_idx, pep_cter_idx);
-					protocols::simple_moves::MinMover N2C_minimizer( N2C_minimize_movemap, scorefxn_N2C_minimize, "dfpmin_armijo_atol", 0.01 /*tolerance*/, true /*nb_list*/ );
-					N2C_minimizer.apply( *pose_for_N2C_cyclization );
-					// additional bond declaration to correct the position of the amide proton and the carboxyl oxygen,
-					// as the N-ter phi and C-ter psi are not sampled during minimization
-					protocols::cyclic_peptide::DeclareBondOP declare_N2C_bond ( new protocols::cyclic_peptide::DeclareBond() );
-					declare_N2C_bond->set(pep_nter_idx,"N",pep_cter_idx,"C",false /*add_termini*/,false /*run KIC*/, 0 /*KIC res1 */, 0 /*KIC res2*/, false /*rebuild_fold_tree*/);
-					declare_N2C_bond->apply(*pose_for_N2C_cyclization);
-					N2C_pep_info->cyc_isc = calculate_interface_score(*pose_for_N2C_cyclization, linear_jump_id);
-					N2C_pep_info->cyc_pose = pose_for_N2C_cyclization;
-					N2C_pep_info->was_cyclic_model_created=true;
-					std::stringstream N2C_info("");
-					N2C_info << partner_chain_letter << "_" << pep_start << "-" << pep_end;
-					N2C_pep_info->cyc_comment = N2C_info.str();
+					core::pose::PoseOP N2C_cyclic_pose = generate_N2C_cyclic_peptide_protein_complex(receptor_peptide_pose, pep_nter_idx, pep_cter_idx, scorefxn_N2C_minimize);
+					// accept or reject cyclic peptide - protein complex based on interface score
+					core::Real N2C_cyclic_interface_score = calculate_interface_score(*N2C_cyclic_pose, linear_jump_id);
+
+					core::scoring::EnergyMap cyclic_pose_emap (N2C_cyclic_pose->energies().total_energies());
+					core::Real const cyc_pose_rama_energy = cyclic_pose_emap.get(core::scoring::score_type_from_name("rama_prepro"));
+					core::Real const cyc_pose_omega_energy = cyclic_pose_emap.get(core::scoring::score_type_from_name("omega"));
+
+					core::scoring::EnergyMap linear_pose_emap (receptor_peptide_pose->energies().total_energies());
+					core::Real const linear_pose_rama_energy = linear_pose_emap.get(core::scoring::score_type_from_name("rama_prepro"));
+					core::Real const linear_pose_omega_energy = linear_pose_emap.get(core::scoring::score_type_from_name("omega"));
+
+					core::Real const delta_rama_score = cyc_pose_rama_energy - linear_pose_rama_energy;
+					core::Real const delta_omega_score = cyc_pose_omega_energy - linear_pose_omega_energy;
+
+					tracer << "changes in rama and omega due to cyclization: rama - " << delta_rama_score << "; omega - " << delta_omega_score << std::endl;
+					tracer << "cyclic interface score of head-to-tail candidate is: " << N2C_cyclic_interface_score << std::endl;
+					if ( N2C_cyclic_interface_score < 0 ) {
+						N2C_pep_info->cyc_isc = N2C_cyclic_interface_score;
+						N2C_pep_info->cyc_pose = N2C_cyclic_pose;
+						N2C_pep_info->was_cyclic_model_created=true;
+						std::stringstream N2C_info("");
+						N2C_info << partner_chain_letter << "_" << pep_start << "-" << pep_end;
+						N2C_pep_info->cyc_comment = N2C_info.str();
+					}
 				}
 			}
+
 			// This section checks and prints out closability of the peptide by a proposed putative wrapper disulfide bridge
 			core::Size n_putative_cyd = pep_start - 1;
 			core::Size c_putative_cyd = pep_end + 1;
@@ -1346,6 +1348,36 @@ PeptideDeriverFilter::calculate_interface_score(core::pose::Pose const & pose, c
 }
 
 
+/// Take a given linear peptide-protein complex and return a head-to-tail (N-ter to C-ter) cyclic peptide - receptor complex
+/// @param receptor_peptide_pose linear peptide-protein complex
+/// @param pep_nter_idx index of peptide start position in the given complex
+/// @param pep_cter_idx index of peptide end position in the given complex
+/// @param scorefxn_N2C_minimize scorefunction with constraints turned on to be used in complex minimization
+core::pose::PoseOP
+PeptideDeriverFilter::generate_N2C_cyclic_peptide_protein_complex(core::pose::PoseOP const receptor_peptide_pose, core::Size const pep_nter_idx, core::Size  const pep_cter_idx, core::scoring::ScoreFunctionOP const scorefxn_N2C_minimize) const {
+	core::pose::PoseOP pose_for_N2C_cyclization( new core::pose::Pose(*receptor_peptide_pose));
+
+	// setup for calling PeptideCyclizeMover to setup chemical bond and constraints on N-ter and C-ter residues
+	char const cyclic_peptide_chain = pose_for_N2C_cyclization->pdb_info()->chain(pep_nter_idx);
+	core::select::residue_selector::ChainSelectorCOP peptide_chain_selector (new core::select::residue_selector::ChainSelector( cyclic_peptide_chain));
+	protocols::cyclic_peptide::PeptideCyclizeMoverOP cyclize_head_to_tail ( new protocols::cyclic_peptide::PeptideCyclizeMover () );
+	cyclize_head_to_tail->set_selector(peptide_chain_selector);
+	cyclize_head_to_tail->apply(*pose_for_N2C_cyclization);
+	// minimization of the structure to actually close the bond
+	core::kinematics::MoveMapOP N2C_minimize_movemap ( new core::kinematics::MoveMap );
+	N2C_minimize_movemap->set_bb_true_range(pep_nter_idx, pep_cter_idx);
+	protocols::simple_moves::MinMover N2C_minimizer( N2C_minimize_movemap, scorefxn_N2C_minimize, "dfpmin_armijo_atol", 0.01 /*tolerance*/, true /*nb_list*/ );
+	N2C_minimizer.apply( *pose_for_N2C_cyclization );
+	// additional bond declaration to correct the position of the amide proton and the carboxyl oxygen,
+	// as the N-ter phi and C-ter psi are not sampled during minimization
+	protocols::cyclic_peptide::DeclareBondOP declare_N2C_bond ( new protocols::cyclic_peptide::DeclareBond() );
+	declare_N2C_bond->set(pep_nter_idx,"N",pep_cter_idx,"C",false /*add_termini*/,false /*run KIC*/, 0 /*KIC res1 */, 0 /*KIC res2*/, false /*rebuild_fold_tree*/);
+	declare_N2C_bond->apply(*pose_for_N2C_cyclization);
+	return pose_for_N2C_cyclization;
+}
+
+
+
 /// Given a two-monomer pose and a score function - the interface score (delta between energy of complex and of the seperated monomers) is calculated for each residue.
 /// This signifies the energetic contribution of each residue to the complex binding.
 /// @param pose a two-monomer pose.
@@ -1412,13 +1444,9 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose:
 	core::pose::PoseOP receptor_peptide_pose( new core::pose::Pose(receptor_pose) );
 	core::Size pep_cen_mass = core::pose::residue_center_of_mass(partner_pose, peptide_start, peptide_end);
 
-	// tracer messages might be useful for debugging, but I'd rather comment than tracer.Debug
 	// from Flexpepdock's flags file; choose the residue in the receptor that is closest to the peptide center-of-mass
-	// TODO : handle a case where the closest residue is not a protein -- we needn't ask for "CA"
-
-	core::Size receptor_anchor_pos = core::pose::return_nearest_residue(receptor_pose, 1, receptor_pose.size(), partner_pose.residue(pep_cen_mass).atom("CA").xyz());
-
-
+	// Atom(2) will be CA for canonical amino-acids and hopefully an atom that exists in any other residue type
+	core::Size receptor_anchor_pos = core::pose::return_nearest_residue(receptor_pose, 1, receptor_pose.size(), partner_pose.residue(pep_cen_mass).atom(2).xyz());
 
 	receptor_peptide_pose->append_residue_by_jump(partner_pose.residue(pep_cen_mass), receptor_anchor_pos, "", "", true);
 
@@ -1448,6 +1476,7 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose:
 	}
 	core::pose::add_variant_type_to_pose_residue(*receptor_peptide_pose, core::chemical::LOWER_TERMINUS_VARIANT, two_chain_peptide_start);
 	core::pose::add_variant_type_to_pose_residue(*receptor_peptide_pose, core::chemical::UPPER_TERMINUS_VARIANT, two_chain_peptide_end);
+
 	// if a cysteine in the peptide was disulfide bonded to a residue that no longer exists in the protein-peptide pose, it is converted back to a regular cysteine
 	for ( core::Size i = two_chain_peptide_start; i <= two_chain_peptide_end ; ++i ) {
 		if ( receptor_peptide_pose->conformation().residue(i).has_variant_type( core::chemical::DISULFIDE ) ) {

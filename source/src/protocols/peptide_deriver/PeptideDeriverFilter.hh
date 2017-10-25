@@ -465,6 +465,10 @@ public:
 	///        resulting from the complex coming together.
 	core::Real calculate_interface_score(core::pose::Pose const & pose, core::Size const jump_id) const;
 
+
+	/// @brief Take a given linear peptide-protein complex and return a head-to-tail (N-ter to C-ter) cyclic peptide - receptor complex
+	core::pose::PoseOP generate_N2C_cyclic_peptide_protein_complex(core::pose::PoseOP const receptor_peptide_pose, core::Size const pep_nter_idx, core::Size const pep_cter_idx, core::scoring::ScoreFunctionOP const scorefxn_N2C_minimize) const;
+
 	// @brief Given a two-monomer pose, calculates each the interface score (delta between energy of complex and of the seperated monomers) is calculated for each residue.
 	void calculate_per_residue_interface_score(core::pose::Pose & chain_pair_pose, std::set<core::Size> interface_residues, std::ostream & report_out, core::Size const jump_id) const;
 
