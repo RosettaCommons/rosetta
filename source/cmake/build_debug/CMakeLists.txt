@@ -13,7 +13,6 @@ SET(LINK_RULES shared)
 SET(CMAKE_BUILD_TYPE Debug)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-
 ############ Build Rules
 INCLUDE(../build/compiler.cmake)
 INCLUDE(../build/build.pre.cmake)
@@ -34,3 +33,6 @@ INCLUDE( ../build/pilot_apps.all.cmake )
 
 ############ Unit Tests
 INCLUDE(../build/build.test.cmake)
+
+############ Installation rules
+INCLUDE(../build/install.cmake)

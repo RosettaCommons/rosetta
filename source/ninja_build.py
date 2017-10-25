@@ -59,7 +59,7 @@ for key, item in list(abbrev.items()):
 parser = MyParser(description=help_message1, epilog=help_message2, formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('build', default='release',
         help="Build name to be compiled in the cmake folder.")
-parser.add_argument('-t', '-target', type=str, default=None,
+parser.add_argument('-t', '-target', type=str, default=None, nargs="+",
         help="The build target to tell ninja to compile. (e.g. 'bin', 'unit', 'apps', 'pilot_apps', 'relax') Default is to compile everything.")
 parser.add_argument('-remake', action='store_true', help="Rerun make_project.py and cmake. " +
         "Be sure to call it when building first time, after editing src.settings, or first time switching to -my.")
@@ -69,6 +69,7 @@ parser.add_argument('-clean_exit', action='store_true', help="Remove all old fil
 parser.add_argument('-v', action='store_true', help="Where possible, run the verbose version of the commands.")
 parser.add_argument('-j', type=int, default=None, help="The -j value to pass to ninja. NOTE: Ninja is good at autodiscovery for this value. Don't set it unless you know that's what you need.")
 parser.add_argument('-k', action='store_true', help="Tell ninja to keep going as much as possible when it encounters an error, instead of stopping immediately. Good for lunch-break compiles.")
+parser.add_argument('-install', type=str, default=None, help="Install relocatible binaries to given path via 'ninja install'.")
 args = parser.parse_args()
 
 #Convert abbreviations
@@ -106,7 +107,10 @@ if args.remake:
 
 #Run cmake if requested
 if args.remake:
-    subprocess.check_call(["cmake", "-G", "Ninja"], cwd=build_path)
+    subprocess.check_call(
+        ["cmake", "-G", "Ninja"] + (["-DCMAKE_INSTALL_PREFIX=" + args.install] if args.install else []),
+        cwd=build_path
+        )
 elif not os.path.isfile(os.path.join(build_path, "build.ninja")):
     raise NinjaBuildError("File build.ninja not found. Use option '-remake' the first time building.")
 
@@ -116,8 +120,8 @@ ninja_command = ["ninja", "-C", build_path]
 if args.j is not None:
     ninja_command.extend( ["-j",str(args.j)] )
 
-if args.t is not None:
-    ninja_command.append( str(args.t) )
+if args.t:
+    ninja_command.extend(args.t)
 
 if args.v:
     ninja_command.append( "-v" )
@@ -126,5 +130,7 @@ if args.k:
 
 subprocess.check_call(ninja_command)
 
-print("Job completed. Total time = %f s" % ( time.time() - start_time ))
+if args.install:
+    subprocess.check_call(["ninja", "-C", build_path, "install"])
 
+print("Job completed. Total time = %f s" % ( time.time() - start_time ))

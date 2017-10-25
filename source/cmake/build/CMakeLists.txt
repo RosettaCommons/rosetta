@@ -56,3 +56,5 @@ INCLUDE(build.post.cmake)
 INCLUDE(apps.all.cmake)
 INCLUDE(pilot_apps.all.cmake)
 
+# Include install directives 
+INCLUDE(install.cmake)

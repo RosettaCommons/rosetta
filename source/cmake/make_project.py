@@ -74,6 +74,7 @@ def project_callback(project, project_path, project_files):
             output += 'ADD_DEPENDENCIES( %s %s )\n' % ( symlink_var, key )
             output += 'ADD_DEPENDENCIES( %s BUILD_ROSETTA_LIBS )\n' % ( key )
             output += 'ADD_DEPENDENCIES( %s %s )\n' % ( project, symlink_var )
+            output += 'install(TARGETS %(key)s RUNTIME DESTINATION bin OPTIONAL)' % dict(key=key)
             apps_file = key + '.cmake'
             open( 'build/apps/' + apps_file, 'w').write( output )
             apps_output.write( 'INCLUDE( ../build/apps/%s )\n' % apps_file )
