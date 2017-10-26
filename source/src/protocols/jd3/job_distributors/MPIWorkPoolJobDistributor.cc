@@ -1032,7 +1032,7 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 		if ( n_discarded_jobs[ ii ] == 0 ) continue;
 		float new_n_results_for_archive_ii = n_results_per_archive_.coval_for_val( ii )
 			- n_discarded_jobs[ ii ];
-		n_results_per_archive_.heap_replace( ii, new_n_results_for_archive_ii );
+		n_results_per_archive_.reset_coval( ii, new_n_results_for_archive_ii );
 	}
 }
 

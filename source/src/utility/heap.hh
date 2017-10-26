@@ -50,6 +50,10 @@ public:
 	void
 	heap_extract( int & val, float & coval, bool & err );
 
+	/// @brief replace the lowest value
+	///        (equivalent to heap_extract; heap_insert  but faster)
+	///        If you call heap_insert with a full heap (ie last = maxsize) then
+	///        heap_replace gets called instead.
 	void
 	heap_replace( int val, float coval );
 
