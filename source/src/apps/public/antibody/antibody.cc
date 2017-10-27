@@ -130,7 +130,8 @@ void relax_model(core::pose::PoseOP &pose)
 	// set relax defaults
 	relax_protocol->constrain_relax_to_start_coords( true );
 	relax_protocol->constrain_coords( true );
-	relax_protocol->coord_constrain_sidechains( true );
+	// removed since it slows the protocol down and does not fix all clashes
+	//relax_protocol->coord_constrain_sidechains( true );
 
 	relax_protocol->ramp_down_constraints( false );
 
