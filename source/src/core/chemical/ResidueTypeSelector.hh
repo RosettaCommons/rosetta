@@ -196,6 +196,32 @@ public:
 
 };
 
+////////////////////////////////////////////////////////////////////////////////////////
+/// @brief  Does the residue have ALL of the listed atoms?:
+class Selector_HAS_ATOMS : public ResidueTypeSelectorSingle {
+public:
+
+	Selector_HAS_ATOMS(
+		utility::vector1< std::string > const & atoms,
+		bool const result
+	):
+		ResidueTypeSelectorSingle( result ),
+		atoms_( atoms )
+	{}
+
+	bool
+	operator[]( ResidueType const & rsd ) const override {
+		for ( std::string const & atom : atoms_ ) {
+			if ( ! rsd.has( atom ) ) {
+				return !desired_result();
+			}
+		}
+		return desired_result();
+	}
+
+private:
+	utility::vector1< std::string > atoms_;
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue have ANY of these properties?

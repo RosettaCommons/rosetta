@@ -10,6 +10,7 @@ BEGIN_SELECTOR
 PROPERTY PROTEIN
 NAME3 THR DTH
 NOT VARIANT_TYPE PHOSPHORYLATION
+HAS_ATOMS HG1 OG1
 END_SELECTOR
 
 ## now we search for a case that matches the residue, take the first one

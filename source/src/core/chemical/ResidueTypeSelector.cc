@@ -81,6 +81,16 @@ residue_selector_single_from_line( std::string const & line )
 		}
 		if ( !name3s.empty() )  return ResidueTypeSelectorSingleOP( new Selector_NAME3( name3s, desired_result ) );
 
+	} else if ( tag == "HAS_ATOMS" ) {
+		std::string atom_name;
+		utility::vector1< std::string > atom_names;
+		l >> atom_name;
+		while ( !l.fail() && atom_name[0] != '#' ) {
+			atom_names.push_back( atom_name );
+			l >> atom_name;
+		}
+		if ( !atom_names.empty() ) return ResidueTypeSelectorSingleOP( new Selector_HAS_ATOMS( atom_names, desired_result ) );
+
 	} else if ( tag == "PROPERTY" ) {
 		std::string property;
 		utility::vector1< std::string > properties;
