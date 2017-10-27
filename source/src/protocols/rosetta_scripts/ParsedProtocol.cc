@@ -205,7 +205,8 @@ ParsedProtocol::final_score(core::pose::Pose & pose) const {
 void
 ParsedProtocol::report_all( Pose const & pose ) const {
 	for ( MoverFilterPair const & mover_pair : movers_ ) {
-		if ( mover_pair.report_filter_at_end_ ) {
+		if ( mover_pair.report_filter_at_end_ &&
+				!( mover_pair.second->get_user_defined_name().empty() && mover_pair.second->name() == "TrueFilter" ) ) { // Skip default TrueFilter
 			TR_report<<"============Begin report for "<<mover_pair.second->get_user_defined_name()<<"=================="<<std::endl;
 			mover_pair.second->report( TR_report, pose );
 			TR_report<<"============End report for "<<mover_pair.second->get_user_defined_name()<<"=================="<<std::endl;
@@ -217,7 +218,8 @@ ParsedProtocol::report_all( Pose const & pose ) const {
 void
 ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job ) const {
 	for ( auto const & mover : movers_ ) {
-		if ( mover.report_filter_at_end_ ) {
+		if ( mover.report_filter_at_end_ &&
+				!( mover.second->get_user_defined_name().empty() && mover.second->name() == "TrueFilter" ) ) { // Skip default TrueFilter
 			core::Real const filter_value( mover.second->report_sm( pose ) );
 			if ( filter_value > -9999 ) {
 				job.add_string_real_pair(mover.second->get_user_defined_name(), filter_value);
@@ -229,10 +231,12 @@ ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job 
 void
 ParsedProtocol::report_filters_to_pose( Pose & pose ) const {
 	for ( auto const & mover_filter_pair : movers_ ) {
+		protocols::filters::Filter const & filter( *mover_filter_pair.second );
+		if ( filter.get_user_defined_name().empty() && filter.name() == "TrueFilter" ) { continue; } // Skip default TrueFilter
 		if ( mover_filter_pair.report_filter_at_end_ ) {
-			core::Real const filter_value( mover_filter_pair.second->report_sm( pose ) );
+			core::Real const filter_value( filter.report_sm( pose ) );
 			if ( filter_value > -9999 ) {
-				setPoseExtraScore(pose, mover_filter_pair.second->get_user_defined_name(), (float)filter_value);
+				setPoseExtraScore(pose, filter.get_user_defined_name(), (float)filter_value);
 			}
 		}
 	}
@@ -506,11 +510,11 @@ ParsedProtocol::apply_mover( Pose & pose, MoverFilterPair const & mover_pair ) {
 		}
 	}
 
-	mover_pair.first.first->set_native_pose( get_native_pose() );
-	TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"======================="<<std::endl;
-	mover_pair.first.first->apply( pose );
+	if ( mover_pair.first.first && ( mover_pair.first.first->get_name() != "NullMover" || mover_user_name != "NULL_MOVER" ) ) { // Skip default NullMover
+		TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"======================="<<std::endl;
+		mover_pair.first.first->set_native_pose( get_native_pose() );
+		mover_pair.first.first->apply( pose );
 
-	if ( mover_pair.first.first && mover_pair.first.first->get_name() != "NullMover" ) {
 		last_mover_ = mover_pair.first.first;
 	}
 }
@@ -519,21 +523,25 @@ bool
 ParsedProtocol::apply_filter( Pose & pose, MoverFilterPair const & mover_pair) {
 	std::string const filter_name( mover_pair.second->get_user_defined_name() );
 
-	TR << "=======================BEGIN FILTER " << filter_name << "=======================" << std::endl;
+	// Shouldin't this really go into apply_mover()?
 	info().insert( info().end(), mover_pair.first.first->info().begin(), mover_pair.first.first->info().end() );
-	// Since filters get const poses, they don't necessarily have an opportunity to update neighbors themselves
-	pose.update_residue_neighbors();
-	moves::MoverStatus status( mover_pair.first.first->get_last_move_status() );
-	bool const pass( status==protocols::moves::MS_SUCCESS  && mover_pair.filter().apply( pose ) );
-	if ( !mover_pair.report_filter_at_end_ ) { //report filter now
-		core::Real const filter_value(  mover_pair.filter().report_sm( pose ) );
-		setPoseExtraScore(pose, mover_pair.second->get_user_defined_name(), (float)filter_value);
 
-		TR_report << "============Begin report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
-		mover_pair.filter().report( TR_report, pose );
-		TR_report << "============End report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
+	moves::MoverStatus status( mover_pair.first.first->get_last_move_status() );
+	bool pass( status==protocols::moves::MS_SUCCESS );
+	if ( !( mover_pair.second->get_user_defined_name().empty() && mover_pair.second->name() == "TrueFilter" ) ) { // Skip default TrueFilter
+		TR << "=======================BEGIN FILTER " << filter_name << "=======================" << std::endl;
+		// Since filters get const poses, they don't necessarily have an opportunity to update neighbors themselves
+		pose.update_residue_neighbors();
+		pass = pass && mover_pair.filter().apply( pose );
+		if ( !mover_pair.report_filter_at_end_ ) { //report filter now
+			core::Real const filter_value(  mover_pair.filter().report_sm( pose ) );
+			setPoseExtraScore(pose, mover_pair.second->get_user_defined_name(), (float)filter_value);
+			TR_report << "============Begin report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
+			mover_pair.filter().report( TR_report, pose );
+			TR_report << "============End report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
+		}
+		TR << "=======================END FILTER " << filter_name << "=======================" << std::endl;
 	}
-	TR << "=======================END FILTER " << filter_name << "=======================" << std::endl;
 
 	//filter failed -- set status in mover and return false
 	if ( !pass ) {
