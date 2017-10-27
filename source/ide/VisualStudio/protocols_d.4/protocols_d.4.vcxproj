@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -33,6 +33,7 @@
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -40,18 +41,21 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -59,6 +63,7 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -205,7 +210,7 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external;..\..\..\external\boost_1_55_0;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;..\..\external\boinc\api;..\..\..\external\boinc\api;..\..\..\external\dbio;..\..\..\external\libxml2\include;..\..\..\external\cifparse;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -223,6 +228,16 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\protocols\coupled_moves\CoupledMovesProtocol.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\cartesian\md.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.xdc</XMLDocumentationFileName>
@@ -275,6 +290,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\protocols\coupled_moves\CoupledMovesProtocol.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\coupled_moves\CoupledMovesProtocol.hh" />
     <ClInclude Include="..\..\..\src\protocols\cartesian\md.hh" />
     <ClInclude Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorJobDistributor.hh" />

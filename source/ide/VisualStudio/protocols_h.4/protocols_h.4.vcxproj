@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -33,6 +33,7 @@
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -40,18 +41,21 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -59,6 +63,7 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -205,7 +210,7 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external;..\..\..\external\boost_1_55_0;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;..\..\external\boinc\api;..\..\..\external\boinc\api;..\..\..\external\dbio;..\..\..\external\libxml2\include;..\..\..\external\cifparse;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -232,6 +237,26 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPDockingSetupMover.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPDockingSetupMover.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPDockingSetupMover.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\docking\membrane\MPFindInterfaceMover.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPFindInterfaceMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPFindInterfaceMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPFindInterfaceMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPFindInterfaceMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPFindInterfaceMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPFindInterfaceMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPFindInterfaceMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPFindInterfaceMover.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\docking\membrane\QuickRelaxPartnersSeparately.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__QuickRelaxPartnersSeparately.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__QuickRelaxPartnersSeparately.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__QuickRelaxPartnersSeparately.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__QuickRelaxPartnersSeparately.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__QuickRelaxPartnersSeparately.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__QuickRelaxPartnersSeparately.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__QuickRelaxPartnersSeparately.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__QuickRelaxPartnersSeparately.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\docking\membrane\MPDockingMover.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__docking__membrane__MPDockingMover.obj</ObjectFileName>
@@ -292,16 +317,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__RandomConformers.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__RandomConformers.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__RandomConformers.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\ligand_docking\LigandDesign.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\ligand_docking\InterfaceScoreCalculator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__InterfaceScoreCalculator.obj</ObjectFileName>
@@ -443,6 +458,26 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__ChainExistsFilter.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__ChainExistsFilter.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\ligand_docking\HighResEnsemble.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HighResEnsemble.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HighResEnsemble.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HighResEnsemble.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HighResEnsemble.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HighResEnsemble.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HighResEnsemble.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HighResEnsemble.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HighResEnsemble.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\ligand_docking\TransformEnsemble.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__TransformEnsemble.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__TransformEnsemble.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__TransformEnsemble.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__TransformEnsemble.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__TransformEnsemble.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__TransformEnsemble.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__TransformEnsemble.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__TransformEnsemble.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\ligand_docking\GrowLigand.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__GrowLigand.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__GrowLigand.xdc</XMLDocumentationFileName>
@@ -583,6 +618,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandBaseProtocol.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandBaseProtocol.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\ligand_docking\LigandDesign.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandDesign.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\ligand_docking\HBondDonorFilter.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HBondDonorFilter.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__HBondDonorFilter.xdc</XMLDocumentationFileName>
@@ -612,6 +657,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__AddHydrogens.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__AddHydrogens.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__AddHydrogens.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\ligand_docking\util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__util.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\ligand_docking\LigandArea.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__ligand_docking__LigandArea.obj</ObjectFileName>
@@ -742,6 +797,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingInitialPerturbation.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingInitialPerturbation.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingInitialPerturbation.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\docking\DockingHighResFactory.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingHighResFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingHighResFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingHighResFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingHighResFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingHighResFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingHighResFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingHighResFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingHighResFactory.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\docking\DockingEnsemble.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_h.4__protocols__docking__DockingEnsemble.obj</ObjectFileName>
@@ -947,10 +1012,16 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\src\protocols\docking\membrane\MPDockingMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\membrane\MPDockingMoverCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\membrane\QuickRelaxPartnersSeparatelyCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\membrane\QuickRelaxPartnersSeparately.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\membrane\MPDockingSetupMover.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\membrane\MPFindInterfaceMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\membrane\MPDockingSetupMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\membrane\MPDockingMover.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\membrane\QuickRelaxPartnersSeparately.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\membrane\MPFindInterfaceMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\membrane\MPDockingSetupMoverCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\membrane\MPFindInterfaceMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\ligand_options\interface_distance_functions.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\ligand_options\Interface.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\ligand_options\Interface.fwd.hh" />
@@ -958,11 +1029,14 @@
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\Rotates.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\Rotate.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\HBondAcceptorFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\TransformEnsembleCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\MoveMapBuilder.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\InterfaceScoreCalculator.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\LigandDockProtocol.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\HighResDocker.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\Transform.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\UnconstrainedTorsionsMover.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\LigandArea.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\RandomConformersCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\AddHydrogens.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\DistributionMap.hh" />
@@ -1003,10 +1077,12 @@
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\RandomConformerMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\CompoundTranslateCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\ChainExistsFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\ligand_docking\TransformCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\HighResEnsemble.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\MolecularMassFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\TransformEnsemble.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\InterfaceBuilder.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\ligand_docking\LigandArea.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\TransformEnsemble.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\TransformCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\MoveMapBuilder.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\AddHydrogen.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\RigidSearchMover.fwd.hh" />
@@ -1016,15 +1092,16 @@
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\HighResDocker.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\LigandDesignCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\RotatesCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\util.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\AddHydrogens.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\ResidueTorsionRestraints.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\CompleteConnectionsFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\Transform.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\MinimizeLigand.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\CompleteConnectionsFilterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\ligand_docking\MoveMapBuilder.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\HBondAcceptorFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\MolecularMassFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\HighResEnsemble.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\ligand_scores.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\GrowLigand.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\LigandDesign.hh" />
@@ -1041,6 +1118,7 @@
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\HighResDockerCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\StartFrom.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\MinimizeBackboneCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\ligand_docking\HighResEnsembleCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\InterfaceScoreCalculator.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\WriteLigandMolFile.hh" />
     <ClInclude Include="..\..\..\src\protocols\ligand_docking\MinimizeBackbone.fwd.hh" />
@@ -1054,6 +1132,7 @@
     <ClInclude Include="..\..\..\src\protocols\docking\DockingInitialPerturbation.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingLowResEnsemble.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockSetupMover.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\DockingPrepackProtocolCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockTaskFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockMCMProtocol.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingLowRes.hh" />
@@ -1066,22 +1145,26 @@
     <ClInclude Include="..\..\..\src\protocols\docking\DockMinMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\EllipsoidalRandomizationMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\TemperedDocking.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\DockingHighResLegacyCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingEnsemblePrepackProtocol.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\SidechainMinMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockMinMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\ConformerSwitchMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockFilters.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingPrepackProtocol.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingPrepackProtocol.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\types.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\DockMCMProtocolCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockFilters.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingLowRes.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingEnsemble.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockMCMCycle.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingProtocol.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\DockingHighResFactory.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingHighResLegacy.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingHighRes.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingEnsemblePrepackProtocol.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\docking\DockingInitialPerturbationCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\DockingHighResFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingHighRes.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingProtocolCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\TemperedDocking.hh" />
@@ -1089,9 +1172,10 @@
     <ClInclude Include="..\..\..\src\protocols\docking\DockSetupMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\EllipsoidalRandomizationMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingEnsemble.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\DockMinMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\ConformerSwitchMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingProtocol.hh" />
-    <ClInclude Include="..\..\..\src\protocols\docking\SidechainMinMover.hh" />
+    <ClInclude Include="..\..\..\src\protocols\docking\DockingInitialPerturbationCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockMCMCycle.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\DockingHighResLegacy.hh" />
     <ClInclude Include="..\..\..\src\protocols\docking\TemperedDockingCreator.hh" />

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -29,6 +29,7 @@
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -36,12 +37,14 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -49,6 +52,7 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -135,7 +139,7 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external;..\..\..\external\boost_1_55_0;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\dbio;..\..\..\external\libxml2\include;..\..\..\external\cifparse;..\..\..\external\boinc\zip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -152,16 +156,15 @@
       <DisableSpecificWarnings>4996;4005;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>oldnames.lib;libcmt.lib;libcpmt.lib;kernel32.lib;z.lib;delayimp.lib;boinc_zip.lib;odbc32.lib;odbccp32.lib;utility.lib;basic.lib;sqlite3.lib;cppdb.lib;sqlite3.lib;cppdb.lib;sqlite3.lib;cppdb.lib;sqlite3.lib;cppdb.lib;sqlite3.lib;cppdb.lib;sqlite3.lib;cppdb.lib;sqlite3.lib;cppdb.lib;sqlite3.lib;cppdb.lib;sqlite3.lib;cppdb.lib;core.1.lib;core.2.lib;core.3.lib;core.4.lib;core.5.lib;numeric.lib;ObjexxFCL.lib;protocols.1.lib;protocols.3.lib;protocols.6.lib;protocols.7.lib;protocols_a.2.lib;protocols_a.4.lib;protocols_a.5.lib;protocols_b.2.lib;protocols_b.4.lib;protocols_b.5.lib;protocols_c.4.lib;protocols_c.5.lib;protocols_d.4.lib;protocols_d.5.lib;protocols_e.4.lib;protocols_e.5.lib;protocols_f.4.lib;protocols_f.5.lib;protocols_g.4.lib;protocols_h.4.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)minirosetta_beta_3.56_windows_intelx86.exe</OutputFile>
+      <AdditionalDependencies>libvcruntime.lib;libcmt.lib;libcpmt.lib;libucrt.lib;legacy_stdio_definitions.lib;oldnames.lib;libcmt.lib;libcpmt.lib;kernel32.lib;z.lib;delayimp.lib;libboinc_staticcrt.lib;libboincapi_staticcrt.lib;libgraphics2.lib;libboinczip_staticcrt.lib;odbc32.lib;odbccp32.lib;utility.lib;basic.lib;sqlite3.lib;cppdb.lib;cifparse.lib;libxml2.lib;devel.lib;core.1.lib;core.2.lib;core.3.lib;core.4.lib;core.5.lib;numeric.lib;ObjexxFCL.lib;protocols.1.lib;protocols.3.lib;protocols.6.lib;protocols.7.lib;protocols_a.2.lib;protocols_a.4.lib;protocols_a.5.lib;protocols_b.2.lib;protocols_b.4.lib;protocols_b.5.lib;protocols_c.4.lib;protocols_c.5.lib;protocols_d.4.lib;protocols_d.5.lib;protocols_e.4.lib;protocols_e.5.lib;protocols_f.4.lib;protocols_g.4.lib;protocols_h.4.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)rosetta_4.05_windows_intelx86.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);..\..\..\external\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);..\..\..\external\lib;..\..\..\external\boinc\win_build\Build\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libboost_date_time-vc140-mt-s-1_55.lib;libboost_thread-vc140-mt-s-1_55.lib;libboost_system-vc140-mt-s-1_55.lib;libboost_chrono-vc140-mt-s-1_55.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <ProgramDatabaseFile>
-      </ProgramDatabaseFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)rosetta_4.05_windows_intelx86.pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>
       </StripPrivateSymbols>
       <SubSystem>Console</SubSystem>
@@ -253,200 +256,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\apps\public\boinc\minirosetta.cc" />
-    <ClCompile Include="..\..\..\external\boinc\lib\app_ipc.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\base64.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\api\boinc_api.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\diagnostics.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\diagnostics_win.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\filesys.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\api\graphics2_util.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\api\graphics_api.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\api\graphics_data.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\api\graphics_impl.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\hostinfo.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\md5.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\md5_file.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\mem_usage.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\mfile.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\miofile.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\parse.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\prefs.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\proxy_info.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\api\reduce_main.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\shmem.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\stackwalker_win.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\str_util.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\api\texture.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\util.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\lib\win_util.cpp">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\..\external\boinc\api\windows_opengl.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">CompileAsCpp</CompileAs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="..\..\..\external\boinc\lib\acct_mgr_client.h">

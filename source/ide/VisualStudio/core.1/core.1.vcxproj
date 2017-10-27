@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -33,6 +33,7 @@
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -40,18 +41,21 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -59,6 +63,7 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -211,7 +216,7 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external;..\..\..\external\boost_1_55_0;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;..\..\external\boinc\api;..\..\..\external\boinc\api;..\..\..\external\dbio;..\..\..\external\libxml2\include;..\..\..\external\cifparse;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -239,51 +244,10 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.1__core__svn_version.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.1__core__svn_version.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\graph\DisjointSets.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.1__core__graph__DisjointSets.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.1__core__graph__DisjointSets.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.1__core__graph__DisjointSets.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.1__core__graph__DisjointSets.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.1__core__graph__DisjointSets.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.1__core__graph__DisjointSets.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.1__core__graph__DisjointSets.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.1__core__graph__DisjointSets.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\graph\graph_util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.1__core__graph__graph_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.1__core__graph__graph_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.1__core__graph__graph_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.1__core__graph__graph_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.1__core__graph__graph_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.1__core__graph__graph_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.1__core__graph__graph_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.1__core__graph__graph_util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\graph\Graph.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.1__core__graph__Graph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.1__core__graph__Graph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.1__core__graph__Graph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.1__core__graph__Graph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.1__core__graph__Graph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.1__core__graph__Graph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.1__core__graph__Graph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.1__core__graph__Graph.xdc</XMLDocumentationFileName>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\core\svn_version.hh" />
     <ClInclude Include="..\..\..\src\core\types.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\ArrayPool.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\Graph.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\UpperEdgeGraph.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\UpperEdgeGraph.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\graph_util.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\unordered_object_pool.hpp" />
-    <ClInclude Include="..\..\..\src\core\graph\DisjointSets.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\Graph.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\ArrayPool.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\DisjointSets.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\graph\unordered_object_pool.fwd.hpp" />
     <ClInclude Include="..\..\..\src\core\grid\CartGrid.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\grid\CartGrid.hh" />
   </ItemGroup>

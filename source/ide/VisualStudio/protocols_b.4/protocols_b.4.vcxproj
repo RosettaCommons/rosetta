@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -33,6 +33,7 @@
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -40,18 +41,21 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -59,6 +63,7 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -205,7 +210,7 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external;..\..\..\external\boost_1_55_0;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;..\..\external\boinc\api;..\..\..\external\boinc\api;..\..\..\external\dbio;..\..\..\external\libxml2\include;..\..\..\external\cifparse;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -262,6 +267,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelWorkingSet.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelWorkingSet.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelWorkingSet.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\remodel\RemodelLigandHandler.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelLigandHandler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelLigandHandler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelLigandHandler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelLigandHandler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelLigandHandler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelLigandHandler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelLigandHandler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelLigandHandler.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\forge\remodel\RemodelMover.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__RemodelMover.obj</ObjectFileName>
@@ -333,56 +348,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__ResidueVicinityRCG.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__remodel__ResidueVicinityRCG.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\methods\util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\methods\chainbreak_eval.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\methods\fragment_functions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\methods\pose_mod.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\methods\fold_tree_functions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\pockets\PocketGrid.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pockets__PocketGrid.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pockets__PocketGrid.xdc</XMLDocumentationFileName>
@@ -453,56 +418,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pockets__PocketExemplarMultifunc.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pockets__PocketExemplarMultifunc.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\constraints\InvrotTreeRCG.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\constraints\InverseRotamersRCG.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\constraints\RemoveCsts.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveCsts.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveCsts.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveCsts.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveCsts.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveCsts.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveCsts.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveCsts.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveCsts.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\constraints\ConstraintFileRCG.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__ConstraintFileRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__ConstraintFileRCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__ConstraintFileRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__ConstraintFileRCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__ConstraintFileRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__ConstraintFileRCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__ConstraintFileRCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__ConstraintFileRCG.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\forge\constraints\NtoC_RCG.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoC_RCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoC_RCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoC_RCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoC_RCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoC_RCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoC_RCG.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoC_RCG.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoC_RCG.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\forge\components\VarLengthBuild.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__components__VarLengthBuild.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__components__VarLengthBuild.xdc</XMLDocumentationFileName>
@@ -522,6 +437,96 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__components__BDR.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__components__BDR.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__components__BDR.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\constraints\RemoveRemodelCsts.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveRemodelCsts.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveRemodelCsts.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveRemodelCsts.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveRemodelCsts.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveRemodelCsts.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveRemodelCsts.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveRemodelCsts.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__RemoveRemodelCsts.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\constraints\NtoCConstraintGenerator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoCConstraintGenerator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoCConstraintGenerator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoCConstraintGenerator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoCConstraintGenerator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoCConstraintGenerator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoCConstraintGenerator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoCConstraintGenerator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__NtoCConstraintGenerator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\constraints\InverseRotamersRCG.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InverseRotamersRCG.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\constraints\InvrotTreeRCG.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__constraints__InvrotTreeRCG.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\methods\util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__util.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\methods\chainbreak_eval.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__chainbreak_eval.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\methods\fragment_functions.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fragment_functions.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\methods\pose_mod.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__pose_mod.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\forge\methods\fold_tree_functions.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__methods__fold_tree_functions.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\cluster\cluster.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__cluster.obj</ObjectFileName>
@@ -652,26 +657,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__forge__build__GrowLeft.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__build__GrowLeft.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__forge__build__GrowLeft.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\pose_selectors\ClusterPoseSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\pose_selectors\BasicPoseSelectors.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\loophash\LoopHashSampler.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__loophash__LoopHashSampler.obj</ObjectFileName>
@@ -833,14 +818,126 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__loophash__LoopHashRelaxProtocol.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__loophash__LoopHashRelaxProtocol.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\pose_selectors\ClusterPoseSelector.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__ClusterPoseSelector.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\pose_selectors\BasicPoseSelectors.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__pose_selectors__BasicPoseSelectors.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\cluster\calibur\pdb_util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__pdb_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__pdb_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__pdb_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__pdb_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__pdb_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__pdb_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__pdb_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__pdb_util.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\cluster\calibur\PreloadedPDB.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__PreloadedPDB.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__PreloadedPDB.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__PreloadedPDB.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__PreloadedPDB.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__PreloadedPDB.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__PreloadedPDB.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__PreloadedPDB.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__PreloadedPDB.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\cluster\calibur\cubic.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__cubic.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__cubic.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__cubic.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__cubic.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__cubic.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__cubic.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__cubic.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__cubic.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\cluster\calibur\jacobi.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__jacobi.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__jacobi.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__jacobi.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__jacobi.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__jacobi.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__jacobi.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__jacobi.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__jacobi.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\cluster\calibur\SimPDB.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__SimPDB.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__SimPDB.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__SimPDB.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__SimPDB.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__SimPDB.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__SimPDB.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__SimPDB.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__SimPDB.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\cluster\calibur\Clustering.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__Clustering.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__Clustering.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__Clustering.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__Clustering.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__Clustering.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__Clustering.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__Clustering.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__Clustering.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\cluster\calibur\InitCluster.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__InitCluster.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__InitCluster.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__InitCluster.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__InitCluster.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__InitCluster.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__InitCluster.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__InitCluster.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__InitCluster.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\cluster\calibur\AdjacentList.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__AdjacentList.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__AdjacentList.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__AdjacentList.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__AdjacentList.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__AdjacentList.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__AdjacentList.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__AdjacentList.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__AdjacentList.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\cluster\calibur\rmsd.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__rmsd.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__rmsd.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__rmsd.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__rmsd.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__rmsd.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__rmsd.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__rmsd.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.4__protocols__cluster__calibur__rmsd.xdc</XMLDocumentationFileName>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelConstraintGenerator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelLigandHandler.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelEnzdesCstModule.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelLoopMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelGlobalFrame.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelRotamerLinksCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\ResidueVicinityRCG.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelLigandHandler.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelLoopMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelData.hh" />
@@ -855,11 +952,6 @@
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelGlobalFrame.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\remodel\RemodelRotamerLinks.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\methods\fold_tree_functions.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\methods\fragment_functions.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\methods\pose_mod.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\methods\util.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\methods\chainbreak_eval.hh" />
     <ClInclude Include="..\..\..\src\protocols\pockets\PocketConstraint.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\pockets\PocketConstraint.hh" />
     <ClInclude Include="..\..\..\src\protocols\pockets\Fingerprint.hh" />
@@ -875,24 +967,26 @@
     <ClInclude Include="..\..\..\src\protocols\pockets\GenPharmacophore.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\pockets\PocketGrid.hh" />
     <ClInclude Include="..\..\..\src\protocols\pockets\PocketExemplarMultifunc.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\RemoveCsts.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\NtoC_RCG.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InvrotTreeRCG.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\NtoC_RCG.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\NtoCCstGeneratorCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InverseRotamersRCG.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InverseRotamersCstGeneratorCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InvrotTreeCstGeneratorCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\ConstraintFileCstGeneratorCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\ConstraintFileRCG.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InvrotTreeRCG.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InverseRotamersRCG.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\RemoveCstsCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\forge\constraints\ConstraintFileRCG.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\components\VarLengthBuild.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\components\VarLengthBuild.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\components\BDR.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\components\BDR.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InvrotTreeRCG.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\NtoCConstraintGeneratorCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InverseRotamersRCG.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InverseRotamersCstGeneratorCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InvrotTreeCstGeneratorCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InvrotTreeRCG.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\InverseRotamersRCG.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\RemoveRemodelCstsCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\NtoCConstraintGenerator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\RemoveRemodelCsts.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\constraints\NtoCConstraintGenerator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\methods\fold_tree_functions.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\methods\fragment_functions.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\methods\pose_mod.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\methods\util.hh" />
+    <ClInclude Include="..\..\..\src\protocols\forge\methods\chainbreak_eval.hh" />
     <ClInclude Include="..\..\..\src\protocols\cluster\APCluster.hh" />
     <ClInclude Include="..\..\..\src\protocols\cluster\APCluster.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\cluster\cluster.hh" />
@@ -922,10 +1016,6 @@
     <ClInclude Include="..\..\..\src\protocols\forge\build\RelativeConnectRight.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\build\RelativeSequencePosition.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\forge\build\GrowLeft.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\pose_selectors\BasicPoseSelectors.hh" />
-    <ClInclude Include="..\..\..\src\protocols\pose_selectors\BasicPoseSelectorCreators.hh" />
-    <ClInclude Include="..\..\..\src\protocols\pose_selectors\ClusterPoseSelector.hh" />
-    <ClInclude Include="..\..\..\src\protocols\pose_selectors\ClusterPoseSelectorCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\loophash\MPI_LoopHashRefine_Master.hh" />
     <ClInclude Include="..\..\..\src\protocols\loophash\LoopHashDiversifierCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\loophash\LoopHashLibraryOptions.hh" />
@@ -953,6 +1043,21 @@
     <ClInclude Include="..\..\..\src\protocols\loophash\MPI_LoopHashRefine.hh" />
     <ClInclude Include="..\..\..\src\protocols\loophash\FastGapMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\loophash\MPI_LoopHashRefine_Emperor.hh" />
+    <ClInclude Include="..\..\..\src\protocols\pose_selectors\BasicPoseSelectors.hh" />
+    <ClInclude Include="..\..\..\src\protocols\pose_selectors\BasicPoseSelectorCreators.hh" />
+    <ClInclude Include="..\..\..\src\protocols\pose_selectors\ClusterPoseSelector.hh" />
+    <ClInclude Include="..\..\..\src\protocols\pose_selectors\ClusterPoseSelectorCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\jacobi.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\InitCluster.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\pdb_util.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\AdjacentList.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\PreloadedPDB.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\Clustering.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\cubic.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\PreloadedPDB.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\rmsd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\SimPDB.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\cluster\calibur\SimPDB.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

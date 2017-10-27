@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -34,24 +34,28 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -59,6 +63,7 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -185,7 +190,7 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external;..\..\..\external\boost_1_55_0;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;..\..\external\boinc\api;..\..\..\external\boinc\api;..\..\..\external\dbio;..\..\..\external\libxml2\include;..\..\..\external\cifparse;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;BOINC;_LIB;ZLIB_WINAPI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -230,6 +235,26 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\numeric\geometry\ring_plane.functions.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__geometry__ring_plane.functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__geometry__ring_plane.functions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__geometry__ring_plane.functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__geometry__ring_plane.functions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__geometry__ring_plane.functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__geometry__ring_plane.functions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__geometry__ring_plane.functions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__geometry__ring_plane.functions.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\geometry\BoundingBox.srlz.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__geometry__BoundingBox.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__geometry__BoundingBox.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__geometry__BoundingBox.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__geometry__BoundingBox.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__geometry__BoundingBox.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__geometry__BoundingBox.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__geometry__BoundingBox.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__geometry__BoundingBox.srlz.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\nls\lmmin.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__nls__lmmin.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__nls__lmmin.xdc</XMLDocumentationFileName>
@@ -350,76 +375,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__expression_parser__Arithmetic.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__expression_parser__Arithmetic.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\agglomerative_hierarchical_clustering.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\polynomial.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__polynomial.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__polynomial.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__polynomial.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__polynomial.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__polynomial.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__polynomial.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__polynomial.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__polynomial.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\prob_util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__prob_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__prob_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__prob_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__prob_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__prob_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__prob_util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__prob_util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__prob_util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\ClusteringTreeNode.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\roc_curve.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__roc_curve.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__roc_curve.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__roc_curve.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__roc_curve.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__roc_curve.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__roc_curve.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__roc_curve.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__roc_curve.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\constants.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__constants.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__constants.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__constants.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__constants.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__constants.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__constants.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__constants.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__constants.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__util.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\MultiDimensionalHistogram.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__MultiDimensionalHistogram.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__MultiDimensionalHistogram.xdc</XMLDocumentationFileName>
@@ -450,6 +405,106 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__Calculator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__Calculator.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\HomogeneousTransform.srlz.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__HomogeneousTransform.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__HomogeneousTransform.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__HomogeneousTransform.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__HomogeneousTransform.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__HomogeneousTransform.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__HomogeneousTransform.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__HomogeneousTransform.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__HomogeneousTransform.srlz.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\polynomial.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__polynomial.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__polynomial.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__polynomial.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__polynomial.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__polynomial.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__polynomial.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__polynomial.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__polynomial.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\roc_curve.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__roc_curve.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__roc_curve.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__roc_curve.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__roc_curve.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__roc_curve.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__roc_curve.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__roc_curve.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__roc_curve.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\constants.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__constants.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__constants.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__constants.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__constants.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__constants.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__constants.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__constants.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__constants.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\xyz.serialization.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__xyz.serialization.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__xyz.serialization.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__xyz.serialization.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__xyz.serialization.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__xyz.serialization.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__xyz.serialization.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__xyz.serialization.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__xyz.serialization.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\ClusteringTreeNode.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__ClusteringTreeNode.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__util.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\agglomerative_hierarchical_clustering.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\MathVector.srlz.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\prob_util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__prob_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__prob_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__prob_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__prob_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__prob_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__prob_util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__prob_util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__prob_util.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\color_util.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__color_util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__color_util.xdc</XMLDocumentationFileName>
@@ -470,16 +525,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__dixon.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__dixon.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\kinematic_closure\bridgeObjects.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\kinematic_closure\sturm.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__sturm.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__sturm.xdc</XMLDocumentationFileName>
@@ -490,6 +535,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__sturm.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__sturm.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\kinematic_closure\bridgeObjects.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\kinematic_closure\kinematic_closure_helpers.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__kinematic_closure_helpers.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__kinematic_closure_helpers.xdc</XMLDocumentationFileName>
@@ -499,6 +554,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__kinematic_closure_helpers.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__kinematic_closure_helpers.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__kinematic_closure_helpers.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\kinematic_closure\bridgeObjects_nonredundant.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects_nonredundant.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects_nonredundant.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects_nonredundant.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects_nonredundant.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects_nonredundant.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects_nonredundant.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects_nonredundant.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__kinematic_closure__bridgeObjects_nonredundant.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\kinematic_closure\vector.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__kinematic_closure__vector.obj</ObjectFileName>
@@ -540,6 +605,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__geometry__hashing__SixDHasher.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__geometry__hashing__SixDHasher.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\linear_algebra\singular_value_decomposition.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__linear_algebra__singular_value_decomposition.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__linear_algebra__singular_value_decomposition.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__linear_algebra__singular_value_decomposition.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__linear_algebra__singular_value_decomposition.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__linear_algebra__singular_value_decomposition.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__linear_algebra__singular_value_decomposition.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__linear_algebra__singular_value_decomposition.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__linear_algebra__singular_value_decomposition.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\linear_algebra\rgg.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__linear_algebra__rgg.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__linear_algebra__rgg.xdc</XMLDocumentationFileName>
@@ -550,26 +625,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__linear_algebra__rgg.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__linear_algebra__rgg.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Bicubic_spline.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Bicubic_spline.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Bicubic_spline.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Bicubic_spline.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Bicubic_spline.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Bicubic_spline.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Bicubic_spline.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Bicubic_spline.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\numeric\interpolation\spline\Cubic_spline.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Cubic_spline.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Cubic_spline.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Cubic_spline.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Cubic_spline.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Cubic_spline.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Cubic_spline.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Cubic_spline.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__Cubic_spline.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\interpolation\spline\SimpleInterpolator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__SimpleInterpolator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__SimpleInterpolator.xdc</XMLDocumentationFileName>
@@ -579,6 +634,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__SimpleInterpolator.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__SimpleInterpolator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__SimpleInterpolator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\interpolation\spline\BicubicSpline.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__BicubicSpline.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__BicubicSpline.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__spline__BicubicSpline.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__spline__BicubicSpline.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__BicubicSpline.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__BicubicSpline.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__BicubicSpline.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__BicubicSpline.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\interpolation\spline\TricubicSpline.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__TricubicSpline.obj</ObjectFileName>
@@ -629,6 +694,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CompoundInterpolator.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CompoundInterpolator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CompoundInterpolator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\interpolation\spline\CubicSpline.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CubicSpline.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CubicSpline.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CubicSpline.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CubicSpline.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CubicSpline.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CubicSpline.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CubicSpline.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__spline__CubicSpline.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\interpolation\spline\PolycubicSpline.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__spline__PolycubicSpline.obj</ObjectFileName>
@@ -700,6 +775,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__model_quality__RmsData.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__model_quality__RmsData.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\interpolation\Histogram.srlz.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__Histogram.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__Histogram.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__Histogram.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__interpolation__Histogram.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__Histogram.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__interpolation__Histogram.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__Histogram.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__interpolation__Histogram.srlz.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\interpolation\util.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__interpolation__util.xdc</XMLDocumentationFileName>
@@ -729,6 +814,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__fourier__kiss_fft_state.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__fourier__kiss_fft_state.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__fourier__kiss_fft_state.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\fourier\SHT.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__fourier__SHT.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__fourier__SHT.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__fourier__SHT.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__fourier__SHT.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__fourier__SHT.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__fourier__SHT.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__fourier__SHT.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__fourier__SHT.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\fourier\kiss_fft.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__fourier__kiss_fft.obj</ObjectFileName>
@@ -762,6 +857,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\numeric\geometry\BoundingBox.hh" />
+    <ClInclude Include="..\..\..\src\numeric\geometry\BoundingBox.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\geometry\ring_plane.functions.hh" />
+    <ClInclude Include="..\..\..\src\numeric\geometry\BoundingBox.srlz.hh" />
     <ClInclude Include="..\..\..\src\numeric\nls\lmmin.hh" />
     <ClInclude Include="..\..\..\src\numeric\statistics\functions.hh" />
     <ClInclude Include="..\..\..\src\numeric\kdtree\KDTree.fwd.hh" />
@@ -782,73 +881,84 @@
     <ClInclude Include="..\..\..\src\numeric\kdtree\KDPoint.hh" />
     <ClInclude Include="..\..\..\src\numeric\expression_parser\Arithmetic.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\expression_parser\Arithmetic.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzTransform.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\xyzTransform.io.hh" />
-    <ClInclude Include="..\..\..\src\numeric\BodyPosition.hh" />
-    <ClInclude Include="..\..\..\src\numeric\polynomial.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzMatrix.hh" />
-    <ClInclude Include="..\..\..\src\numeric\Quaternion.hh" />
     <ClInclude Include="..\..\..\src\numeric\MultiDimensionalHistogram.hh" />
-    <ClInclude Include="..\..\..\src\numeric\MathMatrix_operations.hh" />
-    <ClInclude Include="..\..\..\src\numeric\wrap_angles.hh" />
-    <ClInclude Include="..\..\..\src\numeric\MathVector_operations.hh" />
     <ClInclude Include="..\..\..\src\numeric\IntervalSet.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyz.functions.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\sphericalVector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzVector.string.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyz.serialization.hh" />
     <ClInclude Include="..\..\..\src\numeric\constants.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyz.json.hh" />
-    <ClInclude Include="..\..\..\src\numeric\prob_util.hh" />
     <ClInclude Include="..\..\..\src\numeric\Calculator.hh" />
-    <ClInclude Include="..\..\..\src\numeric\Quaternion.io.hh" />
     <ClInclude Include="..\..\..\src\numeric\EulerAngles.hh" />
-    <ClInclude Include="..\..\..\src\numeric\color_util.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzMatrix.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzMatrix.hh" />
+    <ClInclude Include="..\..\..\src\numeric\sphericalVector.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\util.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzVector.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathTensor.hh" />
+    <ClInclude Include="..\..\..\src\numeric\trig.functions.hh" />
+    <ClInclude Include="..\..\..\src\numeric\HomogeneousTransform.srlz.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathMatrix.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzTriple.io.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzTriple.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathNTensor.hh" />
+    <ClInclude Include="..\..\..\src\numeric\ClusteringTreeNode.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzTransform.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathNTensor.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathMatrix_operations.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathVector_operations.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyz.functions.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyz.json.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathNTensorBase.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzTransform.hh" />
+    <ClInclude Include="..\..\..\src\numeric\roc_curve.hh" />
+    <ClInclude Include="..\..\..\src\numeric\BodyPosition.io.hh" />
+    <ClInclude Include="..\..\..\src\numeric\cyclic_coordinate_descent.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolate.hh" />
+    <ClInclude Include="..\..\..\src\numeric\IOTraits.hh" />
+    <ClInclude Include="..\..\..\src\numeric\angle.functions.hh" />
+    <ClInclude Include="..\..\..\src\numeric\sphericalVector.hh" />
+    <ClInclude Include="..\..\..\src\numeric\UniformRotationSampler.hh" />
+    <ClInclude Include="..\..\..\src\numeric\PCA.hh" />
+    <ClInclude Include="..\..\..\src\numeric\BodyPosition.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\HomogeneousTransform.hh" />
+    <ClInclude Include="..\..\..\src\numeric\roc_curve.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\ClusteringTreeNode.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzVector.io.hh" />
+    <ClInclude Include="..\..\..\src\numeric\BodyPosition.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathNTensorBase.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\Quaternion.io.hh" />
     <ClInclude Include="..\..\..\src\numeric\xyzVector.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\EulerAngles.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\wrap_angles.hh" />
+    <ClInclude Include="..\..\..\src\numeric\NumericTraits.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyz.functions.hh" />
+    <ClInclude Include="..\..\..\src\numeric\types.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzTriple.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathVector.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathVector.srlz.hh" />
+    <ClInclude Include="..\..\..\src\numeric\agglomerative_hierarchical_clustering.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MultiDimensionalHistogram.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\HomogeneousTransform.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyz.io.hh" />
+    <ClInclude Include="..\..\..\src\numeric\polynomial.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\polynomial.hh" />
+    <ClInclude Include="..\..\..\src\numeric\UniformRotationSampler.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\Quaternion.hh" />
+    <ClInclude Include="..\..\..\src\numeric\xyzVector.string.hh" />
+    <ClInclude Include="..\..\..\src\numeric\prob_util.hh" />
+    <ClInclude Include="..\..\..\src\numeric\color_util.hh" />
     <ClInclude Include="..\..\..\src\numeric\all.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\xyzMatrix.io.hh" />
     <ClInclude Include="..\..\..\src\numeric\Calculator.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\EulerAngles.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzTransform.hh" />
-    <ClInclude Include="..\..\..\src\numeric\util.hh" />
-    <ClInclude Include="..\..\..\src\numeric\roc_curve.hh" />
-    <ClInclude Include="..\..\..\src\numeric\BodyPosition.io.hh" />
     <ClInclude Include="..\..\..\src\numeric\Quaternion.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzVector.hh" />
-    <ClInclude Include="..\..\..\src\numeric\MathTensor.hh" />
-    <ClInclude Include="..\..\..\src\numeric\cyclic_coordinate_descent.hh" />
-    <ClInclude Include="..\..\..\src\numeric\NumericTraits.hh" />
-    <ClInclude Include="..\..\..\src\numeric\PCA.hh" />
-    <ClInclude Include="..\..\..\src\numeric\trig.functions.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzVector.io.hh" />
-    <ClInclude Include="..\..\..\src\numeric\interpolate.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyz.functions.hh" />
-    <ClInclude Include="..\..\..\src\numeric\io.hh" />
-    <ClInclude Include="..\..\..\src\numeric\IOTraits.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzTriple.io.hh" />
+    <ClInclude Include="..\..\..\src\numeric\DiscreteIntervalEncodingTree.hh" />
     <ClInclude Include="..\..\..\src\numeric\numeric.functions.hh" />
-    <ClInclude Include="..\..\..\src\numeric\MathMatrix.hh" />
-    <ClInclude Include="..\..\..\src\numeric\sphericalVector.hh" />
-    <ClInclude Include="..\..\..\src\numeric\types.hh" />
-    <ClInclude Include="..\..\..\src\numeric\angle.functions.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzTriple.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\conversions.hh" />
-    <ClInclude Include="..\..\..\src\numeric\polynomial.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\ClusteringTreeNode.hh" />
-    <ClInclude Include="..\..\..\src\numeric\MultiDimensionalHistogram.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\IntervalSet.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\BodyPosition.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzMatrix.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyzTriple.hh" />
-    <ClInclude Include="..\..\..\src\numeric\MathVector.hh" />
-    <ClInclude Include="..\..\..\src\numeric\MathNTensor.hh" />
-    <ClInclude Include="..\..\..\src\numeric\agglomerative_hierarchical_clustering.hh" />
-    <ClInclude Include="..\..\..\src\numeric\HomogeneousTransform.hh" />
-    <ClInclude Include="..\..\..\src\numeric\HomogeneousTransform.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\xyz.io.hh" />
-    <ClInclude Include="..\..\..\src\numeric\roc_curve.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\ClusteringTreeNode.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\conversions.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathNTensor_io.hh" />
+    <ClInclude Include="..\..\..\src\numeric\io.hh" />
     <ClInclude Include="..\..\..\src\numeric\kinematic_closure\kinematic_closure_helpers.hh" />
     <ClInclude Include="..\..\..\src\numeric\kinematic_closure\closure.hh" />
+    <ClInclude Include="..\..\..\src\numeric\kinematic_closure\bridgeObjects_nonredundant.hh" />
     <ClInclude Include="..\..\..\src\numeric\kinematic_closure\sturm.hh" />
     <ClInclude Include="..\..\..\src\numeric\kinematic_closure\vector.hh" />
     <ClInclude Include="..\..\..\src\numeric\kinematic_closure\dixon.hh" />
@@ -861,21 +971,25 @@
     <ClInclude Include="..\..\..\src\numeric\geometry\hashing\xyzStripeHash.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\geometry\hashing\SixDHasher.hh" />
     <ClInclude Include="..\..\..\src\numeric\linear_algebra\GeneralizedEigenSolver.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\linear_algebra\singular_value_decomposition.hh" />
     <ClInclude Include="..\..\..\src\numeric\linear_algebra\rgg.hh" />
     <ClInclude Include="..\..\..\src\numeric\linear_algebra\GeneralizedEigenSolver.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\BicubicSpline.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\spline\SplineGenerator.hh" />
-    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\PolycubicSplineBase.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\spline\CompoundInterpolator.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\CubicSpline.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\spline\PolycubicSpline.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.hh" />
-    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\Cubic_spline.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\PolycubicSplineBase.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\spline\spline_functions.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\spline\TricubicSpline.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\spline\PolycubicSpline.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\PolycubicSpline.tmpl.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\spline\TricubicSpline.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\Cubic_spline.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\spline\Interpolator.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\spline\SimpleInterpolator.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\BicubicSpline.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\spline\CubicSpline.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\random\mt19937.hh" />
     <ClInclude Include="..\..\..\src\numeric\random\random_xyz.hh" />
     <ClInclude Include="..\..\..\src\numeric\random\uniform.fwd.hh" />
@@ -892,11 +1006,17 @@
     <ClInclude Include="..\..\..\src\numeric\model_quality\RmsData.hh" />
     <ClInclude Include="..\..\..\src\numeric\model_quality\maxsub.hh" />
     <ClInclude Include="..\..\..\src\numeric\model_quality\rms.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\Histogram.srlz.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\InterpolatedPotential.tmpl.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\InterpolatedPotential.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\Histogram.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\interpolation.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\Histogram.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\interpolation\util.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\InterpolatedPotential.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\interpolation\polycubic_catmull_rom.hh" />
     <ClInclude Include="..\..\..\src\numeric\fourier\kiss_fft_state.hh" />
+    <ClInclude Include="..\..\..\src\numeric\fourier\SHT.hh" />
     <ClInclude Include="..\..\..\src\numeric\fourier\kiss_fft.hh" />
     <ClInclude Include="..\..\..\src\numeric\fourier\FFT.hh" />
     <ClInclude Include="..\..\..\src\numeric\crick_equations\HelixParams.hh" />

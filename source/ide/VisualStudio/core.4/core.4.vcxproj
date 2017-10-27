@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -33,6 +33,7 @@
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -40,18 +41,21 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -59,6 +63,7 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -211,7 +216,7 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external;..\..\..\external\boost_1_55_0;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;..\..\external\boinc\api;..\..\..\external\boinc\api;..\..\..\external\dbio;..\..\..\external\libxml2\include;..\..\..\external\cifparse;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -229,6 +234,26 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\core\pack\rotamer_set\RotamerLinks.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerLinks.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerLinks.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerLinks.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerLinks.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerLinks.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerLinks.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerLinks.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerLinks.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamer_set\bb_independent_rotamers.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamer_set\RotamerSet.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSet.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSet.xdc</XMLDocumentationFileName>
@@ -238,6 +263,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSet.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSet.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSet.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamer_set\DeleteAllRotamerSetOperation.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__DeleteAllRotamerSetOperation.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__DeleteAllRotamerSetOperation.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__DeleteAllRotamerSetOperation.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__DeleteAllRotamerSetOperation.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__DeleteAllRotamerSetOperation.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__DeleteAllRotamerSetOperation.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__DeleteAllRotamerSetOperation.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__DeleteAllRotamerSetOperation.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamer_set\RotamerSetOperation.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetOperation.obj</ObjectFileName>
@@ -258,16 +293,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__FixbbRotamerSets.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__FixbbRotamerSets.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__FixbbRotamerSets.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\rotamer_set\BumpSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamer_set\RotamerSets.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSets.obj</ObjectFileName>
@@ -319,15 +344,15 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__WaterAnchorInfo.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__WaterAnchorInfo.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\rotamer_set\bb_independent_rotamers.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\pack\rotamer_set\BumpSelector.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__BumpSelector.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamer_set\UnboundRotamersOperation.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__UnboundRotamersOperation.obj</ObjectFileName>
@@ -358,6 +383,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__rotamer_building_functions.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__rotamer_building_functions.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__rotamer_building_functions.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamer_set\RotamerCouplings.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerCouplings.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerCouplings.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerCouplings.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerCouplings.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerCouplings.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerCouplings.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerCouplings.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerCouplings.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamer_set\rna_rotamer_building_functions.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__rna_rotamer_building_functions.obj</ObjectFileName>
@@ -429,6 +464,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__OperateOnCertainResidues.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__OperateOnCertainResidues.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\task\operation\task_op_schemas.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__operation__task_op_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__operation__task_op_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__operation__task_op_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__operation__task_op_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__operation__task_op_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__operation__task_op_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__task_op_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__task_op_schemas.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\task\operation\OptH.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__operation__OptH.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__operation__OptH.xdc</XMLDocumentationFileName>
@@ -448,6 +493,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__operation__ReplicateTask.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__ReplicateTask.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__ReplicateTask.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\task\operation\EnableMultiCoolAnnealer.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__operation__EnableMultiCoolAnnealer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__operation__EnableMultiCoolAnnealer.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__operation__EnableMultiCoolAnnealer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__operation__EnableMultiCoolAnnealer.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__operation__EnableMultiCoolAnnealer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__operation__EnableMultiCoolAnnealer.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__EnableMultiCoolAnnealer.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__EnableMultiCoolAnnealer.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\task\operation\ResFilterFactory.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__operation__ResFilterFactory.obj</ObjectFileName>
@@ -579,6 +634,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SurfacePotential.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SurfacePotential.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\interaction_graph\MultiplexedAnnealableGraph.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__MultiplexedAnnealableGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__MultiplexedAnnealableGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__MultiplexedAnnealableGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__MultiplexedAnnealableGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__MultiplexedAnnealableGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__MultiplexedAnnealableGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__MultiplexedAnnealableGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__MultiplexedAnnealableGraph.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\interaction_graph\SymmOnTheFlyInteractionGraph.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.xdc</XMLDocumentationFileName>
@@ -599,16 +664,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__OnTheFlyInteractionGraph.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__OnTheFlyInteractionGraph.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\interaction_graph\SymmMinimalistInteractionGraph.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\interaction_graph\LazyInteractionGraph.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__LazyInteractionGraph.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__LazyInteractionGraph.xdc</XMLDocumentationFileName>
@@ -618,6 +673,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__LazyInteractionGraph.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__LazyInteractionGraph.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__LazyInteractionGraph.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\interaction_graph\NPDHBondInteractionGraph.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBondInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBondInteractionGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBondInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBondInteractionGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBondInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBondInteractionGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBondInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBondInteractionGraph.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\interaction_graph\DoubleDensePDInteractionGraph.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__DoubleDensePDInteractionGraph.obj</ObjectFileName>
@@ -638,6 +703,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__DoubleLazyInteractionGraph.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__DoubleLazyInteractionGraph.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__DoubleLazyInteractionGraph.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\interaction_graph\ResidueArrayAnnealingEvaluator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__ResidueArrayAnnealingEvaluator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__ResidueArrayAnnealingEvaluator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__ResidueArrayAnnealingEvaluator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__ResidueArrayAnnealingEvaluator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__ResidueArrayAnnealingEvaluator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__ResidueArrayAnnealingEvaluator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__ResidueArrayAnnealingEvaluator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__ResidueArrayAnnealingEvaluator.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\interaction_graph\FASTERInteractionGraph.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__FASTERInteractionGraph.obj</ObjectFileName>
@@ -689,6 +764,36 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__RotamerDots.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__RotamerDots.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\interaction_graph\NPDHBSimpleInteractionGraph.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBSimpleInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBSimpleInteractionGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBSimpleInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBSimpleInteractionGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBSimpleInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBSimpleInteractionGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBSimpleInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__NPDHBSimpleInteractionGraph.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\interaction_graph\SymmMinimalistInteractionGraph.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\interaction_graph\AnnealableGraphBase.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__AnnealableGraphBase.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__AnnealableGraphBase.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__AnnealableGraphBase.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__interaction_graph__AnnealableGraphBase.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__AnnealableGraphBase.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__AnnealableGraphBase.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__AnnealableGraphBase.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__AnnealableGraphBase.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\interaction_graph\FixedBBInteractionGraph.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__FixedBBInteractionGraph.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__FixedBBInteractionGraph.xdc</XMLDocumentationFileName>
@@ -738,6 +843,26 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__interaction_graph__HPatchEnergy.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__HPatchEnergy.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__HPatchEnergy.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\dunbrack\cenrot\SingleResidueCenrotLibraryCreator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\dunbrack\cenrot\CenrotLibrary.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__CenrotLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__CenrotLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__CenrotLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__CenrotLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__CenrotLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__CenrotLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__CenrotLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__CenrotLibrary.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\dunbrack\cenrot\CenRotDunEnergy.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__CenRotDunEnergy.obj</ObjectFileName>
@@ -798,6 +923,106 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__optimization__symmetry__sym_atom_tree_minimize.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__optimization__symmetry__sym_atom_tree_minimize.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__optimization__symmetry__sym_atom_tree_minimize.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibraryFactory.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryFactory.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibraryCreator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibraryCreator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibrary.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibrary.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\StoredRotamerLibraryCreator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__StoredRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__StoredRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__StoredRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__StoredRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__StoredRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__StoredRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__StoredRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__StoredRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibraryCreator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibraryCreator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibrary.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResidueRotamerLibrary.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleNCAARotamerLibraryCreator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleNCAARotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleNCAARotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleNCAARotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleNCAARotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleNCAARotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleNCAARotamerLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleNCAARotamerLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleNCAARotamerLibraryCreator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleBasicRotamerLibrary.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleBasicRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleBasicRotamerLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleBasicRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleBasicRotamerLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleBasicRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleBasicRotamerLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleBasicRotamerLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleBasicRotamerLibrary.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\task\rna\RNA_ResidueLevelTask.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__rna__RNA_ResidueLevelTask.obj</ObjectFileName>
@@ -968,6 +1193,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__optimization__AtomTreeMinimizer.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__optimization__AtomTreeMinimizer.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__optimization__AtomTreeMinimizer.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__util.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\pack_rotamers.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__pack_rotamers.obj</ObjectFileName>
@@ -1229,16 +1464,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSets.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSets.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\operation\util\interface_vector_calculate.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__operation__util__interface_vector_calculate.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__operation__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__operation__util__interface_vector_calculate.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__operation__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__operation__util__interface_vector_calculate.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__operation__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__util__interface_vector_calculate.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__operation__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\dunbrack\DunbrackEnergy.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__DunbrackEnergy.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__DunbrackEnergy.xdc</XMLDocumentationFileName>
@@ -1248,26 +1473,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__DunbrackEnergy.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__DunbrackEnergy.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__DunbrackEnergy.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\dunbrack\SingleLigandRotamerLibrary.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleLigandRotamerLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleLigandRotamerLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleLigandRotamerLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleLigandRotamerLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\dunbrack\SingleResiduePeptoidLibrary.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\dunbrack\RotamerLibraryScratchSpace.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamerLibraryScratchSpace.obj</ObjectFileName>
@@ -1309,16 +1514,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibrary.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibrary.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\dunbrack\SingleResidueRotamerLibrary.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueRotamerLibrary.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\dunbrack\DunbrackConstraint.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__DunbrackConstraint.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__DunbrackConstraint.xdc</XMLDocumentationFileName>
@@ -1348,6 +1543,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamerLibrary.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamerLibrary.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamerLibrary.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibraryCreator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibraryCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibraryCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__SingleResidueDunbrackLibraryCreator.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\task\RotamerSampleOptions.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__RotamerSampleOptions.obj</ObjectFileName>
@@ -1379,6 +1584,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__PackerTask.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__PackerTask.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\task\ResidueLevelTask.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\task\IGEdgeReweightContainer.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__IGEdgeReweightContainer.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__IGEdgeReweightContainer.xdc</XMLDocumentationFileName>
@@ -1398,6 +1613,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__ResfileReader.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__ResfileReader.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__ResfileReader.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\task\ResidueLevelTask_.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask_.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask_.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask_.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask_.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask_.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask_.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask_.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__ResidueLevelTask_.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\task\PackerTask_.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__PackerTask_.obj</ObjectFileName>
@@ -1439,16 +1664,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__util__ChainbreakUtil.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__util__ChainbreakUtil.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\util\ABEGOManager.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__util__ABEGOManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__util__ABEGOManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__util__ABEGOManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__util__ABEGOManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__util__ABEGOManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__util__ABEGOManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__util__ABEGOManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__util__ABEGOManager.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\util\cryst_util.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__util__cryst_util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__util__cryst_util.xdc</XMLDocumentationFileName>
@@ -1479,26 +1694,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__util__SwitchResidueTypeSet.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__util__SwitchResidueTypeSet.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\NeighborhoodResidueSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NeighborhoodResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NeighborhoodResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NeighborhoodResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NeighborhoodResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NeighborhoodResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NeighborhoodResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NeighborhoodResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NeighborhoodResidueSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\ResidueSelectorFactory.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelectorFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelectorFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelectorFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelectorFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelectorFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelectorFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelectorFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelectorFactory.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\ClashBasedRepackShellSelector.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc</XMLDocumentationFileName>
@@ -1509,134 +1704,26 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\ResidueIndexSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueIndexSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueIndexSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueIndexSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueIndexSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueIndexSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueIndexSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueIndexSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueIndexSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\InterGroupInterfaceByVectorSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__InterGroupInterfaceByVectorSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__InterGroupInterfaceByVectorSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__InterGroupInterfaceByVectorSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__InterGroupInterfaceByVectorSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__InterGroupInterfaceByVectorSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__InterGroupInterfaceByVectorSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__InterGroupInterfaceByVectorSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__InterGroupInterfaceByVectorSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\OrResidueSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__OrResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__OrResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__OrResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__OrResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__OrResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__OrResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__OrResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__OrResidueSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\ChainSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ChainSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ChainSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ChainSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ChainSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ChainSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ChainSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ChainSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ChainSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\TrueResidueSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__TrueResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__TrueResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__TrueResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__TrueResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__TrueResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__TrueResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__TrueResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__TrueResidueSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\JumpDownstreamSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpDownstreamSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpDownstreamSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpDownstreamSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpDownstreamSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpDownstreamSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpDownstreamSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpDownstreamSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpDownstreamSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\ResidueSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ResidueSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\JumpUpstreamSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpUpstreamSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpUpstreamSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpUpstreamSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpUpstreamSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpUpstreamSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpUpstreamSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpUpstreamSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__JumpUpstreamSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\NotResidueSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NotResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NotResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NotResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NotResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NotResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NotResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NotResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NotResidueSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\NumNeighborsSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NumNeighborsSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NumNeighborsSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NumNeighborsSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NumNeighborsSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NumNeighborsSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NumNeighborsSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NumNeighborsSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__NumNeighborsSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\AndResidueSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__AndResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__AndResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__AndResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__AndResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__AndResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__AndResidueSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__AndResidueSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__AndResidueSelector.xdc</XMLDocumentationFileName>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\rna_rotamer_building_functions.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerSubset.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamer_set\FixbbRotamerSets.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerSetFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\WaterPackingInfo.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\AddResiduesRotamerSetOperation.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerSubsets.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerSetOperation.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerSet_.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerSubsets.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamer_set\FixbbRotamerSets.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\BumpSelector.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerCouplings.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\ContinuousRotamerSet.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\FixbbRotamerSets.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\ContinuousRotamerSet.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamer_set\DeleteAllRotamerSetOperation.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\UnboundRotamersOperation.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerSetOperation.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamer_set\DeleteAllRotamerSetOperation.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerSet.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\WaterPackingInfo.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerSetFactory.hh" />
@@ -1656,16 +1743,18 @@
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\rotamer_building_functions.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\RotamerCouplings.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\WaterAnchorInfo.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\operation\TaskOperation.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResLvlTaskOperationFactory.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\operation\ResLvlTaskOperationFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResFilter.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\OptH.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\TaskOperations.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\operation\task_op_schemas.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\OperateOnCertainResiduesCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResFilterFactory.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResLvlTaskOperationCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\TaskOperationRegistrator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\TaskOperationFactory.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\operation\TaskOperation.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\OptCysHGCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResLvlTaskOperationCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\OperateOnResidueSubset.hh" />
@@ -1684,6 +1773,8 @@
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ReplicateTask.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\OptHCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\TaskOperationFactory.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\operation\ResFilters.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\operation\EnableMultiCoolAnnealer.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResLvlTaskOperationRegistrator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResFilters.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\NoRepackDisulfides.fwd.hh" />
@@ -1694,22 +1785,23 @@
     <ClInclude Include="..\..\..\src\core\pack\task\operation\TaskOperation.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\OperateOnResidueSubset.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\OperateOnCertainResidues.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\operation\ResLvlTaskOperationFactory.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\operation\EnableMultiCoolAnnealerCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\OperateOnResidueSubsetCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\operation\ResFilters.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\operation\OperateOnCertainResidues.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\OptCysHG.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResLvlTaskOperations.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\operation\ReplicateTaskCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\TaskOperations.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResFilterFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\operation\ResLvlTaskOperation.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\operation\OperateOnCertainResidues.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\operation\EnableMultiCoolAnnealer.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\AdditionalBackgroundNodesInteractionGraph.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SurfacePotential.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\NPDHBSimpleInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\FixedBBInteractionGraph.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SurfacePotential.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\RotamerDots.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SymmMinimalistInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\HPatchEnergyCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\AnnealableGraphBase.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\AminoAcidNeighborSparseMatrix.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\DoubleDensePDInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SurfaceInteractionGraph.fwd.hh" />
@@ -1717,11 +1809,13 @@
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\DoubleLazyInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\DoubleDensePDInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SimpleInteractionGraph.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\MultiplexedAnnealableGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\HPatchEnergy.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SimpleInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\LinearMemoryInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\PrecomputedPairEnergiesInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\DensePDInteractionGraph.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\NPDHBondInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\HPatchEnergy.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\LazyInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SurfaceEnergy.hh" />
@@ -1729,34 +1823,44 @@
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\DoubleLazyInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\FASTERInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\PDInteractionGraph.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\PrecomputedPairEnergiesInteractionGraph.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\NPDHBondInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\PDInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\DensePDInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SparseMatrixIndex.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\OnTheFlyInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\InteractionGraphFactory.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\NPDHBSimpleInteractionGraph.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\InteractionGraphBase.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\RotamerDots.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\InteractionGraphBase.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SymmLinMemInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\LinearMemoryInteractionGraph.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\PrecomputedPairEnergiesInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SymmOnTheFlyInteractionGraph.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SymmMinimalistInteractionGraph.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SurfaceEnergy.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SurfaceInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\LazyInteractionGraph.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SurfaceEnergy.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\ResidueArrayAnnealingEvaluator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\HPatchInteractionGraph.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SurfaceEnergyCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SymmMinimalistInteractionGraph.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\ResidueArrayAnnealingEvaluator.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\InteractionGraphFactory.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\OnTheFlyInteractionGraph.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SymmOnTheFlyInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SparseMatrixIndex.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\MultiplexedAnnealableGraph.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SurfaceEnergyCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\FASTERInteractionGraph.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\InteractionGraphBase.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\interaction_graph\AnnealableGraphBase.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SymmLinMemInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\AminoAcidNeighborSparseMatrix.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\CenRotDunEnergy.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\SingleResidueCenrotLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\SingleResidueCenrotLibraryCreator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\CenrotLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\CenRotDunEnergyCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\CenrotLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\SingleResidueCenrotLibraryCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\SingleResidueCenrotLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\optimization\symmetry\sym_atom_tree_minimize.hh" />
     <ClInclude Include="..\..\..\src\core\optimization\symmetry\SymAtomTreeMultifunc.hh" />
@@ -1764,6 +1868,29 @@
     <ClInclude Include="..\..\..\src\core\optimization\symmetry\SymMinimizerMap.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\optimization\symmetry\SymAtomTreeMinimizer.hh" />
     <ClInclude Include="..\..\..\src\core\optimization\symmetry\SymAtomTreeMinimizer.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\RotamericSingleResiduePeptoidLibrary.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibraryCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\RotamericSingleResiduePeptoidLibrary.tmpl.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleBasicRotamerLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibrary.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibraryRegistrator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibraryCreator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibraryCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleNCAARotamerLibraryCreator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibraryCreator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\RotamericSingleResiduePeptoidLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibraryCreator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleBasicRotamerLibrary.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\StoredRotamerLibraryCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibraryFactory.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibrary.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleBasicRotamerLibraryCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibraryCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleNCAARotamerLibraryCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibrary.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\rna\RNA_ResidueLevelTask.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\rna\RNA_ResidueLevelTask.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\optimization\ParticleSwarmMinimizer.fwd.hh" />
@@ -1804,6 +1931,7 @@
     <ClInclude Include="..\..\..\src\core\pack\rtmin.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_trials.hh" />
     <ClInclude Include="..\..\..\src\core\pack\packer_neighbors.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\util.hh" />
     <ClInclude Include="..\..\..\src\core\pack\pack_rotamers.hh" />
     <ClInclude Include="..\..\..\src\core\pack\make_symmetric_task.hh" />
     <ClInclude Include="..\..\..\src\core\pack\optimizeH.hh" />
@@ -1845,27 +1973,21 @@
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\symmetry\SymmetricRotamerSets.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\symmetry\SymmetricRotamerSetFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamer_set\symmetry\SymmetricRotamerSet_.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\operation\util\interface_vector_calculate.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResiduePeptoidLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\ChiSet.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackConstraint.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackConstraintCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackEnergy.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResiduePeptoidLibrary.tmpl.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueRotamerLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackConstraint.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleLigandRotamerLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\ChiSet.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibraryCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibrary.tmpl.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerConstraint.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerLibrary.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResiduePeptoidLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibraryCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackEnergyCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResiduePeptoidLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibrary.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueRotamerLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerLibraryScratchSpace.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackRotamer.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibrary.hh" />
@@ -1874,12 +1996,12 @@
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SemiRotamericSingleResidueDunbrackLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleLigandRotamerLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SemiRotamericSingleResidueDunbrackLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerConstraint.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResiduePeptoidLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackRotamer.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\PackerTask_.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\ResidueLevelTask.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\ResidueLevelTask_.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\ResfileReader.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\TaskFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\RotamerSampleOptions.hh" />
@@ -1891,44 +2013,14 @@
     <ClInclude Include="..\..\..\src\core\pack\task\PackerTask.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\IGEdgeReweightContainer.hh" />
     <ClInclude Include="..\..\..\src\core\util\SwitchResidueTypeSet.hh" />
-    <ClInclude Include="..\..\..\src\core\util\ABEGOManager.hh" />
     <ClInclude Include="..\..\..\src\core\util\kinematics_util.hh" />
     <ClInclude Include="..\..\..\src\core\util\disulfide_util.hh" />
-    <ClInclude Include="..\..\..\src\core\util\ABEGOManager.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\util\metalloproteins_util.hh" />
-    <ClInclude Include="..\..\..\src\core\util\cryst_util.hh" />
     <ClInclude Include="..\..\..\src\core\util\ChainbreakUtil.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\JumpDownstreamSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\TrueResidueSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\AndResidueSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ResidueSelectorCreators.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\JumpUpstreamSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\JumpDownstreamSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ResidueSelectorRegistrator.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ResidueIndexSelector.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\util\cryst_util.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ClashBasedRepackShellSelectorCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ClashBasedRepackShellSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\NotResidueSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\TrueResidueSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ResidueSelectorCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ResidueSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\NotResidueSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ResidueSelectorFactory.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\NeighborhoodResidueSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\NumNeighborsSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\InterGroupInterfaceByVectorSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ResidueSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\NeighborhoodResidueSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\InterGroupInterfaceByVectorSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\AndResidueSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\NumNeighborsSelector.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ClashBasedRepackShellSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ChainSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ResidueSelectorCreator.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\OrResidueSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ChainSelector.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\JumpUpstreamSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\ResidueIndexSelector.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\task\residue_selector\OrResidueSelector.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

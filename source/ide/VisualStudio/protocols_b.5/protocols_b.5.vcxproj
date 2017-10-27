@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="BoincDebug|Win32">
       <Configuration>BoincDebug</Configuration>
@@ -33,6 +33,7 @@
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -40,18 +41,21 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLocal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -59,6 +63,7 @@
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -205,7 +210,7 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;..\..\..\external\dbio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external;..\..\..\external\boost_1_55_0;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;..\..\external\boinc\api;..\..\..\external\boinc\api;..\..\..\external\dbio;..\..\..\external\libxml2\include;..\..\..\external\cifparse;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOOST_ERROR_CODE_HEADER_ONLY;BOOST_SYSTEM_NO_DEPRECATED;PTR_BOOST;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -652,6 +657,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__IterativeAbrelax.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__IterativeAbrelax.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__IterativeAbrelax.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\abinitio\util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__util.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\abinitio\IterativeCentroid.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__abinitio__IterativeCentroid.obj</ObjectFileName>
@@ -1463,16 +1478,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TemplateHistory.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TemplateHistory.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\hybridization\CartesianSampler.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\hybridization\HybridizeFoldtreeDynamic.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeFoldtreeDynamic.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeFoldtreeDynamic.xdc</XMLDocumentationFileName>
@@ -1513,6 +1518,16 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__DDomainParse.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__DDomainParse.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\hybridization\CartesianSampler.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__CartesianSampler.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\hybridization\DomainAssembly.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__DomainAssembly.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__DomainAssembly.xdc</XMLDocumentationFileName>
@@ -1533,16 +1548,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeProtocol.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeProtocol.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\hybridization\HybridizeSetup.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeSetup.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeSetup.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeSetup.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeSetup.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeSetup.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeSetup.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeSetup.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__HybridizeSetup.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\hybridization\BackboneTorsionPerturbation.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.xdc</XMLDocumentationFileName>
@@ -1552,6 +1557,16 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__BackboneTorsionPerturbation.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\hybridization\TMalign.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TMalign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TMalign.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TMalign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TMalign.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TMalign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TMalign.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TMalign.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__TMalign.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\hybridization\FragmentBiasAssigner.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__FragmentBiasAssigner.obj</ObjectFileName>
@@ -1602,6 +1617,106 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__WeightedFragmentTrialMover.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__WeightedFragmentTrialMover.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__hybridization__WeightedFragmentTrialMover.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\loop_grower\SheetSampler.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__SheetSampler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__SheetSampler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__SheetSampler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__SheetSampler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__SheetSampler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__SheetSampler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__SheetSampler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__SheetSampler.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\loop_grower\DensSkeleton.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__DensSkeleton.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__DensSkeleton.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__DensSkeleton.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__DensSkeleton.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__DensSkeleton.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__DensSkeleton.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__DensSkeleton.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__DensSkeleton.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\loop_grower\FragmentExtension.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__FragmentExtension.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__FragmentExtension.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__FragmentExtension.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__FragmentExtension.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__FragmentExtension.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__FragmentExtension.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__FragmentExtension.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__FragmentExtension.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\loop_grower\LoopGrower.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__LoopGrower.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__LoopGrower.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__LoopGrower.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__LoopGrower.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__LoopGrower.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__LoopGrower.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__LoopGrower.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__LoopGrower.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\loop_grower\util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__loop_grower__util.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\LabelPoseFromResidueSelectorMover.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\SplitAndMixPoseMover.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SplitAndMixPoseMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SplitAndMixPoseMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SplitAndMixPoseMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SplitAndMixPoseMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SplitAndMixPoseMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SplitAndMixPoseMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SplitAndMixPoseMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SplitAndMixPoseMover.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\ReleaseConstraintFromResidueMover.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\SegmentedAtomPairConstraintGenerator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\RmsdFromResidueSelectorFilter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.5__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jumping\ResiduePairJumpSetup.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.5__protocols__jumping__ResiduePairJumpSetup.obj</ObjectFileName>
@@ -1907,6 +2022,7 @@
     <ClInclude Include="..\..\..\src\protocols\abinitio\AllResiduesChanged.hh" />
     <ClInclude Include="..\..\..\src\protocols\abinitio\KinematicTaskControl.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\abinitio\HedgeArchive.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\abinitio\util.hh" />
     <ClInclude Include="..\..\..\src\protocols\abinitio\StrandConstraints.hh" />
     <ClInclude Include="..\..\..\src\protocols\abinitio\Template.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\abinitio\PairingStatistics.hh" />
@@ -2077,28 +2193,24 @@
     <ClInclude Include="..\..\..\src\protocols\topology_broker\claims\LegacyRootClaim.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\topology_broker\claims\LegacyRootClaim.hh" />
     <ClInclude Include="..\..\..\src\protocols\topology_broker\claims\DofClaim.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\hybridization\TemplateHistory.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\BackboneTorsionSampler.hh" />
+    <ClInclude Include="..\..\..\src\protocols\hybridization\CartesianHybridize.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\AllResiduesChanged.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\HybridizeFoldtreeDynamic.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\CartesianSampler.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\DDomainParse.hh" />
-    <ClInclude Include="..\..\..\src\protocols\hybridization\HybridizeSetup.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\CartesianHybridize.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\HybridizeProtocolCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\hybridization\FoldTreeHybridizeCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\WeightedFragmentSmoothTrialMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\HybridizeFoldtreeDynamic.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\FragmentBiasAssigner.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\HybridizeProtocol.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\util.hh" />
-    <ClInclude Include="..\..\..\src\protocols\hybridization\CartesianHybridizeCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\WeightedFragmentSmoothTrialMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\FoldTreeHybridize.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\CartesianSampler.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\MRMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\TMalign.hh" />
-    <ClInclude Include="..\..\..\src\protocols\hybridization\HybridizeSetup.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\BackboneTorsionPerturbationCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\InsertChunkMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\BackboneTorsionPerturbation.hh" />
@@ -2109,11 +2221,34 @@
     <ClInclude Include="..\..\..\src\protocols\hybridization\TemplateHistory.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\DomainAssembly.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\DomainAssembly.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\hybridization\CartesianHybridize.hh" />
+    <ClInclude Include="..\..\..\src\protocols\hybridization\TemplateHistory.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\FoldTreeHybridize.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\WeightedFragmentTrialMover.hh" />
-    <ClInclude Include="..\..\..\src\protocols\hybridization\HybridizeSetupMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\hybridization\BackboneTorsionSamplerCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\FragmentExtensionCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\SheetSampler.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\SheetSampler.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\DensSkeleton.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\util.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\FragmentExtension.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\LoopGrower.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\LoopGrower.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\DensSkeleton.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\loop_grower\FragmentExtension.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\LabelPoseFromResidueSelectorMoverCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\RmsdFromResidueSelectorFilterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\ReleaseConstraintFromResidueMover.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\LabelPoseFromResidueSelectorMover.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\SplitAndMixPoseMover.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\ReleaseConstraintFromResidueMover.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\SegmentedAtomPairConstraintGeneratorCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\SegmentedAtomPairConstraintGenerator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\RmsdFromResidueSelectorFilter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\SplitAndMixPoseMoverCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\LabelPoseFromResidueSelectorMover.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\ReleaseConstraintFromResidueMoverCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\SplitAndMixPoseMover.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\fold_from_loops\SegmentedAtomPairConstraintGenerator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jumping\SheetBuilder.hh" />
     <ClInclude Include="..\..\..\src\protocols\jumping\ResiduePairJumpSetup.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jumping\JumpSetup.hh" />
