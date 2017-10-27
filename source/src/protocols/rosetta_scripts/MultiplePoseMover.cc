@@ -40,6 +40,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/util.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
+#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

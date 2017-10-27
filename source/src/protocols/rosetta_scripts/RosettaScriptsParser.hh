@@ -165,6 +165,26 @@ public:
 
 	///@brief
 	///
+	/// Create the ParsedProtocolMover for the protocol using a tag.
+	///
+	///@details
+	///
+	/// Creates mover via standard parsing machinery. Raises error if
+	/// APPLY_TO_POSE operations modify input pose.
+	ParsedProtocolOP parse_protocol_tag( core::pose::Pose & pose, utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options );
+
+	///@brief
+	///
+	/// Create the ParsedProtocolMover for the protocol using a tag.
+	///
+	///@details
+	///
+	/// Creates mover via standard parsing machinery on dummy, empty / pose.
+	/// Raises error if / APPLY_TO_POSE operations modify input pose.
+	ParsedProtocolOP parse_protocol_tag( utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options );
+
+	///@brief
+	///
 	/// Create the ParsedProtocolMover for the protocol using a tag.  Set modified pose variable.
 	/// Apply to pose if needed.
 	///
@@ -209,14 +229,6 @@ public:
 		bool const do_not_recurse = false,
 		std::string const & xml_text_for_top_level = ""
 	) const;
-
-
-	//@brief Temporary hook into parsing machinery with pose reference
-	MoverOP parse_protocol_tag( core::pose::Pose & pose, utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options );
-
-
-	//@brief Temporary hook into parsing machinery w/o pose reference.
-	MoverOP parse_protocol_tag( utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options );
 
 	void register_factory_prototypes();
 

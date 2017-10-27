@@ -636,7 +636,7 @@ RosettaScriptsParser::read_in_and_recursively_replace_includes(
 }
 
 
-MoverOP
+ParsedProtocolOP
 RosettaScriptsParser::parse_protocol_tag( TagCOP protocol_tag, utility::options::OptionCollection const & options)
 {
 	Pose temp_pose;
@@ -645,12 +645,12 @@ RosettaScriptsParser::parse_protocol_tag( TagCOP protocol_tag, utility::options:
 	return parse_protocol_tag(temp_pose, protocol_tag, options);
 }
 
-MoverOP
+ParsedProtocolOP
 RosettaScriptsParser::parse_protocol_tag( Pose & pose, utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options )
 {
 	bool modified_pose = false;
 
-	MoverOP mover =  generate_mover_for_protocol(pose, modified_pose, protocol_tag, options);
+	ParsedProtocolOP mover = generate_mover_for_protocol(pose, modified_pose, protocol_tag, options);
 
 	if ( modified_pose ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");

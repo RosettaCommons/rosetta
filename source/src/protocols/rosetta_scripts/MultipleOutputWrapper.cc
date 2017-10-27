@@ -33,6 +33,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
+#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // Package headers
 #include <basic/datacache/DataMap.fwd.hh>
