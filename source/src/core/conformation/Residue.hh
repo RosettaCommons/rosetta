@@ -2283,11 +2283,11 @@ private:
 
 	/// @brief Does this atom depend on the LOWER_CONNECT?  Checks recursively.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	bool atom_depends_on_lower( core::Size const atom_index, utility::vector1< core::Size > visited_atoms ) const;
+	bool atom_depends_on_lower( core::Size const atom_index, utility::vector1< core::Size > & visited_atoms ) const;
 
 	/// @brief Does this atom depend on the UPPER_CONNECT?  Checks recursively.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	bool atom_depends_on_upper( core::Size const atom_index, utility::vector1< core::Size > visited_atoms ) const;
+	bool atom_depends_on_upper( core::Size const atom_index, utility::vector1< core::Size > & visited_atoms ) const;
 
 	/// @brief Is a value in a list?
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

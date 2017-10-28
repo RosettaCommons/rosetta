@@ -1669,8 +1669,7 @@ Residue::atom_depends_on_lower(
 ) const {
 	if ( !recursive ) { return icoor(atom_index).depends_on_polymer_lower(); }
 
-	utility::vector1 < core::Size > visited;
-	visited.push_back(atom_index);
+	utility::vector1< core::Size > visited( 1, atom_index );
 	return atom_depends_on_lower( atom_index, visited );
 }
 
@@ -1686,8 +1685,7 @@ Residue::atom_depends_on_upper(
 ) const {
 	if ( !recursive ) { return icoor(atom_index).depends_on_polymer_upper(); }
 
-	utility::vector1 < core::Size > visited;
-	visited.push_back(atom_index);
+	utility::vector1 < core::Size > visited( 1, atom_index );
 	return atom_depends_on_upper( atom_index, visited );
 }
 
@@ -2086,22 +2084,22 @@ void Residue::assign_orbitals() {
 bool
 Residue::atom_depends_on_lower(
 	core::Size const atom_index,
-	utility::vector1< core::Size > visited_atoms
+	utility::vector1< core::Size > & visited_atoms
 ) const {
 	if ( icoor(atom_index).depends_on_polymer_lower() ) return true;
 
 	visited_atoms.push_back( atom_index );
 
 	core::Size const stub1_index( icoor( atom_index ).stub_atom1().atomno() );
-	bool const stub1( stub1_index == 0 || in_list( stub1_index, visited_atoms ) ? false : atom_depends_on_lower( stub1_index, visited_atoms )  );
+	bool const stub1( stub1_index == 0 || visited_atoms.has_value( stub1_index ) ? false : atom_depends_on_lower( stub1_index, visited_atoms )  );
 	if ( stub1 ) return true;
 
 	core::Size const stub2_index( icoor( atom_index ).stub_atom2().atomno() );
-	bool const stub2( stub2_index == 0 || in_list( stub2_index, visited_atoms )  ? false : atom_depends_on_lower( stub2_index, visited_atoms )  );
+	bool const stub2( stub2_index == 0 || visited_atoms.has_value( stub2_index )  ? false : atom_depends_on_lower( stub2_index, visited_atoms )  );
 	if ( stub2 ) return true;
 
 	core::Size const stub3_index( icoor( atom_index ).stub_atom3().atomno() );
-	bool const stub3( stub3_index == 0 || in_list( stub3_index, visited_atoms )  ? false : atom_depends_on_lower( stub3_index, visited_atoms )  );
+	bool const stub3( stub3_index == 0 || visited_atoms.has_value( stub3_index )  ? false : atom_depends_on_lower( stub3_index, visited_atoms )  );
 	return stub3;
 }
 
@@ -2110,36 +2108,23 @@ Residue::atom_depends_on_lower(
 bool
 Residue::atom_depends_on_upper(
 	core::Size const atom_index,
-	utility::vector1< core::Size > visited_atoms
+	utility::vector1< core::Size > & visited_atoms
 ) const {
 	if ( icoor(atom_index).depends_on_polymer_upper() ) return true;
 
 	visited_atoms.push_back( atom_index );
 
 	core::Size const stub1_index( icoor( atom_index ).stub_atom1().atomno() );
-	bool const stub1( stub1_index == 0 || in_list( stub1_index, visited_atoms ) ? false : atom_depends_on_upper( stub1_index, visited_atoms )  );
+	bool const stub1( stub1_index == 0 || visited_atoms.has_value( stub1_index ) ? false : atom_depends_on_upper( stub1_index, visited_atoms )  );
 	if ( stub1 ) return true;
 
 	core::Size const stub2_index( icoor( atom_index ).stub_atom2().atomno() );
-	bool const stub2( stub2_index == 0 || in_list( stub2_index, visited_atoms )  ? false : atom_depends_on_upper( stub2_index, visited_atoms )  );
+	bool const stub2( stub2_index == 0 || visited_atoms.has_value( stub2_index )  ? false : atom_depends_on_upper( stub2_index, visited_atoms )  );
 	if ( stub2 ) return true;
 
 	core::Size const stub3_index( icoor( atom_index ).stub_atom3().atomno() );
-	bool const stub3( stub3_index == 0 || in_list( stub3_index, visited_atoms )  ? false : atom_depends_on_upper( stub3_index, visited_atoms )  );
+	bool const stub3( stub3_index == 0 || visited_atoms.has_value( stub3_index )  ? false : atom_depends_on_upper( stub3_index, visited_atoms )  );
 	return stub3;
-}
-
-/// @brief Is a value in a list?
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-bool
-Residue::in_list(
-	core::Size const val,
-	utility::vector1< core::Size > const &vect
-) const {
-	// following copies code from utility -- rhiju, 2017.
-	// for ( core::Size i=1, imax=vect.size(); i<=imax; ++i ) { if ( vect[i] == val ) return true; }
-	// return false;
-	return vect.has_value( val );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
