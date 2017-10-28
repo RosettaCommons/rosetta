@@ -16,6 +16,3 @@
 # should probably instead inherit chain & residue numbering from 3d2v
 -cut_at_rna_chainbreak
 -superimpose_over_all false
-
-# Not sure why this has to be said explicitly
--run:no_prof_info_in_silentout true

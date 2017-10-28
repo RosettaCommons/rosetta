@@ -72,8 +72,11 @@ extern int const verbose ; // All messages output
 OptionCollection &
 initialize();
 
+/// @brief Process complex option inter-dependencies, prior to Tracer initializations
+OptionCollection &
+pre_tracer_process();
 
-/// @brief Process the specified options
+/// @brief Process complex option inter-dependencies (after tracer system is initialized)
 OptionCollection &
 process();
 

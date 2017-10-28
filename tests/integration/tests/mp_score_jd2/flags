@@ -7,5 +7,4 @@
 -mp:setup:membrane_rsd 334
 -out:file:scorefile 2zup_rescored.rsc
 -packing:pack_missing_sidechains false 
--run:no_prof_info_in_silentout
 -restore_talaris_behavior

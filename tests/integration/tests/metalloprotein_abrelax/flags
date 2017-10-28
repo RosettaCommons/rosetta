@@ -30,5 +30,4 @@
 -out:pdb
 -out:file:output_virtual
 -out:file:silent LL1dsvA.out
--run:no_prof_info_in_silentout
 -mute core.io.database

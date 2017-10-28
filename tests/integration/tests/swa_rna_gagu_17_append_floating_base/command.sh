@@ -38,12 +38,12 @@ cd /Users/rhiju/src/rosetta/main/tests/integration/new/swa_rna_gagu_01_append
 # Files will be diffed verbatim, so if you want to log output and compare it,
 # you'll need to filter out lines that change randomly (e.g. timings).
 # Prefixing your tests with "nice" is probably good form as well.
-# Don't forget to use -constant_seed -nodelay  so results are reproducible.
+# Don't forget to use -testing:INTEGRATION_TEST  so results are reproducible.
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 #
 
-/Users/rhiju/src/rosetta/main/source/bin/swa_rna_main.default.macosgccrelease  @flags -database /Users/rhiju/src/rosetta/main/database -run:constant_seed -nodelay  2>&1 \
+/Users/rhiju/src/rosetta/main/source/bin/swa_rna_main.default.macosgccrelease  @flags -database /Users/rhiju/src/rosetta/main/database -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

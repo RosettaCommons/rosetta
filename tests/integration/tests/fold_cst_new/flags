@@ -29,7 +29,6 @@
 -rsd_wt_loop 0.5
 -mute core.chemical
 -mute core.conformation
--run:no_prof_info_in_silentout
 -rmsd_target inputs/truncate_native.pdb
 -rmsd_column noflex
 -out:user_tag nsp1

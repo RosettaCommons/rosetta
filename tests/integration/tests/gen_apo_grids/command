@@ -1,6 +1,6 @@
 cd %(workdir)s
 [ -x %(bin)s/gen_apo_grids.%(binext)s ] || exit 1
-%(bin)s/gen_apo_grids.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  2>&1 \
+%(bin)s/gen_apo_grids.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

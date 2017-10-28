@@ -1,7 +1,7 @@
 cd %(workdir)s
 
 [ -x %(bin)s/test_d_l_readin.%(binext)s ] || exit 1
-%(bin)s/test_d_l_readin.%(binext)s %(additional_flags)s -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/test_d_l_readin.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

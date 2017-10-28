@@ -1,7 +1,6 @@
 #-database /home/smlewis/git_from_andrew/rosetta/rosetta_database 
 #-extra_res_fa /home/smlewis/git_from_andrew/rosetta/rosetta_database/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/CYX.params
 
-#-mpi_tracer_to_file proc
 #-mpi_work_partition_job_distributor
 
 -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer protein_cutpoint_upper protein_cutpoint_lower VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

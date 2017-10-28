@@ -4,7 +4,7 @@ cd %(workdir)s
 #[ -x %(bin)s/dump_capped_residue.%(binext)s ] || exit 1
 
 #You might generate cap.pdb by:
-#%(bin)s/dump_capped_residue.%(binext)s -residue_name URA -fiveprime -write_all_connect_info true -score:weights stepwise/rna/rna_res_level_energy4.wts -set_weights branch_conn 1.0 linear_branch_conn 1.0 -database %(database)s -run:constant_seed -nodelay  2>&1 \
+#%(bin)s/dump_capped_residue.%(binext)s -residue_name URA -fiveprime -write_all_connect_info true -score:weights stepwise/rna/rna_res_level_energy4.wts -set_weights branch_conn 1.0 linear_branch_conn 1.0 -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
 #	| egrep -vf ../../ignore_list \
 #	> log_dump
 #mv URA.pdb cap.pdb
@@ -12,7 +12,7 @@ cd %(workdir)s
 # I don't want to assume the user has renumber_pdb_in_place.py on the path to run this integration test, 
 # and so forth... so instead, I'm just going to give you a working cap.pdb
 
-%(bin)s/rna_denovo.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/rna_denovo.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

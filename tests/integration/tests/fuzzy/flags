@@ -1,5 +1,3 @@
--constant_seed 1
--nodelay
 -use_input_sc
 -extrachi_cutoff 8
 -ignore_unrecognized_res

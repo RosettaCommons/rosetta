@@ -1,5 +1,3 @@
--run
- -constant_seed
 -in
  -file
   -s inputs/7cpa_input.pdb.gz

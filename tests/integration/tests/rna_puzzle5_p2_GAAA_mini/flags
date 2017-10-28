@@ -5,5 +5,4 @@
 -include_neighbor_base_stacks 
 -minimize_rna 
 -chain_connection 1 12  15 18  
--constant_seed  
 -cycles 100

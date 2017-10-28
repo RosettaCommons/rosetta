@@ -32,7 +32,7 @@ cd %(workdir)s
 
 python setup_rosetta_inputs.py &> setup_log
 
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s -constant_seed 2>&1 \
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
 	| egrep -vf ../../ignore_list \
 	> log
 

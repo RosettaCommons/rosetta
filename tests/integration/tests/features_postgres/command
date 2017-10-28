@@ -65,7 +65,7 @@ psql -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -d %(dbms_database_na
 	-dbms:password \
 	-dbms:database_name %(dbms_database_name)s \
 	-dbms:pq_schema %(dbms_pq_schema)s \
-	-constant_seed 2>&1 \
+	-testing:INTEGRATION_TEST 2>&1 \
 	| egrep -vf ../../ignore_list \
 	>> log_db_output 2>&1
 

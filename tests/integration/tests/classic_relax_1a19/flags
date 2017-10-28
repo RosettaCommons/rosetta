@@ -1,6 +1,5 @@
 -s input/S_1029.pdb
 -wobblemoves
--constant_seed
 -nooutput
 -relax::classic
 -relax:stage1_ramp_cycles 3

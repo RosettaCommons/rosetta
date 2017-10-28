@@ -30,19 +30,19 @@ cd %(workdir)s
 [ -x %(bin)s/FiberDiffractionTest.%(binext)s ] || exit 1
 [ -x %(bin)s/score.%(binext)s ] || exit 1
 
-%(bin)s/score.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  2>&1 \
+%(bin)s/score.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_fiber_score_fa
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-%(bin)s/score.%(binext)s %(additional_flags)s @flags_score_cen -database %(database)s -nodelay  2>&1 \
+%(bin)s/score.%(binext)s %(additional_flags)s @flags_score_cen -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_fiber_score_cen
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-%(bin)s/FiberDiffractionTest.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  2>&1 \
+%(bin)s/FiberDiffractionTest.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_fiber_deriv
 

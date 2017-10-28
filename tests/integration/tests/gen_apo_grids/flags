@@ -2,7 +2,6 @@
 -mute all
 -unmute apps.public.match.gen_apo_grids
 -chname off
--constant_seed
 -ignore_unrecognized_res
 -packstat:surface_accessibility
 -packstat:cavity_burial_probe_radius 3.0

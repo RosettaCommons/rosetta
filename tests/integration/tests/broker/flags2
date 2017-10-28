@@ -10,7 +10,6 @@
 -fold_cst:no_minimize
 #-jumps:residue_pair_jump_file ./input/1dsvA.residue_pair_jump_cst
 
--no_prof_info_in_silentout
 -mute core.io.database
 
 -in:file:silent input/low_2.out

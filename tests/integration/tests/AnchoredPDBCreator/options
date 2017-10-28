@@ -1,8 +1,5 @@
 #-database /ifs1/home/smlewis/minirosetta_database 
 
-#-mpi_work_partition_job_distributor
--mpi_tracer_to_file proc
-
 -nstruct 1
 #-nstruct 500
 

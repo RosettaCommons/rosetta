@@ -12,8 +12,6 @@
 -nstruct 1
 -out:file:silent_struct_type binary
 -out:file:silent Menv_smooth-BRD4_frlx.out
--constant_seed
 -mute core.util.prof
 -mute core.io.database
--run:no_prof_info_in_silentout
 -out:file:scorefile Menv_smooth_score.sc

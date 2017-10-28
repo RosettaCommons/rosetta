@@ -45,19 +45,19 @@ date > start-time.ignore
 
 #
 # Run hydrate to score a wet (fixed) structure with SPaDES scoring function
-%(bin)s/hydrate.%(binext)s %(additional_flags)s @score.flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/hydrate.%(binext)s %(additional_flags)s @score.flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_score
 
 #
 # Dump rotamers (water and protein) with the SPaDES protocol
-%(bin)s/hydrate.%(binext)s %(additional_flags)s @rotamer.flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/hydrate.%(binext)s %(additional_flags)s @rotamer.flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_rotamer
 
 #
 # Run hydrate code to hydrate one amino acid anchor with three repacked neighbors
-%(bin)s/hydrate.%(binext)s %(additional_flags)s @hydrate.flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/hydrate.%(binext)s %(additional_flags)s @hydrate.flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_repack
 

@@ -3,5 +3,4 @@
 -in:file:frag9 inputs/aa1l2yA09_05.200_v1_3
 -out:nstruct 1
 -out:file:silent 1l2y_silent.out
--run:no_prof_info_in_silentout
 -mute core.io.database

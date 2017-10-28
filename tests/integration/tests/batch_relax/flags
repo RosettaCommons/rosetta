@@ -1,6 +1,5 @@
 -s input/S_1029.pdb input/S_1029.pdb input/S_1029.pdb input/S_1029.pdb
 -in:file:fullatom
--constant_seed
 -relax:sequence_file input/sequence_file
 -mute core.util.prof ## dont show timing info
 -mute core.io.database

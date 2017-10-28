@@ -9,5 +9,4 @@
 -out:file:silent_struct_type score
 -out:file:silent default.out
 -out:file:scorefile score.fasc
--run:no_prof_info_in_silentout
 -docking:no_filters

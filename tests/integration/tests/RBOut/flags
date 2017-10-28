@@ -9,7 +9,6 @@
 -restore_pre_talaris_2013_behavior
 -score:patch score12_w_corrections.wts
 -score:weights pre_talaris_2013_standard
--constant_seed 1 #this is just for testing!!!!
 
 -s 1dl7_aligned.pdb 
 -parser:protocol rb_db.xml 

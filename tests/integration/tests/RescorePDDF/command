@@ -29,7 +29,7 @@
 cd %(workdir)s
 
 [ -x %(bin)s/RescorePDDF.%(binext)s ] || exit 1
-%(bin)s/RescorePDDF.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  2>&1 \
+%(bin)s/RescorePDDF.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_PDDF
 

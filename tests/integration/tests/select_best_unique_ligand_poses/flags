@@ -29,8 +29,6 @@
  ## makes it easier to figure out what you did later.
  # Must be deactivated for integration tests to prevent spurious failures.
  -version false
- ## MT is now the default random number generator, actually.
- #-rng mt19937
  ## Rosetta's default behavior was to pretend that atoms with zero occupancy
  ## don't exist at all, which can lead to whole residues disappearing...
  -ignore_zero_occupancy false

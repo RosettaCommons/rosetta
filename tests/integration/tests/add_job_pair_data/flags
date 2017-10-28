@@ -1,6 +1,4 @@
 -run
- -constant_seed
- -rng mt19937
  -no_scorefile
 -in
  -file

@@ -11,9 +11,6 @@
  -nooutput
 -parser
  -protocol rotamer_recovery.script
--run
- -constant_seed
--nodelay
 -mute protocols.jobdist
 -mute core.io
 -mute core.conformation

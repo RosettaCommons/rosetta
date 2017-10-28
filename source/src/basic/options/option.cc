@@ -25,6 +25,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>            // for path, pdb
 #include <basic/options/keys/score.OptionKeys.gen.hh>          // for no_pro...
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
+#include <basic/options/keys/testing.OptionKeys.gen.hh>
 
 #include <basic/options/option.cc.gen.hh>                      // for add_al...
 
@@ -74,6 +75,39 @@ initialize()
 	return option;
 }
 
+
+/// @brief Process the specified options - do this prior to
+/// @note  Do more complex value setup and checks here than the option system provides.
+OptionCollection &
+pre_tracer_process() {
+
+	// WARNING - Do not access the Tracer system here, directly or indirectly.
+
+	// Integration test meta option
+	{
+		using namespace basic::options::OptionKeys;
+		if ( option[ testing::INTEGRATION_TEST ].value() ) {
+			// Test for user() such that individual tests can override this if they really want.
+			if ( ! option[ run::constant_seed ].user() ) {
+				option[ run::constant_seed ].value( true );
+			}
+			if ( ! option[ run::nodelay ].user() ) {
+				option[ run::nodelay ].value( true );
+			}
+			if ( ! option[ run::no_prof_info_in_silentout ].user() ) {
+				option[ run::no_prof_info_in_silentout ].value( true );
+			}
+#ifdef USEMPI
+			if ( ! option[ out::mpi_tracer_to_file ].user() ) {
+				option[ out::mpi_tracer_to_file ].value( "mpi_log" );
+				option[ out::mpi_tracer_to_file ].activate(); // So that `user()` triggers correctly
+			}
+#endif
+		}
+	}
+
+	return option;
+}
 
 /// @brief Process the specified options.
 /// @note  Do more complex value setup and checks here than the option system provides.

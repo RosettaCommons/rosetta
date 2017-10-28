@@ -1,7 +1,7 @@
 
 cd %(workdir)s
 
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -parser:script_vars source_pdb=%(database)s/protocol_data/splice/antibodies/template_pdbs/2BRR.ppk.pdb -s %(database)s/protocol_data/splice/antibodies/template_pdbs/2BRR.ppk.pdb -database %(database)s  2>&1 \
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -parser:script_vars source_pdb=%(database)s/protocol_data/splice/antibodies/template_pdbs/2BRR.ppk.pdb -s %(database)s/protocol_data/splice/antibodies/template_pdbs/2BRR.ppk.pdb -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
     | egrep -v 'seconds' \
     | egrep -v 'core.init'\
     | egrep -vf ../../ignore_list \

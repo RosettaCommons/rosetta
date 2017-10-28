@@ -37,16 +37,16 @@ cd %(workdir)s
 # Files will be diffed verbatim, so if you want to log output and compare it,
 # you'll need to filter out lines that change randomly (e.g. timings).
 # Prefixing your tests with "nice" is probably good form as well.
-# Don't forget to use -constant_seed -nodelay  so results are reproducible.
+# Don't forget to use -testing:INTEGRATION_TEST  so results are reproducible.
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 #
 
-%(bin)s/build_full_model.%(binext)s %(additional_flags)s @flags_legacy -database %(database)s -run:constant_seed -jran 11111112 -nodelay  2>&1 \
+%(bin)s/build_full_model.%(binext)s %(additional_flags)s @flags_legacy -database %(database)s -testing:INTEGRATION_TEST -jran 11111112  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_legacy
 
-%(bin)s/build_full_model.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -jran 11111112 -nodelay  2>&1 \
+%(bin)s/build_full_model.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -jran 11111112  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

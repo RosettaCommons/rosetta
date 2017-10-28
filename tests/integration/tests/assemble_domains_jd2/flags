@@ -6,4 +6,3 @@
 -out:file:silent_struct_type binary
 -out:file:silent output/dock.out
 -out:file:scorefile output/scores.fasc
--no_prof_info_in_silentout

@@ -13,9 +13,6 @@
 -rotamer_recovery:comparer RRComparerAutomorphicRMSD
 -rotamer_recovery:reporter RRReporterHuman
 -out:file:rotamer_recovery rotamer_recovery.results
--run
- -constant_seed
--nodelay
 -mute protocols.jobdist
 -mute core.io
 -mute core.conformation

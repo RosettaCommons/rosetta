@@ -6,6 +6,5 @@
 -nstruct 3
 -extra_res_fa sidechain_conjugation/CYX.params crosslinker/1.3.5_trisbromomethylbenzene_symm.params
 -mute core.init
--mpi_tracer_to_file log
 -jd2:sequential_mpi_job_distribution true
 -restore_talaris_behavior true

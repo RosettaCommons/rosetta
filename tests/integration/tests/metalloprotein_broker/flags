@@ -29,7 +29,6 @@
 -out:pdb
 -out:file:output_virtual
 -out:file:silent LL1dsvA.out
--no_prof_info_in_silentout
 -mute core.io.database
 -out:level 500
 -out:levels core:error

@@ -1,5 +1,4 @@
 -s input/S_1029.pdb
--constant_seed
 -nooutput
 -relax:quick
 -mute core.util.prof ## dont show timing info

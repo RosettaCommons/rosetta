@@ -1,5 +1,4 @@
 ## Keywords that are replace are listed in ~mtyka/homo_bench/help_keywords.txt
--no_prof_info_in_silentout
 -cm:aln_format grishin
 -out:file:scorefile output.fsc
 -in:file:template_pdb input/1vyhA.pdb input/1fxwF.pdb

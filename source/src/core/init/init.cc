@@ -783,6 +783,7 @@ init_options(int argc, char * argv []) {
 	// initialize options
 	initialize().load( argc, argv, false /* no "free" cmd line args (just discarded anyway) */ );
 
+	pre_tracer_process();
 }
 
 /// @brief After the tracers have been initialized, now go back and modify some of the

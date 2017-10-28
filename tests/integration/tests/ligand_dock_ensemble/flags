@@ -1,6 +1,3 @@
--run
- -constant_seed
- -rng mt19937
 -in
  -file
   -s inputs/girk_ligands.pdb

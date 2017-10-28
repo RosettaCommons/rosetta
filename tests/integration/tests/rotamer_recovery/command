@@ -33,7 +33,7 @@ cd %(workdir)s
 ######################
 # use RRReporterSimple
 ######################
-%(bin)s/rotamer_recovery.%(binext)s %(additional_flags)s @rotamer_recovery.flags -database %(database)s 2>&1 \
+%(bin)s/rotamer_recovery.%(binext)s %(additional_flags)s @rotamer_recovery.flags -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

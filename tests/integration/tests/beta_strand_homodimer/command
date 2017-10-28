@@ -35,14 +35,14 @@ cd %(workdir)s
 [ -x %(bin)s/homodimer_design.%(binext)s ] || exit 1
 
 #test for exposed_strand_finder
-%(bin)s/exposed_strand_finder.%(binext)s %(additional_flags)s @finder_options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/exposed_strand_finder.%(binext)s %(additional_flags)s @finder_options -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > exposed_strand_finder.log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 #test for homodimer_maker
-%(bin)s/homodimer_maker.%(binext)s %(additional_flags)s @maker_options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/homodimer_maker.%(binext)s %(additional_flags)s @maker_options -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > homodimer_maker.log
 #remove unneeded output
@@ -55,7 +55,7 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 #make symmdef if needed will avoid doing this for the integration test but here's the command if you need to do it again
 #perl %(minidir)s/src/apps/public/symmetry/make_symmdef_file.pl -m NCS -a A -i B -p 2a7b_mpm_A806_anti_wind_1_step_1.pdb > symmdef
 
-%(bin)s/homodimer_design.%(binext)s %(additional_flags)s @design_options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/homodimer_design.%(binext)s %(additional_flags)s @design_options -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > homodimer_design.log
 

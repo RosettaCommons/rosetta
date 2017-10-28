@@ -30,19 +30,19 @@ cd %(workdir)s
 
 [ -x %(bin)s/sewing_hasher.%(binext)s ] || exit 1
 
-%(bin)s/sewing_hasher.%(binext)s @flags_generate -database %(database)s -constant_seed 2>&1 \
+%(bin)s/sewing_hasher.%(binext)s @flags_generate -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
 	| egrep -vf ../../ignore_list \
 	> generate_output_log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
-%(bin)s/sewing_hasher.%(binext)s @flags_hash -database %(database)s -constant_seed 2>&1 \
+%(bin)s/sewing_hasher.%(binext)s @flags_hash -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
 	| egrep -vf ../../ignore_list \
 	> hash_output_log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
-%(bin)s/sewing_hasher.%(binext)s @flags_convert -database %(database)s -constant_seed 2>&1 \
+%(bin)s/sewing_hasher.%(binext)s @flags_convert -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
 	| egrep -vf ../../ignore_list \
 	> convert_output_log
 

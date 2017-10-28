@@ -6731,7 +6731,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'default_movement_params', 'RealVector', desc='default-rotation, default-translation' , default = 'utility::vector1<float>(2,0.0)' ),
 		Option( 'cst_seqwidth', 'Integer', desc='sequence width on constraints', default = '0' ),
 	), # -RBSegmentRelax
-	
+
 	############################################################################
 	# Hydrate (SPaDES) protocol with hybrid solvation options
   Option_Group( 'hydrate',
@@ -6769,7 +6769,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'min_backbone_file', 'File', desc='This file defines whether the backbone is allowed to move for a specific residue.', ),
 		Option( 'single_away_rotamer', 'Boolean', desc='Use single away water rotamer. The sampling gets biased towards keeping more water present.', default='false' ),
 		Option( 'force_enforce_all_waters', 'Boolean', desc='Keep water molecules enforced throughout hybrid solvation protocol.', default='false' ),
-  ), 
+  ),
 
 	############################################################################
 	# CS-Rosetta options
@@ -6841,7 +6841,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'sc_cst_maxdist', 'Real', default='0.0', desc='Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)' ),
 		Option( 'limit_aroma_chi2', 'Boolean', desc = "limit chi2 rotamer of PHE,TYR, and HIS around 90 ", default="false" ),
 		Option( 'respect_resfile', 'Boolean', desc = "Tell FastRelax to respect the input resfile.  Used mainly for doing design within FastRelax.", default="false"),
-        
+
     ## Options for hybrid solvation (hydrate/SPaDES protocol)
     Option( 'use_explicit_water', 'Boolean', default='false', desc='Consider explicit waters (part of the hybrid solvation protocol) during relax'),
     #Option( 'enforce_waters_during_relax', 'Boolean', default='false', desc='Enforce waters during the initial relaxation cycles until ramp step is reached as defined by -enforce_until_ramp_step'),
@@ -8030,5 +8030,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
   #The following option group is for internal testing purposes - not to be used for actual protocols
 	Option_Group( 'testing',
 		Option( 'HCF', 'Boolean', desc="Cause Rosetta to exit immediately with an error.", default="false" ),
+		Option( 'INTEGRATION_TEST', 'Boolean', desc="Meta flag for best-practices flags in integration tests. Don't use on actual runs.", default="false" ),
 	), #-testing
 ) # end options

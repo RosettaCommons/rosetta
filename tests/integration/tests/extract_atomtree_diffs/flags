@@ -29,8 +29,6 @@
  ## Recording the SVN revision of the code in your output files
  ## makes it easier to figure out what you did later.
  -version
- ## MT is now the default random number generator, actually.
- #-rng mt19937
  ## Rosetta's default behavior was to pretend that atoms with zero occupancy
  ## don't exist at all, which can lead to whole residues disappearing...
  -ignore_zero_occupancy false

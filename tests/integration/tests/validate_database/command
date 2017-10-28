@@ -3,35 +3,35 @@ cd %(workdir)s
 [ -x %(bin)s/validate_database.%(binext)s ] || exit 1
 
 #Force creation of Rotlib binaries if for some reason they haven't been made in the main database yet
-%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -constant_seed 2>&1 \
+%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -testing:INTEGRATION_TEST 2>&1 \
      | sed -e 's|%(database)s|ROSETTA_DATABASE|' \
      | egrep -vf ../../ignore_list \
     > default.log
 
 defaultstatus=${PIPESTATUS[0]}
 
-%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -constant_seed -beta 2>&1 \
+%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -testing:INTEGRATION_TEST -beta 2>&1 \
      | sed -e 's|%(database)s|ROSETTA_DATABASE|' \
      | egrep -vf ../../ignore_list \
     > beta.log
 
 betastatus=${PIPESTATUS[0]}
 
-%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -constant_seed -restore_talaris_behavior true 2>&1 \
+%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -testing:INTEGRATION_TEST -restore_talaris_behavior true 2>&1 \
      | sed -e 's|%(database)s|ROSETTA_DATABASE|' \
      | egrep -vf ../../ignore_list \
     > talaris.log
 
 talarisstatus=${PIPESTATUS[0]}
 
-%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -constant_seed -restore_pre_talaris_2013_behavior 2>&1 \
+%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -testing:INTEGRATION_TEST -restore_pre_talaris_2013_behavior 2>&1 \
      | sed -e 's|%(database)s|ROSETTA_DATABASE|' \
      | egrep -vf ../../ignore_list \
     > dun02.log
 
 dun02status=${PIPESTATUS[0]}
 
-%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -constant_seed -restore_pre_talaris_2013_behavior -correct 2>&1 \
+%(bin)s/validate_database.%(binext)s -database %(database)s -out:levels core.pack.dunbrack:debug -testing:INTEGRATION_TEST -restore_pre_talaris_2013_behavior -correct 2>&1 \
      | sed -e 's|%(database)s|ROSETTA_DATABASE|' \
      | egrep -vf ../../ignore_list \
     > dun02_correct.log

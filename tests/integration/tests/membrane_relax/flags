@@ -9,9 +9,7 @@
 -in:file:fullatom
 -out:file:silent_struct_type binary
 -out:file:silent BRD4_frlx.out
--constant_seed
 -mute core.util.prof
 -mute core.io.database
--run:no_prof_info_in_silentout
 -out:file:scorefile score.sc
 -restore_talaris_behavior

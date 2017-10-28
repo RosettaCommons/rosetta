@@ -1,7 +1,7 @@
 cd %(workdir)s
 [ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @inputs/flags.txt -database %(database)s -parser:protocol inputs/protein_centric.xml -out:prefix protein_centric_ -run:constant_seed -nodelay  2>&1 | egrep -vf ../../ignore_list > protein_centric_log
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @inputs/flags.txt -database %(database)s -parser:protocol inputs/protein_centric.xml -out:prefix protein_centric_ -testing:INTEGRATION_TEST  2>&1 | egrep -vf ../../ignore_list > protein_centric_log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @inputs/flags.txt -database %(database)s -parser:protocol inputs/ligand_centric.xml -out:prefix ligand_centric_ -run:constant_seed -nodelay  2>&1 | egrep -vf ../../ignore_list > ligand_centric_log
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @inputs/flags.txt -database %(database)s -parser:protocol inputs/ligand_centric.xml -out:prefix ligand_centric_ -testing:INTEGRATION_TEST  2>&1 | egrep -vf ../../ignore_list > ligand_centric_log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 

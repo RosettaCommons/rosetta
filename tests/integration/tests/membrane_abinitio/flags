@@ -10,5 +10,4 @@
 -increase_cycles 0.05
 -out:nstruct 1
 -out:file:silent BRD4_silent.out
--run:no_prof_info_in_silentout
 -mute core.io.database

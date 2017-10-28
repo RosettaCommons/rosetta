@@ -9,4 +9,3 @@
 -detect_disulf false
 -ignore_unrecognized_res
 -mh:gen_reverse_motifs_on_load true
--no_prof_info_in_silentout 

@@ -3,5 +3,4 @@
 -score:weights inputs/ProQM.wts
 -out:file:scorefile 1e12A_0001.scorefile.ProQM
 -ProQ:membrane T
--run:no_prof_info_in_silentout
 -mute core.io.database

@@ -1,7 +1,3 @@
--run
- -constant_seed
- -rng mt19937
-
 -in
  -file
   -extra_res_fa inputs/7cpa.params inputs/ZNx.params

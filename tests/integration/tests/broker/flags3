@@ -10,7 +10,6 @@
 -relax:fast
 -residues::patch_selectors CENTROID_HA
 
--no_prof_info_in_silentout
 -mute core.io.database
 
 -out:file:silent result3.out
