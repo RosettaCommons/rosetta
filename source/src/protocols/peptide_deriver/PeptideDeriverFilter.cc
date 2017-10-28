@@ -47,7 +47,7 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/svn_version.hh>
+#include <utility/version.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -287,7 +287,7 @@ void PeptideDeriverMarkdownStreamOutputter::begin_structure(core::pose::Pose con
 	header_ << prefix_ << "# Peptiderive report file " << name << std::endl
 		<< prefix_ << std::endl
 		<< prefix_ << "- Chains: " << pose.conformation().num_chains() << std::endl
-		<< prefix_ << "- Rosetta version: " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << std::endl
+		<< prefix_ << "- Rosetta version: " << utility::Version::package() << " " << utility::Version::version() << " commit " << utility::Version::commit() << " from " << utility::Version::url() << std::endl
 		<< prefix_ << "- (*) in the 'Relative interface score (%)' column means positive values were calculated for these entries, indicating unfavorable interactions" << std::endl
 		<< prefix_ << "- (**) in the 'Cyclized interface score' column means that a cyclized model was not constructed for this cyclizable peptide, since its energy contribution (in its linear form) was not significant" << std::endl
 		<< prefix_ << "- Disulfide-cyclized peptide models have additional N- and C-terminal cysteine residues, not shown in the 'Sequence' column" << std::endl;

@@ -21,7 +21,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <core/types.hh>
-#include <core/svn_version.hh>
+#include <utility/version.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
@@ -55,8 +55,6 @@ using std::stringstream;
 using basic::options::OptionKeys::parser::protocol;
 using basic::options::option;
 using core::Size;
-using core::minirosetta_svn_url;
-using core::minirosetta_svn_version;
 using core::pose::Pose;
 using utility::io::izstream;
 using utility::vector1;
@@ -131,8 +129,8 @@ ProtocolFeatures::report_features(
 	option_stream << basic::options::option;
 	string const & specified_options( option_stream.str() );
 
-	string const & svn_url( minirosetta_svn_url() );
-	string const & svn_version( minirosetta_svn_version() );
+	string const & svn_url( utility::Version::url() );
+	string const & svn_version( utility::Version::version() );
 
 	bool using_rosetta_scripts( basic::options::option[ protocol ].active() );
 	string script = "";

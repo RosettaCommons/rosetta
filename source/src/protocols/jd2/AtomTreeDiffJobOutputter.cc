@@ -23,7 +23,7 @@
 
 ///Utility headers
 #include <basic/Tracer.hh>
-#include <core/svn_version.hh>
+#include <utility/version.hh>
 #include <basic/options/option.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
@@ -137,7 +137,7 @@ AtomTreeDiffJobOutputter::dump_pose(
 	} else {
 		out_.open( outfile_name_.c_str() );
 		if ( basic::options::option[ basic::options::OptionKeys::run::version ] ) {
-			out_ << "# Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << "\n";
+			out_ << "# Rosetta version " << utility::Version::package() << " " << utility::Version::version() << " commit " << utility::Version::commit() << " from " << utility::Version::url() << "\n";
 		}
 	}
 	if ( !out_.good() ) {

@@ -13,7 +13,7 @@
 ## @author Sergey Lyskov
 
 
-import codecs, commands, urllib2
+import codecs, commands, urllib2, imp
 import  platform as  platform_module
 
 # ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
@@ -178,7 +178,7 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     return res, output, build_command_line
 
 
-def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verbose=False, debug=False):
+def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verbose=False, debug=False, version=None):
     ''' Compile Rosetta binaries on a given platform return NT(exitcode, output, build_command_line, pyrosetta_path, python) '''
 
     #binder = install_llvm_tool('binder', source_location='{}/source/src/python/PyRosetta/binder'.format(rosetta_dir), config=config)
@@ -194,6 +194,8 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verb
     #     extra += ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
 
     if 'serialization' in platform['extras']: extra += ' --serialization'
+
+    if version: extra += " --version '{version}'".format(**vars())
 
     command_line = 'cd {rosetta_dir}/source/src/python/PyRosetta && {python} build.py -j{jobs} --compiler {compiler} --type {mode}{extra}'.format(rosetta_dir=rosetta_dir, python=py_env.python, jobs=jobs, compiler=platform['compiler'], mode=mode, extra=extra)
 
@@ -372,3 +374,11 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
     #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
 
     return NT(activate=activate, root=working_dir, bin=bin)
+
+
+def generate_version_information(rosetta_dir, url=None, branch=None, package=None, revision=None, date=None, file_name=None):
+    ''' Generate standard Rosetta version structure and save it to JSON file if file_name is provided
+    '''
+
+    version = imp.load_source('version', rosetta_dir + '/source/version.py')
+    return version.generate_version_information(rosetta_dir=rosetta_dir, url=url, branch=branch, package=package, revision=revision, date=date, file_name=file_name)

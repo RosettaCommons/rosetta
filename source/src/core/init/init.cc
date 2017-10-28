@@ -22,7 +22,6 @@
 #include <core/init/init.hh>
 
 // Project Headers
-#include <core/svn_version.hh>
 #include <core/types.hh>
 #include <basic/options/option.hh>
 #include <utility/sys_util.hh>
@@ -358,6 +357,7 @@ using basic::Warning;
 
 #include <basic/init.hh>
 
+#include <utility/version.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/CSI_Sequence.hh>
@@ -850,7 +850,13 @@ init_tracers(){
 void
 init_source_revision(){
 	if ( option[ run::version ]() ) {
-		TR << "Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << std::endl;
+		TR << "Rosetta version information" << std::endl;
+		TR << "Package:                 " << utility::Version::package() << std::endl;
+		TR << "Testing Server Revision: " << utility::Version::revision() << std::endl;
+		TR << "PEP-440 Version:         " << utility::Version::version() << std::endl;
+		TR << "Git Commit:              " << utility::Version::commit() << std::endl;
+		TR << "URL:                     " << utility::Version::url() << std::endl;
+		TR << "Date:                    " << utility::Version::date() << std::endl;
 	}
 }
 

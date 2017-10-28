@@ -24,7 +24,7 @@ if not GetOption("help"):
         print "Skipping versioning script. (Hopefully src/core/svn_version.cc is already up-to-date.)"
     else:
         import version
-        version.main()
+        version.main(['./version.py'])
     subprocess.check_call(["./update_options.sh"])
     subprocess.check_call(["./update_ResidueType_enum_files.sh"])
 

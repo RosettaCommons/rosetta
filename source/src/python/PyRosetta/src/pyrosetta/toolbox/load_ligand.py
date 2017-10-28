@@ -15,8 +15,6 @@
 from __future__ import print_function
 
 import os
-# its in python!
-import openbabel
 import molfile_to_params
 from pyrosetta import Pose, pose_from_file, init
 
@@ -60,6 +58,7 @@ def load_from_pubchem( cid , sdffilename = '' ):
 # 3, convert to .mol or ,mdl
 # uses openbabel to convert sdf to mdl
 def sdf2mdl( sdfile , mdlfilename ):
+    import openbabel
     if os.path.exists( os.getcwd() + '/' + sdfile ):
         converter = openbabel.OBConversion()
         converter.SetInAndOutFormats('sdf','mdl')

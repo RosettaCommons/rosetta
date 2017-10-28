@@ -222,7 +222,7 @@ def install_pybind11(prefix, clean=True):
     return package_dir + '/include'
 
 
-def get_binding_build_root(rosetta_source_path, source=False, build=False):
+def get_binding_build_root(rosetta_source_path, source=False, build=False, documentation=False):
     ''' Calculate bindings build path using current platform and compilation settings and create dir if it is not there yet '''
 
     p = os.path.join(rosetta_source_path, 'build/PyRosetta')
@@ -239,6 +239,12 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
 
     if source: return source_p
     if build: return build_p
+
+    if documentation: # optional, avoid creation if not requested. Also: no incremental builds for documentation so we always return clean dir
+        documentation_p  = p + '/documentation'
+        if os.path.isdir(documentation_p): shutil.rmtree(documentation_p)
+        os.makedirs(documentation_p)
+        return documentation_p
 
     return p
 
@@ -366,7 +372,8 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
         sources.sort()
 
         t  = 'add_library({} OBJECT\n{})\n\n'.format(lib, '\n'.join( [ rosetta_source_path + '/src/' + s for s in sources] ))
-        t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(lib)
+        #t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(lib)
+        t += 'set_target_properties({} PROPERTIES POSITION_INDEPENDENT_CODE ON LINKER_LANGUAGE CXX)\n'.format(lib)
         #t += '\ntarget_compile_options({} PUBLIC -fPIC)\n'.format(lib)  # Enable Position Independent Code generation for libraries
         update_source_file(prefix + lib + '.cmake', t)
 
@@ -422,7 +429,8 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
 def generate_bindings(rosetta_source_path):
     ''' Generate bindings using binder tools and return list of source files '''
     setup_source_directory_links(rosetta_source_path)
-    execute('Updating version, options and residue-type-enum files...', 'cd {} && ./version.py && ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(rosetta_source_path) )
+    maybe_version = '--version {} '.format(Options.version) if Options.version else ''
+    execute('Updating version, options and residue-type-enum files...', 'cd {rosetta_source_path} && ./version.py {maybe_version}&& ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(**vars()) )
 
     prefix = get_binding_build_root(rosetta_source_path, source=True) + '/'
 
@@ -502,45 +510,72 @@ def build_generated_bindings(rosetta_source_path):
 
 
 
-_documentation_index_template_ = '''\
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>PyRosetta-4 Documentation</title>
-    </head>
+def generate_version_file(rosetta_source_path, file_name):
+    if Options.version: shutil.copy(Options.version, file_name)
+    else: shutil.copy(rosetta_source_path + '/.version.json', file_name)
 
-    <body>
-        <a href="rosetta.html">[Rosetta Module Documentation]</a> <a href="pyrosetta.html">[PyRosetta Module Documentation]</a>
-        <br/>
-        <br/>
-        <form method="get" id="search" action="http://duckduckgo.com/">
-          Search PyRosetta/Rosetta API:
-          <input type="hidden" name="sites" value="http://graylab.jhu.edu/PyRosetta.documentation"/>
-          <input type="text" name="q" maxlength="255" placeholder="Search&hellip;" size="64"/>
-          <input type="submit" value="DuckDuckGo Search" style="visibility: hidden;" />
-        </form>
-    </body>
-</html>
+    # release_json = rosetta_source_path + './../.release.json'
+    # moved to main/version.json: elif os.path.isfile(release_json): shutil.copy(release_json, file_name)
+        # with open(rosetta_source_path + '/.version.json') as f: info = json.load(f)
+        # with open(file_name, 'w') as f:
+        #     json.dump(dict(version = info['ver'],
+        #                    date    = info['commit_date'],
+        #                    source = dict(main = info['ver']),
+        #                    release = 'unknown', # all release info fields set to unknown
+        #                    year    = 'unknown',
+        #                    week    = 'unknown',
+        #     ), f, sort_keys=True, indent=2)
+
+
+_documentation_version_template_ = '''
+
+.. _version-json-file:
+
+Version
+-------
+
+.. code-block:: javascript
+
 '''
-def generate_documentation(rosetta_source_path, path):
+
+def generate_documentation(rosetta_source_path, path, version):
     path = os.path.abspath(path)
     print('Creating PyRosetta documentation at: {}...'.format(path))
 
+    if not os.path.isdir(path): os.makedirs(path)
+
     source_prefix = get_binding_build_root(rosetta_source_path, source=True)
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
+    documentation_prefix = get_binding_build_root(rosetta_source_path, documentation=True)
 
-    pyrosetta_modules = ['pyrosetta']
-    for dir_name, _, files in os.walk(build_prefix+'/pyrosetta'):
-        for f in sorted(files):
-            if f.endswith('.py')  and  (not f.startswith('__')):
-                pyrosetta_modules.append( (dir_name[len(build_prefix)+1:] + '/' + f).replace('/', '.')[:-len('.py')] )
+    distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/documentation', documentation_prefix, update=False)
 
-    with open(source_prefix + '/rosetta.modules') as fh: modules = ' '.join( pyrosetta_modules + ['rosetta'] + [ 'rosetta.'+ f for f in fh.read().split()] )
+    version_file = path + '/version.json'
+    generate_version_file(rosetta_source_path, version_file)
 
-    if not os.path.isdir(path): os.makedirs(path)
-    execute('Generating PyRosetta documentation...', 'cd {build_prefix} && {pydoc} -w {modules} && mv *.html {path}'.format(pydoc=Options.pydoc, **vars()), silent=True)
+    with open(version_file) as f: info = json.load(f)
 
-    with open(path+'/index.html', 'w') as f: f.write(_documentation_index_template_)
+    index = documentation_prefix + '/source/index.rst'
+    with open(index) as f: text = f.read()
+    with open(index, 'w') as f:
+        s = 'Version: {package} (for full version info see :ref:`version-json-file`)'.format(**info) if info['package'] else 'No explicit version info was provided during build phase, see :ref:`version-json-file` for version information of individual packages'.format(**info)
+        f.write(s + '\n\n' + text)
+        f.write(_documentation_version_template_)
+        for line in open(version_file): f.write('    '+line)
+
+
+    documentation_source_prefix = documentation_prefix + '/source'
+    generator = rosetta_source_path + '/src/python/PyRosetta/binder/sphinx-doc-generator.py'
+
+    python = sys.executable
+    execute('Generating Sphinx files for PyRosetta Python code...', '{python} {generator} -o {documentation_source_prefix} --javascript-path {documentation_source_prefix}/_static --javascript-web-path _static/ {build_prefix}/pyrosetta'.format(**vars()))
+    execute('Generating Sphinx files for PyRosetta Rosetta code...', '{python} {generator} -o {documentation_source_prefix} --javascript-path {documentation_source_prefix}/_static --javascript-web-path _static/ --root pyrosetta.rosetta {source_prefix}/rosetta.modules'.format(**vars()))  # --depth 1
+
+    execute('Building documentation...', 'cd {documentation_prefix} && PATH={python_path}:$PATH && PYTHONPATH={build_prefix}:PYTHONPATH && make clean && make html'.format(python_path=os.path.dirname(python), **vars()))
+
+    distutils.dir_util.copy_tree(documentation_prefix + '/build/html', path, update=False)
+
+    print('Creating PyRosetta documentation at: {}... Done!'.format(path))
 
 
 def create_package(rosetta_source_path, path):
@@ -571,7 +606,7 @@ def create_package(rosetta_source_path, path):
             for f in files:
                 if f.endswith('.pyc'): os.remove(dir_name + '/' + f)
 
-
+    generate_version_file(rosetta_source_path, path + '/version.json')
 
 
 def main(args):
@@ -592,12 +627,8 @@ def main(args):
     parser.add_argument('--annotate-includes', action="store_true", help='Annotate includes in generated PyRosetta source files')
     parser.add_argument('--trace', action="store_true", help='Binder will add trace output to to generated PyRosetta source files')
 
-    parser.add_argument("--pydoc", default='pydoc', help="Specify pydoc executable to use (default is 'pydoc')")
-    parser.add_argument('--documentation', default='', help='Generate PyRosetta documentation at specified path (default is to skip documentation creation)')
-
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
-    parser.add_argument('--external-link', default=None, choices=["debug", "release"],
-        help="Optional, link externally compiled rosetta libraries from the given cmake build directory rather than rebuilding in extension modoule.")
+    parser.add_argument('--external-link', default=None, choices=["debug", "release"], help="Optional, link externally compiled rosetta libraries from the given cmake build directory rather than rebuilding in extension modoule.")
 
     parser.add_argument('--python-include-dir', default=None, help='Path to python C headers. Use this if CMake fails to autodetect it')
     parser.add_argument('--python-lib', default=None, help='Path to python library. Use this if CMake fails to autodetect it')
@@ -607,6 +638,10 @@ def main(args):
     parser.add_argument('--serialization', action="store_true", help="Build PyRosetta with serialization enabled (off by default)")
 
     parser.add_argument('--binder-extra-options', default=None, help='Specify Binder extra (LLVM) options. Use this to point Binder to additional include dir or add/change LLVM flags. For example on Mac with no Xcode install set this to "-isystem /Library/Developer/CommandLineTools/usr/include/c++/v1" to point Binder to correct location of system includes.')
+
+    parser.add_argument('--documentation', help='Generate PyRosetta documentation at specified path (default is to skip documentation creation). Note that Sphinx package need to be installed for this to work correctly.')
+
+    parser.add_argument('--version', help='Supply JSON version file to be used for during package creation and documentation building. File must be in the same format as standard Rosetta .release.json used to mark release versions. If no file is supplied script will fallback to use main/.version.json.')
 
     global Options
     Options = parser.parse_args()
@@ -638,7 +673,7 @@ def main(args):
     if Options.skip_building_phase: print('Option --skip-building-phase is supplied, skipping building phase...')
     else: build_generated_bindings(rosetta_source_path)
 
-    if Options.documentation: generate_documentation(rosetta_source_path, Options.documentation)
+    if Options.documentation: generate_documentation(rosetta_source_path, Options.documentation, Options.version)
     if Options.create_package: create_package(rosetta_source_path, Options.create_package)
 
 

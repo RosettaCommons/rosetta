@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, os.path, json
 
 # Assert or bootstrap minimum setuptools version required for find_packages
 import ez_setup
@@ -23,6 +23,18 @@ class PyRosettaDistribution( Distribution ):
     def has_ext_modules(self):
         return True
 
+
+def get_package_version():
+    version_file = os.path.dirname( os.path.abspath(__file__) ) + '/../version.json'
+
+    if os.path.isfile(version_file):
+        with open(version_file) as f: v = json.load(f)
+
+        if v['version']: return v['version']
+
+    return 'v2017'
+
+
 def setup_package():
     # chdir to source path and add sources to sys.path to allow invocation of setup script from other directories.
     # Code structure taken from numpy/setup.py
@@ -35,7 +47,7 @@ def setup_package():
         setup(
             name = "pyrosetta",
             description="PyRosetta package",
-            version = "4.0",
+            version = get_package_version(),
             packages = find_packages(include=["pyrosetta*", "rosetta*"]),
             package_data = {
                 "pyrosetta" :

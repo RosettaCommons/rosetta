@@ -86,8 +86,7 @@ def project_callback(project, project_path, project_files):
 
         #print('making project files for ' + project + ' from ' + project_path)
 
-        output = ''
-        output += 'SET(' + project + '_files' + cmake_files + '\n)\n'
+        output = 'SET(' + project + '_files' + cmake_files + '\n)\n'
 
         open('build/' + project + '.cmake', 'w').write(output)
     print('done.')
@@ -179,4 +178,3 @@ build_util.external_main(PATH_TO_SOURCE_DIR, sys.argv, project_external_callback
 build_util.project_main(PATH_TO_SOURCE_DIR, sys.argv, project_callback)
 
 build_util.test_main(PATH_TO_SOURCE_DIR, sys.argv, project_test_callback)
-

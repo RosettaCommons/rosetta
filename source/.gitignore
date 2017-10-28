@@ -59,3 +59,4 @@ scons_one_auto.bash
 scons_one.bash
 big_scons_log
 temp_scons_stupid_mac_workaround
+.version.json

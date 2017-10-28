@@ -16,7 +16,7 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <basic/Tracer.hh>
 
-#include <core/svn_version.hh>
+#include <utility/version.hh>
 #include <core/types.hh>
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 #include <core/conformation/Residue.hh>
@@ -541,7 +541,7 @@ AtomTreeDiffJobDistributor::AtomTreeDiffJobDistributor(JobVector jobs, std::stri
 	} else {
 		out_.open( outfile_name.c_str() );
 		if ( basic::options::option[ basic::options::OptionKeys::run::version ] ) {
-			out_ << "# Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << "\n";
+			out_ << "# Rosetta version " << utility::Version::package() << " " << utility::Version::version() << " commit " << utility::Version::commit() << " from " << utility::Version::url() << "\n";
 		}
 	}
 	if ( !out_.good() ) {

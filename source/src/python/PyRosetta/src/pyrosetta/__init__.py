@@ -43,7 +43,7 @@ rosetta.utility.vector1_string = rosetta.utility.vector1_std_string
 # Constants and globals
 
 # FIXME: create 'version' struct in utility instead
-rosetta_version =  rosetta.utility.Version.commit_id() + ':' + rosetta.utility.Version.commit()
+rosetta_version =  rosetta.utility.Version.package() + ' ' + rosetta.utility.Version.version() + rosetta.utility.Version.commit()
 
 # Create global '_PLATFORM' that will hold info of current system.
 if sys.platform.startswith("linux"):
@@ -184,7 +184,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
 
 
 def version():
-    return "PyRosetta-4 2016 [Rosetta 2016 " + rosetta_version + ' ' + rosetta.utility.Version.date() + \
+    return "PyRosetta-4 2017 [Rosetta " + rosetta_version + ' ' + rosetta.utility.Version.date() + \
            "] retrieved from: " + rosetta.utility.Version.url() + \
            "\n(C) Copyright Rosetta Commons Member Institutions." + \
            "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"

@@ -12,7 +12,6 @@
 sources = {
 	"devel": [
 		"init",
-                "svn_version",
                 #"init.release",
 	],
 	"devel/buns": [
