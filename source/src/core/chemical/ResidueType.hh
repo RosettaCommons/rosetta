@@ -1634,6 +1634,18 @@ public:
 	///
 	bool has_polymer_dependent_groups() const;
 
+	/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on the lower polymeric connection?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool atom_depends_on_lower_polymeric_connection( core::Size const atom_index ) const;
+
+	/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on the upper polymeric connection?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool atom_depends_on_upper_polymeric_connection( core::Size const atom_index ) const;
+
+	/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on the upper or lower polymeric connection?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool atom_depends_on_polymeric_connection( core::Size const atom_index ) const;
+
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
 	///
 	bool is_sri() const;
@@ -2301,6 +2313,11 @@ private:
 	void
 	update_derived_data();
 
+	/// @brief Determine which atoms are polymer bond-dependent.
+	/// @details Should only be called from update_derived_data() function.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void update_polymer_dependent_groups();
+
 	/// @brief If there is an NCAARotamerLibrarySpecification, ensure that the rotamer backbone dependicies have been set.
 	/// If they have not, set them to all mainchain torsions except omega (the final, inter-residue torsion).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -2803,6 +2820,19 @@ private:
 	/// @details If blank, the base type's file is used.  If that's blank too, then this ResidueType isn't scored by RamaPrePro.
 	/// @note This one is for maps used if this residue occurs before a proline.
 	std::string rama_prepro_map_file_name_beforeproline_;
+
+	/// @brief Does this ResidueType have groups with icoors that depend, directly or indirectly, on polymeric bonds?
+	bool has_polymer_dependent_groups_;
+
+	/// @brief vector of length corresponding to number of atoms indicating whether each atom is dependent on the lower
+	/// polymer bond.
+	/// @details empty if this is a ligand instead of a polymer bond.
+	utility::vector1 < bool > atom_depends_on_lower_polymeric_connection_;
+
+	/// @brief vector of length corresponding to number of atoms indicating whether each atom is dependent on the upper
+	/// polymer bond.
+	/// @details empty if this is a ligand instead of a polymer bond.
+	utility::vector1 < bool > atom_depends_on_upper_polymeric_connection_;
 
 	////////////////
 	/// @brief Is all the derived data appropriately updated?

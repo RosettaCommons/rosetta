@@ -934,8 +934,8 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		if ( !rsd_type_.atom_is_backbone(i) &&
 				!(rsd_type_.is_NA() && rsd_type_.atom_name(i) == " O2'") && //Special nucleic acid case
 				!(rsd_type_.is_NA() && rsd_type_.atom_name(i) == "HO2'") && //Special nucleic acid case
-				!( atom_depends_on_lower(i, rsd_type_.has_polymer_dependent_groups()) ) &&
-				!( atom_depends_on_upper(i, rsd_type_.has_polymer_dependent_groups()) )
+				!( atom_depends_on_lower(i) ) &&
+				!( atom_depends_on_upper(i) )
 				) {
 			continue;
 		}
@@ -945,8 +945,8 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 				( (!rsd_type_.is_polymer() ) ||
 				(rsd_type_.is_peptoid() && !rsd_type_.atom_is_hydrogen(i) && rsd_type_.atom_is_backbone(i)) ||
 				(!rsd_type_.is_peptoid() && !rsd_type_.atom_is_hydrogen(i)) ||
-				(!rsd_type_.is_peptoid() && atom_depends_on_lower(i, rsd_type_.has_polymer_dependent_groups() ) ) ||
-				atom_depends_on_upper(i, rsd_type_.has_polymer_dependent_groups() ) ||
+				(!rsd_type_.is_peptoid() && atom_depends_on_lower(i) ) ||
+				atom_depends_on_upper(i) ||
 				(rsd_type_.is_lower_terminus() && rsd_type_.icoor(i).stub_atom1().atomno() == 1)
 				/*Force rebuild of mainchain hydrogens that don't depend on polymer lower or upper and aren't N-terminal amide protons.  Logic below ensures that hydrogen positions are preserved if they don't deviate by more than a threshold from ideal. VKM 21 Aug 2015.*/
 				)
@@ -1658,37 +1658,23 @@ Residue::n_bonded_neighbor_all_res(
 }
 
 /// @brief Does this atom depend on the LOWER_CONNECT?
-/// @details If recursive is set to true (the default), the dependencies are traced back and the function returns
-/// true if ANY atom that this atom depends on is dependent on LOWER_CONNECT.  If false, only the immediate stub1, stub2, and
-/// stub3 atoms are checked.
+/// @details Now based on a simple lookup, based on data initialized during ResidueType::finalize().
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 bool
 Residue::atom_depends_on_lower(
-	core::Size const atom_index,
-	bool const recursive
+	core::Size const atom_index
 ) const {
-	if ( !recursive ) { return icoor(atom_index).depends_on_polymer_lower(); }
-
-	utility::vector1 < core::Size > visited;
-	visited.push_back(atom_index);
-	return atom_depends_on_lower( atom_index, visited );
+	return rsd_type_.atom_depends_on_lower_polymeric_connection(atom_index);
 }
 
 /// @brief Does this atom depend on the UPPER_CONNECT?
-/// @details If recursive is set to true (the default), the dependencies are traced back and the function returns
-/// true if ANY atom that this atom depends on is dependent on UPPER_CONNECT.  If false, only the immediate stub1, stub2, and
-/// stub3 atoms are checked.
+/// @details Now based on a simple lookup, based on data initialized during ResidueType::finalize().
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 bool
 Residue::atom_depends_on_upper(
-	core::Size const atom_index,
-	bool const recursive
+	core::Size const atom_index
 ) const {
-	if ( !recursive ) { return icoor(atom_index).depends_on_polymer_upper(); }
-
-	utility::vector1 < core::Size > visited;
-	visited.push_back(atom_index);
-	return atom_depends_on_upper( atom_index, visited );
+	return rsd_type_.atom_depends_on_upper_polymeric_connection(atom_index);
 }
 
 // fpd bondlength analog to set_chi
@@ -2079,67 +2065,6 @@ void Residue::assign_orbitals() {
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
 		}
 	}
-}
-
-/// @brief Does this atom depend on the LOWER_CONNECT?  Checks recursively.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-bool
-Residue::atom_depends_on_lower(
-	core::Size const atom_index,
-	utility::vector1< core::Size > visited_atoms
-) const {
-	if ( icoor(atom_index).depends_on_polymer_lower() ) return true;
-
-	visited_atoms.push_back( atom_index );
-
-	core::Size const stub1_index( icoor( atom_index ).stub_atom1().atomno() );
-	bool const stub1( stub1_index == 0 || in_list( stub1_index, visited_atoms ) ? false : atom_depends_on_lower( stub1_index, visited_atoms )  );
-	if ( stub1 ) return true;
-
-	core::Size const stub2_index( icoor( atom_index ).stub_atom2().atomno() );
-	bool const stub2( stub2_index == 0 || in_list( stub2_index, visited_atoms )  ? false : atom_depends_on_lower( stub2_index, visited_atoms )  );
-	if ( stub2 ) return true;
-
-	core::Size const stub3_index( icoor( atom_index ).stub_atom3().atomno() );
-	bool const stub3( stub3_index == 0 || in_list( stub3_index, visited_atoms )  ? false : atom_depends_on_lower( stub3_index, visited_atoms )  );
-	return stub3;
-}
-
-/// @brief Does this atom depend on the UPPER_CONNECT?  Checks recursively.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-bool
-Residue::atom_depends_on_upper(
-	core::Size const atom_index,
-	utility::vector1< core::Size > visited_atoms
-) const {
-	if ( icoor(atom_index).depends_on_polymer_upper() ) return true;
-
-	visited_atoms.push_back( atom_index );
-
-	core::Size const stub1_index( icoor( atom_index ).stub_atom1().atomno() );
-	bool const stub1( stub1_index == 0 || in_list( stub1_index, visited_atoms ) ? false : atom_depends_on_upper( stub1_index, visited_atoms )  );
-	if ( stub1 ) return true;
-
-	core::Size const stub2_index( icoor( atom_index ).stub_atom2().atomno() );
-	bool const stub2( stub2_index == 0 || in_list( stub2_index, visited_atoms )  ? false : atom_depends_on_upper( stub2_index, visited_atoms )  );
-	if ( stub2 ) return true;
-
-	core::Size const stub3_index( icoor( atom_index ).stub_atom3().atomno() );
-	bool const stub3( stub3_index == 0 || in_list( stub3_index, visited_atoms )  ? false : atom_depends_on_upper( stub3_index, visited_atoms )  );
-	return stub3;
-}
-
-/// @brief Is a value in a list?
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-bool
-Residue::in_list(
-	core::Size const val,
-	utility::vector1< core::Size > const &vect
-) const {
-	// following copies code from utility -- rhiju, 2017.
-	// for ( core::Size i=1, imax=vect.size(); i<=imax; ++i ) { if ( vect[i] == val ) return true; }
-	// return false;
-	return vect.has_value( val );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

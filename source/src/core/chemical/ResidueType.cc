@@ -150,6 +150,9 @@ ResidueType::ResidueType(
 	rama_prepro_mainchain_torsion_potential_name_beforeproline_(),
 	rama_prepro_map_file_name_(),
 	rama_prepro_map_file_name_beforeproline_(),
+	has_polymer_dependent_groups_(false),
+	atom_depends_on_lower_polymeric_connection_(),
+	atom_depends_on_upper_polymeric_connection_(),
 	finalized_(false),
 	nondefault_(false)
 {
@@ -290,6 +293,9 @@ ResidueType::operator=( ResidueType const & residue_type )
 	rama_prepro_mainchain_torsion_potential_name_beforeproline_ = residue_type.rama_prepro_mainchain_torsion_potential_name_beforeproline_;
 	rama_prepro_map_file_name_ = residue_type.rama_prepro_map_file_name_;
 	rama_prepro_map_file_name_beforeproline_ = residue_type.rama_prepro_map_file_name_beforeproline_;
+	has_polymer_dependent_groups_ = residue_type.has_polymer_dependent_groups_;
+	atom_depends_on_lower_polymeric_connection_ = residue_type.atom_depends_on_lower_polymeric_connection_;
+	atom_depends_on_upper_polymeric_connection_ = residue_type.atom_depends_on_upper_polymeric_connection_;
 	finalized_ = residue_type.finalized_;
 	defined_adducts_ = residue_type.defined_adducts_;
 	nondefault_ = residue_type.nondefault_;
@@ -2289,15 +2295,37 @@ ResidueType::is_oligourea() const {
 }
 
 /// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
-///
+/// @details Always returns false for non-polymeric residue types.
 bool
 ResidueType::has_polymer_dependent_groups() const {
-	return
-		is_n_methylated() ||
-		is_peptoid() ||
-		has_variant_type(core::chemical::CUTPOINT_LOWER) ||
-		has_variant_type(core::chemical::CUTPOINT_UPPER)
-		; //TODO: Update this if other polymer-dependent types are added.
+	return is_polymer() && has_polymer_dependent_groups_;
+}
+
+/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on the lower polymeric connection?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::atom_depends_on_lower_polymeric_connection( core::Size const atom_index ) const {
+	debug_assert( atom_index > 0 && atom_index <= natoms() );
+	if ( !is_polymer() ) return false;
+	return atom_depends_on_lower_polymeric_connection_[atom_index];
+}
+
+/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on the upper polymeric connection?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::atom_depends_on_upper_polymeric_connection( core::Size const atom_index ) const {
+	debug_assert( atom_index > 0 && atom_index <= natoms() );
+	if ( !is_polymer() ) return false;
+	return atom_depends_on_upper_polymeric_connection_[atom_index];
+}
+
+/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on the upper or lower polymeric connection?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::atom_depends_on_polymeric_connection( core::Size const atom_index ) const {
+	debug_assert( atom_index > 0 && atom_index <= natoms() );
+	if ( !is_polymer() ) return false;
+	return atom_depends_on_lower_polymeric_connection_[atom_index] || atom_depends_on_upper_polymeric_connection_[atom_index];
 }
 
 /// @brief Is this one of SRI's special heteropolymer building blocks?
@@ -3231,6 +3259,9 @@ Derived data updated by this method:
 * within2bonds_sets_for_atom_
 * last_controlling_chi_
 * atoms_last_controlled_by_chi_
+* has_polymer_dependent_groups_
+* atom_depends_on_lower_polymeric_connection_
+* atom_depends_on_upper_polymeric_connection_
 
 * Atom.heavyatom_has_polar_hydrogens_ - for all atoms.
 * Some AtomProperties:
@@ -3609,6 +3640,43 @@ ResidueType::update_derived_data()
 		}
 	}
 
+	update_polymer_dependent_groups();
+}
+
+/// @brief Determine which atoms are polymer bond-dependent.
+/// @details Should only be called from update_derived_data() function.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+ResidueType::update_polymer_dependent_groups() {
+	core::Size const n_atom( natoms() );
+	has_polymer_dependent_groups_ = false;
+	atom_depends_on_lower_polymeric_connection_.clear();
+	atom_depends_on_lower_polymeric_connection_.resize( n_atom, false );
+	atom_depends_on_upper_polymeric_connection_.clear();
+	atom_depends_on_upper_polymeric_connection_.resize( n_atom, false );
+
+	if ( !is_polymer() ) return;
+
+	bool nothing_changed(true);
+
+	// This logic scales with natoms^3, which isn't ideal, but it's only called once on ResidueType initialization.  Still, it prevents
+	// the necessity of implementing a recursive function, which is what I'm trying to avoid:
+	for ( core::Size attempts(1); attempts<=n_atom; ++attempts ) { //The maximum number of iterations needed should be n_atom, though it will be much lower in most cases.
+		nothing_changed = true;
+		for ( core::Size i(1); i<=n_atom; ++i ) {
+			if ( icoor(i).depends_on_polymer_lower() || icoor(i).depends_on_a_true_index( atom_depends_on_lower_polymeric_connection_ ) ) {
+				nothing_changed = false;
+				has_polymer_dependent_groups_ = true;
+				atom_depends_on_lower_polymeric_connection_[i] = true;
+			}
+			if ( icoor(i).depends_on_polymer_upper() || icoor(i).depends_on_a_true_index( atom_depends_on_upper_polymeric_connection_ ) ) {
+				nothing_changed = false;
+				has_polymer_dependent_groups_ = true;
+				atom_depends_on_upper_polymeric_connection_[i] = true;
+			}
+		}
+		if ( nothing_changed ) break;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -4963,6 +5031,9 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	arc( CEREAL_NVP( rama_prepro_mainchain_torsion_potential_name_beforeproline_ ) ); // std::string
 	arc( CEREAL_NVP( rama_prepro_map_file_name_ ) );// std::string
 	arc( CEREAL_NVP( rama_prepro_map_file_name_beforeproline_ ) );// std::string
+	arc( CEREAL_NVP( has_polymer_dependent_groups_ ) ); //bool
+	arc( CEREAL_NVP( atom_depends_on_lower_polymeric_connection_ ) ); //utility::vector1<bool>
+	arc( CEREAL_NVP( atom_depends_on_upper_polymeric_connection_ ) ); //utility::vector1<bool>
 	// EXEMPT finalized_
 	// ( will call finalization function on load )
 	arc( CEREAL_NVP( defined_adducts_ ) ); // utility::vector1<Adduct>
@@ -5161,6 +5232,9 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( rama_prepro_mainchain_torsion_potential_name_beforeproline_ ); // std::string
 	arc( rama_prepro_map_file_name_ ); // std::string
 	arc( rama_prepro_map_file_name_beforeproline_ ); // std::string
+	arc( has_polymer_dependent_groups_ ); //bool
+	arc( atom_depends_on_lower_polymeric_connection_ ); //utility::vector1<bool>
+	arc( atom_depends_on_upper_polymeric_connection_ ); //utility::vector1<bool>
 	arc( defined_adducts_ ); // utility::vector1<Adduct>
 	arc( nondefault_ ); // _Bool
 

@@ -80,6 +80,7 @@ public:
 	}
 
 	void test_recursive_identification_of_connection_dependencies() {
+		//Note -- the determination is no longer recursive.  VKM -- 27 Oct 2017.
 		Pose pose;
 		core::import_pose::pose_from_file(pose, "core/conformation/4gatA.pdb", core::import_pose::PDB_file);
 
@@ -93,9 +94,9 @@ public:
 		TR << "\nATOM\tLOWER_DEP\tUPPER_DEP\n";
 		for ( core::Size ia=1, iamax=pose.residue(5).natoms(); ia<=iamax; ++ia ) {
 			std::string const atomname( pose.residue(5).atom_name(ia) );
-			bool const lowerdep( pose.residue(5).atom_depends_on_lower(ia,true) );
+			bool const lowerdep( pose.residue(5).atom_depends_on_lower(ia) );
 			//bool const upperdep(false);
-			bool const upperdep( pose.residue(5).atom_depends_on_upper(ia,true) );
+			bool const upperdep( pose.residue(5).atom_depends_on_upper(ia) );
 			TR << atomname << "\t" << (lowerdep ? "TRUE" : "FALSE") << "\t" << (upperdep ? "TRUE" : "FALSE") << "\n";
 			if ( atomname == " CN " || atomname == "1HN " || atomname == "2HN " || atomname == "3HN " ) {
 				TS_ASSERT( lowerdep );
@@ -110,6 +111,7 @@ public:
 	}
 
 	void test_recursive_identification_of_connection_dependencies_peptoid() {
+		//Note -- the determination is no longer recursive.  VKM -- 27 Oct 2017.
 		Pose pose;
 		core::import_pose::pose_from_file(pose, "core/conformation/4gatA.pdb", core::import_pose::PDB_file);
 
@@ -121,9 +123,9 @@ public:
 		TR << "\nATOM\tLOWER_DEP\tUPPER_DEP\n";
 		for ( core::Size ia=1, iamax=pose.residue(5).natoms(); ia<=iamax; ++ia ) {
 			std::string const atomname( pose.residue(5).atom_name(ia) );
-			bool const lowerdep( pose.residue(5).atom_depends_on_lower(ia,true) );
+			bool const lowerdep( pose.residue(5).atom_depends_on_lower(ia) );
 			//bool const upperdep(false);
-			bool const upperdep( pose.residue(5).atom_depends_on_upper(ia,true) );
+			bool const upperdep( pose.residue(5).atom_depends_on_upper(ia) );
 			TR << atomname << "\t" << (lowerdep ? "TRUE" : "FALSE") << "\t" << (upperdep ? "TRUE" : "FALSE") << "\n";
 			if ( atomname == " CA1" || atomname == " CB1" || atomname == " CB2" || atomname == " CG1" || atomname == " CG2" ||
 					atomname == " CD1" || atomname == " CD2" || atomname == " CE " || atomname == "1HA1" ||

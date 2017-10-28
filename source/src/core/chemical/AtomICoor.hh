@@ -301,6 +301,20 @@ public:
 		return ( stub_atom1_.is_internal() && stub_atom2_.is_internal() && stub_atom3_.is_internal() );
 	}
 
+	/// @brief Given a Boolean vector corresponding to atom indices, determine whether any of the stub
+	/// indices depends on one of the atoms that are "true".
+	/// @details Called by ResidueType::update_polymer_dependent_groups() when figuring out which atoms depend on atoms that
+	/// depend on a connection.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool
+	depends_on_a_true_index( utility::vector1< bool > const &atomvect ) const {
+		for ( core::Size i(1), imax(atomvect.size()); i<=imax; ++i ) {
+			if ( atomvect[i] ) {
+				if ( stub_atom1_.atomno() == i || stub_atom2_.atomno() == i || stub_atom3_.atomno() == i ) return true;
+			}
+		}
+		return false;
+	}
 
 	/// @brief Is this icoor immediately dependent on LOWER?
 	/// @details Returns true if stub atom 1, 2, or 3 is LOWER.
