@@ -151,8 +151,6 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
         #     if os.path.isdir(build_dir): shutil.rmtree(build_dir)
         # else: print( 'Binder build detected, but source version mismatched: was:{} current:{}, rebuilding...'.format(disk_signature['binder'], signature['binder']) )
 
-        if not os.path.isdir(build_dir): os.makedirs(build_dir)
-
         git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
 
         if os.path.isdir(prefix) and  (not os.path.isdir(prefix+'/.git')): shutil.rmtree(prefix)  # removing old style checkoiut
@@ -182,6 +180,9 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
 
         config = '-DCMAKE_BUILD_TYPE={build_type}'.format(build_type='Debug' if debug else 'Release')
         if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
+
+        # Defer recreating of build_dir, as removing prefix dir may also remove build dir
+        if not os.path.isdir(build_dir): os.makedirs(build_dir)
 
         execute(
             'Building tool: {}...'.format(name),
