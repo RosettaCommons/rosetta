@@ -35,6 +35,9 @@ mpirun -np 4 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags.mpi 
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
+#Ignore node 0, as job results will be returned in arbitrary order
+rm mpi_log_0
+
 # Filter out the ignore_list items from the MPI logs.
 bash ../../clean_mpi_logs.sh
 
