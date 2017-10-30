@@ -888,8 +888,8 @@ Options = Option_Group( '',
 #			lower='0', upper='9', default='0'
 #			),
 		Option( 'version', 'Boolean',
-			desc="write out SVN version info, if it was available at compile time",
-			default='true'
+			desc="write out detailed version info, if it was available at compile time",
+			default='false'
 			),
 		Option( 'nodelay', 'Boolean',
 			desc="Do not delay launch of minirosetta",

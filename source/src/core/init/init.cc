@@ -858,6 +858,11 @@ init_source_revision(){
 		TR << "Git Commit:              " << utility::Version::commit() << std::endl;
 		TR << "URL:                     " << utility::Version::url() << std::endl;
 		TR << "Date:                    " << utility::Version::date() << std::endl;
+	} else {
+		TR << "Rosetta version:";
+		if ( utility::Version::package() != "devel" ) TR << " " << utility::Version::package();
+		if ( utility::Version::revision() != "None" ) TR << " r" << utility::Version::revision();
+		TR << " " << utility::Version::version() << " " << utility::Version::commit() << " " << utility::Version::url() << " " << utility::Version::date() << std::endl;
 	}
 }
 
