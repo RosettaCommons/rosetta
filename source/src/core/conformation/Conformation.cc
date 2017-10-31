@@ -710,9 +710,9 @@ Conformation::set_membrane_info( membrane::MembraneInfoOP mem_info )
 membrane::MembraneInfoOP
 Conformation::membrane_info() {
 	if ( membrane_info_== nullptr ) {
-		utility_exit_with_message( "Incomplete Conformation: Trying to access membrane framework data without initializing with AddMembraneMover. Exiting!" ); 
+		utility_exit_with_message( "Incomplete Conformation: Trying to access membrane framework data without initializing with AddMembraneMover. Exiting!" );
 	}
-	return membrane_info_; 
+	return membrane_info_;
 }
 
 /// @brief Returns a Membrane Info Object in the conformation
@@ -724,7 +724,7 @@ Conformation::membrane_info() const {
 	if ( membrane_info_ == nullptr ) {
 		utility_exit_with_message( "Incomplete Conformation: Trying to access membrane framework data without initializing with AddMembraneMover. Exiting!" );
 	}
-	return membrane_info_; 
+	return membrane_info_;
 }
 
 
