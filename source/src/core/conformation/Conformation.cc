@@ -709,7 +709,10 @@ Conformation::set_membrane_info( membrane::MembraneInfoOP mem_info )
 /// and lipid exposure/burial data
 membrane::MembraneInfoOP
 Conformation::membrane_info() {
-	return membrane_info_;
+	if ( membrane_info_== nullptr ) {
+		utility_exit_with_message( "Incomplete Conformation: Trying to access membrane framework data without initializing with AddMembraneMover. Exiting!" ); 
+	}
+	return membrane_info_; 
 }
 
 /// @brief Returns a Membrane Info Object in the conformation
@@ -718,7 +721,10 @@ Conformation::membrane_info() {
 /// scoring and the spanning topology/lipids accessibility data
 membrane::MembraneInfoOP
 Conformation::membrane_info() const {
-	return membrane_info_;
+	if ( membrane_info_ == nullptr ) {
+		utility_exit_with_message( "Incomplete Conformation: Trying to access membrane framework data without initializing with AddMembraneMover. Exiting!" );
+	}
+	return membrane_info_; 
 }
 
 
