@@ -378,7 +378,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 	known_links_ = core::io::explicit_links_from_sfr_linkage( sfr_.link_map(), rinfos_ );
 	if ( options_.auto_detect_glycan_connections() ) {
 		//This clears the links before fix_glycan_order call which makes the clear in add_glycan_links_to_map redundant but I'm leaving it for now.
-		if ( !basic::options::option[ basic::options::OptionKeys::in::maintain_links ].value() ) {
+		if ( !options_.maintain_links() ) {
 			known_links_.clear();
 		}
 		utility::vector1< core::Size > chain_ends = core::io::fix_glycan_order( rinfos_, glycan_positions_, options_, known_links_ );
@@ -908,9 +908,10 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 
 	// Step 5. Reconcile connectivity data.
 
-	//Store atoms with ambiguous lower connect so that we can regenerate coordinates after lower connects are resolved.
+	//Store carbohydrate atoms with ambiguous lower connect so that we can regenerate coordinates after lower connects are resolved. This should probably be changed to apply to all non proteins.
 	utility::vector1< core::id::AtomID > lower_connect_atoms;
 	for ( Size ii=1; ii<=pose.size(); ++ii ) {
+		if ( !pose.residue_type(ii).is_carbohydrate() ) continue;
 		for ( Size jj=1; jj<=pose.residue(ii).natoms(); ++jj ) {
 			if ( ( pose.residue(ii).icoor(jj).depends_on_polymer_lower() && !pose.residue(ii).is_lower_terminus() ) ||
 					( pose.residue(ii).icoor(jj).depends_on_polymer_upper() && !pose.residue(ii).is_upper_terminus() ) ) {
