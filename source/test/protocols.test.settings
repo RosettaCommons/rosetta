@@ -467,6 +467,7 @@ sources = {
 
 	"protein_interface_design/movers" : [
 		"LoopLengthChange",
+		"AddChainBreak",
 	],
 
 	"qsar/scoring_grid" : [

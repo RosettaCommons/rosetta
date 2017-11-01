@@ -11,6 +11,8 @@
 /// @brief
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 
+#include <boost/range/algorithm.hpp>
+
 // Unit headers
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>
 #include <protocols/protein_interface_design/movers/AddChainBreakCreator.hh>
@@ -65,6 +67,7 @@ AddChainBreak::AddChainBreak() :
 	protocols::moves::Mover( AddChainBreak::mover_name() ),
 	resnum_( "" ),
 	change_foldtree_( true ),
+	change_conformation_( false ),
 	find_automatically_( false ),
 	automatic_distance_cutoff_( 2.5 ),
 	remove_( false )
@@ -92,6 +95,7 @@ AddChainBreak::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, prot
 	}
 	remove( tag->getOption< bool >( "remove", false ) );
 	change_foldtree( tag->getOption< bool >( "change_foldtree", true ) );
+	change_conformation( tag->getOption< bool >( "change_conformation", false ) );
 	TR<<"resnum: "<<resnum_<<" change foldtree "<<change_foldtree()<<" find cutpoints automatically "<<find_automatically()<<" remove: "<<remove()<<std::endl;
 }//end parse my tag
 
@@ -108,6 +112,11 @@ AddChainBreak::apply( core::pose::Pose & pose )
 		if ( change_foldtree() ) {
 			f.new_jump( resn, resn+1, resn );
 		}
+
+		if ( change_conformation() ) {
+			pose.conformation().insert_chain_ending(resn);
+		}
+
 		if ( pose.residue(resn  ).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(pose,resn);
 		if ( pose.residue(resn+1).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(pose,resn+1);
 		if ( remove() ) {
@@ -132,8 +141,12 @@ AddChainBreak::apply( core::pose::Pose & pose )
 	for ( core::Size const res : cuts ) {
 		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res );
 		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res +1);
-		if ( change_foldtree() ) {
+		if ( change_foldtree() &&  !f.is_cutpoint(res) ) {
 			f.new_jump( res, res+1, res );
+		}
+
+		if ( change_conformation() && boost::range::count(pose.conformation().chain_endings(), res) == 0 ) {
+			pose.conformation().insert_chain_ending(res);
 		}
 	}
 	if ( change_foldtree() ) {
@@ -164,7 +177,10 @@ void AddChainBreak::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		"remove", xsct_rosetta_bool, "Residue numbering (pdb); provide this or resnum",
 		"false")
 		+ XMLSchemaAttribute::attribute_w_default(
-		"change_foldtree", xsct_rosetta_bool, "Residue numbering (pdb); provide this or resnum",
+		"change_foldtree", xsct_rosetta_bool, "Add chainbreak as new jump in fold tree.",
+		"true")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"change_conformation", xsct_rosetta_bool, "Add chainbreak as chain ending in pose conformation.",
 		"true")
 		+ XMLSchemaAttribute( "resnum", xs_string, "Residue numbering (pdb); provide this or resnum" )
 		+ XMLSchemaAttribute( "find_automatically", xsct_rosetta_bool, "Automatically find chain breaks" )
@@ -191,4 +207,3 @@ void AddChainBreakCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 } //movers
 } //protein_interface_design
 } //protocols
-
