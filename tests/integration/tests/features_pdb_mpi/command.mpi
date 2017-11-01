@@ -37,7 +37,7 @@ mpirun -np 3 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -dat
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
 #Ignore all log files, as there's order stochasticity
-for f in mpi_log; do
+for f in mpi_log*; do
   mv ${f} ${f}.ignore
 done
 
