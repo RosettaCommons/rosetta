@@ -20,6 +20,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/util.hh>
 
 #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
@@ -123,6 +124,7 @@ void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 	}
 
 	query_pose.batch_set_xyz( atm_ids, atm_xyzs );
+	core::conformation::idealize_position( query_pose.size(), query_pose.conformation() );
 
 	//////////
 	// 3) repack all missing atoms & idealize H
