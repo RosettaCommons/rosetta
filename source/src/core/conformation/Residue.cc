@@ -244,6 +244,21 @@ Residue::Residue( Residue const & src, core::chemical::ResidueTypeCOP new_restyp
 {
 	init_residue_from_other( src );
 	if ( flip_chirality && type().is_achiral_backbone() ) set_mirrored_relative_to_type( !src.mirrored_relative_to_type() ); //For achiral residues, we need to record whether the geometry is mirrored relative to the params file.  (1H and 2H may be chemically indistinguishable, but Rosetta distinguishes them.)
+	if ( src.nchi() < new_restype->nchi() ) {
+		chi_.resize( new_restype->nchi() );
+		for ( core::Size i( src.nchi() + 1 ), imax( nchi() ); i<=imax; ++i ) {
+			AtomIndices const & chi_atoms( rsd_type_.chi_atoms( i ) );
+			core::Real const current_chi(
+				numeric::dihedral_degrees(
+				atom( chi_atoms[1] ).xyz(),
+				atom( chi_atoms[2] ).xyz(),
+				atom( chi_atoms[3] ).xyz(),
+				atom( chi_atoms[4] ).xyz()
+				)
+			);
+			chi_[ i ] = current_chi;
+		}
+	}
 }
 
 /// @brief Function called by both copy constructors, to avoid code duplication.

@@ -706,6 +706,11 @@ AtomTree::torsion_angle_dof_id(
 		Real cos_phi3 = ( cos( theta3 ) - cos( theta1 ) * cos_theta2 ) /
 			( sin( theta1 ) * sin( theta2 ) );
 
+		//Bounds checking -- VKM, 1 Nov 2017.  (There were certain cases where numerical errors put
+		//the computed cos_phi3 value just a tiny hair outside of the allowed range).
+		if ( cos_phi3 < -1.0 ) cos_phi3 = -1.0;
+		else if ( cos_phi3 > 1.0 ) cos_phi3 = 1.0;
+
 		// PHIL! really should handle degenerate cases more carefully
 		// PHIL! also could reuse some of the trig calculations
 
