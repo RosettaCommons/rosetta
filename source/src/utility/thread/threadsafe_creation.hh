@@ -30,6 +30,26 @@
 // C++ headers
 #include <map>
 
+// The C++ standard libraries provided with GCCs before 5.1 did not have std::atomic_lock(std::shared_ptr) or std:atomic_lock(std::shared_ptr) defined.
+// We want to allow some special-case logic.
+// This is compicated by the fact that it's the *libraries* which don't have things defined, not the compilers.
+// This requires special introspection in order to figure out what we have.
+// NOTE: We have to do this after the includes, as the value only gets defined if we have stdlib headers included
+#ifdef __GLIBCXX__ // Using GCC's stdlib
+#if __GLIBCXX__ < 20150000 // everything prior to GCC 5.1 - see https://gcc.gnu.org/develop.html#timeline for dates
+	#define OLDER_GXX_STDLIB
+#elif __GLIBCXX__ == 20150623 // GCC 4.8.5 stdlib, released after 5.1
+	#define OLDER_GXX_STDLIB
+#elif __GLIBCXX__ == 20150626 // GCC 4.9.3 stdlib, released after 5.1
+	#define OLDER_GXX_STDLIB
+#elif __GLIBCXX__ == 20160803 // GCC 4.9.4 stdlib
+	#define OLDER_GXX_STDLIB
+#endif
+
+#endif // ifdef __GLIBCXX__
+
+
+
 namespace utility {
 namespace thread {
 
@@ -37,7 +57,7 @@ namespace thread {
 // safe creation functions
 #if defined MULTI_THREADED
 #define SAFELY_PASS_MUTEX(X) X
-#ifdef OLDER_GCC
+#ifdef OLDER_GXX_STDLIB
 #define SAFELY_PASS_THREADSAFETY_BOOL(X) X
 #else
 #define SAFELY_PASS_THREADSAFETY_BOOL(X) false
@@ -119,7 +139,7 @@ safely_create_load_once_object_by_OP(
 	utility::pointer::shared_ptr< T > & instance,
 #if defined MULTI_THREADED
 	std::mutex &mut,
-#ifdef OLDER_GCC
+#ifdef OLDER_GXX_STDLIB
 	std::atomic_bool &atomicbool
 #else
 	bool const /*dummy2*/
@@ -131,20 +151,20 @@ safely_create_load_once_object_by_OP(
 ) {
 
 #ifdef MULTI_THREADED
-#ifdef OLDER_GCC
-    std::atomic_bool local_atomicbool( atomicbool.load( std::memory_order_relaxed ) );
-    std::atomic_thread_fence( std::memory_order_acquire );
-    if( !local_atomicbool ) {
-	std::lock_guard< std::mutex > lock(mut);
-	local_atomicbool = atomicbool.load( std::memory_order_relaxed );
-	if( !local_atomicbool ) {
-	    utility::pointer::shared_ptr< T > local_instance( creation_func() );
-	    instance = local_instance; //Should be okay, since protected by mutex -- no other read or write occurs without this mutex.
-	    std::atomic_thread_fence( std::memory_order_release );
-	    atomicbool.store( true, std::memory_order_relaxed );
+#ifdef OLDER_GXX_STDLIB
+	std::atomic_bool local_atomicbool( atomicbool.load( std::memory_order_relaxed ) );
+	std::atomic_thread_fence( std::memory_order_acquire );
+	if ( !local_atomicbool ) {
+		std::lock_guard< std::mutex > lock(mut);
+		local_atomicbool = atomicbool.load( std::memory_order_relaxed );
+		if ( !local_atomicbool ) {
+			utility::pointer::shared_ptr< T > local_instance( creation_func() );
+			instance = local_instance; //Should be okay, since protected by mutex -- no other read or write occurs without this mutex.
+			std::atomic_thread_fence( std::memory_order_release );
+			atomicbool.store( true, std::memory_order_relaxed );
+		}
 	}
-    }
-#else // !OLDER_GCC
+#else // !OLDER_GXX_STDLIB
 	// threadsafe version that uses c++11 interface
 	// taken from http://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/
 	utility::pointer::shared_ptr< T > local_instance( std::atomic_load_explicit( &instance, std::memory_order_relaxed ) );
@@ -158,7 +178,7 @@ safely_create_load_once_object_by_OP(
 			std::atomic_store_explicit( &instance, local_instance, std::memory_order_relaxed );
 		}
 	}
-#endif // ifdef OLDER_GCC
+#endif // ifdef OLDER_GXX_STDLIB
 #else
 	// not multithreaded; standard singleton instantiation logic
 	if ( ! instance ) {

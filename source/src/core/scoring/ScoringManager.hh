@@ -124,7 +124,8 @@
 #ifdef MULTI_THREADED
 #include <mutex>
 #include <utility/thread/ReadWriteMutex.hh>
-#ifdef OLDER_GCC
+#include <utility/thread/threadsafe_creation.hh> // Needed for OLDER_GXX_STDLIB define
+#ifdef OLDER_GXX_STDLIB
 #include <atomic>
 #endif
 #endif
@@ -1077,7 +1078,7 @@ private:
 	mutable utility::thread::ReadWriteMutex etable_mutex_;
 	mutable std::mutex cp_rep_map_mutex_;
 	mutable utility::thread::ReadWriteMutex aa_comp_mutex_;
-#ifdef OLDER_GCC
+#ifdef OLDER_GXX_STDLIB
 	// Older versions of GCC lack the atomic_load and atomic_store functions for std::shared_ptr,
 	// so we also need std::atomic_bools as a workaround
 	mutable std::atomic_bool pairE_bool_;
@@ -1139,7 +1140,7 @@ private:
 	mutable std::atomic_bool carb_chienergy_bool_;
 	mutable std::atomic_bool carb_omegapref_bool_;
 	mutable std::atomic_bool cp_rep_map_bool_;
-#endif //OLDER_GCC
+#endif //OLDER_GXX_STDLIB
 #endif //MULTI_THREADED
 	// WARNING -- if you add something here don't forget to initialize to 0 in the constructor
 	mutable VdWTinkerPotentialOP vdw_tinker_potential_;

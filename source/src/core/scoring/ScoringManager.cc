@@ -195,7 +195,7 @@ ScoringManager::ScoringManager() :
 	etable_mutex_(),
 	cp_rep_map_mutex_(),
 	aa_comp_mutex_(),
-#ifdef OLDER_GCC
+#ifdef OLDER_GXX_STDLIB
 	pairE_bool_(false),
 	genborn_bool_(false),
 	hxl_potential_bool_(false),
@@ -255,7 +255,7 @@ ScoringManager::ScoringManager() :
 	carb_chienergy_bool_(false),
 	carb_omegapref_bool_(false),
 	cp_rep_map_bool_(false),
-#endif //OLDER_GCC
+#endif //OLDER_GXX_STDLIB
 #endif //MULTI_THREADED
 	vdw_tinker_potential_( /* 0 */ ),
 	pairE_potential_( /* 0 */ ),
