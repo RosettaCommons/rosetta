@@ -92,22 +92,22 @@ public:
 	}
 
 	//// special case for hydrate/SPaDES protocol
-	inline
-	Energy
-	sum_energies_wat_wat( Real atr, Real rep ) const {
-		return
-			atr_weight_ * atr +
-			rep_weight_ * rep;
-	}
-
-	// special case for hydrate/SPaDES protocol
-	inline
-	Energy
-	sum_energies_wat_res( Real atr, Real rep ) const {
-		return
-			atr_weight_ * atr +
-			rep_weight_ * rep;
-	}
+	//inline
+	//Energy
+	//sum_energies_wat_wat( Real atr, Real rep ) const {
+	// return
+	//  atr_weight_ * atr +
+	//  rep_weight_ * rep;
+	//}
+	//
+	//// special case for hydrate/SPaDES protocol
+	//inline
+	//Energy
+	//sum_energies_wat_res( Real atr, Real rep ) const {
+	// return
+	//  atr_weight_ * atr +
+	//  rep_weight_ * rep;
+	//}
 
 	inline
 	Real
@@ -116,6 +116,10 @@ public:
 		return hydrogen_interaction_cutoff2_;
 	}
 
+	/// @brief A Virtual function for the evaluation of an interaction energy of an atom with
+	/// a hydrogen atom. Not to be confused with the importantly non-virtual function defined
+	/// in each of the subclasses that templated atom-pair-energy-inline functions invoke
+	/// (avoiding any virtual-function overhead).
 	// redundant with atom_pair_energy below, but I didn't want to screw up
 	// how things are optimized... rhiju, 2014.
 	virtual
@@ -141,6 +145,7 @@ public:
 
 	// redundant with atom_pair_energy below, but I didn't want to screw up
 	// how things are optimized... rhiju, 2014.
+	virtual
 	void
 	atom_pair_energy_v(
 		conformation::Atom const & atom1,
@@ -213,7 +218,7 @@ public:
 
 	//Etable etable() const { return etable_; }
 
-	/// Atom pair energy inline type resolution functions
+	/// @brief Atom pair energy inline type resolution function
 	void
 	residue_atom_pair_energy(
 		conformation::Residue const & rsd1,
@@ -274,6 +279,9 @@ public:
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const;
 
+	/// @brief A non-virtual function for the evaluation of an interaction energy of a
+	/// pair of atoms that is invoked directly by the atom-pair-energy-inline functions
+	/// without any virtual-function overhead.
 	inline
 	void
 	atom_pair_energy(
@@ -293,7 +301,6 @@ public:
 
 	}
 
-	virtual
 	void
 	atom_pair_energy_v(
 		conformation::Atom const & atom1,
@@ -303,20 +310,18 @@ public:
 		Real & repE,
 		Real & solE,
 		Real & d2
-	) const {
+	) const override {
 		atom_pair_energy( atom1, atom2, weight, atrE, repE, solE, d2 );
 	}
 
-	virtual
 	void
 	atom_pair_lk_energy_and_deriv_v(
 		conformation::Atom const & atom1,
 		conformation::Atom const & atom2,
 		Real & solE1,
 		Real & dsolE1,
-		bool const eval_deriv = false ) const;
+		bool const eval_deriv = false ) const override;
 
-	virtual
 	void
 	atom_pair_lk_energy_and_deriv_v_efficient(
 		conformation::Atom const & atom1,
@@ -325,9 +330,11 @@ public:
 		Real & solE2,
 		Real & dsolE1,
 		bool const eval_deriv
-	) const;
+	) const override;
 
-
+	/// @brief A non-virtual function for the evaluation of an interaction energy of a
+	/// pair of atoms that is invoked by functions that are themselves invoked
+	/// by the atom-pair-energy-inline functions without any virtual-function overhead.
 	inline
 	void
 	atom_pair_energy(
@@ -340,18 +347,19 @@ public:
 		Real & d2
 	) const;
 
-	virtual
 	void
 	pair_energy_H_v(
 		conformation::Atom const & atom1,
 		conformation::Atom const & atom2,
 		Real const weight,
 		EnergyMap & emap
-	) const {
+	) const override {
 		pair_energy_H( atom1, atom2, weight, emap );
 	}
 
-	virtual
+	/// @brief A non-virtual function for the evaluation of an interaction energy of a
+	/// pair of atoms that is invoked directly by the atom-pair-energy-inline functions
+	/// without any virtual-function overhead.
 	inline
 	void
 	pair_energy_H(
@@ -369,7 +377,6 @@ public:
 		emap[ st_sol() ] += sol;
 	}
 
-	virtual
 	Real
 	eval_dE_dR_over_r_v(
 		conformation::Atom const & atom1,
@@ -377,7 +384,7 @@ public:
 		EnergyMap const & weights,
 		Vector & f1,
 		Vector & f2
-	) const {
+	) const override {
 		return eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
 	}
 
@@ -404,13 +411,13 @@ public:
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2 );
 
 		//// hydrate/SPaDES protocol
-		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
-			if ( at1.is_wat() && at2.is_wat() ) {
-				return sum_energies_wat_wat( atr, rep );
-			} else if ( at1.is_wat() || at2.is_wat() ) {
-				return sum_energies_wat_res( atr, rep );
-			}
-		}
+		//if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		// if ( at1.is_wat() && at2.is_wat() ) {
+		//  return sum_energies_wat_wat( atr, rep );
+		// } else if ( at1.is_wat() || at2.is_wat() ) {
+		//  return sum_energies_wat_res( atr, rep );
+		// }
+		//}
 
 		return sum_energies( atr, rep, solv );
 	}
@@ -426,13 +433,13 @@ public:
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
 
 		//// hydrate/SPaDES protocol
-		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
-			if ( at1.is_wat() && at2.is_wat() ) {
-				return sum_energies_wat_wat( atr, rep );
-			} else if ( at1.is_wat() || at2.is_wat() ) {
-				return sum_energies_wat_res( atr, rep );
-			}
-		}
+		//if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		// if ( at1.is_wat() && at2.is_wat() ) {
+		//  return sum_energies_wat_wat( atr, rep );
+		// } else if ( at1.is_wat() || at2.is_wat() ) {
+		//  return sum_energies_wat_res( atr, rep );
+		// }
+		//}
 
 		return sum_energies( atr, rep, solv );
 	}
@@ -448,13 +455,13 @@ public:
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
 
 		//// hydrate/SPaDES protocol
-		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
-			if ( at1.is_wat() && at2.is_wat() ) {
-				return sum_energies_wat_wat( atr, rep );
-			} else if ( at1.is_wat() || at2.is_wat() ) {
-				return sum_energies_wat_res( atr, rep );
-			}
-		}
+		//if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		// if ( at1.is_wat() && at2.is_wat() ) {
+		//  return sum_energies_wat_wat( atr, rep );
+		// } else if ( at1.is_wat() || at2.is_wat() ) {
+		//  return sum_energies_wat_res( atr, rep );
+		// }
+		//}
 
 		return sum_energies( atr, rep, solv );
 	}
@@ -470,13 +477,13 @@ public:
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
 
 		//// hydrate/SPaDES protocol
-		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
-			if ( at1.is_wat() && at2.is_wat() ) {
-				return sum_energies_wat_wat( atr, rep );
-			} else if ( at1.is_wat() || at2.is_wat() ) {
-				return sum_energies_wat_res( atr, rep );
-			}
-		}
+		//if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		// if ( at1.is_wat() && at2.is_wat() ) {
+		//  return sum_energies_wat_wat( atr, rep );
+		// } else if ( at1.is_wat() || at2.is_wat() ) {
+		//  return sum_energies_wat_res( atr, rep );
+		// }
+		//}
 
 		return sum_energies( atr, rep, solv );
 	}
@@ -555,7 +562,6 @@ public:
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const;
 
-	virtual
 	void
 	atom_pair_energy_v(
 		conformation::Atom const & atom1,
@@ -563,21 +569,20 @@ public:
 		Real const weight,
 		EnergyMap & emap,
 		Real & d2
-	) const
+	) const override
 	{
 		atom_pair_energy( atom1, atom2, weight, emap, d2 );
 	}
 
-	virtual
+
 	void
 	atom_pair_lk_energy_and_deriv_v(
 		conformation::Atom const & atom1,
 		conformation::Atom const & atom2,
 		Real & solE1,
 		Real & dsolE1,
-		bool const eval_deriv = false ) const;
+		bool const eval_deriv = false ) const override;
 
-	virtual
 	void
 	atom_pair_lk_energy_and_deriv_v_efficient(
 		conformation::Atom const & atom1,
@@ -586,8 +591,11 @@ public:
 		Real & solE2,
 		Real & dsolE1,
 		bool const eval_deriv
-	) const;
+	) const override;
 
+	/// @brief A non-virtual function for the evaluation of an interaction energy of a
+	/// pair of atoms that is invoked directly by the atom-pair-energy-inline functions
+	/// without any virtual-function overhead.
 	inline
 	void
 	atom_pair_energy(
@@ -606,7 +614,6 @@ public:
 		emap[ st_sol() ] += solv;
 	}
 
-	virtual
 	void
 	atom_pair_energy_v(
 		conformation::Atom const & atom1,
@@ -616,7 +623,7 @@ public:
 		Real & repE,
 		Real & solE,
 		Real & d2
-	) const {
+	) const override {
 		atom_pair_energy( atom1, atom2, weight, atrE, repE, solE, d2 );
 	}
 
@@ -632,7 +639,6 @@ public:
 		Real & d2
 	) const;
 
-	virtual
 	Real
 	eval_dE_dR_over_r_v(
 		conformation::Atom const & atom1,
@@ -640,11 +646,10 @@ public:
 		EnergyMap const & weights,
 		Vector & f1,
 		Vector & f2
-	) const {
+	) const override {
 		return eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
 	}
 
-	virtual
 	inline
 	Real
 	eval_dE_dR_over_r(
@@ -669,13 +674,13 @@ public:
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2 );
 
 		//// hydrate/SPaDES protocol
-		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
-			if ( at1.is_wat() && at2.is_wat() ) {
-				return sum_energies_wat_wat( atr, rep );
-			} else if ( at1.is_wat() || at2.is_wat() ) {
-				return sum_energies_wat_res( atr, rep );
-			}
-		}
+		//if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		// if ( at1.is_wat() && at2.is_wat() ) {
+		//  return sum_energies_wat_wat( atr, rep );
+		// } else if ( at1.is_wat() || at2.is_wat() ) {
+		//  return sum_energies_wat_res( atr, rep );
+		// }
+		//}
 
 		return sum_energies( atr, rep, solv );
 	}
@@ -691,13 +696,13 @@ public:
 		pair_energy_H( at1, at2, 1.0, atr, rep, solv );
 
 		//// hydrate/SPaDES protocol
-		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
-			if ( at1.is_wat() && at2.is_wat() ) {
-				return sum_energies_wat_wat( atr, rep );
-			} else if ( at1.is_wat() || at2.is_wat() ) {
-				return sum_energies_wat_res( atr, rep );
-			}
-		}
+		//if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		// if ( at1.is_wat() && at2.is_wat() ) {
+		//  return sum_energies_wat_wat( atr, rep );
+		// } else if ( at1.is_wat() || at2.is_wat() ) {
+		//  return sum_energies_wat_res( atr, rep );
+		// }
+		//}
 
 		return sum_energies( atr, rep, solv );
 	}
@@ -713,13 +718,13 @@ public:
 		pair_energy_H( at1, at2, 1.0, atr, rep, solv );
 
 		//// hydrate/SPaDES protocol
-		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
-			if ( at1.is_wat() && at2.is_wat() ) {
-				return sum_energies_wat_wat( atr, rep );
-			} else if ( at1.is_wat() || at2.is_wat() ) {
-				return sum_energies_wat_res( atr, rep );
-			}
-		}
+		//if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		// if ( at1.is_wat() && at2.is_wat() ) {
+		//  return sum_energies_wat_wat( atr, rep );
+		// } else if ( at1.is_wat() || at2.is_wat() ) {
+		//  return sum_energies_wat_res( atr, rep );
+		// }
+		//}
 
 		return sum_energies( atr, rep, solv );
 	}
@@ -735,28 +740,30 @@ public:
 		pair_energy_H( at1, at2, 1.0, atr, rep, solv );
 
 		//// hydrate/SPaDES protocol
-		if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
-			if ( at1.is_wat() && at2.is_wat() ) {
-				return sum_energies_wat_wat( atr, rep );
-			} else if ( at1.is_wat() || at2.is_wat() ) {
-				return sum_energies_wat_res( atr, rep );
-			}
-		}
+		//if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
+		// if ( at1.is_wat() && at2.is_wat() ) {
+		//  return sum_energies_wat_wat( atr, rep );
+		// } else if ( at1.is_wat() || at2.is_wat() ) {
+		//  return sum_energies_wat_res( atr, rep );
+		// }
+		//}
 
 		return sum_energies( atr, rep, solv );
 	}
 
-	virtual
 	void
 	pair_energy_H_v(
 		conformation::Atom const & atom1,
 		conformation::Atom const & atom2,
 		Real const weight,
 		EnergyMap & emap
-	) const {
+	) const override {
 		pair_energy_H( atom1, atom2, weight, emap );
 	}
 
+	/// @brief A non-virtual function for the evaluation of an interaction energy of a
+	/// pair of atoms that is invoked directly by the atom-pair-energy-inline functions
+	/// without any virtual-function overhead.
 	inline
 	void
 	pair_energy_H(
@@ -774,7 +781,9 @@ public:
 		emap[ st_sol() ] += sol;
 	}
 
-	virtual
+	/// @brief A non-virtual function for the evaluation of an interaction energy of a
+	/// pair of atoms that is invoked directly by the atom-pair-energy-inline functions
+	/// without any virtual-function overhead.
 	inline
 	void
 	pair_energy_H(
