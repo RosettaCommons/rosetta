@@ -73,7 +73,7 @@ def update_file_if_changed(filename, contents):
             f.close()
 
 
-def generate_version_information(rosetta_dir, url=None, branch=None, package=None, revision=None, date=None, file_name=None):
+def generate_version_information(rosetta_dir, url=None, branch=None, package=None, revision=None, date=None, file_name=None, version=None):
     ''' Generate JSON-like data with Rosetta vesion information. If some of the fields is not supplied either try to autodetect them (if possible) or supply `null` value for it
         Example output:
         {
@@ -135,37 +135,37 @@ def generate_version_information(rosetta_dir, url=None, branch=None, package=Non
     if branch is None: branch = execute('Getting current branch',  'cd {rosetta_dir} && git rev-parse --abbrev-ref HEAD'.format(**vars()), return_='output', silent=True)[:-1] # remove \n at the end
 
     res, _ = execute('Checking if current Git repositoty is clone of RosettaCommons/main...',  'cd {rosetta_dir} && git cat-file -t e7ed669d70414d073c5477a317a65cea1172daa2'.format(**vars()), return_='tuple', silent=True)
-    if res: git_describe, post_revision = None, None
+    if res: git_describe = None
     else:
-        git_describe = execute('Getting `git describe` for current commit...',  "cd {rosetta_dir} && git describe --tags --match 'v[0-9]*'".format(**vars()), return_='output', silent=True)[:-1] # remove \n at the end
-
-        describe_match = re.match("v(?P<year>\d+)\.(?P<week>\d+)-dev(?P<dev_revision>\d+)?(-(?P<post_version>\d+)-g(?P<commit>\w+))?", git_describe)
+        # Use git-describe --long to always include post-version and sha information
+        git_describe_str = execute('Getting `git describe` for current commit...',  "cd {rosetta_dir} && git describe --tags --long --match 'v[0-9]*'".format(**vars()), return_='output', silent=True)[:-1] # remove \n at the end
+        describe_match = re.match("v(?P<year>\d+)\.(?P<week>\d+)(-dev(?P<dev_revision>\d+))?-(?P<post_revision>\d+)-g(?P<commit>\w+)", git_describe_str)
 
         if describe_match:
-            g = describe_match.groupdict()
+            git_describe = describe_match.groupdict()
+            for int_field in ("year", "week", "dev_revision", "post_revision"):
+                if git_describe[int_field] is not None:
+                    git_describe[int_field] = int(git_describe[int_field])
 
-            def i_(v):
-                try: return int(v)
-                except ValueError: return None
+            git_describe["describe"] = git_describe_str
+        else:
+            git_describe = None
 
-            post_revision = g['post_version']
-            if post_revision: post_revision = int(post_revision)
+    if version is None:
+        # 'version' string was not specified, so we assume that we producing local build and Generating PEP-440 version string
+        # Expected version string for a release tagged branch is: 2017.42+{branch_names}.{sha1}
+        # Expected version string for any other branch is: 2017.42.post.dev+{post_revision.{branch_name}.{sha1}
 
-            git_describe = dict(describe=git_describe, year=i_(g['year']), week=i_(g['week']), revision=i_(g['dev_revision']), post_revision=i_(post_revision), commit=g['commit'])
+        mangled_branch = re.sub('[^0-9a-zA-Z.]', '', branch.replace('/', '.'))
 
-    # Generating PEP-440 version string
-    # Official public facing releases. Expected version string is:
-    # v2017.42 for releas branch
-    # v2017.42.{testing-server-revision} for master branch
-    # 2017.01+{post_revision}.my_name_my_branch.{sha1} for all other branches
-
-    mangled_branch = re.sub('[^0-9a-zA-Z.]', '', branch.replace('/', '.'))
-
-    if   revision and git_describe and branch == 'release': version = '{git_describe[year]}.{git_describe[week]:=02}'.format(**vars())
-    # DISABLED FOR NOW, see #2659 for details  elif revision and git_describe and branch == 'master':  version = '{git_describe[year]}.{git_describe[week]:=02}.{revision}'.format(**vars())
-    # DISABLED FOR NOW, see #2659 for details  elif git_describe:                                      version = '{git_describe[year]}.{git_describe[week]:=02}+{git_describe[post_revision]}.{mangled_branch}.{git_describe[commit]}'.format(**vars())
-    else:
-        version = '2017+unknown'
+        if git_describe and not git_describe["post_revision"]:
+            # On a specific tag, so use "release format" tag
+            version = '{git_describe[year]}.{git_describe[week]:=02}+{mangled_branch}.{git_describe[commit]}'.format(**vars())
+        elif git_describe:
+            # On a non-release revision, format a "local" tag
+            version = '{git_describe[year]}.{git_describe[week]:=02}.post.dev+{git_describe[post_revision]}.{mangled_branch}.{git_describe[commit]}'.format(**vars())
+        else:
+            version = 'unknown'
 
     info = dict(branch = branch,
                 revision      = revision,
