@@ -54,10 +54,6 @@ operator <<( std::ostream& os, AtomID const & a )
 	return os;
 }
 
-/// @brief Globals
-AtomID const BOGUS_ATOM_ID( 0,0 );
-AtomID const CHAINBREAK_BOGUS_ATOM_ID( 0,0 );
-StubID const BOGUS_STUB_ID( BOGUS_ATOM_ID, BOGUS_ATOM_ID, BOGUS_ATOM_ID );
 
 /// @brief stream << AtomID
 std::ostream &

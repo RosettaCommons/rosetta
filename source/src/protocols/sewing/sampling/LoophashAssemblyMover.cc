@@ -749,8 +749,8 @@ LoophashAssemblyMover::build_loop_pose(
 			tmp.set_omega( ires, omega[i]);
 		}
 
-		core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::BOGUS_ATOM_ID );
-		core::pose::initialize_atomid_map( atom_map, tmp, core::id::BOGUS_ATOM_ID );
+		core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::AtomID::BOGUS_ATOM_ID() );
+		core::pose::initialize_atomid_map( atom_map, tmp, core::id::AtomID::BOGUS_ATOM_ID() );
 
 		//  atom_map.set( core::id::AtomID(tmp.residue( 2 ).atom_index("N"), 2), core::id::AtomID( pose.residue(complete_loop_start).atom_index("N"), complete_loop_start ) );
 		//  atom_map.set( core::id::AtomID(tmp.residue( 2 ).atom_index("CA"), 2 ), core::id::AtomID( pose.residue(complete_loop_start).atom_index("CA"), complete_loop_start ) );

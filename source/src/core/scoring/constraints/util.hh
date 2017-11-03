@@ -24,6 +24,8 @@
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <iostream>
 
 #ifdef WIN32
@@ -93,6 +95,17 @@ cull_violators(
 ////////// Centroid constraints (add and replace)
 
 std::string get_cst_file_option();
+
+std::string get_cst_file_option(
+	utility::options::OptionCollection const & options
+);
+
+/// @brief companion function for get_cst_file_option
+void
+options_for_get_cst_file_option(
+	utility::options::OptionKeyList & opts
+);
+
 //// @brief  add constraints if specified by user.
 void add_constraints_from_cmdline_to_pose( core::pose::Pose & pose );
 //// @brief  add constraints if specified by user.
@@ -107,6 +120,16 @@ void add_constraints_from_cmdline(
 ////////// FA constraints (add and replace)
 
 std::string get_cst_fa_file_option();
+
+std::string get_cst_fa_file_option(
+	utility::options::OptionCollection const & options
+);
+
+/// @brief companion function for get_cst_file_option
+void
+options_for_get_cst_fa_file_option(
+	utility::options::OptionKeyList & opts
+);
 
 /// @brief add constraints if specified by user.
 void add_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose );

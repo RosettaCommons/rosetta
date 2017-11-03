@@ -357,8 +357,8 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	//we'll superimpose the relaxed pose onto the unrelaxed pose,
 	//but ignoring the loop residues
 	//makes analysis later cleaner
-	core::id::AtomID_Map< core::id::AtomID> rms_atom_map(  core::id::BOGUS_ATOM_ID );
-	core::pose::initialize_atomid_map( rms_atom_map, pose, core::id::BOGUS_ATOM_ID );
+	core::id::AtomID_Map< core::id::AtomID> rms_atom_map(  core::id::AtomID::BOGUS_ATOM_ID() );
+	core::pose::initialize_atomid_map( rms_atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 	for ( Size i = 1; i < enz_flexbb_prot_->enz_flexible_region(1)->start(); ++i ) {
 		if ( pose.residue_type(i).is_protein() ) rms_atom_map.set(  core::id::AtomID( pose.residue( i ).atom_index("CA"), i ), core::id::AtomID( raw_pose.residue( i ).atom_index("CA"), i ) );
 	}

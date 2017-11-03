@@ -397,7 +397,7 @@ Resonance const& ResonanceList::operator[] ( core::id::NamedAtomID const& atom )
 Resonance const& ResonanceList::operator[] ( core::Size key ) const {
 	auto iter = map_.find( key );
 	if ( iter == map_.end() ) {
-		throw EXCN_UnknownResonance( id::BOGUS_NAMED_ATOM_ID, "can't find resonance " + ObjexxFCL::string_of( key ) );
+		throw EXCN_UnknownResonance( id::NamedAtomID::BOGUS_NAMED_ATOM_ID(), "can't find resonance " + ObjexxFCL::string_of( key ) );
 	}
 	return *(iter->second);
 }
@@ -417,7 +417,7 @@ ResonanceList::Resonances const& ResonanceList::resonances_at_residue( core::Siz
 	if ( it_res != by_resid_.end() ) {
 		return it_res->second;
 	}
-	throw EXCN_UnknownResonance( id::BOGUS_NAMED_ATOM_ID, "can't find resonance with residue " + ObjexxFCL::string_of( resid ) );
+	throw EXCN_UnknownResonance( id::NamedAtomID::BOGUS_NAMED_ATOM_ID(), "can't find resonance with residue " + ObjexxFCL::string_of( resid ) );
 	return by_resid_.begin()->second; //to make compile happy
 }
 

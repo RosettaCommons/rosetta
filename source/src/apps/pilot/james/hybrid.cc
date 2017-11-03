@@ -99,11 +99,12 @@ void superimpose_via_alignment(
 	using core::id::AtomID;
 	using core::id::AtomID_Map;
 	AtomID_Map< AtomID > atom_map;
-  core::pose::initialize_atomid_map( atom_map, pose1, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, pose1, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	vector1< Size > residues;
-	for ( Size ii = 1; ii <= pose1.size(); ++ii )
+	for ( Size ii = 1; ii <= pose1.size(); ++ii ) {
 		residues.push_back(ii);
+	}
 
 	core::id::SequenceMapping mapping( aln.sequence_mapping(1,2) );
 
@@ -170,123 +171,123 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using std::map;
-	using std::string;
-	using core::Real;
-	using core::Size;
-	using core::pose::Pose;
-	using utility::vector1;
-	using core::sequence::SequenceAlignment;
-	using core::import_pose::pose_from_file;
-	using namespace core::chemical;
-	using namespace core::io::silent;
+		using std::map;
+		using std::string;
+		using core::Real;
+		using core::Size;
+		using core::pose::Pose;
+		using utility::vector1;
+		using core::sequence::SequenceAlignment;
+		using core::import_pose::pose_from_file;
+		using namespace core::chemical;
+		using namespace core::io::silent;
 
-	basic::Tracer tr( "hybrid" );
-	vector1< std::string > align_fns = option[ in::file::alignment ]();
+		basic::Tracer tr( "hybrid" );
+		vector1< std::string > align_fns = option[ in::file::alignment ]();
 
-	Pose native_pose;
-	core::import_pose::pose_from_file(
-		native_pose, *(rsd_set_from_cmd_line()), option[ in::file::native ]()
-	);
-
-	map< string, Pose > poses;
-	poses = poses_from_cmd_line(
-		option[ in::file::template_pdb ]()
-	);
-
-	Real const upper_dist_limit(12.0);
-	string const atom_name("CA");
-	string const query_seq( read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence() );
-	SilentFileData sfd;
-
-	map< string, vector1< Real > > distances;
-
-	typedef vector1< string >::const_iterator aln_iter;
-	for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
-				aln_fn != aln_end; ++aln_fn
-	) {
-		vector1< SequenceAlignment > alns = core::sequence::read_aln(
-			option[ cm::aln_format ](), *aln_fn
+		Pose native_pose;
+		core::import_pose::pose_from_file(
+			native_pose, *(rsd_set_from_cmd_line()), option[ in::file::native ]()
 		);
 
-		for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-				end = alns.end();
-				it != end; ++it
-		) {
-			string const aln_id( it->sequence(2)->id() );
-			string const template_id( it->sequence(2)->id().substr(0,5) );
-			tr << *it << std::endl;
-			tr << "id " << it->sequence(2)->id() << " => " << template_id
-				<< std::endl;
-			string const ungapped_query( it->sequence(1)->ungapped_sequence() );
+		map< string, Pose > poses;
+		poses = poses_from_cmd_line(
+			option[ in::file::template_pdb ]()
+		);
 
-			Pose query_pose, template_pose;
-			core::pose::make_pose_from_sequence(
-				query_pose, query_seq, *(rsd_set_from_cmd_line())
+		Real const upper_dist_limit(12.0);
+		string const atom_name("CA");
+		string const query_seq( read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence() );
+		SilentFileData sfd;
+
+		map< string, vector1< Real > > distances;
+
+		typedef vector1< string >::const_iterator aln_iter;
+		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
+				aln_fn != aln_end; ++aln_fn
+				) {
+			vector1< SequenceAlignment > alns = core::sequence::read_aln(
+				option[ cm::aln_format ](), *aln_fn
 			);
 
-			map< string, Pose >::iterator pose_it = poses.find( template_id );
-			if ( pose_it == poses.end() ) {
-				string msg( "Error: can't find pose (id = " + template_id + ")" );
-				//utility_exit_with_message(msg);
-				tr.Error << msg << std::endl;
-			} else {
-				template_pose = pose_it->second;
+			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
+					end = alns.end();
+					it != end; ++it
+					) {
+				string const aln_id( it->sequence(2)->id() );
+				string const template_id( it->sequence(2)->id().substr(0,5) );
+				tr << *it << std::endl;
+				tr << "id " << it->sequence(2)->id() << " => " << template_id
+					<< std::endl;
+				string const ungapped_query( it->sequence(1)->ungapped_sequence() );
 
-				// build a partial threading model
-				protocols::comparative_modeling::PartialThreadingMover mover(*it,template_pose);
-				using core::sequence::align_poses_naive;
-				mover.apply(query_pose);
-				SequenceAlignment aln( align_poses_naive(query_pose, native_pose) );
-				superimpose_via_alignment( query_pose, native_pose, aln, atom_name );
+				Pose query_pose, template_pose;
+				core::pose::make_pose_from_sequence(
+					query_pose, query_seq, *(rsd_set_from_cmd_line())
+				);
 
-				core::id::SequenceMapping mapping( aln.sequence_mapping(2,1) );
-				distances[aln_id] = vector1< Real >();
-				for ( Size native_res = 1; native_res <= native_pose.size(); ++native_res ) {
-					Size const query_res( mapping[native_res] );
-					Real distance( upper_dist_limit );
-					if ( mapping[native_res] ) {
-						distance = native_pose.residue(native_res).xyz(atom_name).distance(
-							query_pose.residue(query_res).xyz(atom_name)
-						);
+				map< string, Pose >::iterator pose_it = poses.find( template_id );
+				if ( pose_it == poses.end() ) {
+					string msg( "Error: can't find pose (id = " + template_id + ")" );
+					//utility_exit_with_message(msg);
+					tr.Error << msg << std::endl;
+				} else {
+					template_pose = pose_it->second;
+
+					// build a partial threading model
+					protocols::comparative_modeling::PartialThreadingMover mover(*it,template_pose);
+					using core::sequence::align_poses_naive;
+					mover.apply(query_pose);
+					SequenceAlignment aln( align_poses_naive(query_pose, native_pose) );
+					superimpose_via_alignment( query_pose, native_pose, aln, atom_name );
+
+					core::id::SequenceMapping mapping( aln.sequence_mapping(2,1) );
+					distances[aln_id] = vector1< Real >();
+					for ( Size native_res = 1; native_res <= native_pose.size(); ++native_res ) {
+						Size const query_res( mapping[native_res] );
+						Real distance( upper_dist_limit );
+						if ( mapping[native_res] ) {
+							distance = native_pose.residue(native_res).xyz(atom_name).distance(
+								query_pose.residue(query_res).xyz(atom_name)
+							);
+						}
+
+						distances[aln_id].push_back( std::min( distance, upper_dist_limit ) );
 					}
+				} // template pdb check
+			} // for alns
+		} // for ( it in aligns )
 
-					distances[aln_id].push_back( std::min( distance, upper_dist_limit ) );
-				}
-			} // template pdb check
-		} // for alns
-	} // for ( it in aligns )
-
-	typedef map< string, vector1< Real > >::const_iterator dev_iter;
-	vector1< string > aln_ids;
-	for ( dev_iter it = distances.begin(), end = distances.end(); it != end; ++it ) {
-		string const & aln_id( it->first );
-		aln_ids.push_back(aln_id);
-	}
-
-	for ( Size ii = 1; ii <= native_pose.size(); ++ii ) {
-		SilentStructOP ss_out( new ScoreFileSilentStruct );
-		ss_out->scoreline_prefix( "" );
-		ss_out->decoy_tag( string_of(ii) );
-
-		Real min_dist( upper_dist_limit );
-		for ( Size jj = 1; jj <= aln_ids.size(); ++jj ) {
-			string const & aln_id( aln_ids[jj] );
-			Real const & dist( distances[aln_id][ii] );
-			ss_out->add_energy( "aln_" + aln_id, dist );
-
-			min_dist = std::min( dist, min_dist );
+		typedef map< string, vector1< Real > >::const_iterator dev_iter;
+		vector1< string > aln_ids;
+		for ( dev_iter it = distances.begin(), end = distances.end(); it != end; ++it ) {
+			string const & aln_id( it->first );
+			aln_ids.push_back(aln_id);
 		}
-		ss_out->add_energy( "min_dist", min_dist );
 
-		sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
-	}
+		for ( Size ii = 1; ii <= native_pose.size(); ++ii ) {
+			SilentStructOP ss_out( new ScoreFileSilentStruct );
+			ss_out->scoreline_prefix( "" );
+			ss_out->decoy_tag( string_of(ii) );
 
-	tr.Debug << "finished rescoring alignments." << std::endl;
-	tr.flush_all_channels();
+			Real min_dist( upper_dist_limit );
+			for ( Size jj = 1; jj <= aln_ids.size(); ++jj ) {
+				string const & aln_id( aln_ids[jj] );
+				Real const & dist( distances[aln_id][ii] );
+				ss_out->add_energy( "aln_" + aln_id, dist );
+
+				min_dist = std::min( dist, min_dist );
+			}
+			ss_out->add_energy( "min_dist", min_dist );
+
+			sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
+		}
+
+		tr.Debug << "finished rescoring alignments." << std::endl;
+		tr.flush_all_channels();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

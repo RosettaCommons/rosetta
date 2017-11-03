@@ -116,25 +116,25 @@ public:
 
 		set_default();
 
-		if (option[ OptionKeys::in::file::s ].user()){
+		if ( option[ OptionKeys::in::file::s ].user() ) {
 			set_file_name(option[ OptionKeys::in::file::s ]()[1]);
 		}
-		if (option[ OptionKeys::docking::partners ].user()){
+		if ( option[ OptionKeys::docking::partners ].user() ) {
 			set_partners(option[ OptionKeys::docking::partners ]());
 		}
-		if (option[ OptionKeys::docking::docking_local_refine ].user()){
+		if ( option[ OptionKeys::docking::docking_local_refine ].user() ) {
 			set_refine(option[ OptionKeys::docking::docking_local_refine ]());
 		}
-		if (option[ OptionKeys::pH::pre_process ].user()){
+		if ( option[ OptionKeys::pH::pre_process ].user() ) {
 			set_pre_process(option[ OptionKeys::pH::pre_process ]());
 		}
-		if (option[ OptionKeys::pH::output_raw_scores ].user()){
+		if ( option[ OptionKeys::pH::output_raw_scores ].user() ) {
 			set_output_raw_scores(option[ OptionKeys::pH::output_raw_scores ]());
 		}
-		if (option[ OptionKeys::pH::cognate_partners ].user()){
+		if ( option[ OptionKeys::pH::cognate_partners ].user() ) {
 			set_cognate_partners(option[ OptionKeys::pH::cognate_partners ]());
 		}
-		if (option[ OptionKeys::pH::cognate_pdb ].user()){
+		if ( option[ OptionKeys::pH::cognate_pdb ].user() ) {
 			set_cognate_pdb(option[ OptionKeys::pH::cognate_pdb ]());
 		}
 
@@ -151,7 +151,7 @@ public:
 	}
 
 	void
-		set_pre_process(bool pre_process){
+	set_pre_process(bool pre_process){
 		pre_process_ = pre_process;
 	}
 
@@ -191,11 +191,11 @@ public:
 		using namespace kinematics;
 		FoldTree f( pose.fold_tree() );
 
-		for (Size i=1; i<=partner_chainID.length()-1; i++){ //identify second chain from input partner_chainID
-			if (partner_chainID[i-1] == '_') second_chain = partner_chainID[i];
+		for ( Size i=1; i<=partner_chainID.length()-1; i++ ) { //identify second chain from input partner_chainID
+			if ( partner_chainID[i-1] == '_' ) second_chain = partner_chainID[i];
 		}
 		for ( Size i=2; i<= pose.size(); ++i ) {
-			if(pdb_info->chain( i ) == second_chain){ //identify cutpoint corresponding to second chain in partner_chainID
+			if ( pdb_info->chain( i ) == second_chain ) { //identify cutpoint corresponding to second chain in partner_chainID
 				cutpoint = i-1;
 				break;
 			}
@@ -216,7 +216,7 @@ public:
 		//rebuild jumps between chains N-terminal to the docking cutpoint
 		chain_end = cutpoint;
 		chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
-		while (chain_begin != 1){
+		while ( chain_begin != 1 ) {
 			chain_end = chain_begin-1;
 			f.new_jump( chain_end, chain_begin, chain_end);
 			chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
@@ -225,7 +225,7 @@ public:
 		//rebuild jumps between chains C-terminal to the docking cutpoint
 		chain_begin = cutpoint+1;
 		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-		while (chain_end != pose.size()){
+		while ( chain_end != pose.size() ) {
 			chain_begin = chain_end+1;
 			f.new_jump( chain_end, chain_begin, chain_end);
 			chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
@@ -275,7 +275,7 @@ public:
 
 		std::string atom_name("CA");
 		AtomID_Map< AtomID > atom_map;
-	    pose::initialize_atomid_map(atom_map, pose1, id::BOGUS_ATOM_ID);
+		pose::initialize_atomid_map(atom_map, pose1, id::AtomID::BOGUS_ATOM_ID());
 
 		Size ant1_start_chain = pose::get_chain_id_from_chain(ant1_chains[0], pose1);
 		Size ant1_stop_chain = pose::get_chain_id_from_chain(ant1_chains[ant1_chains.length()-1], pose1);
@@ -288,8 +288,8 @@ public:
 		Size ant2_stop_res = pose2.conformation().chain_end(ant2_stop_chain);
 
 		Size jj = ant2_start_res;
-		for (Size ii = ant1_start_res; ii <= ant1_stop_res; ++ii){
-			if (! pose1.residue(ii).has(atom_name)) break;
+		for ( Size ii = ant1_start_res; ii <= ant1_stop_res; ++ii ) {
+			if ( ! pose1.residue(ii).has(atom_name) ) break;
 			AtomID const id1(pose1.residue(ii).atom_index(atom_name), ii);
 			AtomID const id2(pose2.residue(jj).atom_index(atom_name), jj);
 			atom_map.set(id1, id2);
@@ -316,15 +316,15 @@ public:
 		Size light_start [] = {1, 35, 57, 98};
 		Size light_end [] = {23, 49, 88, 103};
 
-		for(Size i = 0; i < light_frmk_segments; i++){
-			for(Size j = light_start[i]; j <= light_end[i]; j++){
+		for ( Size i = 0; i < light_frmk_segments; i++ ) {
+			for ( Size j = light_start[i]; j <= light_end[i]; j++ ) {
 				Size ab1_res = pose1.pdb_info()-> pdb2pose(ab1_chains[0],j);
 				Size ab2_res = pose2.pdb_info()-> pdb2pose(ab2_chains[0],j);
-				if (ab1_res == 0 || ab2_res == 0) continue;
-				if (! pose1.residue(ab1_res).has(atom_name)) continue;
-				if (! pose2.residue(ab2_res).has(atom_name)) continue;
+				if ( ab1_res == 0 || ab2_res == 0 ) continue;
+				if ( ! pose1.residue(ab1_res).has(atom_name) ) continue;
+				if ( ! pose2.residue(ab2_res).has(atom_name) ) continue;
 				/*TR << "Light Chain Alignment: " << j << ab1_chains[0] << " (" << ab1_res << ") -" <<
-						j << ab2_chains[0] << " (" << ab2_res << ")"<< std::endl;*/
+				j << ab2_chains[0] << " (" << ab2_res << ")"<< std::endl;*/
 				AtomID const id1(pose1.residue(ab1_res).atom_index(atom_name), ab1_res);
 				AtomID const id2(pose2.residue(ab2_res).atom_index(atom_name), ab2_res);
 				atom_id_map[id1] = id2;
@@ -336,15 +336,15 @@ public:
 		Size heavy_start [] = {1, 36, 66, 103};
 		Size heavy_end [] = {25, 49, 94, 108};
 
-		for(Size m = 0; m < heavy_frmk_segments; m++){
-			for(Size n = heavy_start[m]; n <= heavy_end[m]; n++){
+		for ( Size m = 0; m < heavy_frmk_segments; m++ ) {
+			for ( Size n = heavy_start[m]; n <= heavy_end[m]; n++ ) {
 				Size ab1_res = pose1.pdb_info()-> pdb2pose(ab1_chains[1],n);
 				Size ab2_res = pose2.pdb_info()-> pdb2pose(ab2_chains[1],n);
-				if (ab1_res == 0 || ab2_res == 0) continue;
-				if (! pose1.residue(ab1_res).has(atom_name)) continue;
-				if (! pose2.residue(ab2_res).has(atom_name)) continue;
+				if ( ab1_res == 0 || ab2_res == 0 ) continue;
+				if ( ! pose1.residue(ab1_res).has(atom_name) ) continue;
+				if ( ! pose2.residue(ab2_res).has(atom_name) ) continue;
 				/*TR << "Heavy Chain Alignment: " << n << ab1_chains[1] << " (" << ab1_res << ") -" <<
-						n << ab2_chains[1] << " (" << ab2_res << ")"<< std::endl;*/
+				n << ab2_chains[1] << " (" << ab2_res << ")"<< std::endl;*/
 				AtomID const id1(pose1.residue(ab1_res).atom_index(atom_name), ab1_res);
 				AtomID const id2(pose2.residue(ab2_res).atom_index(atom_name), ab2_res);
 				atom_id_map[id1] = id2;
@@ -353,9 +353,9 @@ public:
 
 		Size natoms(0);
 		Real sum(0.0);
-		for (std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin(); iter != atom_id_map.end(); iter++){
+		for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin(); iter != atom_id_map.end(); iter++ ) {
 			assert (pose1.residue((iter->first).rsd()).atom_name((iter->first).atomno()) ==
-					pose2.residue((iter->second).rsd()).atom_name((iter->second).atomno()));
+				pose2.residue((iter->second).rsd()).atom_name((iter->second).atomno()));
 
 			Vector const & p1(pose1.xyz(iter->first));
 			Vector const & p2(pose2.xyz(iter->second));
@@ -373,8 +373,8 @@ public:
 		utility::vector1< std::string > partners;   //Vec(partner1,partner2)
 		char split = '_';
 
-		for (Size i = 0; i <= partner_info.length()-1; i++){
-			if (partner_info[i] == '_'){
+		for ( Size i = 0; i <= partner_info.length()-1; i++ ) {
+			if ( partner_info[i] == '_' ) {
 				partners.push_back(partner_info.substr(0,i));
 				partners.push_back(partner_info.substr(i+1,partner_info.length()-i-1));
 				break;
@@ -426,7 +426,7 @@ public:
 
 		Real bound_sasa = core::scoring::calc_total_sasa(complex_pose, 1.4);
 
-		for( utility::vector1_int::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
+		for ( utility::vector1_int::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 
 			Size const rb_jump = *it;
 			core::pose::Pose separated_pose = complex_pose;
@@ -443,9 +443,9 @@ public:
 			Real const separated_energy = (*docking_scorefxn)(separated_pose);
 			interaction_energy += (complex_energy - separated_energy);
 
-			if (output_raw_scores){
+			if ( output_raw_scores ) {
 				utility::vector1< core::Real > const raw_separated_energies = return_raw_scores(separated_pose);
-				for ( Size n=1; n<= raw_complex_energies.size(); ++n ){
+				for ( Size n=1; n<= raw_complex_energies.size(); ++n ) {
 					raw_interface_energies.push_back(raw_complex_energies[n]-raw_separated_energies[n]);
 				}
 			}
@@ -460,8 +460,8 @@ public:
 		energies_and_sasa.push_back(binding_energy);
 		energies_and_sasa.push_back(del_sasa);
 		//output raw scores if needed
-		if (output_raw_scores){
-			for ( Size n=1; n<= raw_complex_energies.size(); ++n ){
+		if ( output_raw_scores ) {
+			for ( Size n=1; n<= raw_complex_energies.size(); ++n ) {
 				energies_and_sasa.push_back(raw_interface_energies[n]);
 			}
 		}
@@ -482,7 +482,7 @@ public:
 		core::kinematics::MoveMapOP movemap = new kinematics::MoveMap();
 		movemap->set_chi(false);
 		movemap->set_bb(false);
-		for( utility::vector1_int::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it){
+		for ( utility::vector1_int::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
 			movemap->set_jump(*it, true);
 		}
 
@@ -495,11 +495,11 @@ public:
 		tf->push_back(new RestrictToRepacking);
 		tf->push_back(new NoRepackDisulfides);
 
-	    using namespace protocols::toolbox::task_operations;
+		using namespace protocols::toolbox::task_operations;
 		tf->push_back(new RestrictToInterface());
 
 		// unbound_rot
-	    pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
+		pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
 		unboundrot->initialize_from_command_line();
 		operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet(unboundrot);
 		tf->push_back(unboundrot_operation);
@@ -528,12 +528,11 @@ public:
 		setup_foldtree(pose, partner_info_);
 
 		//Dock local refine before feeding the complex to score calculations
-		if (pre_process_){
-			if (refine_) {
+		if ( pre_process_ ) {
+			if ( refine_ ) {
 				antibody2::LHRepulsiveRampOP dock_refine_mover = setup_RepulsiveRampMover(pose);
 				dock_refine_mover->apply(pose);
-			}
-			else {
+			} else {
 				docking::DockingProtocolOP dock_refine_mover = new docking::DockingProtocol(movable_jumps_, false, false, false);
 				dock_refine_mover->apply(pose);
 			}
@@ -543,7 +542,7 @@ public:
 		//(*score_fxn)(pose);
 
 		//RMSD calculations using cognate Ab framework
-		if (cognate_){
+		if ( cognate_ ) {
 			utility::vector1< std::string > cognate_chains = partners_from_info(cognate_partner_info_);
 			utility::vector1< std::string > decoy_chains = partners_from_info(partner_info_);
 			core::pose::Pose cognate_pose;
@@ -552,12 +551,12 @@ public:
 			frmk_rms_ = rmsd_frmk_chothia_num_ab(cognate_pose, pose, cognate_chains[1], decoy_chains[1]);
 		}
 
-/*		//Do a rigid body linmin before feeding the complex to score calculations
+		/*  //Do a rigid body linmin before feeding the complex to score calculations
 		core::kinematics::MoveMapOP movemap (new core::kinematics::MoveMap);
 		movemap->set_bb(false);
 		movemap->set_chi(true);
 		for( utility::vector1_int::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
-			movemap->set_jump(*it, true);
+		movemap->set_jump(*it, true);
 		}
 		protocols::simple_moves::MinMoverOP minmover ( new protocols::simple_moves::MinMover(movemap, score_fxn, "linmin", 0.1, false use_nblist) );
 		minmover->apply(pose);*/
@@ -568,10 +567,10 @@ public:
 		job->add_string_real_pair("I_sc", scores_and_sasa[1]);
 		job->add_string_real_pair("B_sc", scores_and_sasa[2]);
 		job->add_string_real_pair("dSASA", scores_and_sasa[3]);
-		if (cognate_){
+		if ( cognate_ ) {
 			job->add_string_real_pair("Frms", frmk_rms_);
 		}
-		if (output_raw_scores_){
+		if ( output_raw_scores_ ) {
 			job->add_string_real_pair("rint.dslf_ca_dih", scores_and_sasa[4]);
 			job->add_string_real_pair("rint.dslf_cs_ang", scores_and_sasa[5]);
 			job->add_string_real_pair("rint.dslf_ss_dih", scores_and_sasa[6]);

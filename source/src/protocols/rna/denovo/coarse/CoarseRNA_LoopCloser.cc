@@ -53,7 +53,6 @@ using ObjexxFCL::format::F;
 using core::id::AtomID;
 using core::id::NamedAtomID;
 using core::id::DOF_ID;
-using core::id::BOGUS_DOF_ID;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 using numeric::angle_radians;
@@ -702,7 +701,7 @@ CoarseRNA_LoopCloser::figure_out_offset(
 	core::Real const & original_torsion_value,
 	utility::vector1< core::Real > & offset_save ){
 
-	if ( dof_id == BOGUS_DOF_ID ) { //expected at cutpoint!
+	if ( dof_id == DOF_ID::BOGUS_DOF_ID() ) { //expected at cutpoint!
 		//   if ( pivot == cutpos_+1 ) {
 		//    offset_save.push_back( 0.0 ); //placeholder
 		//    if ( verbose_ ){
@@ -861,11 +860,11 @@ CoarseRNA_LoopCloser::fill_solution( core::pose::Pose & pose,
 
 	for ( Size i = 1; i <= dof_ids1_.size(); i++ ) {
 
-		if ( dof_ids1_[ i ] != BOGUS_DOF_ID )  {
+		if ( dof_ids1_[ i ] != DOF_ID::BOGUS_DOF_ID() )  {
 			pose.set_dof( dof_ids1_[i], principal_angle( radians( t_ang_[ n ][ 3 * pivot_to_scratch_res_[ i ] + 1 ] ) + offset_save1_[i] ) );
 		}
 
-		if ( dof_ids2_[ i ] != BOGUS_DOF_ID )  {
+		if ( dof_ids2_[ i ] != DOF_ID::BOGUS_DOF_ID() )  {
 			pose.set_dof( dof_ids2_[i], principal_angle( radians( t_ang_[ n ][ 3 * pivot_to_scratch_res_[ i ] + 2 ] ) + offset_save2_[i] ) );
 		}
 

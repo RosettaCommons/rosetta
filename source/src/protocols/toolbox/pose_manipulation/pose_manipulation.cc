@@ -354,7 +354,7 @@ superimpose_pose_on_subset_CA(
 
 	AtomID_Map< AtomID > atom_map;
 
-	core::pose::initialize_atomid_map( atom_map, pose, BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, pose, AtomID::BOGUS_ATOM_ID() );
 
 	for ( utility::vector1< core::Size >::const_iterator res_it = positions.begin(); res_it != positions.end(); ++res_it ) {
 

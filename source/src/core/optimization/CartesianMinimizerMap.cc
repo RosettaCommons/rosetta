@@ -142,7 +142,7 @@ CartesianMinimizerMap::assign_rosetta_torsions_and_trim( pose::Pose const & pose
 	utility::vector1<id::DOF_ID> new_moving_dofids;
 
 	// mapping from AtomTree DOF ID's to bb/chi torsion angle ids
-	id::DOF_ID_Map< id::TorsionID > dof_map ( id::BOGUS_TORSION_ID );
+	id::DOF_ID_Map< id::TorsionID > dof_map ( id::TorsionID::BOGUS_TORSION_ID() );
 	pose::setup_dof_to_torsion_map( pose, dof_map );
 
 	Size ndofs = moving_dofids_.size();
@@ -247,7 +247,7 @@ CartesianMinimizerMap::setup(
 	pose::setup_dof_mask_from_move_map( move_map_torsional, pose, dof_mask );
 
 	// fill the torsion list
-	DOF_ID tmp( id::BOGUS_DOF_ID );
+	DOF_ID tmp( id::DOF_ID::BOGUS_DOF_ID() );
 	pose.atom_tree().root()->setup_min_map( tmp, dof_mask, *this );
 
 	// now trim this list ensuring that at least one of the

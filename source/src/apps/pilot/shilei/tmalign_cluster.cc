@@ -97,7 +97,7 @@ void do_tmalign(core::pose::Pose & aligned_pose,core::pose::Pose const & ref_pos
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::Size n_mapped_residues=0;
 
-	core::pose::initialize_atomid_map( atom_map, aligned_pose, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, aligned_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	std::list <core::Size> residue_list;
 	std::list <core::Size> ref_residue_list;

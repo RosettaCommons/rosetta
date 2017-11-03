@@ -419,7 +419,7 @@ create_alignment_id_map_legacy( pose::Pose & mod_pose, pose::Pose const & ref_po
 
 	id::AtomID_Map < id::AtomID > atom_ID_map;
 
-	pose::initialize_atomid_map( atom_ID_map, mod_pose, id::BOGUS_ATOM_ID );
+	pose::initialize_atomid_map( atom_ID_map, mod_pose, id::AtomID::BOGUS_ATOM_ID() );
 
 	if ( ref_pose.sequence() != mod_pose.sequence() ) {
 		TR << "ref_pose.sequence() = " << ref_pose.sequence() << std::endl;

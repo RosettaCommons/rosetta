@@ -155,8 +155,8 @@ main( int argc, char * argv [] ) {
 
 		runtime_assert(score_it->second.segment_matches.size() == 1);
 
-		core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::BOGUS_ATOM_ID );
-		core::pose::initialize_atomid_map( atom_map, hit_pose, core::id::BOGUS_ATOM_ID );
+		core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::AtomID::BOGUS_ATOM_ID() );
+		core::pose::initialize_atomid_map( atom_map, hit_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 		//First just superimpose the two matching residues that make up the frame
 		atom_map.set( core::id::AtomID(hit_pose.residue( hit_resnum ).atom_index("CA"), hit_resnum ), core::id::AtomID( query_pose.residue(query_resnum).atom_index("CA"), query_resnum ) );

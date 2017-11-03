@@ -451,7 +451,8 @@ public:
 		Real const weight_factor,
 		Real const d2,
 		utility::vector1< DerivVectorPair > & r1_at_derivs,
-		utility::vector1< DerivVectorPair > & r2_at_derivs
+		utility::vector1< DerivVectorPair > & r2_at_derivs,
+		utility::vector1< core::Real > & dwwd2_ddi
 	) const;
 
 	void
@@ -467,7 +468,8 @@ public:
 		EnergyMap const & weights,
 		Real const cp_weight,
 		utility::vector1< DerivVectorPair > & r1_at_derivs,
-		utility::vector1< DerivVectorPair > & r2_at_derivs
+		utility::vector1< DerivVectorPair > & r2_at_derivs,
+		utility::vector1< core::Real > & dwwd2_ddi
 	) const;
 
 	void

@@ -107,7 +107,7 @@ SymMinimizerMap::SymMinimizerMap(
 	pose::setup_dof_to_torsion_map( pose, dof_id2torsion_id_ );
 
 	// this fills the torsion and atom lists
-	DOF_ID temp( id::BOGUS_DOF_ID );
+	DOF_ID temp( id::DOF_ID::BOGUS_DOF_ID() );
 	pose.atom_tree().root()->setup_min_map( temp, dof_mask, *this );
 
 	/// sort dof nodes by tree depth.
@@ -163,7 +163,7 @@ SymMinimizerMap::add_torsion(
 		if ( independent ) {
 			//std::cout << " ind"  << std::endl;
 			add_new_dof_node( new_torsion, parent, false );
-			//last_cloned_jump_ = DOF_ID( id::BOGUS_DOF_ID ); // set invalid
+			//last_cloned_jump_ = DOF_ID( id::DOF_ID::BOGUS_DOF_ID() ); // set invalid
 		} else {
 
 			if ( new_torsion.type() >= id::RB1 ) { // We have a jump
@@ -171,7 +171,7 @@ SymMinimizerMap::add_torsion(
 					dynamic_cast< conformation::symmetry::SymmetricConformation const & > ( pose_.conformation()) );
 				debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 				if ( symm_info_->get_dof_derivative_weight( new_torsion, symm_conf ) != 0.0 ) {
-					DOF_ID parent_dof( id::BOGUS_DOF_ID );
+					DOF_ID parent_dof( id::DOF_ID::BOGUS_DOF_ID() );
 					add_new_dof_node( new_torsion, parent_dof, true );
 				}
 			}
@@ -403,7 +403,7 @@ SymMinimizerMap::assign_rosetta_torsions()
 {
 	// mapping from AtomTree DOF ID's to bb/chi torsion angle ids
 	//id::DOF_ID_Map< id::TorsionID > dof_map
-	// ( id::BOGUS_TORSION_ID);
+	// ( id::TorsionID::BOGUS_TORSION_ID());
 	//pose::setup_dof_to_torsion_map( pose, dof_map ); // we already did this
 	id::DOF_ID_Map< id::TorsionID > const & dof_map( dof_id2torsion_id_ );
 

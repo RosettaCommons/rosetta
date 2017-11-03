@@ -442,7 +442,7 @@ LoopCreationMover::copy_last_loop_to_new_anchor(
 
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	atom_map.clear();
-	core::pose::initialize_atomid_map( atom_map, loop_pose, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, loop_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	core::id::AtomID const id1( pose.residue(new_modifications_begin-1).atom_index("CA"), new_modifications_begin-1);
 	core::id::AtomID const id2( loop_pose.residue(1).atom_index("CA"), 1);

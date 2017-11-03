@@ -702,18 +702,18 @@ named_atom_id_to_atom_id(
 				//  tr.Error << "atom names are: " << std::endl;
 				//rt.show_all_atom_names( tr.Error );
 				if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
-				return id::BOGUS_ATOM_ID;
+				return id::GLOBAL_BOGUS_ATOM_ID;
 			}
 		} else {
 			// tr.Error << "can't find residue " << named_atom_id.rsd()
 			//  << " in pose (pose.size() = ) "
 			//  << pose.size() << std::endl;
 			if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
-			return id::BOGUS_ATOM_ID;
+			return id::GLOBAL_BOGUS_ATOM_ID;
 		}
 	} else {
 		if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
-		return id::BOGUS_ATOM_ID;
+		return id::GLOBAL_BOGUS_ATOM_ID;
 	}
 }
 
@@ -879,7 +879,7 @@ setup_dof_to_torsion_map( pose::Pose const & pose, id::DOF_ID_Map< id::TorsionID
 	using namespace id;
 
 	// Set DOF mask size and initialize to an invalid TorsionID
-	core::pose::initialize_dof_id_map( dof_map, pose, id::BOGUS_TORSION_ID );
+	core::pose::initialize_dof_id_map( dof_map, pose, id::TorsionID::BOGUS_TORSION_ID() );
 
 	// Torsion angles
 	Size const n_res( pose.size() );
@@ -905,7 +905,7 @@ setup_dof_to_torsion_map( pose::Pose const & pose, id::DOF_ID_Map< id::TorsionID
 			TorsionID const tor_id( i, CHI, j );
 			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( tor_id ) );
 			if ( id.valid() ) {
-				if ( dof_map[ id  ] != BOGUS_TORSION_ID ) {
+				if ( dof_map[ id  ] != TorsionID::BOGUS_TORSION_ID() ) {
 					// This chi angle was already assigned to the DoF map as a BB TorsionType. Do not change it.
 					continue;
 				}
@@ -1484,7 +1484,7 @@ id::AtomID_Map< id::AtomID >
 convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 	core::pose::Pose const & pose ){
 	id::AtomID_Map< id::AtomID > atom_ID_map;
-	initialize_atomid_map( atom_ID_map, pose, id::BOGUS_ATOM_ID );
+	initialize_atomid_map( atom_ID_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 	for ( auto const & it : atom_map ) {
 		atom_ID_map.set( it.first, it.second );
 	}

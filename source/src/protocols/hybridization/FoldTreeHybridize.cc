@@ -840,7 +840,7 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 			if ( (resi_pdb == (core::Size)it->start() && resj_pdb == (core::Size)it->stop()) ||
 					(resj_pdb == (core::Size)it->start() && resi_pdb == (core::Size)it->stop()) ) {
 				core::id::AtomID_Map< id::AtomID > atom_map;
-				core::pose::initialize_atomid_map( atom_map, *template_poses_[*pairings_iter], core::id::BOGUS_ATOM_ID );
+				core::pose::initialize_atomid_map( atom_map, *template_poses_[*pairings_iter], core::id::AtomID::BOGUS_ATOM_ID() );
 				// try to align to the initial template
 				if ( !templates_with_incorrect_strand_pairings_.count(initial_template_index_) && *pairings_iter != initial_template_index_ ) {
 					core::Size template_resi = map_pdb_info_number( *template_poses_[initial_template_index_], resi_pdb );

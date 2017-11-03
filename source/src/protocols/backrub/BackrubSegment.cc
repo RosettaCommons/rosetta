@@ -122,7 +122,7 @@ protocols::backrub::BackrubSegment::end_bond_angle_key(
 	end_atoms1(pose, end_atom_m1, end_atom, end_atom_p1);
 
 	if ( !end_atom_p1 ) {
-		return BondAngleKey(end_atom_m1->id(), end_atom->id(), id::BOGUS_ATOM_ID);
+		return BondAngleKey(end_atom_m1->id(), end_atom->id(), id::GLOBAL_BOGUS_ATOM_ID);
 	}
 
 	if ( end_atom_m1->id() < end_atom_p1->id() ) {

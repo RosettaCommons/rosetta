@@ -16,6 +16,7 @@
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/electron_density/util.hh>
 
+#include <protocols/moves/mover_schemas.hh>
 
 #include <core/scoring/electron_density/util.hh>
 
@@ -44,11 +45,13 @@
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+
+// Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-// XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+#include <utility/options/keys/OptionKeyList.hh>
+
 
 using basic::T;
 using basic::Error;
@@ -83,14 +86,21 @@ using namespace core;
 ///////////////////////////////////////
 ///////////////////////////////////////
 
-SetupForDensityScoringMover::SetupForDensityScoringMover() : Mover() {
+SetupForDensityScoringMover::SetupForDensityScoringMover() : SetupForDensityScoringMover( basic::options::option ) {}
+
+SetupForDensityScoringMover::SetupForDensityScoringMover( utility::options::OptionCollection const & options ) : Mover()
+{
 	using namespace basic::options;
-	dock_into_dens_strategy_ = option[ OptionKeys::edensity::realign ]();
+	dock_into_dens_strategy_ = options[ OptionKeys::edensity::realign ]();
 }
+
 
 void SetupForDensityScoringMover::apply( core::pose::Pose & pose ) {
 	core::pose::addVirtualResAsRoot( pose );
+
+	// Oh. Read from the global options system to load global data.
 	core::scoring::electron_density::getDensityMap().maskResidues( mask_reses_ );
+
 	last_score = dockPoseIntoMap( pose, dock_into_dens_strategy_ );
 	core::scoring::electron_density::getDensityMap().clearMask(  );
 }
@@ -119,7 +129,8 @@ void SetupForDensityScoringMover::parse_my_tag(
 	basic::datacache::DataMap &,
 	filters::Filters_map const &,
 	moves::Movers_map const &,
-	core::pose::Pose const & ) {
+	core::pose::Pose const & )
+{
 
 	TR << "Parsing SetupForDensityScoringMover----" << std::endl;
 	dock_into_dens_strategy_ = tag->getOption<std::string>( "realign", "no" );
@@ -143,6 +154,15 @@ void SetupForDensityScoringMover::provide_xml_schema( utility::tag::XMLSchemaDef
 		+ XMLSchemaAttribute::attribute_w_default("realign", xs_string, "Dock pose into density map.","no");
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Roots pose in VRT. Option to trigger docking into the density.", attlist );
 }
+
+
+void
+SetupForDensityScoringMover::options_read_in_ctor( utility::options::OptionKeyList & opts )
+{
+	using namespace basic::options;
+	opts + OptionKeys::edensity::realign;
+}
+
 
 std::string SetupForDensityScoringMoverCreator::keyname() const {
 	return SetupForDensityScoringMover::mover_name();

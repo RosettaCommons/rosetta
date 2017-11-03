@@ -303,7 +303,7 @@ void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 	for ( tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
 		if ( (*tag_it)->getName() == "Torsion" ) {
 			utility::vector1< id::NamedAtomID > atoms;
-			atoms.resize(4, id::BOGUS_NAMED_ATOM_ID);
+			atoms.resize(4, id::NamedAtomID::BOGUS_NAMED_ATOM_ID());
 
 			angle_.push_back((*tag_it)->getOption< std::string >( "angle" ));
 			add_perturbation_type( (*tag_it)->getOption< std::string >("perturbation_type", "gaussian") );

@@ -1,12 +1,12 @@
 /****************************************************************************************************
-	make_betahelicalbundle.cc
-	Created by Vikram K. Mulligan, Baker Laboratory.
+make_betahelicalbundle.cc
+Created by Vikram K. Mulligan, Baker Laboratory.
 
-	A pilot app to create a helical bundle based on the Crick parameterization, using beta-amino
-	acids.
+A pilot app to create a helical bundle based on the Crick parameterization, using beta-amino
+acids.
 
-	History:
-		--File created Monday, 22 Sept. 2014 (modified from make_helicalbundle.cc).
+History:
+--File created Monday, 22 Sept. 2014 (modified from make_helicalbundle.cc).
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -204,7 +204,7 @@ void normalizevector (
 	v[0] = v[0] / normval;
 	v[1] = v[1] / normval;
 	v[2] = v[2] / normval;
-	
+
 	return;
 }
 
@@ -221,11 +221,11 @@ bool use_in_rmsd(
 	core::Size resno,
 	core::Size atomno
 ) {
-	if(pose1.residue(resno).has( "N") && pose2.residue(resno).has( "N") && pose1.residue(resno).atom_index( "N")==atomno) return true;
-	if(pose1.residue(resno).has("CA") && pose2.residue(resno).has("CA") && pose1.residue(resno).atom_index("CA")==atomno) return true;
-	if(pose1.residue(resno).has("CM") && pose2.residue(resno).has("CM") && pose1.residue(resno).atom_index("CM")==atomno) return true;
-	if(pose1.residue(resno).has( "C") && pose2.residue(resno).has( "C") && pose1.residue(resno).atom_index( "C")==atomno) return true;
-	if(pose1.residue(resno).has( "O") && pose2.residue(resno).has( "O") && pose1.residue(resno).atom_index( "O")==atomno) return true;
+	if ( pose1.residue(resno).has( "N") && pose2.residue(resno).has( "N") && pose1.residue(resno).atom_index( "N")==atomno ) return true;
+	if ( pose1.residue(resno).has("CA") && pose2.residue(resno).has("CA") && pose1.residue(resno).atom_index("CA")==atomno ) return true;
+	if ( pose1.residue(resno).has("CM") && pose2.residue(resno).has("CM") && pose1.residue(resno).atom_index("CM")==atomno ) return true;
+	if ( pose1.residue(resno).has( "C") && pose2.residue(resno).has( "C") && pose1.residue(resno).atom_index( "C")==atomno ) return true;
+	if ( pose1.residue(resno).has( "O") && pose2.residue(resno).has( "O") && pose1.residue(resno).atom_index( "O")==atomno ) return true;
 
 	return false;
 }
@@ -235,10 +235,10 @@ void align_poses(
 	core::pose::Pose const &target
 ) {
 	core::id::AtomID_Map< core::id::AtomID > amap;
-	core::pose::initialize_atomid_map(amap,mypose,core::id::BOGUS_ATOM_ID);
-	for(int ir = 1; ir <= (int)mypose.size(); ++ir) {
-		for(int ia = 1; ia <= (int)mypose.residue(ir).nheavyatoms(); ++ia) {
-			if(use_in_rmsd(mypose,target,ir,ia)) {
+	core::pose::initialize_atomid_map(amap,mypose,core::id::AtomID::BOGUS_ATOM_ID());
+	for ( int ir = 1; ir <= (int)mypose.size(); ++ir ) {
+		for ( int ia = 1; ia <= (int)mypose.residue(ir).nheavyatoms(); ++ia ) {
+			if ( use_in_rmsd(mypose,target,ir,ia) ) {
 				amap[core::id::AtomID(ia,ir)] = core::id::AtomID(ia,ir);
 			}
 		}
@@ -248,13 +248,13 @@ void align_poses(
 }
 
 core::Real get_distance_measure(
-		const core::pose::Pose & pose1,
-		const core::pose::Pose & pose2
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2
 ) {
 	std::map< core::id::AtomID, core::id::AtomID > amap;
-	for(int ir = 1; ir <= (int)pose1.size(); ++ir) {
-		for(int ia = 1; ia <= (int)pose1.residue(ir).nheavyatoms(); ++ia) {
-			if(use_in_rmsd(pose1,pose2,ir,ia)) {
+	for ( int ir = 1; ir <= (int)pose1.size(); ++ir ) {
+		for ( int ia = 1; ia <= (int)pose1.residue(ir).nheavyatoms(); ++ia ) {
+			if ( use_in_rmsd(pose1,pose2,ir,ia) ) {
 				amap.insert(std::pair< core::id::AtomID, core::id::AtomID> (core::id::AtomID(ia,ir), core::id::AtomID(ia, ir)));
 			}
 		}
@@ -314,13 +314,12 @@ int main( int argc, char * argv [] ) {
 	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence, *( chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )), true );
 	mypose.clear();
 
-	for ( Size i = 1; i <= requested_types.size(); ++i )
-	{
+	for ( Size i = 1; i <= requested_types.size(); ++i ) {
 		// grab the new residue
 		chemical::ResidueType const & rsd_type = *requested_types[ i ];
 		core::conformation::ResidueOP new_rsd( NULL );
 		new_rsd = conformation::ResidueFactory::create_residue ( rsd_type );
-		if (i>1) mypose.append_residue_by_bond( *new_rsd, true );
+		if ( i>1 ) mypose.append_residue_by_bond( *new_rsd, true );
 		else {
 			mypose.append_residue_by_jump(*new_rsd, 1, "", "", true);
 		}
@@ -331,14 +330,14 @@ int main( int argc, char * argv [] ) {
 	numeric::xyzVector<core::Real> curatompos;
 	numeric::xyzVector<core::Real> T1, T2, v1, v2;
 	core::Real curphi, curpsi, curomega, curtheta;
-	for(core::Size i=1; i<90; i+=1) {
+	for ( core::Size i=1; i<90; i+=1 ) {
 		omega0 = (-static_cast<core::Real>(i)*0.1-3.2)/360*2.0*numeric::constants::d::pi/R0*5.0;
 		omega1 = 12.0*numeric::constants::d::pi/21.0 - omega0;
 		alpha = asin(omega0)*3.6*R0/5.0;
 		//alpha = omega0*4.0;
 		//alpha = -(double)i/360.0*2.0*numeric::constants::d::pi;
 		//R0 = (double)i*0.5;
-		for(core::Size ir=1; ir<=mypose.size(); ir++) {
+		for ( core::Size ir=1; ir<=mypose.size(); ir++ ) {
 			core::conformation::Residue rsd(mypose.residue(ir));
 
 			Dz=0.0; R1=2.27; phi1=0.0;
@@ -370,7 +369,7 @@ int main( int argc, char * argv [] ) {
 		mypose.update_residue_neighbors();
 		Dz=0.0; R1=2.27; phi1=0.0;
 
-		for(core::Size ir=1; ir<=mypose.size(); ir++) {
+		for ( core::Size ir=1; ir<=mypose.size(); ir++ ) {
 			/*T1[0]=-R0*omega0*sin(omega0*((double)ir-0.5));
 			T2[0]=-R0*omega0*sin(omega0*((double)ir+0.5));
 			T1[1]=R0*omega0*cos(omega0*((double)ir-0.5));
@@ -396,7 +395,7 @@ int main( int argc, char * argv [] ) {
 			mypose2.set_phi(ir, curphi);
 			mypose2.set_psi(ir, curpsi);*/
 
-			if(ir>1) {
+			if ( ir>1 ) {
 				dihedral_degrees( mypose.residue(ir-1).xyz("C"),
 					mypose.residue(ir).xyz("N"),
 					mypose.residue(ir).xyz("CA"),
@@ -410,7 +409,7 @@ int main( int argc, char * argv [] ) {
 				mypose.residue(ir).xyz("C"),
 				curtheta);
 			betapeptide_settheta(mypose2, ir, curtheta);
-			if(ir<mypose.size()) {
+			if ( ir<mypose.size() ) {
 				dihedral_degrees( mypose.residue(ir).xyz("CA"),
 					mypose.residue(ir).xyz("CM"),
 					mypose.residue(ir).xyz("C"),
@@ -435,7 +434,7 @@ int main( int argc, char * argv [] ) {
 		sprintf(outfile, "tors%02lu.pdb", i);
 		mypose2.dump_pdb(outfile);
 	}
-	
+
 	printf("JOB COMPLETED.\n"); fflush(stdout);
 	return 0;
 }

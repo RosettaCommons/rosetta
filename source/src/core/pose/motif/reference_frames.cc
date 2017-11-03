@@ -53,7 +53,7 @@ AIDs get_AIDs(
 			aids.push_back( AtomID(pose.residue_type(ir).atom_index(aname),ir) );
 		} else {
 			std::cout << "WARNING! get_sidechain_reference_frame_downstream_atoms: res "<<ir<<" "<< pose.residue_type(ir).name() << " has no atom named '" << aname<<"'!" << std::endl;
-			aids.push_back( core::id::BOGUS_ATOM_ID );
+			aids.push_back( core::id::AtomID::BOGUS_ATOM_ID() );
 			utility_exit_with_message("atom name mismatch somewhere!!!");
 		}
 	}
@@ -238,7 +238,7 @@ get_backbone_reference_frame_atomids(
 	aids.push_back(AtomID(2,ir));
 	aids.push_back(AtomID(3,ir));
 	if ( pose.residue(ir).aa()!=aa_gly ) aids.push_back(AtomID(5,ir));
-	else                              aids.push_back(id::BOGUS_ATOM_ID);
+	else                              aids.push_back(id::AtomID::BOGUS_ATOM_ID());
 	return aids;
 }
 

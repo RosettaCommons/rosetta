@@ -569,7 +569,7 @@ void align_mainchain_atoms(
 	core::Size const helix_end
 ) {
 	core::id::AtomID_Map< core::id::AtomID > amap;
-	core::pose::initialize_atomid_map(amap, pose, core::id::BOGUS_ATOM_ID);
+	core::pose::initialize_atomid_map(amap, pose, core::id::AtomID::BOGUS_ATOM_ID());
 
 	for ( core::Size ir=helix_start; ir<=helix_end; ++ir ) {
 		for ( core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia ) {
@@ -593,7 +593,7 @@ void align_mainchain_atoms_of_residue_range(
 	core::pose::Pose pose_copy(pose);
 
 	core::id::AtomID_Map< core::id::AtomID > amap;
-	core::pose::initialize_atomid_map(amap, pose_copy, core::id::BOGUS_ATOM_ID);
+	core::pose::initialize_atomid_map(amap, pose_copy, core::id::AtomID::BOGUS_ATOM_ID());
 
 	for ( core::Size ir=helix_start; ir<=helix_end; ++ir ) {
 		for ( core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia ) {

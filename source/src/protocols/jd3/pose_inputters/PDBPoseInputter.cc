@@ -28,6 +28,9 @@
 #include <core/import_pose/import_pose_options.hh>
 #include <protocols/jd2/util.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+
 //utility headers
 #include <utility/assert.hh>
 #include <utility/vector1.hh>
@@ -45,6 +48,8 @@
 namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
+
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.pose_inputter.PDBPoseInputter" );
 
 
 PDBPoseInputter::PDBPoseInputter() {}
@@ -131,6 +136,7 @@ PDBPoseInputter::pose_from_input_source(
 )
 {
 	debug_assert( input_source.string_string_map().find( "filename" ) != input_source.string_string_map().end() );
+	TR << "Loading " << input_source.string_string_map().find( "filename" )->second << " for input soure with pose_id() " << input_source.pose_id() << std::endl;
 	core::import_pose::ImportPoseOptions import_opts( options );
 	return core::import_pose::pose_from_file(
 		input_source.string_string_map().find( "filename" )->second,

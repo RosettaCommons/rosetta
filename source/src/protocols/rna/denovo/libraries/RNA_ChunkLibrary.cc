@@ -494,7 +494,7 @@ RNA_ChunkLibrary::align_to_chunk( pose::Pose & pose, ChunkSet const & chunk_set,
 	std::map< AtomID, AtomID > atom_id_map = chunk_set.get_atom_id_map( pose, *atom_level_domain_map_->atom_id_mapper() );
 
 	id::AtomID_Map< id::AtomID >  alignment_atom_id_map; // weird alternative format needed for superimpose_pose
-	core::pose::initialize_atomid_map( alignment_atom_id_map, pose, id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( alignment_atom_id_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 	for ( auto const & elem : atom_id_map ) {
 		alignment_atom_id_map.set( elem.first, elem.second );
 	}

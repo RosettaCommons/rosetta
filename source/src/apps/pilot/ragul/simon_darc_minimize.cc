@@ -181,7 +181,7 @@ calpha_pdb_superimpose_pose(
 )
 {
 	id::AtomID_Map< id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, mod_pose, id::AtomID::BOGUS_ATOM_ID() );
 	for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
 		if ( ! mod_pose.residue(ii).has("CA") ) continue;
 		if ( ! mod_pose.residue(ii).is_protein() ) continue;

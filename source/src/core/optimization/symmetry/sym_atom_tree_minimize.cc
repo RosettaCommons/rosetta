@@ -489,7 +489,7 @@ numerical_derivative_check(
 						A( 10, "vars[ii]" ) << std::endl;
 				}
 
-				id::DOF_ID parent_id( id::BOGUS_DOF_ID );
+				id::DOF_ID parent_id( id::DOF_ID::BOGUS_DOF_ID() );
 				if ( dof_node.parent() ) {
 					parent_id = dof_node.parent()->dof_id();
 				}

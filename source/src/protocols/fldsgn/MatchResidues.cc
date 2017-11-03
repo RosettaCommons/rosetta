@@ -81,7 +81,7 @@ core::Real
 MatchResidues::superimpose_comb( core::pose::Pose & pose, VecSize const & comb ) const
 {
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 	for ( Size i = 1; i < comb.size(); ++i ) {
 		const core::id::AtomID mod_id(pose.residue_type( comb[i] ).atom_index( "CA" ), comb[i] );
 		const core::id::AtomID ref_id(pose.residue_type( reference_residues_indexes_[i] ).atom_index( "CA" ), reference_residues_indexes_[i]);

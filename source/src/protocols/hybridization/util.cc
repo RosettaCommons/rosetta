@@ -517,7 +517,7 @@ update_atom_map(
 {
 	core::id::AtomID_Map< core::id::AtomID > updated_atom_map;
 
-	core::pose::initialize_atomid_map( updated_atom_map, pose, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( updated_atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	for ( Size ires=1; ires<= pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {

@@ -40,10 +40,6 @@ operator <<( std::ostream & os, DOF_ID const & a )
 }
 
 
-/// @brief Globals
-DOF_ID const BOGUS_DOF_ID( BOGUS_ATOM_ID, PHI );
-
-
 } // namespace id
 } // namespace core
 

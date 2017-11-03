@@ -355,7 +355,7 @@ superimpose_overhangs_heavy(Pose const & pose, Pose & piece, bool ca_only, Size 
 	}
 	TR <<"Superimposing overhang residues" << std::endl;
 	AtomID_Map < AtomID > atoms_to_superimpose;
-	initialize_atomid_map( atoms_to_superimpose, piece, core::id::BOGUS_ATOM_ID );
+	initialize_atomid_map( atoms_to_superimpose, piece, core::id::AtomID::BOGUS_ATOM_ID() );
 	//Remove termini
 	remove_lower_terminus_type_from_pose_residue(piece, 1);
 	remove_upper_terminus_type_from_pose_residue(piece, piece.size());

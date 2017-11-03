@@ -1397,7 +1397,7 @@ Residue::inter_residue_connection_partner(
 	if ( partner_seqpos < 1 || partner_seqpos > conformation.size() ) {
 		TR.Warning << "Residue::inter_residue_connection_partner: Invalid residue connection, returning BOGUS ID: this_rsd= " << name() <<
 			' ' << seqpos() << " connid= " << connid << " partner_seqpos= " << partner_seqpos << std::endl;
-		return id::BOGUS_ATOM_ID;
+		return id::GLOBAL_BOGUS_ATOM_ID;
 	}
 
 	Size const partner_connid( residue_connection_conn_id( connid ) );

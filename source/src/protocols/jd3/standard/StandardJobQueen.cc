@@ -63,7 +63,7 @@
 #include <basic/datacache/ConstDataMap.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.StandardJobQueen" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.standard.StandardJobQueen" );
 
 
 namespace protocols {
@@ -693,6 +693,7 @@ StandardJobQueen::process_deallocation_message(
 		InputPoseDeallocationMessageOP pose_dealloc_msg =
 			utility::pointer::dynamic_pointer_cast< InputPoseDeallocationMessage > ( message );
 		if ( input_pose_index_map_.count( pose_dealloc_msg->pose_id() ) ) {
+			TR << "Erasing previously-stored Pose with index " << pose_dealloc_msg->pose_id() << std::endl;
 			input_pose_index_map_.erase( pose_dealloc_msg->pose_id() );
 		}
 	} else {
@@ -1120,7 +1121,9 @@ StandardJobQueen::pose_for_job(
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
 	PoseInputSource const & input_source = dynamic_cast< PoseInputSource const & >( inner_job->input_source() );
+	TR << "Looking for input source " << job->inner_job()->input_source().input_tag() << " with pose_id " << job->inner_job()->input_source().pose_id() << std::endl;
 	if ( input_pose_index_map_.count( input_source.pose_id() ) ) {
+
 		core::pose::PoseOP pose( new core::pose::Pose );
 		// Why does the standard job queen use detached_copy? Because it is important in multithreaded
 		// contexts that no two Poses pointing to that same data end up in two separate threads,
@@ -1140,6 +1143,7 @@ StandardJobQueen::pose_for_job(
 	}
 
 	core::pose::PoseOP input_pose = pose_inputter_for_job( *inner_job )->pose_from_input_source( input_source, options, inputter_tag );
+	TR << "Storing Pose for input source " << job->inner_job()->input_source().input_tag() << " with pose_id " << job->inner_job()->input_source().pose_id() << std::endl;
 	input_pose_index_map_[ input_source.pose_id() ] = input_pose;
 
 	core::pose::PoseOP pose( new core::pose::Pose );
@@ -1439,7 +1443,10 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 		}
 
 		PoseInputSources input_poses = inputter->pose_input_sources_from_tag( *job_options, input_tag_child );
-		for ( auto input_source : input_poses ) { input_source->pose_id( ++input_pose_counter_ ); }
+		for ( auto input_source : input_poses ) {
+			input_source->pose_id( ++input_pose_counter_ );
+			TR << "Assigning input_source " << input_source->input_tag() << " pose_id " << input_pose_counter_ << " and stored as " << input_source->pose_id() << std::endl;
+		}
 
 		// Get the right outputter for this job.
 		pose_outputters::PoseOutputterOP outputter = get_outputter_from_job_tag( subtag );
@@ -1550,7 +1557,10 @@ StandardJobQueen::determine_preliminary_job_list_from_command_line()
 			}
 		}
 	}
-	for ( auto input_source : input_poses ) { input_source.first->pose_id( ++input_pose_counter_ ); }
+	for ( auto input_source : input_poses ) {
+		input_source.first->pose_id( ++input_pose_counter_ );
+		TR << "Assigning input_source " << input_source.first->input_tag() << " pose_id " << input_pose_counter_ << std::endl;
+	}
 
 	pose_outputters::PoseOutputterOP outputter = get_outputter_from_job_tag( utility::tag::TagCOP() );
 

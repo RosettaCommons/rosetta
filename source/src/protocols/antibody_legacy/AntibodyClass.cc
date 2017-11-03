@@ -451,7 +451,7 @@ void
 Antibody::align_to_native( Antibody & native ) {
 
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, Fv, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, Fv, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	for ( core::Size j = 1; j <= 6; j++ ) {
 		core::Size buffer_for_h3_end(0);

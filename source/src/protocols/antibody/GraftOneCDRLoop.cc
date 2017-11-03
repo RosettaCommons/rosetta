@@ -128,7 +128,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 
 	// create atom map for superimposing 2 flanking resiudes
 	id::AtomID_Map< id::AtomID > atom_map;
-	pose::initialize_atomid_map( atom_map, template_pose, id::BOGUS_ATOM_ID );
+	pose::initialize_atomid_map( atom_map, template_pose, id::AtomID::BOGUS_ATOM_ID() );
 
 
 	//   ****AAAAAAAAAAAAAAAAAAA****  the template pose should have 4 residues each side

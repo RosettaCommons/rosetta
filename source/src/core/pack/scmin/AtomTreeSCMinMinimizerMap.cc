@@ -405,7 +405,7 @@ AtomTreeSCMinMinimizerMap::dof_node_for_chi( Size resid, Size chiid ) const
 id::TorsionID
 AtomTreeSCMinMinimizerMap::tor_for_dof( DOF_ID const & dofid ) const
 {
-	if ( dofid.type() != core::id::PHI ) return core::id::BOGUS_TORSION_ID;
+	if ( dofid.type() != core::id::PHI ) return core::id::TorsionID::BOGUS_TORSION_ID();
 
 	Size const rsd( dofid.rsd() );
 	Size const chi( residue( rsd ).type().last_controlling_chi( dofid.atomno() ) );

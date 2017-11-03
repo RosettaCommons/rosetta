@@ -194,7 +194,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 		core::pose::Pose pose_copy = pose; //Make a copy of the pose.
 
 		core::id::AtomID_Map< core::id::AtomID > amap;
-		core::pose::initialize_atomid_map(amap, pose, core::id::BOGUS_ATOM_ID);
+		core::pose::initialize_atomid_map(amap, pose, core::id::AtomID::BOGUS_ATOM_ID());
 
 		core::Real t = -1.0*static_cast<core::Real>(end_index_ - start_index_ + 1)/2.0;
 		t += static_cast<core::Real>( reference_res_index-start_index_ );

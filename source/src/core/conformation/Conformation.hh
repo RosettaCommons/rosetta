@@ -1448,7 +1448,7 @@ private:
 		bool start_new_chain,
 		bool by_jump = false,
 		std::string const & root_atom = "",
-		id::NamedAtomID anchor_id = id::BOGUS_NAMED_ATOM_ID
+		id::NamedAtomID anchor_id = id::NamedAtomID::BOGUS_NAMED_ATOM_ID()
 	);
 
 

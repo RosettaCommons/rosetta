@@ -837,11 +837,11 @@ Conformation::fold_tree( FoldTree const & fold_tree_in )
 ResidueCOPs
 Conformation::const_residues() const
 {
-	// setup ResidueCAPs object
-	conformation::ResidueCAPs const_rsds;
+	// setup ResidueCAPs object ?? Why this and not COPs?
+	conformation::ResidueCOPs const_rsds;
 	for ( Size i=1; i<= size(); ++i ) {
 		// pointer conversions are really annoying
-		const_rsds.push_back( ResidueCAP( residues_[i] ) );
+		const_rsds.push_back( ResidueCOP( residues_[i] ) );
 	}
 	return const_rsds;
 }
@@ -890,7 +890,7 @@ Conformation::append_residue_by_jump(
 	pre_nresidue_change();
 	// handle first residue: special case
 	if ( size() < 1 ) {
-		append_residue( new_rsd, false, "", id::BOGUS_NAMED_ATOM_ID, start_new_chain );
+		append_residue( new_rsd, false, "", id::NamedAtomID::BOGUS_NAMED_ATOM_ID(), start_new_chain );
 		return;
 	}
 
@@ -1038,7 +1038,7 @@ Conformation::append_residue_by_bond(
 
 	// handle first residue: special case
 	if ( size() < 1 ) {
-		append_residue( new_rsd, false, "", id::BOGUS_NAMED_ATOM_ID, start_new_chain );
+		append_residue( new_rsd, false, "", id::NamedAtomID::BOGUS_NAMED_ATOM_ID(), start_new_chain );
 		return;
 	}
 
@@ -1118,7 +1118,7 @@ Conformation::append_residue_by_bond(
 			append_residue( *ideal_geometry_rsd,
 				false,
 				"",
-				id::BOGUS_NAMED_ATOM_ID,
+				id::NamedAtomID::BOGUS_NAMED_ATOM_ID(),
 				start_new_chain );
 		} else {
 			append_residue(
@@ -1827,12 +1827,12 @@ Conformation::fill_missing_atoms(
 					stub_atom2( rsd.icoor( j ).stub_atom2().atom_id( rsd, *this ) ),
 					stub_atom3( rsd.icoor( j ).stub_atom3().atom_id( rsd, *this ) );
 
-				if ( natoms-num_missing < 3 && !( stub_atom1 == id::BOGUS_ATOM_ID || missing.get( stub_atom1 ) ) ) {
+				if ( natoms-num_missing < 3 && !( stub_atom1 == id::AtomID::BOGUS_ATOM_ID() || missing.get( stub_atom1 ) ) ) {
 					// with < 3 atoms present, we can't build any stubs, so we're stuck forever unless we punt:
 					using numeric::random::uniform;
 					Vector xyz1( xyz( stub_atom1 ) ), xyz2( xyz( stub_atom2 ) ), xyz3( xyz( stub_atom3 ) );
-					if ( stub_atom2 == id::BOGUS_ATOM_ID || missing.get( stub_atom2 ) ) xyz2 = Vector( uniform(), uniform(), uniform() );
-					if ( stub_atom3 == id::BOGUS_ATOM_ID || missing.get( stub_atom3 ) ) xyz3 = Vector( uniform(), uniform(), uniform() );
+					if ( stub_atom2 == id::AtomID::BOGUS_ATOM_ID() || missing.get( stub_atom2 ) ) xyz2 = Vector( uniform(), uniform(), uniform() );
+					if ( stub_atom3 == id::AtomID::BOGUS_ATOM_ID() || missing.get( stub_atom3 ) ) xyz3 = Vector( uniform(), uniform(), uniform() );
 					kinematics::Stub const stub( xyz1, xyz2, xyz3 );
 					set_xyz( id, stub.spherical( rsd.icoor(j).phi(), rsd.icoor(j).theta(), rsd.icoor(j).d() ) );
 					if ( ! rsd.is_virtual(j) ) { // Metal ions rely on this -- don't warn for virtuals
@@ -2693,7 +2693,7 @@ Conformation::torsion_angle(
 	AtomID const & atom4
 ) const {
 	DOF_ID const dof_id( atom_tree_->torsion_angle_dof_id( atom1, atom2, atom3, atom4, /*quiet* =*/ true ) );
-	if ( dof_id == core::id::BOGUS_DOF_ID ) {
+	if ( dof_id == core::id::DOF_ID::BOGUS_DOF_ID() ) {
 		// Not in the AtomTree, but we can possibly calculate it.
 		if ( !atoms_are_bonded( atom2, atom3 ) ) {
 			// Only require that the center two atoms are bonded.
@@ -3046,7 +3046,7 @@ Conformation::dof_id_from_atom_ids( utility::vector1< id::AtomID > const & ids )
 	case 2 :
 		return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ] );
 	default :
-		return id::BOGUS_DOF_ID;
+		return id::GLOBAL_BOGUS_DOF_ID;
 	}
 }
 
@@ -3067,7 +3067,7 @@ Conformation::dof_id_from_torsion_id( TorsionID const & tor_id ) const
 
 		if ( fail ) {
 			// probably a backbone torsion undefined b/c of a cutpoint
-			return id::BOGUS_DOF_ID;
+			return id::GLOBAL_BOGUS_DOF_ID;
 		}
 		return dof_id_from_atom_ids( id1, id2, id3, id4 );
 	}
@@ -3729,7 +3729,7 @@ Conformation::residues_append( Residue const & new_rsd, bool const start_new_cha
 
 	// update polymeric connection status from chain id's and termini status (but only if it's possible they're chemically connected)
 	if ( nres > 1 && ! by_jump ) {
-		if ( anchor_id == id::BOGUS_NAMED_ATOM_ID ) {
+		if ( anchor_id == id::NamedAtomID::BOGUS_NAMED_ATOM_ID() ) {
 			update_polymeric_connection(nres - 1);
 		} else {
 			Size root_atomno = residues_[nres]->type().atom_index(root_atom);

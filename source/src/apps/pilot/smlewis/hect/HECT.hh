@@ -90,7 +90,7 @@ using basic::Warning;
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.HECT" );
 
-namespace basic{ namespace options{ namespace OptionKeys{
+namespace basic { namespace options { namespace OptionKeys {
 basic::options::IntegerOptionKey const e3_hinge_start_resnum("e3_hinge_start_resnum");
 basic::options::IntegerOptionKey const e3_hinge_stop_resnum("e3_hinge_stop_resnum");
 basic::options::StringOptionKey const e3_hinge_chain("e3_hinge_chain");
@@ -129,7 +129,7 @@ void register_options(){
 	option.add( e2_catalytic_resnum, "" );
 
 	option.add( debug_skip_fragment_generation, "" ).def(false);
- 	option.add( debug, "" ).def(false);
+	option.add( debug, "" ).def(false);
 
 	option.add( cycles, "run refinement for this many cycles" ).def(50);
 	option.add( repack_cycles, "repack every this many cycles" ).def(50);
@@ -184,13 +184,13 @@ protected: //protected does not require writing getters/setters for all these me
 
 public:
 	HECTMover() :  init_for_input_yet_(false),
-								 e3chain_(0), e2chain_(0), ubqchain_(0),
-								 e3chain_num_(0), e3chain_start_(0), e3chain_end_(0), e3_hinge_start_(0), e3_hinge_stop_(0), e3_catalytic_res_(0),
-								 ubqchain_num_(0), ubqchain_start_(0), ubqchain_end_(0), utail_start_(0), utail_stop_(0),
-								 e2chain_num_(0), e2chain_start_(0), e2chain_end_(0), e2_catalytic_res_(0),
-								 fullatom_scorefunction_(NULL), task_factory_(NULL), movemap_(NULL), fragset3mer_e3_hinge_(NULL), fragset3mer_ubq_tail_(NULL),
-								 fixed_starting_pose_(NULL), xtal_pose_(NULL),
-								 atomIDs(atomID_tot, core::id::BOGUS_ATOM_ID )
+		e3chain_(0), e2chain_(0), ubqchain_(0),
+		e3chain_num_(0), e3chain_start_(0), e3chain_end_(0), e3_hinge_start_(0), e3_hinge_stop_(0), e3_catalytic_res_(0),
+		ubqchain_num_(0), ubqchain_start_(0), ubqchain_end_(0), utail_start_(0), utail_stop_(0),
+		e2chain_num_(0), e2chain_start_(0), e2chain_end_(0), e2_catalytic_res_(0),
+		fullatom_scorefunction_(NULL), task_factory_(NULL), movemap_(NULL), fragset3mer_e3_hinge_(NULL), fragset3mer_ubq_tail_(NULL),
+		fixed_starting_pose_(NULL), xtal_pose_(NULL),
+		atomIDs(atomID_tot, core::id::AtomID::BOGUS_ATOM_ID() )
 
 	{
 		//set up fullatom scorefunction
@@ -212,8 +212,8 @@ public:
 		std::string ss_string(frags_length, 'L');
 		core::fragment::FragDataOPs list;
 
-		if(!basic::options::option[basic::options::OptionKeys::debug_skip_fragment_generation].value()){
-			for (core::Size j = start; j <= stop-frags_length+1; ++j){
+		if ( !basic::options::option[basic::options::OptionKeys::debug_skip_fragment_generation].value() ) {
+			for ( core::Size j = start; j <= stop-frags_length+1; ++j ) {
 				std::string const seqsubstr(seq, j-1, frags_length); //j-1 accounts for string [] from 0
 				TR << "adding frame, start at " << j << " go for " << frags_length << " to " << j+frags_length << " seq " << seqsubstr << std::endl;
 				list =  core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_string, seqsubstr, 200, false ); //magic number: 200 fragments per position (not duplicated - this will be like robetta server fragments)
@@ -262,12 +262,12 @@ public:
 		e2chain_end_ = (pose.conformation().chain_end(e2chain_num_));
 
 		TR << "resnums:" << std::endl
-				<< "e3 chain start catalytic hingestart hingeend stop " << e3chain_num_ << " " << e3chain_start_ << " "
-				<< e3_catalytic_res_ << " " << e3_hinge_start_ << " " << e3_hinge_stop_ << " " << e3chain_end_ << std::endl
-				<< "e2 chain start catalytic stop " << e2chain_num_ << " " << e2chain_start_ << " "
-				<< e2_catalytic_res_ << " " << e2chain_end_ << std::endl
-				<< "ubq chain start flexstart stop " << " " << ubqchain_num_ << " " << ubqchain_start_ << " "
-				<< utail_start_ << " " << ubqchain_end_ << std::endl;
+			<< "e3 chain start catalytic hingestart hingeend stop " << e3chain_num_ << " " << e3chain_start_ << " "
+			<< e3_catalytic_res_ << " " << e3_hinge_start_ << " " << e3_hinge_stop_ << " " << e3chain_end_ << std::endl
+			<< "e2 chain start catalytic stop " << e2chain_num_ << " " << e2chain_start_ << " "
+			<< e2_catalytic_res_ << " " << e2chain_end_ << std::endl
+			<< "ubq chain start flexstart stop " << " " << ubqchain_num_ << " " << ubqchain_start_ << " "
+			<< utail_start_ << " " << ubqchain_end_ << std::endl;
 		TR << "num chains " << pose.conformation().num_chains() << std::endl;
 		return;
 	}
@@ -281,7 +281,7 @@ public:
 		using namespace core::kinematics;
 		FoldTree foldtree(pose.size());
 		foldtree.clear();
- 		foldtree.add_edge( Edge(e3chain_start_, e3chain_end_, Edge::PEPTIDE));
+		foldtree.add_edge( Edge(e3chain_start_, e3chain_end_, Edge::PEPTIDE));
 		foldtree.add_edge( Edge(e2chain_start_, e2_catalytic_res_, Edge::PEPTIDE));
 		foldtree.add_edge( Edge(e2_catalytic_res_, e2chain_end_, Edge::PEPTIDE));
 		foldtree.add_edge( Edge(e2chain_start_, e3chain_start_, E2_E3_JUMP));
@@ -322,12 +322,12 @@ public:
 
 		//first we build residue sets for the different domains and regions of interest
 		std::set< core::Size > E3C, E3N, E3hinge, E2, UBQ, UBQtail;
-		for( core::Size i(e3chain_start_);   i<=e3_hinge_start_; ++i) E3N.insert(i);
-		for( core::Size i(e3_hinge_start_); i<=e3_hinge_stop_;  ++i) E3hinge.insert(i);
-		for( core::Size i(e3_hinge_stop_);  i<=e3chain_end_;     ++i) E3C.insert(i);
-		for( core::Size i(e2chain_start_);   i<=e2chain_end_;     ++i) E2.insert(i);
-		for( core::Size i(ubqchain_start_);  i<=utail_start_;    ++i) UBQ.insert(i);
-		for( core::Size i(utail_start_);    i<=ubqchain_end_;    ++i) UBQtail.insert(i);
+		for ( core::Size i(e3chain_start_);   i<=e3_hinge_start_; ++i ) E3N.insert(i);
+		for ( core::Size i(e3_hinge_start_); i<=e3_hinge_stop_;  ++i ) E3hinge.insert(i);
+		for ( core::Size i(e3_hinge_stop_);  i<=e3chain_end_;     ++i ) E3C.insert(i);
+		for ( core::Size i(e2chain_start_);   i<=e2chain_end_;     ++i ) E2.insert(i);
+		for ( core::Size i(ubqchain_start_);  i<=utail_start_;    ++i ) UBQ.insert(i);
+		for ( core::Size i(utail_start_);    i<=ubqchain_end_;    ++i ) UBQtail.insert(i);
 
 
 		//borrowing IGNC's typedefs to set up the group pairs
@@ -488,20 +488,20 @@ public:
 	void
 	apply( core::pose::Pose & pose ){
 
-		if( !init_for_input_yet_ ) init_on_new_input(pose);
+		if ( !init_for_input_yet_ ) init_on_new_input(pose);
 		pose = *fixed_starting_pose_; //copy operation
 
 		/*
-			movers we'll need:
-			bb cycles:
-			small/shear/fragment movers for hinge region
-			small/shear/fragment movers for UBQ tail
-			TorsionDOF movers for chemical linkage
-			RotamerTrialsMover
-			MinMover
-			packing cycles:
-			PackRotamersMover
-			TaskAwareMinMover
+		movers we'll need:
+		bb cycles:
+		small/shear/fragment movers for hinge region
+		small/shear/fragment movers for UBQ tail
+		TorsionDOF movers for chemical linkage
+		RotamerTrialsMover
+		MinMover
+		packing cycles:
+		PackRotamersMover
+		TaskAwareMinMover
 		*/
 
 		using namespace protocols::moves;
@@ -516,16 +516,16 @@ public:
 		using protocols::simple_moves::RotamerTrialsMoverOP;
 		using protocols::simple_moves::EnergyCutRotamerTrialsMover;
 		protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
-																																	fullatom_scorefunction_,
-																																	task_factory_,
-																																	mc,
-																																	0.01 /*energycut*/ ) );
+			fullatom_scorefunction_,
+			task_factory_,
+			mc,
+			0.01 /*energycut*/ ) );
 
 		//////////////////////////TorsionDOFMovers for the chemical linkage////////////////////////////////
 		//utility::vector1< protocols::simple_moves::TorsionDOFMoverOP > DOF_movers;
 		//we are going to iterate over the ordered quadruplets describing the torsional degrees of freedom involved in the thioester bond, like so: 1,2,3,4; 2,3,4,5; 3,4,5,6
 		//This iterates from the cysteine backbone C to the second glycine backbone C.  See the enum names for which atoms are which
-		for( core::Size i(1); i <= GLY2_C-3; ++i){
+		for ( core::Size i(1); i <= GLY2_C-3; ++i ) {
 			protocols::simple_moves::TorsionDOFMoverOP DOF_mover(new protocols::simple_moves::TorsionDOFMover);
 			DOF_mover->set_DOF(atomIDs[i], atomIDs[i+1], atomIDs[i+2], atomIDs[i+3]);
 			DOF_mover->check_mmt(true);
@@ -536,16 +536,16 @@ public:
 			random_mover->add_mover(DOF_mover, 1.0);
 		}
 
-		//		//DOF movers test
-		// 		core::pose::Pose copy(pose);
-		// 		std::ostringstream outputfilename;
-		// 		for(core::Size i(1); i<=DOF_movers.size(); ++i){
-		// 			DOF_movers[i]->apply(copy);
-		// 			outputfilename.str(""); //clears stream
-		// 			outputfilename << "torsionDOF_" << i << ".pdb";
-		// 			copy.dump_pdb(outputfilename.str());
-		// 			copy = pose;
-		// 		}
+		//  //DOF movers test
+		//   core::pose::Pose copy(pose);
+		//   std::ostringstream outputfilename;
+		//   for(core::Size i(1); i<=DOF_movers.size(); ++i){
+		//    DOF_movers[i]->apply(copy);
+		//    outputfilename.str(""); //clears stream
+		//    outputfilename << "torsionDOF_" << i << ".pdb";
+		//    copy.dump_pdb(outputfilename.str());
+		//    copy = pose;
+		//   }
 
 		///////////////////////////////////fragments////////////////////////////////////////////////
 		using protocols::simple_moves::ClassicFragmentMover;
@@ -576,11 +576,11 @@ public:
 
 		///////////////////////////////////////////Minimizer mover and TAMinmover///////////////////////////
 		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
-																				movemap_,
-																				fullatom_scorefunction_,
-																				basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-																				0.01,
-																				true /*use_nblist*/ );
+			movemap_,
+			fullatom_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ );
 
 		using protocols::simple_moves::TaskAwareMinMoverOP;
 		using protocols::simple_moves::TaskAwareMinMover;
@@ -592,10 +592,10 @@ public:
 		RT_min_seq->add_mover(min_mover);
 
 		protocols::moves::JumpOutMoverOP bb_if_RT_min( new protocols::moves::JumpOutMover(
-																																											random_mover,
-																																											RT_min_seq,
-																																											fullatom_scorefunction_,
-																																											20.0)); //20 score units
+			random_mover,
+			RT_min_seq,
+			fullatom_scorefunction_,
+			20.0)); //20 score units
 
 		//run loop
 		using basic::options::option;
@@ -604,7 +604,7 @@ public:
 		core::Size const repackcycles = option[ repack_cycles ].value();
 		TR << "   Current     Low    total cycles =" << applies << std::endl;
 		for ( core::Size i(1); i <= applies; ++i ) {
-			if( (i % repackcycles == 0) || (i == applies) ) { //full repack
+			if ( (i % repackcycles == 0) || (i == applies) ) { //full repack
 				pack_mover->apply(pose);
 				TAmin_mover->apply(pose);
 			} else {
@@ -612,13 +612,13 @@ public:
 			}
 
 			mc->boltzmann(pose);
-			if(mc->mc_accepted()) TR << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
+			if ( mc->mc_accepted() ) TR << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
 
 		}//end the exciting for loop
 		mc->recover_low( pose );
 
 		//let's store some energies/etc of interest
-		if (true) create_extra_output(pose);
+		if ( true ) create_extra_output(pose);
 
 		(*fullatom_scorefunction_)(pose);
 		set_last_move_status(protocols::moves::MS_SUCCESS); //this call is unnecessary but let's be safe

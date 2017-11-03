@@ -72,10 +72,6 @@ operator >>( std::istream & is, NamedAtomID& e )
 	return is;
 }
 
-/// @brief Globals
-NamedAtomID const BOGUS_NAMED_ATOM_ID( "", 0 );
-NamedAtomID const CHAINBREAK_BOGUS_NAMED_ATOM_ID( "", 0 );
-
 
 } // namespace id
 } // namespace core

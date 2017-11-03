@@ -1527,7 +1527,7 @@ get_residue_connections(
 
 	// setup incoming connection
 	if ( fold_tree.is_root( seqpos ) ) {
-		new_rsd_in.atom1 = id::BOGUS_ATOM_ID;
+		new_rsd_in.atom1 = id::AtomID::BOGUS_ATOM_ID();
 		new_rsd_in.atom2 = id::AtomID( get_root_residue_root_atomno( new_rsd, fold_tree ), seqpos );
 	} else {
 		Size anchor_atomno, root_atomno, anchor_pos;

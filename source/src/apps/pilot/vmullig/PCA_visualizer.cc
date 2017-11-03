@@ -1,12 +1,12 @@
 /****************************************************************************************************
-	PCA_visualizer.cc
+PCA_visualizer.cc
 
-	A pilot app to read a PCA file and a PDB, and to generate a series of PDB files animating
-	the perturbation of the initial PDB file by the PCA vectors.
-	History:
-	--File created 22 May 2013 by Vikram K. Mulligan, Baker Laboratory.
-	--Modified 10 Sept 2013 by VKM to allow beta-amino acids.
-	--Modified 15 Oct 2013 by VKM to work with jumps.
+A pilot app to read a PCA file and a PDB, and to generate a series of PDB files animating
+the perturbation of the initial PDB file by the PCA vectors.
+History:
+--File created 22 May 2013 by Vikram K. Mulligan, Baker Laboratory.
+--Modified 10 Sept 2013 by VKM to allow beta-amino acids.
+--Modified 15 Oct 2013 by VKM to work with jumps.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -73,7 +73,7 @@ void register_options() {
 
 	NEW_OPT(PCAfiles, "List of PCA files to load.  Must be specified in same order as files listed using the -in:file:s flag.", emptystringvector);
 	NEW_OPT(outcount, "Number of output files to write per input structure.  (Or length of animation, in frames.)  Default 30.", 30);
-	NEW_OPT(amplitudes, "List of amplitudes of oscillation for the PCA vectors.  If fewer amplitudes are specified than there are PCA vectors, amplitudes of 0 are assumed for all later PCA vectors.", emptyrealvector);	
+	NEW_OPT(amplitudes, "List of amplitudes of oscillation for the PCA vectors.  If fewer amplitudes are specified than there are PCA vectors, amplitudes of 0 are assumed for all later PCA vectors.", emptyrealvector);
 	NEW_OPT(frequencies, "List of frequencies of oscillation for the PCA vectors (in oscillation cycles per animation timecourse).", emptyrealvector);
 	NEW_OPT(offsets, "List of offsets of oscillation for the PCA vectors (as a fraction of an oscillation cycle).", emptyrealvector);
 	NEW_OPT(use_variances, "If true, amplitudes are premultiplied by variances for each principal component vector.  If false, principal component vectors are used as-is.  Default true.", true);
@@ -128,8 +128,8 @@ void betapeptide_setomega (
 }
 
 /********************************************************************************
-	Function to read in a PCA file and output a variances vector and a
-	vector of principal component vectors.
+Function to read in a PCA file and output a variances vector and a
+vector of principal component vectors.
 ********************************************************************************/
 void read_PCAfile (
 	const char* filename,
@@ -150,7 +150,7 @@ void read_PCAfile (
 
 	//If there are no principal component vectors for this state, return without doing anything.
 	//The sizes of the variancs and PCA_vectors vectors will be 0, in this case.
-	if(vectorcount==0) return;
+	if ( vectorcount==0 ) return;
 
 	//Resize the variances and PCA_vectors vectors:
 	variances.resize(vectorcount);
@@ -158,15 +158,15 @@ void read_PCAfile (
 
 	//Loop through and read the variances vector:
 	core::Real realbuffer;
-	for(core::Size i=1; i<=vectorcount; i++) {
+	for ( core::Size i=1; i<=vectorcount; i++ ) {
 		fscanf(pcafile, "%lf", &realbuffer);
 		variances[i]=realbuffer;
 	}
 
 	//Loop through and populate the PCA matrix:
-	for(core::Size i=1; i<=vectorcount; i++) {
+	for ( core::Size i=1; i<=vectorcount; i++ ) {
 		PCA_vectors[i].resize(vectorcomponentcount);
-		for(core::Size j=1; j<=vectorcomponentcount; j++) {
+		for ( core::Size j=1; j<=vectorcomponentcount; j++ ) {
 			fscanf(pcafile, "%lf", &realbuffer);
 			PCA_vectors[i][j]=realbuffer;
 		}
@@ -176,7 +176,8 @@ void read_PCAfile (
 	fclose(pcafile);
 
 	//Normalize the variances vector to the size of the first entry:
-	if(normalize_variances) {for(core::Size i=variances.size(); i>=1; i--) variances[i]=variances[i]/variances[1];}
+	if ( normalize_variances ) { for ( core::Size i=variances.size(); i>=1; i-- ) variances[i]=variances[i]/variances[1];
+	}
 
 	return;
 }
@@ -196,34 +197,34 @@ void fix_cyclic_termini (core::pose::Pose &mypose) {
 		core::chemical::ResidueTypeSetCAP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		core::pose::Pose dialanine;
 		std::string diala_seq = "";
-		if(mypose.residue(mypose.size()).has("CM")) diala_seq+="A[B3A]"; else diala_seq+="A";
-		if(mypose.residue(1).has("CM")) diala_seq+="A[B3A]"; else diala_seq+="A";
+		if ( mypose.residue(mypose.size()).has("CM") ) diala_seq+="A[B3A]"; else diala_seq+="A";
+		if ( mypose.residue(1).has("CM") ) diala_seq+="A[B3A]"; else diala_seq+="A";
 
 		//core::pose::make_pose_from_sequence(dialanine, "AA", *standard_residues, true); //The termini are OPEN.
 		{
 			core::chemical::ResidueTypeSetCAP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 			core::chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( diala_seq, *standard_residues, false );
-			for(core::Size ir=1, numres=requested_types.size(); ir<=numres; ir++){
+			for ( core::Size ir=1, numres=requested_types.size(); ir<=numres; ir++ ) {
 				core::chemical::ResidueType const & rsd_type = *requested_types[ ir ];
 				core::conformation::ResidueOP new_rsd = core::conformation::ResidueFactory::create_residue( rsd_type );
-				if(ir==1) dialanine.append_residue_by_jump( *new_rsd, 1, "", "", true );
+				if ( ir==1 ) dialanine.append_residue_by_jump( *new_rsd, 1, "", "", true );
 				else dialanine.append_residue_by_bond(*new_rsd, true);
 			}
 		}
 
 
 		core::Real omegaval = numeric::dihedral_degrees(
-				mypose.residue(mypose.size()).xyz( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ),
-				mypose.residue(mypose.size()).xyz("C"),
-				mypose.residue(1).xyz("N"),
-				mypose.residue(1).xyz("CA")
-			);
+			mypose.residue(mypose.size()).xyz( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ),
+			mypose.residue(mypose.size()).xyz("C"),
+			mypose.residue(1).xyz("N"),
+			mypose.residue(1).xyz("CA")
+		);
 
 		dialanine.conformation().set_torsion(id::TorsionID(1, id::BB, (dialanine.residue(1).has("CM")?4:3) ), omegaval);
 		//dialanine.set_omega(1, omegaval);
 
 		core::id::AtomID_Map< core::id::AtomID > amap;
-		core::pose::initialize_atomid_map(amap,dialanine,core::id::BOGUS_ATOM_ID);
+		core::pose::initialize_atomid_map(amap,dialanine,core::id::AtomID::BOGUS_ATOM_ID());
 		amap[AtomID(dialanine.residue(1).atom_index((dialanine.residue(1).has("CM")?"CM":"CA")),1)] = AtomID(mypose.residue(mypose.size()).atom_index((dialanine.residue(1).has("CM")?"CM":"CA")),mypose.size());
 		amap[AtomID(dialanine.residue(1).atom_index("C"),1)] = AtomID(mypose.residue(mypose.size()).atom_index("C"),mypose.size());
 		amap[AtomID(dialanine.residue(1).atom_index("O"),1)] = AtomID(mypose.residue(mypose.size()).atom_index("O"),mypose.size());
@@ -247,23 +248,21 @@ bool checkresiduecount (
 
 	core::Size count=0;
 
-	for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
-		if(mypose.residue(ir).type().is_beta_aa()) {
+	for ( core::Size ir=1, nres=mypose.size(); ir<=nres; ir++ ) {
+		if ( mypose.residue(ir).type().is_beta_aa() ) {
 			count+=4; //Beta-amino acid
-			if(mypose.residue(ir).is_lower_terminus() || ir==1) count--;
-			if(mypose.residue(ir).is_upper_terminus() || ir==nres) count-=2;
-		}
-		else if(mypose.residue(ir).type().is_alpha_aa()) {
+			if ( mypose.residue(ir).is_lower_terminus() || ir==1 ) count--;
+			if ( mypose.residue(ir).is_upper_terminus() || ir==nres ) count-=2;
+		} else if ( mypose.residue(ir).type().is_alpha_aa() ) {
 			count+=3; //Alpha amino acid
-			if(mypose.residue(ir).is_lower_terminus() || ir==1) count--;
-			if(mypose.residue(ir).is_upper_terminus() || ir==nres) count-=2;
-		}
-		else {} //Default case -- do nothing.
+			if ( mypose.residue(ir).is_lower_terminus() || ir==1 ) count--;
+			if ( mypose.residue(ir).is_upper_terminus() || ir==nres ) count-=2;
+		} else { } //Default case -- do nothing.
 	}
-	if(option[cyclic]()) count+=3; //Add three if the peptide is cyclic.
-	else if (mypose.num_jump() > 0) count+=6*mypose.num_jump(); //Add jump data.
+	if ( option[cyclic]() ) count+=3; //Add three if the peptide is cyclic.
+	else if ( mypose.num_jump() > 0 ) count+=6*mypose.num_jump(); //Add jump data.
 
-	if(count==pcavect.size()) return true;
+	if ( count==pcavect.size() ) return true;
 
 	return false;
 }
@@ -291,31 +290,31 @@ int main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 
 	//Initial checks:
-	if (option[in::file::s].size()==0) {
+	if ( option[in::file::s].size()==0 ) {
 		printf("Error!  The user must specify input PDB files with the -in::file::s flag.\nCrashing.\n"); fflush(stdout);
 		exit(1);
 	}
-	if (option[PCAfiles].size()==0) {
+	if ( option[PCAfiles].size()==0 ) {
 		printf("Error!  The user must specify input PCA files with the -PCAfiles flag.\nCrashing.\n"); fflush(stdout);
 		exit(1);
 	}
-	if (option[PCAfiles].size()!=option[in::file::s].size()) {
+	if ( option[PCAfiles].size()!=option[in::file::s].size() ) {
 		printf("Error!  The number of PDB files must match the number of PCA files.\nCrashing.\n"); fflush(stdout);
 		exit(1);
 	}
-	if (option[amplitudes].size()==0) {
+	if ( option[amplitudes].size()==0 ) {
 		printf("Error!  At least one amplitude must be specified using the -amplitudes flag.\nCrashing.\n"); fflush(stdout);
 		exit(1);
 	}
-	if (option[frequencies].size()==0) {
+	if ( option[frequencies].size()==0 ) {
 		printf("Error!  At least one frequency must be specified using the -frequencies flag.\nCrashing.\n"); fflush(stdout);
 		exit(1);
 	}
-	if (option[offsets].size()==0) {
+	if ( option[offsets].size()==0 ) {
 		printf("Error!  At least one offset must be specified using the -offsets flag.\nCrashing.\n"); fflush(stdout);
 		exit(1);
 	}
-	if (option[offsets].size()!=option[amplitudes].size() || option[frequencies].size()!=option[amplitudes].size() ) {
+	if ( option[offsets].size()!=option[amplitudes].size() || option[frequencies].size()!=option[amplitudes].size() ) {
 		printf("Error!  The lists of amplitudes, frequencies, and offsets must all have the same number of elements.\nCrashing.\n"); fflush(stdout);
 		exit(1);
 	}
@@ -326,7 +325,7 @@ int main( int argc, char * argv [] ) {
 	utility::vector1 < core::Real > pertvector;
 
 	//Lists of the file names to import:
-	utility::vector1 <std::string> pdbfiles = option[in::file::s]();	
+	utility::vector1 <std::string> pdbfiles = option[in::file::s]();
 	utility::vector1 <std::string> pcafiles = option[PCAfiles]();
 
 	//Storage for the imported and perturbed poses:
@@ -335,7 +334,7 @@ int main( int argc, char * argv [] ) {
 
 	//List of the frequencies:
 	utility::vector1 <core::Real> freqs = option[frequencies]();
-	for(core::Size i=1; i<=freqs.size(); i++) freqs[i]=freqs[i]*2.0*PI; //Pre-multiply by 2*PI.
+	for ( core::Size i=1; i<=freqs.size(); i++ ) freqs[i]=freqs[i]*2.0*PI; //Pre-multiply by 2*PI.
 
 	//List of the offsets:
 	utility::vector1 <core::Real> offs = option[offsets]();
@@ -353,13 +352,13 @@ int main( int argc, char * argv [] ) {
 	//Repack and minimize movers:
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn); //Create the RepackSidechains mover and set the score function.
 	protocols::simple_moves::MinMover minmove(mm, sfxn, "dfpmin_armijo_nonmonotone", 0.0000000001, true);
-	
-	for(core::Size istruct=1; istruct<=pcafiles.size(); istruct++) {
+
+	for ( core::Size istruct=1; istruct<=pcafiles.size(); istruct++ ) {
 
 		//Import the PCA vectors for this structure:
 		read_PCAfile(pcafiles[istruct].c_str(), variances, PCA_vectors, true);
 
-		if(variances.size()==0) {
+		if ( variances.size()==0 ) {
 			printf("No principal component vectors found in file %s.  Moving on to next structure.\n", pcafiles[istruct].c_str() ); fflush(stdout);
 			continue;
 		} else {
@@ -369,20 +368,20 @@ int main( int argc, char * argv [] ) {
 		//Import the pose:
 		core::import_pose::pose_from_file(inputpose, pdbfiles[istruct], core::import_pose::PDB_file);
 		//Check that the number of residues matches the perturbation file:
-		if(!checkresiduecount(inputpose, PCA_vectors[1])) {
+		if ( !checkresiduecount(inputpose, PCA_vectors[1]) ) {
 			printf("Error!  Input pdb %s is a different size than the backbones corresponding to PCA file %s.\nCrashing.\n", pcafiles[istruct].c_str(), pdbfiles[istruct].c_str()); fflush(stdout);
 			exit(1);
 		}
 
-		if(option[cyclic]()) fix_cyclic_termini(inputpose); //Fix the termini if this is a backbone-cyclized peptide.
+		if ( option[cyclic]() ) fix_cyclic_termini(inputpose); //Fix the termini if this is a backbone-cyclized peptide.
 
 		//Lists of the amplitudes:
 		utility::vector1 <core::Real> amps;
 		amps.resize( std::min( option[amplitudes]().size(), variances.size() ) );
 		//Premultiply the amplitudes if and only if use_variances is true; otherwise, use them straight.
-		for(core::Size i=1, ampsize=amps.size(); i<=ampsize; i++) amps[i] = (option[use_variances] ? (variances[i]*option[amplitudes][i]) : (option[amplitudes][i]) );
+		for ( core::Size i=1, ampsize=amps.size(); i<=ampsize; i++ ) amps[i] = (option[use_variances] ? (variances[i]*option[amplitudes][i]) : (option[amplitudes][i]) );
 
-		for(core::Size ioutput=0; ioutput < static_cast<core::Size>(option[outcount]()); ioutput++) {
+		for ( core::Size ioutput=0; ioutput < static_cast<core::Size>(option[outcount]()); ioutput++ ) {
 			//Copy the input pose:
 			perturbedpose = inputpose;
 
@@ -394,35 +393,34 @@ int main( int argc, char * argv [] ) {
 			core::Real t = ((core::Real) ioutput)/((core::Real) option[outcount]());
 
 			//Loop through all amplitudes, whichever is smaller.
-			for(core::Size ivect=1; ivect<=amps.size(); ivect++) {
+			for ( core::Size ivect=1; ivect<=amps.size(); ivect++ ) {
 				//Loop through all entries in the peturbation vector and generate it from the PCA vectors.
-				for(core::Size j=1; j<=pertvector.size(); j++) {
+				for ( core::Size j=1; j<=pertvector.size(); j++ ) {
 					pertvector[j] += amps[ivect]*sin(freqs[ivect]*(t+offs[ivect]))*PCA_vectors[ivect][j];
 				}
 			}
 
 			//Once the perturbation vector has been generated, loop through all residues and perturb the backbone:
 			core::Size pertindex = 1;
-			for(core::Size ir=1; ir<=perturbedpose.size(); ir++) {
-				if(perturbedpose.residue(ir).type().is_beta_aa()) { //beta-amino acids
-					if(ir>1 && !perturbedpose.residue(ir).is_lower_terminus()) betapeptide_setphi(perturbedpose, ir, perturbedpose.residue(ir).mainchain_torsion(1)+pertvector[pertindex++]);
+			for ( core::Size ir=1; ir<=perturbedpose.size(); ir++ ) {
+				if ( perturbedpose.residue(ir).type().is_beta_aa() ) { //beta-amino acids
+					if ( ir>1 && !perturbedpose.residue(ir).is_lower_terminus() ) betapeptide_setphi(perturbedpose, ir, perturbedpose.residue(ir).mainchain_torsion(1)+pertvector[pertindex++]);
 					betapeptide_settheta(perturbedpose, ir, perturbedpose.residue(ir).mainchain_torsion(2)+pertvector[pertindex++]);
-					if(ir<perturbedpose.size() && !perturbedpose.residue(ir).is_upper_terminus()) {
+					if ( ir<perturbedpose.size() && !perturbedpose.residue(ir).is_upper_terminus() ) {
 						betapeptide_setpsi(perturbedpose, ir, perturbedpose.residue(ir).mainchain_torsion(3)+pertvector[pertindex++]);
 						betapeptide_setomega(perturbedpose, ir, perturbedpose.residue(ir).mainchain_torsion(4)+pertvector[pertindex++]);
 					}
-				} else if (perturbedpose.residue(ir).type().is_alpha_aa()) { //alpha-amino acids:
-					if(ir>1 && !perturbedpose.residue(ir).is_lower_terminus()) perturbedpose.set_phi(ir, perturbedpose.phi(ir)+pertvector[pertindex++]);
-					if(ir<perturbedpose.size()  && !perturbedpose.residue(ir).is_lower_terminus()) {
+				} else if ( perturbedpose.residue(ir).type().is_alpha_aa() ) { //alpha-amino acids:
+					if ( ir>1 && !perturbedpose.residue(ir).is_lower_terminus() ) perturbedpose.set_phi(ir, perturbedpose.phi(ir)+pertvector[pertindex++]);
+					if ( ir<perturbedpose.size()  && !perturbedpose.residue(ir).is_lower_terminus() ) {
 						perturbedpose.set_psi(ir, perturbedpose.psi(ir)+pertvector[pertindex++]);
 						perturbedpose.set_omega(ir, perturbedpose.omega(ir)+pertvector[pertindex++]);
 					}
-				}
-				else {} //Default case -- do nothing.
+				} else { } //Default case -- do nothing.
 			}
 
 			//If this is a cyclic peptide, perturb the backbone dihedral angles adjacent to the peptide bond linking the N- and C-termini
-			if(option[cyclic]()) {
+			if ( option[cyclic]() ) {
 				core::Real ang1 = numeric::dihedral_degrees (
 					perturbedpose.residue(perturbedpose.size()).xyz( (perturbedpose.residue(perturbedpose.size()).has("CM")?"CA":"N") ),
 					perturbedpose.residue(perturbedpose.size()).xyz( (perturbedpose.residue(perturbedpose.size()).has("CM")?"CM":"CA") ),
@@ -448,11 +446,11 @@ int main( int argc, char * argv [] ) {
 					core::id::AtomID(perturbedpose.residue(1).atom_index("CA"), 1),
 					core::id::AtomID(perturbedpose.residue(1).atom_index( (perturbedpose.residue(1).has("CM")?"CM":"C") ), 1),
 					(ang2+pertvector[pertindex++])/180.0*PI);
-			} else if(perturbedpose.num_jump() > 0) { //Otherwise, if this is a multi-chain pose, perturb the jumps:
-				for(core::Size jumpcount=1, numjump=perturbedpose.num_jump(); jumpcount<=numjump; jumpcount++) {
+			} else if ( perturbedpose.num_jump() > 0 ) { //Otherwise, if this is a multi-chain pose, perturb the jumps:
+				for ( core::Size jumpcount=1, numjump=perturbedpose.num_jump(); jumpcount<=numjump; jumpcount++ ) {
 					numeric::xyzVector < core::Real > transvect = perturbedpose.jump(jumpcount).get_translation();
 					numeric::EulerAngles < core::Real > euler_angles(perturbedpose.jump(jumpcount).get_rotation());
-					for(core::Size j=0; j<3; j++) transvect[j]+=pertvector[pertindex++]; //Perturb translation (note zero-based vector!)
+					for ( core::Size j=0; j<3; j++ ) transvect[j]+=pertvector[pertindex++]; //Perturb translation (note zero-based vector!)
 					//Perturb rotation:
 					euler_angles.phi_degrees( euler_angles.phi_degrees() + pertvector[pertindex++] );
 					euler_angles.theta_degrees( euler_angles.theta_degrees() + pertvector[pertindex++] );
@@ -465,8 +463,8 @@ int main( int argc, char * argv [] ) {
 				}
 			}
 
-			if(option[do_repack]()) repack_sc.apply(perturbedpose);
-			if(option[do_minimize]()) minmove.apply(perturbedpose);
+			if ( option[do_repack]() ) repack_sc.apply(perturbedpose);
+			if ( option[do_minimize]() ) minmove.apply(perturbedpose);
 
 			char outfile [256];
 			sprintf(outfile, "PCA_%04lu_%04lu.pdb", istruct, ioutput+1);

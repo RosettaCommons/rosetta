@@ -303,7 +303,7 @@ StepWiseRNA_CombineLongLoopFilterer::align_all_pose( utility::vector1< PoseOP > 
 	for ( auto & poseop : side_ONE_pose_data_list ) {
 
 		id::AtomID_Map < id::AtomID > atom_ID_map; //Align the first and last residues of the two pose (which should be the same residue)
-		pose::initialize_atomid_map( atom_ID_map, *poseop, id::BOGUS_ATOM_ID );
+		pose::initialize_atomid_map( atom_ID_map, *poseop, id::AtomID::BOGUS_ATOM_ID() );
 
 		setup_suite_atom_id_map( poseop->residue( 1 ), alignment_pose.residue( 1 ), atom_ID_map );
 		setup_suite_atom_id_map( poseop->residue( poseop->total_residue() ), alignment_pose.residue( alignment_pose.total_residue() ),  atom_ID_map );
@@ -314,7 +314,7 @@ StepWiseRNA_CombineLongLoopFilterer::align_all_pose( utility::vector1< PoseOP > 
 	for ( auto & poseop : side_TWO_pose_data_list ) {
 
 		id::AtomID_Map < id::AtomID > atom_ID_map; //Align the first and last residues of the two pose (which should be the same residue)
-		pose::initialize_atomid_map( atom_ID_map, *poseop, id::BOGUS_ATOM_ID );
+		pose::initialize_atomid_map( atom_ID_map, *poseop, id::AtomID::BOGUS_ATOM_ID() );
 
 		setup_suite_atom_id_map( poseop->residue( 1 ), alignment_pose.residue( 1 ), atom_ID_map );
 		setup_suite_atom_id_map( poseop->residue( poseop->total_residue() ), alignment_pose.residue( alignment_pose.total_residue() ), atom_ID_map );

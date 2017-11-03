@@ -625,7 +625,7 @@ ProtectedConformation::fail_verification(
 	core::Size const& seqpos
 
 ) const {
-	// like BOGUS_DOF_ID, but containing residue information.
+	// like DOF_ID::BOGUS_DOF_ID(), but containing residue information.
 	core::id::DOF_ID id = DOF_ID( core::id::AtomID( 0, seqpos ), core::id::PHI );
 	fail_verification( id, mod_type );
 }

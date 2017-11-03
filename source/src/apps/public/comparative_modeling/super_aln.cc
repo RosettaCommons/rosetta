@@ -99,7 +99,7 @@ main( int argc, char * argv [] ) {
 		}
 
 		AtomID_Map< AtomID > atom_map;
-		core::pose::initialize_atomid_map( atom_map, pose1, core::id::BOGUS_ATOM_ID );
+		core::pose::initialize_atomid_map( atom_map, pose1, core::id::AtomID::BOGUS_ATOM_ID() );
 		typedef vector1< Size >::const_iterator iter;
 		for ( iter it = residues.begin(), end = residues.end(); it != end; ++it ) {
 			Size const templ_ii( mapping[*it] );

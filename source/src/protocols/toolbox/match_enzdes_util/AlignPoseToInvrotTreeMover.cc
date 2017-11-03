@@ -123,8 +123,8 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 	//TR << "there are " << all_invrots.size() << " invrot collectors, picked collector has " << all_invrots[ picked_collector ]->invrots()[0].size() << " rotamers in 0th element." << std::endl;
 	//temp debug over
 
-	core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::BOGUS_ATOM_ID );
-	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
+	core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::AtomID::BOGUS_ATOM_ID() );
+	core::pose::initialize_atomid_map( atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 	atom_map.set( core::id::AtomID(pose.residue( picked_seqpos ).atom_index("CA"), picked_seqpos ), core::id::AtomID( temp_pose.residue(1).atom_index("CA"), 1 ) );
 	atom_map.set( core::id::AtomID(pose.residue( picked_seqpos ).atom_index("N"), picked_seqpos ), core::id::AtomID( temp_pose.residue(1).atom_index("N"), 1 ) );
 	atom_map.set( core::id::AtomID(pose.residue( picked_seqpos ).atom_index("C"), picked_seqpos ), core::id::AtomID( temp_pose.residue(1).atom_index("C"), 1 ) );

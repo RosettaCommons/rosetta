@@ -99,7 +99,7 @@ public:
 	virtual core::Size natoms() const { return 0; }
 	virtual AtomID const & atom( core::Size const ) const {
 		utility_exit_with_message("SequenceProfileConstraint is not atom-based!.");
-		return core::id::BOGUS_ATOM_ID; // required for compilation on Windows
+		return core::id::GLOBAL_BOGUS_ATOM_ID; // required for compilation on Windows
 	};
 
 	virtual utility::vector1< core::Size > residues() const;

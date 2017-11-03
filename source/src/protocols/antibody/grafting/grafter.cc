@@ -171,7 +171,7 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 
 		// super impose only the FR regions
 		core::id::AtomID_Map< core::id::AtomID> atom_map; // map j.pose CAs of FR to orientation CAs of FR
-		core::pose::initialize_atomid_map( atom_map, *j.pose, core::id::BOGUS_ATOM_ID );
+		core::pose::initialize_atomid_map( atom_map, *j.pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 
 		for (auto it = j.conserved_fr_residues.begin(); it != j.conserved_fr_residues.end(); ++it) {

@@ -12,81 +12,81 @@
 
 
 // libRosetta headers
- #include <protocols/frags/VallData.hh>
- #include <protocols/frags/TorsionFragment.hh>
+#include <protocols/frags/VallData.hh>
+#include <protocols/frags/TorsionFragment.hh>
 
- #include <core/scoring/constraints/CoordinateConstraint.hh>
- #include <core/scoring/constraints/ConstraintIO.hh>
- #include <core/scoring/func/FlatHarmonicFunc.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/func/FlatHarmonicFunc.hh>
 
- #include <protocols/simple_moves/BackboneMover.hh>
- #include <protocols/simple_moves/MinMover.hh>
- #include <protocols/moves/MonteCarlo.hh>
- #include <protocols/moves/Mover.hh>
- #include <protocols/moves/MoverContainer.hh>
- #include <protocols/moves/OutputMovers.hh>
- #include <protocols/rigid/RigidBodyMover.hh>
- // #include <protocols/moves/rigid_body_moves.hh>
- #include <protocols/moves/TrialMover.hh>
- #include <protocols/simple_moves/PackRotamersMover.hh>
- #include <protocols/simple_moves/RotamerTrialsMover.hh>
- #include <protocols/moves/RepeatMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/OutputMovers.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+// #include <protocols/moves/rigid_body_moves.hh>
+#include <protocols/moves/TrialMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/moves/RepeatMover.hh>
 
- #include <protocols/loops/ccd_closure.hh>
- #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loops_main.hh>
 
- #include <protocols/viewer/viewers.hh>
+#include <protocols/viewer/viewers.hh>
 
- #include <core/types.hh>
+#include <core/types.hh>
 
- #include <core/scoring/sasa.hh>
+#include <core/scoring/sasa.hh>
 
 // #include <core/util/prof.hh> // profiling
 // #include <core/util/CacheableData.hh> // profiling
 
 
- #include <core/chemical/AA.hh>
- #include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AA.hh>
+#include <core/chemical/AtomTypeSet.hh>
 
- #include <core/chemical/AA.hh>
- #include <core/conformation/Conformation.hh>
- #include <core/conformation/Residue.hh>
- #include <core/conformation/ResidueMatcher.hh>
- #include <core/conformation/ResidueFactory.hh>
- #include <core/pack/rotamer_set/RotamerCouplings.hh>
- #include <core/chemical/ResidueType.hh>
- #include <core/chemical/ResidueTypeSet.hh>
- #include <core/chemical/ResidueTypeSelector.hh>
+#include <core/chemical/AA.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/ResidueFactory.hh>
- #include <core/chemical/VariantType.hh>
- #include <core/chemical/util.hh>
- #include <core/chemical/ChemicalManager.hh>
+#include <core/pack/rotamer_set/RotamerCouplings.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/chemical/util.hh>
+#include <core/chemical/ChemicalManager.hh>
 
- #include <core/scoring/rms_util.hh>
- #include <core/scoring/EnergyMap.hh>
- #include <core/scoring/Energies.hh>
- #include <core/scoring/etable/Etable.hh>
- #include <core/scoring/ScoringManager.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
- #include <core/scoring/Ramachandran.hh>
- #include <core/pack/dunbrack/RotamerLibrary.hh>
- #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
- #include <core/scoring/hbonds/HBondSet.hh>
- #include <core/scoring/hbonds/hbonds.hh>
- #include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/Ramachandran.hh>
+#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/hbonds.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
- #include <core/pack/rotamer_trials.hh>
+#include <core/pack/rotamer_trials.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
- #include <core/kinematics/RT.hh>
- #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/RT.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
- #include <core/kinematics/util.hh>
- #include <core/id/AtomID_Map.hh>
+#include <core/kinematics/util.hh>
+#include <core/id/AtomID_Map.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
@@ -96,9 +96,9 @@
 #include <basic/options/util.hh>//option.hh>
 // #include <basic/options/after_opts.hh>
 
- #include <basic/basic.hh>
+#include <basic/basic.hh>
 
- #include <basic/database/open.hh>
+#include <basic/database/open.hh>
 
 #include <devel/init.hh>
 
@@ -107,11 +107,11 @@
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 
- #include <numeric/conversions.hh>
- #include <numeric/xyzVector.hh>
- #include <numeric/random/random.hh>
- #include <numeric/random/random_permutation.hh>
- #include <ObjexxFCL/string.functions.hh>
+#include <numeric/conversions.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 // //REMOVE LATER!
 // #include <utility/io/izstream.hh>
@@ -130,11 +130,11 @@
 #include <core/sequence/ScoringSchemeFactory.hh>
 
 // // C++ headers
- #include <cstdlib>
- #include <fstream>
- #include <iostream>
- #include <string>
- #include <sstream>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <sstream>
 
 //silly using/typedef
 
@@ -190,13 +190,13 @@ print_pep_csts(
 	std::string cst_file_name_str( option[ out::file::o ]+".cst" );
 	char const *cst_file_name = cst_file_name_str.c_str();
 	std::fstream cst_file( cst_file_name, std::ios::out );
-	for( Size i = 1; i <= pep_cst_all_vects.size(); ++i ){
-		if( n_pep_cs[ i ] < min_cas_for_cst && option[ pepspec::p_homol_csts ].user() ) continue;
+	for ( Size i = 1; i <= pep_cst_all_vects.size(); ++i ) {
+		if ( n_pep_cs[ i ] < min_cas_for_cst && option[ pepspec::p_homol_csts ].user() ) continue;
 		Real this_tol( pep_cst_all_tols[ i ] + pep_cst_all_tols[ i ] * ( 1.0 - std::pow( ( n_pep_cs[ i ] / max_pep_cs ), 1.0 / 3.0 ) ) );
 		Vector pep_cst_vect( pep_cst_all_vects[ i ] );
 		int pep_pos( pep_cst_all_indices[ i ] );
 		Real pep_cst_tol( pep_cst_all_tols[ i ] );
-//		if( pep_cst_tol < min_tol_for_cst ) pep_cst_tol = min_tol_for_cst;
+		//  if( pep_cst_tol < min_tol_for_cst ) pep_cst_tol = min_tol_for_cst;
 		cst_file << pep_cst_all_atom_names[ i ] + "\t" + string_of( pep_pos ) + "\t" + string_of( pep_cst_vect.x() ) + "\t" + string_of( pep_cst_vect.y() ) + "\t" + string_of( pep_cst_vect.z() ) + "\t0.0\t" + string_of( pep_cst_all_sds[ i ] ) + "\t" + string_of( this_tol ) + "\n";
 	}
 }
@@ -224,10 +224,10 @@ set_pep_cst(
 /// @details  This function will make a sequence mutation while trying to preserve the variants
 void
 make_sequence_change(
-		Size const seqpos,
-		chemical::AA const & new_aa,
-		pose::Pose & pose
-		)
+	Size const seqpos,
+	chemical::AA const & new_aa,
+	pose::Pose & pose
+)
 {
 	Size const which_his_variant = 1;
 	conformation::Residue const & current_rsd( pose.residue( seqpos ) );
@@ -248,19 +248,19 @@ make_sequence_change(
 	}
 
 	conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( *(rsd_types[ rsd_types_index ] ),
-				current_rsd, pose.conformation() ) );
+		current_rsd, pose.conformation() ) );
 	pose.replace_residue( seqpos, *new_rsd, false );
 }
 
 
 bool
 has_clash(
-		pose::Pose pose,
-		vector1< bool > check_seqpos,
-		scoring::ScoreFunctionOP const & scorefxn,
-		Real const clash_threshold,
-		bool print_clash
-	 )
+	pose::Pose pose,
+	vector1< bool > check_seqpos,
+	scoring::ScoreFunctionOP const & scorefxn,
+	Real const clash_threshold,
+	bool print_clash
+)
 {
 	using namespace scoring;
 	using namespace chemical;
@@ -275,8 +275,8 @@ has_clash(
 	EnergyGraph & energy_graph( energies.energy_graph() );
 	bool is_clash( false );
 
-	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
-		if( !check_seqpos[ seqpos ] ) continue;
+	for ( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
+		if ( !check_seqpos[ seqpos ] ) continue;
 		// search upstream
 		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( seqpos )->lower_edge_list_begin(),
@@ -288,8 +288,8 @@ has_clash(
 			// the pair energies cached in the link
 			EnergyMap const & emap( edge->fill_energy_map());
 			Real const clash( emap[ fa_rep ] );
-			if ( clash > clash_threshold ){
-				if( print_clash ) TR<< "fa_rep: " << string_of( clash ) << " at " << pose.residue( j ).name1() << string_of( j ) << "-" << pose.residue( seqpos ).name1() << string_of( seqpos ) << std::endl;
+			if ( clash > clash_threshold ) {
+				if ( print_clash ) TR<< "fa_rep: " << string_of( clash ) << " at " << pose.residue( j ).name1() << string_of( j ) << "-" << pose.residue( seqpos ).name1() << string_of( seqpos ) << std::endl;
 				is_clash = true;
 				return is_clash;
 			}
@@ -306,8 +306,8 @@ has_clash(
 			// the pair energies cached in the link
 			EnergyMap const & emap( edge->fill_energy_map());
 			Real const clash( emap[ fa_rep ] );
-			if ( clash > clash_threshold ){
-				if( print_clash ) TR<< "fa_rep: " << string_of( clash ) << " at " << pose.residue( j ).name1() << string_of( j ) << "-" << pose.residue( seqpos ).name1() << string_of( seqpos ) << std::endl;
+			if ( clash > clash_threshold ) {
+				if ( print_clash ) TR<< "fa_rep: " << string_of( clash ) << " at " << pose.residue( j ).name1() << string_of( j ) << "-" << pose.residue( seqpos ).name1() << string_of( seqpos ) << std::endl;
 				is_clash = true;
 				return is_clash;
 			}
@@ -332,10 +332,10 @@ pep_rmsd_analysis(
 	import_pose::pose_from_file( ref_pose, ref_name , core::import_pose::PDB_file);
 
 	Size ref_pep_anchor( pep_anchor );
-	if( option[ pepspec::native_pep_anchor ].user() ){
+	if ( option[ pepspec::native_pep_anchor ].user() ) {
 		Size ref_pep_anchor_in = option[ pepspec::native_pep_anchor ];
 		std::string ref_pep_chain_in( option[ pepspec::pep_chain ] );
-		if( option[ pepspec::native_pep_chain ].user() ) ref_pep_chain_in = option[ pepspec::native_pep_chain ];
+		if ( option[ pepspec::native_pep_chain ].user() ) ref_pep_chain_in = option[ pepspec::native_pep_chain ];
 		ref_pep_anchor = ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in[0], ref_pep_anchor_in );
 	}
 	Size ref_pep_chain( ref_pose.chain( ref_pep_anchor ) );
@@ -343,10 +343,10 @@ pep_rmsd_analysis(
 	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) );
 
 	Size ref_prot_chain;
-	for( Size i = 1; i <= ref_pose.conformation().num_chains(); ++i ){
-		if( i == ref_pep_chain ) continue;
-		if( !( ref_pose.residue( ref_pose.conformation().chain_begin( i ) ).is_protein() ) ) continue;
-		else{
+	for ( Size i = 1; i <= ref_pose.conformation().num_chains(); ++i ) {
+		if ( i == ref_pep_chain ) continue;
+		if ( !( ref_pose.residue( ref_pose.conformation().chain_begin( i ) ).is_protein() ) ) continue;
+		else {
 			ref_prot_chain = i;
 			break;
 		}
@@ -362,20 +362,20 @@ pep_rmsd_analysis(
 
 	Size nterm( pep_nterm );
 	Size cterm( pep_cterm );
-	if( pep_nterm < ref_pep_nterm ) ref_pep_begin += ref_pep_nterm - pep_nterm;
-	else if( pep_nterm > ref_pep_nterm ){
+	if ( pep_nterm < ref_pep_nterm ) ref_pep_begin += ref_pep_nterm - pep_nterm;
+	else if ( pep_nterm > ref_pep_nterm ) {
 		pep_begin += pep_nterm - ref_pep_nterm;
 		nterm = ref_pep_nterm;
 	}
-	if( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm;
-	else if( pep_cterm > ref_pep_cterm ){
+	if ( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm;
+	else if ( pep_cterm > ref_pep_cterm ) {
 		pep_end -= pep_cterm - ref_pep_cterm;
 		cterm = ref_pep_cterm;
 	}
 	//superpose if needed
-	if( option[ pepspec::native_align ] ){
+	if ( option[ pepspec::native_align ] ) {
 		id::AtomID_Map< id::AtomID > atom_map;
-		pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
+		pose::initialize_atomid_map( atom_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 
 		for ( Size i = prot_begin; i <= prot_end; ++i ) {
 			id::AtomID const id1( pose.residue( i ).atom_index( "CA" ), i );
@@ -389,14 +389,14 @@ pep_rmsd_analysis(
 	Real sd( 0.0 );
 	std::string rmsd_analysis( "" );
 	Size natoms( 0 );
-	for( int i_seq = 0; i_seq <= nterm + cterm; ++i_seq ){
+	for ( int i_seq = 0; i_seq <= nterm + cterm; ++i_seq ) {
 		Size ref_pep_seqpos = ref_pep_begin + i_seq;
 		Size pep_seqpos = pep_begin + i_seq;
 
-//		if( pose.residue( pep_seqpos ).natoms() != ref_pose.residue( ref_pep_seqpos ).natoms() ) utility_exit_with_message( "natoms mismatch for fa_rmsd\n" );
-		for( Size atomno = 1; atomno <= pose.residue( pep_seqpos ).natoms(); ++atomno ){
-				sd += ref_pose.residue( ref_pep_seqpos ).xyz( atomno ).distance_squared( pose.residue( pep_seqpos ).xyz( atomno ) );
-				++natoms;
+		//  if( pose.residue( pep_seqpos ).natoms() != ref_pose.residue( ref_pep_seqpos ).natoms() ) utility_exit_with_message( "natoms mismatch for fa_rmsd\n" );
+		for ( Size atomno = 1; atomno <= pose.residue( pep_seqpos ).natoms(); ++atomno ) {
+			sd += ref_pose.residue( ref_pep_seqpos ).xyz( atomno ).distance_squared( pose.residue( pep_seqpos ).xyz( atomno ) );
+			++natoms;
 		}
 
 	}
@@ -413,7 +413,7 @@ average(
 )
 {
 	Real avg( 0 );
-	for( Size i = 1; i <= real_vec.size(); ++i ){
+	for ( Size i = 1; i <= real_vec.size(); ++i ) {
 		avg += real_vec[ i ] / real_vec.size();
 	}
 	return avg;
@@ -430,22 +430,21 @@ shift_angles(
 
 	vector1< Real > pos_angles;
 	vector1< Real > neg_angles;
-	for( Size i = 1; i <= n_angles; ++i ){
-		if( angles[ i ] >=0 ) pos_angles.push_back( angles[ i ] );
+	for ( Size i = 1; i <= n_angles; ++i ) {
+		if ( angles[ i ] >=0 ) pos_angles.push_back( angles[ i ] );
 		else neg_angles.push_back( angles[ i ] );
 	}
 	Size n_pos_angles( pos_angles.size() );
 	Size n_neg_angles( neg_angles.size() );
-	if( n_pos_angles >= n_neg_angles ){
+	if ( n_pos_angles >= n_neg_angles ) {
 		Real avg_pos_angle( average( pos_angles ) );
-		for( Size i = 1; i <= n_angles; ++i ){
-			if( angles[ i ] < 0  && std::abs( angles[ i ] - avg_pos_angle ) > pi ) angles[ i ] += ( 2 * pi );
+		for ( Size i = 1; i <= n_angles; ++i ) {
+			if ( angles[ i ] < 0  && std::abs( angles[ i ] - avg_pos_angle ) > pi ) angles[ i ] += ( 2 * pi );
 		}
-	}
-	else{
+	} else {
 		Real avg_neg_angle( average( neg_angles ) );
-		for( Size i = 1; i <= n_angles; ++i ){
-			if( angles[ i ] >= 0  && std::abs( angles[ i ] - avg_neg_angle ) > pi ) angles[ i ] -= ( 2 * pi );
+		for ( Size i = 1; i <= n_angles; ++i ) {
+			if ( angles[ i ] >= 0  && std::abs( angles[ i ] - avg_neg_angle ) > pi ) angles[ i ] -= ( 2 * pi );
 		}
 	}
 
@@ -464,10 +463,10 @@ run_pep_prep()
 	using namespace kinematics;
 	using namespace sequence;
 
-        using namespace protocols::moves;
+	using namespace protocols::moves;
 
-        using namespace id;
-        using namespace protocols::frags;
+	using namespace id;
+	using namespace protocols::frags;
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
 
@@ -477,14 +476,14 @@ run_pep_prep()
 	std::string pdb_out_list_filename_str( option[ out::file::o ]+".pdblist" );
 	char const *pdb_out_list_filename = pdb_out_list_filename_str.c_str();
 	std::fstream pdb_out_list_file( pdb_out_list_filename, std::ios::out );
-/*
+	/*
 	std::string cst_list_file_name_str( option[ out::file::o ]+".cstlist" );
 	char const *cst_list_file_name = cst_list_file_name_str.c_str();
 	std::fstream cst_list_file( cst_list_file_name, std::ios::out );
-*/
+	*/
 
 	std::string out_nametag( "data" );
-	if( option[ out::file::o ].user() ) out_nametag = option[ out::file::o ];
+	if ( option[ out::file::o ].user() ) out_nametag = option[ out::file::o ];
 	std::string out_file_name_str( out_nametag + ".spec" );
 	char const *out_file_name = out_file_name_str.c_str();
 	std::fstream out_file( out_file_name, std::ios::out );
@@ -492,26 +491,25 @@ run_pep_prep()
 	vector1< string > ref_pdbs;
 	vector1< string > ref_pep_chains;
 	vector1< string > ref_pep_anchors_int;
-	if( option[ pepspec::ref_pdb_list ].user() ){
+	if ( option[ pepspec::ref_pdb_list ].user() ) {
 		std::string ref_filename( option[ pepspec::ref_pdb_list ] );
 		std::ifstream ref_file( ref_filename.c_str() );
 		std::string line;
 		std::string word;
-		while( !getline( ref_file, line ).eof() ){
+		while ( !getline( ref_file, line ).eof() ) {
 			std::istringstream line_parse( line );
-			for( Size ii = 1; !getline( line_parse, word, '\t' ).eof(); ++ii ){
-				if( ii == 1 ) ref_pdbs.push_back( word );
-				else if( ii == 2 ) ref_pep_chains.push_back( word );
+			for ( Size ii = 1; !getline( line_parse, word, '\t' ).eof(); ++ii ) {
+				if ( ii == 1 ) ref_pdbs.push_back( word );
+				else if ( ii == 2 ) ref_pep_chains.push_back( word );
 				else utility_exit_with_message( "ref_pdb_list has too many args @ line \"" + line + "\"\n" );
 			}
 			getline( line_parse, word );
 			ref_pep_anchors_int.push_back( word );
 		}
 
-	}
-	else utility_exit_with_message( "ref_pdb_list not defined!\n" );
-	if( ref_pdbs.size() < 1 ) utility_exit_with_message( "no ref pdbs loaded!\n" );
-	if( ref_pep_chains.size() < 1 ) utility_exit_with_message( "no ref chains loaded!\n" );
+	} else utility_exit_with_message( "ref_pdb_list not defined!\n" );
+	if ( ref_pdbs.size() < 1 ) utility_exit_with_message( "no ref pdbs loaded!\n" );
+	if ( ref_pep_chains.size() < 1 ) utility_exit_with_message( "no ref chains loaded!\n" );
 
 	Size n_ref_poses( ref_pdbs.size() );
 
@@ -534,19 +532,18 @@ run_pep_prep()
 	/////////////////////////////////////////////
 
 	vector1< std::string > pdb_filenames;
-	if( option[ pepspec::pdb_list ].user() ){
+	if ( option[ pepspec::pdb_list ].user() ) {
 		std::string pdb_list_filename( option[ pepspec::pdb_list ] );
 		std::ifstream pdb_list_data( pdb_list_filename.c_str() );
 		if ( !pdb_list_data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + pdb_list_filename + '\n' );
 		}
 		std::string pdb_list_line;
-		while( !getline( pdb_list_data, pdb_list_line, '\n' ).eof() ) {
+		while ( !getline( pdb_list_data, pdb_list_line, '\n' ).eof() ) {
 			std::string this_filename( pdb_list_line );
 			pdb_filenames.push_back( this_filename );
 		}
-	}
-	else{
+	} else {
 		pdb_filenames.push_back( basic::options::start_file() );
 
 	}
@@ -558,14 +555,14 @@ run_pep_prep()
 	Size const nres( pose.size() );
 
 	Size prot_chain;
-	for( Size i = 1; i <= pose.conformation().num_chains(); ++i ){
-		if( !( pose.residue( pose.conformation().chain_begin( i ) ).is_protein() ) ) continue;
-		else{
+	for ( Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
+		if ( !( pose.residue( pose.conformation().chain_begin( i ) ).is_protein() ) ) continue;
+		else {
 			prot_chain = i;
 			break;
 		}
 	}
-	if( option[ pepspec::remove_input_bb ] ) pose = pose.split_by_chain( prot_chain );
+	if ( option[ pepspec::remove_input_bb ] ) pose = pose.split_by_chain( prot_chain );
 	Size prot_begin( pose.conformation().chain_begin( prot_chain ) );
 	Size prot_end( pose.conformation().chain_end( prot_chain ) );
 	Size prot_anchor( prot_begin + 1 );
@@ -575,8 +572,8 @@ run_pep_prep()
 	FoldTree f( pose.size() );
 
 	//gen fold tree
-	if( prot_begin != 1 ) f.new_jump( prot_anchor, 1, 1 );
-	if( prot_end != pose.size() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
+	if ( prot_begin != 1 ) f.new_jump( prot_anchor, 1, 1 );
+	if ( prot_end != pose.size() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
 
 	core::scoring::ScoreFunctionOP scorefxn(  get_score_function() );
 	core::scoring::ScoreFunctionOP soft_scorefxn(  ScoreFunctionFactory::create_score_function( option[ pepspec::soft_wts ] ) );
@@ -584,10 +581,10 @@ run_pep_prep()
 	//for each desired anchor-docked protein
 	Size n_peptides( option[ pepspec::n_peptides ] );
 	int pose_index( 0 );
-	if( option[ pepspec::run_sequential ] ) n_peptides = pdb_filenames.size();
-	for( Size peptide_loop = 1; peptide_loop <= n_peptides; ++peptide_loop ){
+	if ( option[ pepspec::run_sequential ] ) n_peptides = pdb_filenames.size();
+	for ( Size peptide_loop = 1; peptide_loop <= n_peptides; ++peptide_loop ) {
 
-		if( option[ pepspec::run_sequential ] ) ++pose_index;
+		if ( option[ pepspec::run_sequential ] ) ++pose_index;
 		else pose_index = static_cast< int >( numeric::random::rg().uniform() * pdb_filenames.size() + 1 );
 		std::string pdb_filename( pdb_filenames[ pose_index ] );
 		TR<<"Initializing "<< "prep_" + string_of( peptide_loop ) + ".pdb with " + pdb_filename << std::endl;
@@ -597,7 +594,7 @@ run_pep_prep()
 		pose.fold_tree( f );
 
 		//prepack?
-		if( !option[ pepspec::no_prepack_prot ] ){
+		if ( !option[ pepspec::no_prepack_prot ] ) {
 			( *soft_scorefxn )( pose );
 
 			pack::task::PackerTaskOP prepack_task( pack::task::TaskFactory::create_packer_task( pose ));
@@ -623,12 +620,12 @@ run_pep_prep()
 		Real prot_score( pose.energies().total_energies().dot( scorefxn->weights() ) );
 
 		//align to other pre-aligned struct of same seq
-		if( option[ pepspec::prep_align_prot_to ].user() ){
+		if ( option[ pepspec::prep_align_prot_to ].user() ) {
 			std::string align_name( option[ pepspec::prep_align_prot_to ] );
 			Pose align_pose;
 			import_pose::pose_from_file( align_pose, align_name , core::import_pose::PDB_file);
 			id::AtomID_Map< id::AtomID > atom_map;
-			pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
+			pose::initialize_atomid_map( atom_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 			for ( Size i = prot_begin; i <= prot_end; ++i ) {
 				id::AtomID const id1( pose.residue( i ).atom_index( "CA" ), i );
 				id::AtomID const id2( align_pose.residue( i ).atom_index( "CA" ), i );
@@ -645,16 +642,16 @@ run_pep_prep()
 		Size pep_jump( 1 );
 		Pose start_pose( pose );
 		/*
-		   if( anchor_type == "PRO" ){
-		   pep_anchor_stub2 = "C";
-		   pep_anchor_stub3 = "O";
-		   }
-		 */
+		if( anchor_type == "PRO" ){
+		pep_anchor_stub2 = "C";
+		pep_anchor_stub3 = "O";
+		}
+		*/
 		FoldTree f_jump( pose.size() );
 		FoldTree f_orient( pose.size() );
 
 		f_jump.new_jump( prot_anchor, pep_anchor, prot_end );
-		if( prot_end != pose.size() - 1 ){
+		if ( prot_end != pose.size() - 1 ) {
 			f_jump.new_jump( prot_anchor, prot_end + 1, prot_end );
 			f_orient.new_jump( prot_anchor, prot_end + 1, prot_end );
 		}
@@ -676,7 +673,7 @@ run_pep_prep()
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// copy anchor xyz coords from ref pdbs to pose and calc/store kinematic orientation
 		bool pep_anchor_is_nterm( false );
-		for( Size i = 1; i <= n_ref_poses; ++i ){
+		for ( Size i = 1; i <= n_ref_poses; ++i ) {
 
 			//START CUT OUT, put this part of the ref prot loop outside the gen docked target loop
 
@@ -686,7 +683,7 @@ run_pep_prep()
 			std::istringstream ref_pep_anchor_in( ref_pep_anchors_int[ i ] );
 			int ref_pep_anchor_int;
 			ref_pep_anchor_in >> ref_pep_anchor_int;
-			if( peptide_loop == 1 ) TR << "Loading " << ref_input_name << ": pep anchor @ chain " << ref_pep_chain_in << " seqpos " << string_of( ref_pep_anchor_int ) << std::endl;
+			if ( peptide_loop == 1 ) TR << "Loading " << ref_input_name << ": pep anchor @ chain " << ref_pep_chain_in << " seqpos " << string_of( ref_pep_anchor_int ) << std::endl;
 
 			//load ref pdb
 			Pose ref_pose;
@@ -696,8 +693,8 @@ run_pep_prep()
 			//if gly, just change to ala, orient and calc data, then change back
 			//can we just use one of the Halphas?
 			//if( ref_pose.residue( ref_pep_anchor ).name3() == "GLY" ) utility_exit_with_message( "Cannot yet handle GLY anchors\n" );
-			if( ref_pose.residue( ref_pep_anchor ).name3() == "GLY" ){
-					make_sequence_change( ref_pep_anchor, chemical::aa_ala, ref_pose );
+			if ( ref_pose.residue( ref_pep_anchor ).name3() == "GLY" ) {
+				make_sequence_change( ref_pep_anchor, chemical::aa_ala, ref_pose );
 			}
 			//store ref pose, anchor
 			ref_poses[ i ] = ref_pose;
@@ -707,10 +704,10 @@ run_pep_prep()
 			Size ref_pep_end( ref_pose.conformation().chain_end( ref_pose.chain( ref_pep_anchor ) ) );
 			//set ref prot chain  = first non-peptide protein chain in pose
 			Size ref_prot_chain;
-			for( Size ii = 1; ii <= ref_pose.conformation().num_chains(); ++ii ){
-				if( ii == ref_pep_chain ) continue;
-				if( !( ref_pose.residue( ref_pose.conformation().chain_begin( ii ) ).is_protein() ) ) continue;
-				else{
+			for ( Size ii = 1; ii <= ref_pose.conformation().num_chains(); ++ii ) {
+				if ( ii == ref_pep_chain ) continue;
+				if ( !( ref_pose.residue( ref_pose.conformation().chain_begin( ii ) ).is_protein() ) ) continue;
+				else {
 					ref_prot_chain = ii;
 					break;
 				}
@@ -718,7 +715,7 @@ run_pep_prep()
 			Size ref_prot_begin( ref_pose.conformation().chain_begin( ref_prot_chain ) );
 
 			//sequence alignment of ref prot and target?
-			if( option[ pepspec::seq_align ] ){
+			if ( option[ pepspec::seq_align ] ) {
 				utility::file::FileName blosum62( "/home/cking/blosum/BLOSUM62" );
 				ScoringSchemeOP ss( new MatrixScoringScheme( -11, -1, blosum62 ) );
 				NWAligner nw_aligner;
@@ -729,11 +726,11 @@ run_pep_prep()
 				//seq_map.show( TR );
 				vector1< Size > seq_align( seq_map.mapping() );
 				id::AtomID_Map< id::AtomID > atom_map;
-				pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
+				pose::initialize_atomid_map( atom_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 				Real total_rmsd( 0 );
 				Size npos( 0 );
-				for( Size ii = 1; ii <= seq_align.size(); ++ii ){
-					if( seq_align[ ii ] == 0 ) continue;
+				for ( Size ii = 1; ii <= seq_align.size(); ++ii ) {
+					if ( seq_align[ ii ] == 0 ) continue;
 					id::AtomID const id1( ref_pose.residue( ii ).atom_index( "CA" ), ii );
 					id::AtomID const id2( pose.residue( seq_align[ ii ] ).atom_index( "CA" ), seq_align[ ii ] );
 					atom_map[ id1 ] = id2;
@@ -742,23 +739,23 @@ run_pep_prep()
 				}
 				total_rmsd = std::sqrt( total_rmsd / npos );
 				TR << string_of( total_rmsd ) + " Ca RMSD over " + string_of( npos ) + " atoms\n";
-				if( npos < pose.size() / 2 ) utility_exit_with_message( "Alignment falied at " + ref_input_name + "\n" );
+				if ( npos < pose.size() / 2 ) utility_exit_with_message( "Alignment falied at " + ref_input_name + "\n" );
 				//superimpose ref, target with atom map from seq alignment
 				superimpose_pose( ref_pose, pose, atom_map );
 			}
 
 			//store calpha vectors for csts
-			if( option[ pepspec::homol_csts ].user() && peptide_loop == 1 ){
-				for( Size i_mut = ref_pep_begin; i_mut <= ref_pep_end; ++i_mut ){
-					if( i_mut == ref_pep_anchor ) continue;
+			if ( option[ pepspec::homol_csts ].user() && peptide_loop == 1 ) {
+				for ( Size i_mut = ref_pep_begin; i_mut <= ref_pep_end; ++i_mut ) {
+					if ( i_mut == ref_pep_anchor ) continue;
 					make_sequence_change( i_mut, chemical::aa_ala, ref_pose );
 				}
 				vector1< std::pair< int, Vector > > pep_ca_vect;
 				vector1< std::pair< int, Vector > > pep_cb_vect;
-				for( Size ii = ref_pep_begin; ii <= ref_pep_end; ++ii ){
+				for ( Size ii = ref_pep_begin; ii <= ref_pep_end; ++ii ) {
 					int ref_pep_pos( ii - ref_pep_anchor );
-					if( ref_pep_pos < ref_pep_pos_min ) ref_pep_pos_min = ref_pep_pos;
-					if( ref_pep_pos > ref_pep_pos_max ) ref_pep_pos_max = ref_pep_pos;
+					if ( ref_pep_pos < ref_pep_pos_min ) ref_pep_pos_min = ref_pep_pos;
+					if ( ref_pep_pos > ref_pep_pos_max ) ref_pep_pos_max = ref_pep_pos;
 					Vector pep_ca_coord( ref_pose.residue( ii ).xyz( "CA" ) );
 					Vector pep_cb_coord( ref_pose.residue( ii ).xyz( "CB" ) );
 					std::pair< int, Vector > pep_ca_pair( ref_pep_pos, pep_ca_coord );
@@ -777,19 +774,19 @@ run_pep_prep()
 			//set target anchor coords to those from ref anchor and store translations, rotations
 
 			//check for noisy stub conformations due to no restraint at termini
-			if( ref_pose.conformation().chain_begin( ref_pep_chain ) == ref_pep_anchor ){
+			if ( ref_pose.conformation().chain_begin( ref_pep_chain ) == ref_pep_anchor ) {
 				//check if previous refs were stored w/ nterm stub
-				if( pep_anchor_is_nterm == false && i != 1 ) utility_exit_with_message( "nterm anchor must be first\n" );
+				if ( pep_anchor_is_nterm == false && i != 1 ) utility_exit_with_message( "nterm anchor must be first\n" );
 				pep_anchor_is_nterm = true;
-				//			pep_anchor_stub2 = "C";
-				//			pep_anchor_stub3 = "O";
+				//   pep_anchor_stub2 = "C";
+				//   pep_anchor_stub3 = "O";
 				pep_anchor_stub3 = "C";
 			}
-			if( ref_pose.conformation().chain_end( ref_pep_chain ) == ref_pep_anchor && pep_anchor_is_nterm == true ) utility_exit_with_message( "cannot have nterm and cterm ref pep anchors\n" );
+			if ( ref_pose.conformation().chain_end( ref_pep_chain ) == ref_pep_anchor && pep_anchor_is_nterm == true ) utility_exit_with_message( "cannot have nterm and cterm ref pep anchors\n" );
 			//TODO: WTF is this?
-			if( pose.residue( pep_anchor ).name3() != "PRO" && ref_pose.residue( ref_pep_anchor ).name3() == "PRO" ) utility_exit_with_message( "cannot have PRO ref anchor for non-PRO anchor, need coords for H!\n" );
+			if ( pose.residue( pep_anchor ).name3() != "PRO" && ref_pose.residue( ref_pep_anchor ).name3() == "PRO" ) utility_exit_with_message( "cannot have PRO ref anchor for non-PRO anchor, need coords for H!\n" );
 
-			if( pose.residue( pep_anchor ).name3() != "PRO" && !pep_anchor_is_nterm ) pose.set_xyz( AtomID( pose.residue( pep_anchor ).atom_index( "H" ), pep_anchor ), ref_pose.xyz( AtomID( ref_pose.residue( ref_pep_anchor ).atom_index( "H" ), ref_pep_anchor ) ) );
+			if ( pose.residue( pep_anchor ).name3() != "PRO" && !pep_anchor_is_nterm ) pose.set_xyz( AtomID( pose.residue( pep_anchor ).atom_index( "H" ), pep_anchor ), ref_pose.xyz( AtomID( ref_pose.residue( ref_pep_anchor ).atom_index( "H" ), ref_pep_anchor ) ) );
 			pose.set_xyz( AtomID( pose.residue( pep_anchor ).atom_index( "N" ), pep_anchor ), ref_pose.xyz( AtomID( ref_pose.residue( ref_pep_anchor ).atom_index( "N" ), ref_pep_anchor ) ) );
 			pose.set_xyz( AtomID( pose.residue( pep_anchor ).atom_index( "CA" ), pep_anchor ), ref_pose.xyz( AtomID( ref_pose.residue( ref_pep_anchor ).atom_index( "CA" ), ref_pep_anchor ) ) );
 			pose.set_xyz( AtomID( pose.residue( pep_anchor ).atom_index( "CB" ), pep_anchor ), ref_pose.xyz( AtomID( ref_pose.residue( ref_pep_anchor ).atom_index( "CB" ), ref_pep_anchor ) ) );
@@ -803,37 +800,37 @@ run_pep_prep()
 			Residue rsd1( pose.residue( prot_anchor ) );
 			Residue rsd2( pose.residue( pep_anchor ) );
 			StubID upstubid(  AtomID( rsd1.atom_index( prot_anchor_stub1 ), prot_anchor ) ,
-					AtomID( rsd1.atom_index( prot_anchor_stub2 ), prot_anchor ) ,
-					AtomID( rsd1.atom_index( prot_anchor_stub3 ), prot_anchor ) ) ;
+				AtomID( rsd1.atom_index( prot_anchor_stub2 ), prot_anchor ) ,
+				AtomID( rsd1.atom_index( prot_anchor_stub3 ), prot_anchor ) ) ;
 
 			StubID downstubid(  AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub3 ), pep_anchor ) ) ;
+				AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub3 ), pep_anchor ) ) ;
 
 			RT const rt( pose.conformation().get_stub_transform( upstubid, downstubid ) );
 			jump_trans_vector[i] = rt.get_translation();
 			jump_rot_matrix[i] = rt.get_rotation();
 
-			if( peptide_loop == 1 ) TR << "RB translation: x, y, z: " << jump_trans_vector[i].x() << ", "  << jump_trans_vector[i].y() << ", " << jump_trans_vector[i].z() << std::endl;
+			if ( peptide_loop == 1 ) TR << "RB translation: x, y, z: " << jump_trans_vector[i].x() << ", "  << jump_trans_vector[i].y() << ", " << jump_trans_vector[i].z() << std::endl;
 			///////////////////////
 
 			pose.fold_tree( f_orient );
 
 			jump_bond_angle[i] = pose.conformation().bond_angle( AtomID( rsd1.atom_index( prot_anchor_stub2 ), prot_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) );
+				AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) );
 
 			jump_tor1_angle[i] = pose.conformation().torsion_angle( AtomID( rsd1.atom_index( prot_anchor_stub2 ), prot_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub3 ), pep_anchor ) );
+				AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub3 ), pep_anchor ) );
 
 			jump_tor2_angle[i] = pose.conformation().torsion_angle( AtomID( rsd1.atom_index( prot_anchor_stub1 ), prot_anchor ) ,
-					AtomID( rsd1.atom_index( prot_anchor_stub2 ), prot_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) );
+				AtomID( rsd1.atom_index( prot_anchor_stub2 ), prot_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) );
 
-			if( peptide_loop == 1 ) TR << "RB rotation: bond, tor1, tor2: " << degrees( jump_bond_angle[i] ) << ", "  << degrees( jump_tor1_angle[i] ) << ", " << degrees( jump_tor2_angle[i] ) << std::endl;
+			if ( peptide_loop == 1 ) TR << "RB rotation: bond, tor1, tor2: " << degrees( jump_bond_angle[i] ) << ", "  << degrees( jump_tor1_angle[i] ) << ", " << degrees( jump_tor2_angle[i] ) << std::endl;
 
 		}
 
@@ -848,13 +845,13 @@ run_pep_prep()
 		vector1< Real > pep_cst_cb_sds( ref_pep_nres_max, 0.0 );
 		vector1< Size > pep_cst_ca_indices( ref_pep_nres_max, 0 );
 		vector1< Size > pep_cst_cb_indices( ref_pep_nres_max, 0 );
-		if( option[ pepspec::homol_csts ].user() ){
+		if ( option[ pepspec::homol_csts ].user() ) {
 			vector1< Size > n_pep_cas( ref_pep_nres_max, 0 );
 			//sum pep_ca_vects -> pep_cst_ca_vects and n_pep_cas
-			for( Size i = 1; i <= pep_ca_vects.size(); ++i ){
+			for ( Size i = 1; i <= pep_ca_vects.size(); ++i ) {
 				vector1< std::pair< int, Vector > > pep_ca_vect( pep_ca_vects[ i ] );
 				vector1< std::pair< int, Vector > > pep_cb_vect( pep_cb_vects[ i ] );
-				for( Size ii = 1; ii <= pep_ca_vect.size(); ++ii ){
+				for ( Size ii = 1; ii <= pep_ca_vect.size(); ++ii ) {
 					int pep_pos( pep_ca_vect[ ii ].first );
 					Vector pep_ca_coord( pep_ca_vect[ ii ].second );
 					Vector pep_cb_coord( pep_cb_vect[ ii ].second );
@@ -865,15 +862,15 @@ run_pep_prep()
 				}
 			}
 			//normalize pep_cst_ca_vects -> avgs
-			for( Size i = 1; i <= pep_cst_ca_vects.size(); ++i ){
+			for ( Size i = 1; i <= pep_cst_ca_vects.size(); ++i ) {
 				pep_cst_ca_vects[ i ] = pep_cst_ca_vects[ i ] / n_pep_cas[ i ];
 				pep_cst_cb_vects[ i ] = pep_cst_cb_vects[ i ] / n_pep_cas[ i ];
 			}
 			//find max dists -> tols
-			for( Size i = 1; i <= pep_ca_vects.size(); ++i ){
+			for ( Size i = 1; i <= pep_ca_vects.size(); ++i ) {
 				vector1< std::pair< int, Vector > > pep_ca_vect( pep_ca_vects[ i ] );
 				vector1< std::pair< int, Vector > > pep_cb_vect( pep_cb_vects[ i ] );
-				for( Size ii = 1; ii <= pep_ca_vect.size(); ++ii ){
+				for ( Size ii = 1; ii <= pep_ca_vect.size(); ++ii ) {
 					int pep_pos( pep_ca_vect[ ii ].first );
 					Vector pep_ca_coord( pep_ca_vect[ ii ].second );
 					Vector pep_cb_coord( pep_cb_vect[ ii ].second );
@@ -882,14 +879,14 @@ run_pep_prep()
 					Real dist_to_cb_avg( pep_cb_coord.distance( pep_cst_cb_vects[ i_pep ] ) );
 					pep_cst_ca_sds[ i_pep ] += ( dist_to_ca_avg * dist_to_ca_avg );
 					pep_cst_cb_sds[ i_pep ] += ( dist_to_cb_avg * dist_to_cb_avg );
-					if( dist_to_ca_avg > pep_cst_ca_tols[ i_pep ] ) pep_cst_ca_tols[ i_pep ] = dist_to_ca_avg;
-					if( dist_to_cb_avg > pep_cst_cb_tols[ i_pep ] ) pep_cst_cb_tols[ i_pep ] = dist_to_cb_avg;
+					if ( dist_to_ca_avg > pep_cst_ca_tols[ i_pep ] ) pep_cst_ca_tols[ i_pep ] = dist_to_ca_avg;
+					if ( dist_to_cb_avg > pep_cst_cb_tols[ i_pep ] ) pep_cst_cb_tols[ i_pep ] = dist_to_cb_avg;
 				}
 			}
-			for( Size i = 1; i <= ref_pep_nres_max; ++i ){
-				if( n_pep_cas[ i ] > 1 ) pep_cst_ca_sds[ i ] = std::sqrt( pep_cst_ca_sds[ i ] / ( n_pep_cas[ i ] - 1 ) );
+			for ( Size i = 1; i <= ref_pep_nres_max; ++i ) {
+				if ( n_pep_cas[ i ] > 1 ) pep_cst_ca_sds[ i ] = std::sqrt( pep_cst_ca_sds[ i ] / ( n_pep_cas[ i ] - 1 ) );
 				else pep_cst_ca_sds[ i ] = 100;
-				if( n_pep_cas[ i ] > 1 ) pep_cst_cb_sds[ i ] = std::sqrt( pep_cst_cb_sds[ i ] / ( n_pep_cas[ i ] - 1 ) );
+				if ( n_pep_cas[ i ] > 1 ) pep_cst_cb_sds[ i ] = std::sqrt( pep_cst_cb_sds[ i ] / ( n_pep_cas[ i ] - 1 ) );
 				else pep_cst_cb_sds[ i ] = 100;
 				pep_cst_ca_indices[ i ] = ref_pep_pos_min + i - 1;
 				pep_cst_cb_indices[ i ] = ref_pep_pos_min + i - 1;
@@ -903,16 +900,16 @@ run_pep_prep()
 			vector1< Size > n_pep_cs( n_pep_cas );
 			/*
 			for( Size i = 1; i <= ref_pep_nres_max; ++i ){
-				pep_cst_all_vects.push_back( pep_cst_cb_vects[ i ] );
-				pep_cst_all_tols.push_back( pep_cst_cb_tols[ i ] );
-				pep_cst_all_sds.push_back( pep_cst_cb_sds[ i ] );
-				pep_cst_all_atom_names.push_back( "CB" );
-				pep_cst_all_indices.push_back( pep_cst_cb_indices[ i ] );
-				n_pep_cs.push_back( n_pep_cas[ i ] );
+			pep_cst_all_vects.push_back( pep_cst_cb_vects[ i ] );
+			pep_cst_all_tols.push_back( pep_cst_cb_tols[ i ] );
+			pep_cst_all_sds.push_back( pep_cst_cb_sds[ i ] );
+			pep_cst_all_atom_names.push_back( "CB" );
+			pep_cst_all_indices.push_back( pep_cst_cb_indices[ i ] );
+			n_pep_cs.push_back( n_pep_cas[ i ] );
 			}
 			*/
 			//now have pep_cst_ca_vects and pep_cst_ca_tols
-			if( peptide_loop == 1 ) print_pep_csts( pep_cst_all_vects, pep_cst_all_tols, pep_cst_all_sds, n_pep_cs, pep_cst_all_indices, pep_cst_all_atom_names );
+			if ( peptide_loop == 1 ) print_pep_csts( pep_cst_all_vects, pep_cst_all_tols, pep_cst_all_sds, n_pep_cs, pep_cst_all_indices, pep_cst_all_atom_names );
 		}
 
 		TR << "peptide stub atoms:\t" << pep_anchor_stub1 << "\t" << pep_anchor_stub2 << "\t" << pep_anchor_stub3 << "\n";
@@ -923,20 +920,19 @@ run_pep_prep()
 
 		// calc trans vector avg //
 		Vector jump_trans_vector_avg( 0 );
-		for( Size i = 1; i <= n_ref_poses; ++i ){
+		for ( Size i = 1; i <= n_ref_poses; ++i ) {
 			jump_trans_vector_avg += ( jump_trans_vector[i] / n_ref_poses );
 		}
 		// ...and std dev //
 		Real jump_trans_x_sd( 0 );
 		Real jump_trans_y_sd( 0 );
 		Real jump_trans_z_sd( 0 );
-		if( option[ pepspec::prep_trans_std_dev ].user() ){
+		if ( option[ pepspec::prep_trans_std_dev ].user() ) {
 			jump_trans_x_sd = option[ pepspec::prep_trans_std_dev ];
 			jump_trans_y_sd = option[ pepspec::prep_trans_std_dev ];
 			jump_trans_z_sd = option[ pepspec::prep_trans_std_dev ];
-		}
-		else{
-			for( Size i = 1; i<= n_ref_poses; ++i ){
+		} else {
+			for ( Size i = 1; i<= n_ref_poses; ++i ) {
 				jump_trans_x_sd += numeric::square( jump_trans_vector[i].x() - jump_trans_vector_avg.x() ) / ( sd_denom );
 				jump_trans_y_sd += numeric::square( jump_trans_vector[i].y() - jump_trans_vector_avg.y() ) / ( sd_denom );
 				jump_trans_z_sd += numeric::square( jump_trans_vector[i].z() - jump_trans_vector_avg.z() ) / ( sd_denom );
@@ -948,8 +944,8 @@ run_pep_prep()
 		Vector jump_trans_vector_sd( jump_trans_x_sd, jump_trans_y_sd, jump_trans_z_sd );
 		Real jump_trans_magn_sd( std::sqrt( jump_trans_x_sd * jump_trans_x_sd + jump_trans_y_sd * jump_trans_y_sd + jump_trans_z_sd * jump_trans_z_sd ) );
 
-		if( peptide_loop == 1 ) TR << "RB translation avg: x, y, z: " << jump_trans_vector_avg.x() << ", "  << jump_trans_vector_avg.y() << ", " << jump_trans_vector_avg.z() << std::endl;
-		if( peptide_loop == 1 ) TR << "Max RB translation deviation: x, y, z: " << jump_trans_x_sd << ", "  << jump_trans_y_sd << ", " << jump_trans_z_sd << std::endl;
+		if ( peptide_loop == 1 ) TR << "RB translation avg: x, y, z: " << jump_trans_vector_avg.x() << ", "  << jump_trans_vector_avg.y() << ", " << jump_trans_vector_avg.z() << std::endl;
+		if ( peptide_loop == 1 ) TR << "Max RB translation deviation: x, y, z: " << jump_trans_x_sd << ", "  << jump_trans_y_sd << ", " << jump_trans_z_sd << std::endl;
 
 		// calc orientation avgs //
 		jump_bond_angle = shift_angles( jump_bond_angle );
@@ -962,13 +958,12 @@ run_pep_prep()
 		Real jump_bond_angle_sd( 0 );
 		Real jump_tor1_angle_sd( 0 );
 		Real jump_tor2_angle_sd( 0 );
-		if( option[ pepspec::prep_rot_std_dev ].user() ){
+		if ( option[ pepspec::prep_rot_std_dev ].user() ) {
 			jump_bond_angle_sd = radians( static_cast< Real >( option[ pepspec::prep_rot_std_dev ] ) );
 			jump_tor1_angle_sd = radians( static_cast< Real >( option[ pepspec::prep_rot_std_dev ] ) );
 			jump_tor2_angle_sd = radians( static_cast< Real >( option[ pepspec::prep_rot_std_dev ] ) );
-		}
-		else{
-			for( Size i = 1; i <= n_ref_poses; ++i ){
+		} else {
+			for ( Size i = 1; i <= n_ref_poses; ++i ) {
 				jump_bond_angle_sd += numeric::square( jump_bond_angle[i] - jump_bond_angle_avg ) / ( sd_denom );
 				jump_tor1_angle_sd += numeric::square( jump_tor1_angle[i] - jump_tor1_angle_avg ) / ( sd_denom );
 				jump_tor2_angle_sd += numeric::square( jump_tor2_angle[i] - jump_tor2_angle_avg ) / ( sd_denom );
@@ -977,8 +972,8 @@ run_pep_prep()
 			jump_tor1_angle_sd = max_std_devs * std::sqrt( jump_tor1_angle_sd );
 			jump_tor2_angle_sd = max_std_devs * std::sqrt( jump_tor2_angle_sd );
 		}
-		if( peptide_loop == 1 ) TR << "RB rotation avg: jump_bond_angle, jump_tor1, jump_tor2: " << degrees(jump_bond_angle_avg) << ", "  << degrees(jump_tor1_angle_avg) << ", " << degrees(jump_tor2_angle_avg) << std::endl;
-		if( peptide_loop == 1 ) TR << "Max RB rotation deviation: jump_bond_angle, jump_tor1, jump_tor2: " << degrees(jump_bond_angle_sd) << ", "  << degrees(jump_tor1_angle_sd) << ", " << degrees(jump_tor2_angle_sd) << std::endl;
+		if ( peptide_loop == 1 ) TR << "RB rotation avg: jump_bond_angle, jump_tor1, jump_tor2: " << degrees(jump_bond_angle_avg) << ", "  << degrees(jump_tor1_angle_avg) << ", " << degrees(jump_tor2_angle_avg) << std::endl;
+		if ( peptide_loop == 1 ) TR << "Max RB rotation deviation: jump_bond_angle, jump_tor1, jump_tor2: " << degrees(jump_bond_angle_sd) << ", "  << degrees(jump_tor1_angle_sd) << ", " << degrees(jump_tor2_angle_sd) << std::endl;
 
 		////////////////////////////////////////////////////////////////////
 
@@ -989,12 +984,12 @@ run_pep_prep()
 			Residue rsd1( pose.residue( prot_anchor ) );
 			Residue rsd2( pose.residue( pep_anchor ) );
 			StubID upstubid(  AtomID( rsd1.atom_index( prot_anchor_stub1 ), prot_anchor ) ,
-					AtomID( rsd1.atom_index( prot_anchor_stub2 ), prot_anchor ) ,
-					AtomID( rsd1.atom_index( prot_anchor_stub3 ), prot_anchor ) ) ;
+				AtomID( rsd1.atom_index( prot_anchor_stub2 ), prot_anchor ) ,
+				AtomID( rsd1.atom_index( prot_anchor_stub3 ), prot_anchor ) ) ;
 
 			StubID downstubid(  AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub3 ), pep_anchor ) ) ;
+				AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub3 ), pep_anchor ) ) ;
 
 			Real jump_trans_x_div( jump_trans_vector_avg.x() + ( 2 * numeric::random::rg().uniform() - 1 ) * jump_trans_x_sd );
 			Real jump_trans_y_div( jump_trans_vector_avg.y() + ( 2 * numeric::random::rg().uniform() - 1 ) * jump_trans_y_sd );
@@ -1012,31 +1007,29 @@ run_pep_prep()
 			pose.fold_tree( f_orient );
 
 			pose.conformation().set_bond_angle( AtomID( rsd1.atom_index(prot_anchor_stub2), prot_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
-					jump_bond_angle_div );
+				AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
+				jump_bond_angle_div );
 			pose.conformation().set_torsion_angle( AtomID( rsd1.atom_index(prot_anchor_stub2), prot_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub3 ), pep_anchor ),
-					jump_tor1_angle_div );
+				AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub3 ), pep_anchor ),
+				jump_tor1_angle_div );
 			pose.conformation().set_torsion_angle( AtomID( rsd1.atom_index(prot_anchor_stub1), prot_anchor ) ,
-					AtomID( rsd1.atom_index(prot_anchor_stub2), prot_anchor ),
-					AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
-					AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
-					jump_tor2_angle_div );
+				AtomID( rsd1.atom_index(prot_anchor_stub2), prot_anchor ),
+				AtomID( rsd2.atom_index( pep_anchor_stub1 ), pep_anchor ) ,
+				AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
+				jump_tor2_angle_div );
 
 			pose.fold_tree( f_jump );
 		}
 		/////////////////////////////////////////////////////////
 
 		Size ref_index( static_cast< int >( numeric::random::rg().uniform() * n_ref_poses + 1 ) );
-		if( option[ pepspec::prep_use_ref_rotamers ] ){
+		if ( option[ pepspec::prep_use_ref_rotamers ] ) {
 			pose.replace_residue( pep_anchor, ref_poses[ ref_index ].residue( ref_pep_anchors[ ref_index ] ), true );
-		}
-
-		//set p0 homol_csts
-		else if( option[ pepspec::homol_csts ].user() ){
+		} else if ( option[ pepspec::homol_csts ].user() ) {
+			//set p0 homol_csts
 			scorefxn->set_weight( coordinate_constraint, 0.1 );
 			Vector p0_vect( pep_cst_ca_vects[ -1 * ref_pep_pos_min + 1 ] );
 			pep_coord_cst p0_cst;
@@ -1053,10 +1046,10 @@ run_pep_prep()
 
 		vector1< bool > ignore_clash( pose.size(), false );
 		TR << "Ignoring clash residues:\t";
-		for( Size i = 1; i <= pose.size() - 1; ++i ){
+		for ( Size i = 1; i <= pose.size() - 1; ++i ) {
 			vector1< bool > this_clash( pose.size(), false );
 			this_clash[ i ] = true;
-			if( has_clash( pose, this_clash, scorefxn, option[ pepspec::clash_cutoff ], false ) ){
+			if ( has_clash( pose, this_clash, scorefxn, option[ pepspec::clash_cutoff ], false ) ) {
 				TR << string_of( i ) + ", ";
 				ignore_clash[ i ] = true;
 			}
@@ -1067,7 +1060,7 @@ run_pep_prep()
 		MonteCarloOP mc_dock2 ( new MonteCarlo( pose, *scorefxn, 0.8 ) );
 		pose.update_residue_neighbors();
 		Pose restart_pose( pose );
-		for( Size i_dock = 1; i_dock <= option[ pepspec::n_dock_loop]; ++i_dock ){
+		for ( Size i_dock = 1; i_dock <= option[ pepspec::n_dock_loop]; ++i_dock ) {
 
 			pose = restart_pose;
 			( *scorefxn )( pose );
@@ -1104,9 +1097,9 @@ run_pep_prep()
 			pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 			task->initialize_from_command_line().or_include_current( true );
 			for ( Size i=1; i<= pose.size(); ++i ) {
-				if( !option[ pepspec::anchor_type ].user() && i == pep_anchor ) continue;
-				else if( i == pep_anchor && option[ pepspec::prep_use_ref_rotamers ] ) task->nonconst_residue_task( i ).prevent_repacking();
-				else if( i == pep_anchor || is_pep_nbr[ i ] ) task->nonconst_residue_task( i ).restrict_to_repacking();
+				if ( !option[ pepspec::anchor_type ].user() && i == pep_anchor ) continue;
+				else if ( i == pep_anchor && option[ pepspec::prep_use_ref_rotamers ] ) task->nonconst_residue_task( i ).prevent_repacking();
+				else if ( i == pep_anchor || is_pep_nbr[ i ] ) task->nonconst_residue_task( i ).restrict_to_repacking();
 				else task->nonconst_residue_task( i ).prevent_repacking();
 			}
 			protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, task, 1 ) );
@@ -1137,16 +1130,16 @@ run_pep_prep()
 			check_clash[ this_nbr ] = ( true && !ignore_clash[ this_nbr ] );
 		}
 		check_clash[ pep_anchor ] = true;
-		if( has_clash( pose, check_clash, scorefxn, option[ pepspec::clash_cutoff ], true ) ){
+		if ( has_clash( pose, check_clash, scorefxn, option[ pepspec::clash_cutoff ], true ) ) {
 			//dump_pdb( pose, "clash." + string_of( peptide_loop ) + ".pdb" );
 			TR << "Failed to resolve clash in iter " + string_of( peptide_loop ) + "\n";
-			if( peptide_loop > 0 ) --peptide_loop;
+			if ( peptide_loop > 0 ) --peptide_loop;
 			continue;
 		}
 
 
 		std::string pdb_name ( option[ out::file::o ] );
-		if( option[pepspec::n_peptides ] > 1 ) pdb_name += "_" + string_of( peptide_loop );
+		if ( option[pepspec::n_peptides ] > 1 ) pdb_name += "_" + string_of( peptide_loop );
 		pdb_name += ".pdb";
 
 		( *scorefxn )( pose );
@@ -1156,7 +1149,7 @@ run_pep_prep()
 		out_file << " total_score: " << total_score << "\t";
 		Real total_prot_score( total_score - prot_score );
 		out_file << " total-prot_score: " << total_prot_score << "\t";
-		if( option[ pepspec::rmsd_analysis ] ) out_file << pep_rmsd_analysis( pose, prot_begin, prot_end, pep_anchor, pep_anchor, pep_anchor );
+		if ( option[ pepspec::rmsd_analysis ] ) out_file << pep_rmsd_analysis( pose, prot_begin, prot_end, pep_anchor, pep_anchor, pep_anchor );
 		out_file << std::endl;
 
 		////////////////////////////////////////////////////////
@@ -1168,29 +1161,29 @@ run_pep_prep()
 
 		Size pep_begin( pep_anchor );
 		Size pep_end( pep_anchor );
-		for( Size i = 1; i <= n_append; ++i ){
+		for ( Size i = 1; i <= n_append; ++i ) {
 			pose.conformation().safely_append_polymer_residue_after_seqpos( *ala, pep_end, true );
 			++pep_end;
 		}
-		for( Size i = 1; i <= n_prepend; ++i ){
+		for ( Size i = 1; i <= n_prepend; ++i ) {
 			pose.conformation().safely_prepend_polymer_residue_before_seqpos( *ala, pep_begin, true );
 			++pep_anchor;
 			++pep_end;
 		}
 
-		for( Size i_omega = pep_begin; i_omega <= pep_end - 1; ++i_omega ){
+		for ( Size i_omega = pep_begin; i_omega <= pep_end - 1; ++i_omega ) {
 			pose.set_omega( i_omega, 180.0 );
 		}
 
-		if( option[ pepspec::use_input_bb ] ){
+		if ( option[ pepspec::use_input_bb ] ) {
 
 			vector1< Size > ref_indices;
-			for( Size ii = 1; ii <= n_ref_poses; ++ii ) ref_indices.push_back( ii );
+			for ( Size ii = 1; ii <= n_ref_poses; ++ii ) ref_indices.push_back( ii );
 			//from -n to +m
 			int begin( pep_begin - pep_anchor );
 			int end( pep_end - pep_anchor );
 			numeric::random::random_permutation( ref_indices, numeric::random::rg() ); //shuffle ref poses
-			for( Size i_ref = 1; i_ref <= n_ref_poses; ++i_ref ){
+			for ( Size i_ref = 1; i_ref <= n_ref_poses; ++i_ref ) {
 				ref_index = ref_indices[ i_ref ];
 				Pose ref_pose( ref_poses[ ref_index ] );
 				Size ref_pep_anchor( ref_pep_anchors[ ref_index ] );
@@ -1200,16 +1193,15 @@ run_pep_prep()
 				int ref_end = static_cast< int >( ref_pep_end ) - static_cast< int >( ref_pep_anchor );
 
 				//goto next if ref does not overlap
-				if( begin < ref_begin || end > ref_end ){
-					if( i_ref == n_ref_poses ) utility_exit_with_message( "N append/prepend > all ref poses!\n" );
+				if ( begin < ref_begin || end > ref_end ) {
+					if ( i_ref == n_ref_poses ) utility_exit_with_message( "N append/prepend > all ref poses!\n" );
 					continue;
-				}
-				else{
-					for( int ii = begin; ii <= end; ++ii ){
+				} else {
+					for ( int ii = begin; ii <= end; ++ii ) {
 						//or use first avail then goto next res
-						if( ii > begin ) pose.set_phi( pep_anchor + ii, ref_pose.phi( ref_pep_anchor + ii ) );
+						if ( ii > begin ) pose.set_phi( pep_anchor + ii, ref_pose.phi( ref_pep_anchor + ii ) );
 						pose.set_psi( pep_anchor + ii, ref_pose.psi( ref_pep_anchor + ii ) );
-						if( ii < end ){
+						if ( ii < end ) {
 							pose.set_omega( pep_anchor + ii, ref_pose.omega( ref_pep_anchor + ii ) );
 						}
 					}
@@ -1222,18 +1214,18 @@ run_pep_prep()
 		pdb_out_list_file << pdb_name << std::endl;
 
 		/*
-		   Real cst_distance_n( pose.residue( prot_anchor ).xyz("CA").distance( pose.residue( new_pep_anchor ).xyz("N") ) );
-		   Real cst_distance_ca( pose.residue( prot_anchor ).xyz("CA").distance( pose.residue( new_pep_anchor ).xyz("CA") ) );
-		   Real cst_distance_c( pose.residue( prot_anchor ).xyz("CA").distance( pose.residue( new_pep_anchor ).xyz("C") ) );
-		   std::string cst_file_name_str( option[ out::file::o ]+"_"+string_of(peptide_loop)+".cst" );
-		   char const *cst_file_name = cst_file_name_str.c_str();
-		   std::fstream cst_file( cst_file_name, std::ios::out );
-		   cst_file << "[ atompairs ]\n";
-		   cst_file << "CA\t" + string_of( prot_anchor ) + "\tN\t" + string_of( new_pep_anchor ) + "\tHARMONIC\t" + string_of( cst_distance_n ) + "\t0.1\n";
-		   cst_file << "CA\t" + string_of( prot_anchor ) + "\tCA\t" + string_of( new_pep_anchor ) + "\tHARMONIC\t" + string_of( cst_distance_ca ) + "\t0.1\n";
-		   cst_file << "CA\t" + string_of( prot_anchor ) + "\tC\t" + string_of( new_pep_anchor ) + "\tHARMONIC\t" + string_of( cst_distance_c ) + "\t0.1\n";
-		   cst_list_file << cst_file_name_str << std::endl;
-		 */
+		Real cst_distance_n( pose.residue( prot_anchor ).xyz("CA").distance( pose.residue( new_pep_anchor ).xyz("N") ) );
+		Real cst_distance_ca( pose.residue( prot_anchor ).xyz("CA").distance( pose.residue( new_pep_anchor ).xyz("CA") ) );
+		Real cst_distance_c( pose.residue( prot_anchor ).xyz("CA").distance( pose.residue( new_pep_anchor ).xyz("C") ) );
+		std::string cst_file_name_str( option[ out::file::o ]+"_"+string_of(peptide_loop)+".cst" );
+		char const *cst_file_name = cst_file_name_str.c_str();
+		std::fstream cst_file( cst_file_name, std::ios::out );
+		cst_file << "[ atompairs ]\n";
+		cst_file << "CA\t" + string_of( prot_anchor ) + "\tN\t" + string_of( new_pep_anchor ) + "\tHARMONIC\t" + string_of( cst_distance_n ) + "\t0.1\n";
+		cst_file << "CA\t" + string_of( prot_anchor ) + "\tCA\t" + string_of( new_pep_anchor ) + "\tHARMONIC\t" + string_of( cst_distance_ca ) + "\t0.1\n";
+		cst_file << "CA\t" + string_of( prot_anchor ) + "\tC\t" + string_of( new_pep_anchor ) + "\tHARMONIC\t" + string_of( cst_distance_c ) + "\t0.1\n";
+		cst_list_file << cst_file_name_str << std::endl;
+		*/
 	}
 
 

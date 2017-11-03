@@ -684,7 +684,7 @@ pep_rmsd_analysis(
 	//superpose if needed
 	if ( option[ pepspec::native_align ] ) {
 		id::AtomID_Map< id::AtomID > atom_map;
-		pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
+		pose::initialize_atomid_map( atom_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 
 		for ( Size i = prot_begin; i <= prot_end; ++i ) {
 			id::AtomID const id1( pose.residue( i ).atom_index( "CA" ), i );

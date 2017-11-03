@@ -154,6 +154,7 @@ settings = {
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
+                    #"fno-omit-frame-pointer", # -- useful for profiling on linux using RotateRight's Zoom profiler
                 ],
                 "compile" : [
                     "pipe",
@@ -1088,7 +1089,18 @@ settings = {
             "defines" : [
                 "MULTI_THREADED"
             ],
-            "libraries" : [ "pthread" ]
+            #"flags" : {
+            #    "compile" : [
+            #        "fno-builtin-malloc",
+            #        "fno-builtin-calloc",
+            #        "fno-builtin-realloc",
+            #        "fno-builtin-free",
+            #    ]
+            #},
+            "libraries" : [
+                "pthread",
+                #"tcmalloc",
+            ]
         },
     },
 

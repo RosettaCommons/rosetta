@@ -151,7 +151,7 @@ FitSimpleHelixMultiFunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) con
 	core::pose::Pose pose_copy(pose_);
 
 	core::id::AtomID_Map< core::id::AtomID > amap;
-	core::pose::initialize_atomid_map(amap, pose_copy, core::id::BOGUS_ATOM_ID);
+	core::pose::initialize_atomid_map(amap, pose_copy, core::id::AtomID::BOGUS_ATOM_ID());
 
 	core::Real t = -1.0*static_cast<core::Real>(end_index_ - start_index_ + 1)/2.0;
 	t += static_cast<core::Real>(first_res_index_-start_index_);

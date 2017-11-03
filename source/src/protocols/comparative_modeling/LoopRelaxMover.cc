@@ -381,7 +381,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	core::pose::Pose native_pose_super = native_pose;
 	id::AtomID_Map< id::AtomID > atom_map;
 	if (  option[ OptionKeys::loops::superimpose_native ]()  ) {
-		core::pose::initialize_atomid_map( atom_map, native_pose_super, core::id::BOGUS_ATOM_ID );
+		core::pose::initialize_atomid_map( atom_map, native_pose_super, core::id::AtomID::BOGUS_ATOM_ID() );
 		for ( core::Size ir=1; ir <= native_pose.size(); ++ir ) {
 			if ( !loops->is_loop_residue( ir ) ) {
 				id::AtomID const id1( native_pose_super.residue(ir).atom_index("CA"), ir );

@@ -22,6 +22,7 @@
 #include <utility/tag/Tag.hh>
 
 // Basic headers
+#include <basic/Tracer.hh>
 #include <basic/datacache/ConstDataMap.hh>
 #include <basic/resource_manager/JobOptions.hh>
 
@@ -47,6 +48,7 @@
 namespace protocols {
 namespace jd3 {
 
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.InnerLarvalJob" );
 
 InnerLarvalJob::InnerLarvalJob() :
 	input_sources_(),
@@ -323,6 +325,7 @@ InnerLarvalJob::concatenated_input_source_names() const
 template< class Archive >
 void
 protocols::jd3::InnerLarvalJob::save( Archive & arc ) const {
+	TR << "Serializing InnerLarvalJob with " << input_sources_.size() << " InputSources" << std::endl;
 	arc( CEREAL_NVP( input_tag_ ) ); // std::string
 	arc( CEREAL_NVP( job_tag_ ) ); // std::string
 	arc( CEREAL_NVP( outputter_ ) ); // std::string
@@ -338,6 +341,7 @@ protocols::jd3::InnerLarvalJob::save( Archive & arc ) const {
 template< class Archive >
 void
 protocols::jd3::InnerLarvalJob::load( Archive & arc ) {
+	TR << "Deserializing InnerLarvalJob" << std::endl;
 	arc( input_tag_ ); // std::string
 	arc( job_tag_ ); // std::string
 	arc( outputter_ ); // std::string
@@ -351,6 +355,7 @@ protocols::jd3::InnerLarvalJob::load( Archive & arc ) {
 	utility::tag::TagOP local_jobdef_tag;
 	arc( local_jobdef_tag ); // utility::tag::TagOP
 	jobdef_tag_ = local_jobdef_tag;
+	TR << "Deserializing InnerLarvalJob with " << input_sources_.size() << " Input Sources" << std::endl;
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::InnerLarvalJob );

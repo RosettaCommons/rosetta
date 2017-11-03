@@ -350,7 +350,7 @@ EnergyBasedClusteringProtocol::align_with_offset (
 
 	AtomID_Map< AtomID > amap;
 	signed int ir;
-	core::pose::initialize_atomid_map(amap,pose1, BOGUS_ATOM_ID);
+	core::pose::initialize_atomid_map(amap,pose1, AtomID::BOGUS_ATOM_ID() );
 	for ( core::Size ir2(1), nres(pose2.total_residue()); ir2 <= nres; ++ir2 ) {
 		ir= ir2-offset;
 		if ( ir<=0 ) ir+=pose1.total_residue();

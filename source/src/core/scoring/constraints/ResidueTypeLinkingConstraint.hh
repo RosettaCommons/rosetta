@@ -79,7 +79,7 @@ public:
 	AtomID const &
 	atom( Size const ) const {
 		utility_exit_with_message("ResidueTypeLinkingConstraint is not atom-based!.");
-		return core::id::BOGUS_ATOM_ID;  // required for compilation on Windows
+		return core::id::GLOBAL_BOGUS_ATOM_ID;  // required for compilation on Windows
 	}
 
 	virtual

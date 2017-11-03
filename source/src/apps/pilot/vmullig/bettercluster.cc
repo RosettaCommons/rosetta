@@ -1,42 +1,42 @@
 /****************************************************************************************************
-	bettercluster.cc
+bettercluster.cc
 
-	A better clustering algorithm for generating conformational libraries for
-	explicit multistate design.
-	History:
-	--File created 6 May 2013 by Vikram K. Mulligan, Baker Laboratory.
-	--Modified 3 Jun 2013 to make Cartesian-based clustering much faster.  (No
-	more rebuilding poses).
-	--Modified 5 Jun 2013 to allow clustering of backbone-cyclized peptides.
-	--Modified 28 Aug 2013 to allow N-offset cyclic permutations to be clustered.  (e.g. Offsets
-		are incremented by 2 residues, or by 3 residues, or whatever.)
-	--Modified 4 Sept 2013 to allow clustering of peptides with beta-amino acid residues:
-			--check for beta residues based on first structure loaded (they must be consistent -- DONE).
-			--align CM atoms, if present (DONE).
-			--update information that is stored for cartesian or dihedral clustering (DONE).
-			--update PCA file output --> list of backbone dihedrals must include theta (DONE, though
-			other apps must also be updated to READ these properly).
-	--Modified 9 Oct 2013 to allow clustering of homooligomers (with swapping of oligomer subunits
-		during RMSD calculation).
-				TODO:
-				--store jumps for PCA analysis
-				--calculate RMSD for all possible permutations of homooligomer subunits and keep lowest
-	--Modified 21 May 2014 to allow silent file output.
-	--Modified 22 May 2014:
-		--Added support for constraints files.
-		--Added support for a user-defined list of additional atoms to use in RMSD
-		calculation.
-	--Modified 18 June 2014:
-		--Took out all references to the Alglib library, because of the asenine Rosettacommons rules
-		about third-party libraries.
-		--Added a PCA function to the numeric library, and linked this to that.
-	--Modified 11 Aug 2014:
-		--Added an option to ignore entire chains in the RMSD calculation.
-		--Added an option to skip PCA analysis.
-	--Modified 21 Sept 2015:
-	    --Added an option to dump out only the first N clusters.
-	--Modified 30 Jan 2017:
-	    --Added an option to filter out structures that aren't symmetric.
+A better clustering algorithm for generating conformational libraries for
+explicit multistate design.
+History:
+--File created 6 May 2013 by Vikram K. Mulligan, Baker Laboratory.
+--Modified 3 Jun 2013 to make Cartesian-based clustering much faster.  (No
+more rebuilding poses).
+--Modified 5 Jun 2013 to allow clustering of backbone-cyclized peptides.
+--Modified 28 Aug 2013 to allow N-offset cyclic permutations to be clustered.  (e.g. Offsets
+are incremented by 2 residues, or by 3 residues, or whatever.)
+--Modified 4 Sept 2013 to allow clustering of peptides with beta-amino acid residues:
+--check for beta residues based on first structure loaded (they must be consistent -- DONE).
+--align CM atoms, if present (DONE).
+--update information that is stored for cartesian or dihedral clustering (DONE).
+--update PCA file output --> list of backbone dihedrals must include theta (DONE, though
+other apps must also be updated to READ these properly).
+--Modified 9 Oct 2013 to allow clustering of homooligomers (with swapping of oligomer subunits
+during RMSD calculation).
+TODO:
+--store jumps for PCA analysis
+--calculate RMSD for all possible permutations of homooligomer subunits and keep lowest
+--Modified 21 May 2014 to allow silent file output.
+--Modified 22 May 2014:
+--Added support for constraints files.
+--Added support for a user-defined list of additional atoms to use in RMSD
+calculation.
+--Modified 18 June 2014:
+--Took out all references to the Alglib library, because of the asenine Rosettacommons rules
+about third-party libraries.
+--Added a PCA function to the numeric library, and linked this to that.
+--Modified 11 Aug 2014:
+--Added an option to ignore entire chains in the RMSD calculation.
+--Added an option to skip PCA analysis.
+--Modified 21 Sept 2015:
+--Added an option to dump out only the first N clusters.
+--Modified 30 Jan 2017:
+--Added an option to filter out structures that aren't symmetric.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -176,14 +176,14 @@ void parse_extra_atom_list ( utility::vector1 < core::id::NamedAtomID > &extra_a
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(!option[v_extra_rms_atoms].user()) return; //Do nothing if there's no list of extra atoms.
+	if ( !option[v_extra_rms_atoms].user() ) return; //Do nothing if there's no list of extra atoms.
 	extra_atom_list.clear();
 
 	utility::vector1 <std::string> tags = option[v_extra_rms_atoms]();
 
 	//Parse each tag:
 	printf("The following additional atoms will be used in the RMSD calculation:\n");
-	for(core::Size i=1, imax=tags.size(); i<=imax; ++i) { //Loop through each tag
+	for ( core::Size i=1, imax=tags.size(); i<=imax; ++i ) { //Loop through each tag
 		core::Size colonposition = tags[i].find( ':' );
 		std::string resstring = tags[i].substr( 0, colonposition );
 		core::Size res = static_cast<core::Size>( atoi( resstring.c_str() ) ); //The residue number
@@ -210,32 +210,32 @@ use_in_rmsd_offset(
 	using namespace basic::options::OptionKeys;
 
 	signed int resno=resno2-pose1_offset;
-	if(resno<=0) resno+=pose1.size();
+	if ( resno<=0 ) resno+=pose1.size();
 
-	if(option[v_ignorechain]().size()>0) {
-		for(core::Size i=1; i<=option[v_ignorechain]().size(); ++i) {
-			if(pose2.residue(resno2).chain()==static_cast<core::Size>(option[v_ignorechain]()[i])) return false; //If this chain is to be ignored, return false.
+	if ( option[v_ignorechain]().size()>0 ) {
+		for ( core::Size i=1; i<=option[v_ignorechain]().size(); ++i ) {
+			if ( pose2.residue(resno2).chain()==static_cast<core::Size>(option[v_ignorechain]()[i]) ) return false; //If this chain is to be ignored, return false.
 		}
 	}
 
-	if(option[v_ignoreresidue]().size()>0) {
-		for(core::Size i=1; i<=option[v_ignoreresidue]().size(); i++) if (resno2 == static_cast<core::Size>(option[v_ignoreresidue]()[i])) return false; //If this residue is to be ignored, return false.
+	if ( option[v_ignoreresidue]().size()>0 ) {
+		for ( core::Size i=1; i<=option[v_ignoreresidue]().size(); i++ ) if ( resno2 == static_cast<core::Size>(option[v_ignoreresidue]()[i]) ) return false; //If this residue is to be ignored, return false.
 	}
 
-	if(pose1.residue(resno).has( "N") && pose2.residue(resno2).has( "N") && pose1.residue(resno).atom_index( "N")==atomno) return true;
-	if(pose1.residue(resno).has("CA") && pose2.residue(resno2).has("CA") && pose1.residue(resno).atom_index("CA")==atomno) return true;
-	if(pose1.residue(resno).has( "C") && pose2.residue(resno2).has( "C") && pose1.residue(resno).atom_index( "C")==atomno) return true;
-	if(pose1.residue(resno).has( "O") && pose2.residue(resno2).has( "O") && pose1.residue(resno).atom_index( "O")==atomno
-			&& !pose1.residue(resno).is_upper_terminus() &&!pose2.residue(resno2).is_upper_terminus()) return true;
-	if(pose1.residue(resno).has("CM") && pose2.residue(resno2).has("CM") && pose1.residue(resno).atom_index("CM")==atomno) return true;
-	if(option[v_CB]()) {
-		if(pose1.residue(resno).has( "CB") && pose2.residue(resno2).has( "CB") && pose1.residue(resno).atom_index( "CB")==atomno) return true;
+	if ( pose1.residue(resno).has( "N") && pose2.residue(resno2).has( "N") && pose1.residue(resno).atom_index( "N")==atomno ) return true;
+	if ( pose1.residue(resno).has("CA") && pose2.residue(resno2).has("CA") && pose1.residue(resno).atom_index("CA")==atomno ) return true;
+	if ( pose1.residue(resno).has( "C") && pose2.residue(resno2).has( "C") && pose1.residue(resno).atom_index( "C")==atomno ) return true;
+	if ( pose1.residue(resno).has( "O") && pose2.residue(resno2).has( "O") && pose1.residue(resno).atom_index( "O")==atomno
+			&& !pose1.residue(resno).is_upper_terminus() &&!pose2.residue(resno2).is_upper_terminus() ) return true;
+	if ( pose1.residue(resno).has("CM") && pose2.residue(resno2).has("CM") && pose1.residue(resno).atom_index("CM")==atomno ) return true;
+	if ( option[v_CB]() ) {
+		if ( pose1.residue(resno).has( "CB") && pose2.residue(resno2).has( "CB") && pose1.residue(resno).atom_index( "CB")==atomno ) return true;
 	}
 
 	//Check extra atoms:
-	for(core::Size i=1, imax=extra_atom_list.size(); i<=imax; ++i) {
-		if(resno!=static_cast<signed int>(extra_atom_list[i].rsd())) continue;
-		if(pose1.residue(resno).has( extra_atom_list[i].atom() ) && pose2.residue(resno2).has( extra_atom_list[i].atom() ) && pose1.residue(resno).atom_index( extra_atom_list[i].atom() )==atomno) return true;
+	for ( core::Size i=1, imax=extra_atom_list.size(); i<=imax; ++i ) {
+		if ( resno!=static_cast<signed int>(extra_atom_list[i].rsd()) ) continue;
+		if ( pose1.residue(resno).has( extra_atom_list[i].atom() ) && pose2.residue(resno2).has( extra_atom_list[i].atom() ) && pose1.residue(resno).atom_index( extra_atom_list[i].atom() )==atomno ) return true;
 	}
 
 	return false;
@@ -252,29 +252,30 @@ use_in_rmsd(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(option[v_ignorechain]().size()>0) {
-		for(core::Size i=1; i<=option[v_ignorechain].size(); ++i)
-			if(pose1.residue(resno).chain()==static_cast<core::Size>(option[v_ignorechain]()[i]) || pose2.residue(resno).chain()==static_cast<core::Size>(option[v_ignorechain]()[i])) return false; //If this chain is to be ignored, return false.
+	if ( option[v_ignorechain]().size()>0 ) {
+		for ( core::Size i=1; i<=option[v_ignorechain].size(); ++i ) {
+			if ( pose1.residue(resno).chain()==static_cast<core::Size>(option[v_ignorechain]()[i]) || pose2.residue(resno).chain()==static_cast<core::Size>(option[v_ignorechain]()[i]) ) return false; //If this chain is to be ignored, return false.
+		}
 	}
 
-	if(option[v_ignoreresidue]().size()>0) {
-		for(core::Size i=1; i<=option[v_ignoreresidue]().size(); i++) if (resno == static_cast<core::Size>(option[v_ignoreresidue]()[i])) return false; //If this residue is to be ignored, return false.
+	if ( option[v_ignoreresidue]().size()>0 ) {
+		for ( core::Size i=1; i<=option[v_ignoreresidue]().size(); i++ ) if ( resno == static_cast<core::Size>(option[v_ignoreresidue]()[i]) ) return false; //If this residue is to be ignored, return false.
 	}
 
-	if(pose1.residue(resno).has( "N") && pose2.residue(resno).has( "N") && pose1.residue(resno).atom_index( "N")==atomno) return true;
-	if(pose1.residue(resno).has("CA") && pose2.residue(resno).has("CA") && pose1.residue(resno).atom_index("CA")==atomno) return true;
-	if(pose1.residue(resno).has( "C") && pose2.residue(resno).has( "C") && pose1.residue(resno).atom_index( "C")==atomno) return true;
-	if(pose1.residue(resno).has( "O") && pose2.residue(resno).has( "O") && pose1.residue(resno).atom_index( "O")==atomno
-			&& !pose1.residue(resno).is_upper_terminus() &&!pose2.residue(resno).is_upper_terminus()) return true;
-	if(pose1.residue(resno).has("CM") && pose2.residue(resno).has("CM") && pose1.residue(resno).atom_index("CM")==atomno) return true;
-	if(option[v_CB]()) {
-		if(pose1.residue(resno).has( "CB") && pose2.residue(resno).has( "CB") && pose1.residue(resno).atom_index( "CB")==atomno) return true;
+	if ( pose1.residue(resno).has( "N") && pose2.residue(resno).has( "N") && pose1.residue(resno).atom_index( "N")==atomno ) return true;
+	if ( pose1.residue(resno).has("CA") && pose2.residue(resno).has("CA") && pose1.residue(resno).atom_index("CA")==atomno ) return true;
+	if ( pose1.residue(resno).has( "C") && pose2.residue(resno).has( "C") && pose1.residue(resno).atom_index( "C")==atomno ) return true;
+	if ( pose1.residue(resno).has( "O") && pose2.residue(resno).has( "O") && pose1.residue(resno).atom_index( "O")==atomno
+			&& !pose1.residue(resno).is_upper_terminus() &&!pose2.residue(resno).is_upper_terminus() ) return true;
+	if ( pose1.residue(resno).has("CM") && pose2.residue(resno).has("CM") && pose1.residue(resno).atom_index("CM")==atomno ) return true;
+	if ( option[v_CB]() ) {
+		if ( pose1.residue(resno).has( "CB") && pose2.residue(resno).has( "CB") && pose1.residue(resno).atom_index( "CB")==atomno ) return true;
 	}
 
 	//Check extra atoms:
-	for(core::Size i=1, imax=extra_atom_list.size(); i<=imax; ++i) {
-		if(resno!=extra_atom_list[i].rsd()) continue;
-		if(pose1.residue(resno).has( extra_atom_list[i].atom() ) && pose2.residue(resno).has( extra_atom_list[i].atom() ) && pose1.residue(resno).atom_index( extra_atom_list[i].atom() )==atomno) return true;
+	for ( core::Size i=1, imax=extra_atom_list.size(); i<=imax; ++i ) {
+		if ( resno!=extra_atom_list[i].rsd() ) continue;
+		if ( pose1.residue(resno).has( extra_atom_list[i].atom() ) && pose2.residue(resno).has( extra_atom_list[i].atom() ) && pose1.residue(resno).atom_index( extra_atom_list[i].atom() )==atomno ) return true;
 	}
 
 	return false;
@@ -351,15 +352,15 @@ core::Size count_bb_dihedrals (const core::pose::Pose &mypose)
 	using namespace basic::options::OptionKeys;
 
 	core::Size ndihedrals = 0;
-	for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
-			if(!mypose.residue(ir).type().is_alpha_aa() && !mypose.residue(ir).type().is_beta_aa()) continue;
-			ndihedrals+=3;
-			if(mypose.residue(ir).is_lower_terminus() || ir==1) ndihedrals--;
-			if(mypose.residue(ir).is_upper_terminus() || ir==nres) ndihedrals-=2;
-			if(is_beta_aminoacid(mypose, ir)) ndihedrals++;
-		}
-		if(option[v_cyclic]()) ndihedrals+=3; //There are three more backbone dihedral angles if this is a cyclic peptide
-		return(ndihedrals);
+	for ( core::Size ir=1, nres=mypose.size(); ir<=nres; ir++ ) {
+		if ( !mypose.residue(ir).type().is_alpha_aa() && !mypose.residue(ir).type().is_beta_aa() ) continue;
+		ndihedrals+=3;
+		if ( mypose.residue(ir).is_lower_terminus() || ir==1 ) ndihedrals--;
+		if ( mypose.residue(ir).is_upper_terminus() || ir==nres ) ndihedrals-=2;
+		if ( is_beta_aminoacid(mypose, ir) ) ndihedrals++;
+	}
+	if ( option[v_cyclic]() ) ndihedrals+=3; //There are three more backbone dihedral angles if this is a cyclic peptide
+	return(ndihedrals);
 }
 
 //Function to determine whether a value is in a list
@@ -367,9 +368,9 @@ bool is_in_list (
 	const core::Size val,
 	const utility::vector1 <core::Size> &vallist
 ) {
-	if(vallist.size()>0) {
-		for(core::Size i=1, listlength=vallist.size(); i<=listlength;i++){
-			if (vallist[i]==val) return true;
+	if ( vallist.size()>0 ) {
+		for ( core::Size i=1, listlength=vallist.size(); i<=listlength; i++ ) {
+			if ( vallist[i]==val ) return true;
 		}
 	}
 	return false;
@@ -380,15 +381,15 @@ void check_angle_bounds(
 	utility::vector1 <core::Real> anglevector,
 	utility::vector1 <core::Size> skiplist //list of entries to ignore
 ) {
-	for(core::Size i=1; i<=anglevector.size(); i++) {
-		if(!is_in_list(i,skiplist)) {
-			if(anglevector[i] > 180.0) anglevector[i] = fmod(anglevector[i]+180.0,360.0)-180.0;
-			if(anglevector[i] < -180.0) anglevector[i] = -(fmod(-anglevector[i]+180.0,360.0)-180.0);
+	for ( core::Size i=1; i<=anglevector.size(); i++ ) {
+		if ( !is_in_list(i,skiplist) ) {
+			if ( anglevector[i] > 180.0 ) anglevector[i] = fmod(anglevector[i]+180.0,360.0)-180.0;
+			if ( anglevector[i] < -180.0 ) anglevector[i] = -(fmod(-anglevector[i]+180.0,360.0)-180.0);
 		}
 		//if(anglevector[i]<180.0 && anglevector[i]>-180.0) continue;
 		//anglevector[i]=fmod(anglevector[i]+180.0, 360.0)-180.0; //THIS ISN'T RIGHT.
 	}
-	
+
 	return;
 }
 
@@ -398,7 +399,7 @@ void check_angle_bounds(
 ) {
 	utility::vector1 <core::Size> skiplist;
 	check_angle_bounds(anglevector, skiplist);
-	
+
 	return;
 }
 
@@ -408,10 +409,11 @@ void make_disulfides (core::pose::Pose outputpose) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(option[v_disulfide_positions].user() && option[v_disulfide_positions]().size()>0) {
+	if ( option[v_disulfide_positions].user() && option[v_disulfide_positions]().size()>0 ) {
 		utility::vector1 < std::pair < core::Size, core::Size > > disulfpairs;
-		for(core::Size i=1; i<=option[v_disulfide_positions]().size(); i+=2) 
+		for ( core::Size i=1; i<=option[v_disulfide_positions]().size(); i+=2 ) {
 			disulfpairs.push_back(std::pair< core::Size, core::Size > ( option[v_disulfide_positions]()[i], option[v_disulfide_positions]()[i+1] ));
+		}
 		outputpose.conformation().fix_disulfides(disulfpairs);
 	} else {
 		outputpose.conformation().detect_disulfides();
@@ -423,7 +425,7 @@ void storeposedata(
 	const core::pose::Pose &pose,
 	utility::vector1 < core::Real > &posedata,
 	FArray2D < core::Real > &alignmentdata, //Only for Cartesian clustering: x,y,z coordinates of atoms to be used for alignment.
-	const core::Size clustermode,	
+	const core::Size clustermode,
 	utility::vector1 <core::id::NamedAtomID> const &extra_atom_list
 ) {
 	using namespace basic::options;
@@ -433,113 +435,113 @@ void storeposedata(
 	const core::Size nres = pose.size();
 
 	//Count the number of atoms in the alignment data:
-	if(clustermode==1) {
+	if ( clustermode==1 ) {
 		core::Size alignmentdatasize = 0;
-		for(core::Size ir=1; ir<=nres; ir++) {
-			if(is_in_list(pose.residue(ir).chain(), option[v_ignorechain]())) continue; //Skip this residue if it's in the chain ignore list.
-			if(is_in_list(ir, option[v_ignoreresidue]())) continue; //Skip this residue if it's in the ignore list.
-			if(!pose.residue(ir).type().is_alpha_aa() && !pose.residue(ir).type().is_beta_aa()) continue; //Skip this if not an alpha or beta amino acid
-			for(core::Size ia=1,iamax=pose.residue(ir).natoms(); ia<=iamax; ia++) {
-				if(use_in_rmsd(pose,pose,ir,ia, extra_atom_list)) alignmentdatasize++;
+		for ( core::Size ir=1; ir<=nres; ir++ ) {
+			if ( is_in_list(pose.residue(ir).chain(), option[v_ignorechain]()) ) continue; //Skip this residue if it's in the chain ignore list.
+			if ( is_in_list(ir, option[v_ignoreresidue]()) ) continue; //Skip this residue if it's in the ignore list.
+			if ( !pose.residue(ir).type().is_alpha_aa() && !pose.residue(ir).type().is_beta_aa() ) continue; //Skip this if not an alpha or beta amino acid
+			for ( core::Size ia=1,iamax=pose.residue(ir).natoms(); ia<=iamax; ia++ ) {
+				if ( use_in_rmsd(pose,pose,ir,ia, extra_atom_list) ) alignmentdatasize++;
 			}
 		}
 		alignmentdata.redimension(3, alignmentdatasize);
 	}
-	
 
-/*	//I might want to change the following to something that just counts atoms to be stored...	
+
+	/* //I might want to change the following to something that just counts atoms to be stored...
 	core::Size nglycines=0;
 	if(option[v_CB]()) { //Count glycines (and anything else that lacks a CB) if CBs are used:
-		for(core::Size ir=1; ir<=pose.size(); ir++)
-			if(!pose.residue(ir).has("CB")) nglycines++;
+	for(core::Size ir=1; ir<=pose.size(); ir++)
+	if(!pose.residue(ir).has("CB")) nglycines++;
 	}
 
 	//Count beta-amino acids:
 	core::Size nbeta=0;
 	for(core::Size ir=1, nres=pose.size(); ir<=nres; ir++)
-		if(is_beta_aminoacid(pose, ir)) nbeta++;
+	if(is_beta_aminoacid(pose, ir)) nbeta++;
 
 	if(clustermode==1) alignmentdata.redimension(3, (pose.size()-option[v_ignoreresidue].size())*(option[v_CB]()?5:4) - nglycines*(option[v_CB]()?1:0) + nbeta); //Assumes that the user hasn't specified the same residue multiple times!
-*/
+	*/
 
 	core::Size icount=0;
 
-	for(core::Size ir=1, nres=pose.size(); ir<=nres; ir++) { //Loop through all residues
+	for ( core::Size ir=1, nres=pose.size(); ir<=nres; ir++ ) { //Loop through all residues
 		switch(clustermode) { //Depending on the clustering mode do different things
-			case 1: //backbone Cartesian coordinate clustering
-				for(core::Size ia=1, natom=pose.residue(ir).natoms(); ia<=natom; ia++) {
-					posedata.push_back(pose.residue(ir).atom(ia).xyz()[0]);
-					posedata.push_back(pose.residue(ir).atom(ia).xyz()[1]);
-					posedata.push_back(pose.residue(ir).atom(ia).xyz()[2]);
-					bool useresidue=true;
-					if(!pose.residue(ir).type().is_alpha_aa() && !pose.residue(ir).type().is_beta_aa()) useresidue=false; //Skip if this isn't an alpha or beta amino acid
-					else {
-						if(option[v_ignoreresidue].size() > 0) {
-							for(core::Size i=1; i<=option[v_ignoreresidue].size(); i++) {
-								if(ir==static_cast<core::Size>(option[v_ignoreresidue][i])) {
-									useresidue=false;
-									break;
-								}
+		case 1 : //backbone Cartesian coordinate clustering
+			for ( core::Size ia=1, natom=pose.residue(ir).natoms(); ia<=natom; ia++ ) {
+				posedata.push_back(pose.residue(ir).atom(ia).xyz()[0]);
+				posedata.push_back(pose.residue(ir).atom(ia).xyz()[1]);
+				posedata.push_back(pose.residue(ir).atom(ia).xyz()[2]);
+				bool useresidue=true;
+				if ( !pose.residue(ir).type().is_alpha_aa() && !pose.residue(ir).type().is_beta_aa() ) useresidue=false; //Skip if this isn't an alpha or beta amino acid
+				else {
+					if ( option[v_ignoreresidue].size() > 0 ) {
+						for ( core::Size i=1; i<=option[v_ignoreresidue].size(); i++ ) {
+							if ( ir==static_cast<core::Size>(option[v_ignoreresidue][i]) ) {
+								useresidue=false;
+								break;
 							}
 						}
-						if(option[v_ignorechain].size() > 0 && is_in_list(pose.residue(ir).chain(), option[v_ignorechain]())) {
-							useresidue=false;
-						}
 					}
-					if(useresidue && use_in_rmsd(pose, pose, ir, ia, extra_atom_list)) { //Store data for Cartesian alignment:
-						icount++;
-						alignmentdata(1, icount)=pose.residue(ir).atom(ia).xyz()[0];
-						alignmentdata(2, icount)=pose.residue(ir).atom(ia).xyz()[1];
-						alignmentdata(3, icount)=pose.residue(ir).atom(ia).xyz()[2];
-						//printf("%f\t%f\t%f\n", pose.residue(ir).atom(ia).xyz()[0],pose.residue(ir).atom(ia).xyz()[1],pose.residue(ir).atom(ia).xyz()[2]); fflush(stdout); //DELETE ME
+					if ( option[v_ignorechain].size() > 0 && is_in_list(pose.residue(ir).chain(), option[v_ignorechain]()) ) {
+						useresidue=false;
 					}
 				}
-				break;
-			case 2: //backbone dihedral clustering
-				if(is_beta_aminoacid(pose, ir)) { //Beta amino acids:
-					if(ir>1 && !pose.residue(ir).is_lower_terminus()) posedata.push_back(pose.residue(ir).mainchain_torsion(1)); //Phi for a beta-amino acid
-					posedata.push_back(pose.residue(ir).mainchain_torsion(2)); //Theta for a beta-amino acid
-					if(ir<nres && !pose.residue(ir).is_upper_terminus()) {
-						posedata.push_back(pose.residue(ir).mainchain_torsion(3)); //Psi for a beta-amino acid
-						posedata.push_back(pose.residue(ir).mainchain_torsion(4)); //Omega for a beta-amino acid
-					}
-				} else if (pose.residue(ir).type().is_alpha_aa()) { //Alpha amino acids:
-					if(ir>1 && !pose.residue(ir).is_lower_terminus()) posedata.push_back(pose.phi(ir));
-					if(ir<nres && !pose.residue(ir).is_upper_terminus()) {
-						posedata.push_back(pose.psi(ir));
-						posedata.push_back(pose.omega(ir));
-					}
-				} else {} //Default case -- neither alpha nor beta amino acid, in which case we do nothing.
-				break;
-			default:
-				break;
+				if ( useresidue && use_in_rmsd(pose, pose, ir, ia, extra_atom_list) ) { //Store data for Cartesian alignment:
+					icount++;
+					alignmentdata(1, icount)=pose.residue(ir).atom(ia).xyz()[0];
+					alignmentdata(2, icount)=pose.residue(ir).atom(ia).xyz()[1];
+					alignmentdata(3, icount)=pose.residue(ir).atom(ia).xyz()[2];
+					//printf("%f\t%f\t%f\n", pose.residue(ir).atom(ia).xyz()[0],pose.residue(ir).atom(ia).xyz()[1],pose.residue(ir).atom(ia).xyz()[2]); fflush(stdout); //DELETE ME
+				}
+			}
+			break;
+		case 2 : //backbone dihedral clustering
+			if ( is_beta_aminoacid(pose, ir) ) { //Beta amino acids:
+				if ( ir>1 && !pose.residue(ir).is_lower_terminus() ) posedata.push_back(pose.residue(ir).mainchain_torsion(1)); //Phi for a beta-amino acid
+				posedata.push_back(pose.residue(ir).mainchain_torsion(2)); //Theta for a beta-amino acid
+				if ( ir<nres && !pose.residue(ir).is_upper_terminus() ) {
+					posedata.push_back(pose.residue(ir).mainchain_torsion(3)); //Psi for a beta-amino acid
+					posedata.push_back(pose.residue(ir).mainchain_torsion(4)); //Omega for a beta-amino acid
+				}
+			} else if ( pose.residue(ir).type().is_alpha_aa() ) { //Alpha amino acids:
+				if ( ir>1 && !pose.residue(ir).is_lower_terminus() ) posedata.push_back(pose.phi(ir));
+				if ( ir<nres && !pose.residue(ir).is_upper_terminus() ) {
+					posedata.push_back(pose.psi(ir));
+					posedata.push_back(pose.omega(ir));
+				}
+			} else { } //Default case -- neither alpha nor beta amino acid, in which case we do nothing.
+			break;
+		default :
+			break;
 		}
 	}
 
-	if (clustermode==2) { //Additional data to be stored in the backbone dihedral clustering case:
-		if(option[v_cyclic]()) { //Store the additional dihedral angles (psi_n, omega_n->1, phi_1) for backbone clustering
+	if ( clustermode==2 ) { //Additional data to be stored in the backbone dihedral clustering case:
+		if ( option[v_cyclic]() ) { //Store the additional dihedral angles (psi_n, omega_n->1, phi_1) for backbone clustering
 			posedata.push_back (numeric::dihedral_degrees( //Psi of last residue
 				pose.residue(pose.size()).xyz( (is_beta_aminoacid(pose,pose.size())?"CA":"N") ),
 				pose.residue(pose.size()).xyz( (is_beta_aminoacid(pose,pose.size())?"CM":"CA") ),
 				pose.residue(pose.size()).xyz("C"),
 				pose.residue(1).xyz("N")
-			));
+				));
 			posedata.push_back (numeric::dihedral_degrees( //Omega of peptide bond between last and first residues
 				pose.residue(pose.size()).xyz( (is_beta_aminoacid(pose,pose.size())?"CM":"CA") ),
 				pose.residue(pose.size()).xyz("C"),
 				pose.residue(1).xyz("N"),
 				pose.residue(1).xyz("CA")
-			));
+				));
 			posedata.push_back (numeric::dihedral_degrees( //Phi of first residue
 				pose.residue(pose.size()).xyz("C"),
 				pose.residue(1).xyz("N"),
 				pose.residue(1).xyz("CA"),
 				pose.residue(1).xyz( (is_beta_aminoacid(pose,1)?"CM":"C") )
-			));
+				));
 		}
-		for (core::Size ir=1; ir<=pose.size(); ir++) { //Store side chain dihedrals, too, for rebuilding structures later
-			if(pose.residue(ir).nchi()==0) continue;
-			for(core::Size ichi=1; ichi<=pose.residue(ir).nchi(); ichi++) {
+		for ( core::Size ir=1; ir<=pose.size(); ir++ ) { //Store side chain dihedrals, too, for rebuilding structures later
+			if ( pose.residue(ir).nchi()==0 ) continue;
+			for ( core::Size ichi=1; ichi<=pose.residue(ir).nchi(); ichi++ ) {
 				posedata.push_back(pose.residue(ir).chi(ichi));
 				//printf("Stored residue %lu chi %lu as posedata index %lu.\n", ir, ichi, posedata.size()); fflush(stdout); //DELETE ME
 			}
@@ -555,7 +557,7 @@ void storeposedata(
 	const core::pose::Pose &pose,
 	utility::vector1 < utility::vector1 <core::Real> > &posedata,
 	utility::vector1 < FArray2D < core::Real > > &alignmentdata,
-	const core::Size clustermode,	
+	const core::Size clustermode,
 	utility::vector1 <core::id::NamedAtomID> const &extra_atom_list
 ) {
 	utility::vector1 <core::Real> posedata_tostore;
@@ -574,11 +576,11 @@ core::Real elementdiff (
 	const core::Real &n2,
 	const core::Size &clustmode
 ) {
-	if (clustmode==1) return n1-n2;
-	else if (clustmode==2) {
+	if ( clustmode==1 ) return n1-n2;
+	else if ( clustmode==2 ) {
 		core::Real diff = n1-n2;
-		if (diff<-180.0) diff+=360.0;
-		else if (diff>180.0) diff-=360.0;
+		if ( diff<-180.0 ) diff+=360.0;
+		else if ( diff>180.0 ) diff-=360.0;
 		return diff;
 		//return (core::Real) (fmod((double)n1-(double)n2 + 180.0, 360.0)-180.0); //RETURN TO THIS!  I don't think it's right.
 	}
@@ -602,89 +604,89 @@ void pose_from_posedata (
 	core::Size counter=0;
 	numeric::xyzVector <core::Real> atomxyz;
 	switch(clustermode) {
-		case 1:
-			for(core::Size ir=1; ir<=outputpose.size(); ir++) {
-				for(core::Size ia=1; ia<=outputpose.residue(ir).natoms(); ia++) {
-					counter+=3;
-					atomxyz[0]=posedata[counter-2];
-					atomxyz[1]=posedata[counter-1];
-					atomxyz[2]=posedata[counter];
-					outputpose.conformation().set_xyz(id::AtomID(ia, ir), atomxyz);
-				}
+	case 1 :
+		for ( core::Size ir=1; ir<=outputpose.size(); ir++ ) {
+			for ( core::Size ia=1; ia<=outputpose.residue(ir).natoms(); ia++ ) {
+				counter+=3;
+				atomxyz[0]=posedata[counter-2];
+				atomxyz[1]=posedata[counter-1];
+				atomxyz[2]=posedata[counter];
+				outputpose.conformation().set_xyz(id::AtomID(ia, ir), atomxyz);
 			}
-			break;
-		case 2: //Dihedral clustering case.
-			counter=1;
-			for(core::Size i=1, nres=outputpose.size(); i<=nres; i++) {
-				if(is_beta_aminoacid(outputpose, i)) {//beta-amino acids:
-					if(i>1 && !inputpose.residue(i).is_lower_terminus()) betapeptide_setphi(outputpose, i, posedata[counter++]);
-					betapeptide_settheta(outputpose, i, posedata[counter++]);
-					if(i<nres && !inputpose.residue(i).is_upper_terminus()) {
-						betapeptide_setpsi(outputpose, i, posedata[counter++]);
-						betapeptide_setomega(outputpose, i, posedata[counter++]);
-					}
-				}else if(outputpose.residue(i).type().is_alpha_aa()){ //alpha-amino acids:
-					if(i>1 && !inputpose.residue(i).is_lower_terminus()) outputpose.set_phi(i, posedata[counter++]);
-					if(i<nres && !inputpose.residue(i).is_upper_terminus()) {
-						outputpose.set_psi(i, posedata[counter++]);
-						outputpose.set_omega(i, posedata[counter++]);
-					}
-				} else {} //Other residues -- do nothing, for now.
+		}
+		break;
+	case 2 : //Dihedral clustering case.
+		counter=1;
+		for ( core::Size i=1, nres=outputpose.size(); i<=nres; i++ ) {
+			if ( is_beta_aminoacid(outputpose, i) ) { //beta-amino acids:
+				if ( i>1 && !inputpose.residue(i).is_lower_terminus() ) betapeptide_setphi(outputpose, i, posedata[counter++]);
+				betapeptide_settheta(outputpose, i, posedata[counter++]);
+				if ( i<nres && !inputpose.residue(i).is_upper_terminus() ) {
+					betapeptide_setpsi(outputpose, i, posedata[counter++]);
+					betapeptide_setomega(outputpose, i, posedata[counter++]);
+				}
+			} else if ( outputpose.residue(i).type().is_alpha_aa() ) { //alpha-amino acids:
+				if ( i>1 && !inputpose.residue(i).is_lower_terminus() ) outputpose.set_phi(i, posedata[counter++]);
+				if ( i<nres && !inputpose.residue(i).is_upper_terminus() ) {
+					outputpose.set_psi(i, posedata[counter++]);
+					outputpose.set_omega(i, posedata[counter++]);
+				}
+			} else { } //Other residues -- do nothing, for now.
+		}
+
+		{ //Also need to set side-chain dihedrals:
+		if ( option[v_cyclic]() ) {
+			counter+=3;
+			outputpose.conformation().set_torsion_angle(//Set psi of last residue
+				core::id::AtomID(outputpose.residue(outputpose.size()).atom_index( (is_beta_aminoacid(outputpose,outputpose.size())?"CA":"N") ), outputpose.size()),
+				core::id::AtomID(outputpose.residue(outputpose.size()).atom_index( (is_beta_aminoacid(outputpose,outputpose.size())?"CM":"CA") ), outputpose.size()),
+				core::id::AtomID(outputpose.residue(outputpose.size()).atom_index("C"), outputpose.size()),
+				core::id::AtomID(outputpose.residue(outputpose.size()).atom_index("O"), outputpose.size()),
+				(posedata[counter-3]-180.0)/180.0*PI);
+			outputpose.conformation().set_torsion_angle( //Set phi of first residue
+				core::id::AtomID(outputpose.residue(1).atom_index("H"), 1),
+				core::id::AtomID(outputpose.residue(1).atom_index("N"), 1),
+				core::id::AtomID(outputpose.residue(1).atom_index("CA"), 1),
+				core::id::AtomID(outputpose.residue(1).atom_index( (is_beta_aminoacid(outputpose,1)?"CM":"C") ), 1),
+				(posedata[counter-1]-180.0)/180.0*PI);
+		}
+
+		core::Size ir=1;
+		core::Size ichi=0;
+		core::Size ijump=0;
+		if ( set_chi ) {
+			//printf("posedata.size()=%lu\n", posedata.size()); fflush(stdout); //DELETE ME
+			while ( counter<=posedata.size() ) {
+				ichi++;
+				//printf("ir=%lu ichi=%lu counter=%lu\n", ir, ichi, counter); fflush(stdout); //DELETE ME
+				if ( ichi>outputpose.residue(ir).nchi() ) { //If we're done with this residue, go on to the next.
+					ichi=0;
+					ir++;
+					continue;
+				}
+
+				outputpose.set_chi(ichi, ir, posedata[counter++]);
+				if ( counter>posedata.size() ) break; //Should be redundant.
 			}
-
-			{	//Also need to set side-chain dihedrals:
-				if(option[v_cyclic]()) {
-					counter+=3;
-					outputpose.conformation().set_torsion_angle(//Set psi of last residue
-						core::id::AtomID(outputpose.residue(outputpose.size()).atom_index( (is_beta_aminoacid(outputpose,outputpose.size())?"CA":"N") ), outputpose.size()),
-						core::id::AtomID(outputpose.residue(outputpose.size()).atom_index( (is_beta_aminoacid(outputpose,outputpose.size())?"CM":"CA") ), outputpose.size()),
-						core::id::AtomID(outputpose.residue(outputpose.size()).atom_index("C"), outputpose.size()),
-						core::id::AtomID(outputpose.residue(outputpose.size()).atom_index("O"), outputpose.size()),
-						(posedata[counter-3]-180.0)/180.0*PI);
-					outputpose.conformation().set_torsion_angle( //Set phi of first residue
-						core::id::AtomID(outputpose.residue(1).atom_index("H"), 1),
-						core::id::AtomID(outputpose.residue(1).atom_index("N"), 1),
-						core::id::AtomID(outputpose.residue(1).atom_index("CA"), 1),
-						core::id::AtomID(outputpose.residue(1).atom_index( (is_beta_aminoacid(outputpose,1)?"CM":"C") ), 1),
-						(posedata[counter-1]-180.0)/180.0*PI);
-				}
-
-				core::Size ir=1;
-				core::Size ichi=0;
-				core::Size ijump=0;
-				if(set_chi) {
-					//printf("posedata.size()=%lu\n", posedata.size()); fflush(stdout); //DELETE ME
-					while(counter<=posedata.size()) {
-						ichi++;
-						//printf("ir=%lu ichi=%lu counter=%lu\n", ir, ichi, counter); fflush(stdout); //DELETE ME
-						if(ichi>outputpose.residue(ir).nchi()) {//If we're done with this residue, go on to the next.
-							ichi=0;
-							ir++;
-							continue;
-						}
-
-						outputpose.set_chi(ichi, ir, posedata[counter++]);
-						if(counter>posedata.size()) break; //Should be redundant.
-					}
-				}
-				while(counter<=posedata.size()) { //Need to set jumps
-					ijump++;
-					numeric::xyzVector < core::Real > transvect = outputpose.jump(ijump).get_translation();
-					numeric::EulerAngles < core::Real > euler_angles(outputpose.jump(ijump).get_rotation());
-					for(core::Size j=0; j<3; j++) transvect[j]=posedata[counter++];
-					euler_angles.phi_degrees( posedata[counter++] );
-					euler_angles.theta_degrees( posedata[counter++] );
-					euler_angles.psi_degrees( posedata[counter++] );
-					//Update the jump:
-					core::kinematics::Jump myjump = outputpose.jump(ijump);
-					myjump.set_translation( transvect);
-					myjump.set_rotation( euler_angles.to_rotation_matrix() );
-					outputpose.set_jump(ijump, myjump);
-				}
-			}
-			break;
-		default:
-			break;
+		}
+		while ( counter<=posedata.size() ) { //Need to set jumps
+			ijump++;
+			numeric::xyzVector < core::Real > transvect = outputpose.jump(ijump).get_translation();
+			numeric::EulerAngles < core::Real > euler_angles(outputpose.jump(ijump).get_rotation());
+			for ( core::Size j=0; j<3; j++ ) transvect[j]=posedata[counter++];
+			euler_angles.phi_degrees( posedata[counter++] );
+			euler_angles.theta_degrees( posedata[counter++] );
+			euler_angles.psi_degrees( posedata[counter++] );
+			//Update the jump:
+			core::kinematics::Jump myjump = outputpose.jump(ijump);
+			myjump.set_translation( transvect);
+			myjump.set_rotation( euler_angles.to_rotation_matrix() );
+			outputpose.set_jump(ijump, myjump);
+		}
+	}
+		break;
+	default :
+		break;
 	}
 
 	make_disulfides(outputpose);
@@ -701,12 +703,12 @@ core::Size alignment_atoms_in_res (
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(!pose.residue(position).type().is_alpha_aa() && !pose.residue(position).type().is_beta_aa()) return 0;
+	if ( !pose.residue(position).type().is_alpha_aa() && !pose.residue(position).type().is_beta_aa() ) return 0;
 
 	core::Size numatoms = 4;
-	if(pose.residue(position).is_upper_terminus()) numatoms--; //"O" not included if upper terminus
-	if(option[v_CB]() && pose.residue(position).has("CB")) numatoms++;
-	if(is_beta_aminoacid(pose, position)) numatoms++;
+	if ( pose.residue(position).is_upper_terminus() ) numatoms--; //"O" not included if upper terminus
+	if ( option[v_CB]() && pose.residue(position).has("CB") ) numatoms++;
+	if ( is_beta_aminoacid(pose, position) ) numatoms++;
 	return numatoms;
 }
 
@@ -715,27 +717,27 @@ core::Size alignment_torsions_in_res (
 	const core::pose::Pose &pose,
 	const core::Size position
 ) {
-	if(!pose.residue(position).type().is_alpha_aa() && !pose.residue(position).type().is_beta_aa()) return 0;
+	if ( !pose.residue(position).type().is_alpha_aa() && !pose.residue(position).type().is_beta_aa() ) return 0;
 
 	core::Size numtors = 3;
-	if(is_beta_aminoacid(pose, position)) numtors++;
-	if(position==1) numtors--; //No phi for first position.
-	if(position==pose.size()) numtors-=2; //No psi or omega for last position.
+	if ( is_beta_aminoacid(pose, position) ) numtors++;
+	if ( position==1 ) numtors--; //No phi for first position.
+	if ( position==pose.size() ) numtors-=2; //No psi or omega for last position.
 	return numtors;
 }
 
 //Function to calculate the factorial of a number (recursively calls itself):
-core::Size factorial(core::Size val) 
-{   if (val == 0) return 1;
-    return val * factorial(val - 1);
+core::Size factorial(core::Size val)
+{   if ( val == 0 ) return 1;
+	return val * factorial(val - 1);
 }
 
 //Function to get the first index in the alignment vector (vector of x,y,z atom coordinates) corresponding to an amino acid:
 core::Size get_start_index (const core::Size aa_number, const core::pose::Pose &refpose)
 {
 	core::Size counter = 1;
-	for(core::Size ir=1, nres=refpose.size(); ir<=nres; ir++)	{
-		if(ir == aa_number) return counter;
+	for ( core::Size ir=1, nres=refpose.size(); ir<=nres; ir++ ) {
+		if ( ir == aa_number ) return counter;
 		counter += alignment_atoms_in_res(refpose,ir);
 	}
 	return 0;
@@ -744,7 +746,7 @@ core::Size get_start_index (const core::Size aa_number, const core::pose::Pose &
 //Function to get the first amino acid in a chain:
 core::Size get_start_aa (const core::Size chainnumber, const core::pose::Pose &refpose)
 {
-	for(core::Size ir=1, nres=refpose.size(); ir<=nres; ir++) if(static_cast<core::Size>(refpose.chain(ir)) == chainnumber) return ir;
+	for ( core::Size ir=1, nres=refpose.size(); ir<=nres; ir++ ) if ( static_cast<core::Size>(refpose.chain(ir)) == chainnumber ) return ir;
 	return 0;
 }
 
@@ -753,21 +755,21 @@ void swapchains(
 	core::pose::Pose &currentpose, //Input and output
 	const core::Size permutation_number //Input -- the chain perturbation number
 ) {
-	if(permutation_number == 1) return; //Do nothing if this is the first perturbation (no rearrangement of the list of chains).
+	if ( permutation_number == 1 ) return; //Do nothing if this is the first perturbation (no rearrangement of the list of chains).
 
 	const core::Size chaincount = currentpose.num_jump()+1;
-	if(chaincount < 2) return; //Do nothing if there's only one chain.
+	if ( chaincount < 2 ) return; //Do nothing if there's only one chain.
 
 	utility::vector1 < core::Size > chainlist; //List of chains -- order will be perturbed.
 	utility::vector1 < core::Size > startaa_list; //List of starting amino acids of chains
 	utility::vector1 < core::Size > startindex_list; //List of the starting index in the parentvect for each chain
 	chainlist.resize(chaincount);
 	startaa_list.resize(chaincount);
-	for(core::Size i=1; i<=chainlist.size(); i++) chainlist[i]=i; //Initialize the list
+	for ( core::Size i=1; i<=chainlist.size(); i++ ) chainlist[i]=i; //Initialize the list
 
 	//Reorder the list of chains:
-	if(permutation_number>1) {
-		for(core::Size i=2; i<=permutation_number; i++) {
+	if ( permutation_number>1 ) {
+		for ( core::Size i=2; i<=permutation_number; i++ ) {
 			std::next_permutation(chainlist.begin(), chainlist.end());
 		}
 	}
@@ -777,16 +779,15 @@ void swapchains(
 	//for(core::Size i=1; i<=chainlist.size(); i++) printf("%lu\t", chainlist[i]); //DELETE ME
 
 	//Get the starting aa for each chain:
-	for(core::Size i=1; i<=chainlist.size(); i++) startaa_list[i]=get_start_aa(chainlist[i], currentpose);
+	for ( core::Size i=1; i<=chainlist.size(); i++ ) startaa_list[i]=get_start_aa(chainlist[i], currentpose);
 
 	//A pose into which residues will be copied:
 	core::pose::Pose newpose;
 
 	//Copy the pose, swapping chains around:
-	for(core::Size i=1; i<=chainlist.size(); i++) {
-		for (core::Size ir=startaa_list[i], nres=currentpose.size(); ir<=nres && static_cast<core::Size>(currentpose.chain(ir)) == chainlist[i]; ir++)
-		{
-			if(ir==startaa_list[i]) {
+	for ( core::Size i=1; i<=chainlist.size(); i++ ) {
+		for ( core::Size ir=startaa_list[i], nres=currentpose.size(); ir<=nres && static_cast<core::Size>(currentpose.chain(ir)) == chainlist[i]; ir++ ) {
+			if ( ir==startaa_list[i] ) {
 				newpose.append_residue_by_jump(currentpose.residue(ir), 1, "", "", true);
 			} else {
 				newpose.append_residue_by_bond(currentpose.residue(ir));
@@ -816,20 +817,20 @@ void swapalignmentvector (
 	utility::vector1 < core::Size > startaa_list; //List of starting amino acids of chains
 	utility::vector1 < core::Size > startindex_list; //List of the starting index in the parentvect for each chain
 
-	for(core::Size i=1, imax=refpose.num_jump()+1; i<=imax; i++) chainlist.push_back(i);
-	if(permutation_number>1) {
-		for(core::Size i=2; i<=permutation_number; i++) {
+	for ( core::Size i=1, imax=refpose.num_jump()+1; i<=imax; i++ ) chainlist.push_back(i);
+	if ( permutation_number>1 ) {
+		for ( core::Size i=2; i<=permutation_number; i++ ) {
 			std::next_permutation(chainlist.begin(), chainlist.end());
 		}
 	}
 
 	//Store the starting amino acid numbers for each chain, in the perturbed chain order:
 	startaa_list.resize(chainlist.size());
-	for(core::Size i=1; i<=startaa_list.size(); i++) startaa_list[i]=get_start_aa(chainlist[i], refpose);
+	for ( core::Size i=1; i<=startaa_list.size(); i++ ) startaa_list[i]=get_start_aa(chainlist[i], refpose);
 
 	//Store the starting indices for each chain, in the perturbed chain order:
 	startindex_list.resize(chainlist.size());
-	for(core::Size i=1; i<=startindex_list.size(); i++) startindex_list[i]=get_start_index(startaa_list[i], refpose);
+	for ( core::Size i=1; i<=startindex_list.size(); i++ ) startindex_list[i]=get_start_index(startaa_list[i], refpose);
 
 	//DELETE THE FOLLOWING!  ONLY FOR TESTING!
 	//printf("\nPermutation:\t"); //DELETE ME
@@ -844,10 +845,10 @@ void swapalignmentvector (
 	//fflush(stdout); //DELETE ME
 
 	core::Size counter = 1;
-	for(core::Size ichain=1, nchain=startindex_list.size(); ichain<=nchain; ichain++) {
+	for ( core::Size ichain=1, nchain=startindex_list.size(); ichain<=nchain; ichain++ ) {
 		core::Size counter2 = startindex_list[ichain]; //Starting index in the parent vector for this chain
-		for(core::Size ir=startaa_list[ichain], nres=refpose.size(); ir<=nres && static_cast<core::Size>(refpose.chain(ir))==chainlist[ichain]; ir++) { //Loop through all residues in the current chain
-			for(core::Size iatom=1, natom=alignment_atoms_in_res(refpose, ir); iatom<=natom; iatom++) { //Loop through all alignment atoms in the current residue
+		for ( core::Size ir=startaa_list[ichain], nres=refpose.size(); ir<=nres && static_cast<core::Size>(refpose.chain(ir))==chainlist[ichain]; ir++ ) { //Loop through all residues in the current chain
+			for ( core::Size iatom=1, natom=alignment_atoms_in_res(refpose, ir); iatom<=natom; iatom++ ) { //Loop through all alignment atoms in the current residue
 				swappedvect(1, counter) = parentvect (1, counter2); //X
 				swappedvect(2, counter) = parentvect (2, counter2); //Y
 				swappedvect(3, counter) = parentvect (3, counter2); //Z
@@ -891,26 +892,26 @@ core::Real calc_dist(
 
 	core::Real accumulator = 0.0;
 
-	if(alignmentvect1.size2()!=alignmentvect2.size2()) {
+	if ( alignmentvect1.size2()!=alignmentvect2.size2() ) {
 		printf("Internal error!  Alignment vector size mismatch!  Crashing!!!\n"); fflush(stdout);
 		exit(1);
 	}
 
-	if(clustmode==1) accumulator=numeric::model_quality::rms_wrapper(alignmentvect1.size2(), alignmentvect1, alignmentvect2); //Calculate the rms, if we're doing Cartesian clustering
-	else if (clustmode==2) { //Backbone dihedral clustering
+	if ( clustmode==1 ) accumulator=numeric::model_quality::rms_wrapper(alignmentvect1.size2(), alignmentvect1, alignmentvect2); //Calculate the rms, if we're doing Cartesian clustering
+	else if ( clustmode==2 ) { //Backbone dihedral clustering
 		bool includeme=true;
-		for(core::Size ir=1,index=1; ir<=nresidues; ir++) {
+		for ( core::Size ir=1,index=1; ir<=nresidues; ir++ ) {
 			//The number of torsion angles in the current residue:
 			core::Size curres_torsioncount = 3;
-			if(firstpose.residue(ir).is_lower_terminus() || ir==1) curres_torsioncount--;
-			if(firstpose.residue(ir).is_upper_terminus() || ir==nresidues) curres_torsioncount-=2;
-			if(is_beta_aminoacid(firstpose, ir)) curres_torsioncount++;
+			if ( firstpose.residue(ir).is_lower_terminus() || ir==1 ) curres_torsioncount--;
+			if ( firstpose.residue(ir).is_upper_terminus() || ir==nresidues ) curres_torsioncount-=2;
+			if ( is_beta_aminoacid(firstpose, ir) ) curres_torsioncount++;
 
 			includeme=true;
 
-			if(option[v_ignorechain].size()>0) {
-				for(core::Size j=1; j<=(core::Size)option[v_ignorechain].size(); ++j) {
-					if(firstpose.residue(ir).chain() == static_cast<core::Size>(option[v_ignorechain][j])) {
+			if ( option[v_ignorechain].size()>0 ) {
+				for ( core::Size j=1; j<=(core::Size)option[v_ignorechain].size(); ++j ) {
+					if ( firstpose.residue(ir).chain() == static_cast<core::Size>(option[v_ignorechain][j]) ) {
 						includeme=false;
 						index+=curres_torsioncount; //Increment the dihedral angle index to skip this residue.
 						break;
@@ -918,10 +919,10 @@ core::Real calc_dist(
 				}
 			}
 
-			if(option[v_ignoreresidue].size()>0 && includeme) {
+			if ( option[v_ignoreresidue].size()>0 && includeme ) {
 				//includeme=true;
-				for(core::Size j=1; j<=(core::Size)option[v_ignoreresidue].size(); j++) {
-					if( ir == static_cast<core::Size>(option[v_ignoreresidue][j])) {
+				for ( core::Size j=1; j<=(core::Size)option[v_ignoreresidue].size(); j++ ) {
+					if ( ir == static_cast<core::Size>(option[v_ignoreresidue][j]) ) {
 						includeme=false;
 						index+=curres_torsioncount; //Increment the dihedral angle index to skip this residue.
 						break;
@@ -929,15 +930,15 @@ core::Real calc_dist(
 				}
 			}
 
-			if(includeme) { //If the current residue, ir, is to be included in the rms calculation
+			if ( includeme ) { //If the current residue, ir, is to be included in the rms calculation
 
-				for(core::Size i=1; i<=curres_torsioncount; i++) {
+				for ( core::Size i=1; i<=curres_torsioncount; i++ ) {
 					accumulator+=pow(elementdiff(vect1[index],vect2[index], clustmode), 2.0);
-					index++;				
+					index++;
 				}
 
-				if(option[v_cyclic]() && ir==nresidues) { //If this is a backbone-cyclized peptide, then there are additional dihedral angles stored in vect1 and vect2.
-					for(core::Size j=1; j<=3; j++) accumulator+=pow(elementdiff(vect1[index],vect2[index], clustmode), 2.0);
+				if ( option[v_cyclic]() && ir==nresidues ) { //If this is a backbone-cyclized peptide, then there are additional dihedral angles stored in vect1 and vect2.
+					for ( core::Size j=1; j<=3; j++ ) accumulator+=pow(elementdiff(vect1[index],vect2[index], clustmode), 2.0);
 				}
 			}
 		}
@@ -964,25 +965,25 @@ core::Real calc_dist(
 
 	core::Real dist=0.0;
 
-	if(option[v_cluster_cyclic_permutations]()) {
-		if(clustmode==1) { //Clustering by backbone atom Cartesian coordinates
+	if ( option[v_cluster_cyclic_permutations]() ) {
+		if ( clustmode==1 ) { //Clustering by backbone atom Cartesian coordinates
 			//const core::Size atomsperresidue = (option[v_CB]() ? 5 : 4) ;
 			FArray2D < core::Real > avect2 (3, alignmentvect2.size2());
-			for(core::Size ioffset=0; ioffset<nresidues; ioffset+=option[v_cyclic_permutation_offset]()) { //Loop through all possible offsets
+			for ( core::Size ioffset=0; ioffset<nresidues; ioffset+=option[v_cyclic_permutation_offset]() ) { //Loop through all possible offsets
 				core::Size offset_index_1 = 1; //The index of the first atom (i.e. alignment atom 1 of the OLD first residue), when offset by ioffset residues.
 				//Figure out starting value of offset_index_1.  This means that we're putting the atoms from the END of the sequence ahead of the first atom:
-				if(ioffset>0) {
-					for(core::Size ir=nresidues; ir>nresidues-ioffset; ir--) {
+				if ( ioffset>0 ) {
+					for ( core::Size ir=nresidues; ir>nresidues-ioffset; ir-- ) {
 						offset_index_1 += alignment_atoms_in_res(firstpose, ir);
 					}
 				}
 
-				for(core::Size ir=1, index=1; ir<=nresidues; ir++) { //For each offset, loop through all residues
+				for ( core::Size ir=1, index=1; ir<=nresidues; ir++ ) { //For each offset, loop through all residues
 					//The number of alignment atoms stored for this residue:
 					core::Size atoms_in_this_res = alignment_atoms_in_res(firstpose,ir);
 
 					//Offset the alignment vectors:
-					for(core::Size ia=1; ia<=atoms_in_this_res; ia++) {
+					for ( core::Size ia=1; ia<=atoms_in_this_res; ia++ ) {
 						avect2(1, offset_index_1) = alignmentvect2(1, index);
 						avect2(2, offset_index_1) = alignmentvect2(2, index);
 						avect2(3, offset_index_1) = alignmentvect2(3, index);
@@ -990,74 +991,72 @@ core::Real calc_dist(
 						offset_index_1++; //Move this with index.
 						//printf("%.2f, %.2f, %.2f\n", avect2(1,ia), avect2(2, ia), avect2(3, ia)); //DELETE ME
 					}
-					if(ir==(nresidues-ioffset)) offset_index_1=1; //Reset this if we've reached the wrap-around point.
+					if ( ir==(nresidues-ioffset) ) offset_index_1=1; //Reset this if we've reached the wrap-around point.
 				} //Looping through all residues
 
 				core::Real curdist = calc_dist(vect1, vect2, clustmode, alignmentvect1, avect2, nresidues, firstpose);
 
 				//printf("offset %i\t dist %.2f\n", ioffset, curdist); fflush(stdout); //DELETE ME
-				if (ioffset==0 || curdist<dist ) { //If this offset has yielded the lowest RMS encountered so far.
+				if ( ioffset==0 || curdist<dist ) { //If this offset has yielded the lowest RMS encountered so far.
 					dist = curdist;
 					offset = ioffset;
 				}
 			}
-		} else if (clustmode==2) { //Clustering by backbone dihedrals
+		} else if ( clustmode==2 ) { //Clustering by backbone dihedrals
 			//Make copies of vect1 and vect2
 			utility::vector1 <core::Real> v2 = vect2;
-			for(core::Size ioffset=0; ioffset<nresidues; ioffset+=option[v_cyclic_permutation_offset]()) {
+			for ( core::Size ioffset=0; ioffset<nresidues; ioffset+=option[v_cyclic_permutation_offset]() ) {
 				core::Size offset_index_1=2;
-				if(ioffset>0) {
-					for(core::Size ir=nresidues; ir>nresidues-ioffset; ir--) {
+				if ( ioffset>0 ) {
+					for ( core::Size ir=nresidues; ir>nresidues-ioffset; ir-- ) {
 						offset_index_1 += alignment_torsions_in_res(firstpose, ir);
-						if(ir==nresidues) offset_index_1+=3; //Extra 3 torsions stored at end of list.
+						if ( ir==nresidues ) offset_index_1+=3; //Extra 3 torsions stored at end of list.
 					}
 				}
 
-				for(core::Size ir=1, index=1; ir<=nresidues; ir++) { //Loop through all residues
+				for ( core::Size ir=1, index=1; ir<=nresidues; ir++ ) { //Loop through all residues
 					core::Size torsions_in_this_res = alignment_torsions_in_res(firstpose, ir);
-					if(ir==nresidues) torsions_in_this_res+=3; //Three additional torsions are stored for a backbone-cyclized peptide.
-					for(core::Size itors=1; itors<=torsions_in_this_res; itors++) {
+					if ( ir==nresidues ) torsions_in_this_res+=3; //Three additional torsions are stored for a backbone-cyclized peptide.
+					for ( core::Size itors=1; itors<=torsions_in_this_res; itors++ ) {
 						v2[offset_index_1] = vect2[index];
 						offset_index_1++;
 						index++;
-						if(ir==(nresidues-ioffset+1) && itors==1) offset_index_1=1; //Reset this at the wrap-around point.
+						if ( ir==(nresidues-ioffset+1) && itors==1 ) offset_index_1=1; //Reset this at the wrap-around point.
 					}
 				}
 
 				core::Real curdist = calc_dist(vect1, v2, clustmode, alignmentvect1, alignmentvect2, nresidues, firstpose);
 				//printf("Offset %i\t Dist %.2f\n", ioffset, curdist); fflush(stdout); //DELETE ME
 
-				if (ioffset==0 || curdist<dist ) { //If this offset has yielded the lowest distance encountered so far.
+				if ( ioffset==0 || curdist<dist ) { //If this offset has yielded the lowest distance encountered so far.
 					dist = curdist;
 					offset = ioffset;
 				}
 			}
 		}
-	} //if(option[v_cluster_cyclic_permutations]())
-	else if (option[v_homooligomer_swap]() && firstpose.num_jump() > 0) { //consider all permutations of chains
+	} else if ( option[v_homooligomer_swap]() && firstpose.num_jump() > 0 ) { //if(option[v_cluster_cyclic_permutations]()) //consider all permutations of chains
 		core::Size numchains = firstpose.num_jump()+1;
-		for(core::Size i=1; i<=factorial(numchains); i++) {
-			if(clustmode==1) {
+		for ( core::Size i=1; i<=factorial(numchains); i++ ) {
+			if ( clustmode==1 ) {
 				FArray2D < core::Real > alignmentvect2_swapped;
 				swapalignmentvector(alignmentvect2, alignmentvect2_swapped, firstpose, i);
 				core::Real curdist = calc_dist(vect1, vect2, clustmode, alignmentvect1, alignmentvect2_swapped, nresidues, firstpose);
-				if(i==1 || curdist < dist) {
+				if ( i==1 || curdist < dist ) {
 					dist=curdist;
 					permutation=i;
-				}				
-			} else if(clustmode==2) {
+				}
+			} else if ( clustmode==2 ) {
 				utility::vector1 < core::Real > vect2_swapped;
 				swapvector(vect2, vect2_swapped, firstpose, i); //TODO -- CURRENTLY DOESN'T WORK!
 				core::Real curdist = calc_dist(vect1, vect2_swapped, clustmode, alignmentvect1, alignmentvect2, nresidues, firstpose);
-				if(i==1 || curdist < dist) {
+				if ( i==1 || curdist < dist ) {
 					dist=curdist;
 					permutation=i;
 				}
 			}
 		}
-		
-	} //else if (option[v_homooligomer_swap]() && firstpose.num_jump() > 0) {
-	else {
+
+	} else { //else if (option[v_homooligomer_swap]() && firstpose.num_jump() > 0) {
 		dist = calc_dist(vect1, vect2, clustmode, alignmentvect1, alignmentvect2, nresidues, firstpose);
 	}
 
@@ -1074,19 +1073,19 @@ void slidearound(
 	utility::vector1 <core::Real> result;
 
 	core::Size bb_dihed_count = 0;
-	for(core::Size ir=1; ir<=pose.size(); ir++) bb_dihed_count+=alignment_torsions_in_res(pose, ir);
+	for ( core::Size ir=1; ir<=pose.size(); ir++ ) bb_dihed_count+=alignment_torsions_in_res(pose, ir);
 	bb_dihed_count+=3; //For a true cyclic peptide, there are three additional vectors stored.
 
 	result.resize(bb_dihed_count, 0.0);
 	core::Size offset_index = 2;
-	if(offset>0) {
-		for(core::Size ir=rescount; ir>rescount-offset; ir--) offset_index+=alignment_torsions_in_res(pose, ir);			
+	if ( offset>0 ) {
+		for ( core::Size ir=rescount; ir>rescount-offset; ir-- ) offset_index+=alignment_torsions_in_res(pose, ir);
 		offset_index+=3; //3 additional at end
 	}
 
-	for(core::Size ir=1, index=1; ir<=rescount; ir++) {
-		for(core::Size itors=1, ntors=alignment_torsions_in_res(pose, ir); itors<ntors; itors++) {
-			if(itors==1 && ir==(rescount-offset+1)) offset_index = 1; //Reset at the wrap-around point.
+	for ( core::Size ir=1, index=1; ir<=rescount; ir++ ) {
+		for ( core::Size itors=1, ntors=alignment_torsions_in_res(pose, ir); itors<ntors; itors++ ) {
+			if ( itors==1 && ir==(rescount-offset+1) ) offset_index = 1; //Reset at the wrap-around point.
 			result[offset_index]=dihedrals[index];
 			offset_index++;
 			index++;
@@ -1103,11 +1102,11 @@ void trim_and_add_jump_data (
 	const core::pose::Pose &mypose
 ) {
 	myvect.resize(numdihedrals + 6*mypose.num_jump()); //Discard extra information in myvect
-	if(mypose.num_jump() > 0) { //If there are jumps, store translation and rotation vectors for each jump in mypose.
-		for(core::Size i=numdihedrals+1, counter=1; i<=myvect.size(); counter++) {
+	if ( mypose.num_jump() > 0 ) { //If there are jumps, store translation and rotation vectors for each jump in mypose.
+		for ( core::Size i=numdihedrals+1, counter=1; i<=myvect.size(); counter++ ) {
 			numeric::xyzVector < core::Real > transvect = mypose.jump(counter).get_translation();
 			numeric::EulerAngles < core::Real > euler_angles(mypose.jump(counter).get_rotation());
-			for(core::Size j=0; j<3; j++) myvect[i++] = transvect[j]; //Note that xyzVectors are zero-based (unlike everything else in Rosetta -- yay for consistency).
+			for ( core::Size j=0; j<3; j++ ) myvect[i++] = transvect[j]; //Note that xyzVectors are zero-based (unlike everything else in Rosetta -- yay for consistency).
 			myvect[i++] = euler_angles.phi_degrees();
 			myvect[i++] = euler_angles.theta_degrees();
 			myvect[i++] = euler_angles.psi_degrees();
@@ -1164,21 +1163,21 @@ void shift_center_and_PCA(
 
 	utility::vector1 < utility::vector1 < core::Real > > Dphipsiomega; //A matrix whose columns are the phi, psi, and omega values of each state in the cluster, with the cluster centre subtracted off.  Columns will then be multiplied by the weighting coefficients.
 	Dphipsiomega.resize(statesincluster.size()); //A column for each state.
-	for(core::Size i=1, imax=statesincluster.size(); i<=imax; ++i) {
+	for ( core::Size i=1, imax=statesincluster.size(); i<=imax; ++i ) {
 		Dphipsiomega[i].resize( ndihedrals+6*clustcenterpose.num_jump() ); //A row for each backbone dihedral angle and jump parameter.
 	}
 	//Dphipsiomega.setlength(statesincluster.size(), ndihedrals+6*clustcenterpose.num_jump()); //This should have a column for each state, and a row for each backbone dihedral angle and jump parameter.
 
-	if(clustmode==1) {
+	if ( clustmode==1 ) {
 		pose_from_posedata(firstpose, clustcenterpose, clustmode, clustcenter);
 		storeposedata(clustcenterpose, newclustcenter, dummyarray, 2, extra_atom_list); //If clustermode is 1, newclustcenter holds the vector of backbone (and side chain) dihedrals at this point.  NOTE THAT THERE'S EXTRA INFORMATION AT THE END OF NEWCLUSTCENTER.
-	} else if(clustmode==2) newclustcenter=clustcenter;
+	} else if ( clustmode==2 ) newclustcenter=clustcenter;
 
 	trim_and_add_jump_data (newclustcenter, ndihedrals, clustcenterpose);  //Discard extra data and add jump data.
 
 	utility::vector1 <core::Size> not_angle_list; //A list of entries in the newclustcenter vector that are NOT angles (translations instead of rotations).
-	if(clustcenterpose.num_jump()>0) {
-		for(core::Size i=ndihedrals+1, counter=1, njump=clustcenterpose.num_jump(); counter<=njump; counter++) {
+	if ( clustcenterpose.num_jump()>0 ) {
+		for ( core::Size i=ndihedrals+1, counter=1, njump=clustcenterpose.num_jump(); counter<=njump; counter++ ) {
 			not_angle_list.push_back(i);
 			not_angle_list.push_back(i+1);
 			not_angle_list.push_back(i+2);
@@ -1187,54 +1186,54 @@ void shift_center_and_PCA(
 	}
 
 	deltaclustcenter.resize(ndihedrals + 6*clustcenterpose.num_jump());
-	for(core::Size i=1; i<=deltaclustcenter.size(); i++) deltaclustcenter[i]=0.0; //Initialize the array
-	for(core::Size i=1; i<=newclustcenter.size(); i++) Dphipsiomega[1][i] = newclustcenter[i]; //Initialize the first column of Dphipsiomega
+	for ( core::Size i=1; i<=deltaclustcenter.size(); i++ ) deltaclustcenter[i]=0.0; //Initialize the array
+	for ( core::Size i=1; i<=newclustcenter.size(); i++ ) Dphipsiomega[1][i] = newclustcenter[i]; //Initialize the first column of Dphipsiomega
 
-	if(statesincluster.size() > 1) { //If there is more than one state in this cluster.
-		for (core::Size i=2; i<=statesincluster.size(); i++) { //Loop through all other states in the cluster.
+	if ( statesincluster.size() > 1 ) { //If there is more than one state in this cluster.
+		for ( core::Size i=2; i<=statesincluster.size(); i++ ) { //Loop through all other states in the cluster.
 
 			printf("\t\tCalculating influence of structure %lu.\n", statesincluster[i]); fflush(stdout);
 
 			coeff.push_back(option[v_weightbyenergy]() ? exp(-poseenergies[statesincluster[i]]/option[v_kbt]()) : 1.0);
 			weighting_accumulator+=coeff[i]; //The weighting accumulator will ultimately be the demoninator in the partition function.
 
-			if(clustmode==1) {
+			if ( clustmode==1 ) {
 				utility::vector1 <core::Real> currentdata;
 				core::pose::Pose currentpose;
 				pose_from_posedata(firstpose, currentpose, clustmode, posedata[statesincluster[i]]);
-				if(option[v_homooligomer_swap]()) swapchains( currentpose, cluster_oligomer_permutations[statesincluster[i]] ); //Swap chains around.
+				if ( option[v_homooligomer_swap]() ) swapchains( currentpose, cluster_oligomer_permutations[statesincluster[i]] ); //Swap chains around.
 				storeposedata(currentpose, currentdata, dummyarray, 2, extra_atom_list); //currentdata is a vector of backbone dihedrals at this point.  NOTE EXTRA DATA AT END -- SIDE-CHAIN DIHEDRALS.
 
 				//If we're clustering cyclic permutations, it's necessary to offset the backbone dihedral vector:
-				if(option[v_cluster_cyclic_permutations]()) slidearound(currentdata, cluster_offsets[statesincluster[i]], firstpose.size(), firstpose);
+				if ( option[v_cluster_cyclic_permutations]() ) slidearound(currentdata, cluster_offsets[statesincluster[i]], firstpose.size(), firstpose);
 				trim_and_add_jump_data (currentdata, ndihedrals, currentpose); //Discard extra data and add jump data.
 
 				//Add this structure to Dphipsiomega:
-				for(core::Size j=1; j<=currentdata.size(); j++) Dphipsiomega[i][j]=currentdata[j];
+				for ( core::Size j=1; j<=currentdata.size(); j++ ) Dphipsiomega[i][j]=currentdata[j];
 
 				//Add this to deltaclustcenter:
-				for(core::Size j=1, diffmode=2; j<=deltaclustcenter.size(); j++) {
+				for ( core::Size j=1, diffmode=2; j<=deltaclustcenter.size(); j++ ) {
 					diffmode = 2;
-					if(j>ndihedrals && is_in_list(j, not_angle_list)) diffmode=1; //If we're past the dihedral list, check whether this entry is a translation or a rotation.  If it's a translation, diffmode=1.
+					if ( j>ndihedrals && is_in_list(j, not_angle_list) ) diffmode=1; //If we're past the dihedral list, check whether this entry is a translation or a rotation.  If it's a translation, diffmode=1.
 					deltaclustcenter[j] += (coeff[i]*elementdiff(currentdata[j], newclustcenter[j], diffmode));
 				}
-			} else if (clustmode==2) {
+			} else if ( clustmode==2 ) {
 				utility::vector1 <core::Real> currentdata = posedata[statesincluster[i]];
 				//If we're clustering cyclic permutations, it's necessary to offset the backbone dihedral vector:
-				if(option[v_cluster_cyclic_permutations]()) slidearound(currentdata, cluster_offsets[statesincluster[i]], firstpose.size(), firstpose);
-				for(core::Size j=1; j<=deltaclustcenter.size(); j++) deltaclustcenter[j] += (coeff[i]*elementdiff(currentdata[j], newclustcenter[j], clustmode));
+				if ( option[v_cluster_cyclic_permutations]() ) slidearound(currentdata, cluster_offsets[statesincluster[i]], firstpose.size(), firstpose);
+				for ( core::Size j=1; j<=deltaclustcenter.size(); j++ ) deltaclustcenter[j] += (coeff[i]*elementdiff(currentdata[j], newclustcenter[j], clustmode));
 				//Add this structure to Dphipsiomega:
-				for(core::Size j=1; j<=ndihedrals; j++) Dphipsiomega[i][j]=currentdata[j];
+				for ( core::Size j=1; j<=ndihedrals; j++ ) Dphipsiomega[i][j]=currentdata[j];
 			}
 		} //Looping through states in the cluster
 
-		for(core::Size i=1; i<=deltaclustcenter.size(); i++) newclustcenter[i]+=(deltaclustcenter[i]/weighting_accumulator); //Shift the cluster center.
+		for ( core::Size i=1; i<=deltaclustcenter.size(); i++ ) newclustcenter[i]+=(deltaclustcenter[i]/weighting_accumulator); //Shift the cluster center.
 
 		check_angle_bounds(newclustcenter, not_angle_list);
 
 		//Subtract clustcenter from Dphipsiomega, and multiply each resultant column by coeff:
-		for(core::Size i=1, imax=statesincluster.size(); i<=imax; i++) { //Loop through all states
-			for(core::Size j=1, jmax=newclustcenter.size(); j<=jmax; j++) { //Loop through all backbone dihedrals
+		for ( core::Size i=1, imax=statesincluster.size(); i<=imax; i++ ) { //Loop through all states
+			for ( core::Size j=1, jmax=newclustcenter.size(); j<=jmax; j++ ) { //Loop through all backbone dihedrals
 				Dphipsiomega[i][j] = coeff[i]/weighting_accumulator*elementdiff(Dphipsiomega[i][j],newclustcenter[j], (is_in_list(j, not_angle_list)?1:2));
 				//Dphipsiomega[i-1][j-1] = coeff[i]*(Dphipsiomega[i-1][j-1]-newclustcenter[j]);
 				//printf("%.4f\t", Dphipsiomega[i-1][j-1]); //DELETE ME
@@ -1253,7 +1252,7 @@ void shift_center_and_PCA(
 		std::pair< utility::vector1< utility::vector1 <core::Real> >,  utility::vector1 <core::Real> > pcaresult = numeric::principal_components_and_eigenvalues_ndimensions( Dphipsiomega, false );
 
 		//Store the variances and principal component vectors for output from this function.  Only the first N-1 should be nonzero, where N is the number of states in the cluster.
-		for(core::Size i=1; i<std::min(statesincluster.size(), ndihedrals+6*clustcenterpose.num_jump()); i++) {
+		for ( core::Size i=1; i<std::min(statesincluster.size(), ndihedrals+6*clustcenterpose.num_jump()); i++ ) {
 			coeff_list.push_back( pcaresult.second[i] );
 			//printf("%.8f\n", variances[i-1]);fflush(stdout); //DELETE ME
 			utility::vector1 < core::Real > PCA_vector = pcaresult.first[i];
@@ -1261,7 +1260,7 @@ void shift_center_and_PCA(
 			pca_vector_list.push_back(PCA_vector);
 		}
 
-		if(clustmode==1) {
+		if ( clustmode==1 ) {
 			pose_from_posedata(firstpose, clustcenterpose, 2, newclustcenter, false);
 			storeposedata(clustcenterpose, newclustcenter, dummyarray, clustmode, extra_atom_list);
 		}
@@ -1286,18 +1285,18 @@ void output_PCA (
 	outputfile = fopen(filename, "w");
 	//printf("\tOpened %s for write.\n", filename); fflush(stdout); //DELETE ME
 
-	if(coeff_list.size() > 0) {
+	if ( coeff_list.size() > 0 ) {
 		fprintf (outputfile, "%lu\t%lu\n", pca_vector_list[1].size(), coeff_list.size());
-		for(core::Size i=1; i<=coeff_list.size(); i++) fprintf(outputfile, "%.14e\t", coeff_list[i]);
+		for ( core::Size i=1; i<=coeff_list.size(); i++ ) fprintf(outputfile, "%.14e\t", coeff_list[i]);
 		fprintf(outputfile, "\n");
-		for(core::Size i=1; i<=pca_vector_list.size(); i++) {
-			for(core::Size j=1; j<=pca_vector_list[i].size(); j++) fprintf(outputfile, "%.14e\t", pca_vector_list[i][j]);
+		for ( core::Size i=1; i<=pca_vector_list.size(); i++ ) {
+			for ( core::Size j=1; j<=pca_vector_list[i].size(); j++ ) fprintf(outputfile, "%.14e\t", pca_vector_list[i][j]);
 			fprintf(outputfile, "\n");
 		}
 	} else {
 		fprintf (outputfile, "0\t0\n");
 	}
-		
+
 	fclose(outputfile);
 	printf("\tWrote %s.\n", filename); fflush(stdout);
 	return;
@@ -1313,19 +1312,19 @@ void sortclusterlist(
 	core::Size lowestEentry = 0;
 	core::Size buffer = 0;
 
-	for(core::Size i=1; i<statelist.size(); i++) {
-		for(core::Size j=i; j<=statelist.size(); j++) {
-			if(j==i || poseenergies[statelist[j]]<lowestE) {
+	for ( core::Size i=1; i<statelist.size(); i++ ) {
+		for ( core::Size j=i; j<=statelist.size(); j++ ) {
+			if ( j==i || poseenergies[statelist[j]]<lowestE ) {
 				lowestE = poseenergies[statelist[j]];
 				lowestEentry=j;
 			}
 		}
-		if(lowestEentry!=i) {
+		if ( lowestEentry!=i ) {
 			buffer=statelist[i];
 			statelist[i]=statelist[lowestEentry];
 			statelist[lowestEentry]=buffer;
 		}
-	} 
+	}
 
 	return;
 }
@@ -1341,7 +1340,7 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 
 	const std::string hstring = (mypose.residue(1).has("H") ? "H" : "CD");
 
-	if(mypose.residue(1).has("H")) { //If this is not a proline or D-proline
+	if ( mypose.residue(1).has("H") ) { //If this is not a proline or D-proline
 		core::Size hindex = mypose.residue(1).atom_index("H");
 
 		//Rebuild the N-terminal proton.  This has to be done in a slightly irritating way because Rosetta doesn't really like the fact
@@ -1351,15 +1350,15 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 			core::pose::Pose dialanine;
 			core::pose::make_pose_from_sequence(dialanine, "AA", *standard_residues, true); //The termini are OPEN.
 			core::Real omegaval = numeric::dihedral_degrees(
-					mypose.residue(mypose.size()).xyz("CA"),
-					mypose.residue(mypose.size()).xyz("C"),
-					mypose.residue(1).xyz("N"),
-					mypose.residue(1).xyz("CA")
-				);
+				mypose.residue(mypose.size()).xyz("CA"),
+				mypose.residue(mypose.size()).xyz("C"),
+				mypose.residue(1).xyz("N"),
+				mypose.residue(1).xyz("CA")
+			);
 			dialanine.set_omega(1, omegaval);
-	
+
 			core::id::AtomID_Map< core::id::AtomID > amap;
-			core::pose::initialize_atomid_map(amap,dialanine,core::id::BOGUS_ATOM_ID);
+			core::pose::initialize_atomid_map(amap,dialanine,core::id::AtomID::BOGUS_ATOM_ID());
 			amap[AtomID(dialanine.residue(1).atom_index("CA"),1)] = AtomID(mypose.residue(mypose.size()).atom_index("CA"),mypose.size());
 			amap[AtomID(dialanine.residue(1).atom_index("C"),1)] = AtomID(mypose.residue(mypose.size()).atom_index("C"),mypose.size());
 			amap[AtomID(dialanine.residue(1).atom_index("O"),1)] = AtomID(mypose.residue(mypose.size()).atom_index("O"),mypose.size());
@@ -1379,64 +1378,64 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 	{//Peptide bond length constraint:
 		FuncOP harmfunc1 ( new HarmonicFunc( 1.3288, 0.02) );
 		ConstraintCOP distconst1 ( new AtomPairConstraint (
-				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ) ,
-				AtomID( mypose.residue(1).atom_index("N") , 1) ,
-				harmfunc1
+			AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ) ,
+			AtomID( mypose.residue(1).atom_index("N") , 1) ,
+			harmfunc1
 			) );
 		mypose.add_constraint (distconst1);
 	}
 
-	{	//Peptide dihedral angle constraints:
+	{ //Peptide dihedral angle constraints:
 		// (TODO -- change these if we sample a trans-proline.)
 		FuncOP circharmfunc1 ( new CircularHarmonicFunc( PI, 0.02) );
 		ConstraintCOP dihedconst1 ( new DihedralConstraint (
-				AtomID( mypose.residue(mypose.size()).atom_index("O") , mypose.size() ),
-				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
-				AtomID( mypose.residue(1).atom_index("N") , 1) ,
-				AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
-				circharmfunc1
+			AtomID( mypose.residue(mypose.size()).atom_index("O") , mypose.size() ),
+			AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
+			AtomID( mypose.residue(1).atom_index("N") , 1) ,
+			AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
+			circharmfunc1
 			) );
 		ConstraintCOP dihedconst2 ( new DihedralConstraint (
-				AtomID( mypose.residue(mypose.size()).atom_index( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ) , mypose.size() ),
-				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
-				AtomID( mypose.residue(1).atom_index("N") , 1) ,
-				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
-				circharmfunc1
+			AtomID( mypose.residue(mypose.size()).atom_index( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ) , mypose.size() ),
+			AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
+			AtomID( mypose.residue(1).atom_index("N") , 1) ,
+			AtomID( mypose.residue(1).atom_index("CA") , 1) ,
+			circharmfunc1
 			) );
 
 		mypose.add_constraint (dihedconst1);
 		mypose.add_constraint (dihedconst2);
 	}
 
-	{	//Peptide bond angle constraints:
+	{ //Peptide bond angle constraints:
 		FuncOP circharmfunc2a ( new CircularHarmonicFunc( CNCa_ANGLE/180.0*PI, 0.02) );
 		FuncOP circharmfunc2b ( new CircularHarmonicFunc( CNH_ANGLE/180.0*PI, 0.02) );
 		FuncOP circharmfunc2c ( new CircularHarmonicFunc( CaCN_ANGLE/180.0*PI, 0.02) );
 		FuncOP circharmfunc2d ( new CircularHarmonicFunc( OCN_ANGLE/180.0*PI, 0.02) );
 
 		ConstraintCOP angleconst1 ( new AngleConstraint (
-				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
-				AtomID( mypose.residue(1).atom_index("N") , 1) ,
-				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
-				circharmfunc2a
+			AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
+			AtomID( mypose.residue(1).atom_index("N") , 1) ,
+			AtomID( mypose.residue(1).atom_index("CA") , 1) ,
+			circharmfunc2a
 			) );
 		ConstraintCOP angleconst2 ( new AngleConstraint (
-				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
-				AtomID( mypose.residue(1).atom_index("N") , 1) ,
-				AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
-				circharmfunc2b
+			AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
+			AtomID( mypose.residue(1).atom_index("N") , 1) ,
+			AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
+			circharmfunc2b
 			) );
 		ConstraintCOP angleconst3 ( new AngleConstraint (
-				AtomID( mypose.residue(mypose.size()).atom_index( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ) , mypose.size() ),
-				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
-				AtomID( mypose.residue(1).atom_index("N") , 1) ,
-				circharmfunc2c
+			AtomID( mypose.residue(mypose.size()).atom_index( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ) , mypose.size() ),
+			AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
+			AtomID( mypose.residue(1).atom_index("N") , 1) ,
+			circharmfunc2c
 			) );
 		ConstraintCOP angleconst4 ( new AngleConstraint (
-				AtomID( mypose.residue(mypose.size()).atom_index("O") , mypose.size() ),
-				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
-				AtomID( mypose.residue(1).atom_index("N") , 1) ,
-				circharmfunc2d
+			AtomID( mypose.residue(mypose.size()).atom_index("O") , mypose.size() ),
+			AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
+			AtomID( mypose.residue(1).atom_index("N") , 1) ,
+			circharmfunc2d
 			) );
 
 		mypose.add_constraint (angleconst1);
@@ -1459,12 +1458,12 @@ void align_with_offset (
 
 	AtomID_Map< AtomID > amap;
 	signed int ir;
-	core::pose::initialize_atomid_map(amap,pose1, BOGUS_ATOM_ID);
-	for(core::Size ir2 = 1; ir2 <= (core::Size)pose2.size(); ++ir2) {
+	core::pose::initialize_atomid_map(amap,pose1, AtomID::BOGUS_ATOM_ID());
+	for ( core::Size ir2 = 1; ir2 <= (core::Size)pose2.size(); ++ir2 ) {
 		ir= ir2-offset;
-		if(ir<=0) ir+=pose1.size(); 
-		for(core::Size ia = 1; ia <= (core::Size)pose2.residue(ir2).nheavyatoms(); ++ia) {
-			if(use_in_rmsd_offset(pose1,pose2,ir2,ia, offset, extra_atom_list)) {
+		if ( ir<=0 ) ir+=pose1.size();
+		for ( core::Size ia = 1; ia <= (core::Size)pose2.residue(ir2).nheavyatoms(); ++ia ) {
+			if ( use_in_rmsd_offset(pose1,pose2,ir2,ia, offset, extra_atom_list) ) {
 				amap[AtomID(ia,ir)] = AtomID(ia,ir2);
 			}
 		}
@@ -1477,11 +1476,11 @@ void align_with_offset (
 //Function to mutate a pose to a chain of alanines -- EXCEPT CYSTEINES:
 void mutate_to_ala(core::pose::Pose &mypose)
 {
-	for(core::Size ir=1; ir<=mypose.size(); ir++) { //Loop through all residues
-		if(!mypose.residue(ir).type().is_beta_aa() && !mypose.residue(ir).type().is_alpha_aa()) continue; //Skip non-amino acid residues
-		if(mypose.residue(ir).name1()=='C') continue; //Skip cysteines
+	for ( core::Size ir=1; ir<=mypose.size(); ir++ ) { //Loop through all residues
+		if ( !mypose.residue(ir).type().is_beta_aa() && !mypose.residue(ir).type().is_alpha_aa() ) continue; //Skip non-amino acid residues
+		if ( mypose.residue(ir).name1()=='C' ) continue; //Skip cysteines
 		std::string aaname = "ALA";
-		if( core::chemical::is_canonical_D_aa( mypose.residue(ir).aa() ) ) aaname = "DALA"; //If it's a D-amino acid, mutate to D-alanine
+		if ( core::chemical::is_canonical_D_aa( mypose.residue(ir).aa() ) ) aaname = "DALA"; //If it's a D-amino acid, mutate to D-alanine
 		else if ( is_beta_aminoacid(mypose, ir) ) aaname = "B3A"; //If it's a beta-amino acid, mutate to beta-3-alanine.
 		protocols::simple_moves::MutateResidue mutres(ir, aaname); //Mutate residue mover
 		mutres.apply(mypose); //Apply the mutation
@@ -1494,8 +1493,9 @@ void mutate_to_ala(core::pose::Pose &mypose)
 
 //Function to check whether a pose contains at least one beta-amino acid residue:
 bool contains_beta (const core::pose::Pose &mypose) {
-	for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++)
-		if(is_beta_aminoacid(mypose, ir)) return true;
+	for ( core::Size ir=1, nres=mypose.size(); ir<=nres; ir++ ) {
+		if ( is_beta_aminoacid(mypose, ir) ) return true;
+	}
 	return false;
 }
 
@@ -1504,8 +1504,9 @@ bool betas_match (
 	const core::pose::Pose &pose1,
 	const core::pose::Pose &pose2
 ) {
-	for(core::Size ir=1,nres=pose1.size(); ir<=nres; ir++) 
-		if( is_beta_aminoacid(pose1,ir) != is_beta_aminoacid(pose2,ir) ) return false;
+	for ( core::Size ir=1,nres=pose1.size(); ir<=nres; ir++ ) {
+		if ( is_beta_aminoacid(pose1,ir) != is_beta_aminoacid(pose2,ir) ) return false;
+	}
 	return true;
 }
 
@@ -1517,14 +1518,14 @@ void add_user_constraints (
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(!option[v_cst_file].user()) return; //Do nothing if no constraint file is specified.
+	if ( !option[v_cst_file].user() ) return; //Do nothing if no constraint file is specified.
 
 	ConstraintSetMoverOP cst_maker ( new ConstraintSetMover() );
 	std::string cstfile = option[v_cst_file]();
 
 	cst_maker->constraint_file(cstfile);
 	cst_maker->add_constraints(true); //Add constraints to anything else already there.
-	cst_maker->apply(mypose);	
+	cst_maker->apply(mypose);
 
 	return;
 }
@@ -1550,24 +1551,24 @@ int main( int argc, char * argv [] ) {
 		devel::init(argc, argv);
 		core::scoring::ScoreFunctionOP sfxn;
 		sfxn = core::scoring::get_score_function();
-		
+
 		core::Size symm_repeats(0);
 		bool mirror_symm(false);
 		core::Real symm_threshold( 10.0 );
-		
-		if(option[v_cst_file].user()) { //If a constraints file has been specified by the user, turn on the atom_pair, angle, and dihedral constraint weights unless otherwise on.
-			if(sfxn->get_weight(atom_pair_constraint) < 1.0e-6) sfxn->set_weight(atom_pair_constraint, 1.0);
-			if(sfxn->get_weight(angle_constraint) < 1.0e-6) sfxn->set_weight(angle_constraint, 1.0);
-			if(sfxn->get_weight(dihedral_constraint) < 1.0e-6) sfxn->set_weight(dihedral_constraint, 1.0);
+
+		if ( option[v_cst_file].user() ) { //If a constraints file has been specified by the user, turn on the atom_pair, angle, and dihedral constraint weights unless otherwise on.
+			if ( sfxn->get_weight(atom_pair_constraint) < 1.0e-6 ) sfxn->set_weight(atom_pair_constraint, 1.0);
+			if ( sfxn->get_weight(angle_constraint) < 1.0e-6 ) sfxn->set_weight(angle_constraint, 1.0);
+			if ( sfxn->get_weight(dihedral_constraint) < 1.0e-6 ) sfxn->set_weight(dihedral_constraint, 1.0);
 		}
 
 		//Parse the clustering mode:
 		string clusterby = option[v_clusterby]();
 		core::Size clustermode =0;
-		if (clusterby=="bb_cartesian") {
+		if ( clusterby=="bb_cartesian" ) {
 			clustermode = 1;
 			printf("Clustering by Cartesian coordinates of backbone atoms.\n");
-		} else if (clusterby=="bb_dihedral") {
+		} else if ( clusterby=="bb_dihedral" ) {
 			clustermode = 2;
 			printf("Clustering by backbone dihedral angles.\n");
 		} else {
@@ -1576,14 +1577,15 @@ int main( int argc, char * argv [] ) {
 		}
 
 		//Check whether the v_mutate_to_ala flag has been set:
-		if(option[v_mutate_to_ala]())
+		if ( option[v_mutate_to_ala]() ) {
 			printf("The -v_mutate_to_ala flag was set.  Input structures will be mutated to a chain of (alpha-D-, alpha-L-, or beta-3-) alanines (with the exception of cysteine residues).\n");
+		}
 
 		//Check that the user hasn't specified the same chain multiple times in -v_ignorechain:
-		if(option[v_ignorechain]().size()>1) {
-			for(core::Size i=2; i<=option[v_ignorechain]().size(); ++i) {
-				for(core::Size j=1; j<=i; ++j) {
-					if(option[v_ignorechain]()[i]==option[v_ignorechain]()[j]) {
+		if ( option[v_ignorechain]().size()>1 ) {
+			for ( core::Size i=2; i<=option[v_ignorechain]().size(); ++i ) {
+				for ( core::Size j=1; j<=i; ++j ) {
+					if ( option[v_ignorechain]()[i]==option[v_ignorechain]()[j] ) {
 						printf("Error!  The same chain must not be specified multiple times with the -v_ignorechain flag.  Crashing gracelessly.\n");
 						fflush(stdout); exit(1);
 					}
@@ -1592,10 +1594,10 @@ int main( int argc, char * argv [] ) {
 		}
 
 		//Check that the user hasn't specified the same residue multiple times in -v_ignoreresidue:
-		if(option[v_ignoreresidue]().size()>1) {
-			for(core::Size i=2; i<=option[v_ignoreresidue]().size(); i++) {
-				for(core::Size j=1; j<i; j++) {
-					if(option[v_ignoreresidue]()[i] == option[v_ignoreresidue]()[j]) {
+		if ( option[v_ignoreresidue]().size()>1 ) {
+			for ( core::Size i=2; i<=option[v_ignoreresidue]().size(); i++ ) {
+				for ( core::Size j=1; j<i; j++ ) {
+					if ( option[v_ignoreresidue]()[i] == option[v_ignoreresidue]()[j] ) {
 						printf("Error!  The same residue must not be specified multiple times with the -v_ignoreresidue flag.  Crashing.\n");
 						fflush(stdout); exit(1);
 					}
@@ -1604,12 +1606,12 @@ int main( int argc, char * argv [] ) {
 		}
 
 		//Check whether the v_homooligomer_swap flag has been set:
-		if(option[v_homooligomer_swap]()) {
-			if(clusterby!="bb_cartesian") {
+		if ( option[v_homooligomer_swap]() ) {
+			if ( clusterby!="bb_cartesian" ) {
 				printf("Error!  Multi-chain structures can currently only be scored with the \"-v_clusterby bb_cartesian\" flag!  Crashing.\n");
 				fflush(stdout); exit(1);
 			}
-			if(option[v_cyclic]()) {
+			if ( option[v_cyclic]() ) {
 				printf("Error!  The -v_homooligomer_swap flag is not currently compatible with the -v_cyclic flag!  Crashing.\n");
 				fflush(stdout); exit(1);
 			}
@@ -1618,55 +1620,55 @@ int main( int argc, char * argv [] ) {
 
 		//Parse the clustering radius:
 		const core::Real R_cluster = option[v_clusterradius]();
-		if (R_cluster < 1.0e-12) {
+		if ( R_cluster < 1.0e-12 ) {
 			printf("Error!  The clustering radius must be greater than zero.  Crashing.\n");
 			fflush(stdout); exit(1);
 		} else {
 			string unitsstring;
-			if(clustermode==1) unitsstring = "Angstroms";
-			else if (clustermode==2) unitsstring = "degrees";
+			if ( clustermode==1 ) unitsstring = "Angstroms";
+			else if ( clustermode==2 ) unitsstring = "degrees";
 			printf("Using a cluster radius of %.2f %s.\n", R_cluster, unitsstring.c_str());
 		}
 
 		//Parse v_kbt:
 		const core::Real kbt = option[v_kbt]();
-		if(kbt<1.0e-12) {
+		if ( kbt<1.0e-12 ) {
 			printf("Error!  The value of k_B*T specified with the -v_kbt flag must be greater than zero.  Crashing.\n");
 			fflush(stdout); exit(1);
 		} else {
-			if(option[v_weightbyenergy]()) {
+			if ( option[v_weightbyenergy]() ) {
 				printf("Weighting structures by energy when calculating cluster centers.  Setting k_B*T=%.2f\n", kbt);
 			}
 		}
 
 		//Alter the scoring function for v_cyclic:
-		if(option[v_cyclic]()) {
+		if ( option[v_cyclic]() ) {
 			printf("Setting constraint weights for a peptide bond between the N- and C-termini (-v_cyclic flag).\n");
 			sfxn->set_weight(atom_pair_constraint, 1.0);
 			sfxn->set_weight(dihedral_constraint, 1.0);
 			sfxn->set_weight(angle_constraint, 1.0);
 		}
-		
+
 		//Checks related to symmetry:
-		if(option[v_cyclic_symmetry].user()) {
+		if ( option[v_cyclic_symmetry].user() ) {
 			runtime_assert_string_msg( option[v_cyclic](), "Error!  The \"-v_cyclic_symmetry\" flag requires \"-v_cyclic true\"." );
 			symm_repeats = option[v_cyclic_symmetry]();
 			runtime_assert_string_msg( symm_repeats > 1, "Error!  The \"-v_cyclic_symmetry\" flag requires a setting greater than 1." );
 		}
-		if(option[v_cyclic_symmetry_mirroring].user()) {
+		if ( option[v_cyclic_symmetry_mirroring].user() ) {
 			runtime_assert_string_msg( option[v_cyclic](), "Error!  The \"-v_cyclic_symmetry_mirroring\" flag requires \"-v_cyclic true\"." );
 			runtime_assert_string_msg( option[v_cyclic_symmetry].user() && symm_repeats > 1, "Error!  The \"-v_cyclic_symmetry_mirroring\" flag requires that the \"-v_cyclic_symmetry\" flag is also used." );
 			mirror_symm = option[v_cyclic_symmetry_mirroring]();
 		}
-		if(option[v_cyclic_symmetry_threshold].user()) {
+		if ( option[v_cyclic_symmetry_threshold].user() ) {
 			runtime_assert_string_msg( option[v_cyclic](), "Error!  The \"-v_cyclic_symmetry_threshold\" flag requires \"-v_cyclic true\"." );
 			runtime_assert_string_msg( option[v_cyclic_symmetry].user() && symm_repeats > 1, "Error!  The \"-v_cyclic_symmetry_threshold\" flag requires that the \"-v_cyclic_symmetry\" flag is also used." );
 			symm_threshold = option[v_cyclic_symmetry_threshold]();
 		}
 
 		//Checks releated to v_cluster_cyclic_permutations:
-		if(option[v_cluster_cyclic_permutations]()) {
-			if(!option[v_cyclic]()) {
+		if ( option[v_cluster_cyclic_permutations]() ) {
+			if ( !option[v_cyclic]() ) {
 				printf("Error!  The -v_cluster_cyclic_permutations flag cannot be used without the -v_cyclic flag.  Crashing gracelessly.\n");
 				fflush(stdout); exit(1);
 			}
@@ -1674,7 +1676,7 @@ int main( int argc, char * argv [] ) {
 		}
 
 		//Checking v_limit_clusters value:
-		if(option[v_limit_clusters]() < 0 ) {
+		if ( option[v_limit_clusters]() < 0 ) {
 			printf("Error!  The -v_limit_clusters flag must be set to 0 or greater.  Crashing with no grace whastoever.\n");
 			fflush(stdout); exit(1);
 		}
@@ -1684,7 +1686,7 @@ int main( int argc, char * argv [] ) {
 		parse_extra_atom_list(extra_atom_list); //Does nothing if no list provided.
 
 		fflush(stdout);
-	
+
 		protocols::relax::FastRelax frlx(sfxn, option[v_relaxrounds]());
 
 		//printf("ping1\n"); fflush(stdout); //DELETE ME
@@ -1704,26 +1706,26 @@ int main( int argc, char * argv [] ) {
 		printf("Scoring energies of all input structures.\n"); fflush(stdout);
 		core::pose::Pose firstpose;
 		bool firstpose_hasbeta = false; //Are there beta-amino acids in the first input pose?
-		
+
 		//Symmetry filter (used only if the v_cyclic_symmetry flag is used):
 		protocols::cyclic_peptide::CycpepSymmetryFilter symmfilter;
-		if( symm_repeats > 1 ) {
+		if ( symm_repeats > 1 ) {
 			symmfilter.set_symm_repeats( symm_repeats );
 			symmfilter.set_mirror_symm( mirror_symm );
 			symmfilter.set_angle_threshold( symm_threshold );
 		}
 
-		while( input.has_another_pose() ) { //For every input structure
+		while ( input.has_another_pose() ) { //For every input structure
 			count++;
 
 			core::pose::Pose pose; //Create the pose
 			input.fill_pose( pose ); //Import it
 
-			if(option[v_cyclic]()) {
+			if ( option[v_cyclic]() ) {
 				addcyclicconstraints(pose); //If this is a cyclic peptide, add constraints for the terminal peptide bond:
-				if(option[v_cluster_cyclic_permutations]() && clustermode==1 && option[v_CB]()) {
-					for(core::Size ir=1; ir<=pose.size(); ir++) {
-						if(!pose.residue(ir).has("CB")) { //Error if we don't have the same set of atoms on which to cluster in each residue.
+				if ( option[v_cluster_cyclic_permutations]() && clustermode==1 && option[v_CB]() ) {
+					for ( core::Size ir=1; ir<=pose.size(); ir++ ) {
+						if ( !pose.residue(ir).has("CB") ) { //Error if we don't have the same set of atoms on which to cluster in each residue.
 							printf("Error!  When using Cartesian clustering and clustering cyclic permutations, all residues in the input structures must have the same number of atoms to be used in the alignment.  If beta carbons are included, the sequence cannot contain glycine.\nCrashing.\n");
 							fflush(stdout); exit(1);
 						}
@@ -1731,10 +1733,10 @@ int main( int argc, char * argv [] ) {
 				}
 			}
 
-			//Filter by symmetry:			
-			if( symm_repeats > 1 ) {
-				if( !symmfilter.apply( pose ) ) {
-					if( mirror_symm ) {
+			//Filter by symmetry:
+			if ( symm_repeats > 1 ) {
+				if ( !symmfilter.apply( pose ) ) {
+					if ( mirror_symm ) {
 						printf( "\nStructure is not c%lu/m symmetric.  Skipping.\n", symm_repeats );
 					} else {
 						printf( "\nStructure is not c%lu symmetric.  Skipping.\n", symm_repeats );
@@ -1744,21 +1746,21 @@ int main( int argc, char * argv [] ) {
 				}
 			}
 
-			if (count % 100 == 0) {printf("."); fflush(stdout); }
+			if ( count % 100 == 0 ) { printf("."); fflush(stdout); }
 
 			cluster_assignments.push_back(0); //Initially, every structure is assigned to cluster 0 (unassigned).
-			if(option[v_cluster_cyclic_permutations]()) cluster_offsets.push_back(0); //Initially, we assume that each structure may be aligned without any cyclic permutation, so these are all zero.
-			if(option[v_homooligomer_swap]()) cluster_oligomer_permutations.push_back(1); //Initially, we assume the first permutation of homooligomer subunits for each structure.
+			if ( option[v_cluster_cyclic_permutations]() ) cluster_offsets.push_back(0); //Initially, we assume that each structure may be aligned without any cyclic permutation, so these are all zero.
+			if ( option[v_homooligomer_swap]() ) cluster_oligomer_permutations.push_back(1); //Initially, we assume the first permutation of homooligomer subunits for each structure.
 
-			if(pose.num_jump() > 0 && clusterby == "bb_dihedral") {
+			if ( pose.num_jump() > 0 && clusterby == "bb_dihedral" ) {
 				printf("Error!  Backbone dihedral clustering is not currently compatible with multi-chain PDB files.  Crashing.\n"); //TODO -- make this compatible!
 				fflush(stdout); exit(1);
 			}
 
-			if(pose.num_jump() > 0 && option[v_homooligomer_swap]()) {
+			if ( pose.num_jump() > 0 && option[v_homooligomer_swap]() ) {
 				const std::string chain1seq = pose.chain_sequence(1);
-				for(core::Size i=2, imax=pose.num_jump()+1; i<=imax; i++) {
-					if (pose.chain_sequence(i) != chain1seq) {
+				for ( core::Size i=2, imax=pose.num_jump()+1; i<=imax; i++ ) {
+					if ( pose.chain_sequence(i) != chain1seq ) {
 						printf("Error!  When using the v_homooligomer_swap option, the lengths and sequences of all chains in the input structures must be identical.  Crashing.\n");
 						fflush(stdout); exit(1);
 					}
@@ -1767,21 +1769,20 @@ int main( int argc, char * argv [] ) {
 
 			add_user_constraints(pose); //This checks for a user-specified CST file, and does nothing if there isn't one.  (Adds constraints if there is one.)
 
-			if(option[v_prerelax]()) {
+			if ( option[v_prerelax]() ) {
 				make_disulfides(pose); //Add user-specified disulfide bonds.
 				frlx.apply(pose); //Relax the pose if the user has specified that it be relaxed.
 			}
 
-			if(option[v_mutate_to_ala]()) mutate_to_ala(pose); //Mutate the pose to a chain of alanines if necesssary.
+			if ( option[v_mutate_to_ala]() ) mutate_to_ala(pose); //Mutate the pose to a chain of alanines if necesssary.
 
 			make_disulfides(pose); //Add user-specified disulfide bonds.
 
 			(*sfxn)(pose); //Score the input pose
-			if(count==1) {
+			if ( count==1 ) {
 				firstpose=pose; //Store the first pose.
 				firstpose_hasbeta = contains_beta(firstpose); //Check whether this pose contains beta-amino acids.
-			}
-			else if (firstpose_hasbeta && !betas_match(firstpose, pose)) { //If this is not the first pose AND the first pose had beta-amino acids, check that this pose has beta-amino acids at the same positions.
+			} else if ( firstpose_hasbeta && !betas_match(firstpose, pose) ) { //If this is not the first pose AND the first pose had beta-amino acids, check that this pose has beta-amino acids at the same positions.
 				printf("Error!  If input structures contain beta-amino acids, they must have the same number of beta-amino acid residues, and at the same positions.\nCrashing!\n");
 				fflush(stdout);
 				exit(1);
@@ -1791,7 +1792,7 @@ int main( int argc, char * argv [] ) {
 			//Store the pose data that will be used for clustering:
 			storeposedata(pose, posedata, alignmentdata, clustermode, extra_atom_list);
 
-			if(count==1 || pose.energies().total_energy() < lowestE) {
+			if ( count==1 || pose.energies().total_energy() < lowestE ) {
 				lowestE=pose.energies().total_energy();
 				lowestE_index = count;
 			}
@@ -1803,7 +1804,7 @@ int main( int argc, char * argv [] ) {
 		utility::vector1 < utility::vector1 <core::Real> > clustcenter_list; //Vector of vectors to store the data for the cluster centres
 		utility::vector1 < utility::vector1 <core::Size> > clusterlist_sortedbyenergy; //A vector storing lists of the states assigned to each cluster, sorted by energy.
 
-		while(unclustered_count > 0) {
+		while ( unclustered_count > 0 ) {
 			//Make a new cluster
 			cluster_count++;
 
@@ -1821,8 +1822,8 @@ int main( int argc, char * argv [] ) {
 
 			//Make a list of unassigned candidate structures:
 			utility::vector1 <core::Size> candidatelist;
-			for(core::Size istruct=1; istruct<=count; istruct++) {
-				if(cluster_assignments[istruct]==0) candidatelist.push_back(istruct);
+			for ( core::Size istruct=1; istruct<=count; istruct++ ) {
+				if ( cluster_assignments[istruct]==0 ) candidatelist.push_back(istruct);
 			}
 			printf("\tMade list of %lu unassigned structures.\n", candidatelist.size()); fflush(stdout);
 
@@ -1830,24 +1831,24 @@ int main( int argc, char * argv [] ) {
 			core::Real currentdist=0.0;
 			core::Size currentcyclicoffset=0; //Only used for calculating cyclic permutations
 			core::Size current_oligomer_permutation=0; //Only used for calculating permutations when swapping around homodimers.
-			for(core::Size istruct=1; istruct<=candidatelist.size(); istruct++) {
+			for ( core::Size istruct=1; istruct<=candidatelist.size(); istruct++ ) {
 
-				currentdist=calc_dist(clustcenter, posedata[candidatelist[istruct]], clustermode, alignmentdata[lowestE_index], alignmentdata[candidatelist[istruct]], firstpose.size(), firstpose, currentcyclicoffset, current_oligomer_permutation);	
+				currentdist=calc_dist(clustcenter, posedata[candidatelist[istruct]], clustermode, alignmentdata[lowestE_index], alignmentdata[candidatelist[istruct]], firstpose.size(), firstpose, currentcyclicoffset, current_oligomer_permutation);
 
-				if (currentdist < R_cluster) {
+				if ( currentdist < R_cluster ) {
 					printf("\tAdding structure %lu (%.6f from the cluster center).\n", candidatelist[istruct], currentdist); fflush(stdout);
 					cluster_assignments[candidatelist[istruct]]=cluster_count;
 					cluster_sortedbyenergy.push_back(candidatelist[istruct]);
-					if(option[v_cluster_cyclic_permutations]()) cluster_offsets[candidatelist[istruct]]=currentcyclicoffset;
-					if(option[v_homooligomer_swap]()) cluster_oligomer_permutations[candidatelist[istruct]]=current_oligomer_permutation;
+					if ( option[v_cluster_cyclic_permutations]() ) cluster_offsets[candidatelist[istruct]]=currentcyclicoffset;
+					if ( option[v_homooligomer_swap]() ) cluster_oligomer_permutations[candidatelist[istruct]]=current_oligomer_permutation;
 				}
 			} //for loop through all candidates
 
 			sortclusterlist(cluster_sortedbyenergy, poseenergies); //Sort the list of states in this cluster by energy
 			clusterlist_sortedbyenergy.push_back(cluster_sortedbyenergy); //Add the list of states in this cluster to the list of states in each cluster
 			utility::vector1 < utility::vector1 < core::Real > > pca_vector_list; //A place to store the PCA vectors
-			utility::vector1 < core::Real > coeff_list; //A place to store coefficients (amplitudes) for each PCA vector 
-			if(!option[v_skip_PCA]()) {
+			utility::vector1 < core::Real > coeff_list; //A place to store coefficients (amplitudes) for each PCA vector
+			if ( !option[v_skip_PCA]() ) {
 				shift_center_and_PCA(clustcenter, pca_vector_list, coeff_list, lowestE_index, posedata, poseenergies,
 					cluster_sortedbyenergy, cluster_count, clustermode, firstpose, cluster_offsets,
 					cluster_oligomer_permutations, extra_atom_list);
@@ -1856,37 +1857,37 @@ int main( int argc, char * argv [] ) {
 			}
 
 			bool juststartedsearch=true;
-			for(core::Size i=1; i<=poseenergies.size(); i++) {
-				if(cluster_assignments[i]!=0) continue; //Continue if this structure has been assigned
-				if(juststartedsearch || poseenergies[i]<lowestE) { //If this is the first unassigned encountered OR the lowest energy unassigned encountered so far
+			for ( core::Size i=1; i<=poseenergies.size(); i++ ) {
+				if ( cluster_assignments[i]!=0 ) continue; //Continue if this structure has been assigned
+				if ( juststartedsearch || poseenergies[i]<lowestE ) { //If this is the first unassigned encountered OR the lowest energy unassigned encountered so far
 					juststartedsearch=false;
 					lowestE=poseenergies[i];
 					lowestE_index=i;
 				}
 			}
 
-			if (juststartedsearch) break; //If this is still true, there were no unassigned structures.
+			if ( juststartedsearch ) break; //If this is still true, there were no unassigned structures.
 		}
 
 		//Outputs:
 		printf("Cluster\tStructure\tFile_out\n");
 
-		for (core::Size i=1; i<=clusterlist_sortedbyenergy.size(); i++) {
-			if(option[v_limit_clusters]()!=0 && i > static_cast<core::Size>( option[v_limit_clusters]() ) ) {
+		for ( core::Size i=1; i<=clusterlist_sortedbyenergy.size(); i++ ) {
+			if ( option[v_limit_clusters]()!=0 && i > static_cast<core::Size>( option[v_limit_clusters]() ) ) {
 				printf("Maximum number of clusters for output reached.\n");
 				break;
 			}
 			core::pose::Pose pose1;
-			for(core::Size j=1; j<=clusterlist_sortedbyenergy[i].size(); j++) {
+			for ( core::Size j=1; j<=clusterlist_sortedbyenergy[i].size(); j++ ) {
 				core::pose::Pose temppose;
-				if(option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]())) {
+				if ( option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]()) ) {
 					pose_from_posedata (firstpose, temppose, clustermode, posedata[ clusterlist_sortedbyenergy[i][j] ]);
-					if(j>1 && option[v_homooligomer_swap]()) swapchains( temppose, cluster_oligomer_permutations[clusterlist_sortedbyenergy[i][j]] ); //Swap chains around.
-					if(j==1) pose1=temppose;
+					if ( j>1 && option[v_homooligomer_swap]() ) swapchains( temppose, cluster_oligomer_permutations[clusterlist_sortedbyenergy[i][j]] ); //Swap chains around.
+					if ( j==1 ) pose1=temppose;
 					else align_with_offset(temppose, pose1, (option[v_cluster_cyclic_permutations]() ? cluster_offsets[ clusterlist_sortedbyenergy[i][j] ] : 0), extra_atom_list );
 				}
 				char outfile[128];
-				if(option[v_silentoutput]()) {
+				if ( option[v_silentoutput]() ) {
 					char curstructtag[128];
 					sprintf(curstructtag, "c.%lu.%lu", i, j);
 					core::io::silent::SilentFileOptions opts;
@@ -1894,19 +1895,19 @@ int main( int argc, char * argv [] ) {
 					io::silent::SilentFileData outsilentfiledata(opts);
 					io::silent::SilentStructOP outsilentstruct ( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts) );
 					outsilentstruct->fill_struct(temppose, curstructtag);
-					if(j==1) {
+					if ( j==1 ) {
 						sprintf(outfile, "clusters_firstmember.out");
 						outsilentfiledata.write_silent_struct((*outsilentstruct), outfile);
 					}
-					if(option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]())) {
-						if(option[v_limit_structures_per_cluster]()==0) sprintf(outfile, "clusters_allmembers.out");
+					if ( option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]()) ) {
+						if ( option[v_limit_structures_per_cluster]()==0 ) sprintf(outfile, "clusters_allmembers.out");
 						else sprintf(outfile, "clusters_first_%lu_members.out", static_cast<core::Size>(option[v_limit_structures_per_cluster]()) );
 						outsilentfiledata.write_silent_struct((*outsilentstruct), outfile);
 					}
-					sprintf(outfile, "c.%lu.%lu", i, j);											
+					sprintf(outfile, "c.%lu.%lu", i, j);
 				} else {
 					sprintf(outfile, "c.%lu.%lu.pdb", i, j);
-					if(option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]())) temppose.dump_pdb(outfile);
+					if ( option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]()) ) temppose.dump_pdb(outfile);
 				}
 				printf("%lu\t%lu\t%s\n", i, clusterlist_sortedbyenergy[i][j], outfile);
 			}
@@ -1914,11 +1915,11 @@ int main( int argc, char * argv [] ) {
 
 		/*printf("\nWriting cluster centers.\n"); fflush(stdout);
 		for(core::Size i=1; i<=clustcenter_list.size(); i++) {
-			core::pose::Pose cenpose;
-			pose_from_posedata(firstpose, cenpose, clustermode, clustcenter_list[i]);
-			char outfile[64];
-			sprintf(outfile, "center_%lu.pdb", i);
-			cenpose.dump_pdb(outfile);
+		core::pose::Pose cenpose;
+		pose_from_posedata(firstpose, cenpose, clustermode, clustcenter_list[i]);
+		char outfile[64];
+		sprintf(outfile, "center_%lu.pdb", i);
+		cenpose.dump_pdb(outfile);
 		}*/
 
 		printf("\n*****JOB COMPLETED*****\n"); fflush(stdout);

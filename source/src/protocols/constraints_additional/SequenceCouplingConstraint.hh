@@ -94,7 +94,7 @@ public:
 	core::Size natoms() const override { return 0; };
 	AtomID const & atom( Size const ) const override {
 		utility_exit_with_message("SequenceCouplingConstraint is not atom-based!.");
-		return core::id::BOGUS_ATOM_ID;  // required for compilation on Windows
+		return core::id::GLOBAL_BOGUS_ATOM_ID;  // required for compilation on Windows
 	}
 
 	utility::vector1< core::Size > residues() const override;

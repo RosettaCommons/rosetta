@@ -325,7 +325,7 @@ void align_to_native( core::pose::Pose & pose,
 
 
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	// loop over the L and H chains
 	for ( Size i_chain=1; i_chain<=ab_info->get_AntibodyFrameworkInfo().size(); i_chain++ ) {

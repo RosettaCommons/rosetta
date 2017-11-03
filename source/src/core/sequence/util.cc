@@ -801,7 +801,7 @@ calpha_superimpose_with_mapping(
 	core::id::SequenceMapping const & mapping // mod_pose -> ref_pose
 ) {
 	id::AtomID_Map< id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, mod_pose, id::AtomID::BOGUS_ATOM_ID() );
 	Size const mod_resn( mod_pose.size() );
 	Size const ref_resn( ref_pose.size() );
 	static std::string const atom_name("CA");

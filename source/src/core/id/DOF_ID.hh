@@ -36,8 +36,9 @@ class DOF_ID
 
 public: // Creation
 
+	constexpr
 	DOF_ID():
-		atom_id_(), // Default is invalid atom id
+		atom_id_( AtomID::BOGUS_ATOM_ID() ), // Default is invalid atom id
 		type_( INVALID_DOF )
 	{}
 
@@ -48,6 +49,8 @@ public: // Creation
 		atom_id_( atom_id_in ),
 		type_( type_in )
 	{}
+
+	static constexpr DOF_ID BOGUS_DOF_ID() { return DOF_ID(); }
 
 public: // Properties
 
@@ -128,8 +131,8 @@ public:
 }; // DOF_ID
 
 
-/// @brief Globals
-extern DOF_ID const BOGUS_DOF_ID;
+/// @brief Global -- may not be used until after core::init is called.
+extern DOF_ID const GLOBAL_BOGUS_DOF_ID;
 
 
 /////////////////////////////////////////////////////////////////////////////

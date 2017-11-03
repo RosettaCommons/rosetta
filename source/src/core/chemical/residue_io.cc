@@ -102,7 +102,7 @@ atom_id_from_icoor_line(
 	default :
 		utility_exit_with_message( "unrecognized stub atom id type!" );
 	}
-	return id::BOGUS_ATOM_ID;
+	return id::GLOBAL_BOGUS_ATOM_ID;
 }
 
 

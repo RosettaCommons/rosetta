@@ -53,7 +53,6 @@ using namespace core::pose;
 using core::id::AtomID;
 using core::id::NamedAtomID;
 using core::id::DOF_ID;
-using core::id::BOGUS_DOF_ID;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 using numeric::angle_radians;
@@ -358,7 +357,7 @@ RNA_KinematicCloser::figure_out_offset(
 	Real const original_torsion_value,
 	pose::Pose const & pose
 ) {
-	if ( dof_id == BOGUS_DOF_ID ) { //expected at cutpoint!
+	if ( dof_id == DOF_ID::BOGUS_DOF_ID() ) { //expected at cutpoint!
 		utility_exit_with_message( "Problem with DOF_ID" );
 	} else {
 		offset_save_.push_back( pose.dof ( dof_id ) -

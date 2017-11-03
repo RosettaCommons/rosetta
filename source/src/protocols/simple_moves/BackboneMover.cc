@@ -475,7 +475,7 @@ SmallMover::setup_list( core::pose::Pose & pose )
 			DOF_ID const omega_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_1st_omega( pose, i ) ) );
 			if ( my_movemap->get( phi_dof_id ) && my_movemap->get( psi_dof_id ) ) {
 				// If we have an omega, but we cannot move it, continue.
-				if ( ( omega_dof_id != BOGUS_DOF_ID ) && ( ! my_movemap->get( omega_dof_id ) ) ) {
+				if ( ( omega_dof_id != DOF_ID::BOGUS_DOF_ID() ) && ( ! my_movemap->get( omega_dof_id ) ) ) {
 					continue;
 				}
 				// Carbohydrates are always considered loops for now.

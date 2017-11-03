@@ -42,6 +42,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 namespace core {
 namespace scoring {
@@ -173,13 +174,28 @@ cull_violators(
 
 ////////// Centroid constraints
 std::string get_cst_file_option(){
+	return get_cst_file_option( basic::options::option );
+}
+
+std::string get_cst_file_option(
+	utility::options::OptionCollection const & options
+){
 	using namespace basic::options;
-	utility::vector1< std::string>  cst_files = option[ OptionKeys::constraints::cst_file ]();
+	utility::vector1< std::string>  cst_files = options[ OptionKeys::constraints::cst_file ]();
 	core::Size choice=1;
 	if ( cst_files.size() > 1 ) choice=core::Size( numeric::random::rg().random_range( 1,cst_files.size() ) );
 	tr.Info << "Constraint choice: " << cst_files[choice] << std::endl;
 	return cst_files[choice];
 }
+
+void
+options_for_get_cst_file_option(
+	utility::options::OptionKeyList & opts
+)
+{
+	opts + basic::options::OptionKeys::constraints::cst_file;
+}
+
 
 /// @details add constraints from command line to POSE ONLY, if cst file is supplied by user.  Overwrites any constraints already in the Pose.  Assumed to be "centroid constraints" using the cst_file flag (will work fine with fa constraints, but uses the not-fa command line option).
 void add_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
@@ -210,14 +226,32 @@ void add_constraints_from_cmdline( core::pose::Pose & pose, core::scoring::Score
 
 ////////// FA constraints
 std::string get_cst_fa_file_option() {
+	return get_cst_fa_file_option( basic::options::option );
+}
+
+std::string get_cst_fa_file_option(
+	utility::options::OptionCollection const & options
+)
+{
 	using namespace basic::options;
 	utility::vector1< std::string> cst_files
-		= option[ OptionKeys::constraints::cst_fa_file ]();
+		= options[ OptionKeys::constraints::cst_fa_file ]();
 	core::Size choice=1;
 	if ( cst_files.size() > 1 ) choice=core::Size( numeric::random::rg().random_range( 2,cst_files.size() ) );
 	tr.Info << "Constraint choice: " << cst_files[choice] << std::endl;
 	return cst_files[choice];
 }
+
+
+/// @brief companion function for get_cst_file_option
+void
+options_for_get_cst_fa_file_option(
+	utility::options::OptionKeyList & opts
+)
+{
+	opts + basic::options::OptionKeys::constraints::cst_fa_file;
+}
+
 
 /// @details add constraints from command line to POSE ONLY, if cst file is supplied by user.  Overwrites any constraints already in the Pose.  Assumed to be "fullatom constraints" using the cst_fa_file flag (will work fine with centroid constraints otherwise)
 void add_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {

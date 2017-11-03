@@ -188,7 +188,7 @@ align_conformations(
 ){
 	if ( !( refpose->total_residue() == newpose->total_residue() ) ) utility::exit(__FILE__, __LINE__, "New pose must be the same number of residues as the reference pose!" );
 	core::id::AtomID_Map< core::id::AtomID > aID_map;
-	core::pose::initialize_atomid_map(aID_map, *newpose, core::id::BOGUS_ATOM_ID);
+	core::pose::initialize_atomid_map(aID_map, *newpose, core::id::AtomID::BOGUS_ATOM_ID());
 
 	for ( core::Size r(1),rmax(newpose->total_residue());
 			r<=rmax;
@@ -245,9 +245,9 @@ fix_prolines(
 
 	frlx.set_movemap( move );
 
-//	newpose->dump_pdb("temp1.pdb"); //DELETE LATER, only for testing
+	// newpose->dump_pdb("temp1.pdb"); //DELETE LATER, only for testing
 	frlx.apply( *newpose );
-//	newpose->dump_pdb("temp2.pdb"); //DELETE LATER, only for testing
+	// newpose->dump_pdb("temp2.pdb"); //DELETE LATER, only for testing
 }
 
 

@@ -53,6 +53,7 @@ public: // Creation
 
 	/// @brief Default constructor
 	inline
+	constexpr
 	TorsionID() :
 		rsd_( 0 ),
 		type_( BB ),
@@ -74,6 +75,8 @@ public: // Creation
 		type_( type_in ),
 		torsion_( torsion_in )
 	{}
+
+	static constexpr TorsionID BOGUS_TORSION_ID() { return TorsionID(); }
 
 public: // Properties
 
@@ -191,8 +194,8 @@ public:
 }; // TorsionID
 
 
-/// @brief Globals
-extern TorsionID const BOGUS_TORSION_ID;
+/// @brief Global -- may not be used until after core::init is called.
+extern TorsionID const GLOBAL_BOGUS_TORSION_ID;
 
 } // namespace id
 } // namespace core

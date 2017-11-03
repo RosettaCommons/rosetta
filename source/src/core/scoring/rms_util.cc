@@ -1186,7 +1186,7 @@ xyz_gdttm(
 /// Usage example: superimpose pose1 onto pose2 by mapping C-alphas of residue 10-30 onto residues 20-40
 ///
 ///  id::AtomID_Map< id::AtomID > atom_map;
-///  id::initialize( atom_map, pose1, id::BOGUS_ATOM_ID ); // maps every atomid to bogus atom
+///  id::initialize( atom_map, pose1, id::AtomID::BOGUS_ATOM_ID() ); // maps every atomid to bogus atom
 ///
 ///   for ( Size i=10; i<=30; ++i ) {
 ///     id::AtomID const id1( pose1.residue(i).atom_index("CA"), i );
@@ -1306,7 +1306,7 @@ calpha_superimpose_pose(
 {
 	runtime_assert( mod_pose.size() == ref_pose.size() );
 	id::AtomID_Map< id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, mod_pose, id::AtomID::BOGUS_ATOM_ID() );
 	for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
 		if ( ii > ref_pose.size() ) break;
 		if ( ! mod_pose.residue(ii).has("CA") ) continue;

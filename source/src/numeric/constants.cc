@@ -25,91 +25,91 @@ namespace constants {
 
 
 // float
-namespace f {
-
-typedef  NumericTraits< Type >  Traits;
-
-Type const zero               = Traits::zero();
-Type const one                = Traits::one();
-Type const two                = Traits::two();
-Type const pi                 = Traits::pi();
-Type const pi_2               = Traits::pi_2();
-Type const pi_over_2          = Traits::pi_over_2();
-Type const pi_over_3          = Traits::pi_over_3();
-Type const pi_2_over_3        = Traits::pi_2_over_3();
-Type const pi_over_180        = Traits::pi_over_180();
-Type const degrees_to_radians = Traits::degrees_to_radians();
-Type const deg2rad            = Traits::deg2rad();
-Type const radians_to_degrees = Traits::radians_to_degrees();
-Type const rad2deg            = Traits::rad2deg();
-
-} // namespace f
-
-
-// double
-namespace d {
-
-typedef  NumericTraits< Type >  Traits;
-
-Type const zero               = Traits::zero();
-Type const one                = Traits::one();
-Type const two                = Traits::two();
-Type const pi                 = Traits::pi();
-Type const pi_2               = Traits::pi_2();
-Type const pi_over_2          = Traits::pi_over_2();
-Type const pi_over_3          = Traits::pi_over_3();
-Type const pi_2_over_3        = Traits::pi_2_over_3();
-Type const pi_over_180        = Traits::pi_over_180();
-Type const degrees_to_radians = Traits::degrees_to_radians();
-Type const deg2rad            = Traits::deg2rad();
-Type const radians_to_degrees = Traits::radians_to_degrees();
-Type const rad2deg            = Traits::rad2deg();
-
-} // namespace d
-
-
-// long double
-namespace ld {
-
-typedef  NumericTraits< Type >  Traits;
-
-Type const zero               = Traits::zero();
-Type const one                = Traits::one();
-Type const two                = Traits::two();
-Type const pi                 = Traits::pi();
-Type const pi_2               = Traits::pi_2();
-Type const pi_over_2          = Traits::pi_over_2();
-Type const pi_over_3          = Traits::pi_over_3();
-Type const pi_2_over_3        = Traits::pi_2_over_3();
-Type const pi_over_180        = Traits::pi_over_180();
-Type const degrees_to_radians = Traits::degrees_to_radians();
-Type const deg2rad            = Traits::deg2rad();
-Type const radians_to_degrees = Traits::radians_to_degrees();
-Type const rad2deg            = Traits::rad2deg();
-
-} // namespace ld
-
-
-// Real
-namespace r {
-
-typedef  NumericTraits< Type >  Traits;
-
-Type const zero               = Traits::zero();
-Type const one                = Traits::one();
-Type const two                = Traits::two();
-Type const pi                 = Traits::pi();
-Type const pi_2               = Traits::pi_2();
-Type const pi_over_2          = Traits::pi_over_2();
-Type const pi_over_3          = Traits::pi_over_3();
-Type const pi_2_over_3        = Traits::pi_2_over_3();
-Type const pi_over_180        = Traits::pi_over_180();
-Type const degrees_to_radians = Traits::degrees_to_radians();
-Type const deg2rad            = Traits::deg2rad();
-Type const radians_to_degrees = Traits::radians_to_degrees();
-Type const rad2deg            = Traits::rad2deg();
-
-} // namespace r
+//namespace f {
+//
+//typedef  NumericTraits< Type >  Traits;
+//
+//Type const zero               = Traits::zero();
+//Type const one                = Traits::one();
+//Type const two                = Traits::two();
+//Type const pi                 = Traits::pi();
+//Type const pi_2               = Traits::pi_2();
+//Type const pi_over_2          = Traits::pi_over_2();
+//Type const pi_over_3          = Traits::pi_over_3();
+//Type const pi_2_over_3        = Traits::pi_2_over_3();
+//Type const pi_over_180        = Traits::pi_over_180();
+//Type const degrees_to_radians = Traits::degrees_to_radians();
+//Type const deg2rad            = Traits::deg2rad();
+//Type const radians_to_degrees = Traits::radians_to_degrees();
+//Type const rad2deg            = Traits::rad2deg();
+//
+//} // namespace f
+//
+//
+//// double
+//namespace d {
+//
+//typedef  NumericTraits< Type >  Traits;
+//
+//Type const zero               = Traits::zero();
+//Type const one                = Traits::one();
+//Type const two                = Traits::two();
+//Type const pi                 = Traits::pi();
+//Type const pi_2               = Traits::pi_2();
+//Type const pi_over_2          = Traits::pi_over_2();
+//Type const pi_over_3          = Traits::pi_over_3();
+//Type const pi_2_over_3        = Traits::pi_2_over_3();
+//Type const pi_over_180        = Traits::pi_over_180();
+//Type const degrees_to_radians = Traits::degrees_to_radians();
+//Type const deg2rad            = Traits::deg2rad();
+//Type const radians_to_degrees = Traits::radians_to_degrees();
+//Type const rad2deg            = Traits::rad2deg();
+//
+//} // namespace d
+//
+//
+//// long double
+//namespace ld {
+//
+//typedef  NumericTraits< Type >  Traits;
+//
+//Type const zero               = Traits::zero();
+//Type const one                = Traits::one();
+//Type const two                = Traits::two();
+//Type const pi                 = Traits::pi();
+//Type const pi_2               = Traits::pi_2();
+//Type const pi_over_2          = Traits::pi_over_2();
+//Type const pi_over_3          = Traits::pi_over_3();
+//Type const pi_2_over_3        = Traits::pi_2_over_3();
+//Type const pi_over_180        = Traits::pi_over_180();
+//Type const degrees_to_radians = Traits::degrees_to_radians();
+//Type const deg2rad            = Traits::deg2rad();
+//Type const radians_to_degrees = Traits::radians_to_degrees();
+//Type const rad2deg            = Traits::rad2deg();
+//
+//} // namespace ld
+//
+//
+//// Real
+//namespace r {
+//
+//typedef  NumericTraits< Type >  Traits;
+//
+//Type const zero               = Traits::zero();
+//Type const one                = Traits::one();
+//Type const two                = Traits::two();
+//Type const pi                 = Traits::pi();
+//Type const pi_2               = Traits::pi_2();
+//Type const pi_over_2          = Traits::pi_over_2();
+//Type const pi_over_3          = Traits::pi_over_3();
+//Type const pi_2_over_3        = Traits::pi_2_over_3();
+//Type const pi_over_180        = Traits::pi_over_180();
+//Type const degrees_to_radians = Traits::degrees_to_radians();
+//Type const deg2rad            = Traits::deg2rad();
+//Type const radians_to_degrees = Traits::radians_to_degrees();
+//Type const rad2deg            = Traits::rad2deg();
+//
+//} // namespace r
 
 
 } // namespace constants

@@ -60,7 +60,7 @@ bool TMalign_poses(core::pose::Pose & aligned_pose,
 	TMalign tm_align;
 	std::string seq_pose, seq_ref, aligned;
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, aligned_pose, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, aligned_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 	core::Size n_mapped_residues=0;
 	core::Size normalize_length = aligned_pose.size() < ref_pose.size() ? aligned_pose.size() : ref_pose.size();
 
@@ -297,7 +297,7 @@ DomainAssembly::run()
 				TMalign tm_align;
 				std::string seq_pose, seq_ref, aligned;
 				core::id::AtomID_Map< core::id::AtomID > atom_map;
-				core::pose::initialize_atomid_map( atom_map, *poses_[ipose], core::id::BOGUS_ATOM_ID );
+				core::pose::initialize_atomid_map( atom_map, *poses_[ipose], core::id::AtomID::BOGUS_ATOM_ID() );
 				core::Size n_mapped_residues=0;
 
 				tm_align.apply(*poses_[ipose], *poses_[jpose], i_residue_list, j_residue_list);

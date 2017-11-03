@@ -110,13 +110,13 @@ static THREAD_LOCAL basic::Tracer TR( "smhybrid" );
 string & replace_string(string & s, string const & f, string const & r) {
 	size_t i = s.find(f);
 	bool replaced = false;
-	while( i != s.npos ) {
+	while ( i != s.npos ) {
 		// TR << i << " " << s.size() << " " << s.npos << std::endl;
 		s = s.replace(i,f.size(),r);
 		i = s.find(f,i);
 		replaced = true;
 	}
-	if(!replaced) utility_exit_with_message("no string replaced!!! probably mismatch tags in input and sym file");
+	if ( !replaced ) utility_exit_with_message("no string replaced!!! probably mismatch tags in input and sym file");
 	// TR << i << " " << s.size() << " " << s.npos << std::endl;
 	return s;
 }
@@ -124,7 +124,7 @@ string & replace_string(string & s, string const & f, string const & r) {
 core::pose::Pose append_jumpless_pose(core::pose::Pose const & pose1, core::pose::Pose const & pose2) {
 	core::pose::Pose pose(pose1);
 	pose.append_residue_by_jump(pose2.residue(1),pose.size());
-	for(Size i = 2; i <= pose2.size(); ++i ) {
+	for ( Size i = 2; i <= pose2.size(); ++i ) {
 		pose.append_residue_by_bond(pose2.residue(i));
 	}
 	return pose;
@@ -135,22 +135,22 @@ string process_ss_str(string in) {
 	string outss = "";
 	Size i = 0;
 	do {
-		if('{'==in[i]) {
+		if ( '{'==in[i] ) {
 			++i;
 			string beg,end;
-			while( i < in.size() && ','!=in[i] ) beg+=in[i++];
+			while ( i < in.size() && ','!=in[i] ) beg+=in[i++];
 			i++; // skip ','
-			while( i < in.size() && '}'!=in[i] ) end+=in[i++];
-			if( beg.size()==0 || end.size()==0 ) {
+			while ( i < in.size() && '}'!=in[i] ) end+=in[i++];
+			if ( beg.size()==0 || end.size()==0 ) {
 				utility_exit_with_message( "can't parse outss string '"+in+"'" );
 			}
 			Size ibeg = max(0,utility::string2int(beg));
 			Size iend = utility::string2int(end);
 			Size n = std::ceil(((Real)(iend-ibeg+1))*uniform()) - 1;
-			for(Size j = 1; j <= ibeg+n; ++j) outss += prevchar;
+			for ( Size j = 1; j <= ibeg+n; ++j ) outss += prevchar;
 			prevchar = NULL;
 		} else {
-			if( prevchar ) {
+			if ( prevchar ) {
 				TR << "append to outss " << prevchar << std::endl;
 				outss += prevchar;
 			}
@@ -158,14 +158,14 @@ string process_ss_str(string in) {
 		}
 		++i;
 	} while( i < in.size() );
-	if( prevchar && prevchar != '}' ) outss += prevchar;
+	if ( prevchar && prevchar != '}' ) outss += prevchar;
 	// std::cerr << "!!!!!!!!!!!!!!!!!! '" << in << "' '" << outss << "'" << std::endl;
 	return outss;
 }
 
 int up_jump_tree(Pose & pose, int rsd) {
-	for(int i = 1; i <= (int)pose.fold_tree().num_jump(); ++i) {
-		if( pose.fold_tree().downstream_jump_residue(i)==rsd ) {
+	for ( int i = 1; i <= (int)pose.fold_tree().num_jump(); ++i ) {
+		if ( pose.fold_tree().downstream_jump_residue(i)==rsd ) {
 			return pose.fold_tree().upstream_jump_residue(i);
 		}
 	}
@@ -174,14 +174,14 @@ int up_jump_tree(Pose & pose, int rsd) {
 
 
 // void addcc(core::pose::Pose & pose, core::id::AtomID aid, Size anchor, core::Real mult = 1.0 ) {
-// 	core::id::StubID sid(AtomID(1,anchor),AtomID(2,anchor),AtomID(3,anchor));
-// 	core::scoring::constraints::ConstraintOP cc = new core::scoring::constraints::LocalCoordinateConstraint(
-// 		aid, sid, pose.xyz(aid), new core::scoring::constraints::HarmonicFunc(0,mult) );
-// 	pose.add_constraint(cc);
+//  core::id::StubID sid(AtomID(1,anchor),AtomID(2,anchor),AtomID(3,anchor));
+//  core::scoring::constraints::ConstraintOP cc = new core::scoring::constraints::LocalCoordinateConstraint(
+//   aid, sid, pose.xyz(aid), new core::scoring::constraints::HarmonicFunc(0,mult) );
+//  pose.add_constraint(cc);
 // }
 
 void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID aid2, core::Real mean, core::Real sd,
-			 core::scoring::ScoreType st = core::scoring::atom_pair_constraint)
+	core::scoring::ScoreType st = core::scoring::atom_pair_constraint)
 {
 	core::scoring::constraints::ConstraintOP cc = new core::scoring::constraints::AtomPairConstraint(
 		aid1, aid2, new core::scoring::constraints::HarmonicFunc(mean,sd), st );
@@ -205,18 +205,18 @@ add_agc(
 
 void change_floating_sc_geometry(Pose & pose, Size rsd_in, Size nres) {
 	Pose before = pose;
-	for(Size rsd = rsd_in; rsd <= pose.size(); rsd+=nres) {
+	for ( Size rsd = rsd_in; rsd <= pose.size(); rsd+=nres ) {
 		Vec metal;
-		for(Size j = 1; j <= pose.fold_tree().num_jump(); ++j) {
-			if(pose.fold_tree().downstream_jump_residue(j) == (int)rsd) {
+		for ( Size j = 1; j <= pose.fold_tree().num_jump(); ++j ) {
+			if ( pose.fold_tree().downstream_jump_residue(j) == (int)rsd ) {
 				metal = pose.xyz(AtomID(1,pose.fold_tree().upstream_jump_residue(j)));
 				break;
 			}
 		}
-		if( pose.residue(rsd).name3()=="HSC" ) {
+		if ( pose.residue(rsd).name3()=="HSC" ) {
 			Size oldath=pose.residue(rsd).atom_index("NE2"), newath=pose.residue(rsd).atom_index("ND1"), ce1=pose.residue(rsd).atom_index("CE1");
 			string newatm = "ND1";
-			if( pose.xyz(AtomID(newath,rsd)).distance(metal) < pose.xyz(AtomID(oldath,rsd)).distance(metal) ) {
+			if ( pose.xyz(AtomID(newath,rsd)).distance(metal) < pose.xyz(AtomID(oldath,rsd)).distance(metal) ) {
 				newath=pose.residue(rsd).atom_index("NE2");
 				oldath=pose.residue(rsd).atom_index("ND1");
 				newatm = "NE2";
@@ -225,30 +225,29 @@ void change_floating_sc_geometry(Pose & pose, Size rsd_in, Size nres) {
 			Vec newcen = pose.xyz(AtomID(newath,rsd));
 			Vec oldcen = pose.xyz(AtomID(oldath,rsd));
 			Mat m = rotation_matrix_degrees(axis,142.3);
-			for(Size i = 1; i <= pose.residue_type(rsd).natoms(); ++i) {
+			for ( Size i = 1; i <= pose.residue_type(rsd).natoms(); ++i ) {
 				// TR << "change_floating_sc_geometry_reverse: moving atom " << i << " " << pose.residue(rsd).atom_name(i) << " res " << rsd << std::endl;
 				pose.set_xyz(AtomID(i,rsd),  m*(pose.xyz(AtomID(i,rsd))-newcen)+oldcen );
 			}
 			FoldTree ft = pose.fold_tree();
-			for(Size j = 1; j <= pose.fold_tree().num_jump(); ++j) {
-				if((pose.fold_tree().downstream_jump_residue(j)-1)%nres+1 == rsd && pose.fold_tree().upstream_atom(j).size()) {
+			for ( Size j = 1; j <= pose.fold_tree().num_jump(); ++j ) {
+				if ( (pose.fold_tree().downstream_jump_residue(j)-1)%nres+1 == rsd && pose.fold_tree().upstream_atom(j).size() ) {
 					ft.set_jump_atoms(j,ft.upstream_atom(j),newatm);
 				}
 			}
 			pose.fold_tree(ft);
-		} else if( pose.residue(rsd).name3()=="BPY" ) {
+		} else if ( pose.residue(rsd).name3()=="BPY" ) {
 			Vec axis = (pose.xyz(AtomID(pose.residue(rsd).atom_index("NE1"),rsd)) + pose.xyz(AtomID(pose.residue(rsd).atom_index("NN1"),rsd)))/2.0;
 			axis = (axis-metal).normalized();
 			Mat m = rotation_matrix_degrees(axis.normalized(),180.0);
 			Vec oldnn1 = pose.xyz(AtomID(pose.residue(rsd).atom_index("NN1"),rsd));
 			Vec oldne1 = pose.xyz(AtomID(pose.residue(rsd).atom_index("NE1"),rsd));
-			for(Size i = 1; i <= pose.residue_type(rsd).natoms(); ++i) {
+			for ( Size i = 1; i <= pose.residue_type(rsd).natoms(); ++i ) {
 				// TR << "change_floating_sc_geometry_reverse: moving atom " << i << " " << pose.residue(rsd).atom_name(i) << " res " << rsd << std::endl;
 				pose.set_xyz(AtomID(i,rsd),  m*(pose.xyz(AtomID(i,rsd))-metal)+metal );
 			}
-			if( std::fabs(pose.xyz(AtomID(pose.residue(rsd).atom_index("NE1"),rsd)).distance(oldnn1)) > 0.1 ||
-			    std::fabs(pose.xyz(AtomID(pose.residue(rsd).atom_index("NN1"),rsd)).distance(oldne1)) > 0.1 )
-			{
+			if ( std::fabs(pose.xyz(AtomID(pose.residue(rsd).atom_index("NE1"),rsd)).distance(oldnn1)) > 0.1 ||
+					std::fabs(pose.xyz(AtomID(pose.residue(rsd).atom_index("NN1"),rsd)).distance(oldne1)) > 0.1 ) {
 				before.dump_pdb("change_floating_sc_geometry_before.pdb");
 				std::ofstream out("change_floating_sc_geometry_before.pdb",std::ios::app);
 				out << "HETATM 9999 ZN    ZN A 999       " << F(5,3,metal.x()) << "   " << F(5,3,metal.y()) << "   " << F(5,3,metal.z()) << "  1.00  0.00              " << std::endl;
@@ -261,19 +260,19 @@ void change_floating_sc_geometry(Pose & pose, Size rsd_in, Size nres) {
 			}
 			/// below only works for 2 around z
 			// if(rsd != rsd_in) {
-			// 	numeric::xyzVector<Real> xyz1 = pose.xyz(AtomID(1,rsd_in));
-			// 	numeric::xyzVector<Real> xyz2 = pose.xyz(AtomID(1,rsd_in+nres));
-			// 	if( fabs(xyz1.x()+xyz2.x()) > 0.1 || fabs(xyz1.y()+xyz2.y()) > 0.1 || fabs(xyz1.z()-xyz2.z()) > 0.1 ) {
-			// 		before.dump_pdb("change_floating_sc_geometry_before.pdb");
-			// 		std::ofstream out("change_floating_sc_geometry_before.pdb",std::ios::app);
-			// 		out << "HETATM 9999 ZN    ZN A 999       " << F(5,3,metal.x()) << "   " << F(5,3,metal.y()) << "   " << F(5,3,metal.z()) << "  1.00  0.00              " << std::endl;
-			// 		out << "HETATM 9999 PT    PT A 999       " << F(5,3,(metal+axis).x()) << "   " << F(5,3,(metal+axis).y()) << "   " << F(5,3,(metal+axis).z()) << "  1.00  0.00              " << std::endl;
-			// 		pose  .dump_pdb("change_floating_sc_geometry_after.pdb");
-			// 		std::ofstream out2("change_floating_sc_geometry_after.pdb",std::ios::app);
-			// 		out2 << "HETATM 9999 ZN    ZN A 999       " << F(5,3,metal.x()) << "   " << F(5,3,metal.y()) << "   " << F(5,3,metal.z()) << "  1.00  0.00              " << std::endl;
-			// 		out2 << "HETATM 9999 PT    PT A 999       " << F(5,3,(metal+axis).x()) << "   " << F(5,3,(metal+axis).y()) << "   " << F(5,3,(metal+axis).z()) << "  1.00  0.00              " << std::endl;
-			// 		utility_exit_with_message("ERROR in change_floating_sc_geometry_reverse! BPY");
-			// 	}
+			//  numeric::xyzVector<Real> xyz1 = pose.xyz(AtomID(1,rsd_in));
+			//  numeric::xyzVector<Real> xyz2 = pose.xyz(AtomID(1,rsd_in+nres));
+			//  if( fabs(xyz1.x()+xyz2.x()) > 0.1 || fabs(xyz1.y()+xyz2.y()) > 0.1 || fabs(xyz1.z()-xyz2.z()) > 0.1 ) {
+			//   before.dump_pdb("change_floating_sc_geometry_before.pdb");
+			//   std::ofstream out("change_floating_sc_geometry_before.pdb",std::ios::app);
+			//   out << "HETATM 9999 ZN    ZN A 999       " << F(5,3,metal.x()) << "   " << F(5,3,metal.y()) << "   " << F(5,3,metal.z()) << "  1.00  0.00              " << std::endl;
+			//   out << "HETATM 9999 PT    PT A 999       " << F(5,3,(metal+axis).x()) << "   " << F(5,3,(metal+axis).y()) << "   " << F(5,3,(metal+axis).z()) << "  1.00  0.00              " << std::endl;
+			//   pose  .dump_pdb("change_floating_sc_geometry_after.pdb");
+			//   std::ofstream out2("change_floating_sc_geometry_after.pdb",std::ios::app);
+			//   out2 << "HETATM 9999 ZN    ZN A 999       " << F(5,3,metal.x()) << "   " << F(5,3,metal.y()) << "   " << F(5,3,metal.z()) << "  1.00  0.00              " << std::endl;
+			//   out2 << "HETATM 9999 PT    PT A 999       " << F(5,3,(metal+axis).x()) << "   " << F(5,3,(metal+axis).y()) << "   " << F(5,3,(metal+axis).z()) << "  1.00  0.00              " << std::endl;
+			//   utility_exit_with_message("ERROR in change_floating_sc_geometry_reverse! BPY");
+			//  }
 			// }
 		}
 	}
@@ -294,11 +293,11 @@ public:
 
 	Real func( Real const x ) const {
 		Real const z = ( x-x0_ )/sd_;
-		if(z < 0) return -z;
+		if ( z < 0 ) return -z;
 		else return z;
 	}
 	Real dfunc( Real const x ) const {
-		if(x-x0_ < 0) return -1.0/sd_;
+		if ( x-x0_ < 0 ) return -1.0/sd_;
 		else return 1.0/sd_;
 	}
 
@@ -345,11 +344,11 @@ public:
 	clone() const { return new RepFunc( *this ); }
 
 	Real func( Real const x ) const {
-		if(x >= range_) return 0;
+		if ( x >= range_ ) return 0;
 		return (x-range_)*(x-range_)*height_;
 	}
 	Real dfunc( Real const x ) const {
-		if(x >= range_) return 0;
+		if ( x >= range_ ) return 0;
 		return 2*(x-range_)*height_;
 	}
 
@@ -426,7 +425,7 @@ struct PoseWrap : public ReferenceCount {
 	Size which_subsub(Size i) {
 		i = (i-1)%nres+1;
 		Size j = 1;
-		while( j <= subsub_ends_.size() && i > subsub_ends_[j] ) j++;
+		while ( j <= subsub_ends_.size() && i > subsub_ends_[j] ) j++;
 		return j;
 	}
 	Size which_sub(Size i) {
@@ -461,29 +460,29 @@ struct PoseWrap : public ReferenceCount {
 		using namespace conformation;
 		using namespace pose;
 
-		if(poses.size()!=rel_attach .size()) utility_exit_with_message( "attach_rsd  must be specified for every pose" );
-		if(poses.size()!=attach_atom.size()) utility_exit_with_message( "attach_atom must be specified for every pose" );
-		if(poses.size()!=ss_pref    .size()) utility_exit_with_message( "ss_pref     must be specified for every pose" );
-		if(poses.size()!=ss_suff    .size()) utility_exit_with_message( "ss_suff     must be specified for every pose" );
+		if ( poses.size()!=rel_attach .size() ) utility_exit_with_message( "attach_rsd  must be specified for every pose" );
+		if ( poses.size()!=attach_atom.size() ) utility_exit_with_message( "attach_atom must be specified for every pose" );
+		if ( poses.size()!=ss_pref    .size() ) utility_exit_with_message( "ss_pref     must be specified for every pose" );
+		if ( poses.size()!=ss_suff    .size() ) utility_exit_with_message( "ss_suff     must be specified for every pose" );
 
 		scattach_res_user.push_back(vector1<Size>());
 
 		primary_subsub = option[ basic::options::OptionKeys::smhybrid::primary_subsubunit ]();
 		debug = option[basic::options::OptionKeys::smhybrid::debug]();
 
-		for( Size i = 1; i <= poses.size(); ++i ) {
-			if( attach_as_sc_in[i] && (ss_pref[i].size()>0 || ss_suff[i].size()>0) ) {
+		for ( Size i = 1; i <= poses.size(); ++i ) {
+			if ( attach_as_sc_in[i] && (ss_pref[i].size()>0 || ss_suff[i].size()>0) ) {
 				utility_exit_with_message("can't have prefix or suffix on pose attached as side chain!! "+string_of(i)+" pref:  '"+ss_pref[i]+"' suff: '"+ss_suff[i]+"'");
 			}
 		}
 
-		 fa_residue_set_ = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		fa_residue_set_ = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		cen_residue_set_ = ChemicalManager::get_instance()->residue_type_set( CENTROID    );
 
 		has_floating_sc = false;
 		// TR << "BLAH " << rel_attach.size() << " " << ss_pref.size() << " " << ss_suff.size() << std::endl;
 
-		for(Size i = 1, e = poses_.size(); i <= e; ++i) {
+		for ( Size i = 1, e = poses_.size(); i <= e; ++i ) {
 			core::pose::Pose tmp(poses_[i]);
 			// tmp.dump_pdb("tmp"+string_of(i)+".pdb");
 			// set ss
@@ -493,31 +492,31 @@ struct PoseWrap : public ReferenceCount {
 
 			ss_ += ss_pref[i];
 			scattach_res_user.push_back(vector1<Size>());
-			for(Size j = 1; j <=   design_res_in[i].size(); ++j)   design_res_user   .push_back(  design_res_in[i][j]+ss_.size());
-			for(Size j = 1; j <=    fixed_res_in[i].size(); ++j)    fixed_res_user   .push_back(   fixed_res_in[i][j]+ss_.size());
-			for(Size j = 1; j <=     frag_res_in[i].size(); ++j)     frag_res_user   .push_back(    frag_res_in[i][j]+ss_.size());
-			for(Size j = 1; j <=  virtual_res_in[i].size(); ++j)  virtual_res_user   .push_back( virtual_res_in[i][j]+ss_.size());
-			for(Size j = 1; j <= scattach_res_in[i].size(); ++j) scattach_res_user[i].push_back(scattach_res_in[i][j]+ss_.size());
+			for ( Size j = 1; j <=   design_res_in[i].size(); ++j )   design_res_user   .push_back(  design_res_in[i][j]+ss_.size());
+			for ( Size j = 1; j <=    fixed_res_in[i].size(); ++j )    fixed_res_user   .push_back(   fixed_res_in[i][j]+ss_.size());
+			for ( Size j = 1; j <=     frag_res_in[i].size(); ++j )     frag_res_user   .push_back(    frag_res_in[i][j]+ss_.size());
+			for ( Size j = 1; j <=  virtual_res_in[i].size(); ++j )  virtual_res_user   .push_back( virtual_res_in[i][j]+ss_.size());
+			for ( Size j = 1; j <= scattach_res_in[i].size(); ++j ) scattach_res_user[i].push_back(scattach_res_in[i][j]+ss_.size());
 
 			// Size ins_frag_segment_edge = 3;
 			bool marked_subsub_fixed = false;
-			for(Size j=1;j<=tmp.size();++j) {
+			for ( Size j=1; j<=tmp.size(); ++j ) {
 				// if( frag_res_in[i].size() ) {
-					if(std::find(frag_res_in[i].begin(),frag_res_in[i].end(),j)!=frag_res_in[i].end()) {
-						ss_ += tmp.secstruct(j);
-					} else {
-						ss_ += 'F';
+				if ( std::find(frag_res_in[i].begin(),frag_res_in[i].end(),j)!=frag_res_in[i].end() ) {
+					ss_ += tmp.secstruct(j);
+				} else {
+					ss_ += 'F';
+				}
+				if ( ss_[ss_.size()]=='F' || std::find(fixed_res_in[i].begin(),fixed_res_in[i].end(),j)!=fixed_res_in[i].end() ) {
+					if ( !marked_subsub_fixed ) {
+						marked_subsub_fixed = true;
+						subsub_fixed_begin.push_back(ss_.size());
+						subsub_fixed_end  .push_back(ss_.size());
 					}
-					if(ss_[ss_.size()]=='F' || std::find(fixed_res_in[i].begin(),fixed_res_in[i].end(),j)!=fixed_res_in[i].end()) {
-						if(!marked_subsub_fixed) {
-							marked_subsub_fixed = true;
-							subsub_fixed_begin.push_back(ss_.size());
-							subsub_fixed_end  .push_back(ss_.size());
-						}
-						subsub_fixed_end.back() = ss_.size();
-					}
+					subsub_fixed_end.back() = ss_.size();
+				}
 			}
-			if( ! marked_subsub_fixed ) {
+			if ( ! marked_subsub_fixed ) {
 				subsub_fixed_begin.push_back(0);
 				subsub_fixed_end.push_back(0);
 			}
@@ -525,16 +524,16 @@ struct PoseWrap : public ReferenceCount {
 			ss_ += ss_suff[i];
 			TR << "subunit " << i << " ss: " << ss_ << std::endl;
 			// create tmp pose with pref and suff
-			if(tmp.residue(              1).is_protein()) remove_lower_terminus_type_from_pose_residue(tmp,1);
-			if(tmp.residue(tmp.size()).is_protein()) remove_upper_terminus_type_from_pose_residue(tmp,tmp.size());
-			for( Size j = 1; j <= ss_pref[i].size(); ++j ) {
-				char c = 'L'; if(res_pref[i].size()==ss_pref[i].size()) c = res_pref[i][ss_pref.size()-i];
+			if ( tmp.residue(              1).is_protein() ) remove_lower_terminus_type_from_pose_residue(tmp,1);
+			if ( tmp.residue(tmp.size()).is_protein() ) remove_upper_terminus_type_from_pose_residue(tmp,tmp.size());
+			for ( Size j = 1; j <= ss_pref[i].size(); ++j ) {
+				char c = 'L'; if ( res_pref[i].size()==ss_pref[i].size() ) c = res_pref[i][ss_pref.size()-i];
 				string name3 = name_from_aa(aa_from_oneletter_code(c));
 				tmp.prepend_polymer_residue_before_seqpos(*ResidueFactory::create_residue(fa_residue_set_->name_map(name3)),1,true);
 				// tmp.set_phi  (1,-60); tmp.set_psi  (1,-45); tmp.set_omega(1,180);
 			}
-			for( Size j = 1; j <= ss_suff[i].size(); ++j ) {
-				char c = 'L'; if(res_suff[i].size()==ss_suff[i].size()) c = res_suff[i][ss_suff.size()-i];
+			for ( Size j = 1; j <= ss_suff[i].size(); ++j ) {
+				char c = 'L'; if ( res_suff[i].size()==ss_suff[i].size() ) c = res_suff[i][ss_suff.size()-i];
 				string name3 = name_from_aa(aa_from_oneletter_code(c));
 				tmp.append_residue_by_bond(*ResidueFactory::create_residue(fa_residue_set_->name_map(name3)),true);
 				// tmp.set_phi  (tmp.size(),-60); tmp.set_psi  (tmp.size(),-45); tmp.set_omega(tmp.size(),180);
@@ -542,23 +541,23 @@ struct PoseWrap : public ReferenceCount {
 			// append to main pose
 			attach_rsd_.push_back(pose.size()+ss_pref[i].size()+rel_attach[i]);
 			pose.append_residue_by_jump(tmp.residue(1),pose.size());
-			for(Size j = 2; j <= tmp.size(); ++j ) {
-				if(! tmp.residue(j).is_lower_terminus() ) {
+			for ( Size j = 2; j <= tmp.size(); ++j ) {
+				if ( ! tmp.residue(j).is_lower_terminus() ) {
 					pose.append_residue_by_bond(tmp.residue(j));
 				} else {
 					pose.append_residue_by_jump(tmp.residue(j),pose.size());
 				}
 			}
 
-			for(Size j = 1; j <= rep_edge_res_in[i].size(); ++j) {
+			for ( Size j = 1; j <= rep_edge_res_in[i].size(); ++j ) {
 				rep_edge_res_.push_back( rep_edge_res_in[i][j] + pose.size() - tmp.size() + ss_pref[i].size() );
 			}
 
-			if(i != 1 ) cuts_.push_back( pose.size() - tmp.size() );
-			if(i != 1 ) jmpu_.push_back(attach_rsd_[i-1]);
-			if(i != 1 ) jmpd_.push_back(attach_rsd_[i  ]);
-			if( jumpcut[i].size() > 0 ) {
-				for( Size j = 1; j <= jumpcut[i].size(); ++j ) {
+			if ( i != 1 ) cuts_.push_back( pose.size() - tmp.size() );
+			if ( i != 1 ) jmpu_.push_back(attach_rsd_[i-1]);
+			if ( i != 1 ) jmpd_.push_back(attach_rsd_[i  ]);
+			if ( jumpcut[i].size() > 0 ) {
+				for ( Size j = 1; j <= jumpcut[i].size(); ++j ) {
 					jmpu_     .push_back( jumpcut[i][j].x() + pose.size() - tmp.size() + ss_pref[i].size() );
 					jmpd_     .push_back( jumpcut[i][j].y() + pose.size() - tmp.size() + ss_pref[i].size() );
 					cuts_     .push_back( jumpcut[i][j].z() + pose.size() - tmp.size() + ss_pref[i].size() );
@@ -567,20 +566,20 @@ struct PoseWrap : public ReferenceCount {
 				}
 			} else {
 				FoldTree ft = poses_[i].fold_tree();
-				for( Size j = 1; j <= ft.num_jump(); ++j ) {
+				for ( Size j = 1; j <= ft.num_jump(); ++j ) {
 					jmpu_     .push_back( ft.  upstream_jump_residue(j) + pose.size() - tmp.size() + ss_pref[i].size() );
 					jmpd_     .push_back( ft.downstream_jump_residue(j) + pose.size() - tmp.size() + ss_pref[i].size() );
 					cuts_     .push_back( ft.cutpoint_by_jump       (j) + pose.size() - tmp.size() + ss_pref[i].size() );
 					TR << "adding jmps/cuts from orig subsub pose " << jmpu_[jmpu_.size()] << " " << jmpd_[jmpd_.size()] << " " << cuts_[cuts_.size()] << std::endl;
 				}
 			}
-			for(Size j = 1; j <= ss_pref[i].size(); ++j) linker_res_.push_back(pose.size()-tmp.size()+j);
-			for(Size j = ss_suff[i].size(); j >= 1; --j) linker_res_.push_back(pose.size()-j+1);
+			for ( Size j = 1; j <= ss_pref[i].size(); ++j ) linker_res_.push_back(pose.size()-tmp.size()+j);
+			for ( Size j = ss_suff[i].size(); j >= 1; --j ) linker_res_.push_back(pose.size()-j+1);
 
 			attach_as_sc_.push_back(attach_as_sc_in[i]);
-			if(attach_as_sc_in[i] > 0) {
+			if ( attach_as_sc_in[i] > 0 ) {
 				floating_scs_.push_back(attach_rsd_[i]);
-				if(attach_as_sc_in[i] > poses.size()) utility_exit_with_message("subsub "+string_of(attach_as_sc_in[i])+" doesn't exist!");
+				if ( attach_as_sc_in[i] > poses.size() ) utility_exit_with_message("subsub "+string_of(attach_as_sc_in[i])+" doesn't exist!");
 				floating_scs_subsub_.push_back(attach_as_sc_in[i]);
 				has_floating_sc = true;
 			}
@@ -600,68 +599,70 @@ struct PoseWrap : public ReferenceCount {
 		// TR << ss_.size() << " " << pose.size() << std::endl;
 		assert( ss_.size() == pose.size() );
 
-		if(debug) dump_pdb("init0.pdb");
+		if ( debug ) dump_pdb("init0.pdb");
 
-		TR << "PoweWrap constructor attach:"; for(Size i=1;i<=attach_rsd_.size();++i) TR << " " << attach_rsd_[i]; TR << std::endl;
+		TR << "PoweWrap constructor attach:"; for ( Size i=1; i<=attach_rsd_.size(); ++i ) TR << " " << attach_rsd_[i];
+		TR << std::endl;
 		TR << "jumps/cuts size " << jmpu_.size() << " " << jmpd_.size() << " " << cuts_.size() << std::endl;
-		TR << "PoweWrap constructor jumps/cuts :"; for(Size i=1;i<=cuts_.size();++i) TR << jmpu_[i] << " " << jmpd_[i] << " " << cuts_[i] << ",  "; TR << std::endl;
+		TR << "PoweWrap constructor jumps/cuts :"; for ( Size i=1; i<=cuts_.size(); ++i ) TR << jmpu_[i] << " " << jmpd_[i] << " " << cuts_[i] << ",  ";
+		TR << std::endl;
 
 
 		//////// add variants
-		if( floating_scs_.size() > 1 ) {
+		if ( floating_scs_.size() > 1 ) {
 			// utility_exit_with_message("only support one floating sc at the moment");
 			TR.Warning << "morethan one floating SC may be trouble!!!" << std::endl;
 		}
-		for(Size i = 1; i <= user_cuts_.size(); ++i) {
+		for ( Size i = 1; i <= user_cuts_.size(); ++i ) {
 			// if not a floating SC and not a terminus, put cut points
-			if( find(floating_scs_.begin(),floating_scs_.end(),user_cuts_[i])   != floating_scs_.end() ) continue;
-			if( find(floating_scs_.begin(),floating_scs_.end(),user_cuts_[i]+1) != floating_scs_.end() ) continue;
-			if( pose.residue(user_cuts_[i]).is_upper_terminus() ) continue;
+			if ( find(floating_scs_.begin(),floating_scs_.end(),user_cuts_[i])   != floating_scs_.end() ) continue;
+			if ( find(floating_scs_.begin(),floating_scs_.end(),user_cuts_[i]+1) != floating_scs_.end() ) continue;
+			if ( pose.residue(user_cuts_[i]).is_upper_terminus() ) continue;
 			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, user_cuts_[i]   );
 			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, user_cuts_[i]+1 );
 		}
-		for(Size i = 1; i <= chainbreaks_.size()-1; ++i) {
-			if(chainbreaks_[i]) {
-				if(pose.residue(subsub_ends_[i]).is_protein() && pose.residue(subsub_ends_[i]+1).is_protein() ) {
+		for ( Size i = 1; i <= chainbreaks_.size()-1; ++i ) {
+			if ( chainbreaks_[i] ) {
+				if ( pose.residue(subsub_ends_[i]).is_protein() && pose.residue(subsub_ends_[i]+1).is_protein() ) {
 					core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, subsub_ends_[i]   );
 					core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, subsub_ends_[i]+1 );
 				} else {
 					utility_exit_with_message("tried to add cutpoint to non-protein residue!");
 				}
 			} else {
-				if(pose.residue(subsub_ends_[i]+1).is_protein()) add_lower_terminus_type_to_pose_residue(pose,subsub_starts_[i+1]);
-				if(pose.residue(subsub_ends_[i]  ).is_protein()) add_upper_terminus_type_to_pose_residue(pose,subsub_ends_  [i  ]);
+				if ( pose.residue(subsub_ends_[i]+1).is_protein() ) add_lower_terminus_type_to_pose_residue(pose,subsub_starts_[i+1]);
+				if ( pose.residue(subsub_ends_[i]  ).is_protein() ) add_upper_terminus_type_to_pose_residue(pose,subsub_ends_  [i  ]);
 			}
 		}
-		if( chainbreaks_[chainbreaks_.size()] ) {
-			if(pose.residue(pose.size()).is_protein()) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, pose.size() );
-			if(pose.residue(1               ).is_protein()) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, 1    );
+		if ( chainbreaks_[chainbreaks_.size()] ) {
+			if ( pose.residue(pose.size()).is_protein() ) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, pose.size() );
+			if ( pose.residue(1               ).is_protein() ) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, 1    );
 		} else {
-			if(pose.residue(1               ).is_protein()) pose::add_lower_terminus_type_to_pose_residue(pose,1);
-			if(pose.residue(pose.size()).is_protein()) pose::add_upper_terminus_type_to_pose_residue(pose,pose.size());
+			if ( pose.residue(1               ).is_protein() ) pose::add_lower_terminus_type_to_pose_residue(pose,1);
+			if ( pose.residue(pose.size()).is_protein() ) pose::add_upper_terminus_type_to_pose_residue(pose,pose.size());
 		}
-		for( Size i = 1; i <= floating_scs_.size(); ++i ) {
+		for ( Size i = 1; i <= floating_scs_.size(); ++i ) {
 			core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_BBCB",floating_scs_[i]);
 		}
-		if(option[basic::options::OptionKeys::smhybrid::virtual_nterm]()) {
-			if(debug) pose.dump_pdb("before_vnterm.pdb");
+		if ( option[basic::options::OptionKeys::smhybrid::virtual_nterm]() ) {
+			if ( debug ) pose.dump_pdb("before_vnterm.pdb");
 			// remove_lower_terminus_type_from_pose_residue(pose,1);
-			if(!pose.residue(1).is_lower_terminus()) utility_exit_with_message("virtual_nterm requested, but res 1 isn't terminus");
-			if(pose.residue(1).is_upper_terminus()) pose::remove_upper_terminus_type_from_pose_residue(pose,1);
+			if ( !pose.residue(1).is_lower_terminus() ) utility_exit_with_message("virtual_nterm requested, but res 1 isn't terminus");
+			if ( pose.residue(1).is_upper_terminus() ) pose::remove_upper_terminus_type_from_pose_residue(pose,1);
 			core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_NTERM",1);
 		}
 
-		if(debug) dump_pdb("init1.pdb");
+		if ( debug ) dump_pdb("init1.pdb");
 
 		//////////// setup fold tree
 		// TR << "FT " << pose.fold_tree() << std::endl;
 		std::map<Size,string> jump_atom;
-		for(Size i = 1; i <= attach_rsd_.size(); ++i ) {
+		for ( Size i = 1; i <= attach_rsd_.size(); ++i ) {
 			jump_atom[attach_rsd_[i]] = attach_atom_[i];
 		}
 		ObjexxFCL::FArray2D_int jumps(2,cuts_.size());
 		ObjexxFCL::FArray1D_int cuts(cuts_.size());
-		for(Size i = 1; i <= cuts_.size(); ++i ) {
+		for ( Size i = 1; i <= cuts_.size(); ++i ) {
 			cuts(   i) = cuts_[i];
 			jumps(1,i) = jmpu_[i];//attach_rsd_[i];
 			jumps(2,i) = jmpd_[i];//attach_rsd_[i+1];
@@ -672,25 +673,25 @@ struct PoseWrap : public ReferenceCount {
 		TR << ft << std::endl;
 		ft.reorder(attach_rsd_[primary_subsub]);
 		std::vector<Size> seenit;
-		for(Size i = 1; i <= ft.num_jump(); ++i ) {
+		for ( Size i = 1; i <= ft.num_jump(); ++i ) {
 			string up = "N", dn = "N";
-			if( jump_atom.find(ft.  upstream_jump_residue(i)) != jump_atom.end() ) up = jump_atom[ft.  upstream_jump_residue(i)];
-			if( jump_atom.find(ft.downstream_jump_residue(i)) != jump_atom.end() ) dn = jump_atom[ft.downstream_jump_residue(i)];
+			if ( jump_atom.find(ft.  upstream_jump_residue(i)) != jump_atom.end() ) up = jump_atom[ft.  upstream_jump_residue(i)];
+			if ( jump_atom.find(ft.downstream_jump_residue(i)) != jump_atom.end() ) dn = jump_atom[ft.downstream_jump_residue(i)];
 			ft.set_jump_atoms(i, up, dn );
 			seenit.push_back(ft.downstream_jump_residue(i));
 			TR << "removing " << ft.downstream_jump_residue(i) << " from root contention" << std::endl;
 		}
 		Size count = 0;
-		for(std::map<Size,string>::iterator i = jump_atom.begin(); i != jump_atom.end(); ++i) {
+		for ( std::map<Size,string>::iterator i = jump_atom.begin(); i != jump_atom.end(); ++i ) {
 			// TR << "POSEWRAP checking jump " << i->first << " " << i->second << std::endl;
-			if(std::find(seenit.begin(),seenit.end(),i->first)!=seenit.end()) continue;
-			if( jump_atom.find(i->first) == jump_atom.end() ) continue;
+			if ( std::find(seenit.begin(),seenit.end(),i->first)!=seenit.end() ) continue;
+			if ( jump_atom.find(i->first) == jump_atom.end() ) continue;
 			TR << "POSEWRAP setting fold tree root " << i->first << " " << i->second << " " << pose.residue(i->first).atom_index(i->second) << std::endl;
 			ft.reorder(i->first);
 			// TR << "POSEWRAP setting fold tree root atomno " << i->first << " " << i->second << " " << pose.residue(i->first).atom_index(i->second) << std::endl;
 			set_root_atomno( pose.residue(i->first).atom_index(i->second) );
 			++count;
-			if(count > 1) utility_exit_with_message( "should only be 1 anchor left as root after adding jumps" );
+			if ( count > 1 ) utility_exit_with_message( "should only be 1 anchor left as root after adding jumps" );
 		}
 		TR << "POSEWRAP done setting up fold tree" << std::endl;
 		pose.fold_tree(ft);
@@ -700,19 +701,19 @@ struct PoseWrap : public ReferenceCount {
 
 		TR << "expanding symm def template" << std::endl;
 		utility::options::StringVectorOption & symm_file_tag = option[ basic::options::OptionKeys::smhybrid::symm_file_tag ];
-		if( primary_subsub > poses.size() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
-		if( attach_rsd_[primary_subsub] < 1                ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
-		if( attach_rsd_[primary_subsub] > pose.size() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
+		if ( primary_subsub > poses.size() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
+		if ( attach_rsd_[primary_subsub] < 1                ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
+		if ( attach_rsd_[primary_subsub] > pose.size() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
 		string pstr = symm_file_tag[primary_subsub];
 		Size n_eq_primary = 0;
-		for(Size i = 1; i <= symm_file_tag.size(); ++i) {
-			if(symm_file_tag[i]==pstr) n_eq_primary++;
-			if(symm_file_tag[i]!=pstr) symm_def_template = replace_string(symm_def_template,symm_file_tag[i],string_of(attach_rsd_[i]));
+		for ( Size i = 1; i <= symm_file_tag.size(); ++i ) {
+			if ( symm_file_tag[i]==pstr ) n_eq_primary++;
+			if ( symm_file_tag[i]!=pstr ) symm_def_template = replace_string(symm_def_template,symm_file_tag[i],string_of(attach_rsd_[i]));
 			else                       symm_def_template = replace_string(symm_def_template,symm_file_tag[i]," ");
-			if(symm_file_tag[i]!=pstr) symm_def_template_reduced = replace_string(symm_def_template_reduced,symm_file_tag[i],string_of(attach_rsd_[i]));
+			if ( symm_file_tag[i]!=pstr ) symm_def_template_reduced = replace_string(symm_def_template_reduced,symm_file_tag[i],string_of(attach_rsd_[i]));
 			else                       symm_def_template_reduced = replace_string(symm_def_template_reduced,symm_file_tag[i]," ");
 		}
-		if(n_eq_primary!=1) {
+		if ( n_eq_primary!=1 ) {
 			utility_exit_with_message("must be exactly one primary subunit... this is seriously messed up "+primary_subsub);
 		}
 		TR << "making symm data" << std::endl;
@@ -727,7 +728,7 @@ struct PoseWrap : public ReferenceCount {
 
 		orig_pose = pose;
 
-		if(debug) dump_pdb("init2.pdb");
+		if ( debug ) dump_pdb("init2.pdb");
 
 		// TR << "POSEWRAP switch_to_residue_type_set cen" << std::endl;
 		// core::chemical::switch_to_residue_type_set( pose, core::chemical::CENTROID );
@@ -738,57 +739,57 @@ struct PoseWrap : public ReferenceCount {
 		TR << "POSEWRAP make_symmetric_pose DONE" << std::endl;
 		std::map<Size,core::conformation::symmetry::SymDof> dofs = symmetry::symmetry_info(pose)->get_dofs();
 		std::map<Size,core::conformation::symmetry::SymDof>::iterator i;
-		for( i = dofs.begin(); i != dofs.end(); ++i ) {
+		for ( i = dofs.begin(); i != dofs.end(); ++i ) {
 			TR << "DOF " << i->first << " " << i->second << std::endl;
 		}
 
 
 		// if( !option[basic::options::OptionKeys::smhybrid::refine]() ) {
-		// 	TR << "POSEWRAP set symm dofs" << std::endl;
-		// 	protocols::rigid::RigidBodyDofSeqRandomizeMover symsetup(dofs);
-		// 	symsetup.apply(pose);
-		// 	// for(Size i = 1; i <= 3; ++i)	change_floating_sc_geometry(pose,floating_scs_[i],nres);
-		// 	// for(Size i = 1; i <= 2; ++i)	change_floating_sc_geometry(pose,floating_scs_[i],nres);
-		// 	// for(Size i = 1; i <= 1; ++i)	change_floating_sc_geometry(pose,floating_scs_[i],nres);
-		// 	for(Size i = 0; i < 30; i++) {
-		// 		symsetup.apply(pose);
-		// 		pose.dump_pdb("sym_init"+string_of(i)+".pdb");
-		// 	}
-		// 	// for(Size i = 1; i <= 3; ++i)	change_floating_sc_geometry(pose,floating_scs_[3],nres);
-		// 	// // symsetup.apply(pose);
-		// 	// pose.dump_pdb("sym_init6.pdb");
-		// 	// symsetup.apply(pose);
-		// 	// pose.dump_pdb("sym_init7.pdb");
-		// 	// symsetup.apply(pose);
-		// 	// pose.dump_pdb("sym_init8.pdb");
-		// 	// symsetup.apply(pose);
-		// 	// pose.dump_pdb("sym_init9.pdb");
-		// 	std::exit(-1);
+		//  TR << "POSEWRAP set symm dofs" << std::endl;
+		//  protocols::rigid::RigidBodyDofSeqRandomizeMover symsetup(dofs);
+		//  symsetup.apply(pose);
+		//  // for(Size i = 1; i <= 3; ++i) change_floating_sc_geometry(pose,floating_scs_[i],nres);
+		//  // for(Size i = 1; i <= 2; ++i) change_floating_sc_geometry(pose,floating_scs_[i],nres);
+		//  // for(Size i = 1; i <= 1; ++i) change_floating_sc_geometry(pose,floating_scs_[i],nres);
+		//  for(Size i = 0; i < 30; i++) {
+		//   symsetup.apply(pose);
+		//   pose.dump_pdb("sym_init"+string_of(i)+".pdb");
+		//  }
+		//  // for(Size i = 1; i <= 3; ++i) change_floating_sc_geometry(pose,floating_scs_[3],nres);
+		//  // // symsetup.apply(pose);
+		//  // pose.dump_pdb("sym_init6.pdb");
+		//  // symsetup.apply(pose);
+		//  // pose.dump_pdb("sym_init7.pdb");
+		//  // symsetup.apply(pose);
+		//  // pose.dump_pdb("sym_init8.pdb");
+		//  // symsetup.apply(pose);
+		//  // pose.dump_pdb("sym_init9.pdb");
+		//  std::exit(-1);
 		// }
 
 		nsub = symmetry::symmetry_info(pose)->subunits(); // TODO read from SymmData
 
-		if(debug) dump_pdb("sym_init1.pdb");
+		if ( debug ) dump_pdb("sym_init1.pdb");
 
 		// if( !option[basic::options::OptionKeys::smhybrid::refine]() ) {
-			// for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs.begin(); i != dofs.end(); ++i) {
-			// 	if( i->second.allow_dof(1) && i->second.allow_dof(2) && i->second.allow_dof(3) &&
-			// 		i->second.allow_dof(4) && i->second.allow_dof(5) && i->second.allow_dof(6) ) continue; // ignore the "RB" 6 dof jumps
-			// 	core::kinematics::Jump j(pose.jump(i->first));
-			// 	j.set_translation( j.get_translation() + Vec(-40.0,0,0) );
-			// 	pose.set_jump(i->first,j);
-			// }
-
-			TR << "POSEWRAP set phispsi" << std::endl;
-			for(Size i = 1; i <= nres; ++i) {
-				if(std::find(linker_res_.begin(),linker_res_.end(),i)==linker_res_.end()) continue;
-				// if('F'==ss(i)) continue;
-				pose.set_phi(i,-60); pose.set_psi(i,-45); pose.set_omega(i,180);
-			}
+		// for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs.begin(); i != dofs.end(); ++i) {
+		//  if( i->second.allow_dof(1) && i->second.allow_dof(2) && i->second.allow_dof(3) &&
+		//   i->second.allow_dof(4) && i->second.allow_dof(5) && i->second.allow_dof(6) ) continue; // ignore the "RB" 6 dof jumps
+		//  core::kinematics::Jump j(pose.jump(i->first));
+		//  j.set_translation( j.get_translation() + Vec(-40.0,0,0) );
+		//  pose.set_jump(i->first,j);
 		// }
-		if(debug)pose.dump_pdb("sym_init2.pdb");
+
+		TR << "POSEWRAP set phispsi" << std::endl;
+		for ( Size i = 1; i <= nres; ++i ) {
+			if ( std::find(linker_res_.begin(),linker_res_.end(),i)==linker_res_.end() ) continue;
+			// if('F'==ss(i)) continue;
+			pose.set_phi(i,-60); pose.set_psi(i,-45); pose.set_omega(i,180);
+		}
+		// }
+		if ( debug ) pose.dump_pdb("sym_init2.pdb");
 		switch_to_cen();
-		if(debug) {
+		if ( debug ) {
 			pose.dump_pdb("sym_init_switch_to_cen1.pdb");
 			switch_to_fa();
 			pose.dump_pdb("sym_init_switch_to_fa.pdb");
@@ -815,16 +816,16 @@ struct PoseWrap : public ReferenceCount {
 
 		ft = pose.fold_tree();
 		TR << ft << std::endl;
-		for(Size j = 1; j <= ft.num_jump(); ++j ) {
-			if( ft.downstream_jump_residue(j) > (int)nres && ft.upstream_jump_residue(j) > (int)nres ) continue;
+		for ( Size j = 1; j <= ft.num_jump(); ++j ) {
+			if ( ft.downstream_jump_residue(j) > (int)nres && ft.upstream_jump_residue(j) > (int)nres ) continue;
 			TR << "EDGE " << ft.jump_edge(j) << std::endl;
 		}
 		// TR << "add_constraints_from_cmdline_to_pose BEFORE NCST: " << pose.constraint_set()->get_all_constraints().size() << std::endl;
 		core::scoring::constraints::add_constraints_from_cmdline_to_pose( pose );
 		// core::scoring::constraints::ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
 		// for(Size i = 1; i <= cs.size(); i++) {
-		// 	TR << "cst " << i << std::endl;
-		// 	cs[i]->show(TR);
+		//  TR << "cst " << i << std::endl;
+		//  cs[i]->show(TR);
 		// }
 		TR << "add_constraints_from_cmdline_to_pose AFTER  NCST: " << pose.constraint_set()->get_all_constraints().size() << std::endl;
 
@@ -835,41 +836,41 @@ struct PoseWrap : public ReferenceCount {
 		// std::exit(-1);
 
 
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::linker_cst]() ) {
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::linker_cst]() ) {
 			using namespace core::scoring::constraints;
 			ConstraintCOPs ac;
 			Size beg=1, end=subsub_starts_.size();
-			while(beg < subsub_starts_.size() && attach_as_sc_[beg]) beg++;
-			while(end > 0 && attach_as_sc_[end]) end--;
-			if( beg < end ) {
+			while ( beg < subsub_starts_.size() && attach_as_sc_[beg] ) beg++;
+			while ( end > 0 && attach_as_sc_[end] ) end--;
+			if ( beg < end ) {
 				ac.push_back(new AtomPairConstraint( AtomID(1,subsub_starts_[beg]), AtomID(3,   nres              ), new AbsFunc(0,1), core::scoring::coordinate_constraint ) );
 				ac.push_back(new AtomPairConstraint( AtomID(1,subsub_starts_[end]), AtomID(3,subsub_starts_[end]-1), new AbsFunc(0,1), core::scoring::coordinate_constraint ) );
 				pose.add_constraint(new AmbiguousConstraint(ac));
 			}
 		}
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::subsubs_attract]() ) {
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::subsubs_attract]() ) {
 			using namespace core::scoring::constraints;
 			vector1<Size> real_subsubs;
-			for(Size i = 1; i <= attach_as_sc_.size(); ++i) if(!attach_as_sc_[i]) real_subsubs.push_back(i);
-			for(Size i = 1; i <= real_subsubs.size(); ++i) {
-				for(Size j = 1; j <= real_subsubs.size(); ++j) {
-					if(   j > i) {
+			for ( Size i = 1; i <= attach_as_sc_.size(); ++i ) if ( !attach_as_sc_[i] ) real_subsubs.push_back(i);
+			for ( Size i = 1; i <= real_subsubs.size(); ++i ) {
+				for ( Size j = 1; j <= real_subsubs.size(); ++j ) {
+					if (   j > i ) {
 						Size ires=0,jres=0;
-						for(Size jmp = 1; jmp <= pose.fold_tree().num_jump(); ++jmp) {
-							if(pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[i]]) ires = pose.fold_tree().upstream_jump_residue(jmp);
-							if(pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[j]]) jres = pose.fold_tree().upstream_jump_residue(jmp);
+						for ( Size jmp = 1; jmp <= pose.fold_tree().num_jump(); ++jmp ) {
+							if ( pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[i]] ) ires = pose.fold_tree().upstream_jump_residue(jmp);
+							if ( pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[j]] ) jres = pose.fold_tree().upstream_jump_residue(jmp);
 						}
-						if( ires * jres == 0 ) utility_exit_with_message("ires or jres is 0!!!");
+						if ( ires * jres == 0 ) utility_exit_with_message("ires or jres is 0!!!");
 						pose.add_constraint(new AtomPairConstraint(AtomID(1,ires),AtomID(1,jres),new AbsFunc(0,1),core::scoring::coordinate_constraint ));
 						TR << "adding subsub's attract cst sub 1-" << i << " 2-" << j << " " << ires << " " << jres << std::endl;
 					}
-					if(nsub > 1) {
+					if ( nsub > 1 ) {
 						Size ires=0,jres=0;
-						for(Size jmp = 1; jmp <= pose.fold_tree().num_jump(); ++jmp) {
-							if(pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[i]]          ) ires = pose.fold_tree().upstream_jump_residue(jmp);
-							if(pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[j]]+(int)nres) jres = pose.fold_tree().upstream_jump_residue(jmp);
+						for ( Size jmp = 1; jmp <= pose.fold_tree().num_jump(); ++jmp ) {
+							if ( pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[i]]          ) ires = pose.fold_tree().upstream_jump_residue(jmp);
+							if ( pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[j]]+(int)nres ) jres = pose.fold_tree().upstream_jump_residue(jmp);
 						}
-						if( ires * jres == 0 ) utility_exit_with_message("ires or jres is 0!!!");
+						if ( ires * jres == 0 ) utility_exit_with_message("ires or jres is 0!!!");
 						pose.add_constraint(new AtomPairConstraint(AtomID(1,ires),AtomID(1,jres),new AbsFunc(0,1),core::scoring::coordinate_constraint ));
 						TR << "adding subsub's attract cst sub 2-" << i << " 2-" << j << " " << ires << " " << jres << std::endl;
 					}
@@ -882,15 +883,15 @@ struct PoseWrap : public ReferenceCount {
 		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[6]),AtomID(1,attach_rsd_[5]+nres),new AbsFunc(0,1) ));
 		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[6]),AtomID(1,attach_rsd_[6]+nres),new AbsFunc(0,1) ));
 
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::pseudosym]() ) {
-			if( pose.size() < 2*nres ) {
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::pseudosym]() ) {
+			if ( pose.size() < 2*nres ) {
 				utility_exit_with_message("pseudosym requires at least 2 subunits!!!");
 			}
 			using namespace core::scoring::constraints;
 			FuncOP h = new HarmonicFunc(0,3.0);
 			Size sp = 10;
-			for(Size i = 1; i <=nres; i+=sp) {
-				for(Size j = i+sp; j <=nres; j+=sp) {
+			for ( Size i = 1; i <=nres; i+=sp ) {
+				for ( Size j = i+sp; j <=nres; j+=sp ) {
 					Size a1=i, a2=j+nres, b1=i+nres, b2=j;
 					TR << "Pseudo-sym cst: " << a1 << " " << a2 << " " << b1 << " " << b2 << std::endl;
 					CoupledFunc* cf = new CoupledFunc(&pose,AtomID(2,a1),AtomID(2,a2),AtomID(2,b1),AtomID(2,b2),h);
@@ -901,38 +902,38 @@ struct PoseWrap : public ReferenceCount {
 		}
 
 
-		if( option[basic::options::OptionKeys::edensity::mapfile].user() ) {
+		if ( option[basic::options::OptionKeys::edensity::mapfile].user() ) {
 			protocols::electron_density::SetupForDensityScoringMover m;
 			m.apply(pose);
 		}
 
-		if(debug)pose.dump_pdb("sym_init4.pdb");
+		if ( debug ) pose.dump_pdb("sym_init4.pdb");
 
 		// std::exit(-1);
 		// for(Size i=1; i < 10; i+=1) {
-		// 	for(Size j=1; j <= pose.fold_tree().num_jump(); ++j) {
-		// 		if(pose.fold_tree().downstream_jump_residue(j)==1) {
-		// 			core::kinematics::Jump jmp(pose.jump(j));
-		// 			jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
-		// 			pose.set_jump(j,jmp);
-		// 		}
-		// 		if(pose.fold_tree().downstream_jump_residue(j)==2) {
-		// 			core::kinematics::Jump jmp(pose.jump(j));
-		// 			jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
-		// 			pose.set_jump(j,jmp);
-		// 		}
-		// 		// if(pose.fold_tree().downstream_jump_residue(j)==3) {
-		// 		// 	core::kinematics::Jump jmp(pose.jump(j));
-		// 		// 	jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
-		// 		// 	pose.set_jump(j,jmp);
-		// 		// }
-		// 		// if(pose.fold_tree().downstream_jump_residue(j)==4) {
-		// 		// 	core::kinematics::Jump jmp(pose.jump(j));
-		// 		// 	jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
-		// 		// 	pose.set_jump(j,jmp);
-		// 		// }
-		// 	}
-		// 	dump_pdb("sym_init_"+string_of(i)+".pdb");
+		//  for(Size j=1; j <= pose.fold_tree().num_jump(); ++j) {
+		//   if(pose.fold_tree().downstream_jump_residue(j)==1) {
+		//    core::kinematics::Jump jmp(pose.jump(j));
+		//    jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
+		//    pose.set_jump(j,jmp);
+		//   }
+		//   if(pose.fold_tree().downstream_jump_residue(j)==2) {
+		//    core::kinematics::Jump jmp(pose.jump(j));
+		//    jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
+		//    pose.set_jump(j,jmp);
+		//   }
+		//   // if(pose.fold_tree().downstream_jump_residue(j)==3) {
+		//   //  core::kinematics::Jump jmp(pose.jump(j));
+		//   //  jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
+		//   //  pose.set_jump(j,jmp);
+		//   // }
+		//   // if(pose.fold_tree().downstream_jump_residue(j)==4) {
+		//   //  core::kinematics::Jump jmp(pose.jump(j));
+		//   //  jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
+		//   //  pose.set_jump(j,jmp);
+		//   // }
+		//  }
+		//  dump_pdb("sym_init_"+string_of(i)+".pdb");
 		// }
 		// std::exit(-1);
 		// TR << "score after adding csts: " << ssf(pose) << std::endl;
@@ -942,8 +943,8 @@ struct PoseWrap : public ReferenceCount {
 		// ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
 		// TR << "num cst: " << cs.size() << std::endl;
 		// for(Size i = 1; i <= cs.size(); i++) {
-		// 	TR << "cst " << i << std::endl;
-		// 	cs[i]->show(TR);
+		//  TR << "cst " << i << std::endl;
+		//  cs[i]->show(TR);
 		// }
 		// // std::exit(-1);
 		//
@@ -956,11 +957,11 @@ struct PoseWrap : public ReferenceCount {
 		// pose.set_xyz(AtomID(5,scattach_res_user[1]),pose.xyz(AtomID(5,floating_scs_[1])));
 		//
 		// for(Real i = -10; i <= 10; i+=1.0 ) {
-		// 	pose.set_xyz(AtomID(1,scattach_res_user[1]),pose.xyz(AtomID(1,floating_scs_[1]))+Vec(i,0,0));
-		// 	pose.set_xyz(AtomID(2,scattach_res_user[1]),pose.xyz(AtomID(2,floating_scs_[1]))+Vec(i,0,0));
-		// 	pose.set_xyz(AtomID(3,scattach_res_user[1]),pose.xyz(AtomID(3,floating_scs_[1]))+Vec(i,0,0));
-		// 	pose.set_xyz(AtomID(5,scattach_res_user[1]),pose.xyz(AtomID(5,floating_scs_[1]))+Vec(i,0,0));
-		// 	TR << i << " " << ssf(pose) << std::endl;
+		//  pose.set_xyz(AtomID(1,scattach_res_user[1]),pose.xyz(AtomID(1,floating_scs_[1]))+Vec(i,0,0));
+		//  pose.set_xyz(AtomID(2,scattach_res_user[1]),pose.xyz(AtomID(2,floating_scs_[1]))+Vec(i,0,0));
+		//  pose.set_xyz(AtomID(3,scattach_res_user[1]),pose.xyz(AtomID(3,floating_scs_[1]))+Vec(i,0,0));
+		//  pose.set_xyz(AtomID(5,scattach_res_user[1]),pose.xyz(AtomID(5,floating_scs_[1]))+Vec(i,0,0));
+		//  TR << i << " " << ssf(pose) << std::endl;
 		// }
 		// ssf.show(pose);
 		//
@@ -968,31 +969,31 @@ struct PoseWrap : public ReferenceCount {
 
 		// dump_pdb("PoseWrap_symm_0.pdb");
 		// for(Size iter = 1; iter < 10; iter++ ) {
-		// 	for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs.begin(); i != dofs.end(); ++i) {
-		// 			core::kinematics::Jump j(pose.jump(i->first));
-		// 			j.set_translation( j.get_translation() + Vec(gaussian()*4,0,0) );
-		// 			j.set_rotation(numeric::rotation_matrix(Vec(1,0,0),gaussian())*j.get_rotation());
-		// 			pose.set_jump(i->first,j);
-		// 		}
-		// 	// for(Size j = 1; j <= 4; ++j) {
-		// 	// 	pose.set_chi( j, attach_rsd_[1], pose.chi(j,attach_rsd_[1]) + 10.0);
-		// 	// }
-		// 	dump_pdb("PoseWrap_symm_"+string_of(iter)+".pdb");
+		//  for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs.begin(); i != dofs.end(); ++i) {
+		//    core::kinematics::Jump j(pose.jump(i->first));
+		//    j.set_translation( j.get_translation() + Vec(gaussian()*4,0,0) );
+		//    j.set_rotation(numeric::rotation_matrix(Vec(1,0,0),gaussian())*j.get_rotation());
+		//    pose.set_jump(i->first,j);
+		//   }
+		//  // for(Size j = 1; j <= 4; ++j) {
+		//  //  pose.set_chi( j, attach_rsd_[1], pose.chi(j,attach_rsd_[1]) + 10.0);
+		//  // }
+		//  dump_pdb("PoseWrap_symm_"+string_of(iter)+".pdb");
 		// }
 		//
 		// std::exit(-1);
 
 		// pose.dump_pdb("pw_init_done.pdb");
 
-		if (option[ basic::options::OptionKeys::parser::view ]()) {
+		if ( option[ basic::options::OptionKeys::parser::view ]() ) {
 			protocols::viewer::add_conformation_viewer(pose.conformation(),"smhybrid",1000,1000);
 		}
 
 
 		// pose.dump_pdb("test0.pdb");
 		// for(Size i = 1; i < 10; ++i) {
-		// 	pose.set_chi(4,1,pose.chi(4,1)+10.0);
-		// 	pose.dump_pdb("test"+string_of(i)+".pdb");
+		//  pose.set_chi(4,1,pose.chi(4,1)+10.0);
+		//  pose.dump_pdb("test"+string_of(i)+".pdb");
 		// }
 		// std::exit(-1);
 
@@ -1005,8 +1006,8 @@ struct PoseWrap : public ReferenceCount {
 		// TR << "NUM CST BEFORE: " << pose.constraint_set()->get_all_constraints().size() << std::endl;
 		ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
 		ConstraintCOPs rem;
-		for(Size i = 1; i <= cs.size(); i++) {
-			if( cs[i]->type() != "AmbiguousConstraint" ) continue;
+		for ( Size i = 1; i <= cs.size(); i++ ) {
+			if ( cs[i]->type() != "AmbiguousConstraint" ) continue;
 			rem.push_back(cs[i]);
 		}
 		pose.remove_constraints(rem);
@@ -1023,29 +1024,29 @@ struct PoseWrap : public ReferenceCount {
 		// hfunc->show(TR);
 		// Size last_subsub = 0;
 		floating_scs_sub_ = basic::options::option[basic::options::OptionKeys::smhybrid::attach_as_sc_sub]();
-		while(floating_scs_sub_.size() < floating_scs_sub_.size()) floating_scs_sub_.push_back(1);
-		for(Size i = 1; i <= floating_scs_.size(); ++i) {
+		while ( floating_scs_sub_.size() < floating_scs_sub_.size() ) floating_scs_sub_.push_back(1);
+		for ( Size i = 1; i <= floating_scs_.size(); ++i ) {
 			TR << i << " Adding floating scs constraints " << floating_scs_[i] << " " << floating_scs_subsub_[i] << " " << scattach_res_user[floating_scs_subsub_[i]].size() << " " << floating_scs_sub_[i] << std::endl;
 			vector1<Size> scattach_res = scattach_res_user[floating_scs_subsub_[i]];
 			// if(!last_subsub) last_subsub = floating_scs_subsub_[i];
 			// if( floating_scs_subsub_[i] != last_subsub && pose.size() > 2*nres ) { // TODO FIX THIS HACK.. asusmes inter-subunit
-			// 	TR << "shifting scattach res to next subunit" << std::endl;
-			// 	for(Size j = 1; j <= scattach_res.size(); ++j ) {
-			// 		scattach_res[j] = scattach_res[j] + nres;
-			// 	}
-			// 	floating_scs_sub_.push_back(2);
+			//  TR << "shifting scattach res to next subunit" << std::endl;
+			//  for(Size j = 1; j <= scattach_res.size(); ++j ) {
+			//   scattach_res[j] = scattach_res[j] + nres;
+			//  }
+			//  floating_scs_sub_.push_back(2);
 			// } else {
-				// floating_scs_sub_.push_back(scattach_sub[i]);
+			// floating_scs_sub_.push_back(scattach_sub[i]);
 			// }
 			// last_subsub = floating_scs_subsub_[i];
 			ConstraintCOPs ac;
-			for(Size j = 1; j <= scattach_res.size(); ++j) {
+			for ( Size j = 1; j <= scattach_res.size(); ++j ) {
 				// TR << "scattach_res " << i << " " << j << " " << scattach_res[j] << std::endl;
-				if( pose.residue(scattach_res[j]).name3() == "GLY" ) continue;
-				if( pose.residue(scattach_res[j]).name3() == "PRO" ) continue;
+				if ( pose.residue(scattach_res[j]).name3() == "GLY" ) continue;
+				if ( pose.residue(scattach_res[j]).name3() == "PRO" ) continue;
 				ConstraintCOPs mc;
 				FuncOP bb,cb;
-				if(pose.residue(floating_scs_[i]).name3()=="BPY") {
+				if ( pose.residue(floating_scs_[i]).name3()=="BPY" ) {
 					bb = afunc1; cb = afunc3;
 				} else {
 					bb = afunc2; cb = afunc6;
@@ -1057,37 +1058,37 @@ struct PoseWrap : public ReferenceCount {
 				ac.push_back(new MultiConstraint(mc));
 				TR << "adding cst " << i << " " << j << " " << scattach_res[j]+(floating_scs_sub_[i]-1)*nres << std::endl;
 			}
-			if(ac.size()) pose.add_constraint(new AmbiguousConstraint(ac));
+			if ( ac.size() ) pose.add_constraint(new AmbiguousConstraint(ac));
 			else utility_exit_with_message("no floating sidechain attachments speficied!");
 		}
 
 		// for(Size i = 1; i <= floating_scs_.size(); ++i) {
-		// 	for(Size j = 1; j <= floating_scs_.size(); ++j) {
-		// 		for(Size k = 0; k < nsub; ++k) {
-		// 			Size r1 = floating_scs_[i];
-		// 			Size r2 = floating_scs_[j]+k*nres;
-		// 			if(r1 >= r2) continue;
-		// 			for(Size a1 = 1; a1 <= pose.residue(r1).nheavyatoms(); ++a1) {
-		// 				for(Size a2 = 1; a2 <= pose.residue(r2).nheavyatoms(); ++a2) {
-		// 					Real d = 4.0;
-		// 					if( a1 < 5 && a2 < 5 ) d = 8.0;
-		// 					pose.add_constraint(new core::scoring::constraints::AtomPairConstraint(AtomID(a1,r1),AtomID(a2,r2), new RepFunc(d,20.0) ), core::scoring::coordinate_constraint);
-		// 				}
-		// 			}
-		// 		}
-		// 	}
+		//  for(Size j = 1; j <= floating_scs_.size(); ++j) {
+		//   for(Size k = 0; k < nsub; ++k) {
+		//    Size r1 = floating_scs_[i];
+		//    Size r2 = floating_scs_[j]+k*nres;
+		//    if(r1 >= r2) continue;
+		//    for(Size a1 = 1; a1 <= pose.residue(r1).nheavyatoms(); ++a1) {
+		//     for(Size a2 = 1; a2 <= pose.residue(r2).nheavyatoms(); ++a2) {
+		//      Real d = 4.0;
+		//      if( a1 < 5 && a2 < 5 ) d = 8.0;
+		//      pose.add_constraint(new core::scoring::constraints::AtomPairConstraint(AtomID(a1,r1),AtomID(a2,r2), new RepFunc(d,20.0) ), core::scoring::coordinate_constraint);
+		//     }
+		//    }
+		//   }
+		//  }
 		// }
 		// prevents res in same subsub from overlapping
 		// if(basic::options::option[basic::options::OptionKeys::smhybrid::floating_scs_rep]() && nsub > 1) {
-		for(Size k = 1; k <= nsub; ++k) {
-			for(Size i = 1; i <= floating_scs_.size(); ++i) {
-				Size s = 1;	if(k == 1) s = i+1;
-				for(Size j = s; j <= floating_scs_.size(); ++j) {
+		for ( Size k = 1; k <= nsub; ++k ) {
+			for ( Size i = 1; i <= floating_scs_.size(); ++i ) {
+				Size s = 1; if ( k == 1 ) s = i+1;
+				for ( Size j = s; j <= floating_scs_.size(); ++j ) {
 					ConstraintCOPs ac;
 					TR << "adding fsc CA rep cstres1=" << floating_scs_[i] << " cstres2=" << floating_scs_[j]+(k-1)*nres << " | i=" << i << " j=" << j << " k=" << k << " n=" << nres << std::endl;
 					ac.push_back(new core::scoring::constraints::AtomPairConstraint(
-					   AtomID(2,floating_scs_[i]),AtomID(2,floating_scs_[j]+(k-1)*nres),
-					   new RepFunc(8.0,1000.0), core::scoring::coordinate_constraint ));
+						AtomID(2,floating_scs_[i]),AtomID(2,floating_scs_[j]+(k-1)*nres),
+						new RepFunc(8.0,1000.0), core::scoring::coordinate_constraint ));
 					pose.add_constraint(new AmbiguousConstraint(ac));
 				}
 			}
@@ -1097,7 +1098,7 @@ struct PoseWrap : public ReferenceCount {
 		// std::exit(-1);
 		// TR << "BPY CB IS: " << pose.residue(1).atom_index("CB") << std::endl;
 		// for(Size i = 1; i <= pose.residue(1).natoms(); ++i) {
-		// 	TR << "BPY atom " << i << " " << pose.residue(1).atom_name(i) << std::endl;
+		//  TR << "BPY atom " << i << " " << pose.residue(1).atom_name(i) << std::endl;
 		// }
 
 	}
@@ -1106,8 +1107,8 @@ struct PoseWrap : public ReferenceCount {
 	Size set_root_atomno() { return root_atomno_; }
 
 	bool move_chi(Size rsd) {
-		for(Size i = 1; i <= attach_rsd_.size(); ++i ) {
-			if( rsd == attach_rsd_[i] && attach_atom_[i] != "N" && pose.residue(rsd).is_protein() ) return true;
+		for ( Size i = 1; i <= attach_rsd_.size(); ++i ) {
+			if ( rsd == attach_rsd_[i] && attach_atom_[i] != "N" && pose.residue(rsd).is_protein() ) return true;
 		}
 		return false;
 	}
@@ -1123,52 +1124,52 @@ struct PoseWrap : public ReferenceCount {
 
 	string tag() {
 		string r = tag_;
-		for(Size i = 1; i <= attached_scattach_res_.size(); ++i) r += "_"+string_of(attached_scattach_res_[i]);
+		for ( Size i = 1; i <= attached_scattach_res_.size(); ++i ) r += "_"+string_of(attached_scattach_res_[i]);
 		return r;
 	}
 	// core::pose::Pose make_mono_pose( core::pose::Pose const & in ) const {
-	// 	// create_subpose(
-	// 	// 	Pose const & src,
-	// 	// 	vector1< Size > const & positions,
-	// 	// 	kinematics::FoldTree const & f,
-	// 	// 	Pose & pose
-	// 	// );
+	//  // create_subpose(
+	//  //  Pose const & src,
+	//  //  vector1< Size > const & positions,
+	//  //  kinematics::FoldTree const & f,
+	//  //  Pose & pose
+	//  // );
 	//
-	// 	ObjexxFCL::FArray2D_int jumps(2,cuts_.size());
-	// 	ObjexxFCL::FArray1D_int cuts(cuts_.size());
-	// 	for(Size i = 1; i <= cuts_.size(); ++i ) {
-	// 		cuts(i) = cuts_[i];
-	// 		jumps(1,i) = attach_rsd_[i];
-	// 		jumps(2,i) = attach_rsd_[i+1];
-	// 	}
-	// 	core::kinematics::FoldTree ft = pose.fold_tree();
-	// 	ft.tree_from_jumps_and_cuts(nres,cuts_.size(),jumps,cuts,attach_rsd_[1]);
+	//  ObjexxFCL::FArray2D_int jumps(2,cuts_.size());
+	//  ObjexxFCL::FArray1D_int cuts(cuts_.size());
+	//  for(Size i = 1; i <= cuts_.size(); ++i ) {
+	//   cuts(i) = cuts_[i];
+	//   jumps(1,i) = attach_rsd_[i];
+	//   jumps(2,i) = attach_rsd_[i+1];
+	//  }
+	//  core::kinematics::FoldTree ft = pose.fold_tree();
+	//  ft.tree_from_jumps_and_cuts(nres,cuts_.size(),jumps,cuts,attach_rsd_[1]);
 	//
-	// 	vector1<Size> pos;
-	// 	for(Size i = 1; i <= nres; ++i) pos.push_back(i);
+	//  vector1<Size> pos;
+	//  for(Size i = 1; i <= nres; ++i) pos.push_back(i);
 	//
-	// 	core::pose::Pose pose;
-	// 	core::pose::create_subpose(in,pos,ft,pose);
-	// 	return pose;
+	//  core::pose::Pose pose;
+	//  core::pose::create_subpose(in,pos,ft,pose);
+	//  return pose;
 	// }
 	// void make_full_pose(core::pose::Pose & mono_pose) const {
-	// 	core::conformation::symmetry::make_symmetric_pose( mono_pose, *symm_data_full );
+	//  core::conformation::symmetry::make_symmetric_pose( mono_pose, *symm_data_full );
 	// }
 	// Size get_region(Size rsd) {
-	// 	for(Size i = 1; i<= cuts_.size(); ++i) if( rsd <= cuts_[i] ) return i;
-	// 	return cuts_.size()+1;
+	//  for(Size i = 1; i<= cuts_.size(); ++i) if( rsd <= cuts_[i] ) return i;
+	//  return cuts_.size()+1;
 	// }
 	void dump_pdb(string fname, bool fullsymm=false) {
 		using namespace ObjexxFCL::format;
 
 		core::pose::Pose out_pose;
-		if( fullsymm ) {
-		// 	// TR << "init pose nres " << pose.size() << std::endl;
-		// 	out_pose = make_mono_pose(pose);
-		// 	// TR << "mono pose nres " << out_pose.size() << std::endl;
-		// 	make_full_pose(out_pose);
-		// 	// TR << "full pose nres " << out_pose.size() << std::endl;
-		//
+		if ( fullsymm ) {
+			//  // TR << "init pose nres " << pose.size() << std::endl;
+			//  out_pose = make_mono_pose(pose);
+			//  // TR << "mono pose nres " << out_pose.size() << std::endl;
+			//  make_full_pose(out_pose);
+			//  // TR << "full pose nres " << out_pose.size() << std::endl;
+			//
 			out_pose = pose;
 		} else  {
 			out_pose = pose;
@@ -1178,12 +1179,12 @@ struct PoseWrap : public ReferenceCount {
 
 		out << "REMARK   1" << std::endl;
 		out << "REMARK   2 " << tag_ << std::endl;
-		for(Size i = 1; i <= attached_scattach_res_.size(); ++i) {
+		for ( Size i = 1; i <= attached_scattach_res_.size(); ++i ) {
 			string s = " ABABABABABABABABABABABABABABABABAB";
 			out << "REMARK   3 " << attached_scattach_res_[i] << " " << s[which_subsub(attached_scattach_res_[i])] << std::endl;
 		}
 
-		if(basic::options::option[basic::options::OptionKeys::smhybrid::add_metal_at_0]()) {
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::add_metal_at_0]() ) {
 			out << "HETATM 9999 ZN    ZN A 999       0.000   0.000   0.000  1.00  0.00              " << std::endl;
 		}
 
@@ -1191,10 +1192,10 @@ struct PoseWrap : public ReferenceCount {
 		{
 			utility::options::StringVectorOption & add_atom_at_cen = option[ basic::options::OptionKeys::smhybrid::add_atom_at_cen ];
 			core::kinematics::FoldTree const & ft( out_pose.fold_tree());
-			for( Size i = 1; i <= ft.num_jump(); ++i ) {
-				for( Size j = 1; j <= attach_rsd_.size(); ++j ) {
-					if( add_atom_at_cen[j] == "_" ) continue;
-					if( (ft.downstream_jump_residue(i)-1)%nres+1 == attach_rsd_[j] && ft.downstream_jump_residue(i) <= (int)(nsub*nres) ) {
+			for ( Size i = 1; i <= ft.num_jump(); ++i ) {
+				for ( Size j = 1; j <= attach_rsd_.size(); ++j ) {
+					if ( add_atom_at_cen[j] == "_" ) continue;
+					if ( (ft.downstream_jump_residue(i)-1)%nres+1 == attach_rsd_[j] && ft.downstream_jump_residue(i) <= (int)(nsub*nres) ) {
 						Vec o = out_pose.xyz(core::id::AtomID(1,ft.upstream_jump_residue(i)));
 						added.push_back(o);
 						// TR << "output metal at origin of " << ft.upstream_jump_residue(i) << " " << add_atom_at_cen[j] << " " << o << std::endl;
@@ -1206,18 +1207,18 @@ struct PoseWrap : public ReferenceCount {
 		numeric::xyzVector<Real> shift;
 		// center output on added atom, if only one
 		Real mxdis = 0.0;
-		for(Size i = 1; i <= added.size(); ++i) {
-			for(Size j = i; j <= added.size(); ++j) {
+		for ( Size i = 1; i <= added.size(); ++i ) {
+			for ( Size j = i; j <= added.size(); ++j ) {
 				mxdis = numeric::max(added[i].distance_squared(added[j]),mxdis);
 			}
 		}
 		// if(added.size() > 0) {
-		if(mxdis < 0.01 && added.size() > 0) {
+		if ( mxdis < 0.01 && added.size() > 0 ) {
 			shift = added[1];
 		} else {
 			Real N = 0;
-			for(Size i = 1; i <= pose.size(); ++i) {
-				for(Size j = 1; j <= pose.residue_type(i).natoms(); ++j) {
+			for ( Size i = 1; i <= pose.size(); ++i ) {
+				for ( Size j = 1; j <= pose.residue_type(i).natoms(); ++j ) {
 					N += 1.0;
 					shift += out_pose.xyz(AtomID(j,i));
 				}
@@ -1225,8 +1226,8 @@ struct PoseWrap : public ReferenceCount {
 			shift /= N;
 		}
 
-		for(Size i = 1; i <= pose.size(); ++i) {
-			for(Size j = 1; j <= pose.residue_type(i).natoms(); ++j) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
+			for ( Size j = 1; j <= pose.residue_type(i).natoms(); ++j ) {
 				out_pose.set_xyz( AtomID(j,i), out_pose.xyz(AtomID(j,i)) - shift );
 			}
 		}
@@ -1236,10 +1237,10 @@ struct PoseWrap : public ReferenceCount {
 		{
 			utility::options::StringVectorOption & add_atom_at_cen = option[ basic::options::OptionKeys::smhybrid::add_atom_at_cen ];
 			core::kinematics::FoldTree const & ft( out_pose.fold_tree());
-			for( Size i = 1; i <= ft.num_jump(); ++i ) {
-				for( Size j = 1; j <= attach_rsd_.size(); ++j ) {
-					if( add_atom_at_cen[j] == "_" ) continue;
-					if( (ft.downstream_jump_residue(i)-1)%nres+1 == attach_rsd_[j] && ft.downstream_jump_residue(i) <= (int)(nsub*nres) ) {
+			for ( Size i = 1; i <= ft.num_jump(); ++i ) {
+				for ( Size j = 1; j <= attach_rsd_.size(); ++j ) {
+					if ( add_atom_at_cen[j] == "_" ) continue;
+					if ( (ft.downstream_jump_residue(i)-1)%nres+1 == attach_rsd_[j] && ft.downstream_jump_residue(i) <= (int)(nsub*nres) ) {
 						Vec o = out_pose.xyz(core::id::AtomID(1,ft.upstream_jump_residue(i)));
 						Size subunit = (ft.downstream_jump_residue(i)-1) / nres;
 						char chain = utility::UPPERCASE_LETTERS[(subunit-1)%26];
@@ -1251,13 +1252,13 @@ struct PoseWrap : public ReferenceCount {
 			}
 		}
 
-		if(basic::options::option[basic::options::OptionKeys::smhybrid::add_cavities]()) {
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::add_cavities]() ) {
 			core::scoring::packstat::output_packstat_pdb(out_pose,out);
 		}
 
 		// std::map< string, core::conformation::symmetry::VirtualCoordinate > const & m( symm_data->get_virtual_coordinates() );
 		// for( std::map< string, core::conformation::symmetry::VirtualCoordinate >::const_iterator i = m.begin(); i != m.end(); ++i ) {
-		// 	TR << i->first << " " << i->second.get_x() << " " << i->second.get_y() << " " << i->second.get_origin() << std::endl;
+		//  TR << i->first << " " << i->second.get_x() << " " << i->second.get_y() << " " << i->second.get_origin() << std::endl;
 		// }
 
 	}
@@ -1269,12 +1270,12 @@ struct PoseWrap : public ReferenceCount {
 	void align_orig_pose( Size beg, Size end ) {
 		using namespace core;
 		id::AtomID_Map< id::AtomID > atom_map;
-		id::initialize( atom_map, orig_pose, id::BOGUS_ATOM_ID ); // maps every atomid to bogus atom
+		id::initialize( atom_map, orig_pose, id::AtomID::BOGUS_ATOM_ID() ); // maps every atomid to bogus atom
 
 		for ( Size i=beg; i<=end; ++i ) {
-		  id::AtomID const id1( orig_pose.residue(i).atom_index("CA"), i );
-		  id::AtomID const id2( pose     .residue(i).atom_index("CA"), i );
-		  atom_map[ id1 ] = id2;
+			id::AtomID const id1( orig_pose.residue(i).atom_index("CA"), i );
+			id::AtomID const id2( pose     .residue(i).atom_index("CA"), i );
+			atom_map[ id1 ] = id2;
 		}
 		scoring::superimpose_pose( orig_pose, pose, atom_map );
 
@@ -1282,16 +1283,16 @@ struct PoseWrap : public ReferenceCount {
 
 	bool switch_to_fa() {
 		TR << "switch to fa" << std::endl;
-		if(pose.is_fullatom()) {
+		if ( pose.is_fullatom() ) {
 			TR.Warning << "switch to FA when already in fa!" << std::endl;
 		} else {
 
-			if(debug) pose.dump_pdb("before_switch_to_fa.pdb");
+			if ( debug ) pose.dump_pdb("before_switch_to_fa.pdb");
 
-			if( basic::options::option[basic::options::OptionKeys::smhybrid::centroid_all_val]() ) {
-				for(Size i = 1; i <= nres; ++i) {
+			if ( basic::options::option[basic::options::OptionKeys::smhybrid::centroid_all_val]() ) {
+				for ( Size i = 1; i <= nres; ++i ) {
 					res_types_.push_back(&(pose.residue(i).type()));
-					if(find(floating_scs_.begin(),floating_scs_.end(),i)==floating_scs_.end()) {
+					if ( find(floating_scs_.begin(),floating_scs_.end(),i)==floating_scs_.end() ) {
 						core::chemical::replace_pose_residue_copying_existing_coordinates( pose, i, *res_types_[i] );
 					}
 				}
@@ -1304,13 +1305,13 @@ struct PoseWrap : public ReferenceCount {
 			// dump_pdb("switch_to_fa_1.pdb");
 			//get_closest_res_for_sc_attach
 
-			for(Size i = 1; i <= subsub_fixed_begin.size(); ++i) {
-				if(subsub_fixed_begin[i]==0 || subsub_fixed_end[i]==0) continue;
+			for ( Size i = 1; i <= subsub_fixed_begin.size(); ++i ) {
+				if ( subsub_fixed_begin[i]==0 || subsub_fixed_end[i]==0 ) continue;
 				TR << "align orig_pose " << subsub_fixed_begin[i] << " " << subsub_fixed_end[i] << std::endl;
 				align_orig_pose( subsub_fixed_begin[i], subsub_fixed_end[i] );
 				TR << "set coords " << subsub_fixed_begin[i] << " " << subsub_fixed_end[i] << std::endl;
-				for(Size rsd = subsub_fixed_begin[i]; rsd <= subsub_fixed_end[i]; ++rsd) {
-					for(Size j = 1; j <= pose.residue(rsd).natoms(); ++j) {
+				for ( Size rsd = subsub_fixed_begin[i]; rsd <= subsub_fixed_end[i]; ++rsd ) {
+					for ( Size j = 1; j <= pose.residue(rsd).natoms(); ++j ) {
 						pose.set_xyz(core::id::AtomID(j,rsd),orig_pose.xyz(core::id::AtomID(j,rsd)));
 					}
 					// TR << "adding coordinate_constraint " << rsd << std::endl;
@@ -1323,11 +1324,11 @@ struct PoseWrap : public ReferenceCount {
 			core::id::AtomID_Map<bool> missing;
 			core::id::initialize(missing,pose,false);
 			bool anymissing = false;
-			for(Size ath = 1; ath <= attach_rsd_.size(); ++ath) {
-				for(Size attach = attach_rsd_[ath]; attach < nsub*nres; attach += nres) {
-					for(Size i = 1; i <= pose.residue(attach).natoms(); ++i) {
+			for ( Size ath = 1; ath <= attach_rsd_.size(); ++ath ) {
+				for ( Size attach = attach_rsd_[ath]; attach < nsub*nres; attach += nres ) {
+					for ( Size i = 1; i <= pose.residue(attach).natoms(); ++i ) {
 						string aname = pose.residue(attach).atom_name(i);
-						if( cen.residue(attach).type().has(aname) ) {
+						if ( cen.residue(attach).type().has(aname) ) {
 							// TR << "switch_to_fa: setting coords for res " << attach << " atom " << aname << std::endl;
 							pose.set_xyz(core::id::AtomID(i,attach),cen.residue(attach).xyz(aname));
 						} else {
@@ -1338,20 +1339,20 @@ struct PoseWrap : public ReferenceCount {
 					}
 				}
 			}
-			if(anymissing) pose.conformation().fill_missing_atoms( missing );
+			if ( anymissing ) pose.conformation().fill_missing_atoms( missing );
 			check_scattach_res();
 		}
 		// add_apcs_floating_sc_csts();
 		check_scattach_res();
 		add_apcs_local(true);
 		check_scattach_res();
-		if(debug) pose.dump_pdb("after_switch_to_fa.pdb");
-		if(!replace_scattach_res()) {
+		if ( debug ) pose.dump_pdb("after_switch_to_fa.pdb");
+		if ( !replace_scattach_res() ) {
 			TR << "switch_to_fa: replace_scattach_res failed!" << std::endl;
 			return false;
 		}
 
-		for(Size i = 1; i <= rep_edge_res_.size(); ++i) {
+		for ( Size i = 1; i <= rep_edge_res_.size(); ++i ) {
 			core::core::pose::add_variant_type_to_pose_residue(pose,"SHOVE_STRAND",rep_edge_res_[i]);
 			TR << "switch_to_fa setting edge strand repulsive: " << rep_edge_res_[i] << " " << pose.residue(rep_edge_res_[i]).atom_name(1) << std::endl;
 
@@ -1359,39 +1360,39 @@ struct PoseWrap : public ReferenceCount {
 
 		check_scattach_res();
 		// for(Size i = 1; i <= pose.residue(1).natoms(); ++i) {
-		// 	TR << "BPY atom " << i << " " << pose.residue(1).atom_name(i) << std::endl;
+		//  TR << "BPY atom " << i << " " << pose.residue(1).atom_name(i) << std::endl;
 		// }
 		// std::exit(-1);
 		// dump_pdb("switch_to_fa_3.pdb");
 
 		// for( Size scid = 1; scid <= floating_scs_.size(); ++scid ) {
-		// 	Vec f = pose.residue(floating_scs_[scid]).xyz("CA");
-		// 	Real best = 9e9;
-		// 	Size bsti = 0;
-		// 	for( Size i = 1; i <= nres; ++i ) {
-		// 		if(i == floating_scs_[scid]) continue;
-		// 		Real const d = pose.residue(i).xyz("CA").distance(f);
-		// 		if( d < best ) {
-		// 			best = d;
-		// 			bsti = i;cen_fold
-		// 		}
-		// 	}
-		// 	floating_scs_attach_.push_back(bsti);
+		//  Vec f = pose.residue(floating_scs_[scid]).xyz("CA");
+		//  Real best = 9e9;
+		//  Size bsti = 0;
+		//  for( Size i = 1; i <= nres; ++i ) {
+		//   if(i == floating_scs_[scid]) continue;
+		//   Real const d = pose.residue(i).xyz("CA").distance(f);
+		//   if( d < best ) {
+		//    best = d;
+		//    bsti = i;cen_fold
+		//   }
+		//  }
+		//  floating_scs_attach_.push_back(bsti);
 		//
 		// }
 		return true;
 	}
 	bool check() {
-		for(Size i = 1; i <=attached_scattach_res_.size(); ++i) {
-			if(pose.residue(attached_scattach_res_[i]).name3() != attached_scattach_res_name_[i]) {
-				if(debug) std::cerr << "FA FAIL: " << pose.residue(attached_scattach_res_[i]).name3() << " " << attached_scattach_res_name_[i] << std::endl;
+		for ( Size i = 1; i <=attached_scattach_res_.size(); ++i ) {
+			if ( pose.residue(attached_scattach_res_[i]).name3() != attached_scattach_res_name_[i] ) {
+				if ( debug ) std::cerr << "FA FAIL: " << pose.residue(attached_scattach_res_[i]).name3() << " " << attached_scattach_res_name_[i] << std::endl;
 				return false;
 			}
 		}
 		return true;
 	}
 	void switch_to_cen() {
-		if(!pose.is_fullatom()) {
+		if ( !pose.is_fullatom() ) {
 			TR.Warning << "tried to switch to CEN when already in CEN! doing nothing. " << std::endl;
 			return;
 		}
@@ -1401,36 +1402,36 @@ struct PoseWrap : public ReferenceCount {
 		// pose.dump_pdb("switch_to_cen0.pdb");
 		//TODO is the following necessary? need to switch to iterate over attach_rsd_?
 		// TR << "switch_to_cen copy coords" << std::endl;
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::centroid_all_val]() ) {
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::centroid_all_val]() ) {
 			res_types_.clear();
-			for(Size i = 1; i <= nres; ++i) {
+			for ( Size i = 1; i <= nres; ++i ) {
 				res_types_.push_back(&(pose.residue(i).type()));
-				if(find(floating_scs_.begin(),floating_scs_.end(),i)==floating_scs_.end()) continue;
+				if ( find(floating_scs_.begin(),floating_scs_.end(),i)==floating_scs_.end() ) continue;
 				bool skip = false;
-				for(Size j = 1; j <= subsub_starts_.size(); ++j) if(subsub_starts_[j]==i && subsub_ends_[j]==i) skip=true;
-				if(skip) continue;
-				if(i==1 && option[basic::options::OptionKeys::smhybrid::virtual_nterm]() ) continue;
+				for ( Size j = 1; j <= subsub_starts_.size(); ++j ) if ( subsub_starts_[j]==i && subsub_ends_[j]==i ) skip=true;
+				if ( skip ) continue;
+				if ( i==1 && option[basic::options::OptionKeys::smhybrid::virtual_nterm]() ) continue;
 				core::chemical::replace_pose_residue_copying_existing_coordinates( pose, i, cen_residue_set_->name_map("PHE") );
 			}
 		}
 		// pose.dump_pdb("switch_to_cen1.pdb");
 		// for(Size i = 1; i <= subsub_fixed_begin.size(); ++i) {
-		// 	if(subsub_fixed_begin[i]==0 || subsub_fixed_end[i]==0) continue;
-		// 	for(Size rsd = subsub_fixed_begin[i]; rsd <= subsub_fixed_end[i]; ++rsd) {
-		// 		// addcc(pose,AtomID(2,rsd),attach_rsd_[i],1.0);
-		// 	}
+		//  if(subsub_fixed_begin[i]==0 || subsub_fixed_end[i]==0) continue;
+		//  for(Size rsd = subsub_fixed_begin[i]; rsd <= subsub_fixed_end[i]; ++rsd) {
+		//   // addcc(pose,AtomID(2,rsd),attach_rsd_[i],1.0);
+		//  }
 		// }
 
 
 		core::id::AtomID_Map<bool> missing;
 		core::id::initialize(missing,pose,false);
 		bool anymissing = false;
-		for(Size ath = 1; ath <= attach_rsd_.size(); ++ath) {
-			for(Size attach = attach_rsd_[ath]; attach <= nsub*nres; attach += nres) {
-				for(Size i = 1; i <= pose.residue(attach).natoms(); ++i) {
+		for ( Size ath = 1; ath <= attach_rsd_.size(); ++ath ) {
+			for ( Size attach = attach_rsd_[ath]; attach <= nsub*nres; attach += nres ) {
+				for ( Size i = 1; i <= pose.residue(attach).natoms(); ++i ) {
 					string aname = pose.residue(attach).atom_name(i);
 					// if(aname=="CEN")
-					if( fa.residue(attach).type().has(aname) ) {
+					if ( fa.residue(attach).type().has(aname) ) {
 						// TR << "switch_to_cen: setting coords for res " << attach << " atom " << aname << std::endl;
 						pose.set_xyz(core::id::AtomID(i,attach),fa.residue(attach).xyz(aname));
 					} else {
@@ -1442,13 +1443,13 @@ struct PoseWrap : public ReferenceCount {
 			}
 		}
 
-		for(Size i = 1; i <= rep_edge_res_.size(); ++i) {
+		for ( Size i = 1; i <= rep_edge_res_.size(); ++i ) {
 			core::core::pose::add_variant_type_to_pose_residue(pose,"SHOVE_STRAND",rep_edge_res_[i]);
 			TR << "switch_to_cen setting edge strand repulsive: " << rep_edge_res_[i] << " " << pose.residue(rep_edge_res_[i]).atom_name(1) << std::endl;
 		}
 		// pose.dump_pdb("switch_to_cen2.pdb");
 		// TR << "switch_to_cen fill missing" << std::endl;
-		if(anymissing) pose.conformation().fill_missing_atoms( missing );
+		if ( anymissing ) pose.conformation().fill_missing_atoms( missing );
 		// TR << "switch_to_cen DONE" << std::endl;
 		// pose.dump_pdb("switch_to_cen3.pdb");
 		add_apcs_local(false);
@@ -1457,7 +1458,7 @@ struct PoseWrap : public ReferenceCount {
 
 
 	Size get_closest_res_for_sc_attach(Size float_rsd) {
-		if(attached_scattach_res_.size()) {
+		if ( attached_scattach_res_.size() ) {
 			TR.Warning << "get_closest_res_for_sc_attach called after floating res attached" << std::endl;
 			return 0;
 		}
@@ -1478,16 +1479,16 @@ struct PoseWrap : public ReferenceCount {
 		sf = new core::scoring::symmetry::SymmetricScoreFunction(*sf);
 		(*sf)(pose);
 
-		for(Size i = 1; i <= cs.size(); i++) {
-			if( cs[i]->type() != "AmbiguousConstraint" ) continue;
+		for ( Size i = 1; i <= cs.size(); i++ ) {
+			if ( cs[i]->type() != "AmbiguousConstraint" ) continue;
 			AmbiguousConstraint const * ac = (AmbiguousConstraint const *)(cs[i]());
-			if(ac->active_constraint()->type() != "MultiConstraint") continue;
+			if ( ac->active_constraint()->type() != "MultiConstraint" ) continue;
 			MultiConstraint     const * mc = (MultiConstraint     const *)(ac->active_constraint()());
 			AtomPairConstraint  const * pc = (AtomPairConstraint  const *)(mc->member_constraints()[1]());
 			AtomID paid = pc->atom(1);
 			AtomID faid = pc->atom(2);
 			TR << "PAID " << paid.rsd() << " FAID " << faid.rsd() << std::endl;
-			if(faid.rsd()==float_rsd) {
+			if ( faid.rsd()==float_rsd ) {
 				return (paid.rsd()-1)%nres+1;
 			}
 		}
@@ -1496,7 +1497,7 @@ struct PoseWrap : public ReferenceCount {
 
 
 		// core::conformation::symmetry::SymmetricConformation const & SymmConf (
-		// 	dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+		//  dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		// core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		//
 		// Vec floater( pose.residue(float_rsd).xyz("CA"));
@@ -1504,27 +1505,27 @@ struct PoseWrap : public ReferenceCount {
 		// // vector1<bool> nearcut(pose.size(),false);
 		// // for(Size i = 1; i <= 4; ++i) nearcut[i] = true;
 		// // for(Size i = 1; i <= (Size)pose.fold_tree().num_cutpoint(); ++i) {
-		// // 	Size cp( pose.fold_tree().cutpoint(i) );
-		// // 	if( !symm_info->bb_is_independent(cp) ) continue;
-		// // 	for(Size j = numeric::max(((Size)1),cp-4); j <= numeric::min(cp+4,pose.size()); ++j) nearcut[j] = true;
+		// //  Size cp( pose.fold_tree().cutpoint(i) );
+		// //  if( !symm_info->bb_is_independent(cp) ) continue;
+		// //  for(Size j = numeric::max(((Size)1),cp-4); j <= numeric::min(cp+4,pose.size()); ++j) nearcut[j] = true;
 		// // }
 		//
 		// Size best = 9e9;
 		// Size sc_attch_rsd = 0;
 		// for( Size i = 1; i <= nres; ++i ) {
-		// 	if ( ! pose.residue(i).is_protein() ) continue;
-		// 	if( i == float_rsd ) continue;
-		// 	bool isattach = false;
-		// 	for(Size j = 1; j <= attach_rsd_.size(); ++j) if( attach_rsd_[j]==i && attach_atom_[j]!="N" ) isattach = true;
-		// 	if(isattach) continue;
-		// 	// if( nearcut[i] ) continue;
+		//  if ( ! pose.residue(i).is_protein() ) continue;
+		//  if( i == float_rsd ) continue;
+		//  bool isattach = false;
+		//  for(Size j = 1; j <= attach_rsd_.size(); ++j) if( attach_rsd_[j]==i && attach_atom_[j]!="N" ) isattach = true;
+		//  if(isattach) continue;
+		//  // if( nearcut[i] ) continue;
 		//
-		// 	Real dis = (floater.distance( pose.residue(i).xyz(2) )); dis = std::abs(dis);
-		// 	if( dis < best ) {
-		// 		// TR << "floating_sc " << i << " " << dis << std::endl;
-		// 		sc_attch_rsd = i;
-		// 		best = dis;
-		// 	}
+		//  Real dis = (floater.distance( pose.residue(i).xyz(2) )); dis = std::abs(dis);
+		//  if( dis < best ) {
+		//   // TR << "floating_sc " << i << " " << dis << std::endl;
+		//   sc_attch_rsd = i;
+		//   best = dis;
+		//  }
 		// }
 		// return sc_attch_rsd;
 	}
@@ -1532,31 +1533,31 @@ struct PoseWrap : public ReferenceCount {
 	void update_designable_packable() {
 		is_repackable_.resize(nres);
 		is_designable_.resize(nres);
-		for(Size i = 1; i <= nres; ++i) {
+		for ( Size i = 1; i <= nres; ++i ) {
 			is_designable_[i] = true;
 			is_repackable_[i] = true;
 		}
-		for(Size i = 1; i <= nres; ++i) {
-			if(ss(i)=='F') {
+		for ( Size i = 1; i <= nres; ++i ) {
+			if ( ss(i)=='F' ) {
 				is_designable_[i] = false;
 				is_repackable_[i] = true;
 			}
-			if( find(linker_res_.begin(),linker_res_.end(),i) != linker_res_.end() ) {
+			if ( find(linker_res_.begin(),linker_res_.end(),i) != linker_res_.end() ) {
 				is_designable_[i] = basic::options::option[basic::options::OptionKeys::smhybrid::design_linker]();
 			}
 		}
-		for(Size i = 1; i <= design_res_user.size(); ++i) {
+		for ( Size i = 1; i <= design_res_user.size(); ++i ) {
 			is_designable_[design_res_user[i]] = true;
 			is_repackable_[design_res_user[i]] = true;
 		}
-		for(Size i = 1; i <= fixed_res_user.size(); ++i) {
+		for ( Size i = 1; i <= fixed_res_user.size(); ++i ) {
 			is_designable_[fixed_res_user[i]] = false;
 			is_repackable_[fixed_res_user[i]] = false;
 		}
-		for(Size j = 1; j <= floating_scs_.size(); ++j) {
+		for ( Size j = 1; j <= floating_scs_.size(); ++j ) {
 			Size r = get_closest_res_for_sc_attach(floating_scs_[j]);
-			if(!r) continue;
-			if( pose.is_fullatom() ) {
+			if ( !r ) continue;
+			if ( pose.is_fullatom() ) {
 				core::chemical::replace_pose_residue_copying_existing_coordinates( pose, r, fa_residue_set_->name_map("ALA") );
 				core::core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_SC",r);
 				TR << "setting res " << r << " to alanine" << std::endl;
@@ -1564,47 +1565,47 @@ struct PoseWrap : public ReferenceCount {
 			is_designable_[r] = false;
 			is_repackable_[r] = false;
 		}
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::restrict_design_to_interface]() ) {
-			for(Size i = 1; i <= nres; ++i) {
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::restrict_design_to_interface]() ) {
+			for ( Size i = 1; i <= nres; ++i ) {
 				// if(!is_designable_[i]) continue;
 				Size is = which_sub(i);
 				bool iface = false;
-				for(Size j = 1; j <= nres*nsub; ++j) {
-					if(which_sub(j)==is) continue;
-					if( pose.xyz(AtomID(5,i)).distance_squared(pose.xyz(AtomID(2,j))) < 144.0 ) {
+				for ( Size j = 1; j <= nres*nsub; ++j ) {
+					if ( which_sub(j)==is ) continue;
+					if ( pose.xyz(AtomID(5,i)).distance_squared(pose.xyz(AtomID(2,j))) < 144.0 ) {
 						iface = true;
 						break;
 					}
 				}
-				if(!iface) is_designable_[i] = false;
-		 		else is_designable_[i] = true;
+				if ( !iface ) is_designable_[i] = false;
+				else is_designable_[i] = true;
 			}
 		}
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::restrict_design_to_subsub_interface]() ) {
-			for(Size i = 1; i <= nres; ++i) {
-				if(!is_designable_[i]) continue;
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::restrict_design_to_subsub_interface]() ) {
+			for ( Size i = 1; i <= nres; ++i ) {
+				if ( !is_designable_[i] ) continue;
 				Size is = which_subsub(i);
 				bool iface = false;
-				for(Size j = 1; j <= nres*nsub; ++j) {
-					if(which_subsub(j)==is) continue;
-					if( pose.xyz(AtomID(5,i)).distance_squared(pose.xyz(AtomID(2,j))) < 144.0 ) {
+				for ( Size j = 1; j <= nres*nsub; ++j ) {
+					if ( which_subsub(j)==is ) continue;
+					if ( pose.xyz(AtomID(5,i)).distance_squared(pose.xyz(AtomID(2,j))) < 144.0 ) {
 						iface = true;
 						break;
 					}
 				}
-				if(!iface) is_designable_[i] = false;
+				if ( !iface ) is_designable_[i] = false;
 			}
 		}
-		for(Size j = 1; j <= attach_rsd_.size(); ++j) {
-			if(	attach_atom_[j]!="N") {
+		for ( Size j = 1; j <= attach_rsd_.size(); ++j ) {
+			if ( attach_atom_[j]!="N" ) {
 				is_designable_[attach_rsd_[j]] = false;
 				is_repackable_[attach_rsd_[j]] = false;
 			}
 		}
-		if( !basic::options::option[basic::options::OptionKeys::smhybrid::design]() ) {
-			for(Size i = 1; i <= nres; ++i) is_designable_[i] = false;
+		if ( !basic::options::option[basic::options::OptionKeys::smhybrid::design]() ) {
+			for ( Size i = 1; i <= nres; ++i ) is_designable_[i] = false;
 		}
-		for(Size i = 1; i <= attached_scattach_res_.size(); ++i) {
+		for ( Size i = 1; i <= attached_scattach_res_.size(); ++i ) {
 			is_designable_[attached_scattach_res_[i]] = false;
 			is_repackable_[attached_scattach_res_[i]] = true;
 		}
@@ -1617,33 +1618,33 @@ struct PoseWrap : public ReferenceCount {
 		// return;
 		vector1<Size> all_subsub;
 		// for(Size ss = 1; ss <= subsub_starts_.size(); ++ss) {
-			// Size start=subsub_starts_[ss], end=subsub_ends_[ss];
-		for(Size ss = 1; ss <= subsub_fixed_begin.size(); ++ss) {
+		// Size start=subsub_starts_[ss], end=subsub_ends_[ss];
+		for ( Size ss = 1; ss <= subsub_fixed_begin.size(); ++ss ) {
 			Size start=subsub_fixed_begin[ss], end=subsub_fixed_end[ss];
 			vector1<Size> subs;
-			if(cst_sub_files_.size() >= ss) subs = cst_sub_files_[ss];
-			if(subs.size()==0) subs.push_back(1);
+			if ( cst_sub_files_.size() >= ss ) subs = cst_sub_files_[ss];
+			if ( subs.size()==0 ) subs.push_back(1);
 
 			vector1<Size> res;
-			for(vector1<Size>::iterator i = subs.begin(); i != subs.end(); ++i) {
-				for(Size j = start; j <= end; ++j) {
+			for ( vector1<Size>::iterator i = subs.begin(); i != subs.end(); ++i ) {
+				for ( Size j = start; j <= end; ++j ) {
 					res.push_back(j+(*i-1)*nres);
 					all_subsub.push_back(j+(*i-1)*nres);
 				}
 			}
 
-			for(Size i = start; i <= end; ++i) {
-				if(std::find(frag_res_user.begin(),frag_res_user.end(),i) == frag_res_user.end()) { // not frag res
-					if(!fullatom) continue;
+			for ( Size i = start; i <= end; ++i ) {
+				if ( std::find(frag_res_user.begin(),frag_res_user.end(),i) == frag_res_user.end() ) { // not frag res
+					if ( !fullatom ) continue;
 					else TR << "FA adding local apcs to resi " << i << std::endl;
 				} else { // is frag res
-					if(fullatom) continue;
+					if ( fullatom ) continue;
 					else TR << "CEN adding local apcs to resi " << i << std::endl;
 				}
-				for(vector1<Size>::iterator j = res.begin(); j != res.end(); ++j) {
-					if( i+5 > *j ) continue;
+				for ( vector1<Size>::iterator j = res.begin(); j != res.end(); ++j ) {
+					if ( i+5 > *j ) continue;
 					Real d = pose.xyz(AtomID(2,i)).distance(pose.xyz(AtomID(2,*j)));
-					if( d < 8.0 ) {
+					if ( d < 8.0 ) {
 						// TR << "distance resi " << i << " and name CA, resi " << *j << " and name CA" << std::endl;
 						Real wt = 2;
 						// if(!fullatom) wt = 0.5;
@@ -1652,14 +1653,14 @@ struct PoseWrap : public ReferenceCount {
 				}
 			}
 		}
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::inter_subsub_cst]() ) {
-			for(Size i = 1; i <= all_subsub.size(); ++i) {
-				for(Size j = i+1; j <= all_subsub.size(); ++j) {
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::inter_subsub_cst]() ) {
+			for ( Size i = 1; i <= all_subsub.size(); ++i ) {
+				for ( Size j = i+1; j <= all_subsub.size(); ++j ) {
 					Real d = pose.xyz(AtomID(2,i)).distance(pose.xyz(AtomID(2,j)));
-					if( d < 10.0 ) {
+					if ( d < 10.0 ) {
 						// TR << "distance resi " << i << " and name CA, resi " << *j << " and name CA" << std::endl;
-						Real wt = 	4;
-						if(fullatom) wt = 0.4;
+						Real wt =  4;
+						if ( fullatom ) wt = 0.4;
 						add_apc(pose,AtomID(5,i),AtomID(5,j),d,wt,core::scoring::coordinate_constraint);
 					}
 				}
@@ -1667,63 +1668,63 @@ struct PoseWrap : public ReferenceCount {
 		}
 
 		// trying to make sheet....
-// 		using namespace core::scoring::constraints;
-// 		ConstraintCOPs ac;
-// 		FuncOP func = new HarmonicFunc(4,0.5);
-// 		std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-// 		int a[2][2],b[2][2];
-// 		a[0][0] =  30; a[0][1] =  34;
-// 		a[1][0] =  81; a[1][1] =  85;
-// 		b[0][0] = 135+nres; b[0][1] = 139+nres;
-// 		b[1][0] = 172+nres; b[1][1] = 176+nres;
-// 		for(int i = 0; i <= 1; ++i) {
-// 			for(int j = 0; j <= 1; ++j) {
-// 				TR << "SS pair " << a[i][0] << "-" << b[j][0] << " " << a[i][1] << "-" << b[j][1] << " " << std::endl;
-// 				TR << "SS pair " << a[i][0] << "-" << b[j][1] << " " << a[i][1] << "-" << b[j][0] << " " << std::endl;
-// 				add_apc(pose,AtomID(1,a[i][0]),AtomID(4,b[j][0]),3,1,core::scoring::coordinate_constraint);
-// 				add_apc(pose,AtomID(1,a[i][1]),AtomID(4,b[j][1]),3,1,core::scoring::coordinate_constraint);
+		//   using namespace core::scoring::constraints;
+		//   ConstraintCOPs ac;
+		//   FuncOP func = new HarmonicFunc(4,0.5);
+		//   std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+		//   int a[2][2],b[2][2];
+		//   a[0][0] =  30; a[0][1] =  34;
+		//   a[1][0] =  81; a[1][1] =  85;
+		//   b[0][0] = 135+nres; b[0][1] = 139+nres;
+		//   b[1][0] = 172+nres; b[1][1] = 176+nres;
+		//   for(int i = 0; i <= 1; ++i) {
+		//    for(int j = 0; j <= 1; ++j) {
+		//     TR << "SS pair " << a[i][0] << "-" << b[j][0] << " " << a[i][1] << "-" << b[j][1] << " " << std::endl;
+		//     TR << "SS pair " << a[i][0] << "-" << b[j][1] << " " << a[i][1] << "-" << b[j][0] << " " << std::endl;
+		//     add_apc(pose,AtomID(1,a[i][0]),AtomID(4,b[j][0]),3,1,core::scoring::coordinate_constraint);
+		//     add_apc(pose,AtomID(1,a[i][1]),AtomID(4,b[j][1]),3,1,core::scoring::coordinate_constraint);
 
-// 				{
-// 				ConstraintCOPs mc;
-// 				mc.push_back(new AtomPairConstraint( AtomID(2,a[i][0]), AtomID(2,b[j][0]), func ) );
-// 				mc.push_back(new AtomPairConstraint( AtomID(2,a[i][1]), AtomID(2,b[j][1]), func ) );
-// 				ac.push_back(new MultiConstraint(mc));
-// 				}
-// 				{
-// 				ConstraintCOPs mc;
-// 				mc.push_back(new AtomPairConstraint( AtomID(2,a[i][0]), AtomID(2,b[j][1]), func ) );
-// 				mc.push_back(new AtomPairConstraint( AtomID(2,a[i][1]), AtomID(2,b[j][0]), func ) );
-// 				ac.push_back(new MultiConstraint(mc));
-// 				}
+		//     {
+		//     ConstraintCOPs mc;
+		//     mc.push_back(new AtomPairConstraint( AtomID(2,a[i][0]), AtomID(2,b[j][0]), func ) );
+		//     mc.push_back(new AtomPairConstraint( AtomID(2,a[i][1]), AtomID(2,b[j][1]), func ) );
+		//     ac.push_back(new MultiConstraint(mc));
+		//     }
+		//     {
+		//     ConstraintCOPs mc;
+		//     mc.push_back(new AtomPairConstraint( AtomID(2,a[i][0]), AtomID(2,b[j][1]), func ) );
+		//     mc.push_back(new AtomPairConstraint( AtomID(2,a[i][1]), AtomID(2,b[j][0]), func ) );
+		//     ac.push_back(new MultiConstraint(mc));
+		//     }
 
-// 			}
-// 		}
-// 		if(ac.size()) pose.add_constraint(new AmbiguousConstraint(ac));
+		//    }
+		//   }
+		//   if(ac.size()) pose.add_constraint(new AmbiguousConstraint(ac));
 
 
 	}
 
 	// void add_fsc_harmonic_cst() {
-	// 	using namespace core::scoring::constraints;
-	// 	for(Size i = 1; i <= floating_scs_.size(); ++i ) {
-	// 		Size r = attached_scattach_res_[i], fsc = floating_scs_[i] + (floating_scs_sub_[i]-1)*nres;
-	// 		for(Size j = 1; j <= pose.residue(fsc).nheavyatoms(); ++j) {
-	// 			if( pose.residue(r).has(pose.residue(fsc).atom_name(j)) ) {
-	// 				Real wt = 1.0;
-	// 				if(j < 5) wt = 3.0;
-	// 				pose.add_constraint( new AtomPairConstraint(
-	// 					AtomID(pose.residue(r).atom_index(pose.residue(fsc).atom_name(j)),r),
-	// 					AtomID(j,fsc), new HarmonicFunc(0.0,wt) ) );
-	// 			}
-	// 		}
-	// 	}
+	//  using namespace core::scoring::constraints;
+	//  for(Size i = 1; i <= floating_scs_.size(); ++i ) {
+	//   Size r = attached_scattach_res_[i], fsc = floating_scs_[i] + (floating_scs_sub_[i]-1)*nres;
+	//   for(Size j = 1; j <= pose.residue(fsc).nheavyatoms(); ++j) {
+	//    if( pose.residue(r).has(pose.residue(fsc).atom_name(j)) ) {
+	//     Real wt = 1.0;
+	//     if(j < 5) wt = 3.0;
+	//     pose.add_constraint( new AtomPairConstraint(
+	//      AtomID(pose.residue(r).atom_index(pose.residue(fsc).atom_name(j)),r),
+	//      AtomID(j,fsc), new HarmonicFunc(0.0,wt) ) );
+	//    }
+	//   }
+	//  }
 	//
 	// }
 
 	bool check_scattach_res() {
 		vector1<Vec> other_tetra;
-		for(Size i = 1; i <= floating_scs_.size(); ++i) {
-			if(pose.residue(floating_scs_[i]).name3()=="HSC") {
+		for ( Size i = 1; i <= floating_scs_.size(); ++i ) {
+			if ( pose.residue(floating_scs_[i]).name3()=="HSC" ) {
 				Vec cen = pose.xyz(AtomID(1,up_jump_tree(pose,floating_scs_[i])));
 				Vec ne2 = pose.residue(floating_scs_[i]).xyz("NE2");
 				Vec nd1 = pose.residue(floating_scs_[i]).xyz("ND1");
@@ -1732,19 +1733,19 @@ struct PoseWrap : public ReferenceCount {
 				// Vec cg  = pose.residue(floating_scs_[i]).xyz("CG" );
 				Real dd = cen.distance(nd1), de = cen.distance(ne2);
 				bool fail = false;
-				if(dd<de) {
-					if( fabs(dd-2.0274) > 0.02 ) fail = true;
+				if ( dd<de ) {
+					if ( fabs(dd-2.0274) > 0.02 ) fail = true;
 					// TR << "ANGLE2 " << numeric::angle_radians(cen,nd1,ce1) << std::endl;
-					if( fabs(numeric::angle_radians(cen,nd1,ce1)-2.158972) > 0.01 ) {
+					if ( fabs(numeric::angle_radians(cen,nd1,ce1)-2.158972) > 0.01 ) {
 						fail = true;
 						TR << "check_scattach_res FAIL angle cen nd1 ce1 " << i << " " << fabs(numeric::angle_radians(cen,nd1,ce1)-2.21751) << std::endl;
 						TR << cen << std::endl;
 						TR << nd1 << std::endl;
 						TR << ce1 << std::endl;
 					}
-					for(Size j = 1; j <= other_tetra.size(); j++) {
+					for ( Size j = 1; j <= other_tetra.size(); j++ ) {
 						// TR << "tetra: " << numeric::angle_radians(nd1,cen,other_tetra[j]) << std::endl;
-						if(fabs(numeric::angle_radians(nd1,cen,other_tetra[j])-1.911136) > 0.02) {
+						if ( fabs(numeric::angle_radians(nd1,cen,other_tetra[j])-1.911136) > 0.02 ) {
 							fail = true;
 							TR << "check_scattach_res FAIL tetra " << i << " " << j << " " << fabs(numeric::angle_radians(nd1,cen,other_tetra[j])-1.911136) << std::endl;
 							TR << nd1 << std::endl;
@@ -1754,18 +1755,18 @@ struct PoseWrap : public ReferenceCount {
 					}
 					other_tetra.push_back(nd1);
 				} else {
-					if( fabs(de-2.0274) > 0.02 ) fail = true;
+					if ( fabs(de-2.0274) > 0.02 ) fail = true;
 					// TR << "ANGLE2 " << numeric::angle_radians(cen,ne2,ce1) << std::endl;
-					if( fabs(numeric::angle_radians(cen,ne2,ce1)-2.21751) > 0.01 ) {
+					if ( fabs(numeric::angle_radians(cen,ne2,ce1)-2.21751) > 0.01 ) {
 						fail = true;
 						TR << "check_scattach_res FAIL angle cen ne2 ce1 " << i << " " << fabs(numeric::angle_radians(cen,ne2,ce1)-2.21751) << std::endl;
 						TR << cen << std::endl;
 						TR << ne2 << std::endl;
 						TR << ce1 << std::endl;
 					}
-					for(Size j = 1; j <= other_tetra.size(); j++) {
+					for ( Size j = 1; j <= other_tetra.size(); j++ ) {
 						// TR << "tetra: " << numeric::angle_radians(ne2,cen,other_tetra[j]) << std::endl;
-						if(fabs(numeric::angle_radians(ne2,cen,other_tetra[j])-1.911136) > 0.02) {
+						if ( fabs(numeric::angle_radians(ne2,cen,other_tetra[j])-1.911136) > 0.02 ) {
 							fail = true;
 							TR << "check_scattach_res FAIL tetra " << i << " " << j << " " << fabs(numeric::angle_radians(ne2,cen,other_tetra[j])-1.911136) << std::endl;
 							TR << ne2 << std::endl;
@@ -1775,12 +1776,12 @@ struct PoseWrap : public ReferenceCount {
 					}
 					other_tetra.push_back(ne2);
 				}
-				if( option[basic::options::OptionKeys::smhybrid::stop_on_bad_geom]() && fail) {
+				if ( option[basic::options::OptionKeys::smhybrid::stop_on_bad_geom]() && fail ) {
 					dump_pdb("ERROR.pdb");
 					utility_exit_with_message("check_scattach_res failed!");
 				}
 			} else {
-				if( option[basic::options::OptionKeys::smhybrid::stop_on_bad_geom]()) {
+				if ( option[basic::options::OptionKeys::smhybrid::stop_on_bad_geom]() ) {
 					utility_exit_with_message("don't know how to check geom of res "+pose.residue(floating_scs_[i]).name());
 				}
 			}
@@ -1793,7 +1794,7 @@ struct PoseWrap : public ReferenceCount {
 		TR << pose.fold_tree() << std::endl;
 		TR << pose.residue(1).name() << std::endl;
 		vector1<Size> scattach_res;
-		for(Size i = 1; i <= floating_scs_.size(); ++i ) {
+		for ( Size i = 1; i <= floating_scs_.size(); ++i ) {
 			Size r = get_closest_res_for_sc_attach(floating_scs_[i]);
 			scattach_res.push_back(r);
 			TR << "scattach res " << i << " " << r << std::endl;
@@ -1801,11 +1802,11 @@ struct PoseWrap : public ReferenceCount {
 		FoldTree ft = pose.fold_tree();
 		// std::exit(-1);
 		// for(Size i = 1; i <= floating_scs_.size(); ++i ) {
-		// 	for(Size j = 1; j <= (Size)ft.num_jump(); ++j ) {
-		// 		if( ((Size)ft.downstream_jump_residue(j)-1)%nres+1 == floating_scs_[i] ) {
-		// 			ft.set_jump_atoms(j,"","");
-		// 		}
-		// 	}
+		//  for(Size j = 1; j <= (Size)ft.num_jump(); ++j ) {
+		//   if( ((Size)ft.downstream_jump_residue(j)-1)%nres+1 == floating_scs_[i] ) {
+		//    ft.set_jump_atoms(j,"","");
+		//   }
+		//  }
 		// }
 		// pose.fold_tree(ft);
 
@@ -1814,8 +1815,8 @@ struct PoseWrap : public ReferenceCount {
 		using namespace core::scoring::constraints;
 		ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
 		ConstraintCOPs rem;
-		for(Size i = 1; i <= cs.size(); i++) {
-			if( cs[i]->type() != "AmbiguousConstraint" ) continue;
+		for ( Size i = 1; i <= cs.size(); i++ ) {
+			if ( cs[i]->type() != "AmbiguousConstraint" ) continue;
 			rem.push_back(cs[i]);
 		}
 		pose.remove_constraints(rem);
@@ -1827,45 +1828,45 @@ struct PoseWrap : public ReferenceCount {
 
 		attached_scattach_res_.clear();
 		attached_scattach_res_name_.clear();
-		for(Size i = 1; i <= floating_scs_.size(); ++i ) {
+		for ( Size i = 1; i <= floating_scs_.size(); ++i ) {
 			Size r = scattach_res[i], fsc = floating_scs_[i] + (floating_scs_sub_[i]-1)*nres;
 			r = (r-1) % (nres) + 1;
-			if( pose.residue(fsc).name3() == "HSC" ) {
+			if ( pose.residue(fsc).name3() == "HSC" ) {
 				core::chemical::replace_pose_residue_copying_existing_coordinates( pose, r, fa_residue_set_->name_map("HIS_D") );
 				// for(Size j = 1; j <= pose.fold_tree().num_jump(); ++j) {
-				// 	if(pose.fold_tree().downstream_jump_residue(j) == (int)fsc) {
-				// 		TR << "adding dist cst from HIS N to virt ZN" << std::endl;
-				// 		Size upres = pose.fold_tree().upstream_jump_residue(j);
-				// 		pose.add_constraint( new AtomPairConstraint(
-				// 			AtomID(pose.residue(r).atom_index(pose.fold_tree().downstream_atom(j)),r),
-				// 			AtomID(1,upres), new AbsFunc(2.0,0.5) ) );
-				// 		break;
-				// 	}
+				//  if(pose.fold_tree().downstream_jump_residue(j) == (int)fsc) {
+				//   TR << "adding dist cst from HIS N to virt ZN" << std::endl;
+				//   Size upres = pose.fold_tree().upstream_jump_residue(j);
+				//   pose.add_constraint( new AtomPairConstraint(
+				//    AtomID(pose.residue(r).atom_index(pose.fold_tree().downstream_atom(j)),r),
+				//    AtomID(1,upres), new AbsFunc(2.0,0.5) ) );
+				//   break;
+				//  }
 				// }
 			} else if ( pose.residue(fsc).name3() == "BPY" ) {
 				core::chemical::replace_pose_residue_copying_existing_coordinates( pose, r, fa_residue_set_->name_map("BPY") );
 			}
 			check_scattach_res();
-			if(debug) dump_pdb("before_virt.pdb");
+			if ( debug ) dump_pdb("before_virt.pdb");
 			TR << "make floating_sc " << floating_scs_[i] << " virtual" << std::endl;
 			vector1<core::conformation::ResidueOP> tmp;
-			for(Size l = 0; l < nsub; ++l) {
+			for ( Size l = 0; l < nsub; ++l ) {
 				tmp.push_back(new core::conformation::Residue(pose.residue(floating_scs_[i]+l*nres)));
 			}
 			core::core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL",floating_scs_[i]);
-			for(Size l = 0; l < nsub; ++l) {
-				for(Size k = 1; k <= tmp[l+1]->natoms(); k++) {
-					if(pose.residue(floating_scs_[i]+l*nres).has(tmp[l+1]->atom_name(k))) {
+			for ( Size l = 0; l < nsub; ++l ) {
+				for ( Size k = 1; k <= tmp[l+1]->natoms(); k++ ) {
+					if ( pose.residue(floating_scs_[i]+l*nres).has(tmp[l+1]->atom_name(k)) ) {
 						pose.set_xyz(AtomID(pose.residue(floating_scs_[i]+l*nres).atom_index(tmp[l+1]->atom_name(k)),floating_scs_[i]+l*nres),tmp[l+1]->xyz(k));
 					}
 				}
 			}
-			if(debug) dump_pdb("after_virt.pdb");
+			if ( debug ) dump_pdb("after_virt.pdb");
 			check_scattach_res();
-			for(Size j = 1; j <= pose.residue(fsc).nheavyatoms(); ++j) {
-				if( pose.residue(r).has(pose.residue(fsc).atom_name(j)) ) {
+			for ( Size j = 1; j <= pose.residue(fsc).nheavyatoms(); ++j ) {
+				if ( pose.residue(r).has(pose.residue(fsc).atom_name(j)) ) {
 					Real wt = 1.0;
-					if(j < 5) wt = 3.0;
+					if ( j < 5 ) wt = 3.0;
 					pose.add_constraint( new AtomPairConstraint(
 						AtomID(pose.residue(r).atom_index(pose.residue(fsc).atom_name(j)),r),
 						AtomID(j,fsc), new AbsFunc(0.0,wt) ) );
@@ -1878,16 +1879,16 @@ struct PoseWrap : public ReferenceCount {
 			check_scattach_res();
 		}
 
-		for(Size i = 1; i <= attached_scattach_res_.size(); ++i) {
-			for(Size j = i+1; j <= attached_scattach_res_.size(); ++j) {
-				if(attached_scattach_res_[i]==attached_scattach_res_[j]) return false;
+		for ( Size i = 1; i <= attached_scattach_res_.size(); ++i ) {
+			for ( Size j = i+1; j <= attached_scattach_res_.size(); ++j ) {
+				if ( attached_scattach_res_[i]==attached_scattach_res_[j] ) return false;
 			}
 		}
 		// ft = pose.fold_tree();
 		// for(Size j = 1; j <= (Size)ft.num_jump(); ++j ) {
-		// 	for(Size i = 1; i <= scattach_res.size(); ++i ) {
-		// 		if( ((Size)ft.downstream_jump_residue(j)-1)%nres+1 == floating_scs_[i] ) ft.set_jump_atoms(j,"ORIG","ORIG");
-		// 	}
+		//  for(Size i = 1; i <= scattach_res.size(); ++i ) {
+		//   if( ((Size)ft.downstream_jump_residue(j)-1)%nres+1 == floating_scs_[i] ) ft.set_jump_atoms(j,"ORIG","ORIG");
+		//  }
 		// }
 		// pose.fold_tree(ft);
 
@@ -1897,14 +1898,14 @@ struct PoseWrap : public ReferenceCount {
 	Real rms_to_orig_subsubs() {
 		Real rms = 0.0;
 		Size n = 0;
-		for(Size i = 1; i <= subsub_starts_.size(); ++i) {
+		for ( Size i = 1; i <= subsub_starts_.size(); ++i ) {
 			// TR << "align orig_pose " << subsub_starts_[i] << " " << subsub_ends_[i] << std::endl;
 			align_orig_pose( subsub_starts_[i], subsub_ends_[i] );
 			// TR << "set coords " << subsub_starts_[i] << " " << subsub_ends_[i] << std::endl;
-			for(Size rsd = subsub_starts_[i]; rsd <= subsub_ends_[i]; ++rsd) {
-				for(Size j = 1; j <= pose.residue(rsd).nheavyatoms(); ++j) {
-					if( j > orig_pose.residue(rsd).nheavyatoms() ) continue;
-					if( pose.residue(rsd).atom_name(j) != orig_pose.residue(rsd).atom_name(j) ) continue;
+			for ( Size rsd = subsub_starts_[i]; rsd <= subsub_ends_[i]; ++rsd ) {
+				for ( Size j = 1; j <= pose.residue(rsd).nheavyatoms(); ++j ) {
+					if ( j > orig_pose.residue(rsd).nheavyatoms() ) continue;
+					if ( pose.residue(rsd).atom_name(j) != orig_pose.residue(rsd).atom_name(j) ) continue;
 					rms += pose.xyz(core::id::AtomID(j,rsd)).distance_squared( orig_pose.xyz(core::id::AtomID(j,rsd)));
 					n += 1;
 				}
@@ -1916,13 +1917,13 @@ struct PoseWrap : public ReferenceCount {
 	Real absrms_to_orig_subsubs() {
 		Real rms = 0.0;
 		Size n = 0;
-		for(Size i = 1; i <= subsub_starts_.size(); ++i) {
+		for ( Size i = 1; i <= subsub_starts_.size(); ++i ) {
 			// TR << "set coords " << subsub_starts_[i] << " " << subsub_ends_[i] << std::endl;
-			for(Size rsd = subsub_starts_[i]; rsd <= subsub_ends_[i]; ++rsd) {
-				for(Size j = 1; j <= pose.residue(rsd).nheavyatoms(); ++j) {
-					if( j > orig_pose.residue(rsd).nheavyatoms() ) continue;
-					if( j > 4 ) continue;
-					if( pose.residue(rsd).atom_name(j) != orig_pose.residue(rsd).atom_name(j) ) continue;
+			for ( Size rsd = subsub_starts_[i]; rsd <= subsub_ends_[i]; ++rsd ) {
+				for ( Size j = 1; j <= pose.residue(rsd).nheavyatoms(); ++j ) {
+					if ( j > orig_pose.residue(rsd).nheavyatoms() ) continue;
+					if ( j > 4 ) continue;
+					if ( pose.residue(rsd).atom_name(j) != orig_pose.residue(rsd).atom_name(j) ) continue;
 					rms += pose.xyz(core::id::AtomID(j,rsd)).distance_squared( orig_pose.xyz(core::id::AtomID(j,rsd)));
 					n += 1;
 				}
@@ -1944,28 +1945,28 @@ typedef access_ptr<const PoseWrap> PoseWrapCAP;
 
 vector1<Size> read_res_list(string fn) {
 	vector1<Size> l;
-	if(fn=="_") return l;
-	if(fn.size()==1 && fn[0]==(char)0) return l;
+	if ( fn=="_" ) return l;
+	if ( fn.size()==1 && fn[0]==(char)0 ) return l;
 	izstream in(fn);
-	if(!in.good()) {
+	if ( !in.good() ) {
 		utility_exit_with_message("can't open res list file '"+fn+"'");
 	}
 	Size r;
-	while( in >> r ) l.push_back(r);
+	while ( in >> r ) l.push_back(r);
 	return l;
 }
 
 vector1<xyzVector<Size> > read_jumpcut_file(string fn) {
 	vector1<numeric::xyzVector<Size> > l;
-	if(fn=="") return l;
-	if(fn=="_") return l;
-	if(fn.size()==1 && fn[0]==(char)0) return l;
+	if ( fn=="" ) return l;
+	if ( fn=="_" ) return l;
+	if ( fn.size()==1 && fn[0]==(char)0 ) return l;
 	izstream in(fn);
-	if(!in.good()) {
+	if ( !in.good() ) {
 		utility_exit_with_message("can't open file "+fn);
 	}
 	Size x,y,z;
-	while(in >> x >> y >> z) {
+	while ( in >> x >> y >> z ) {
 		l.push_back(xyzVector<Size>(x,y,z));
 	}
 	return l;
@@ -1975,12 +1976,12 @@ string select_string(string in, Size & fp) {
 	vector1<string> files(1,"");
 	Size i=0;
 	do {
-		if(in[i]!='|') files.back() += in[i];
+		if ( in[i]!='|' ) files.back() += in[i];
 		else files.push_back("");
 		++i;
 	} while(i < in.size());
-	if(files.size()==1) return files[1];
-	if(fp==0) fp = std::ceil(uniform()*files.size());
+	if ( files.size()==1 ) return files[1];
+	if ( fp==0 ) fp = std::ceil(uniform()*files.size());
 	return files[fp];
 }
 
@@ -2012,19 +2013,19 @@ PoseWrap posewrap_from_command_line(string symm_def_template = "", string symm_d
 	vector1<vector1<Size> > cst_sub_files;
 	vector1<bool> chainbreaks;
 
-	if(option[smhybrid::attach_as_sc].user()) attach_as_sc = option[ smhybrid::attach_as_sc ]();
+	if ( option[smhybrid::attach_as_sc].user() ) attach_as_sc = option[ smhybrid::attach_as_sc ]();
 	// convert to vector1s
 	vector1<Size> myattach;
 	vector1<Size> mysc;
 	vector1<string> myattach_atom,mypref,mysuff,myrespref,myressuff;
 
-	for(Size i = 1; i <= pdbs.size(); ++i ) {
+	for ( Size i = 1; i <= pdbs.size(); ++i ) {
 		// TR << "reading pose from " << pdbs[i] << std::endl;
 		core::pose::Pose tmp;
 		Size fp = 0;
 		string posefile = select_string(pdbs[i],fp);
-		if( attach_as_sc.size() < i || !attach_as_sc[i] ) {
-			if(tag.size() > 1) tag += "-";
+		if ( attach_as_sc.size() < i || !attach_as_sc[i] ) {
+			if ( tag.size() > 1 ) tag += "-";
 			tag += utility::file_basename(posefile.substr(0,posefile.size()-4));
 		}
 		core::io::pdb::pose_from_file(tmp,posefile, core::import_pose::PDB_file);
@@ -2033,80 +2034,80 @@ PoseWrap posewrap_from_command_line(string symm_def_template = "", string symm_d
 		poses.push_back( tmp );
 	}
 
-	for(Size i = 1; i <= pdbs.size(); ++i ) {
-		if( attach_rsd.size() > 1 && attach_rsd.size() != pdbs.size() ) utility_exit_with_message("attach_rsd wrong size!");
-		if( attach_rsd.size() < i ) myattach.push_back(1);
+	for ( Size i = 1; i <= pdbs.size(); ++i ) {
+		if ( attach_rsd.size() > 1 && attach_rsd.size() != pdbs.size() ) utility_exit_with_message("attach_rsd wrong size!");
+		if ( attach_rsd.size() < i ) myattach.push_back(1);
 		else myattach.push_back( to_integer(select_string(attach_rsd[i],filepick[i])));
-		if( attach_atom.size() > 1 && attach_atom.size() != pdbs.size() ) utility_exit_with_message("attach_atom wrong size!");
-		if( attach_atom.size() < i ) myattach_atom.push_back("N");
+		if ( attach_atom.size() > 1 && attach_atom.size() != pdbs.size() ) utility_exit_with_message("attach_atom wrong size!");
+		if ( attach_atom.size() < i ) myattach_atom.push_back("N");
 		else myattach_atom.push_back(select_string(attach_atom[i],filepick[i]));
-		if( ss_pref.size() > 1 && ss_pref.size() != pdbs.size() ) utility_exit_with_message("ss_pref wrong size!");
-		if( ss_pref.size() < i ) mypref.push_back("");
-		else if(ss_pref[i][0]=='_') mypref.push_back("");
+		if ( ss_pref.size() > 1 && ss_pref.size() != pdbs.size() ) utility_exit_with_message("ss_pref wrong size!");
+		if ( ss_pref.size() < i ) mypref.push_back("");
+		else if ( ss_pref[i][0]=='_' ) mypref.push_back("");
 		else mypref.push_back( process_ss_str(select_string(ss_pref[i],filepick[i])) );
-		if( ss_suff.size() > 1 && ss_suff.size() != pdbs.size() ) utility_exit_with_message("ss_suff wrong size!");
-		if( ss_suff.size() < i ) mysuff.push_back("");
-		else if(ss_suff[i][0]=='_') mysuff.push_back("");
+		if ( ss_suff.size() > 1 && ss_suff.size() != pdbs.size() ) utility_exit_with_message("ss_suff wrong size!");
+		if ( ss_suff.size() < i ) mysuff.push_back("");
+		else if ( ss_suff[i][0]=='_' ) mysuff.push_back("");
 		else mysuff.push_back( process_ss_str(select_string(ss_suff[i],filepick[i])) );
-		if( res_pref.size() > 1 && res_pref.size() != pdbs.size() ) utility_exit_with_message("res_pref wrong size!");
-		if( res_pref.size() < i ) myrespref.push_back("");
-		else if(res_pref[i][0]=='_') myrespref.push_back("");
+		if ( res_pref.size() > 1 && res_pref.size() != pdbs.size() ) utility_exit_with_message("res_pref wrong size!");
+		if ( res_pref.size() < i ) myrespref.push_back("");
+		else if ( res_pref[i][0]=='_' ) myrespref.push_back("");
 		else myrespref.push_back( select_string(res_pref[i],filepick[i]) );
-		if( res_suff.size() > 1 && res_suff.size() != pdbs.size() ) utility_exit_with_message("res_suff wrong size!");
-		if( res_suff.size() < i ) myressuff.push_back("");
-		else if(res_suff[i][0]=='_') myressuff.push_back("");
+		if ( res_suff.size() > 1 && res_suff.size() != pdbs.size() ) utility_exit_with_message("res_suff wrong size!");
+		if ( res_suff.size() < i ) myressuff.push_back("");
+		else if ( res_suff[i][0]=='_' ) myressuff.push_back("");
 		else myressuff.push_back( select_string(res_suff[i],filepick[i]) );
-		if( attach_as_sc.size() > 1 && attach_as_sc.size() != pdbs.size() ) utility_exit_with_message("attach_as_sc wrong size!");
-		if( attach_as_sc.size() < i ) mysc.push_back(0);
+		if ( attach_as_sc.size() > 1 && attach_as_sc.size() != pdbs.size() ) utility_exit_with_message("attach_as_sc wrong size!");
+		if ( attach_as_sc.size() < i ) mysc.push_back(0);
 		else mysc.push_back(attach_as_sc[i]);
-		if( option[smhybrid::design_res_files]().size() > 1 && option[smhybrid::design_res_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::design_res_files]() wrong size!");
-		if( option[smhybrid::design_res_files]().size() < i) design_res.push_back(vector1<Size>());
+		if ( option[smhybrid::design_res_files]().size() > 1 && option[smhybrid::design_res_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::design_res_files]() wrong size!");
+		if ( option[smhybrid::design_res_files]().size() < i ) design_res.push_back(vector1<Size>());
 		else design_res.push_back(read_res_list(select_string(option[smhybrid::design_res_files]()[i],filepick[i])));
 
-		if( option[smhybrid::rep_edge_files]().size() > 1 && option[smhybrid::rep_edge_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::rep_edge_files]() wrong size!");
-		if( option[smhybrid::rep_edge_files]().size() < i) rep_edge_res.push_back(vector1<Size>());
+		if ( option[smhybrid::rep_edge_files]().size() > 1 && option[smhybrid::rep_edge_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::rep_edge_files]() wrong size!");
+		if ( option[smhybrid::rep_edge_files]().size() < i ) rep_edge_res.push_back(vector1<Size>());
 		else rep_edge_res.push_back(read_res_list(select_string(option[smhybrid::rep_edge_files]()[i],filepick[i])));
 
-		if( option[smhybrid::fixed_res_files]().size() > 1 && option[smhybrid::fixed_res_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::fixed_res_files]() wrong size!");
-		if( option[smhybrid::fixed_res_files]().size() < i) fixed_res.push_back(vector1<Size>());
+		if ( option[smhybrid::fixed_res_files]().size() > 1 && option[smhybrid::fixed_res_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::fixed_res_files]() wrong size!");
+		if ( option[smhybrid::fixed_res_files]().size() < i ) fixed_res.push_back(vector1<Size>());
 		else fixed_res.push_back(read_res_list(select_string(option[smhybrid::fixed_res_files]()[i],filepick[i])));
-		if( option[smhybrid::frag_res_files]().size() > 1 && option[smhybrid::frag_res_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::frag_res_files]() wrong size!");
-		if( option[smhybrid::frag_res_files]().size() < i) frag_res.push_back(vector1<Size>());
+		if ( option[smhybrid::frag_res_files]().size() > 1 && option[smhybrid::frag_res_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::frag_res_files]() wrong size!");
+		if ( option[smhybrid::frag_res_files]().size() < i ) frag_res.push_back(vector1<Size>());
 		else frag_res.push_back(read_res_list(select_string(option[smhybrid::frag_res_files]()[i],filepick[i])));
-		if( option[smhybrid::virtual_res_files]().size() > 1 && option[smhybrid::virtual_res_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::virtual_res_files]() wrong size!");
-		if( option[smhybrid::virtual_res_files]().size() < i) virtual_res.push_back(vector1<Size>());
+		if ( option[smhybrid::virtual_res_files]().size() > 1 && option[smhybrid::virtual_res_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::virtual_res_files]() wrong size!");
+		if ( option[smhybrid::virtual_res_files]().size() < i ) virtual_res.push_back(vector1<Size>());
 		else virtual_res.push_back(read_res_list(select_string(option[smhybrid::virtual_res_files]()[i],filepick[i])));
-		if( attach_rsd.size() > 1 && attach_rsd.size() != pdbs.size() ) utility_exit_with_message("attach_rsd wrong size!");
-		if( option[smhybrid::scattach_res_files]().size() < i) scattach_res.push_back(vector1<Size>());
+		if ( attach_rsd.size() > 1 && attach_rsd.size() != pdbs.size() ) utility_exit_with_message("attach_rsd wrong size!");
+		if ( option[smhybrid::scattach_res_files]().size() < i ) scattach_res.push_back(vector1<Size>());
 		else scattach_res.push_back(read_res_list(select_string(option[smhybrid::scattach_res_files]()[i],filepick[i])));
-		if( option[smhybrid::jumpcut_files]().size() > 1 && option[smhybrid::jumpcut_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::jumpcut_files]() wrong size!");
-		if( option[smhybrid::jumpcut_files]().size() < i) jumpcut.push_back(vector1<xyzVector<Size> >());
+		if ( option[smhybrid::jumpcut_files]().size() > 1 && option[smhybrid::jumpcut_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::jumpcut_files]() wrong size!");
+		if ( option[smhybrid::jumpcut_files]().size() < i ) jumpcut.push_back(vector1<xyzVector<Size> >());
 		else jumpcut.push_back(read_jumpcut_file(select_string(option[smhybrid::jumpcut_files]()[i],filepick[i])));
-		if( option[smhybrid::cst_sub_files]().size() > 1 && option[smhybrid::cst_sub_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::cst_sub_files]() wrong size!");
-		if( option[smhybrid::cst_sub_files]().size() < i) cst_sub_files.push_back(vector1<Size>());
+		if ( option[smhybrid::cst_sub_files]().size() > 1 && option[smhybrid::cst_sub_files]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::cst_sub_files]() wrong size!");
+		if ( option[smhybrid::cst_sub_files]().size() < i ) cst_sub_files.push_back(vector1<Size>());
 		else cst_sub_files.push_back(read_res_list(select_string(option[smhybrid::cst_sub_files]()[i],filepick[i])));
-		if( option[smhybrid::chainbreaks]().size() > 1 && option[smhybrid::chainbreaks]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::chainbreaks]() wrong size!");
-		if( option[smhybrid::chainbreaks]().size() < i) chainbreaks.push_back(false);
+		if ( option[smhybrid::chainbreaks]().size() > 1 && option[smhybrid::chainbreaks]().size() != pdbs.size() ) utility_exit_with_message("option[smhybrid::chainbreaks]() wrong size!");
+		if ( option[smhybrid::chainbreaks]().size() < i ) chainbreaks.push_back(false);
 		else chainbreaks.push_back(/*select_string(*/option[smhybrid::chainbreaks]()[i]/*,filepick[i])*/);
 
 	}
-	if( symm_def_template.size()==0 ) {
+	if ( symm_def_template.size()==0 ) {
 		std::string fname = option[smhybrid::symm_def_template]();
 		izstream in(fname.c_str());
-		if(!in.good()) utility_exit_with_message("can't open sym template file: "+fname);
+		if ( !in.good() ) utility_exit_with_message("can't open sym template file: "+fname);
 		char buf[999];
-		while( in.getline(buf,999) ) {
+		while ( in.getline(buf,999) ) {
 			symm_def_template += buf;
 			symm_def_template += "\n";
 		}
 		in.close();
 	}
-	if( symm_def_template_reduced.size()==0 ) {
+	if ( symm_def_template_reduced.size()==0 ) {
 		std::string fname = option[smhybrid::symm_def_template_reduced]();
 		izstream in(fname.c_str());
-		if(!in.good()) utility_exit_with_message("can't open sym template file: "+fname);
+		if ( !in.good() ) utility_exit_with_message("can't open sym template file: "+fname);
 		char buf[999];
-		while( in.getline(buf,999) ) {
+		while ( in.getline(buf,999) ) {
 			symm_def_template_reduced += buf;
 			symm_def_template_reduced += "\n";
 		}
@@ -2119,11 +2120,11 @@ PoseWrap posewrap_from_command_line(string symm_def_template = "", string symm_d
 void read_fragdata( vector1< core::fragment::FragDataOP > & fds, std::istream & in, bool /*design = false*/ ) {
 	using namespace core::fragment;
 	Size n,count=0;
-	while( in >> n ) {
-	 	string pdb;
+	while ( in >> n ) {
+		string pdb;
 		char buf[999];
 		FragDataOP fd = new FragData;
-		for( Size i = 1; i <= n; ++i ) {
+		for ( Size i = 1; i <= n; ++i ) {
 			utility::pointer::owning_ptr<SingleResidueFragData> srfd;
 			srfd = new BBTorsionSRFD;
 			in >> pdb;
@@ -2176,36 +2177,39 @@ core::fragment::FragSetOP make_frag_set(PoseWrap const & pw, std::map<string, ve
 	using namespace core::fragment;
 	FragSetOP frags = new ConstantLengthFragSet();
 	int const stop = pw.nres + 1 - 3;
-	if((int)1 >= stop) return NULL;
-	for( Size i = 1; i <= (Size)stop; ++i ) {
+	if ( (int)1 >= stop ) return NULL;
+	for ( Size i = 1; i <= (Size)stop; ++i ) {
 		string ss3 = pw.ss(i,3);
 		bool mkframe = true;
-		for(Size j = 0; j < ss3.size(); ++j) if(ss3[j]!='H'&&ss3[j]!='E'&&ss3[j]!='L'&&ss3[j]!='*') mkframe = false;
-		for(Size j = 1; j <= pw.cuts_.size(); ++j ) {
+		for ( Size j = 0; j < ss3.size(); ++j ) if ( ss3[j]!='H'&&ss3[j]!='E'&&ss3[j]!='L'&&ss3[j]!='*' ) mkframe = false;
+		for ( Size j = 1; j <= pw.cuts_.size(); ++j ) {
 			Size c = pw.cuts_[j];
-			if( i==c ) mkframe=false; if( i==c-1 ) mkframe=false;
+			if ( i==c ) mkframe=false;
+			if ( i==c-1 ) mkframe=false;
 		}
-		if( !mkframe ) continue;
+		if ( !mkframe ) continue;
 		FrameOP frame = new Frame(i,3);
 		vector1<char> ss0,ss1,ss2;
-		if('*'==ss3[0]) { ss0.push_back('H'); ss0.push_back('E'); ss0.push_back('L'); } else ss0.push_back(ss3[0]);
-		if('*'==ss3[1]) { ss1.push_back('H'); ss1.push_back('E'); ss1.push_back('L'); } else ss1.push_back(ss3[1]);
-		if('*'==ss3[2]) { ss2.push_back('H'); ss2.push_back('E'); ss2.push_back('L'); } else ss2.push_back(ss3[2]);
-		for( Size j = 1; j <= ss0.size(); ++j ) {
-		for( Size k = 1; k <= ss1.size(); ++k ) {
-		for( Size l = 1; l <= ss2.size(); ++l ) {
-			string ss=""; ss+=ss0[j]; ss+=ss1[k]; ss+=ss2[l];
-			// TR << "adding ss " << ss << " '" << ss0[j] << "' '" << ss1[k] << "' '" << ss2[l] << "'" << std::endl;
-			vector1<FragDataOP>::iterator beg = fds[ss].begin();
-			vector1<FragDataOP>::iterator end = fds[ss].end();
-			for( vector1<FragDataOP>::iterator fi = beg; fi != end; ++fi ) {
-				frame->add_fragment(*fi);
+		if ( '*'==ss3[0] ) { ss0.push_back('H'); ss0.push_back('E'); ss0.push_back('L'); } else ss0.push_back(ss3[0]);
+		if ( '*'==ss3[1] ) { ss1.push_back('H'); ss1.push_back('E'); ss1.push_back('L'); } else ss1.push_back(ss3[1]);
+		if ( '*'==ss3[2] ) { ss2.push_back('H'); ss2.push_back('E'); ss2.push_back('L'); } else ss2.push_back(ss3[2]);
+		for ( Size j = 1; j <= ss0.size(); ++j ) {
+			for ( Size k = 1; k <= ss1.size(); ++k ) {
+				for ( Size l = 1; l <= ss2.size(); ++l ) {
+					string ss=""; ss+=ss0[j]; ss+=ss1[k]; ss+=ss2[l];
+					// TR << "adding ss " << ss << " '" << ss0[j] << "' '" << ss1[k] << "' '" << ss2[l] << "'" << std::endl;
+					vector1<FragDataOP>::iterator beg = fds[ss].begin();
+					vector1<FragDataOP>::iterator end = fds[ss].end();
+					for ( vector1<FragDataOP>::iterator fi = beg; fi != end; ++fi ) {
+						frame->add_fragment(*fi);
+					}
+				}
 			}
-		}}}
+		}
 		frags->add(frame);
 		TR << "make frag " << i << ": " << ss3 << std::endl;
 	}
-	if(frags->size() == 0) return NULL;
+	if ( frags->size() == 0 ) return NULL;
 	return frags;
 }
 
@@ -2217,14 +2221,14 @@ core::fragment::FragSetOP make_frag_set_9mers(Size nres) {
 	read_fragdata(fds9,in,false);
 
 	FragSetOP frags = new ConstantLengthFragSet();
-	for( Size i = 1; i <= nres-8; ++i ) {
+	for ( Size i = 1; i <= nres-8; ++i ) {
 		FrameOP frame = new Frame(i,9);
-		for( vector1<FragDataOP>::iterator fi = fds9.begin(); fi != fds9.end(); ++fi ) {
+		for ( vector1<FragDataOP>::iterator fi = fds9.begin(); fi != fds9.end(); ++fi ) {
 			frame->add_fragment(*fi);
 		}
 		frags->add(frame);
 	}
-	if(frags->size() == 0) return NULL;
+	if ( frags->size() == 0 ) return NULL;
 	return frags;
 }
 
@@ -2237,12 +2241,12 @@ public:
 		using namespace core::pack::dunbrack;
 		using namespace core::chemical;
 		string name3 = pose.residue(residue).name3();
-		if(name3=="BPY") name3 = "TRP"; //TODO find a better way to get rotamers...
-		if(name3=="NPP") name3 = "TYR";
-		if(name3=="NPD") name3 = "TYR";
-		if(name3=="NPA") name3 = "TYR";
-		if(name3=="TIA") name3 = "LYS";
-		if(name3=="HSC") name3 = "HIS";
+		if ( name3=="BPY" ) name3 = "TRP"; //TODO find a better way to get rotamers...
+		if ( name3=="NPP" ) name3 = "TYR";
+		if ( name3=="NPD" ) name3 = "TYR";
+		if ( name3=="NPA" ) name3 = "TYR";
+		if ( name3=="TIA" ) name3 = "LYS";
+		if ( name3=="HSC" ) name3 = "HIS";
 		ResidueTypeSetCAP rs( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		lib_ = core::scoring::ScoringManager::get_instance()->get_RotamerLibrary().get_rsd_library( rs->name_map(name3) );
 		assert(lib_);
@@ -2252,10 +2256,10 @@ public:
 		using namespace core::pack::dunbrack;
 		ChiVector chis;
 		lib_->assign_random_rotamer_with_bias(pose.residue(residue_),scratch_,numeric::random::rg(),chis,true);
-		for(Size i = 1; i <= chis.size(); ++i)	{
+		for ( Size i = 1; i <= chis.size(); ++i ) {
 			pose.set_chi(i,residue_,chis[i]);
 		}
-		for(Size i = chis.size()+1; i <= nchi; ++i ) {
+		for ( Size i = chis.size()+1; i <= nchi; ++i ) {
 			pose.set_chi(i,residue_,uniform()*360.0);
 		}
 		// Real a =  5.0*numeric::random::gaussian();
@@ -2288,7 +2292,7 @@ public:
 		slide_ = new protocols::symmetric_docking::SymDockingSlideIntoContact(dofs_);
 	}
 	void apply( core::pose::Pose & pose ) {
-		for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs_.begin(); i != dofs_.end(); ++i) {
+		for ( std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs_.begin(); i != dofs_.end(); ++i ) {
 			// TR << "MySlideMover: set jump " << i->first << " translation to 0" << std::endl;
 			core::kinematics::Jump j(pose.jump(i->first));
 			// TR << j << std::endl;
@@ -2296,7 +2300,7 @@ public:
 			// TR << j << std::endl;
 			pose.set_jump(i->first,j);
 		}
-		if(!dofs_.empty()/*size()*/) slide_->apply(pose);
+		if ( !dofs_.empty()/*size()*/ ) slide_->apply(pose);
 	}
 	std::string get_name() const { return "MySlideMover"; }
 };
@@ -2314,71 +2318,71 @@ public:
 		pw_ = pw;
 		core::pose::Pose & pose(pw.pose);
 		dofs_ = core::conformation::symmetry::symmetry_info(pose)->get_dofs();
-		if(concerted_) {
-			for(Size j = 1; j <= pose.fold_tree().num_jump(); ++j) {
-				if( pose.fold_tree().downstream_jump_residue(j)==(int)concert_sub_ ) concert_sub_ = pose.fold_tree().upstream_jump_residue(j);
+		if ( concerted_ ) {
+			for ( Size j = 1; j <= pose.fold_tree().num_jump(); ++j ) {
+				if ( pose.fold_tree().downstream_jump_residue(j)==(int)concert_sub_ ) concert_sub_ = pose.fold_tree().upstream_jump_residue(j);
 			}
 		}
-		for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs_.begin(); i != dofs_.end(); ++i) {
-			if(        i->second.allow_dof(1) &&  i->second.allow_dof(2) &&  i->second.allow_dof(3) &&
-			          !i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
+		for ( std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs_.begin(); i != dofs_.end(); ++i ) {
+			if (        i->second.allow_dof(1) &&  i->second.allow_dof(2) &&  i->second.allow_dof(3) &&
+					!i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
 				comjump.push_back(i->first);
-			} else if( i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) &&
-			           i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
+			} else if ( i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) &&
+					i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
 				symjumps.push_back(i->first);
-			} else if(/*i->second.allow_dof(1)&&*/i->second.allow_dof(2) && i->second.allow_dof(3) &&
-			            i->second.allow_dof(4) && i->second.allow_dof(5) && i->second.allow_dof(6) ) {
+			} else if ( /*i->second.allow_dof(1)&&*/i->second.allow_dof(2) && i->second.allow_dof(3) &&
+					i->second.allow_dof(4) && i->second.allow_dof(5) && i->second.allow_dof(6) ) {
 				rbjumps.push_back(i->first);
 			}
 		}
-		if(comjump.size() > 1) utility_exit_with_message("more than one COM jump!");
+		if ( comjump.size() > 1 ) utility_exit_with_message("more than one COM jump!");
 	}
 	std::string get_name() const { return "MyTransMover"; }
 	void apply( core::pose::Pose & pose ) {
 		pw_->validate_set_reference();
 		// if(debug_) TR << "MyTransMover " << concerted_ << std::endl;
-		if( concerted_ ) {
+		if ( concerted_ ) {
 			// pose.dump_pdb("trans_before.pdb");
-			if( (rbjumps.size()==0 || uniform() < 0.6) && symjumps.size() > 0 ) {
+			if ( (rbjumps.size()==0 || uniform() < 0.6) && symjumps.size() > 0 ) {
 				Real magx = gaussian()*mag_;
-				for(Size idx = 1; idx <= symjumps.size(); ++idx) {
+				for ( Size idx = 1; idx <= symjumps.size(); ++idx ) {
 					core::kinematics::Jump j(pose.jump(symjumps[idx]));
 					j.set_translation(j.get_translation()+(magx)*Vec(1,0,0));
 					pose.set_jump(symjumps[idx],j);
 				}
 			} else {
 				Real magx = gaussian()*mag_; Real magy = gaussian()*mag_; Real magz = gaussian()*mag_;
-				for(Size idx = 1; idx <= rbjumps.size(); ++idx) {
+				for ( Size idx = 1; idx <= rbjumps.size(); ++idx ) {
 					core::kinematics::Jump j(pose.jump(rbjumps[idx]));
-					if(dofs_[rbjumps[idx]].allow_dof(1)) j.set_translation(j.get_translation()+(magx)*Vec(1,0,0));
-					if(dofs_[rbjumps[idx]].allow_dof(2)) j.set_translation(j.get_translation()+(magy)*Vec(0,1,0));
-					if(dofs_[rbjumps[idx]].allow_dof(3)) j.set_translation(j.get_translation()+(magz)*Vec(0,0,1));
+					if ( dofs_[rbjumps[idx]].allow_dof(1) ) j.set_translation(j.get_translation()+(magx)*Vec(1,0,0));
+					if ( dofs_[rbjumps[idx]].allow_dof(2) ) j.set_translation(j.get_translation()+(magy)*Vec(0,1,0));
+					if ( dofs_[rbjumps[idx]].allow_dof(3) ) j.set_translation(j.get_translation()+(magz)*Vec(0,0,1));
 					pose.set_jump(rbjumps[idx],j);
 				}
 			}
 			// pose.dump_pdb("trans_after.pdb");
 			// if(uniform() < 0.01) std::exit(-1);
 		} else {
-			if( (rbjumps.size()==0 || uniform() < 0.6) && symjumps.size() > 0 ) {
+			if ( (rbjumps.size()==0 || uniform() < 0.6) && symjumps.size() > 0 ) {
 				Size idx = std::ceil(uniform()*symjumps.size());
 				core::kinematics::Jump j(pose.jump(symjumps[idx]));
 				j.set_translation(j.get_translation()+(gaussian()*mag_)*Vec(1,0,0));
 				pose.set_jump(symjumps[idx],j);
-			} else if(rbjumps.size()>0) { // move rb jump
+			} else if ( rbjumps.size()>0 ) { // move rb jump
 				Size idx = std::ceil(uniform()*rbjumps.size());
 				core::kinematics::Jump j(pose.jump(rbjumps[idx]));
 				j.set_translation(j.get_translation()+Vec((gaussian()*mag_),(gaussian()*mag_),(gaussian()*mag_)));
 				pose.set_jump(rbjumps[idx],j);
 			} else {
 				static bool printed(false);
-				if(!printed) {
+				if ( !printed ) {
 					TR << "MyTransMover WARNING! no jump with translation MOVES!" << std::endl;
 					printed=true;
 				}
 			}
 		}
 
-		if(post_ && uniform() < postfrac_ && !concerted_) post_->apply(pose);
+		if ( post_ && uniform() < postfrac_ && !concerted_ ) post_->apply(pose);
 
 		pw_->validate();
 		pw_->center();
@@ -2388,14 +2392,14 @@ public:
 void get_res_downstream_of_jump(FoldTree const & ft, Size j, vector1<Size> & resout) {
 	// TR << "get_res_downstream_of_jump " << resout << std::endl;
 	bool isleaf = true;
-	for(Size i = 1; i <= ft.num_jump(); ++i) {
-		if(ft.upstream_jump_residue(i)==ft.downstream_jump_residue(j)) {
+	for ( Size i = 1; i <= ft.num_jump(); ++i ) {
+		if ( ft.upstream_jump_residue(i)==ft.downstream_jump_residue(j) ) {
 			// TR << "get_res_downstream_of_jump " << j << " recursing on " << i << std::endl;
 			get_res_downstream_of_jump(ft,i,resout);
 			isleaf = false;
 		}
 	}
-	if(isleaf) {
+	if ( isleaf ) {
 		resout.push_back(ft.downstream_jump_residue(j));
 		// TR << "get_res_downstream_of_jump IS LEAF " << j << " " << resout->size() << std::endl;
 	}
@@ -2415,34 +2419,34 @@ public:
 	MyRotMover(PoseWrap & pw, Real mag, bool counterrot=false, bool concerted=false, MoverOP post = NULL, Real postfrac=0, Size concert_sub=0) : mag_(mag), postfrac_(postfrac), counterrot_(counterrot), concerted_(concerted), debug_(pw.debug), post_(post), concert_sub_(concert_sub) {
 		pw_ = pw;
 		dofs_ = core::conformation::symmetry::symmetry_info(pw.pose)->get_dofs();
-		if(counterrot_) {
-			for(Size j = 1; j <= pw.pose.fold_tree().num_jump(); ++j) {
-				if( pw.pose.fold_tree().downstream_jump_residue(j)==(int)concert_sub_ ) concert_sub_ = pw.pose.fold_tree().upstream_jump_residue(j);
+		if ( counterrot_ ) {
+			for ( Size j = 1; j <= pw.pose.fold_tree().num_jump(); ++j ) {
+				if ( pw.pose.fold_tree().downstream_jump_residue(j)==(int)concert_sub_ ) concert_sub_ = pw.pose.fold_tree().upstream_jump_residue(j);
 			}
 		}
-		for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs_.begin(); i != dofs_.end(); ++i) {
-			if( i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) &&
-			    i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
+		for ( std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs_.begin(); i != dofs_.end(); ++i ) {
+			if ( i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) &&
+					i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
 				symjumps.push_back(i->first);
-			} else if( !i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) &&
-			            i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
+			} else if ( !i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) &&
+					i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
 				rotjumps.push_back(i->first);
 			} else {
-			  	rbjumps.push_back(i->first);
+				rbjumps.push_back(i->first);
 				rbparentres.push_back(pw.pose.fold_tree().downstream_jump_residue(i->first));
 				// TR << "ROT RBjump " << i->first << " " << pw.pose.fold_tree().downstream_jump_residue(i->first) << std::endl;
 				vector1<Size> downstream;
 				get_res_downstream_of_jump(pw.pose.fold_tree(),i->first,downstream);
-				for(vector1<Size>::iterator ir = downstream.begin(); ir != downstream.end(); ++ir) {
+				for ( vector1<Size>::iterator ir = downstream.begin(); ir != downstream.end(); ++ir ) {
 					// TR << "checking res " << *ir << std::endl;
-					if( *ir <= pw.nres*pw.nsub ) {
+					if ( *ir <= pw.nres*pw.nsub ) {
 						starts_.push_back(pw.subsub_starts_[pw.which_subsub(*ir)]);
 						stops_ .push_back(pw.subsub_ends_  [pw.which_subsub(*ir)]);
 					}
 				}
 			}
 		}
-		if(starts_.size() == 0 && rbjumps.size() != 0) {
+		if ( starts_.size() == 0 && rbjumps.size() != 0 ) {
 			utility_exit_with_message("have RB jump with no downstream residues!");
 		}
 
@@ -2451,16 +2455,16 @@ public:
 		pw_->validate_set_reference();
 		// if(debug_) TR << "MyRotMover " << concert_sub_ << " " << concerted_ << " " << counterrot_ << std::endl;
 		// TR << "ROT MOVER APPLY" << std::endl;
-		if( !concerted_ && !counterrot_ ) {
+		if ( !concerted_ && !counterrot_ ) {
 			Real MAG = (gaussian()*mag_);
-			if( ( (symjumps.size()==0 && rbjumps.size()==0) || uniform() < 0.333) && rotjumps.size() > 0  ) {
+			if ( ( (symjumps.size()==0 && rbjumps.size()==0) || uniform() < 0.333) && rotjumps.size() > 0  ) {
 				// TR << "ROT not concerted rotjumps" << std::endl;
-					Size idx = std::ceil(uniform()*rotjumps.size());
-					core::kinematics::Jump j(pose.jump(rotjumps[idx]));
-					j.set_rotation(x_rotation_matrix_degrees(MAG)*j.get_rotation());
-					pose.set_jump(rotjumps[idx],j);
-					// TR << "ROT MOVER MOVE 1 " << MAG << std::endl;
-				} else if( (rbjumps.size()==0 || uniform() < 0.5) && symjumps.size() > 0 ) {
+				Size idx = std::ceil(uniform()*rotjumps.size());
+				core::kinematics::Jump j(pose.jump(rotjumps[idx]));
+				j.set_rotation(x_rotation_matrix_degrees(MAG)*j.get_rotation());
+				pose.set_jump(rotjumps[idx],j);
+				// TR << "ROT MOVER MOVE 1 " << MAG << std::endl;
+			} else if ( (rbjumps.size()==0 || uniform() < 0.5) && symjumps.size() > 0 ) {
 				// TR << "ROT not concerted symjumps" << std::endl;
 				Size idx = std::ceil(uniform()*symjumps.size());
 				core::kinematics::Jump j(pose.jump(symjumps[idx]));
@@ -2471,12 +2475,12 @@ public:
 				// TR << "ROT not concerted rbjumps" << std::endl;
 				Size idx = std::ceil(uniform()*rbjumps.size());
 				core::kinematics::Jump j(pose.jump(rbjumps[idx]));
-				if(dofs_[rbjumps[idx]].allow_dof(4)) j.set_rotation(x_rotation_matrix_degrees(gaussian()*mag_)*j.get_rotation());
-				if(dofs_[rbjumps[idx]].allow_dof(5)) j.set_rotation(y_rotation_matrix_degrees(gaussian()*mag_)*j.get_rotation());
-				if(dofs_[rbjumps[idx]].allow_dof(6)) j.set_rotation(z_rotation_matrix_degrees(gaussian()*mag_)*j.get_rotation());
+				if ( dofs_[rbjumps[idx]].allow_dof(4) ) j.set_rotation(x_rotation_matrix_degrees(gaussian()*mag_)*j.get_rotation());
+				if ( dofs_[rbjumps[idx]].allow_dof(5) ) j.set_rotation(y_rotation_matrix_degrees(gaussian()*mag_)*j.get_rotation());
+				if ( dofs_[rbjumps[idx]].allow_dof(6) ) j.set_rotation(z_rotation_matrix_degrees(gaussian()*mag_)*j.get_rotation());
 				pose.set_jump(rbjumps[idx],j);
 			}
-		} else if(rbjumps.size() > 0 && concerted_ ) {
+		} else if ( rbjumps.size() > 0 && concerted_ ) {
 			// pose.dump_pdb("rot_before.pdb");c
 			// for(Size i = 1; i <= rbparentres.size(); ++i) std::cerr << "CONCERTED rbparentres: " << rbparentres[i] << std::endl;
 			// TR << "ROT concerted_ switch=" << concert_sub_ << std::endl;
@@ -2486,9 +2490,9 @@ public:
 				// pose.dump_pdb("rot_before.pdb");
 				Vec tmp(0,0,0); // TODO: set to center of subunit!!!!
 				Size n = 0;
-				for(Size idx = 1; idx <= starts_.size(); ++idx) {
+				for ( Size idx = 1; idx <= starts_.size(); ++idx ) {
 					// TR << "ROT computing CEN from " << starts_[idx] << " " << stops_[idx] << std::endl;
-					for(Size i = starts_[idx]; i <= stops_[idx]; ++i) {
+					for ( Size i = starts_[idx]; i <= stops_[idx]; ++i ) {
 						tmp += pose.xyz(AtomID(2,i));
 						n++;
 					}
@@ -2500,82 +2504,82 @@ public:
 				// out1 << "HETATM 9999 ZN    ZN A 999      " << LJ(8,F(5,3,CEN.x())) << LJ(8,F(5,3,CEN.y())) << LJ(8,F(5,3,CEN.z())) << "1.00  0.00" << std::endl;
 				// std::cerr << "CEN  " << CEN << std::endl;
 				// for(Size idx = 1; idx <= rbjumps.size(); ++idx) {
-				// 	Vec LCEN = pose.xyz(AtomID(1,rbparentres[idx]));
-				// 	std::cerr << "LCEN " << LCEN << std::endl;
-				// 	out1 << "HETATM 9999 ZN    ZN A "+string_of(999-idx)+"      " << LJ(8,F(5,3,LCEN.x())) << LJ(8,F(5,3,LCEN.y())) << LJ(8,F(5,3,LCEN.z())) << "1.00  0.00" << std::endl;
+				//  Vec LCEN = pose.xyz(AtomID(1,rbparentres[idx]));
+				//  std::cerr << "LCEN " << LCEN << std::endl;
+				//  out1 << "HETATM 9999 ZN    ZN A "+string_of(999-idx)+"      " << LJ(8,F(5,3,LCEN.x())) << LJ(8,F(5,3,LCEN.y())) << LJ(8,F(5,3,LCEN.z())) << "1.00  0.00" << std::endl;
 				// }
 			}
 
 			// numeric::xyzVector<Real> com(0,0,0);
 			// if(comjumps.size()) com = pose.jump(comjumps[1]).get_translation();
-			for(Size idx = 1; idx <= rbjumps.size(); ++idx) {
+			for ( Size idx = 1; idx <= rbjumps.size(); ++idx ) {
 				core::kinematics::Jump j(pose.jump(rbjumps[idx]));
 				// std::cerr << "JMP: " << idx << " " << j.get_translation() << " " << pose.xyz(AtomID(1,rbparentres[idx])) << std::endl;
 				// if( (j.get_translation()+com-pose.xyz(AtomID(1,rbparentres[idx]))).length() > 0.0001 ) {
-				// 	std::cerr << "COM " << j.get_translation() << " " << pose.xyz(AtomID(1,rbparentres[idx])) << " " << com << std::endl;
-				// 	utility_exit_with_message("coordinate frames do not match!!!");
+				//  std::cerr << "COM " << j.get_translation() << " " << pose.xyz(AtomID(1,rbparentres[idx])) << " " << com << std::endl;
+				//  utility_exit_with_message("coordinate frames do not match!!!");
 				// }
 				// std::cerr << "ROT: " << j.get_rotation() << std::endl;
-				if(dofs_[rbjumps[idx]].allow_dof(1)&&dofs_[rbjumps[idx]].allow_dof(4)) j.set_translation(x_rotation_matrix_degrees(magx)*(j.get_translation()-CEN)+CEN);
-				if(dofs_[rbjumps[idx]].allow_dof(2)&&dofs_[rbjumps[idx]].allow_dof(5)) j.set_translation(y_rotation_matrix_degrees(magy)*(j.get_translation()-CEN)+CEN);
-				if(dofs_[rbjumps[idx]].allow_dof(3)&&dofs_[rbjumps[idx]].allow_dof(6)) j.set_translation(z_rotation_matrix_degrees(magz)*(j.get_translation()-CEN)+CEN);
-				if(dofs_[rbjumps[idx]].allow_dof(1)&&dofs_[rbjumps[idx]].allow_dof(4)) j.set_rotation   (x_rotation_matrix_degrees(magx)*(j.get_rotation()));
-				if(dofs_[rbjumps[idx]].allow_dof(2)&&dofs_[rbjumps[idx]].allow_dof(5)) j.set_rotation   (y_rotation_matrix_degrees(magy)*(j.get_rotation()));
-				if(dofs_[rbjumps[idx]].allow_dof(3)&&dofs_[rbjumps[idx]].allow_dof(6)) j.set_rotation   (z_rotation_matrix_degrees(magz)*(j.get_rotation()));
+				if ( dofs_[rbjumps[idx]].allow_dof(1)&&dofs_[rbjumps[idx]].allow_dof(4) ) j.set_translation(x_rotation_matrix_degrees(magx)*(j.get_translation()-CEN)+CEN);
+				if ( dofs_[rbjumps[idx]].allow_dof(2)&&dofs_[rbjumps[idx]].allow_dof(5) ) j.set_translation(y_rotation_matrix_degrees(magy)*(j.get_translation()-CEN)+CEN);
+				if ( dofs_[rbjumps[idx]].allow_dof(3)&&dofs_[rbjumps[idx]].allow_dof(6) ) j.set_translation(z_rotation_matrix_degrees(magz)*(j.get_translation()-CEN)+CEN);
+				if ( dofs_[rbjumps[idx]].allow_dof(1)&&dofs_[rbjumps[idx]].allow_dof(4) ) j.set_rotation   (x_rotation_matrix_degrees(magx)*(j.get_rotation()));
+				if ( dofs_[rbjumps[idx]].allow_dof(2)&&dofs_[rbjumps[idx]].allow_dof(5) ) j.set_rotation   (y_rotation_matrix_degrees(magy)*(j.get_rotation()));
+				if ( dofs_[rbjumps[idx]].allow_dof(3)&&dofs_[rbjumps[idx]].allow_dof(6) ) j.set_rotation   (z_rotation_matrix_degrees(magz)*(j.get_rotation()));
 				pose.set_jump(rbjumps[idx],j);
 			}
 
 			// {
-			// 	pose.dump_pdb("rot_after.pdb");
-			// 	Vec tmp(0,0,0); // TODO: set to center of subunit!!!!
-			// 	Size n = 0;
-			// 	for(Size idx = 1; idx <= starts_.size(); ++idx) {
-			// 		TR << "ROT computing CEN from " << starts_[idx] << " " << stops_[idx] << std::endl;
-			// 		for(Size i = starts_[idx]; i <= stops_[idx]; ++i) {
-			// 			tmp += pose.xyz(AtomID(2,i));
-			// 			n++;
-			// 		}
-			// 	}
-			// 	Vec CEN = Vec(tmp.x()/n,tmp.y()/n,tmp.z()/n); // TODO: FIX THIS HACK!!!!!!!!!!! assumes z,x,y coord frame in sym file!!!!!!!
-			// 	pose.dump_pdb("rot_after.pdb");
-			// 	std::ofstream out("rot_after.pdb",std::ios::app);
-			// 	out << "HETATM 9999 ZN    ZN A 999      " << LJ(8,F(5,3,CEN.x())) << LJ(8,F(5,3,CEN.y())) << LJ(8,F(5,3,CEN.z())) << "1.00  0.00" << std::endl;
-			// 	for(Size idx = 1; idx <= rbjumps.size(); ++idx) {
-			// 		Vec LCEN = pose.xyz(AtomID(1,rbparentres[idx]));
-			// 		out << "HETATM 9999 ZN    ZN A "+string_of(999-idx)+"      " << LJ(8,F(5,3,LCEN.x())) << LJ(8,F(5,3,LCEN.y())) << LJ(8,F(5,3,LCEN.z())) << "1.00  0.00" << std::endl;
-			// 	}
+			//  pose.dump_pdb("rot_after.pdb");
+			//  Vec tmp(0,0,0); // TODO: set to center of subunit!!!!
+			//  Size n = 0;
+			//  for(Size idx = 1; idx <= starts_.size(); ++idx) {
+			//   TR << "ROT computing CEN from " << starts_[idx] << " " << stops_[idx] << std::endl;
+			//   for(Size i = starts_[idx]; i <= stops_[idx]; ++i) {
+			//    tmp += pose.xyz(AtomID(2,i));
+			//    n++;
+			//   }
+			//  }
+			//  Vec CEN = Vec(tmp.x()/n,tmp.y()/n,tmp.z()/n); // TODO: FIX THIS HACK!!!!!!!!!!! assumes z,x,y coord frame in sym file!!!!!!!
+			//  pose.dump_pdb("rot_after.pdb");
+			//  std::ofstream out("rot_after.pdb",std::ios::app);
+			//  out << "HETATM 9999 ZN    ZN A 999      " << LJ(8,F(5,3,CEN.x())) << LJ(8,F(5,3,CEN.y())) << LJ(8,F(5,3,CEN.z())) << "1.00  0.00" << std::endl;
+			//  for(Size idx = 1; idx <= rbjumps.size(); ++idx) {
+			//   Vec LCEN = pose.xyz(AtomID(1,rbparentres[idx]));
+			//   out << "HETATM 9999 ZN    ZN A "+string_of(999-idx)+"      " << LJ(8,F(5,3,LCEN.x())) << LJ(8,F(5,3,LCEN.y())) << LJ(8,F(5,3,LCEN.z())) << "1.00  0.00" << std::endl;
+			//  }
 			// }
 
 			// pose.dump_pdb("rot_after.pdb");
 			// std::exit(-1);
-		} else if(rbjumps.size() > 0 && counterrot_) {
+		} else if ( rbjumps.size() > 0 && counterrot_ ) {
 			// TR << "ROT counterrot" << std::endl;
 			Real magx = (gaussian()*mag_); Real magy = (gaussian()*mag_); Real magz = (gaussian()*mag_);
 			Size idx = std::ceil(uniform()*rbjumps.size());
 			core::kinematics::Jump j(pose.jump(rbjumps[idx]));
-			if(dofs_[rbjumps[idx]].allow_dof(4)) j.set_rotation(x_rotation_matrix_degrees(magx)*j.get_rotation());
-			if(dofs_[rbjumps[idx]].allow_dof(5)) j.set_rotation(y_rotation_matrix_degrees(magy)*j.get_rotation());
-			if(dofs_[rbjumps[idx]].allow_dof(6)) j.set_rotation(z_rotation_matrix_degrees(magz)*j.get_rotation());
+			if ( dofs_[rbjumps[idx]].allow_dof(4) ) j.set_rotation(x_rotation_matrix_degrees(magx)*j.get_rotation());
+			if ( dofs_[rbjumps[idx]].allow_dof(5) ) j.set_rotation(y_rotation_matrix_degrees(magy)*j.get_rotation());
+			if ( dofs_[rbjumps[idx]].allow_dof(6) ) j.set_rotation(z_rotation_matrix_degrees(magz)*j.get_rotation());
 			pose.set_jump(rbjumps[idx],j);
 			// TR << "ROT MOVER MOVE 4 " << magx << " " << magy << " " << magz << std::endl;
-			if(rbjumps.size() > 1 && counterrot_) {
+			if ( rbjumps.size() > 1 && counterrot_ ) {
 				Size idx2 = std::ceil(uniform()*rbjumps.size());
-				while(idx2 == idx) idx2 = std::ceil(uniform()*rbjumps.size());
+				while ( idx2 == idx ) idx2 = std::ceil(uniform()*rbjumps.size());
 				core::kinematics::Jump j(pose.jump(rbjumps[idx2]));
-				if(dofs_[rbjumps[idx2]].allow_dof(4)) j.set_rotation(x_rotation_matrix_degrees(magx)*j.get_rotation());
-				if(dofs_[rbjumps[idx2]].allow_dof(5)) j.set_rotation(y_rotation_matrix_degrees(magy)*j.get_rotation());
-				if(dofs_[rbjumps[idx2]].allow_dof(6)) j.set_rotation(z_rotation_matrix_degrees(magz)*j.get_rotation());
+				if ( dofs_[rbjumps[idx2]].allow_dof(4) ) j.set_rotation(x_rotation_matrix_degrees(magx)*j.get_rotation());
+				if ( dofs_[rbjumps[idx2]].allow_dof(5) ) j.set_rotation(y_rotation_matrix_degrees(magy)*j.get_rotation());
+				if ( dofs_[rbjumps[idx2]].allow_dof(6) ) j.set_rotation(z_rotation_matrix_degrees(magz)*j.get_rotation());
 				pose.set_jump(rbjumps[idx2],j);
 				// TR << "ROT MOVER MOVE 5 " << magx << " " << magy << " " << magz << std::endl;
 			}
 		} else {
 			static bool printed(false);
-			if(!printed) {
+			if ( !printed ) {
 				TR << "MyRotMover WARNING! no jump with allowed rotation MOVES! counterrot_ " << counterrot_ << " rbj: " << rbjumps.size() << " concerted_: " << concerted_ << std::endl;
 				printed=true;
 			}
 		}
-		if(post_ && uniform() < postfrac_ && !concerted_) post_->apply(pose);
+		if ( post_ && uniform() < postfrac_ && !concerted_ ) post_->apply(pose);
 
 		pw_->validate();
 
@@ -2600,22 +2604,22 @@ void print_movemap(core::kinematics::MoveMap const & movemap) {
 	using namespace core::id;
 	using namespace core::kinematics;
 	TR << "movemap " << std::endl;
-	for(std::map< TorsionType, bool >::const_iterator i = movemap.torsion_type_begin(); i != movemap.torsion_type_end(); ++i) {
+	for ( std::map< TorsionType, bool >::const_iterator i = movemap.torsion_type_begin(); i != movemap.torsion_type_end(); ++i ) {
 		TR << "TorsionType " << i->first << " " << i->second << std::endl;
 	}
-	for(std::map< std::pair< Size, TorsionType >, bool >::const_iterator i = movemap.movemap_torsion_id_begin(); i != movemap.movemap_torsion_id_end(); ++i) {
+	for ( std::map< std::pair< Size, TorsionType >, bool >::const_iterator i = movemap.movemap_torsion_id_begin(); i != movemap.movemap_torsion_id_end(); ++i ) {
 		TR << "MoveMapTorsionID (" << i->first.first << "," << i->first.second << ") " << i->second << std::endl;
 	}
-	for(std::map< TorsionID, bool >::const_iterator i = movemap.torsion_id_begin(); i != movemap.torsion_id_end(); ++i) {
+	for ( std::map< TorsionID, bool >::const_iterator i = movemap.torsion_id_begin(); i != movemap.torsion_id_end(); ++i ) {
 		TR << "TorsionID " << i->first << " " << i->second << std::endl;
 	}
-	for(std::map< DOF_Type, bool >::const_iterator i = movemap.dof_type_begin(); i != movemap.dof_type_end(); ++i) {
+	for ( std::map< DOF_Type, bool >::const_iterator i = movemap.dof_type_begin(); i != movemap.dof_type_end(); ++i ) {
 		TR << "DOF_Type " << i->first << " " << i->second << std::endl;
 	}
-	for(std::map< DOF_ID, bool >::const_iterator i = movemap.dof_id_begin(); i != movemap.dof_id_end(); ++i) {
+	for ( std::map< DOF_ID, bool >::const_iterator i = movemap.dof_id_begin(); i != movemap.dof_id_end(); ++i ) {
 		TR << "DOF_ID " << i->first << " " << i->second << std::endl;
 	}
-	for(std::map< JumpID, bool >::const_iterator i = movemap.jump_id_begin(); i != movemap.jump_id_end(); ++i) {
+	for ( std::map< JumpID, bool >::const_iterator i = movemap.jump_id_begin(); i != movemap.jump_id_end(); ++i ) {
 		TR << "JumpID " << i->first << " " << i->second << std::endl;
 	}
 
@@ -2623,10 +2627,10 @@ void print_movemap(core::kinematics::MoveMap const & movemap) {
 
 void jumps_to_root(Pose & pose, Size rsd, vector1<Size> & jumps) {
 	FoldTree const & ft(pose.fold_tree());
-	if( (int)rsd == ft.root() ) return;
-	for(Size i = 1; i <= ft.num_jump(); ++i) {
+	if ( (int)rsd == ft.root() ) return;
+	for ( Size i = 1; i <= ft.num_jump(); ++i ) {
 		// TR << "jumphunt " << i << " " << ft.downstream_jump_residue(i) << " " << ft.upstream_jump_residue(i) << " " << rsd << std::endl;
-		if(ft.downstream_jump_residue(i)==(int)rsd) {
+		if ( ft.downstream_jump_residue(i)==(int)rsd ) {
 			jumps.push_back(i);
 			return jumps_to_root(pose,ft.upstream_jump_residue(i),jumps);
 		}
@@ -2637,7 +2641,7 @@ void jumps_to_root(Pose & pose, Size rsd, vector1<Size> & jumps) {
 MoverOP
 make_float_sc_min_mover(core::pose::Pose & pose, vector1<Size> rsd_, Real tol) {
 	vector1<Size> jumps;
-	for(Size i = 1; i <= rsd_.size(); ++i) jumps_to_root(pose,rsd_[i],jumps);
+	for ( Size i = 1; i <= rsd_.size(); ++i ) jumps_to_root(pose,rsd_[i],jumps);
 
 	ScoreFunctionOP sf_ = new core::scoring::ScoreFunction;
 	sf_ = new core::scoring::symmetry::SymmetricScoreFunction(*sf_);
@@ -2649,10 +2653,10 @@ make_float_sc_min_mover(core::pose::Pose & pose, vector1<Size> rsd_, Real tol) {
 	movemap->set_chi(false);
 	movemap->set_bb(false);
 	movemap->set_jump(false);
-	for(Size i = 1; i <= rsd_.size(); ++i) movemap->set_chi(rsd_[i],true);
-	for(Size i = 1; i <= rsd_.size(); ++i) movemap->set_bb(rsd_[i],true);
+	for ( Size i = 1; i <= rsd_.size(); ++i ) movemap->set_chi(rsd_[i],true);
+	for ( Size i = 1; i <= rsd_.size(); ++i ) movemap->set_bb(rsd_[i],true);
 	// TR << pose.fold_tree() << std::endl;
-	for(Size i = 1; i <= jumps.size(); ++i) {
+	for ( Size i = 1; i <= jumps.size(); ++i ) {
 		// TR << "JUMP " << jumps[i] << std::endl;
 		movemap->set_jump(jumps[i],true);
 	}
@@ -2712,10 +2716,10 @@ public:
 	}
 	void apply(core::pose::Pose & pose) {
 		// TR << "before ScMinMover " << (*sf_)(pose) << std::endl;
-		for(Size i = 1; i<=rsd_.size();++i) {
+		for ( Size i = 1; i<=rsd_.size(); ++i ) {
 			Pose tmp = pose;
 			change_floating_sc_geometry(pose,rsd_[i],nres_);
-			if((*sf_)(tmp) < (*sf_)(pose)) {
+			if ( (*sf_)(tmp) < (*sf_)(pose) ) {
 				pose = tmp;
 			} else {
 				TR << "ScMinMover: performed sc swap on res " << i << std::endl;
@@ -2736,7 +2740,7 @@ public:
 	BBMover(Size nres, Real mag) : nres_(nres),mag_(mag) {}
 	void apply(core::pose::Pose & pose) {
 		Size i = std::ceil(uniform()*nres_);
-		if(uniform()<0.5) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
+		if ( uniform()<0.5 ) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
 		else              pose.set_psi(i,pose.psi(i)+gaussian()*mag_);
 	}
 	std::string get_name() const { return "BBMover"; }
@@ -2749,23 +2753,23 @@ void repack(PoseWrap & pw, ScoreFunctionOP sf, bool fsc_only=false) {
 	task->restrict_to_repacking();
 	task->or_include_current(true);
 	pw.update_designable_packable();
-	for(Size i = 1; i <= pw.nres; ++i) {
-		if(!pw.is_rsd_repackable(i)) {
+	for ( Size i = 1; i <= pw.nres; ++i ) {
+		if ( !pw.is_rsd_repackable(i) ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		}
 	}
-	if(fsc_only) {
-		for(Size i = 1; i <= pw.nres; ++i) {
-			if(std::find(pw.attached_scattach_res_.begin(),pw.attached_scattach_res_.end(),i)!=pw.attached_scattach_res_.end()) continue;
+	if ( fsc_only ) {
+		for ( Size i = 1; i <= pw.nres; ++i ) {
+			if ( std::find(pw.attached_scattach_res_.begin(),pw.attached_scattach_res_.end(),i)!=pw.attached_scattach_res_.end() ) continue;
 			task->nonconst_residue_task(i).prevent_repacking();
 		}
 	}
-	for(Size i = 1; i <= pw.attached_scattach_res_.size(); ++i) {
+	for ( Size i = 1; i <= pw.attached_scattach_res_.size(); ++i ) {
 		TR << "scattach res packing mode: " << pw.attached_scattach_res_[i] << std::endl;
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex1(true);
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex2(true);
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
-		if(fsc_only) task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex2_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
+		if ( fsc_only ) task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex2_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).and_extrachi_cutoff(0);
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).restrict_to_repacking();
 	}
@@ -2783,7 +2787,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 	task->or_include_current(true);
 	// task->nonconst_residue_task(pw.attach).prevent_repacking();
 	// for(Size i = 1; i <= task->size(); ++i) {
-	// 	task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
+	//  task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 	// }
 
 	vector1< bool > aas(20,true);
@@ -2792,9 +2796,9 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 	aas[core::chemical::aa_cys] = false;
 	aas[core::chemical::aa_met] = false;
 	aas[core::chemical::aa_lys] = false;
-	if(pw.pose.is_fullatom()) {
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::design_hydrophobic]() ) {
-			for(Size i = 1; i <= aas.size(); ++i) aas[i] = false;
+	if ( pw.pose.is_fullatom() ) {
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::design_hydrophobic]() ) {
+			for ( Size i = 1; i <= aas.size(); ++i ) aas[i] = false;
 			// aas[core::chemical::aa_ala] = true;
 			aas[core::chemical::aa_ile] = true;
 			aas[core::chemical::aa_val] = true;
@@ -2803,20 +2807,20 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 			aas[core::chemical::aa_tyr] = true;
 			aas[core::chemical::aa_met] = true;
 			aas[core::chemical::aa_pro] = true;
-			if(do_trp) aas[core::chemical::aa_trp] = true;
+			if ( do_trp ) aas[core::chemical::aa_trp] = true;
 		}
 	} else {
 		utility_exit_with_message("design() called on cen pose... use cen_design()?");
 	}
 
 	pw.update_designable_packable();
-	for(Size i = 1; i <= pw.nres; ++i) {
-		if(!pw.is_rsd_repackable(i)) {
+	for ( Size i = 1; i <= pw.nres; ++i ) {
+		if ( !pw.is_rsd_repackable(i) ) {
 			TR << "fixed     " << i << std::endl;
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).or_ex1_sample_level( core::pack::task::EX_ONE_STDDEV );
 			task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
-		} else if(!pw.is_rsd_designable(i)) {
+		} else if ( !pw.is_rsd_designable(i) ) {
 			TR << "repacking " << i << std::endl;
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).or_ex1_sample_level( core::pack::task::EX_ONE_STDDEV );
@@ -2829,11 +2833,11 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 	}
 	// std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 	// for(Size i = 1; i <= pw.nres; ++i) {
-	// 	if(std::find(pw.attached_scattach_res_.begin(),pw.attached_scattach_res_.end(),i)!=pw.attached_scattach_res_.end()) continue;
-	// 	std::cerr << "SLKDFJSKLDJ " << i << std::endl;
-	// 	task->nonconst_residue_task(i).prevent_repacking();
+	//  if(std::find(pw.attached_scattach_res_.begin(),pw.attached_scattach_res_.end(),i)!=pw.attached_scattach_res_.end()) continue;
+	//  std::cerr << "SLKDFJSKLDJ " << i << std::endl;
+	//  task->nonconst_residue_task(i).prevent_repacking();
 	// }
-	for(Size i = 1; i <= pw.attached_scattach_res_.size(); ++i) {
+	for ( Size i = 1; i <= pw.attached_scattach_res_.size(); ++i ) {
 		TR << "scattach res packing mode: " << pw.attached_scattach_res_[i] << std::endl;
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex1(true);
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex2(true);
@@ -2846,7 +2850,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 	protocols::flxbb::DesignLayerOperationOP op = new protocols::flxbb::DesignLayerOperation(true,true,true);
 	op->apply(pose,*task);
 	// for(Size i = 1; i <= pw.nres; ++i) {
-	// 	task->nonconst_residue_task(i).allow_aa(pose.residue(i).aa());
+	//  task->nonconst_residue_task(i).allow_aa(pose.residue(i).aa());
 	// }
 
 
@@ -2871,10 +2875,10 @@ void cen_design(PoseWrap & pw, ScoreFunctionOP sf) {
 	// aas[core::chemical::aa_lys] = false;
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	task->or_include_current(true);
-	for(Size i = 1; i <= pw.nres; ++i) {
+	for ( Size i = 1; i <= pw.nres; ++i ) {
 		task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 	}
-	for(Size i = 1; i <= pw.floating_scs_.size(); ++i) {
+	for ( Size i = 1; i <= pw.floating_scs_.size(); ++i ) {
 		task->nonconst_residue_task(pw.floating_scs_[i]).prevent_repacking();
 	}
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
@@ -2888,32 +2892,33 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf, int bb=0, bool jmp=true, bool c
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	// core::conformation::symmetry::make_symmetric_movemap(pose,*movemap);
 	movemap->set_chi(true);
-	if(pw.pose.residue(1).name3()=="NPA") { movemap->set_chi(1,chi1); }//movemap->set(DOF_ID(AtomID(pose.residue(1).atom_index("C11"),1),core::id::PHI),true); }
-	if(pw.pose.residue(1).name3()=="NPD") { movemap->set_chi(1,chi1); }//movemap->set(DOF_ID(AtomID(pose.residue(1).atom_index("C11"),1),core::id::PHI),true); }
-	if(pw.pose.residue(1).name3()=="NPH") { movemap->set_chi(1,chi1); }//movemap->set(DOF_ID(AtomID(pose.residue(1).atom_index("C11"),1),core::id::PHI),true); }
+	if ( pw.pose.residue(1).name3()=="NPA" ) { movemap->set_chi(1,chi1); }//movemap->set(DOF_ID(AtomID(pose.residue(1).atom_index("C11"),1),core::id::PHI),true); }
+	if ( pw.pose.residue(1).name3()=="NPD" ) { movemap->set_chi(1,chi1); }//movemap->set(DOF_ID(AtomID(pose.residue(1).atom_index("C11"),1),core::id::PHI),true); }
+	if ( pw.pose.residue(1).name3()=="NPH" ) { movemap->set_chi(1,chi1); }//movemap->set(DOF_ID(AtomID(pose.residue(1).atom_index("C11"),1),core::id::PHI),true); }
 	movemap->set_bb(false);
 	movemap->set_jump(jmp);
 	// if(bb == 1) for(Size i = 1; i <= pw.nres; ++i) if(pw.pose.secstruct(i)=='L') movemap->set_bb(i,true);
-	if(bb > 0) { for(Size i = 1; i <= pw.nres; ++i) movemap->set_bb(i,true); }
-	else       { for(Size i = 1; i <= pw.nres; ++i) movemap->set_bb(i,false); }
+	if ( bb > 0 ) { for ( Size i = 1; i <= pw.nres; ++i ) movemap->set_bb(i,true);
+	} else       { for ( Size i = 1; i <= pw.nres; ++i ) movemap->set_bb(i,false);
+	}
 	// if(bb >= 2) for(Size i = 1; i <= pw.nres; ++i) movemap->set_bb(i,true);
-	if(bb > 0) TR << "minimizing with flexible bb! " << bb << std::endl;
+	if ( bb > 0 ) TR << "minimizing with flexible bb! " << bb << std::endl;
 
 
 	// set jumps, chi, bb true for floating sc res always
 	vector1<Size> jumps;
-	for(Size i = 1; i <= pw.floating_scs_.size(); ++i) jumps_to_root(pose,pw.floating_scs_[i],jumps);
-	for(Size i = 1; i <= pw.floating_scs_.size(); ++i ) {
+	for ( Size i = 1; i <= pw.floating_scs_.size(); ++i ) jumps_to_root(pose,pw.floating_scs_[i],jumps);
+	for ( Size i = 1; i <= pw.floating_scs_.size(); ++i ) {
 		TR << "minbb floating sc res " << pw.floating_scs_[i] << std::endl;
 		movemap->set_bb(pw.floating_scs_[i],true);
 	}
-	for(Size i = 1; i <= jumps.size(); ++i) movemap->set_jump(jumps[i],true);
+	for ( Size i = 1; i <= jumps.size(); ++i ) movemap->set_jump(jumps[i],true);
 	// movemap->set_jump(jumps.back(),false);
 
 	// // set bb free for linker always
 	// for(Size i = 1; i <= pw.linker_res_.size(); ++i) {
-	// 	TR << "minbb linker res " << pw.linker_res_[i] << std::endl;
-	// 	movemap->set_bb(pw.linker_res_[i],true);
+	//  TR << "minbb linker res " << pw.linker_res_[i] << std::endl;
+	//  movemap->set_bb(pw.linker_res_[i],true);
 	// }
 
 	print_movemap(*movemap);
@@ -2924,22 +2929,22 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf, int bb=0, bool jmp=true, bool c
 
 	// TR << "movemap " << std::endl;
 	// for(std::map< DOF_ID, bool >::const_iterator i = movemap->dof_id_begin(); i != movemap->dof_id_end(); ++i) {
-		// TR << "DOF " << i->first << " " << i->second << std::endl;
+	// TR << "DOF " << i->first << " " << i->second << std::endl;
 	// }
 	// std::exit(-1);
 	// TR << "minimize before " << (*sf)(pose) << std::endl;
 
 	// if(pw.floating_scs_.size()) {
-	// 	FloatScMonteCarlo(pw.floating_scs_,1000).apply(pw.pose);
-	// 	for(Size i = 1; i <= pw.floating_scs_.size();++i) {
-	// 		Pose tmp = pose;
-	// 		change_floating_sc_geometry(pose,pw.floating_scs_[i],pw.nres);
-	// 		if((*sf)(tmp) < (*sf)(pose)) {
-	// 			pose = tmp;
-	// 		} else {
-	// 			TR << "ScMinMover: performed sc swap on res " << i << std::endl;
-	// 		}
-	// 	}
+	//  FloatScMonteCarlo(pw.floating_scs_,1000).apply(pw.pose);
+	//  for(Size i = 1; i <= pw.floating_scs_.size();++i) {
+	//   Pose tmp = pose;
+	//   change_floating_sc_geometry(pose,pw.floating_scs_[i],pw.nres);
+	//   if((*sf)(tmp) < (*sf)(pose)) {
+	//    pose = tmp;
+	//   } else {
+	//    TR << "ScMinMover: performed sc swap on res " << i << std::endl;
+	//   }
+	//  }
 	// }
 
 	m.apply(pose);
@@ -2949,23 +2954,23 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf, int bb=0, bool jmp=true, bool c
 }
 
 // void add_sheet_cst(PoseWrap & pw) {
-// 	Size sheet_start=999999, sheet_end=0;
-// 	for(size_t i = 0; i < pw.nres); ++i) {
-// 		if(pw.ss(i)=='E') {
-// 			sheet_start = numeric::min(sheet_start,i+1);
-// 			sheet_end = numeric::max(sheet_end,i+1);
-// 		}
-// 	}
-// 	if((sheet_end-sheet_start)%2==1){
-// 		TR << "even sheet length!!!" << std::endl;
-// 		std::exit(-1);
-// 	}
-// 	using core::id::AtomID;
-// 	for(size_t i = sheet_start; i <= sheet_end; ++i) {
-// 		Size other = sheet_end+sheet_start-i;
-// 		add_apc(pw.pose,AtomID(2,i),AtomID(2,pw.nres*3+other),5.0,1.0);
-// 		TR << "apc " << i << " " << pw.nres*3+other << std::endl;
-// 	}
+//  Size sheet_start=999999, sheet_end=0;
+//  for(size_t i = 0; i < pw.nres); ++i) {
+//   if(pw.ss(i)=='E') {
+//    sheet_start = numeric::min(sheet_start,i+1);
+//    sheet_end = numeric::max(sheet_end,i+1);
+//   }
+//  }
+//  if((sheet_end-sheet_start)%2==1){
+//   TR << "even sheet length!!!" << std::endl;
+//   std::exit(-1);
+//  }
+//  using core::id::AtomID;
+//  for(size_t i = sheet_start; i <= sheet_end; ++i) {
+//   Size other = sheet_end+sheet_start-i;
+//   add_apc(pw.pose,AtomID(2,i),AtomID(2,pw.nres*3+other),5.0,1.0);
+//   TR << "apc " << i << " " << pw.nres*3+other << std::endl;
+//  }
 //
 // }
 
@@ -2974,7 +2979,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	using namespace core;
 	using namespace scoring;
 	using namespace protocols::moves;
-	if(pw.pose.is_fullatom()) pw.switch_to_cen();
+	if ( pw.pose.is_fullatom() ) pw.switch_to_cen();
 	core::pose::Pose & pose(pw.pose);
 
 	Real temp   = basic::options::option[basic::options::OptionKeys::smhybrid::temperature]();
@@ -2984,13 +2989,13 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	slide->apply(pw.pose);
 	// Size cres = 0; if(csub) cres = pw.attach_rsd_[pw.primary_subsub];
 	MoverOP minsc,minscpicky,changesc;
-	if(pw.has_floating_sc) {
+	if ( pw.has_floating_sc ) {
 		minsc = new ScMinMover(pw.pose,pw.floating_scs_,0.05,pw.nres);//make_float_sc_min_mover(pw.pose,pw.floating_scs_[1]);
 		minscpicky = new ScMinMover(pw.pose,pw.floating_scs_,0.0001,pw.nres);//make_float_sc_min_mover(pw.pose,pw.floating_scs_[1]);
 		changesc = new FloatScRotMover(pw);
 	}
 	RandomMoverOP mover0 = new RandomMover;
-	if( frags0() != NULL && frags0->size() > 0 ) {
+	if ( frags0() != NULL && frags0->size() > 0 ) {
 		protocols::moves::MoverOP fragins = new protocols::abinitio::ClassicFragmentMover(frags0);
 		// TODO FIX HACK
 		TR << "doing frag moves" << std::endl;
@@ -3000,7 +3005,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 		protocols::moves::MoverOP bbmove = new BBMover(pw.nres,30.0);
 		mover0->add_mover(bbmove,5.0);
 	}
-	if( core::conformation::symmetry::symmetry_info(pw.pose)->get_dofs().size() ) {
+	if ( core::conformation::symmetry::symmetry_info(pw.pose)->get_dofs().size() ) {
 		// mover0->add_mover(slide,0.005);
 		MoverOP rot      = new MyRotMover  (pw,rb_mag*180.0,false,false,minsc,0.15,csub);
 		MoverOP rotc     = new MyRotMover  (pw,rb_mag*180.0,false,true ,minsc,0.15,csub);
@@ -3011,23 +3016,23 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 		MoverOP transsm  = new MyTransMover(pw,rb_mag*  1.0,      false,minsc,0.05,csub);
 		MoverOP transsmc = new MyTransMover(pw,rb_mag*  1.0,      true ,minsc,0.05,csub);
 		// if( option[basic::options::OptionKeys::smhybrid::refine]() ) {
-		// 	MoverOP rot      = new MyRotMover  (pw,rb_mag*2.0,false,false,minsc,0.15,csub);
-		// 	MoverOP rotc     = new MyRotMover  (pw,rb_mag*1.0,false,true ,minsc,0.15,csub);
-		// 	MoverOP rotsm    = new MyRotMover  (pw,rb_mag*1.0,false,false,minsc,0.15,csub);
-		// 	MoverOP rotsmc   = new MyRotMover  (pw,rb_mag*1.0,false,true ,minsc,0.15,csub);
-		// 	MoverOP trans    = new MyTransMover(pw,rb_mag*1.0,      false,minsc,0.15,csub);
-		// 	MoverOP transc   = new MyTransMover(pw,rb_mag*1.0,      true ,minsc,0.15,csub);
-		// 	MoverOP transsm  = new MyTransMover(pw,rb_mag*0.1,      false,minsc,0.15,csub);
-		// 	MoverOP transsmc = new MyTransMover(pw,rb_mag*0.1,      true ,minsc,0.15,csub);
+		//  MoverOP rot      = new MyRotMover  (pw,rb_mag*2.0,false,false,minsc,0.15,csub);
+		//  MoverOP rotc     = new MyRotMover  (pw,rb_mag*1.0,false,true ,minsc,0.15,csub);
+		//  MoverOP rotsm    = new MyRotMover  (pw,rb_mag*1.0,false,false,minsc,0.15,csub);
+		//  MoverOP rotsmc   = new MyRotMover  (pw,rb_mag*1.0,false,true ,minsc,0.15,csub);
+		//  MoverOP trans    = new MyTransMover(pw,rb_mag*1.0,      false,minsc,0.15,csub);
+		//  MoverOP transc   = new MyTransMover(pw,rb_mag*1.0,      true ,minsc,0.15,csub);
+		//  MoverOP transsm  = new MyTransMover(pw,rb_mag*0.1,      false,minsc,0.15,csub);
+		//  MoverOP transsmc = new MyTransMover(pw,rb_mag*0.1,      true ,minsc,0.15,csub);
 		// }
-		if(true) mover0->add_mover(rot     ,0.3);
-		if(true) mover0->add_mover(rotsm   ,3.0);
-		if(true) mover0->add_mover(trans   ,0.1);
-		if(true) mover0->add_mover(transsm ,1.0);
-		if(csub) mover0->add_mover(rotc    ,0.1);
-		if(csub) mover0->add_mover(rotsmc  ,1.0);
-		if(csub) mover0->add_mover(transc  ,0.1);
-		if(csub) mover0->add_mover(transsmc,1.0);
+		if ( true ) mover0->add_mover(rot     ,0.3);
+		if ( true ) mover0->add_mover(rotsm   ,3.0);
+		if ( true ) mover0->add_mover(trans   ,0.1);
+		if ( true ) mover0->add_mover(transsm ,1.0);
+		if ( csub ) mover0->add_mover(rotc    ,0.1);
+		if ( csub ) mover0->add_mover(rotsmc  ,1.0);
+		if ( csub ) mover0->add_mover(transc  ,0.1);
+		if ( csub ) mover0->add_mover(transsmc,1.0);
 		/////////////// if(changesc) mover0->add_mover(changesc,0.8);
 		/////////////// if(minsc) mover0->add_mover(minscpicky,0.2);
 		// std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
@@ -3035,10 +3040,10 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	}
 	TR << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 	// for(Size i = 1; i <= pw.attach_rsd_.size(); ++i) {
-	// 	if( pw.move_chi( pw.attach_rsd_[i] ) ) {
-	// 		TR << "add chi mover res " << pw.attach_rsd_[i] << std::endl;
-	// 		mover0->add_mover(new ChiMover(pw.pose,pw.attach_rsd_[i]),1.0);
-	// 	}
+	//  if( pw.move_chi( pw.attach_rsd_[i] ) ) {
+	//   TR << "add chi mover res " << pw.attach_rsd_[i] << std::endl;
+	//   mover0->add_mover(new ChiMover(pw.pose,pw.attach_rsd_[i]),1.0);
+	//  }
 	// }
 
 
@@ -3111,13 +3116,13 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	// sf2->set_weight(scoring::spline,0.04);
 	// sf3->set_weight(scoring::spline,0.05);
 	// sf5->set_weight(scoring::spline,0.02);
-		// sf0->set_weight(scoring::floating_sc,0.05);
-		// sf1->set_weight(scoring::floating_sc,0.05);
-		// sf2->set_weight(scoring::floating_sc,0.05);
-		// sf3->set_weight(scoring::floating_sc,0.05);
-		// sf5->set_weight(scoring::floating_sc,0.05);
+	// sf0->set_weight(scoring::floating_sc,0.05);
+	// sf1->set_weight(scoring::floating_sc,0.05);
+	// sf2->set_weight(scoring::floating_sc,0.05);
+	// sf3->set_weight(scoring::floating_sc,0.05);
+	// sf5->set_weight(scoring::floating_sc,0.05);
 	// } else {
-	// 	; //TR << "not using floating sc" << std::endl;
+	//  ; //TR << "not using floating sc" << std::endl;
 	// }
 	// sf0->set_weight(scoring::coordinate_constraint,1.0);
 	// sf1->set_weight(scoring::coordinate_constraint,1.0);
@@ -3125,7 +3130,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	// sf5->set_weight(scoring::coordinate_constraint,1.0);
 
 
-	if( option[basic::options::OptionKeys::edensity::mapfile].user() ) {
+	if ( option[basic::options::OptionKeys::edensity::mapfile].user() ) {
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *sf0 );
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *sf1 );
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *sf2 );
@@ -3138,12 +3143,12 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 
 
 	core::pose::Pose init = pose;
-	if(pw.debug) pw.dump_pdb("cen_init.pdb");
+	if ( pw.debug ) pw.dump_pdb("cen_init.pdb");
 
 	bool skip0=false,skip1=false,skip2=false,filter=options::option[basic::options::OptionKeys::smhybrid::filter].user();
 	Real filter0=0,filter1=0,filter2=0,filter3=0;
 	Size ntries=1;
-	if(filter) {
+	if ( filter ) {
 		assert(options::option[basic::options::OptionKeys::smhybrid::filter]().size()==5);
 		ntries  = options::option[basic::options::OptionKeys::smhybrid::filter]()[1];
 		filter0 = options::option[basic::options::OptionKeys::smhybrid::filter]()[2];
@@ -3151,9 +3156,9 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 		filter2 = options::option[basic::options::OptionKeys::smhybrid::filter]()[4];
 		filter3 = options::option[basic::options::OptionKeys::smhybrid::filter]()[5];
 	}
-	for(Size TRIES = 1; TRIES <= ntries; TRIES++ ) {
+	for ( Size TRIES = 1; TRIES <= ntries; TRIES++ ) {
 
-		if(!skip0) {
+		if ( !skip0 ) {
 			pose = init;
 
 			TR << "stage 0" << std::endl;
@@ -3165,19 +3170,19 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			RepeatMover( new TrialMover( mover0, mc ), NCYCLES/5 ).apply( pose );
 			mc->reset( pose );
 			cen_design(pw,sf0);
-			if(pw.debug) sf0->show(TR,pose);
-			if(pw.debug) pw.dump_pdb("cen0.pdb");
-			if(filter) {
-				if( pw.pose.energies().total_energies()[scoring::linear_chainbreak] > 50.0 ||
-				 	pw.pose.energies().total_energies()[scoring::atom_pair_constraint] > filter0 ) {
+			if ( pw.debug ) sf0->show(TR,pose);
+			if ( pw.debug ) pw.dump_pdb("cen0.pdb");
+			if ( filter ) {
+				if ( pw.pose.energies().total_energies()[scoring::linear_chainbreak] > 50.0 ||
+						pw.pose.energies().total_energies()[scoring::atom_pair_constraint] > filter0 ) {
 					TR << "linear_chainbreak or atom_pair_constraint FAIL after score0! redoing centroid 0: "
-					   << pw.pose.energies().total_energies()[scoring::linear_chainbreak] << " "
-					   << pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
-					if( pw.pose.energies().total_energies()[scoring::linear_chainbreak]       > 50.0 ) {
+						<< pw.pose.energies().total_energies()[scoring::linear_chainbreak] << " "
+						<< pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
+					if ( pw.pose.energies().total_energies()[scoring::linear_chainbreak]       > 50.0 ) {
 						sf0->set_weight(scoring::linear_chainbreak, sf0->get_weight(scoring::linear_chainbreak)*1.2 );
 						TR << "upweight linear_chainbreak" << std::endl;
 					}
-					if( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter0 ) {
+					if ( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter0 ) {
 						sf0->set_weight(scoring::atom_pair_constraint, sf0->get_weight(scoring::atom_pair_constraint)*1.2 );
 						TR << "upweight atom_pair_constraint" << std::endl;
 					}
@@ -3190,7 +3195,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			}
 		}
 
-		if(!skip1) {
+		if ( !skip1 ) {
 
 			TR << "stage 1" << std::endl;
 			MonteCarloOP mc = new MonteCarlo( pose, *sf1, 2.0 );
@@ -3199,19 +3204,19 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			RepeatMover( new TrialMover( mover0, mc ), NCYCLES ).apply( pose );
 			mc->reset( pose );
 			cen_design(pw,sf1);
-			if(pw.debug) pw.dump_pdb("cen1.pdb");
+			if ( pw.debug ) pw.dump_pdb("cen1.pdb");
 
-			if(filter) {
-				if( pw.pose.energies().total_energies()[scoring::linear_chainbreak] > 30.0 ||
-				 	pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter1 ) {
+			if ( filter ) {
+				if ( pw.pose.energies().total_energies()[scoring::linear_chainbreak] > 30.0 ||
+						pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter1 ) {
 					TR << "linear_chainbreak or atom_pair_constraint FAIL after score1! redoing centroid 1 "
-					   << pw.pose.energies().total_energies()[scoring::linear_chainbreak] << " "
-					   << pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
-					if( pw.pose.energies().total_energies()[scoring::linear_chainbreak]       > 30.0 ) {
+						<< pw.pose.energies().total_energies()[scoring::linear_chainbreak] << " "
+						<< pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
+					if ( pw.pose.energies().total_energies()[scoring::linear_chainbreak]       > 30.0 ) {
 						sf1->set_weight(scoring::linear_chainbreak, sf1->get_weight(scoring::linear_chainbreak)*1.2 );
 						TR << "upweight linear_chainbreak" << std::endl;
 					}
-					if( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter1 ) {
+					if ( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter1 ) {
 						sf1->set_weight(scoring::atom_pair_constraint, sf1->get_weight(scoring::atom_pair_constraint)*1.2 );
 						TR << "upweight atom_pair_constraint" << std::endl;
 					}
@@ -3224,12 +3229,12 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			}
 		}
 
-		if(pw.debug) sf1->show(TR,pose);
+		if ( pw.debug ) sf1->show(TR,pose);
 		// pose.dump_pdb("stage1.pdb");
 
 		// NO SHEETS AT THE MOMENT....
-		if(!skip2) {
-			for( Size i = 1; i <= 5; ++i ) {
+		if ( !skip2 ) {
+			for ( Size i = 1; i <= 5; ++i ) {
 				TR << "stage 2 " << i << std::endl;
 				MonteCarloOP mc = new MonteCarlo( pose, *sf2, 2.0 );
 				mc->set_autotemp( true, temp );
@@ -3238,7 +3243,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 				mc->reset( pose );
 				cen_design(pw,sf2);
 				// if(i>3) design(pw,sf2);
-				if(pw.debug) sf2->show(TR,pose);
+				if ( pw.debug ) sf2->show(TR,pose);
 
 				mc = new MonteCarlo( pose, *sf5, 2.0 );
 				mc->set_autotemp( true, temp );
@@ -3247,21 +3252,21 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 				mc->reset( pose );
 				cen_design(pw,sf5);
 				// if(i>3) design(pw,sf5);
-				if(pw.debug) sf5->show(TR,pose);
-				if(pw.debug) pw.dump_pdb("cen25.pdb");
+				if ( pw.debug ) sf5->show(TR,pose);
+				if ( pw.debug ) pw.dump_pdb("cen25.pdb");
 			}
-			if(filter) {
-				if( pw.pose.energies().total_energies()[scoring::chainbreak] > 10.0 ||
-				    pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter2 ) {
+			if ( filter ) {
+				if ( pw.pose.energies().total_energies()[scoring::chainbreak] > 10.0 ||
+						pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter2 ) {
 					TR << "chainbreak or atom_pair_constraint FAIL after score25! redoing centroid 2 "
-					   << pw.pose.energies().total_energies()[scoring::chainbreak] << " "
-					   << pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
-					if( pw.pose.energies().total_energies()[scoring::chainbreak]       > 10.0 ) {
+						<< pw.pose.energies().total_energies()[scoring::chainbreak] << " "
+						<< pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
+					if ( pw.pose.energies().total_energies()[scoring::chainbreak]       > 10.0 ) {
 						sf2->set_weight(scoring::chainbreak, sf2->get_weight(scoring::chainbreak)*1.2 );
 						sf5->set_weight(scoring::chainbreak, sf5->get_weight(scoring::chainbreak)*1.2 );
 						TR << "upweight chainbreak" << std::endl;
 					}
-					if( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter2 ) {
+					if ( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter2 ) {
 						sf2->set_weight(scoring::atom_pair_constraint, sf2->get_weight(scoring::atom_pair_constraint)*1.2 );
 						sf5->set_weight(scoring::atom_pair_constraint, sf2->get_weight(scoring::atom_pair_constraint)*1.2 );
 						TR << "upweight atom_pair_constraint" << std::endl;
@@ -3276,14 +3281,14 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 		}
 
 		RandomMoverOP mover3 = new RandomMover;
-/*
+		/*
 		if(frags0 != NULL && frags3 == NULL) {
-			TR << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-			for(Size i = 0; i < pw.ss_.size(); ++i) pw.ss_[i] = pw.pose.secstruct(i+1);
-			core::fragment::FragSetOP frags3 = make_frag_set(pw,fds);
-			protocols::moves::MoverOP fragins3 = new protocols::abinitio::ClassicFragmentMover(frags3);
+		TR << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+		for(Size i = 0; i < pw.ss_.size(); ++i) pw.ss_[i] = pw.pose.secstruct(i+1);
+		core::fragment::FragSetOP frags3 = make_frag_set(pw,fds);
+		protocols::moves::MoverOP fragins3 = new protocols::abinitio::ClassicFragmentMover(frags3);
 		} else*/
- if( frags3() != NULL && frags3->size() > 0 ) {
+		if ( frags3() != NULL && frags3->size() > 0 ) {
 			protocols::moves::MoverOP fragins = new protocols::abinitio::ClassicFragmentMover(frags3);
 			mover3->add_mover(fragins,5.0);
 		} else {
@@ -3291,7 +3296,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			protocols::moves::MoverOP bbmove = new BBMover(pw.nres,5.0);
 			mover3->add_mover(bbmove,5.0);
 		}
-		if( core::conformation::symmetry::symmetry_info(pw.pose)->get_dofs().size() ) {
+		if ( core::conformation::symmetry::symmetry_info(pw.pose)->get_dofs().size() ) {
 			// mover3->add_mover(slide,0.05);
 			MoverOP rot      = new MyRotMover(  pw,rb_mag*10.0,false,false,minsc,0.5,csub);
 			MoverOP rotc     = new MyRotMover(  pw,rb_mag*10.0,false,true ,minsc,0.5,csub);
@@ -3302,36 +3307,36 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			MoverOP transsm  = new MyTransMover(pw,rb_mag* 0.1,false,      minsc,0.1,csub);
 			MoverOP transsmc = new MyTransMover(pw,rb_mag* 0.1,true ,      minsc,0.1,csub);
 			// if( option[basic::options::OptionKeys::smhybrid::refine]() ) {
-			// 	MoverOP rot      = new MyRotMover(  pw,rb_mag*1.0,false,false,minsc,0.2,csub);
-			// 	MoverOP rotc     = new MyRotMover(  pw,rb_mag*1.0,false,true ,minsc,0.2,csub);
-			// 	MoverOP rotsm    = new MyRotMover(  pw,rb_mag*0.1,false,false,minsc,0.2,csub);
-			// 	MoverOP rotsmc   = new MyRotMover(  pw,rb_mag*0.1,false,true ,minsc,0.2,csub);
-			// 	MoverOP trans    = new MyTransMover(pw,rb_mag*0.5,      false,minsc,0.2,csub);
-			// 	MoverOP transc   = new MyTransMover(pw,rb_mag*0.5,      true ,minsc,0.2,csub);
-			// 	MoverOP transsm  = new MyTransMover(pw,rb_mag*0.1,      false,minsc,0.2,csub);
-			// 	MoverOP transsmc = new MyTransMover(pw,rb_mag*0.1,      true ,minsc,0.2,csub);
+			//  MoverOP rot      = new MyRotMover(  pw,rb_mag*1.0,false,false,minsc,0.2,csub);
+			//  MoverOP rotc     = new MyRotMover(  pw,rb_mag*1.0,false,true ,minsc,0.2,csub);
+			//  MoverOP rotsm    = new MyRotMover(  pw,rb_mag*0.1,false,false,minsc,0.2,csub);
+			//  MoverOP rotsmc   = new MyRotMover(  pw,rb_mag*0.1,false,true ,minsc,0.2,csub);
+			//  MoverOP trans    = new MyTransMover(pw,rb_mag*0.5,      false,minsc,0.2,csub);
+			//  MoverOP transc   = new MyTransMover(pw,rb_mag*0.5,      true ,minsc,0.2,csub);
+			//  MoverOP transsm  = new MyTransMover(pw,rb_mag*0.1,      false,minsc,0.2,csub);
+			//  MoverOP transsmc = new MyTransMover(pw,rb_mag*0.1,      true ,minsc,0.2,csub);
 			// }
-			if(true) mover3->add_mover(rot     ,0.2);
-			if(true) mover3->add_mover(rotsm   ,1.0);
-			if(true) mover3->add_mover(trans   ,0.1);
-			if(true) mover3->add_mover(transsm ,1.0);
-			if(csub) mover3->add_mover(rotc    ,1.2);
-			if(csub) mover3->add_mover(rotsmc  ,4.0);
-			if(csub) mover3->add_mover(transc  ,0.5);
-			if(csub) mover3->add_mover(transsmc,2.5);
+			if ( true ) mover3->add_mover(rot     ,0.2);
+			if ( true ) mover3->add_mover(rotsm   ,1.0);
+			if ( true ) mover3->add_mover(trans   ,0.1);
+			if ( true ) mover3->add_mover(transsm ,1.0);
+			if ( csub ) mover3->add_mover(rotc    ,1.2);
+			if ( csub ) mover3->add_mover(rotsmc  ,4.0);
+			if ( csub ) mover3->add_mover(transc  ,0.5);
+			if ( csub ) mover3->add_mover(transsmc,2.5);
 			//////////////////////////if(minsc) mover3->add_mover(minscpicky,0.2);
 			//////////////////////////if(changesc) mover0->add_mover(changesc,0.8);
 
 		}
 		TR << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 		// for(Size i = 1; i <= pw.attach_rsd_.size(); ++i) {
-		// 	if( pw.move_chi( pw.attach_rsd_[i] ) ) {
-		// 		TR << "add chi mover res " << pw.attach_rsd_[i] << std::endl;
-		// 		mover3->add_mover(new ChiMover(pw.pose,pw.attach_rsd_[i]),1.0);
-		// 	}
+		//  if( pw.move_chi( pw.attach_rsd_[i] ) ) {
+		//   TR << "add chi mover res " << pw.attach_rsd_[i] << std::endl;
+		//   mover3->add_mover(new ChiMover(pw.pose,pw.attach_rsd_[i]),1.0);
+		//  }
 		// }
 
-		for( Size i = 1; i <= 10; ++i ) {
+		for ( Size i = 1; i <= 10; ++i ) {
 			TR << "stage 3" << i << std::endl;
 			MonteCarloOP mc = new MonteCarlo( pose, *sf3, 2.0 );
 			mc->set_autotemp( true, temp );
@@ -3339,22 +3344,22 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			RepeatMover( new TrialMover( mover3, mc ), NCYCLES/2 ).apply( pose );
 			mc->reset( pose );
 			cen_design(pw,sf3);
-			if(pw.debug) sf3->show(TR,pose);
-			if(pw.debug) pw.dump_pdb("cen3.pdb");
+			if ( pw.debug ) sf3->show(TR,pose);
+			if ( pw.debug ) pw.dump_pdb("cen3.pdb");
 		}
 		TR << std::endl;
 
-		if(filter) {
-			if( pw.pose.energies().total_energies()[scoring::chainbreak] > 5.0 ||
-			 	pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter3 ) {
+		if ( filter ) {
+			if ( pw.pose.energies().total_energies()[scoring::chainbreak] > 5.0 ||
+					pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter3 ) {
 				TR << "chainbreak or atom_pair_constraint FAIL after score3! redoing centroid 3 "
-				   << pw.pose.energies().total_energies()[scoring::chainbreak] << " "
-				   << pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
-				if( pw.pose.energies().total_energies()[scoring::chainbreak]       > 5.0 ) {
+					<< pw.pose.energies().total_energies()[scoring::chainbreak] << " "
+					<< pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
+				if ( pw.pose.energies().total_energies()[scoring::chainbreak]       > 5.0 ) {
 					sf3->set_weight(scoring::chainbreak, sf3->get_weight(scoring::chainbreak)*1.2 );
 					TR << "upweight chainbreak" << std::endl;
 				}
-				if( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter3 ) {
+				if ( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter3 ) {
 					sf3->set_weight(scoring::atom_pair_constraint, sf3->get_weight(scoring::atom_pair_constraint)*1.2 );
 					TR << "upweight atom_pair_constraint" << std::endl;
 				}
@@ -3366,7 +3371,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	}
 
 	sf3->show(TR,pose);
-	if(pw.debug) pw.dump_pdb("cen.pdb");
+	if ( pw.debug ) pw.dump_pdb("cen.pdb");
 
 	return sf3;
 }
@@ -3413,7 +3418,7 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 	// sf3->set_weight(overlap_chainbreak,3.00);
 	// sf4->set_weight(overlap_chainbreak,4.00);
 
-// std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+	// std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 	sf1->set_weight(chainbreak,1.00);
 	sf2->set_weight(chainbreak,2.00);
 	sf3->set_weight(chainbreak,3.00);
@@ -3428,7 +3433,7 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 	sf2->set_weight(atom_pair_constraint,5.0);
 	sf3->set_weight(atom_pair_constraint,3.0);
 	sf4->set_weight(atom_pair_constraint,2.0);
-	if(option[basic::options::OptionKeys::smhybrid::refine].user()) {
+	if ( option[basic::options::OptionKeys::smhybrid::refine].user() ) {
 		sf1->set_weight(atom_pair_constraint,80.0);
 		sf2->set_weight(atom_pair_constraint,50.0);
 		sf3->set_weight(atom_pair_constraint,30.0);
@@ -3456,7 +3461,7 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 	// core::pose::Pose best = pose;
 
 	string tmp = string_of(uniform());
-	if(pw.debug) pw.dump_pdb("fa_init"+tmp+".pdb");
+	if ( pw.debug ) pw.dump_pdb("fa_init"+tmp+".pdb");
 	// pw.add_fsc_harmonic_cst();
 	sf1->set_weight(atom_pair_constraint,100);
 	pw.check_scattach_res();
@@ -3465,77 +3470,77 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 	// if(pw.debug) pw.dump_pdb("fa0PACK"+tmp+".pdb");
 	minimize(pw,sf1,0,false);
 	pw.check_scattach_res();
-	if(pw.debug) pw.dump_pdb("fa0_"+tmp+".pdb");
+	if ( pw.debug ) pw.dump_pdb("fa0_"+tmp+".pdb");
 	sf1->set_weight(atom_pair_constraint,1);
 	// std::exit(-1);
 	pw.check_scattach_res();
 
 	int bb = basic::options::option[basic::options::OptionKeys::smhybrid::minbb]();
 	int chi1 = -1;
-	for(Size i = 1; i <= NCYCLE; ++i ) {
+	for ( Size i = 1; i <= NCYCLE; ++i ) {
 		// for(Size k = 1; k <= 4; ++k) {
-		// 	repack(pw,sf1); minimize(pw,sf1);
-		// 	repack(pw,sf2); minimize(pw,sf2);
-		// 	repack(pw,sf3); minimize(pw,sf3);
-		// 	repack(pw,sf4); minimize(pw,sf4);
-		// 	TR << "repack/min1234    " << I(2,k) << " " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,nres_mono) << std::endl;
-		// 	// if( (*sf4)(best) >= (*sf4)(pose) ) best = pose;
+		//  repack(pw,sf1); minimize(pw,sf1);
+		//  repack(pw,sf2); minimize(pw,sf2);
+		//  repack(pw,sf3); minimize(pw,sf3);
+		//  repack(pw,sf4); minimize(pw,sf4);
+		//  TR << "repack/min1234    " << I(2,k) << " " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,nres_mono) << std::endl;
+		//  // if( (*sf4)(best) >= (*sf4)(pose) ) best = pose;
 		// }
 		// // pose = best;
 		// for(Size k = 1; k <= 1; ++k) {
-			TR << "bb = " << bb << std::endl;
-			// std::cerr << "SCORE 1" << std::endl;
-			design(pw,sf1); if(!pw.check()) return NULL;
-			if(pw.debug) pw.dump_pdb("fa1A_"+tmp+".pdb");
-			minimize(pw,sf1,bb-1,false,chi1>0);
-			if(pw.debug) sf1->show(std::cerr,pose);
-			if(pw.debug) pw.dump_pdb("fa1B_"+tmp+".pdb");
-			// minimize(pw,sf1,bb-1,true);
-			// if(pw.debug) sf1->show(std::cerr,pose);
-			// if(pw.debug) pw.dump_pdb("fa1_"+tmp+".pdb");
+		TR << "bb = " << bb << std::endl;
+		// std::cerr << "SCORE 1" << std::endl;
+		design(pw,sf1); if ( !pw.check() ) return NULL;
+		if ( pw.debug ) pw.dump_pdb("fa1A_"+tmp+".pdb");
+		minimize(pw,sf1,bb-1,false,chi1>0);
+		if ( pw.debug ) sf1->show(std::cerr,pose);
+		if ( pw.debug ) pw.dump_pdb("fa1B_"+tmp+".pdb");
+		// minimize(pw,sf1,bb-1,true);
+		// if(pw.debug) sf1->show(std::cerr,pose);
+		// if(pw.debug) pw.dump_pdb("fa1_"+tmp+".pdb");
 
-			// std::cerr << "SCORE 2" << std::endl;
-			design(pw,sf2); if(!pw.check()) return NULL;
-			if(pw.debug) pw.dump_pdb("fa2A_"+tmp+".pdb");
-			minimize(pw,sf2,bb-1,false,chi1>0);
-			if(pw.debug) sf2->show(std::cerr,pose);
-			if(pw.debug) pw.dump_pdb("fa2B_"+tmp+".pdb");
-			// minimize(pw,sf2,bb-1,true);
-			// if(pw.debug) sf2->show(std::cerr,pose);
-			// if(pw.debug) pw.dump_pdb("fa2_"+tmp+".pdb");
+		// std::cerr << "SCORE 2" << std::endl;
+		design(pw,sf2); if ( !pw.check() ) return NULL;
+		if ( pw.debug ) pw.dump_pdb("fa2A_"+tmp+".pdb");
+		minimize(pw,sf2,bb-1,false,chi1>0);
+		if ( pw.debug ) sf2->show(std::cerr,pose);
+		if ( pw.debug ) pw.dump_pdb("fa2B_"+tmp+".pdb");
+		// minimize(pw,sf2,bb-1,true);
+		// if(pw.debug) sf2->show(std::cerr,pose);
+		// if(pw.debug) pw.dump_pdb("fa2_"+tmp+".pdb");
 
-			// std::cerr << "SCORE 3" << std::endl;
-			design(pw,sf3);  if(!pw.check()) return NULL;
-			if(pw.debug) pw.dump_pdb("fa3A_"+tmp+".pdb");
-			minimize(pw,sf3,bb-1,false,chi1>0);
-			if(pw.debug) sf3->show(std::cerr,pose);
-			if(pw.debug) pw.dump_pdb("fa3B_"+tmp+".pdb");
-			// minimize(pw,sf3,bb-1,true);
-			// if(pw.debug) sf3->show(std::cerr,pose);
-			// if(pw.debug) pw.dump_pdb("fa3_"+tmp+".pdb");
+		// std::cerr << "SCORE 3" << std::endl;
+		design(pw,sf3);  if ( !pw.check() ) return NULL;
+		if ( pw.debug ) pw.dump_pdb("fa3A_"+tmp+".pdb");
+		minimize(pw,sf3,bb-1,false,chi1>0);
+		if ( pw.debug ) sf3->show(std::cerr,pose);
+		if ( pw.debug ) pw.dump_pdb("fa3B_"+tmp+".pdb");
+		// minimize(pw,sf3,bb-1,true);
+		// if(pw.debug) sf3->show(std::cerr,pose);
+		// if(pw.debug) pw.dump_pdb("fa3_"+tmp+".pdb");
 
-			// std::cerr << "SCORE 4" << std::endl;
-			design(pw,sf4);  if(!pw.check()) return NULL;
-			if(pw.debug) pw.dump_pdb("fa4A_"+tmp+".pdb");
-			minimize(pw,sf4,bb-1,false,chi1>0);
-			if(pw.debug) sf4->show(std::cerr,pose);
-			if(pw.debug) pw.dump_pdb("fa4B_"+tmp+".pdb");
-			// minimize(pw,sf4,bb-1,true);
-			// if(pw.debug) sf4->show(std::cerr,pose);
-			// if(pw.debug) pw.dump_pdb("fa4_"+tmp+".pdb");
-			// TR << "deisgn/min1234   " << I(2,k) << " " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,pw.nres) << std::endl;
-			// if( (*sf4)(best) >= (*sf4)(pose) ) best = pose;
+		// std::cerr << "SCORE 4" << std::endl;
+		design(pw,sf4);  if ( !pw.check() ) return NULL;
+		if ( pw.debug ) pw.dump_pdb("fa4A_"+tmp+".pdb");
+		minimize(pw,sf4,bb-1,false,chi1>0);
+		if ( pw.debug ) sf4->show(std::cerr,pose);
+		if ( pw.debug ) pw.dump_pdb("fa4B_"+tmp+".pdb");
+		// minimize(pw,sf4,bb-1,true);
+		// if(pw.debug) sf4->show(std::cerr,pose);
+		// if(pw.debug) pw.dump_pdb("fa4_"+tmp+".pdb");
+		// TR << "deisgn/min1234   " << I(2,k) << " " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,pw.nres) << std::endl;
+		// if( (*sf4)(best) >= (*sf4)(pose) ) best = pose;
 		// }
 		// pose = best;
 
 		// sf4->set_weight(overlap_chainbreak,3.00);
 		// sf4->set_weight(chainbreak,3.0);
-			// std::cerr << "BB MIN" << std::endl;
-			// sf4->set_weight(atom_pair_constraint,1.00);
-			design(pw,sf4,true);  if(!pw.check()) return NULL;
-			if(pw.debug) pw.dump_pdb("fa5A_"+tmp+".pdb");
-			minimize(pw,sf4,bb,false,chi1>0);
-			if(pw.debug) pw.dump_pdb("fa5_"+tmp+".pdb");
+		// std::cerr << "BB MIN" << std::endl;
+		// sf4->set_weight(atom_pair_constraint,1.00);
+		design(pw,sf4,true);  if ( !pw.check() ) return NULL;
+		if ( pw.debug ) pw.dump_pdb("fa5A_"+tmp+".pdb");
+		minimize(pw,sf4,bb,false,chi1>0);
+		if ( pw.debug ) pw.dump_pdb("fa5_"+tmp+".pdb");
 		// if(pw.debug) sf4->show(TR,pose);
 		// TR << "deisgn/min cb3   " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,pw.nres) << std::endl;
 
@@ -3579,13 +3584,13 @@ ScoreFunctionOP flxbb_nobu(PoseWrap & pw) {
 	sf3 = new symmetry::SymmetricScoreFunction(*sf3);
 	sf4 = new symmetry::SymmetricScoreFunction(*sf4);
 
-	if( basic::options::option[basic::options::OptionKeys::smhybrid::fa_refine]() ) {
+	if ( basic::options::option[basic::options::OptionKeys::smhybrid::fa_refine]() ) {
 		protocols::flxbb::FlxbbDesign flxbb(sf3,sf4);
 		flxbb.apply(pw.pose);
 	} // else {
-	 // 		protocols::relax::SimpleMultiRelax smr(sf3);
-	 // 		smr.apply(pw.pose);
-	 // 	}
+	//   protocols::relax::SimpleMultiRelax smr(sf3);
+	//   smr.apply(pw.pose);
+	//  }
 
 	return sf4;
 }
@@ -3620,7 +3625,7 @@ interface_energy_ratio( core::pose::Pose const & pose, ScoreFunctionOP sf ) {
 		}
 	}
 
-	for(size_t i = 1; i <= ife.size(); ++i) {
+	for ( size_t i = 1; i <= ife.size(); ++i ) {
 		ife[i] /= tot;
 	}
 
@@ -3629,7 +3634,7 @@ interface_energy_ratio( core::pose::Pose const & pose, ScoreFunctionOP sf ) {
 
 Real
 symm_self_rep( PoseWrap & pw, ScoreFunctionOP sf, Size rsd ) {
-	if(!sf)return 0;
+	if ( !sf ) return 0;
 	using namespace core;
 	using namespace conformation::symmetry;
 	using namespace scoring;
@@ -3641,7 +3646,7 @@ symm_self_rep( PoseWrap & pw, ScoreFunctionOP sf, Size rsd ) {
 
 	Real tot = 0.0;
 	for ( Size i=1, i_end = pw.pose.size(); i<= i_end; ++i ) {
-		if( (i-1)%pw.nres+1 != rsd ) continue;
+		if ( (i-1)%pw.nres+1 != rsd ) continue;
 		// conformation::Residue const & resl( pose.residue( i ) );
 		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
@@ -3649,9 +3654,9 @@ symm_self_rep( PoseWrap & pw, ScoreFunctionOP sf, Size rsd ) {
 				iru != irue; ++iru ) {
 			EnergyEdge const & edge( static_cast< EnergyEdge const & > (**iru) );
 			Size const j( edge.get_second_node_ind() );
-			if( (j-1)%pw.nres+1 != rsd ) continue;
+			if ( (j-1)%pw.nres+1 != rsd ) continue;
 			// conformation::Residue const & resu( pose.residue( j ) );
-		  	tot += symm_info->score_multiply(i,j) * edge[fa_rep];
+			tot += symm_info->score_multiply(i,j) * edge[fa_rep];
 		}
 	}
 
@@ -3680,11 +3685,11 @@ find_clashes( PoseWrap & pw ) {
 				iru != irue; ++iru ) {
 			EnergyEdge const & edge( static_cast< EnergyEdge const & > (**iru) );
 			Size const j( edge.get_second_node_ind() );
-			if(pose.residue(i).name3()=="BPY"&&pose.residue(j).name3()=="BPY") continue;
+			if ( pose.residue(i).name3()=="BPY"&&pose.residue(j).name3()=="BPY" ) continue;
 			// conformation::Residue const & resu( pose.residue( j ) );
 			// if( edge[core::scoring::fa_rep] > 0 ) TR << "E EDGE rep " << i << " " << j << " " << edge[core::scoring::fa_rep] << std::endl;
 
-			if(  edge[core::scoring::fa_rep] > 40.0 ) {
+			if (  edge[core::scoring::fa_rep] > 40.0 ) {
 				clashes[std::pair<Size,Size>(i,j)] = edge[core::scoring::fa_rep];
 			}
 		}
@@ -3702,25 +3707,25 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	string tag = string_of(uniform());
 	vector1<core::Real> ife;
 	std::map< std::pair<Size,Size>, Real > clashes;
-	if(sf_fa) {
-	// core::pose::Pose posebefore = pose;
-	// sf_fa->set_weight(scoring::holes_min,1.0);
+	if ( sf_fa ) {
+		// core::pose::Pose posebefore = pose;
+		// sf_fa->set_weight(scoring::holes_min,1.0);
 		sf_fa->set_weight(scoring::rg,0.00001);
-	// TR << "BEFORE HOLES MIN: " << (*sf4)(pose) << std::endl;
+		// TR << "BEFORE HOLES MIN: " << (*sf4)(pose) << std::endl;
 		(*sf_fa)(pose);
 		sf_fa->show(TR,pose);
-	// Real rholes = compute_rosettaholes_score(pw.pose).score();
-	// core::Real before = pw.pose.energies().total_energies()[core::scoring::holes_min];
-	// minimize(pw,sf_fa);
-	// (*sf_fa)(pose);
-	// TR << "holes_min " << before << " " << pw.pose.energies().total_energies()[core::scoring::holes_min] << std::endl;
-	// sf4->show(pose);
+		// Real rholes = compute_rosettaholes_score(pw.pose).score();
+		// core::Real before = pw.pose.energies().total_energies()[core::scoring::holes_min];
+		// minimize(pw,sf_fa);
+		// (*sf_fa)(pose);
+		// TR << "holes_min " << before << " " << pw.pose.energies().total_energies()[core::scoring::holes_min] << std::endl;
+		// sf4->show(pose);
 
-	// for( Size i = 0; i < 4; ++i ) {
-	// 	Size nres_mono = (pose.size()-4)/4;
-	// 	ref_rep += pose.energies().residue_total_energies(i*nres_mono+1)[scoring::fa_rep];
-	//    	ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
-	// }
+		// for( Size i = 0; i < 4; ++i ) {
+		//  Size nres_mono = (pose.size()-4)/4;
+		//  ref_rep += pose.energies().residue_total_energies(i*nres_mono+1)[scoring::fa_rep];
+		//     ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
+		// }
 
 
 		ife = interface_energy_ratio(pose,sf_fa);
@@ -3729,7 +3734,7 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	using namespace core::scoring::constraints;
 	ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
 	// TR << "num cst: " << cs.size() << std::endl;
-	for(Size i = 1; i <= cs.size(); i++) {
+	for ( Size i = 1; i <= cs.size(); i++ ) {
 		// if( cs[i]->type() != "LocalCoordinateConstraint" ) continue;
 		// LocalCoordinateConstraint const * cc = (LocalCoordinateConstraint const *)(cs[i]());
 		// TR << "cst " << i << " " << cc->atom(1) << " " << cc->atom(2) << " " << cc->dist(pose) << std::endl;
@@ -3740,11 +3745,11 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	Size nheavy = 0;
-	for(Size i = 1; i <= pose.size(); ++i) nheavy += pose.residue(i).nheavyatoms();
+	for ( Size i = 1; i <= pose.size(); ++i ) nheavy += pose.residue(i).nheavyatoms();
 
 	Real sym_lig      = pose.energies().total_energies()[ scoring::sym_lig      ];
 	Real floating_sc  = pose.energies().total_energies()[ scoring::atom_pair_constraint  ] / symm_info->score_multiply(1,1) / 6.0 / pw.floating_scs_.size();
-	     floating_sc  += pose.energies().total_energies()[ scoring::angle_constraint   ] / symm_info->score_multiply(1,1) / 6.0 / pw.floating_scs_.size();
+	floating_sc  += pose.energies().total_energies()[ scoring::angle_constraint   ] / symm_info->score_multiply(1,1) / 6.0 / pw.floating_scs_.size();
 	Real lin_cb       = pose.energies().total_energies()[ scoring::linear_chainbreak  ] / 3.0 + pose.energies().total_energies()[ scoring::chainbreak  ] / 3.0;
 	Real fa_atr       = pose.energies().total_energies()[ scoring::fa_atr       ];
 	Real fa_rep       = pose.energies().total_energies()[ scoring::fa_rep       ];
@@ -3761,13 +3766,13 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	Real ref          = pose.energies().total_energies()[ scoring::ref          ];
 	Real rg           = pose.energies().total_energies()[ scoring::rg           ];
 	Real surface = 0, cavvol=0;
-	if(sf_fa) surface = scoring::calc_total_sasa(pose,1.6);
-	if(sf_fa) cavvol  = scoring::packstat::get_cavity_volume(pose);
+	if ( sf_fa ) surface = scoring::calc_total_sasa(pose,1.6);
+	if ( sf_fa ) cavvol  = scoring::packstat::get_cavity_volume(pose);
 	Real rholes       = 0;
-	if(sf_fa) rholes = scoring::packstat::compute_packing_score( pw.pose , 2 );
+	if ( sf_fa ) rholes = scoring::packstat::compute_packing_score( pw.pose , 2 );
 	Real score = 0;
-	if(sf_fa) score = (*sf_fa)(pose);
-	if( sf_fa && pw.attach_rsd_[1]==1 && pw.attach_atom_[1]!="N" ) {
+	if ( sf_fa ) score = (*sf_fa)(pose);
+	if ( sf_fa && pw.attach_rsd_[1]==1 && pw.attach_atom_[1]!="N" ) {
 		Real symrep = symm_self_rep(pw,sf_fa,1);
 		score -= sf_fa->get_weight(scoring::fa_rep) * symrep;
 		fa_rep -= symrep;
@@ -3776,40 +3781,40 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	Real per_res_score = score/nres_mono/symm_info->score_multiply(1,1);
 	oss << LJ(20,tag)          << " "
 		<< pw.tag() << " "
-	    << F(8,3,per_res_score)<< " "
-	    << F(8,3,lin_cb    )<< " "
-	    << F(8,3,floating_sc    )<< " "
+		<< F(8,3,per_res_score)<< " "
+		<< F(8,3,lin_cb    )<< " "
+		<< F(8,3,floating_sc    )<< " "
 		<< F(8,3,pw.rms_to_orig_subsubs() ) << " "
 		<< F(8,3,pw.absrms_to_orig_subsubs() ) << " "
-	    // << I(4, pw.get_closest_res_for_sc_attach(pw.floating_scs_[1]) )<< " "
-        << F(8,3,ife[2]      ) << " "
-        << F(8,3,ife[3]      ) << " "
-        << F(8,3,ife[4]      ) << " "
+		// << I(4, pw.get_closest_res_for_sc_attach(pw.floating_scs_[1]) )<< " "
+		<< F(8,3,ife[2]      ) << " "
+		<< F(8,3,ife[3]      ) << " "
+		<< F(8,3,ife[4]      ) << " "
 		<< F(8,3, pose.energies().total_energies()[scoring::elec_dens_whole_structure_ca]/nres_mono/symm_info->score_multiply(1,1)) << " "
-	    << F(8,3,score)        << " "
-        << F(8,3,fa_atr      ) << " "
-        << F(8,3,fa_rep      ) << " "
-        << F(8,3,fa_sol      ) << " "
-        << F(8,3,rholes      ) << " "
-        << F(8,3,surface     ) << " "
-        << F(8,3,cavvol      ) << " "
-        << F(8,3,rg          ) << " "
+		<< F(8,3,score)        << " "
+		<< F(8,3,fa_atr      ) << " "
+		<< F(8,3,fa_rep      ) << " "
+		<< F(8,3,fa_sol      ) << " "
+		<< F(8,3,rholes      ) << " "
+		<< F(8,3,surface     ) << " "
+		<< F(8,3,cavvol      ) << " "
+		<< F(8,3,rg          ) << " "
 		<< I(3,nres_mono)      << " "
 		<< I(3,nheavy   )      << " "
-	    << F(8,3,censcore)     << " "
+		<< F(8,3,censcore)     << " "
 		<< F(8,3,sym_lig     ) << " "
-        << F(8,3,fa_intra_rep) << " "
-        << F(8,3,pro_close   ) << " "
-        << F(8,3,fa_pair     ) << " "
-        << F(8,3,hbond_sr_bb ) << " "
-        << F(8,3,hbond_lr_bb ) << " "
-        << F(8,3,hbond_bb_sc ) << " "
-        << F(8,3,hbond_sc    ) << " "
-        << F(8,3,fa_dun      ) << " "
-        << F(8,3,p_aa_pp     ) << " "
-        << F(8,3,ref         ) << " "
+		<< F(8,3,fa_intra_rep) << " "
+		<< F(8,3,pro_close   ) << " "
+		<< F(8,3,fa_pair     ) << " "
+		<< F(8,3,hbond_sr_bb ) << " "
+		<< F(8,3,hbond_lr_bb ) << " "
+		<< F(8,3,hbond_bb_sc ) << " "
+		<< F(8,3,hbond_sc    ) << " "
+		<< F(8,3,fa_dun      ) << " "
+		<< F(8,3,p_aa_pp     ) << " "
+		<< F(8,3,ref         ) << " "
 		<< pose.sequence().substr(0,pw.nres);
-	for(std::map< std::pair<Size,Size>, Real >::iterator i = clashes.begin(); i != clashes.end(); ++i) {
+	for ( std::map< std::pair<Size,Size>, Real >::iterator i = clashes.begin(); i != clashes.end(); ++i ) {
 		oss << " CLASH " << i->first.first << "," << i->first.second << " " << i->second;
 	}
 	oss << std::endl;
@@ -3817,14 +3822,14 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 
 	using namespace basic::options;
 	string outdir = "./";
-	if(option[OptionKeys::out::file::o].user()) outdir = option[OptionKeys::out::file::o]();
-	if( per_res_score <= options::option[options::OptionKeys::in::file::silent_energy_cut]() ) {
+	if ( option[OptionKeys::out::file::o].user() ) outdir = option[OptionKeys::out::file::o]();
+	if ( per_res_score <= options::option[options::OptionKeys::in::file::silent_energy_cut]() ) {
 		// cenpose.dump_pdb(string()+"/smhybrid"+tag+"_cen.pdb.gz");
 		// posebefore .dump_pdb(outdir+"/smhybrid"+tag+"_fa.pdb.gz");
 		{
 			option[OptionKeys::out::file::output_virtual].value(true);
 			string fn = outdir+"/smhybrid"+tag+"_virt.pdb";
-			if(option[OptionKeys::out::pdb_gz]()) fn += ".gz";
+			if ( option[OptionKeys::out::pdb_gz]() ) fn += ".gz";
 			pw.dump_pdb(fn);
 		}
 		std::cout << oss.str();
@@ -3841,14 +3846,14 @@ string make_rand_ss_hs(core::Size /*len*/) {
 	Size nsheet = ((Size)(uniform()*3))*2+3;
 	Size nhelix = uniform()*5+3;
 	Size nloop = uniform()*4+0;
-	for(Size i = 1; i <= nhelix; ++i) ss += "H";
-	for(Size i = 1; i <= nloop+1; ++i) ss += "L";
-	for(Size i = 1; i <= nhelix; ++i) ss += "H";
-	for(Size i = 1; i <= nloop ; ++i) ss += "L";
-	for(Size i = 1; i <= nsheet; ++i) ss += "E";
+	for ( Size i = 1; i <= nhelix; ++i ) ss += "H";
+	for ( Size i = 1; i <= nloop+1; ++i ) ss += "L";
+	for ( Size i = 1; i <= nhelix; ++i ) ss += "H";
+	for ( Size i = 1; i <= nloop ; ++i ) ss += "L";
+	for ( Size i = 1; i <= nsheet; ++i ) ss += "E";
 	// while(ss.size()<len) {
-	// 	for(int i = 1; i <= uniform()*6   ; ++i) ss += "L";
-	// 	for(int i = 1; i <= uniform()*15+5; ++i) ss += "H";
+	//  for(int i = 1; i <= uniform()*6   ; ++i) ss += "L";
+	//  for(int i = 1; i <= uniform()*15+5; ++i) ss += "H";
 	// }
 	return ss;
 }
@@ -3856,10 +3861,10 @@ string make_rand_ss_hs(core::Size /*len*/) {
 
 string make_rand_ss_h(core::Size len) {
 	string ss = "";
-	for(int i = 1; i <= uniform()*15+5; ++i) ss += "H";
-	while(ss.size()<len) {
-		for(int i = 1; i <= uniform()*6   ; ++i) ss += "L";
-		for(int i = 1; i <= uniform()*15+5; ++i) ss += "H";
+	for ( int i = 1; i <= uniform()*15+5; ++i ) ss += "H";
+	while ( ss.size()<len ) {
+		for ( int i = 1; i <= uniform()*6   ; ++i ) ss += "L";
+		for ( int i = 1; i <= uniform()*15+5; ++i ) ss += "H";
 	}
 	return ss;
 }
@@ -3871,17 +3876,17 @@ string make_rand_ss_h(core::Size len) {
 //
 // public:
 //
-// 	// default constructor
-// 	SmhybridMover() {}
+//  // default constructor
+//  SmhybridMover() {}
 //
-// 	virtual ~SmhybridMover() {}
+//  virtual ~SmhybridMover() {}
 //
-// 	// constructor with arguments
+//  // constructor with arguments
 //
-// 	virtual protocols::moves::MoverOP clone() const { return new SmhybridMover(*this); }
-// 	virtual protocols::moves::MoverOP fresh_instance() const { return new SmhybridMover; }
+//  virtual protocols::moves::MoverOP clone() const { return new SmhybridMover(*this); }
+//  virtual protocols::moves::MoverOP fresh_instance() const { return new SmhybridMover; }
 //
-// 	virtual void apply( core::pose::Pose & pose ){
+//  virtual void apply( core::pose::Pose & pose ){
 void* doit(void* /*x = NULL*/) {
 	using namespace core;
 	using namespace pose;
@@ -3897,7 +3902,7 @@ void* doit(void* /*x = NULL*/) {
 	std::ostringstream oss;
 	Size Ncycle    = options::option[options::OptionKeys::smhybrid::abinitio_cycles]();
 
-	for(Size iter = 1; iter <= (Size)options::option[options::OptionKeys::out::nstruct](); ++iter) {
+	for ( Size iter = 1; iter <= (Size)options::option[options::OptionKeys::out::nstruct](); ++iter ) {
 		TR << "ITER " << iter << std::endl;
 
 
@@ -3910,10 +3915,9 @@ void* doit(void* /*x = NULL*/) {
 
 		scoring::ScoreFunctionOP sf_cen = cen_fold(pw,Ncycle,frags0,frags3);
 
-		if( options::option[basic::options::OptionKeys::smhybrid::filter].user() ) {
-			if( pw.pose.energies().total_energies()[scoring::linear_chainbreak]    > 5.0 ||
-		 		pw.pose.energies().total_energies()[scoring::atom_pair_constraint] > options::option[basic::options::OptionKeys::smhybrid::filter]()[5] )
-			{
+		if ( options::option[basic::options::OptionKeys::smhybrid::filter].user() ) {
+			if ( pw.pose.energies().total_energies()[scoring::linear_chainbreak]    > 5.0 ||
+					pw.pose.energies().total_energies()[scoring::atom_pair_constraint] > options::option[basic::options::OptionKeys::smhybrid::filter]()[5] ) {
 				TR << "chainbreak or floating_sc FAIL! redoing centroid" << std::endl;
 				sf_cen->show(TR,pw.pose);
 				--iter;
@@ -3925,12 +3929,12 @@ void* doit(void* /*x = NULL*/) {
 		// pw.pose.dump_pdb("cen.pdb");
 
 
-		if(option[basic::options::OptionKeys::smhybrid::fa_refine]()) {
+		if ( option[basic::options::OptionKeys::smhybrid::fa_refine]() ) {
 			ScoreFunctionOP sf_fa;
 			// pw.dump_pdb("cen.pdb");
-			if(!pw.switch_to_fa()) continue;
+			if ( !pw.switch_to_fa() ) continue;
 			sf_fa = fa_refine_and_design(pw,3);
-			if(!sf_fa) {
+			if ( !sf_fa ) {
 				TR << "FA PW FAIL" << std::endl;
 				continue;
 			}
@@ -3938,7 +3942,7 @@ void* doit(void* /*x = NULL*/) {
 		} else {
 			string tag = string_of(uniform());
 			TR << "cen" << tag << " " << censcore << std::endl;
-			if(censcore < option[basic::options::OptionKeys::in::file::silent_energy_cut]) {
+			if ( censcore < option[basic::options::OptionKeys::in::file::silent_energy_cut] ) {
 				pw.pose.dump_pdb("cen"+tag+".pdb");
 			}
 		}
@@ -3963,9 +3967,9 @@ void* doit_refine(void* /*x = NULL*/) {
 
 	vector1<utility::file::FileName> f = options::option[options::OptionKeys::smhybrid::refine]();
 
-	for(Size ifile = 1; ifile <= f.size(); ++ifile) {
+	for ( Size ifile = 1; ifile <= f.size(); ++ifile ) {
 		utility::file::FileName const fname(f[ifile]);
-		for(Size iter = 1; iter <= (Size)options::option[options::OptionKeys::out::nstruct](); ++iter) {
+		for ( Size iter = 1; iter <= (Size)options::option[options::OptionKeys::out::nstruct](); ++iter ) {
 			TR << "FILE " << fname << "ITER " << iter << std::endl;
 
 			PoseWrap pw = posewrap_from_command_line();
@@ -3973,19 +3977,19 @@ void* doit_refine(void* /*x = NULL*/) {
 
 			Pose ref;
 			pose_from_file(ref,fname, core::import_pose::PDB_file);
-			for(Size ir = 1; ir <= pw.pose.size(); ++ir) {
+			for ( Size ir = 1; ir <= pw.pose.size(); ++ir ) {
 				pw.pose.replace_residue(ir,ref.residue(ir),false);
-				for(Size ia = 1; ia <= ref.residue(ir).natoms(); ++ia) {
+				for ( Size ia = 1; ia <= ref.residue(ir).natoms(); ++ia ) {
 					pw.pose.set_xyz(AtomID(ia,ir),ref.xyz(AtomID(ia,ir)));
 				}
 			}
-			for(Size ir = 1; ir <= pw.floating_scs_.size(); ++ir) {
+			for ( Size ir = 1; ir <= pw.floating_scs_.size(); ++ir ) {
 				Size const rsd(pw.floating_scs_[ir]);
 				pose::add_lower_terminus_type_to_pose_residue(pw.pose,rsd);
 				pose::add_upper_terminus_type_to_pose_residue(pw.pose,rsd);
 				core::pose::add_variant_type_to_pose_residue(pw.pose,"VIRTUAL_BBCB",rsd);
-				for(Size ia = 1; ia <= ref.residue(rsd).natoms(); ++ia) {
-					if(pw.pose.residue(rsd).has(ref.residue(rsd).atom_name(ia))) {
+				for ( Size ia = 1; ia <= ref.residue(rsd).natoms(); ++ia ) {
+					if ( pw.pose.residue(rsd).has(ref.residue(rsd).atom_name(ia)) ) {
 						pw.pose.set_xyz(AtomID(pw.pose.residue(rsd).atom_index(ref.residue(rsd).atom_name(ia)),rsd),ref.xyz(AtomID(ia,rsd)));
 					}
 				}
@@ -4013,17 +4017,17 @@ main( int argc, char * argv [] )
 
 	try {
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
 
-	void* (*func)(void*) = &doit;
-	if( basic::options::option[basic::options::OptionKeys::smhybrid::refine].user() ) func = &doit_refine;
+		void* (*func)(void*) = &doit;
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::refine].user() ) func = &doit_refine;
 
-	if (option[ basic::options::OptionKeys::parser::view ]()) {
-		protocols::viewer::viewer_main( func );
-	} else {
-		func(NULL);
-	}
+		if ( option[ basic::options::OptionKeys::parser::view ]() ) {
+			protocols::viewer::viewer_main( func );
+		} else {
+			func(NULL);
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

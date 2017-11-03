@@ -88,7 +88,7 @@ public:
 		protocols::hybridization::TMalign tm_align;
 		tm_align.apply(query_pose_,ref_pose,pose_residue_list,ref_pose_residue_list);
 		core::id::AtomID_Map< core::id::AtomID > atom_map;
-		core::pose::initialize_atomid_map( atom_map, query_pose_, core::id::BOGUS_ATOM_ID );
+		core::pose::initialize_atomid_map( atom_map, query_pose_, core::id::AtomID::BOGUS_ATOM_ID() );
 		core::Size n_mapped_residues=0;
 
 		tm_align.alignment2AtomMap(query_pose_, ref_pose, pose_residue_list,ref_pose_residue_list, n_mapped_residues, atom_map);

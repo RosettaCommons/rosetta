@@ -233,7 +233,7 @@ align_pose_general( core::pose::Pose const & static_pose, std::string const & st
 
 	////////////////////////////////////create the alignment map////////////////////////////////////////////////////////////////////
 	id::AtomID_Map < id::AtomID > atom_ID_map;
-	pose::initialize_atomid_map( atom_ID_map, moving_pose, id::BOGUS_ATOM_ID );
+	pose::initialize_atomid_map( atom_ID_map, moving_pose, id::AtomID::BOGUS_ATOM_ID() );
 
 	std::string const static_sequence = static_pose.sequence();
 	std::string const moving_sequence = moving_pose.sequence();

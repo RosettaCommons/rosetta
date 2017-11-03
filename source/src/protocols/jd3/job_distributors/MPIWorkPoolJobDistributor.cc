@@ -1307,6 +1307,7 @@ MPIWorkPoolJobDistributor::retrieve_job_maturation_data()
 	LarvalJobOP larval_job;
 	try {
 		larval_job = deserialize_larval_job( larval_job_string );
+		TR << "Recieved job " << larval_job->job_index() << std::endl;
 	} catch ( cereal::Exception & e ) {
 		std::ostringstream oss;
 		oss << "Failed to deserialize larval job on worker node " << mpi_rank_ << ". Exiting.\nError message from cereal library:\n";

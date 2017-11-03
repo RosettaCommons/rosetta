@@ -1484,7 +1484,7 @@ loop_rmsd_with_superimpose_core(
 {
 	pose::Pose ncpose1 = pose1;
 	id::AtomID_Map< id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, ncpose1, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, ncpose1, core::id::AtomID::BOGUS_ATOM_ID() );
 	for ( core::Size ir=1; ir <= ncpose1.size(); ++ir ) {
 		if ( ncpose1.residue(ir).aa() == core::chemical::aa_vrt || pose2.residue(ir).aa() == core::chemical::aa_vrt ) continue;
 		if ( !loops.is_loop_residue( ir ) && ( core.size()==0 || core.is_loop_residue( ir ) ) ) {

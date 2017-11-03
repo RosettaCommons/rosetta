@@ -56,7 +56,6 @@ using ObjexxFCL::format::F;
 using core::id::AtomID;
 using core::id::NamedAtomID;
 using core::id::DOF_ID;
-using core::id::BOGUS_DOF_ID;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 using numeric::angle_radians;
@@ -278,7 +277,7 @@ RNA_AnalyticLoopCloser::figure_out_offset (
 	core::id::DOF_ID const & dof_id,
 	core::Real const & original_torsion_value,
 	utility::vector1< core::Real > & offset_save ) {
-	if ( dof_id == BOGUS_DOF_ID ) { //expected at cutpoint!
+	if ( dof_id == DOF_ID::BOGUS_DOF_ID() ) { //expected at cutpoint!
 		TR <<  "Problem with DOF_ID " << dof_id << std::endl;
 		utility_exit_with_message ( "Problem with DOF_ID" );
 		//  }

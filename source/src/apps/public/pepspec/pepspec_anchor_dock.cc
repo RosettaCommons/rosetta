@@ -365,7 +365,7 @@ pep_rmsd_analysis(
 	//superpose if needed
 	if ( option[ pepspec::native_align ] ) {
 		id::AtomID_Map< id::AtomID > atom_map;
-		pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
+		pose::initialize_atomid_map( atom_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 
 		for ( Size i = prot_begin; i <= prot_end; ++i ) {
 			id::AtomID const id1( pose.residue( i ).atom_index( "CA" ), i );
@@ -620,7 +620,7 @@ run_pep_prep()
 			Pose align_pose;
 			import_pose::pose_from_file( align_pose, align_name , core::import_pose::PDB_file);
 			id::AtomID_Map< id::AtomID > atom_map;
-			pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
+			pose::initialize_atomid_map( atom_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 			for ( Size i = prot_begin; i <= prot_end; ++i ) {
 				id::AtomID const id1( pose.residue( i ).atom_index( "CA" ), i );
 				id::AtomID const id2( align_pose.residue( i ).atom_index( "CA" ), i );
@@ -740,7 +740,7 @@ run_pep_prep()
 				//seq_map.show( TR );
 				vector1< Size > seq_align( seq_map.mapping() );
 				id::AtomID_Map< id::AtomID > atom_map;
-				pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
+				pose::initialize_atomid_map( atom_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 				Real total_rmsd( 0 );
 				Size npos( 0 );
 				for ( Size ii = 1; ii <= seq_align.size(); ++ii ) {

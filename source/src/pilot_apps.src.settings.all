@@ -47,6 +47,7 @@ sources = {
 		"sweep_respair_energies",
 		"find_buns",
 		"fixbb_jd3",
+		"relax_jd3",
 		#"test_ik_match",
 	],
 	"pilot/aroop" : [

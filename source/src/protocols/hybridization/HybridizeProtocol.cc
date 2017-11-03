@@ -1826,7 +1826,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 
 	for ( Size i_domain = 1; i_domain <= domains.size() ; ++i_domain ) {
 		core::id::AtomID_Map< core::id::AtomID > atom_map;
-		core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
+		core::pose::initialize_atomid_map( atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 		// find all residues in moving pose corresponding to this domain
 		std::list <Size> residue_list;

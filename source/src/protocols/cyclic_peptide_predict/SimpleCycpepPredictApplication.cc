@@ -2741,7 +2741,7 @@ SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 	core::Size res_counter(0); //Residue indices might not match between native pose and pose, due to linkers.
 
 	core::id::AtomID_Map< core::id::AtomID > amap;
-	core::pose::initialize_atomid_map(amap, *pose, core::id::BOGUS_ATOM_ID);
+	core::pose::initialize_atomid_map(amap, *pose, core::id::AtomID::BOGUS_ATOM_ID());
 	for ( core::Size ir=1, irmax=native_pose->total_residue(); ir<=irmax; ++ir ) {
 		if ( !native_pose->residue_type(ir).is_alpha_aa() && !native_pose->residue_type(ir).is_oligourea() ) continue;
 		++res_counter;

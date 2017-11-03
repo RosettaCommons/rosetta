@@ -123,7 +123,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 	while ( counter < MAX_TRIAL ) {
 		++counter;
 		sequence_alignment_local_.clear();
-		core::pose::initialize_atomid_map( atom_map_, pose, core::id::BOGUS_ATOM_ID );
+		core::pose::initialize_atomid_map( atom_map_, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 		//fpd pick a random downstream residue and steal it's position from a template
 		//fpd if anchor_insert_only_ is set, use the jump anchor position

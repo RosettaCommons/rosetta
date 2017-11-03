@@ -388,8 +388,8 @@ FusePosesNtoCMover::generate_superposition_map(
 ) const
 {
 
-	core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::BOGUS_ATOM_ID );
-	core::pose::initialize_atomid_map( atom_map, fuse_pose, core::id::BOGUS_ATOM_ID );
+	core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::AtomID::BOGUS_ATOM_ID() );
+	core::pose::initialize_atomid_map( atom_map, fuse_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	//remember: pose is nterminal half, fuse_pose cterminal half
 	for ( Size chain_it(1); chain_it <= chains_to_use_.size(); ++chain_it ) {
@@ -984,7 +984,7 @@ convert_AtomID_Map_to_std_map(
 
 			core::id::AtomID to_probe( atcounter, rescounter );
 			core::id::AtomID mapped_id( atom_map[ to_probe ] );
-			if ( mapped_id != core::id::BOGUS_ATOM_ID ) {
+			if ( mapped_id != core::id::AtomID::BOGUS_ATOM_ID() ) {
 				to_return.insert( std::pair< core::id::AtomID, core::id::AtomID>( to_probe, mapped_id ) );
 			}
 		} //loop over atoms for res

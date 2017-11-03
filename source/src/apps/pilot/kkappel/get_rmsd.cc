@@ -211,7 +211,7 @@ get_rmsd()
 		if ( !option[ rmsd_nosuper ]() ) {
 			// first do the superposition
 			core::id::AtomID_Map< id::AtomID > atom_map;
-			core::pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
+			core::pose::initialize_atomid_map( atom_map, pose, id::AtomID::BOGUS_ATOM_ID() );
 			for ( core::Size i = 1; i <= native_super_residues.size(); ++i ) {
 				id::AtomID const id1( pose.residue( super_residues[ i ] ).atom_index("CA"), super_residues[ i ]);
 				id::AtomID const id2( native_pose->residue( native_super_residues[ i ]).atom_index("CA"), native_super_residues[ i ] );
@@ -239,7 +239,7 @@ get_rmsd()
 		// then get the rmsd
 		//core::id::AtomID_Map< id::AtomID > atom_map_rms;
 		std::map<core::id::AtomID, core::id::AtomID> atom_map_rms;
-		//core::pose::initialize_atomid_map( atom_map_rms, pose, id::BOGUS_ATOM_ID );
+		//core::pose::initialize_atomid_map( atom_map_rms, pose, id::AtomID::BOGUS_ATOM_ID() );
 		for ( core::Size i = 1; i<= native_rmsd_residues.size(); ++i ) {
 			for ( core::Size j = 1; j<= RNA_backbone_atoms.size(); ++j ) {
 				std::string name = RNA_backbone_atoms[ j ];

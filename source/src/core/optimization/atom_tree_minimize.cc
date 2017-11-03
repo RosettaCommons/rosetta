@@ -579,7 +579,7 @@ numerical_derivative_check(
 				deriv / dE_dvars[ii] );
 
 			if ( std::abs(dE_dvars[ii]) > 0.001 || std::abs(deriv) > 0.001 ) {
-				id::DOF_ID parent_id( id::BOGUS_DOF_ID );
+				id::DOF_ID parent_id( id::DOF_ID::BOGUS_DOF_ID() );
 				if ( dof_node.parent() ) {
 					parent_id = dof_node.parent()->dof_id();
 				}

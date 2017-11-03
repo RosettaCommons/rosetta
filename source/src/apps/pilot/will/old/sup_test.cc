@@ -31,31 +31,31 @@ int main (int argc, char *argv[])
 	try {
 
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	core::pose::Pose mod_pose,ref_pose;
+		core::pose::Pose mod_pose,ref_pose;
 
-	core::import_pose::pose_from_file(mod_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
-	core::import_pose::pose_from_file(ref_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[2], core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(mod_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(ref_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[2], core::import_pose::PDB_file);
 
-	using namespace core::id;
-	AtomID_Map<AtomID> atom_map;
-	core::pose::initialize_atomid_map(atom_map,mod_pose,BOGUS_ATOM_ID);
-	for(core::Size ir = 1; ir <= 6; ++ir) {
-		for(core::Size ia = 1; ia <= 4; ia++) {
-			core::Size ref_rsd = ref_pose.size() - 6 + ir;
-			atom_map[ AtomID(ia,ir) ] = AtomID(ia,ref_rsd);
+		using namespace core::id;
+		AtomID_Map<AtomID> atom_map;
+		core::pose::initialize_atomid_map(atom_map,mod_pose,AtomID::BOGUS_ATOM_ID());
+		for ( core::Size ir = 1; ir <= 6; ++ir ) {
+			for ( core::Size ia = 1; ia <= 4; ia++ ) {
+				core::Size ref_rsd = ref_pose.size() - 6 + ir;
+				atom_map[ AtomID(ia,ir) ] = AtomID(ia,ref_rsd);
+			}
 		}
-	}
 
-	core::Real rms = core::scoring::superimpose_pose(mod_pose,ref_pose,atom_map);
+		core::Real rms = core::scoring::superimpose_pose(mod_pose,ref_pose,atom_map);
 
-	std::cout << "aligned region rms: " << rms << std::endl;
+		std::cout << "aligned region rms: " << rms << std::endl;
 
-	mod_pose.dump_pdb("moved_pose.pdb");
-	ref_pose.dump_pdb("fixed_pose.pdb");
+		mod_pose.dump_pdb("moved_pose.pdb");
+		ref_pose.dump_pdb("fixed_pose.pdb");
 
-	return 0;
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

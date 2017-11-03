@@ -265,7 +265,7 @@ ExposedStrandMover::move_superimpose(core::pose::Pose & pose1 /*input*/, core::p
 	//some initialization for each new run
 	// maps every atomid to bogus atom
 	atom_map.clear();
-	core::pose::initialize_atomid_map( atom_map, pose1, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, pose1, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	for ( core::Size ii = 0; ii < length; ++ii ) {
 		//Sloppy way of adding all bb atoms, must be a better way...

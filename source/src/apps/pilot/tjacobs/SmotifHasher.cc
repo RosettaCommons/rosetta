@@ -177,8 +177,8 @@ superimpose_smotifs(
 			core::pose::Pose hit_pose;
 			protein_silent_report->load_pose(db_session, struct_id, hit_pose);
 
-			core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::BOGUS_ATOM_ID );
-			core::pose::initialize_atomid_map( atom_map, hit_pose, core::id::BOGUS_ATOM_ID );
+			core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::AtomID::BOGUS_ATOM_ID() );
+			core::pose::initialize_atomid_map( atom_map, hit_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 			atom_map.set( core::id::AtomID(hit_pose.residue( hit.resnum ).atom_index("N"), hit.resnum ), core::id::AtomID( query_pose.residue(query.resnum).atom_index("N"), query.resnum ) );
 			atom_map.set( core::id::AtomID(hit_pose.residue( hit.resnum ).atom_index("CA"), hit.resnum ), core::id::AtomID( query_pose.residue(query.resnum).atom_index("CA"), query.resnum ) );
 			atom_map.set( core::id::AtomID(hit_pose.residue( hit.resnum ).atom_index("C"), hit.resnum ), core::id::AtomID( query_pose.residue(query.resnum).atom_index("C"), query.resnum ) );

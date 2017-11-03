@@ -42,6 +42,7 @@ public: // Creation
 
 	/// @brief Default constructor
 	inline
+	constexpr
 	AtomID() :
 		atomno_( 0 ),
 		rsd_( 0 )
@@ -60,6 +61,9 @@ public: // Creation
 		atomno_( atomno_in ),
 		rsd_( rsd_in )
 	{}
+
+	static constexpr AtomID BOGUS_ATOM_ID() { return AtomID(); }
+	static constexpr AtomID CHAINBREAK_BOGUS_ATOM_ID() { return AtomID(); }
 
 public: // Properties
 
@@ -145,8 +149,9 @@ public:
 
 }; // AtomID
 
-extern AtomID const BOGUS_ATOM_ID;
-extern AtomID const CHAINBREAK_BOGUS_ATOM_ID;
+/// Globals -- may not be used until after core::init is called.
+extern AtomID const GLOBAL_BOGUS_ATOM_ID;
+extern AtomID const GLOBAL_CHAINBREAK_BOGUS_ATOM_ID;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// two more classes, temporary for testing purposes
@@ -156,8 +161,8 @@ class BondID {
 public:
 
 	BondID():
-		atom1( BOGUS_ATOM_ID ),
-		atom2( BOGUS_ATOM_ID )
+		atom1( AtomID::BOGUS_ATOM_ID() ),
+		atom2( AtomID::BOGUS_ATOM_ID() )
 	{}
 
 	BondID( AtomID const & a1, AtomID const & a2 ):
@@ -226,12 +231,14 @@ public:
 		center_( c )
 	{}
 
-
+	constexpr
 	StubID():
-		atom1(),
-		atom2(),
-		atom3()
+		atom1(AtomID::BOGUS_ATOM_ID()),
+		atom2(AtomID::BOGUS_ATOM_ID()),
+		atom3(AtomID::BOGUS_ATOM_ID())
 	{}
+
+	static constexpr StubID const BOGUS_STUB_ID() { return StubID(); }
 
 	AtomID const &
 	atom( Size const index ) const {
@@ -291,8 +298,8 @@ public:
 };
 
 
-/// @brief Globals
-extern StubID const BOGUS_STUB_ID;
+/// @brief Global -- may not be used until after core::init is called.
+extern StubID const GLOBAL_BOGUS_STUB_ID;
 
 
 } // namespace id

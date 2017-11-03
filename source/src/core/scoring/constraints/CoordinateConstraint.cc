@@ -64,8 +64,8 @@ using pose::atom_id_to_named_atom_id;
 
 CoordinateConstraint::CoordinateConstraint() :
 	Constraint( coordinate_constraint ),
-	atom_( id::BOGUS_ATOM_ID ),
-	fixed_atom_( id::BOGUS_ATOM_ID ),
+	atom_( id::AtomID::BOGUS_ATOM_ID() ),
+	fixed_atom_( id::AtomID::BOGUS_ATOM_ID() ),
 	func_( /* NULL */ )
 {}
 

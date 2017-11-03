@@ -23,6 +23,7 @@
 
 // Project Headers
 #include <core/types.hh>
+#include <core/id/bogus.hh>
 #include <basic/options/option.hh>
 #include <utility/sys_util.hh>
 #include <utility/excn/Exceptions.hh>
@@ -1269,6 +1270,8 @@ init_resources() {
 void init(int argc, char * argv [])
 {
 	basic::init();
+
+	core::id::initialize_core_id_globals();
 
 	try{
 		//Initialize MPI

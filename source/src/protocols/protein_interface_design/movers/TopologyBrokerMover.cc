@@ -117,7 +117,7 @@ TopologyBrokerMover::apply( pose::Pose & pose )
 
 	// superimpose
 	core::id::AtomID_Map< id::AtomID > atom_map;
-	core::pose::initialize_atomid_map_AtomID ( atom_map, pose2, id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map_AtomID ( atom_map, pose2, id::AtomID::BOGUS_ATOM_ID() );
 	for ( core::Size i=start_; i<=end_; ++i ) {
 		core::id::AtomID const id1( pose2.residue(i-chain1end).atom_index("CA"), i-chain1end );
 		core::id::AtomID const id2( ref_pose.residue(i-chain1end).atom_index("CA"), i-chain1end);

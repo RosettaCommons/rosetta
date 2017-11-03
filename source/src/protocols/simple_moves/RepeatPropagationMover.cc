@@ -631,7 +631,7 @@ void RepeatPropagationMover::generate_overlap(Pose & pose, Pose & parent_pose, s
 	using namespace core::id;
 	using namespace core::scoring;
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, pose, BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, pose, AtomID::BOGUS_ATOM_ID() );
 	for ( Size ii=0; ii<=end_overlap_pose-start_overlap_pose; ++ii ) {
 		core::id::AtomID const id1(pose.residue(start_overlap_pose+ii).atom_index("CA"),start_overlap_pose+ii);
 		core::id::AtomID const id2(parent_pose.residue(start_overlap_parent+ii).atom_index("CA"), start_overlap_parent+ii );

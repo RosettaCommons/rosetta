@@ -48,10 +48,10 @@ namespace simple_moves {
 
 TorsionDOFMover::TorsionDOFMover() :
 	protocols::moves::Mover(),
-	atom1_(core::id::BOGUS_ATOM_ID),
-	atom2_(core::id::BOGUS_ATOM_ID),
-	atom3_(core::id::BOGUS_ATOM_ID),
-	atom4_(core::id::BOGUS_ATOM_ID),
+	atom1_(core::id::AtomID::BOGUS_ATOM_ID()),
+	atom2_(core::id::AtomID::BOGUS_ATOM_ID()),
+	atom3_(core::id::AtomID::BOGUS_ATOM_ID()),
+	atom4_(core::id::AtomID::BOGUS_ATOM_ID()),
 	upper_angle_(0),
 	lower_angle_(0),
 	check_MMT_(false),

@@ -295,7 +295,7 @@ MinimizerMap::setup(
 	pose::setup_dof_mask_from_move_map( move_map, pose, dof_mask );
 
 	// this fills the torsion and atom lists
-	DOF_ID tmp( id::BOGUS_DOF_ID );
+	DOF_ID tmp( id::DOF_ID::BOGUS_DOF_ID() );
 	pose.atom_tree().root()->setup_min_map( tmp, dof_mask, *this );
 
 	// sort DOFs for proper linking later on
@@ -326,7 +326,7 @@ void
 MinimizerMap::assign_rosetta_torsions( pose::Pose const & pose )
 {
 	// mapping from AtomTree DOF ID's to bb/chi/nu/branch torsion angle ids
-	id::DOF_ID_Map< id::TorsionID > dof_map( id::BOGUS_TORSION_ID);
+	id::DOF_ID_Map< id::TorsionID > dof_map( id::TorsionID::BOGUS_TORSION_ID());
 
 	pose::setup_dof_to_torsion_map( pose, dof_map );
 

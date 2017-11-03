@@ -20,8 +20,10 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/symmetry/SymmData.hh>
-#include <utility/vector1.hh>
 
+#include <utility/vector1.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 // Utility Headers
 
@@ -35,12 +37,22 @@ class SetupForSymmetryMover : public protocols::moves::Mover
 {
 public:
 
-	// default constructor
+	/// @brief default constructor, reads from the global options object
 	SetupForSymmetryMover();
+
+	/// @brief reads from a (possibly-local) option collection object
+	SetupForSymmetryMover( utility::options::OptionCollection const & options );
 
 	SetupForSymmetryMover( core::conformation::symmetry::SymmDataOP symmdata );
 
-	SetupForSymmetryMover( std::string const & );
+	SetupForSymmetryMover(
+		core::conformation::symmetry::SymmDataOP symmdata,
+		utility::options::OptionCollection const & options
+	);
+
+	SetupForSymmetryMover( std::string const & symmdef_file );
+	SetupForSymmetryMover( std::string const & symmdef_file,
+		utility::options::OptionCollection const & options );
 
 	~SetupForSymmetryMover();
 
@@ -76,6 +88,12 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	static
+	void
+	options_read_in_ctor( utility::options::OptionKeyList & opts );
+
+	void
+	set_refinable_lattice( bool setting );
 
 private:
 	void process_symmdef_file(std::string tag);
@@ -87,11 +105,17 @@ private:
 	void
 	make_symmetric_pose( core::pose::Pose & pose ) const;
 
+	void
+	read_refinable_lattice( utility::options::OptionCollection const & options );
+
 private:
 	bool slide_;
 	bool cryst1_; //use cryst1 line
 	bool preserve_datacache_;
 	core::conformation::symmetry::SymmDataOP symmdef_;
+	std::string symdef_fname_from_options_system_;
+	bool refinable_lattice_was_set_;
+	bool refinable_lattice_;
 };
 
 ///////////////

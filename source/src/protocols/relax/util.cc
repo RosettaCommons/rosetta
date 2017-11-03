@@ -52,6 +52,7 @@
 //Utility Headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -75,40 +76,47 @@ namespace relax {
 
 RelaxProtocolBaseOP
 generate_relax_from_cmd( bool NULL_if_no_flag ) {
+	return generate_relax_from_cmd( basic::options::option, NULL_if_no_flag );
+}
+
+RelaxProtocolBaseOP
+generate_relax_from_cmd(
+	utility::options::OptionCollection const & options,
+	bool NULL_if_no_flag
+) {
 	using namespace protocols::moves;
 	using namespace scoring;
 	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
 
 	core::scoring::ScoreFunctionOP scorefxn;
 	scorefxn = core::scoring::get_score_function();
-	if ( option[ in::file::fullatom ]() || option[ OptionKeys::constraints::cst_fa_file ].user() ) {
+	if ( options[ OptionKeys::in::file::fullatom ]() || options[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn );
 	} else {
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *scorefxn );
 	}
 
 	// now add density scores
-	if ( option[ edensity::mapfile ].user() ) {
+	if ( options[ OptionKeys::edensity::mapfile ].user() ) {
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn );
 	}
 
 	RelaxProtocolBaseOP protocol;
-	if ( option[ OptionKeys::relax::sequence_file ].user() ) {
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::sequence_file ]() ) );
-	} else if ( option[ OptionKeys::relax::script ].user() ) {
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::script ]() ) );
-	} else if ( option[ OptionKeys::relax::quick ]() ) {
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
-	} else if ( option[ OptionKeys::relax::thorough ]() ) {
+	if ( options[ OptionKeys::relax::sequence_file ].user() ) {
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, options[ OptionKeys::relax::sequence_file ]() ) );
+	} else if ( options[ OptionKeys::relax::script ].user() ) {
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, options[ OptionKeys::relax::script ]() ) );
+	} else if ( options[ OptionKeys::relax::quick ]() ) {
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, options[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
+	} else if ( options[ OptionKeys::relax::thorough ]() ) {
 		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, 15 ) );
-	} else if ( option[ OptionKeys::relax::fast ]() ) {
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
-	} else if ( option[ OptionKeys::relax::classic ]() ) {
+	} else if ( options[ OptionKeys::relax::fast ]() ) {
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, options[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
+	} else if ( options[ OptionKeys::relax::classic ]() ) {
 		protocol = RelaxProtocolBaseOP( new ClassicRelax ( scorefxn ) );
-	} else if ( option[ OptionKeys::relax::mini ]() ) {
+	} else if ( options[ OptionKeys::relax::mini ]() ) {
 		protocol = RelaxProtocolBaseOP( new MiniRelax( scorefxn ) );
-	} else if ( option[ OptionKeys::relax::centroid_mode ]() ) {
+	} else if ( options[ OptionKeys::relax::centroid_mode ]() ) {
 		protocol = RelaxProtocolBaseOP( new CentroidRelax() );
 	} else {
 		// default relax should be a quick sequence relax
@@ -120,6 +128,27 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 	}
 
 	return protocol;
+}
+
+void
+options_for_generate_relax_from_cmd(
+	utility::options::OptionKeyList & opts
+)
+{
+	using namespace basic::options;
+
+	opts
+		+ OptionKeys::in::file::fullatom
+		+ OptionKeys::constraints::cst_fa_file
+		+ OptionKeys::edensity::mapfile
+		+ OptionKeys::relax::sequence_file
+		+ OptionKeys::relax::script
+		+ OptionKeys::relax::quick
+		+ OptionKeys::relax::thorough
+		+ OptionKeys::relax::fast
+		+ OptionKeys::relax::classic
+		+ OptionKeys::relax::mini
+		+ OptionKeys::relax::centroid_mode;
 }
 
 // RosettaMembrane from 2006

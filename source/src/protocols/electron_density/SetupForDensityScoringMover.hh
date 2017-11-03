@@ -27,7 +27,10 @@
 #include <string>
 
 #include <protocols/loops/Loops.fwd.hh>
+
 #include <utility/vector1.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 namespace protocols {
 namespace electron_density {
@@ -37,6 +40,7 @@ namespace electron_density {
 class SetupForDensityScoringMover : public moves::Mover {
 public:
 	SetupForDensityScoringMover();
+	SetupForDensityScoringMover( utility::options::OptionCollection const & options );
 
 	void apply( core::pose::Pose & pose ) override;
 
@@ -65,6 +69,9 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	static
+	void
+	options_read_in_ctor( utility::options::OptionKeyList & opts );
 
 private:
 	std::string dock_into_dens_strategy_;

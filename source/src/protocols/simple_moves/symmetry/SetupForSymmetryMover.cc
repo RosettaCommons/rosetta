@@ -13,50 +13,39 @@
 
 // Unit headers
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMoverCreator.hh>
+
+// Package headers
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/cryst/refinable_lattice.hh>
+#include <protocols/moves/mover_schemas.hh>
+
+// Core headers
 #include <core/conformation/symmetry/SymmData.hh>
-
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
-
-// Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/resource_manager/util.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/cryst.OptionKeys.gen.hh>
-
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-
-// ObjexxFCL Headers
-
-// C++ Headers
-#include <string>
-
-// Utility Headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+#include <basic/options/keys/cryst.OptionKeys.gen.hh>
 
+// Utility Headers
+#include <utility/tag/Tag.hh>
+#include <utility/excn/Exceptions.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-// XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
+// C++ Headers
+#include <string>
 
 namespace protocols {
 namespace simple_moves {
@@ -116,32 +105,63 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.symmetry.SetupForS
 
 
 SetupForSymmetryMover::SetupForSymmetryMover() :
-	protocols::moves::Mover("SetupForSymmetryMover"),
-	slide_(false),
-	cryst1_(false),
-	preserve_datacache_(false),
-	symmdef_()
+	SetupForSymmetryMover( basic::options::option )
 {}
 
-SetupForSymmetryMover::SetupForSymmetryMover( core::conformation::symmetry::SymmDataOP symmdata ) :
+SetupForSymmetryMover::SetupForSymmetryMover( utility::options::OptionCollection const & options ) :
 	protocols::moves::Mover("SetupForSymmetryMover"),
 	slide_(false),
 	cryst1_(false),
 	preserve_datacache_(false),
-	symmdef_( symmdata )
-{}
-
-SetupForSymmetryMover::SetupForSymmetryMover( std::string const & symmdef_file) :
-	protocols::moves::Mover("SetupForSymmetryMover"),
-	slide_(false),
-	cryst1_(false),
-	preserve_datacache_(false),
-	symmdef_()
+	symmdef_(),
+	refinable_lattice_was_set_( false ),
+	refinable_lattice_( false )
 {
-	process_symmdef_file(symmdef_file);
+	using namespace basic::options;
+	if ( options[ OptionKeys::symmetry::symmetry_definition ].user() ) {
+		symdef_fname_from_options_system_ = options[ OptionKeys::symmetry::symmetry_definition ];
+	}
+	read_refinable_lattice( options );
 }
 
+SetupForSymmetryMover::SetupForSymmetryMover( core::conformation::symmetry::SymmDataOP symmdata ) :
+	SetupForSymmetryMover( symmdata, basic::options::option )
+{}
 
+SetupForSymmetryMover::SetupForSymmetryMover(
+	core::conformation::symmetry::SymmDataOP symmdata,
+	utility::options::OptionCollection const & options
+) :
+	protocols::moves::Mover("SetupForSymmetryMover"),
+	slide_(false),
+	cryst1_(false),
+	preserve_datacache_(false),
+	symmdef_( symmdata ),
+	refinable_lattice_was_set_( false ),
+	refinable_lattice_( false )
+{
+	read_refinable_lattice( options );
+}
+
+SetupForSymmetryMover::SetupForSymmetryMover( std::string const & symmdef_file) :
+	SetupForSymmetryMover( symmdef_file, basic::options::option )
+{}
+
+SetupForSymmetryMover::SetupForSymmetryMover(
+	std::string const & symmdef_file,
+	utility::options::OptionCollection const & options
+) :
+	protocols::moves::Mover("SetupForSymmetryMover"),
+	slide_(false),
+	cryst1_(false),
+	preserve_datacache_(false),
+	symmdef_(),
+	refinable_lattice_was_set_( false ),
+	refinable_lattice_( false )
+{
+	process_symmdef_file(symmdef_file);
+	read_refinable_lattice( options );
+}
 
 SetupForSymmetryMover::~SetupForSymmetryMover(){}
 
@@ -185,6 +205,18 @@ SetupForSymmetryMover::make_symmetric_pose( core::pose::Pose & pose ) const
 	if ( preserve_datacache_ ) pose.data() = cached;
 }
 
+void
+SetupForSymmetryMover::read_refinable_lattice(
+	utility::options::OptionCollection const & options
+)
+{
+	using namespace basic::options;
+	// default is not refinable _from this context_
+	if ( options[ OptionKeys::cryst::refinable_lattice ].user() ) {
+		refinable_lattice_was_set_ = true;
+		refinable_lattice_ = options[ OptionKeys::cryst::refinable_lattice ];
+	}
+}
 
 void
 SetupForSymmetryMover::apply( core::pose::Pose & pose )
@@ -195,8 +227,8 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 	if ( core::pose::symmetry::is_symmetric( pose ) ) return;
 
 	if ( !symmdef_ && !cryst1_ ) {
-		if ( option[ OptionKeys::symmetry::symmetry_definition].user() ) {
-			process_symmdef_file(option[ OptionKeys::symmetry::symmetry_definition]());
+		if ( ! symdef_fname_from_options_system_.empty() ) {
+			process_symmdef_file( symdef_fname_from_options_system_ );
 		} else {
 			throw utility::excn::EXCN_BadInput(
 				"The -symmetry:symmetry_definition command line option "
@@ -206,8 +238,8 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 
 	if ( cryst1_ ) {
 		protocols::cryst::MakeLatticeMover make_lattice;
-		if ( option[ OptionKeys::cryst::refinable_lattice].user() ) {
-			make_lattice.set_refinable_lattice( option[ OptionKeys::cryst::refinable_lattice]() );
+		if ( refinable_lattice_was_set_ ) {
+			make_lattice.set_refinable_lattice( refinable_lattice_ );
 		} else {
 			// default is not refinable _from this context_
 			make_lattice.set_refinable_lattice( false );
@@ -268,8 +300,8 @@ void SetupForSymmetryMover::parse_my_tag(
 		// but for now I will leave it and refrain from using the 'resource_description'
 		// XML option
 		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
-	} else if ( option[ OptionKeys::symmetry::symmetry_definition].user() ) {
-		process_symmdef_file(option[OptionKeys::symmetry::symmetry_definition]);
+	} else if ( ! symdef_fname_from_options_system_.empty() ) {
+		process_symmdef_file( symdef_fname_from_options_system_ );
 	} else {
 		throw utility::excn::EXCN_BadInput(
 			"To use SetupForSymmetryMover with rosetta scripts please supply either a 'definition' tag, a 'resource_decription' tag or specify -symmetry:symmetry_definition the command line.");
@@ -301,6 +333,26 @@ void SetupForSymmetryMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Given a symmetry definition file that describes configuration and scoring of a symmetric system, this mover 'symmetrizes' an asymmetric pose.", attlist );
 }
+
+void
+SetupForSymmetryMover::options_read_in_ctor( utility::options::OptionKeyList & opts )
+{
+	// *sigh* Symmetry does not lend itself to multithreaded (JD3) applications because it
+	// is so dependent on global data.
+	using namespace basic::options;
+	opts
+		+ OptionKeys::symmetry::symmetry_definition
+		+ OptionKeys::cryst::refinable_lattice;
+}
+
+void
+SetupForSymmetryMover::set_refinable_lattice( bool setting )
+{
+	refinable_lattice_was_set_ = true;
+	refinable_lattice_ = setting;
+}
+
+
 
 std::string SetupForSymmetryMoverCreator::keyname() const {
 	return SetupForSymmetryMover::mover_name();

@@ -80,6 +80,7 @@ void PoseInputSource::store_string_pair( std::string const & key, std::string co
 template< class Archive >
 void
 protocols::jd3::pose_inputters::PoseInputSource::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::jd3::InputSource >( this ) );
 	arc( CEREAL_NVP( origin_ ) ); // std::string
 	arc( CEREAL_NVP( input_tag_ ) ); // std::string
 	arc( CEREAL_NVP( string_string_map_ ) ); // StringStringMap
@@ -90,6 +91,7 @@ protocols::jd3::pose_inputters::PoseInputSource::save( Archive & arc ) const {
 template< class Archive >
 void
 protocols::jd3::pose_inputters::PoseInputSource::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::jd3::InputSource >( this ) );
 	arc( origin_ ); // std::string
 	arc( input_tag_ ); // std::string
 	arc( string_string_map_ ); // StringStringMap

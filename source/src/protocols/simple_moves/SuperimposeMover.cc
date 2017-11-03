@@ -138,7 +138,7 @@ SuperimposeMover::superimpose(
 {
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	std::map< core::id::AtomID, core::id::AtomID> atom_id_map;
-	core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 	for ( Size i_target = target_start, i_ref = ref_start; i_ref <= ref_end; ++i_ref, ++i_target ) {
 		if ( ! mod_pose.residue(i_target).has("CA") ) continue;
 		if ( ! ref_pose.residue(i_ref).has("CA") ) continue;
@@ -165,7 +165,7 @@ SuperimposeMover::superimposebb(
 {
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	std::map< core::id::AtomID, core::id::AtomID> atom_id_map;
-	core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 	for ( Size i_target = target_start, i_ref = ref_start; i_ref <= ref_end; ++i_ref, ++i_target ) {
 
 		if ( ! mod_pose.residue(i_target).has("N") ) continue;

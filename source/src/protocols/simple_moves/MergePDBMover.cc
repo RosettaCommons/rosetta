@@ -180,7 +180,7 @@ vector1<core::pose::PoseOP> MergePDBMover::generate_overlaps(Pose & pose, vector
 		Size start_overlap_xmlPose = overlaps[kk].start_overlap_xmlPose;
 		Size end_overlap_xmlPose = overlaps[kk].end_overlap_xmlPose;
 		core::id::AtomID_Map< core::id::AtomID > atom_map;
-		core::pose::initialize_atomid_map( atom_map, pose, BOGUS_ATOM_ID );
+		core::pose::initialize_atomid_map( atom_map, pose, AtomID::BOGUS_ATOM_ID() );
 		for ( Size ii=0; ii<=end_overlap_pose-start_overlap_pose; ++ii ) {
 			core::id::AtomID const id1(pose.residue(start_overlap_pose+ii).atom_index("CA"),start_overlap_pose+ii);
 			core::id::AtomID const id2(xml_input_pose_->residue(start_overlap_xmlPose+ii).atom_index("CA"), start_overlap_xmlPose+ii );

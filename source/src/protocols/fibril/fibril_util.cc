@@ -172,7 +172,7 @@ superimpose_pose_on_subset_bb(
 
 	//set atom map for superimpose_pose
 	core::id::AtomID_Map< id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID ); // maps every atomid to bogus atom
+	core::pose::initialize_atomid_map( atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() ); // maps every atomid to bogus atom
 
 	utility::vector1< core::id::AtomID > ref_ids;
 	utility::vector1< core::id::AtomID > ids;

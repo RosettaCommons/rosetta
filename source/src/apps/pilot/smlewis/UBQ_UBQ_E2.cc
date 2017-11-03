@@ -131,7 +131,7 @@ public:
 		task_factory_(NULL),
 		thioester_mm_(NULL),
 		loop_(), //we want default ctor
-		atomIDs(atomID_tot, core::id::BOGUS_ATOM_ID ),
+		atomIDs(atomID_tot, core::id::AtomID::BOGUS_ATOM_ID() ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
 		IAM_(new protocols::analysis::InterfaceAnalyzerMover)
 	{
@@ -139,12 +139,12 @@ public:
 		using namespace core::scoring;
 		fullatom_scorefunction_ = get_score_function();
 		TR << "Using fullatom scorefunction (TALARIS_2013), pair may be modified\n"
-			 << *fullatom_scorefunction_;
+			<< *fullatom_scorefunction_;
 
 		using namespace core::pose::metrics;
 		using namespace protocols::toolbox::pose_metric_calculators;
 		//magic number: chains 1 and 2; set up interface SASA calculator
-		if( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ){
+		if ( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ) {
 			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)));
 		}
 
@@ -153,7 +153,7 @@ public:
 		//set up loop object
 		if ( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].user() ) {
 			protocols::loops::Loops loops( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value()[1] );
-			loop_ = *(loops.begin());\
+			loop_ = *(loops.begin());
 		}
 	}
 
@@ -222,14 +222,14 @@ public:
 
 		//cross fingers - making the actual connection!
 		/*void
-			append_residue_by_bond(
-			conformation::Residue const & new_rsd,
-			bool const build_ideal_geometry = false,
-			int const connection = 0,
-			Size const anchor_residue = 0,
-			int const anchor_connection = 0,
-			bool const start_new_chain = false
-			)*/
+		append_residue_by_bond(
+		conformation::Residue const & new_rsd,
+		bool const build_ideal_geometry = false,
+		int const connection = 0,
+		Size const anchor_residue = 0,
+		int const anchor_connection = 0,
+		bool const start_new_chain = false
+		)*/
 		core::pose::Pose complex(E2);
 		complex.append_residue_by_bond( UBQ.residue( UBQ_term ), true, ubq_connid, E2_cys, cyx_connid );
 		//complex.dump_pdb("just1_complex.pdb");
@@ -255,7 +255,7 @@ public:
 		//complex.dump_pdb("just1_complex2.pdb");
 
 		//now add the rest of ubiquitin
-		for( core::Size i=UBQ_term-1; i>= 1; --i ) {
+		for ( core::Size i=UBQ_term-1; i>= 1; --i ) {
 			complex.prepend_polymer_residue_before_seqpos( UBQ.residue(i), E2length+1, false );
 		}
 
@@ -267,8 +267,8 @@ public:
 
 		//now add in the second ubiquitin - link to thioester C=O from lys48
 		complex.conformation().append_residue_by_jump(UBQ_second.residue(48), complexlength, "C", "NZ", true);
-		for( core::Size i(49); i <= UBQlength; ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second.residue(i), complex.size(), false);
-		for( core::Size i(47); i >= 1; --i) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second.residue(i), complexlength+1, false);
+		for ( core::Size i(49); i <= UBQlength; ++i ) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second.residue(i), complex.size(), false);
+		for ( core::Size i(47); i >= 1; --i ) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second.residue(i), complexlength+1, false);
 
 		//check it!
 		TR << complex.fold_tree();
@@ -302,12 +302,12 @@ public:
 		//core::Vector newposC(newpos+(oldpos-oldposC));
 
 		complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48), newpos);
-		//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+48), newposC);
+		// complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+48), newposC);
 
 		core::kinematics::Jump newjump(complex.atom_tree().jump(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48)));
 
 		complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48), oldpos);
-		//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+48), oldposC);
+		// complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+48), oldposC);
 
 		complex.conformation().set_jump(1, newjump);
 
@@ -336,7 +336,7 @@ public:
 		if ( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].user() ) {
 			TR << "loop " <<  loop_ << std::endl;
 			//set up for interface-plus-neighbors-positions operation
-			for (core::Size j(loop_.start()), end(loop_.stop()); j <= end; ++j){
+			for ( core::Size j(loop_.start()), end(loop_.stop()); j <= end; ++j ) {
 				loop_posns.insert(j);
 			}//for each residue in loop
 		} //no else needed - default loop is safe enough
@@ -384,7 +384,7 @@ public:
 	virtual
 	void
 	apply( core::pose::Pose & pose ){
-		if( !init_for_input_yet_ ) init_on_new_input();
+		if ( !init_for_input_yet_ ) init_on_new_input();
 
 		pose = starting_pose_;
 
@@ -455,7 +455,7 @@ public:
 		backbone_mover->add_mover(DOF_mover_phi, 0.75);
 
 		///////////////////////////loop movement/////////////////////////////////////////////////////
-		if( loop_.stop() - loop_.start() >= 3 ) { //empty loop; skip it!
+		if ( loop_.stop() - loop_.start() >= 3 ) { //empty loop; skip it!
 			//make kinematic mover
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
@@ -489,7 +489,7 @@ public:
 		task->nonconst_residue_task(Kres).or_ex2_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
 		task->nonconst_residue_task(Kres).or_ex3_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
 		task->nonconst_residue_task(Kres).or_ex4_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
-		//		TR << *task << std::endl;
+		//  TR << *task << std::endl;
 
 		protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 		SCmover->set_task(task);
@@ -511,20 +511,20 @@ public:
 		using protocols::simple_moves::MinMoverOP;
 		using protocols::simple_moves::MinMover;
 		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
-																				thioester_mm_,
-																				fullatom_scorefunction_,
-																				basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-																				0.01,
-																				true /*use_nblist*/ );
+			thioester_mm_,
+			fullatom_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ );
 
 		/////////////////////////////////rotamer trials mover///////////////////////////////////////////
 		using protocols::simple_moves::RotamerTrialsMoverOP;
 		using protocols::simple_moves::EnergyCutRotamerTrialsMover;
 		protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
-																																	fullatom_scorefunction_,
-																																	task_factory_,
-																																	mc,
-																																	0.01 /*energycut*/ ) );
+			fullatom_scorefunction_,
+			task_factory_,
+			mc,
+			0.01 /*energycut*/ ) );
 
 		///////////////////////package RT/min for JumpOutMover////////////////////////////////////////
 		protocols::moves::SequenceMoverOP RT_min_seq( new protocols::moves::SequenceMover );
@@ -532,10 +532,10 @@ public:
 		RT_min_seq->add_mover(min_mover);
 
 		protocols::moves::JumpOutMoverOP bb_if_RT_min( new protocols::moves::JumpOutMover(
-																																											backbone_mover,
-																																											RT_min_seq,
-																																											fullatom_scorefunction_,
-																																											20.0));
+			backbone_mover,
+			RT_min_seq,
+			fullatom_scorefunction_,
+			20.0));
 
 		///////////////////////////////repack///////////////////////////////////////////////
 		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
@@ -543,11 +543,11 @@ public:
 		pack_mover->score_function( fullatom_scorefunction_ );
 
 		protocols::simple_moves::MinMoverOP min_mover_pack = new protocols::simple_moves::MinMover(
-																						 thioester_mm_,
-																						 fullatom_scorefunction_,
-																						 basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-																						 0.01,
-																						 true /*use_nblist*/ );
+			thioester_mm_,
+			fullatom_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ );
 
 		using protocols::simple_moves::TaskAwareMinMoverOP;
 		using protocols::simple_moves::TaskAwareMinMover;
@@ -561,7 +561,7 @@ public:
 		TR << "   Current     Low    total cycles =" << refine_applies << std::endl;
 		for ( core::Size i(1); i <= refine_applies; ++i ) {
 
-			if( (i % repack_cycles == 0) || (i == refine_applies) ) { //full repack
+			if ( (i % repack_cycles == 0) || (i == refine_applies) ) { //full repack
 				pack_mover->apply(pose);
 				TAmin_mover->apply(pose);
 				//} else if ( i % min_cycles == 0 ) { //minimize
@@ -587,7 +587,7 @@ public:
 
 		//Filter on total score
 		core::Real const score((*fullatom_scorefunction_)(pose));
-		if( score > basic::options::option[scorefilter].value() ){
+		if ( score > basic::options::option[scorefilter].value() ) {
 			set_last_move_status(protocols::moves::FAIL_RETRY);
 			TR << "total score filter failed; score " << score << std::endl;
 			return;
@@ -607,10 +607,10 @@ public:
 		//TR << main_tree << std::endl;
 		copy.fold_tree(main_tree);
 
- 		//Filter on SASA
+		//Filter on SASA
 		basic::MetricValue< core::Real > mv_delta_sasa;
 		copy.metric(InterfaceSasaDefinition_, "delta_sasa", mv_delta_sasa);
-		if(mv_delta_sasa.value() < basic::options::option[SASAfilter].value()){
+		if ( mv_delta_sasa.value() < basic::options::option[SASAfilter].value() ) {
 			set_last_move_status(protocols::moves::FAIL_RETRY);
 			TR << "interface SASA filter failed; SASA " << mv_delta_sasa.value() << std::endl;
 			return;
@@ -656,8 +656,8 @@ private:
 	core::scoring::ScoreFunctionOP fullatom_scorefunction_;
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::kinematics::MoveMapOP thioester_mm_;
-// 	core::kinematics::MoveMapOP loop_mm_;
-// 	core::kinematics::MoveMapOP all_mm_;
+	//  core::kinematics::MoveMapOP loop_mm_;
+	//  core::kinematics::MoveMapOP all_mm_;
 
 	protocols::loops::Loop loop_;
 
@@ -680,29 +680,30 @@ int main( int argc, char* argv[] )
 	try {
 
 
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
- 	option.add( UBQpdb, "ubiquitin structure" ).def("1UBQ.pdb");
- 	option.add( E2pdb, "E2 structure" ).def("2OB4.pdb");
- 	option.add( E2_residue, "E2 catalytic cysteine (PDB numbering)").def(85);
-	option.add( SASAfilter, "filter out interface dSASA less than this").def(1000);
-	option.add( scorefilter, "filter out total score greater than this").def(10);
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		option.add( UBQpdb, "ubiquitin structure" ).def("1UBQ.pdb");
+		option.add( E2pdb, "E2 structure" ).def("2OB4.pdb");
+		option.add( E2_residue, "E2 catalytic cysteine (PDB numbering)").def(85);
+		option.add( SASAfilter, "filter out interface dSASA less than this").def(1000);
+		option.add( scorefilter, "filter out total score greater than this").def(10);
 
-	//initialize options
-	devel::init(argc, argv);
-	basic::prof_reset();
+		//initialize options
+		devel::init(argc, argv);
+		basic::prof_reset();
 
-	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].active()
-		|| basic::options::option[ basic::options::OptionKeys::in::file::l ].active()
-		|| basic::options::option[ basic::options::OptionKeys::in::file::silent ].active())
-		utility_exit_with_message("do not use an input PDB with UBQ_E2 (program uses internally)");
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].active()
+				|| basic::options::option[ basic::options::OptionKeys::in::file::l ].active()
+				|| basic::options::option[ basic::options::OptionKeys::in::file::silent ].active() ) {
+			utility_exit_with_message("do not use an input PDB with UBQ_E2 (program uses internally)");
+		}
 
-	protocols::jd2::JobDistributor::get_instance()->go(new UBQ_E2Mover);
+		protocols::jd2::JobDistributor::get_instance()->go(new UBQ_E2Mover);
 
-	basic::prof_show();
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		basic::prof_show();
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
-	return 0;
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

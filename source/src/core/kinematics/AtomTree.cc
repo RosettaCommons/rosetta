@@ -271,7 +271,7 @@ AtomTree::delete_seqpos( Size const seqpos )
 
 
 /// @note  This can also handle the case of inserting a residue, proved that we've already renumbered atomtree leaving an empty slot at seqpos.
-/// @note  If the new residue contains the root of the tree, incoming.atom1 should be BOGUS_ATOM_ID
+/// @note  If the new residue contains the root of the tree, incoming.atom1 should be AtomID::BOGUS_ATOM_ID()
 /// @note  Note that for all BondID's atom1 should be the parent and atom2 should be the child
 
 /// Couple of special cases:
@@ -453,7 +453,7 @@ AtomTree::jump( AtomID const & id ) const
 /////////////////////////////////////////////////////////////////////////////
 //get the DOF_ID of a torsion angle given those four atoms which define this torsion
 /// @details an "offset" value is also calculated that torsion(id1,id2,id3,id4) = dof( dof_id ) + offset.
-/// A BOGUS_DOF_ID will be returned if no proper DOF can be found for these four atoms.
+/// A DOF_ID::BOGUS_DOF_ID() will be returned if no proper DOF can be found for these four atoms.
 /// offset is mainly for an atom with a previous sibling as the torsion(PHI) attached
 /// to it is calculated as improper angle with respect to its sibling.
 id::DOF_ID
@@ -518,13 +518,13 @@ AtomTree::torsion_angle_dof_id(
 		atom3_in_id.rsd() == atom4_in_id.rsd() ) {
 		// BRANCH case: torsion includes 2 atoms from each of 2 residues
 		TR << "Noncanonical connection torsion does not have a corresponding DOF_ID" << std::endl;
-		return id::BOGUS_DOF_ID;
+		return id::GLOBAL_BOGUS_DOF_ID;
 		}*/
 
 		// AMW: We should note that this is FINE. This doesn't mean that we cannot have a fine
-		// time with the data we need. If we return id:BOGUS_DOF_ID, then conformation will
+		// time with the data we need. If we return id:GLOBAL_BOGUS_DOF_ID, then conformation will
 		// catch that and just calculate the torsion manually (in atom_tree_torsion) or return
-		// said BOGUS_DOF_ID (in dof_id_from_torsion_id)
+		// said DOF_ID::BOGUS_DOF_ID() (in dof_id_from_torsion_id)
 		// and that, on this level, is what's desired.
 		if ( !quiet ) {
 			TR.Error << "No proper DoF can be found for these four atoms: ";
@@ -555,7 +555,7 @@ AtomTree::torsion_angle_dof_id(
 				}
 			}
 		}
-		return id::BOGUS_DOF_ID;
+		return id::GLOBAL_BOGUS_DOF_ID;
 	}
 
 	offset = 0.0; // initialize
@@ -768,7 +768,7 @@ AtomTree::torsion_angle_dof_id(
 	}
 
 	// failure
-	return id::BOGUS_DOF_ID;
+	return id::GLOBAL_BOGUS_DOF_ID;
 }
 
 
@@ -864,7 +864,7 @@ AtomTree::set_jump_now(
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details It is possible that no DOF can be obtained given these four atoms or the torsion
-/// does not match exactly the DOF(PHI) angle. In the former case, a BOGUS_DOF_ID is
+/// does not match exactly the DOF(PHI) angle. In the former case, a DOF_ID::BOGUS_DOF_ID() is
 /// returned as indicator and in the latter case, an offset value is deducted from
 /// input setting to set the real DOF value properly.
 id::DOF_ID
@@ -969,7 +969,7 @@ AtomTree::bond_angle_dof_id(
 
 	// reorder the atoms if necessary
 	// not necessary at all in the current logic
-	DOF_ID dof_id( id::BOGUS_DOF_ID );
+	DOF_ID dof_id( id::DOF_ID::BOGUS_DOF_ID() );
 
 	if ( !atom3->is_jump() &&
 			!atom3->keep_dof_fixed( THETA ) && // not stub atom2 of a jump
@@ -1061,7 +1061,7 @@ AtomTree::bond_length_dof_id(
 		// not handling other cases right now
 	}
 
-	return id::BOGUS_DOF_ID;
+	return id::GLOBAL_BOGUS_DOF_ID;
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -54,6 +54,7 @@
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 namespace protocols {
 namespace jd2 {
@@ -335,22 +336,41 @@ input_pdb_files_from_command_line()
 }
 
 void set_native_in_mover( protocols::moves::Mover &mover ){
-	using namespace basic::options;
+	set_native_in_mover( mover, basic::options::option );
+}
+
+void set_native_in_mover(
+	protocols::moves::Mover & mover,
+	utility::options::OptionCollection const & options
+){
 	using namespace basic::options::OptionKeys;
 
-	if ( option[ in::file::native ].user() ) {
+	if ( options[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose );
 		core::chemical::ResidueTypeSetCOP rsd_set;
-		if ( option[ in::file::fullatom ]() ) {
+		if ( options[ in::file::fullatom ]() ) {
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		} else {
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		}
-		std::string native_pdb_file  = option[ in::file::native ]();
+		std::string native_pdb_file  = options[ in::file::native ]();
 		core::import_pose::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
+
 		mover.set_native_pose( native_pose );
 	}
 }
+
+void
+options_for_set_native_in_mover(
+	utility::options::OptionKeyList & opts
+)
+{
+	using namespace basic::options::OptionKeys;
+	opts
+		+ in::file::native
+		+ in::file::fullatom;
+}
+
 
 } // jd2
 } // protocols

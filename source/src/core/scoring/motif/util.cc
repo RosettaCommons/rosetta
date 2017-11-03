@@ -504,7 +504,7 @@ Real align_motif_pose_NCAC_super( Pose & motif_pose, Pose const & paln1, Size co
 	ref.append_residue_by_jump(paln1.residue(ir),1);
 	ref.append_residue_by_jump(paln2.residue(jr),1);
 	AtomID_Map<AtomID> atommap;
-	initialize_atomid_map(atommap,motif_pose,BOGUS_ATOM_ID);
+	initialize_atomid_map(atommap,motif_pose,AtomID::BOGUS_ATOM_ID());
 	atommap[AtomID(1,1)] = AtomID(1,1);
 	atommap[AtomID(2,1)] = AtomID(2,1);
 	atommap[AtomID(3,1)] = AtomID(3,1);
@@ -538,7 +538,7 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 	vector1<AtomID> modids1,refids1,modids2,refids2;
 	Pose refer_pose;
 	AtomID_Map<AtomID> atommap;
-	initialize_atomid_map(atommap,motif_pose,BOGUS_ATOM_ID);
+	initialize_atomid_map(atommap,motif_pose,AtomID::BOGUS_ATOM_ID());
 	refer_pose.append_residue_by_jump(paln1.residue(ir),1);
 	switch(rpm_type1(type)){
 	case RM_PH :
@@ -546,7 +546,7 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 		refids1 = get_nterminal_peptide_bond_reference_frame_atomids(refer_pose,1);
 		runtime_assert(modids1.size()==refids1.size());
 		for ( Size i=1; i <= modids1.size(); ++i ) {
-			if ( modids1[i]!=BOGUS_ATOM_ID ) {
+			if ( modids1[i]!=AtomID::BOGUS_ATOM_ID() ) {
 				atommap[modids1[i]] = refids1[i];
 			}
 		}
@@ -556,7 +556,7 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 		refids1 = get_cterminal_peptide_bond_reference_frame_atomids(refer_pose,1);
 		runtime_assert(modids1.size()==refids1.size());
 		for ( Size i=1; i <= modids1.size(); ++i ) {
-			if ( modids1[i]!=BOGUS_ATOM_ID ) {
+			if ( modids1[i]!=AtomID::BOGUS_ATOM_ID() ) {
 				atommap[modids1[i]] = refids1[i];
 			}
 		}
@@ -567,7 +567,7 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 		refids1 = get_backbone_reference_frame_atomids(refer_pose,1);
 		runtime_assert(modids1.size()==refids1.size());
 		for ( Size i=1; i <= modids1.size(); ++i ) {
-			if ( modids1[i]!=BOGUS_ATOM_ID && refids1[i]!=BOGUS_ATOM_ID ) {
+			if ( modids1[i]!=AtomID::BOGUS_ATOM_ID() && refids1[i]!=AtomID::BOGUS_ATOM_ID() ) {
 				atommap[modids1[i]] = refids1[i];
 			}
 		}
@@ -578,7 +578,7 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 		refids1 = get_sidechain_reference_frame_atomids(refer_pose,1);
 		runtime_assert(modids1.size()==refids1.size());
 		for ( Size i=1; i <= modids1.size(); ++i ) {
-			if ( modids1[i]!=BOGUS_ATOM_ID ) {
+			if ( modids1[i]!=AtomID::BOGUS_ATOM_ID() ) {
 				atommap[modids1[i]] = refids1[i];
 			}
 		}
@@ -592,7 +592,7 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 		refids2 = get_nterminal_peptide_bond_reference_frame_atomids(refer_pose,2);
 		runtime_assert(modids2.size()==refids2.size());
 		for ( Size i=1; i <= modids2.size(); ++i ) {
-			if ( modids2[i]!=BOGUS_ATOM_ID ) {
+			if ( modids2[i]!=AtomID::BOGUS_ATOM_ID() ) {
 				atommap[modids2[i]] = refids2[i];
 			}
 		}
@@ -602,7 +602,7 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 		refids2 = get_cterminal_peptide_bond_reference_frame_atomids(refer_pose,2);
 		runtime_assert(modids2.size()==refids2.size());
 		for ( Size i=1; i <= modids2.size(); ++i ) {
-			if ( modids2[i]!=BOGUS_ATOM_ID ) {
+			if ( modids2[i]!=AtomID::BOGUS_ATOM_ID() ) {
 				atommap[modids2[i]] = refids2[i];
 			}
 		}
@@ -613,7 +613,7 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 		refids2 = get_backbone_reference_frame_atomids(refer_pose,2);
 		runtime_assert(modids2.size()==refids2.size());
 		for ( Size i=1; i <= modids2.size(); ++i ) {
-			if ( modids2[i]!=BOGUS_ATOM_ID && refids2[i]!=BOGUS_ATOM_ID ) {
+			if ( modids2[i]!=AtomID::BOGUS_ATOM_ID() && refids2[i]!=AtomID::BOGUS_ATOM_ID() ) {
 				atommap[modids2[i]] = refids2[i];
 			}
 		}
@@ -624,7 +624,7 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 		refids2 = get_sidechain_reference_frame_atomids(refer_pose,2);
 		runtime_assert(modids2.size()==refids2.size());
 		for ( Size i=1; i <= modids2.size(); ++i ) {
-			if ( modids2[i]!=BOGUS_ATOM_ID ) {
+			if ( modids2[i]!=AtomID::BOGUS_ATOM_ID() ) {
 				atommap[modids2[i]] = refids2[i];
 			}
 		}
@@ -633,17 +633,17 @@ Real align_motif_pose_super( Pose & motif_pose, Pose const & paln1, Size const &
 	}
 	core::scoring::superimpose_pose(motif_pose,refer_pose,atommap);
 	Real rms = 0.0;
-	for ( Size i=1; i <= modids1.size(); ++i ) if ( modids1[i]!=BOGUS_ATOM_ID&&refids1[i]!=BOGUS_ATOM_ID ) rms += motif_pose.xyz(modids1[i]).distance_squared(refer_pose.xyz(refids1[i]));
-	for ( Size i=1; i <= modids2.size(); ++i ) if ( modids2[i]!=BOGUS_ATOM_ID&&refids2[i]!=BOGUS_ATOM_ID ) rms += motif_pose.xyz(modids2[i]).distance_squared(refer_pose.xyz(refids2[i]));
+	for ( Size i=1; i <= modids1.size(); ++i ) if ( modids1[i]!=AtomID::BOGUS_ATOM_ID()&&refids1[i]!=AtomID::BOGUS_ATOM_ID() ) rms += motif_pose.xyz(modids1[i]).distance_squared(refer_pose.xyz(refids1[i]));
+	for ( Size i=1; i <= modids2.size(); ++i ) if ( modids2[i]!=AtomID::BOGUS_ATOM_ID()&&refids2[i]!=AtomID::BOGUS_ATOM_ID() ) rms += motif_pose.xyz(modids2[i]).distance_squared(refer_pose.xyz(refids2[i]));
 	if ( rpm_type1(type)==RM_SC ) rms *= 0.8;
 	if ( rpm_type2(type)==RM_SC ) rms *= 0.8;
 	// if(rms > 0.1){
 	//  for(Size i=1; i <= modids1.size(); ++i)
-	//   if(modids1[i]!=BOGUS_ATOM_ID)
+	//   if(modids1[i]!=AtomID::BOGUS_ATOM_ID())
 	//    cout << motif_pose.residue(modids1[i].rsd()).name() << "/" << motif_pose.residue(modids1[i].rsd()).atom_name(modids1[i].atomno()) << " -- "
 	//         << refer_pose.residue(refids1[i].rsd()).name() << "/" << refer_pose.residue(refids1[i].rsd()).atom_name(refids1[i].atomno()) << endl;
 	//  for(Size i=1; i <= modids2.size(); ++i)
-	//   if(modids2[i]!=BOGUS_ATOM_ID)
+	//   if(modids2[i]!=AtomID::BOGUS_ATOM_ID())
 	//    cout << motif_pose.residue(modids2[i].rsd()).name() << "/" << motif_pose.residue(modids2[i].rsd()).atom_name(modids2[i].atomno()) << " -- "
 	//         << refer_pose.residue(refids2[i].rsd()).name() << "/" << refer_pose.residue(refids2[i].rsd()).atom_name(refids2[i].atomno()) << endl;
 	//  cout << endl;

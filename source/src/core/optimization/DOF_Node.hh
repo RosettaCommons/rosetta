@@ -174,7 +174,7 @@ public:
 		depth_(-1),
 		id(std::move( id_in )),
 		parent_(std::move( parent_in )),
-		torsion_id_( id::BOGUS_TORSION_ID ),
+		torsion_id_( id::TorsionID::BOGUS_TORSION_ID() ),
 		dependent_( false )
 	{}
 

@@ -399,7 +399,7 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 	// create atom map for superimposing 2 flanking resiudes
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, template_pose_,
-		id::BOGUS_ATOM_ID );
+		id::AtomID::BOGUS_ATOM_ID() );
 
 	Size flank = 2; // default 2
 	for ( Size start_stem = 4 - (flank-1); start_stem <= 4; start_stem++ ) {

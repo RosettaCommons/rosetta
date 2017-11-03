@@ -23,6 +23,8 @@
 
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 #include <string>
 #include <map>
@@ -111,7 +113,22 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tag );
 utility::vector1< utility::file::FileName >
 input_pdb_files_from_command_line();
 
+/// @brief Set the "native" for the Mover by reading from the global option collection
 void set_native_in_mover( protocols::moves::Mover &mover );
+
+/// @brief Set the "native" for the Mover by reading from a possibly-local option collection
+void set_native_in_mover(
+	protocols::moves::Mover & mover,
+	utility::options::OptionCollection const & options
+);
+
+/// @brief Companion function for set_native_in_mover that reports on
+/// the options that are read out of the (possibly-local) option collection
+void
+options_for_set_native_in_mover(
+	utility::options::OptionKeyList & opts
+);
+
 
 }  //jd2
 }  //protocols

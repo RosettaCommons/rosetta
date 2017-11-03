@@ -116,7 +116,7 @@ void ExtraThreadingMover::apply(
 
 	// superimpose query onto template
 	AtomID_Map< AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, query_pose, core::id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, query_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	for ( Size ii = 1; ii <= query_pose.size(); ++ii ) {
 		Size const templ_ii( mapping[ii] );

@@ -100,7 +100,7 @@ void EnvMover::apply( Pose& pose ) {
 		core::pose::PDBInfoCOP info( ppose.pdb_info() );
 
 		if ( info &&
-				e.id() != core::id::BOGUS_DOF_ID &&
+				e.id() != core::id::DOF_ID::BOGUS_DOF_ID() &&
 				e.id().atom_id().rsd() <= ppose.size() ) {
 			ss << "According to the PDBInfo object, the violating residue was "
 				<< info->number( e.id().atom_id().rsd() )

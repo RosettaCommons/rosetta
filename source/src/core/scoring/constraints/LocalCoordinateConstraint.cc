@@ -59,8 +59,8 @@ namespace constraints {
 
 LocalCoordinateConstraint::LocalCoordinateConstraint() :
 	Constraint( coordinate_constraint ),
-	atom_( id::BOGUS_ATOM_ID ),
-	fixed_stub_( id::BOGUS_STUB_ID ),
+	atom_( id::AtomID::BOGUS_ATOM_ID() ),
+	fixed_stub_( id::StubID::BOGUS_STUB_ID() ),
 	func_( /* NULL */ ) {}
 
 ///c-tor

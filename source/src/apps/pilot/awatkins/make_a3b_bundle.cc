@@ -224,7 +224,7 @@ void align_poses(
 	core::pose::Pose const &target
 ) {
 	core::id::AtomID_Map< core::id::AtomID > amap;
-	core::pose::initialize_atomid_map(amap,mypose,core::id::BOGUS_ATOM_ID);
+	core::pose::initialize_atomid_map(amap,mypose,core::id::AtomID::BOGUS_ATOM_ID());
 	for ( int ir = 1; ir <= (int)mypose.size(); ++ir ) {
 		for ( int ia = 1; ia <= (int)mypose.residue(ir).nheavyatoms(); ++ia ) {
 			if ( use_in_rmsd(mypose,target,ir,ia) ) {

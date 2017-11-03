@@ -23,6 +23,8 @@
 #include <protocols/relax/RelaxProtocolBase.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 
 //// C++ headers
@@ -41,8 +43,21 @@ void setup_for_dna(core::scoring::ScoreFunction & scorefxn);
 
 void relax_pose( core::pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag );
 
-RelaxProtocolBaseOP generate_relax_from_cmd( bool NULL_if_no_cmd = false );
+/// @brief Create a relax mover reading from the global options collection
+RelaxProtocolBaseOP
+generate_relax_from_cmd( bool NULL_if_no_cmd = false );
 
+/// @brief
+RelaxProtocolBaseOP
+generate_relax_from_cmd(
+	utility::options::OptionCollection const & options,
+	bool NULL_if_no_flag = false
+);
+
+void
+options_for_generate_relax_from_cmd(
+	utility::options::OptionKeyList & opts
+);
 
 /// @brief Rebuild all polymer bond-dependent atoms in the pose.
 /// @details Rewritten from an earlier, uglier function that manually placed H atom in non-pro.

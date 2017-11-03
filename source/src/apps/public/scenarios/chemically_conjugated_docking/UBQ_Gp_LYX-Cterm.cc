@@ -114,7 +114,7 @@ public:
 		task_factory_(/* NULL */),
 		amide_mm_(/* NULL */),
 		loop_(), //we want default ctor
-		atomIDs(8, core::id::BOGUS_ATOM_ID ),
+		atomIDs(8, core::id::AtomID::BOGUS_ATOM_ID() ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
 		IAM_(protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover )),
 		GTPase_lys_(0)

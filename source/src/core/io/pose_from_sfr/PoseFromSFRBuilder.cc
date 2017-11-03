@@ -919,7 +919,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 					stub_atom1( pose.residue(ii).icoor( jj ).stub_atom1().atom_id( pose.residue(ii), pose.conformation() ) ),
 					stub_atom2( pose.residue(ii).icoor( jj ).stub_atom2().atom_id( pose.residue(ii), pose.conformation() ) ),
 					stub_atom3( pose.residue(ii).icoor( jj ).stub_atom3().atom_id( pose.residue(ii), pose.conformation() ) );
-				if ( stub_atom1 == id::BOGUS_ATOM_ID || stub_atom2 == id::BOGUS_ATOM_ID || stub_atom3 == id::BOGUS_ATOM_ID ) {
+				if ( stub_atom1 == id::AtomID::BOGUS_ATOM_ID() || stub_atom2 == id::AtomID::BOGUS_ATOM_ID() || stub_atom3 == id::AtomID::BOGUS_ATOM_ID() ) {
 					lower_connect_atoms.push_back( core::id::AtomID(jj,ii) );
 				}
 			}
@@ -1000,8 +1000,8 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 		core::Size resno = lower_connect_atoms[ii].rsd();
 		core::Size atomno = lower_connect_atoms[ii].atomno();
 		core::chemical::AtomICoor icoor = pose.residue(resno).type().icoor(atomno);
-		if ( icoor.stub_atom1().atom_id( pose.residue(resno), pose.conformation()) == id::BOGUS_ATOM_ID || icoor.stub_atom2().atom_id(pose.residue(resno), pose.conformation()) == id::BOGUS_ATOM_ID
-				|| icoor.stub_atom3().atom_id( pose.residue(resno), pose.conformation()) == id::BOGUS_ATOM_ID ) continue;
+		if ( icoor.stub_atom1().atom_id( pose.residue(resno), pose.conformation()) == id::AtomID::BOGUS_ATOM_ID() || icoor.stub_atom2().atom_id(pose.residue(resno), pose.conformation()) == id::AtomID::BOGUS_ATOM_ID()
+				|| icoor.stub_atom3().atom_id( pose.residue(resno), pose.conformation()) == id::AtomID::BOGUS_ATOM_ID() ) continue;
 		numeric::xyzVector<core::Real> icoor_xyz = icoor.build(pose.residue(resno), pose.conformation());
 		pose.conformation().set_xyz( lower_connect_atoms[ii], icoor_xyz);
 	}

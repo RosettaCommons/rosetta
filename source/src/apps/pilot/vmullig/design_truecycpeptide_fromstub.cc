@@ -1,26 +1,26 @@
 /****************************************************************************************************
-	design_truecycpeptide_fromstub.cc
+design_truecycpeptide_fromstub.cc
 
-	A pilot app to let me design a cyclic peptide inhibitor in the active site of an enzyme, based
-	on starting residues already present in an existing structure.  This is intended for the design
-	of a cyclic peptide inhibitor of the antibiotic resistance enzyme New Delhi metallo-beta-lactamase
-	1, based on the structure of this enzyme bound to L-captopril (a structural analogue of a
-	DCys-LPro dipeptide).
-	This program was written by Vikram K. Mulligan, Baker Laboratory.
+A pilot app to let me design a cyclic peptide inhibitor in the active site of an enzyme, based
+on starting residues already present in an existing structure.  This is intended for the design
+of a cyclic peptide inhibitor of the antibiotic resistance enzyme New Delhi metallo-beta-lactamase
+1, based on the structure of this enzyme bound to L-captopril (a structural analogue of a
+DCys-LPro dipeptide).
+This program was written by Vikram K. Mulligan, Baker Laboratory.
 
-	USER INPUTS:
-	-in::file::s (the input PDB, formatted so that any bound metals are separate chains, as is the
-		stub that will be used to grow the cyclic peptide).
-	-relaxfirst (Boolean -- do I relax the input PDB first?  Default true.)
-	-relaxrounds (Integer -- number of fastrelax rounds.  Default 3.)
-	-stubchain (Integer -- the chain that represents the peptide stub that will be extended to
-		generate a cyclic peptide.  Default chain 2.)
+USER INPUTS:
+-in::file::s (the input PDB, formatted so that any bound metals are separate chains, as is the
+stub that will be used to grow the cyclic peptide).
+-relaxfirst (Boolean -- do I relax the input PDB first?  Default true.)
+-relaxrounds (Integer -- number of fastrelax rounds.  Default 3.)
+-stubchain (Integer -- the chain that represents the peptide stub that will be extended to
+generate a cyclic peptide.  Default chain 2.)
 
-	HISTORY:
-	--File created 21 October 2013 by Vikram K. Mulligan.
-	--Tweaked 9 January 2014 to allow enumeration of backbone conformations for a chain of
-	L-amino acids only.  TODO: add support for D-amino acids at specific positions, or prolines
-	at specific positions.
+HISTORY:
+--File created 21 October 2013 by Vikram K. Mulligan.
+--Tweaked 9 January 2014 to allow enumeration of backbone conformations for a chain of
+L-amino acids only.  TODO: add support for D-amino acids at specific positions, or prolines
+at specific positions.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -177,13 +177,13 @@ bool do_initial_checks ()
 	//TODO -- add check of allowedLaas and allowedDaas lists to ensure that everything provided is either a standard L-amino acid or a standard D-amino acid
 	bool checksfailed = false;
 
-	if(option[enumerate_only_mode]()) {
+	if ( option[enumerate_only_mode]() ) {
 		printf("The -enumerate_only_mode flag was used.  Backbone conformations for a chain of L-alanines will be generated.  Note that no Monte Carlo search or design will be attempted.  Each round will discard the previous round's solution.\n");
-		if(option[MCtemp].user()) {
+		if ( option[MCtemp].user() ) {
 			printf("Warning: the -MCtemp flag was used with the -enumerate_only_mode flag.  The value of the -MCtemp flag will be ignored, since no Monte Carlo search will be attempted.\n");
 		}
 	} else {
-		if(option[MCtemp]() < 1.0e-12) {
+		if ( option[MCtemp]() < 1.0e-12 ) {
 			printf("Error!  The value specified with the -MCtemp flag cannot be negative!\n");
 			checksfailed = true;
 		} else {
@@ -191,12 +191,12 @@ bool do_initial_checks ()
 		}
 	}
 
-	if(option[OptionKeys::relax::script].user()) {
+	if ( option[OptionKeys::relax::script].user() ) {
 		printf("Using FastRelax script file %s.\n", option[OptionKeys::relax::script]().name().c_str());
 	}
 
-	if(option[jittersize].user()) {
-		if(option[jittersize]() < 1.0e-12) {
+	if ( option[jittersize].user() ) {
+		if ( option[jittersize]() < 1.0e-12 ) {
 			printf("Error!  The value specified with the -jittersize flag cannot be negative!\n");
 			checksfailed = true;
 		} else {
@@ -204,15 +204,15 @@ bool do_initial_checks ()
 		}
 	}
 
-	if(option[dab_sev_strength].user()) {
+	if ( option[dab_sev_strength].user() ) {
 		printf("Design and FastRelax steps will use a dab_sev (DAlphaBall_SurfaceVolumeEnergy) value of %.4f (-dab_sev_strength flag).  A final round of minimization without dab_sev will also be applied.", option[dab_sev_strength]());
 	}
 
-	if(option[design_farep_mult].user()) {
-		if(option[enumerate_only_mode]()) {
+	if ( option[design_farep_mult].user() ) {
+		if ( option[enumerate_only_mode]() ) {
 			printf("Warning: the -design_farep_mult flag was used with the -enumerate_only_mode flag.  The value of -design_farep_mult will be ignored, since no design will be attempted.\n");
 		} else {
-			if(option[design_farep_mult]() < 1.0e-12) {
+			if ( option[design_farep_mult]() < 1.0e-12 ) {
 				printf("Error!  The value specified with the -design_farep_mult flag cannot be negative!\n");
 				checksfailed = true;
 			} else {
@@ -221,11 +221,11 @@ bool do_initial_checks ()
 		}
 	}
 
-	if(option[design_faatr_mult].user()) {
-		if(option[enumerate_only_mode]()) {
+	if ( option[design_faatr_mult].user() ) {
+		if ( option[enumerate_only_mode]() ) {
 			printf("Warning: the -design_faatr_mult flag was used with the -enumerate_only_mode flag.  The value of -design_faatr_mult will be ignored, since no design will be attempted.\n");
 		} else {
-			if(option[design_faatr_mult]() < 1.0e-12) {
+			if ( option[design_faatr_mult]() < 1.0e-12 ) {
 				printf("Error!  The value specified with the -design_faatr_mult flag cannot be negative!\n");
 				checksfailed = true;
 			} else {
@@ -235,75 +235,75 @@ bool do_initial_checks ()
 	}
 
 
-	if(option[maxattempts]()<1) {
-			printf("Error!  The number of attempts at perturbing start and end residues (-maxattempts flag) must be at least 1.\n");
-			checksfailed = true;
+	if ( option[maxattempts]()<1 ) {
+		printf("Error!  The number of attempts at perturbing start and end residues (-maxattempts flag) must be at least 1.\n");
+		checksfailed = true;
 	}
 
-	if(option[maxiterations]() < 1) {
-			printf("Error!  The number of iterations (-maxiterations flag) must be at least 1.\n");
-			checksfailed = true;
+	if ( option[maxiterations]() < 1 ) {
+		printf("Error!  The number of iterations (-maxiterations flag) must be at least 1.\n");
+		checksfailed = true;
 	}
 
-	if(option[maxdesignrounds]() < 1) {
-			printf("Error!  The number of design rounds (-maxdesignrounds flag) must be at least 1.\n");
-			checksfailed = true;
+	if ( option[maxdesignrounds]() < 1 ) {
+		printf("Error!  The number of design rounds (-maxdesignrounds flag) must be at least 1.\n");
+		checksfailed = true;
 	}
 
-	if(!option[newloopstart].user()) {
-			printf("Error!  The user must specify the loop start residue with the -newloopstart flag.\n");
-			checksfailed = true;
+	if ( !option[newloopstart].user() ) {
+		printf("Error!  The user must specify the loop start residue with the -newloopstart flag.\n");
+		checksfailed = true;
 	} else {
-		if(option[newloopstart]() < 1) {
+		if ( option[newloopstart]() < 1 ) {
 			printf("Error!  The user must provide a value greater than zero with the -newloopstart flag.\n");
 			checksfailed = true;
 		}
 	}
 
-	if(!option[newloopend].user()) {
-			printf("Error!  The user must specify the loop end residue with the -newloopend flag.\n");
-			checksfailed = true;
+	if ( !option[newloopend].user() ) {
+		printf("Error!  The user must specify the loop end residue with the -newloopend flag.\n");
+		checksfailed = true;
 	} else {
-		if(option[newloopend]() < 1) {
+		if ( option[newloopend]() < 1 ) {
 			printf("Error!  The user must provide a value greater than zero with the -newloopend flag.\n");
 			checksfailed = true;
 		}
 	}
 
-	if(option[cyclic]()) {
-		if( option[newloopend]() > option[newloopstart]() ) {
+	if ( option[cyclic]() ) {
+		if ( option[newloopend]() > option[newloopstart]() ) {
 			printf("Error!  For a cyclic peptide, the end of the loop must be a lower-numbered residue than the start.\n");
 			checksfailed = true;
 		}
 	} else {
-		if( option[newloopend]() < option[newloopstart]() ) {
+		if ( option[newloopend]() < option[newloopstart]() ) {
 			printf("Error!  The end of the loop must be a higher-numbered residue than the start.\n");
 			checksfailed = true;
 		}
 	}
 
-	if(option[stubchain]() < 1) {
+	if ( option[stubchain]() < 1 ) {
 		printf("Error!  The -stubchain flag cannot take a value less than 1.\n");
 		checksfailed = true;
 	} else printf("Chain %i is the peptide stub that will be extended to generate a cyclic peptide.\n", option[stubchain]());
 
-	if(!option[in::file::s].user() || option[in::file::s]().size()!=1) {
+	if ( !option[in::file::s].user() || option[in::file::s]().size()!=1 ) {
 		printf("Error!  The user must specify a single PDB file with the -in:file:s flag.\n");
 		checksfailed = true;
 	}
 
-	if(option[relaxrounds]()<1) {
+	if ( option[relaxrounds]()<1 ) {
 		printf("Error!  The number of rounds of relaxation (-relaxrounds flag) cannot be less than 1.\n");
 		checksfailed = true;
 	}
 
-	if(option[norepackpositions].user() && option[norepackpositions]().size()<1) {
+	if ( option[norepackpositions].user() && option[norepackpositions]().size()<1 ) {
 		printf("Error!  If the -norepackpositions flag is used, the user must provide a list of positions that cannot repack.\n");
 		checksfailed = true;
 	}
 
-	if(option[repackradius].user()) {
-		if(option[repackradius]() < 1e-12) {
+	if ( option[repackradius].user() ) {
+		if ( option[repackradius]() < 1e-12 ) {
 			printf("Error!  If the -repackradius flag is used, the user must provide a repack radius greater than zero.\n");
 			checksfailed = true;
 		} else {
@@ -322,12 +322,12 @@ bool do_postload_checks( const core::pose::Pose &mypose )
 	core::Size loopend = (core::Size)option[newloopend]();
 	core::Size stub_chain = (core::Size)option[stubchain]();
 
-	if((core::Size)mypose.chain(loopstart) != stub_chain) {
+	if ( (core::Size)mypose.chain(loopstart) != stub_chain ) {
 		printf("Error!  The starting residue for the loop (-newloopstart flag) is not in the stub chain (-stubchain flag).\n");
 		checksfailed = true;
 	}
 
-	if((core::Size)mypose.chain(loopend) != stub_chain) {
+	if ( (core::Size)mypose.chain(loopend) != stub_chain ) {
 		printf("Error!  The ending residue for the loop (-newloopend flag) is not in the stub chain (-stubchain flag).\n");
 		checksfailed = true;
 	}
@@ -338,9 +338,9 @@ bool do_postload_checks( const core::pose::Pose &mypose )
 //Function to check whether a value is in a list:
 bool is_in_list (const core::Size val, const utility::vector1 < core::Size > &vallist)
 {
-	if (vallist.size()==0) return false;
-	for(core::Size i=1, listsize=vallist.size(); i<=listsize; i++) {
-		if(vallist[i]==val) return true;
+	if ( vallist.size()==0 ) return false;
+	for ( core::Size i=1, listsize=vallist.size(); i<=listsize; i++ ) {
+		if ( vallist[i]==val ) return true;
 	}
 	return false;
 }
@@ -348,9 +348,9 @@ bool is_in_list (const core::Size val, const utility::vector1 < core::Size > &va
 //Function to check whether a string is in a list of strings:
 bool is_in_list (const std::string str, const utility::vector1 < std::string > &stringlist)
 {
-	if (stringlist.size()==0) return false;
-	for(core::Size i=1, listsize=stringlist.size(); i<=listsize; i++) {
-		if(stringlist[i]==str) return true;
+	if ( stringlist.size()==0 ) return false;
+	for ( core::Size i=1, listsize=stringlist.size(); i<=listsize; i++ ) {
+		if ( stringlist[i]==str ) return true;
 	}
 	return false;
 }
@@ -389,9 +389,9 @@ void constrain_loop_ends (
 		//Peptide bond length constraint:
 		mypose.add_constraint (
 			new AtomPairConstraint (
-				AtomID( mypose.residue(resC).atom_index("C") , resC ) ,
-				AtomID( mypose.residue(resN).atom_index("N") , resN) ,
-				new HarmonicFunc( 1.3288, 0.01)
+			AtomID( mypose.residue(resC).atom_index("C") , resC ) ,
+			AtomID( mypose.residue(resN).atom_index("N") , resN) ,
+			new HarmonicFunc( 1.3288, 0.01)
 			)
 		);
 
@@ -399,54 +399,54 @@ void constrain_loop_ends (
 		// (TODO -- change these if we sample a trans-proline.)
 		mypose.add_constraint (
 			new DihedralConstraint (
-				AtomID( mypose.residue(resC).atom_index("O") , resC ),
-				AtomID( mypose.residue(resC).atom_index("C") , resC ),
-				AtomID( mypose.residue(resN).atom_index("N") , resN) ,
-				AtomID( mypose.residue(resN).atom_index(Hstring) , resN) ,
-				new CircularHarmonicFunc( PI, 0.02)
+			AtomID( mypose.residue(resC).atom_index("O") , resC ),
+			AtomID( mypose.residue(resC).atom_index("C") , resC ),
+			AtomID( mypose.residue(resN).atom_index("N") , resN) ,
+			AtomID( mypose.residue(resN).atom_index(Hstring) , resN) ,
+			new CircularHarmonicFunc( PI, 0.02)
 			)
 		);
 		mypose.add_constraint (
 			new DihedralConstraint (
-				AtomID( mypose.residue(resC).atom_index("CA") , resC ),
-				AtomID( mypose.residue(resC).atom_index("C") , resC ),
-				AtomID( mypose.residue(resN).atom_index("N") , resN) ,
-				AtomID( mypose.residue(resN).atom_index("CA") , resN) ,
-				new CircularHarmonicFunc( PI, 0.02)
+			AtomID( mypose.residue(resC).atom_index("CA") , resC ),
+			AtomID( mypose.residue(resC).atom_index("C") , resC ),
+			AtomID( mypose.residue(resN).atom_index("N") , resN) ,
+			AtomID( mypose.residue(resN).atom_index("CA") , resN) ,
+			new CircularHarmonicFunc( PI, 0.02)
 			)
 		);
 
 		//Peptide bond angle constraints:
 		mypose.add_constraint (
 			new AngleConstraint (
-				AtomID( mypose.residue(resC).atom_index("C") , resC ),
-				AtomID( mypose.residue(resN).atom_index("N") , resN) ,
-				AtomID( mypose.residue(resN).atom_index("CA") , resN) ,
-				new CircularHarmonicFunc( CNCa_ANGLE/180.0*PI, 0.02)
+			AtomID( mypose.residue(resC).atom_index("C") , resC ),
+			AtomID( mypose.residue(resN).atom_index("N") , resN) ,
+			AtomID( mypose.residue(resN).atom_index("CA") , resN) ,
+			new CircularHarmonicFunc( CNCa_ANGLE/180.0*PI, 0.02)
 			)
 		);
 		mypose.add_constraint (
 			new AngleConstraint (
-				AtomID( mypose.residue(resC).atom_index("C") , resC ),
-				AtomID( mypose.residue(resN).atom_index("N") , resN) ,
-				AtomID( mypose.residue(resN).atom_index(Hstring) , resN) ,
-				new CircularHarmonicFunc( CNH_ANGLE/180.0*PI, 0.02)
+			AtomID( mypose.residue(resC).atom_index("C") , resC ),
+			AtomID( mypose.residue(resN).atom_index("N") , resN) ,
+			AtomID( mypose.residue(resN).atom_index(Hstring) , resN) ,
+			new CircularHarmonicFunc( CNH_ANGLE/180.0*PI, 0.02)
 			)
 		);
 		mypose.add_constraint (
 			new AngleConstraint (
-				AtomID( mypose.residue(resC).atom_index("CA") , resC ),
-				AtomID( mypose.residue(resC).atom_index("C") , resC ),
-				AtomID( mypose.residue(resN).atom_index("N") , resN) ,
-				new CircularHarmonicFunc( CaCN_ANGLE/180.0*PI, 0.02)
+			AtomID( mypose.residue(resC).atom_index("CA") , resC ),
+			AtomID( mypose.residue(resC).atom_index("C") , resC ),
+			AtomID( mypose.residue(resN).atom_index("N") , resN) ,
+			new CircularHarmonicFunc( CaCN_ANGLE/180.0*PI, 0.02)
 			)
 		);
 		mypose.add_constraint (
 			new AngleConstraint (
-				AtomID( mypose.residue(resC).atom_index("O") , resC ),
-				AtomID( mypose.residue(resC).atom_index("C") , resC ),
-				AtomID( mypose.residue(resN).atom_index("N") , resN) ,
-				new CircularHarmonicFunc( OCN_ANGLE/180.0*PI, 0.02)
+			AtomID( mypose.residue(resC).atom_index("O") , resC ),
+			AtomID( mypose.residue(resC).atom_index("C") , resC ),
+			AtomID( mypose.residue(resN).atom_index("N") , resN) ,
+			new CircularHarmonicFunc( OCN_ANGLE/180.0*PI, 0.02)
 			)
 		);
 
@@ -459,9 +459,9 @@ void append_pose_by_jump (
 	core::pose::Pose &mypose,
 	const core::pose::Pose &pose_to_append
 ) {
-	if(pose_to_append.empty()) return;
-	for(core::Size ir=1,nres=pose_to_append.size(); ir<=nres; ir++) {
-		if(ir==1) mypose.append_residue_by_jump( pose_to_append.residue(ir), 1, "", "", true );
+	if ( pose_to_append.empty() ) return;
+	for ( core::Size ir=1,nres=pose_to_append.size(); ir<=nres; ir++ ) {
+		if ( ir==1 ) mypose.append_residue_by_jump( pose_to_append.residue(ir), 1, "", "", true );
 		else mypose.append_residue_by_bond( pose_to_append.residue(ir), false);
 	}
 	return;
@@ -475,17 +475,17 @@ void append_alanines (
 	core::pose::remove_lower_terminus_type_from_pose_residue(mypose, mypose.size());
 
 	std::string seq = "A";
-	if (append_D) seq+="[DALA]";
-	if(alacount>1) {
-		for(core::Size i=2; i<=alacount; i++) {seq+="A"; if (append_D) seq+="[DALA]";}
+	if ( append_D ) seq+="[DALA]";
+	if ( alacount>1 ) {
+		for ( core::Size i=2; i<=alacount; i++ ) {seq+="A"; if ( append_D ) seq+="[DALA]";}
 	}
 
 	core::chemical::ResidueTypeSetCAP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	core::chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( seq, *standard_residues, false );
 
-	for(core::Size i=1; i<=alacount; i++) {
+	for ( core::Size i=1; i<=alacount; i++ ) {
 		core::conformation::ResidueOP new_rsd = core::conformation::ResidueFactory::create_residue ( *requested_types[ i ] );
-		if(!mypose.empty()) { //If the input pose is not empty, add the new residue as a bond.
+		if ( !mypose.empty() ) { //If the input pose is not empty, add the new residue as a bond.
 			mypose.append_residue_by_bond( *new_rsd, true);
 			mypose.set_psi(mypose.size()-1, 135.0);
 			mypose.set_omega(mypose.size()-1, 180.0);
@@ -512,12 +512,12 @@ void create_loop (
 	const bool is_cyclic = option[cyclic]();
 	bool first_residue_appended = false;
 
-	for(core::Size ir=1, nres=masterpose.size(); ir<=nres; ir++) {
-		if(ir == 1 || (ir > 1 && masterpose.chain(ir)!=masterpose.chain(ir-1) ) ) chaincount++; //If this is the first residue of a new chain
-		if(chaincount == stub_chain) { //If this is the stub chain
-			if(is_cyclic) { //If we are designing a cyclic peptide, do not append anything until endres, then append everything up to startres, then append alanines.
-				if(ir>=endres && ir<=startres) {
-					if(!first_residue_appended) {
+	for ( core::Size ir=1, nres=masterpose.size(); ir<=nres; ir++ ) {
+		if ( ir == 1 || (ir > 1 && masterpose.chain(ir)!=masterpose.chain(ir-1) ) ) chaincount++; //If this is the first residue of a new chain
+		if ( chaincount == stub_chain ) { //If this is the stub chain
+			if ( is_cyclic ) { //If we are designing a cyclic peptide, do not append anything until endres, then append everything up to startres, then append alanines.
+				if ( ir>=endres && ir<=startres ) {
+					if ( !first_residue_appended ) {
 						outpose.append_residue_by_jump(masterpose.residue(ir), 1, "", "", true);
 						core::pose::remove_lower_terminus_type_from_pose_residue(outpose, 1);
 						first_residue_appended=true;
@@ -527,18 +527,18 @@ void create_loop (
 					}
 				}
 			} else { //if we're NOT designing a cyclic peptide, append everything up to startres, then append alanines, then do nothing up to endres, then append everything from endres to the end of the chain.
-				if(ir<=startres) {
-					if(!first_residue_appended) {
+				if ( ir<=startres ) {
+					if ( !first_residue_appended ) {
 						outpose.append_residue_by_jump(masterpose.residue(ir), 1, "", "", true);
 						first_residue_appended=true;
 					} else {
 						outpose.append_residue_by_bond(masterpose.residue(ir), false);
 					}
-					if(ir==startres) {
+					if ( ir==startres ) {
 						core::pose::remove_upper_terminus_type_from_pose_residue(outpose, outpose.size());
 						append_alanines(outpose, option[looplength](), d_only);
 					}
-				} else if(ir>=endres) {
+				} else if ( ir>=endres ) {
 					outpose.append_residue_by_bond(masterpose.residue(ir), false);
 				}
 			}
@@ -546,7 +546,7 @@ void create_loop (
 
 	}
 
-	if(is_cyclic) append_alanines(outpose, option[looplength](), d_only);
+	if ( is_cyclic ) append_alanines(outpose, option[looplength](), d_only);
 
 	//Copy the pose:
 	stubpose=outpose;
@@ -582,28 +582,27 @@ void set_up_pose (
 	no_repack_positions.push_back(endpos);
 	const core::Size aas_in_stubchain = posechains[stub_chain]->size();
 	core::Size first_stubchain_aa=1;
-	if(stub_chain > 1) {
-		for(core::Size i=1; i<stub_chain; i++) first_stubchain_aa+=posechains[i]->size();
+	if ( stub_chain > 1 ) {
+		for ( core::Size i=1; i<stub_chain; i++ ) first_stubchain_aa+=posechains[i]->size();
 	}
 	core::Size aas_after_stubchain = 0;
-	if(stub_chain < posechains.size()) { //If the stub chain isn't the last pose chain
-		for(core::Size i=stub_chain, imax=posechains.size(); i<=imax; i++) aas_after_stubchain+=posechains[i]->size();
+	if ( stub_chain < posechains.size() ) { //If the stub chain isn't the last pose chain
+		for ( core::Size i=stub_chain, imax=posechains.size(); i<=imax; i++ ) aas_after_stubchain+=posechains[i]->size();
 	}
-	if(no_repack_positions.size()>0) {
-		for(core::Size i=1, imax=no_repack_positions.size(); i<=imax; i++) {
-			if((core::Size)masterpose.chain(no_repack_positions[i]) < stub_chain) new_no_repack_positions.push_back(no_repack_positions[i]);
-			else if((core::Size)masterpose.chain(no_repack_positions[i]) == stub_chain) {
-				if(is_cyclic){//Cyclic case: chain is from endpos to startpos, with anything before endpos in the chain cut off.  It is shifted to the end of the pose.
+	if ( no_repack_positions.size()>0 ) {
+		for ( core::Size i=1, imax=no_repack_positions.size(); i<=imax; i++ ) {
+			if ( (core::Size)masterpose.chain(no_repack_positions[i]) < stub_chain ) new_no_repack_positions.push_back(no_repack_positions[i]);
+			else if ( (core::Size)masterpose.chain(no_repack_positions[i]) == stub_chain ) {
+				if ( is_cyclic ) { //Cyclic case: chain is from endpos to startpos, with anything before endpos in the chain cut off.  It is shifted to the end of the pose.
 					core::Size trimmed_residues = endpos-first_stubchain_aa;
 					new_no_repack_positions.push_back( no_repack_positions[i] - trimmed_residues + aas_after_stubchain );
 				} else { //Not cyclic case: chain is from first residue to startpos, then polyALA is appended, then from endpos to end residue.  Anything between startpos and endpos is cut out.  It is shifted to the end of the pose.
-					if(no_repack_positions[i]<=startpos) new_no_repack_positions.push_back(no_repack_positions[i]+aas_after_stubchain);
-					else if (no_repack_positions[i]>=endpos) {
+					if ( no_repack_positions[i]<=startpos ) new_no_repack_positions.push_back(no_repack_positions[i]+aas_after_stubchain);
+					else if ( no_repack_positions[i]>=endpos ) {
 						new_no_repack_positions.push_back( no_repack_positions[i] + aas_after_stubchain - (endpos-startpos-1) + (core::Size)option[looplength]() );
 					}
 				}
-			}
-			else if((core::Size)masterpose.chain(no_repack_positions[i]) >= stub_chain) new_no_repack_positions.push_back(no_repack_positions[i] - aas_in_stubchain);
+			} else if ( (core::Size)masterpose.chain(no_repack_positions[i]) >= stub_chain ) new_no_repack_positions.push_back(no_repack_positions[i] - aas_in_stubchain);
 		}
 	}
 	//for(core::Size i=1; i<=no_repack_positions.size(); i++) printf("%lu ", no_repack_positions[i]); printf("\n"); //DELETE ME
@@ -619,14 +618,14 @@ void set_up_pose (
 
 	//Ensure that all the chains have proper termini, EXCEPT the stub chain:
 	printf("Setting up termini.\n"); fflush(stdout);
-	for(core::Size ichain=1, nchain=posechains.size(); ichain<=nchain; ichain++) {
-		if((posechains[ichain]->residue(1).is_protein()) ) { //Skip non-protein chains
-			if(ichain!=stub_chain) {
+	for ( core::Size ichain=1, nchain=posechains.size(); ichain<=nchain; ichain++ ) {
+		if ( (posechains[ichain]->residue(1).is_protein()) ) { //Skip non-protein chains
+			if ( ichain!=stub_chain ) {
 				core::pose::add_lower_terminus_type_to_pose_residue((*(posechains[ichain])), 1);
 				core::pose::add_upper_terminus_type_to_pose_residue((*(posechains[ichain])), posechains[ichain]->size());
 			}
 		}
-		if(ichain!=stub_chain) append_pose_by_jump(newpose, *(posechains[ichain])); //Append the chain, UNLESS it is the stub chain.
+		if ( ichain!=stub_chain ) append_pose_by_jump(newpose, *(posechains[ichain])); //Append the chain, UNLESS it is the stub chain.
 	}
 
 	append_pose_by_jump(newpose, *(posechains[stub_chain])); //Append the stub chain LAST.
@@ -643,8 +642,8 @@ void set_up_pose (
 //Function to set which sidechains can repack, based on a user-input option:
 void set_sc_repacking (core::kinematics::MoveMapOP mm, utility::vector1 < core::Size > &no_repack_positions)
 {
-	for(core::Size i=1, imax=no_repack_positions.size(); i<=imax; i++) {
-		if(no_repack_positions[i] > 0) mm->set_chi(no_repack_positions[i], false);
+	for ( core::Size i=1, imax=no_repack_positions.size(); i<=imax; i++ ) {
+		if ( no_repack_positions[i] > 0 ) mm->set_chi(no_repack_positions[i], false);
 	}
 	return;
 }
@@ -660,11 +659,11 @@ void copy_residue_position (
 	core::conformation::Residue modifiedres(modifiedpose.conformation().residue(modifiedposition)); //A copy of the residue to modify.
 	core::Size atcount = refres.natoms();
 	for(core::Size ia=1; ia<=atcount; ia++) {
-		std::string atname = refres.atom_name(ia);
-		if(modifiedres.has(atname)) modifiedres.set_xyz(atname, refres.xyz(ia)); //Copy xyz coordinates of each atom.
+	std::string atname = refres.atom_name(ia);
+	if(modifiedres.has(atname)) modifiedres.set_xyz(atname, refres.xyz(ia)); //Copy xyz coordinates of each atom.
 	}
 	modifiedpose.replace_residue(modifiedposition, modifiedres, false);*/
-   modifiedpose.replace_residue(modifiedposition, refpose.residue(refposition), false);
+	modifiedpose.replace_residue(modifiedposition, refpose.residue(refposition), false);
 	modifiedpose.update_residue_neighbors();
 	return;
 }
@@ -672,56 +671,56 @@ void copy_residue_position (
 //Function to align two poses.
 //Yanked from a private member function in SuperimposeMover.cc.
 core::Real superimposebb(
-        core::pose::Pose & mod_pose,
-        core::pose::Pose const & ref_pose,
-        core::Size ref_start,
-        core::Size ref_end,
-        core::Size target_start,
-        core::Size /*target_end*/ ,
+	core::pose::Pose & mod_pose,
+	core::pose::Pose const & ref_pose,
+	core::Size ref_start,
+	core::Size ref_end,
+	core::Size target_start,
+	core::Size /*target_end*/ ,
 	bool use_O
 )
 {
-        core::id::AtomID_Map< core::id::AtomID > atom_map;
-        std::map< core::id::AtomID, core::id::AtomID> atom_id_map;
-        core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::BOGUS_ATOM_ID );
-        for ( core::Size i_target = target_start, i_ref = ref_start; i_ref <= ref_end; ++i_ref, ++i_target ) {
+	core::id::AtomID_Map< core::id::AtomID > atom_map;
+	std::map< core::id::AtomID, core::id::AtomID> atom_id_map;
+	core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::AtomID::BOGUS_ATOM_ID() );
+	for ( core::Size i_target = target_start, i_ref = ref_start; i_ref <= ref_end; ++i_ref, ++i_target ) {
 
-                //if ( ! mod_pose.residue(i_target).has("N") ) continue;
-                //if ( ! ref_pose.residue(i_ref).has("N") ) continue;
-                core::id::AtomID const id1( mod_pose.residue(i_target).atom_index("N"), i_target );
-                core::id::AtomID const id2( ref_pose.residue(i_ref).atom_index("N"), i_ref );
-                atom_map.set( id1, id2 );
-                atom_id_map.insert( std::make_pair(id1, id2) );
+		//if ( ! mod_pose.residue(i_target).has("N") ) continue;
+		//if ( ! ref_pose.residue(i_ref).has("N") ) continue;
+		core::id::AtomID const id1( mod_pose.residue(i_target).atom_index("N"), i_target );
+		core::id::AtomID const id2( ref_pose.residue(i_ref).atom_index("N"), i_ref );
+		atom_map.set( id1, id2 );
+		atom_id_map.insert( std::make_pair(id1, id2) );
 
-                //if ( ! mod_pose.residue(i_target).has("CA") ) continue;
-                //if ( ! ref_pose.residue(i_ref).has("CA") ) continue;
-                core::id::AtomID const id3( mod_pose.residue(i_target).atom_index("CA"), i_target );
-                core::id::AtomID const id4( ref_pose.residue(i_ref).atom_index("CA"), i_ref );
-                atom_map.set( id3, id4 );
-                atom_id_map.insert( std::make_pair(id3, id4) );
+		//if ( ! mod_pose.residue(i_target).has("CA") ) continue;
+		//if ( ! ref_pose.residue(i_ref).has("CA") ) continue;
+		core::id::AtomID const id3( mod_pose.residue(i_target).atom_index("CA"), i_target );
+		core::id::AtomID const id4( ref_pose.residue(i_ref).atom_index("CA"), i_ref );
+		atom_map.set( id3, id4 );
+		atom_id_map.insert( std::make_pair(id3, id4) );
 
-                //if ( ! mod_pose.residue(i_target).has("C") ) continue;
-                //if ( ! ref_pose.residue(i_ref).has("C") ) continue;
-                core::id::AtomID const id5( mod_pose.residue(i_target).atom_index("C"), i_target );
-                core::id::AtomID const id6( ref_pose.residue(i_ref).atom_index("C"), i_ref );
-                atom_map.set( id5, id6 );
-                atom_id_map.insert( std::make_pair(id5, id6) );
+		//if ( ! mod_pose.residue(i_target).has("C") ) continue;
+		//if ( ! ref_pose.residue(i_ref).has("C") ) continue;
+		core::id::AtomID const id5( mod_pose.residue(i_target).atom_index("C"), i_target );
+		core::id::AtomID const id6( ref_pose.residue(i_ref).atom_index("C"), i_ref );
+		atom_map.set( id5, id6 );
+		atom_id_map.insert( std::make_pair(id5, id6) );
 
-                //if ( ! mod_pose.residue(i_target).has("HA") ) continue;
-                //if ( ! ref_pose.residue(i_ref).has("HA") ) continue;
-		if(use_O && mod_pose.residue(i_target).has("O") && ref_pose.residue(i_ref).has("O")) {
+		//if ( ! mod_pose.residue(i_target).has("HA") ) continue;
+		//if ( ! ref_pose.residue(i_ref).has("HA") ) continue;
+		if ( use_O && mod_pose.residue(i_target).has("O") && ref_pose.residue(i_ref).has("O") ) {
 			core::id::AtomID const id7( mod_pose.residue(i_target).atom_index("O"), i_target );
 			core::id::AtomID const id8( ref_pose.residue(i_ref).atom_index("O"), i_ref );
 			atom_map.set( id7, id8 );
 			atom_id_map.insert( std::make_pair(id7, id8) );
 		} else {
-			if(mod_pose.residue(i_target).has("CB") && ref_pose.residue(i_ref).has("CB")) {
+			if ( mod_pose.residue(i_target).has("CB") && ref_pose.residue(i_ref).has("CB") ) {
 				core::id::AtomID const id7( mod_pose.residue(i_target).atom_index("CB"), i_target );
 				core::id::AtomID const id8( ref_pose.residue(i_ref).atom_index("CB"), i_ref );
 				atom_map.set( id7, id8 );
-			     	atom_id_map.insert( std::make_pair(id7, id8) );
+				atom_id_map.insert( std::make_pair(id7, id8) );
 			} else { //gly-to-gly alignment:
-				if(mod_pose.residue(i_target).has("1HA") && ref_pose.residue(i_ref).has("1HA")) {
+				if ( mod_pose.residue(i_target).has("1HA") && ref_pose.residue(i_ref).has("1HA") ) {
 					core::id::AtomID const id7( mod_pose.residue(i_target).atom_index("1HA"), i_target );
 					core::id::AtomID const id8( ref_pose.residue(i_ref).atom_index("1HA"), i_ref );
 					atom_map.set( id7, id8 );
@@ -731,8 +730,8 @@ core::Real superimposebb(
 				}
 			}
 		}
-        }
-        return core::scoring::superimpose_pose( mod_pose, ref_pose, atom_map );
+	}
+	return core::scoring::superimpose_pose( mod_pose, ref_pose, atom_map );
 }
 
 //Function to do quick backbone clash checks for a residue against all residues that are not in the same chain.
@@ -748,21 +747,21 @@ bool noclash (
 	atlist.push_back("O");
 	atlist.push_back("CB");
 
-	for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
-		if((core::Size)mypose.chain(ir)==curchain) continue; //No clash check within chain.
+	for ( core::Size ir=1, nres=mypose.size(); ir<=nres; ir++ ) {
+		if ( (core::Size)mypose.chain(ir)==curchain ) continue; //No clash check within chain.
 
-		for(core::Size ia1=1, ia1max=atlist.size(); ia1<=ia1max; ia1++) { //Loop through atoms in this residue
-			if(!mypose.residue(ir).has(atlist[ia1])) continue; //Skip if this residue doesn't have this atom (e.g. CB).
+		for ( core::Size ia1=1, ia1max=atlist.size(); ia1<=ia1max; ia1++ ) { //Loop through atoms in this residue
+			if ( !mypose.residue(ir).has(atlist[ia1]) ) continue; //Skip if this residue doesn't have this atom (e.g. CB).
 
-			for(core::Size ia2=1, ia2max=atlist.size(); ia2<=ia2max; ia2++) { //Loop through atoms in the residue that we want to compare.
-				if(!mypose.residue(position).has(atlist[ia2])) continue; //Skip if the comparison residue doesn't have this atom (e.g. CB).
+			for ( core::Size ia2=1, ia2max=atlist.size(); ia2<=ia2max; ia2++ ) { //Loop through atoms in the residue that we want to compare.
+				if ( !mypose.residue(position).has(atlist[ia2]) ) continue; //Skip if the comparison residue doesn't have this atom (e.g. CB).
 
 				core::Real dist_cutoff_squared = mypose.residue(position).atom_type( mypose.residue(position).atom_index( atlist[ia2] ) ).lj_radius();
 				dist_cutoff_squared += mypose.residue(ir).atom_type( mypose.residue(ir).atom_index( atlist[ia1] ) ).lj_radius();
 				dist_cutoff_squared = dist_cutoff_squared*dist_cutoff_squared;
 
 				core::Real dist_squared = (mypose.residue(position).xyz( atlist[ia2] ) - mypose.residue(ir).xyz( atlist[ia1] )).length_squared();
-				if(dist_squared<dist_cutoff_squared) return false;
+				if ( dist_squared<dist_cutoff_squared ) return false;
 
 			}
 		}
@@ -784,12 +783,12 @@ bool good_geometry (
 	numeric::xyzVector < core::Real > Cxyz;
 	core::Real dist;
 
-	for(core::Size ir=start; ir<=end; ir++) {
+	for ( core::Size ir=start; ir<=end; ir++ ) {
 		Cxyz = mypose.residue(ir).xyz("C");
-		if(ir<end) Nxyz = mypose.residue(ir+1).xyz("N");
+		if ( ir<end ) Nxyz = mypose.residue(ir+1).xyz("N");
 		else Nxyz = mypose.residue(additional).xyz("N");
 		dist = (Cxyz-Nxyz).length();
-		if(dist > 1.4 || dist < 1.2) {
+		if ( dist > 1.4 || dist < 1.2 ) {
 			printf("Peptide bond length between residues %lu and %lu is %.2f.\n", ir, ir+1, dist);  fflush(stdout);
 			return false;
 		}
@@ -812,9 +811,9 @@ void kinclose(
 	printf("Attempting kinematic closure (startres=%lu, endres=%lu).\n", startres, endres); fflush(stdout); //DELETE ME
 
 	bool sample_gly = allowGLY;
-	if(allowL && allowD) sample_gly = false; //We don't need to sample gly explicitly if we're sampling both L- and D- amino acids.
+	if ( allowL && allowD ) sample_gly = false; //We don't need to sample gly explicitly if we're sampling both L- and D- amino acids.
 
-	while(true) {
+	while ( true ) {
 
 		bool perturbationfailed = false;
 
@@ -825,16 +824,16 @@ void kinclose(
 		core::Size afterend = endres; //The residue after the last pivot.
 		core::pose::Pose mypose_copy = mypose; //Make a copy of mypose.
 
-	 	//Mutate mypose_copy to sample L-amino acids, D-amino acids, or glycine:
-		for (core::Size ir=start; ir<=end; ir++) {
+		//Mutate mypose_copy to sample L-amino acids, D-amino acids, or glycine:
+		for ( core::Size ir=start; ir<=end; ir++ ) {
 			std::string aaname = "ALA";
 			core::Size dieroll = RG.random_range(1, 100); //Pick a number from 1 to 100.
-			if(allowD && !allowL) aaname = "DALA"; //If we're only sampling D-amino acids, change this to D-alanine
-			else if (allowD && allowL && dieroll <=50) aaname = "DALA"; //If we're sampling both, flip a coin and decide whether to change this to D-alanine
+			if ( allowD && !allowL ) aaname = "DALA"; //If we're only sampling D-amino acids, change this to D-alanine
+			else if ( allowD && allowL && dieroll <=50 ) aaname = "DALA"; //If we're sampling both, flip a coin and decide whether to change this to D-alanine
 
-			if(sample_gly) {
+			if ( sample_gly ) {
 				dieroll = RG.random_range(1,100); //We'll use a one in ten chance of sampling a gly, if we're sampling gly.
-				if(dieroll <=10) aaname = "GLY";
+				if ( dieroll <=10 ) aaname = "GLY";
 			}
 
 			//Mutate this position to L-ala, D-ala, or glycine, appropriately:
@@ -847,10 +846,10 @@ void kinclose(
 		//mypose_copy.conformation().detect_disulfides();
 
 		printf("Trial sequence for kinematic closure: ");
-		for(core::Size ir=start; ir<=end; ir++) printf("%s ", mypose_copy.residue(ir).name3().c_str());
+		for ( core::Size ir=start; ir<=end; ir++ ) printf("%s ", mypose_copy.residue(ir).name3().c_str());
 		printf("\n"); fflush(stdout);
 
-		if(close_random_subset){ //If we're closing a random subset of the new loop, pick random start, mid, and end points.
+		if ( close_random_subset ) { //If we're closing a random subset of the new loop, pick random start, mid, and end points.
 			mid=RG.random_range(startres+2, startres+loop_length-1);
 			start=RG.random_range(startres+1, mid-1);
 			end=RG.random_range(mid+1, startres+loop_length);
@@ -865,26 +864,26 @@ void kinclose(
 
 		{ //Scope 1: Perturb psi, omega, phi of the beforestart-start linkage.
 			core::Size numattempts = 1;
-			while(true) {
+			while ( true ) {
 				mypose_copy.set_psi(beforestart, RG.uniform()*360.0-180.0);
 				mypose_copy.set_omega(beforestart, 180.0);
 				mypose_copy.set_phi(start, RG.uniform()*360.0-180.0);
 				mypose_copy.update_residue_neighbors();
-				if(noclash(start, mypose_copy) ) break; //Keep perturbing until no clash
+				if ( noclash(start, mypose_copy) ) break; //Keep perturbing until no clash
 				numattempts++;
-				if(numattempts > (core::Size)option[maxattempts]()) {
+				if ( numattempts > (core::Size)option[maxattempts]() ) {
 					perturbationfailed = true;
 					break;
 				}
 			}
 		}
 
-		if(perturbationfailed) {
+		if ( perturbationfailed ) {
 			printf("Could not find clash-free perturbation for start residue (-maxattempts flag exceeded).  Trying again with new start, middle, and end positions.\n");
 			continue;
 		}
 
-		{	//Scope 2: make a dipeptide for the last loop residue plus the end residue, randomly perturb, align to the end residue, and copy the last loop residue's position into mypose_copy.
+		{ //Scope 2: make a dipeptide for the last loop residue plus the end residue, randomly perturb, align to the end residue, and copy the last loop residue's position into mypose_copy.
 			//If this is NOT a cyclic peptide, the last part of the last chain needs to be repositioned, too.
 			core::pose::Pose dipeptide1;
 			dipeptide1.append_residue_by_jump(mypose_copy.residue(end), 1, "", "", true);
@@ -893,7 +892,7 @@ void kinclose(
 
 			//Set psi, omega, phi:
 			core::Size numattempts = 1;
-			while(true) {
+			while ( true ) {
 				dipeptide1.set_psi(1, RG.uniform()*360.0-180.0);
 				dipeptide1.set_omega(1, 180.0);
 				dipeptide1.set_phi(2, RG.uniform()*360.0-180.0);
@@ -905,21 +904,21 @@ void kinclose(
 				copy_residue_position(dipeptide1, 2, mypose_copy, afterend); //Copy the position of the afterend residue
 				copy_residue_position(dipeptide1, 1, mypose_copy, end); //Copy the position of the end residue
 
-				if(!is_cyclic && mypose_copy.size()>afterend) {
-					for(core::Size ir=afterend+1, nres=mypose_copy.size(); ir<=nres; ir++) copy_residue_position(mypose, ir, mypose_copy, ir); //Copy the positions of the rest of the residues in the chain.
+				if ( !is_cyclic && mypose_copy.size()>afterend ) {
+					for ( core::Size ir=afterend+1, nres=mypose_copy.size(); ir<=nres; ir++ ) copy_residue_position(mypose, ir, mypose_copy, ir); //Copy the positions of the rest of the residues in the chain.
 				}
 
 				mypose_copy.update_residue_neighbors();
 
-				if(noclash(end, mypose_copy)) break; //Keep perturbing until no clash
+				if ( noclash(end, mypose_copy) ) break; //Keep perturbing until no clash
 				numattempts++;
-				if(numattempts > (core::Size)option[maxattempts]()) {
+				if ( numattempts > (core::Size)option[maxattempts]() ) {
 					perturbationfailed = true;
 					break;
 				}
 			}
 
-			if(is_cyclic && afterend == endres) {
+			if ( is_cyclic && afterend == endres ) {
 				mypose_copy.append_residue_by_bond(dipeptide1.residue(2), false); //Append another copy of the end residue.
 				mypose_copy.conformation().delete_residue_slow(afterend);
 				//mypose_copy.conformation().detect_disulfides();
@@ -928,7 +927,7 @@ void kinclose(
 			}
 		}
 
-		if(perturbationfailed) {
+		if ( perturbationfailed ) {
 			printf("Could not find clash-free perturbation for end residue (-maxattempts flag exceeded).  Trying again with new start, middle, and end positions.\n");
 			continue;
 		}
@@ -945,16 +944,15 @@ void kinclose(
 
 		kinmover.apply(mypose_copy);
 
-		if(	kinmover.last_move_succeeded() &&
+		if ( kinmover.last_move_succeeded() &&
 				good_geometry(mypose_copy,
-					startres - ((is_cyclic && afterend == endres)?1:0),
-					startres+loop_length,
-					afterend
+				startres - ((is_cyclic && afterend == endres)?1:0),
+				startres+loop_length,
+				afterend
 				)
-		  )
-		{
+				) {
 			//mypose.dump_pdb("premut.pdb"); //DELETE ME
-			for(core::Size ir=beforestart; ir<=end; ir++) {
+			for ( core::Size ir=beforestart; ir<=end; ir++ ) {
 				//Mutate the mypose sequence to match mypose_copy:
 				std::string rsdname = mypose_copy.residue(ir).name();
 				protocols::simple_moves::MutateResidue mutres(ir+( (is_cyclic && afterend == endres) ? 1 : 0 ), rsdname.substr(0, rsdname.find(chemical::patch_linker)));
@@ -986,12 +984,12 @@ bool near_chain (
 	core::Real distsq=0.0;
 	const core::Real radiussq=radius*radius;
 
-	for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
-		if((core::Size)mypose.chain(ir)!=designchain) continue; //Skip residues outside of the design chain
-		if(!mypose.residue(ir).has("CA")) continue; //Skip if there's no alpha carbon
+	for ( core::Size ir=1, nres=mypose.size(); ir<=nres; ir++ ) {
+		if ( (core::Size)mypose.chain(ir)!=designchain ) continue; //Skip residues outside of the design chain
+		if ( !mypose.residue(ir).has("CA") ) continue; //Skip if there's no alpha carbon
 		chainCAxyz = mypose.residue(ir).atom("CA").xyz();
 		distsq = (chainCAxyz - resCAxyz).length_squared();
-		if(distsq < radiussq) return true;
+		if ( distsq < radiussq ) return true;
 	}
 
 	return false;
@@ -1016,11 +1014,11 @@ void designloop(
 	core::Real farep_default = sfxn->get_weight(core::scoring::fa_rep);
 	core::Real faatr_default = sfxn->get_weight(core::scoring::fa_atr);
 
-	if(option[design_farep_mult].user()) { //If the user has specified a factor by which to reduce fa_rep during design:
+	if ( option[design_farep_mult].user() ) { //If the user has specified a factor by which to reduce fa_rep during design:
 		sfxn->set_weight(core::scoring::fa_rep, farep_default*option[design_farep_mult]());
 	}
 
-	if(option[design_faatr_mult].user()) { //If the user has specified a factor by which to reduce fa_rep during design:
+	if ( option[design_faatr_mult].user() ) { //If the user has specified a factor by which to reduce fa_rep during design:
 		sfxn->set_weight(core::scoring::fa_rep, faatr_default*option[design_faatr_mult]());
 	}
 
@@ -1031,10 +1029,10 @@ void designloop(
 
 	//mypose.dump_pdb("temp.pdb"); //DELETE ME
 
-	for(core::Size ir=startres,lastres=(is_cyclic?mypose.size():endres); ir<=lastres; ir++) {
-		if(core::chemical::is_canonical_D_aa(mypose.residue(ir).aa())) {
+	for ( core::Size ir=startres,lastres=(is_cyclic?mypose.size():endres); ir<=lastres; ir++ ) {
+		if ( core::chemical::is_canonical_D_aa(mypose.residue(ir).aa()) ) {
 			dpositions.push_back(ir);
-			if(!is_in_list(mypose.residue(ir).name3(), allowed_D_aas)) { //If this is DALA and DALA isn't an allowed D-amino acid, mutate to glycine temporarily
+			if ( !is_in_list(mypose.residue(ir).name3(), allowed_D_aas) ) { //If this is DALA and DALA isn't an allowed D-amino acid, mutate to glycine temporarily
 				protocols::simple_moves::MutateResidue mutres(ir, "GLY");
 				mutres.apply(mypose);
 			}
@@ -1043,34 +1041,34 @@ void designloop(
 
 	//DELETE THE FOLLOWING:
 	//if(dpositions.size()>0){
-	//	printf("DPOSITIONS: ");
-	//	for(core::Size i=1, imax=dpositions.size(); i<=imax; i++) printf("%lu ", dpositions[i]);
-	//	printf("\n"); fflush(stdout);
+	// printf("DPOSITIONS: ");
+	// for(core::Size i=1, imax=dpositions.size(); i<=imax; i++) printf("%lu ", dpositions[i]);
+	// printf("\n"); fflush(stdout);
 	//}
 
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(mypose);
 
-	for(core::Size ir=1,nres=mypose.size(); ir<=nres; ir++) {
-		if(!mypose.residue(ir).is_protein()) {
+	for ( core::Size ir=1,nres=mypose.size(); ir<=nres; ir++ ) {
+		if ( !mypose.residue(ir).is_protein() ) {
 			task->nonconst_residue_task(ir).prevent_repacking();
 			continue;
 		}
-		if((core::Size)mypose.chain(ir)==designchain && ir>startres && (is_cyclic?true:ir<endres)) { //If this is the design chain
-			if(is_in_list(ir, dpositions)) { //If this is a D-amino acid position
+		if ( (core::Size)mypose.chain(ir)==designchain && ir>startres && (is_cyclic?true:ir<endres) ) { //If this is the design chain
+			if ( is_in_list(ir, dpositions) ) { //If this is a D-amino acid position
 				utility::vector1< bool > aas(20,false);
-				if(allow_gly) aas[core::chemical::aa_gly] = true;
+				if ( allow_gly ) aas[core::chemical::aa_gly] = true;
 				task->nonconst_residue_task(ir).restrict_absent_canonical_aas(aas);
 
-				if(allowed_D_aas.size()>0) {
-					for(core::Size i=1, imax = allowed_D_aas.size(); i<=imax; i++) { //Loop through the allowed D-amino acids
+				if ( allowed_D_aas.size()>0 ) {
+					for ( core::Size i=1, imax = allowed_D_aas.size(); i<=imax; i++ ) { //Loop through the allowed D-amino acids
 						task->nonconst_residue_task(ir).allow_aa( core::chemical::get_D_equivalent( core::chemical::aa_from_name( allowed_D_aas[i] )  ) );
 					}
 				}
 			} else {
 				utility::vector1< bool > aas(20,false);
-				if(allow_gly) aas[core::chemical::aa_gly] = true;
-				if(allowed_L_aas.size()>0 && !is_in_list("NONE", allowed_L_aas)) {
-					for(core::Size i=1, imax=allowed_L_aas.size(); i<=imax; i++) {
+				if ( allow_gly ) aas[core::chemical::aa_gly] = true;
+				if ( allowed_L_aas.size()>0 && !is_in_list("NONE", allowed_L_aas) ) {
+					for ( core::Size i=1, imax=allowed_L_aas.size(); i<=imax; i++ ) {
 						aas[ core::chemical::aa_from_name( allowed_L_aas[i] ) ] = true;
 					}
 				}
@@ -1078,12 +1076,12 @@ void designloop(
 				task->nonconst_residue_task(ir).restrict_absent_canonical_aas(aas);
 			}
 		} else { //If this is NOT the design chain (or is the design chain, but outside of the loop to be designed)
-			if( is_in_list(ir, no_repack_positions) ) {
+			if ( is_in_list(ir, no_repack_positions) ) {
 				task->nonconst_residue_task(ir).prevent_repacking();
-			} else if( is_in_list(ir, can_repack_positions) ) {
+			} else if ( is_in_list(ir, can_repack_positions) ) {
 				task->nonconst_residue_task(ir).restrict_to_repacking();
-			} else if( option[repackradius].user() ){
-				if( near_chain(mypose, ir, designchain, option[repackradius]()) ) {
+			} else if ( option[repackradius].user() ) {
+				if ( near_chain(mypose, ir, designchain, option[repackradius]()) ) {
 					can_repack_positions.push_back (ir);
 					task->nonconst_residue_task(ir).restrict_to_repacking();
 				} else {
@@ -1100,23 +1098,23 @@ void designloop(
 	repack.apply(mypose);
 
 	printf("Design complete.  Sequence is ");
-	for(core::Size ir=startres, irmax=startres+loop_length; ir<=irmax; ir++) {
+	for ( core::Size ir=startres, irmax=startres+loop_length; ir<=irmax; ir++ ) {
 		char aaname = mypose.residue(ir).name1();
-		if( core::chemical::is_canonical_D_aa(mypose.residue(ir).aa()) ) aaname=tolower(aaname);
+		if ( core::chemical::is_canonical_D_aa(mypose.residue(ir).aa()) ) aaname=tolower(aaname);
 		printf("%c", aaname);
-		if(ir==irmax) {
+		if ( ir==irmax ) {
 			aaname=mypose.residue(endres).name1();
-			if( core::chemical::is_canonical_D_aa(mypose.residue(endres).aa()) ) aaname=tolower(aaname);
+			if ( core::chemical::is_canonical_D_aa(mypose.residue(endres).aa()) ) aaname=tolower(aaname);
 			printf("%c", aaname);
 		}
 	}
 	printf("\n"); fflush(stdout);
 
-	if(option[design_farep_mult].user()) { //If the user has specified a factor by which to reduce fa_rep during design, reset it now.
+	if ( option[design_farep_mult].user() ) { //If the user has specified a factor by which to reduce fa_rep during design, reset it now.
 		sfxn->set_weight(core::scoring::fa_rep, farep_default);
 	}
 
-	if(option[design_faatr_mult].user()) { //If the user has specified a factor by which to reduce fa_rep during design, reset it now.
+	if ( option[design_faatr_mult].user() ) { //If the user has specified a factor by which to reduce fa_rep during design, reset it now.
 		sfxn->set_weight(core::scoring::fa_rep, faatr_default);
 	}
 
@@ -1143,8 +1141,8 @@ void relaxloop(
 	mm->set_bb(option[relaxbb]());
 
 	//Allow chi and bb minimization of loop positions:
-	for (core::Size ir = startres, irmax = startres+loop_length; ir<=irmax; ir++) {
-		if( !is_in_list( ir, no_repack_positions ) ) {
+	for ( core::Size ir = startres, irmax = startres+loop_length; ir<=irmax; ir++ ) {
+		if ( !is_in_list( ir, no_repack_positions ) ) {
 			mm->set_bb(ir, (ir==startres? option[relaxjumps]() :true) );
 			mm->set_chi(ir, true);
 		}
@@ -1157,17 +1155,17 @@ void relaxloop(
 	mm->set(core::id::TorsionID(startres, core::id::BB, 2), true); //Allow startres psi to be minimized
 	mm->set(core::id::TorsionID(endres, core::id::BB, 1), false); //Do not allow endres phi to be minimized (TEMPORARILY -- TODO: allow jumps and fix this!)
 
-	if(option[repackradius].user() && can_repack_positions.size()!=0) { //If the user has specified a relax radius, chi is false by default --> need to turn ON for entries in the can_repack_positions list.
-		for(core::Size i=1, imax=can_repack_positions.size(); i<=imax; i++) {
-			if( !is_in_list(can_repack_positions[i], no_repack_positions) ) mm->set_chi(can_repack_positions[i], true); //Turn on ONLY if not in the no_repack_positions list.
+	if ( option[repackradius].user() && can_repack_positions.size()!=0 ) { //If the user has specified a relax radius, chi is false by default --> need to turn ON for entries in the can_repack_positions list.
+		for ( core::Size i=1, imax=can_repack_positions.size(); i<=imax; i++ ) {
+			if ( !is_in_list(can_repack_positions[i], no_repack_positions) ) mm->set_chi(can_repack_positions[i], true); //Turn on ONLY if not in the no_repack_positions list.
 		}
-	} else if(!option[repackradius].user()){ //If the user has NOT specified a relax radius, all residues can repack by default --> need to turn OFF for entries in the no_repack_positions list.
-		for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
-			if(is_in_list(ir, no_repack_positions)) mm->set_chi(ir, false);
+	} else if ( !option[repackradius].user() ) { //If the user has NOT specified a relax radius, all residues can repack by default --> need to turn OFF for entries in the no_repack_positions list.
+		for ( core::Size ir=1, nres=mypose.size(); ir<=nres; ir++ ) {
+			if ( is_in_list(ir, no_repack_positions) ) mm->set_chi(ir, false);
 		}
 	}
 
-	if(option[relaxjumps]()) {
+	if ( option[relaxjumps]() ) {
 		printf("Doing initial minimization without jumps.\n"); fflush(stdout);
 		mm->set_jump(false);
 		minmove->apply(mypose);
@@ -1175,7 +1173,7 @@ void relaxloop(
 	}
 
 
-	if(option[relaxjumps]()) {printf("Doing fastrelax with jumps.\n"); fflush(stdout);}
+	if ( option[relaxjumps]() ) { printf("Doing fastrelax with jumps.\n"); fflush(stdout);}
 	frlx->apply(mypose);
 	printf("Relax complete.\n"); fflush(stdout);
 
@@ -1194,26 +1192,26 @@ void set_loop_conformation(
 	const bool is_cyclic = (startres+loop_length != endres-1); //Is this a cyclic peptide?
 	const core::Size jumpnumber = mypose.num_jump(); //The jump should be the last one
 
-	if(option[relaxjumps]()) { //Set the jump if jumps have been relaxed:
+	if ( option[relaxjumps]() ) { //Set the jump if jumps have been relaxed:
 		mypose.set_jump(jumpnumber, refpose.jump(jumpnumber));
 	}
 
-	if(!is_cyclic) irmax++; //If this is not a cyclic peptide, we want to set phi for the end residue
+	if ( !is_cyclic ) irmax++; //If this is not a cyclic peptide, we want to set phi for the end residue
 
-	for(core::Size ir=startres; ir<=irmax; ir++) {
-		if (ir>startres) mypose.set_phi(ir, refpose.phi(ir));
-		if(ir<irmax) {
+	for ( core::Size ir=startres; ir<=irmax; ir++ ) {
+		if ( ir>startres ) mypose.set_phi(ir, refpose.phi(ir));
+		if ( ir<irmax ) {
 			mypose.set_psi(ir, refpose.psi(ir));
 			mypose.set_omega(ir, refpose.omega(ir));
 		}
 	}
 
-	if(!is_cyclic) {
+	if ( !is_cyclic ) {
 		//If this is not a cyclic peptide, all the backbone dihedral values are correct, now, BUT the residues after the loop
 		//are hanging out in space somewhere.  We need to fix this now.
 		core::pose::Pose afterresidues = mypose; //Make a copy of mypose.
 		superimposebb(afterresidues, refpose, endres, afterresidues.size(), endres, refpose.size(), true); //Superimpose the whole last chain.
-		for(core::Size ir=endres, irmax=afterresidues.size(); ir<=irmax; ir++) copy_residue_position(afterresidues, ir, mypose, ir); //Copy the residue positions.
+		for ( core::Size ir=endres, irmax=afterresidues.size(); ir<=irmax; ir++ ) copy_residue_position(afterresidues, ir, mypose, ir); //Copy the residue positions.
 		return; //We're done if this is NOT a cyclic peptide.  Otherwise, proceed to set the last psi and after-end phi values.
 	}
 
@@ -1258,7 +1256,7 @@ bool metropolis_criterion (
 	const core::Real MCtemperature,
 	numeric::random::RandomGenerator &RG
 ) {
-	if( newval < oldval) return true;
+	if ( newval < oldval ) return true;
 	else {
 		core::Real randval = RG.uniform();
 		core::Real expval = exp( -1.0 * (newval-oldval) / MCtemperature );
@@ -1280,17 +1278,17 @@ void jitterloop (
 	core::Real accumulator = 0.0;
 	utility::vector1 < core::Real > pertvect;
 	pertvect.resize(loop_length*3, 0.0);
-	for(core::Size i=1, imax=pertvect.size(); i<=imax; i++) {
+	for ( core::Size i=1, imax=pertvect.size(); i<=imax; i++ ) {
 		pertvect[i]=RG.gaussian();
-		if(i%3==2) pertvect[i] *= 0.05; //Omega perturbations should be SMALL.
+		if ( i%3==2 ) pertvect[i] *= 0.05; //Omega perturbations should be SMALL.
 		accumulator+=(pertvect[i]*pertvect[i]);
 	}
 	accumulator=RG.gaussian()*magnitude/sqrt(accumulator);
-	for(core::Size i=1, imax=pertvect.size(); i<=imax; i++) pertvect[i] *= accumulator;
+	for ( core::Size i=1, imax=pertvect.size(); i<=imax; i++ ) pertvect[i] *= accumulator;
 
-	for(core::Size counter=1, ir=startres, nr=startres+loop_length; ir<=nr; ir++) {
-		if(ir>startres) mypose.set_phi(ir, mypose.phi(ir) + pertvect[counter++]);
-		if(ir<nr) {
+	for ( core::Size counter=1, ir=startres, nr=startres+loop_length; ir<=nr; ir++ ) {
+		if ( ir>startres ) mypose.set_phi(ir, mypose.phi(ir) + pertvect[counter++]);
+		if ( ir<nr ) {
 			mypose.set_psi(ir, mypose.psi(ir) + pertvect[counter++]);
 			mypose.set_omega(ir, mypose.omega(ir) + pertvect[counter++]);
 		}
@@ -1300,7 +1298,7 @@ void jitterloop (
 	return;
 }
 
-static 	numeric::random::RandomGenerator RG( 847322 ); //Random generator and seed
+static  numeric::random::RandomGenerator RG( 847322 ); //Random generator and seed
 
 //MAIN
 int main( int argc, char * argv [] ) {
@@ -1317,7 +1315,7 @@ int main( int argc, char * argv [] ) {
 
 	//Do initial checks of the options provided by the user:
 	bool failnow = do_initial_checks();
-	if(failnow) { printf("Program will now terminate.\n"); fflush(stdout); exit(1); }
+	if ( failnow ) { printf("Program will now terminate.\n"); fflush(stdout); exit(1); }
 
 	//Scorefunction, movemap, and reusable movers:
 	core::scoring::ScoreFunctionOP sfxn;
@@ -1329,7 +1327,7 @@ int main( int argc, char * argv [] ) {
 	// AMW: VKM prefers dfpmin here
 	protocols::simple_moves::MinMoverOP minmove = new protocols::simple_moves::MinMover(mm, sfxn, "dfpmin_armijo_nonmonotone", 0.0000001, true, false, false);
 	protocols::relax::FastRelaxOP frlx;
-	if(option[OptionKeys::relax::script].user()) {
+	if ( option[OptionKeys::relax::script].user() ) {
 		frlx = new protocols::relax::FastRelax(sfxn, option[OptionKeys::relax::script]()); //A fastrelax mover initialized from a script
 	} else {
 		frlx = new protocols::relax::FastRelax(sfxn, (core::Size) option[relaxrounds]()); //A fastrelax mover
@@ -1342,14 +1340,14 @@ int main( int argc, char * argv [] ) {
 	const bool allowL = (allowed_L_aas.size()>0 && !is_in_list("NONE", allowed_L_aas));
 	const bool allowD = (allowed_D_aas.size()>0);
 	const bool allowGLY = ( is_in_list("GLY", allowed_L_aas) || is_in_list("GLY", allowed_D_aas) ); //Is glycine in one of the allowed amino acid lists?  If the other list is empty, the kinclose function will allow glys.
-	if(allowL) {
+	if ( allowL ) {
 		printf ("These L-amino acids are allowed in the designed loop/cyclic peptide:\t");
-		for(core::Size i=1, imax=allowed_L_aas.size(); i<=imax; i++) { printf("%s ", allowed_L_aas[i].c_str());}
+		for ( core::Size i=1, imax=allowed_L_aas.size(); i<=imax; i++ ) { printf("%s ", allowed_L_aas[i].c_str());}
 		printf("\n"); fflush(stdout);
 	}
-	if(allowD) {
+	if ( allowD ) {
 		printf ("These D-amino acids are allowed in the designed loop/cyclic peptide:\t");
-		for(core::Size i=1, imax=allowed_D_aas.size(); i<=imax; i++) { printf("%s ", allowed_D_aas[i].c_str());}
+		for ( core::Size i=1, imax=allowed_D_aas.size(); i<=imax; i++ ) { printf("%s ", allowed_D_aas[i].c_str());}
 		printf("\n"); fflush(stdout);
 	}
 
@@ -1359,11 +1357,11 @@ int main( int argc, char * argv [] ) {
 	core::Size startres=(core::Size)option[newloopstart](); //This will be updated, below, to point to the new startres position (given that the start_chain has moved).
 	core::Size endres=(core::Size)option[newloopend](); //This will be updated, below, to point to the new endres position (given that the start_chain has moved, and that a loop has been inserted).
 	set_up_pose(masterpose, no_repack_positions, startres, endres, !allowL); //Import and rearrange chains, updating the positions that can't repack and the starting and ending points of the chain0.
-	if(option[norepackpositions].user()) set_sc_repacking(mm, no_repack_positions); //Set the sidechain positions that can't repack.
+	if ( option[norepackpositions].user() ) set_sc_repacking(mm, no_repack_positions); //Set the sidechain positions that can't repack.
 
 	//Do checks of options provided by the user that are dependent on the pose:
 	failnow = do_postload_checks(masterpose);
-	if(failnow) { printf("Program will now terminate.\n"); fflush(stdout); exit(1); }
+	if ( failnow ) { printf("Program will now terminate.\n"); fflush(stdout); exit(1); }
 
 	(*sfxn)(masterpose);
 	//masterpose.dump_scored_pdb("temp.pdb", *sfxn); //DELETE ME
@@ -1378,10 +1376,10 @@ int main( int argc, char * argv [] ) {
 	const bool is_cyclic=option[cyclic]();
 
 	//Main loop: iterations of kinematic closure
-	for(core::Size iter=1, maxiter=(core::Size)option[maxiterations](); iter<=maxiter; iter++) {
+	for ( core::Size iter=1, maxiter=(core::Size)option[maxiterations](); iter<=maxiter; iter++ ) {
 		printf("\nMOVE %lu\n", iter); fflush(stdout);
 
-		if(option[dab_sev_strength].user()) {
+		if ( option[dab_sev_strength].user() ) {
 			sfxn->set_weight(core::scoring::dab_sev, 0.0); //Turn OFF dab_sev for the initial scoring
 		}
 
@@ -1399,18 +1397,18 @@ int main( int argc, char * argv [] ) {
 
 		//Inner loop: rounds of design, perturbation, and relaxation.
 		{
-			if(option[dab_sev_strength].user()) {
+			if ( option[dab_sev_strength].user() ) {
 				sfxn->set_weight(core::scoring::dab_sev, option[dab_sev_strength]()); //Turn OFF dab_sev
 			}
 
 			core::pose::Pose bestrelaxedpose=trialpose;
-			for(core::Size irounds=1, maxrounds=(core::Size)option[maxdesignrounds](); irounds<=maxrounds; irounds++) {
+			for ( core::Size irounds=1, maxrounds=(core::Size)option[maxdesignrounds](); irounds<=maxrounds; irounds++ ) {
 				trialpose2=trialpose;
-				if(option[jittersize].user()) jitterloop(trialpose2, startres, loop_length, option[jittersize](),RG); //Add a small random value to all backbond dihedral angles
-				if(!option[enumerate_only_mode]()) designloop(trialpose2, startres, endres, loop_length, is_cyclic, sfxn, no_repack_positions, can_repack_positions, allowed_L_aas, allowed_D_aas, allowGLY); //designloop will add to the can_repack_positions vector based on the cutoff radius, if specified.
+				if ( option[jittersize].user() ) jitterloop(trialpose2, startres, loop_length, option[jittersize](),RG); //Add a small random value to all backbond dihedral angles
+				if ( !option[enumerate_only_mode]() ) designloop(trialpose2, startres, endres, loop_length, is_cyclic, sfxn, no_repack_positions, can_repack_positions, allowed_L_aas, allowed_D_aas, allowGLY); //designloop will add to the can_repack_positions vector based on the cutoff radius, if specified.
 				constrain_loop_ends(trialpose2, startres+loop_length, endres, sfxn); //Add constraints to the score function and pose to keep the termini together
 				relaxloop(trialpose2, startres, endres, loop_length, frlx, minmove, mm, no_repack_positions, can_repack_positions); //relax the loop
-				if(option[dab_sev_strength].user()) {
+				if ( option[dab_sev_strength].user() ) {
 					sfxn->set_weight(core::scoring::dab_sev, 0.0); //Turn OFF dab_sev
 					printf("Minimizing without dab_sev.\n"); fflush(stdout);
 					minmove->apply(trialpose2); //Minimize without dab_sev
@@ -1419,10 +1417,10 @@ int main( int argc, char * argv [] ) {
 				reset_sfxn(sfxn); //Reset the scorefunction (no constraints).
 
 				(*sfxn)(trialpose2);
-				if(irounds==1 || metropolis_criterion(trialpose2.energies().total_energy(), trialpose.energies().total_energy(), option[MCtemp](), RG) ) {
+				if ( irounds==1 || metropolis_criterion(trialpose2.energies().total_energy(), trialpose.energies().total_energy(), option[MCtemp](), RG) ) {
 					printf("\tAccepting design/relax round %lu.\n", irounds); fflush(stdout);
 					trialpose=trialpose2;
-					if(trialpose2.energies().total_energy() < bestrelaxedpose.energies().total_energy()) bestrelaxedpose = trialpose2; //Store this if it is the lowest-energy structure encountered so far.
+					if ( trialpose2.energies().total_energy() < bestrelaxedpose.energies().total_energy() ) bestrelaxedpose = trialpose2; //Store this if it is the lowest-energy structure encountered so far.
 				} else {
 					printf("\tRejecting design/relax round %lu.\n", irounds); fflush(stdout);
 				}
@@ -1431,7 +1429,7 @@ int main( int argc, char * argv [] ) {
 		}
 
 		(*sfxn)(trialpose);
-		if(option[enumerate_only_mode]() || (iter==1 && option[acceptfirstmove]()) || metropolis_criterion(trialpose.energies().total_energy(), bestpose.energies().total_energy(), option[MCtemp](), RG) ) {
+		if ( option[enumerate_only_mode]() || (iter==1 && option[acceptfirstmove]()) || metropolis_criterion(trialpose.energies().total_energy(), bestpose.energies().total_energy(), option[MCtemp](), RG) ) {
 			printf("Accepting move %lu.\n", iter); fflush(stdout);
 			bestpose=trialpose;
 
@@ -1441,7 +1439,7 @@ int main( int argc, char * argv [] ) {
 			trialpose.dump_scored_pdb(outfile, *sfxn);
 			printf("Wrote %s\n", outfile); fflush(stdout);
 
-			if(!option[enumerate_only_mode]() && trialpose.energies().total_energy()<verybestpose.energies().total_energy()) { //If this is the lowest-energy structure found so far
+			if ( !option[enumerate_only_mode]() && trialpose.energies().total_energy()<verybestpose.energies().total_energy() ) { //If this is the lowest-energy structure found so far
 				printf("New lowest-energy sequence found at move %lu.\n", iter); fflush(stdout);
 				verybestpose=trialpose;
 				sprintf(outfile, "lowestE_%04lu.pdb", iter);

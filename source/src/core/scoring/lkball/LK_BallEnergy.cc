@@ -121,13 +121,13 @@ public:
 	virtual ~LK_BallInvoker() {}
 
 protected:
-	LK_BallEnergy const & lk_ball() const;
-	core::conformation::Residue const & rsd1() const;
-	LKB_ResidueInfo const & rsd1_info() const;
-	conformation::Residue const & rsd2() const;
-	LKB_ResidueInfo const & rsd2_info() const;
-	ScoreFunction const & sfxn() const;
-	EnergyMap & emap() const;
+	inline LK_BallEnergy const & lk_ball() const;
+	inline core::conformation::Residue const & rsd1() const;
+	inline LKB_ResidueInfo const & rsd1_info() const;
+	inline conformation::Residue const & rsd2() const;
+	inline LKB_ResidueInfo const & rsd2_info() const;
+	inline ScoreFunction const & sfxn() const;
+	inline EnergyMap & emap() const;
 
 
 private:
@@ -519,6 +519,7 @@ update_cached_lkb_resinfo(
 class LKB_ResPairMinData : public basic::datacache::CacheableData {
 public:
 	LKB_ResPairMinData();
+	LKB_ResPairMinData( LKB_ResPairMinData const & src );
 	virtual ~LKB_ResPairMinData() {}
 	virtual basic::datacache::CacheableDataOP clone() const
 	{ return basic::datacache::CacheableDataOP( new LKB_ResPairMinData( *this ) ); }
@@ -535,11 +536,19 @@ public:
 	bool
 	initialized() const { return initialized_; }
 
+	/// @brief An array for accumulating the per-atom-water derivatives;
+	/// a temp space, effectively, that we do not want to allocate repeatedly
+	/// in the inner-most loop. Held by a pointer to get around const.
+	utility::vector1< Real > &
+	dwwd2_ddi() const {
+		return *dwwd2_ddi_;
+	}
 
 private:
 
 	LKB_ResidueInfoCOP res1_data_;
 	LKB_ResidueInfoCOP res2_data_;
+	std::shared_ptr< utility::vector1< Real > > dwwd2_ddi_;
 
 	bool initialized_;
 };
@@ -548,8 +557,18 @@ typedef utility::pointer::shared_ptr< LKB_ResPairMinData >       LKB_ResPairMinD
 typedef utility::pointer::shared_ptr< LKB_ResPairMinData const > LKB_ResPairMinDataCOP;
 
 LKB_ResPairMinData::LKB_ResPairMinData():
+	dwwd2_ddi_( new utility::vector1< Real > ),
 	initialized_( false )
 {}
+
+LKB_ResPairMinData::LKB_ResPairMinData( LKB_ResPairMinData const & src ) :
+	res1_data_( src.res1_data_ ),
+	res2_data_( src.res2_data_ ),
+	dwwd2_ddi_( new utility::vector1< Real >( *src.dwwd2_ddi_ ) ), // deep copy of this scratch array
+	initialized_( src.initialized_)
+{
+}
+
 
 void
 LKB_ResPairMinData::initialize(
@@ -707,6 +726,9 @@ LK_BallEnergy::setup_for_minimizing_for_residue_pair(
 	nblist->initialize_from_residues( XX2, 0, 0, rsd1, rsd2, cpfxn );
 
 	pair_data.set_data( lkball_nblist, nblist );
+
+	LKB_ResPairMinDataOP respair_data( new LKB_ResPairMinData );
+	pair_data.set_data( lkb_respair_data, respair_data );
 }
 
 bool
@@ -1034,7 +1056,9 @@ LK_BallEnergy::get_lk_fractional_contribution(
 	Real const d2_low( d2_low_[ atom2_type ] );
 
 	// softmax of closest water
-	d_weighted_d2_d_di.resize( atom1_waters.size() );
+	if ( d_weighted_d2_d_di.size() < atom1_waters.size() ) {
+		d_weighted_d2_d_di.resize( atom1_waters.size() );
+	}
 
 	weighted_d2_water_delta = 0.0;
 	Real d2_delta;
@@ -1555,7 +1579,8 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 	Real const weight_factor,
 	Real const d2,
 	utility::vector1< DerivVectorPair > & r1_at_derivs,
-	utility::vector1< DerivVectorPair > & r2_at_derivs
+	utility::vector1< DerivVectorPair > & r2_at_derivs,
+	utility::vector1< core::Real > & dwwd2_ddi
 ) const
 {
 	Vectors const & atom1_waters = rsd1_info.waters()[heavyatom1];
@@ -1612,7 +1637,6 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 	//              = fraction * (d lk / d dsum * d dsum/d di ) + ( d fraction / d dsum * d dsum/d di ) * lk
 	if ( !skip_heavyatom ) {
 		Real weighted_water_d2(0);
-		utility::vector1< core::Real > dwwd2_ddi;
 		Real const lk_fraction(
 			get_lk_fractional_contribution( atom2_xyz, rsd2.atom( heavyatom2 ).type(), atom1_waters, dwwd2_ddi, weighted_water_d2 ) );
 
@@ -1814,16 +1838,17 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair(
 	EnergyMap const & weights,
 	Real const cp_weight,
 	utility::vector1< DerivVectorPair > & r1_at_derivs,
-	utility::vector1< DerivVectorPair > & r2_at_derivs
+	utility::vector1< DerivVectorPair > & r2_at_derivs,
+	utility::vector1< core::Real > & dwwd2_ddi
 ) const
 {
 	sum_deriv_contributions_for_heavyatom_pair_one_way(
 		heavyatom1, rsd1, rsd1_info, heavyatom2, rsd2, rsd2_info, weights,
-		cp_weight, d2, r1_at_derivs, r2_at_derivs );
+		cp_weight, d2, r1_at_derivs, r2_at_derivs, dwwd2_ddi );
 
 	sum_deriv_contributions_for_heavyatom_pair_one_way(
 		heavyatom2, rsd2, rsd2_info, heavyatom1, rsd1, rsd1_info, weights,
-		cp_weight, d2, r2_at_derivs, r1_at_derivs );
+		cp_weight, d2, r2_at_derivs, r1_at_derivs, dwwd2_ddi );
 }
 
 void
@@ -1984,6 +2009,10 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	ResiduePairNeighborList const & nblist =
 		static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( lkball_nblist ));
 
+	LKB_ResPairMinData const & lkb_rpmd =
+		static_cast< LKB_ResPairMinData const & > (min_data.get_data_ref( lkb_respair_data ));
+	utility::vector1< Real > & dwwd2_ddi = lkb_rpmd.dwwd2_ddi();
+
 	bool use_lkbr_uncpl = (weights[core::scoring::lk_ball_bridge_uncpl]!=0);
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
@@ -2000,7 +2029,7 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 
 		// fpd ... new version works at the heavyatom level
 		sum_deriv_contributions_for_heavyatom_pair(
-			d2, heavyatom1, rsd1, rsd1_info, heavyatom2, rsd2, rsd2_info, pose, weights, cp_weight, r1_at_derivs, r2_at_derivs );
+			d2, heavyatom1, rsd1, rsd1_info, heavyatom2, rsd2, rsd2_info, pose, weights, cp_weight, r1_at_derivs, r2_at_derivs, dwwd2_ddi );
 	}
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 }
