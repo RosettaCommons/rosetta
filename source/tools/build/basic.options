@@ -9,12 +9,12 @@
 # You shouldn't usually need to override them unless the system is
 # generating incorrect results.
 
-# C++ compiler.
-# Defaults to whatever is "g++" on the system.
 
 import os
 
-cxx     = "gcc"
+# C++ compiler.
+# Typically defaults to GCC on the system.
+cxx     = "*"
 
 # Extra features
 extras  = "none"

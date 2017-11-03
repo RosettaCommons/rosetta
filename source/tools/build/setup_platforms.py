@@ -31,22 +31,19 @@ else:
     from os import uname as _uname
 from os import popen as _popen
 
-def select_compiler(supported, requested):
-    """Figure out the actual C++ compiler name, based on the compiler type.
+def select_compiler(supported, requested, compiler_command):
+    """Figure out the actual C++ compiler type.
     Default is the requested name.
 
     requested - The requested compiler name.
+    compiler_path - The command for the compiler, or None if not availible
     """
-    actual = {
-#        "gcc" : "g++",
-#        "icc" : "icpc",
-        # XXX: others?
-    }.get(requested, requested)
+    actual = _get_compiler_type( requested, compiler_command )
 
     return actual
 
 
-def select_compiler_version(supported, compiler, requested):
+def select_compiler_version(supported, compiler, requested, compiler_command):
     """Figure out the actual compiler version.
     How to do this is compiler-dependent.  A compiler that can't
     provide its version number is currently assumed to be unsupported
@@ -63,14 +60,18 @@ def select_compiler_version(supported, compiler, requested):
       ValueError is raised.  As the system is currently implemented
       this will never happen: the SCons Options class will catch this
       condition in the SConstruct.
+    compiler_command - the command for the compiler, or None if not availible
 """
+    actual, actual_full = "*", "*"
+    if compiler_command is not None:
+        actual, actual_full = _get_compiler_version(compiler, compiler_command)
+    if actual == "*":
+        if requested == "*":
+            actual, actual_full = _get_compiler_version(compiler)
+        else:
+            actual, actual_full = requested, requested
 
-    if requested == "*":
-        actual, actual_full = _get_compiler_version(compiler)
-    else:
-        actual, actual_full = requested, requested
-
-    if not actual:
+    if not actual or actual == "*":
         raise RuntimeError, \
             "Could not determine version for compiler '%s'.  Check whether compiler by that name is installed and on your path." % \
                 (compiler)
@@ -274,8 +275,26 @@ def get_os_pathsep():
     else:
         pathsep = os.pathsep
 
+def _get_compiler_type(default_compiler, compiler_command):
+    """Ask a compiler for information about what sort it is.
 
-def _get_compiler_version(compiler):
+    If we can't get a good read on it, just return the default one
+    """
+    if compiler_command is None or not compiler_command:
+        return default_compiler
+
+    version_output = os.popen("%s --version" % compiler_command).read()
+    if ( 'Clang' in version_output or 'clang' in version_output ):
+        return 'clang'
+    if ( 'GCC' in version_output or 'g++' in version_output ) :
+        return 'gcc'
+    if ( 'ICC' in version_output or 'Intel' in version_output ) :
+        return 'icc'
+    #Add more here?
+    print "\nCannot autodetermine compiler type for '"+str(compiler_command)+"' returning default of '"+default_compiler+"' instead.\n"
+    return default_compiler
+
+def _get_compiler_version(compiler, compiler_command = None):
     """Ask the compiler for it's version number.
 
 Most compilers can tell you their version from the command line
@@ -283,13 +302,16 @@ but the command line probably differs from compiler to compiler.
 Neither GCC nor Intel C++ provide this number isolated: it needs
 to be parsed out.
 """
+    if compiler_command is None:
+        compiler_command = compiler
+
     # We don't handle MSVC yet.  Don't know how to ask it for it's
     # version, or what the output would look like.
    # assert compiler == "gcc" or compiler == "icc", \
    #        "Compiler '%s' needs explicit handling in %s._get_compiler_version" % \
    #        (compiler, __name__)
     if compiler == 'gcc':
-        compiler_output = os.popen("%s -dumpversion" % compiler).read()
+        compiler_output = os.popen("%s -dumpversion" % compiler_command).read()
         if compiler_output:
             full_version = compiler_output.strip()
             version = ".".join(full_version.split(".")[0:2])
@@ -297,7 +319,7 @@ to be parsed out.
             full_version = "*"#None
             version = "*"#None
     else:
-        compiler_output = os.popen("%s --version" % compiler).read()
+        compiler_output = os.popen("%s --version" % compiler_command).read()
         # New versions of Apple provided clang return: "Apple clang version 2.0 (tags/Apple/clang-137) (based on LLVM 2.9svn)..."
         if compiler_output:
             full_version = compiler_output.split()[2]

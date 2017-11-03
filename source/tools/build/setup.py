@@ -95,6 +95,23 @@ directory it is built to, and what settings it ultimately uses.
         utility.map_subset(env.Dictionary(), defaults.keys())
     )
 
+    # We want to pull out the compiler command from the settings to get the compiler type
+    # But in order to truely parse the settings, we need a compiler_type
+    # We get around this by making a pass once-through with the default settings,
+    # and then pull out just the relevant settings.
+    # Then we set things up for the appropriate compiler type
+    # and then redo the setup with the full options.
+    naive_settings = setup_build_settings(requested)
+    naive_environment = setup_environment(naive_settings)
+    if 'CXX' in naive_environment:
+        compiler_command = naive_environment['CXX']
+    else:
+        compiler_command = None
+
+    if requested['cxx'] == '*' or not requested['cxx']: # Default to gcc if the settings don't otherwise overrule them
+        requested['cxx'] = 'gcc'
+        requested['cxx_ver'] = '*'
+
     # Generate a build options object for the actual options used.
     # This is used to select the build targets.
     actual = BuildOptions(requested)
@@ -103,9 +120,9 @@ directory it is built to, and what settings it ultimately uses.
     # meaningful target id as specified in targets.settings.
 
     # The C++ compiler
-    actual.cxx = setup_platforms.select_compiler(supported, requested.cxx)
+    actual.cxx = setup_platforms.select_compiler(supported, requested.cxx, compiler_command)
     actual.cxx_ver = setup_platforms.select_compiler_version(
-        supported, actual.cxx, requested.cxx_ver
+        supported, actual.cxx, requested.cxx_ver, compiler_command
     )
 
     # The operating system
