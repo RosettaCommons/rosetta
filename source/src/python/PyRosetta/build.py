@@ -130,7 +130,9 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
 
     build_dir = prefix+'/build_' + release + '.' + Platform + '.' +_machine_name_ + ('.debug' if debug else '.release')
 
-    binder_head = execute('Getting binder HEAD commit SHA1...', 'cd {} && git rev-parse HEAD'.format(source_location), return_='output', silent=True).split('\n')[0]
+    res, output = execute('Getting binder HEAD commit SHA1...', 'cd {} && git rev-parse HEAD'.format(source_location), return_='tuple', silent=True)
+    if res: binder_head = 'unknown'
+    else: binder_head = output.split('\n')[0]
 
     signature = dict(config = 'LLVM install by install_llvm_tool version: 1.0', binder = binder_head)
     signature_file_name = build_dir + '/.signature.json'
@@ -583,7 +585,8 @@ def create_package(rosetta_source_path, path):
     print('Creating Python package at: {}...'.format(path))
 
     package_prefix = path + '/setup'
-    if not os.path.isdir(package_prefix): os.makedirs(package_prefix)
+    if os.path.isdir(package_prefix): shutil.rmtree(package_prefix)
+    os.makedirs(package_prefix)
 
     for f in 'self-test.py PyMOL-RosettaServer.py'.split(): shutil.copy(rosetta_source_path + '/src/python/PyRosetta/src/' + f, path)
 
@@ -663,9 +666,16 @@ def main(args):
     else:
         if not Options.pybind11: Options.pybind11 = install_pybind11(rosetta_source_path + '/build/prefix')
         if not Options.binder:
-            execute('Updating Binder and other Git submodules...', 'cd {}/.. && git submodule update --init --recursive -- source/src/python/PyRosetta/binder'.format(rosetta_source_path) )
-            output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)
-            if 'source/src/python/PyRosetta/binder' not in output: print('ERROR: Binder submodule is not found... terminating...'); sys.exit(1)
+            res, output = execute('Getting main repository root...', 'cd {rosetta_source_path} && git rev-parse --show-toplevel'.format(**vars()), return_='tuple')
+            main_repository_root = output.split()[0] # removing \n at the end
+
+            if res == 0:
+                execute('Updating Binder and other Git submodules...', 'cd {}/.. && git submodule update --init --recursive -- source/src/python/PyRosetta/binder'.format(rosetta_source_path) )
+
+                if main_repository_root == os.path.abspath(rosetta_source_path + '/../'):
+                    output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)
+                    if 'source/src/python/PyRosetta/binder' not in output: print('ERROR: Binder submodule is not found... terminating...'); sys.exit(1)
+
             Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder/source', rosetta_source_path + '/build/prefix', Options.binder_debug)
 
         generate_bindings(rosetta_source_path)
