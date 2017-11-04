@@ -137,7 +137,7 @@ private:
 
 	/// @brief Calculate the energy given the vector of residue owning pointers.
 	/// @param[in] resvect 1-vector of const-owning pointers to Residue objects representing current state.
-	core::Real calculate_weighted_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect );
+	core::Real calculate_weighted_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, int const substitution_position=0 );
 
 	/// @brief Initialize symmetry information.
 	/// @details Called by initialize().

@@ -39,7 +39,7 @@
 #include <core/scoring/disulfides/DisulfideMatchingEnergyCreator.hh>
 #include <core/scoring/disulfides/FullatomDisulfideEnergyCreator.hh>
 #include <core/scoring/etable/EtableEnergyCreator.hh>
-
+#include <core/scoring/hbnet_energy/HBNetEnergyCreator.hh>
 #include <core/scoring/hbonds/HBondEnergyCreator.hh>
 #include <core/scoring/hbonds/NPDHBondEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
@@ -391,6 +391,7 @@ static EnergyMethodRegistrator< scoring::disulfides::DisulfideMatchingEnergyCrea
 static EnergyMethodRegistrator< scoring::disulfides::FullatomDisulfideEnergyCreator > FullatomDisulfideEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::etable::EtableEnergyCreator > EtableEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::etable::EtableClassicIntraEnergyCreator > EtableClassicIntraEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::hbnet_energy::HBNetEnergyCreator > HBNetEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::NPDHBondEnergyCreator > NPDHBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::aa_repeat_energy::AARepeatEnergyCreator > AARepeatEnergyCreator_registrator;

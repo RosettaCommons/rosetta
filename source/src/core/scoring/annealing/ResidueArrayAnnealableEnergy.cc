@@ -42,6 +42,13 @@ ResidueArrayAnnealableEnergy::setup_residuearrayannealableenergy_for_packing (
 	core::scoring::ScoreFunction const &/*sfxn*/
 ) {} //Does nothing unless implemented by a derived class.
 
+/// @brief What to do when a substitution that was considered is accepted.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ResidueArrayAnnealableEnergy::commit_considered_substitution() {
+	//Does nothing unless implemeneted by a derived class.
+}
+
 }
 }
 }

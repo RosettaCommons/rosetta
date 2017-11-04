@@ -617,6 +617,7 @@ enum ScoreType {
 	aa_repeat, //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
 	aa_composition, //A wholebody score term for penalizing deviation from a desired amino acid composition.
 	aspartimide_penalty, //A context-independent two-body score term for penalizing two-residue sequences likely to produce the aspartimide side-product during peptide synthesis.
+	hbnet, //A bonus for hydrogen-bonded networks, which ramps nonlinearly with the size of the network.  Fundamentally non-pairwise decomposable (but packer-compatbile due to Alex Ford's nice framework).
 
 	// dna env/pair potential
 	dna_env,

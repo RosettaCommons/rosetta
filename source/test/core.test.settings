@@ -423,6 +423,9 @@ sources = {
 		"GeometricSolEnergy",
 		"OccludedHbondSolEnergy",
 	],
+	"scoring/hbnet_energy" : [
+		"HBNetEnergyTests",
+	],
 	"scoring/hbonds" : [
 		"HBondDatabaseTest",
 		"HBondDerivTest",
@@ -932,6 +935,8 @@ testinputfiles = [
 	"scoring/fiber_diffraction/data/1ifp.mini.dat",
 	"scoring/fiber_diffraction/data/helix_denovo.sdef",
 	"scoring/func/GaussianFunc.u",
+	"scoring/hbnet_energy/hbnet_energy_test1.pdb",
+	"scoring/hbnet_energy/S4.symm",
 	"scoring/hbond_sr_bb.data",
 	"scoring/hbonds/1ubq_23_to_34.pdb",
 	"scoring/hbonds/bad_symm_hbonds.silent",

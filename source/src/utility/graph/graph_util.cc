@@ -45,13 +45,14 @@ find_connected_components( Graph const & g )
 
 	for ( platform::Size ii = 1; ii <= (platform::Size) g.num_nodes(); ++ii ) {
 		if ( reached[ ii ] ) continue;
+		reached[ii] = true; //I think this was missing -- VKM, 24 Oct 2017.
 
 		// new connected component
 		// run a dfs from this node
 		representative.push_back( ii );
 		cc_nelements.push_back( 1 );
-		n_to_explore = 0;
-		to_explore[ ++n_to_explore ] = ii;
+		n_to_explore = 1;
+		to_explore[ n_to_explore ] = ii;
 
 		while ( n_to_explore != 0 ) {
 			platform::Size const exploring = to_explore[ n_to_explore ];

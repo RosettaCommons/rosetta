@@ -88,6 +88,8 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void process_symmdef_file(std::string tag);
+
 	static
 	void
 	options_read_in_ctor( utility::options::OptionKeyList & opts );
@@ -96,7 +98,6 @@ public:
 	set_refinable_lattice( bool setting );
 
 private:
-	void process_symmdef_file(std::string tag);
 
 	/// @brief   constructs a symmetric pose with a symmetric conformation and energies object.
 	/// @details Calls core::pose::make_symmetric_pose().  If preserve_datacache is set, this

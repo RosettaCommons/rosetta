@@ -373,7 +373,7 @@ void ResidueArrayAnnealingEvaluator::consider_substitution(
 
 	considered_node_ = node_ind;
 	considered_state_ = new_state;
-	considered_energy_ = calculate_weighted_energy( current_residues_ );
+	considered_energy_ = calculate_weighted_energy( current_residues_, considered_node_ );
 
 	unset_consideration( unset_information );
 
@@ -384,6 +384,10 @@ void ResidueArrayAnnealingEvaluator::consider_substitution(
 
 core::PackerEnergy ResidueArrayAnnealingEvaluator::commit_considered_substitution()
 {
+	for ( WeightedMethodPair const &method : weighted_energy_methods_ ) {
+		method.second->commit_considered_substitution();
+	}
+
 	int node_resid = per_node_rotamer_sets_.at(considered_node_)->resid();
 
 	utility::vector1<std::pair < int, core::conformation::ResidueCOP > > unset_information_dummy;
@@ -398,11 +402,11 @@ core::PackerEnergy ResidueArrayAnnealingEvaluator::get_energy_current_state_assi
 	return current_energy_;
 }
 
-core::Real ResidueArrayAnnealingEvaluator::calculate_weighted_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) {
+core::Real ResidueArrayAnnealingEvaluator::calculate_weighted_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, int const substitution_position ) {
 	core::Real result = 0;
 
 	for ( WeightedMethodPair const & method : weighted_energy_methods_ ) {
-		result += method.first * method.second->calculate_energy( resvect );
+		result += method.first * method.second->calculate_energy( resvect, substitution_position );
 	}
 
 	return result;

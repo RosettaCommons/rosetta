@@ -134,8 +134,10 @@ void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFuncti
 
 /// @brief Calculate the total energy given a vector of const owning pointers to residues.
 /// @details Called by finalize_total_energy().
-core::Real AARepeatEnergy::calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const
-{
+core::Real AARepeatEnergy::calculate_energy(
+	utility::vector1< core::conformation::ResidueCOP > const &resvect,
+	core::Size const /*substitution_position = 0*/
+) const {
 	core::Size const nres( resvect.size() );
 	if ( nres==0 ) return 0.0;
 	if ( nres==1 ) return penalties(1);

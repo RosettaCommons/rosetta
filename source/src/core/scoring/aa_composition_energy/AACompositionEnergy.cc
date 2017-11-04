@@ -161,7 +161,8 @@ void AACompositionEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreF
 /// that setup_residuearrayannealablenergy_for_packing() be called first.
 core::Real
 AACompositionEnergy::calculate_energy(
-	utility::vector1< core::conformation::ResidueCOP > const &resvect
+	utility::vector1< core::conformation::ResidueCOP > const &resvect,
+	core::Size const /*substitution_position = 0*/
 ) const {
 	//for(core::Size i=1, imax=resvect.size(); i<=imax; ++i) { TR << i << ":\t" << resvect[i]->name() << "\t" << resvect[i]->seqpos() << std::endl; } //DELETE ME
 	return calculate_energy( resvect, setup_helpers_for_packing_, setup_helper_masks_for_packing_);
@@ -269,7 +270,7 @@ AACompositionEnergy::setup_residuearrayannealableenergy_for_packing (
 	core::pose::Pose const &pose,
 	core::scoring::ScoreFunction const &/*sfxn*/
 ) {
-	if ( TR.Debug.visible() ) TR.Debug << "Setting up the AACompostionEnergy for packing." << std::endl;
+	if ( TR.Debug.visible() ) TR.Debug << "Setting up the AACompositionEnergy for packing." << std::endl;
 
 	get_helpers_from_pose( pose, setup_helpers_for_packing_, setup_helper_masks_for_packing_ );
 

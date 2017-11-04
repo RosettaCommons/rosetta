@@ -1,0 +1,48 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" >
+			<Reweight scoretype="hbnet" weight="3.0" />
+		</ScoreFunction>
+
+		<ScoreFunction name="r15_symm" weights="ref2015.wts" symmetric="true" >
+			<Reweight scoretype="hbnet" weight="3.0" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer name="select_core" select_core="true" select_boundary="false" select_surface="false" core_cutoff="2" surface_cutoff="1" />
+		<Layer name="select_boundary" select_core="false" select_boundary="true" select_surface="false" core_cutoff="2" surface_cutoff="1" />
+		<Layer name="select_surface" select_core="false" select_boundary="false" select_surface="true" core_cutoff="2" surface_cutoff="1" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<ExtraRotamersGeneric name="extra" ex1="true" ex2="true" />
+		<ReadResfile name="resfile_core" filename="inputs/core.resfile" selector="select_core" />
+		<ReadResfile name="resfile_boundary" filename="inputs/boundary.resfile" selector="select_boundary" />
+		<OperateOnResidueSubset name="no_design_surf" selector="select_surface" >
+			<PreventRepackingRLT />
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<BundleGridSampler name="bgs1" scorefxn="r15" max_samples="3" nstruct_mode="true" helix_length="10" crick_params_file="alpha_helix_100" use_degrees="true" >
+			<Helix r0="8" omega0_min="1.6" omega0_max="2.1" omega0_samples="3" delta_omega0="45" delta_omega1="0" z1_offset="-0.5" invert="false" />
+		</BundleGridSampler>
+
+		<AtomTree name="foldtree1" fold_tree_file="inputs/foldtree1.txt" />
+
+		<SetupForSymmetry name="symm_d2" definition="inputs/D2.symm" />
+
+		<FastDesign name="fdes1" scorefxn="r15_symm" repeats="1" task_operations="resfile_core,resfile_boundary,no_design_surf" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs1" />
+		<Add mover="foldtree1" />
+		<Add mover="symm_d2" />
+		<Add mover="fdes1" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_symm" />
+</ROSETTASCRIPTS>
+

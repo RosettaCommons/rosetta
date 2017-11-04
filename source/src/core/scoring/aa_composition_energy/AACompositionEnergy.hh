@@ -86,7 +86,7 @@ public:
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called directly by the ResidueArrayAnnealingEvaluator during packer runs.
-	virtual core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
+	virtual core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, core::Size const substitution_position = 0 ) const;
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues, vectors of AACompositionEnergySetup objects, and vectors of masks.
 	/// @details Called by finalize_total_energy() and during packer runs.  Requires

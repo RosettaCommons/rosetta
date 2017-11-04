@@ -29,8 +29,9 @@ namespace utility {
 namespace graph {
 
 /// @brief returns a vector1 of connected component descriptions:
-/// each entry holds the connected-component size
-/// and a representative vertex from that connected component.
+/// each entry holds a representative vertex from that connected component
+/// (first entry in pair) and the connected-component size (second entry
+/// in pair).
 /// O( V+E ).
 utility::vector1< std::pair< platform::Size, platform::Size > >
 find_connected_components( Graph const & g );

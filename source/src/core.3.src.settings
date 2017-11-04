@@ -498,6 +498,9 @@ sources = {
 	"core/scoring/hackaro": [
 		"HackAroEnergy",
 	],
+	"core/scoring/hbnet_energy": [
+		"HBNetEnergy",
+	],
 	"core/scoring/hbonds": [
 		"FadeInterval",
 		"HBEvalTuple",
