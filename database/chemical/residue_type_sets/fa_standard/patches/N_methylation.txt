@@ -1256,8 +1256,8 @@ REMOVE_ROTAMER_SPECIFICATIONS
 NCAA_ROTLIB_PATH ncaa_rotamer_libraries/n_methyl_amino_acid/VAL_Nmethylated.rotlib
 NCAA_ROTLIB_NUM_ROTAMER_BINS 1 3
 
-ADD_CHI 3 CA N CN 1HN
-ADD_PROTON_CHI 3 SAMPLES 5 -60 -30 0 30 60 EXTRA 1 15
+ADD_CHI 2 CA N CN 1HN
+ADD_PROTON_CHI 2 SAMPLES 5 -60 -30 0 30 60 EXTRA 1 15
 
 # Set Ramachandran maps:
 RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_ramatable_QM.txt scoring/score_functions/rama/n_methyl/Generic_L_Alpha_Nmethyl_AA_prepro_ramatable_QM.txt
@@ -1454,6 +1454,9 @@ SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
 SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
 SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
 SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
+
+ADD_CHI 1 CA N CN 1HN
+ADD_PROTON_CHI 1 SAMPLES 5 -60 -30 0 30 60 EXTRA 1 15
 
 # Update properties:
 ADD_PROPERTY N_METHYLATED
