@@ -5,20 +5,16 @@
 PATH_TO_ROOT = '../../'
 
 import hashlib, os, string, sys, shutil
-#sys.path.append(PATH_TO_ROOT + 'script/')
 import build_util, xcode_util
 
 sys.path.append( '..' )
-import version
 
+# generate new version file
+os.system( 'cd ..; python version.py' )
 
-# generate new svn_version file
-#os.popen( 'cd ..; python svn_version.py' )
 starting_directory = os.path.basename( os.getcwd() )
 os.chdir( '..' )
 
-version.retrieve_version_information()
-version.generate_version_files()
 os.chdir( starting_directory )
 
 # (re)generate options files
