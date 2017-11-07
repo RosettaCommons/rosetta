@@ -3,6 +3,7 @@
 ##### e.g. 'time' will match (and erase) 'runtime error' or 'antimetabolite' 
 [0-9.]+ seconds([^A-Za-z]|$)
 core.init:.*Rosetta version
+core.init:.*PEP-440 Version
 core.init:.*'RNG device' seed mode,
 core.init:.*Git Commit:
 core.init:.*Date:
