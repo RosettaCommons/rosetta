@@ -134,21 +134,24 @@ public:
 		utility::vector1< CDRSetOptionsOP > options = parser->parse_options("protocols/antibody/database/cdr_set_instructions_load_test.txt");
 		utility::vector1< CDRSetOptionsOP>  bogus_options = parser->parse_options("protocols/antibody/database/cdr_set_instructions.txt");
 
-		//Turn off loading of everything but L1 for speed:
+		//Turn off loading of everything but L1+H3 (which has disulfides) for speed:
 		options[ h1 ]->load(false);
 		options[ h2 ]->load(false);
-		options[ h3 ]->load(false);
+		options[ h3 ]->load(true);
 		options[ l2 ]->load(false);
 		options[ l3 ]->load(false);
 
 		bogus_options[ h1 ]->load(false);
 		bogus_options[ h2 ]->load(false);
-		bogus_options[ h3 ]->load(false);
+		bogus_options[ h3 ]->load(true);
 		bogus_options[ l2 ]->load(false);
 		bogus_options[ l3 ]->load(false);
 
 		AntibodyDatabaseManagerOP manager( new AntibodyDatabaseManager(ab_info, true /* Force use of north paper ab db */) );
 		TS_ASSERT_THROWS_NOTHING(manager->load_cdr_poses(options, pose, false));
+
+
+		//Check that all structures are loaded -
 
 		TR << "------------ Checking to make sure an error is thrown when loading bogus options from database ------------- " << std::endl;
 		set_throw_on_next_assertion_failure();

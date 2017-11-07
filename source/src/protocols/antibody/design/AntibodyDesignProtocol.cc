@@ -366,6 +366,7 @@ AntibodyDesignProtocol::output_ensemble(vector1<core::pose::PoseOP> ensemble, co
 
 		if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user() ) {
 			AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
+			converter.set_from_scheme( AHO_Scheme );
 			converter.apply(*(ensemble[i]));
 		}
 
@@ -490,6 +491,7 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 
 	if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user() ) {
 		AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
+		converter.set_from_scheme( AHO_Scheme );
 		converter.apply(pose);
 	}
 

@@ -113,6 +113,7 @@ AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool f
 	}
 
 	cdr_cache_limit_ = option[ OptionKeys::antibody::design::cdr_set_cache_limit]();
+	high_mem_mode_ = option[ OptionKeys::antibody::design::high_mem_mode].value();
 
 	///Close the database session until we are ready to actually read from it.
 	db_session_->close();

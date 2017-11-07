@@ -75,6 +75,10 @@ public:
 	void
 	show( std::ostream & output = std::cout ) const override;
 
+	///@brief Set the current numbering scheme of the antibody.
+	void
+	set_from_scheme( AntibodyNumberingSchemeEnum const from );
+
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void
 	parse_my_tag(

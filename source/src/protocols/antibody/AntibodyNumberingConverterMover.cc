@@ -89,6 +89,11 @@ AntibodyNumberingConverterMover::set_scheme_conversion(
 
 }
 
+void
+AntibodyNumberingConverterMover::set_from_scheme( AntibodyNumberingSchemeEnum const from ){
+	from_scheme_ = from;
+}
+
 
 AntibodyNumberingConverterMover::~AntibodyNumberingConverterMover(){}
 
@@ -127,7 +132,8 @@ AntibodyNumberingConverterMover::apply( core::pose::Pose & pose)
 	using namespace core::pose;
 
 	if ( from_scheme_ == to_scheme_ ) {
-		utility_exit_with_message("AntibodyNumberingConverterMover: Cannot convert as schemes are identical.  You probably did not set the conversion scheme!");
+		TR << "AntibodyNumberingConverterMover: Cannot convert as schemes are identical. " << std::endl;
+		return;
 	}
 
 	if ( ! ( has_chain( 'L', pose) || has_chain('H', pose) ) ) {

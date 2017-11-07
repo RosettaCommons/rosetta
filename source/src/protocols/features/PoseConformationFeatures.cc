@@ -427,6 +427,10 @@ PoseConformationFeatures::load_sequence(
 		while ( res.next() ) {
 			string res_type;
 			res >> res_type;
+
+			if ( res_type=="CYD" ) {
+				res_type="CYS:disulfide"; //JAB - Backwards compatability with older databases
+			}
 			requested_types.push_back( residue_set->name_mapOP( res_type ) );
 		}
 		make_pose_from_sequence(pose, requested_types);
