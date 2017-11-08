@@ -29,11 +29,8 @@ namespace scoring {
 namespace elec {
 namespace electrie {
 
-Real
-ElecTrieEvaluator::elec_weight( bool at1isbb, bool at2isbb ) const {
-	return ( at1isbb ? ( at2isbb ? wbb_bb_ : wbb_sc_ ) : ( at2isbb ? wsc_bb_ : wsc_sc_ ) ); // fpd add asymmetry
-}
-
+//Real
+//ElecTrieEvaluator::elec_weight( bool at1isbb, bool at2isbb ) const
 
 ElecTrieEvaluator::ElecTrieEvaluator(
 	core::Real wt_bb_bb,
@@ -51,58 +48,34 @@ ElecTrieEvaluator::ElecTrieEvaluator(
 
 ElecTrieEvaluator::~ElecTrieEvaluator() {}
 
-Energy
-ElecTrieEvaluator::heavyatom_heavyatom_energy(
-	ElecAtom const & at1,
-	ElecAtom const & at2,
-	DistanceSquared & d2,
-	Size & /*path_dist*/
-) const
-{
-	Real bbscwt = elec_weight(at1.isbb(),at2.isbb());
-	Real score = bbscwt * elec_.coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
-	return score;
-}
+//Energy
+//ElecTrieEvaluator::heavyatom_heavyatom_energy(
+// ElecAtom const & at1,
+// ElecAtom const & at2,
+// DistanceSquared & d2,
+// Size & /*path_dist*/
+//) const
 
-Energy
-ElecTrieEvaluator::heavyatom_hydrogenatom_energy(
-	ElecAtom const & at1,
-	ElecAtom const & at2,
-	Size & /*path_dist*/
-) const
-{
-	Real d2;
-	Real bbscwt = elec_weight(at1.isbb(),at2.isbb());
-	Real score = bbscwt * elec_.coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
-	return score;
-}
+//Energy
+//ElecTrieEvaluator::heavyatom_hydrogenatom_energy(
+// ElecAtom const & at1,
+// ElecAtom const & at2,
+// Size & /*path_dist*/
+//) const
 
-Energy
-ElecTrieEvaluator::hydrogenatom_heavyatom_energy(
-	ElecAtom const & at1,
-	ElecAtom const & at2,
-	Size & /*path_dist*/
-) const
-{
-	Real d2;
-	Real bbscwt = elec_weight(at1.isbb(),at2.isbb());
-	Real score = bbscwt * elec_.coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
-
-	return score;
-}
-
-Energy
-ElecTrieEvaluator::hydrogenatom_hydrogenatom_energy(
-	ElecAtom const & at1,
-	ElecAtom const & at2,
-	Size & /*path_dist*/
-) const
-{
-	Real d2;
-	Real bbscwt = elec_weight(at1.isbb(),at2.isbb());
-	Real score = bbscwt * elec_.coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
-	return score;
-}
+//Energy
+//ElecTrieEvaluator::hydrogenatom_heavyatom_energy(
+// ElecAtom const & at1,
+// ElecAtom const & at2,
+// Size & /*path_dist*/
+//) const
+//
+//Energy
+//ElecTrieEvaluator::hydrogenatom_hydrogenatom_energy(
+// ElecAtom const & at1,
+// ElecAtom const & at2,
+// Size & /*path_dist*/
+//) const
 
 core::Real
 ElecTrieEvaluator::hydrogen_interaction_cutoff2() const {

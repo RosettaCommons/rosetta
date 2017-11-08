@@ -16,10 +16,13 @@
 
 // Unit Headers
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
-#include <core/conformation/Atom.hh>
+
+// Package headres
+#include <core/scoring/lkball/LK_BallInfo.hh>
 
 // Project Headers
 #include <core/types.hh>
+#include <core/conformation/Atom.hh>
 
 // STL Headers
 #include <iostream>
@@ -46,11 +49,16 @@ public:
 	Vector const & xyz() const { return base_.xyz(); }
 	void xyz( Vector const & base ) { base_.xyz(base); }
 
-	utility::vector1< Vector > const & waters() const { return waters_; }
-	void waters(utility::vector1< Vector > const & waters) { waters_=waters; }
+	Size n_attached_waters() const { return n_attached_waters_; }
 
-	utility::vector1< Real > const & atom_weights() const { return atom_weights_; }
-	void atom_weights(utility::vector1< Real > const & atom_weights) { atom_weights_=atom_weights; }
+	WaterCoords const & waters() const { return waters_; }
+	void waters( Size n_attached, WaterCoords const & waters) {
+		n_attached_waters_ = n_attached;
+		waters_ = waters;
+	}
+
+	AtomWeights const & atom_weights() const { return atom_weights_; }
+	void atom_weights( AtomWeights const & atom_weights ) { atom_weights_ = atom_weights; }
 
 	/// @brief property required by RotamerTrie class
 	inline
@@ -66,12 +74,24 @@ public:
 	inline
 	bool operator < ( LKBAtom const & other ) const
 	{
-		if ( waters_.size() != other.waters_.size() ) {
-			return (waters_.size() < other.waters_.size());
+		// compare the base atom and its coordinate first
+		if ( base_.type() != other.base_.type() ) {
+			return base_.type() < other.base_.type();
+		} else {
+			for ( int ii = 0; ii < 3; ++ii ) {
+				if ( float(base_.xyz()[ ii ]) != float(other.base_.xyz()[ ii ]) ) {
+					return base_.xyz()[ ii ] < other.base_.xyz()[ ii ];
+				}
+			}
+		}
+
+		// Then the coordinates of the attached waters
+		if ( n_attached_waters_ != other.n_attached_waters_ ) {
+			return n_attached_waters_ < other.n_attached_waters_;
 		}
 
 		// because xyzVector does not properly define <
-		for ( core::Size i=1; i<=waters_.size(); ++i ) {
+		for ( core::Size i=1; i <= n_attached_waters_; ++i ) {
 			for ( core::Size j=0; j<3; ++j ) {
 				if ( float(waters_[i][j]) != float(other.waters_[i][j]) ) {
 					return (float(waters_[i][j]) < float(other.waters_[i][j]));
@@ -79,40 +99,64 @@ public:
 			}
 		}
 
-		// waters_ are the same
-		if ( atom_weights_ < other.atom_weights_ ) {
-			return true;
-		} else if ( atom_weights_ == other.atom_weights_ ) {
-			if ( base_.type() < other.base_.type() ) {
-				return true;
-			} else if ( base_.type() == other.base_.type() ) {
-				for ( int ii = 0; ii< 3; ++ii ) {
-					if ( float(base_.xyz()[ ii ]) != float(other.base_.xyz()[ ii ]) ) {
-						return base_.xyz()[ ii ] < other.base_.xyz()[ ii ];
-					}
-				}
+		// water coordinates are the same
+		for ( core::Size i=1; i <= atom_weights_.size(); ++i ) {
+			if ( atom_weights_[ i ] != other.atom_weights_[ i ] ) {
+				return atom_weights_[ i ] < other.atom_weights_[ i ];
 			}
 		}
 
+		// atom weights are the same
 		return false;
 	}
 
 
-	/// @brief equality operator for shared-prefix detection
+	/// @brief equality operator for shared-prefix detection -- must be true if
+	/// !( a < b ) && !( b < a )
 	inline
 	bool operator == ( LKBAtom const & other ) const
 	{
-		return (
-			base_.xyz() == other.base_.xyz() &&
-			base_.type() == other.base_.type() &&
-			waters_ == other.waters_ &&
-			atom_weights_ == other.atom_weights_);
+		if ( base_.type() != other.base_.type() ) {
+			return false;
+		} else {
+			for ( int ii = 0; ii < 3; ++ii ) {
+				if ( float(base_.xyz()[ ii ]) != float(other.base_.xyz()[ ii ]) ) {
+					return false;
+				}
+			}
+		}
+
+		if ( n_attached_waters_ != other.n_attached_waters_ ) {
+			return false;
+		}
+
+		// because xyzVector does not properly define <
+		for ( core::Size i=1; i <= n_attached_waters_; ++i ) {
+			for ( core::Size j=0; j<3; ++j ) {
+				if ( float(waters_[i][j]) != float(other.waters_[i][j]) ) {
+					return false;
+				}
+			}
+		}
+
+		// waters_ are the same
+		for ( core::Size i=1; i <= atom_weights_.size(); ++i ) {
+			if ( atom_weights_[ i ] != other.atom_weights_[ i ] ) {
+				return false;
+			}
+		}
+
+		// atom weights are the same
+
+		return true;
+
 	}
 
 private:
 	conformation::Atom base_;
-	utility::vector1< Vector > waters_;
-	utility::vector1< Real > atom_weights_;
+	Size n_attached_waters_;
+	WaterCoords waters_;
+	AtomWeights atom_weights_;
 
 #ifdef    SERIALIZATION
 public:

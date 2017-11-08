@@ -100,6 +100,7 @@ using namespace core::scoring;
 using namespace core::chemical;
 using namespace core::scoring::etable;
 using namespace core::scoring::etable::count_pair;
+using namespace core::scoring::lkball;
 using namespace core::scoring::methods;
 
 static THREAD_LOCAL basic::Tracer TR("fasol_refit");
@@ -151,12 +152,14 @@ public:
 			if ( !rsd1.is_protein() ) continue;
 			if ( rsd_sasa[ires] != 0 ) continue;
 
-			utility::vector1< utility::vector1< numeric::xyzVector<Real> > > rsd1_waters, rsd2_waters;
-			utility::vector1< utility::vector1< Real > > rsd1_atom_wts;
+			utility::vector1< WaterCoords > rsd1_waters, rsd2_waters;
+			utility::vector1< AtomWeights > rsd1_atom_wts;
+			utility::vector1< Size > rsd1_n_attached_waters, rsd2_n_attached_waters;
 
 			if ( weightLKbw != 0 || weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 ) {
 				lkball::LKB_ResidueInfo const &lkbinfo1 = static_cast< lkball::LKB_ResidueInfo const & > (
 					rsd1.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
+				rsd1_n_attached_waters = lkbinfo1.n_attached_waters();
 				rsd1_waters = ( lkbinfo1.waters() );
 				rsd1_atom_wts = ( lkbinfo1.atom_weights() );
 			}
@@ -170,11 +173,13 @@ public:
 				core::conformation::Atom a_i = rsd1.atom(iatm);
 				a_i.type(bur_type);
 
-				utility::vector1< numeric::xyzVector< core::Real > >atom1_waters;
-				utility::vector1< core::Real > atom1_wts;
+				Size n_atom1_waters( 0 );
+				WaterCoords atom1_waters;
+				AtomWeights atom1_wts;
 				numeric::xyzVector< core::Real > atom1_xyz( rsd1.xyz( iatm ) );
 
 				if ( iatm <= rsd1.nheavyatoms() && rsd1_waters.size() > 0 ) {
+					n_atom1_waters = rsd1_n_attached_waters[ iatm ];
 					atom1_waters = rsd1_waters[ iatm ];
 					atom1_wts = rsd1_atom_wts[iatm];
 				}
@@ -194,6 +199,7 @@ public:
 					if ( weightLKbw != 0 || weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 ) {
 						lkball::LKB_ResidueInfo const &lkbinfo2 = static_cast< lkball::LKB_ResidueInfo const & > (
 							rsd2.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
+						rsd2_n_attached_waters = lkbinfo2.n_attached_waters();
 						rsd2_waters = ( lkbinfo2.waters() );
 					}
 
@@ -203,8 +209,9 @@ public:
 					for ( Size jatm=1; jatm<= rsd2.natoms(); ++jatm ) {
 						numeric::xyzVector< core::Real > const & atom2_xyz( rsd2.xyz( jatm ) );
 
-						utility::vector1< numeric::xyzVector< core::Real > >atom2_waters;
-						if ( jatm <= rsd2.nheavyatoms()  && rsd2_waters.size() > 0 ) {
+						WaterCoords atom2_waters;
+						Size n_atom2_waters = rsd2_n_attached_waters[ jatm ];
+						if ( jatm <= rsd2.nheavyatoms()  && n_atom2_waters > 0 ) {
 							atom2_waters = rsd2_waters[ jatm ];
 						}
 
@@ -222,19 +229,20 @@ public:
 							etable.analytic_lk_energy(rsd1.atom(iatm), rsd2.atom(jatm), fasol1,fasol2 );
 							fa_sol_i += weight*weightS*fasol1;
 
-							if ( !atom1_waters.empty() ) {
+							if ( n_atom1_waters != 0 ) {
 								Real const fasol1_lkball =
-									fasol1 * lkb.get_lk_fractional_contribution( atom2_xyz, rsd2.atom(jatm).type(), atom1_waters );
+									fasol1 * lkb.get_lk_fractional_contribution( atom2_xyz, rsd2.atom(jatm).type(), n_atom1_waters, atom1_waters );
 								lk_ball_i += weight*weightLKb * ( atom1_wts[1] * fasol1 + atom1_wts[2] * fasol1_lkball );
 								lk_ball_i += weight*weightLKbw * ( fasol1_lkball );
 								lk_ball_i += weight*weightLKbi * ( fasol1);
 
-								if ( !atom2_waters.empty() ) {
+								if ( n_atom2_waters == 0 ) {
 									Real lk_desolvation_sum = 0.0;
 									core::Real lkbr_wt = sf->get_weight( core::scoring::lk_ball_bridge );
 									core::Real lkbr_uncpl_wt = sf->get_weight( core::scoring::lk_ball_bridge_uncpl );
 									core::Real fasol1_lkbridge = lkb.get_lkbr_fractional_contribution(
 										atom1_xyz, atom2_xyz,
+										n_atom1_waters, n_atom2_waters,
 										atom1_waters, atom2_waters,
 										lk_desolvation_sum, lkbr_wt, lkbr_uncpl_wt );
 									lk_ball_i += 0.5 * weight * weightLKbr * (fasol1+fasol2) * fasol1_lkbridge;

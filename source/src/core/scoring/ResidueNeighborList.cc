@@ -98,7 +98,7 @@ ResiduePairNeighborList::initialize_from_residues(
 	etable::count_pair::CountPairFunctionCOP cpfxn
 ) {
 	atom_neighbors_.clear();
-
+	atom_neighbors_.reserve( 100 );
 	//std::cout << "ResiduePairNeighborList::initialize_from_residues " << r1.seqpos() << " " << r2.seqpos() << std::endl;
 
 	utility::vector0< Real > cutoffs( 3 );
@@ -137,6 +137,7 @@ ResiduePairNeighborList::initialize_from_residues(
 	std::map<core::Size,core::Size> const &r2_map
 ) {
 	atom_neighbors_.clear();
+	atom_neighbors_.reserve( 100 );
 
 	//std::cout << "ResiduePairNeighborList::initialize_from_residues " << r1.seqpos() << " " << r2.seqpos() << std::endl;
 

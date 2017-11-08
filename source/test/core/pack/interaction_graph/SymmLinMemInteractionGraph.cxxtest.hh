@@ -576,6 +576,7 @@ public:
 		using namespace core::pack::task;
 		using namespace core::pose;
 		using namespace core::scoring;
+		using namespace core::scoring::lkball;
 
 		TS_ASSERT( true );
 		core::io::silent::SilentFileOptions opts;
@@ -971,16 +972,18 @@ public:
 					LKB_ResidueInfo const & kk_pose_lkb_info( static_cast< LKB_ResidueInfo const & > ( kk_pose_data->get( LK_BALL_INFO )));
 					LKB_ResidueInfo const & kk_sotf_lkb_info( static_cast< LKB_ResidueInfo const & > ( kk_sotf_data->get( LK_BALL_INFO )));
 
-					utility::vector1< LKB_ResidueInfo::Vectors > const & kk_pose_waters( kk_pose_lkb_info.waters() );
-					utility::vector1< LKB_ResidueInfo::Vectors > const & kk_sotf_waters( kk_sotf_lkb_info.waters() );
+					utility::vector1< Size > const & kk_pose_n_waters( kk_pose_lkb_info.n_attached_waters() );
+					utility::vector1< Size > const & kk_sotf_n_waters( kk_sotf_lkb_info.n_attached_waters() );
+					utility::vector1< WaterCoords > const & kk_pose_waters( kk_pose_lkb_info.waters() );
+					utility::vector1< WaterCoords > const & kk_sotf_waters( kk_sotf_lkb_info.waters() );
 					TS_ASSERT_EQUALS( kk_pose_waters.size(), kk_sotf_waters.size() );
 					//std::cout << "#Waters: " << kk_pose_waters.size() << std::endl;
 					if ( kk_pose_waters.size() != kk_sotf_waters.size() ) continue;
 
 					for ( Size ll = 1; ll <= kk_pose_waters.size(); ++ll ) {
-						TS_ASSERT_EQUALS( kk_pose_waters[ ll ].size(), kk_sotf_waters[ ll ].size() );
+						TS_ASSERT_EQUALS( kk_pose_n_waters[ ll ], kk_sotf_n_waters[ ll ] );
 						if ( kk_pose_waters[ ll ].size() != kk_sotf_waters[ ll ].size() ) continue;
-						for ( Size mm = 1; mm <= kk_pose_waters[ ll ].size(); ++mm ) {
+						for ( Size mm = 1; mm <= kk_pose_n_waters[ ll ]; ++mm ) {
 							TS_ASSERT_DELTA( kk_pose_waters[ ll ][ mm ].distance_squared( kk_sotf_waters[ ll ][ mm ] ), 0, 1e-6 );
 						}
 					}

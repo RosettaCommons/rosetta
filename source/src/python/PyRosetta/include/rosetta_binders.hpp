@@ -18,11 +18,13 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl_bind.h>
 
+#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.io.hh>
+
 #include <utility/vectorL.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-#include <numeric/xyzVector.hh>
+#include <utility/stream_util.hh>
 
 #include <type_traits>
 #include <sstream>

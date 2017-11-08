@@ -25,7 +25,7 @@
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
-#include <utility/vector1.srlz.hh>
+#include <utility/fixedsizearray1.srlz.hh>
 #include <utility/serialization/serialization.hh>
 
 // Numeric serialization headers
@@ -38,7 +38,7 @@ namespace lkball {
 namespace lkbtrie {
 
 
-LKBAtom::LKBAtom() {}
+LKBAtom::LKBAtom() : n_attached_waters_( 0 ) {}
 
 LKBAtom::~LKBAtom() {}
 
@@ -75,6 +75,7 @@ template< class Archive >
 void
 core::scoring::lkball::lkbtrie::LKBAtom::save( Archive & arc ) const {
 	arc( CEREAL_NVP( base_ ) ); // conformation::Atom
+	arc( CEREAL_NVP( n_attached_waters_ ) ); // Size
 	arc( CEREAL_NVP( waters_ ) ); // utility::vector1<Vector>
 	arc( CEREAL_NVP( atom_weights_ ) ); // utility::vector1<Real>
 }
@@ -84,6 +85,7 @@ template< class Archive >
 void
 core::scoring::lkball::lkbtrie::LKBAtom::load( Archive & arc ) {
 	arc( base_ ); // conformation::Atom
+	arc( n_attached_waters_ ); // Size
 	arc( waters_ ); // utility::vector1<Vector>
 	arc( atom_weights_ ); // utility::vector1<Real>
 }

@@ -64,6 +64,7 @@
 
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
+#include <utility/fixedsizearray1.srlz.hh>
 #include <utility/serialization/serialization.hh>
 
 // Numeric serialization headers
@@ -222,16 +223,41 @@ build_optimal_water_Os_on_acceptor(
 	} else {
 
 		if ( hybrid == SP2_HYBRID ) {
+			if ( params_sp2.size() > 3*MAX_N_WATERS_PER_ATOM ) {
+				std::ostringstream oss;
+				oss << "More than " << MAX_N_WATERS_PER_ATOM << " waters were requested for atom "
+					<< acc_rsd.atom_name( acc_atm ) << " on Residue " << acc_rsd.name() << ". The "
+					<< "MAX_N_WATERS_PER_ATOM constant in src/core/scoring/lkball/LK_BallInfo.hh must "
+					<< "be increased and the code recompiled to accommodate this many waters.";
+				utility_exit_with_message( oss.str() );
+			}
 			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
 			for ( core::Size i=0; i<params_sp2.size()/3; ++i ) {
 				waters.push_back( stub.spherical( radians( params_sp2[3*i+3] ), radians( 180.0-params_sp2[3*i+2] ), params_sp2[3*i+1] ) );
 			}
 		} else if ( hybrid == SP3_HYBRID ) {
+			if ( params_sp3.size() > 3*MAX_N_WATERS_PER_ATOM ) {
+				std::ostringstream oss;
+				oss << "More than " << MAX_N_WATERS_PER_ATOM << " waters were requested for atom "
+					<< acc_rsd.atom_name( acc_atm ) << " on Residue " << acc_rsd.name() << ". The "
+					<< "MAX_N_WATERS_PER_ATOM constant in src/core/scoring/lkball/LK_BallInfo.hh must "
+					<< "be increased and the code recompiled to accommodate this many waters.";
+				utility_exit_with_message( oss.str() );
+			}
 			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
 			for ( core::Size i=0; i<params_sp3.size()/3; ++i ) {
 				waters.push_back( stub.spherical( radians( params_sp3[3*i+3] ), radians( 180.0-params_sp3[3*i+2] ), params_sp3[3*i+1] ) );
 			}
 		} else if ( hybrid == RING_HYBRID ) {
+			if ( params_ring.size() > 3*MAX_N_WATERS_PER_ATOM ) {
+				std::ostringstream oss;
+				oss << "More than " << MAX_N_WATERS_PER_ATOM << " waters were requested for atom "
+					<< acc_rsd.atom_name( acc_atm ) << " on Residue " << acc_rsd.name() << ". The "
+					<< "MAX_N_WATERS_PER_ATOM constant in src/core/scoring/lkball/LK_BallInfo.hh must "
+					<< "be increased and the code recompiled to accommodate this many waters.";
+				utility_exit_with_message( oss.str() );
+			}
+
 			b1_xyz = 0.5 * ( b1_xyz + b2_xyz );
 			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
 			for ( core::Size i=0; i<params_ring.size()/3; ++i ) {
@@ -439,13 +465,12 @@ LKBallDatabase::initialize_residue_type( ResidueType const & rsd_type )
 		// Attach a destruction observer so we can clean up the database if the residue gets destroyed
 		rsd_type.attach_destruction_obs( &LKBallDatabase::restype_destruction_observer, this );
 
-		water_builder_map_[ address ] = utility::vector1< WaterBuilders >(); // create entry in map
-		utility::vector1< WaterBuilders > & rsd_water_builders( water_builder_map_[ address ] );
-		setup_water_builders_for_residue_type( rsd_type, sidechain_only, rsd_water_builders );
+		WaterBuildersListOP builders( new WaterBuildersList );
+		water_builder_map_[ address ] = builders; // create entry in map
+		setup_water_builders_for_residue_type( rsd_type, sidechain_only, *builders );
 
-		atom_weights_map_[ address ] = utility::vector1< utility::vector1< Real > >();
-		utility::vector1< utility::vector1< Real > > & atom_wts( atom_weights_map_.find( address )->second );
-		setup_atom_weights( rsd_type, rsd_water_builders, atom_wts );
+		utility::vector1< AtomWeights > & atom_wts( atom_weights_map_[ address ] );
+		setup_atom_weights( rsd_type, *builders, atom_wts );
 	}
 }
 
@@ -453,7 +478,7 @@ void
 LKBallDatabase::setup_atom_weights(
 	chemical::ResidueType const & rsd_type,
 	WaterBuildersList const & rsd_water_builders, // for sanity
-	AtomWeights & atom_wts
+	utility::vector1< AtomWeights > & atom_wts
 )
 {
 	using utility::vector1;
@@ -480,7 +505,10 @@ LKBallDatabase::setup_atom_weights(
 	Size const  lkb_atom_wt_index( atom_set.extra_parameter_index( "LK_BALL_ATOM_WEIGHT"+atom_wts_tag ) );
 
 	atom_wts.clear(); atom_wts.resize( rsd_type.natoms() );
-	for ( Size i=1; i<= rsd_type.natoms(); ++i ) atom_wts[i] = utility::tools::make_vector1( Real(0.0), Real(0.0) );
+	for ( Size i=1; i<= rsd_type.natoms(); ++i ) {
+		atom_wts[i][1] = 0;
+		atom_wts[i][2] = 0;
+	}
 
 	runtime_assert( lk_ball_wtd_prefactors.size() == 8 );
 	for ( Size i=1; i<= rsd_type.nheavyatoms(); ++i ) {
@@ -520,10 +548,32 @@ LKBallDatabase::get_water_builders( chemical::ResidueType const & rsd_type ) con
 		utility_exit_with_message("LKB_ResidueInfo::initialize has not been called");
 	}
 
+	return *it->second;
+}
+
+WaterBuildersListCOP
+LKBallDatabase::get_water_builders_cop( chemical::ResidueType const & rsd_type ) const {
+
+	// waters_ array has already been dimensioned properly
+	ResidueType const * const address( &rsd_type );
+
+	WaterBuilderMap::const_iterator it;
+	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard lock( lkball_db_mutex_ );
+#endif
+		it = ( water_builder_map_.find( address ) );
+	}
+
+	if ( it == water_builder_map_.end() ) {
+		utility_exit_with_message("LKB_ResidueInfo::initialize has not been called");
+	}
+
 	return it->second;
 }
 
-AtomWeights const &
+
+utility::vector1< AtomWeights > const &
 LKBallDatabase::get_atom_weights( chemical::ResidueType const & rsd_type ) const {
 
 	ResidueType const * const address( &rsd_type );
@@ -584,7 +634,7 @@ LKB_ResidueInfo::LKB_ResidueInfo(
 LKB_ResidueInfo::LKB_ResidueInfo() = default;
 
 void
-LKB_ResidueInfo::build_waters( Residue const & rsd )
+LKB_ResidueInfo::build_waters( Residue const & rsd, bool compute_derivs )
 {
 	if ( !this->matches_residue_type( rsd.type() ) ) {
 		utility_exit_with_message("LKB_ResidueInfo::build_waters: mismatch: "+rsd_type_->name()+" "+rsd.type().name() );
@@ -592,21 +642,23 @@ LKB_ResidueInfo::build_waters( Residue const & rsd )
 
 	if ( !has_waters_ ) return;
 
-	WaterBuildersList const & wb_list( LKBallDatabase::get_instance()->get_water_builders( rsd.type() ) );
+	//WaterBuildersList const & wb_list( LKBallDatabase::get_instance()->get_water_builders( rsd.type() ) );
 
 	for ( Size i=1; i<= rsd.nheavyatoms(); ++i ) {
-		WaterBuilders const & water_builders( wb_list[ i ] );
+		WaterBuilders const & water_builders( (*water_builders_list_)[ i ] );
 		for ( Size j=1, j_end = water_builders.size(); j<= j_end; ++j ) {
 			waters_[i][j] = water_builders[j].build( rsd );
-			water_builders[j].derivatives( rsd , dwater_datom1_[i][j] , dwater_datom2_[i][j] , dwater_datom3_[i][j] );
+			if ( compute_derivs ) {
+				water_builders[j].derivatives( rsd , dwater_datom1_[i][j] , dwater_datom2_[i][j] , dwater_datom3_[i][j] );
+			}
 		}
 	}
 }
 
 WaterBuilders const &
-LKB_ResidueInfo::get_water_builder( conformation::Residue const & rsd , Size heavyatom ) const
+LKB_ResidueInfo::get_water_builder( conformation::Residue const & rsd, Size heavyatom ) const
 {
-	if ( !this->matches_residue_type( rsd.type() ) ) {
+	if ( !matches_residue_type( rsd.type() ) ) {
 		utility_exit_with_message("LKB_ResidueInfo::get_water_builder: mismatch: "+rsd_type_->name()+" "+rsd.type().name() );
 	}
 
@@ -614,13 +666,13 @@ LKB_ResidueInfo::get_water_builder( conformation::Residue const & rsd , Size hea
 		utility_exit_with_message("LKB_ResidueInfo::get_water_builder: no water builders!");
 	}
 
-	WaterBuildersList const & wb_list( LKBallDatabase::get_instance()->get_water_builders( rsd.type() ) );
+	//WaterBuildersList const & wb_list( LKBallDatabase::get_instance()->get_water_builders( rsd.type() ) );
 
-	if ( heavyatom > wb_list.size() ) {
+	if ( heavyatom > water_builders_list_->size() ) {
 		utility_exit_with_message("LKB_ResidueInfo::get_water_builder called on unrecognized atom");
 	}
 
-	return wb_list[ heavyatom ];
+	return (*water_builders_list_)[ heavyatom ];
 }
 
 /// resize the waters_ array
@@ -632,6 +684,7 @@ LKB_ResidueInfo::initialize( ResidueType const & rsd )
 {
 	rsd_type_ = rsd.get_self_ptr();
 
+	n_attached_waters_.clear(); n_attached_waters_.resize( rsd.nheavyatoms() );
 	waters_.clear(); waters_.resize( rsd.nheavyatoms() );
 	dwater_datom1_.clear(); dwater_datom1_.resize( rsd.nheavyatoms() );
 	dwater_datom2_.clear(); dwater_datom2_.resize( rsd.nheavyatoms() );
@@ -644,22 +697,24 @@ LKB_ResidueInfo::initialize( ResidueType const & rsd )
 		lk_db.initialize_residue_type( rsd );
 	}
 
-	WaterBuildersList const & wb_list( LKBallDatabase::get_instance()->get_water_builders( rsd ) );
+	water_builders_list_ = LKBallDatabase::get_instance()->get_water_builders_cop( rsd );
+	//WaterBuildersList const & wb_list( LKBallDatabase::get_instance()->get_water_builders( rsd ) );
 
 	// now initialize
 	for ( Size i=1; i<= rsd.nheavyatoms(); ++i ) {
-		WaterBuilders const & water_builders( wb_list[ i ] );
+		WaterBuilders const & water_builders( (*water_builders_list_)[ i ] );
+		n_attached_waters_[ i ] = water_builders.size();
 		if ( water_builders.empty() ) {
-			waters_[i].clear();
-			dwater_datom1_[i].clear();
-			dwater_datom2_[i].clear();
-			dwater_datom3_[i].clear();
+			//waters_[i].clear();
+			//dwater_datom1_[i].clear();
+			//dwater_datom2_[i].clear();
+			//dwater_datom3_[i].clear();
 		} else {
 			has_waters_ = true;
-			waters_[i].resize( water_builders.size() );
-			dwater_datom1_[i].resize( water_builders.size() );
-			dwater_datom2_[i].resize( water_builders.size() );
-			dwater_datom3_[i].resize( water_builders.size() );
+			//waters_[i].resize( water_builders.size() );
+			//dwater_datom1_[i].resize( water_builders.size() );
+			//dwater_datom2_[i].resize( water_builders.size() );
+			//dwater_datom3_[i].resize( water_builders.size() );
 		}
 	}
 
@@ -669,6 +724,8 @@ LKB_ResidueInfo::initialize( ResidueType const & rsd )
 LKB_ResidueInfo::LKB_ResidueInfo( LKB_ResidueInfo const & src ):
 	basic::datacache::CacheableData( src ),
 	rsd_type_( src.rsd_type_ ),
+	water_builders_list_( src.water_builders_list_ ),
+	n_attached_waters_( src.n_attached_waters_ ),
 	waters_( src.waters_ ),
 	dwater_datom1_( src.dwater_datom1_ ),
 	dwater_datom2_( src.dwater_datom2_ ),
@@ -699,33 +756,36 @@ LKB_ResiduesInfo::clone() const
 	return basic::datacache::CacheableDataOP( new LKB_ResiduesInfo( *this ) );
 }
 
-void
-LKB_ResidueInfo::remove_irrelevant_waters(
-	Size const atom,
-	chemical::ResidueType const & rsd_type,
-	utility::vector1< Vector > & waters
-) const
-{
-	runtime_assert( rsd_type.atom_is_hydrogen( atom ) );
-
-	Size const heavyatom( rsd_type.atom_base( atom ) );
-
-	WaterBuildersList const & wb_list( LKBallDatabase::get_instance()->get_water_builders( rsd_type ) );
-
-	WaterBuilders const & water_builders( wb_list[ heavyatom ] );
-	runtime_assert( water_builders.size() == waters.size() );
-
-	for ( Size k= water_builders.size(); k>= 1; --k ) {
-		if ( atom == water_builders[k].atom1() ||
-				atom == water_builders[k].atom2() ||
-				atom == water_builders[k].atom3() ) continue;
-		waters.erase( waters.begin() + k-1 );
-	}
-
-	// TR.Trace << "remove_irrelevant_waters: "<< rsd_type.name() << ' '<< rsd_type.atom_name(atom) <<
-	//  " before: " << water_builders.size() << " after: " << waters.size() << std::endl;
-
-}
+/// @details This function is never called in the code, and it
+/// does not seem to rely on any member data of the class. I'm not sure
+/// I understand why this is here.
+//void
+//LKB_ResidueInfo::remove_irrelevant_waters(
+// Size const atom,
+// chemical::ResidueType const & rsd_type,
+// utility::vector1< Vector > & waters
+//) const
+//{
+// runtime_assert( rsd_type.atom_is_hydrogen( atom ) );
+//
+// Size const heavyatom( rsd_type.atom_base( atom ) );
+//
+// WaterBuildersList const & wb_list( LKBallDatabase::get_instance()->get_water_builders( rsd_type ) );
+//
+// WaterBuilders const & water_builders( wb_list[ heavyatom ] );
+// runtime_assert( water_builders.size() == waters.size() );
+//
+// for ( Size k= water_builders.size(); k>= 1; --k ) {
+//  if ( atom == water_builders[k].atom1() ||
+//    atom == water_builders[k].atom2() ||
+//    atom == water_builders[k].atom3() ) continue;
+//  waters.erase( waters.begin() + k-1 );
+// }
+//
+// // TR.Trace << "remove_irrelevant_waters: "<< rsd_type.name() << ' '<< rsd_type.atom_name(atom) <<
+// //  " before: " << water_builders.size() << " after: " << waters.size() << std::endl;
+//
+//}
 
 bool
 LKB_ResidueInfo::matches_residue_type( chemical::ResidueType const & rsd_type ) const {
@@ -748,12 +808,14 @@ void
 core::scoring::lkball::LKB_ResidueInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( CEREAL_NVP( rsd_type_ ) );
-	arc( CEREAL_NVP( waters_ ) ); // utility::vector1<Vectors>
+	arc( CEREAL_NVP( n_attached_waters_ )); // utility::vector1< Size >
+	arc( CEREAL_NVP( waters_ ) ); // utility::vector1< WaterCoords >
 	arc( CEREAL_NVP( dwater_datom1_ ) );
 	arc( CEREAL_NVP( dwater_datom2_ ) );
 	arc( CEREAL_NVP( dwater_datom3_ ) );
-	arc( CEREAL_NVP( atom_weights_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( atom_weights_ ) ); // utility::vector1< AtomWeights >
 	arc( CEREAL_NVP( has_waters_ ) ); // _Bool
+	// EXEMPT water_builders_list_
 }
 
 /// @brief Automatically generated deserialization method
@@ -762,13 +824,21 @@ void
 core::scoring::lkball::LKB_ResidueInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( rsd_type_ );
-	arc( waters_ ); // utility::vector1<Vectors>
+	arc( n_attached_waters_ ); // Size
+	arc( waters_ ); // utility::vector1<WaterCoords>
 	arc( dwater_datom1_ );
 	arc( dwater_datom2_ );
 	arc( dwater_datom3_ );
-	arc( atom_weights_ ); // utility::vector1<utility::vector1<Real> >
+	arc( atom_weights_ ); // utility::vector1< AtomWeights >
 	arc( has_waters_ ); // _Bool
+
+	LKBallDatabase & lk_db( * LKBallDatabase::get_instance() );
+	if ( ! lk_db.has( *rsd_type_ ) ) {
+		lk_db.initialize_residue_type( *rsd_type_ );
+	}
+	water_builders_list_ = LKBallDatabase::get_instance()->get_water_builders_cop( *rsd_type_ );
 }
+
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::lkball::LKB_ResidueInfo );
 CEREAL_REGISTER_TYPE( core::scoring::lkball::LKB_ResidueInfo )
 

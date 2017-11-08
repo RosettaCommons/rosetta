@@ -129,7 +129,8 @@ public:
 	calculate_lk_ball_atom_energies(
 		Size const atom1,
 		conformation::Residue const & rsd1,
-		Vectors const & atom1_waters,
+		Size atom1_n_attached_waters,
+		WaterCoords const & atom1_waters,
 		Size const atom2,
 		conformation::Residue const & rsd2,
 		Real & lk_desolvation_of_atom1_by_atom2,
@@ -140,7 +141,8 @@ public:
 	calculate_lk_ball_atom_energies_cp(
 		Size const atom1,
 		conformation::Residue const & rsd1,
-		Vectors const & atom1_waters,
+		Size atom1_n_attached_waters,
+		WaterCoords const & atom1_waters,
 		Size const atom2,
 		conformation::Residue const & rsd2,
 		etable::count_pair::CPCrossoverBehavior const & cp_crossover,
@@ -245,8 +247,9 @@ public:
 	accumulate_single_atom_contributions(
 		Size const atom1,
 		Size const atom1_type_index,
-		Vectors const & atom1_waters,
-		utility::vector1< Real > const & atom1_wts,
+		Size atom1_n_attached_waters,
+		WaterCoords const & atom1_waters,
+		AtomWeights const & atom1_wts,
 		conformation::Residue const & rsd1,
 		Size const atom2_type_index,
 		Vector const & atom2_xyz,
@@ -376,8 +379,9 @@ public:
 	get_lk_fractional_contribution(
 		Vector const & atom2_xyz,
 		Size const atom2_type_index,
-		Vectors const & atom1_waters,
-		utility::vector1< Real > & d_weighted_d2_d_di,  // per water contribution
+		Size atom1_n_attached_waters,
+		WaterCoords const & atom1_waters,
+		WaterDerivContributions & d_weighted_d2_d_di,  // per water contribution
 		Real & weighted_water_dis2
 	) const;
 
@@ -386,15 +390,18 @@ public:
 	get_lk_fractional_contribution(
 		Vector const & atom2_xyz,
 		Size const atom2_type_index,
-		Vectors const & atom1_waters
+		Size const atom1_n_attached_waters,
+		WaterCoords const & atom1_waters
 	) const;
 
 	Real
 	get_lkbr_fractional_contribution(
 		Vector const & atom1_base,
 		Vector const & atom2_base,
-		Vectors const & atom1_waters,
-		Vectors const & atom2_waters,
+		Size atom1_n_attached_waters,
+		Size atom2_n_attached_waters,
+		WaterCoords const & atom1_waters,
+		WaterCoords const & atom2_waters,
 		Real const & lk_desolvation_sum,
 		Real const & lkbr_wt,
 		Real const & lkbr_uncpl_wt
@@ -405,9 +412,11 @@ public:
 	get_lkbr_fractional_contribution(
 		Vector const & atom1_base,
 		Vector const & atom2_base,
-		Vectors const & atom1_waters,
-		Vectors const & atom2_waters,
-		utility::vector1< numeric::xyzVector<core::Real> > & d_weighted_d2_d_di1,  // per water1 contribution
+		Size atom1_n_attached_waters,
+		Size atom2_n_attached_waters,
+		WaterCoords const & atom1_waters,
+		WaterCoords const & atom2_waters,
+		WaterDerivVectors & d_weighted_d2_d_di1,  // per water1 contribution
 		Real & weighted_d2_water_delta,
 		Real & pointterm_lkbr,
 		Real & angleterm_lkbr,
@@ -451,8 +460,7 @@ public:
 		Real const weight_factor,
 		Real const d2,
 		utility::vector1< DerivVectorPair > & r1_at_derivs,
-		utility::vector1< DerivVectorPair > & r2_at_derivs,
-		utility::vector1< core::Real > & dwwd2_ddi
+		utility::vector1< DerivVectorPair > & r2_at_derivs
 	) const;
 
 	void
@@ -468,8 +476,7 @@ public:
 		EnergyMap const & weights,
 		Real const cp_weight,
 		utility::vector1< DerivVectorPair > & r1_at_derivs,
-		utility::vector1< DerivVectorPair > & r2_at_derivs,
-		utility::vector1< core::Real > & dwwd2_ddi
+		utility::vector1< DerivVectorPair > & r2_at_derivs
 	) const;
 
 	void

@@ -31,6 +31,7 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
+#include <utility/fixedsizearray1.hh>
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>
 #endif
@@ -47,6 +48,14 @@ namespace lkball {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+int const MAX_N_WATERS_PER_ATOM = 4;
+
+typedef utility::fixedsizearray1< Vector, MAX_N_WATERS_PER_ATOM > WaterCoords;
+typedef utility::fixedsizearray1< Vector, MAX_N_WATERS_PER_ATOM > WaterDerivVectors;
+typedef utility::fixedsizearray1< Real, MAX_N_WATERS_PER_ATOM > WaterDerivContributions;
+typedef utility::fixedsizearray1< numeric::xyzMatrix< Real >, MAX_N_WATERS_PER_ATOM > WaterDerivMatrices;
+typedef utility::fixedsizearray1< Real, 2 > AtomWeights;
 
 /// @details  Stores the internal coordinates of an ideal water position
 class WaterBuilder {
@@ -65,8 +74,12 @@ public:
 	// fpd get the derivative of water movement w.r.t. base atom movement
 	// fpd SLOW!
 	void
-	derivatives( conformation::Residue const & rsd,
-		numeric::xyzMatrix <Real> &dw_da1, numeric::xyzMatrix <Real> &dw_da2, numeric::xyzMatrix <Real> &dw_da3 ) const;
+	derivatives(
+		conformation::Residue const & rsd,
+		numeric::xyzMatrix< Real > & dw_da1,
+		numeric::xyzMatrix< Real > & dw_da2,
+		numeric::xyzMatrix< Real > & dw_da3
+	) const;
 
 	Size atom1() const { return atom1_; }
 	Size atom2() const { return atom2_; }
@@ -81,8 +94,10 @@ private:
 
 typedef utility::vector1< WaterBuilder > WaterBuilders;
 typedef utility::vector1< WaterBuilders > WaterBuildersList;
+typedef utility::pointer::shared_ptr< WaterBuildersList > WaterBuildersListOP;
+typedef utility::pointer::shared_ptr< WaterBuildersList const > WaterBuildersListCOP;
 
-typedef utility::vector1< utility::vector1< Real > >  AtomWeights;
+//typedef utility::vector1< utility::vector1< Real > >  AtomWeights;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,9 +126,12 @@ public:
 	WaterBuildersList const &
 	get_water_builders( chemical::ResidueType const & rsd_type ) const;
 
+	WaterBuildersListCOP
+	get_water_builders_cop( chemical::ResidueType const & rsd_type ) const;
+
 	/// @brief Get the atom_weights for the ResidueType
 	/// @details IMPORTANT LIFETIME NOTE: The return value is only valid so long as the passed residue type is
-	AtomWeights const &
+	utility::vector1< AtomWeights > const &
 	get_atom_weights( chemical::ResidueType const & rsd_type ) const;
 
 	/// danger
@@ -126,7 +144,7 @@ private:
 	setup_atom_weights(
 		chemical::ResidueType const & rsd_type,
 		WaterBuildersList const & rsd_water_builders, // for sanity
-		AtomWeights & atom_wts
+		utility::vector1< AtomWeights > & atom_wts
 	);
 
 	void restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event );
@@ -141,8 +159,8 @@ private:
 private:
 
 	// The raw pointers here are registered in the destruction observer for their respective ResidueType
-	typedef std::map< chemical::ResidueType const *, WaterBuildersList > WaterBuilderMap;
-	typedef std::map< chemical::ResidueType const *, AtomWeights > AtomWeightsMap;
+	typedef std::map< chemical::ResidueType const *, WaterBuildersListCOP > WaterBuilderMap;
+	typedef std::map< chemical::ResidueType const *, utility::vector1< AtomWeights > > AtomWeightsMap;
 
 	WaterBuilderMap water_builder_map_;
 	AtomWeightsMap atom_weights_map_;
@@ -163,7 +181,6 @@ typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 class LKB_ResidueInfo : public basic::datacache::CacheableData {
 public:
 	virtual ~LKB_ResidueInfo();
-	typedef utility::vector1< Vector > Vectors;
 
 public:
 
@@ -181,39 +198,42 @@ public:
 	clone() const;
 
 	void
-	build_waters( conformation::Residue const & rsd );
+	build_waters( conformation::Residue const & rsd, bool compute_derivs = false );
 
 	// fpd const access to the water builders (to identify stub atoms)
 	WaterBuilders const &
 	get_water_builder( conformation::Residue const & rsd , Size heavyatom ) const;
 
-	utility::vector1< Vectors > const &
+	utility::vector1< Size > const &
+	n_attached_waters() const { return n_attached_waters_; }
+
+	utility::vector1< WaterCoords > const &
 	waters() const { return waters_; }
 
 	//fpd deriv of water position w.r.t. atom 1
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > const &
+	utility::vector1< WaterDerivMatrices > const &
 	atom1_derivs() const { return dwater_datom1_; }
 
 	//fpd deriv of water position w.r.t. atom 2
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > const &
+	utility::vector1< WaterDerivMatrices > const &
 	atom2_derivs() const { return dwater_datom2_; }
 
 	//fpd deriv of water position w.r.t. atom 3
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > const &
+	utility::vector1< WaterDerivMatrices > const &
 	atom3_derivs() const { return dwater_datom3_; }
 
 	bool
 	has_waters() const { return has_waters_; }
 
-	utility::vector1< utility::vector1< Real > > const &
+	utility::vector1< AtomWeights > const &
 	atom_weights() const { return atom_weights_; }
 
-	void
-	remove_irrelevant_waters(
-		Size const atom,
-		chemical::ResidueType const & rsd_type,
-		utility::vector1< Vector > & waters
-	) const;
+	//void
+	//remove_irrelevant_waters(
+	// Size const atom,
+	// chemical::ResidueType const & rsd_type,
+	// utility::vector1< Vector > & waters
+	//) const;
 
 
 	bool
@@ -224,11 +244,13 @@ public:
 
 private:
 	chemical::ResidueTypeCOP rsd_type_;
-	utility::vector1< Vectors > waters_;
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > dwater_datom1_;
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > dwater_datom2_;
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > dwater_datom3_;
-	utility::vector1< utility::vector1< Real > > atom_weights_;
+	WaterBuildersListCOP water_builders_list_; // Pointer to the singleton-managed water builders list
+	utility::vector1< Size > n_attached_waters_;
+	utility::vector1< WaterCoords > waters_;
+	utility::vector1< WaterDerivMatrices > dwater_datom1_;
+	utility::vector1< WaterDerivMatrices > dwater_datom2_;
+	utility::vector1< WaterDerivMatrices > dwater_datom3_;
+	utility::vector1< AtomWeights > atom_weights_;
 	bool has_waters_;
 
 #ifdef    SERIALIZATION

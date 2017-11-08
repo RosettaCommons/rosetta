@@ -15,7 +15,7 @@
 #define INCLUDED_core_scoring_elec_electrie_ElecTrieEvaluator_hh
 
 // Package Headers
-#include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
+#include <core/scoring/elec/FA_ElecEnergy.hh>
 #include <core/scoring/elec/electrie/ElecAtom.hh>
 
 // Project Headers
@@ -43,37 +43,70 @@ public:
 
 	~ElecTrieEvaluator();
 
+	inline
 	Real
-	elec_weight( bool at1isbb, bool at2isbb ) const;
+	elec_weight( bool at1isbb, bool at2isbb ) const
+	{
+		return ( at1isbb ? ( at2isbb ? wbb_bb_ : wbb_sc_ ) : ( at2isbb ? wsc_bb_ : wsc_sc_ ) ); // fpd add asymmetry
+	}
 
+	inline
 	Energy
 	heavyatom_heavyatom_energy(
 		ElecAtom const & at1,
 		ElecAtom const & at2,
 		DistanceSquared & d2,
 		Size & /*path_dist*/
-	) const;
+	) const
+	{
+		Real bbscwt = elec_weight(at1.isbb(),at2.isbb());
+		Real score = bbscwt * elec_.coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
+		return score;
+	}
 
+	inline
 	Energy
 	heavyatom_hydrogenatom_energy(
 		ElecAtom const & at1,
 		ElecAtom const & at2,
 		Size & /*path_dist*/
-	) const;
+	) const
+	{
+		Real d2;
+		Real bbscwt = elec_weight(at1.isbb(),at2.isbb());
+		Real score = bbscwt * elec_.coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(),  at2.xyz(), at2.charge(), d2  );
+		return score;
+	}
 
+
+	inline
 	Energy
 	hydrogenatom_heavyatom_energy(
 		ElecAtom const & at1,
 		ElecAtom const & at2,
 		Size & /*path_dist*/
-	) const;
+	) const
+	{
+		Real d2;
+		Real bbscwt = elec_weight(at1.isbb(),at2.isbb());
+		Real score = bbscwt * elec_.coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
 
+		return score;
+	}
+
+	inline
 	Energy
 	hydrogenatom_hydrogenatom_energy(
 		ElecAtom const & at1,
 		ElecAtom const & at2,
 		Size & /*path_dist*/
-	) const;
+	) const
+	{
+		Real d2;
+		Real bbscwt = elec_weight(at1.isbb(),at2.isbb());
+		Real score = bbscwt * elec_.coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
+		return score;
+	}
 
 	core::Real
 	hydrogen_interaction_cutoff2() const;
