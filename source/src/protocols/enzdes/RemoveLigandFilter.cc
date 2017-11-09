@@ -30,6 +30,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
+
 //utility headers
 #include <utility/tag/Tag.hh>
 
@@ -114,11 +116,8 @@ RemoveLigandFilter::report_sm( Pose const & pose ) const
 		RmsdFilter* rmsd_filter = dynamic_cast< RmsdFilter* >( filter_.get() );
 		rmsd_filter->reference_pose( init_pose );
 		rmsd_filter->superimpose( true );
-		std::list< core::Size > selection;
-		for ( Size i = 1; i <= init_pose->size(); i++ ) {
-			selection.push_back( i );
-		}
-		rmsd_filter->selection( selection );
+		using namespace core::select::residue_selector;
+		rmsd_filter->set_selection( ResidueSelectorOP( new TrueResidueSelector ) ); // All residues
 
 		mover_->apply( no_lig_pose );
 		return rmsd_filter->report_sm( no_lig_pose );

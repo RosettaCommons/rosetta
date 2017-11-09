@@ -34,7 +34,7 @@ public:
 	HotspotHasherMover( std::vector<std::string> const & resnames,
 		core::scoring::ScoreFunctionCOP scorefxn,
 		core::Size const n_stubs,
-		core::Size const target_resnum,
+		std::string const & target_resnum,
 		protocols::filters::FilterOP hotspot_filter,
 		core::Real const target_distance,
 		std::string const & hashin_fname,
@@ -61,7 +61,8 @@ private:
 	// Residues to use for hashing (defaults to all, sans Gly, Cys, or Pro)
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	std::vector< std::string > resnames_;
-	core::Size n_stubs_, target_resnum_;
+	core::Size n_stubs_;
+	std::string target_resnum_;
 	core::Real target_distance_, score_threshold_;
 	std::string hashin_fname_, hashout_fname_;
 	protocols::filters::FilterOP hotspot_filter_; // a filter for each hotspot. defaults to TrueFilter

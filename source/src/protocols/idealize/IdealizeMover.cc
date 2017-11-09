@@ -29,7 +29,8 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-
+#include <core/select/util.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
@@ -105,13 +106,17 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 	}
 
 	if ( atom_pair_constraint_weight_ != 0.0 || symm_info ) {
+		utility::vector1< core::Size > ignore_residues_in_csts;
+		if ( ignore_residues_in_csts_ != nullptr ) {
+			ignore_residues_in_csts = core::select::get_residues_from_subset( ignore_residues_in_csts_->apply( pose ) );
+		}
 		for ( Size i=1; i<= nres-1; ++i ) {
-			if ( std::find( ignore_residues_in_csts().begin(), ignore_residues_in_csts().end(), i ) != ignore_residues_in_csts().end() ) continue;
+			if ( std::find( ignore_residues_in_csts.begin(), ignore_residues_in_csts.end(), i ) != ignore_residues_in_csts.end() ) continue;
 			Residue const & i_rsd( pose.residue(i) );
 			if ( i_rsd.aa() == core::chemical::aa_vrt ) continue;
 
 			for ( Size j=i+1; j<= nres-1; ++j ) {
-				if ( std::find( ignore_residues_in_csts().begin(), ignore_residues_in_csts().end(), j ) != ignore_residues_in_csts().end() ) continue;
+				if ( std::find( ignore_residues_in_csts.begin(), ignore_residues_in_csts.end(), j ) != ignore_residues_in_csts.end() ) continue;
 				Residue const & j_rsd( pose.residue(j) );
 				if ( j_rsd.aa() == core::chemical::aa_vrt ) continue;
 
@@ -285,14 +290,14 @@ IdealizeMover::apply( pose::Pose & pose ) {
 
 
 void
-IdealizeMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
+IdealizeMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ){
 	atom_pair_constraint_weight( tag->getOption< core::Real >( "atom_pair_constraint_weight", 0.0 ) );
 	coordinate_constraint_weight( tag->getOption< core::Real >( "coordinate_constraint_weight", 0.01 ) );
 	fast( tag->getOption< bool >( "fast", false ) );
 	chainbreaks( tag->getOption< bool >( "chainbreaks", false ) );
 	report_CA_rmsd( tag->getOption< bool >( "report_CA_rmsd", true ) );
 	if ( tag->hasOption( "ignore_residues_in_csts" ) ) {
-		ignore_residues_in_csts( core::pose::get_resnum_list( tag, "ignore_residues_in_csts", pose ) );
+		ignore_residues_in_csts( core::pose::get_resnum_selector( tag, "ignore_residues_in_csts") );
 	}
 	impose_constraints( tag->getOption< bool >( "impose_constraints", 1 ) );
 	constraints_only( tag->getOption< bool >( "constraints_only", 0 ) );
@@ -304,7 +309,7 @@ IdealizeMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 }
 
 void
-IdealizeMover::ignore_residues_in_csts( utility::vector1< core::Size > const & i ) {
+IdealizeMover::ignore_residues_in_csts( core::select::residue_selector::ResidueSelectorCOP const & i ) {
 	ignore_residues_in_csts_ = i;
 }
 
@@ -349,7 +354,7 @@ void IdealizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 }
 
 
-utility::vector1< core::Size >
+core::select::residue_selector::ResidueSelectorCOP
 IdealizeMover::ignore_residues_in_csts() const{
 	return ignore_residues_in_csts_;
 }

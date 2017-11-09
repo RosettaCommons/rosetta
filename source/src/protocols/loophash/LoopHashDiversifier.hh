@@ -44,8 +44,8 @@ public:
 		core::Real max_intra_ss_bbrms,
 		core::Real min_rms,
 		core::Real max_rms,
-		core::Size start_res,
-		core::Size stop_res,
+		std::string const & start_res,
+		std::string const & stop_res,
 		core::Size window_size,
 		core::Size max_radius,
 		core::Size max_struct,
@@ -128,7 +128,7 @@ private:
 	core::Real min_rms_, max_rms_;
 
 	//Residues to loophash over
-	core::Size start_res_, stop_res_;
+	std::string start_res_, stop_res_;
 
 	//loophash window size & loophash fragment size
 	core::Size window_size_;

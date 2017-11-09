@@ -21,6 +21,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/select/util.hh>
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
@@ -94,31 +95,7 @@ BackrubMover::BackrubMover() :
 	init_with_options();
 }
 
-BackrubMover::BackrubMover(
-	BackrubMover const & mover
-) :
-	//utility::pointer::ReferenceCount(),
-	protocols::canonical_sampling::ThermodynamicMover(mover),
-	segments_(mover.segments_),
-	branchopt_(mover.branchopt_),
-	bond_angle_map_(mover.bond_angle_map_),
-	pivot_residues_(mover.pivot_residues_),
-	pivot_atoms_(mover.pivot_atoms_),
-	min_atoms_(mover.min_atoms_),
-	max_atoms_(mover.max_atoms_),
-	max_angle_disp_4_(mover.max_angle_disp_4_),
-	max_angle_disp_7_(mover.max_angle_disp_7_),
-	max_angle_disp_slope_(mover.max_angle_disp_slope_),
-	next_segment_id_(mover.next_segment_id_),
-	last_segment_id_(mover.last_segment_id_),
-	last_start_atom_name_(mover.last_start_atom_name_),
-	last_end_atom_name_(mover.last_end_atom_name_),
-	next_angle_(mover.next_angle_),
-	last_angle_(mover.last_angle_),
-	preserve_detailed_balance_(mover.preserve_detailed_balance_),
-	require_mm_bend_(mover.require_mm_bend_),
-	custom_angle_(mover.custom_angle_)
-{}
+BackrubMover::BackrubMover( BackrubMover const & ) = default;
 
 protocols::moves::MoverOP BackrubMover::clone() const { return protocols::moves::MoverOP( new BackrubMover( *this ) ); }
 protocols::moves::MoverOP BackrubMover::fresh_instance() const { return protocols::moves::MoverOP( new BackrubMover ); }
@@ -158,7 +135,7 @@ BackrubMover::parse_my_tag(
 )
 {
 	if ( tag->hasOption("pivot_residues") ) {
-		pivot_residues_ = core::pose::get_resnum_list(tag, "pivot_residues", pose);
+		pivot_residue_selector_ = core::pose::get_resnum_selector(tag, "pivot_residues");
 	}
 
 	if ( tag->hasOption("pivot_atoms") ) {
@@ -177,7 +154,7 @@ BackrubMover::parse_my_tag(
 	set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) ));
 
 	clear_segments();
-	add_mainchain_segments();
+	// add_mainchain_segments(); // Will be called on apply() call
 
 	if ( ! branchopt_.initialized() ) branchopt_.read_database();
 }
@@ -199,7 +176,7 @@ BackrubMover::initialize_simulation(
 
 		// this code shouldn't get called when the parser is in use
 		clear_segments();
-		add_mainchain_segments();
+		add_mainchain_segments( pose );
 	}
 
 	protocols::moves::MonteCarloCOP monte_carlo(metropolis_hastings_mover.monte_carlo());
@@ -236,7 +213,7 @@ BackrubMover::apply(
 		}
 
 		clear_segments();
-		add_mainchain_segments();
+		add_mainchain_segments( pose );
 	}
 
 	runtime_assert(segments_.size());
@@ -639,9 +616,9 @@ BackrubMover::add_mainchain_segments(
 }
 
 core::Size
-BackrubMover::add_mainchain_segments()
+BackrubMover::add_mainchain_segments( core::pose::Pose const & pose )
 {
-	utility::vector1<core::Size> resnums(pivot_residues_);
+	utility::vector1<core::Size> resnums(pivot_residues(pose));
 	if ( resnums.size() == 0 ) {
 		// use all residues if none defined
 		for ( core::Size i = 1; i <= get_input_pose()->size(); ++i ) resnums.push_back(i);
@@ -652,11 +629,11 @@ BackrubMover::add_mainchain_segments()
 }
 
 core::Size
-BackrubMover::add_mainchain_segments_from_options()
+BackrubMover::add_mainchain_segments_from_options( core::pose::Pose const & pose )
 {
 	init_with_options();
 
-	return add_mainchain_segments();
+	return add_mainchain_segments( pose );
 }
 
 void
@@ -675,10 +652,14 @@ BackrubMover::optimize_branch_angles(
 	}
 }
 
-utility::vector1<core::Size> const &
-BackrubMover::pivot_residues() const
+utility::vector1<core::Size>
+BackrubMover::pivot_residues( core::pose::Pose const & pose ) const
 {
-	return pivot_residues_;
+	utility::vector1<core::Size> pivot_residues( pivot_residues_ );
+	if ( pivot_residue_selector_ ) {
+		pivot_residues.append( core::select::get_residues_from_subset( pivot_residue_selector_->apply( pose ) ) );
+	}
+	return pivot_residues;
 }
 
 void
@@ -687,6 +668,13 @@ BackrubMover::set_pivot_residues(
 )
 {
 	pivot_residues_ = pivot_residues;
+}
+
+void
+BackrubMover::set_pivot_residue_selector(
+	core::select::residue_selector::ResidueSelectorCOP pivot_residues
+) {
+	pivot_residue_selector_ = pivot_residues;
 }
 
 void

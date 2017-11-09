@@ -43,6 +43,11 @@
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/ResidueSpanSelector.hh>
+#include <core/select/residue_selector/util.hh>
+#include <core/select/util.hh>
 
 #include <protocols/scoring/Interface.hh>
 #include <core/kinematics/Edge.hh>
@@ -122,7 +127,6 @@ BackrubDDMover::BackrubDDMover() :
 	small_move_prob_( 0.0 ),
 	bbg_move_prob_( 0.25 )
 {
-	residues_.clear();
 }
 
 using namespace protocols::protein_interface_design;
@@ -141,7 +145,7 @@ BackrubDDMover::BackrubDDMover
 	core::Size const backrub_moves,
 	core::Real const mc_kt,
 	core::Real const sidechain_move_prob,
-	std::vector<core::Size> const & residues
+	utility::vector1<core::Size> const & residues
 )
 : simple_moves::DesignRepackMover( "Backrub" )
 {
@@ -166,7 +170,8 @@ BackrubDDMover::BackrubDDMover
 	emo.bond_angle_central_atoms_to_score( option[ OptionKeys::backrub::pivot_atoms ] );
 	scorefxn_repack_->set_energy_method_options( emo );
 
-	residues_ = residues;
+	using namespace core::select::residue_selector;
+	residues_ = ResidueSelectorOP( new ResidueIndexSelector( residues ) );
 }
 
 BackrubDDMover::~BackrubDDMover() {}
@@ -259,6 +264,10 @@ BackrubDDMover::apply( Pose & pose )
 
 	using ObjexxFCL::FArray1D_bool;
 	utility::vector1< core::Size > resnums;
+	if ( residues_ ) {
+		resnums = core::select::get_residues_from_subset( residues_->apply( pose ) );
+	}
+
 	if ( pose.conformation().num_chains() == 2 ) {
 		Size const rb_jump( 1 );
 
@@ -270,7 +279,7 @@ BackrubDDMover::apply( Pose & pose )
 		interface.distance( interface_distance_cutoff_ );
 		interface.calculate( pose );
 		// list of residues to backrub
-		if ( !residues_.size() ) {
+		if ( resnums.empty() ) {
 			bool first( true ); bool last( false ); // mark all interface residues + 1 spanning residue on each side for backrub
 			for ( Size i = 1; i <= pose.size(); i++ ) {
 				if ( !pose.residue( i ).is_protein() ) continue;
@@ -286,18 +295,12 @@ BackrubDDMover::apply( Pose & pose )
 					last = false; first = true;
 				}
 			}
-		} else resnums = residues_;
-	} else if ( !residues_.size() ) { // pose does not have 2 chains, backrub all (protein)
+		}
+	} else if ( resnums.empty() ) { // pose does not have 2 chains, backrub all (protein)
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( !pose.residue( i ).is_protein() ) continue;
 			resnums.push_back( i );
 		}
-	}
-	if ( residues_.size() ) { // add user-defined residues to the list of backrubbable residues
-		resnums.insert( resnums.begin(), residues_.begin(), residues_.end() );
-		std::sort( resnums.begin(), resnums.end() );
-		utility::vector1<Size>::iterator last = std::unique( resnums.begin(), resnums.end() );
-		resnums.erase( last, resnums.end() );
 	}
 
 	/// movemap is used by smallmoves
@@ -398,17 +401,17 @@ BackrubDDMover::apply( Pose & pose )
 	pose.fold_tree( saved_ft );
 }
 
-// XRW TEMP std::string
-// XRW TEMP BackrubDDMover::get_name() const {
-// XRW TEMP  return BackrubDDMover::mover_name();
-// XRW TEMP }
+void
+BackrubDDMover::add_selector( core::select::residue_selector::ResidueSelectorOP const & sele  ) {
+	residues_ = core::select::residue_selector::OR_combine( residues_, sele );
+}
 
 void BackrubDDMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose)
+	core::pose::Pose const & )
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ));
 	backrub_partner1_ = tag->getOption<bool>( "partner1", 0 );
@@ -429,27 +432,20 @@ void BackrubDDMover::parse_my_tag(
 
 	utility::vector0< TagCOP > const & backrub_tags( tag->getTags() );
 	for ( utility::vector0< TagCOP >::const_iterator br_it=backrub_tags.begin(); br_it!=backrub_tags.end(); ++br_it ) {
+		using namespace core::select::residue_selector;
 		TagCOP const br_tag_ptr = *br_it;
 		if ( br_tag_ptr->getName() == "residue" ) {
-			core::Size const resnum( core::pose::get_resnum( br_tag_ptr, pose ) );
-			residues_.push_back( resnum );
+			ResidueSelectorOP res_select( new ResidueIndexSelector( core::pose::get_resnum_string( br_tag_ptr ) ) );
+			add_selector( res_select );
 		}
 		if ( br_tag_ptr->getName() == "span" ) {
 			string const begin_str( br_tag_ptr->getOption<string>( "begin" ) );
 			string const end_str( br_tag_ptr->getOption<string>( "end" ) );
-			core::Size const begin( core::pose::parse_resnum( begin_str, pose ) );
-			core::Size const end( core::pose::parse_resnum( end_str, pose ) );
-			runtime_assert( end > begin );
-			runtime_assert( begin>=1);
-			runtime_assert( end<=pose.size() );
-			for ( core::Size i=begin; i<=end; ++i ) residues_.push_back( i );
+			ResidueSelectorOP span_select( new ResidueSpanSelector( begin_str, end_str ) );
+			add_selector( span_select );
 		}
 	}
-	TR<<"backrub mover over residues: ";
-	for ( std::vector< core::Size >::const_iterator it=residues_.begin() ; it!=residues_.end(); ++it ) {
-		TR<<*it<<" ";
-	}
-	TR<<std::endl;
+	TR<<"backrub mover" << std::endl;
 }
 
 std::string BackrubDDMover::get_name() const {

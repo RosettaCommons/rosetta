@@ -22,6 +22,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
@@ -134,7 +135,7 @@ protected:
 
 private:
 	core::Size mode_;
-	std::list<Size> residues_;
+	core::select::residue_selector::ResidueSelectorCOP residues_;
 
 };
 

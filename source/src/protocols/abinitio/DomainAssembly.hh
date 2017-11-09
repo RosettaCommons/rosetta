@@ -35,8 +35,8 @@ class DomainAssembly : public protocols::moves::Mover
 public:
 	DomainAssembly();
 	DomainAssembly(
-		core::Size const linker_start,
-		core::Size const linker_end,
+		std::string const & linker_start,
+		std::string const & linker_end,
 		FragSetOP fragset_large,
 		FragSetOP fragset_small
 	);
@@ -64,7 +64,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	core::Size linker_start_, linker_end_;
+	std::string linker_start_, linker_end_;
 	core::fragment::FragSetOP fragset_large_, fragset_small_;
 	bool fragments_set_;
 };

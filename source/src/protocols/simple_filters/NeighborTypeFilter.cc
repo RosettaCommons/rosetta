@@ -40,7 +40,7 @@ static THREAD_LOCAL basic::Tracer neighbor_type_filter_tracer( "protocols.simple
 NeighborTypeFilter::~NeighborTypeFilter() = default;
 
 void
-NeighborTypeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+NeighborTypeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	residue_types_.assign( core::chemical::num_canonical_aas, false );
 	utility::vector0< utility::tag::TagCOP > const neighbor_type_tags( tag->getTags() );
@@ -50,7 +50,7 @@ NeighborTypeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Da
 			residue_types_[ core::chemical::aa_from_name( type ) ] = true;
 		}
 	}
-	target_residue_ = core::pose::get_resnum( tag, pose );
+	target_residue_ = core::pose::get_resnum_string( tag );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 
 	neighbor_type_filter_tracer<<"NeighborTypeFilter with distance threshold of "<<distance_threshold_<<" around residue "<<target_residue_<<std::endl;
@@ -61,7 +61,7 @@ NeighborTypeFilter::apply( core::pose::Pose const & pose ) const
 {
 	std::vector< core::Size > neighbors = compute( pose );
 	if ( neighbors.size() == 0 ) return false;
-	neighbor_type_filter_tracer<<"neighbours of residue "<<pose.residue( target_residue_ ).name3()<<target_residue_<<": ";
+	neighbor_type_filter_tracer<<"neighbours of residue "<<target_residue_<<": ";
 	for ( std::vector< core::Size >::const_iterator n_it=neighbors.begin(); n_it!=neighbors.end(); ++n_it ) {
 		neighbor_type_filter_tracer<<pose.residue( *n_it ).name3()<<*n_it<<" ";
 	}
@@ -73,7 +73,7 @@ void
 NeighborTypeFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
 	std::vector< core::Size > neighbors = compute( pose );
-	out<<"neighbours of residue "<<pose.residue( target_residue_ ).name3()<<target_residue_<<": ";
+	out<<"neighbours of residue "<<target_residue_<<": ";
 	for ( std::vector< core::Size >::const_iterator n_it=neighbors.begin(); n_it!=neighbors.end(); ++n_it ) {
 		out<<pose.residue( *n_it ).name3()<<*n_it<<" ";
 	}
@@ -112,7 +112,7 @@ void NeighborTypeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	subelements.complex_type_naming_func( & NeighborType_subelement_ct_name );
 	subelements.add_simple_subelement( "Neighbors", NeighborType_subtag_attributes, "XRW TO DO");
 
-	core::pose::attributes_for_get_resnum( attlist, "" );
+	core::pose::attributes_for_get_resnum_string( attlist, "" );
 
 	attlist + XMLSchemaAttribute::attribute_w_default( "distance", xsct_real, "XRW TO DO", "8.0");
 	attlist + XMLSchemaAttribute::attribute_w_default( "confidence", xsct_real, "Probability that this pose will be filtered out if the filter fails", "1.0");
@@ -150,11 +150,12 @@ NeighborTypeFilter::compute( core::pose::Pose const & pose ) const
 	core::Size const chain2begin( pose.conformation().chain_begin( 2 ) );
 	core::Size const residue_num( pose.size() );
 
-	core::Size const start( target_residue_ < chain2begin ? chain2begin : 1 );
-	core::Size const end( target_residue_ < chain2begin ? residue_num : chain2begin-1 );
-	core::conformation::Residue const res_target( pose.residue( target_residue_ ) );
+	core::Size const target_residue( core::pose::parse_resnum( target_residue_, pose ) );
+	core::Size const start( target_residue < chain2begin ? chain2begin : 1 );
+	core::Size const end( target_residue < chain2begin ? residue_num : chain2begin-1 );
+	core::conformation::Residue const res_target( pose.residue( target_residue ) );
 
-	runtime_assert( target_residue_ <= residue_num );
+	runtime_assert( target_residue <= residue_num );
 	for ( core::Size res=start; res<=end; ++res ) {
 		core::conformation::Residue const resi( pose.residue( res ) );
 		if ( !residue_types_[ resi.aa() ] ) continue;

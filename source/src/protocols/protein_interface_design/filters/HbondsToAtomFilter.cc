@@ -106,14 +106,14 @@ HbondsToAtomFilter::apply( Pose const & pose ) const {
 }
 
 void
-HbondsToAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+HbondsToAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	partners_ = tag->getOption<core::Size>( "partners" );
 	energy_cutoff_ = tag->getOption<core::Real>( "energy_cutoff", -0.5 );
 	bb_bb_ = tag->getOption<bool>( "bb_bb", 0 );
 	backbone_ = tag->getOption<bool>( "backbone", 0 );
 	sidechain_ = tag->getOption<bool>( "sidechain", 1 );
-	resnum_ = core::pose::get_resnum( tag, pose );
+	resnum_ = core::pose::get_resnum_string( tag );
 
 	if ( tag->hasOption( "atomname" ) ) {
 		atomdesg_ = tag->getOption< std::string >( "atomname" );
@@ -148,7 +148,8 @@ HbondsToAtomFilter::compute( Pose const & pose ) const {
 
 	Size const chain2begin( temp_pose.conformation().chain_begin( 2 ) );
 	Size partner_begin, partner_end;
-	if ( resnum_ >= chain2begin ) {
+	Size resnum( core::pose::parse_resnum( resnum_, pose ) );
+	if ( resnum >= chain2begin ) {
 		partner_begin = 1; partner_end = chain2begin-1;
 	} else {
 		partner_begin = chain2begin; partner_end = temp_pose.size();
@@ -156,7 +157,7 @@ HbondsToAtomFilter::compute( Pose const & pose ) const {
 	std::set<Size> binders;
 	for ( Size i=partner_begin; i<=partner_end; ++i ) binders.insert( i );
 
-	std::list< Size> hbonded_res( hbonded_atom ( temp_pose, resnum_, atomdesg_,  binders, backbone_, sidechain_, energy_cutoff_, bb_bb_) );
+	std::list< Size> hbonded_res( hbonded_atom ( temp_pose, resnum, atomdesg_,  binders, backbone_, sidechain_, energy_cutoff_, bb_bb_) );
 
 	return( hbonded_res.size() );
 }
@@ -183,7 +184,7 @@ void HbondsToAtomFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute( "pdb_num", xsct_refpose_enabled_residue_number, "Particular residue of interest" )
 		+ XMLSchemaAttribute::required_attribute( "atomname", xs_string, "Atom name to which to examine H-bonds" );
 
-	core::pose::attributes_for_get_resnum( attlist ) ;
+	core::pose::attributes_for_get_resnum_string( attlist ) ;
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "This filter counts the number of residues that form sufficiently energetically favorable H-bonds to a selected atom", attlist );
 }
 

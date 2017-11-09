@@ -44,7 +44,6 @@ namespace simple_filters {
 SimpleHbondsToAtomFilter::SimpleHbondsToAtomFilter():
 	protocols::filters::Filter( "SimpleHbondsToAtomFilter" ),
 	target_atom_name_( /* NULL */ ),
-	target_residue_( /* NULL */ ),
 	n_partners_( 1 ),
 	scorefxn_( /* NULL */ ),
 	hb_e_cutoff_( -0.5 )
@@ -65,13 +64,13 @@ SimpleHbondsToAtomFilter::set_n_partners( core::Size n_partners ){
 	n_partners_ = n_partners;
 }
 
-core::Size
+std::string const &
 SimpleHbondsToAtomFilter::get_target_residue() const{
 	return target_residue_;
 }
 
 void
-SimpleHbondsToAtomFilter::set_target_residue( core::Size target_residue ){
+SimpleHbondsToAtomFilter::set_target_residue( std::string const & target_residue ){
 	target_residue_ = target_residue;
 }
 
@@ -113,10 +112,10 @@ SimpleHbondsToAtomFilter::parse_my_tag(
 	basic::datacache::DataMap & data ,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	TR << "SimpleHbondsToAtomFilter"<<std::endl;
-	set_target_residue(core::pose::get_resnum( tag, pose ));
+	set_target_residue(core::pose::get_resnum_string( tag ));
 	set_n_partners( tag->getOption< core::Size >( "n_partners", 1 ) );
 	set_target_atom_name( tag->getOption< std::string >( "target_atom_name", "" ) );
 	set_hb_e_cutoff(tag->getOption< core::Real >( "hb_e_cutoff", -0.5) );
@@ -173,12 +172,13 @@ SimpleHbondsToAtomFilter::compute( core::pose::Pose const & pose) const
 	core::scoring::hbonds::fill_hbond_set( p, false /* calculate_derivatives */, hb_container );
 	TR << "Done populating HBondSet, "<<hb_container.nhbonds()<<" Hbonds found."<<std::endl;
 
+	core::Size target_residue( core::pose::parse_resnum( get_target_residue(), p ) );
 	// Get the residue index from the pose so you can look for it in the HB container:
-	core::conformation::Residue const res = p.residue( get_target_residue() );
+	core::conformation::Residue const res = p.residue( target_residue );
 
 	// Get the atom index from the pose so you can look for it in the HB container:
 	core::Size const atm_index = res.atom_index( get_target_atom_name() );
-	core::id::AtomID atom_id( atm_index, get_target_residue() );
+	core::id::AtomID atom_id( atm_index, target_residue );
 
 	// Get vector of HBonds involving atom atom_id:
 	utility::vector1< core::scoring::hbonds::HBondCOP > Hbond_list( hb_container.atom_hbonds( atom_id ) );
@@ -256,7 +256,7 @@ void SimpleHbondsToAtomFilter::provide_xml_schema( utility::tag::XMLSchemaDefini
 	attlist + XMLSchemaAttribute::attribute_w_default( "n_partners"  , xsct_positive_integer , "Number of partners expected to be Hbonding to tatget atom." , "1" ) + XMLSchemaAttribute::attribute_w_default( "target_atom_name" , xs_string , "Atom of interest involved in Hbonding." , "" ) + XMLSchemaAttribute::attribute_w_default( "hb_e_cutoff" , xsct_real , "Energy of Hbond cutoff." , "-0.5" );
 
 	// Residue number where the atom of interest is. This adds res_num and pbd_num to the attribute list.
-	core::pose::attributes_for_get_resnum( attlist ) ;
+	core::pose::attributes_for_get_resnum_string( attlist ) ;
 	// Score function used to fill in the interaction graph.
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist ) ;
 

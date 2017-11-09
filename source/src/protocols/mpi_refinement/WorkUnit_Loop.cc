@@ -30,6 +30,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSpanSelector.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -279,14 +281,14 @@ WorkUnit_FragInsert::run()
 	core::scoring::ScoreFunctionOP sfxn_obj      = get_energy( obj_name );
 
 	// 2. Loop region
-	std::set<core::Size> user_pos;
+	core::select::residue_selector::ResidueSelectorOP user_pos( new core::select::residue_selector::ResidueSpanSelector(get_res1(),get_res2()) );
+
 	utility::vector1< core::Size > loopres;
 	for ( core::Size i = get_res1(); i <= get_res2(); ++i ) {
-		user_pos.insert( i );
 		loopres.push_back( i );
 	}
 
-	if ( user_pos.empty() ) { //size() == 0 ){
+	if ( loopres.empty() ) { //size() == 0 ){
 		TR << "Empty loop region! nothing to execute." << std::endl;
 		return;
 	}

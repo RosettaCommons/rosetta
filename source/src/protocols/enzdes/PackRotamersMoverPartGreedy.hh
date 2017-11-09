@@ -24,6 +24,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -46,7 +47,7 @@ public:
 	PackRotamersMoverPartGreedy(
 		ScoreFunctionOP scorefxn,
 		PackerTaskOP task,
-		utility::vector1 <core::Size> target_residues
+		core::select::residue_selector::ResidueSelectorCOP target_residues
 	);
 
 	PackRotamersMoverPartGreedy();
@@ -86,7 +87,7 @@ public:
 
 	void task_factory( core::pack::task::TaskFactoryOP p );
 	void task( core::pack::task::PackerTaskOP task );
-	void target_residues (utility::vector1< core::Size > & trg_res);
+	void target_residues (core::select::residue_selector::ResidueSelectorCOP trg_res);
 
 	//choose n best residues interacting with ligand
 	utility::vector1<core::Size> choose_n_best(
@@ -112,7 +113,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_minimize_;
 	core::pack::task::PackerTaskOP task_;
 	core::pack::task::TaskFactoryOP task_factory_;
-	utility::vector1< core::Size > target_residues_;
+	core::select::residue_selector::ResidueSelectorCOP target_residues_;
 	utility::vector1< core::Size > restrict_to_repacking_;
 	bool use_cstids_;
 	core::Real threshold_;

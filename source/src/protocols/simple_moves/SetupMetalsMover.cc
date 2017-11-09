@@ -199,8 +199,8 @@ SetupMetalsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 		+ utility::tag::optional_name_attribute();
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "metal_residue_selector", "Selector used to indicate which metal residues should be set up. If no selector or resnum string is provided, all metals will be set up." );
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "contact_residue_selector", "Selector used to indicate which metal contacts should be set up. If no selector or resnum string is provided, all contacts for the specified metals will be set up." );
-	core::pose::attributes_for_get_resnum_list( attlist, xsd, "metal_resnums" );
-	core::pose::attributes_for_get_resnum_list( attlist, xsd, "contact_resnums" );
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "metal_resnums" );
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "contact_resnums" );
 	//We can provide 0 or 1 subselector
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )

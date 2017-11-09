@@ -30,7 +30,7 @@ class ResidueDistanceFilter : public filters::Filter
 {
 public:
 	ResidueDistanceFilter() : filters::Filter( "ResidueDistance"  ) {}
-	ResidueDistanceFilter( core::Size const res1, core::Size const res2, core::Real const distance_threshold ) :
+	ResidueDistanceFilter( std::string const & res1, std::string const & res2, core::Real const distance_threshold ) :
 		Filter( "ResidueDistance" ), res1_( res1 ), res2_( res2 ), distance_threshold_( distance_threshold ) {}
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
@@ -58,7 +58,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	core::Size res1_, res2_;
+	std::string res1_, res2_;
 	core::Real distance_threshold_;
 };
 

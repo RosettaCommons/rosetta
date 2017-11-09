@@ -25,6 +25,7 @@
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -47,52 +48,6 @@ using namespace std;
 using utility::vector1;
 
 
-
-/// @brief a convenience function to test whether the user has specified pdb numbering rather than rosetta numbering.
-core::Size
-get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::string const & prefix/*=""*/ ) {
-	core::Size resnum( 0 );
-	bool const pdb_num_used( tag_ptr->hasOption( prefix + "pdb_num" ) );
-	if ( pose.pdb_info().get() == nullptr ) { //no pdbinfo for this pose (e.g., silent file), resort to using just the residue number
-		if ( pdb_num_used ) {
-			TR<<"Bad tag: "<< *tag_ptr<<std::endl;
-			utility_exit_with_message( "pdb_num used but no pdb_info found. Use res_num instead" );
-			return( 0 );
-		}
-	} else {
-		core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
-		if ( pdb_num_used ) {
-			std::string pdbnum( tag_ptr->getOption<std::string>( prefix + "pdb_num" ) );
-			char const chain( pdbnum[ pdbnum.length() - 1 ] );
-			std::stringstream ss( pdbnum.substr( 0, pdbnum.length() - 1 ) );
-			core::Size number(0);
-			ss >> number;
-			resnum = pose_map.find( chain, number );
-		}
-	}
-	if ( !pdb_num_used ) {
-		resnum = tag_ptr->getOption<core::Size>( prefix + "res_num" );
-	}
-
-	runtime_assert( resnum );
-	return( resnum );
-}
-
-///@brief Companion function for get_resnum
-///@brief Appends relevant XMLSchemaAttributes to the AttributeList
-void
-attributes_for_get_resnum( utility::tag::AttributeList & attlist, std::string const & prefix ){
-	using namespace utility::tag;
-
-	if ( ! utility::tag::attribute_w_name_in_attribute_list( prefix + "pdb_num", attlist ) ) {
-		attlist
-			+ XMLSchemaAttribute( prefix + "pdb_num", xsct_residue_number, "Residue number in PDB numbering (residue number + chain ID)" );
-	}
-	if ( ! utility::tag::attribute_w_name_in_attribute_list( prefix + "res_num", attlist ) ) {
-		attlist
-			+ XMLSchemaAttribute( prefix + "res_num", xsct_non_negative_integer, "Residue number in Rosetta numbering (sequentially with the first residue in the pose being 1" );
-	}
-}
 
 /// @brief Extracts a residue number from a string.
 /// @detail Recognizes three forms of numbering:
@@ -166,14 +121,6 @@ parse_resnum(
 	}
 }
 
-void
-attributes_for_parse_resnum( utility::tag::AttributeList & attlist, std::string const & att_name, std::string const & description ) {
-	using namespace utility::tag;
-	attlist
-		+ XMLSchemaAttribute( att_name, xsct_refpose_enabled_residue_number,
-		( description.empty() ? "Residue number in PDB numbering (residue number + chain ID)" : description ) );
-}
-
 /// @brief Extracts residue numbers from a 'selection'.
 /// @detail Recognizes two forms of numbering:
 ///   - Rosetta residue numbers (numbered sequentially from 1 to the last residue
@@ -199,51 +146,6 @@ parse_selection_block(
 		res.push_back(parse_resnum(sele,pose));
 	}
 	return res;
-}
-
-
-/// @brief Extracts a list of residue numbers from a tag.
-/// @details The tag should contain a comma-separated list of numbers, in either
-///   pdb or rosetta format (@see parse_resnum for details)
-vector1<Size>
-get_resnum_list(
-	utility::tag::TagCOP tag_ptr,
-	string const& tag,
-	pose::Pose const& pose
-){
-	vector1< Size > resnums;
-	if ( ! tag_ptr->hasOption( tag ) ) {
-		TR.Fatal <<"No "<<tag<<" option was found in tag "<<tag_ptr<<std::endl;
-		utility_exit_with_message("Error when parsing a residue number list.");
-		return resnums;
-	}
-	set<Size> const resnums_set( get_resnum_list( tag_ptr->getOption< std::string >( tag ), pose ) );
-	resnums.clear();
-	resnums.insert( resnums.begin(), resnums_set.begin(), resnums_set.end() );
-	sort( resnums.begin(), resnums.end() );
-	auto last = unique( resnums.begin(), resnums.end() );
-	resnums.erase(last, resnums.end() );
-
-	return resnums;
-}
-
-///@brief Companion function for get_resnum_list
-///@brief Appends relevant XMLSchemaAttributes to the AttributeList
-void
-attributes_for_get_resnum_list( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, string const& tag ){
-	using namespace utility::tag;
-	std::string resnum_list_regex = "(" + refpose_enabled_residue_number_string() + ")([,\\-](" + refpose_enabled_residue_number_string() + "))*";
-	XMLSchemaRestriction restriction;
-	restriction.name( "resnum_list_with_ranges" );
-	restriction.base_type( xs_string );
-	restriction.add_restriction( xsr_pattern, resnum_list_regex );
-	xsd.add_top_level_element( restriction );
-
-
-	if ( ! utility::tag::attribute_w_name_in_attribute_list( tag, attlist ) ) {
-
-		attlist + XMLSchemaAttribute( tag, "resnum_list_with_ranges", "List of residue numbers to use" );
-	}
 }
 
 set<Size>
@@ -426,6 +328,85 @@ core::Size get_resnumber_from_reference_pose(
 	signed long returnval( static_cast< signed long >( pose.corresponding_residue_in_current(refpose_number, refpose_name) ) + refpose_offset );
 	if ( returnval <= 0 || returnval > static_cast< signed long >( pose.size() ) ) return 0;
 	return static_cast< core::Size >( returnval );
+}
+
+/////////////////////////////////////////////////////////
+//////////////////// XML PARSING ////////////////////////
+
+std::string
+get_resnum_string( utility::tag::TagCOP tag_ptr, std::string const & prefix/*=""*/ ) {
+	if ( tag_ptr->hasOption( prefix + "pdb_num" ) ) {
+		return tag_ptr->getOption<std::string>( prefix + "pdb_num" );
+	} else if ( tag_ptr->hasOption( prefix + "res_num" ) ) {
+		return tag_ptr->getOption<std::string>( prefix + "res_num" );
+	}
+	throw utility::excn::EXCN_RosettaScriptsOption("Either " + prefix + "pdb_num or " + prefix + "res_num must be specified.");
+}
+
+std::string
+get_resnum_string( utility::tag::TagCOP tag_ptr, std::string const & prefix, std::string const & default_value ) {
+	if ( tag_ptr->hasOption( prefix + "pdb_num" ) ) {
+		return tag_ptr->getOption<std::string>( prefix + "pdb_num" );
+	} else if ( tag_ptr->hasOption( prefix + "res_num" ) ) {
+		return tag_ptr->getOption<std::string>( prefix + "res_num" );
+	}
+	return default_value;
+}
+
+///// @brief Extracts a list of residue numbers from a tag
+///// @details The tag should contain a comma-separated list of numbers, in either
+/////   pdb or rosetta format (@see parse_resnum for details)
+core::select::residue_selector::ResidueSelectorOP
+get_resnum_selector(utility::tag::TagCOP tag_ptr, std::string const& tag) {
+	if ( tag_ptr->hasOption( tag ) ) {
+		return core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( tag_ptr->getOption< std::string >( tag ) ) );
+	} else {
+		TR.Fatal <<"No "<<tag<<" option was found in tag "<<tag_ptr<<std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption("Error when parsing a residue number list from "+tag+" attribute.");
+	}
+}
+
+///@brief Companion function for get_resnum
+///@brief Appends relevant XMLSchemaAttributes to the AttributeList
+void
+attributes_for_get_resnum_string( utility::tag::AttributeList & attlist, std::string const & prefix ){
+	using namespace utility::tag;
+
+	if ( ! utility::tag::attribute_w_name_in_attribute_list( prefix + "pdb_num", attlist ) ) {
+		attlist
+			+ XMLSchemaAttribute( prefix + "pdb_num", xsct_residue_number, "Residue number in PDB numbering (residue number + chain ID)" );
+	}
+	if ( ! utility::tag::attribute_w_name_in_attribute_list( prefix + "res_num", attlist ) ) {
+		attlist
+			+ XMLSchemaAttribute( prefix + "res_num", xsct_non_negative_integer, "Residue number in Rosetta numbering (sequentially with the first residue in the pose being 1" );
+	}
+}
+
+///@brief Companion function for get_resnum_list
+///@brief Appends relevant XMLSchemaAttributes to the AttributeList
+void
+attributes_for_get_resnum_selector( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, string const& tag ){
+	using namespace utility::tag;
+	std::string resnum_list_regex = "(" + refpose_enabled_residue_number_string() + ")([,\\-](" + refpose_enabled_residue_number_string() + "))*";
+	XMLSchemaRestriction restriction;
+	restriction.name( "resnum_list_with_ranges" );
+	restriction.base_type( xs_string );
+	restriction.add_restriction( xsr_pattern, resnum_list_regex );
+	xsd.add_top_level_element( restriction );
+
+
+	if ( ! utility::tag::attribute_w_name_in_attribute_list( tag, attlist ) ) {
+
+		attlist + XMLSchemaAttribute( tag, "resnum_list_with_ranges", "List of residue numbers to use" );
+	}
+}
+
+void
+attributes_for_parse_resnum( utility::tag::AttributeList & attlist, std::string const & att_name, std::string const & description ) {
+	using namespace utility::tag;
+	attlist
+		+ XMLSchemaAttribute( att_name, xsct_refpose_enabled_residue_number,
+		( description.empty() ? "Residue number in PDB numbering (residue number + chain ID)" : description ) );
 }
 
 } //pose

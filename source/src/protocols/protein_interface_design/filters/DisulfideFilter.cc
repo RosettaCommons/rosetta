@@ -26,6 +26,9 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/util.hh>
 #include <protocols/protein_interface_design/movers/DisulfideMover.hh>
 
 // Utility Headers
@@ -37,6 +40,7 @@
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -67,24 +71,17 @@ DisulfideFilter::DisulfideFilter() :
 {}
 
 /// @brief copy ctor
-DisulfideFilter::DisulfideFilter(DisulfideFilter const& df) :
-	//utility::pointer::ReferenceCount(),
-	parent( "DisulfideFilter" ),
-	targets_(df.targets_),
-	rb_jump_(df.rb_jump_)
-{}
+DisulfideFilter::DisulfideFilter(DisulfideFilter const& ) = default;
 
 /// @brief Constructor with a single target residue
 DisulfideFilter::DisulfideFilter( core::Size targetResidue ) :
 	parent( "DisulfideFilter" ),
-	targets_(),
+	targets_( new core::select::residue_selector::ResidueIndexSelector( utility::to_string(targetResidue) ) ),
 	rb_jump_(1)
-{
-	targets_.push_back(targetResidue);
-}
+{}
 
 /// @brief Constructor with multiple target residues
-DisulfideFilter::DisulfideFilter( utility::vector1<core::Size> const& targetResidues ) :
+DisulfideFilter::DisulfideFilter( core::select::residue_selector::ResidueSelectorCOP targetResidues ) :
 	parent( "DisulfideFilter" ),
 	targets_(targetResidues),
 	rb_jump_(1)
@@ -96,7 +93,9 @@ DisulfideFilter::~DisulfideFilter() {}
 bool DisulfideFilter::apply(Pose const & pose ) const
 {
 	vector1< pair<Size,Size> > disulfides;
-	DisulfideMover::disulfide_list(pose, targets_, rb_jump_, disulfides);
+	runtime_assert( targets_ );
+	vector1< core::Size > targets = core::select::get_residues_from_subset( targets_->apply( pose ) );
+	DisulfideMover::disulfide_list(pose, targets, rb_jump_, disulfides);
 	if ( disulfides.empty() ) {
 		TR << "Failing."<<std::endl;
 		return false;
@@ -109,7 +108,9 @@ bool DisulfideFilter::apply(Pose const & pose ) const
 void DisulfideFilter::report( ostream & out, Pose const & pose ) const
 {
 	vector1< pair<Size,Size> > disulfides;
-	DisulfideMover::disulfide_list(pose, targets_, rb_jump_, disulfides);
+	runtime_assert( targets_ );
+	vector1< core::Size > targets = core::select::get_residues_from_subset( targets_->apply( pose ) );
+	DisulfideMover::disulfide_list(pose, targets, rb_jump_, disulfides);
 
 	out << disulfides.size() << " disulfides possible: ";
 	for ( auto const & disulf : disulfides ) {
@@ -121,7 +122,9 @@ void DisulfideFilter::report( ostream & out, Pose const & pose ) const
 Real DisulfideFilter::report_sm( Pose const & pose ) const
 {
 	vector1< pair<Size,Size> > disulfides;
-	DisulfideMover::disulfide_list(pose, targets_, rb_jump_, disulfides);
+	runtime_assert( targets_ );
+	vector1< core::Size > targets = core::select::get_residues_from_subset( targets_->apply( pose ) );
+	DisulfideMover::disulfide_list(pose, targets, rb_jump_, disulfides);
 
 	return disulfides.size();
 }
@@ -134,20 +137,13 @@ void DisulfideFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose)
+	core::pose::Pose const & )
 {
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
 	if ( tag->hasOption("targets") ) {
-		targets_ = core::pose::get_resnum_list(tag, "targets",pose);
+		targets_ = core::pose::get_resnum_selector(tag, "targets");
 	}
-
-	TR.Info << "DisulfideFilter targeting residues ";
-	for ( vector1<Size>::const_iterator target = targets_.begin();
-			target != targets_.end(); ++target ) {
-		TR.Info<<*target<<", ";
-	}
-	TR.Info<<std::endl;
 }
 
 // XRW TEMP protocols::filters::FilterOP

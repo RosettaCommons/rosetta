@@ -26,6 +26,7 @@
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -78,7 +79,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds() :
 
 DesignMinimizeHbonds::DesignMinimizeHbonds(
 	ScoreFunctionCOP scorefxn_repack, ScoreFunctionCOP scorefxn_minimize,
-	utility::vector1< core::Size > const & target_residues,
+	utility::vector1< core::Size > const & target_res,
 	bool const donors,
 	bool const acceptors,
 	bool const bb_hbond,
@@ -93,7 +94,8 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 {
 	scorefxn_repack_ = scorefxn_repack->clone();
 	scorefxn_minimize_ = scorefxn_minimize->clone();
-	target_residues_ = target_residues;
+	using namespace core::select::residue_selector;
+	target_residues( ResidueSelectorOP( new ResidueIndexSelector( target_res ) ) );
 	repack_partner1_ = repack_partner1;
 	repack_partner2_ = repack_partner2;
 	donors_ = donors; acceptors_ = acceptors;
@@ -112,7 +114,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 DesignMinimizeHbonds::DesignMinimizeHbonds(
 	ScoreFunctionOP scorefxn_repack,
 	ScoreFunctionOP scorefxn_minimize,
-	core::Size const target_residue,
+	core::Size const target_res,
 	bool const donors,
 	bool const acceptors,
 	bool const bb_hbond,
@@ -127,7 +129,8 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 {
 	scorefxn_repack_ = scorefxn_repack;
 	scorefxn_minimize_ = scorefxn_minimize;
-	target_residues_.push_back( target_residue );
+	using namespace core::select::residue_selector;
+	target_residues( ResidueSelectorOP( new ResidueIndexSelector( target_res ) ) );
 	bb_hbond_ = bb_hbond;
 	sc_hbond_ = sc_hbond;
 	hbond_energy_threshold_ = hbond_energy_threshold;
@@ -208,6 +211,7 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 	interface_obj.calculate( pose );
 
 	setup_packer_and_movemap( pose );
+	utility::vector1< core::Size > const & target_res( target_residues(pose) );
 	// potential hbond partners will later on be reverted if they do not form hbonds
 	std::set< core::Size > potential_hbond_partners;
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
@@ -217,8 +221,8 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 				(partner1( i ) && repack_partner1_ )) || ((!partner1(i) && repack_partner2_) && //designable
 				( !( !repack_non_ala_ && (restype != chemical::aa_ala) ) || (restype == chemical::aa_pro) || (restype == chemical::aa_gly) || pose.residue(i).has_variant_type( chemical::DISULFIDE ) )) ) { // design-allowed residues
 			core::conformation::Residue const resi( pose.residue( i ) );
-			for ( utility::vector1< Size >::const_iterator target_it = target_residues_.begin();
-					target_it!=target_residues_.end(); ++target_it ) {
+			for ( utility::vector1< Size >::const_iterator target_it = target_res.begin();
+					target_it!=target_res.end(); ++target_it ) {
 				core::conformation::Residue const res_target( pose.residue( *target_it ) );
 
 				Real const distance( resi.xyz( resi.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
@@ -231,13 +235,13 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 	}
 
 	pack::pack_rotamers( pose, *scorefxn_repack_, task_ );
-	MinimizeInterface( pose, scorefxn_minimize_, curr_min_bb_, curr_min_sc_, curr_min_rb_, optimize_foldtree_, target_residues_ );
+	MinimizeInterface( pose, scorefxn_minimize_, curr_min_bb_, curr_min_sc_, curr_min_rb_, optimize_foldtree_, target_res );
 	pose.update_residue_neighbors();
 
 	{ // replace any positions that were mutated but did not hbond with their previous identities
 		std::set< core::Size > hbonded_residues;
-		for ( utility::vector1< core::Size >::const_iterator target_it = target_residues_.begin();
-				target_it!=target_residues_.end(); ++target_it ) {
+		for ( utility::vector1< core::Size >::const_iterator target_it = target_res.begin();
+				target_it!=target_res.end(); ++target_it ) {
 			std::list< core::Size > new_list( hbonded( pose, *target_it, potential_hbond_partners, bb_hbond_, sc_hbond_,
 				hbond_energy_threshold_ ));
 			hbonded_residues.insert( new_list.begin(), new_list.end() );
@@ -301,11 +305,6 @@ DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 	runtime_assert( bb_hbond_ || sc_hbond_ );
 	runtime_assert( hbond_energy_threshold_ <= 0 );
 	runtime_assert(interface_distance_cutoff_ >= 0 );
-	runtime_assert( target_residues_.size() );
-
-	if ( target_residues_.size() == 0 ) {
-		TR.Warning << "no target residue defined for hbond design minimize"<<std::endl;
-	}
 }
 
 std::string DesignMinimizeHbonds::get_name() const {

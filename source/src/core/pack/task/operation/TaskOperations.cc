@@ -1668,7 +1668,7 @@ std::string PreventRepacking::keyname() { return "PreventRepacking"; }
 
 void PreventRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	core::pose::attributes_for_get_resnum_list( attributes, xsd, "resnum" );
+	core::pose::attributes_for_get_resnum_selector( attributes, xsd, "resnum" );
 	task_op_schema_w_attributes( xsd, keyname(), attributes , "Do not allow repacking at all for the specified residues. Freezes residues." );
 }
 

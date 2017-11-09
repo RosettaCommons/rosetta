@@ -18,6 +18,9 @@
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 
+#include <core/select/residue_selector/OrResidueSelector.hh>
+#include <core/select/residue_selector/AndResidueSelector.hh>
+
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
@@ -272,6 +275,40 @@ utility::vector1< core::Size > selection_positions( ResidueSubset const & select
 		it = std::find_if( std::next( it ), std::end( selection ), []( bool i ) { return i; } );
 	}
 	return results;
+}
+
+ResidueSelectorOP
+OR_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {
+	using namespace core::select::residue_selector;
+	if ( sele1 == nullptr ) { return sele2; }
+	if ( sele2 == nullptr ) { return sele1; }
+
+	OrResidueSelectorOP or_select( utility::pointer::dynamic_pointer_cast< OrResidueSelector >( sele1 ) );
+	if ( or_select ) {
+		// If we already have an Or selector, just add to it.
+		or_select->add_residue_selector( sele2 );
+		return or_select;
+	} else {
+		// If not, just combine with the Or selector
+		return ResidueSelectorOP( new OrResidueSelector( sele1, sele2 ) );
+	}
+}
+
+ResidueSelectorOP
+AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {
+	using namespace core::select::residue_selector;
+	if ( sele1 == nullptr ) { return sele2; }
+	if ( sele2 == nullptr ) { return sele1; }
+
+	AndResidueSelectorOP and_select( utility::pointer::dynamic_pointer_cast< AndResidueSelector >( sele1 ) );
+	if ( and_select ) {
+		// If we already have an and selector, just add to it.
+		and_select->add_residue_selector( sele2 );
+		return and_select;
+	} else {
+		// If not, just combine with the Or selector
+		return ResidueSelectorOP( new AndResidueSelector( sele1, sele2 ) );
+	}
 }
 
 }

@@ -161,7 +161,6 @@ PlaceStubMover::PlaceStubMover() :
 	residue_numbers_( /* NULL */ )
 {
 	coord_cst_std_.clear();
-	disallowed_host_pos_.clear();
 	stub_minimize_movers_.clear();
 	design_movers_.clear();
 	placed_stubs_.clear();
@@ -691,6 +690,8 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 		}
 	}
 
+	utility::vector1< core::Size > const & disallowed_pos( disallowed_host_pos( pose ) );
+
 	do { // for each two sided trial
 		//select a stub
 		if ( !SelectStubIteratively( stub_it ) ) {
@@ -722,8 +723,8 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 					&& std::find( prevent_repacking().begin(), prevent_repacking().end(), res ) != prevent_repacking().end() ) {
 				continue; //not allowed to repack
 			}
-			if ( !disallowed_host_pos_.empty()
-					&& std::find( disallowed_host_pos_.begin(), disallowed_host_pos_.end(), res ) != disallowed_host_pos_.end() ) {
+			if ( !disallowed_pos.empty()
+					&& std::find( disallowed_pos.begin(), disallowed_pos.end(), res ) != disallowed_pos.end() ) {
 				continue; //not allowed to be a stub
 			}
 
@@ -1162,26 +1163,8 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 	}
 
 	//parse allowed residues
-	disallowed_host_pos_.clear();
 	if ( tag->hasOption("allowed_host_res") ) {
-		utility::vector1<Size> allowed_host_pos(
-			core::pose::get_resnum_list(
-			tag, "allowed_host_res", pose ));
-		//disallowed is the set complement of allowed
-
-		core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ));
-		core::Size const host_chain_end( pose.conformation().chain_end( host_chain_ ));
-
-		for ( Size host_pos( host_chain_begin); host_pos <= host_chain_end; ++host_pos ) {
-			if ( std::find( allowed_host_pos.begin(), allowed_host_pos.end(), host_pos)
-					== allowed_host_pos.end() ) {
-				// not allowed
-				disallowed_host_pos_.push_back(host_pos);
-			}
-		}
-		TR.Debug<<"Disallowing "<<disallowed_host_pos_.size()
-			<<" of "<<host_chain_end - host_chain_begin + 1
-			<<" host positions."<<std::endl;
+		allowed_host_pos_ = core::pose::get_resnum_selector( tag, "allowed_host_res" );
 	}
 
 	//parsing stub minimize movers and design movers for place stub
@@ -1301,6 +1284,31 @@ std::string PlaceStubMover::mover_name() {
 	return "PlaceStub";
 }
 
+utility::vector1< core::Size >
+PlaceStubMover::disallowed_host_pos( core::pose::Pose const & pose ) const {
+	utility::vector1< core::Size > disallowed_host_pos;
+	if ( allowed_host_pos_ == nullptr ) {
+		return disallowed_host_pos;
+	}
+
+	//disallowed is the set complement of allowed
+	core::select::residue_selector::ResidueSubset const & allowed_host_pos( allowed_host_pos_->apply( pose ) );
+
+	core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ));
+	core::Size const host_chain_end( pose.conformation().chain_end( host_chain_ ));
+
+	for ( Size host_pos( host_chain_begin); host_pos <= host_chain_end; ++host_pos ) {
+		if ( ! allowed_host_pos[ host_pos ] ) {
+			// not allowed
+			disallowed_host_pos.push_back(host_pos);
+		}
+	}
+	TR.Debug<<"Disallowing "<<disallowed_host_pos.size()
+		<<" of "<<host_chain_end - host_chain_begin + 1
+		<<" host positions."<<std::endl;
+	return disallowed_host_pos;
+}
+
 //name mangling XML schema extravaganza
 std::string PlaceStub_subelement_mangler( std::string const & element ) { return "PlaceStub_subelement" + element + "_type"; }
 std::string PlaceStub_StubMinimize_subelement_mangler( std::string const & element ) { return "PlaceStub_StubMinimize_subelement" + element + "_type"; }
@@ -1334,7 +1342,7 @@ void PlaceStubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute::attribute_w_default( "post_placement_sdev", xsct_real, "related to and requires leave_coord_csts. The lower the sdev (towards 0) the more stringent the constraint.", "1.0") //XRW TODO should be nonnegative Real
 		+ XMLSchemaAttribute::attribute_w_default( "place_scaffold", xsct_rosetta_bool, "use PlaceScaffold instead of PlaceStub. this will place the scaffold on the stub's position by using an inverse rotamer approach.", "false");
 	rosetta_scripts::attributes_for_parse_task_operations( direct_attlist );
-	core::pose::attributes_for_get_resnum_list( direct_attlist, xsd, "allowed_host_res");
+	core::pose::attributes_for_get_resnum_selector( direct_attlist, xsd, "allowed_host_res");
 
 	//see main/source/test/utility/tag/XMLSchemaGeneration.cxxtest.hh for example that clarifies
 	//This is the ROOT NODE

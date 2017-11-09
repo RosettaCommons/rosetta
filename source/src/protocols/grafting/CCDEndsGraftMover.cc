@@ -167,11 +167,10 @@ CCDEndsGraftMover::apply(Pose & pose){
 	//TR <<"Beginning of anchored graft mover" <<std::endl;
 	//pose.constraint_set()->show(TR);
 
-	if ( tag() ) {
-		core::Size scaffold_start = core::pose::get_resnum(tag(), pose, "start_");
-		core::Size scaffold_end = core::pose::get_resnum(tag(), pose, "end_");
-
-		set_insert_region(scaffold_start, scaffold_end);
+	if ( !scaffold_start().empty() && ! scaffold_end().empty() ) {
+		core::Size scaff_start = core::pose::parse_resnum(scaffold_start(), pose);
+		core::Size scaff_end = core::pose::parse_resnum(scaffold_end(), pose);
+		set_insert_region(scaff_start, scaff_end);
 	}
 
 	TR << "Start: " << start() << " End: " << end() << " NterO: "<<Nter_overhang_length() <<" CterO: " << Cter_overhang_length()<<std::endl;

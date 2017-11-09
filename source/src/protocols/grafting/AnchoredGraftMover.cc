@@ -151,8 +151,7 @@ AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
 	insert_movemap_factory_ = src.insert_movemap_factory_; //COP, so won't alter
 	if ( src.cen_scorefxn_ ) cen_scorefxn_ = src.cen_scorefxn_->clone();
 	if ( src.fa_scorefxn_ ) fa_scorefxn_ = src.fa_scorefxn_->clone();
-	if ( src.tag_ ) tag_ = src.tag_->clone();
-	if ( src.tag_ ) loops_ = src.loops_->clone();
+	if ( src.loops_ ) loops_ = src.loops_->clone();
 
 }
 
@@ -165,7 +164,6 @@ AnchoredGraftMover::set_defaults(){
 	insert_movemap_ = nullptr;
 	scaffold_movemap_factory_ = nullptr;
 	insert_movemap_factory_ = nullptr;
-	tag_ = nullptr;
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
 
 	idealize_insert(false);
@@ -221,11 +219,8 @@ AnchoredGraftMover::parse_my_tag(
 	Nter_overhang_length(tag->getOption<core::Size>("Nter_overhang", Nter_overhang_length()));
 	Cter_overhang_length(tag->getOption<core::Size>("Cter_overhang", Cter_overhang_length()));
 
-	tag_ = tag->clone();
-
-	//Protect from unused option crash.
-	tag->getOption<std::string>( "start_" );
-	tag->getOption<std::string>( "end_" );
+	scaffold_start_ = core::pose::get_resnum_string(tag, "start_");
+	scaffold_end_ = core::pose::get_resnum_string(tag, "end_");
 
 	piece(protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name"));
 
@@ -567,10 +562,9 @@ AnchoredGraftMover::apply(Pose & pose){
 	//TR <<"Beginning of anchored graft mover" <<std::endl;
 	//pose.constraint_set()->show(TR);
 
-	if ( tag_ ) {
-		core::Size scaffold_start = core::pose::get_resnum(tag_, pose, "start_");
-		core::Size scaffold_end = core::pose::get_resnum(tag_, pose, "end_");
-
+	if ( !scaffold_start_.empty() && ! scaffold_end_.empty() ) {
+		core::Size scaffold_start = core::pose::parse_resnum(scaffold_start_, pose);
+		core::Size scaffold_end = core::pose::parse_resnum(scaffold_end_, pose);
 		set_insert_region(scaffold_start, scaffold_end);
 	}
 
@@ -729,8 +723,11 @@ core::Real AnchoredGraftMover::neighbor_dis() const {
 	return neighbor_dis_;
 }
 
-utility::tag::TagCOP AnchoredGraftMover::tag() const {
-	return tag_;
+std::string const & AnchoredGraftMover::scaffold_start() const {
+	return scaffold_start_;
+}
+std::string const & AnchoredGraftMover::scaffold_end() const {
+	return scaffold_end_;
 }
 
 std::string AnchoredGraftMover::get_name() const {

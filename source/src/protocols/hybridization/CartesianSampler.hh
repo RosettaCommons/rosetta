@@ -26,6 +26,7 @@
 #include <core/fragment/FragSet.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -82,7 +83,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	// accessors
-	void set_userpos(std::set<core::Size> const &user_pos_in) { user_pos_ = user_pos_in; }
+	void set_userpos(core::select::residue_selector::ResidueSelectorCOP const &user_pos_in) { user_pos_ = user_pos_in; }
 	void set_strategy( std::string strategy_in ) { fragment_bias_strategies_.push_back( strategy_in ); }
 	void set_rms_cutoff(core::Real rms_cutoff_in) { rms_cutoff_ = rms_cutoff_in; }
 	void set_fullatom(bool fullatom_in) {fullatom_ = fullatom_in; }
@@ -152,9 +153,9 @@ private:
 
 	// FragmentBiasAssigner
 	bool cumulate_prob_, exclude_residues_, include_residues_;
-	std::set<core::Size> user_pos_;
-	std::set<core::Size> residues_to_exclude_;
-	std::set<core::Size> residues_to_include_;
+	core::select::residue_selector::ResidueSelectorCOP user_pos_;
+	core::select::residue_selector::ResidueSelectorCOP residues_to_exclude_;
+	core::select::residue_selector::ResidueSelectorCOP residues_to_include_;
 
 	// dump pdb right before changing anything
 	bool dump_pdb_;

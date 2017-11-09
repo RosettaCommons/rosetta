@@ -41,11 +41,9 @@ public:
 	LoopRemodel();
 	LoopRemodel(
 		std::string const & protocol,
-		core::Size const loop_start,
-		core::Size const loop_end,
+		std::string const & loop_start,
+		std::string const & loop_end,
 		core::Size const cycles,
-		bool const auto_loops,
-		//bool const design,
 		bool const perturb,
 		bool const refine,
 		bool const hurry,
@@ -85,8 +83,9 @@ public:
 private:
 	std::string protocol_;
 	core::scoring::ScoreFunctionOP hires_score_, lores_score_;
-	core::Size loop_start_, loop_end_, cycles_;
-	bool auto_loops_, perturb_, refine_, hurry_; // design_,
+	std::string loop_start_, loop_end_;
+	core::Size cycles_;
+	bool perturb_, refine_, hurry_;
 	protocols::loops::LoopsOP loops_;
 	core::fragment::FragSetOP frag1_;
 	core::fragment::FragSetOP frag3_;

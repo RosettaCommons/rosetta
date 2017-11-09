@@ -30,7 +30,7 @@ class InsertPoseIntoPoseMover : public  protocols::moves::Mover {
 public:
 
 	InsertPoseIntoPoseMover(bool copy_pdbinfo = false);
-	InsertPoseIntoPoseMover(core::pose::Pose const & src_pose, core::Size res_start, core::Size res_end, bool copy_pdbinfo = false);
+	InsertPoseIntoPoseMover(core::pose::Pose const & src_pose, std::string const & res_start, std::string const & res_end, bool copy_pdbinfo = false);
 
 	InsertPoseIntoPoseMover( InsertPoseIntoPoseMover const & src);
 
@@ -45,15 +45,15 @@ public:
 	src_pose(core::pose::Pose const & src_pose);
 
 	void
-	start(core::Size res_start);
+	start(std::string const & res_start);
 
-	core::Size
+	std::string const &
 	start() const;
 
 	void
-	end(core::Size res_end);
+	end(std::string const & res_end);
 
-	core::Size
+	std::string const &
 	end() const;
 
 public:
@@ -83,11 +83,10 @@ public:
 
 
 private:
-	core::Size start_;
-	core::Size end_;
+	std::string start_;
+	std::string end_;
 	bool copy_pdbinfo_;
 	core::pose::PoseOP src_pose_;
-	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
 };
 
 

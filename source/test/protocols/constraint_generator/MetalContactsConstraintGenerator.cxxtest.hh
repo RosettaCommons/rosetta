@@ -124,21 +124,25 @@ public:
 		TS_TRACE( "Invalid both ligand" );
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_invalid_both_ligand );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 
 		TS_TRACE( "Invalid both contact" );
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_invalid_both_contact );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 
 		TS_TRACE( "Invalid neither ligand" );
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_invalid_neither_ligand );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 
 		TS_TRACE( "Invalid no atom" );
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_invalid_no_atom );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 	}
 

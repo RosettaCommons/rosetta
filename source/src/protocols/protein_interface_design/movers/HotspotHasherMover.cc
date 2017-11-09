@@ -73,7 +73,7 @@ HotspotHasherMover::HotspotHasherMover(
 	std::vector<std::string> const & resnames,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::Size const n_stubs,
-	core::Size const target_resnum,
+	std::string const & target_resnum,
 	protocols::filters::FilterOP hotspot_filter,
 	core::Real const target_distance,
 	std::string const & hashin_fname,
@@ -134,6 +134,10 @@ void HotspotHasherMover::apply( core::pose::Pose & pose ) {
 		TR << "Found hash file " << hashout_fname_ << std::endl;
 	}
 
+	core::Size target_resnum( 0 );
+	if ( ! target_resnum_.empty() ) {
+		target_resnum = core::pose::parse_resnum( target_resnum_, pose );
+	}
 
 	// for each residue requested
 	for ( std::vector< std::string >::const_iterator it=resnames_.begin() ; it!=resnames_.end(); ++it ) {
@@ -171,9 +175,9 @@ void HotspotHasherMover::apply( core::pose::Pose & pose ) {
 			stubset.clear();
 			stubset.score_threshold( score_threshold_ );
 			TR << "Finding " << n_per*i << "/" << n_stubs_ << " " << resname << " stubs" ;
-			if ( target_resnum_ ) {
+			if ( ! target_resnum_.empty() ) {
 				TR << " " << target_distance_ << "A from " << target_resnum_ << std::endl;
-				stubset.fill( pose, scorefxn_, target_resnum_, target_distance_, resname, n_per );
+				stubset.fill( pose, scorefxn_, target_resnum, target_distance_, resname, n_per );
 			} else {
 				TR << "." << std::endl;
 				stubset.fill( pose, scorefxn_, resname, n_per );
@@ -203,7 +207,7 @@ void HotspotHasherMover::apply( core::pose::Pose & pose ) {
 
 
 void
-HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const &, core::pose::Pose const & pose )
+HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const &, core::pose::Pose const & )
 {
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
@@ -211,11 +215,7 @@ HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & 
 	n_stubs_ = tag->getOption<core::Size>( "nstubs", 1000 );
 
 	// target residue
-	// target_resnum gets set below with residues
-	target_resnum_ = 0;
-	if ( tag->hasOption( "target_residue_pdb_num" ) || tag->hasOption( "target_residue_res_num" ) ) {
-		target_resnum_ = core::pose::get_resnum( tag, pose, "target_residue_" );
-	}
+	target_resnum_ = core::pose::get_resnum_string( tag, "target_residue_", "" );
 
 	target_distance_ = tag->getOption<core::Real>( "target_distance", 15.0 );
 
@@ -254,7 +254,7 @@ HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & 
 
 	TR<<"hashing mover finding residues: ";
 	for ( std::vector< std::string >::const_iterator it=resnames_.begin() ; it!=resnames_.end(); ++it ) TR<<*it<<" ";
-	if ( target_resnum_ ) TR << target_distance_ << "A away from residue " << target_resnum_ << std::endl;
+	if ( ! target_resnum_.empty() ) TR << target_distance_ << "A away from residue " << target_resnum_ << std::endl;
 	TR<<std::endl;
 } // HotspotHasherMover::parse_my_tag
 

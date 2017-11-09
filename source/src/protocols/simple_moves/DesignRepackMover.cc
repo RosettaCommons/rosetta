@@ -29,6 +29,9 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <basic/datacache/DataMap.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/util.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <core/chemical/ResidueType.hh>
@@ -167,6 +170,8 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 		racaas.apply( pose, *task_ );
 	}
 
+	utility::vector1< core::Size > target_res = target_residues( pose );
+
 	// Packertask defaults to designing all residues, so this paragraph only has to restrict
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
@@ -181,7 +186,7 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 					}
 					if ( !min_bb_set() ) curr_min_bb_[ i ] = true;
 				} else { // non-PRO/GLY/CYD
-					if ( target_residues_.size() == 0 ) { // target residues undefined => repack the entire interface
+					if ( target_res.size() == 0 ) { // target residues undefined => repack the entire interface
 						//      if( design_ && automatic_repacking_definition_ )
 						//       task_->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas_ );
 						//      else if( !design_ && automatic_repacking_definition_ )
@@ -191,8 +196,8 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 					} else { //target residues defined
 						core::conformation::Residue const resi( pose.residue( i ) );
 
-						for ( utility::vector1< Size >::const_iterator target_it = target_residues_.begin();
-								target_it!=target_residues_.end(); ++target_it ) {
+						for ( utility::vector1< Size >::const_iterator target_it = target_res.begin();
+								target_it!=target_res.end(); ++target_it ) {
 							core::conformation::Residue const res_target( pose.residue( *target_it ) );
 
 							Real const distance( resi.xyz( resi.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
@@ -239,8 +244,8 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 			if ( !min_bb_set() ) curr_min_bb_[ i ] = true;
 		}
 	}
-	for ( utility::vector1< Size >::const_iterator target_it = target_residues_.begin();
-			target_it!=target_residues_.end(); ++target_it ) {
+	for ( utility::vector1< Size >::const_iterator target_it = target_res.begin();
+			target_it!=target_res.end(); ++target_it ) {
 		// minimize also +-1 amino-acid residues around target residues, unless they are CYD
 		if ( !min_sc_set() ) {
 			curr_min_sc_[ *target_it ] = true;
@@ -379,12 +384,17 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 	}
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
 	utility::vector0< TagCOP > const & repack_tags( tag->getTags() );
+
+	utility::vector1< std::string > target_res_vec;
 	for ( auto repack_ptr : repack_tags ) {
 		if ( repack_ptr->getName() == "residue" ) {
-			core::Size const resnum( core::pose::get_resnum( repack_ptr, pose ) );
-			target_residues_.push_back( resnum );
+			target_res_vec.push_back( core::pose::get_resnum_string( repack_ptr ) );
 		}
 	}
+	if ( target_res_vec.size() ) {
+		target_residues( core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( utility::join(target_res_vec,",") ) ) );
+	}
+
 	repack_non_ala_ = tag->getOption<bool>( "repack_non_ala", 1 );
 
 	symmetry_ = tag->getOption< bool >( "symmetry", 0 );
@@ -399,12 +409,7 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 		scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
 	}
 	automatic_repacking_definition_ = tag->getOption<bool>( "automatic_repacking_definition", 1 );
-	TR<<"repack scorefxn "<<scorefxn_repack<<" and minimize scorefxn "<<scorefxn_minimize<<" automatic_repacking_definition set to "<<automatic_repacking_definition_<<" optimize fold tree="<<optimize_foldtree_<<" targeting residues ";
-
-	for ( utility::vector1< core::Size >::const_iterator target_res_it=target_residues_.begin(); target_res_it!=target_residues_.end(); ++target_res_it ) {
-		TR<<*target_res_it<<" ";
-	}
-	TR<<std::endl;
+	TR<<"repack scorefxn "<<scorefxn_repack<<" and minimize scorefxn "<<scorefxn_minimize<<" automatic_repacking_definition set to "<<automatic_repacking_definition_<<" optimize fold tree="<<optimize_foldtree_<< std::endl;
 }
 
 void
@@ -454,6 +459,28 @@ DesignRepackMover::scorefxn_repack() const {
 core::scoring::ScoreFunctionOP
 DesignRepackMover::scorefxn_minimize() const {
 	return scorefxn_minimize_;
+}
+
+void
+DesignRepackMover::target_residues( core::select::residue_selector::ResidueSelectorCOP setting ) {
+	target_residues_ = setting;
+}
+
+core::select::residue_selector::ResidueSelectorCOP
+DesignRepackMover::target_residues() const {
+	return target_residues_;
+}
+
+utility::vector1< core::Size >
+DesignRepackMover::target_residues( core::pose::Pose const & pose ) const {
+	utility::vector1< core::Size > target_res;
+	if ( target_residues_ ) {
+		target_res = core::select::get_residues_from_subset( target_residues_->apply( pose ) );
+		if ( target_res.empty() ) {
+			TR.Warning << "A residue selection was given, but it's empty!" << std::endl;
+		}
+	}
+	return target_res;
 }
 
 } //simple_moves

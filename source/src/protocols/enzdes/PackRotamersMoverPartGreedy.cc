@@ -29,6 +29,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/util.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -69,7 +71,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.PackRotamersMoverPartGre
 PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy(
 	ScoreFunctionOP scorefxn,
 	PackerTaskOP task,
-	utility::vector1 <core::Size> target_residues
+	core::select::residue_selector::ResidueSelectorCOP target_residues
 ) :
 
 	protocols::moves::Mover("PackRotamersMoverPartGreedy"),
@@ -97,7 +99,7 @@ PackRotamersMoverPartGreedy::parse_my_tag(
 	basic::datacache::DataMap & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
-	Pose const & pose
+	Pose const &
 )
 {
 	//task operations
@@ -109,7 +111,7 @@ PackRotamersMoverPartGreedy::parse_my_tag(
 	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", datamap )->clone();
 	//target residues for greedy opt around
 	if ( tag->hasOption("target_residues") ) {
-		target_residues_ = core::pose::get_resnum_list(tag, "target_residues",pose);
+		target_residues_ = core::pose::get_resnum_selector(tag, "target_residues");
 	}
 	use_cstids_ = false;
 	if ( tag->hasOption("target_cstids") ) {
@@ -153,25 +155,29 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
 	}
 	(*scorefxn_repack_)(greedy_pose);
 	// make sure we have some target residues
+	utility::vector1< core::Size > target_residues;
+	if ( target_residues_ ) {
+		target_residues = core::select::get_residues_from_subset( target_residues_->apply( pose ) );
+	}
 	if ( use_cstids_ ) { // enzdes csts if specified
 		utility::vector1< core::Size > trg_res;
 		protocols::enzdes::enzutil::get_resnum_from_cstid_list( cstid_list_, greedy_pose, trg_res );
-		target_residues_.insert( target_residues_.begin(), trg_res.begin(), trg_res.end() );
-		auto last = std::unique( target_residues_.begin(), target_residues_.end() );
-		target_residues_.erase( last, target_residues_.end() );
+		target_residues.insert( target_residues.begin(), trg_res.begin(), trg_res.end() );
+		auto last = std::unique( target_residues.begin(), target_residues.end() );
+		target_residues.erase( last, target_residues.end() );
 
 	}
 	if ( n_best_>0 ) {
 		utility::vector1< core::Size > n_best_res = choose_n_best( greedy_pose, n_best_ );
-		target_residues_.insert( target_residues_.begin(), n_best_res.begin(), n_best_res.end() );
-		auto last = std::unique( target_residues_.begin(), target_residues_.end() );
-		target_residues_.erase( last, target_residues_.end() );
+		target_residues.insert( target_residues.begin(), n_best_res.begin(), n_best_res.end() );
+		auto last = std::unique( target_residues.begin(), target_residues.end() );
+		target_residues.erase( last, target_residues.end() );
 	}
-	runtime_assert(target_residues_.size()>0);
+	runtime_assert(target_residues.size()>0);
 	//randomly shuffle targets
-	random_permutation( target_residues_ , numeric::random::rg() );
+	random_permutation( target_residues, numeric::random::rg() );
 	//Make sure target residues are held fixed
-	for ( utility::vector1< core::Size >::const_iterator pos_it = target_residues_.begin(); pos_it != target_residues_.end(); ++pos_it ) {
+	for ( utility::vector1< core::Size >::const_iterator pos_it = target_residues.begin(); pos_it != target_residues.end(); ++pos_it ) {
 		task_->nonconst_residue_task( *pos_it ).prevent_repacking();
 	}
 	//Convert to Ala
@@ -181,10 +187,10 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
 	}
 	protocols::toolbox::pose_manipulation::construct_poly_ala_pose( greedy_pose, toAla, true, true, true );
 	//Then, greedy opt around user specified target residues, this will modify the task and pose
-	greedy_around( greedy_pose, target_residues_, task_, scorefxn_repack_greedy_);
+	greedy_around( greedy_pose, target_residues, task_, scorefxn_repack_greedy_);
 	//greedy_pose.dump_pdb("after_greedy.pdb");
 	//Now just replace the target_residues and the greedily optimized positions in original pose with greedy pose, set task to reflect these
-	for ( utility::vector1< core::Size >::const_iterator pos_it = target_residues_.begin(); pos_it != target_residues_.end(); ++pos_it ) {
+	for ( utility::vector1< core::Size >::const_iterator pos_it = target_residues.begin(); pos_it != target_residues.end(); ++pos_it ) {
 		pose.replace_residue( *pos_it, greedy_pose.residue(*pos_it), true);
 	}
 	for ( utility::vector1< core::Size >::const_iterator res=restrict_to_repacking_.begin(); res!=restrict_to_repacking_.end(); ++res ) {
@@ -345,7 +351,7 @@ PackRotamersMoverPartGreedy::task( core::pack::task::PackerTaskOP task ){
 }
 
 void
-PackRotamersMoverPartGreedy::target_residues( utility::vector1< core::Size > & trg_res ){
+PackRotamersMoverPartGreedy::target_residues( core::select::residue_selector::ResidueSelectorCOP trg_res ){
 	target_residues_ = trg_res;
 }
 

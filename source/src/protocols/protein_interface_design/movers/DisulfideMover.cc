@@ -32,6 +32,9 @@
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/util.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -115,7 +118,8 @@ DisulfideMover::DisulfideMover( core::Size targetResidue ) :
 	parent(),
 	rb_jump_(1)
 {
-	target_residues_.push_back(targetResidue);
+	using namespace core::select::residue_selector;
+	target_residues( ResidueSelectorOP( new ResidueIndexSelector(targetResidue) ) );
 }
 
 /// @brief Constructor with multiple target residues
@@ -123,7 +127,8 @@ DisulfideMover::DisulfideMover( utility::vector1<core::Size> const& targetResidu
 	parent(),
 	rb_jump_(1)
 {
-	target_residues_ = targetResidues;
+	using namespace core::select::residue_selector;
+	target_residues( ResidueSelectorOP( new ResidueIndexSelector(targetResidues) ) );
 }
 
 DisulfideMover::~DisulfideMover() {}
@@ -147,7 +152,7 @@ void DisulfideMover::form_disulfide(Pose & pose, Size lower_res, Size upper_res)
 
 void DisulfideMover::apply( Pose & pose ) {
 	vector1< pair<Size,Size> > potential_disulfides;
-	disulfide_list(pose, target_residues_, rb_jump_, potential_disulfides);
+	disulfide_list(pose, target_residues(pose), rb_jump_, potential_disulfides);
 	TR.Info << "Found " << potential_disulfides.size()
 		<< " potential disulfide bonds." << endl;
 
@@ -313,24 +318,17 @@ void DisulfideMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	Movers_map const &,
-	Pose const & pose)
+	Pose const & )
 {
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
 	if ( tag->hasOption("targets") ) {
-		target_residues_ = core::pose::get_resnum_list(tag, "targets",pose);
+		target_residues( core::pose::get_resnum_selector(tag, "targets") );
 	}
 
 	using namespace core::scoring;
 	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
 	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
-
-	TR<<"DisulfideMover targeting residues ";
-	for ( vector1<Size>::const_iterator target = target_residues_.begin();
-			target != target_residues_.end(); ++target ) {
-		TR<<*target<<", ";
-	}
-	TR<<std::endl;
 }
 
 std::string DisulfideMover::get_name() const {

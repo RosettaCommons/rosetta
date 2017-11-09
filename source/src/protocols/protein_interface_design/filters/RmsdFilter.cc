@@ -33,6 +33,12 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/ResidueSpanSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/NamedAtomID.hh>
@@ -75,19 +81,18 @@ RmsdFilter::RmsdFilter() :
 	end_pose_ ( 0 ),
 	by_aln_ ( false )
 {
-	selection_.clear();
 	aln_files_.clear();
 	template_names_.clear();
 	query_names_.clear();
 }
 
 RmsdFilter::RmsdFilter(
-	std::list<core::Size> const selection,
+	utility::vector1<core::Size> const selection,
 	bool const superimpose,
 	core::Real const threshold,
 	core::pose::PoseOP reference_pose
 ) : protocols::filters::Filter( "Rmsd" ),
-	selection_(selection),
+	selection_( core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector(selection) ) ),
 	superimpose_(superimpose),
 	threshold_(threshold),
 	reference_pose_(reference_pose),
@@ -324,12 +329,18 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	if ( selection_from_segment_cache_ ) {
 		core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( superimpose_array, pose, true );
 	} else {
-		if ( selection_.size() && superimpose_on_all() ) {
+		core::select::residue_selector::ResidueSubset selection(pose.size(), false);
+		if ( selection_ ) {
+			selection = selection_->apply( *reference_pose_ ); // In parse_my_tag this was the pose reference -- Is there a way to apply the selection independently to each pose?
+		}
+		if ( selection_ && superimpose_on_all() ) {
 			core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( superimpose_array, pose, true );
 		}
-		for ( std::list<core::Size>::const_iterator it = selection_.begin(); it!=selection_.end(); ++it ) {
-			selection_array[*it-1] = true; // FArray1D is 0 indexed
-			superimpose_array[*it-1] = true;
+		for ( core::Size ii(1); ii <= selection.size(); ++ii ) {
+			if ( selection[ ii ] ) {
+				selection_array[ii-1] = true; // FArray1D is 0 indexed
+				superimpose_array[ii-1] = true;
+			}
 		}
 	}
 
@@ -375,8 +386,20 @@ RmsdFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
+RmsdFilter::set_selection( core::select::residue_selector::ResidueSelectorOP const & sele ) {
+	selection_ = sele;
+}
+
+void
+RmsdFilter::add_selector( core::select::residue_selector::ResidueSelectorOP const & sele  ) {
+	selection_ = core::select::residue_selector::OR_combine( selection_, sele );
+}
+
+void
 RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
 {
+	using namespace core::select::residue_selector;
+
 	/// @details
 	///if the save pose mover has been instantiated, this filter can calculate the rms
 	///against the ref pose
@@ -391,35 +414,13 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	}
 
 	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
-	std::string chains = tag->getOption<std::string>( "chains", "" );
 	superimpose_on_all( tag->getOption< bool >( "superimpose_on_all", false ) );
-	if ( chains != "" ) {
-		core::Size chain_start( 0 );
-		core::Size chain_end( 0 );
 
-		utility::vector1<core::Size> chain_ends = reference_pose_->conformation().chain_endings();
-		chain_ends.push_back( reference_pose_->size() ); // chain_endings() doesn't count last residue as a chain ending (sigh)
-		for ( std::string::const_iterator chain_it = chains.begin(); chain_it != chains.end(); ++chain_it ) { // for each chain letter
-			char const chain = *chain_it;
-			TR.Debug << "Chain " << chain << " selected" << std::endl;
-			for ( utility::vector1<core::Size>::const_iterator it = chain_ends.begin(); it != chain_ends.end(); ++it ) {
-				chain_end = *it;
-				core::Size const chainid = reference_pose.residue( chain_end ).chain();
-				if ( reference_pose_->pdb_info()->chain( chain_end ) == chain ) { // if chain letter of chain_end == chain specified
-					if ( chain_end == reference_pose_->size() ) { // all of this because the last residue doesn't count as a chain ending. why, god, why!?
-						//core::Size const chainid = reference_pose_.residue( chain_end ).chain();
-						for ( core::Size i = 1; i <= reference_pose_->size(); ++i ) {
-							if ( (core::Size)reference_pose_->residue(i).chain() == chainid ) { // first time we hit this, we're at the start of the chain in question
-								chain_start = i;
-								break;
-							}
-						}
-					} else chain_start = reference_pose_->conformation().chain_begin( chainid );
-					for ( core::Size i = chain_start; i <= chain_end; ++i ) { // populate selection_ list
-						selection_.push_back( i );
-					}
-				}
-			}
+	std::string chains = tag->getOption<std::string>( "chains", "" );
+	if ( chains != "" ) {
+		for ( char const & chain: chains ) {
+			ResidueSelectorOP chain_select( new ChainSelector( chain ) );
+			add_selector( chain_select );
 		}
 	}
 
@@ -427,17 +428,15 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	for ( utility::vector0< utility::tag::TagCOP >::const_iterator it=rmsd_tags.begin(); it!=rmsd_tags.end(); ++it ) {
 		utility::tag::TagCOP const rmsd_tag = *it;
 		if ( rmsd_tag->getName() == "residue" ) {
-			core::Size const resnum( core::pose::get_resnum( rmsd_tag, *reference_pose_ ) );
-			selection_.push_back( resnum );
+			ResidueSelectorOP res_select( new ResidueIndexSelector( core::pose::get_resnum_string( rmsd_tag ) ) );
+			add_selector( res_select );
 		}
 
 		if ( rmsd_tag->getName() == "span" ) {
-			core::Size const begin( core::pose::get_resnum( rmsd_tag, *reference_pose_, "begin_" ) );
-			core::Size const end( core::pose::get_resnum( rmsd_tag, *reference_pose_, "end_" ) );
-			runtime_assert( end > begin );
-			runtime_assert( begin>=1);
-			runtime_assert( end<=reference_pose_->size() );
-			for ( core::Size i=begin; i<=end; ++i ) selection_.push_back( i );
+			std::string const & begin( core::pose::get_resnum_string( rmsd_tag, "begin_" ) );
+			std::string const & end( core::pose::get_resnum_string( rmsd_tag, "end_" ) );
+			ResidueSelectorOP span_select( new ResidueSpanSelector( begin, end ) );
+			add_selector( span_select );
 		}
 
 		if ( rmsd_tag->getName() == "span_two" ) {
@@ -455,16 +454,6 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 		}
 	}
 
-	if ( selection_.size() > 0 ) selection_.unique(); // make sure our selection list doesn't have redudancies
-	TR.Debug << "RMSD selected residues: ";
-	if ( selection_.size() == 0 ) TR.Debug << "ALL" << std::endl;
-	else {
-		for ( std::list<core::Size>::const_iterator it = selection_.begin(); it != selection_.end(); ++it ) {
-			TR.Debug << *it << " ";
-		}
-	}
-	TR.Debug << std::endl;
-
 	superimpose_ = tag->getOption<bool>( "superimpose", 1 );
 	threshold_ = tag->getOption<core::Real>( "threshold", 5 );
 	///
@@ -479,20 +468,19 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 
 	if ( tag->hasOption("rms_residues_from_pose_cache") ) {
 		selection_from_segment_cache_ = tag->getOption<bool>( "rms_residues_from_pose_cache", 1 );
-		if ( selection_.size() != 0 ) std::cerr << "Warning: in rmsd filter tag, both a span selection and the instruction to set the residues from the pose cache is given. Incompatible, defined span will be ignored." << std::endl;
+		if ( selection_ != nullptr ) std::cerr << "Warning: in rmsd filter tag, both a span selection and the instruction to set the residues from the pose cache is given. Incompatible, defined span will be ignored." << std::endl;
 	}
 
-	TR<<"RMSD filter with superimpose=" << superimpose_ << " and threshold="<< threshold_ << " over residues ";
+	TR<<"RMSD filter with superimpose=" << superimpose_ << " and threshold="<< threshold_ << std::endl;
 	if ( superimpose_on_all() ) {
 		TR<<" superimpose_on_all set to true. Any spans defined will be used only to measure RMSd but the pose will be supreimposed on the reference pose through all residues ";
 	}
 	if ( selection_from_segment_cache_ ) TR << " that are in pose segment observer cache at apply time." << std::endl;
-	else if ( selection_.size() == 0 ) {
+	else if ( selection_ == nullptr ) {
 		TR << "ALL" << std::endl;
-		for ( core::Size i=1; i<=reference_pose.size(); ++i ) selection_.push_back( i );
+		selection_ = ResidueSelectorOP( new TrueResidueSelector );
 	} else {
-		for ( std::list<core::Size>::const_iterator it=selection_.begin(); it != selection_.end(); ++it ) TR << *it << " ";
-		TR << std::endl;
+		TR << "selected residues" << std::endl;
 	}
 }
 

@@ -48,6 +48,14 @@ public:
 	// derived from base class
 	ResidueIndexSelector();
 
+	ResidueIndexSelector( std::string const & index_str );
+
+	/// @brief Convenience constructor for a single residue index
+	ResidueIndexSelector( core::Size index_in );
+
+	/// @brief Convenience constructor for a vector of indexes
+	ResidueIndexSelector( utility::vector1< core::Size > const & index_in );
+
 	/// @brief Copy constructor
 	///
 	ResidueIndexSelector( ResidueIndexSelector const &src);
@@ -56,7 +64,6 @@ public:
 	/// @details Copy this object and return an owning pointer to the new object.
 	virtual ResidueSelectorOP clone() const;
 
-	ResidueIndexSelector( std::string const & index_str );
 	virtual ~ResidueIndexSelector();
 
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
@@ -80,7 +87,10 @@ public:
 
 	/// @brief Append an additional index (in Rosetta numbering) to the list of indices.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void append_index( core::Size const index_in );
+	void append_index( core::Size index_in );
+
+	/// @brief Append additional indexes (in Rosetta numbering) to the list of indices.
+	void append_index( utility::vector1< core::Size > const & index_in );
 
 private: // data members
 	std::string index_str_;

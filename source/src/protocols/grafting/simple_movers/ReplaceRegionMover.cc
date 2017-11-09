@@ -34,20 +34,17 @@ namespace simple_movers {
 
 ReplaceRegionMover::ReplaceRegionMover(bool copy_pdbinfo /*false*/):
 	protocols::moves::Mover("ReplaceRegionMover"),
-	src_pose_start_(0),
-	target_pose_start_(0),
 	span_(0),
 	copy_pdbinfo_(copy_pdbinfo),
-	src_pose_(/* NULL */),
-	tag_(/* NULL */)
+	src_pose_(/* NULL */)
 {
 
 }
 
 ReplaceRegionMover::ReplaceRegionMover(
 	core::pose::Pose const & src_pose,
-	Size const src_pose_start,
-	Size const target_pose_start,
+	std::string const & src_pose_start,
+	std::string const & target_pose_start,
 	Size const span,
 	bool copy_pdbinfo /*false*/
 ) :
@@ -55,8 +52,7 @@ ReplaceRegionMover::ReplaceRegionMover(
 	src_pose_start_(src_pose_start),
 	target_pose_start_(target_pose_start),
 	span_(span),
-	copy_pdbinfo_(copy_pdbinfo),
-	tag_(/* NULL */)
+	copy_pdbinfo_(copy_pdbinfo)
 {
 	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
 }
@@ -70,7 +66,6 @@ ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& src) :
 	copy_pdbinfo_(src.copy_pdbinfo_)
 {
 	if ( src.src_pose_ ) src_pose_ = src.src_pose_->clone();
-	if ( src.tag_ ) tag_ = tag_->clone();
 }
 
 ReplaceRegionMover::~ReplaceRegionMover(){}
@@ -91,15 +86,11 @@ ReplaceRegionMover::parse_my_tag(
 {
 
 	src_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map, "spm_reference_name");
-	tag_ = tag->clone();
 	span_ = tag->getOption<core::Size>("span");
 	copy_pdbinfo_ = tag->getOption<bool>("copy_pdbinfo", false);
 
-	//Protect from unused option crash.
-	tag->getOption<std::string>( "src_pose_start_" );
-	tag->getOption<std::string>( "target_pose_start_" );
-
-
+	src_pose_start_ = core::pose::get_resnum_string(tag, "src_pose_start_");
+	target_pose_start_= core::pose::get_resnum_string(tag, "target_pose_start_");
 }
 
 // XRW TEMP protocols::moves::MoverOP
@@ -117,11 +108,11 @@ ReplaceRegionMover::parse_my_tag(
 // XRW TEMP  return "ReplaceRegionMover";
 // XRW TEMP }
 
-void ReplaceRegionMover::src_pose_start(core::Size start){ src_pose_start_ = start; }
-core::Size ReplaceRegionMover::src_pose_start() const{ return src_pose_start_; }
+void ReplaceRegionMover::src_pose_start(std::string const & start){ src_pose_start_ = start; }
+std::string const & ReplaceRegionMover::src_pose_start() const{ return src_pose_start_; }
 
-void ReplaceRegionMover::target_pose_start(core::Size start) { target_pose_start_ = start; }
-core::Size ReplaceRegionMover::target_pose_start() const { return target_pose_start_;}
+void ReplaceRegionMover::target_pose_start(std::string const & start) { target_pose_start_ = start; }
+std::string const &  ReplaceRegionMover::target_pose_start() const { return target_pose_start_;}
 
 void
 ReplaceRegionMover::src_pose(const core::pose::Pose& src_pose){
@@ -141,18 +132,16 @@ ReplaceRegionMover::fresh_instance() const {
 void
 ReplaceRegionMover::apply(core::pose::Pose& pose) {
 
-	if ( tag_ ) {
-		src_pose_start_ = core::pose::get_resnum(tag_, *src_pose_, "src_pose_start_");
-		target_pose_start_= core::pose::get_resnum(tag_, pose, "target_pose_start_");
-	}
+	core::Size src_pose_start = core::pose::parse_resnum(src_pose_start_, *src_pose_);
+	core::Size target_pose_start = core::pose::parse_resnum(target_pose_start_, pose);
 
-	PyAssert(src_pose_start_ != 0, "Cannot copy from a region starting with 0 - make sure region is set for ReplaceRegionMover");
-	PyAssert(target_pose_start_ != 0, "Cannot copy to a region starting with 0 - make sure region is set for ReplaceRegionMover");
+	PyAssert(src_pose_start != 0, "Cannot copy from a region starting with 0 - make sure region is set for ReplaceRegionMover");
+	PyAssert(target_pose_start != 0, "Cannot copy to a region starting with 0 - make sure region is set for ReplaceRegionMover");
 	PyAssert(span_ <= src_pose_->size(), "Cannot delete region ending with 0 - make sure region is set for ReplaceRegionMover");
-	PyAssert(src_pose_start_ + span_ <= pose.size(), "Not enough residues in pose to copy all of the span of the source pose");
+	PyAssert(src_pose_start + span_ <= pose.size(), "Not enough residues in pose to copy all of the span of the source pose");
 
 
-	pose = protocols::grafting::replace_region (*src_pose_, pose, src_pose_start_, target_pose_start_, span_);
+	pose = protocols::grafting::replace_region (*src_pose_, pose, src_pose_start, target_pose_start, span_);
 
 }
 

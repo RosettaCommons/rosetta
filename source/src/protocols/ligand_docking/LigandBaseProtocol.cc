@@ -324,7 +324,7 @@ void frac_atoms_within(
 core::Size
 LigandBaseProtocol::get_ligand_jump_id(
 	core::pose::Pose const & pose
-)const{
+) {
 	int jump_id = pose.num_jump(); // assume ligand attached by last jump
 	if ( jump_id == 0 ) {
 		utility_exit_with_message("Pose has no jumps!");
@@ -338,7 +338,7 @@ LigandBaseProtocol::get_ligand_jump_id(
 core::Size
 LigandBaseProtocol::get_ligand_id(
 	core::pose::Pose const & pose
-) const
+)
 {
 	return get_ligand_id(pose, get_ligand_jump_id(pose));
 }
@@ -350,7 +350,7 @@ core::Size
 LigandBaseProtocol::get_ligand_id(
 	core::pose::Pose const & pose,
 	core::Size jump_id
-) const
+)
 {
 	core::Size const lig_id = (core::Size) pose.fold_tree().downstream_jump_residue(jump_id);
 

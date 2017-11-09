@@ -26,6 +26,9 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoringManager.hh>
 
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/util.hh>
+
 #include <core/chemical/VariantType.hh>
 
 #include <core/kinematics/FoldTree.hh>
@@ -124,11 +127,11 @@ namespace ncbb {
 namespace oop {
 
 OopCreatorMover::OopCreatorMover():
-	oop_plus_positions_ (utility::tools::make_vector1(0)),
-	oop_minus_positions_ (utility::tools::make_vector1(0)),
-	oop_d_plus_positions_ (utility::tools::make_vector1(0)),
-	oop_d_minus_positions_ (utility::tools::make_vector1(0)),
-	oop_low_e_puck_positions_ (utility::tools::make_vector1(0)),
+	oop_plus_positions_ (nullptr),
+	oop_minus_positions_ (nullptr),
+	oop_d_plus_positions_ (nullptr),
+	oop_d_minus_positions_ (nullptr),
+	oop_low_e_puck_positions_ (nullptr),
 	prepend_n_residues_ (0),
 	append_n_residues_ (0),
 	final_repack_ (false),
@@ -140,11 +143,11 @@ OopCreatorMover::OopCreatorMover():
 }
 
 OopCreatorMover::OopCreatorMover(
-	utility::vector1<core::Size> oop_plus_positions,
-	utility::vector1<core::Size> oop_minus_positions,
-	utility::vector1<core::Size> oop_d_plus_positions,
-	utility::vector1<core::Size> oop_d_minus_positions,
-	utility::vector1<core::Size> oop_low_e_puck_positions,
+	core::select::residue_selector::ResidueSelectorCOP oop_plus_positions,
+	core::select::residue_selector::ResidueSelectorCOP oop_minus_positions,
+	core::select::residue_selector::ResidueSelectorCOP oop_d_plus_positions,
+	core::select::residue_selector::ResidueSelectorCOP oop_d_minus_positions,
+	core::select::residue_selector::ResidueSelectorCOP oop_low_e_puck_positions,
 	core::Size prepend_n_residues,
 	core::Size append_n_residues,
 	bool final_repack,
@@ -182,7 +185,10 @@ OopCreatorMover::apply(
 
 	utility::vector1< Size > all_positions;
 
-	utility::vector1< Size > const plus_positions = oop_plus_positions_;//option[ oop_creator::oop_plus_positions].value();
+	utility::vector1< Size > plus_positions;
+	if ( oop_plus_positions_ ) { //option[ oop_creator::oop_plus_positions].value();
+		plus_positions = core::select::get_residues_from_subset( oop_plus_positions_->apply( pose ) );
+	}
 	all_positions.insert( all_positions.end(), plus_positions.begin(), plus_positions.end() );
 	for ( Size i = 1; i <= plus_positions.size(); i++ ) {
 		OopPatcherOP oop_patcher( new OopPatcher( plus_positions[i] ) );
@@ -192,7 +198,10 @@ OopCreatorMover::apply(
 		opm_plus->apply( pose );
 	}
 
-	utility::vector1< Size > const minus_positions = oop_minus_positions_;//option[ oop_creator::oop_minus_positions].value();
+	utility::vector1< Size > minus_positions;
+	if ( oop_minus_positions_ ) { //option[ oop_creator::oop_minus_positions].value();
+		minus_positions = core::select::get_residues_from_subset( oop_minus_positions_->apply( pose ) );
+	}
 	all_positions.insert( all_positions.end(), minus_positions.begin(), minus_positions.end() );
 	for ( Size i = 1; i <= minus_positions.size(); i++ ) {
 		OopPatcherOP oop_patcher( new OopPatcher( minus_positions[i] ) );
@@ -202,7 +211,10 @@ OopCreatorMover::apply(
 		opm_minus->apply( pose );
 	}
 
-	utility::vector1< Size > const d_plus_positions = oop_d_plus_positions_;//option[ oop_creator::oop_d_plus_positions].value();
+	utility::vector1< Size > d_plus_positions;
+	if ( oop_d_plus_positions_ ) { //option[ oop_creator::oop_d_plus_positions].value();
+		d_plus_positions = core::select::get_residues_from_subset( oop_d_plus_positions_->apply( pose ) );
+	}
 	all_positions.insert( all_positions.end(), d_plus_positions.begin(), d_plus_positions.end() );
 	for ( Size i = 1; i <= d_plus_positions.size(); i++ ) {
 		OopPatcherOP oop_patcher( new OopPatcher( d_plus_positions[i] ) );
@@ -212,7 +224,10 @@ OopCreatorMover::apply(
 		opm_plus->apply( pose );
 	}
 
-	utility::vector1< Size > const d_minus_positions = oop_d_minus_positions_;//option[ oop_creator::oop_d_minus_positions].value();
+	utility::vector1< Size > d_minus_positions;
+	if ( oop_d_minus_positions_ ) { //option[ oop_creator::oop_d_minus_positions].value();
+		d_minus_positions = core::select::get_residues_from_subset( oop_d_minus_positions_->apply( pose ) );
+	}
 	all_positions.insert( all_positions.end(), d_minus_positions.begin(), d_minus_positions.end() );
 	for ( Size i = 1; i <= d_minus_positions.size(); i++ ) {
 		OopPatcherOP oop_patcher( new OopPatcher( d_minus_positions[i] ) );
@@ -222,7 +237,10 @@ OopCreatorMover::apply(
 		opm_minus->apply( pose );
 	}
 
-	utility::vector1< Size > const low_e_puck_positions = oop_low_e_puck_positions_;//option[ oop_creator::oop_low_e_puck_positions ].value();
+	utility::vector1< Size > low_e_puck_positions;
+	if ( oop_low_e_puck_positions_ ) { //option[ oop_creator::oop_low_e_puck_positions ].value();
+		low_e_puck_positions = core::select::get_residues_from_subset( oop_low_e_puck_positions_->apply( pose ) );
+	}
 	all_positions.insert( all_positions.end(), low_e_puck_positions.begin(), low_e_puck_positions.end() );
 	for ( Size i = 1; i <= low_e_puck_positions.size(); ++i ) {
 		OopPatcherOP oop_patcher( new OopPatcher( low_e_puck_positions[i] ) );
@@ -469,38 +487,28 @@ OopCreatorMover::parse_my_tag
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 ) {
 	using namespace utility;
 
 	if ( tag->hasOption( "oop_plus_positions") ) {
-		oop_plus_positions_ = core::pose::get_resnum_list(tag, "oop_plus_positions", pose);
-	} else {
-		oop_plus_positions_ = *(new vector1<core::Size>(0));
+		oop_plus_positions_ = core::pose::get_resnum_selector(tag, "oop_plus_positions");
 	}
 
 	if ( tag->hasOption( "oop_minus_positions") ) {
-		oop_minus_positions_ = core::pose::get_resnum_list(tag, "oop_minus_positions", pose);
-	} else {
-		oop_minus_positions_ = *(new vector1<core::Size>(0));
+		oop_minus_positions_ = core::pose::get_resnum_selector(tag, "oop_minus_positions");
 	}
 
 	if ( tag->hasOption( "oop_d_plus_positions") ) {
-		oop_d_plus_positions_ = core::pose::get_resnum_list(tag, "oop_d_plus_positions", pose);
-	} else {
-		oop_d_plus_positions_ = *(new vector1<core::Size>(0));
+		oop_d_plus_positions_ = core::pose::get_resnum_selector(tag, "oop_d_plus_positions");
 	}
 
 	if ( tag->hasOption( "oop_d_minus_positions") ) {
-		oop_d_minus_positions_ = core::pose::get_resnum_list(tag, "oop_d_minus_positions", pose);
-	} else {
-		oop_d_minus_positions_ = *(new vector1<core::Size>(0));
+		oop_d_minus_positions_ = core::pose::get_resnum_selector(tag, "oop_d_minus_positions");
 	}
 
 	if ( tag->hasOption( "oop_low_e_puck_positions") ) {
-		oop_low_e_puck_positions_ = core::pose::get_resnum_list(tag, "oop_low_e_puck_positions", pose);
-	} else {
-		oop_low_e_puck_positions_ = *(new vector1<core::Size>(0));
+		oop_low_e_puck_positions_ = core::pose::get_resnum_selector(tag, "oop_low_e_puck_positions");
 	}
 
 	if ( tag->hasOption( "prepend_n_residues") ) {

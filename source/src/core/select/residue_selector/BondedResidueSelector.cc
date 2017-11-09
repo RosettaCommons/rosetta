@@ -261,7 +261,7 @@ BondedResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	AttributeList attributes;
 	attributes
 		+ XMLSchemaAttribute( "residue_selector", xs_string, "Name of residue selector specifying residues for which to select bonded partners" );
-	core::pose::attributes_for_get_resnum_list( attributes, xsd, "resnums" );
+	core::pose::attributes_for_get_resnum_selector( attributes, xsd, "resnums" );
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), "Selects all residues that are attached to the provided residues by a chemical bond", attributes );
 
 }

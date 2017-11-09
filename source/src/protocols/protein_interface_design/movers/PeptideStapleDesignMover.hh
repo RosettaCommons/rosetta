@@ -33,8 +33,8 @@ class PeptideStapleDesignMover : public protocols::moves::Mover
 {
 public:
 	PeptideStapleDesignMover();
-	PeptideStapleDesignMover( core::Size const seqpos, core::Size const staple_gap );
-	PeptideStapleDesignMover( PeptideStapleDesignMover const & init );
+	PeptideStapleDesignMover( std::string const & seqpos, core::Size const staple_gap );
+	PeptideStapleDesignMover( PeptideStapleDesignMover const & ) = default;
 	virtual ~PeptideStapleDesignMover();
 
 	protocols::moves::MoverOP clone() const override;
@@ -54,7 +54,8 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	protocols::simple_moves::PeptideStapleMoverOP stapler_;
+	std::string staple_start_;
+	core::Size staple_gap_;
 };
 
 } // movers

@@ -22,6 +22,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/exit.hh>
@@ -89,9 +90,15 @@ public:
 	core::pack::task::TaskFactoryOP task_factory() const;
 	~DesignRepackMover() override;
 
+	/// @brief Replace the current target_residue setting with the passed residue selector
+	void target_residues( core::select::residue_selector::ResidueSelectorCOP setting );
+
+	core::select::residue_selector::ResidueSelectorCOP target_residues() const;
+	utility::vector1< core::Size > target_residues( core::pose::Pose const & pose ) const;
+
 	static utility::tag::XMLSchemaComplexTypeGeneratorOP get_xsd_complex_type();
 
-protected:
+protected: // RM: This is against the coding conventions - while member functions can be protected, data should be private!
 	core::scoring::ScoreFunctionOP scorefxn_repack_;
 	core::scoring::ScoreFunctionOP scorefxn_minimize_;
 	bool repack_partner1_, repack_partner2_;
@@ -100,7 +107,6 @@ protected:
 	utility::vector1< bool > min_sc_, curr_min_sc_, min_rb_;
 	utility::vector1< bool > min_bb_, curr_min_bb_, curr_min_rb_;
 	bool min_rb_set_, min_sc_set_, min_bb_set_;
-	utility::vector1< core::Size > target_residues_;
 	core::Real interface_distance_cutoff_;
 	bool repack_non_ala_; // do we redesign nonalanine positions?
 	bool optimize_foldtree_; // do we want to optimize or keep the input fold tree or optimize it?
@@ -113,6 +119,10 @@ protected:
 	utility::vector1< core::Size > restrict_to_repacking_; //residues that should not be designed
 	core::pack::task::TaskFactoryOP task_factory_; // sequence positions and residue-level tasks to apply when setup_packer_task is done
 	bool symmetry_;
+
+private:
+	core::select::residue_selector::ResidueSelectorCOP target_residues_;
+
 };
 
 } // simple_moves

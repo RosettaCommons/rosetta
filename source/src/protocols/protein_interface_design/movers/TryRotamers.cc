@@ -23,6 +23,9 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/util.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -77,7 +80,7 @@ TryRotamers::TryRotamers() :
 	protocols::moves::Mover( TryRotamers::mover_name() )
 { }
 
-TryRotamers::TryRotamers( Size resnum,
+TryRotamers::TryRotamers( std::string const & resnum,
 	ScoreFunction const & scorefxn,
 	protocols::filters::Filter const & final_filter,
 	Size explosion, // rotamer explosion
@@ -98,7 +101,7 @@ TryRotamers::TryRotamers( Size resnum,
 {}
 
 /// @note Pass everything through the final filter (True Filter)
-TryRotamers::TryRotamers( core::Size resnum,
+TryRotamers::TryRotamers( std::string const & resnum,
 	core::scoring::ScoreFunction const& scorefxn,
 	Size explosion, // rotamer explosion
 	Size jump_num,
@@ -120,20 +123,15 @@ TryRotamers::TryRotamers( core::Size resnum,
 TryRotamers::~TryRotamers() {}
 
 void
-TryRotamers::setup_rotamer_set( pose::Pose & pose )
+TryRotamers::setup_rotamer_set( pose::Pose & pose, core::Size resnum )
 {
 	using namespace core::pack::task;
 	using namespace core::pack::rotamer_set;
 
-	//SEGFAULT REMOVED: OL 3/6/12:
-	//using here a const reference causes segfaults, probably due to subsequent fold-tree manipulation which
-	//would invalidate residue objects.
-	Residue res_ = pose.residue( resnum_ );
-
 	PackerTaskOP ptask( TaskFactory::create_packer_task( pose ) );
 	ptask->set_bump_check( clash_check_ );
 
-	ResidueLevelTask & restask( ptask->nonconst_residue_task( resnum_ ) );
+	ResidueLevelTask & restask( ptask->nonconst_residue_task( resnum ) );
 	utility::graph::GraphOP packer_graph( new utility::graph::Graph( pose.size() ) );
 	restask.or_ex1( true );
 	restask.or_ex2( true );
@@ -147,9 +145,9 @@ TryRotamers::setup_rotamer_set( pose::Pose & pose )
 
 	restask.restrict_to_repacking();
 	RotamerSetFactory rsf;
-	rotset_ = rsf.create_rotamer_set( res_ );
+	rotset_ = rsf.create_rotamer_set( pose.residue( resnum ) );
 
-	rotset_->set_resid( resnum_ );
+	rotset_->set_resid( resnum );
 	rotset_->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 	rotamer_it_ = rotset_->begin();
 	TR<<"building rotamer set of " <<rotset_->num_rotamers()<< " different rotamers ...\n";
@@ -171,8 +169,10 @@ TryRotamers::apply ( pose::Pose & pose )
 		pose.fold_tree( new_ft );
 	}
 
-	for ( core::Size const resid : shove_residues_ ) {
-		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::SHOVE_BB, resid );
+	if ( shove_residues_ ) {
+		for ( core::Size const resid : core::select::get_residues_from_subset( shove_residues_->apply(pose) ) ) {
+			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::SHOVE_BB, resid );
+		}
 	}
 
 	if ( solo_res_ ) {
@@ -182,8 +182,10 @@ TryRotamers::apply ( pose::Pose & pose )
 
 	pose.update_residue_neighbors();
 
+	core::Size resnum( core::pose::parse_resnum( resnum_, pose ) );
+
 	if ( !rotset_ || rotset_->num_rotamers() == 0 ) {
-		setup_rotamer_set(pose);
+		setup_rotamer_set(pose, resnum);
 	}//end building rotamer set
 
 	// job distributor iterates ...
@@ -197,10 +199,10 @@ TryRotamers::apply ( pose::Pose & pose )
 	if ( final_filter_->apply( pose ) ) {
 		if ( jump_num_ > 0 ) { // Let 0 indicate no jumps
 			core::kinematics::Jump const saved_jump( pose.jump( jump_num_ ) );
-			pose.replace_residue ( resnum_, **rotamer_it_, false/*orient bb*/ );
+			pose.replace_residue ( resnum, **rotamer_it_, false/*orient bb*/ );
 			pose.set_jump( jump_num_, saved_jump );
 		} else { // no jumps to save
-			pose.replace_residue ( resnum_, **rotamer_it_, false/*orient bb*/ );
+			pose.replace_residue ( resnum, **rotamer_it_, false/*orient bb*/ );
 		}
 		TR << "TryRotamers passed the final_filter" <<std::endl;
 		set_last_move_status ( protocols::moves::MS_SUCCESS );
@@ -225,9 +227,9 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &filters,
 	Movers_map const &,
-	Pose const & pose)
+	Pose const & )
 {
-	resnum_ = core::pose::get_resnum( tag, pose );
+	resnum_ = core::pose::get_resnum_string( tag );
 	automatic_connection_ = tag->getOption< bool >( "automatic_connection", 1 );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
@@ -252,13 +254,7 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 	}
 
 	if ( tag->hasOption( "shove" ) ) {
-		std::string const shove_val( tag->getOption< std::string >( "shove" ) );
-		utility::vector1< std::string > const shove_keys( utility::string_split( shove_val, ',' ) );
-		for ( std::string const & key : shove_keys ) {
-			core::Size const resnum( core::pose::parse_resnum( key, pose ) );
-			shove_residues_.push_back( resnum );
-			TR<<"Using shove atomtype for "<< key <<'\n';
-		}
+		shove_residues_ = core::pose::get_resnum_selector( tag, "shove" );
 	}
 
 
@@ -283,7 +279,7 @@ void TryRotamers::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	core::pose::attributes_for_get_resnum( attlist );
+	core::pose::attributes_for_get_resnum_string( attlist );
 	attlist + XMLSchemaAttribute::attribute_w_default( "automatic_connection", xsct_rosetta_bool, "Automatically set up a hotspot foldtree", "1" );
 	rosetta_scripts::attributes_for_parse_score_function( attlist );
 	attlist + XMLSchemaAttribute::attribute_w_default( "jump_num", xsct_non_negative_integer, "Jump across which to evaluate energies, numbered sequentially from one", "1" )

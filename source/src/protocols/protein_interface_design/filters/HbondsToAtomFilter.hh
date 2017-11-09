@@ -47,14 +47,24 @@ public:
 	typedef core::Size Size;
 public :
 	HbondsToAtomFilter() : Filter( "HbondsToAtom" ) {}
-	HbondsToAtomFilter( Size const resnum, Size const partners, Real const energy_cutoff=-0.5,
-		bool const backbone=false, bool const sidechain=true ) : Filter( "HbondsToAtom" ) {
-		resnum_ = resnum; partners_ = partners; energy_cutoff_ = energy_cutoff; backbone_ = backbone;
-		sidechain_ = sidechain;
+	HbondsToAtomFilter( std::string const & resnum,
+		Size const partners,
+		Real const energy_cutoff=-0.5,
+		bool const backbone=false,
+		bool const sidechain=true
+	) :
+		Filter( "HbondsToAtom" ),
+		resnum_(resnum),
+		partners_(partners),
+		energy_cutoff_(energy_cutoff),
+		backbone_(backbone),
+		sidechain_(sidechain)
+	{
 		runtime_assert( backbone_ || sidechain_ );
 		runtime_assert( partners_ );
 		runtime_assert( energy_cutoff_ <= 0 );
 	}
+
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new HbondsToAtomFilter( *this ) );
@@ -83,7 +93,8 @@ public :
 
 
 private:
-	Size resnum_, partners_;
+	std::string resnum_;
+	Size partners_;
 	Real energy_cutoff_;
 	std::string atomdesg_;
 	bool backbone_, sidechain_, bb_bb_;

@@ -18,6 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <set>
 
@@ -45,7 +46,7 @@ public:
 	void chain( core::Size const c );
 	core::Real coord_sdev() const;
 	void coord_sdev( core::Real const sdev );
-	void add_residue( core::Size const res );
+	void set_residue( core::select::residue_selector::ResidueSelectorCOP residues );
 
 	std::string
 	get_name() const override;
@@ -58,11 +59,10 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	std::set< core::Size > const & residues() const;
 private:
 	core::Size chain_; //dflt 2
 	core::Real coord_sdev_; //dflt 1.0
-	std::set< core::Size > residues_; //dflt empty; used to decide which residues to add constraints to.
+	core::select::residue_selector::ResidueSelectorCOP residues_; //dflt empty; used to decide which residues to add constraints to.
 };
 
 

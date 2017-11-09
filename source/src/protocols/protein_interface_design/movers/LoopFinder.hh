@@ -47,7 +47,7 @@ public:
 		core::Size const min_length,
 		core::Size const max_length,
 		core::Size const mingap,
-		core::Size const resnum,
+		std::string const & resnum,
 		core::Real const ca_ca_distance,
 		core::Real const iface_cutoff,
 		protocols::loops::LoopsOP loops
@@ -74,7 +74,7 @@ private:
 	Size interface_;
 	bool ch1_, ch2_;
 	core::Size min_length_, max_length_, mingap_;
-	core::Size resnum_;
+	std::string resnum_;
 	core::Real ca_ca_distance_;
 	core::Real iface_cutoff_;
 	//basic::datacache::DataMapOP data_;

@@ -29,6 +29,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/filters/Filter.hh>
 #include <basic/datacache/DataMap.fwd.hh>
@@ -192,7 +193,7 @@ public:
 public:
 	EnzScoreFilter() : Filter( "EnzScore" ) {}
 
-	EnzScoreFilter(  core::Size const resnum, std::string cstid, core::scoring::ScoreFunctionOP scorefxn,
+	EnzScoreFilter( std::string const & resnum, std::string const & cstid, core::scoring::ScoreFunctionOP scorefxn,
 		core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE
 	);
 
@@ -224,10 +225,10 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	static inline
-	core::Size
+	std::string
 	default_value_for_resnum()
 	{
-		return 1000000;
+		return "";
 	}
 
 	static inline
@@ -266,7 +267,7 @@ public:
 	}
 
 private:
-	core::Size resnum_ = default_value_for_resnum();
+	std::string resnum_ = default_value_for_resnum();
 	std::string cstid_ = default_value_for_cstid();
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::scoring::ScoreType score_type_ = core::scoring::score_type_from_name( default_value_for_score_type() );
@@ -286,7 +287,7 @@ public:
 public:
 	DiffAtomSasaFilter() : Filter( "DiffAtomBurial" ) {}
 
-	DiffAtomSasaFilter( core::Size resid1, core::Size resid2, std::string atomname1, std::string atomane2, std::string sample_type );
+	DiffAtomSasaFilter( std::string const & resid1, std::string const & resid2, std::string const & atomname1, std::string const & atomane2, std::string const & sample_type );
 	//DiffAtomSasaFilter( DiffAtomSasaFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const override;
 	FilterOP clone() const override {
@@ -314,7 +315,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	core::Size resid1_, resid2_;
+	std::string resid1_, resid2_;
 	std::string aname1_, aname2_, sample_type_;
 };
 
@@ -329,7 +330,7 @@ public:
 public:
 	RepackWithoutLigandFilter() : Filter( "RepackWithoutLigand" ) {}
 
-	RepackWithoutLigandFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real rms_thresh, core::Real energy_thresh, utility::vector1< core::Size > rms_target_res  );
+	RepackWithoutLigandFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real rms_thresh, core::Real energy_thresh, core::select::residue_selector::ResidueSelectorCOP rms_target_res  );
 	bool apply( core::pose::Pose const & pose ) const override;
 	FilterOP clone() const override {
 		return FilterOP( new RepackWithoutLigandFilter( *this ) );
@@ -362,7 +363,7 @@ private:
 	core::Real rms_threshold_, energy_threshold_;
 	bool calc_dE_, calc_rms_, use_cstids_, rms_all_rpked_;
 	std::string cstid_list_;
-	utility::vector1< core::Size > target_res_;
+	core::select::residue_selector::ResidueSelectorCOP target_res_;
 };
 
 /// @brief tiny helper struct for EnzdesScoreFileFilter

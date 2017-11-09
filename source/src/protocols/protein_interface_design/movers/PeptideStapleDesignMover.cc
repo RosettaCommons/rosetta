@@ -42,41 +42,17 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PeptideStapleDesignMover" );
 
-// XRW TEMP std::string
-// XRW TEMP PeptideStapleDesignMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PeptideStapleDesignMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PeptideStapleDesignMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PeptideStapleDesignMover );
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP PeptideStapleDesignMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "StapleMover";
-// XRW TEMP }
-
 PeptideStapleDesignMover::PeptideStapleDesignMover() :
 	protocols::moves::Mover( PeptideStapleDesignMover::mover_name() )
 {}
 
-PeptideStapleDesignMover::PeptideStapleDesignMover( core::Size const seqpos, core::Size const staple_gap ) :
-	protocols::moves::Mover( PeptideStapleDesignMover::mover_name() )
-{
-	stapler_ = protocols::simple_moves::PeptideStapleMoverOP( new protocols::simple_moves::PeptideStapleMover( seqpos, staple_gap ) );
-}
+PeptideStapleDesignMover::PeptideStapleDesignMover( std::string const & seqpos, core::Size const staple_gap ) :
+	protocols::moves::Mover( PeptideStapleDesignMover::mover_name() ),
+	staple_start_( seqpos ),
+	staple_gap_( staple_gap )
+{}
 
-PeptideStapleDesignMover::PeptideStapleDesignMover( PeptideStapleDesignMover const & init ) :
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( init )
-{
-	stapler_ = protocols::simple_moves::PeptideStapleMoverOP( new protocols::simple_moves::PeptideStapleMover( *(init.stapler_) ) );
-}
-
-PeptideStapleDesignMover::~PeptideStapleDesignMover() {}
+PeptideStapleDesignMover::~PeptideStapleDesignMover() = default;
 
 protocols::moves::MoverOP
 PeptideStapleDesignMover::clone() const {
@@ -85,20 +61,17 @@ PeptideStapleDesignMover::clone() const {
 
 void PeptideStapleDesignMover::apply( core::pose::Pose & pose )
 {
-	stapler_->apply( pose );
+	core::Size staple_start( core::pose::parse_resnum( staple_start_, pose ) );
+
+	protocols::simple_moves::PeptideStapleMover stapler( staple_start, staple_gap_ );
+	stapler.apply( pose );
 }
 
-// XRW TEMP std::string
-// XRW TEMP PeptideStapleDesignMover::get_name() const {
-// XRW TEMP  return PeptideStapleDesignMover::mover_name();
-// XRW TEMP }
-
 void
-PeptideStapleDesignMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+PeptideStapleDesignMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
-	core::Size const staple_start( core::pose::get_resnum( tag, pose ));
-	core::Size const gap( tag->getOption<core::Size>( "staple_gap", 4 ) );
-	stapler_ = protocols::simple_moves::PeptideStapleMoverOP( new protocols::simple_moves::PeptideStapleMover( staple_start, gap ) );
+	staple_start_ = core::pose::get_resnum_string( tag );
+	staple_gap_ = tag->getOption<core::Size>( "staple_gap", 4 );
 }
 
 std::string PeptideStapleDesignMover::get_name() const {

@@ -317,7 +317,7 @@ my_main( void* )
 
 		backrubmover.clear_segments();
 		backrubmover.set_input_pose(input_pose);
-		backrubmover.add_mainchain_segments_from_options();
+		backrubmover.add_mainchain_segments_from_options(*input_pose);
 
 		TR << "Score After PDB Load:" << std::endl;
 		score_fxn->show(TR, *input_pose);

@@ -20,6 +20,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 #include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
@@ -35,36 +36,24 @@ namespace simple_movers {
 
 KeepRegionMover::KeepRegionMover() :
 	protocols::moves::Mover("KeepRegionMover"),
-	start_(0),
-	end_(0),
 	nter_overhang_(0),
-	cter_overhang_(0),
-	tag_(/* NULL */)
+	cter_overhang_(0)
 {
 
 }
 
-KeepRegionMover::KeepRegionMover(core::Size res_start, core::Size res_end):
+KeepRegionMover::KeepRegionMover(std::string const & res_start, std::string const & res_end):
 	start_(res_start),
 	end_(res_end),
 	nter_overhang_(0),
-	cter_overhang_(0),
-	tag_(/* NULL */)
+	cter_overhang_(0)
 {
 
 }
 
 KeepRegionMover::~KeepRegionMover() {}
 
-KeepRegionMover::KeepRegionMover(KeepRegionMover const & src) :
-	protocols::moves::Mover(src),
-	start_(src.start_),
-	end_(src.end_),
-	nter_overhang_(src.nter_overhang_),
-	cter_overhang_(src.cter_overhang_)
-{
-	if ( src.tag_ ) tag_ = tag_->clone();
-}
+KeepRegionMover::KeepRegionMover(KeepRegionMover const & ) = default;
 
 protocols::moves::MoverOP
 KeepRegionMover::clone() const {
@@ -104,42 +93,50 @@ KeepRegionMover::parse_my_tag(
 	const protocols::moves::Movers_map&,
 	const Pose& )
 {
-	tag_ = tag->clone();
-	//Protect from unused option crash.
-	tag->getOption<std::string>( "start_" );
-	tag->getOption<std::string>( "end_" );
+	start_ = core::pose::get_resnum_string(tag, "start_");
+	end_ = core::pose::get_resnum_string(tag, "end_");
 
 	nter_overhang_ = tag->getOption<core::Size>("nter_overhang", 0);
 	cter_overhang_ = tag->getOption<core::Size>("cter_overhang", 0);
 }
 
 void
-KeepRegionMover::region(core::Size res_start, core::Size res_end){
+KeepRegionMover::region(std::string const & res_start, std::string const & res_end){
 	start_ = res_start;
 	end_ = res_end;
 }
 
-std::pair<core::Size, core::Size>
+std::pair<std::string, std::string>
 KeepRegionMover::region() const{
 	return std::make_pair(start_, end_);
 }
 
 void
-KeepRegionMover::start(core::Size res_start){
+KeepRegionMover::start(std::string const & res_start){
 	start_ = res_start;
 }
 
 void
-KeepRegionMover::end(core::Size res_end){
+KeepRegionMover::end(std::string const & res_end){
 	end_ = res_end;
 }
 
-core::Size
+void
+KeepRegionMover::start(core::Size res_start){
+	start_ = utility::to_string(res_start);
+}
+
+void
+KeepRegionMover::end(core::Size res_end){
+	end_ = utility::to_string(res_end);
+}
+
+std::string const &
 KeepRegionMover::start() const{
 	return start_;
 }
 
-core::Size
+std::string const &
 KeepRegionMover::end() const{
 	return end_;
 }
@@ -147,24 +144,20 @@ KeepRegionMover::end() const{
 void
 KeepRegionMover::apply(core::pose::Pose& pose) {
 
-	if ( tag_ ) {
-		start_ = core::pose::get_resnum(tag_, pose, "start_");
-		end_ = core::pose::get_resnum(tag_, pose, "end_");
-	}
+	core::Size start = core::pose::parse_resnum(start_, pose);
+	core::Size end = core::pose::parse_resnum(end_, pose);
 
-	if ( start_ == 1 && end_ == pose.size() ) {
+	if ( start == 1 && end == pose.size() ) {
 		return;
 	}
 
-	PyAssert(start_ != 0, "Cannot keep region starting with 0 - make sure region is set for KeepRegionMover");
-	PyAssert(end_ !=0, "Cannot keep region ending with 0 - make sure region is set for KeepRegionMover");
-	PyAssert(end_ > start_, "Cannot keep region where end > start");
-	PyAssert(end_ < pose.size(), "Cannot keep region where end is > pose size");
+	PyAssert(start != 0, "Cannot keep region starting with 0 - make sure region is set for KeepRegionMover");
+	PyAssert(end !=0, "Cannot keep region ending with 0 - make sure region is set for KeepRegionMover");
+	PyAssert(end > start, "Cannot keep region where end > start");
+	PyAssert(end < pose.size(), "Cannot keep region where end is > pose size");
 
 
-
-
-	core::pose::Pose temp_pose = protocols::grafting::return_region(pose, start_- nter_overhang_, end_ + cter_overhang_);
+	core::pose::Pose temp_pose = protocols::grafting::return_region(pose, start - nter_overhang_, end + cter_overhang_);
 	pose = temp_pose;
 
 }
@@ -187,8 +180,8 @@ void KeepRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		+ XMLSchemaAttribute::attribute_w_default( "nter_overhang", xsct_non_negative_integer, "Number of residues N terminal to start to include", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "cter_overhang", xsct_non_negative_integer, "Number of residues C terminal to end to include", "0");
 
-	core::pose::attributes_for_get_resnum( attlist, "start_" );
-	core::pose::attributes_for_get_resnum( attlist, "end_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "start_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "end_" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Keeps a specified region of the current pose and deletes the rest", attlist );
 }

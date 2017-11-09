@@ -27,6 +27,8 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/select/util.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -78,7 +80,12 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 	core::Size const end( pose.conformation().chain_end( chain() ) );
 
 	Size const num_cutpoints( pose.fold_tree().num_cutpoint() );
-	if ( num_cutpoints <= 2 && residues().size() == 0 ) {
+	std::set< core::Size > residues; // We use set such that it's ordered
+	if ( residues_ ) {
+		utility::vector1< core::Size > res_vec( core::select::get_residues_from_subset( residues_->apply( pose ) ) );
+		residues.insert( res_vec.begin(), res_vec.end() );
+	}
+	if ( num_cutpoints <= 2 && residues.size() == 0 ) {
 		TR<<"Not enough cutpoints in pose and no residues defined by user. Doing nothing"<<std::endl;
 		return;
 	}
@@ -87,10 +94,10 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 		core::Size const cutpoint_i_1 = pose.fold_tree().cutpoint( i - 1 );
 		if ( cutpoint - 1 != cutpoint_i_1 ) continue;//only mark residues that are cut on both ends
 		if ( cutpoint <= end && cutpoint >= begin ) {
-			add_residue( i );
+			residues.insert( i );
 		}
 	}
-	for ( core::Size const residue : residues() ) {
+	for ( core::Size const residue : residues ) {
 		using namespace core::scoring::constraints;
 
 		core::scoring::func::HarmonicFuncOP dummy_cst;
@@ -113,12 +120,11 @@ AddSidechainConstraintsToHotspots::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	coord_sdev( tag->getOption< core::Real >( "coord_sdev", 1.0 ) );
-	utility::vector1< core::Size > v1 = core::pose::get_resnum_list( tag, "resnums", pose );
-	for ( core::Size const r : v1 ) { add_residue( r ); }
+	set_residue( core::pose::get_resnum_selector( tag, "resnums") );
 }
 
 core::Size
@@ -142,8 +148,8 @@ AddSidechainConstraintsToHotspots::coord_sdev( core::Real const c ){
 }
 
 void
-AddSidechainConstraintsToHotspots::add_residue( core::Size const res ){
-	residues_.insert( res );
+AddSidechainConstraintsToHotspots::set_residue( core::select::residue_selector::ResidueSelectorCOP residues ) {
+	residues_ = residues;
 }
 
 std::string AddSidechainConstraintsToHotspots::get_name() const {
@@ -177,12 +183,6 @@ AddSidechainConstraintsToHotspotsCreator::create_mover() const {
 void AddSidechainConstraintsToHotspotsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	AddSidechainConstraintsToHotspots::provide_xml_schema( xsd );
-}
-
-
-std::set< core::Size > const &
-AddSidechainConstraintsToHotspots::residues() const{
-	return residues_;
 }
 
 } //movers

@@ -91,7 +91,8 @@ private:
 
 	// params
 	core::Real min_bbrms_, max_bbrms_, min_rms_, max_rms_;  // loophash centroid generation params
-	core::Size start_res_, stop_res_, max_struct_, max_radius_, max_struct_per_radius_;                       // residues to loophash over
+	std::string start_res_, stop_res_;                      // residues to loophash over
+	core::Size max_struct_, max_radius_, max_struct_per_radius_;
 	core::Size max_nstruct_;                                // maximum number of residues per position to generate
 	core::Size ncentroid_, nfullatom_;                      // number of structures to carry over to subsequent stages
 	core::Size batch_size_;                                 // batch relax batch size

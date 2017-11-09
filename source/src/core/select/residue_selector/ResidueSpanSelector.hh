@@ -59,6 +59,7 @@ public:
 	virtual ResidueSelectorOP clone() const;
 
 	ResidueSpanSelector( std::string const & start_str, std::string const & end_str );
+	ResidueSpanSelector( core::Size start, core::Size end );
 	virtual ~ResidueSpanSelector();
 
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;

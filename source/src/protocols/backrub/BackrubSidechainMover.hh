@@ -28,6 +28,7 @@
 #include <utility/vector1.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.fwd.hh>
 #include <utility/vector0.hh>
@@ -110,12 +111,17 @@ public:
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	) override;
 
-	utility::vector1<core::Size> const &
-	pivot_residues() const;
+	//utility::vector1<core::Size> const &
+	//pivot_residues() const;
 
 	void
 	set_pivot_residues(
 		utility::vector1<core::Size> const & pivot_residues
+	);
+
+	void
+	set_pivot_residue_selector(
+		core::select::residue_selector::ResidueSelectorCOP pivot_residues
 	);
 
 	core::pack::task::TaskFactoryCOP

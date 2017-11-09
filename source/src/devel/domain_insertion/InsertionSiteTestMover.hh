@@ -25,6 +25,7 @@
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <devel/enzdes/EnzdesRemodelProtocol.hh>
 
@@ -74,6 +75,9 @@ public:
 
 	void
 	apply( core::pose::Pose & pose ) override;
+
+	/// @brief Adds the given ResidueSelector to the selection. (As in all residues in both selections.)
+	void add_insert_test_pos_selector( core::select::residue_selector::ResidueSelectorOP const & sele  );
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -146,7 +150,7 @@ public:
 private:
 
 	core::scoring::ScoreFunctionOP sfxn_;
-	utility::vector1< Size > insert_test_pos_;
+	core::select::residue_selector::ResidueSelectorOP insert_test_pos_;
 	Size flex_window_; //how many res up- and downstream of the insert pos to move
 
 	std::string test_insert_ss_;

@@ -2277,7 +2277,7 @@ void HybridizeProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default( "domain_hcut", xsct_real, "Used in DDomainParse. Aggressively undocumented.", "0.81")
 		+ XMLSchemaAttribute::attribute_w_default( "domain_length", xsct_non_negative_integer, "Used in DDomainParse.  Aggressively undocumented.", "38");
 	//user constraints
-	core::pose::attributes_for_get_resnum_list( attlist, xsd, "coord_cst_res");
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "coord_cst_res");
 	//orphaned docstring: "residues with user-provided CoordinateConstraints; If defined, at least one of the scorefunctions in [stage1_scorefxn, stage2_scorefxn, fa_scorefxn] must have nonzero coordinate_constraint weights"); //XRW TODO maybe
 
 	// attributes for Fragments subelement

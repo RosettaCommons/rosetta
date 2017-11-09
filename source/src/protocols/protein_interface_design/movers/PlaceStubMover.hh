@@ -25,6 +25,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 // C++ headers
 
@@ -156,6 +157,11 @@ private: // member functions
 	/// clean everything before exiting
 	void final_cleanup( core::pose::Pose & pose );
 
+	/// Locations where stubs are not allowed to be placed
+	/// @note This is similar to DesignRepackMover::prevent_repacking() but
+	/// we want to allow repacking at steps after stub placement.
+	utility::vector1< core::Size >
+	disallowed_host_pos( core::pose::Pose const & pose ) const;
 
 private: // data members
 	/// maximum bonus_value for accepting a stub
@@ -168,10 +174,8 @@ private: // data members
 	bool add_constraints_; /// dflt false
 	/// what std to use for coordinate cst in each design mover
 	utility::vector1< core::Real > coord_cst_std_;
-	/// Locations where stubs are not allowed to be placed
-	/// @note This is similar to DesignRepackMover::prevent_repacking() but
-	/// we want to allow repacking at steps after stub placement.
-	utility::vector1< core::Real > disallowed_host_pos_;
+	/// The `inverse` of the disallowed_host_pos().
+	core::select::residue_selector::ResidueSelectorCOP allowed_host_pos_;
 	/// movers for stub minimization, vector of pairs of movers and whether or not
 	/// to apply bb constraints during the mover
 	utility::vector1< DesignMoverRealPair > stub_minimize_movers_;

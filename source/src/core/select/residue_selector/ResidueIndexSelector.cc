@@ -49,21 +49,31 @@ namespace residue_selector {
 ResidueIndexSelector::ResidueIndexSelector():
 	index_str_() {}
 
+ResidueIndexSelector::ResidueIndexSelector( std::string const & index_str ):
+	index_str_( index_str )
+{}
+
+/// @brief Convenience constructor for a single residue index
+ResidueIndexSelector::ResidueIndexSelector( core::Size index_in )
+{
+	append_index( index_in );
+}
+
+/// @brief Convenience constructor for a vector of indexes
+ResidueIndexSelector::ResidueIndexSelector( utility::vector1< core::Size > const & index_in )
+{
+	append_index( index_in );
+}
+
+
 /// @brief Copy constructor
 ///
-ResidueIndexSelector::ResidueIndexSelector( ResidueIndexSelector const &src) :
-	index_str_( src.index_str_ )
-{}
+ResidueIndexSelector::ResidueIndexSelector( ResidueIndexSelector const & ) = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 ResidueSelectorOP ResidueIndexSelector::clone() const { return ResidueSelectorOP( new ResidueIndexSelector(*this) ); }
 
-
-ResidueIndexSelector::ResidueIndexSelector( std::string const & index_str )
-{
-	index_str_ = index_str;
-}
 
 
 ResidueIndexSelector::~ResidueIndexSelector() {}
@@ -128,6 +138,23 @@ ResidueIndexSelector::append_index(
 	}
 }
 
+/// @brief Append additional indexes (in Rosetta numbering) to the list of indices.
+void
+ResidueIndexSelector::append_index( utility::vector1< core::Size > const & index_in ) {
+	std::stringstream this_str;
+	this_str << index_str_;
+	bool comma = !index_str_.empty();
+	for ( core::Size ii: index_in ) {
+		runtime_assert_string_msg( ii > 0, "Error in core::select::residue_selector::ResidueIndexSelector::append_index(): The index must be greater than zero." );
+		if ( comma ) {
+			this_str << ",";
+		}
+		this_str << ii;
+		comma = true;
+	}
+	index_str_ = this_str.str();
+}
+
 
 std::string ResidueIndexSelector::class_name() {
 	return "Index";
@@ -146,7 +173,7 @@ ResidueIndexSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	"e.g. 12A-47A, referring to residues 12 through 47 on chain A in PDB numbering. "
 	"(Note, residues that contain insertion codes cannot be properly identified by these PDB numbered schemes).");
 	*/
-	core::pose::attributes_for_get_resnum_list( attributes, xsd, "resnums" );
+	core::pose::attributes_for_get_resnum_selector( attributes, xsd, "resnums" );
 	xsd_type_definition_w_attributes(
 		xsd, class_name(),
 		"The ResidueIndexSelector sets the positions corresponding to the residues given in the resnums string to true, and all other positions to false. Note that it does not support PDB insertion codes.",

@@ -42,6 +42,8 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 
+#include <core/select/residue_selector/ResidueSelector.hh>
+
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -74,11 +76,11 @@ public:
 	//OopCreatorMover(): Mover("OopCreatorMover"){}
 	OopCreatorMover();
 	OopCreatorMover(
-		utility::vector1<core::Size> oop_plus_positions,
-		utility::vector1<core::Size> oop_minus_positions,
-		utility::vector1<core::Size> oop_d_plus_positions,
-		utility::vector1<core::Size> oop_d_minus_positions,
-		utility::vector1<core::Size> oop_low_e_puck_positions,
+		core::select::residue_selector::ResidueSelectorCOP  oop_plus_positions,
+		core::select::residue_selector::ResidueSelectorCOP  oop_minus_positions,
+		core::select::residue_selector::ResidueSelectorCOP  oop_d_plus_positions,
+		core::select::residue_selector::ResidueSelectorCOP  oop_d_minus_positions,
+		core::select::residue_selector::ResidueSelectorCOP  oop_low_e_puck_positions,
 		core::Size prepend_n_residues,
 		core::Size append_n_residues,
 		bool final_repack,
@@ -109,11 +111,11 @@ public:
 
 
 private:
-	utility::vector1<core::Size> oop_plus_positions_;
-	utility::vector1<core::Size> oop_minus_positions_;
-	utility::vector1<core::Size> oop_d_plus_positions_;
-	utility::vector1<core::Size> oop_d_minus_positions_;
-	utility::vector1<core::Size> oop_low_e_puck_positions_;
+	core::select::residue_selector::ResidueSelectorCOP oop_plus_positions_;
+	core::select::residue_selector::ResidueSelectorCOP oop_minus_positions_;
+	core::select::residue_selector::ResidueSelectorCOP oop_d_plus_positions_;
+	core::select::residue_selector::ResidueSelectorCOP oop_d_minus_positions_;
+	core::select::residue_selector::ResidueSelectorCOP oop_low_e_puck_positions_;
 	core::Size prepend_n_residues_;
 	core::Size append_n_residues_;
 	bool final_repack_;

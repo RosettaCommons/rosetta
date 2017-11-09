@@ -81,8 +81,8 @@ DomainAssembly::DomainAssembly() :
 {}
 
 DomainAssembly::DomainAssembly(
-	core::Size const linker_start,
-	core::Size const linker_end,
+	std::string const & linker_start,
+	std::string const & linker_end,
 	FragSetOP fragset_large,
 	FragSetOP fragset_small
 ) :
@@ -120,7 +120,13 @@ DomainAssembly::apply( core::pose::Pose & pose )
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
 	mm->set_bb( false );
-	for ( core::Size i=linker_start_; i<=linker_end_; ++i ) mm->set_bb( i, true );
+	core::Size linker_start( core::pose::parse_resnum( linker_start_, pose ) );
+	core::Size linker_end( core::pose::parse_resnum( linker_end_, pose ) );
+	runtime_assert( linker_end > linker_start );
+	runtime_assert( linker_start > 0 );
+	runtime_assert( linker_end < pose.size() );
+
+	for ( core::Size i=linker_start; i<=linker_end; ++i ) mm->set_bb( i, true );
 	/* //The following code only makes sense if we do 'blind' prediction stuff. In all cases where we have a starting structure,
 	//it's probably a good idea to start near that.
 	for(i = 1; i <= flexible_regions_.size(); i++ ){
@@ -160,7 +166,7 @@ DomainAssembly::apply( core::pose::Pose & pose )
 	task->initialize_from_command_line().or_include_current( true );
 	task->restrict_to_repacking();
 
-	for ( core::Size i = linker_end_+1; i <= pose.size(); ++i ) {
+	for ( core::Size i = linker_end+1; i <= pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		if ( pose.residue(i).type().is_disulfide_bonded() ) {
 			task->nonconst_residue_task( i ).prevent_repacking();
@@ -169,15 +175,15 @@ DomainAssembly::apply( core::pose::Pose & pose )
 
 		core::conformation::Residue const resi( pose.residue( i ) );
 		core::Size j;
-		for ( j = 1; j<=linker_end_; ++j ) {
+		for ( j = 1; j<=linker_end; ++j ) {
 			core::conformation::Residue const resj( pose.residue( j ) );
 
 			core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 			if ( distance <= 8.0 ) break;
 		}
-		if ( j>linker_end_ ) task->nonconst_residue_task( i ).prevent_repacking();
+		if ( j>linker_end ) task->nonconst_residue_task( i ).prevent_repacking();
 	}
-	for ( core::Size i = 1; i <= linker_start_ - 1; ++i ) {
+	for ( core::Size i = 1; i <= linker_start - 1; ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		if ( pose.residue(i).type().is_disulfide_bonded() ) {
 			task->nonconst_residue_task( i ).prevent_repacking();
@@ -186,7 +192,7 @@ DomainAssembly::apply( core::pose::Pose & pose )
 
 		core::conformation::Residue const resi( pose.residue( i ) );
 		core::Size j;
-		for ( j = linker_start_; j<=pose.size(); ++j ) {
+		for ( j = linker_start; j<=pose.size(); ++j ) {
 			core::conformation::Residue const resj( pose.residue( j ) );
 
 			core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
@@ -210,13 +216,10 @@ DomainAssembly::apply( core::pose::Pose & pose )
 // XRW TEMP }
 
 void
-DomainAssembly::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+DomainAssembly::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
-	linker_start_ = core::pose::get_resnum( tag, pose, "linker_start_" );
-	linker_end_   = core::pose::get_resnum( tag, pose, "linker_end_" );
-	runtime_assert( linker_end_ > linker_start_ );
-	runtime_assert( linker_start_ > 0 );
-	runtime_assert( linker_end_ < pose.size() );
+	linker_start_ = core::pose::get_resnum_string( tag, "linker_start_" );
+	linker_end_   = core::pose::get_resnum_string( tag, "linker_end_" );
 
 	std::string const frag_large_fname( tag->getOption< std::string >( "frag9", "frag9" ) );
 	std::string const frag_small_fname( tag->getOption< std::string >( "frag3", "frag3" ) );
@@ -244,8 +247,8 @@ void DomainAssembly::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute::attribute_w_default( "frag9", xs_string, "Path to fragment file containing 9mers", "frag9" )
 		+ XMLSchemaAttribute::attribute_w_default( "frag3", xs_string, "Path to fragment file containing 3mers", "frag3" );
 
-	core::pose::attributes_for_get_resnum( attlist, "linker_start_" );
-	core::pose::attributes_for_get_resnum( attlist, "linker_end_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "linker_start_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "linker_end_" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Do domain assembly sampling by fragment insertion in a linker region", attlist );
 }
 

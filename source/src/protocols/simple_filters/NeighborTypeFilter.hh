@@ -32,10 +32,16 @@ class NeighborTypeFilter : public filters::Filter
 {
 public:
 	NeighborTypeFilter() : filters::Filter( "NeighborType" ){};
-	NeighborTypeFilter( core::Size const target_residue, utility::vector1< bool > const & residue_types, core::Real const distance_threshold ) :
-		filters::Filter( "NeighborType" ) {
-		target_residue_ = target_residue; residue_types_ = residue_types; distance_threshold_ = distance_threshold;
-	}
+	NeighborTypeFilter( std::string const & target_residue,
+		utility::vector1< bool > const & residue_types,
+		core::Real const distance_threshold
+	) :
+		filters::Filter( "NeighborType" ),
+		target_residue_(target_residue),
+		residue_types_(residue_types),
+		distance_threshold_(distance_threshold)
+	{}
+
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
@@ -62,7 +68,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	core::Size target_residue_;
+	std::string target_residue_;
 	utility::vector1< bool > residue_types_;
 	core::Real distance_threshold_;
 };

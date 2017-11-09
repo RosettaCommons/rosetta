@@ -126,11 +126,9 @@ LoopRemodel::LoopRemodel() :
 
 LoopRemodel::LoopRemodel(
 	std::string const & protocol,
-	core::Size const loop_start,
-	core::Size const loop_end,
+	std::string const & loop_start,
+	std::string const & loop_end,
 	core::Size const cycles,
-	bool const auto_loops,
-	//bool const design,
 	bool const perturb,
 	bool const refine,
 	bool const hurry,
@@ -146,15 +144,15 @@ LoopRemodel::LoopRemodel(
 	loop_start_( loop_start ),
 	loop_end_( loop_end ),
 	cycles_( cycles ),
-	auto_loops_(auto_loops),
-	//design_(design),
 	perturb_( perturb),
 	refine_( refine),
 	hurry_( hurry )
 {
 	hires_score_ = hires_score;
 	lores_score_ = lores_score->clone();
-	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops( *loops ) );
+	if ( loops ) {
+		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops( *loops ) );
+	}
 	frag1_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( *frag1 ) );
 	frag3_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( *frag3 ) );
 	frag9_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( *frag9 ) );
@@ -168,7 +166,23 @@ LoopRemodel::apply( core::pose::Pose & pose )
 
 	core::pose::Pose native_pose = pose;
 
-	LoopsOP loops( new protocols::loops::Loops( *loops_ ) ); // loops_ gets set in parse_my_tag
+	LoopsOP loops;
+	if ( loops_ ) {
+		loops = LoopsOP( new protocols::loops::Loops( *loops_ ) ); // Make a copy
+	} else if ( !loop_start_.empty() && !loop_end_.empty() ) {
+		core::Size loop_start = core::pose::parse_resnum( loop_start_, pose );
+		core::Size loop_end   = core::pose::parse_resnum( loop_end_, pose );
+		runtime_assert( loop_end > loop_start );
+		runtime_assert( (loop_end - loop_start) >= 3 );
+		runtime_assert( loop_start > 1 );
+		runtime_assert( loop_end < pose.size() );
+		core::Size const cutpt = (loop_start+loop_end)/2; // put cutpoint in the middle of the loop
+		loops = protocols::loops::LoopsOP( new protocols::loops::Loops );
+		loops->add_loop( protocols::loops::Loop( loop_start, loop_end, cutpt ) );
+	} else {
+		utility_exit_with_message("In LoopRemodel mover - must specify either a Loops definition or a loop start and end.");
+	}
+
 	if ( loops->size() == 0 )  {
 		TR << "No loops found!" << std::endl;
 		return; // bounce out if we didn't define any loops
@@ -434,7 +448,7 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 
 
 void
-LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
 	perturb_ = tag->getOption<bool>( "perturb", 0 );
@@ -445,7 +459,7 @@ LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, p
 
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
-	auto_loops_ = tag->getOption<bool>( "auto_loops", 0 );
+	bool auto_loops = tag->getOption<bool>( "auto_loops", 0 );
 	bool const des = tag->getOption<bool>( "design", 0 );
 	design( des ); // set baseclass design flag
 
@@ -453,33 +467,23 @@ LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, p
 	cycles_ = tag->getOption<Size>( "cycles", 10 );
 	runtime_assert( cycles_ > 0 );
 
-	loop_start_ = 0;
-	loop_end_ = 0;
-
 	// populate loops
-	if ( auto_loops_ ) {
+	if ( auto_loops ) {
 		if ( !data.has( "loops", "found_loops" ) ) {
 			TR << "Loops not present in basic::datacache::DataMap! Be sure to add LoopFinder before LoopRemodel!" << std::endl;
 			return;
 		}
 		loops_ = data.get_ptr<protocols::loops::Loops>( "loops", "found_loops" ); // from LoopFinder
 	} else {
-		loop_start_ = core::pose::get_resnum( tag, pose, "loop_start_" );
-		loop_end_   = core::pose::get_resnum( tag, pose, "loop_end_" );
-		core::Size const cutpt = (loop_start_+loop_end_)/2; // put cutpoint in the middle of the loop
-		protocols::loops::LoopOP loop( new protocols::loops::Loop( loop_start_, loop_end_, cutpt ) );
-		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );
-		loops_->add_loop( *loop );
+		loop_start_ = core::pose::get_resnum_string( tag, "loop_start_", "" );
+		loop_end_   = core::pose::get_resnum_string( tag, "loop_end_", "" );
 	}
 
-	runtime_assert( auto_loops_ || (loop_start_ && loop_end_) );
-	if ( (loop_start_ && loop_end_) && !auto_loops_ ) {
-		runtime_assert( loop_end_ > loop_start_ );
-		runtime_assert( (loop_end_ - loop_start_) >= 3 );
-		runtime_assert( loop_start_ > 1 );
-		runtime_assert( loop_end_ < pose.size() );
+	if ( !auto_loops && ( loop_start_.empty() || loop_end_.empty() ) ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("LoopRemodel must have either auto_loops set, or both loop_start and loop_end designations");
 	}
-	TR << "LoopRemodel mover: auto_loops="<<auto_loops_<<" loop_start="<<loop_start_<<" loop_end="<<loop_end_<<" design="<<design()<<
+
+	TR << "LoopRemodel mover: auto_loops="<<auto_loops<<" loop_start="<<loop_start_<<" loop_end="<<loop_end_<<" design="<<design()<<
 		" perturb="<<perturb_<<" refine="<<refine_<<" hurry=" <<hurry_<< " cycles=" << cycles_ <<" hires_score="<< rosetta_scripts::get_score_function_name(tag, "refine_score") << std::endl;
 }
 

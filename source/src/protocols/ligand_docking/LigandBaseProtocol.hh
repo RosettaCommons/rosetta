@@ -96,21 +96,24 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override;
 
+	static
 	core::Size
 	get_ligand_jump_id(
 		core::pose::Pose const & pose
-	) const;
+	);
 
+	static
 	core::Size
 	get_ligand_id(
 		core::pose::Pose const & pose
-	) const;
+	);
 
+	static
 	core::Size
 	get_ligand_id(
 		core::pose::Pose const & pose,
 		core::Size jump_id
-	) const;
+	);
 
 	void
 	restrain_protein_Calphas(

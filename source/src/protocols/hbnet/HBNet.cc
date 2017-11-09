@@ -88,6 +88,7 @@
 #include <core/select/residue_selector/ResidueNameSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/LayerSelector.hh>
+#include <core/select/util.hh>
 
 // Protocols headers
 #include <protocols/enzdes/AddorRemoveCsts.hh>
@@ -379,7 +380,7 @@ HBNet::task_factory( core::pack::task::TaskFactoryOP task_factory )
 }
 
 void
-HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	hydrogen_bond_threshold_ = tag->getOption<core::Real>( "hb_threshold" ,-0.5);
 	//bw_cutoff_ = tag->getOption<core::PackerEnergy>("bw_cutoff",-0.5);
@@ -451,14 +452,9 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}
 
-	if ( tag->hasOption("start_resnums") ) {
-		std::string string_resnums( tag->getOption< std::string >( "start_resnums", "" ) );
-		start_res_vec_ = pose::get_resnum_list( string_resnums, pose );
-	}
 	if ( tag->hasOption("start_selector") ) {
 		if ( tag->hasOption("start_resnums" ) ) {
 			TR.Warning << "cannot use both start_resnums and start_selector options; start_selector will be used" << std::endl;
-			start_res_vec_.clear();
 		}
 		std::string const selector_name ( tag->getOption< std::string >( "start_selector" ) );
 		if ( TR.visible() ) TR << "Set selector name to " << selector_name << "." << std::endl;
@@ -471,6 +467,8 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 		}
 		runtime_assert( selector );
 		start_selector_ = selector->clone();
+	} else if ( tag->hasOption("start_resnums") ) {
+		start_selector_ = core::pose::get_resnum_selector( tag, "start_resnums" );
 	}
 	if ( tag->hasOption("core_selector") ) {
 		std::string const selector_name ( tag->getOption< std::string >( "core_selector" ) );
@@ -3571,13 +3569,7 @@ HBNet::apply( Pose & pose )
 	// put all residues in selector in start_res_vec_ (we check later to ensure that these positions are actually in IG)
 	//    ResidueSubset is a bool vector of all positions in the pose; can use Vikram's ReferencePose if need to add/delete residues
 	if ( start_selector_ ) {
-		core::select::residue_selector::ResidueSubset rs( start_selector_->apply( pose ) );
-		start_res_vec_.clear();
-		for ( Size r = 1; r <= rs.size(); ++r ) {
-			if ( rs[ r ] ) {
-				start_res_vec_.insert(r);
-			}
-		}
+		start_res_vec_ = core::select::get_residue_set_from_subset( start_selector_->apply( pose ) );
 	}
 	if ( core_selector_ ) {
 		core_residues_ = core_selector_->apply( pose );

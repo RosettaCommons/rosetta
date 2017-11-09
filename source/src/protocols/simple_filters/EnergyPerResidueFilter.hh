@@ -49,12 +49,12 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~EnergyPerResidueFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
-	core::Size resnum() const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	core::scoring::ScoreType score_type() const;
 	core::Real threshold() const;
 	bool bb_bb() const;
-	void resnum( core::Size const rn );
+	void resnum( core::Size rn );
+	void resnum( std::string const & rn );
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	void score_type( core::scoring::ScoreType score_type );
 	void threshold( core::Real const th );
@@ -73,6 +73,7 @@ public:
 
 private:
 	core::Size resnum_;
+	std::string resnum_string_;
 	core::scoring::ScoreFunctionOP scorefxn_; //?
 	core::scoring::ScoreType score_type_;
 	core::Real threshold_;

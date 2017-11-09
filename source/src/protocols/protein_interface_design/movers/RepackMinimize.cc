@@ -24,6 +24,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -82,7 +83,7 @@ RepackMinimize::RepackMinimize() :
 RepackMinimize::RepackMinimize(
 	ScoreFunctionCOP scorefxn_repack,
 	ScoreFunctionCOP scorefxn_minimize,
-	utility::vector1< core::Size > const & target_residues,
+	utility::vector1< core::Size > const & target_res,
 	bool const repack_partner1/*=false*/,
 	bool const repack_partner2/*=true*/,
 	core::Real const interface_distance_cutoff/*=8.0*/,
@@ -92,7 +93,8 @@ RepackMinimize::RepackMinimize(
 {
 	repack_partner2_ = repack_partner2;
 	repack_partner1_ = repack_partner1;
-	target_residues_ = target_residues;
+	using namespace core::select::residue_selector;
+	target_residues( ResidueSelectorOP( new ResidueIndexSelector( target_res ) ) );
 	interface_distance_cutoff_ = interface_distance_cutoff;
 	if ( symmetry_ ) {
 		if ( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_repack );
@@ -134,9 +136,9 @@ RepackMinimize::apply( pose::Pose & pose )
 
 	pack::pack_rotamers(pose, *scorefxn_repack_, task_ );
 	if ( symmetry_ ) {
-		SymMinimizeInterface( pose, scorefxn_minimize_, curr_min_bb_, curr_min_sc_, curr_min_rb_); //, optimize_foldtree_, target_residues_ );
+		SymMinimizeInterface( pose, scorefxn_minimize_, curr_min_bb_, curr_min_sc_, curr_min_rb_); //, optimize_foldtree_, target_residues(pose) );
 	} else {
-		MinimizeInterface( pose, scorefxn_minimize_, curr_min_bb_, curr_min_sc_, curr_min_rb_, optimize_foldtree_, target_residues_ );
+		MinimizeInterface( pose, scorefxn_minimize_, curr_min_bb_, curr_min_sc_, curr_min_rb_, optimize_foldtree_, target_residues(pose) );
 	}
 	pose.update_residue_neighbors();
 	(*scorefxn_minimize_)( pose );

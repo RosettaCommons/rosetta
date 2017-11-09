@@ -293,7 +293,8 @@ protected:
 	core::Size cycles() const;
 	bool skip_sampling() const;
 
-	utility::tag::TagCOP tag() const;
+	std::string const & scaffold_start() const;
+	std::string const & scaffold_end() const;
 
 private:
 	core::Size cycles_;
@@ -326,7 +327,8 @@ private:
 	bool final_repack_;
 
 	core::Real neighbor_dis_;
-	utility::tag::TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
+	std::string scaffold_start_;
+	std::string scaffold_end_;
 	bool idealize_insert_;
 
 	protocols::loops::LoopsOP loops_;

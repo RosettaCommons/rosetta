@@ -174,6 +174,18 @@ core::Size count_selected( ResidueSubset const & selection );
 /// @brief Returns the Rosetta Numbering corresponding to the selected residues
 utility::vector1< core::Size > selection_positions( ResidueSubset const & selection );
 
+/// @brief If sele1 is already an OrResidueSelector, add sele2 to it.
+/// If not, return a new OrResidueSelector which combines the two.
+/// @details If either of the selectors are a nullptr, just return the other.
+ResidueSelectorOP
+OR_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 );
+
+/// @brief If sele1 is already an AndResidueSelector, add sele2 to it.
+/// If not, return a new AndResidueSelector which combines the two.
+/// @details If either of the selectors are a nullptr, just return the other.
+ResidueSelectorOP
+AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 );
+
 }
 }
 }

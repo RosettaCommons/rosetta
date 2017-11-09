@@ -19,7 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
-
+#include <set>
 
 namespace core {
 namespace select {
@@ -27,6 +27,10 @@ namespace select {
 /// @brief Get a vector1 of the indexes which are the same value as 'select' in the ResidueSubset.
 utility::vector1< core::Size >
 get_residues_from_subset( utility::vector1< bool > const & subset, bool select = true);
+
+/// @brief Get a std::set of the indexes which are the same value as 'select' in the ResidueSubset.
+std::set< core::Size >
+get_residue_set_from_subset( utility::vector1< bool > const & subset, bool select = true);
 
 /// @brief Get a vector1 of true/false (a ResidueSubset) from a list of residue numbers.
 /// @details If invert is true, residues *not* in the selection are true in the returned vector.

@@ -52,7 +52,7 @@ static THREAD_LOCAL basic::Tracer sidechain_rmsd_filter_tracer( "protocols.simpl
 
 SidechainRmsdFilter::SidechainRmsdFilter() : filters::Filter( "SidechainRmsd"  ) {}
 
-SidechainRmsdFilter::SidechainRmsdFilter( core::Size const res1, core::Size const res2, core::Real const rmsd_threshold ) :
+SidechainRmsdFilter::SidechainRmsdFilter( std::string const & res1, std::string const & res2, core::Real const rmsd_threshold ) :
 	Filter( "SidechainRmsd" ), res1_( res1 ), res2_( res2 ), rmsd_threshold_( rmsd_threshold ) {}
 
 SidechainRmsdFilter::~SidechainRmsdFilter()= default;
@@ -60,8 +60,8 @@ SidechainRmsdFilter::~SidechainRmsdFilter()= default;
 void
 SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
-	res1_ = core::pose::get_resnum( tag, pose, "res1_" );
-	res2_ = core::pose::get_resnum( tag, pose, "res2_" );
+	res1_ = core::pose::get_resnum_string( tag, "res1_" );
+	res2_ = core::pose::get_resnum_string( tag, "res2_" );
 	rmsd_threshold_ = tag->getOption<core::Real>("threshold", 1.0);
 	include_backbone_ = tag->getOption<bool>("include_backbone", false);
 
@@ -101,8 +101,10 @@ SidechainRmsdFilter::report_sm( core::pose::Pose const & pose ) const {
 core::Real
 SidechainRmsdFilter::compute( core::pose::Pose const & pose ) const {
 	debug_assert( reference_pose_ );
-	core::conformation::Residue const res_res1( pose.conformation().residue( res1_ ) );
-	core::conformation::Residue const res_res2( reference_pose_->conformation().residue( res2_ ) );
+	core::Size res1( core::pose::parse_resnum( res1_, pose ) );
+	core::Size res2( core::pose::parse_resnum( res2_, pose ) );
+	core::conformation::Residue const res_res1( pose.conformation().residue( res1 ) );
+	core::conformation::Residue const res_res2( reference_pose_->conformation().residue( res2 ) );
 	core::Real rmsd (0.0);
 
 	// make sure we're comparing the same amino acid type
@@ -156,9 +158,9 @@ void SidechainRmsdFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	attlist + XMLSchemaAttribute::attribute_w_default( "threshold"  , xsct_real , "In a truth value context, what's the maximum RMSD value which is considered to be passing." , "1.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "include_backbone" , xsct_rosetta_bool , "Whether to include the backbone in the RMSD calculation. It is recommended to set this to 'true' for ligands and other residues which don't have a backbone." , "false" ) ;
 
-	core::pose::attributes_for_get_resnum( attlist , "res1_" ) ;
+	core::pose::attributes_for_get_resnum_string( attlist , "res1_" ) ;
 	//The residue number for the active pose. see RosettaScripts#rosettascripts-conventions_specifying-residues
-	core::pose::attributes_for_get_resnum( attlist , "res2_" ) ;
+	core::pose::attributes_for_get_resnum_string( attlist , "res2_" ) ;
 	//The residue number for the reference pose. see RosettaScripts#rosettascripts-conventions_specifying-residues
 
 	protocols::rosetta_scripts::attributes_for_saved_reference_pose( attlist , "reference_name" ) ;

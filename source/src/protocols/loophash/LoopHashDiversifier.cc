@@ -105,8 +105,8 @@ LoopHashDiversifier::LoopHashDiversifier() :
 	max_intra_ss_bbrms_( 100000.0 ),
 	min_rms_( 0.0 ),
 	max_rms_( 100.0 ),
-	start_res_( 2 ),
-	stop_res_( 0 ),
+	start_res_( "2" ),
+	stop_res_( "0" ),
 	window_size_(4),
 	max_radius_(4),
 	max_struct_(10),
@@ -136,8 +136,8 @@ LoopHashDiversifier::LoopHashDiversifier(
 	core::Real max_intra_ss_bbrms,
 	core::Real min_rms,
 	core::Real max_rms,
-	core::Size start_res,
-	core::Size stop_res,
+	std::string const & start_res,
+	std::string const & stop_res,
 	core::Size window_size,
 	core::Size max_radius,
 	core::Size max_struct,
@@ -212,13 +212,19 @@ LoopHashDiversifier::apply( Pose & pose )
 	lsampler.set_max_struct( max_struct_ );
 	lsampler.set_filter_by_phipsi( filter_by_phipsi_ );
 
+	core::Size start_res = core::pose::parse_resnum( start_res_, pose );
+	core::Size stop_res = pose.size();
+	if ( !stop_res_.empty() ) {
+		stop_res = core::pose::parse_resnum( stop_res_, pose );
+	}
+
 	for ( core::Size cur_iter=1; cur_iter<=num_iterations_; ++cur_iter ) {
 		core::Size cur_num_try_div = 1 ;
 		bool div_success = false;
 		while ( !div_success && cur_num_try_div <= num_try_div_ ) // it tries upto num_try_div_ times to diversify
 				{
 			//Choose a random window-size of residues to run loophash on
-			core::Size lh_start = numeric::random::random_range(start_res_, stop_res_-window_size_+1);
+			core::Size lh_start = numeric::random::random_range(start_res, stop_res-window_size_+1);
 			core::Size lh_stop = lh_start+window_size_-1;
 			TR << "lh_start: " << lh_start << ", lh_stop: " << lh_stop << std::endl;
 
@@ -353,7 +359,7 @@ LoopHashDiversifier::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &filters,
 	Movers_map const & /*movers*/,
-	Pose const & pose
+	Pose const &
 ){
 	num_iterations_ = tag->getOption< Size >( "num_iterations", 100 );
 	num_try_div_ = tag->getOption< Size >( "num_try_div", 100 );
@@ -376,14 +382,8 @@ LoopHashDiversifier::parse_my_tag(
 	ideal_ = tag->getOption< bool >( "ideal",  false );  // by default, assume structure is nonideal
 	filter_by_phipsi_ = tag->getOption< bool >( "filter_by_phipsi", false );
 
-	start_res_ = 2;
-	stop_res_ = pose.size();
-	if ( tag->hasOption( "start_res_num" ) || tag->hasOption( "start_pdb_num") ) {
-		start_res_ = core::pose::get_resnum( tag, pose, "start_" );
-	}
-	if ( tag->hasOption( "stop_res_num" ) || tag->hasOption( "stop_pdb_num") ) {
-		stop_res_ = core::pose::get_resnum( tag, pose, "stop_" );
-	}
+	start_res_ = core::pose::get_resnum_string( tag, "start_", start_res_ );
+	stop_res_ = core::pose::get_resnum_string( tag, "stop_", "" );
 
 	window_size_ = tag->getOption< Size >( "window_size", 4 );
 
@@ -535,8 +535,8 @@ void LoopHashDiversifier::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		+ XMLSchemaAttribute::attribute_w_default("ideal", xsct_rosetta_bool, "Save space and assume structure is ideal?", "false")
 		+ XMLSchemaAttribute::attribute_w_default("filter_by_phipsi", xsct_rosetta_bool, "Filter-out non-ideal phipsi.", "false");
 
-	core::pose::attributes_for_get_resnum( attlist, "start_" );
-	core::pose::attributes_for_get_resnum( attlist, "stop_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "start_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "stop_" );
 
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default("window_size", xsct_non_negative_integer, "loophash window size and loophash fragment size", "4")

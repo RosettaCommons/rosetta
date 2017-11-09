@@ -371,7 +371,7 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 	backrubmover_->set_min_atoms( min_atoms_ );
 	backrubmover_->set_max_atoms( max_atoms_ );
 	backrubmover_->set_input_pose( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
-	backrubmover_->add_mainchain_segments();
+	backrubmover_->add_mainchain_segments( pose );
 
 }
 
@@ -381,13 +381,8 @@ BackrubProtocol::parse_my_tag(
 	basic::datacache::DataMap  & data,
 	protocols::filters::Filters_map const & /* filters */,
 	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const& pose
+	core::pose::Pose const&
 ) {
-
-	utility::vector1<core::Size> pivot_residues;
-	if ( tag->hasOption("pivot_residues") ) {
-		pivot_residues = core::pose::get_resnum_list(tag, "pivot_residues", pose);
-	}
 
 	utility::vector1<std::string> pivot_atoms = utility::vector1<std::string>(1, "CA");
 	if ( tag->hasOption("pivot_atoms") ) {
@@ -404,6 +399,9 @@ BackrubProtocol::parse_my_tag(
 	}
 
 	// Take any residues set to be at least packable in "pivot_task_operations" and use these as pivots
+	if ( tag->hasOption("pivot_residues") ) {
+		pivots_residue_selector_ = core::pose::get_resnum_selector(tag, "pivot_residues");
+	}
 	if ( tag->hasOption("pivot_residue_selector") ) {
 		// We hold on to the residue selector until apply time (to run its apply function), as it has not been
 		// initialized at this point and we would need a non-const pose to initialize
@@ -444,6 +442,7 @@ BackrubProtocol::parse_my_tag(
 		trajectory = true;
 	}
 
+	utility::vector1<core::Size> pivot_residues; // Pivot residues will be set by the ResidueSelectors
 	set_options(
 		pivot_residues,
 		pivot_atoms,

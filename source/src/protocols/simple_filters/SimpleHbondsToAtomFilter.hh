@@ -52,8 +52,8 @@ public:
 	report( std::ostream & os, core::pose::Pose const & pose ) const override;
 
 public:
-	core::Size get_target_residue() const;
-	void set_target_residue( core::Size target_residue );
+	std::string const & get_target_residue() const;
+	void set_target_residue( std::string const & target_residue );
 	core::Size get_n_partners() const;
 	void set_n_partners( core::Size n_partners );
 	std::string get_target_atom_name() const;
@@ -93,7 +93,7 @@ public:
 
 private:
 	std::string target_atom_name_;
-	core::Size target_residue_;
+	std::string target_residue_;
 	core::Size n_partners_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real hb_e_cutoff_;

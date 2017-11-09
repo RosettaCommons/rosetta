@@ -192,7 +192,7 @@ void LigandMetalContactSelector::provide_xml_schema( utility::tag::XMLSchemaDefi
 	attributes
 		+ XMLSchemaAttribute( "residue_selector", xs_string, "Name of the residue selector for the ligand")
 		+ XMLSchemaAttribute::attribute_w_default( "dist_cutoff_multiplier", xsct_real, "Multiplier for the distance from the metal atom for contact detection", "1");
-	core::pose::attributes_for_get_resnum_list( attributes, xsd, "resnums");
+	core::pose::attributes_for_get_resnum_selector( attributes, xsd, "resnums");
 	core::select::residue_selector::xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), "This residue selector selects for the residues in contact with the ligand metal", attributes );
 
 

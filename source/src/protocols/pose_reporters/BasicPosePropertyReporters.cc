@@ -34,6 +34,8 @@
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -249,18 +251,23 @@ core::Real RMSDReporter::report_property( core::pose::Pose & p1, core::pose::Pos
 {
 	core::Real r = 0;
 
+	std::list< core::Size > residues; // Why std::list?
+	if ( residues_ ) {
+		utility::vector1< core::Size > resvec = core::select::get_residues_from_subset( residues_->apply( p1 ) ); // Do we need different selectors for p1 and p2?
+		residues.insert( residues.end(), resvec.begin(), resvec.end() );
+	}
 	switch(mode_) {
 	case MODE_CA_rmsd :
-		if ( residues_.size() > 0 ) {
-			r = core::scoring::CA_rmsd( p1, p2, residues_ );
+		if ( residues.size() > 0 ) {
+			r = core::scoring::CA_rmsd( p1, p2, residues );
 		} else {
 			r = core::scoring::CA_rmsd( p1, p2 );
 		}
 		break;
 
 	case MODE_all_atom_rmsd :
-		if ( residues_.size() > 0 ) {
-			r = core::scoring::all_atom_rmsd( p1, p2, residues_ );
+		if ( residues.size() > 0 ) {
+			r = core::scoring::all_atom_rmsd( p1, p2, residues );
 		} else {
 			r = core::scoring::all_atom_rmsd( p1, p2 );
 		}
@@ -291,7 +298,7 @@ RMSDReporter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 	attlist
 		+ XMLSchemaAttribute::required_attribute( "mode", "rmsd_mode", "Calculate CA or all_atom RMSD?" );
 
-	core::pose::attributes_for_get_resnum_list( attlist, xsd, "residues" );
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues" );
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( name() )
 		.description( "Reports the Calpha or full-atom RMSD of a pose (optionally within a specified residue range)" )
@@ -309,7 +316,7 @@ void RMSDReporter::parse_my_tag(
 	basic::datacache::DataMap & /* data */,
 	protocols::filters::Filters_map & /* filters */,
 	protocols::moves::Movers_map const & /* movers */,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	using namespace utility::tag;
@@ -326,10 +333,7 @@ void RMSDReporter::parse_my_tag(
 	}
 
 	if ( tag->hasOption("residues") ) {
-		std::string residues = tag->getOption<std::string>("residues");
-		// Why do we have std::set in some places and std::list elsewhere?
-		std::set< core::Size > residues_list ( core::pose::get_resnum_list(residues, pose) );
-		residues_.assign( residues_list.begin(), residues_list.end() );
+		residues_ = core::pose::get_resnum_selector( tag, "residues" );
 	}
 
 	if ( mode_ == MODE_NONE ) {

@@ -33,6 +33,9 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/util.hh>
+
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
 #include <basic/datacache/DataMap.hh>
@@ -636,17 +639,21 @@ CartesianSampler::apply_constraints(
 	utility::vector1< utility::vector1< core::Real > > tgt_dists(nres_tgt);
 	utility::vector1< utility::vector1< core::Real > > tgt_weights(nres_tgt);
 
+	std::set< core::Size > user_pos;
+	if ( user_pos_ ) {
+		user_pos = core::select::get_residue_set_from_subset( user_pos_->apply( pose ) );
+	}
 	for ( core::Size j=1; j < ref_model_.size(); ++j ) {
 		if ( !ref_model_.residue_type(j).is_protein() ) continue;
 
-		if ( user_rebuild && user_pos_.find(j) != user_pos_.end() ) continue;
+		if ( user_rebuild && user_pos.find(j) != user_pos.end() ) continue;
 		if ( user_rebuild && loops_ && loops_->is_loop_residue(j) ) continue;
 
 		for ( core::Size k=j+1; k < ref_model_.size(); ++k ) {
 			if ( !ref_model_.residue_type(k).is_protein() ) continue;
 			if ( ref_model_.pdb_info()->number(k) - ref_model_.pdb_info()->number(j) < (int)MINSEQSEP ) continue;
 
-			if ( user_rebuild && user_pos_.find(k) != user_pos_.end() ) continue;
+			if ( user_rebuild && user_pos.find(k) != user_pos.end() ) continue;
 			if ( user_rebuild && loops_ && loops_->is_loop_residue(k) ) continue;
 
 			core::Real dist = ref_model_.residue(j).xyz(2).distance( ref_model_.residue(k).xyz(2) );
@@ -703,7 +710,11 @@ compute_fragment_bias(
 		}
 
 		if ( std::find( fragment_bias_strategies_.begin(), fragment_bias_strategies_.end(), "user" ) !=fragment_bias_strategies_.end() ) {
-			frag_bias_assigner.user( user_pos_, loops_ );
+			std::set< core::Size > user_pos;
+			if ( user_pos_ ) {
+				user_pos = core::select::get_residue_set_from_subset( user_pos_->apply(pose) );
+			}
+			frag_bias_assigner.user( user_pos, loops_ );
 		}
 
 		if ( std::find( fragment_bias_strategies_.begin(), fragment_bias_strategies_.end(), "density" ) !=fragment_bias_strategies_.end() ) {
@@ -733,12 +744,20 @@ compute_fragment_bias(
 
 	// remove residues form the frag_bias container - should probably consider window as well
 	if ( include_residues_ ) {
-		frag_bias_assigner.include_residues( residues_to_include_ );
+		std::set< core::Size > residues_to_include;
+		if ( user_pos_ ) {
+			residues_to_include = core::select::get_residue_set_from_subset( residues_to_include_->apply(pose) );
+		}
+		frag_bias_assigner.include_residues( residues_to_include );
 	}
 
 	// remove residues form the frag_bias container - should probably consider window as well
 	if ( exclude_residues_ ) {
-		frag_bias_assigner.exclude_residues( residues_to_exclude_ );
+		std::set< core::Size > residues_to_exclude;
+		if ( user_pos_ ) {
+			residues_to_exclude = core::select::get_residue_set_from_subset( residues_to_exclude_->apply(pose) );
+		}
+		frag_bias_assigner.exclude_residues( residues_to_exclude );
 	}
 
 	// set residues to freeze (residues to chew back from the missing density jump)
@@ -967,7 +986,7 @@ CartesianSampler::parse_my_tag(
 	basic::datacache::DataMap & data,
 	filters::Filters_map const &,
 	moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 ){
 	using namespace core::scoring;
 
@@ -1056,7 +1075,7 @@ CartesianSampler::parse_my_tag(
 	// user-specified residues
 	runtime_assert( !( tag->hasOption( "residues" ) && tag->hasOption( "loops_in" ) ));  // one or the other
 	if ( tag->hasOption( "residues" ) ) {
-		user_pos_ = core::pose::get_resnum_list( tag->getOption<std::string>( "residues" ), pose );
+		user_pos_ = core::pose::get_resnum_selector( tag, "residues" );
 	}
 	if ( tag->hasOption( "loops_in" ) ) {
 		std::string looptag = tag->getOption<std::string>( "loops_in" );
@@ -1065,12 +1084,12 @@ CartesianSampler::parse_my_tag(
 	}
 	// residues_to_exclude duing modeling, prob assigned to be zero, should check frame as well
 	if ( tag->hasOption( "residues_to_exclude" ) ) {
-		residues_to_exclude_ = core::pose::get_resnum_list( tag->getOption<std::string>( "residues_to_exclude" ), pose );
+		residues_to_exclude_ = core::pose::get_resnum_selector( tag, "residues_to_exclude" );
 		exclude_residues_=true;
 	}
 	// residues_to_include duing modeling, prob assigned to be one
 	if ( tag->hasOption( "residues_to_include" ) ) {
-		residues_to_include_ = core::pose::get_resnum_list( tag->getOption<std::string>( "residues_to_include" ), pose );
+		residues_to_include_ = core::pose::get_resnum_selector( tag, "residues_to_include" );
 		include_residues_=true;
 	}
 
@@ -1193,13 +1212,13 @@ void CartesianSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 	std::string const residues_loops_warning(" 'residues' and 'loops_in' are mutually exclusive.");
 
-	core::pose::attributes_for_get_resnum_list( attlist, xsd, "residues"); //XRW TODO, fix function to take a docstring; here is partial docstring:
-	//+ XMLSchemaAttribute( "residues", xsct_refpose_enabled_residue_number_cslist, "XRW TODO" + residues_loops_warning) // XRW TODO this is the wrong type, use get_attributes_for_get_resnum_list instead
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues"); //XRW TODO, fix function to take a docstring; here is partial docstring:
+	//+ XMLSchemaAttribute( "residues", xsct_refpose_enabled_residue_number_cslist, "XRW TODO" + residues_loops_warning) // XRW TODO this is the wrong type, use get_attributes_for_get_resnum_selector instead
 
 	attlist + XMLSchemaAttribute( "loops_in", xs_string, "XRW TODO.  Looks for a Loops object in the DataMap with this name." + residues_loops_warning);
 
-	core::pose::attributes_for_get_resnum_list( attlist, xsd, "residues_to_include");
-	core::pose::attributes_for_get_resnum_list( attlist, xsd, "residues_to_exclude");
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues_to_include");
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues_to_exclude");
 
 	attlist
 		+ XMLSchemaAttribute( "reference_model", xs_string, "XRW TODO; if 'input' uses the Pose from apply(); otherwise loads this pdb file")

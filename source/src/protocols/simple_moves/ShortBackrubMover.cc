@@ -264,7 +264,7 @@ ShortBackrubMover::parse_my_tag(
 {
 	backrubmover_->set_input_pose(core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) ));
 	backrubmover_->clear_segments();
-	backrubmover_->add_mainchain_segments();
+	backrubmover_->add_mainchain_segments( pose );
 	backrubmover_->branchopt().read_database();
 }
 

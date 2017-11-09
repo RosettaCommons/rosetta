@@ -32,8 +32,8 @@ class ReplaceRegionMover : public  protocols::moves::Mover {
 public:
 	ReplaceRegionMover(bool copy_pdbinfo = false);
 	ReplaceRegionMover(core::pose::Pose const & src_pose,
-		core::Size const src_pose_start,
-		core::Size const target_pose_start,
+		std::string const & src_pose_start,
+		std::string const & target_pose_start,
 		core::Size const span,
 		bool copy_pdbinfo = false);
 
@@ -46,11 +46,11 @@ public:
 
 public:
 
-	core::Size src_pose_start() const;
-	void           src_pose_start(core::Size start);
+	std::string const & src_pose_start() const;
+	void src_pose_start(std::string const & start);
 
-	core::Size target_pose_start() const;
-	void           target_pose_start(core::Size start);
+	std::string const & target_pose_start() const;
+	void target_pose_start(std::string const &  start);
 
 	// Undefined, commenting out to fix PyRosetta build  core::Size span() const;
 	// Undefined, commenting out to fix PyRosetta build  void       span(core::Size span);
@@ -88,12 +88,11 @@ public:
 
 
 private:
-	core::Size src_pose_start_;
-	core::Size target_pose_start_;
+	std::string src_pose_start_;
+	std::string target_pose_start_;
 	core::Size span_;
 	bool copy_pdbinfo_;
 	core::pose::PoseOP src_pose_;
-	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
 };
 
 

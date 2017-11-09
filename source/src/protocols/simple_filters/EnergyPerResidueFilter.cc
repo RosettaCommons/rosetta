@@ -98,7 +98,7 @@ EnergyPerResidueFilter::EnergyPerResidueFilter(
 
 
 EnergyPerResidueFilter::EnergyPerResidueFilter( EnergyPerResidueFilter const &init ) :
-	Filter( init ), resnum_( init.resnum_ ),
+	Filter( init ), resnum_( init.resnum_ ), resnum_string_( init.resnum_string_ ),
 	score_type_( init.score_type_ ),
 	threshold_( init.threshold_ ),
 	whole_interface_ (init.whole_interface_),
@@ -156,20 +156,20 @@ EnergyPerResidueFilter::bb_bb( bool const b_b ){
 	bb_bb_ = b_b;
 }
 
-core::Size
-EnergyPerResidueFilter::resnum() const{
-	return resnum_;
-}
-
 void
 EnergyPerResidueFilter::resnum( core::Size const rn ){
 	resnum_ = rn;
 }
 
+void
+EnergyPerResidueFilter::resnum( std::string const & rn ){
+	resnum_string_ = rn;
+}
+
 EnergyPerResidueFilter::~EnergyPerResidueFilter() = default;
 
 void
-EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 
@@ -181,7 +181,8 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 1 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
 	bb_bb_ = tag->getOption< bool >("bb_bb", false );
-	resnum_=0;
+	resnum_ = 0;
+	resnum_string_.clear();
 
 	if ( !whole_protein_ ) {
 		select_resnums_=false;
@@ -189,14 +190,10 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 		select_around_resnums_=false;
 		string_around_resnums_ ="";
 		if ( whole_interface_ ) {
-			if ( pose.conformation().num_chains() < 2 ) {
-				throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense for interface since you have only one chain");
-			} else {
-				energy_per_residue_filter_tracer<<"energies for all interface residues with a distance cutoff of "
-					<< interface_distance_cutoff_ << " A will be calculated "
-					<< "jump_number is set to "<< rb_jump_
-					<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
-			}
+			energy_per_residue_filter_tracer<<"energies for all interface residues with a distance cutoff of "
+				<< interface_distance_cutoff_ << " A will be calculated "
+				<< "jump_number is set to "<< rb_jump_
+				<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
 		} else if ( tag->hasOption( "resnums" ) ) {
 			select_resnums_=true;
 			string_resnums_ = tag->getOption< std::string >( "resnums" );
@@ -207,8 +204,8 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 			around_shell_ = tag->getOption<core::Real>( "around_shell", 8.0 );
 			energy_per_residue_filter_tracer<<"energies for residues around specified residues " << string_around_resnums_  <<" using a cutoff distance (around_shell) of " << around_shell_ << std::endl;
 		} else {
-			resnum_ = core::pose::get_resnum( tag, pose );
-			energy_per_residue_filter_tracer<<"EnergyPerResidueFilter for residue "<<resnum_<<" of score_type "<<score_type_<<" with cutoff "<<threshold_<<std::endl;
+			resnum_string_ = core::pose::get_resnum_string( tag );
+			energy_per_residue_filter_tracer<<"EnergyPerResidueFilter for residue "<<resnum_string_<<" of score_type "<<score_type_<<" with cutoff "<<threshold_<<std::endl;
 		}
 	} else {
 		whole_protein_=1;
@@ -228,6 +225,10 @@ EnergyPerResidueFilter::apply_helper( std::string name, core::pose::Pose const &
 		energy_per_residue_filter_tracer << name << " reassign interface residues" << std::endl;
 		core::pose::Pose in_pose = pose;
 		FArray1D_bool partner1_( in_pose.size(), false );
+		if ( rb_jump_ > pose.num_jump() ) {
+			energy_per_residue_filter_tracer.Error << "Attempted to get jump " << rb_jump_ << " from a pose which only has " << pose.num_jump() << " jumps!" << std::endl;
+			utility_exit_with_message("Unable to calculate EnergyPerResidue across an interface which doesn't exist.");
+		}
 		in_pose.fold_tree().partition_by_jump( rb_jump_, partner1_);
 		protocols::scoring::Interface interface_obj(rb_jump_);
 		in_pose.update_residue_neighbors();
@@ -263,8 +264,10 @@ EnergyPerResidueFilter::apply_helper( std::string name, core::pose::Pose const &
 		} else {
 			utility_exit_with_message( "around_resnums is true but no residues were specified" );
 		}
-	} else if ( resnum_ !=0 )  {
-		use_all_residues[ resnum_ ]=true;
+	} else if ( resnum_ != 0 ) {
+		use_all_residues[ resnum_ ] = true;
+	} else if ( !resnum_string_.empty() )  {
+		use_all_residues[ core::pose::parse_resnum( resnum_string_, pose ) ] = true;
 	} else {
 		energy_per_residue_filter_tracer << name << " reassign everything to be true" << std::endl;
 		std::fill (use_all_residues.begin(),use_all_residues.end(),true);
@@ -422,7 +425,11 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose ) const
 	in_pose.update_residue_neighbors();
 	(*scorefxn_)( in_pose );
 	core::Real weighted_score;
-	if ( score_type_ == total_score ) weighted_score = in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( score_type_ )];
+	core::Size resnum = resnum_;
+	if ( resnum == 0 ) {
+		resnum = core::pose::parse_resnum( resnum_string_, pose );
+	}
+	if ( score_type_ == total_score ) weighted_score = in_pose.energies().residue_total_energies( resnum )[ ScoreType( score_type_ )];
 	else {
 
 		if ( bb_bb_ ) {
@@ -433,7 +440,7 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose ) const
 		}
 
 		core::Real const weight( (*scorefxn_)[ ScoreType( score_type_ ) ] );
-		core::Real const score( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( score_type_ ) ]);
+		core::Real const score( in_pose.energies().residue_total_energies( resnum )[ ScoreType( score_type_ ) ]);
 		weighted_score = weight * score ;
 	}
 	return( weighted_score );
@@ -469,7 +476,7 @@ void EnergyPerResidueFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute("around_resnums", xs_string, "a list of residues that you want to evaluate the energy around")
 		+ XMLSchemaAttribute::attribute_w_default("around_shell", xsct_real, "distance measure that helps define the region to evaluate the energy", "8.0");
 
-	core::pose::attributes_for_get_resnum( attlist, "");
+	core::pose::attributes_for_get_resnum_string( attlist, "");
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Tests the energy of a particular residue (e.g. pdb_num=1), or interface (whole_interface=1), or whole protein (whole_protein=1), or a set of residues (e.g. resnums=1,2,3).", attlist );
 }

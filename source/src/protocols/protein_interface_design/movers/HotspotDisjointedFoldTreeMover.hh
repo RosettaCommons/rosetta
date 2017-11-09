@@ -20,11 +20,12 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <set>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
 
+#include <set>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -48,8 +49,8 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover ); }
 	virtual ~HotspotDisjointedFoldTreeMover();
 
-	void add_residue( core::Size const r );
-	std::set< core::Size > get_residues() const;
+	void set_residues( core::select::residue_selector::ResidueSelectorCOP residues );
+	std::set< core::Size > get_residues( core::pose::Pose const & pose ) const;
 	void chain( core::Size const c );
 	core::Size chain() const;
 	core::Real ddG_threshold() const;
@@ -58,7 +59,6 @@ public:
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	void interface_radius( core::Real const rad );
 	core::Real interface_radius() const;
-	core::kinematics::FoldTreeOP make_disjointed_foldtree( core::pose::Pose const & pose ) const;
 
 	std::string
 	get_name() const override;
@@ -71,9 +71,12 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+protected:
+	core::kinematics::FoldTreeOP make_disjointed_foldtree( core::pose::Pose const & pose, std::set< core::Size > residues ) const;
+
 private:
 	core::Real ddG_threshold_; //dflt 1.0; ala-scan energy above which residues will be considered for the disjointed foldtree
-	std::set< core::Size > residues_; // the list of residues to make disjointed
+	core::select::residue_selector::ResidueSelectorCOP residues_; // the list of residues to make disjointed
 	core::Size chain_; //deflt 2; what is the host chain
 	core::Real interface_radius_; //dflt 8 ; value used to look for hotspot residues
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL

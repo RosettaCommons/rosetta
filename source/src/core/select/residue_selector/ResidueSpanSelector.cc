@@ -60,6 +60,11 @@ ResidueSpanSelector::ResidueSpanSelector( std::string const & start_str, std::st
 	end_str_( end_str )
 {}
 
+ResidueSpanSelector::ResidueSpanSelector( core::Size start, core::Size end ) :
+	start_str_( utility::to_string(start) ),
+	end_str_( utility::to_string(end) )
+{}
+
 ResidueSpanSelector::~ResidueSpanSelector() = default;
 
 ResidueSubset

@@ -31,6 +31,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/pack/task/PackerTask.hh>
 //#include <core/pack/task/TaskFactory.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -148,14 +149,12 @@ main( int argc, char *argv[] )
 
 		core::pose::make_pose_from_sequence( ala_pose, sequence, core::chemical::FA_STANDARD );
 
-		utility::vector1< Size > plus_pos;
-		utility::vector1< Size > empty;
-
+		core::select::residue_selector::ResidueIndexSelectorOP plus_pos( new core::select::residue_selector::ResidueIndexSelector );
 		for ( Size i = 1; i <= length; i += 2 ) {
-			plus_pos.push_back( i );
+			plus_pos->append_index( i );
 		}
 
-		protocols::ncbb::oop::OopCreatorMoverOP OC_mover( new protocols::ncbb::oop::OopCreatorMover(plus_pos, empty, empty, empty, empty, 0, 0, false, true, false, true ));
+		protocols::ncbb::oop::OopCreatorMoverOP OC_mover( new protocols::ncbb::oop::OopCreatorMover(plus_pos, nullptr, nullptr, nullptr, nullptr, 0, 0, false, true, false, true ));
 
 		kinematics::MoveMapOP mvmp( new kinematics::MoveMap );
 		ScoreFunctionOP scorefxn_no_hbond = ScoreFunctionFactory::create_score_function( "mm_std_no_hbond" );

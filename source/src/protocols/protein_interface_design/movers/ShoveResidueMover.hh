@@ -19,6 +19,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -56,8 +57,7 @@ public:
 
 private:
 	bool remove_shove_variant_;
-	core::Size resnum_;
-	utility::vector1< core::Size > shove_residues_; // a list of residues for which to use the shove_bb atom type, so that backbone atoms might clash.
+	core::select::residue_selector::ResidueSelectorCOP shove_residues_; // residues for which to use the shove_bb atom type, so that backbone atoms might clash.
 };
 
 

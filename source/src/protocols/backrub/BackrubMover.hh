@@ -23,6 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 // Protocols Headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
@@ -164,13 +165,13 @@ public:
 		core::Size max_atoms
 	);
 
-	/// @brief add segments between mainchain atoms using stored parameters
+	/// @brief add segments between mainchain atoms for the given pose, using stored parameters
 	core::Size
-	add_mainchain_segments();
+	add_mainchain_segments( Pose const & pose );
 
-	/// @brief add segments between mainchain atoms using command line options
+	/// @brief add segments between mainchain atoms for the given pose, using command line options
 	core::Size
-	add_mainchain_segments_from_options();
+	add_mainchain_segments_from_options( Pose const & pose );
 
 	/// @brief optimize branching atoms for all segment pivot atoms
 	void
@@ -179,13 +180,18 @@ public:
 	);
 
 	/// @brief get residues to pivot if no segments manually defined
-	utility::vector1<core::Size> const &
-	pivot_residues() const;
+	utility::vector1<core::Size>
+	pivot_residues( Pose const & pose ) const;
 
 	/// @brief set residues to pivot if no segments manually defined
 	void
 	set_pivot_residues(
 		utility::vector1<core::Size> const & pivot_residues
+	);
+
+	void
+	set_pivot_residue_selector(
+		core::select::residue_selector::ResidueSelectorCOP pivot_residues
 	);
 
 	/// @brief Sets Pivot Residues from the Movemap.  Each contiguous set of residues
@@ -384,6 +390,8 @@ private:
 	utility::vector1<protocols::backrub::BackrubSegment> segments_;
 	protocols::branch_angle::BranchAngleOptimizer branchopt_;
 	std::map<protocols::backrub::BackrubSegment::BondAngleKey, core::Size> bond_angle_map_;
+	/// @details The pivot residues are a combination of the pivot_residue_selector_ and the explicitly set pivot_residues_
+	core::select::residue_selector::ResidueSelectorCOP pivot_residue_selector_;
 	utility::vector1<core::Size> pivot_residues_;
 	utility::vector1<std::string> pivot_atoms_;
 	core::Size min_atoms_;

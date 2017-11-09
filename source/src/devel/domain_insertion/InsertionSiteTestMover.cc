@@ -45,6 +45,10 @@
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSpanSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 #include <devel/enzdes/EnzdesRemodelProtocol.hh>
 
@@ -78,18 +82,21 @@ InsertionSiteTestMover::InsertionSiteTestMover()
 	insert_seqmap_(/* NULL */)
 	//mostly arbitrary numbers, but can be modified through RS tag
 {
-	insert_test_pos_.clear();
 }
 
 InsertionSiteTestMover::InsertionSiteTestMover( InsertionSiteTestMover const & other )
 : parent( other ),
-	sfxn_(other.sfxn_), insert_test_pos_(other.insert_test_pos_),
+	sfxn_(other.sfxn_),
 	flex_window_(other.flex_window_), test_insert_ss_(other.test_insert_ss_),
 	insert_allowed_score_increase_(other.insert_allowed_score_increase_),
 	insert_attempt_sasa_cutoff_(other.insert_attempt_sasa_cutoff_), length_of_insert_(other.length_of_insert_),
 	num_repeats_(other.num_repeats_), pdb_numbering_(other.pdb_numbering_),
 	enz_flexbb_prot_( protocols::enzdes::EnzdesFlexBBProtocolOP( new protocols::enzdes::EnzdesFlexBBProtocol() ) ), insert_seqmap_(other.insert_seqmap_)
-{}
+{
+	if ( other.insert_test_pos_ ) {
+		insert_test_pos_ = other.insert_test_pos_->clone(); // Because we modify it for adding spans.
+	}
+}
 
 
 InsertionSiteTestMover::~InsertionSiteTestMover() = default;
@@ -115,14 +122,18 @@ InsertionSiteTestMover::apply( core::pose::Pose & pose )
 	core::pose::Pose input_pose = pose;
 	core::Real input_score = (*sfxn_)(input_pose);
 
-	tr << "instest apply called, insert_test_pos_ has size " << insert_test_pos_.size() << std::endl;
+	utility::vector1< core::Size > insert_test_pos;
+	if ( insert_test_pos_ ) {
+		insert_test_pos = core::select::residue_selector::selection_positions( insert_test_pos_->apply( pose ) );
+	}
+	tr << "instest apply called, insert_test_pos has size " << insert_test_pos.size() << std::endl;
 
 	//spit out title line of results, this should be solved better, but ok for now
 	tr <<"result Insert_pos   dSco_rawins_start    dSco_relax_start    dSco_anchor    rms_neigh    rms_anchor   diff_nlc_anchor  sasa_insert   deg_bury_insert     sasa_orig    orig_dssp" << std::endl;
 
-	for ( Size i = 1; i <= insert_test_pos_.size(); ++i ) {
+	for ( Size i = 1; i <= insert_test_pos.size(); ++i ) {
 
-		Size insert_pos( insert_test_pos_[ i ] );
+		Size insert_pos( insert_test_pos[ i ] );
 		tr << "Starting insertion test at position " << insert_pos << "..." << std::endl;
 		if ( pdb_numbering_ ) {
 			tr << "PDB res " << insert_pos << " is pose res ";
@@ -177,11 +188,10 @@ InsertionSiteTestMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
-	insert_test_pos_.clear();
-
+	using namespace core::select::residue_selector;
 	sfxn_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn", data )->clone();
 	enz_flexbb_prot_->set_scorefxn( sfxn_ );
 
@@ -194,7 +204,8 @@ InsertionSiteTestMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("seqpos") ) {
-		insert_test_pos_.push_back( tag->getOption<Size>("seqpos") );
+		ResidueSelectorOP pos_select( new ResidueIndexSelector( tag->getOption<Size>("seqpos") ) );
+		insert_test_pos_ = OR_combine( insert_test_pos_, pos_select );
 	}
 
 	if ( tag->hasOption("repeats") ) {
@@ -208,18 +219,14 @@ InsertionSiteTestMover::parse_my_tag(
 	for ( auto subtag : subtags ) {
 
 		if ( subtag->getName() == "span" ) {
-			core::Size const begin( core::pose::get_resnum( subtag, pose, "begin_" ) );
-			core::Size const end( core::pose::get_resnum( subtag, pose, "end_" ) );
-			runtime_assert( end > begin );
-			runtime_assert( begin>=1);
-			//runtime_assert( end<=reference_pose_->size() );
-			for ( core::Size i=begin; i<=end; ++i ) insert_test_pos_.push_back( i );
+			std::string const & begin( core::pose::get_resnum_string( subtag, "begin_" ) );
+			std::string const & end( core::pose::get_resnum_string( subtag, "end_" ) );
+			ResidueSelectorOP span_select( new ResidueSpanSelector( begin, end ) );
+			insert_test_pos_ = OR_combine( insert_test_pos_, span_select );
 		}
 	}
 
-	tr << "InsertionSiteTestMover parse_my_tag: trying insert string " << test_insert_ss_ << " at positions: ";
-	for ( Size i = 1; i <= insert_test_pos_.size(); ++i ) tr << insert_test_pos_[i] << ", ";
-	tr << std::endl;
+	tr << "InsertionSiteTestMover parse_my_tag: trying insert string " << test_insert_ss_ << std::endl;
 }
 
 
@@ -534,8 +541,8 @@ void InsertionSiteTestMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	XMLSchemaSimpleSubelementList subelements;
 	AttributeList span_attributes;
-	core::pose::attributes_for_get_resnum( span_attributes, "begin_" );
-	core::pose::attributes_for_get_resnum( span_attributes, "end_" );
+	core::pose::attributes_for_get_resnum_string( span_attributes, "begin_" );
+	core::pose::attributes_for_get_resnum_string( span_attributes, "end_" );
 	subelements.add_simple_subelement( "span", span_attributes, "XRW TO DO" );
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );

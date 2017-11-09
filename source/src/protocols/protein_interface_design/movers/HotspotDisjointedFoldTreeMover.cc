@@ -34,6 +34,8 @@
 #include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -76,7 +78,6 @@ HotspotDisjointedFoldTreeMover::HotspotDisjointedFoldTreeMover( ) :
 	interface_radius_( 8.0 ),
 	scorefxn_( /* NULL */ )
 {
-	residues_.clear();
 }
 
 HotspotDisjointedFoldTreeMover::~HotspotDisjointedFoldTreeMover( ) {}
@@ -87,20 +88,26 @@ HotspotDisjointedFoldTreeMover::~HotspotDisjointedFoldTreeMover( ) {}
 
 /// @details generates a foldtree that links the nearest residues on chain 1 to key residues on chain 2 and breaks the chain around the key residues on chain 2
 core::kinematics::FoldTreeOP
-HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const & pose ) const
+HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const & pose, std::set< core::Size > residues ) const
 {
 	using namespace core::kinematics;
 	FoldTreeOP ft( new FoldTree );
 
+	TR<<"Making a disjointed fold tree for residues: ";
+	for ( core::Size const r : residues ) {
+		TR<<r<<" ";
+	}
+	TR<<std::endl;
+	runtime_assert( residues.size() );
 	TR<<"Fold tree before disjointed foldtree:\n"<<pose.fold_tree()<<std::endl;
 	ft->clear();
 	runtime_assert( chain() == 2 );
-	/// THIS will only work with chain==2, though reworking it should not be too difficult
-	core::Size head( *get_residues().begin()-1 );
+	// THIS will only work with chain==2, though reworking it should not be too difficult
+	// We rely on a std::set being always sorted.
+	core::Size head( *residues.begin()-1 );
 	std::set< core::Size > residues_on_target;
-	residues_on_target.clear();
 	core::Size jump( 1 );
-	for ( core::Size const r : get_residues() ) {
+	for ( core::Size const r : residues ) {
 		/// Connect the nearest residues on chain1 to key residues on chain2 leaving breaks in chain2 around each key residue
 		if ( head < r - 1 ) {
 			///connect segments intervening between hot spots
@@ -126,8 +133,8 @@ HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const
 	ft->add_edge( target_end, pose.conformation().chain_end( 1 ), Edge::PEPTIDE );
 
 	/// refold chain2 from the first key residue to the beginning of the chain and from the last key residue to its end
-	core::Size const begin( *get_residues().begin() );
-	core::Size const end( *get_residues().rbegin() );
+	core::Size const begin( *residues.begin() );
+	core::Size const end( *residues.rbegin() );
 	if ( begin - 1 >= pose.conformation().chain_begin( chain() ) ) {
 		ft->add_edge( begin, begin - 1, jump );
 		ft->add_edge( begin - 1, pose.conformation().chain_begin( chain() ), Edge::PEPTIDE );
@@ -164,6 +171,8 @@ HotspotDisjointedFoldTreeMover::apply( core::pose::Pose & pose )
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory );
 	tf->push_back( pido );
 
+	std::set< core::Size > residues( get_residues( pose ) );
+
 	if ( ddG_threshold() <= 100 ) {
 		protocols::simple_filters::RotamerBoltzmannWeight rbw;
 		rbw.ddG_threshold( ddG_threshold() );
@@ -171,20 +180,15 @@ HotspotDisjointedFoldTreeMover::apply( core::pose::Pose & pose )
 		rbw.repacking_radius( interface_radius() );
 		rbw.task_factory( tf );
 		utility::vector1< core::Size > const ala_scan_res( rbw.first_pass_ala_scan( pose ) );
-		for ( core::Size const r : ala_scan_res ) { add_residue( r ); }
+		for ( core::Size const r : ala_scan_res ) { residues.insert( r ); }
 	}// fi ddG_threshold
-	TR<<"Making a disjointed fold tree for residues: ";
-	for ( core::Size const r : get_residues() ) {
-		TR<<r<<" ";
-	}
-	TR<<std::endl;
-	FoldTreeOP ft( make_disjointed_foldtree( pose ) );
+	FoldTreeOP ft( make_disjointed_foldtree( pose, residues ) );
 	pose.fold_tree( *ft );
 	protocols::loops::add_cutpoint_variants( pose );
 }
 
 void
-HotspotDisjointedFoldTreeMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+HotspotDisjointedFoldTreeMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	ddG_threshold( tag->getOption< core::Real >( "ddG_threshold", 1.0 ) );
 	if ( ddG_threshold() >= 100.0 ) {
@@ -193,23 +197,25 @@ HotspotDisjointedFoldTreeMover::parse_my_tag( TagCOP const tag, basic::datacache
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	interface_radius( tag->getOption< core::Real >( "radius", 8.0 ) );
-	utility::vector1< core::Size > v1 = core::pose::get_resnum_list( tag, "resnums", pose );
-	for ( core::Size const r : v1 ) { add_residue( r ); }
+	set_residues( core::pose::get_resnum_selector( tag, "resnums" ) );
 
-	runtime_assert( ddG_threshold() <= 100.0 || get_residues().size() );
-	TR<<"HotspotDisjointedFoldTreeMover with: chain "<<chain()<<" ddG_threshold "<<ddG_threshold()<<" and residues ";
-	for ( core::Size const r : get_residues() ) { TR<<r<<" "; }
-	TR<<std::endl;
+	runtime_assert( ddG_threshold() <= 100.0 );
+	TR<<"HotspotDisjointedFoldTreeMover with: chain "<<chain()<<" ddG_threshold "<<ddG_threshold() << std::endl;
 }
 
 void
-HotspotDisjointedFoldTreeMover::add_residue( core::Size const r ){
-	residues_.insert( r );
+HotspotDisjointedFoldTreeMover::set_residues( core::select::residue_selector::ResidueSelectorCOP residues ) {
+	residues_ = residues;
 }
 
 std::set< core::Size >
-HotspotDisjointedFoldTreeMover::get_residues() const{
-	return( residues_ );
+HotspotDisjointedFoldTreeMover::get_residues( core::pose::Pose const & pose ) const{
+	std::set< core::Size > residues;
+	if ( residues_ ) {
+		utility::vector1< core::Size > const & residue_vec( core::select::get_residues_from_subset( residues_->apply( pose ) ) );
+		residues.insert( residue_vec.begin(), residue_vec.end() );
+	}
+	return residues;
 }
 
 void
@@ -271,7 +277,7 @@ void HotspotDisjointedFoldTreeMover::provide_xml_schema( utility::tag::XMLSchema
 		+ XMLSchemaAttribute::attribute_w_default( "chain", xsct_non_negative_integer, "Chain with hotspots of interest, identified by sequentially numbering", "2" )
 		+ XMLSchemaAttribute::attribute_w_default( "radius", xsct_real, "Radius around which to calculate the local interface", "8.0" );
 	// + XMLSchemaAttribute( "resnums", xsct_refpose_enabled_residue_number_cslist, "Residues of interest to the alanine scanning calculation" );
-	core::pose::attributes_for_get_resnum_list( attlist, xsd, "resnums" );
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "resnums" );
 	rosetta_scripts::attributes_for_parse_score_function( attlist );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );

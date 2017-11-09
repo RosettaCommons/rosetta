@@ -24,6 +24,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -69,7 +70,7 @@ public:
 	/// @details targets may come from either binding partner. If no targets
 	///   are specified for one target, all residues on the interface will be
 	///   concidered.
-	DisulfideFilter( utility::vector1<core::Size> const& targetResidues );
+	DisulfideFilter( core::select::residue_selector::ResidueSelectorCOP targetResidues );
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
@@ -99,10 +100,10 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	/// @brief a list of residues which may participate in the disulfide.
+	/// @brief residues which may participate in the disulfide.
 	/// @details If either docking partner has no target residues specified,
 	///   all interface residues will be allowed to disulfide bond.
-	utility::vector1<core::Size> targets_;
+	core::select::residue_selector::ResidueSelectorCOP targets_;
 	/// @brief for calculating centroid disulfide energies
 	static const core::scoring::disulfides::CentroidDisulfidePotential potential_;
 	/// @brief Which jump defines the interface where the targets lie?

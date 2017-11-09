@@ -36,6 +36,8 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -143,12 +145,43 @@ main( int argc, char* argv[] )
 
 		devel::init(argc, argv);
 
+		using namespace core::select::residue_selector;
+
 		//create mover instance
-		OopCreatorMoverOP OC_mover( new OopCreatorMover(option[oop_creator::oop_plus_positions].value(),
-			option[oop_creator::oop_minus_positions].value(),
-			option[oop_creator::oop_d_plus_positions].value(),
-			option[oop_creator::oop_d_minus_positions].value(),
-			option[oop_creator::oop_low_e_puck_positions].value(),
+		utility::vector1< core::Size > oop_plus_positions( option[oop_creator::oop_plus_positions].value() );
+		utility::vector1< core::Size > oop_minus_positions( option[oop_creator::oop_minus_positions].value() );
+		utility::vector1< core::Size > oop_d_plus_positions( option[oop_creator::oop_d_plus_positions].value() );
+		utility::vector1< core::Size > oop_d_minus_positions( option[oop_creator::oop_d_minus_positions].value() );
+		utility::vector1< core::Size > oop_low_e_puck_positions( option[oop_creator::oop_low_e_puck_positions].value() );
+		ResidueSelectorOP oop_plus_selector( nullptr );
+		if ( ! oop_plus_positions.empty() ) {
+			oop_plus_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_plus_positions ) );
+		}
+		ResidueSelectorOP oop_minus_selector( nullptr );
+		if ( ! oop_minus_positions.empty() ) {
+			oop_minus_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_minus_positions ) );
+		}
+		ResidueSelectorOP oop_d_plus_selector( nullptr );
+		if ( ! oop_d_plus_positions.empty() ) {
+			oop_d_plus_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_d_plus_positions ) );
+		}
+		ResidueSelectorOP oop_d_minus_selector( nullptr );
+		if ( ! oop_d_minus_positions.empty() ) {
+			oop_d_minus_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_d_minus_positions ) );
+		}
+		ResidueSelectorOP oop_low_e_puck_selector( nullptr );
+		if ( ! oop_low_e_puck_positions.empty() ) {
+			oop_low_e_puck_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_low_e_puck_positions ) );
+		}
+
+
+
+		OopCreatorMoverOP OC_mover( new OopCreatorMover(
+			oop_plus_selector,
+			oop_minus_selector,
+			oop_d_plus_selector,
+			oop_d_minus_selector,
+			oop_low_e_puck_selector,
 			option[oop_creator::prepend_n_residues].value(),
 			option[oop_creator::append_n_residues].value(),
 			option[oop_creator::final_repack].value(),

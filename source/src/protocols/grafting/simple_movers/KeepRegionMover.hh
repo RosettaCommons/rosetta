@@ -34,7 +34,7 @@ class KeepRegionMover : public protocols::moves::Mover {
 public:
 
 	KeepRegionMover();
-	KeepRegionMover(core::Size res_start, core::Size res_end);
+	KeepRegionMover(std::string const & res_start, std::string const & res_end);
 
 	KeepRegionMover(KeepRegionMover const & src);
 
@@ -48,23 +48,29 @@ public:
 
 	/// @brief Set the region of the pose where we keep the residues
 	void
-	region(core::Size res_start, core::Size res_end);
+	region(std::string const & res_start, std::string const & res_end);
 
-	std::pair<core::Size, core::Size>
+	std::pair<std::string, std::string>
 	region() const;
 
 	/// @brief Set the first residue that we will keep
 	void
-	start(core::Size res_start);
+	start(std::string const & res_start);
 
-	core::Size
+	void
+	start( core::Size res_start );
+
+	std::string const &
 	start() const;
 
 	/// @brief Set the last residue that we will keep
 	void
-	end(core::Size res_end);
+	end(std::string const & res_end);
 
-	core::Size
+	void
+	end( core::Size res_end );
+
+	std::string const &
 	end() const;
 
 
@@ -99,12 +105,10 @@ public:
 
 
 private:
-	core::Size start_;
-	core::Size end_;
+	std::string start_;
+	std::string end_;
 	core::Size nter_overhang_;
 	core::Size cter_overhang_;
-	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
-
 };
 
 

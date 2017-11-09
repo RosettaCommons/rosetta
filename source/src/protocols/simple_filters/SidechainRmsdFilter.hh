@@ -30,7 +30,7 @@ class SidechainRmsdFilter : public filters::Filter
 {
 public:
 	SidechainRmsdFilter();
-	SidechainRmsdFilter( core::Size const res1, core::Size const res2, core::Real const rmsd_threshold );
+	SidechainRmsdFilter( std::string const & res1, std::string const & res2, core::Real const rmsd_threshold );
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
@@ -53,7 +53,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	core::Size res1_, res2_;
+	std::string res1_, res2_;
 	core::Real rmsd_threshold_;
 	core::pose::PoseOP reference_pose_;
 	bool include_backbone_;

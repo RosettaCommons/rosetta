@@ -17,6 +17,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <list>
@@ -33,7 +34,7 @@ class RmsdFilter : public protocols::filters::Filter
 public:
 	RmsdFilter();
 	RmsdFilter(
-		std::list<core::Size> const selection,
+		utility::vector1<core::Size> const selection,
 		bool const superimpose,
 		core::Real const threshold,
 		core::pose::PoseOP reference_pose
@@ -45,7 +46,10 @@ public:
 	}
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	void reference_pose( core::pose::PoseOP ref ) { reference_pose_ = ref; }
-	void selection( std::list< core::Size > const & sele ) { selection_ = sele; }
+	/// @brief Resets the selection to the given ResidueSelector
+	void set_selection( core::select::residue_selector::ResidueSelectorOP const & sele );
+	/// @brief Adds the given ResidueSelector to the selection. (As in all residues in both selections.)
+	void add_selector( core::select::residue_selector::ResidueSelectorOP const & sele  );
 	void superimpose( bool s ) { superimpose_ = s; }
 	bool superimpose( ) const { return superimpose_; }
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
@@ -70,7 +74,7 @@ public:
 
 
 private:
-	std::list< core::Size > selection_;
+	core::select::residue_selector::ResidueSelectorOP selection_;
 	bool superimpose_, symmetry_;
 	core::Real threshold_;
 	core::pose::PoseOP reference_pose_;

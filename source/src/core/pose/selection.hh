@@ -19,6 +19,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.fwd.hh>
@@ -33,14 +34,6 @@
 namespace core {
 namespace pose {
 
-core::Size
-get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::string const & prefix="" );
-
-///@brief Companion function for get_resnum
-///@details Appends relevant XMLSchemaAttributes to the AttributeList
-void
-attributes_for_get_resnum( utility::tag::AttributeList & attlist, std::string const & prefix="" );
-
 /// @brief Extracts a residue number from a string.
 /// @detail Recognizes three forms of numbering:
 ///   - Rosetta residue numbers (numbered sequentially from 1 to the last residue
@@ -54,17 +47,6 @@ attributes_for_get_resnum( utility::tag::AttributeList & attlist, std::string co
 /// @return the rosetta residue number for the string, or 0 upon an error
 core::Size
 parse_resnum(std::string const& resnum, core::pose::Pose const& pose, bool const check_for_refpose=false);
-
-///@brief Companion function for parse_resnum
-///@details Appends relevant XMLSchemaAttributes to the AttributeList
-void
-attributes_for_parse_resnum( utility::tag::AttributeList & attlist, std::string const & att_name, std::string const & description = "");
-
-/// @brief Extracts a list of residue numbers from a tag.
-/// @details The tag should contain a comma-separated list of numbers, in either
-///   pdb or rosetta format (@see parse_resnum for details)
-utility::vector1<core::Size>
-get_resnum_list(utility::tag::TagCOP tag_ptr, std::string const& tag, core::pose::Pose const& pose);
 
 /// @brief returns a resnum list directly from a string
 std::set< core::Size >
@@ -97,11 +79,43 @@ core::Size get_resnumber_from_reference_pose(
 	core::pose::Pose const &pose
 );
 
-///@brief Companion function for get_resnum_list
-///@details Appends relevant XMLSchemaAttributes to the AttributeList; needs the xsd because it adds restricted types
+/////////////////////////////////////////////////////////
+//////////////////// XML PARSING ////////////////////////
 
+/// @brief DEPRECATED - provided for legacy usage only. Don't use for new code.
+/// Instead, just use a single option which uses the parse_resnum syntax to specify.
+/// @details Checks for either/both of `pdb_num`/`res_num` in the tag, and pulls out the appropriate string
+std::string
+get_resnum_string( utility::tag::TagCOP tag_ptr, std::string const & prefix="" );
+
+/// @brief DEPRECATED - provided for legacy usage only. Don't use for new code.
+/// Instead, just use a single option which uses parse_resnum syntax to specify
+/// @details Checks for either/both of `pdb_num`/`res_num` in the tag, and pulls out the appropriate string
+std::string
+get_resnum_string( utility::tag::TagCOP tag_ptr, std::string const & prefix, std::string const & default_value );
+
+///// @brief Extracts a list of residue numbers from a tag
+///// @details The tag should contain a comma-separated list of numbers, in either
+/////   pdb or rosetta format (@see parse_resnum for details)
+core::select::residue_selector::ResidueSelectorOP
+get_resnum_selector(utility::tag::TagCOP tag_ptr, std::string const& tag);
+
+//////////// XSD /////////////////
+
+///@brief Companion function for get_resnum_string
+///@details Appends relevant XMLSchemaAttributes to the AttributeList
 void
-attributes_for_get_resnum_list( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, std::string const& tag="" );
+attributes_for_get_resnum_string( utility::tag::AttributeList & attlist, std::string const & prefix="" );
+
+///@brief Companion function for get_resnum_selector
+///@details Appends relevant XMLSchemaAttributes to the AttributeList; needs the xsd because it adds restricted types
+void
+attributes_for_get_resnum_selector( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, std::string const& tag="" );
+
+///@brief Companion function for parse_resnum
+///@details Appends relevant XMLSchemaAttributes to the AttributeList
+void
+attributes_for_parse_resnum( utility::tag::AttributeList & attlist, std::string const & att_name, std::string const & description = "");
 
 } // pose
 } // core

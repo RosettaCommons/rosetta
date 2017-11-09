@@ -471,7 +471,7 @@ void repack_cluster(
 				backrubmover.clear_segments();
 				backrubmover.set_input_pose(after_backrub);
 				backrubmover.set_pivot_residues(positions);
-				backrubmover.add_mainchain_segments(); // _from_options();
+				backrubmover.add_mainchain_segments(*after_backrub); // _from_options();
 
 				// initialize structure (!?) -- check with Tanja...
 				backrubmover.optimize_branch_angles(*after_backrub);

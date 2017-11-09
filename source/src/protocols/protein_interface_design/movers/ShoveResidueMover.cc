@@ -25,6 +25,9 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/util.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/protein_interface_design/util.hh>
@@ -76,13 +79,12 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers
 
 
 ShoveResidueMover::ShoveResidueMover() :
-	protocols::moves::Mover( ShoveResidueMover::mover_name() ),
-	resnum_( 0 )
+	protocols::moves::Mover( ShoveResidueMover::mover_name() )
 {}
 
 ShoveResidueMover::ShoveResidueMover( Size resnum ) :
 	protocols::moves::Mover( ShoveResidueMover::mover_name() ),
-	resnum_( resnum )
+	shove_residues_( new core::select::residue_selector::ResidueIndexSelector( resnum ) )
 {}
 
 void
@@ -92,7 +94,9 @@ ShoveResidueMover::apply ( pose::Pose & pose )
 	using namespace core::scoring;
 	using namespace core::pack::task;
 	using namespace core::pack::rotamer_set;
-	for ( core::Size const resid : shove_residues_ ) {
+	runtime_assert( shove_residues_ != nullptr );
+
+	for ( core::Size const resid : core::select::get_residues_from_subset( shove_residues_->apply(pose) ) ) {
 		if ( pose.residue(resid).name3() == "GLY" ) {
 			//The SHOVE_BB patch does not properly work with Glycine.  Looking at it, it's not clear that it even
 			//Makes sense to use this mover with Glycine.  Given this, it's probably best to exit here.
@@ -121,20 +125,15 @@ ShoveResidueMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	Movers_map const &,
-	Pose const & pose)
+	Pose const & )
 {
-	resnum_ = core::pose::get_resnum( tag, pose );
 	remove_shove_variant_ = tag->getOption<bool>( "remove_shove_variant", false );
 	if ( tag->hasOption( "shove" ) ) {
-		std::string const shove_val( tag->getOption< std::string >( "shove" ) );
-		utility::vector1< std::string > const shove_keys( utility::string_split( shove_val, ',' ) );
-		for ( std::string const & key : shove_keys ) {
-			core::Size const resnum( core::pose::parse_resnum( key, pose ) );
-			shove_residues_.push_back( resnum );
-			TR<<"Using shove atomtype for "<< key <<'\n';
-		}
+		shove_residues_ = core::pose::get_resnum_selector( tag, "shove" );
 	} else {
-		shove_residues_.push_back( resnum_ );
+		using namespace core::select::residue_selector;
+		std::string resnum = core::pose::get_resnum_string( tag );
+		shove_residues_ = ResidueSelectorOP( new ResidueIndexSelector( resnum ) );
 	}
 }
 
@@ -150,7 +149,7 @@ void ShoveResidueMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	core::pose::attributes_for_get_resnum( attlist );
+	core::pose::attributes_for_get_resnum_string( attlist );
 	attlist + XMLSchemaAttribute::attribute_w_default( "remove_shove_variant", xsct_rosetta_bool, "Remove the shove variant from the residue in question?", "false" )
 		+ XMLSchemaAttribute( "shove", xsct_refpose_enabled_residue_number_cslist, "Residues to which to add shove variant, especially if resnum isn't provided" );
 

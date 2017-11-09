@@ -125,11 +125,11 @@ BackrubSidechainMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	if ( tag->hasOption("pivot_residues") ) {
-		set_pivot_residues(core::pose::get_resnum_list(tag, "pivot_residues", pose));
+		set_pivot_residue_selector(core::pose::get_resnum_selector(tag, "pivot_residues"));
 	}
 
 	core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );
@@ -162,7 +162,7 @@ BackrubSidechainMover::parse_my_tag(
 	set_record_statistics( tag->getOption<bool>( "record_statistics", record_statistics() ) );
 	set_statistics_filename( tag->getOption<std::string>( "statistics_filename", statistics_filename() ) );
 
-	update_segments(pose);
+	valid_segments_.clear(); // Will force call of update_segments(pose) in apply()
 }
 
 void
@@ -176,7 +176,7 @@ BackrubSidechainMover::update_segments(
 
 	backrub_mover_->set_input_pose(core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) ));
 	backrub_mover_->clear_segments();
-	backrub_mover_->add_mainchain_segments();
+	backrub_mover_->add_mainchain_segments( pose );
 
 	sidechain_mover_->init_task(pose);
 
@@ -271,11 +271,11 @@ BackrubSidechainMover::finalize_simulation(
 	}
 }
 
-utility::vector1<core::Size> const &
-BackrubSidechainMover::pivot_residues() const
-{
-	return backrub_mover_->pivot_residues();
-}
+//utility::vector1<core::Size> const &
+//BackrubSidechainMover::pivot_residues() const
+//{
+// return backrub_mover_->pivot_residues();
+//}
 
 void
 BackrubSidechainMover::set_pivot_residues(
@@ -283,6 +283,14 @@ BackrubSidechainMover::set_pivot_residues(
 )
 {
 	backrub_mover_->set_pivot_residues(pivot_residues);
+}
+
+void
+BackrubSidechainMover::set_pivot_residue_selector(
+	core::select::residue_selector::ResidueSelectorCOP pivot_residues
+)
+{
+	backrub_mover_->set_pivot_residue_selector(pivot_residues);
 }
 
 core::pack::task::TaskFactoryCOP

@@ -90,7 +90,7 @@ public:
 		TR <<"Replace Region Mover" << std::endl;
 		TR << new_region << std::endl;
 		core::pose::Pose scaffold_copy = core::pose::Pose(scaffold_pose);
-		ReplaceRegionMover replacer = ReplaceRegionMover(new_region, 1, 24, new_region.size());
+		ReplaceRegionMover replacer = ReplaceRegionMover(new_region, "1", "24", new_region.size());
 		replacer.apply(scaffold_copy);
 		TS_ASSERT_EQUALS(starting_residues, scaffold_pose.size());
 
@@ -112,13 +112,13 @@ public:
 		TS_ASSERT_EQUALS(deleted_residues, L1_2j88_size);
 
 		TR<<"Insert Region Mover" << std::endl;
-		InsertPoseIntoPoseMover inserter = InsertPoseIntoPoseMover(new_region, start, start+1);
+		InsertPoseIntoPoseMover inserter = InsertPoseIntoPoseMover(new_region, utility::to_string(start), utility::to_string(start+1));
 		inserter.apply(scaffold_copy);
 		TS_ASSERT_EQUALS(new_pose.size(), starting_residues);
 
 		TR << "Keep Region Mover" << std::endl;
 		scaffold_copy = core::pose::Pose(scaffold_pose);
-		KeepRegionMover keeper = KeepRegionMover(start+1, end-1);
+		KeepRegionMover keeper = KeepRegionMover(utility::to_string(start+1), utility::to_string(end-1));
 		keeper.apply(scaffold_copy);
 		TS_ASSERT_EQUALS(scaffold_copy.size(), L1_2j88_size);
 

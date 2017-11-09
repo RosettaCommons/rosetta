@@ -17,10 +17,13 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/idealize/IdealizeMover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+
+
 //Auto Headers
 #include <utility/vector1.hh>
 namespace protocols {
@@ -50,7 +53,6 @@ public:
 		impose_constraints_( true ),
 		constraints_only_( false )
 	{
-		ignore_residues_in_csts_.clear();
 	}
 
 	/// @brief clone has to be overridden only if clone invocation is expected.
@@ -113,8 +115,8 @@ public:
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
-	utility::vector1< core::Size > ignore_residues_in_csts() const;
-	void ignore_residues_in_csts( utility::vector1< core::Size > const & i );
+	core::select::residue_selector::ResidueSelectorCOP ignore_residues_in_csts() const;
+	void ignore_residues_in_csts( core::select::residue_selector::ResidueSelectorCOP const & i );
 	void impose_constraints( bool const i ){ impose_constraints_ = i; }
 	bool impose_constraints() const{ return( impose_constraints_ ); }
 	bool constraints_only() const{ return constraints_only_; }
@@ -143,7 +145,7 @@ private:
 
 	Real atom_pair_constraint_weight_;
 	Real coordinate_constraint_weight_;
-	utility::vector1< core::Size > ignore_residues_in_csts_; // dflt empty; residues that don't carry constraints, e.g., residues that were inserted without closing loops etc.
+	core::select::residue_selector::ResidueSelectorCOP ignore_residues_in_csts_; // dflt empty; residues that don't carry constraints, e.g., residues that were inserted without closing loops etc.
 	bool cis_omega_;
 	bool fast_;
 	bool chainbreaks_;

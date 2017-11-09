@@ -56,6 +56,8 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/select/util.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ChargeCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
@@ -162,7 +164,19 @@ LigDSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Fil
 
 LigDSasaFilter::~LigDSasaFilter() = default;
 
-DiffAtomSasaFilter::DiffAtomSasaFilter( core::Size resid1, core::Size resid2, std::string atomname1, std::string atomname2, std::string sample_type ) : Filter( "DiffAtomBurial" ), resid1_( resid1 ), resid2_( resid2), aname1_(std::move( atomname1 )), aname2_(std::move( atomname2 )), sample_type_(std::move( sample_type )) {}
+DiffAtomSasaFilter::DiffAtomSasaFilter(
+	std::string const & resid1,
+	std::string const & resid2,
+	std::string const & atomname1,
+	std::string const & atomname2,
+	std::string const & sample_type ) :
+	Filter( "DiffAtomBurial" ),
+	resid1_(std::move(resid1)),
+	resid2_(std::move(resid2)),
+	aname1_(std::move( atomname1 )),
+	aname2_(std::move( atomname2 )),
+	sample_type_(std::move( sample_type ))
+{}
 
 bool
 DiffAtomSasaFilter::apply( core::pose::Pose const & pose ) const {
@@ -192,11 +206,28 @@ DiffAtomSasaFilter::report_sm( core::pose::Pose const & pose ) const {
 
 bool
 DiffAtomSasaFilter::compute( core::pose::Pose const & pose ) const {
+	core::Size resid1 = 0;
+	core::Size resid2 = 0;
+	if ( ! resid1_.empty() ) {
+		resid1 = core::pose::parse_resnum( resid1_, pose );
+	} else {
+		resid1 = protocols::ligand_docking::LigandBaseProtocol::get_ligand_id(pose);
+	}
+	if ( ! resid2_.empty() ) {
+		resid2 = core::pose::parse_resnum( resid2_, pose );
+	} else {
+		resid2 = protocols::ligand_docking::LigandBaseProtocol::get_ligand_id(pose);
+	}
+	runtime_assert(resid1>0 && resid1<=pose.size() );
+	runtime_assert(resid2>0 && resid2<=pose.size() );
+	runtime_assert (pose.residue( resid1 ).has( aname1_ ));
+	runtime_assert (pose.residue( resid2 ).has( aname2_ ));
+
 	basic::MetricValue< id::AtomID_Map< core::Real > > atom_sasa;
 	bool setting (false);
 	pose.metric( "sasa_interface", "delta_atom_sasa", atom_sasa );
-	core::id::AtomID const atomid1 (core::id::AtomID( pose.residue( resid1_ ).atom_index(aname1_), resid1_ ));
-	core::id::AtomID const atomid2 (core::id::AtomID( pose.residue( resid2_ ).atom_index(aname2_), resid2_ ));
+	core::id::AtomID const atomid1 (core::id::AtomID( pose.residue( resid1 ).atom_index(aname1_), resid1 ));
+	core::id::AtomID const atomid2 (core::id::AtomID( pose.residue( resid2 ).atom_index(aname2_), resid2 ));
 	core::Real const atom1_delta_sasa( atom_sasa.value()( atomid1 ) );
 	core::Real const atom2_delta_sasa( atom_sasa.value()( atomid2 ) );
 	TR<<"Atom1: Dsasa is "<< atom1_delta_sasa <<" and Atom2 Dsasa is "<< atom2_delta_sasa << std::endl;
@@ -207,24 +238,13 @@ DiffAtomSasaFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 void
-DiffAtomSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const &pose )
+DiffAtomSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
-	if ( tag->hasOption("res1_res_num") ) resid1_ =  tag->getOption<core::Size>( "res1_res_num", 0 );
-	if ( tag->hasOption("res2_res_num") ) resid2_ =  tag->getOption<core::Size>( "res2_res_num", 0 );
-	if ( tag->hasOption("res1_pdb_num") ) resid1_ = core::pose::get_resnum(tag, pose, "res1_");
-	if ( tag->hasOption("res2_pdb_num") ) resid2_ = core::pose::get_resnum(tag, pose, "res2_");
-	if ( resid1_==0 || resid2_==0 ) { //ligand
-		protocols::ligand_docking::LigandBaseProtocol ligdock;
-		if ( resid1_==0 ) resid1_ = ligdock.get_ligand_id(pose);
-		if ( resid2_==0 ) resid2_ = ligdock.get_ligand_id(pose);
-	}
+	resid1_ = core::pose::get_resnum_string(tag, "res1_", "");
+	resid2_ = core::pose::get_resnum_string(tag, "res2_", "");
 	aname1_  =  tag->getOption<std::string>("atomname1", "CA" );
 	aname2_  =  tag->getOption<std::string>("atomname2", "CA" );
 	sample_type_  =  tag->getOption<std::string>("sample_type", "more" ); //a1 is more buried than a2 i.e. dsasa is more
-	runtime_assert(resid1_>0 && resid1_<=pose.size() );
-	runtime_assert(resid2_>0 && resid2_<=pose.size() );
-	runtime_assert (pose.residue( resid1_ ).has( aname1_ ));
-	runtime_assert (pose.residue( resid2_ ).has( aname2_ ));
 	runtime_assert( sample_type_=="more" || sample_type_ == "less" );
 	TR<<" Defined LigDSasaFilter "<< std::endl;
 }
@@ -442,7 +462,7 @@ LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::Data
 
 LigInterfaceEnergyFilter::~LigInterfaceEnergyFilter() = default;
 
-EnzScoreFilter::EnzScoreFilter( core::Size const resnum, std::string  cstid, core::scoring::ScoreFunctionOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE ) : Filter( "EnzScore" ), resnum_( resnum ), cstid_(std::move( cstid )), score_type_( score_type ), threshold_( threshold ),  whole_pose_ ( whole_pose ), is_cstE_ ( is_cstE ) {
+EnzScoreFilter::EnzScoreFilter( std::string const & resnum, std::string const & cstid, core::scoring::ScoreFunctionOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE ) : Filter( "EnzScore" ), resnum_( resnum ), cstid_(std::move( cstid )), score_type_( score_type ), threshold_( threshold ),  whole_pose_ ( whole_pose ), is_cstE_ ( is_cstE ) {
 
 	using namespace core::scoring;
 
@@ -490,10 +510,11 @@ EnzScoreFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core::pose;
 	using namespace core::scoring;
 	PoseOP in_pose( new Pose( pose ) );
-	core::Size resnum = resnum_;
-	if ( resnum==0 ) { //means we want ligand scores
-		protocols::ligand_docking::LigandBaseProtocol ligdock;
-		resnum = ligdock.get_ligand_id(pose);
+	core::Size resnum;
+	if ( resnum_.empty() ) {
+		resnum = protocols::ligand_docking::LigandBaseProtocol::get_ligand_id(pose);
+	} else {
+		resnum = core::pose::parse_resnum( resnum_, pose );
 	}
 	core::Real weight(0.0), score(0.0);
 	if ( whole_pose_ ) {
@@ -542,12 +563,11 @@ EnzScoreFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 void
-EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const &pose)
+EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 	is_cstE_ = default_value_for_is_cstE();
-	if ( tag->hasOption( "pdb_num" ) ) resnum_ = core::pose::get_resnum(tag, pose);
-	else if ( tag->hasOption( "res_num" ) ) resnum_ =  tag->getOption<core::Size>( "res_num", 0 );
+	resnum_ = core::pose::get_resnum_string( tag, "", "" );
 	cstid_ = tag->getOption<std::string>( "cstid", default_value_for_cstid() );
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function(tag, data)->clone();
@@ -560,9 +580,9 @@ EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 	whole_pose_ = tag->getOption<bool>( "whole_pose" , default_value_for_whole_pose() );
 
 	//check to make sure one and only one of resnum, cstid and whole_pose are specified
-	runtime_assert(tag->hasOption( "res_num" )|| tag->hasOption( "pdb_num" ) || tag->hasOption( "cstid" ) || whole_pose_==1 );
-	runtime_assert(!( (tag->hasOption( "res_num" )|| tag->hasOption( "pdb_num" )) &&  tag->hasOption( "cstid" )));
-	runtime_assert(!( (tag->hasOption( "res_num" )|| tag->hasOption( "pdb_num" )) &&  whole_pose_==1));
+	runtime_assert( !resnum_.empty() || tag->hasOption( "cstid" ) || whole_pose_==1 );
+	runtime_assert(!( !resnum_.empty() &&  tag->hasOption( "cstid" )));
+	runtime_assert(!( !resnum_.empty() &&  whole_pose_==1));
 	runtime_assert(!(tag->hasOption( "cstid" ) &&  whole_pose_==1));
 
 	if ( whole_pose_==1 ) {
@@ -574,7 +594,17 @@ EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 }
 EnzScoreFilter::~EnzScoreFilter() = default;
 
-RepackWithoutLigandFilter::RepackWithoutLigandFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real rms_thresh, core::Real energy_thresh, utility::vector1< core::Size > rms_target_res  ) : Filter( "RepackWithoutLigand" ), scorefxn_(std::move(scorefxn)), rms_threshold_( rms_thresh ), energy_threshold_( energy_thresh ), target_res_( rms_target_res ) {}
+RepackWithoutLigandFilter::RepackWithoutLigandFilter(
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::Real rms_thresh,
+	core::Real energy_thresh,
+	core::select::residue_selector::ResidueSelectorCOP rms_target_res  ) :
+	Filter( "RepackWithoutLigand" ),
+	scorefxn_(std::move(scorefxn)),
+	rms_threshold_( rms_thresh ),
+	energy_threshold_( energy_thresh ),
+	target_res_( rms_target_res )
+{}
 
 bool
 RepackWithoutLigandFilter::apply( core::pose::Pose const & pose ) const
@@ -635,8 +665,8 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 		return (wl_score - nl_score);
 	} else if ( calc_rms_ ) {
 		ObjexxFCL::FArray1D_bool rms_seqpos( pose.size(), false );
-		utility::vector1< core::Size > trg_res;
 		TR << " Length of initial pose " << rnl_pose.size() << std::endl;
+		utility::vector1< core::Size > trg_res;
 		if ( rms_all_rpked_ ) {
 			TR<<"Getting identities of all pack residues... "<< std::endl;
 			core::pack::task::PackerTaskCOP rnl_ptask = rnl.get_ptask();
@@ -647,10 +677,13 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 				}
 			}
 		} else if ( use_cstids_ ) {
-			enzutil::get_resnum_from_cstid_list(cstid_list_, pose, trg_res);
+			enzutil::get_resnum_from_cstid_list(cstid_list_, pose, trg_res); // Clears trg_res before recalculating
 		}
 
-		trg_res.insert( trg_res.begin(), target_res_.begin(), target_res_.end() );
+		if ( target_res_ ) {
+			trg_res.append( core::select::get_residues_from_subset( target_res_->apply( pose ) ) );
+		}
+
 		auto last = std::unique( trg_res.begin(), trg_res.end() );
 		trg_res.erase( last, trg_res.end() );
 
@@ -679,7 +712,7 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 }
 
 void
-RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, Filters_map const &, Movers_map const &, core::pose::Pose const &pose )
+RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	TR<<" Defining RepackWithoutLigandFilter "<< std::endl;
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
@@ -691,7 +724,7 @@ RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 		if ( tag->hasOption("target_res") ) {
 			std::string target_res = tag->getOption<std::string>("target_res", "" );
 			if ( target_res=="all_repacked" ) rms_all_rpked_ = true;
-			else target_res_ = core::pose::get_resnum_list(tag, "target_res",pose);
+			else target_res_ = core::pose::get_resnum_selector(tag, "target_res");
 		}
 		if ( tag->hasOption("target_cstids") ) {
 			cstid_list_ = tag->getOption<std::string>("target_cstids", "" );
@@ -702,7 +735,7 @@ RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 		calc_dE_ = true;
 	}
 	// 21-05-2013 PG
-	if ( !calc_dE_ && target_res_.empty() && cstid_list_.empty() && !rms_all_rpked_  ) {
+	if ( !calc_dE_ && target_res_ != nullptr && cstid_list_.empty() && !rms_all_rpked_  ) {
 		throw utility::excn::EXCN_RosettaScriptsOption(" NO RESIDUES HAVE BEEN SPECIFIED FOR THE RMSD CALCULATION");
 	}
 	TR<<" Defined RepackWithoutLigandFilter "<< std::endl;
@@ -1407,8 +1440,8 @@ void DiffAtomSasaFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	// + XMLSchemaAttribute::attribute_w_default("res1_res_num", xsct_non_negative_integer, "number of the residue for res1", "0")
 	//+ XMLSchemaAttribute::attribute_w_default("res2_res_num", xsct_non_negative_integer, "number of the residue for res2", "0");
 
-	core::pose::attributes_for_get_resnum( attlist, "res1_" );
-	core::pose::attributes_for_get_resnum( attlist, "res2_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "res1_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "res2_" );
 
 	attlist + XMLSchemaAttribute::attribute_w_default("atomname1", xs_string, "name of atom 1 (given as a string); defaults to CA on res1", "CA")
 		+ XMLSchemaAttribute::attribute_w_default("atomname2", xs_string, "name of atom 2 (given as a string); defaults to CA on res2", "CA")
@@ -1458,7 +1491,7 @@ void EnzScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	attlist + XMLSchemaAttribute::attribute_w_default("score_type", xs_string, "type of score to be evaluated; default is total_score", default_value_for_score_type())
 		+ XMLSchemaAttribute::attribute_w_default("energy_cutoff", xsct_real, "filters the energy based upon this cutoff value", utility::to_string( default_value_for_threshold() ))
 		+ XMLSchemaAttribute::attribute_w_default("whole_pose", xsct_rosetta_bool, "determines whether to evalue the score based upon the whole pose or not", utility::to_string( default_value_for_whole_pose() ));
-	core::pose::attributes_for_get_resnum( attlist );
+	core::pose::attributes_for_get_resnum_string( attlist );
 	// can't add sfxn again
 	//protocols::rosetta_scripts::attributes_for_get_score_function_name( attlist );
 
@@ -1627,7 +1660,7 @@ void RepackWithoutLigandFilter::provide_xml_schema( utility::tag::XMLSchemaDefin
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default("rms_threshold", xsct_real, "rmsd threshold", "0.5");
 
-	// Can't use attributes_for_get_resnum_list because the whole thing can also be
+	// Can't use attributes_for_get_resnum_selector because the whole thing can also be
 	// "all_repacked"
 	std::string resnum_list_regex = "all_repacked|(" + refpose_enabled_residue_number_string() + ")([,\\-](" + refpose_enabled_residue_number_string() + "))*";
 	XMLSchemaRestriction restriction;

@@ -90,7 +90,7 @@ LoopFinder::LoopFinder(
 	core::Size const min_length,
 	core::Size const max_length,
 	core::Size const mingap,
-	core::Size const resnum,
+	std::string const & resnum,
 	core::Real const ca_ca_distance,
 	core::Real const iface_cutoff,
 	protocols::loops::LoopsOP loops
@@ -157,9 +157,10 @@ LoopFinder::apply( core::pose::Pose & pose )
 					if ( !iface.is_interface(i) ) continue;
 				}
 
-				if ( resnum_ > 0 ) {
-					TR.Debug <<"residue : " << resnum_ << " was specified" << std::endl;
-					if ( pose.residue( i ).xyz( "CA" ).distance( pose.residue( resnum_ ).xyz( "CA" ) ) < ca_ca_distance_ ) {
+				if ( ! resnum_.empty() ) {
+					core::Size resnum( core::pose::parse_resnum( resnum_, pose ) );
+					TR.Debug <<"residue : " << resnum_ << " (" << resnum << ") was specified" << std::endl;
+					if ( pose.residue( i ).xyz( "CA" ).distance( pose.residue( resnum ).xyz( "CA" ) ) < ca_ca_distance_ ) {
 						TR.Debug<< "residue is within " << ca_ca_distance_ << " of the specified target chain(s)" << std::endl;
 					} else {
 						TR.Debug<<"residue is not within " << ca_ca_distance_ << " of this loop residue " << std::endl;
@@ -210,16 +211,14 @@ LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, pr
 	runtime_assert( ch1_ || ch2_ );
 	if ( interface_ ) runtime_assert( pose.num_jump() >= 1 );
 	mingap_ = tag->getOption<core::Size>( "mingap", 1 );
-	if ( tag->hasOption( "resnum" ) || ( tag->hasOption( "pdb_num" ) ) ) {
-		resnum_ = core::pose::get_resnum( tag, pose );
+	resnum_ = core::pose::get_resnum_string( tag, "", "" );
+	if ( ! resnum_.empty() ) {
 		TR<<"user specified residue " << resnum_ << " for distance cutoff" << std::endl;
-
 	} else {
-		resnum_ = 0;
 		TR<<"no target residue has been specified"<< std::endl;
 	}
 	ca_ca_distance_ = tag->getOption<core::Real>( "CA_CA_distance", 15 );
-	if ( resnum_ != 0 ) TR<<"distance cutoff from user defined residue is " << ca_ca_distance_ << std::endl;
+	if ( ! resnum_.empty() ) TR<<"distance cutoff from user defined residue is " << ca_ca_distance_ << std::endl;
 
 	// add loopsOP to the basic::datacache::DataMap
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );

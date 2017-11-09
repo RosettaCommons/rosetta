@@ -43,10 +43,10 @@ static THREAD_LOCAL basic::Tracer residue_distance_filter_tracer( "protocols.sim
 ResidueDistanceFilter::~ResidueDistanceFilter()= default;
 
 void
-ResidueDistanceFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+ResidueDistanceFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
-	res1_ = core::pose::get_resnum( tag, pose, "res1_" );
-	res2_ = core::pose::get_resnum( tag, pose, "res2_" );
+	res1_ = core::pose::get_resnum_string( tag, "res1_" );
+	res2_ = core::pose::get_resnum_string( tag, "res2_" );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 
 	residue_distance_filter_tracer<<"ResidueDistanceFilter with distance threshold of "<<distance_threshold_<<" between residues "<<res1_<<" and "<<res2_<<std::endl;
@@ -56,7 +56,7 @@ bool
 ResidueDistanceFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const distance( compute( pose ) );
 
-	residue_distance_filter_tracer<<"Distance between residues "<<pose.residue( res1_ ).name3()<<res1_<<" and "<<pose.residue( res2_ ).name3()<<res2_<<" is "<<distance<<std::endl;
+	residue_distance_filter_tracer<<"Distance between residues "<<res1_<<" and "<<res2_<<" is "<<distance<<std::endl;
 	return( distance<=distance_threshold_ );
 }
 
@@ -64,7 +64,7 @@ void
 ResidueDistanceFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
 	core::Real const distance( compute( pose ) );
 
-	out<<"Distance between residues "<<pose.residue( res1_ ).name3()<<res1_<<" and "<<pose.residue( res2_ ).name3()<<res2_<<" is "<<distance<<'\n';
+	out<<"Distance between residues "<<res1_<<" and "<<res2_<<" is "<<distance<<'\n';
 }
 
 core::Real
@@ -75,8 +75,10 @@ ResidueDistanceFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 core::Real
 ResidueDistanceFilter::compute( core::pose::Pose const & pose ) const {
-	core::conformation::Residue const res_res1( pose.conformation().residue( res1_ ) );
-	core::conformation::Residue const res_res2( pose.conformation().residue( res2_ ) );
+	core::Size res1( core::pose::parse_resnum( res1_, pose ) );
+	core::Size res2( core::pose::parse_resnum( res2_, pose ) );
+	core::conformation::Residue const res_res1( pose.conformation().residue( res1 ) );
+	core::conformation::Residue const res_res2( pose.conformation().residue( res2 ) );
 	core::Real const distance( res_res1.xyz( res_res1.nbr_atom() ).distance( res_res2.xyz( res_res2.nbr_atom() ) ) );
 	return( distance );
 }
@@ -98,8 +100,8 @@ void ResidueDistanceFilter::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		"distance", xsct_real,
 		"Maximal distance between residue 1 and residue 2");
 
-	core::pose::attributes_for_get_resnum(attlist, "res1_");
-	core::pose::attributes_for_get_resnum(attlist, "res2_");
+	core::pose::attributes_for_get_resnum_string(attlist, "res1_");
+	core::pose::attributes_for_get_resnum_string(attlist, "res2_");
 
 	protocols::filters::xsd_type_definition_w_attributes(
 		xsd, class_name(),

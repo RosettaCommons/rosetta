@@ -100,8 +100,8 @@ LoopHashMoverWrapper::LoopHashMoverWrapper() :
 	max_bbrms_( 0 ),
 	min_rms_( 0 ),
 	max_rms_( 0 ),
-	start_res_( 2 ),
-	stop_res_( 0 ),
+	start_res_( "2" ),
+	stop_res_( "0" ),
 	max_nstruct_( 1000000 ),
 	cenfilter_( /* NULL */ ),
 	ranking_cenfilter_( /* NULL */ ),
@@ -138,8 +138,8 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
 	LoopHashSampler lsampler( library_, simple_inserter );
 
-	lsampler.set_start_res( start_res_ );
-	lsampler.set_stop_res ( stop_res_ );
+	lsampler.set_start_res( core::pose::parse_resnum( start_res_, pose ) );
+	lsampler.set_stop_res ( core::pose::parse_resnum( stop_res_, pose ) );
 	lsampler.set_min_bbrms( min_bbrms() );
 	lsampler.set_max_bbrms( max_bbrms() );
 	lsampler.set_min_rms( min_rms() );
@@ -310,7 +310,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &filters,
 	Movers_map const &movers,
-	Pose const & pose )
+	Pose const & )
 {
 	min_bbrms_ = tag->getOption< Real >( "min_bbrms", 0 );
 	max_bbrms_ = tag->getOption< Real >( "max_bbrms", 100000 );
@@ -324,14 +324,8 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	filter_by_phipsi_ = tag->getOption< bool >( "filter_by_phipsi", 1 );
 	sample_weight_const_ = tag->getOption< Real >( "sample_weight_const", 1.0 );
 
-	start_res_ = 2;
-	stop_res_ = 0;
-	if ( tag->hasOption( "start_res_num" ) || tag->hasOption( "start_pdb_num") ) {
-		start_res_ = core::pose::get_resnum( tag, pose, "start_" );
-	}
-	if ( tag->hasOption( "stop_res_num" ) || tag->hasOption( "stop_pdb_num") ) {
-		stop_res_ = core::pose::get_resnum( tag, pose, "stop_" );
-	}
+	start_res_ = core::pose::get_resnum_string( tag, "start_", start_res_ );
+	stop_res_ = core::pose::get_resnum_string( tag, "stop_", stop_res_ );
 
 	string const loop_sizes_str( tag->getOption< string >( "loop_sizes" ) );
 	vector1< string > const loop_sizes_split( utility::string_split( loop_sizes_str, ',' ) );
@@ -512,8 +506,8 @@ void LoopHashMoverWrapper::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		+ XMLSchemaAttribute::attribute_w_default("filter_by_phipsi", xsct_rosetta_bool, "Filter-out non-ideal phipsi.", "1" )
 		+ XMLSchemaAttribute::attribute_w_default("sample_weight_const", xsct_real, "sets the same sample weight throughout the pose", "1.0" );
 
-	core::pose::attributes_for_get_resnum( attlist, "start_" );
-	core::pose::attributes_for_get_resnum( attlist, "stop_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "start_" );
+	core::pose::attributes_for_get_resnum_string( attlist, "stop_" );
 	attlist
 		+ XMLSchemaAttribute::required_attribute("loop_sizes", xsct_nnegative_int_cslist, "Sizes of loops for loophash" )
 		+ XMLSchemaAttribute("db_path", xs_string, "path to DB -- if not specified then command-line flag is used" )

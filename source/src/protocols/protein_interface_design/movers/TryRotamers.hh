@@ -19,7 +19,8 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/scoring/ScoreFunction.hh> /// EVIL
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh> /// EVIL
 
 #include <utility/vector1.hh>
@@ -40,7 +41,7 @@ public:
 
 public:
 	TryRotamers();
-	TryRotamers( core::Size resnum,
+	TryRotamers( std::string const & resnum,
 		core::scoring::ScoreFunction const& scorefxn,
 		protocols::filters::Filter const& final_filter,
 		core::Size explosion = 0, // rotamer explosion
@@ -52,7 +53,7 @@ public:
 
 	/// @param jump_num The jump number of the interface. 0 for no interface
 	/// @note Pass everything through the final filter (True Filter)
-	TryRotamers( core::Size resnum,
+	TryRotamers( std::string const & resnum,
 		core::scoring::ScoreFunction const& scorefxn,
 		core::Size explosion = 0, // rotamer explosion
 		core::Size jump_num = 1,
@@ -61,23 +62,12 @@ public:
 		bool include_current = true
 	);
 
-
-	/// EVIL
-	core::pack::rotamer_set::RotamerSetOP rotamer_set() { return rotset_ ; }
-
-	/// EVIL
-	void get_rotamer_set( core::pack::rotamer_set::RotamerSetOP const & rs ){
-		rotset_ = rs;
-		rotamer_it_ = begin();
-	}
-
 	// for direct access
-	void set_resnum( core::Size const r ) { resnum_ = r; }
+	void set_resnum( std::string const & r ) { resnum_ = r; }
 
 	/// EVIL
 	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
 
-	void setup_rotamer_set(core::pose::Pose & pose);
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
@@ -102,11 +92,24 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+protected:
+
+	void setup_rotamer_set(core::pose::Pose & pose, core::Size resnum );
+
+	/// EVIL
+	core::pack::rotamer_set::RotamerSetOP rotamer_set() { return rotset_ ; }
+
+	/// EVIL
+	void get_rotamer_set( core::pack::rotamer_set::RotamerSetOP const & rs ){
+		rotset_ = rs;
+		rotamer_it_ = begin();
+	}
+
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	core::pack::rotamer_set::Rotamers::const_iterator rotamer_it_;
 	core::pack::rotamer_set::RotamerSetOP rotset_;
-	core::Size resnum_;
+	std::string resnum_;
 	core::Size jump_num_;
 	bool clash_check_;
 	bool solo_res_;
@@ -114,7 +117,7 @@ private:
 	bool automatic_connection_; // should TryRotamers decide on the foldtree on its own? default true
 	core::Size explosion_; // rotamer explosion
 	protocols::filters::FilterOP final_filter_; // filter. Defaults to TrueFilter
-	utility::vector1< core::Size > shove_residues_; // a list of residues for which to use the shove_bb atom type, so that backbone atoms might clash.
+	core::select::residue_selector::ResidueSelectorCOP shove_residues_; // residues for which to use the shove_bb atom type, so that backbone atoms might clash.
 };
 
 

@@ -18,6 +18,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -47,7 +48,7 @@ public:
 		core::Size const backrub_moves,
 		core::Real const mc_kt,
 		core::Real const sidechain_move_prob,
-		std::vector< core::Size > const & residues );
+		utility::vector1< core::Size > const & residues );
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new BackrubDDMover ); }
@@ -65,6 +66,9 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 protected:
+	/// @brief Adds the given ResidueSelector to the selection. (As in all residues in both selections.)
+	void add_selector( core::select::residue_selector::ResidueSelectorOP const & sele  );
+
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
@@ -76,7 +80,7 @@ private:
 	core::Real sidechain_move_prob_;
 	core::Real small_move_prob_;
 	core::Real bbg_move_prob_;
-	std::vector< core::Size > residues_;
+	core::select::residue_selector::ResidueSelectorOP residues_;
 };
 
 } // movers
