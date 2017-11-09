@@ -44,6 +44,17 @@
 
 #include <string>
 
+std::string
+pdb_id(core::pose::PDBInfo const & pdbinfo, core::Size ii ) {
+	using namespace ObjexxFCL;
+	std::string pdbid( string_of( pdbinfo.number(ii) ) + pdbinfo.chain(ii) );
+	if ( pdbinfo.icode(ii) != ' ' ) {
+		pdbid += ':';
+		pdbid += pdbinfo.icode(ii);
+	}
+	return pdbid;
+}
+
 int
 main( int argc, char* argv [] ) {
 
@@ -115,7 +126,7 @@ main( int argc, char* argv [] ) {
 				ss->decoy_tag( tag + "_" + string_of(ii) + "_onebody" );
 				ss->add_string_value( "pose_id", tag );
 				ss->add_string_value( "resi1", string_of(ii) );
-				ss->add_string_value( "pdbid1", string_of( current_pose.pdb_info()->number(ii) ) + current_pose.pdb_info()->chain(ii) );
+				ss->add_string_value( "pdbid1", pdb_id( *current_pose.pdb_info(), ii ) );
 				ss->add_string_value( "restype1", current_pose.residue_type(ii).name3() );
 				ss->add_string_value( "resi2", "--" );
 				ss->add_string_value( "pdbid2", "--" );
@@ -160,10 +171,10 @@ main( int argc, char* argv [] ) {
 					ss->decoy_tag( tag + "_" + string_of(ii) + "_" + string_of(jj) );
 					ss->add_string_value( "pose_id", tag );
 					ss->add_string_value( "resi1", string_of(ii) );
-					ss->add_string_value( "pdbid1", string_of( current_pose.pdb_info()->number(ii) ) + current_pose.pdb_info()->chain(ii) );
+					ss->add_string_value( "pdbid1", pdb_id( *current_pose.pdb_info(), ii ) );
 					ss->add_string_value( "restype1", current_pose.residue_type(ii).name3() );
 					ss->add_string_value( "resi2", string_of(jj) );
-					ss->add_string_value( "pdbid2", string_of( current_pose.pdb_info()->number(jj) ) + current_pose.pdb_info()->chain(jj) );
+					ss->add_string_value( "pdbid2", pdb_id( *current_pose.pdb_info(), jj ) );
 					ss->add_string_value( "restype2", current_pose.residue_type(jj).name3() );
 
 					bool nonzero(false);

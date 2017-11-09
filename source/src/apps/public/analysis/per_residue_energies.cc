@@ -42,6 +42,17 @@
 
 #include <string>
 
+std::string
+pdb_id(core::pose::PDBInfo const & pdbinfo, core::Size ii ) {
+	using namespace ObjexxFCL;
+	std::string pdbid( string_of( pdbinfo.number(ii) ) + pdbinfo.chain(ii) );
+	if ( pdbinfo.icode(ii) != ' ' ) {
+		pdbid += ':';
+		pdbid += pdbinfo.icode(ii);
+	}
+	return pdbid;
+}
+
 void all_pair_energies(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP scorefxn,
@@ -141,7 +152,7 @@ main( int argc, char* argv [] ) {
 					SilentStructOP ss( new ScoreFileSilentStruct(opts) );
 					ss->decoy_tag( "residue_" + string_of(jj) );
 					ss->add_string_value( "pose_id", core::pose::tag_from_pose(current_pose) );
-					ss->add_string_value( "pdb_id", string_of( current_pose.pdb_info()->number(jj) ) + current_pose.pdb_info()->chain(jj) );
+					ss->add_string_value( "pdb_id", pdb_id( *current_pose.pdb_info(), jj ) );
 					Real total(0);
 					for ( int ii = 1; ii <= n_score_types; ++ii ) {
 						if ( weights[ ScoreType(ii) ] != 0.0 ) {
