@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 // Requirement creators
-#include <protocols/sewing/sampling/requirements/RequirementFactory.hh>
-#include <protocols/sewing/sampling/requirements/ResidueRetentionRequirementCreator.hh>
-#include <protocols/sewing/sampling/requirements/SegmentDsspRequirementCreator.hh>
-#include <protocols/sewing/sampling/requirements/SegmentLengthRequirementCreator.hh>
-#include <protocols/sewing/sampling/requirements/GlobalLengthRequirementCreator.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementFactory.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacyResidueRetentionRequirementCreator.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacySegmentDsspRequirementCreator.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacySegmentLengthRequirementCreator.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacyGlobalLengthRequirementCreator.hh>

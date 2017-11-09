@@ -17,11 +17,11 @@
 
 //Package headers
 #include <devel/init.hh>
-#include <protocols/sewing/hashing/Hasher.hh>
-#include <protocols/sewing/conformation/Model.hh>
-#include <protocols/sewing/conformation/AssemblyFactory.hh>
-#include <protocols/sewing/conformation/Assembly.hh>
-#include <protocols/sewing/util/io.hh>
+#include <protocols/legacy_sewing/hashing/Hasher.hh>
+#include <protocols/legacy_sewing/conformation/Model.hh>
+#include <protocols/legacy_sewing/conformation/AssemblyFactory.hh>
+#include <protocols/legacy_sewing/conformation/Assembly.hh>
+#include <protocols/legacy_sewing/util/io.hh>
 
 //Protocol headers
 #include <core/types.hh>
@@ -80,7 +80,7 @@ main( int argc, char * argv [] ) {
 	try {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		using namespace protocols::sewing;
+		using namespace protocols::legacy_sewing;
 
 		// initialize core and read options
 		devel::init(argc, argv);
@@ -95,20 +95,20 @@ main( int argc, char * argv [] ) {
 			<< std::endl;
 
 		//Check for model file (either for reading or writing)
-		if ( !option[sewing::model_file_name].user() || !option[sewing::new_model_file_name].user() ) {
+		if ( !option[legacy_sewing::model_file_name].user() || !option[legacy_sewing::new_model_file_name].user() ) {
 			std::stringstream err;
 			err << "You must provide both an input and output model file name to the ModelTrimmer using " <<
 				"the -model_file_name flag and -new_model_file_name flags respectively";
 			utility_exit_with_message(err.str());
 		}
 		std::map< int, Model > models;
-		std::string model_filename = option[sewing::model_file_name];
-		std::string new_model_filename = option[sewing::new_model_file_name];
+		std::string model_filename = option[legacy_sewing::model_file_name];
+		std::string new_model_filename = option[legacy_sewing::new_model_file_name];
 
 		comments << "#This model file contains models from parent file " << model_filename << std::endl;
 		comments << "#Any model with L segment at terminal segment has been removed" << std::endl;
 
-		std::string remove_any_dssp = option[sewing::remove_any_dssp];
+		std::string remove_any_dssp = option[legacy_sewing::remove_any_dssp];
 		for ( core::Size i=0; i<remove_any_dssp.length(); ++i ) {
 			if ( remove_any_dssp[i] != 'H' && remove_any_dssp[i] != 'E' && remove_any_dssp[i] != 'L' ) {
 				std::stringstream err;
@@ -120,7 +120,7 @@ main( int argc, char * argv [] ) {
 			comments << "#All models with a segment containing dssp code(s) " << remove_any_dssp << " have been removed" << std::endl;
 		}
 
-		std::string remove_all_dssp = option[sewing::remove_all_dssp];
+		std::string remove_all_dssp = option[legacy_sewing::remove_all_dssp];
 		for ( core::Size i=0; i<remove_all_dssp.length(); ++i ) {
 			if ( remove_all_dssp[i] != 'H' && remove_all_dssp[i] != 'E' && remove_all_dssp[i] != 'L' ) {
 				std::stringstream err;
@@ -132,51 +132,51 @@ main( int argc, char * argv [] ) {
 			comments << "#All models composed of entirely loops and dssp code(s) " << remove_all_dssp << " have been removed" << std::endl;
 		}
 
-		comments << "#All models with any helical (H) segment(s) which has fewer than " << option[sewing::min_helix_length]
-			<< " residues or greater than " << option[sewing::max_helix_length] << " residues has been removed" << std::endl;
+		comments << "#All models with any helical (H) segment(s) which has fewer than " << option[legacy_sewing::min_helix_length]
+			<< " residues or greater than " << option[legacy_sewing::max_helix_length] << " residues has been removed" << std::endl;
 
-		comments << "#All models with any strand (E) segment(s) which has fewer than " << option[sewing::min_strand_length]
-			<< " residues or greater than " << option[sewing::max_strand_length] << " residues has been removed" << std::endl;
+		comments << "#All models with any strand (E) segment(s) which has fewer than " << option[legacy_sewing::min_strand_length]
+			<< " residues or greater than " << option[legacy_sewing::max_strand_length] << " residues has been removed" << std::endl;
 
-		comments << "#All models with any loop (L) segment(s) which has fewer than " << option[sewing::min_loop_length]
-			<< " residues or greater than " << option[sewing::max_loop_length] << " residues has been removed" << std::endl;
+		comments << "#All models with any loop (L) segment(s) which has fewer than " << option[legacy_sewing::min_loop_length]
+			<< " residues or greater than " << option[legacy_sewing::max_loop_length] << " residues has been removed" << std::endl;
 
-		if ( option[sewing::leave_models_by_ss_num] ) {
-			comments << "#Only models with " << option[sewing::model_should_have_this_num_of_ss] << " secondary structures remained " << std::endl;
+		if ( option[legacy_sewing::leave_models_by_ss_num] ) {
+			comments << "#Only models with " << option[legacy_sewing::model_should_have_this_num_of_ss] << " secondary structures remained " << std::endl;
 		}
 
-		if ( option[sewing::model_should_have_at_least_1_E_at_terminal_segment] ) {
+		if ( option[legacy_sewing::model_should_have_at_least_1_E_at_terminal_segment] ) {
 			comments << "#Only models that have at least 1 E segment at terminal segment remained " << std::endl;
 		}
 
-		if ( option[sewing::model_should_have_at_least_1_E] ) {
+		if ( option[legacy_sewing::model_should_have_at_least_1_E] ) {
 			comments << "#Only models that have at least 1 E segment remained " << std::endl;
 		}
 
-		if ( option[sewing::model_should_have_at_least_1_H] ) {
+		if ( option[legacy_sewing::model_should_have_at_least_1_H] ) {
 			comments << "#Only models that have at least 1 H segment remained" << std::endl;
 		}
 
-		if ( option[sewing::leave_models_with_E_terminal_ss] ) {
+		if ( option[legacy_sewing::leave_models_with_E_terminal_ss] ) {
 			comments << "#All models that lack '2 terminal beta-strands' have been removed " << std::endl;
 			TR << "All models that lack '2 terminal beta-strands' have been removed" << std::endl;
 		}
 
-		if ( option[sewing::leave_models_with_H_terminal_ss] ) {
+		if ( option[legacy_sewing::leave_models_with_H_terminal_ss] ) {
 			comments << "#All models that lack '2 terminal helices' have been removed " << std::endl;
 			TR << "All models that lack '2 terminal helices' have been removed" << std::endl;
 		}
 
 
-		if ( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ) {
+		if ( option[legacy_sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ) {
 			comments << "#All models that lack 'terminal strands that are parallel way H-bonded with their backbone atoms' have been removed " << std::endl;
 		}
 
-		if ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands] ) {
+		if ( option[legacy_sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands] ) {
 			comments << "#All models that lack 'terminal strands that are anti-parallel way H-bonded with their backbone atoms' have been removed " << std::endl;
 		}
 
-		if ( option[sewing::leave_certain_model_ids] )  {
+		if ( option[legacy_sewing::leave_certain_model_ids] )  {
 			comments << "#Only models with specified model_ids are left " << std::endl;
 		}
 
@@ -191,9 +191,9 @@ main( int argc, char * argv [] ) {
 
 			bool erase = false;
 
-			if ( (!erase) && (option[sewing::leave_certain_model_ids]) ) {
+			if ( (!erase) && (option[legacy_sewing::leave_certain_model_ids]) ) {
 				erase = true; // temporarily
-				std::string model_ids_str( option[sewing::leave_these_model_ids] );
+				std::string model_ids_str( option[legacy_sewing::leave_these_model_ids] );
 				utility::vector1< std::string > model_ids_vec( utility::string_split( model_ids_str, ',' ) );
 
 				for ( core::Size i=1; i<=model_ids_vec.size(); ++i ) {
@@ -249,19 +249,19 @@ main( int argc, char * argv [] ) {
 				}
 			}
 
-			if ( (!erase) && (option[sewing::model_should_have_at_least_1_E_at_terminal_segment]) ) {
+			if ( (!erase) && (option[legacy_sewing::model_should_have_at_least_1_E_at_terminal_segment]) ) {
 				if ( (model.segments_[1].dssp_ != 'E') && (model.segments_[model.segments_.size()].dssp_ != 'E') ) {
 					erase=true;
 				}
 			}
 
-			if ( (!erase) && (option[sewing::leave_models_by_ss_num]) ) {
-				if ( (int)model.segments_.size() != option[sewing::model_should_have_this_num_of_ss] ) {
+			if ( (!erase) && (option[legacy_sewing::leave_models_by_ss_num]) ) {
+				if ( (int)model.segments_.size() != option[legacy_sewing::model_should_have_this_num_of_ss] ) {
 					erase=true;
 				}
 			}
 
-			if ( (!erase) && (option[sewing::model_should_have_at_least_1_E]) ) {
+			if ( (!erase) && (option[legacy_sewing::model_should_have_at_least_1_E]) ) {
 				bool model_have_E = false;
 				for ( core::Size i=1; i<=model.segments_.size(); ++i ) {
 					if ( model.segments_[i].dssp_ == 'E' ) {
@@ -275,7 +275,7 @@ main( int argc, char * argv [] ) {
 			}
 
 
-			if ( (!erase) && (option[sewing::model_should_have_at_least_1_H]) ) {
+			if ( (!erase) && (option[legacy_sewing::model_should_have_at_least_1_H]) ) {
 				bool model_have_H = false;
 				for ( core::Size i=1; i<=model.segments_.size(); ++i ) {
 					if ( model.segments_[i].dssp_ == 'H' ) {
@@ -290,22 +290,22 @@ main( int argc, char * argv [] ) {
 
 			for ( core::Size i=1; (!erase) && i<=model.segments_.size(); ++i ) {
 				if ( model.segments_[i].dssp_ == 'H' &&
-						((int)model.segments_[i].residues_.size() > option[sewing::max_helix_length] ||
-						(int)model.segments_[i].residues_.size() < option[sewing::min_helix_length] ) ) {
+						((int)model.segments_[i].residues_.size() > option[legacy_sewing::max_helix_length] ||
+						(int)model.segments_[i].residues_.size() < option[legacy_sewing::min_helix_length] ) ) {
 					if ( TR.Debug.visible() ) {
 						TR.Debug << "model.segments_[i].dssp_ == 'H' and this model will be erased " << std::endl;
 					}
 					erase=true;
 				} else if ( model.segments_[i].dssp_ == 'E' &&
-						((int)model.segments_[i].residues_.size() > option[sewing::max_strand_length] ||
-						(int)model.segments_[i].residues_.size() < option[sewing::min_strand_length] ) ) {
+						((int)model.segments_[i].residues_.size() > option[legacy_sewing::max_strand_length] ||
+						(int)model.segments_[i].residues_.size() < option[legacy_sewing::min_strand_length] ) ) {
 					if ( TR.Debug.visible() ) {
 						TR.Debug << "model.segments_[i].dssp_ == 'E' and this model will be erased " << std::endl;
 					}
 					erase=true;
 				} else if ( model.segments_[i].dssp_ == 'L' &&
-						((int)model.segments_[i].residues_.size() > option[sewing::max_loop_length] ||
-						(int)model.segments_[i].residues_.size() < option[sewing::min_loop_length] ) ) {
+						((int)model.segments_[i].residues_.size() > option[legacy_sewing::max_loop_length] ||
+						(int)model.segments_[i].residues_.size() < option[legacy_sewing::min_loop_length] ) ) {
 					if ( TR.Debug.visible() ) {
 						TR.Debug << "model.segments_[i].dssp_ == 'L' and this model will be erased" << std::endl;
 					}
@@ -315,26 +315,26 @@ main( int argc, char * argv [] ) {
 
 			//If a given model lacks appropriate DSSP in its two terminal secondary structures, remove it
 			if ( (!erase) &&
-					( ( option[sewing::leave_models_with_E_terminal_ss] )
-					|| ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands] )
-					|| ( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ) ) ) {
+					( ( option[legacy_sewing::leave_models_with_E_terminal_ss] )
+					|| ( option[legacy_sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands] )
+					|| ( option[legacy_sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ) ) ) {
 				if ( model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E' ) {
 					erase=true;
 				}
 			}
 
 			if ( (!erase) &&
-					( option[sewing::leave_models_with_H_terminal_ss] ) ) {
+					( option[legacy_sewing::leave_models_with_H_terminal_ss] ) ) {
 				if ( model.segments_[1].dssp_ != 'H' || model.segments_[model.segments_.size()].dssp_ != 'H' ) {
 					erase=true;
 				}
 			}
 
 			// erase=true if first and last segments are not H-bonded by their backbones
-			if ( (!erase) && (option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ||
-					option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands]) ) {
+			if ( (!erase) && (option[legacy_sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ||
+					option[legacy_sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands]) ) {
 
-				if ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands] ) {
+				if ( option[legacy_sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands] ) {
 					std::string model_is_H_bonded_by_terminal_strands = see_whether_model_is_H_bonded_by_terminal_strands(model, "antiparallel");
 					//TR << "model_is_H_bonded_by_terminal_strands: " << model_is_H_bonded_by_terminal_strands << std::endl;
 					if ( model_is_H_bonded_by_terminal_strands != "antiparallel" ) {
@@ -342,7 +342,7 @@ main( int argc, char * argv [] ) {
 					}
 				}
 
-				if ( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ) {
+				if ( option[legacy_sewing::leave_parallel_way_H_bonded_models_by_terminal_strands] ) {
 					std::string model_is_H_bonded_by_terminal_strands = see_whether_model_is_H_bonded_by_terminal_strands(model, "parallel");
 					//TR << "model_is_H_bonded_by_terminal_strands: " << model_is_H_bonded_by_terminal_strands << std::endl;
 					if ( model_is_H_bonded_by_terminal_strands != "parallel" ) {

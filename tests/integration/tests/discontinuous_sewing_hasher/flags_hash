@@ -1,5 +1,5 @@
--sewing:mode hash
--sewing:assembly_type discontinuous
+-legacy_sewing:mode hash
+-legacy_sewing:assembly_type discontinuous
 -model_file_name test.models
 -score_file_name test.scores
 -num_segments_to_match 2

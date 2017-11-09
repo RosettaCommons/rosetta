@@ -7226,8 +7226,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	), # -sicdock
 
 	################################
-	## Sewing
-	Option_Group( 'sewing',
+	## Legacy Sewing
+	Option_Group( 'legacy_sewing',
 								##General options
 								Option('model_file_name','File', desc="Filename for model file (creation or reading)"),
 								Option('score_file_name','File', desc="Filename for scores file (creation or reading)"),
@@ -7311,7 +7311,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 						##ExhaustiveAssemblyMover options
 						Option('max_ss_num','Integer', desc="max_ss_num so either 3 (smotif) or 5 (5-ss_models)", default='5'),
 						Option('dump_every_model','Boolean', desc="dump_every_model", default='false'),
-	), # -sewing
+	), # -legacy_sewing
 
 	Option_Group( 'SSrbrelax',
 #		Option( 'input_pdb','File', desc='input pdb file', default='input_pdb' ),

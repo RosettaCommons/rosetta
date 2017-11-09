@@ -523,7 +523,7 @@ sources = {
 		"Interface",
 	],
 
-	"sewing" : [
+	"legacy_sewing" : [
 		"SewingHasherTests",
 	],
 
@@ -967,7 +967,7 @@ testinputfiles = [
 	"rosetta_scripts/test2.xml",
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",
-	"sewing/inputs/1ten_m8.db3",
+	"legacy_sewing/inputs/1ten_m8.db3",
 	"simple_moves/1bl0_auto.fasta.pssm",
 	"simple_moves/design.resfile",
 	"simple_moves/design2.resfile",

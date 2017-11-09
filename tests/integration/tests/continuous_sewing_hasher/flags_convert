@@ -1,4 +1,4 @@
--sewing:mode convert
--sewing:assembly_type continuous
--model_file_name test.models
--score_file_name test.scores
+-legacy_sewing:mode convert
+-legacy_sewing:assembly_type continuous
+-legacy_sewing:model_file_name test.models
+-legacy_sewing:score_file_name test.scores

@@ -275,7 +275,7 @@ sources = {
 		"recces_turner",
 		"thermal_sampler",
 	    ],
-	"public/sewing": [
+	"public/legacy_sewing": [
 		"sewing_hasher",
 	],
 	"public/surface_docking": [

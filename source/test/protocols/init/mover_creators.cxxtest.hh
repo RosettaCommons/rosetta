@@ -398,14 +398,14 @@
 #include <protocols/membrane/visualize/VisualizeEmbeddingMoverCreator.hh>
 #include <protocols/docking/membrane/MPDockingMoverCreator.hh>
 #include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh>
-#include <protocols/sewing/sampling/AppendAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/GivenPathAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/GreedyAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/MonteCarloAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/AssemblyConstraintsMoverCreator.hh>
-#include <protocols/sewing/sampling/AddStartnodeFragmentsCreator.hh>
-#include <protocols/sewing/sampling/RepeatAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/EnumerateAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAppendAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyGivenPathAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyGreedyAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyMonteCarloAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAssemblyConstraintsMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAddStartnodeFragmentsCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyRepeatAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyEnumerateAssemblyMoverCreator.hh>
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
 #include <protocols/membrane/AddMPLigandMoverCreator.hh>
 #include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh>
@@ -1537,29 +1537,29 @@ public:
 	void test_protocols_docking_membrane_MPDockingSetupMoverCreator_name()
 	{ protocols::docking::membrane::MPDockingSetupMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MPDockingSetupMover" ); }
 
-	void test_protocols_sewing_AppendAssemblyMoverCreator_name()
-	{ protocols::sewing::AppendAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AppendAssemblyMover" ); }
+	void test_protocols_legacy_sewing_LegacyAppendAssemblyMoverCreator_name()
+	{ protocols::legacy_sewing::LegacyAppendAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LegacyAppendAssemblyMover" ); }
 
-	void test_protocols_sewing_GivenPathAssemblyMoverCreator_name()
-	{ protocols::sewing::GivenPathAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "GivenPathAssemblyMover" ); }
+	void test_protocols_legacy_sewing_LegacyGivenPathAssemblyMoverCreator_name()
+	{ protocols::legacy_sewing::LegacyGivenPathAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LegacyGivenPathAssemblyMover" ); }
 
-	void test_protocols_sewing_GreedyAssemblyMoverCreator_name()
-	{ protocols::sewing::GreedyAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "GreedyAssemblyMover" ); }
+	void test_protocols_legacy_sewing_LegacyGreedyAssemblyMoverCreator_name()
+	{ protocols::legacy_sewing::LegacyGreedyAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LegacyGreedyAssemblyMover" ); }
 
-	void test_protocols_sewing_MonteCarloAssemblyMoverCreator_name()
-	{ protocols::sewing::MonteCarloAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MonteCarloAssemblyMover" ); }
+	void test_protocols_legacy_sewing_LegacyMonteCarloAssemblyMoverCreator_name()
+	{ protocols::legacy_sewing::LegacyMonteCarloAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LegacyMonteCarloAssemblyMover" ); }
 
-	void test_protocols_sewing_AssemblyConstraintsMoverCreator_name()
-	{ protocols::sewing::AssemblyConstraintsMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AssemblyConstraintsMover" ); }
+	void test_protocols_legacy_sewing_LegacyAssemblyConstraintsMoverCreator_name()
+	{ protocols::legacy_sewing::LegacyAssemblyConstraintsMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LegacyAssemblyConstraintsMover" ); }
 
-	void test_protocols_sewing_AddStartnodeFragmentsCreator_name()
-	{ protocols::sewing::AddStartnodeFragmentsCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AddStartnodeFragments" ); }
+	void test_protocols_legacy_sewing_LegacyAddStartnodeFragmentsCreator_name()
+	{ protocols::legacy_sewing::LegacyAddStartnodeFragmentsCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LegacyAddStartnodeFragments" ); }
 
-	void test_protocols_sewing_RepeatAssemblyMoverCreator_name()
-	{ protocols::sewing::RepeatAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RepeatAssemblyMover" ); }
+	void test_protocols_legacy_sewing_LegacyRepeatAssemblyMoverCreator_name()
+	{ protocols::legacy_sewing::LegacyRepeatAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LegacyRepeatAssemblyMover" ); }
 
-	void test_protocols_sewing_EnumerateAssemblyMoverCreator_name()
-	{ protocols::sewing::EnumerateAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "EnumerateAssemblyMover" ); }
+	void test_protocols_legacy_sewing_LegacyEnumerateAssemblyMoverCreator_name()
+	{ protocols::legacy_sewing::LegacyEnumerateAssemblyMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LegacyEnumerateAssemblyMover" ); }
 
 	void test_protocols_symmetric_docking_membrane_MPSymDockMoverCreator_name()
 	{ protocols::symmetric_docking::membrane::MPSymDockMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MPSymDockMover" ); }
@@ -2692,29 +2692,29 @@ public:
 	// void test_protocols_docking_membrane_MPDockingSetupMoverCreator()
 	// { protocols::docking::membrane::MPDockingSetupMoverCreator cr; std::cout << "protocols::docking::membrane::MPDockingSetupMoverCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_sewing_AppendAssemblyMoverCreator()
-	// { protocols::sewing::AppendAssemblyMoverCreator cr; std::cout << "protocols::sewing::AppendAssemblyMoverCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_legacy_sewing_AppendAssemblyMoverCreator()
+	// { protocols::legacy_sewing::AppendAssemblyMoverCreator cr; std::cout << "protocols::legacy_sewing::AppendAssemblyMoverCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_sewing_GivenPathAssemblyMoverCreator()
-	// { protocols::sewing::GivenPathAssemblyMoverCreator cr; std::cout << "protocols::sewing::GivenPathAssemblyMoverCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_legacy_sewing_GivenPathAssemblyMoverCreator()
+	// { protocols::legacy_sewing::GivenPathAssemblyMoverCreator cr; std::cout << "protocols::legacy_sewing::GivenPathAssemblyMoverCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_sewing_GreedyAssemblyMoverCreator()
-	// { protocols::sewing::GreedyAssemblyMoverCreator cr; std::cout << "protocols::sewing::GreedyAssemblyMoverCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_legacy_sewing_GreedyAssemblyMoverCreator()
+	// { protocols::legacy_sewing::GreedyAssemblyMoverCreator cr; std::cout << "protocols::legacy_sewing::GreedyAssemblyMoverCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_sewing_MonteCarloAssemblyMoverCreator()
-	// { protocols::sewing::MonteCarloAssemblyMoverCreator cr; std::cout << "protocols::sewing::MonteCarloAssemblyMoverCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_legacy_sewing_MonteCarloAssemblyMoverCreator()
+	// { protocols::legacy_sewing::MonteCarloAssemblyMoverCreator cr; std::cout << "protocols::legacy_sewing::MonteCarloAssemblyMoverCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_sewing_AssemblyConstraintsMoverCreator()
-	// { protocols::sewing::AssemblyConstraintsMoverCreator cr; std::cout << "protocols::sewing::AssemblyConstraintsMoverCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_legacy_sewing_AssemblyConstraintsMoverCreator()
+	// { protocols::legacy_sewing::AssemblyConstraintsMoverCreator cr; std::cout << "protocols::legacy_sewing::AssemblyConstraintsMoverCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_sewing_AddStartnodeFragmentsCreator()
-	// { protocols::sewing::AddStartnodeFragmentsCreator cr; std::cout << "protocols::sewing::AddStartnodeFragmentsCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_legacy_sewing_AddStartnodeFragmentsCreator()
+	// { protocols::legacy_sewing::AddStartnodeFragmentsCreator cr; std::cout << "protocols::legacy_sewing::AddStartnodeFragmentsCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_sewing_RepeatAssemblyMoverCreator()
-	// { protocols::sewing::RepeatAssemblyMoverCreator cr; std::cout << "protocols::sewing::RepeatAssemblyMoverCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_legacy_sewing_RepeatAssemblyMoverCreator()
+	// { protocols::legacy_sewing::RepeatAssemblyMoverCreator cr; std::cout << "protocols::legacy_sewing::RepeatAssemblyMoverCreator " << cr.keyname() << std::endl; }
 	//
-	// void test_protocols_sewing_EnumerateAssemblyMoverCreator()
-	// { protocols::sewing::EnumerateAssemblyMoverCreator cr; std::cout << "protocols::sewing::EnumerateAssemblyMoverCreator " << cr.keyname() << std::endl; }
+	// void test_protocols_legacy_sewing_EnumerateAssemblyMoverCreator()
+	// { protocols::legacy_sewing::EnumerateAssemblyMoverCreator cr; std::cout << "protocols::legacy_sewing::EnumerateAssemblyMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_symmetric_docking_membrane_MPSymDockMoverCreator()
 	// { protocols::symmetric_docking::membrane::MPSymDockMoverCreator cr; std::cout << "protocols::symmetric_docking::membrane::MPSymDockMoverCreator " << cr.keyname() << std::endl; }

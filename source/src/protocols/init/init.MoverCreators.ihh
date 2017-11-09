@@ -424,15 +424,15 @@
 #include <protocols/seeded_abinitio/SwapSegmentCreator.hh>
 #include <protocols/seeded_abinitio/SegmentHybridizerCreator.hh>
 
-#include <protocols/sewing/sampling/AppendAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/GivenPathAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/GreedyAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/MonteCarloAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/AssemblyConstraintsMoverCreator.hh>
-#include <protocols/sewing/sampling/AddStartnodeFragmentsCreator.hh>
-#include <protocols/sewing/sampling/AssemblyConstraintsMover.hh>
-#include <protocols/sewing/sampling/RepeatAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/EnumerateAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAppendAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyGivenPathAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyGreedyAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyMonteCarloAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAssemblyConstraintsMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAddStartnodeFragmentsCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAssemblyConstraintsMover.hh>
+#include <protocols/legacy_sewing/sampling/LegacyRepeatAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyEnumerateAssemblyMoverCreator.hh>
 
 #include <protocols/simple_moves/AddChainMoverCreator.hh>
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMoverCreator.hh>

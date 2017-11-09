@@ -45,8 +45,8 @@
 #include <protocols/denovo_design/task_operations/ConsensusLoopDesignOperationCreator.hh>
 
 
-#include <protocols/sewing/sampling/ReadRepeatNativeRotamersFileCreator.hh>
-#include <protocols/sewing/sampling/ReadNativeRotamersFileCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyReadRepeatNativeRotamersFileCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyReadNativeRotamersFileCreator.hh>
 
 #include <protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh>
 #include <protocols/toolbox/task_operations/DatabaseThreadCreator.hh>

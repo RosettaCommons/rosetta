@@ -16,11 +16,11 @@
 
 namespace protocols {
 
-using namespace sewing::sampling::requirements;
+using namespace legacy_sewing::sampling::requirements;
 
-static RequirementRegistrator< ResidueRetentionRequirementCreator > reg_ResidueRetentionRequirementCreator;
-static RequirementRegistrator< SegmentDsspRequirementCreator > reg_SegmentDsspRequirementCreator;
-static RequirementRegistrator< SegmentLengthRequirementCreator > reg_SegmentLengthRequirementCreator;
-static RequirementRegistrator< GlobalLengthRequirementCreator > reg_GlobalLengthRequirementCreator;
+static LegacyRequirementRegistrator< LegacyResidueRetentionRequirementCreator > reg_LegacyResidueRetentionRequirementCreator;
+static LegacyRequirementRegistrator< LegacySegmentDsspRequirementCreator > reg_LegacySegmentDsspRequirementCreator;
+static LegacyRequirementRegistrator< LegacySegmentLengthRequirementCreator > reg_LegacySegmentLengthRequirementCreator;
+static LegacyRequirementRegistrator< LegacyGlobalLengthRequirementCreator > reg_LegacyGlobalLengthRequirementCreator;
 
 } //namespace protocols

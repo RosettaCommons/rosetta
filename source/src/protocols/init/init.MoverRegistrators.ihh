@@ -438,14 +438,14 @@ static MoverRegistrator< seeded_abinitio::SeedSetupMoverCreator > SeedSetupMover
 static MoverRegistrator< seeded_abinitio::SwapSegmentCreator > SwapSegmentCreator;
 static MoverRegistrator< seeded_abinitio::SegmentHybridizerCreator > SegmentHybridizerCreator;
 
-static MoverRegistrator< sewing::AppendAssemblyMoverCreator > reg_AppendAssemblyMoverCreator;
-static MoverRegistrator< sewing::GivenPathAssemblyMoverCreator > reg_GivenPathAssemblyMoverCreator;
-static MoverRegistrator< sewing::GreedyAssemblyMoverCreator > reg_GreedyAssemblyMoverCreator;
-static MoverRegistrator< sewing::MonteCarloAssemblyMoverCreator > reg_MonteCarloAssemblyMoverCreator;
-static MoverRegistrator< sewing::AssemblyConstraintsMoverCreator > reg_AssemblyConstraintsMoverCreator;
-static MoverRegistrator< sewing::AddStartnodeFragmentsCreator > reg_AddStartnodeFragmentsCreator;
-static MoverRegistrator< sewing::RepeatAssemblyMoverCreator > reg_RepeatAssemblyMoverCreator;
-static MoverRegistrator< sewing::EnumerateAssemblyMoverCreator > reg_EnumerateAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyAppendAssemblyMoverCreator > reg_LegacyAppendAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyGivenPathAssemblyMoverCreator > reg_LegacyGivenPathAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyGreedyAssemblyMoverCreator > reg_LegacyGreedyAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyMonteCarloAssemblyMoverCreator > reg_LegacyMonteCarloAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyAssemblyConstraintsMoverCreator > reg_LegacyAssemblyConstraintsMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyAddStartnodeFragmentsCreator > reg_LegacyAddStartnodeFragmentsCreator;
+static MoverRegistrator< legacy_sewing::LegacyRepeatAssemblyMoverCreator > reg_LegacyRepeatAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyEnumerateAssemblyMoverCreator > reg_LegacyEnumerateAssemblyMoverCreator;
 
 static MoverRegistrator< simple_moves::AddChainMoverCreator > reg_AddChainMoverCreator;
 static MoverRegistrator< simple_moves::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;

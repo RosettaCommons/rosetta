@@ -41,8 +41,8 @@ static TaskOperationRegistrator< protocols::hbnet::ConstrainHBondNetworkCreator 
 
 static TaskOperationRegistrator< protocols::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 
-static TaskOperationRegistrator< protocols::sewing::ReadNativeRotamersFileCreator > reg_ReadNativeRotamersFileCreator;
-static TaskOperationRegistrator< protocols::sewing::ReadRepeatNativeRotamersFileCreator > reg_ReadRepeatNativeRotamersFileCreator;
+static TaskOperationRegistrator< protocols::legacy_sewing::LegacyReadNativeRotamersFileCreator > reg_LegacyReadNativeRotamersFileCreator;
+static TaskOperationRegistrator< protocols::legacy_sewing::LegacyReadRepeatNativeRotamersFileCreator > reg_LegacyReadRepeatNativeRotamersFileCreator;
 
 static TaskOperationRegistrator< protocols::toolbox::task_operations::CrystalContactsOperationCreator > CrystalContactsOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::DatabaseThreadCreator > DatabaseThreadCreator_registrator;
