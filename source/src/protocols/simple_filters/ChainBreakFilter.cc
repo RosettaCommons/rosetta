@@ -61,8 +61,8 @@ ChainBreak::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &,
 bool
 ChainBreak::apply( core::pose::Pose const & pose ) const {
 	core::Size val = compute( pose );
-	TR << "Sequence distance reports " << val << " mutations." << std::endl;
-	return( compute( pose ) >= threshold() );
+	TR << "ChainBreak filter identified " << val << " chainbreaks." << std::endl;
+	return( compute( pose ) <= threshold() );
 }
 
 void
