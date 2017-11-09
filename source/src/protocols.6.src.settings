@@ -232,6 +232,11 @@ sources = {
 	"protocols/peptide_deriver": [
 		"PeptideDeriverFilter",
 		"PeptideDeriverFilterCreator",
+		"PeptideDeriverOutputterContainer",
+		"PeptideDeriverPoseOutputter",
+		"PeptideDeriverMarkdownStreamOutputter",
+		"PeptideDeriverBasicStreamOutputter",
+		"PeptideDeriverOutputter",
 	],
 	"protocols/protein_interface_design": [
 		"design_utils",

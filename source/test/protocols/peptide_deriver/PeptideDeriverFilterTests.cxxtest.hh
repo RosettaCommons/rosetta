@@ -20,6 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/peptide_deriver/PeptideDeriverFilter.hh>
+#include <protocols/peptide_deriver/PeptideDeriverOutputter.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
