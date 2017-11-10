@@ -348,7 +348,9 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 		ResidueType const & rsd_type( *(rsd_type_list[j]) );
 
 		Size rsd_missing( 0 ), xyz_missing( 0 );
+		utility::vector1< std::string > rsd_missing_atoms, xyz_missing_atoms;
 
+		// xyz_missing is number of candidate ResidueType's atoms that do not match target atom names
 		for ( Size k=1; k<= rsd_type.natoms(); ++k ) {
 			bool found_match( false );
 			for ( Size m = 1; m <= atom_names.size(); ++m ) {
@@ -356,15 +358,22 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 					found_match = true; break;
 				}
 			}
-			if ( !found_match ) ++xyz_missing;
+			if ( !found_match ) {
+				++xyz_missing;
+				xyz_missing_atoms.push_back( rsd_type.atom_name(k) );
+			}
 		}
 
+		// rsd_missing is number of target atom names not found in candidate ResidueType
 		for ( std::string const & atom_name : atom_names ) {
 			if ( !rsd_type.has( ObjexxFCL::stripped_whitespace( atom_name ) ) &&
 					!( atom_name == " H  " && ignore_atom_named_H ) ) { // don't worry about missing BB H if Nterm
 				++rsd_missing;
+				rsd_missing_atoms.push_back( atom_name );
 			}
 		}
+
+		// TR.Debug << "checking: " << rsd_type.name() << "  rsd_missing " << rsd_missing << "  xyz_missing " << xyz_missing << "  rsd_missing names in xyz not captured by ResidueType" << rsd_missing_atoms << "  xyz_missing names in ResidueType not captured in atoms " << xyz_missing_atoms << std::endl;
 
 		if ( ( rsd_missing < best_rsd_missing ) ||
 				( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {

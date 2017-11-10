@@ -3,3 +3,4 @@
 -cm:aln_format grishin
 -out:file:o output/A3RIY0_ECOLX.super.pdb
 -ignore_unrecognized_res
+-load_PDB_components false

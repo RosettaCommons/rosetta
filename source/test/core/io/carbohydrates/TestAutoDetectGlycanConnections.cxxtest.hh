@@ -42,7 +42,7 @@ class TestAutoDetectGlycanConnections : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init_with_additional_options( "-include_sugars -auto_detect_glycan_connections -alternate_3_letter_codes pdb_sugar -ignore_unrecognized_res" );
+		core_init_with_additional_options( "-include_sugars -auto_detect_glycan_connections -alternate_3_letter_codes pdb_sugar -ignore_unrecognized_res -load_PDB_components false" );
 
 	}
 

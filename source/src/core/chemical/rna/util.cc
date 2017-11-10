@@ -401,7 +401,7 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 	//if(rsd.atom_name( rsd.first_sidechain_atom() )!=" O2'") utility_exit_with_message("rsd.atom_name( rsd.first_sidechain_atom() )!=\" O2'\"");
 
 	if ( rsd.RNA_info().o2prime_index() != rsd.first_sidechain_atom() ) {
-		utility_exit_with_message( "rsd.RNA_info().o2prime_index() != rsd.first_sidechain_atom()" );
+		utility_exit_with_message( "rsd.RNA_info().o2prime_index() != rsd.first_sidechain_atom() for residue "+rsd.name() );
 	}
 
 	if ( verbose )  std::cout << "Base atoms" << std::endl;

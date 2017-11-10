@@ -1876,7 +1876,8 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 		// second atom of the prior chi[s]. Note that this will potentially
 		// confuse branches, but branched sidechains with lots of chis are treated
 		// poorly by essentially any chi system.
-		std::string target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
+		std::string target_first_atom;
+		if ( true_chis.size() > 0 )  target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
 		while ( true ) {
 
 			// this extra loop is to future-proof a bit against branching: multiple
@@ -1898,7 +1899,6 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 			// candidate_new_atom -- later.
 			target_first_atom = candidate_new_atom;
 		}
-
 		for ( VDs const & chi : true_chis ) {
 			tr.Debug << "looking at true chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
 			debug_assert( chi.size() == 4 );
@@ -1954,8 +1954,8 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 
 		// Theoretical final step (AMW TODO): add all chis that are children of the base
 		// or of O2', in a protein-y way, as chis 5+.
-
-		std::string target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
+		std::string target_first_atom;
+		if ( true_chis.size() > 0 ) target_first_atom = atom_name( true_chis[ 1 ][ 2 ] );
 
 		while ( true ) {
 

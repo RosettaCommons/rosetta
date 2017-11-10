@@ -145,22 +145,22 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		ISTable & chem_comp = block.GetTable( "chem_comp" );
 		std::string type( chem_comp( 0, "type" ) );
 		if ( type == "L-PEPTIDE LINKING" && is_peptide_linking ) {
-			TR << "Found L-peptide RT" << std::endl;// named " << molecule->name() << std::endl;
+			TR.Debug << "Found L-peptide RT" << std::endl;// named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER L_AA" );
 			is_peptide_linking = true;
 			is_nucleic_linking = false;
 		} else if ( type == "D-PEPTIDE LINKING" && is_peptide_linking ) {
-			TR << "Found D-peptide RT" << std::endl;//named " << molecule->name() << std::endl;
+			TR.Debug << "Found D-peptide RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "PROTEIN POLYMER D_AA" );
 			is_peptide_linking = true;
 			is_nucleic_linking = false;
 		} else if ( type == "RNA LINKING" && is_nucleic_linking ) {
-			TR << "Found D-RNA RT" << std::endl;//named " << molecule->name() << std::endl;
+			TR.Debug << "Found D-RNA RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "RNA POLYMER D_RNA" );
 			is_peptide_linking = false;
 			is_nucleic_linking = true;
 		} else if ( type == "L-RNA LINKING" && is_nucleic_linking ) {
-			TR << "Found L-RNA RT" << std::endl;//named " << molecule->name() << std::endl;
+			TR.Debug << "Found L-RNA RT" << std::endl;//named " << molecule->name() << std::endl;
 			molecule->add_str_str_data( "Rosetta Properties", "RNA POLYMER L_RNA" );
 			is_peptide_linking = false;
 			is_nucleic_linking = true;

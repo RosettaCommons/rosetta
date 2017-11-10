@@ -103,7 +103,7 @@ GlobalResidueTypeSet::GlobalResidueTypeSet(
 
 	name( cm_name );
 	set_merge_behavior_manager( MergeBehaviorManagerCOP( new MergeBehaviorManager( directory ) ) );
-	load_shadowed_ids( directory );
+	load_exclude_pdb_component_ids( directory );
 
 	init_restypes_from_database(); // Will also load the sub-typesets
 	init_restypes_from_commandline();
@@ -115,9 +115,14 @@ GlobalResidueTypeSet::GlobalResidueTypeSet(
 	// Generate combinations of adducts as specified by the user
 	place_adducts();
 
-	// Components file? (Will be empty if we're not doing this.)
+	// Components file
 	if ( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_file ].user() ) {
-		pdb_components_filename( option[ OptionKeys::in::file::PDB_components_file ].value() );
+		if ( option[ OptionKeys::in::include_lipids ]  &&
+				!option[ OptionKeys::in::file::load_PDB_components ].user() ) {
+			TR.Warning << "Not using PDB components dictionary due to current incompatibilities with -include_lipids. Specify -load_PDB_components explicitly to try lipids and ligands, and if it breaks, contact your favorite lipid Rosetta developer. " << std::endl;
+		} else {
+			pdb_components_filenames( option[ OptionKeys::in::file::PDB_components_file ].value() );
+		}
 	}
 
 	TR << "Finished initializing " << name() << " residue type set.  ";
@@ -218,6 +223,7 @@ void GlobalResidueTypeSet::init_restypes_from_commandline() {
 		ResidueTypeOP rsd_type( read_topology_file(
 			filename, atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
 		add_base_residue_type( rsd_type );
+		exclude_pdb_component_ids_.insert( rsd_type->name3() ); // if user has bothered to specify params file, don't look in pdb components dictionary
 		TR.Debug << "Loading ResidueType " << rsd_type->name() << " from file " << filename << std::endl;
 	}
 
@@ -225,6 +231,7 @@ void GlobalResidueTypeSet::init_restypes_from_commandline() {
 		utility::vector1< ResidueTypeOP > extra_residues( extra_nonparam_restypes_from_commandline() );
 		for ( ResidueTypeOP const & rsd_type : extra_residues ) {
 			add_base_residue_type( rsd_type );
+			exclude_pdb_component_ids_.insert( rsd_type->name3() ); // if user has bothered to specify mol file, don't look in pdb components dictionary
 		}
 	} else if ( mode() == CENTROID_t ) {
 		utility::vector1< ResidueTypeOP > extra_residues( extra_nonparam_restypes_from_commandline() );
@@ -717,11 +724,11 @@ GlobalResidueTypeSet::remove_unpatchable_residue_type( std::string const & )
 
 /// @brief From a file, read which IDs shouldn't be loaded from the components.
 void
-GlobalResidueTypeSet::load_shadowed_ids( std::string const & directory, std::string const & filename /* = "shadow_list.txt" */ ) {
+GlobalResidueTypeSet::load_exclude_pdb_component_ids( std::string const & directory, std::string const & filename /* = "exclude_pdb_component_list.txt" */ ) {
 
-	TR.Debug << "Loading shadowed PDB IDs from " << directory + filename << std::endl;
+	TR.Debug << "Loading exclude_pdb_component PDB IDs from " << directory + filename << std::endl;
 
-	shadowed_ids_.clear();
+	exclude_pdb_component_ids_.clear();
 
 	utility::io::izstream file( directory + filename );
 	if ( ! file.good()  ) {
@@ -735,11 +742,11 @@ GlobalResidueTypeSet::load_shadowed_ids( std::string const & directory, std::str
 	while ( file.good() ) {
 		utility::trim( line ); // inplace;
 		if ( line[0] != '#' ) {
-			shadowed_ids_.insert( line );
+			exclude_pdb_component_ids_.insert( line );
 		}
 		getline( file, line );
 	}
-	if ( shadowed_ids_.size() == 0 ) {
+	if ( exclude_pdb_component_ids_.size() == 0 ) {
 		TR.Warning << "For ResidueTypeSet " << name() << ", " << filename << " doesn't have any entries." << std::endl;
 		TR.Warning << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
 	}
@@ -768,18 +775,18 @@ GlobalResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) c
 	// Heuristic: if the ResidueTypeName begins with 'pdb_', then it's loaded from the chemical components directory
 	if ( rsd_base_name.find("pdb_") == 0 ) {
 		std::string short_name( utility::strip( rsd_base_name.substr( 4, rsd_base_name.size() ) ) );
-		if ( shadowed_ids_.size() > 0 && shadowed_ids_.count( short_name ) == 0 ) {
+		if ( exclude_pdb_component_ids_.size() > 0 && exclude_pdb_component_ids_.count( short_name ) == 0 ) {
 			new_rsd_type = load_pdb_component( short_name );
 			if ( new_rsd_type ) {
-				// Duplicate detection is handled by the shadowed file -- if it's not shadowed, we load the component
+				// Duplicate detection is handled by the exclude_pdb_component file -- if it's not exclude_pdb_component, we load the component
 				new_rsd_type->name( "pdb_" + short_name );
 				TR << "Loading '" << short_name << "' from the PDB components dictionary for residue type '" << rsd_base_name << "'" << std::endl;
 			}
 		} else {
-			if ( shadowed_ids_.size() == 0 ) {
+			if ( exclude_pdb_component_ids_.size() == 0 ) {
 				TR.Debug << "Not loading '" << short_name << "' from PDB components dictionary because components are turned off for this ResidueTypeSet." << std::endl;
 			} else {
-				TR.Debug << "Not loading '" << short_name << "' from PDB components dictionary because it is shadowed in the ResidueTypeSet." << std::endl;
+				TR.Debug << "Not loading '" << short_name << "' from PDB components dictionary because it is in exclude_pdb_component_list.txt in the ResidueTypeSet." << std::endl;
 			}
 			cache_object()->add_prohibited( rsd_base_name );
 			return false;
@@ -798,70 +805,78 @@ GlobalResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) c
 ResidueTypeOP
 GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 	static THREAD_LOCAL bool warned_about_missing_file( false );
-	if ( pdb_components_filename_.size() ) {
-		utility::io::izstream filestream( pdb_components_filename_ );
-		if ( !filestream.good() ) {
-			std::string db_filename( basic::database::full_name( pdb_components_filename_, false ) );
-			filestream.open( db_filename );
-
-			if ( !filestream.good() ) {
-				if ( ! warned_about_missing_file ) {
-					warned_about_missing_file = true;
-					TR.Warning << "PDB component dictionary file not found at (./)" << pdb_components_filename_ << std::endl;
-					TR.Warning << "   or in the Rosetta database at " << db_filename << std::endl;
-					TR.Warning << "   For information on how to obtain the file and set it for use with Rosetta, visit: \n\n";
-					TR.Warning << "  https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation#setting-up-rosetta-3_obtaining-additional-files_pdb-chemical-components-dictionary  \n" << std::endl;
-				}
-				return ResidueTypeOP( nullptr );
+	if ( pdb_components_filenames_.size() ) {
+		bool found_file ( false );
+		for ( auto const & pdb_components_filename : pdb_components_filenames_ ) {
+			std::string db_filename = pdb_components_filename;
+			if  ( !utility::file::file_exists( db_filename ) ) db_filename = pdb_components_filename + ".gz";
+			if  ( !utility::file::file_exists( db_filename ) ) db_filename = basic::database::full_name( pdb_components_filename, false );
+			if  ( !utility::file::file_exists( db_filename ) ) db_filename = basic::database::full_name( pdb_components_filename+".gz", false );
+			if ( !utility::file::file_exists( db_filename ) &&
+					!( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_file ].user() ) ) {
+				// return without showing a warning, since user didn't request the PDB components and probably doesn't want to be bothered.
 			}
-		}
-
-		std::string entry( "data_" + pdb_id );
-		std::string line;
-		std::string lines;
-		//std::cout << "Finding '" << entry <<"' " << entry.size() << std::endl;
-		mmCIF::mmCIFParser mmCIF_parser;
-		while ( filestream.good() ) {
-			getline( filestream, line );
-			if ( line.size() == entry.size() ) {
-				//std::cout << line << std::endl;
-				if ( line == entry ) {
-					lines += line;
-					//lines.push_back( line);
-					getline( filestream, line);
-					while ( line.substr(0, 5) != "data_" && filestream.good() ) {
-						lines += line + '\n';
+			utility::io::izstream filestream( db_filename );
+			if ( filestream.good() ) found_file = true;
+			std::string entry( "data_" + pdb_id );
+			std::string line;
+			std::string lines;
+			//std::cout << "Finding '" << entry <<"' " << entry.size() << std::endl;
+			mmCIF::mmCIFParser mmCIF_parser;
+			while ( filestream.good() ) {
+				getline( filestream, line );
+				if ( line.size() == entry.size() ) {
+					//std::cout << line << std::endl;
+					if ( line == entry ) {
+						lines += line;
 						//lines.push_back( line);
 						getline( filestream, line);
+						while ( line.substr(0, 5) != "data_" && filestream.good() ) {
+							lines += line + '\n';
+							//lines.push_back( line);
+							getline( filestream, line);
+						}
+						break;
 					}
-					break;
 				}
 			}
+
+			if ( lines.size() > 0 ) {
+				utility::vector1< core::chemical::sdf::MolFileIOMoleculeOP> molecules;
+				molecules.push_back( mmCIF_parser.parse( lines, pdb_id) );
+				core::chemical::ResidueTypeOP new_rsd_type( core::chemical::sdf::convert_to_ResidueType( molecules ) );
+
+				// By default, the ResidueType is being loaded as a Full Atom type - convert to the correct form, if possible.
+				switch( mode() ) {
+				case FULL_ATOM_t :
+					break; // do nothing, already centroid
+				case CENTROID_t :
+					TR.Debug << "Converting PDB component " << new_rsd_type->name() << " to centroid." << std::endl;
+					new_rsd_type = make_centroid( *new_rsd_type ); // Convert to centroid
+					break;
+				default :
+					TR.Warning << "attempting to load fullatom PDB component for non-fullatom ResidueType." << std::endl;
+					break; //do nothing
+				}
+				return new_rsd_type;
+			}
+		} // pdb_components_files
+
+		if ( ! found_file && ! warned_about_missing_file ) {
+			warned_about_missing_file = true;
+			TR.Warning << "PDB component dictionary file not found at (./)" << pdb_components_filenames_ << std::endl;
+			TR.Warning << "   or in the Rosetta database " << std::endl;
+			TR.Warning << "For more information on how to obtain the file and set it for use with Rosetta, visit: \n\n";
+			TR.Warning << "  https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation#setting-up-rosetta-3_obtaining-additional-files_pdb-chemical-components-dictionary  \n" << std::endl;
+			TR.Warning << "If you want a quick fix, you can try to directly ftp in the file: " << std::endl;
+			TR.Warning << " ftp -o " << basic::database::full_name( "chemical/components.cif.gz", false ) << " ftp://ftp.wwpdb.org/pub/pdb/data/monomers/components.cif.gz " << std::endl;
+			TR.Warning << "and then add to your Rosetta command-line: -PDB_components_file chemical/components.cif.gz ";
 		}
 
-		if ( lines.size() == 0 ) {
-			TR.Warning << "Could not find: '" << pdb_id << "' in pdb components file '" << pdb_components_filename_
-				<< "'! Skipping residue..." << std::endl;
-			return ResidueTypeOP( nullptr );
-		}
+		TR.Warning << "Could not find: '" << pdb_id << "' in pdb components files " << pdb_components_filenames_
+			<< "! Skipping residue..." << std::endl;
+		return ResidueTypeOP( nullptr );
 
-		utility::vector1< core::chemical::sdf::MolFileIOMoleculeOP> molecules;
-		molecules.push_back( mmCIF_parser.parse( lines, pdb_id) );
-		core::chemical::ResidueTypeOP new_rsd_type( core::chemical::sdf::convert_to_ResidueType( molecules ) );
-
-		// By default, the ResidueType is being loaded as a Full Atom type - convert to the correct form, if possible.
-		switch( mode() ) {
-		case FULL_ATOM_t :
-			break; // do nothing, already centroid
-		case CENTROID_t :
-			TR.Debug << "Converting PDB component " << new_rsd_type->name() << " to centroid." << std::endl;
-			new_rsd_type = make_centroid( *new_rsd_type ); // Convert to centroid
-			break;
-		default :
-			TR.Warning << "attempting to load fullatom PDB component for non-fullatom ResidueType." << std::endl;
-			break; //do nothing
-		}
-		return new_rsd_type;
 	}
 	return ResidueTypeOP( nullptr );
 }

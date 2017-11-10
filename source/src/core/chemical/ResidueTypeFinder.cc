@@ -19,12 +19,18 @@
 #include <core/chemical/Metapatch.hh>
 #include <core/chemical/util.hh>
 
+#include <basic/options/option.hh>
+
 #include <utility/tools/make_vector1.hh>
 
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
+// option key includes
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+using namespace basic::options;
 using utility::vector1;
 using utility::tools::make_vector1;
 
@@ -169,16 +175,34 @@ ResidueTypeFinder::get_possible_base_residue_types( bool const include_unpatchab
 	//Otherwise, load the whole set of base types and start pruning:
 
 	ResidueTypeCOPs rsd_types = residue_type_set_.base_residue_types();
-	// Also load the PDB component, if we're specifying a name3 search
-	if ( name3_.size() ) {
-		ResidueTypeCOP pdb_component( residue_type_set_.name_mapOP( "pdb_" + utility::strip(name3_) ) );
-		if ( pdb_component ) {
-			rsd_types.push_back( pdb_component );
-		}
-	}
+
+	append_relevant_pdb_components( rsd_types );
+
 	if ( include_unpatchable ) rsd_types.append( get_possible_base_unpatchable_residue_types() );
 	rsd_types = apply_basic_filters( rsd_types );
 	return rsd_types;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// @brief Also load the PDB component, if we're specifying a name3 search
+void
+ResidueTypeFinder::append_relevant_pdb_components( ResidueTypeCOPs & rsd_types ) const
+{
+	if ( name3_.size() ) {
+		// if there's already a Rosetta type with the name3 probably don't need to dig into PDB components;
+		//   they will be screened out anyway later by prioritize_rosetta_types_over_pdb_components().
+		bool rosetta_type_has_name3( false );
+		for ( auto rsd_type: rsd_types ) {
+			if ( rsd_type->name3() == name3_ ||
+					residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) ) {
+				rosetta_type_has_name3 = true; break;
+			}
+		}
+		if ( !rosetta_type_has_name3 || option[ OptionKeys::in::file::check_all_PDB_components ]() ) {
+			ResidueTypeCOP pdb_component( residue_type_set_.name_mapOP( "pdb_" + utility::strip(name3_) ) );
+			if ( pdb_component ) rsd_types.push_back( pdb_component );
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,6 +269,7 @@ ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 	return rsd_types;
 }
 
+////////////////////////////////////////////////////////
 ResidueTypeCOPs
 ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const & rsd_types ) const {
 	if ( rsd_types.empty() ) return rsd_types;
@@ -326,7 +351,35 @@ ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const 
 		current_type_list = new_type_list;
 	}
 
+	current_type_list = prioritize_rosetta_types_over_pdb_components( current_type_list );
+
 	return current_type_list;
+}
+
+////////////////////////////////////////////////////////
+// @brief pdb_components file ('components.cif') provides 'backup' types labeled "pdb_XXX"
+//   but should only be used if Rosetta can't figure out what this is by itself.
+//     -- rhiju, 2017
+ResidueTypeCOPs
+ResidueTypeFinder::prioritize_rosetta_types_over_pdb_components( ResidueTypeCOPs const & rsd_types ) const
+{
+	bool has_rosetta_type = false;
+	for ( auto const & rsd_type : rsd_types ) {
+		if ( rsd_type->name().size() < 4 || !( rsd_type->name().substr(0,4) == "pdb_" ) ) {
+			has_rosetta_type = true;
+			break;
+		}
+	}
+	if ( has_rosetta_type ) {
+		ResidueTypeCOPs filtered_rsd_types;
+		for ( auto const & rsd_type : rsd_types ) {
+			if ( rsd_type->name().size() < 4 || !( rsd_type->name().substr(0,4) == "pdb_" ) ) {
+				filtered_rsd_types.push_back( rsd_type );
+			}
+		}
+		return filtered_rsd_types;
+	}
+	return rsd_types;
 }
 
 

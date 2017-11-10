@@ -232,6 +232,12 @@ private:
 	ResidueTypeCOPs
 	apply_preferences_and_discouragements( ResidueTypeCOPs const & rsd_types ) const;
 
+	ResidueTypeCOPs
+	prioritize_rosetta_types_over_pdb_components( ResidueTypeCOPs const & rsd_types ) const;
+
+	void
+	append_relevant_pdb_components( ResidueTypeCOPs & rsd_types ) const;
+
 	utility::vector1< ResidueTypeCOP >
 	apply_patches_recursively( utility::vector1< ResidueTypeCOP > const & rsd_types,
 		Size const patch_number,

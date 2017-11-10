@@ -74,9 +74,17 @@ public:
 		using namespace core::chemical;
 
 		ResidueTypeFinder rtf( *rts_ );
-		rtf.name3( "AZT" );
-		ResidueTypeCOPs residues( rtf.get_possible_base_residue_types() );
-		TS_ASSERT_EQUALS( residues.size(), 0 );
+		{
+			rtf.name3( "AZ&" );
+			ResidueTypeCOPs residues( rtf.get_possible_base_residue_types() );
+			TS_ASSERT_EQUALS( residues.size(), 0 );
+		}
+
+		{
+			rtf.name3( "AZT" );
+			ResidueTypeCOPs residues( rtf.get_possible_base_residue_types() );
+			TS_ASSERT_EQUALS( residues.size(), 1 ); // now in components.cif
+		}
 	}
 
 	void test_get_by_overlapping_name3() {
@@ -85,7 +93,7 @@ public:
 		ResidueTypeFinder rtf( *rts_ );
 		rtf.name3( "C12" );
 		ResidueTypeCOPs residues( rtf.get_possible_base_residue_types() );
-		TS_ASSERT_EQUALS( residues.size(), 2 ); // l-aa and d-aa
+		TS_ASSERT_EQUALS( residues.size(), 2 )
 	}
 };
 
@@ -97,7 +105,7 @@ public:
 
 	void setUp() {
 		using namespace core::chemical;
-		core_init_with_additional_options("-load_PDB_components -PDB_components_file core/chemical/mmCIF/components_trimmed.cif");
+		core_init_with_additional_options("-load_PDB_components -PDB_components_file core/chemical/mmCIF/components_trimmed.cif -check_all_PDB_components");
 		rts_ = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	}
 

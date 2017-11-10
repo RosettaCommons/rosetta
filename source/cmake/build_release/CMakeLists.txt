@@ -26,5 +26,8 @@ INCLUDE(../build/build.post.cmake)
 INCLUDE( ../build/apps.all.cmake )
 INCLUDE( ../build/pilot_apps.all.cmake )
 
+############ Unit Tests
+INCLUDE(../build/build.test.cmake)
+
 ############ Installation rules
 INCLUDE( ../build/install.cmake )

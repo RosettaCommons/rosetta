@@ -19,3 +19,7 @@
 -ex1
 -ex2
 -extra_res_fa ../../output/trigger-00000.molfile_to_params/LG.params
+
+# following is not actually necessary, but prevents a
+#  change in test trajectory upon loading the ligand ETQ.
+-load_PDB_components false

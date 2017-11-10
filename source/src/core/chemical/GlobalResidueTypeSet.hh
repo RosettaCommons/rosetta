@@ -164,17 +164,17 @@ private:
 	name( std::string const & setting ) { name_ = setting; }
 
 	void
-	pdb_components_filename( std::string const & setting ) { pdb_components_filename_ = setting; }
+	pdb_components_filenames( utility::vector1< std::string > const & setting ) { pdb_components_filenames_ = setting; }
 
-	std::string const &
-	pdb_components_filename() const { return pdb_components_filename_; }
+	utility::vector1< std::string > const &
+	pdb_components_filenames() const { return pdb_components_filenames_; }
 
 	void
 	generate_all_residue_types();
 
 	/// @brief From a file, read which IDs shouldn't be loaded from the components.
 	void
-	load_shadowed_ids( std::string const & directory, std::string const & file = "shadow_list.txt" );
+	load_exclude_pdb_component_ids( std::string const & directory, std::string const & file = "exclude_pdb_component_list.txt" );
 
 	/// @brief Load a residue type from the components dictionary.
 	ResidueTypeOP
@@ -191,10 +191,10 @@ private:
 	const std::string database_directory_;
 
 	/// @brief Which components shouldn't be loaded from the components file.
-	std::set< std::string > shadowed_ids_;
+	std::set< std::string > exclude_pdb_component_ids_;
 
 	/// @brief data for lazy loading of PDB components
-	std::string pdb_components_filename_;
+	utility::vector1< std::string > pdb_components_filenames_;
 
 private:
 	// uncopyable

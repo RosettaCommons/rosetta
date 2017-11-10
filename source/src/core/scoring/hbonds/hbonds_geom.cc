@@ -751,7 +751,7 @@ get_hb_acc_chem_type(
 			}
 		}
 	}
-	utility_exit_with_message( "unknown Hydrogen Bond acceptor type for: " + A(acc_rsd.name1()) + I(3,acc_rsd.seqpos()) + " " + acc_rsd.atom_name( aatm) );
+	utility_exit_with_message( "unknown Hydrogen Bond acceptor type for: " + A(acc_rsd.name()) + I(3,acc_rsd.seqpos()) + " " + acc_rsd.atom_name( aatm) );
 	return hbacc_NONE;
 }
 

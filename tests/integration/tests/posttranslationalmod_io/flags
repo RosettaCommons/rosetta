@@ -1,3 +1,4 @@
 -l list
 -parser:protocol ppk.xml
 -overwrite
+-load_PDB_components false
