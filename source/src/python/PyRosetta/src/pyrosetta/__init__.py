@@ -15,6 +15,7 @@ import os, sys, platform, os.path, json, random, gzip
 import pyrosetta.rosetta as rosetta
 import pyrosetta.method_bindings
 
+import warnings
 import logging
 logger = logging.getLogger("rosetta")
 
@@ -135,8 +136,16 @@ def _rosetta_database_from_env():
 #_ROSETTA_DATABASE_PATH_ = None
 #def get_rosetta_database_path(): return _ROSETTA_DATABASE_PATH_
 
-# rosetta.init()
-def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, notebook=os.getenv('JPY_PARENT_PID')):
+def _is_interactive():
+    """Determine if in an interactive context.
+
+    See: https://stackoverflow.com/questions/2356399/tell-if-python-is-in-interactive-mode
+    """
+
+    import __main__ as main
+    return not hasattr(main, '__file__')
+
+def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, notebook=None):
     """Initialize Rosetta.  Includes core data and global options.
 
     options string with default Rosetta command-line options args.
@@ -144,8 +153,12 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     kargs -
         extra_options - Extra command line options to pass rosetta init.
                         (default None)
-        set_logging_handler - Route rosetta tracing through logging logger 'rosetta'.
-                        (default None)
+        set_logging_handler - Route rosetta tracing through logging logger 'rosetta':
+            None - Set handler if interactive, otherwise not.
+            False - Write logs via c++-level filehandles.
+            "interactive" - Register python log handling and make visible if not.
+            "logging" - Register python log handling, do not update logging config.
+            True - Register python log handling, make visible if logging isn't configured.
 
     Examples:
         init()                     # uses default flags
@@ -153,16 +166,22 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
         init('-pH -database /home/me/pyrosetta/rosetta_database')  # overrides default flags - be sure to include the dB last
     """
 
-    logging_support.initialize_logging()
+    if set_logging_handler is None and _is_interactive():
+        set_logging_handler = "interactive"
+    elif notebook is not None:
+        warnings.warn(
+            "pyrosetta.init 'notebook' argument is deprecated and may be removed in 2018. "
+            "See set_logging_handler='interactive'.",
+            stacklevel=2
+        )
+        set_logging_handler = "interactive"
 
-    # FIXME
-    #_python_py_exit_callback = PythonPyExitCallback()
-    #utility.py_xinc_ref(_python_py_exit_callback)
-    #utility.py.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
 
-    # Only set the logging handler if a notebook is detected or if requested
-    if (( set_logging_handler is None) and notebook) or set_logging_handler:
-        logging_support.set_logging_handler(notebook=notebook)
+    assert set_logging_handler in (None, True, False, "interactive", "logging")
+
+    logging_support.maybe_initialize_handler(set_logging_handler)
+    if (set_logging_handler):
+        logging_support.set_logging_sink()
 
     args = ['PyRosetta'] + options.split() + extra_options.split()
 
