@@ -145,6 +145,8 @@ public:
 
 	/// @brief if setting == true, turns on linear-memory interaction graph usage
 	virtual void or_linmem_ig( bool setting );
+	/// @brief if setting == false, turns off linear-memory interaction graph usage
+	virtual void and_linmem_ig( bool setting );
 	/// @brief returns the linear-memory interaction graph flag
 	virtual bool linmem_ig() const;
 

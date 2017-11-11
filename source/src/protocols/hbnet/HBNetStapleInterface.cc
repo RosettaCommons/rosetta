@@ -21,9 +21,9 @@
 #include <basic/database/open.hh>
 #include <basic/database/sql_utils.hh>
 #include <core/pack/rotamer_set/rotamer_building_functions.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+//#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+//#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
+//#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -164,7 +164,7 @@ HBNetStapleInterface::HBNetStapleInterface( std::string const name ) :
 
 //Constructor from code
 HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scorefxn,
-	Size max_unsat,
+	Size max_unsat_Hpol,
 	Size min_network_size, /* 3 */
 	Real hb_threshold, /* -0.75 */
 	Size max_network_size, /* 15 */
@@ -175,7 +175,7 @@ HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scor
 	bool extend_existing, /*false*/
 	bool only_extend /*false*/
 ) :
-	HBNet( scorefxn, max_unsat, min_network_size, hb_threshold, max_network_size, des_residues, find_native, only_native, keep_existing, extend_existing, only_extend ),
+	HBNet( scorefxn, max_unsat_Hpol, min_network_size, hb_threshold, max_network_size, des_residues, find_native, only_native, keep_existing, extend_existing, only_extend ),
 	all_helices_(0),
 	span_all_helices_(0),
 	only_symm_interfaces_(0),

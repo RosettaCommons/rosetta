@@ -15,6 +15,7 @@
 #define INCLUDED_protocols_hbnet_HBNet_hh
 
 #include <protocols/hbnet/HBNet.fwd.hh>
+#include <protocols/hbnet/NetworkState.hh>
 
 // BASIC INCLUDES
 #include <basic/datacache/DataMap.hh>
@@ -39,6 +40,11 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondInfo.hh>
+#include <core/scoring/hbonds/graph/AtomInfo.hh>
+#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.fwd.hh>
+//#include <core/scoring/hbonds/graph/LKAtomLevelHBondGraph.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -52,7 +58,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/hbnet/HBondGraph.hh>
 //#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 
 namespace protocols {
@@ -134,7 +139,7 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 	bool term_w_cycle;                                  //network has a cycle
 	bool scored;                                        //has network been scored?
 	bool sort_first_by_tot_unsat;                       //if true, will sort first by total #unsat polar atoms
-	bool sort_by_connectivity;                          //if true, will sort next by % connectivity
+	bool sort_by_percent_hbond_capacity;                          //if true, will sort next by % percent_hbond_capacity
 	bool cst_file_written;
 	bool network_pdb_written;
 	bool pml_file_written;
@@ -143,12 +148,12 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 	core::Size total_hbonds;                            //total h-bonds in the network
 	core::Size total_polar_atoms;
 	core::Size num_intermolecular_hbs;                  //number of interface h-bonds
-	core::Size num_unsat;                               // # unsatisfied polar atoms in the entire network (excluding the ligand if ligand_)
+	core::Size num_unsat_Hpol;                               // # unsatisfied polar atoms in the entire network (excluding the ligand if ligand_)
 	core::Size num_heavy_unsat;                         // how many heavy atoms unsatisfied in network
 	core::Size lig_num_unsatisfied;                     //for ligand_, # unsatisfied polar atoms on the ligand
 	core::Size num_core_residues;
 	core::Size num_boundary_residues;
-	core::Real connectivity;                            // % of polar atoms that participate in h-bonds
+	core::Real percent_hbond_capacity;                            // % of polar atoms that participate in h-bonds
 	core::Real score;                                   //energy score of the network
 	utility::vector1< HBondResStructCOP > residues;      //list of residues in the network
 	utility::vector1< HBondResStructCOP > asymm_residues; //asymmetric residue list to accurately score networks in symmetric cases (find networks that span entire interface)
@@ -171,7 +176,7 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 		term_w_cycle(false),
 		scored(false),
 		sort_first_by_tot_unsat(true),
-		sort_by_connectivity(true),
+		sort_by_percent_hbond_capacity(true),
 		cst_file_written(false),
 		network_pdb_written(false),
 		pml_file_written(false),
@@ -180,12 +185,12 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 		total_hbonds(0),
 		total_polar_atoms(0),
 		num_intermolecular_hbs(0),
-		num_unsat(0),
+		num_unsat_Hpol(0),
 		num_heavy_unsat(0),
 		lig_num_unsatisfied(0),
 		num_core_residues(0),
 		num_boundary_residues(0),
-		connectivity(0.0),
+		percent_hbond_capacity(0.0),
 		score(0.0),
 		residues(0),
 		asymm_residues(0),
@@ -209,7 +214,7 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 		term_w_cycle(hbns.term_w_cycle),
 		scored(hbns.scored),
 		sort_first_by_tot_unsat(hbns.sort_first_by_tot_unsat),
-		sort_by_connectivity(hbns.sort_by_connectivity),
+		sort_by_percent_hbond_capacity(hbns.sort_by_percent_hbond_capacity),
 		cst_file_written(hbns.cst_file_written),
 		network_pdb_written(hbns.network_pdb_written),
 		pml_file_written(hbns.pml_file_written),
@@ -218,12 +223,12 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 		total_hbonds(hbns.total_hbonds),
 		total_polar_atoms(hbns.total_polar_atoms),
 		num_intermolecular_hbs(hbns.num_intermolecular_hbs),
-		num_unsat(hbns.num_unsat),
+		num_unsat_Hpol(hbns.num_unsat_Hpol),
 		num_heavy_unsat(hbns.num_heavy_unsat),
 		lig_num_unsatisfied(hbns.lig_num_unsatisfied),
 		num_core_residues(hbns.num_core_residues),
 		num_boundary_residues(hbns.num_boundary_residues),
-		connectivity(hbns.connectivity),
+		percent_hbond_capacity(hbns.percent_hbond_capacity),
 		score(hbns.score),
 		residues(hbns.residues),
 		asymm_residues(hbns.asymm_residues),
@@ -243,17 +248,17 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 		if ( sort_first_by_tot_unsat ) {
 			if ( !( lig_num_unsatisfied == a.lig_num_unsatisfied ) ) { //only happens in ligand case
 				return lig_num_unsatisfied < a.lig_num_unsatisfied; // want lowest number of unsats
-			} else if ( num_unsat == a.num_unsat ) {
-				if ( sort_by_connectivity && connectivity != a.connectivity ) {
-					return connectivity > a.connectivity; // want higher connectivity
+			} else if ( num_unsat_Hpol == a.num_unsat_Hpol ) {
+				if ( sort_by_percent_hbond_capacity && percent_hbond_capacity != a.percent_hbond_capacity ) {
+					return percent_hbond_capacity > a.percent_hbond_capacity; // want higher percent_hbond_capacity
 				} else {
 					return score < a.score;
 				}
 			} else {
-				return num_unsat < a.num_unsat; // want lowest number of unsats
+				return num_unsat_Hpol < a.num_unsat_Hpol; // want lowest number of unsats
 			}
-		} else if ( sort_by_connectivity && connectivity != a.connectivity ) {
-			return connectivity > a.connectivity;
+		} else if ( sort_by_percent_hbond_capacity && percent_hbond_capacity != a.percent_hbond_capacity ) {
+			return percent_hbond_capacity > a.percent_hbond_capacity;
 		} else {
 			return score < a.score; // want lowest score
 		}
@@ -278,17 +283,17 @@ struct compare_net_vec : public std::binary_function< HBondNetStructOP, HBondNet
 		} else if ( a->sort_first_by_tot_unsat || b->sort_first_by_tot_unsat ) {
 			if ( !( a->lig_num_unsatisfied == b->lig_num_unsatisfied ) ) { //only happens in ligand case
 				return a->lig_num_unsatisfied < b->lig_num_unsatisfied;
-			} else if ( a->num_unsat == b->num_unsat ) {
-				if ( ( a->sort_by_connectivity || b->sort_by_connectivity ) && a->connectivity != b->connectivity ) {
-					return a->connectivity > b->connectivity;
+			} else if ( a->num_unsat_Hpol == b->num_unsat_Hpol ) {
+				if ( ( a->sort_by_percent_hbond_capacity || b->sort_by_percent_hbond_capacity ) && a->percent_hbond_capacity != b->percent_hbond_capacity ) {
+					return a->percent_hbond_capacity > b->percent_hbond_capacity;
 				} else {
 					return a->score < b->score;
 				}
 			} else {
-				return a->num_unsat < b->num_unsat;
+				return a->num_unsat_Hpol < b->num_unsat_Hpol;
 			}
-		} else if ( ( a->sort_by_connectivity || b->sort_by_connectivity ) && a->connectivity != b->connectivity ) {
-			return a->connectivity > b->connectivity;
+		} else if ( ( a->sort_by_percent_hbond_capacity || b->sort_by_percent_hbond_capacity ) && a->percent_hbond_capacity != b->percent_hbond_capacity ) {
+			return a->percent_hbond_capacity > b->percent_hbond_capacity;
 		} else {
 			return a->score < b->score;
 		}
@@ -299,27 +304,6 @@ struct compare_net_vec : public std::binary_function< HBondNetStructOP, HBondNet
 
 
 //MONTE CARLO STRUCTS///////////////////////////////////////////////////////////////////////////////////
-
-struct polar_atom {
-	polar_atom( unsigned int sequence_position, numeric::xyzVector< float > const & atom_position, bool hydroxyl, bool satisfied=false /*, bool buried */ ){
-		seqpos = sequence_position;
-		xyz = atom_position;
-		is_hydroxyl = hydroxyl; // worth it to store here, because so many special cases revolve around OH's
-		is_satisfied = satisfied;
-	}
-
-	bool operator < ( polar_atom const & rhs ) const {
-		//x is the primary metric for sorting. The y and z parts are just to make sure that two atoms with the same x value are still included
-		if ( xyz.x() != rhs.xyz.x() ) return xyz.x() < rhs.xyz.x();
-		if ( xyz.y() != rhs.xyz.y() ) return xyz.y() < rhs.xyz.y();
-		return xyz.z() < rhs.xyz.z();
-	}
-
-	unsigned int seqpos;
-	numeric::xyzVector< float > xyz;
-	bool is_hydroxyl;
-	bool is_satisfied;
-};
 
 struct compare_by_x {
 	inline bool operator() ( std::pair< unsigned int, numeric::xyzVector< float > > const & lhs, std::pair< unsigned int, numeric::xyzVector< float > > const & rhs ) const {
@@ -338,47 +322,6 @@ struct compare_by_x {
 	}
 };
 
-struct NetworkState;
-inline void add_polar_atoms_to_network_state( NetworkState &, HBondNode const *, core::pack::rotamer_set::RotamerSetsOP );
-
-struct NetworkState{
-	NetworkState( HBondEdge const * monte_carlo_seed_in, HBondGraphOP hbond_graph, core::pack::rotamer_set::RotamerSetsOP rotsets ){
-		monte_carlo_seed = monte_carlo_seed_in;
-		full_twobody_energy = monte_carlo_seed->energy();
-		score = 0;
-		edges.push_back( monte_carlo_seed );
-
-		nodes.clear();
-		nodes.push_back( static_cast< HBondNode *  > ( hbond_graph->get_node( monte_carlo_seed->get_first_node_ind() ) ) );
-		add_polar_atoms_to_network_state( *this, nodes.back(), rotsets );
-
-		if ( monte_carlo_seed->get_first_node_ind() != monte_carlo_seed->get_second_node_ind() ) {
-			nodes.push_back( static_cast< HBondNode *  > ( hbond_graph->get_node( monte_carlo_seed->get_second_node_ind() ) ) );
-			add_polar_atoms_to_network_state( *this, nodes.back(), rotsets );
-		}
-	}
-
-	bool operator < ( NetworkState const & rhs) const {
-		return full_twobody_energy < rhs.full_twobody_energy;
-	}
-
-	utility::vector1< HBondNode const * > nodes;
-	utility::vector1< HBondEdge const * > edges;
-
-	HBondEdge const * monte_carlo_seed;//"Seed" hbond to branch off of
-	core::Real full_twobody_energy;//Sum of hbond score + clash score for all residue pairs in "residues" data object
-	core::Real score;//This holds whatever metric is used for sorting
-
-	std::list< polar_atom > sc_donor_atoms;
-	std::list< polar_atom > sc_acceptor_atoms;
-
-};
-
-struct NetworkStateScoreComparator{
-	static bool compare( NetworkState const & a, NetworkState const & b ){
-		return a.score < b.score;
-	}
-};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -503,10 +446,10 @@ public:
 
 	void set_min_networks_size( core::Size min ){ min_network_size_ = min; }
 	void set_max_networks_size( core::Size max ){ max_network_size_ = max; }
-	void set_max_unsat( Size max ){ max_unsat_ = max; }
+	void set_max_unsat( Size max ){ max_unsat_Hpol_ = max; }
 	core::Size get_min_networks_size(){ return min_network_size_; }
 	core::Size get_max_networks_size(){ return max_network_size_; }
-	core::Size get_max_unsat(){ return max_unsat_; }
+	core::Size get_max_unsat(){ return max_unsat_Hpol_; }
 	void set_find_native( bool native ){ find_native_ = native; }
 	bool find_native(){ return find_native_; }
 	void set_find_only_native( bool only )
@@ -598,8 +541,7 @@ public:
 	bool water_oxygen_clashes_with_residue( core::Vector const water_oxygen, core::Size const resnum, int const rot_state );
 	bool water_oxygen_clashes_with_residue( core::Vector const water_oxygen, core::conformation::Residue const & res );
 
-	///@brief used by the job distributor to return multiple poses and branch the RosettaScripts protocol;
-	/// returns networks in order of score: places rotamers on the pose to be returned and automatically turns on constraints
+	///@brief used by the job distributor and MultiplePoseMover (MPM) to return poses OTF as requested (without need to store in memory)
 	core::pose::PoseOP get_additional_output() override;
 
 	std::string get_file_name( core::Size id, std::string prefix, std::string extension );
@@ -623,11 +565,6 @@ public: //Monte Carlo Protocol Public methods
 	///@brief turn on or off the monte carlo branching protocol
 	inline void set_monte_carlo_branch( bool setting ){
 		monte_carlo_branch_ = setting;
-	}
-
-	///@brief turn on or off the only_get_satisfied_nodes option
-	inline void set_only_get_satisfied_nodes( bool setting ){
-		only_get_satisfied_nodes_ = setting;
 	}
 
 	///@brief set number of monte carlo runs to be divided over all the seed hbonds. A single monte carlo run appears to take roughly 1 ms (very loose estimate).
@@ -724,7 +661,6 @@ protected:
 	bool networks_identical_aa_sequence( hbond_net_struct const & i, hbond_net_struct const & j );
 	bool residues_identical( utility::vector1< HBondResStructCOP > & residues1, utility::vector1< HBondResStructCOP > & residues2 );
 	bool residues_not_unique( utility::vector1< HBondResStructCOP > & residues1, utility::vector1< HBondResStructCOP > & residues2 );
-	void benchmark_with_native( core::pose::Pose & pose);
 
 	///@brief Returns true if a network is a subset of another; it's symmetric, i.e. returns true if i is subset of j, or if j is a subset of i
 	bool is_sub_residues( utility::vector1< HBondResStructCOP > & residues1, utility::vector1< HBondResStructCOP > & residues2 );
@@ -775,7 +711,6 @@ protected://Monte Carlo Protocol Protected Methods
 	///@brief This transfers rotamer sets data to hbond_graph_. Need to call this before traversing the IG.
 	void initialize_hbond_graph();
 
-	HBondEdge * register_hbond( core::Size rotamerA, core::Size rotamerB, core::Real score );
 	void register_clash( core::Size rotamerA, core::Size rotamerB );
 
 	///@brief The edge_can_yield_monte_carlo_seed() methods determine if a hydrogen bond can be used as a seed for monte carlo branching. Examples of when this might fail include when the hbond does not cross the interface (for HBNetStapleInterface) or when the hbond is not buried to the level of the user's specifications
@@ -783,15 +718,15 @@ protected://Monte Carlo Protocol Protected Methods
 	virtual bool edge_can_yield_monte_carlo_seed( core::pack::interaction_graph::EdgeBase const * ) const;
 
 	///@brief get_next_node() randomly decides how the current_state will grow during the monte carlo branching protocol
-	HBondNode * get_next_node( NetworkState & current_state );
+	core::scoring::hbonds::graph::HBondNode * get_next_node( NetworkState & current_state );
 
 	///@brief returns true if this hbond can not create a network
-	bool monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed );
+	bool monte_carlo_seed_is_dead_end( core::scoring::hbonds::graph::HBondEdge const * monte_carlo_seed );
 
 	///@brief called at the end of the monte carlo branching protocol. Adds all of the monte carlo networks to the data elements used by the traditional HBNet protocol
 	void append_to_network_vector( std::list< NetworkState > & designed_networks );
 
-	void add_residue_to_network_state( NetworkState & current_state, HBondNode * node_being_added ) const;
+	void add_residue_to_network_state( NetworkState & current_state, core::scoring::hbonds::graph::HBondNode * node_being_added ) const;
 
 	///@brief quick and dirty satisfaction check
 	bool network_state_is_satisfied( NetworkState & current_state ) const;
@@ -806,20 +741,16 @@ protected://Monte Carlo Protocol Protected Methods
 	) const;
 
 	///@brief returns false if there is a clash between the node_being_added and any node currently in the current_state
-	static bool node_is_compatible( NetworkState const & current_state, HBondNode const * node_being_added );
+	static bool node_is_compatible( NetworkState const & current_state, core::scoring::hbonds::graph::HBondNode const * node_being_added );
 
 	///@brief This is only being used for debug purposes right now. Makes sure that there are no possible nodes that can be added to current_state
-	static bool network_state_is_done_growing( NetworkState const & current_state, HBondGraphCOP hbond_graph );
+	static bool network_state_is_done_growing( NetworkState const & current_state, core::scoring::hbonds::graph::AbstractHBondGraphCOP hbond_graph );
 
 private:
-	///@collect data on heavy polar atoms that will be used for quick and dirty satisfaction check during the monte carlo protocol
-	void init_atom_indices_data();
-
 	core::pose::Pose & nonconst_get_orig_pose() { return *orig_pose_; }
 
 private:
 	//bool use_enzdes_cst_;
-	bool benchmark_;                                        //write out benchmarking statistics
 	bool write_network_pdbs_;                               //write .pdb's of the h-bond networks on Poly-Ala for easy visualization
 	bool write_cst_files_;
 	bool output_poly_ala_background_;
@@ -833,7 +764,6 @@ private:
 	bool multi_component_;
 	bool show_task_;
 	bool minimize_;
-	bool start_from_csts_;
 	bool tyr_hydroxyls_must_donate_;
 	bool hydroxyls_must_donate_;
 	bool use_pdb_numbering_;
@@ -845,7 +775,7 @@ private:
 	core::Size min_unique_networks_;
 	core::Size min_core_res_;
 	core::Size min_boundary_res_;
-	core::Size max_unsat_;
+	core::Size max_unsat_Hpol_;
 	core::Size max_lig_unsat_;
 	core::Size max_rep_;                                    //maximum replicates allowed; default is 1 (no replicate networks)
 	core::Size max_replicates_before_branch_;
@@ -868,7 +798,7 @@ private:
 	core::Real charge_charge_rep_cutoff_;
 	core::PackerEnergy clash_threshold_;                    // cutoff; if > then we count as a clash
 	core::Real upper_score_limit_;
-	core::Real min_connectivity_;
+	core::Real min_percent_hbond_capacity_;
 	core::pose::PoseOP ala_pose_;                           //OP to Poly-Ala design/repack shell pose (keeps PRO/GLY/CYS)
 	core::pose::PoseOP orig_pose_;                          //OP to original pose
 	core::pack::task::PackerTaskOP task_;
@@ -895,26 +825,22 @@ private:
 
 	//MONTE CARLO DATA:
 	bool monte_carlo_branch_;
-	bool only_get_satisfied_nodes_;
 	core::Size total_num_mc_runs_;
 	core::Size max_mc_nets_;
 
-	HBondGraphOP hbond_graph_;
+	core::scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph_;
 
 	//"init state" == "seed hbond"
-	utility::vector1< HBondEdge const * > monte_carlo_seeds_;
+	utility::vector1< core::scoring::hbonds::graph::HBondEdge const * > monte_carlo_seeds_;
 	core::Real monte_carlo_seed_threshold_;//twobody energy threshold
 	bool monte_carlo_seed_must_be_buried_;//only branch from hbonds where both residues are in the core
 	bool monte_carlo_seed_must_be_fully_buried_;//only branch from hbonds where both residues are in the core
 
-	std::set< polar_atom > fixed_and_bb_donor_atoms_;
-	std::set< polar_atom > fixed_and_bb_acceptor_atoms_;
 };
 // end HBNet
 
 inline void HBNet::set_monte_carlo_data_to_default(){
 	monte_carlo_branch_ = false;
-	only_get_satisfied_nodes_ = false;
 	total_num_mc_runs_ = 100000;
 	monte_carlo_seeds_.reserve( 1024 );
 	monte_carlo_seed_threshold_ = 0;
@@ -924,42 +850,11 @@ inline void HBNet::set_monte_carlo_data_to_default(){
 	max_mc_nets_ = 0;
 }
 
-inline void add_polar_atoms_to_network_state( NetworkState & network_state, HBondNode const * node, core::pack::rotamer_set::RotamerSetsOP rotsets ){
-	core::conformation::Residue const & res = * rotsets->rotamer( node->get_node_index() );
-	//Acceptors
-	for ( const auto & acc_pos : res.accpt_pos() ) {
-		//numeric::xyzVector<float> acc_xyz( res.atom( acc_pos ).xyz() );
-		//network_state.sc_acceptor_atoms.insert( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz(), res.atom_type( acc_pos).name() == "OH" ) );
-		network_state.sc_acceptor_atoms.push_back( polar_atom( res.seqpos(), res.atom( acc_pos ).xyz(), res.atom_type( acc_pos).name() == "OH" ) );
-	}
-
-	//Donors
-	std::set< core::Size > heavy_donors;//used to eliminate duplicates
-	for ( const auto & don_H_pos : res.Hpos_polar() ) {
-		heavy_donors.insert( res.atom_base( don_H_pos ) );
-	}
-
-	for ( core::Size atomno : heavy_donors ) {
-		//network_state.sc_donor_atoms.insert( polar_atom( res.seqpos(), res.atom( atomno ).xyz(), res.atom_type( atomno ).name() == "OH"  ) );
-		network_state.sc_donor_atoms.push_back( polar_atom( res.seqpos(), res.atom( atomno ).xyz(), res.atom_type( atomno ).name() == "OH"  ) );
-	}
-
+inline void HBNet::register_clash( core::Size rotamerA, core::Size rotamerB ){
+	hbond_graph_->get_hbondnode( rotamerA )->register_clash( rotamerB );
+	hbond_graph_->get_hbondnode( rotamerB )->register_clash( rotamerA );
 }
 
-inline bool heavy_atoms_are_within_cutoff(
-	numeric::xyzVector< core::Real > const & atom1,
-	numeric::xyzVector< float > const & atom2
-){
-	float const cutoff = 3.25;
-	float const cutoff_squared = 3.25*3.25;
-
-	//do quick Manhatten check
-	//assuming we already checked x
-	if ( std::abs( atom1.y() - atom2.y() ) > cutoff ) return false;
-	if ( std::abs( atom1.z() - atom2.z() ) > cutoff ) return false;
-
-	return atom1.distance_squared( atom2 ) < cutoff_squared;
-}
 
 } // hbnet
 } // protocols

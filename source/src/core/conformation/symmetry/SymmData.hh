@@ -115,8 +115,8 @@ public:
 	);
 
 	void
-
 	sanity_check();
+
 	void
 	show();
 

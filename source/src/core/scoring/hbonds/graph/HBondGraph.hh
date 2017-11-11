@@ -7,31 +7,43 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/hbnet/HBondGraph.hh
+/// @file core/scoring/hbonds/graph/HBondGraph.hh
 /// @brief class headers for HBondGraph, HBondNode, and HBondEdge
 /// @details This class is used to store and traverse data used for HBNet's monte carlo branching protocol. Most (if not all) of the information held in this graph is from HBNet's RotamerSets and InteractionGraph. Nodes in this graph represent rotamers from the rotamer set (node id == global rotamer id) and edges respresent hydrogen bonds.
+/// @details See core/pack/hbonds/HBondGraph_util.hh for helper functions. Here is the inteded way to use an HBondGraph:
+/// (1) Call ctor
+/// (2) Immediately call core::pack::hbonds::init_node_info()
+/// (3) Use MCHBNetInteractionGraph and RotamerSets::compute_energies() to populate edges into this graph
+/// (4) If you are using an AtomLevelHBondGraph, call core::pack::hbonds::determine_atom_level_edge_info_for_all_edges() and core::pack::hbonds::determine_atom_level_node_info_for_all_nodes()
+/// (5) Optional: If you are using an AtomLevelHBondGraph and you only care to analyze unsatisfied atoms, call find_satisfying_interactions_with_background()
 /// @author Jack Maguire, jack@med.unc.edu
 
-#ifndef INCLUDED_protocols_hbnet_HBondGraph_HH
-#define INCLUDED_protocols_hbnet_HBondGraph_HH
+#ifndef INCLUDED_core_scoring_hbonds_graph_HBondGraph_HH
+#define INCLUDED_core_scoring_hbonds_graph_HBondGraph_HH
 
-#include <utility/pointer/ReferenceCount.hh>
-#include <protocols/hbnet/HBondGraph.fwd.hh>
-
-#include <utility/graph/Graph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.fwd.hh>
 #include <core/types.hh>
 
+#include <utility/pointer/ReferenceCount.hh>
 #include <utility/graph/unordered_object_pool.hpp>
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
+#include <utility/graph/Graph.hh>
+
+#include <boost/pool/pool.hpp>
 #include <set>
 
-namespace protocols {
-namespace hbnet {
+namespace core {
+namespace scoring {
+namespace hbonds {
+namespace graph {
 
 ///@brief Each HBondNode represents a rotamer from the RotamerSets object
 class HBondNode : public utility::graph::Node {
 
 public:
+	//Please do not use these. We need this to exist only so that we can reserve space in the vector< HBondNode >
+	HBondNode();
+	HBondNode( const HBondNode& );
+	///////////////////////////////////////
 
 	//constructor
 	HBondNode( utility::graph::Graph*, core::Size node_id );
@@ -39,7 +51,7 @@ public:
 	HBondNode( utility::graph::Graph*, core::Size node_id, core::Size mres_id, core::Size rotamer_id );
 
 	//destructor
-	~HBondNode();
+	~HBondNode() override;
 
 public:
 
@@ -92,11 +104,18 @@ public:
 
 private:
 
-	//There are going to be a lot of nodes so I am only using 32 bits here. If you are reading this in a dystopian future where a Pose can have more than 4294967295 molten residues or a single residue position could have more than 4294967295 rotamers, please update these.
 	unsigned int mres_id_;
 	unsigned int rotamer_id_;
 
 	utility::vector1< unsigned int > ids_of_clashing_nodes_;
+
+public://please do not use this. It is required for pyrosetta compilation
+	HBondNode & operator = ( HBondNode const & src ){
+		mres_id_ = src.mres_id_;
+		rotamer_id_ = src.rotamer_id_;
+		ids_of_clashing_nodes_ = src.ids_of_clashing_nodes_;
+		return *this;
+	}
 };
 
 ///@brief Each HBondEdge represents a hydrogen bond
@@ -110,7 +129,7 @@ public:
 	HBondEdge( utility::graph::Graph* owner, core::Size first_node_ind, core::Size second_node_ind, core::Real energy );
 
 	//destructor
-	~HBondEdge();
+	~HBondEdge() override;
 
 public:
 
@@ -142,10 +161,44 @@ private:
 
 	float energy_;
 
+public://please do not use this. It is required for pyrosetta compilation
+	HBondEdge & operator = ( HBondEdge const & src ){
+		energy_ = src.energy_;
+		return *this;
+	}
+
 };
 
+class AbstractHBondGraph : public utility::graph::Graph {
+public:
+	//constructor
+	//AbstractHBondGraph();
+	//AbstractHBondGraph( core::Size num_nodes );
 
-class HBondGraph : public utility::graph::Graph {
+	//destructor
+	//~AbstractHBondGraph() override;
+
+	virtual HBondNode const * get_hbondnode( platform::Size index ) const = 0;
+	virtual HBondNode * get_hbondnode( platform::Size index ) = 0;
+
+	virtual HBondEdge * find_hbondedge( platform::Size node1, platform::Size node2 ) = 0;
+	virtual HBondEdge const * find_hbondedge( platform::Size node1, platform::Size node2 ) const = 0;
+
+	inline HBondEdge * register_hbond( core::Size rotamerA, core::Size rotamerB, core::Real score ){
+		HBondEdge * new_edge = static_cast< HBondEdge * >( add_edge( rotamerA, rotamerB ) );
+		new_edge->set_energy( score );
+		return new_edge;
+	}
+
+protected:
+	///@brief This is only called by Graph::delete_everything() as it deletes its ptrs to nodes.
+	/// Since we will be deleting all nodes upon our destruction, we do not need to do anything here.
+	/// The absence of the override results in a double-free runtime error.
+	void delete_node( utility::graph::Node * ) override {}
+
+};
+
+class HBondGraph : public AbstractHBondGraph {
 
 public:
 
@@ -156,12 +209,13 @@ public:
 	//destructor
 	~HBondGraph() override;
 
+	void set_num_nodes( platform::Size num_nodes ) override;
+
 protected:
 
 	utility::graph::Node * create_new_node( platform::Size node_index ) override;
 
 	utility::graph::Edge * create_new_edge( core::Size index1, core::Size index2 ) override;
-
 	utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge ) override;
 
 public:
@@ -170,13 +224,38 @@ public:
 	core::Size count_static_memory() const override;
 	core::Size count_dynamic_memory() const override;
 
+public: //inline access methods
+	HBondNode const * get_hbondnode( platform::Size index ) const override
+	{
+		return &all_nodes_[ index ];
+	}
+
+	HBondNode * get_hbondnode( platform::Size index ) override
+	{
+		return &all_nodes_[ index ];
+	}
+
+	HBondEdge * find_hbondedge( platform::Size node1, platform::Size node2 ) override
+	{
+		return static_cast< HBondEdge * >( find_edge( node1, node2 ) );
+	}
+
+	HBondEdge const * find_hbondedge( platform::Size node1, platform::Size node2 ) const override
+	{
+		return static_cast< HBondEdge const * >( find_edge( node1, node2 ) );
+	}
+
+
 private:
 
 	boost::unordered_object_pool< HBondEdge > * hbond_edge_pool_;
+	utility::vector1< HBondNode > all_nodes_;
 
 };
 
-} //hbnet
-} //protocols
+} //graph
+} //hbonds
+} //scoring
+} //core
 
 #endif

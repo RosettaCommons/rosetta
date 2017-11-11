@@ -96,6 +96,16 @@ public:
 		bool const set_up_mirror_types_if_has_mirror_symmetry=false
 	) const;
 
+	core::conformation::ResidueOP
+	orient_rotamer_to_symmetric_partner(
+		pose::Pose const & pose,
+		conformation::Residue const & residue_in,
+		int const & sympos,
+		//RotamerSet const & rotset_in,
+		bool const set_up_mirror_types_if_has_mirror_symmetry=false
+	) const;
+
+
 	//fpd function to set some pose data needed SymmetricRotamerSets
 	virtual
 	void

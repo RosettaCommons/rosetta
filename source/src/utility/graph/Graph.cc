@@ -797,11 +797,18 @@ void Graph::delete_everything()
 		delete_edge( *iter );
 		iter = next_iter;
 	}
-	for ( platform::Size ii = 1; ii <= num_nodes_; ii++ ) { delete nodes_[ii]; nodes_[ii] = nullptr; }
+	for ( platform::Size ii = 1; ii <= num_nodes_; ii++ ) { delete_node( nodes_[ii] ); nodes_[ii] = nullptr; }
 	num_nodes_ = 0;
 	nodes_.resize( 0 );
 	focused_edge_ = nullptr;
 }
+
+/// @brief Only called by delete_everything(). Does not need to be overriden unless
+/// derived class generates nodes in a fancy way.
+void Graph::delete_node( Node * node ){
+	delete node;
+}
+
 
 /// @brief
 /// returns the edge connecting node1 and node2 (const version)

@@ -122,6 +122,7 @@ public:
 	/// @brief Activate a LinearMemoryInteraction graph that uses 95% less memory in design runs
 	/// and runs twice as fast.  (Not faster for fixed-sequence repackings).
 	virtual void or_linmem_ig( bool setting ) = 0;
+	virtual void and_linmem_ig( bool setting ) = 0;
 	virtual bool linmem_ig() const = 0;
 
 	virtual void decrease_linmem_ig_history_size( Size setting ) = 0;

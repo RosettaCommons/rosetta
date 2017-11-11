@@ -466,6 +466,11 @@ void PackerTask_::or_linmem_ig( bool setting )
 	linmem_ig_ |= setting;
 }
 
+void PackerTask_::and_linmem_ig( bool setting )
+{
+	linmem_ig_ &= setting;
+}
+
 bool PackerTask_::linmem_ig() const
 {
 	return linmem_ig_;

@@ -521,6 +521,11 @@ sources = {
 		"HBCountPairFunction",
 		"HBCPData",
 	],
+	"core/scoring/hbonds/graph": [
+                "AtomLevelHBondGraph",
+		"HBondGraph",
+#                "LKAtomLevelHBondGraph",
+	],
 	"core/scoring/interface_": [
 		"DDPlookup",
 		"DDPscore",

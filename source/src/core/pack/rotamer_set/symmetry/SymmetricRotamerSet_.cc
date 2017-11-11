@@ -384,6 +384,45 @@ SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner(
 	return sym_rotamer_set;
 }
 
+conformation::ResidueOP
+SymmetricRotamerSet_::orient_rotamer_to_symmetric_partner(
+	pose::Pose const & pose,
+	conformation::Residue const & residue_in,
+	int const & sympos,
+	//RotamerSet const & rotset_in,
+	bool const set_up_mirror_types_if_has_mirror_symmetry
+) const {
+
+	SymmetricConformation const & SymmConf (
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
+
+	core::conformation::symmetry::MirrorSymmetricConformationCOP mirrorconf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::MirrorSymmetricConformation const>( pose.conformation_ptr() ) );
+
+	bool mirrored(false);
+	if ( mirrorconf ) { //If this is a mirror symmetric conformation, figure out whether this subunit is mirrored:
+		mirrored = mirrorconf->res_is_mirrored( sympos );
+	}
+
+	conformation::ResidueOP target_rsd;
+	if ( set_up_mirror_types_if_has_mirror_symmetry && mirrored ) {
+		target_rsd = residue_in.clone_flipping_chirality( *pose.residue_type_set_for_pose( residue_in.type().mode() ) );
+	} else {
+		target_rsd = residue_in.clone();
+	}
+
+	//fpd use the stored transforms instead!  Will work for anything!
+	for ( int i=1; i<=static_cast<int>(target_rsd->natoms()); ++i ) {
+		target_rsd->set_xyz(i ,
+			SymmConf.apply_transformation_norecompute( target_rsd->xyz(i), target_rsd->seqpos(), sympos ) );
+	}
+
+	target_rsd->copy_residue_connections_from( pose.residue( sympos ) );
+	//target_rsd->seqpos( sympos );
+	return target_rsd;
+
+}
+
+
 //fpd function to set some pose data needed SymmetricRotamerSets
 void
 SymmetricRotamerSet_::initialize_pose_for_rotset_creation(

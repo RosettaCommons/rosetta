@@ -7,24 +7,40 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/hbnet/HBondGraph.fwd.hh
+/// @file core/scoring/hbonds/graph/HBondGraph.fwd.hh
 /// @brief HBondGraph (derived from core::graph::Graph) forward declarations
 /// @author Jack Maguire, jack@med.unc.edu
 
 
-#ifndef INCLUDED_protocols_hbnet_HBondGraph_FWD_HH
-#define INCLUDED_protocols_hbnet_HBondGraph_FWD_HH
+#ifndef INCLUDED_core_scoring_hbonds_graph_HBondGraph_FWD_HH
+#define INCLUDED_core_scoring_hbonds_graph_HBondGraph_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace hbnet {
+namespace core {
+namespace scoring {
+namespace hbonds {
+namespace graph {
+
+class HBondNode;
+typedef utility::pointer::shared_ptr< HBondNode > HBondNodeOP;
+typedef utility::pointer::shared_ptr< HBondNode const > HBondNodeCOP;
+
+class HBondEdge;
+typedef utility::pointer::shared_ptr< HBondEdge > HBondEdgeOP;
+typedef utility::pointer::shared_ptr< HBondEdge const > HBondEdgeCOP;
+
+class AbstractHBondGraph;
+typedef utility::pointer::shared_ptr< AbstractHBondGraph > AbstractHBondGraphOP;
+typedef utility::pointer::shared_ptr< AbstractHBondGraph const > AbstractHBondGraphCOP;
 
 class HBondGraph;
 typedef utility::pointer::shared_ptr< HBondGraph > HBondGraphOP;
 typedef utility::pointer::shared_ptr< HBondGraph const > HBondGraphCOP;
 
-} //hbnet
+} //graph
+} //hbonds
+} //scoring
 } //core
 
 #endif

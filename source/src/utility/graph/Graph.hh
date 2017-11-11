@@ -711,7 +711,7 @@ public:
 	}
 
 	/// @brief set the number of nodes in the graph -- deletes any existing edges in the graph
-	void set_num_nodes( platform::Size num_nodes );
+	virtual void set_num_nodes( platform::Size num_nodes );
 
 	/// @brief add an edge between two vertices.  Invokes "create_edge" from the derived class.
 	/// Returns a pointer to the edge after its been added, allowing the calling function
@@ -840,6 +840,10 @@ protected:
 
 	/// @brief deallocate all nodes and edges from the graph
 	void delete_everything();
+
+	/// @brief Only called by delete_everything(). Does not need to be overriden unless
+	/// derived class generates nodes in a fancy way.
+	virtual void delete_node( Node * );
 
 	/// @brief factory method for node creation, defined by derived graph
 	/// classes, called by the base class

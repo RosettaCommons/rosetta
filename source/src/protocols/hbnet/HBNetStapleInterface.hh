@@ -61,7 +61,7 @@ public:
 	HBNetStapleInterface( std::string const name );
 	//Constructor from code
 	HBNetStapleInterface( core::scoring::ScoreFunctionCOP scorefxn,
-		core::Size max_unsat,
+		core::Size max_unsat_Hpol,
 		core::Size min_network_size=3,
 		core::Real hb_threshold=-0.5,
 		core::Size max_network_size=15,

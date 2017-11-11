@@ -1162,13 +1162,9 @@ SymmetryInfo::subunits() const
 utility::vector1< bool >
 SymmetryInfo::independent_residues() const
 {
-	utility::vector1 < bool > residues;
-	for ( Size i=1; i <=num_total_residues_with_pseudo(); ++i ) {
-		if ( bb_is_independent(i) ) {
-			residues.push_back(true);
-		} else {
-			residues.push_back(false);
-		}
+	utility::vector1 < bool > residues ( num_total_residues_with_pseudo() );
+	for ( Size i=1; i <= num_total_residues_with_pseudo(); ++i ) {
+		residues[ i ] = bb_is_independent( i );
 	}
 	return residues;
 }

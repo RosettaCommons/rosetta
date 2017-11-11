@@ -97,12 +97,6 @@ print_list_to_string( Pose const & pose, hbond_net_struct const & network, bool 
 {
 	Size total( pose.total_residue() );
 
-	//        if ( core::pose::symmetry::is_symmetric( *pose ) ){
-	//            core::conformation::symmetry::SymmetricConformation const & SymmConf(dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose->conformation()));
-	//            core::conformation::symmetry::SymmetryInfoCOP symm_info = SymmConf.Symmetry_Info();
-	//            total = symm_info->num_independent_residues();
-	//        }
-
 	utility::vector1< HBondResStructCOP > const residues( (network.asymm_residues.empty()) ? network.residues : network.asymm_residues );
 	std::stringstream ret_str;
 	Size count(0);
@@ -151,7 +145,7 @@ print_list_to_string( Pose const & pose, hbond_net_struct const & network, bool 
 	return ret_str.str();
 }
 
-//BETTER TO PASS REFERENCES THAT OP's HERE SINCE WE ARE OUTSIDE OF ANY CLASS
+//BETTER TO PASS REFERENCES RATHER THAN OP's HERE SINCE WE ARE OUTSIDE OF ANY CLASS
 std::string
 print_network( hbond_net_struct const & i, bool chainid /* true */ )
 {
@@ -160,7 +154,7 @@ print_network( hbond_net_struct const & i, bool chainid /* true */ )
 	if ( i.is_native ) net_prefix = "native";
 	else if ( i.is_extended ) net_prefix = "extended";
 	std::stringstream output;
-	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
+	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.percent_hbond_capacity << "\t" << i.num_unsat_Hpol << "\t";
 	return output.str();
 }
 
@@ -172,14 +166,14 @@ print_network_w_pdb_numbering( Pose const & pose, hbond_net_struct const & i, bo
 	if ( i.is_native ) net_prefix = "native";
 	else if ( i.is_extended ) net_prefix = "extended";
 	std::stringstream output;
-	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( pose, i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
+	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( pose, i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.percent_hbond_capacity << "\t" << i.num_unsat_Hpol << "\t";
 	return output.str();
 }
 
 std::string
 print_headers()
 {
-	return "HBNet_rank \t residues \t size \t score \t num_hbonds \t connectivity \t num_unsat \t";
+	return "HBNet_rank \t residues \t size \t score \t num_hbonds \t percent_hbond_capacity \t num_unsat_Hpol \t";
 }
 
 utility::vector1< HBondResStructCOP >::const_iterator
@@ -230,39 +224,16 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 	//            }
 	//        }
 	//    }
-	// for ( utility::vector1< HBondResStructCOP >::const_iterator i = network.residues.begin(); i != network.residues.end(); ++i ) {
-	//  Size resnum((*i)->resnum);
 	for ( const auto & resnum : resnums ) {
 		//std::cout << "getting hbonds for residue " << res_i;
 		utility::vector1< HBondCOP > hbonds_for_res_i( full_hbond_set->residue_hbonds(resnum, false) );
 		for ( auto & ih : hbonds_for_res_i ) {
-			//std::cout << ": arsd = " << (*ih)->acc_res() << "; drsd = " << (*ih)->don_res();
-			// NEED TO FIX; may need to uncomment
-			//if ( ((*ih)->acc_atm_is_protein_backbone() && (*ih)->acc_res() == res_i) || ((*ih)->don_hatm_is_protein_backbone() && (*ih)->don_res() == res_i) ) {
-			// continue;
-			//}
-			//   if ( (*ih)->energy() <= hb_e_cutoff && !( hbond_exists_in_vector( hbond_vec, *ih ) ) ) { //unweighted h-bond energy
-			//    hbond_vec.push_back( *ih );
-			//std::cout << "stored" << std::endl;
 			if ( !( hbond_exists_in_vector( hbond_vec, ih )) ) { //check that it's not counted twice
 				hbond_vec.push_back( ih );
 			}
 		}
 	}
-	// //remove duplicates (doing one_way both ways is needed but results in some duplicates)
-	// utility::vector1<HBondCOP>::iterator h1 = hbond_vec.begin();
-	// for ( ; h1 != hbond_vec.end(); ) {
-	//  for ( utility::vector1<HBondCOP>::iterator h2 = h1+1; h2 != hbond_vec.end(); ) {
-	//   if ( (*h1)->acc_res() == (*h2)->acc_res() && (*h1)->don_res() == (*h2)->don_res() && (*h1)->acc_atm() == (*h2)->acc_atm() && (*h1)->don_hatm() == (*h2)->don_hatm() ) {
-	//    h2 = hbond_vec.erase(h2);
-	//   } else {
-	//    ++h2;
-	//   }
-	//  }
-	//  ++h1;
-	// }
 	network.hbond_vec = hbond_vec;
-	//network.hbond_set = HBondSetOP(full_hbond_set->get_self_ptr());
 	network.hbond_set = full_hbond_set;
 	network.total_hbonds = hbond_vec.size();
 }
@@ -308,7 +279,6 @@ get_num_protein_sc_sc_hbonds( Pose & pose, hbond_net_struct & i )
 Size
 get_num_edges_for_res( Size const res, ObjexxFCL::FArray2D_int & path_dists )
 {
-	//for ( utility::vector1< HBondResStructCOP >::iterator r = i.residues.begin(); r != i.residues.end(); ++r )
 	Size num_edges(0);
 	int r( static_cast<int>(res));
 	int size( static_cast<int>(path_dists.size2()));

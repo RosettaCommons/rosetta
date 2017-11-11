@@ -131,13 +131,11 @@ sources = {
 		"RemoveLigandFilter",
 	],
 	"protocols/hbnet": [
-                "HBondGraph",
                 "HBNet",
                 "HBNetScore",
                 "HBNetStapleInterface",
                 "HBNetTaskOperations",
 		"HBNet_util",
-                "MCHBNetInteractionGraph",
         ],
 	"protocols/hotspot_hashing": [
 		"HotspotStub",

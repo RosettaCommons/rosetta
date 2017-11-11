@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   utility/
+/// @file   utility/sort_predicates.hh
 /// @brief  sort predicates for using std::pair in std::sort.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 

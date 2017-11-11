@@ -76,6 +76,10 @@ sources = {
 		"SingleResidueCenrotLibraryCreator",
 		"CenRotDunEnergy",
 	],
+	"core/pack/hbonds": [
+                "HBondGraph_util",
+                "MCHBNetInteractionGraph",
+	],
 	"core/pack/interaction_graph": [
 		"AnnealableGraphBase",
 		"DensePDInteractionGraph",

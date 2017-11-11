@@ -7,35 +7,52 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/hbnet/HBondGraph.cc
+/// @file core/scoring/hbonds/graph/HBondGraph.cc
 /// @brief HBondGraph, HBondNode, and HBondEdge classes
 /// @author Jack Maguire, jack@med.unc.edu
 
-#include <protocols/hbnet/HBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 
 #include <basic/Tracer.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+//#include <core/scoring/hbonds/HBondSet.hh>
 #include <core/types.hh>
 
-#include <utility/graph/unordered_object_pool.hpp>
-#include <boost/pool/pool.hpp>
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.hbonds.graph.HBondGraph" );
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hbnet.HBondGraph" );
+namespace core {
+namespace scoring {
+namespace hbonds {
+namespace graph {
 
-namespace protocols {
-namespace hbnet {
+//dummy! please do not call these
+HBondNode::HBondNode() :
+	utility::graph::Node( 0, 0 ),
+	mres_id_( 0 ),
+	rotamer_id_( 0 ),
+	ids_of_clashing_nodes_()
+{ runtime_assert( false ); }
+
+HBondNode::HBondNode( const HBondNode&  ) :
+	utility::graph::Node( 0, 0 ),
+	mres_id_( 0 ),
+	rotamer_id_( 0 ),
+	ids_of_clashing_nodes_()
+{ runtime_assert( false ); }
+///////////
 
 //Constructor
 HBondNode::HBondNode( utility::graph::Graph* owner, core::Size node_id ) :
 	utility::graph::Node( owner, node_id ),
 	mres_id_( 0 ),
-	rotamer_id_( 0 )
+	rotamer_id_( 0 ),
+	ids_of_clashing_nodes_()
 {}
 
 HBondNode::HBondNode( utility::graph::Graph* owner, core::Size node_id, core::Size mres_id, core::Size rotamer_id ) :
 	utility::graph::Node( owner, node_id ),
 	mres_id_( mres_id ),
-	rotamer_id_( rotamer_id )
+	rotamer_id_( rotamer_id ),
+	ids_of_clashing_nodes_()
 {}
 
 //Destructor
@@ -43,6 +60,8 @@ HBondNode::~HBondNode()
 {}
 
 void HBondNode::copy_from( utility::graph::Node const * source ){
+	utility::graph::Node::copy_from( source );
+
 	HBondNode const * src = dynamic_cast< HBondNode const * >( source );
 	debug_assert( src );
 
@@ -83,9 +102,10 @@ HBondEdge::~HBondEdge()
 {}
 
 void HBondEdge::copy_from( utility::graph::Edge const * source ){
+	utility::graph::Edge::copy_from( source );
+
 	HBondEdge const * src = dynamic_cast< HBondEdge const * >( source );
 	debug_assert( src );
-
 	energy_ = src->energy_;
 }
 
@@ -104,18 +124,20 @@ core::Size HBondEdge::count_dynamic_memory() const
 
 //Constructor
 HBondGraph::HBondGraph() :
-	utility::graph::Graph(),
-	hbond_edge_pool_( new boost::unordered_object_pool< HBondEdge > ( 256 ) )
+	AbstractHBondGraph(),
+	hbond_edge_pool_( new boost::unordered_object_pool< HBondEdge > ( 1024 ) )
 {}
 
+
 HBondGraph::HBondGraph( core::Size num_nodes ) :
-	utility::graph::Graph( ),
-	hbond_edge_pool_( new boost::unordered_object_pool< HBondEdge > ( 256 ) )
+	AbstractHBondGraph(),
+	hbond_edge_pool_( new boost::unordered_object_pool< HBondEdge > ( 1024 ) )
 {
 	set_num_nodes( num_nodes );
 }
 
 //Destructor
+
 HBondGraph::~HBondGraph()
 {
 	delete_everything();
@@ -123,15 +145,28 @@ HBondGraph::~HBondGraph()
 	hbond_edge_pool_ = nullptr;
 }
 
+void
+HBondGraph::set_num_nodes( platform::Size num_nodes ){
+	all_nodes_.clear();
+	all_nodes_.reserve( num_nodes );
+	for ( core::Size ii = 1; ii <= num_nodes; ++ii ) {
+		all_nodes_.emplace_back( this, ii );
+	}
+	utility::graph::Graph::set_num_nodes( num_nodes );
+}
+
 utility::graph::Node *
 HBondGraph::create_new_node( platform::Size node_index ){
-	return new HBondNode( this, node_index );
+	return get_hbondnode( node_index );
+	//return new HBondNode( this, node_index );
 }
+
 
 utility::graph::Edge *
 HBondGraph::create_new_edge( core::Size index1, core::Size index2 ){
 	return hbond_edge_pool_->construct( this, index1, index2 );
 }
+
 
 utility::graph::Edge *
 HBondGraph::create_new_edge( utility::graph::Edge const * example_edge ){
@@ -142,22 +177,29 @@ HBondGraph::create_new_edge( utility::graph::Edge const * example_edge ){
 	);
 }
 
+
 void
 HBondGraph::delete_edge( utility::graph::Edge * edge )
 {
 	hbond_edge_pool_->destroy( static_cast< HBondEdge * >( edge ) );
 }
 
-core::Size HBondGraph::count_static_memory() const
+
+core::Size
+HBondGraph::count_static_memory() const
 {
 	return sizeof( HBondGraph );
 }
 
-core::Size HBondGraph::count_dynamic_memory() const
+
+core::Size
+HBondGraph::count_dynamic_memory() const
 {
 	//so basically we are not really overriding this at the moment
 	return utility::graph::Graph::count_dynamic_memory();
 }
 
-} //hbnet
+} //graph
+} //hbonds
+} //scoring
 } //core
