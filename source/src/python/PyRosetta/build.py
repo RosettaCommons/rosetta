@@ -692,7 +692,7 @@ if __name__ == "__main__":
 
     # Check if current working dir is where this file is located...
     if os.path.dirname(os.path.realpath(__file__)) != os.getcwd():
-        print('This script must be run from within setup directory! Exiting...')
+        print('This script must be run from within source/src/python/PyRosetta/ directory! Exiting...')
         sys.exit(1)
 
     main(sys.argv)
