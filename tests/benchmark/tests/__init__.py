@@ -165,7 +165,7 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     skip_compile = config.get('skip_compile', False)
 
     # removing all symlinks from bin/ and then building binaries...
-    build_command_line = 'find bin -type l ! -name ".*" -exec rm {{}} \\; && ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(jobs=jobs, mode=mode, compiler=compiler, extras=extras)
+    build_command_line = 'find bin -type l ! -name ".*" -exec rm {{}} \\; ; ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(jobs=jobs, mode=mode, compiler=compiler, extras=extras)
     if build_unit:
         build_command_line += ' && ./scons.py cxx={compiler} mode={mode} extras={extras} cat=test -j{jobs}'.format(jobs=jobs, compiler=compiler, extras=extras, mode=mode)
 
