@@ -46,7 +46,6 @@
 #include <basic/options/util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-//#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 
 namespace protocols {
 namespace features {

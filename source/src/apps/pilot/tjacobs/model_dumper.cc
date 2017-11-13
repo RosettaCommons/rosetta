@@ -27,7 +27,6 @@
 
 //Utility headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <numeric/random/random.hh>

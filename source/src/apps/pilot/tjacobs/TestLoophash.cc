@@ -33,7 +33,6 @@
 #include <protocols/sewing/sampling/SewGraph.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 
 #include <utility/io/ozstream.hh>
 

@@ -34,7 +34,6 @@
 // option key includes
 #include <basic/options/util.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>

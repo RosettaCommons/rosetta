@@ -42,7 +42,6 @@
 //Basic
 #include <basic/Tracer.hh>
 #include <basic/options/util.hh>
-//#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
