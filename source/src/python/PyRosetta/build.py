@@ -155,7 +155,7 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
 
         git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
 
-        if os.path.isdir(prefix) and  (not os.path.isdir(prefix+'/.git')): shutil.rmtree(prefix)  # removing old style checkoiut
+        #if os.path.isdir(prefix) and  (not os.path.isdir(prefix+'/.git')): shutil.rmtree(prefix)  # removing old style checkoiut
 
         if not os.path.isdir(prefix):
             print( 'No LLVM:{} + Binder install is detected! Going to check out LLVM and install Binder. This procedure will require ~3Gb of free disk space and will only be needed to be done once...\n'.format(release) )
@@ -183,9 +183,7 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
         config = '-DCMAKE_BUILD_TYPE={build_type}'.format(build_type='Debug' if debug else 'Release')
         if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
 
-        # Defer recreating of build_dir, as removing prefix dir may also remove build dir
         if not os.path.isdir(build_dir): os.makedirs(build_dir)
-
         execute(
             'Building tool: {}...'.format(name),
             'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja {jobs}'.format(

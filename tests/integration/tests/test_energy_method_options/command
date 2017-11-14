@@ -1,0 +1,13 @@
+# change to working directory
+cd %(workdir)s
+
+# check to see if executable exits
+ [ -x %(bin)s/test_EnergyMethodOptions.%(binext)s ] || exit 1
+
+# run executable
+%(bin)s/test_EnergyMethodOptions.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+	egrep -vf special_ignore_list \
+	> log
+
+# test to see if exe terminated abnormaly
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true

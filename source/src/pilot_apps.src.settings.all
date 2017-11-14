@@ -1090,6 +1090,7 @@ sources = {
 		"test_CarbohydrateInfo",
 		"test_carbohydrate_scoring",
 		"test_CCD_loop_closure",
+		"test_EnergyMethodOptions",
 		"test_explicit_membrane_input",
 		"test_non-canonical_connectivities",
 		"test_RingConformationMover",
