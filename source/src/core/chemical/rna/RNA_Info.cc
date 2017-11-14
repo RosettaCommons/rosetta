@@ -215,7 +215,7 @@ RNA_Info::figure_out_chi_order() const {
 void
 RNA_Info::rna_note_chi_controls_atom( Size const chi, Size const atomno,
 	utility::vector1< core::Size >  & last_controlling_chi,
-	utility::vector1< Size > const & chi_order ){
+	utility::vector1< Size > const & chi_order ) const {
 
 	//RNA require special treatment: Parin Sripakdeevong, June 26, 2011
 	//1) there are 4 chi torsions.

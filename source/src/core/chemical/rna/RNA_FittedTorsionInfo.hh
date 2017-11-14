@@ -51,44 +51,44 @@ public:
 
 	virtual ~RNA_FittedTorsionInfo();
 
-	GaussianParameterSet gaussian_parameter_set_alpha() const{ return gaussian_parameter_set_alpha_; }
-	GaussianParameterSet gaussian_parameter_set_beta() const{ return gaussian_parameter_set_beta_; }
-	GaussianParameterSet gaussian_parameter_set_gamma() const{ return gaussian_parameter_set_gamma_; }
-	GaussianParameterSet gaussian_parameter_set_delta_north() const{ return gaussian_parameter_set_delta_north_; }
-	GaussianParameterSet gaussian_parameter_set_delta_south() const{ return gaussian_parameter_set_delta_south_; }
-	GaussianParameterSet gaussian_parameter_set_epsilon_north() const{ return gaussian_parameter_set_epsilon_north_; }
-	GaussianParameterSet gaussian_parameter_set_epsilon_south() const{ return gaussian_parameter_set_epsilon_south_; }
-	GaussianParameterSet gaussian_parameter_set_zeta_alpha_sc_minus() const{ return gaussian_parameter_set_zeta_alpha_sc_minus_; }
-	GaussianParameterSet gaussian_parameter_set_zeta_alpha_sc_plus() const{ return gaussian_parameter_set_zeta_alpha_sc_plus_; }
-	GaussianParameterSet gaussian_parameter_set_zeta_alpha_ap() const{ return gaussian_parameter_set_zeta_alpha_ap_; }
-	GaussianParameterSet gaussian_parameter_set_chi_north() const{ return gaussian_parameter_set_chi_north_; }
-	GaussianParameterSet gaussian_parameter_set_chi_south() const{ return gaussian_parameter_set_chi_south_; }
-	GaussianParameterSet gaussian_parameter_set_nu2_north() const{ return gaussian_parameter_set_nu2_north_; }
-	GaussianParameterSet gaussian_parameter_set_nu2_south() const{ return gaussian_parameter_set_nu2_south_; }
-	GaussianParameterSet gaussian_parameter_set_nu1_north() const{ return gaussian_parameter_set_nu1_north_; }
-	GaussianParameterSet gaussian_parameter_set_nu1_south() const{ return gaussian_parameter_set_nu1_south_; }
+	GaussianParameterSet gaussian_parameter_set_alpha() const & { return gaussian_parameter_set_alpha_; }
+	GaussianParameterSet gaussian_parameter_set_beta() const & { return gaussian_parameter_set_beta_; }
+	GaussianParameterSet gaussian_parameter_set_gamma() const & { return gaussian_parameter_set_gamma_; }
+	GaussianParameterSet gaussian_parameter_set_delta_north() const & { return gaussian_parameter_set_delta_north_; }
+	GaussianParameterSet gaussian_parameter_set_delta_south() const & { return gaussian_parameter_set_delta_south_; }
+	GaussianParameterSet gaussian_parameter_set_epsilon_north() const & { return gaussian_parameter_set_epsilon_north_; }
+	GaussianParameterSet gaussian_parameter_set_epsilon_south() const & { return gaussian_parameter_set_epsilon_south_; }
+	GaussianParameterSet gaussian_parameter_set_zeta_alpha_sc_minus() const & { return gaussian_parameter_set_zeta_alpha_sc_minus_; }
+	GaussianParameterSet gaussian_parameter_set_zeta_alpha_sc_plus() const & { return gaussian_parameter_set_zeta_alpha_sc_plus_; }
+	GaussianParameterSet gaussian_parameter_set_zeta_alpha_ap() const & { return gaussian_parameter_set_zeta_alpha_ap_; }
+	GaussianParameterSet gaussian_parameter_set_chi_north() const & { return gaussian_parameter_set_chi_north_; }
+	GaussianParameterSet gaussian_parameter_set_chi_south() const & { return gaussian_parameter_set_chi_south_; }
+	GaussianParameterSet gaussian_parameter_set_nu2_north() const & { return gaussian_parameter_set_nu2_north_; }
+	GaussianParameterSet gaussian_parameter_set_nu2_south() const & { return gaussian_parameter_set_nu2_south_; }
+	GaussianParameterSet gaussian_parameter_set_nu1_north() const & { return gaussian_parameter_set_nu1_north_; }
+	GaussianParameterSet gaussian_parameter_set_nu1_south() const & { return gaussian_parameter_set_nu1_south_; }
 
-	Real delta_north() const{ return ideal_delta_north_; }
-	Real nu2_north() const{ return ideal_nu2_north_; }
-	Real nu1_north() const{ return ideal_nu1_north_; }
+	Real delta_north() const { return ideal_delta_north_; }
+	Real nu2_north() const { return ideal_nu2_north_; }
+	Real nu1_north() const { return ideal_nu1_north_; }
 
-	Real delta_south() const{ return ideal_delta_south_; }
-	Real nu2_south() const{ return ideal_nu2_south_; }
-	Real nu1_south() const{ return ideal_nu1_south_; }
+	Real delta_south() const { return ideal_delta_south_; }
+	Real nu2_south() const { return ideal_nu2_south_; }
+	Real nu1_south() const { return ideal_nu1_south_; }
 
-	Real alpha_aform() const{ return gaussian_parameter_set_alpha_[1].center; }
-	Real beta_aform() const{ return gaussian_parameter_set_beta_[1].center; }
-	Real gamma_aform() const{ return gaussian_parameter_set_gamma_[1].center; }
-	Real epsilon_aform() const{ return gaussian_parameter_set_epsilon_north_[1].center; }
-	Real zeta_aform() const{ return gaussian_parameter_set_zeta_alpha_sc_minus_[1].center; }
+	Real alpha_aform() const { return gaussian_parameter_set_alpha_[1].center; }
+	Real beta_aform() const { return gaussian_parameter_set_beta_[1].center; }
+	Real gamma_aform() const { return gaussian_parameter_set_gamma_[1].center; }
+	Real epsilon_aform() const { return gaussian_parameter_set_epsilon_north_[1].center; }
+	Real zeta_aform() const { return gaussian_parameter_set_zeta_alpha_sc_minus_[1].center; }
 
-	Real epsilon_north() const{ return gaussian_parameter_set_epsilon_north_[1].center; }
-	Real epsilon_south() const{ return gaussian_parameter_set_epsilon_south_[1].center; }
+	Real epsilon_north() const { return gaussian_parameter_set_epsilon_north_[1].center; }
+	Real epsilon_south() const { return gaussian_parameter_set_epsilon_south_[1].center; }
 
-	Real chi_north_anti() const{ return gaussian_parameter_set_chi_north_[1].center; }
-	Real chi_north_syn() const{ return gaussian_parameter_set_chi_north_[2].center; }
-	Real chi_south_anti() const{ return gaussian_parameter_set_chi_south_[1].center; }
-	Real chi_south_syn() const{ return gaussian_parameter_set_chi_south_[2].center; }
+	Real chi_north_anti() const { return gaussian_parameter_set_chi_north_[1].center; }
+	Real chi_north_syn() const { return gaussian_parameter_set_chi_north_[2].center; }
+	Real chi_south_anti() const { return gaussian_parameter_set_chi_south_[1].center; }
+	Real chi_south_syn() const { return gaussian_parameter_set_chi_south_[2].center; }
 
 	Real delta_cutoff() const { return delta_cutoff_; }
 

@@ -56,7 +56,7 @@ private:
 	void
 	rna_note_chi_controls_atom( core::Size const chi, core::Size const atomno,
 		utility::vector1< core::Size > & last_controlling_chi,
-		utility::vector1< core::Size > const & chi_order );
+		utility::vector1< core::Size > const & chi_order ) const;
 
 public:
 

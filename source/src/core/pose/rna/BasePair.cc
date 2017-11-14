@@ -81,33 +81,19 @@ BasePair::print_info( std::ostream & out ) const {
 ///////////////////////////////////////////////////////////////////
 bool operator < ( BasePair const & lhs, BasePair const & rhs )
 {
-	// Priorities: res1_, then res2_, then edge1_, then edge2_, then orientation_
-	// AMW: only way with less "nesting" is if you do explicit true and false returns
-	// for each condition. Then you don't have to nest equality.
-	if ( lhs.res1_ < rhs.res1_ ) {
-		return true;
-	}
-
-	if ( lhs.res1_ == rhs.res1_ ) {
-		if ( lhs.res2_ < rhs.res2_ ) {
-			return true;
-		}
-		if ( lhs.res2_ == rhs.res2_ ) {
-			if ( lhs.edge1_ < rhs.edge1_ ) {
-				return true;
-			}
-			if ( lhs.edge1_ == rhs.edge1_ ) {
-				if ( lhs.edge2_ < rhs.edge2_ ) {
-					return true;
-				}
-				if ( lhs.edge2_ == rhs.edge2_ ) {
-					return ( lhs.orientation_ < rhs.orientation_ );
-				}
-			}
-		}
-	}
-
-	return false;
+	if ( lhs.res1_ < rhs.res1_ ) return true;
+	if ( lhs.res1_ > rhs.res1_ ) return false;
+	// lhs.res1_ == rhs.res1_
+	if ( lhs.res2_ < rhs.res2_ ) return true;
+	if ( lhs.res2_ > rhs.res2_ ) return false;
+	// lhs.res2_ == rhs.res2_
+	if ( lhs.edge1_ < rhs.edge1_ ) return true;
+	if ( lhs.edge1_ > rhs.edge1_ ) return false;
+	// lhs.edge1_ == rhs.edge1_
+	if ( lhs.edge2_ < rhs.edge2_ ) return true;
+	if ( lhs.edge2_ > rhs.edge2_ ) return false;
+	// lhs.edge2_ == rhs.edge2_
+	return ( lhs.orientation_ < rhs.orientation_ );
 }
 
 

@@ -50,8 +50,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodySte
 using namespace protocols::toolbox::rigid_body;
 using namespace core;
 
-static Real const RADS_PER_DEG = numeric::NumericTraits < Real > ::pi() / 180.;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {

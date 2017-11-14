@@ -463,8 +463,7 @@ ResfileContents::locate_command(
 	Size const lineno
 ) const {
 
-	std::map< string, ResfileCommandOP >::const_iterator command(
-		command_map.find(get_token(which_token, tokens)));
+	auto command( command_map.find( get_token( which_token, tokens ) ) );
 
 	if ( command == command_map.end() ) {
 		std::stringstream err_msg;
@@ -497,7 +496,7 @@ NATRO::residue_action(
 	Size resid
 ) const
 {
-	task.nonconst_residue_task(resid).prevent_repacking();
+	task.nonconst_residue_task( resid ).prevent_repacking();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -552,7 +551,6 @@ ALLAA::residue_action(
 	//as in warning, pass to ALLAAwc
 	ALLAAwc allaawc;
 	allaawc.residue_action(task,resid);
-
 }
 
 
@@ -631,11 +629,9 @@ PIKAA::initialize_from_tokens(
 	std::string const & aas_to_keep = get_token( which_token, tokens );
 
 
-	// note: stl uses an index-by-0 convention so the for-loop initialization statment
-	// and its boundary check are not in the rosetta standard.
-	for ( Size ii = 0; ii < aas_to_keep.size(); ++ii ) {
-		if ( oneletter_code_specifies_aa( aas_to_keep[ ii ] ) ) {
-			AA aa( aa_from_oneletter_code( aas_to_keep[ ii ] ) );
+	for ( char const aa_to_keep : aas_to_keep ) {
+		if ( oneletter_code_specifies_aa( aa_to_keep ) ) {
+			AA aa( aa_from_oneletter_code( aa_to_keep ) );
 			if ( size_t(aa) <= keep_canonical_aas_.size() ) {
 				keep_canonical_aas_[ aa ] = true;
 			} else if ( aa == na_ade || aa == na_cyt || aa == na_gua || aa == na_thy ) {
@@ -643,7 +639,7 @@ PIKAA::initialize_from_tokens(
 				na_allowed_.push_back( aa );
 			}
 		} else {
-			TR << "Ignoring unknown one-letter amino acid code " << aas_to_keep[ ii ] << " while parsing PIKAA mode for residue " << resid << "." << std::endl;
+			TR << "Ignoring unknown one-letter amino acid code " << aa_to_keep << " while parsing PIKAA mode for residue " << resid << "." << std::endl;
 
 		}
 	}
@@ -660,13 +656,11 @@ PIKAA::residue_action(
 	if ( keep_canonical_aas_.size() != chemical::num_canonical_aas ) {
 		utility_exit_with_message( "PIKAA Resfile Command used uninitialized" );
 	}
-	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_canonical_aas_ );
+	task.nonconst_residue_task( resid ).restrict_absent_canonical_aas( keep_canonical_aas_ );
 
 	// nucleic acids
-	for ( std::list< chemical::AA >::const_iterator
-			iter = na_allowed_.begin(), iter_end = na_allowed_.end();
-			iter != iter_end; ++iter ) {
-		task.nonconst_residue_task(resid).allow_noncanonical_aa( *iter );
+	for ( auto const & elem : na_allowed_ ) {
+		task.nonconst_residue_task( resid ).allow_noncanonical_aa( elem );
 	}
 }
 
@@ -693,19 +687,15 @@ PIKNA::initialize_from_tokens(
 	++which_token;
 	std::string const & nas_string( get_token( which_token, tokens ) );
 
-	// note: stl uses an index-by-0 convention so the for-loop initialization statment
-	// and its boundary check are not in the rosetta standard.
-	for ( std::string::const_iterator letter( nas_string.begin() );
-			letter != nas_string.end(); ++letter ) {
+	for ( char const letter : nas_string ) {
 		// custom conversion from single letter to aa enum
 		AA na( aa_unk );
-		if      ( *letter == 'A' || *letter == 'a' ) na = na_ade;
-		else if ( *letter == 'C' || *letter == 'c' ) na = na_cyt;
-		else if ( *letter == 'G' || *letter == 'g' ) na = na_gua;
-		else if ( *letter == 'T' || *letter == 't' ) na = na_thy;
+		if      ( letter == 'A' || letter == 'a' ) na = na_ade;
+		else if ( letter == 'C' || letter == 'c' ) na = na_cyt;
+		else if ( letter == 'G' || letter == 'g' ) na = na_gua;
+		else if ( letter == 'T' || letter == 't' ) na = na_thy;
 		else {
-			TR << "Ignoring unknown one-letter nucleic acid code. " << *letter <<" while parsing PIKNA option for residue " << resid << ".";
-			//onError(err_msg.str());
+			TR << "Ignoring unknown one-letter nucleic acid code. " << letter <<" while parsing PIKNA option for residue " << resid << ".";
 		}
 		keep_nas_.push_back( na );
 	}
@@ -742,18 +732,15 @@ PIKRNA::initialize_from_tokens(
 	}
 	std::string const & nas_string( tokens[ ++which_token ] );
 
-	// note: stl uses an index-by-0 convention so the for-loop initialization statment
-	// and its boundary check are not in the rosetta standard.
-	for ( std::string::const_iterator letter( nas_string.begin() );
-			letter != nas_string.end(); ++letter ) {
+	for ( char const letter : nas_string ) {
 		// custom conversion from single letter to aa enum
 		AA na( aa_unk );
-		if      ( *letter == 'A' || *letter == 'a' ) na = na_rad;
-		else if ( *letter == 'C' || *letter == 'c' ) na = na_rcy;
-		else if ( *letter == 'G' || *letter == 'g' ) na = na_rgu;
-		else if ( *letter == 'U' || *letter == 'u' ) na = na_ura;
+		if      ( letter == 'A' || letter == 'a' ) na = na_rad;
+		else if ( letter == 'C' || letter == 'c' ) na = na_rcy;
+		else if ( letter == 'G' || letter == 'g' ) na = na_rgu;
+		else if ( letter == 'U' || letter == 'u' ) na = na_ura;
 		else {
-			TR.Error << "RESFILE ERROR: unknown one-letter nucleic acid code " << *letter
+			TR.Error << "RESFILE ERROR: unknown one-letter nucleic acid code " << letter
 				<< " while parsing PIKRNA option for residue " << resid << std::endl;
 			utility_exit();
 		}
@@ -769,8 +756,8 @@ PIKRNA::residue_action(
 	Size resid
 ) const
 {
-	for ( Size ii = 1; ii <= keep_rnas_.size(); ++ii ) {
-		task.nonconst_residue_task(resid).allow_aa( keep_rnas_[ ii ] );
+	for ( auto const & keep_rna : keep_rnas_ ) {
+		task.nonconst_residue_task( resid ).allow_aa( keep_rna );
 	}
 }
 
@@ -793,15 +780,12 @@ NOTAA::initialize_from_tokens(
 	++which_token;
 	std::string const & aas_to_exclude = get_token( which_token, tokens );
 
-	// note: stl uses an index-by-0 convention so the for-loop initialization statment
-	// and its boundary check are not in the rosetta standard.
-	for ( Size ii = 0; ii < aas_to_exclude.size(); ++ii ) {
-		if ( oneletter_code_specifies_aa( aas_to_exclude[ ii ] ) &&
-				aa_from_oneletter_code(aas_to_exclude[ii]) <= chemical::num_canonical_aas  ) {
-			keep_aas_[ aa_from_oneletter_code( aas_to_exclude[ ii ] ) ] = false;
+	for ( char const aa_to_exclude : aas_to_exclude ) {
+		if ( oneletter_code_specifies_aa( aa_to_exclude ) &&
+				aa_from_oneletter_code( aa_to_exclude ) <= chemical::num_canonical_aas  ) {
+			keep_aas_[ aa_from_oneletter_code( aa_to_exclude ) ] = false;
 		} else {
-			TR << "Ignoring Unknown one-letter amino acid code "<< aas_to_exclude[ ii ] << " while parsing NOTAA option for residue " << resid << ".";
-			//onError(err_msg.str());  // keep parsing on error
+			TR << "Ignoring Unknown one-letter amino acid code "<< aa_to_exclude << " while parsing NOTAA option for residue " << resid << ".";
 		}
 	}
 
@@ -814,7 +798,7 @@ NOTAA::residue_action(
 	Size resid
 ) const
 {
-	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas_ );
+	task.nonconst_residue_task( resid ).restrict_absent_canonical_aas( keep_aas_ );
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -841,8 +825,8 @@ EMPTY::residue_action(
 	//vector is expected format for PackerTask, but false at all positions
 	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, false );
 	std::string mode( "EMPTY" );
-	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas, mode );
-	task.nonconst_residue_task(resid).disallow_noncanonical_aas();
+	task.nonconst_residue_task( resid ).restrict_absent_canonical_aas( keep_aas, mode );
+	task.nonconst_residue_task( resid ).disallow_noncanonical_aas();
 
 }
 
@@ -926,6 +910,7 @@ APOLAR::initialize_from_tokens(
 	++which_token;
 
 }
+
 void
 APOLAR::residue_action(
 	PackerTask & task,
@@ -960,7 +945,7 @@ APOLAR::residue_action(
 void
 APOLA::initialize_from_tokens(
 #ifdef NDEBUG
-							  utility::vector1< std::string > const & ,
+	utility::vector1< std::string > const & ,
 #else
 	utility::vector1< std::string > const & tokens,
 #endif
@@ -1023,7 +1008,7 @@ EX::initialize_from_tokens(
 			++which_token;
 
 			++which_token;
-			chi_sample_level_ = static_cast< ExtraRotSample> (atoi( get_token( which_token, tokens ).c_str() ));
+			chi_sample_level_ = static_cast< ExtraRotSample >( atoi( get_token( which_token, tokens ).c_str() ) );
 			if ( chi_sample_level_ >= ExtraRotSampleCardinality || chi_sample_level_ < 0 ) {
 				std::stringstream err_msg;
 				err_msg  << "Extra rotamer sample level " << get_token( which_token, tokens ) << " is not in the range [0-" << ExtraRotSampleCardinality <<"] for residue " << resid << ".";
@@ -1224,6 +1209,7 @@ TARGET::initialize_from_tokens(
 	argstring_ = get_token( which_token, tokens );
 	++which_token;
 }
+
 void
 TARGET::residue_action(
 	PackerTask & task,
@@ -1269,7 +1255,7 @@ NO_ADDUCTS::residue_action(
 	Size resid
 ) const
 {
-	task.nonconst_residue_task(resid).or_adducts(false);
+	task.nonconst_residue_task( resid ).or_adducts( false );
 }
 //end NO_ADDUCTS
 
@@ -1292,7 +1278,7 @@ FIX_HIS_TAUTOMER::residue_action(
 	Size resid
 ) const
 {
-	task.nonconst_residue_task(resid).or_fix_his_tautomer(true); //call is safe against not-histidine
+	task.nonconst_residue_task( resid ).or_fix_his_tautomer( true ); //call is safe against not-histidine
 }
 //end FIX_HIS_TAUTOMER
 
@@ -1353,7 +1339,7 @@ parse_resfile(
 	pose::Pose const & pose,
 	PackerTask & the_task)
 {
-	parse_resfile(pose, the_task, basic::options::option[basic::options::OptionKeys::packing::resfile].value().at(1));
+	parse_resfile( pose, the_task, basic::options::option[ basic::options::OptionKeys::packing::resfile ].value().at( 1 ) );
 }
 
 
@@ -1363,7 +1349,6 @@ parse_resfile(
 	PackerTask & the_task,
 	std::string const & filename)
 {
-
 	std::string resfile;
 	utility::io::izstream file( filename );
 	if ( !file ) {
@@ -1372,9 +1357,9 @@ parse_resfile(
 	}
 	utility::slurp( file, resfile );
 	file.close();
-	try{
+	try {
 		parse_resfile_string( pose, the_task, filename, resfile );
-	} catch (ResfileReaderException &) {
+	} catch ( ResfileReaderException & ) {
 		if ( basic::options::option[ basic::options::OptionKeys::run::interactive ].user() ) {
 			throw;
 		} else {
@@ -1417,7 +1402,7 @@ parse_resfile_string(
 )
 {
 	using namespace std;
-	istringstream resfile(resfile_string);
+	istringstream resfile( resfile_string );
 	ResfileContents contents( pose, resfile_fname, resfile );
 
 	runtime_assert_string_msg( mask.size() == pose.size(), "Error in core::pack::task::parse_resfile_string(): The mask passed to this function is not the same size as the pose.  The mask must have one entry for every residue." );
@@ -1452,7 +1437,7 @@ get_token(
 	bool make_upper_case
 ) {
 
-	if ( which_token >  tokens.size() ) {
+	if ( which_token > tokens.size() ) {
 		if ( which_token == 1 ) {
 			std::stringstream err_msg;
 			err_msg  << "Resfile does not specify anything.";
@@ -1465,8 +1450,7 @@ get_token(
 	}
 	std::string token = tokens[ which_token ];
 	if ( make_upper_case ) {
-
-		std::transform(token.begin(), token.end(), token.begin(), (int(*)(int)) std::toupper);
+		std::transform( token.begin(), token.end(), token.begin(), (int(*)(int)) std::toupper);
 	}
 	return token;
 }

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file relax_protocols
+/// @file RNA_BasePairClassifier
 /// @brief Implementation of Leontis/Westhof nucleic acid base-pair classification
 /// @details
 /// @author Rhiju Das, Andy Watkins
@@ -95,7 +95,7 @@ update_edge_hbond_numbers(
 	using namespace core::chemical;
 
 	//std::cout << atm << std::endl;
-	std::string atom_name = rsd.atom_name( atm );
+	std::string const & atom_name = rsd.atom_name( atm );
 	// std::cout << atom_name << std::endl;
 
 	if ( rsd.aa() == na_rad || rsd.type().na_analogue() == na_rad ) {
@@ -250,17 +250,14 @@ update_edge_hbond_numbers_careful_hydrogen(
 
 //////////////////////////////////
 bool
-atom_is_polar( core::conformation::Residue const & rsd, Size const & atm )
+atom_is_polar( core::conformation::Residue const & rsd, Size const atm )
 {
-	for ( Size const H_atm : rsd.Hpos_polar() ) {
-		if ( H_atm == atm ) return true;
-	}
-	return false;
+	return rsd.Hpos_polar().contains( atm );
 }
 
 //////////////////////////////////
 bool
-heavy_atom_is_polar( core::conformation::Residue const & rsd, Size const & atm )
+heavy_atom_is_polar( core::conformation::Residue const & rsd, Size const atm )
 {
 	for ( Size const H_atm : rsd.Hpos_polar() ) {
 		if ( rsd.atom_base( H_atm ) == atm ) return true;
@@ -270,12 +267,9 @@ heavy_atom_is_polar( core::conformation::Residue const & rsd, Size const & atm )
 
 //////////////////////////////////
 bool
-atom_is_acceptor( core::conformation::Residue const & rsd, Size const & atm )
+atom_is_acceptor( core::conformation::Residue const & rsd, Size const atm )
 {
-	for ( Size const a_atm : rsd.accpt_pos() ) {
-		if ( a_atm == atm ) return true;
-	}
-	return false;
+	return rsd.accpt_pos().contains( atm );
 }
 
 
@@ -297,7 +291,7 @@ figure_out_number_base_contacts(
 	Size N_W( 0 ), N_H( 0 ), N_S( 0 );
 
 	// Size const i = rsd_i.seqpos();
-	// Size const j = rsd_j.seqpos();
+	// Size const j = rsd_j.seqpos();d
 
 	//std::cout << i << " <--> " << j << std::endl;
 	// heavy atom on base j; heavy atom on i.
@@ -416,8 +410,8 @@ residue_is_bulge( pose::Pose const & pose, Size const i )
 Size
 bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 	core::pose::Pose & pose,
-	Size const & i,
-	Size const & j )
+	Size const i,
+	Size const j )
 {
 	Size num_hbonds = 0;
 
@@ -484,15 +478,15 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 //////////////////////////////////////////////////
 bool
 bases_are_coplanar(
 	core::pose::Pose & pose,
-	Size const & i,
-	Size const & j )
+	Size const i,
+	Size const j )
 {
 	using namespace core::scoring::rna;
 

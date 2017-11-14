@@ -175,7 +175,10 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 
 		// This seems curious. Of course, we could maybe pass `this`, and speed
 		// up our searches. Maybe.
-		FragmentLibrary const & library = *( fragments.get_fragment_library_pointer( sequence, secstruct, nullptr, utility::vector1< SYN_ANTI_RESTRICTION >(), type ) );
+		// Rather than nullptr, we must pass an RNA_HomologyExclusion object that has been set up to have an empty
+		// set of fragment lines.
+		static RNA_FragmentHomologyExclusionCOP const empty_exclusion( new RNA_FragmentHomologyExclusion );
+		FragmentLibrary const & library = *( fragments.get_fragment_library_pointer( sequence, secstruct, empty_exclusion, utility::vector1< SYN_ANTI_RESTRICTION >(), type ) );
 		//TR << "Found library for " << sequence << " with number of matches: " << library.get_align_depth() << std::endl;
 
 		// Now try all the fragments one-by-one in a "scratch pose"

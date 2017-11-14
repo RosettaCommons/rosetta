@@ -167,12 +167,8 @@ RNA_SecStruct::set_basepairs_from_secstruct() {
 		if ( occurrences.empty() ) continue;
 
 		// Iterate inward, pairing first with last, second with penultimate, etc.
-		//auto bp1 = occurrences.begin(), bp2 = occurrences.end();
-		//--bp2;
 		for ( Size ii = 1; ii < occurrences.size() - ii; ++ii ) {
-			//while ( std::distance( bp1, bp2 ) > 0 ) {
 			base_pairs_.emplace_back( occurrences[ ii ], occurrences[ occurrences.size() - ii + 1 ] );
-			//++bp1; --bp2;
 		}
 	}
 }
