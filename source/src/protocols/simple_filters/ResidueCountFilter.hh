@@ -113,10 +113,10 @@ public:
 	res_types( utility::vector1< std::string > const & res_type );
 
 	utility::vector1< std::string >
-        res_props() const;
+	res_props() const;
 
-        void
-        res_props( utility::vector1< std::string > const & res_prop );
+	void
+	res_props( utility::vector1< std::string > const & res_prop );
 
 	bool
 	enable_min_residue_count() const;
@@ -152,10 +152,10 @@ public:
 	);
 
 	bool
-        add_residue_property_by_name(
-                //core::chemical::ResidueTypeSet const & res_type_set,
-                std::string const & prop_input
-        );
+	add_residue_property_by_name(
+		//core::chemical::ResidueTypeSet const & res_type_set,
+		std::string const & prop_input
+	);
 
 	std::string
 	name() const override;

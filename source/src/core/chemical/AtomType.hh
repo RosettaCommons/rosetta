@@ -346,7 +346,7 @@ private:
 	Hybridization hybridization_;
 
 #ifdef    SERIALIZATION
-	public:
+public:
 	friend class cereal::access;
 	template< class Archive > void save( Archive & arc ) const;
 	template< class Archive > void load( Archive & arc );

@@ -133,13 +133,13 @@ ResidueCountFilter::parse_my_tag(
 			}
 		} // for all res type specified
 	}
-	if ( tag->hasOption("include_property")){
+	if ( tag->hasOption("include_property") ) {
 		std::string const res_prop_str( tag->getOption< std::string >("include_property", "") );
-                utility::vector1< std::string > const res_prop_vec( utility::string_split( res_prop_str, ',' ) );
-                TR << "Residue properties specified: " << res_prop_vec << std::endl;
-		// only addint properties that are in the general map 
+		utility::vector1< std::string > const res_prop_vec( utility::string_split( res_prop_str, ',' ) );
+		TR << "Residue properties specified: " << res_prop_vec << std::endl;
+		// only addint properties that are in the general map
 		for ( core::Size i=1; i<=res_prop_vec.size(); ++i ) {
-			if (! add_residue_property_by_name(res_prop_vec[i])){
+			if ( ! add_residue_property_by_name(res_prop_vec[i]) ) {
 				utility_exit_with_message( "The property you're requesting (" + res_prop_vec[i] + ") was specified to ResidueCount filter.  This property is not part of general properties. " );
 			}
 		}
@@ -233,13 +233,13 @@ ResidueCountFilter::compute(
 				} // if
 			} // for all res types specified
 		} else if ( res_props_.size() > 0 ) {
-                        for ( core::Size j=1; j<=res_props_.size(); ++j ) {
-                                if ( pose.residue_type( target_res[i] ).has_property(res_props_[j])) {
-                                        ++count;
-                                        // break; //the break is not necesary. a residue can have multiple properties 
-                                } // if
-                        } // for all res properties specified
-                } else {
+			for ( core::Size j=1; j<=res_props_.size(); ++j ) {
+				if ( pose.residue_type( target_res[i] ).has_property(res_props_[j]) ) {
+					++count;
+					// break; //the break is not necesary. a residue can have multiple properties
+				} // if
+			} // for all res properties specified
+		} else {
 			++count; // for all packable/designable residues if task specified or all residues if no task specified
 		}
 	}
@@ -281,17 +281,17 @@ ResidueCountFilter::res_types(
 
 utility::vector1< std::string >
 ResidueCountFilter::res_props() const {
-        return res_props_;
+	return res_props_;
 }
 
 void
 ResidueCountFilter::res_props(
-        utility::vector1< std::string > const & res_props
+	utility::vector1< std::string > const & res_props
 ) {
-        res_props_.clear();
-        for ( core::Size i=1; i<=res_props.size(); ++i ) {
-                res_props_.push_back( res_props[i] );
-        }
+	res_props_.clear();
+	for ( core::Size i=1; i<=res_props.size(); ++i ) {
+		res_props_.push_back( res_props[i] );
+	}
 }
 
 bool
@@ -382,23 +382,23 @@ ResidueCountFilter::add_residue_type_by_name(
 	return true;
 }
 
-/// @brief add proeprties to peroperty vector 
+/// @brief add proeprties to peroperty vector
 /// @detail given user specified properties, adds them to the property vector to count. I still need to add a way to check the sanity
 /// @input res_type_set, the residue type set of the input structure
 /// @input res_type_input, the user specified residue type name
 /// @return false if res_type_input doesn't match any residue type names, true otherwise
 bool
 ResidueCountFilter::add_residue_property_by_name(
-        std::string const & prop_input
+	std::string const & prop_input
 ) {
-        using namespace core::chemical;
-	
+	using namespace core::chemical;
+
 	static const std::map< std::string, ResidueProperty > * const PROPERTY_MAP( ResidueProperties::generate_string_to_property_map() );
 	if ( ! ( *PROPERTY_MAP ).count( prop_input ) ) {
-        	return false;
+		return false;
 	} else {
 		res_props_.push_back( prop_input );
-        	return true;
+		return true;
 	}
 }
 
@@ -432,9 +432,9 @@ void ResidueCountFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		"Comma-separated list of which residue type names. (e.g. \"CYS,SER,HIS_D\" ). "
 		"Only residues with type names matching those in the list will be counted.")
 		+ XMLSchemaAttribute(
-                "include_property", xs_string,
-                "Comma-separated list of which properties. (e.g. \"D_AA,POLAR\" ). "
-                "Only residues with type names matching those in the list will be counted.");
+		"include_property", xs_string,
+		"Comma-separated list of which properties. (e.g. \"D_AA,POLAR\" ). "
+		"Only residues with type names matching those in the list will be counted.");
 
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
 

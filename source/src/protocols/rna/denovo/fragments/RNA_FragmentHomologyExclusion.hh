@@ -27,7 +27,7 @@ namespace fragments {
 class RNA_FragmentHomologyExclusion {
 public:
 	RNA_FragmentHomologyExclusion( RNA_Fragments const & all_rna_fragments );
-	RNA_FragmentHomologyExclusion( RNA_FragmentHomologyExclusion const & rhs ) : 
+	RNA_FragmentHomologyExclusion( RNA_FragmentHomologyExclusion const & rhs ) :
 		fragment_lines_( rhs.fragment_lines_ )
 	{}
 	RNA_FragmentHomologyExclusion() {}
