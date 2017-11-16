@@ -84,7 +84,7 @@ using utility::to_string;
 using numeric::constants::f::pi;
 using numeric::constants::f::pi_2;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.SemiExplicitWaterUnsatisfiedPolarsCalculator" );
+static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.SemiExplicitWaterUnsatisfiedPolarsCalculator" );
 
 #ifdef    SERIALIZATION
 // Project serialization headers

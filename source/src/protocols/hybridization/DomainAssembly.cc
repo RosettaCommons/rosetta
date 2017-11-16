@@ -44,7 +44,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.DomainAssembly" );
+static basic::Tracer TR( "protocols.hybridization.DomainAssembly" );
 
 namespace protocols {
 //namespace comparative_modeling {

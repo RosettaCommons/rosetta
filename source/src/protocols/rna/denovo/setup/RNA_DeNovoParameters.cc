@@ -20,7 +20,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.setup.RNA_DeNovoParameters" );
+static basic::Tracer TR( "protocols.rna.denovo.setup.RNA_DeNovoParameters" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

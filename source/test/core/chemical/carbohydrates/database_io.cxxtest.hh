@@ -32,7 +32,7 @@
 // C++ header
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.carbohydrates.database_io.cxxtest");
+static basic::Tracer TR("core.chemical.carbohydrates.database_io.cxxtest");
 
 class CarbohydrateDatabaseIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////

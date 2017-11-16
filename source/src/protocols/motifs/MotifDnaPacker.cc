@@ -104,7 +104,7 @@ using namespace ObjexxFCL::format;
 using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
-static THREAD_LOCAL basic::Tracer TR( "devel.motifs.MotifDnaPacker" );
+static basic::Tracer TR( "devel.motifs.MotifDnaPacker" );
 
 // XRW TEMP std::string
 // XRW TEMP MotifDnaPackerCreator::keyname() const

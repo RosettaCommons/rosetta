@@ -48,13 +48,12 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using core::pose::Pose;
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "FlexPepDockingPoseMetrics" );
+static basic::Tracer TR( "FlexPepDockingPoseMetrics" );
 
 namespace protocols {
 namespace flexpep_docking {

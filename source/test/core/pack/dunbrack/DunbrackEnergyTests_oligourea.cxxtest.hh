@@ -38,7 +38,7 @@
 // Utility, etc Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("DunbrackEnergyTests_oligourea");
+static basic::Tracer TR("DunbrackEnergyTests_oligourea");
 
 
 class DunbrackEnergyTests_oligourea : public CxxTest::TestSuite {

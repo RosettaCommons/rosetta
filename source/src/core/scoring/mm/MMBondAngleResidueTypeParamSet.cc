@@ -60,7 +60,7 @@ namespace core {
 namespace scoring {
 namespace mm {
 
-static THREAD_LOCAL basic::Tracer TR( "core.mm.MMBondAngleResidueTypeParamSet" );
+static basic::Tracer TR( "core.mm.MMBondAngleResidueTypeParamSet" );
 
 MMBondAngleResidueTypeParamSet::MMBondAngleResidueTypeParamSet() :
 	mm_bondangle_library_( &scoring::ScoringManager::get_instance()->get_MMBondAngleLibrary() ),

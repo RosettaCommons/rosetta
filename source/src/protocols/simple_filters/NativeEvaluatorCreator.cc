@@ -64,7 +64,7 @@
 #include <utility/exit.hh>
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.NativeEvaluatorCreator" );
+static basic::Tracer tr( "protocols.evalution.NativeEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

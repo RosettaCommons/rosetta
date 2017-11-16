@@ -45,7 +45,7 @@
 #include <utility/vector1.hh>
 #include <utility/stream_util.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.libraries.RNA_ChunkLibrary" );
+static basic::Tracer TR( "protocols.rna.denovo.libraries.RNA_ChunkLibrary" );
 
 namespace protocols {
 namespace rna {

@@ -57,7 +57,7 @@ using protocols::loops::Loop;
 using protocols::loops::Loops;
 using numeric::conversions::DEGREES;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.kinematic_closure.TestHelpers.cxxtest");
+static basic::Tracer TR("protocols.kinematic_closure.TestHelpers.cxxtest");
 
 // Forward declarations {{{1
 class ClosureTest;
@@ -74,9 +74,9 @@ public:
 
 public:
 	virtual void perturb_subset(
-			Pose const & pose,
-			IndexList const & residues,
-			ClosureProblemOP problem);
+		Pose const & pose,
+		IndexList const & residues,
+		ClosureProblemOP problem);
 
 	virtual void perturb_for_test(ClosureProblemOP) {}
 
@@ -102,13 +102,13 @@ public:
 };
 
 ClosureTest::ClosureTest( // {{{1
-		string name_, string pdb_path_, Loop loop_, Size num_solutions_) {
+	string name_, string pdb_path_, Loop loop_, Size num_solutions_) {
 
 	name = name_;
 	pose_from_file(pose, "protocols/kinematic_closure/inputs/" + pdb_path_, core::import_pose::PDB_file);
 	original_pose = pose;
 	loop = loop_;
-	if (loop.cut() == 0) loop.set_cut(loop.midpoint());
+	if ( loop.cut() == 0 ) loop.set_cut(loop.midpoint());
 	num_solutions = num_solutions_;
 	jacobians.resize(num_solutions);
 	pivot_picker = PivotPickerOP( new LoopPivots );
@@ -116,9 +116,9 @@ ClosureTest::ClosureTest( // {{{1
 }
 
 void ClosureTest::perturb_subset( // {{{1
-			Pose const &,
-			IndexList const &,
-			ClosureProblemOP problem) {
+	Pose const &,
+	IndexList const &,
+	ClosureProblemOP problem) {
 
 	perturb_for_test(problem);
 }
@@ -127,7 +127,7 @@ void ClosureTest::test_closure(SolutionList solutions) const { // {{{1
 
 	TS_ASSERT_EQUALS(num_solutions, solutions.size());
 
-	foreach (ClosureSolutionCOP solution, solutions) {
+	foreach ( ClosureSolutionCOP solution, solutions ) {
 		Pose solution_pose(pose);
 		solution->apply(solution_pose);
 
@@ -145,12 +145,12 @@ void ClosureTest::test_closure(Pose const & solution_pose) const { // {{{1
 	// case that no fold tree is being used, a bug in the closure algorithm
 	// will cause atoms outside the designated window to move.
 
-	for (Size index = start_atom; index <= stop_atom; index++) {
+	for ( Size index = start_atom; index <= stop_atom; index++ ) {
 		AtomID id = id_from_index(index);
 		PointPosition expected = original_pose.xyz(id);
 		PointPosition observed = solution_pose.xyz(id);
 
-		if (index <= left_pivot || index >= right_pivot) {
+		if ( index <= left_pivot || index >= right_pivot ) {
 			TS_ASSERT_VECTOR_EQUALS(expected, observed, precision);
 		}
 	}
@@ -162,7 +162,7 @@ void ClosureTest::test_closure(Pose const & solution_pose) const { // {{{1
 	AtomID ids[2];
 	PointPosition xyzs[2];
 
-	for (Size index = start_atom; index <= start_atom - 1; index++) {
+	for ( Size index = start_atom; index <= start_atom - 1; index++ ) {
 		ids[0] = id_from_index(index);
 		ids[1] = id_from_index(index + 1);
 		xyzs[0] = solution_pose.xyz(ids[0]);
@@ -184,9 +184,9 @@ void ClosureTest::test_closure(Pose const & solution_pose) const { // {{{1
 }
 
 void ClosureTest::test_restore( // {{{1
-		ClosureProblemCOP problem, SolutionList solutions) const {
+	ClosureProblemCOP problem, SolutionList solutions) const {
 
-	foreach (ClosureSolutionCOP solution, solutions) {
+	foreach ( ClosureSolutionCOP solution, solutions ) {
 		Pose solution_pose(pose);
 		solution->apply(solution_pose);
 
@@ -196,7 +196,7 @@ void ClosureTest::test_restore( // {{{1
 
 		Size num_atoms = 3 * solution_pose.total_residue();
 
-		for (Size index = 1; index <= num_atoms; index++) {
+		for ( Size index = 1; index <= num_atoms; index++ ) {
 			AtomID id = id_from_index(index);
 			PointPosition expected = original_pose.xyz(id);
 			PointPosition observed = solution_pose.xyz(id);
@@ -208,7 +208,7 @@ void ClosureTest::test_restore( // {{{1
 
 void ClosureTest::test_jacobian(SolutionList solutions) const { // {{{1
 	// Make sure the expected jacobians match the observed ones.
-	foreach (ClosureSolutionCOP solution, solutions) {
+	foreach ( ClosureSolutionCOP solution, solutions ) {
 		Real expected_jacobian = jacobians[solution->get_index()];
 		Real observed_jacobian = solution->get_jacobian();
 		TS_ASSERT_DELTA(expected_jacobian, observed_jacobian, precision);
@@ -216,7 +216,7 @@ void ClosureTest::test_jacobian(SolutionList solutions) const { // {{{1
 }
 
 void ClosureTest::test_pickers( // {{{1
-		ClosureProblemCOP, SolutionList) const {
+	ClosureProblemCOP, SolutionList) const {
 
 	/*
 	// Test to make sure the solution pickers work as expected.  The fact that
@@ -233,11 +233,11 @@ void ClosureTest::test_pickers( // {{{1
 	boost::unordered_map<Size, Size> balanced_picks;
 
 	foreach (ClosureSolutionCOP solution, solutions) {
-		Size index = solution->get_index();
-		total_jacobian += solution->get_jacobian();
+	Size index = solution->get_index();
+	total_jacobian += solution->get_jacobian();
 
-		random_picks[index] = 0;
-		balanced_picks[index] = 0;
+	random_picks[index] = 0;
+	balanced_picks[index] = 0;
 	}
 
 	using protocols::kinematic_closure::pick_random_solution;
@@ -246,28 +246,28 @@ void ClosureTest::test_pickers( // {{{1
 	// Make 1000 picks with each picker.  Record the results in hash tables.
 
 	for (int i = 1; i <= iterations; i++) {
-		solution = pick_random_solution(solutions);
-		random_picks[solution->get_index()] += 1;
+	solution = pick_random_solution(solutions);
+	random_picks[solution->get_index()] += 1;
 
-		solution = pick_balanced_solution(solutions, solutions);
-		balanced_picks[solution->get_index()] += 1;
+	solution = pick_balanced_solution(solutions, solutions);
+	balanced_picks[solution->get_index()] += 1;
 	}
 
 	// Check to see that the expected distributions were observed.
 
 	foreach (ClosureSolutionCOP solution, solutions) {
-		Size index = solution->get_index();
+	Size index = solution->get_index();
 
-		Size expected_random = iterations / solutions.size();
-		Size observed_random = random_picks[index];
+	Size expected_random = iterations / solutions.size();
+	Size observed_random = random_picks[index];
 
-		TS_ASSERT_DELTA(expected_random, observed_random, precision);
+	TS_ASSERT_DELTA(expected_random, observed_random, precision);
 
-		Real jacobian_weight = jacobians[index] / total_jacobian;
-		Size expected_balanced = iterations * jacobian_weight;
-		Size observed_balanced = balanced_picks[index];
+	Real jacobian_weight = jacobians[index] / total_jacobian;
+	Size expected_balanced = iterations * jacobian_weight;
+	Size observed_balanced = balanced_picks[index];
 
-		TS_ASSERT_DELTA(expected_balanced, observed_balanced, precision);
+	TS_ASSERT_DELTA(expected_balanced, observed_balanced, precision);
 	}
 	*/
 }
@@ -287,7 +287,7 @@ class DebuggingHelper : public ClosureTest { // {{{1
 public:
 
 	DebuggingHelper() :
-			ClosureTest("debugging_helper", "1ubq.pdb", Loop(2, 6, 3), 4) {
+		ClosureTest("debugging_helper", "1ubq.pdb", Loop(2, 6, 3), 4) {
 
 		jacobians[1] = 0.0795;
 		jacobians[2] = 0.0879;
@@ -301,7 +301,7 @@ class BigLoopTest : public ClosureTest { // {{{1
 public:
 
 	BigLoopTest() :
-			ClosureTest("big_loop", "3cla.pdb", Loop(170, 181, 175), 6) {
+		ClosureTest("big_loop", "3cla.pdb", Loop(170, 181, 175), 6) {
 
 		jacobians[1] = 0.0032;
 		jacobians[2] = 0.0025;
@@ -317,35 +317,35 @@ class NoSolutionsTest : public ClosureTest { // {{{1
 public:
 
 	NoSolutionsTest() :
-			ClosureTest("no_solutions", "1srp.pdb", Loop(313, 319, 316), 0) {
+		ClosureTest("no_solutions", "1srp.pdb", Loop(313, 319, 316), 0) {
 	}
 
 	void perturb_for_test(ClosureProblemOP problem) {
 		problem->perturb_phi(313,  -62.040, DEGREES);
 		problem->perturb_psi(313,  -31.591, DEGREES);
 		problem->perturb_phi(314, -111.245, DEGREES);
-  	problem->perturb_psi(314,  155.459, DEGREES);
+		problem->perturb_psi(314,  155.459, DEGREES);
 		problem->perturb_phi(315,   85.594, DEGREES);
-  	problem->perturb_psi(315,    2.433, DEGREES);
+		problem->perturb_psi(315,    2.433, DEGREES);
 		problem->perturb_phi(316,  -77.068, DEGREES);
-  	problem->perturb_psi(316,   43.512, DEGREES);
+		problem->perturb_psi(316,   43.512, DEGREES);
 		problem->perturb_phi(317,  -90.960, DEGREES);
-  	problem->perturb_psi(317,  -66.109, DEGREES);
+		problem->perturb_psi(317,  -66.109, DEGREES);
 		problem->perturb_phi(318,  -64.065, DEGREES);
-  	problem->perturb_psi(318,  114.326, DEGREES);
+		problem->perturb_psi(318,  114.326, DEGREES);
 		problem->perturb_phi(319,  -91.959, DEGREES);
-  	problem->perturb_psi(319,  111.620, DEGREES);
+		problem->perturb_psi(319,  111.620, DEGREES);
 	}
 };
 
 class PoseWithLigandTest : public ClosureTest { // {{{1
 
-// If the fold tree is poorly designed, it can get confused by the ligand.
+	// If the fold tree is poorly designed, it can get confused by the ligand.
 
 public:
 
 	PoseWithLigandTest() :
-			ClosureTest("pose_with_ligand", "1exm.pdb", Loop(289, 300), 2) {
+		ClosureTest("pose_with_ligand", "1exm.pdb", Loop(289, 300), 2) {
 
 		jacobians[1] = 0.0168;
 		jacobians[2] = 0.0172;

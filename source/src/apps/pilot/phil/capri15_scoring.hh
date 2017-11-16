@@ -126,7 +126,6 @@
 
 
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -139,7 +138,7 @@ using std::string;
 using std::cout;
 using std::endl;
 
-//static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.loop_model"  );
+//static basic::Tracer TR( "apps.pilot.phil.loop_model"  );
 
 ////////////////////////////////////////////////
 // danger USING ////////////////////////////////

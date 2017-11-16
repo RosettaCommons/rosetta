@@ -39,12 +39,11 @@
 #include <mpi.h>
 #endif
 
-using basic::T;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
 using namespace protocols::loophash;
-static THREAD_LOCAL basic::Tracer TR( "main" );
+static basic::Tracer TR( "main" );
 
 
 // MPI headers
@@ -56,17 +55,17 @@ static THREAD_LOCAL basic::Tracer TR( "main" );
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	// Shouldn't these ints be core::size?
-	// Default num_partitions = 1
-// No point in doing this without MPI
+		// Shouldn't these ints be core::size?
+		// Default num_partitions = 1
+		// No point in doing this without MPI
 #ifndef USEMPI
-	std::cerr << "You cannot use loophash_createfiltereddb without MPI!" << std::endl;
-	std::cout << "You cannot use loophash_createfiltereddb without MPI!" << std::endl;
+		std::cerr << "You cannot use loophash_createfiltereddb without MPI!" << std::endl;
+		std::cout << "You cannot use loophash_createfiltereddb without MPI!" << std::endl;
 #endif
 
 #ifdef USEMPI
@@ -182,9 +181,9 @@ main( int argc, char * argv [] )
 		TR << "Total time: " << (endtime - starttime) / 60 << " min" << std::endl;
 	}
 #endif
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

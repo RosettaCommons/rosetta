@@ -39,72 +39,72 @@
 #include <boost/functional/hash.hpp>
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 
 class InjectorMover : public protocols::moves::Mover {
-  typedef protocols::moves::Mover Parent;
+	typedef protocols::moves::Mover Parent;
 public:
 
-  InjectorMover():
-    Parent() {}
+	InjectorMover():
+		Parent() {}
 
-  void apply( core::pose::Pose& pose ){
+	void apply( core::pose::Pose& pose ){
 
-    using namespace basic::datacache;
-    using namespace core::pose::datacache;
+		using namespace basic::datacache;
+		using namespace core::pose::datacache;
 
-    core::Size const hash = this->hash( pose.fold_tree() );
-    basic::datacache::BasicDataCache& datacache = pose.data();
+		core::Size const hash = this->hash( pose.fold_tree() );
+		basic::datacache::BasicDataCache& datacache = pose.data();
 
-    if( !datacache.has( CacheableDataType::WRITEABLE_DATA ) ){
-      datacache.set( CacheableDataType::WRITEABLE_DATA, new WriteableCacheableMap() );
-    }
-    WriteableCacheableMapOP datamap = dynamic_cast< WriteableCacheableMap* >( datacache.get_raw_ptr( CacheableDataType::WRITEABLE_DATA ) );
+		if ( !datacache.has( CacheableDataType::WRITEABLE_DATA ) ) {
+			datacache.set( CacheableDataType::WRITEABLE_DATA, new WriteableCacheableMap() );
+		}
+		WriteableCacheableMapOP datamap = dynamic_cast< WriteableCacheableMap* >( datacache.get_raw_ptr( CacheableDataType::WRITEABLE_DATA ) );
 
-    std::set< core::Size > auto_cuts;
-    for( int i = 1; i <= pose.fold_tree().num_cutpoint(); ++i ){
-      auto_cuts.insert( (Size) pose.fold_tree().cutpoint(i) );
-    }
+		std::set< core::Size > auto_cuts;
+		for ( int i = 1; i <= pose.fold_tree().num_cutpoint(); ++i ) {
+			auto_cuts.insert( (Size) pose.fold_tree().cutpoint(i) );
+		}
 
-    protocols::environment::AutoCutDataOP data = new protocols::environment::AutoCutData( hash, auto_cuts );
+		protocols::environment::AutoCutDataOP data = new protocols::environment::AutoCutData( hash, auto_cuts );
 
-    datamap->insert( data );
-  }
+		datamap->insert( data );
+	}
 
-  virtual std::string get_name() const {
-    return "InjectorMover";
-  }
+	virtual std::string get_name() const {
+		return "InjectorMover";
+	}
 
-  virtual protocols::moves::MoverOP	fresh_instance() const{
-    return new InjectorMover();
-  }
+	virtual protocols::moves::MoverOP fresh_instance() const{
+		return new InjectorMover();
+	}
 
-  virtual protocols::moves::MoverOP clone() const {
-    return new InjectorMover( *this );
-  }
+	virtual protocols::moves::MoverOP clone() const {
+		return new InjectorMover( *this );
+	}
 
 
 private:
 
-  core::Size hash( core::kinematics::FoldTree const& ft ){
-    utility::vector1< std::string > jump_points;
+	core::Size hash( core::kinematics::FoldTree const& ft ){
+		utility::vector1< std::string > jump_points;
 
-    for( Size i = 1; i <= ft.nres(); ++i ){
-      for( Size j = i + 1; j <= ft.nres(); ++j ){
-        if( ft.jump_exists( i, j ) ){
-          jump_points.push_back( utility::to_string( i ) );
-          jump_points.push_back( utility::to_string( j ) );
-        }
-      }
-    }
+		for ( Size i = 1; i <= ft.nres(); ++i ) {
+			for ( Size j = i + 1; j <= ft.nres(); ++j ) {
+				if ( ft.jump_exists( i, j ) ) {
+					jump_points.push_back( utility::to_string( i ) );
+					jump_points.push_back( utility::to_string( j ) );
+				}
+			}
+		}
 
-    core::Size hashvalue = boost::hash_value( utility::join( jump_points, "," ) );
+		core::Size hashvalue = boost::hash_value( utility::join( jump_points, "," ) );
 
-    tr.Info << "Hash calculated: " << hashvalue << std::endl;
+		tr.Info << "Hash calculated: " << hashvalue << std::endl;
 
-    return hashvalue;
-  }
+		return hashvalue;
+	}
 
 };
 
@@ -112,11 +112,11 @@ typedef utility::pointer::owning_ptr< InjectorMover > InjectorMoverOP;
 
 int main( int argc, char** argv ){
 
-  devel::init( argc, argv );
+	devel::init( argc, argv );
 
-  InjectorMoverOP mover = new InjectorMover();
+	InjectorMoverOP mover = new InjectorMover();
 
-  protocols::jd2::JobDistributor::get_instance()->go( mover );
+	protocols::jd2::JobDistributor::get_instance()->go( mover );
 
 
 }

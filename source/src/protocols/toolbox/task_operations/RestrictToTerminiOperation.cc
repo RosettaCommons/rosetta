@@ -38,7 +38,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictToTerminiOperation" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictToTerminiOperation" );
 
 namespace protocols {
 namespace toolbox {

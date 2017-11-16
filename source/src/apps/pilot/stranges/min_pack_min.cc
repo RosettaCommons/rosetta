@@ -64,7 +64,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.stranges.min_pack_min" );
+static basic::Tracer TR( "apps.pilot.stranges.min_pack_min" );
 
 using namespace core;
 using namespace utility;

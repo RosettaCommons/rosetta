@@ -43,7 +43,7 @@
 
 #include <ctime>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.iterative" );
+static basic::Tracer tr( "protocols.iterative" );
 
 using core::Real;
 using namespace core;

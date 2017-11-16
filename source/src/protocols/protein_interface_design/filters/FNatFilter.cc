@@ -66,7 +66,7 @@ FNatFilter::clone() const {
 	return protocols::filters::FilterOP( new FNatFilter( *this ) );
 }
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.FNatFilter" );
+static basic::Tracer TR( "protocols.protein_interface_design.filters.FNatFilter" );
 core::Real
 FNatFilter::compute( core::pose::Pose const & pose ) const
 {

@@ -126,7 +126,7 @@ namespace relax {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR("LocalRelax");
+static basic::Tracer TR("LocalRelax");
 
 
 // XRW TEMP std::string

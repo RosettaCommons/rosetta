@@ -48,7 +48,7 @@ using namespace numeric;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BBConRotMover" );
+static basic::Tracer TR( "protocols.simple_moves.BBConRotMover" );
 
 namespace protocols {
 namespace simple_moves {

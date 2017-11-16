@@ -62,7 +62,6 @@
 #include <ctime>
 
 #include <core/import_pose/import_pose.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -106,7 +105,7 @@ get_residue( std::string name ) {
 	using namespace chemical;
 	using namespace conformation;
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-	if( 1 == name.size() ) name = ((std::string)get_resname1to3()[name]);
+	if ( 1 == name.size() ) name = ((std::string)get_resname1to3()[name]);
 	return ResidueFactory::create_residue( residue_set->name_map(name) );
 }
 
@@ -115,10 +114,10 @@ void
 refine_pose( Pose & pose, int seqpos = 0 ){
 	using namespace core::scoring;
 
-  ScoreFunctionOP sfstd( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+	ScoreFunctionOP sfstd( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	kinematics::MoveMapOP mm = new kinematics::MoveMap;
-	mm->set_bb ( false ); mm->set_chi( true );	mm->set_jump( false );
+	mm->set_bb ( false ); mm->set_chi( true ); mm->set_jump( false );
 	if ( 0 != seqpos ) {
 		mm->set_bb( seqpos, true );
 	}
@@ -128,11 +127,11 @@ refine_pose( Pose & pose, int seqpos = 0 ){
 	pack::task::PackerTaskOP taskstd = pack::task::TaskFactory::create_packer_task( pose );
 	taskstd->restrict_to_repacking();
 	taskstd->or_include_current(true);
-	for( int i = 1; i <= (int)pose.size(); ++i ) {
+	for ( int i = 1; i <= (int)pose.size(); ++i ) {
 		taskstd->nonconst_residue_task(i).or_ex1(true);
 		taskstd->nonconst_residue_task(i).or_ex2(true);
 	}
-	if( 0 != seqpos ) {
+	if ( 0 != seqpos ) {
 		taskstd->nonconst_residue_task(seqpos).or_ex3(true);
 		taskstd->nonconst_residue_task(seqpos).or_ex4(true);
 	}
@@ -154,7 +153,7 @@ mutate_residue( Pose & pose, int const seqpos, std::string res_to ) {
 Real
 packing_score( Pose const & pose, core::Size const rsd_id = 0 )
 {
-	if( 0 == rsd_id ) {
+	if ( 0 == rsd_id ) {
 		Real ps = core::scoring::packstat::compute_packing_score( pose, 1 );
 		return ps;
 	} else {
@@ -165,22 +164,22 @@ packing_score( Pose const & pose, core::Size const rsd_id = 0 )
 
 void
 test_ddg( Pose const orig, std::string pdb, int seqpos,
-					std::string from_res, std::string to_res, Real ddg1, Real ddg2 ) {
+	std::string from_res, std::string to_res, Real ddg1, Real ddg2 ) {
 
 	Pose pose = orig;
 
-	if( get_resname1to3()[from_res] != pose.residue(seqpos).name3() ) {
+	if ( get_resname1to3()[from_res] != pose.residue(seqpos).name3() ) {
 		std::cerr << "bad from_res " << pdb << " " << seqpos << " " << from_res << " " << to_res << std::endl;
 		// std::exit(-1);
 	}
 
- 	Real ps_pre = core::scoring::packstat::compute_residue_packing_scores( pose, 1 )[seqpos];
+	Real ps_pre = core::scoring::packstat::compute_residue_packing_scores( pose, 1 )[seqpos];
 	// dump_pdb(pose,"before.pdb");
 
 	refine_pose(pose,seqpos);
 
 	std::cout << "DDG_PACKSTAT " << pdb    << " " << from_res << " " << seqpos << " "
-						<< to_res << " " << ddg1     << " " << ddg2   << " before ";
+		<< to_res << " " << ddg1     << " " << ddg2   << " before ";
 	Real ps_before = packing_score(pose,seqpos);
 	// dump_pdb(pose,"mid.pdb");
 
@@ -194,10 +193,10 @@ test_ddg( Pose const orig, std::string pdb, int seqpos,
 	// dump_pdb(pose,"after.pdb");
 	//
 	std::cerr << "DDG_PACKSCORE " << pdb
-			<< " " << from_res
-	 		<< " " << seqpos
-			<< " " << to_res
-	    << " ddg " << ddg1 << " " << ddg2 << " packing: " << ps_pre << " " << ps_before << " " << ps_after << std::endl;
+		<< " " << from_res
+		<< " " << seqpos
+		<< " " << to_res
+		<< " ddg " << ddg1 << " " << ddg2 << " packing: " << ps_pre << " " << ps_before << " " << ps_after << std::endl;
 
 }
 
@@ -208,22 +207,22 @@ read_ddg_file( std::string pdb, std::string fname ) {
 	using namespace std;
 	ifstream in( fname.c_str() );
 	char buf[999];
-	while(true) {
+	while ( true ) {
 		in.getline(buf,999);
 		istringstream iss(buf);
 		int num,seqpos;
 		string from,to,tmpstr;
 		Real ddg1,ddg2;
-		if( !(iss >> num >> ddg1 >> ddg2 >> from >> seqpos >> to) )	break;
-		if( from.size() > 1 ) {
+		if ( !(iss >> num >> ddg1 >> ddg2 >> from >> seqpos >> to) ) break;
+		if ( from.size() > 1 ) {
 			std::cerr << "error parsing line: " << pdb << " " << buf << std::endl;
 			continue;
 		}
-		if( (iss >> tmpstr) ) {
+		if ( (iss >> tmpstr) ) {
 			std::cerr << "can only handle one mutation: " << pdb << " " << buf << std::endl;
 			continue; // can only handle one mutation
 		}
-		if( seqpos < 1 || seqpos > (int)orig.size() ) {
+		if ( seqpos < 1 || seqpos > (int)orig.size() ) {
 			std::cerr << "seqpos out of range: " << pdb << " " << buf << std::endl;
 			continue;
 		}
@@ -241,27 +240,27 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	std::string d = "/Users/sheffler/project/packstat/ddg/training_set/";
+		std::string d = "/Users/sheffler/project/packstat/ddg/training_set/";
 
-	// test_ddg( "1bni", 87, "L", "T" );
+		// test_ddg( "1bni", 87, "L", "T" );
 
-	// read_ddg_file( "1bni", d+"1bni-ddG.txt" );
-	// read_ddg_file( "1bvc", d+"1bvc-ddG.txt" );
-	// read_ddg_file( "1fkj", d+"1fkj-ddG.txt" );
-	// read_ddg_file( "1ftg", d+"1ftg-ddG.txt" );
-	// read_ddg_file( "1shf", d+"1shf-ddG.txt" );
-	// read_ddg_file( "1stn", d+"1stn-ddG.txt" );
-	read_ddg_file( "1u5p", d+"1u5p-ddG.txt" );
-	read_ddg_file( "2ci2", d+"2ci2-ddG.txt" );
-	// read_ddg_file( "2lzm", d+"2lzm-ddG.txt" );
-	// read_ddg_file( "5azu", d+"5azu-ddG.txt" );
+		// read_ddg_file( "1bni", d+"1bni-ddG.txt" );
+		// read_ddg_file( "1bvc", d+"1bvc-ddG.txt" );
+		// read_ddg_file( "1fkj", d+"1fkj-ddG.txt" );
+		// read_ddg_file( "1ftg", d+"1ftg-ddG.txt" );
+		// read_ddg_file( "1shf", d+"1shf-ddG.txt" );
+		// read_ddg_file( "1stn", d+"1stn-ddG.txt" );
+		read_ddg_file( "1u5p", d+"1u5p-ddG.txt" );
+		read_ddg_file( "2ci2", d+"2ci2-ddG.txt" );
+		// read_ddg_file( "2lzm", d+"2lzm-ddG.txt" );
+		// read_ddg_file( "5azu", d+"5azu-ddG.txt" );
 
-	return 0;
+		return 0;
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

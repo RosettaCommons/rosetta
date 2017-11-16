@@ -35,19 +35,15 @@
 #include <pwd.h>
 #endif
 
-using basic::T;
-
 //Auto Headers
 #include <utility/vector1.hh>
 
-
 using basic::Error;
 using basic::Warning;
-
 namespace basic {
 namespace database {
 
-static THREAD_LOCAL basic::Tracer TR( "basic.io.database" );
+static basic::Tracer TR( "basic.io.database" );
 
 
 /// @brief Open a database file on a provided stream
@@ -106,7 +102,7 @@ full_name(
 	}
 	// Don't exit -- sometimes caller wants to check if file exists (e.g. Dunbrack .bin file)
 	//utility_exit_with_message("Unable to locate database file "+db_file);
-	if ( warn ) Warning() << "Unable to locate database file " << db_file << std::endl;
+	if ( warn ) TR.Warning << "Unable to locate database file " << db_file << std::endl;
 	return option[ in::path::database ](1).name() + db_file;
 }
 

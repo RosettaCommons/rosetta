@@ -55,7 +55,7 @@
 #include <ObjexxFCL/format.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.rna.RNA_LowResolutionPotential" );
+static basic::Tracer tr( "core.scoring.rna.RNA_LowResolutionPotential" );
 
 namespace core {
 namespace scoring {

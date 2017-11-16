@@ -25,7 +25,7 @@
 #include <ObjexxFCL/format.hh>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.libraries.BasePairStepLibrary" );
+static basic::Tracer TR( "protocols.rna.denovo.libraries.BasePairStepLibrary" );
 
 using namespace protocols::rna::denovo::base_pairs;
 using namespace core;

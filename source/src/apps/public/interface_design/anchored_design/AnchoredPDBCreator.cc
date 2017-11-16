@@ -40,11 +40,10 @@
 
 #include <utility/excn/Exceptions.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchoredPDBCreator" );
+static basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchoredPDBCreator" );
 
 namespace basic { namespace options { namespace OptionKeys {
 namespace AnchoredPDBCreator {

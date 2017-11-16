@@ -38,7 +38,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("StepWisePoseAlignerTest");
+static basic::Tracer TR("StepWisePoseAlignerTest");
 
 
 using namespace core::pose;

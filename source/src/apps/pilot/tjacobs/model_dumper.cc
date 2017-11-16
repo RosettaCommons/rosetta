@@ -37,7 +37,7 @@
 //C++ headers
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR("ModelDumper");
+static basic::Tracer TR("ModelDumper");
 
 int
 main( int argc, char * argv [] ) {

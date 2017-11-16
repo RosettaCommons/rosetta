@@ -49,7 +49,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DockAndRetrieveSidechains" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.DockAndRetrieveSidechains" );
 
 // XRW TEMP std::string
 // XRW TEMP DockAndRetrieveSidechainsCreator::keyname() const

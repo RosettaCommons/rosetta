@@ -51,7 +51,7 @@ using core::Size;
 using core::Real;
 using core::pose::Pose;
 
-static THREAD_LOCAL basic::Tracer tr( "ouputAbego" );
+static basic::Tracer tr( "ouputAbego" );
 
 int main( int argc, char * argv [] ) {
 	try{
@@ -60,23 +60,23 @@ int main( int argc, char * argv [] ) {
 		using core::import_pose::pose_from_file;
 		devel::init(argc, argv);
 		MetaPoseInputStream input = streams_from_cmd_line();
-    		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
-		while(input.has_another_pose()){
+		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
+		while ( input.has_another_pose() ) {
 			core::pose::PoseOP input_poseOP;
 			input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
 			input.fill_pose(*input_poseOP,*rsd_set);
 			std::string tag = core::pose::tag_from_pose(*input_poseOP);
-        		std::string outFile = (tag + ".abego");
-        		utility::io::ozstream output(outFile);
-       		utility::vector1< std::string >  abego_vector = core::sequence::get_abego(*input_poseOP,1);
-       		 for (Size ii=1; ii<=abego_vector.size(); ++ii){
+			std::string outFile = (tag + ".abego");
+			utility::io::ozstream output(outFile);
+			utility::vector1< std::string >  abego_vector = core::sequence::get_abego(*input_poseOP,1);
+			for ( Size ii=1; ii<=abego_vector.size(); ++ii ) {
 				output << abego_vector[ii];
 			}
-       		output.close();
-   		 }
-    } catch ( utility::excn::EXCN_Base const & e ) {
+			output.close();
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
-    }
-    return 0;
+	}
+	return 0;
 }

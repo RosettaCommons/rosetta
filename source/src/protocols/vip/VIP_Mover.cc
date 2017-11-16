@@ -52,7 +52,7 @@ namespace protocols {
 namespace vip {
 
 
-static THREAD_LOCAL basic::Tracer TR( "VIP" );
+static basic::Tracer TR( "VIP" );
 
 VIP_Mover::VIP_Mover() {}
 VIP_Mover::VIP_Mover(

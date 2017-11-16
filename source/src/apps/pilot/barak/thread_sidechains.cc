@@ -47,13 +47,12 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using core::pose::Pose;
 
 
-static THREAD_LOCAL basic::Tracer TR( "thread_sidechains" );
+static basic::Tracer TR( "thread_sidechains" );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,69 +61,69 @@ main( int argc, char * argv [] )
 {
 	try {
 
-  using namespace core;
-  using namespace basic::options;
-  using namespace std;
+		using namespace core;
+		using namespace basic::options;
+		using namespace std;
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  pose::Pose src_pose,trg_pose;
-  Size sfirst_res, tfirst_res, nres;
-  // verify input params
-  if ( !option[ OptionKeys::in::file::native ].user() ||
-    !option[ OptionKeys::out::file::o ].user() ||
-    !option[ OptionKeys::threadsc::src_chain ].user() ||
-    !option[ OptionKeys::threadsc::trg_chain ].user() ||
-    !option[ OptionKeys::threadsc::src_first_resid ].user() ||
-    !option[ OptionKeys::threadsc::trg_first_resid ].user() ||
-    !option[ OptionKeys::threadsc::nres ].user()
-  ) {
-    TR  << "Usage: " << endl <<
-      argv[0] << endl <<
-      "  -in:file:native:<fname> -s <fname> -out:file:o <output_file> " << endl <<
-      "  -threadsc:src_chain:<chain> -threadsc:src_first_resid:<resid> " << endl <<
-      "  -threadsc:trg_chain:<chain> -threadsc:trg_first_resid:<resid>" << endl <<
-			"  -threadsc:nres <nres> -database <minirosetta_db>"  << endl;
-    exit(-1);
-  }
-  // read poses
-  core::import_pose::pose_from_file( trg_pose, basic::options::start_file() , core::import_pose::PDB_file);
-  string native_fname = option[ OptionKeys::in::file::native ];
-  core::import_pose::pose_from_file( src_pose, native_fname, core::import_pose::PDB_file);
-  string output_fname = option[ OptionKeys::out::file::o ];
-  // compute threading range
-  string schain_pdb = option[ OptionKeys::threadsc::src_chain ];
-  string tchain_pdb = option[ OptionKeys::threadsc::trg_chain ];
-  Size sresi_pdb =  option[ OptionKeys::threadsc::src_first_resid ];
-  Size tresi_pdb =  option[ OptionKeys::threadsc::trg_first_resid ];
-  sfirst_res = src_pose.pdb_info()->pdb2pose(schain_pdb[0],sresi_pdb);
-  tfirst_res = trg_pose.pdb_info()->pdb2pose(tchain_pdb[0],tresi_pdb);
-  nres = option[ OptionKeys::threadsc::nres ];
-  // TODO: also verify no overflow within the same chain
-  if(sfirst_res + nres - 1 > src_pose.size() ||
-    tfirst_res + nres - 1 > trg_pose.size()) {
-    TR << "ERROR: specified resiude IDs beyond range" << std::endl;
-    exit(-1);
-  }
+		pose::Pose src_pose,trg_pose;
+		Size sfirst_res, tfirst_res, nres;
+		// verify input params
+		if ( !option[ OptionKeys::in::file::native ].user() ||
+				!option[ OptionKeys::out::file::o ].user() ||
+				!option[ OptionKeys::threadsc::src_chain ].user() ||
+				!option[ OptionKeys::threadsc::trg_chain ].user() ||
+				!option[ OptionKeys::threadsc::src_first_resid ].user() ||
+				!option[ OptionKeys::threadsc::trg_first_resid ].user() ||
+				!option[ OptionKeys::threadsc::nres ].user()
+				) {
+			TR  << "Usage: " << endl <<
+				argv[0] << endl <<
+				"  -in:file:native:<fname> -s <fname> -out:file:o <output_file> " << endl <<
+				"  -threadsc:src_chain:<chain> -threadsc:src_first_resid:<resid> " << endl <<
+				"  -threadsc:trg_chain:<chain> -threadsc:trg_first_resid:<resid>" << endl <<
+				"  -threadsc:nres <nres> -database <minirosetta_db>"  << endl;
+			exit(-1);
+		}
+		// read poses
+		core::import_pose::pose_from_file( trg_pose, basic::options::start_file() , core::import_pose::PDB_file);
+		string native_fname = option[ OptionKeys::in::file::native ];
+		core::import_pose::pose_from_file( src_pose, native_fname, core::import_pose::PDB_file);
+		string output_fname = option[ OptionKeys::out::file::o ];
+		// compute threading range
+		string schain_pdb = option[ OptionKeys::threadsc::src_chain ];
+		string tchain_pdb = option[ OptionKeys::threadsc::trg_chain ];
+		Size sresi_pdb =  option[ OptionKeys::threadsc::src_first_resid ];
+		Size tresi_pdb =  option[ OptionKeys::threadsc::trg_first_resid ];
+		sfirst_res = src_pose.pdb_info()->pdb2pose(schain_pdb[0],sresi_pdb);
+		tfirst_res = trg_pose.pdb_info()->pdb2pose(tchain_pdb[0],tresi_pdb);
+		nres = option[ OptionKeys::threadsc::nres ];
+		// TODO: also verify no overflow within the same chain
+		if ( sfirst_res + nres - 1 > src_pose.size() ||
+				tfirst_res + nres - 1 > trg_pose.size() ) {
+			TR << "ERROR: specified resiude IDs beyond range" << std::endl;
+			exit(-1);
+		}
 
-  // thread residues
-  TR << "Threading residues from [" << native_fname << "] to [" << basic::options::start_file() << "]" << endl;
-  for(Size i=0; i < nres; i++) {
-    Size sresi = sfirst_res + i;
-    Size tresi = tfirst_res + i;
-    if(!src_pose.residue(sresi).is_protein() ||
-      !trg_pose.residue(tresi).is_protein()) {
-      TR << "ERROR: non-protein residue encountered" << std::endl;
-      exit(-1);
-    }
-    conformation::Residue src_res = src_pose.residue(sresi);
-    bool orient_bb = true; // orient new residue to existing backbone
-    trg_pose.replace_residue(tresi,src_res,orient_bb);
-  }
+		// thread residues
+		TR << "Threading residues from [" << native_fname << "] to [" << basic::options::start_file() << "]" << endl;
+		for ( Size i=0; i < nres; i++ ) {
+			Size sresi = sfirst_res + i;
+			Size tresi = tfirst_res + i;
+			if ( !src_pose.residue(sresi).is_protein() ||
+					!trg_pose.residue(tresi).is_protein() ) {
+				TR << "ERROR: non-protein residue encountered" << std::endl;
+				exit(-1);
+			}
+			conformation::Residue src_res = src_pose.residue(sresi);
+			bool orient_bb = true; // orient new residue to existing backbone
+			trg_pose.replace_residue(tresi,src_res,orient_bb);
+		}
 
-  // output overlayed pose
-  TR << "Output to [" << output_fname << "]" << endl;
-  core::io::pdb::dump_pdb(trg_pose, output_fname);
+		// output overlayed pose
+		TR << "Output to [" << output_fname << "]" << endl;
+		core::io::pdb::dump_pdb(trg_pose, output_fname);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

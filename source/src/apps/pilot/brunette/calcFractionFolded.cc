@@ -47,7 +47,7 @@
 
 #include <utility/vector1.hh>
 
- #include <protocols/jumping/util.hh>
+#include <protocols/jumping/util.hh>
 //basic & utility
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -65,7 +65,7 @@ using core::Real;
 using core::pose::Pose;
 using namespace core::sequence;
 
-static THREAD_LOCAL basic::Tracer tr( "calcFractionFolded" );
+static basic::Tracer tr( "calcFractionFolded" );
 
 Real two_region_rmsd(Pose & mod_pose, Pose const & ref_pose, SequenceAlignment aln, Size start_res, Size end_res, Size region2_start_res, Size region2_end_res){
 	using namespace core::sequence;
@@ -74,12 +74,12 @@ Real two_region_rmsd(Pose & mod_pose, Pose const & ref_pose, SequenceAlignment a
 	vector1<Size> mod_pose_positions;
 	vector1<Size> ref_pose_positions;
 	SequenceMapping map = aln.sequence_mapping(2,1);
-	for (Size ii=start_res; ii<= end_res; ++ii){
+	for ( Size ii=start_res; ii<= end_res; ++ii ) {
 		mod_pose_positions.push_back(ii);
 		ref_pose_positions.push_back(map[ii]);
 	}
-	if(region2_start_res != 0){
-		for(Size ii=region2_start_res; ii<=region2_end_res; ++ii){
+	if ( region2_start_res != 0 ) {
+		for ( Size ii=region2_start_res; ii<=region2_end_res; ++ii ) {
 			mod_pose_positions.push_back(ii);
 			ref_pose_positions.push_back(map[ii]);
 		}
@@ -94,60 +94,61 @@ Real two_region_rmsd(Pose & mod_pose, Pose const & ref_pose, SequenceAlignment a
 }
 
 Real region_rmsd(Pose & mod_pose, Pose const & ref_pose, SequenceAlignment aln, Size start_res, Size end_res){
-    return(two_region_rmsd(mod_pose,ref_pose,aln,start_res,end_res,0,0));
+	return(two_region_rmsd(mod_pose,ref_pose,aln,start_res,end_res,0,0));
 }
 int main( int argc, char * argv [] ) {
-    try {
-    using namespace core::sequence;
-	using namespace core::chemical;
-	using namespace core::import_pose::pose_stream;
-	using core::import_pose::pose_from_file;
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-    devel::init(argc, argv);
-    Real threshold = 0.5;
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-    Pose native_pose;
-    pose_from_file(
+	try {
+		using namespace core::sequence;
+		using namespace core::chemical;
+		using namespace core::import_pose::pose_stream;
+		using core::import_pose::pose_from_file;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
+		Real threshold = 0.5;
+		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		Pose native_pose;
+		pose_from_file(
 			native_pose,
 			*rsd_set,
 			option[ in::file::native ]()
-			);
-    SequenceOP native_sequence = new Sequence(native_pose);
-	//create vector of input poses.
-	MetaPoseInputStream input = streams_from_cmd_line();
-    vector1 < vector1 < Real> > rmsd_by_position(native_pose.size()-8);
- 	while(input.has_another_pose()){
-		core::pose::PoseOP input_poseOP;
-		input_poseOP = new core::pose::Pose();
-		input.fill_pose(*input_poseOP,*rsd_set);
-        SequenceOP inputPose_sequence = new Sequence(*input_poseOP);
-        SequenceAlignment native_alignment =  align_naive(native_sequence,inputPose_sequence);
-        for(Size ii=1; ii<=(Size)input_poseOP->size()-8; ++ii){
-            Real rmsd =  region_rmsd(*input_poseOP,native_pose,native_alignment,ii,ii+8);
-            rmsd_by_position[ii].push_back(rmsd);
-        }
-    }
-    std::string out_name = option[ out::file::o ];
-	utility::io::ozstream output(out_name+".foldingStats");
-    output << "pos avgRmsd pctUnder0.5" << std::endl;
-    for(Size ii = 1; ii<= (Size)rmsd_by_position.size(); ++ii){
-        Real ctBelowThreshold = 0;
-        Real totalRmsd = 0;
-        for(Size kk =1; kk <= (Size)rmsd_by_position[ii].size(); ++ kk){
-            //std::cout << ii << " " << rmsd_by_position[ii][kk] << std::endl;
-            totalRmsd += rmsd_by_position[ii][kk];
-            if(rmsd_by_position[ii][kk] <= threshold)
-                ctBelowThreshold += 1.0;
-        }
-        Real avgRmsd = totalRmsd/(Real)rmsd_by_position[ii].size();
-        Real pctBelowThresh = ctBelowThreshold/(Real)rmsd_by_position[ii].size();
-        output << I(4,ii) << F(8,2,avgRmsd) << F(8,2,pctBelowThresh) << std::endl;
-    }
-    } catch ( utility::excn::EXCN_Base const & e ) {
+		);
+		SequenceOP native_sequence = new Sequence(native_pose);
+		//create vector of input poses.
+		MetaPoseInputStream input = streams_from_cmd_line();
+		vector1 < vector1 < Real> > rmsd_by_position(native_pose.size()-8);
+		while ( input.has_another_pose() ) {
+			core::pose::PoseOP input_poseOP;
+			input_poseOP = new core::pose::Pose();
+			input.fill_pose(*input_poseOP,*rsd_set);
+			SequenceOP inputPose_sequence = new Sequence(*input_poseOP);
+			SequenceAlignment native_alignment =  align_naive(native_sequence,inputPose_sequence);
+			for ( Size ii=1; ii<=(Size)input_poseOP->size()-8; ++ii ) {
+				Real rmsd =  region_rmsd(*input_poseOP,native_pose,native_alignment,ii,ii+8);
+				rmsd_by_position[ii].push_back(rmsd);
+			}
+		}
+		std::string out_name = option[ out::file::o ];
+		utility::io::ozstream output(out_name+".foldingStats");
+		output << "pos avgRmsd pctUnder0.5" << std::endl;
+		for ( Size ii = 1; ii<= (Size)rmsd_by_position.size(); ++ii ) {
+			Real ctBelowThreshold = 0;
+			Real totalRmsd = 0;
+			for ( Size kk =1; kk <= (Size)rmsd_by_position[ii].size(); ++ kk ) {
+				//std::cout << ii << " " << rmsd_by_position[ii][kk] << std::endl;
+				totalRmsd += rmsd_by_position[ii][kk];
+				if ( rmsd_by_position[ii][kk] <= threshold ) {
+					ctBelowThreshold += 1.0;
+				}
+			}
+			Real avgRmsd = totalRmsd/(Real)rmsd_by_position[ii].size();
+			Real pctBelowThresh = ctBelowThreshold/(Real)rmsd_by_position[ii].size();
+			output << I(4,ii) << F(8,2,avgRmsd) << F(8,2,pctBelowThresh) << std::endl;
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-    }
+	}
 	return 0;
 }

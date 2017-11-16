@@ -28,7 +28,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ExpiryFilter" );
+static basic::Tracer TR( "protocols.simple_filters.ExpiryFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP ExpiryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ExpiryFilter ); }

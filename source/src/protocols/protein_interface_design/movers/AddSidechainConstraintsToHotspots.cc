@@ -44,8 +44,8 @@ namespace movers {
 using core::pose::Pose;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.AddSidechainConstraintsToHotspots" );
-static THREAD_LOCAL basic::Tracer TR_cst( "protocols.protein_interface_design.movers.AddSidechainConstraintsToHotspots_csts" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.AddSidechainConstraintsToHotspots" );
+static basic::Tracer TR_cst( "protocols.protein_interface_design.movers.AddSidechainConstraintsToHotspots_csts" );
 
 // XRW TEMP std::string
 // XRW TEMP AddSidechainConstraintsToHotspotsCreator::keyname() const

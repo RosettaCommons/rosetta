@@ -41,7 +41,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "devel.matdes.GenericSymmetricSampler" );
+static basic::Tracer TR( "devel.matdes.GenericSymmetricSampler" );
 
 
 namespace devel {

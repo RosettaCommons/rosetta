@@ -95,7 +95,6 @@ using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::id;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
@@ -103,7 +102,7 @@ using utility::file::FileName;
 //kdrew: this app alters chiral configuration of the given pdb strucure
 
 // tracer - used to replace cout
-static THREAD_LOCAL basic::Tracer TR( "LD_CONVERTER" );
+static basic::Tracer TR( "LD_CONVERTER" );
 
 // application specific options
 namespace ld_converter {

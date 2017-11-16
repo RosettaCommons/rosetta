@@ -53,11 +53,10 @@
 
 // C++ Headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core;
-static THREAD_LOCAL basic::Tracer TR( "devel.DenovoProteinDesign.SequenceFitnessMover" );
+static basic::Tracer TR( "devel.DenovoProteinDesign.SequenceFitnessMover" );
 
 namespace devel {
 namespace denovo_protein_design {

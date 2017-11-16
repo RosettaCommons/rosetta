@@ -47,7 +47,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.scoring.VDW_GridEnergy" );
+static basic::Tracer TR( "protocols.scoring.VDW_GridEnergy" );
 
 namespace protocols {
 namespace scoring {

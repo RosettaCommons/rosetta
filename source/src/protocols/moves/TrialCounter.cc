@@ -23,7 +23,7 @@
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.moves.TrialCounter" );
+static basic::Tracer tr( "protocols.moves.TrialCounter" );
 
 namespace protocols {
 namespace moves {

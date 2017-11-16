@@ -38,9 +38,7 @@ namespace core {
 namespace scoring {
 namespace fiber_diffraction {
 
-using basic::T;
-using basic::Tracer;
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.fiber_diffraction.FiberDiffraction" );
+static basic::Tracer TR( "core.scoring.fiber_diffraction.FiberDiffraction" );
 
 using namespace core;
 using namespace basic::options;

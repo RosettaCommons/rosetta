@@ -88,7 +88,7 @@
 #endif // SERIALIZATION
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.hbonds.NPDHBondEnergy" );
+static basic::Tracer TR( "core.scoring.hbonds.NPDHBondEnergy" );
 
 namespace core {
 namespace scoring {

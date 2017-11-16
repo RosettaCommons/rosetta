@@ -13,6 +13,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
+#include <test/core/init_util.hh>
 
 //#include <core/init_util.hh>
 
@@ -27,7 +28,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("numeric.random.random_xyz_cxxtest");
+static basic::Tracer TR("numeric.random.random_xyz_cxxtest");
 
 class random_xyzTests : public CxxTest::TestSuite
 {
@@ -35,6 +36,7 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
+		core_init(); // Needed to setup the tracer and the RNG.
 	}
 
 	// Shared finalization goes here.
@@ -45,8 +47,7 @@ public:
 
 		numeric::Real distance = 5;
 
-		for (int i=0; i <= 100; i++)
-		{
+		for ( int i=0; i <= 100; i++ ) {
 			numeric::xyzVector<numeric::Real> random_point = numeric::random::uniform_vector_sphere(distance);
 			TR << random_point.x() << "," << random_point.y() << "," << random_point.z() << std::endl;
 			TS_ASSERT_LESS_THAN_EQUALS(random_point.length(),5);

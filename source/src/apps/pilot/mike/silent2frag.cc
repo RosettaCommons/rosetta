@@ -41,7 +41,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

@@ -26,7 +26,7 @@
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer TRG( "protocols.antibody.GraftOneCDRLoop" );
+static basic::Tracer TRG( "protocols.antibody.GraftOneCDRLoop" );
 
 namespace protocols {
 namespace antibody {

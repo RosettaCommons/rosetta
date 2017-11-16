@@ -56,7 +56,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
@@ -82,36 +81,36 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
-	using namespace core::scoring::constraints;
-	using namespace basic::options::OptionKeys;
-	using namespace basic::options;
+		// options, random initialization
+		devel::init( argc, argv );
+		using namespace core::scoring::constraints;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::options;
 
-  // setup residue types
-  core::chemical::ResidueTypeSetCAP rsd_set;
-  if ( option[ in::file::fullatom ]() ) {
-    rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-  } else {
-    rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-  }
+		// setup residue types
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		if ( option[ in::file::fullatom ]() ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		} else {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+		}
 
-	// read in a dummy pose
-  core::pose::Pose native_pose;
-  if ( option[ in::file::native ].user() ) {
-    core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
-  }
+		// read in a dummy pose
+		core::pose::Pose native_pose;
+		if ( option[ in::file::native ].user() ) {
+			core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
+		}
 
-  // read in constraints
-  ConstraintSetOP cstset;
-  std::string cstfile = option[ basic::options::OptionKeys::constraints::cst_file ]();
-  cstset = ConstraintIO::get_instance()->read( cstfile, new ConstraintSet, native_pose );
-	utility::vector1< ConstraintCOP > csts = cstset->get_all_constraints();
+		// read in constraints
+		ConstraintSetOP cstset;
+		std::string cstfile = option[ basic::options::OptionKeys::constraints::cst_file ]();
+		cstset = ConstraintIO::get_instance()->read( cstfile, new ConstraintSet, native_pose );
+		utility::vector1< ConstraintCOP > csts = cstset->get_all_constraints();
 
-	for ( utility::vector1< ConstraintCOP >::iterator it = csts.begin(), end = csts.end(); it != end; ++it ) {
-		FuncOP f = it->get_cst_func();
-		f->show_definition( std::cout );
-	}
+		for ( utility::vector1< ConstraintCOP >::iterator it = csts.begin(), end = csts.end(); it != end; ++it ) {
+			FuncOP f = it->get_cst_func();
+			f->show_definition( std::cout );
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -31,7 +31,6 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -41,7 +40,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer MinimizeLigand_tracer( "protocols.ligand_docking.MinimizeLigand", basic::t_debug );
+static basic::Tracer MinimizeLigand_tracer( "protocols.ligand_docking.MinimizeLigand", basic::t_debug );
 
 MinimizeLigand::MinimizeLigand():
 	//utility::pointer::ReferenceCount(),

@@ -37,7 +37,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("BuildDeNovoBackboneMoverTests");
+static basic::Tracer TR("BuildDeNovoBackboneMoverTests");
 
 class BuildDeNovoBackboneMoverTests : public CxxTest::TestSuite {
 	//Define Variables

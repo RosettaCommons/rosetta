@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 /*
- * ApplicationContext.cc
- *
- *  Created on: Jan 13, 2009
- *      Author: dgront
- */
+* ApplicationContext.cc
+*
+*  Created on: Jan 13, 2009
+*      Author: dgront
+*/
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
@@ -43,140 +43,144 @@
 #include <core/pose/annotated_sequence.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "CustomAbinitio" );
+static basic::Tracer tr( "CustomAbinitio" );
 
 OPT_KEY( Boolean, start_native )
 OPT_KEY( File, sf )
 
 void protocols::abinitio::ApplicationContext::register_options() {
 
-  OPT( in::file::native );
-  OPT( in::file::s );
-  OPT( in::file::frag3 );
-  OPT( in::file::frag9 );
-  OPT( in::file::fasta );
-  OPT( out::file::silent );
-  OPT( out::nstruct );
-  NEW_OPT( start_native, "start from extended structure (instead of native)", false );
-  NEW_OPT( sf, "filename for score output", "score.fsc" );
+	OPT( in::file::native );
+	OPT( in::file::s );
+	OPT( in::file::frag3 );
+	OPT( in::file::frag9 );
+	OPT( in::file::fasta );
+	OPT( out::file::silent );
+	OPT( out::nstruct );
+	NEW_OPT( start_native, "start from extended structure (instead of native)", false );
+	NEW_OPT( sf, "filename for score output", "score.fsc" );
 }
 
 namespace protocols {
-  namespace abinitio {
+namespace abinitio {
 
-    using namespace core;
-    using namespace fragment;
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
-    using std::string;
-    using utility::vector1;
+using namespace core;
+using namespace fragment;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+using std::string;
+using utility::vector1;
 
-    ApplicationContext::ApplicationContext() {
+ApplicationContext::ApplicationContext() {
 
-      tr.Info << "staring ApplicationContext" << std::endl;
-      //-------------- SOME INPUT
-      if (option[out::nstruct].user())
-        nStruct_ = std::max(1, option[out::nstruct]());
-      else
-        nStruct_ = 5;
+	tr.Info << "staring ApplicationContext" << std::endl;
+	//-------------- SOME INPUT
+	if ( option[out::nstruct].user() ) {
+		nStruct_ = std::max(1, option[out::nstruct]());
+	} else {
+		nStruct_ = 5;
+	}
 
-      //-------------- I/O SETUP   ---------------------
-      if (option[sf].user()) {
-        tr.Info << "sf noticed at command line" << std::endl;
-        silentScoreFile_ = new io::silent::SilentFileData;
-        silentScoreFile_-> set_filename(std::string(option[sf]()));
-      }
-      //-------------- READ INITIAL POSE
-      // native pose
-      if (option[in::file::native].user()) {
-        nativePose_ = new core::pose::Pose;
-        tr.Info << "in::file::native noticed at command line" << std::endl;
-        core::import_pose::pose_from_file(*nativePose_, option[in::file::native](), core::import_pose::PDB_file);
-        pose::set_ss_from_phipsi(*nativePose_);
-        sequence_ = nativePose_->sequence();
-      }
-      // starting pose
-      startingPose_ = new core::pose::Pose;
-      generateExtendedPose(*startingPose_, sequence_);
+	//-------------- I/O SETUP   ---------------------
+	if ( option[sf].user() ) {
+		tr.Info << "sf noticed at command line" << std::endl;
+		silentScoreFile_ = new io::silent::SilentFileData;
+		silentScoreFile_-> set_filename(std::string(option[sf]()));
+	}
+	//-------------- READ INITIAL POSE
+	// native pose
+	if ( option[in::file::native].user() ) {
+		nativePose_ = new core::pose::Pose;
+		tr.Info << "in::file::native noticed at command line" << std::endl;
+		core::import_pose::pose_from_file(*nativePose_, option[in::file::native](), core::import_pose::PDB_file);
+		pose::set_ss_from_phipsi(*nativePose_);
+		sequence_ = nativePose_->sequence();
+	}
+	// starting pose
+	startingPose_ = new core::pose::Pose;
+	generateExtendedPose(*startingPose_, sequence_);
 
-      if (option[start_native]()) {
-        copyStructure(*startingPose_, *nativePose_);
-      } else if (option[in::file::s].user()) {
-        core::pose::PoseOP tmp_pose(new core::pose::Pose);
-        std::string fn = option[in::file::s](1);
-        core::import_pose::pose_from_file(*tmp_pose, fn, core::import_pose::PDB_file);
-        copyStructure(*startingPose_, *tmp_pose);
-      }
+	if ( option[start_native]() ) {
+		copyStructure(*startingPose_, *nativePose_);
+	} else if ( option[in::file::s].user() ) {
+		core::pose::PoseOP tmp_pose(new core::pose::Pose);
+		std::string fn = option[in::file::s](1);
+		core::import_pose::pose_from_file(*tmp_pose, fn, core::import_pose::PDB_file);
+		copyStructure(*startingPose_, *tmp_pose);
+	}
 
-      //      if (option[in::file::s].user()) {
-      //        tr.Info << "in::file::s noticed at command line" << std::endl;
-      //        std::string fn = option[in::file::s](1);
-      //        core::chemical::ResidueTypeSetCAP rsd_set =
-      //            core::chemical::ChemicalManager::get_instance()->residue_type_set(
-      //                core::chemical::CENTROID);
-      //        core::import_pose::pose_from_file(*startingPose_, *rsd_set, fn, core::import_pose::PDB_file);
-      //      }
+	//      if (option[in::file::s].user()) {
+	//        tr.Info << "in::file::s noticed at command line" << std::endl;
+	//        std::string fn = option[in::file::s](1);
+	//        core::chemical::ResidueTypeSetCAP rsd_set =
+	//            core::chemical::ChemicalManager::get_instance()->residue_type_set(
+	//                core::chemical::CENTROID);
+	//        core::import_pose::pose_from_file(*startingPose_, *rsd_set, fn, core::import_pose::PDB_file);
+	//      }
 
-      if (option[start_native]()) {
-        tr.Info << "start_native noticed at command line" << std::endl;
-        ApplicationContext::copyStructure(*nativePose_, *startingPose_);
-      }
+	if ( option[start_native]() ) {
+		tr.Info << "start_native noticed at command line" << std::endl;
+		ApplicationContext::copyStructure(*nativePose_, *startingPose_);
+	}
 
-      //-------------- READ FRAGMENTS ---------------------
-      //declare fragments file
-      std::string frag_large_file, frag_small_file;
+	//-------------- READ FRAGMENTS ---------------------
+	//declare fragments file
+	std::string frag_large_file, frag_small_file;
 
-      if (option[in::file::fragA].user())
-        frag_large_file = option[in::file::fragA]();
-      else
-        frag_large_file = option[in::file::frag9]();
+	if ( option[in::file::fragA].user() ) {
+		frag_large_file = option[in::file::fragA]();
+	} else {
+		frag_large_file = option[in::file::frag9]();
+	}
 
-      if (option[in::file::fragB].user())
-        frag_small_file = option[in::file::fragB]();
-      else
-        frag_small_file = option[in::file::frag3]();
+	if ( option[in::file::fragB].user() ) {
+		frag_small_file = option[in::file::fragB]();
+	} else {
+		frag_small_file = option[in::file::frag3]();
+	}
 
-      // declare 9mer fragments
-      fragsetLarge_ = FragmentIO().read(frag_large_file);
+	// declare 9mer fragments
+	fragsetLarge_ = FragmentIO().read(frag_large_file);
 
-      // declare 3mer fragments
-      fragsetSmall_ = FragmentIO().read(frag_small_file);
-    }
+	// declare 3mer fragments
+	fragsetSmall_ = FragmentIO().read(frag_small_file);
+}
 
-    void ApplicationContext::generateExtendedPose(
-        core::pose::Pose &extended_pose, std::string  &sequence)  {
+void ApplicationContext::generateExtendedPose(
+	core::pose::Pose &extended_pose, std::string  &sequence)  {
 
-      core::pose::make_pose_from_sequence(extended_pose, sequence,
-          *(chemical::ChemicalManager::get_instance()->residue_type_set(
-              chemical::CENTROID)));
+	core::pose::make_pose_from_sequence(extended_pose, sequence,
+		*(chemical::ChemicalManager::get_instance()->residue_type_set(
+		chemical::CENTROID)));
 
-      // make extended chain
-      for (Size pos = 1; pos <= extended_pose.size(); pos++) {
-        if (!extended_pose.residue(pos).is_protein())
-          continue;
-        extended_pose.set_phi(pos, -150);
-        extended_pose.set_psi(pos, 150);
-        extended_pose.set_omega(pos, 180);
-      }
-    }
+	// make extended chain
+	for ( Size pos = 1; pos <= extended_pose.size(); pos++ ) {
+		if ( !extended_pose.residue(pos).is_protein() ) {
+			continue;
+		}
+		extended_pose.set_phi(pos, -150);
+		extended_pose.set_psi(pos, 150);
+		extended_pose.set_omega(pos, 180);
+	}
+}
 
-    void ApplicationContext::copyStructure(core::pose::Pose &source,
-        core::pose::Pose &destination) {
+void ApplicationContext::copyStructure(core::pose::Pose &source,
+	core::pose::Pose &destination) {
 
-      Size seg_len = std::min(destination.size(),
-          source.size());
-      Size protein_len = 0;
-      for (Size i = 1; i <= seg_len; ++i) {
-        if (destination.residue(i).is_protein()
-            && source.residue(i).is_protein()) {
-          protein_len++;
-        }
-      }
-      seg_len = protein_len;
-      fragment::Frame long_frame(1, seg_len);
-      FragData frag(new BBTorsionSRFD, seg_len);
-      frag.steal(source, long_frame);
-      frag.apply(destination, long_frame);
-    }
-  }
+	Size seg_len = std::min(destination.size(),
+		source.size());
+	Size protein_len = 0;
+	for ( Size i = 1; i <= seg_len; ++i ) {
+		if ( destination.residue(i).is_protein()
+				&& source.residue(i).is_protein() ) {
+			protein_len++;
+		}
+	}
+	seg_len = protein_len;
+	fragment::Frame long_frame(1, seg_len);
+	FragData frag(new BBTorsionSRFD, seg_len);
+	frag.steal(source, long_frame);
+	frag.apply(destination, long_frame);
+}
+}
 }

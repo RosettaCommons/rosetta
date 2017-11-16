@@ -29,7 +29,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("ConnectionArchitectTests");
+static basic::Tracer TR("ConnectionArchitectTests");
 
 using namespace protocols::denovo_design::architects;
 using namespace protocols::denovo_design::components;

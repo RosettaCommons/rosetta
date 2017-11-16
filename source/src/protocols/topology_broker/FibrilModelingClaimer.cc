@@ -49,7 +49,7 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.topo_broker.fibril_modeling", basic::t_info );
+static basic::Tracer tr( "protocols.topo_broker.fibril_modeling", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {

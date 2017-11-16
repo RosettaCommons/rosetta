@@ -95,7 +95,7 @@ namespace perturb {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_KIC" );
+static basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_KIC" );
 
 LoopMover_Perturb_KIC::LoopMover_Perturb_KIC() :
 	IndependentLoopMover()

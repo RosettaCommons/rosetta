@@ -17,7 +17,7 @@
 //#include <core/scoring/hbonds/HBondSet.hh>
 #include <core/types.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.hbonds.graph.HBondGraph" );
+static basic::Tracer TR( "core.scoring.hbonds.graph.HBondGraph" );
 
 namespace core {
 namespace scoring {

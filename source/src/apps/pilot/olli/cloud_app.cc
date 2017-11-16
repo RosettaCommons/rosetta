@@ -38,7 +38,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;

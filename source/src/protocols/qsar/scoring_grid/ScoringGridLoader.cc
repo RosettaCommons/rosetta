@@ -36,7 +36,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.qsar.scoring_grid.ScoringGridLoader" );
+static basic::Tracer TR( "protocols.qsar.scoring_grid.ScoringGridLoader" );
 
 ScoringGridLoader::ScoringGridLoader() {}
 ScoringGridLoader::~ScoringGridLoader() {}

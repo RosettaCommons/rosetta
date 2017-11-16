@@ -67,7 +67,7 @@
 namespace protocols {
 namespace enzdes {
 
-static THREAD_LOCAL basic::Tracer mv_tr( "protocols.enzdes.PredesignPerturbMover" );
+static basic::Tracer mv_tr( "protocols.enzdes.PredesignPerturbMover" );
 //PredesignPerturbMoverCreator
 
 EnzdesConstraintReporter::EnzdesConstraintReporter() : utility::pointer::ReferenceCount(),

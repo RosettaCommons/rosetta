@@ -29,7 +29,7 @@ namespace legacy_sewing  {
 namespace sampling {
 namespace requirements {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.legacy_sewing.sampling.requirements.LegacySegmentDsspRequirement");
+static basic::Tracer TR("protocols.legacy_sewing.sampling.requirements.LegacySegmentDsspRequirement");
 
 //////Creator methods/////
 LegacyIntraSegmentRequirementOP

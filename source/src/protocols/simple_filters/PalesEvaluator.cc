@@ -38,7 +38,7 @@
 #define system(a) 1
 #endif
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filter.PalesEvaluator" );
+static basic::Tracer tr( "protocols.simple_filter.PalesEvaluator" );
 
 namespace protocols {
 namespace simple_filters {

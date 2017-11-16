@@ -110,9 +110,8 @@
 
 
 #include <basic/Tracer.hh>
-using basic::T;
 
-static THREAD_LOCAL basic::Tracer TR( "swa_protein_main" );
+static basic::Tracer TR( "swa_protein_main" );
 
 // option key includes
 

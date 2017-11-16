@@ -46,7 +46,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.UnbiasedRigidBodyMover" );
+static basic::Tracer tr( "devel.replica_docking.UnbiasedRigidBodyMover" );
 
 namespace devel {
 namespace replica_docking {

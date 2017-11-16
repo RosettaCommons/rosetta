@@ -26,7 +26,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.EnableMultiCoolAnnealer" );
+static basic::Tracer TR( "core.pack.task.operation.EnableMultiCoolAnnealer" );
 
 namespace core {
 namespace pack {

@@ -46,7 +46,7 @@
 
 // ObjexxFCL Headers
 
-static THREAD_LOCAL basic::Tracer TR( "devel.matdes.StoreQuasiSymmetricTaskMover" );
+static basic::Tracer TR( "devel.matdes.StoreQuasiSymmetricTaskMover" );
 
 namespace devel {
 namespace matdes {

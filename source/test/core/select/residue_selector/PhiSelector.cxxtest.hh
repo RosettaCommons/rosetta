@@ -36,7 +36,7 @@
 
 using namespace core::select::residue_selector;
 
-static THREAD_LOCAL basic::Tracer TR("PhiSelectorTests");
+static basic::Tracer TR("PhiSelectorTests");
 
 class PhiSelectorTests : public CxxTest::TestSuite {
 

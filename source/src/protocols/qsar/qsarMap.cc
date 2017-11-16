@@ -30,7 +30,7 @@ qsarMap::~qsarMap() = default;
 /// @details Auto-generated virtual destructor
 qsarPoint::~qsarPoint() = default;
 
-static THREAD_LOCAL basic::Tracer qsarMapTracer( "protocols.qsar.qsarMap" );
+static basic::Tracer qsarMapTracer( "protocols.qsar.qsarMap" );
 
 
 qsarPoint::qsarPoint(std::string type, core::Real value, std::string name, core::conformation::ResidueOP residue ):

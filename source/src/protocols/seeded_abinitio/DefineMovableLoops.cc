@@ -56,7 +56,7 @@
 
 using namespace core;
 using namespace protocols::seeded_abinitio;
-static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.DefineMovableLoops" );
+static basic::Tracer TR( "protocols.seeded_abinitio.DefineMovableLoops" );
 
 
 namespace protocols {

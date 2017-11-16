@@ -32,7 +32,7 @@
 #include <basic/Tracer.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody" );
+static basic::Tracer TR( "protocols.antibody" );
 
 
 int

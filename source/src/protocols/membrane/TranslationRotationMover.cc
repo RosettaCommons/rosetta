@@ -60,7 +60,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.TranslationRotationMover" );
+static basic::Tracer TR( "protocols.membrane.TranslationRotationMover" );
 
 namespace protocols {
 namespace membrane {

@@ -56,7 +56,7 @@
 namespace protocols {
 namespace comparative_modeling {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.extra_threading" );
+static basic::Tracer tr( "protocols.comparative_modeling.extra_threading" );
 
 ExtraThreadingMover::ExtraThreadingMover(
 	core::sequence::SequenceAlignment const & align,

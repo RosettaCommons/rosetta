@@ -32,7 +32,7 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.ConstraintsMap" );
+static basic::Tracer TR( "protocols.constraint_generator.ConstraintsMap" );
 
 
 namespace protocols {

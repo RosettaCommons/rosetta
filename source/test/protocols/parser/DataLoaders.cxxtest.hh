@@ -43,7 +43,7 @@
 #include <string>
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.jd2.parser.DataLoaders.cxxtest");
+static basic::Tracer TR("protocols.jd2.parser.DataLoaders.cxxtest");
 ////////////////////////////////////////////////////////////////////////
 // Tests
 

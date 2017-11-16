@@ -37,7 +37,7 @@ namespace jd2 {
 using namespace core;
 using namespace utility::io::mpi_stream;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.MpiFileBuffer" );
+static basic::Tracer tr( "protocols.jd2.MpiFileBuffer" );
 
 /// @details this is a implementation of Buffer for silent-file-based output.
 std::string const START_BLOCK( "MPI_FILE_BUFFER_BLOCK_START" );

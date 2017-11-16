@@ -41,7 +41,7 @@
 #include <basic/Tracer.hh>
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR("FlipChiralityMover");
+static basic::Tracer TR("FlipChiralityMover");
 
 
 class FlipChiralityMover : public CxxTest::TestSuite {

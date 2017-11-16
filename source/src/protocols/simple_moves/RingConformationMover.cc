@@ -47,7 +47,7 @@
 
 
 // Construct tracers.
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.RingConformationMover" );
+static basic::Tracer TR( "protocols.simple_moves.RingConformationMover" );
 
 
 namespace protocols {

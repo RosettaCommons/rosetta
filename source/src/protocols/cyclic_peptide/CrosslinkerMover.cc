@@ -48,7 +48,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.CrosslinkerMover" );
+static basic::Tracer TR( "protocols.cyclic_peptide.CrosslinkerMover" );
 
 namespace protocols {
 namespace cyclic_peptide {

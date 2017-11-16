@@ -41,7 +41,7 @@
 #include <set>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.list_accpt_pos" );
+static basic::Tracer TR( "apps.pilot.list_accpt_pos" );
 
 using core::Size;
 using core::Real;

@@ -73,9 +73,8 @@ namespace protocols {
 namespace toolbox {
 namespace pose_manipulation {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.pose_manipulation" );
-static THREAD_LOCAL basic::Tracer TR_DI( "protocols.toolbox.pose_manipulation.insert_pose_into_pose" );
-using basic::T;
+static basic::Tracer TR( "protocols.toolbox.pose_manipulation" );
+static basic::Tracer TR_DI( "protocols.toolbox.pose_manipulation.insert_pose_into_pose" );
 using basic::Error;
 using basic::Warning;
 using core::chemical::ResidueType;

@@ -26,7 +26,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.remodelconstraintgenerator" );
+static basic::Tracer TR( "protocols.forge.remodel.remodelconstraintgenerator" );
 namespace protocols {
 namespace forge {
 namespace remodel {

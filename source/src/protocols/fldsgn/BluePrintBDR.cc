@@ -71,7 +71,7 @@ namespace protocols {
 namespace fldsgn {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.BluePrintBDR" );
+static basic::Tracer TR( "protocols.fldsgn.BluePrintBDR" );
 
 /// @brief default constructor
 BluePrintBDR::BluePrintBDR() :

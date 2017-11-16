@@ -55,7 +55,7 @@ using namespace std;
 using core::Size;
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicPerturber" );
+static basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicPerturber" );
 
 KinematicPerturber::KinematicPerturber() :
 	max_sample_iterations_( basic::options::option[ basic::options::OptionKeys::loops::max_kic_perturber_samples ]() )

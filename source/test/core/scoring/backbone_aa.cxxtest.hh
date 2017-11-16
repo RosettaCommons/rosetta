@@ -45,7 +45,7 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.BackboneAATests.cxxtest");
+static basic::Tracer TR("core.scoring.BackboneAATests.cxxtest");
 
 class BackboneAATests : public CxxTest::TestSuite {
 

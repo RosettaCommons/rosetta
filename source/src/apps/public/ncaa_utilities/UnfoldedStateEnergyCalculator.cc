@@ -66,7 +66,7 @@ using namespace basic::options::OptionKeys;
 
 using namespace protocols::unfolded_state_energy_calculator;
 
-using basic::T;
+static basic::Tracer TR("UnfoldedStateEnergyCalculator");
 
 // Local options
 namespace usec {
@@ -136,7 +136,7 @@ main( int argc, char* argv[] )
 		// call job distributor with mover
 		jd.go( usecm );
 
-		T("UnfoldedStateEnergyCalculator") << "\n+-----------------------------------------------------------------+\n"
+		TR << "\n+-----------------------------------------------------------------+\n"
 			<<   "|                              DONE                               |\n"
 			<<   "+-----------------------------------------------------------------+" << std::endl;
 

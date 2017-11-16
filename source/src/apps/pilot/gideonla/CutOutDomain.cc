@@ -63,7 +63,6 @@
 #include <basic/options/keys/cutoutdomain.OptionKeys.gen.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 clock_t clk1; //for timing the process

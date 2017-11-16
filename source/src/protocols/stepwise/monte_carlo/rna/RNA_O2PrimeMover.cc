@@ -37,7 +37,7 @@ using core::Real;
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_O2PrimeMover" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_O2PrimeMover" );
 
 namespace protocols {
 namespace stepwise {

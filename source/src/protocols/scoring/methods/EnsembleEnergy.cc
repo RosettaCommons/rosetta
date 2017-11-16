@@ -33,11 +33,10 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.scoring.methods.EnsembleEnergy" );
+static basic::Tracer TR( "protocols.scoring.methods.EnsembleEnergy" );
 
 
 // C++

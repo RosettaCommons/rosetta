@@ -37,7 +37,7 @@
 #include <core/conformation/Residue.hh>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.FabConstraint" );
+static basic::Tracer TR( "core.scoring.constraints.FabConstraint" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

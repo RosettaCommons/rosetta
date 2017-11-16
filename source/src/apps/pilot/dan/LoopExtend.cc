@@ -46,72 +46,71 @@
 #include <core/import_pose/import_pose.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 //replaces cout
-static THREAD_LOCAL basic::Tracer tr( "apps.pilot.dan.LoopExtend" );
+static basic::Tracer tr( "apps.pilot.dan.LoopExtend" );
 
 /// @brief main method for loop extension.
 int
 main( int argc, char* argv[] )
 {
-    try {
-	using protocols::loops::Loops;
-	using protocols::loops::Loop;
-	devel::init(argc, argv);
+	try {
+		using protocols::loops::Loops;
+		using protocols::loops::Loop;
+		devel::init(argc, argv);
 
-	// read pdb file
-	core::pose::Pose pose;
-	core::import_pose::pose_from_file( pose, core::options::option[ basic::options::OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
+		// read pdb file
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, core::options::option[ basic::options::OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
 
-	// read loops file
-	protocols::loops::Loops loops;
-	loops.read_loop_file( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value()[1] );
-	tr << "initial loops " << loops << std::flush;
+		// read loops file
+		protocols::loops::Loops loops;
+		loops.read_loop_file( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value()[1] );
+		tr << "initial loops " << loops << std::flush;
 
-	//check that cutpoint is not outside the loop and if necessary notify user that only first loop is used
-	Loop extend_loop( *(loops.v_begin()) ); // make a local copy of the loop
+		//check that cutpoint is not outside the loop and if necessary notify user that only first loop is used
+		Loop extend_loop( *(loops.v_begin()) ); // make a local copy of the loop
 
-	if ( (extend_loop.cut() < extend_loop.start()) || (extend_loop.cut() >= extend_loop.stop() ) ) {
-		tr << "Problem with loop: " << extend_loop << std::endl;
-		utility_exit_with_message("Cutpoint must be between loop start and end-1 for extension");
-	}
-	/*
-	for( Loops::iterator it=loops.v_begin(), it_end=loops.v_end(); it != it_end; ++it ){
-		if( (it->cut() < it->start()) || (it->cut() >= it->stop()) ) { // the cutpoint is not within the loop
-			Loop loop( *it );
-			tr << "Problem with loop: " << loop << std::endl;
+		if ( (extend_loop.cut() < extend_loop.start()) || (extend_loop.cut() >= extend_loop.stop() ) ) {
+			tr << "Problem with loop: " << extend_loop << std::endl;
 			utility_exit_with_message("Cutpoint must be between loop start and end-1 for extension");
+		}
+		/*
+		for( Loops::iterator it=loops.v_begin(), it_end=loops.v_end(); it != it_end; ++it ){
+		if( (it->cut() < it->start()) || (it->cut() >= it->stop()) ) { // the cutpoint is not within the loop
+		Loop loop( *it );
+		tr << "Problem with loop: " << loop << std::endl;
+		utility_exit_with_message("Cutpoint must be between loop start and end-1 for extension");
 		}
 
 		if (it != loops.v_begin()) {
-			tr << "Ignoring loop: " << it.begin() << std::endl;
-			tr << "Note: LoopExtend protocol only uses first loop definition in loop file" << std::endl;
+		tr << "Ignoring loop: " << it.begin() << std::endl;
+		tr << "Note: LoopExtend protocol only uses first loop definition in loop file" << std::endl;
 		}
 
-	}
-	*/
-	//get the loop to extend
-	//protocols::loops::Loop loop=loops.begin();
+		}
+		*/
+		//get the loop to extend
+		//protocols::loops::Loop loop=loops.begin();
 
-	// get the length of the insertion
-	core::Size extend_len = basic::options::option[ basic::options::OptionKeys::loops::extend_length ]();
-	// do the insertion
-	devel::loop_extend::LoopExtendMover extend_mover( extend_loop, extend_len );
-	extend_mover.apply(pose);
-	// get the output filename
-	std::string outfile(
-						basic::options::option[ basic::options::OptionKeys::out::path::path ]().name() + "/" +
-						basic::options::option[ basic::options::OptionKeys::out::prefix ] + ".pdb"
-						);
-	pose.dump_pdb(outfile);
-	tr << "success" << std::endl;
+		// get the length of the insertion
+		core::Size extend_len = basic::options::option[ basic::options::OptionKeys::loops::extend_length ]();
+		// do the insertion
+		devel::loop_extend::LoopExtendMover extend_mover( extend_loop, extend_len );
+		extend_mover.apply(pose);
+		// get the output filename
+		std::string outfile(
+			basic::options::option[ basic::options::OptionKeys::out::path::path ]().name() + "/" +
+			basic::options::option[ basic::options::OptionKeys::out::prefix ] + ".pdb"
+		);
+		pose.dump_pdb(outfile);
+		tr << "success" << std::endl;
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 }

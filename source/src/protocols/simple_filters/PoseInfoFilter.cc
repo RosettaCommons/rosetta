@@ -33,7 +33,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.filters.PoseInfoFilter" );
+static basic::Tracer TR( "protocols.filters.PoseInfoFilter" );
 
 /// @brief default ctor
 PoseInfoFilter::PoseInfoFilter() :

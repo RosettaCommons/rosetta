@@ -66,7 +66,7 @@ typedef utility::vector1< bool > bools;
 using namespace std;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.evolution.AlignmentGapInserter" );
+static basic::Tracer TR( "protocols.evolution.AlignmentGapInserter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP AlignmentGapInserterFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AlignmentGapInserter ); }

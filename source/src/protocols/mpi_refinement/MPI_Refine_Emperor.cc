@@ -51,7 +51,7 @@ namespace mpi_refinement {
 
 using namespace protocols::wum;
 
-static THREAD_LOCAL basic::Tracer TR("MPI.LHR.E");
+static basic::Tracer TR("MPI.LHR.E");
 
 void
 MPI_Refine_Emperor::set_defaults(){

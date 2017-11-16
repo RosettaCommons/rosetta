@@ -64,7 +64,7 @@ using namespace protocols::moves;
 using namespace protocols::forge::build;
 using namespace protocols::forge::components;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.VLB" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.VLB" );
 
 // XRW TEMP std::string
 // XRW TEMP VLBCreator::keyname() const

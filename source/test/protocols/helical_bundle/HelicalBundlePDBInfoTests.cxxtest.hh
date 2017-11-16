@@ -31,7 +31,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("HelicalBundlePDBInfoTests");
+static basic::Tracer TR("HelicalBundlePDBInfoTests");
 
 
 class HelicalBundlePDBInfoTests : public CxxTest::TestSuite {

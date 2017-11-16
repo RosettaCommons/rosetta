@@ -33,7 +33,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.io.PDB_w_lipids_IO.cxxtest");
+static basic::Tracer TR("core.io.PDB_w_lipids_IO.cxxtest");
 
 using namespace core;
 

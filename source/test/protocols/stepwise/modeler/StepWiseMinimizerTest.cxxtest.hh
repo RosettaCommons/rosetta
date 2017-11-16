@@ -41,7 +41,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("StepWiseMinimizerTest");
+static basic::Tracer TR("StepWiseMinimizerTest");
 
 
 class StepWiseMinimizerTest : public CxxTest::TestSuite {

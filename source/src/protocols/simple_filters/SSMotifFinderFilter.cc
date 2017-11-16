@@ -44,7 +44,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.SSMotifFinder" );
+static basic::Tracer TR( "protocols.simple_filters.SSMotifFinder" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP SSMotifFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SSMotifFinder ); }

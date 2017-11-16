@@ -66,47 +66,47 @@ using namespace basic::options::OptionKeys;
 using namespace core::scoring::constraints;
 using namespace core::chemical;
 
-static THREAD_LOCAL basic::Tracer tr( "brunette.predictedCstFilter" );
+static basic::Tracer tr( "brunette.predictedCstFilter" );
 
 
 int main( int argc, char * argv [] ) {
-  try {
+	try {
 
-  using core::sequence::read_fasta_file;
-  devel::init( argc, argv );
-  //step 1: read in fasta,alignment,template,csts
-  map< string, Pose > templateData = poses_from_cmd_line(
-						     option[ in::file::template_pdb ]());
-  map< string, SequenceAlignment> alnDataMapped = input_alignmentsMapped(true);
-  string query_sequence (
-	read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence()	);
-  core::pose::Pose query_pose;
-  core::pose::make_pose_from_sequence(
-			      query_pose, query_sequence, *(rsd_set_from_cmd_line())
-			      );
-  ConstraintSetOP sigmoid_cstset
-    = core::scoring::constraints::ConstraintIO::read_constraints(
-	 core::scoring::constraints::get_cst_file_option(),
-	 new core::scoring::constraints::ConstraintSet,query_pose);
-  map< string, Pose> partialThreadsMapped = generate_partial_threads(alnDataMapped,templateData,query_sequence,true);
-  std::cout << "name" << partialThreadsMapped.begin()->first << std::endl;
-  partialThreadsMapped.begin()->second;
- vector1<core::Real> burial =  calculate_surface_exposure(partialThreadsMapped.begin()->second);
-  //step 2: reduce sigmoid constraints in following ways
-  // option 1: gap, top N csts
-  // option 2: gap, all csts
-  // option 3: gap, top N csts, surface exposed
-  // option 4: gap, all csts, surface exposed
-  // option 5: gap, all csts, surface exposed, seperated into cohesive contact collections.
-  //step 3: output sigmoid csts.
+		using core::sequence::read_fasta_file;
+		devel::init( argc, argv );
+		//step 1: read in fasta,alignment,template,csts
+		map< string, Pose > templateData = poses_from_cmd_line(
+			option[ in::file::template_pdb ]());
+		map< string, SequenceAlignment> alnDataMapped = input_alignmentsMapped(true);
+		string query_sequence (
+			read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence() );
+		core::pose::Pose query_pose;
+		core::pose::make_pose_from_sequence(
+			query_pose, query_sequence, *(rsd_set_from_cmd_line())
+		);
+		ConstraintSetOP sigmoid_cstset
+			= core::scoring::constraints::ConstraintIO::read_constraints(
+			core::scoring::constraints::get_cst_file_option(),
+			new core::scoring::constraints::ConstraintSet,query_pose);
+		map< string, Pose> partialThreadsMapped = generate_partial_threads(alnDataMapped,templateData,query_sequence,true);
+		std::cout << "name" << partialThreadsMapped.begin()->first << std::endl;
+		partialThreadsMapped.begin()->second;
+		vector1<core::Real> burial =  calculate_surface_exposure(partialThreadsMapped.begin()->second);
+		//step 2: reduce sigmoid constraints in following ways
+		// option 1: gap, top N csts
+		// option 2: gap, all csts
+		// option 3: gap, top N csts, surface exposed
+		// option 4: gap, all csts, surface exposed
+		// option 5: gap, all csts, surface exposed, seperated into cohesive contact collections.
+		//step 3: output sigmoid csts.
 
-  } catch ( utility::excn::EXCN_Base const & e ) {
-    std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-  }
+	}
 
-  return 0;
+	return 0;
 }
 
 
-  //core::scoring::constraints::ConstraintIO::write_constraints(std::cout,*sigmoid_cstset,query_pose);
+//core::scoring::constraints::ConstraintIO::write_constraints(std::cout,*sigmoid_cstset,query_pose);

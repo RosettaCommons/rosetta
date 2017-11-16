@@ -26,7 +26,7 @@
 // Protocol headers
 #include <protocols/loophash/LoopHashLibrary.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loop_modeler.perturbers.LoopHashPerturber" );
+static basic::Tracer TR( "protocols.loop_modeler.perturbers.LoopHashPerturber" );
 
 namespace protocols {
 namespace loop_modeler {

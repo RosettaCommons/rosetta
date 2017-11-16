@@ -51,7 +51,7 @@ namespace protocols {
 namespace simple_moves {
 namespace bin_transitions {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.bin_transitions.PerturbByBins" );
+static basic::Tracer TR( "protocols.simple_moves.bin_transitions.PerturbByBins" );
 
 // XRW TEMP std::string
 // XRW TEMP PerturbByBinsCreator::keyname() const

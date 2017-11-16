@@ -52,7 +52,7 @@
 #include <boost/assign.hpp>
 
 // C++ headers
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.Connection.cxxtest" );
+static basic::Tracer TR( "protocols.denovo_design.Connection.cxxtest" );
 
 namespace protocols {
 namespace denovo_design {

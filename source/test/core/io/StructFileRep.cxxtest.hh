@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.io.StructFileRep.cxxtest");
+static basic::Tracer TR("core.io.StructFileRep.cxxtest");
 
 class StructFileRepTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////

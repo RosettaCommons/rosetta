@@ -34,7 +34,7 @@
 #include <utility/fixedsizearray1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.AtomPairConstraintGenerator" );
+static basic::Tracer TR( "protocols.constraint_generator.AtomPairConstraintGenerator" );
 
 namespace protocols {
 namespace constraint_generator {

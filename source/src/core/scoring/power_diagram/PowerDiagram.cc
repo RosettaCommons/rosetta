@@ -38,7 +38,7 @@
 #include <iterator>
 #include <functional>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.power_diagram.PowerDiagram" );
+static basic::Tracer TR( "core.scoring.power_diagram.PowerDiagram" );
 
 using namespace ObjexxFCL::format;
 using namespace core;

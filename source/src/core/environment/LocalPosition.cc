@@ -28,7 +28,7 @@
 
 // ObjexxFCL Headers
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.environment.LocalPosition", basic::t_info );
+static basic::Tracer tr( "protocols.environment.LocalPosition", basic::t_info );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

@@ -34,7 +34,7 @@
 
 // ObjexxFCL Headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SavePoseMover" );
+static basic::Tracer TR( "protocols.simple_moves.SavePoseMover" );
 
 namespace protocols {
 namespace rosetta_scripts {

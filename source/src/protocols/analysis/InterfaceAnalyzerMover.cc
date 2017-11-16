@@ -93,13 +93,12 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.analysis.InterfaceAnalyzerMover" );
-static THREAD_LOCAL basic::Tracer TRinterface( "protocols.analysis.InterfaceAnalyzerMover.interface_selection" );
-static THREAD_LOCAL basic::Tracer TRhbonds( "protocols.analysis.InterfaceAnalyzerMover.missing_hbonds" );
+static basic::Tracer TR( "protocols.analysis.InterfaceAnalyzerMover" );
+static basic::Tracer TRinterface( "protocols.analysis.InterfaceAnalyzerMover.interface_selection" );
+static basic::Tracer TRhbonds( "protocols.analysis.InterfaceAnalyzerMover.missing_hbonds" );
 
 
 ///stupid helper function needed because ternary operator does not allow variable return types
@@ -706,7 +705,7 @@ void InterfaceAnalyzerMover::register_calculators()
 	//this sucks but I can't figure out a way to iterate...
 	Sasa_ = "Sasa_" + ijump;
 	if ( CalculatorFactory::Instance().check_calculator_exists( Sasa_ ) ) {
-		Warning() << "In InterfaceAnalyzerMover, calculator " << Sasa_
+		TR.Warning << "In InterfaceAnalyzerMover, calculator " << Sasa_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		CalculatorFactory::Instance().register_calculator( Sasa_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::SasaCalculator2 ) );
@@ -714,7 +713,7 @@ void InterfaceAnalyzerMover::register_calculators()
 
 	InterfaceNeighborDefinition_ = "InterfaceNeighborDefinition_" + ijump;
 	if ( CalculatorFactory::Instance().check_calculator_exists( InterfaceNeighborDefinition_ ) ) {
-		Warning() << "In InterfaceAnalyzerMover, calculator " << InterfaceNeighborDefinition_
+		TR.Warning << "In InterfaceAnalyzerMover, calculator " << InterfaceNeighborDefinition_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		CalculatorFactory::Instance().register_calculator( InterfaceNeighborDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1_, chain2_ ) ) );
@@ -722,7 +721,7 @@ void InterfaceAnalyzerMover::register_calculators()
 
 	InterfaceSasaDefinition_ = "InterfaceSasaDefinition_" + ijump;
 	if ( CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ) {
-		Warning() << "In InterfaceAnalyzerMover, calculator " << InterfaceSasaDefinition_
+		TR.Warning << "In InterfaceAnalyzerMover, calculator " << InterfaceSasaDefinition_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( chain1_, chain2_ ) ) );
@@ -730,7 +729,7 @@ void InterfaceAnalyzerMover::register_calculators()
 
 	InterfaceDeltaEnergetics_ = "InterfaceDeltaEnergetics_" + ijump;
 	if ( CalculatorFactory::Instance().check_calculator_exists( InterfaceDeltaEnergetics_ ) ) {
-		Warning() << "In InterfaceAnalyzerMover, calculator " << InterfaceDeltaEnergetics_
+		TR.Warning << "In InterfaceAnalyzerMover, calculator " << InterfaceDeltaEnergetics_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		CalculatorFactory::Instance().register_calculator( InterfaceDeltaEnergetics_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( InterfaceNeighborDefinition_ ) ) );
@@ -738,7 +737,7 @@ void InterfaceAnalyzerMover::register_calculators()
 
 	NumberHBonds_ = "NumberHBonds_" + ijump;
 	if ( CalculatorFactory::Instance().check_calculator_exists( NumberHBonds_ ) ) {
-		Warning() << "In InterfaceAnalyzerMover, calculator " << NumberHBonds_
+		TR.Warning << "In InterfaceAnalyzerMover, calculator " << NumberHBonds_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		CalculatorFactory::Instance().register_calculator( NumberHBonds_, PoseMetricCalculatorOP( new NumberHBondsCalculator ) );
@@ -746,7 +745,7 @@ void InterfaceAnalyzerMover::register_calculators()
 
 	BuriedUnsatisfiedPolars_ = "BuriedUnsatisfiedPolars_" + ijump;
 	if ( CalculatorFactory::Instance().check_calculator_exists( BuriedUnsatisfiedPolars_ ) ) {
-		Warning() << "In InterfaceAnalyzerMover, calculator " << BuriedUnsatisfiedPolars_
+		TR.Warning << "In InterfaceAnalyzerMover, calculator " << BuriedUnsatisfiedPolars_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		CalculatorFactory::Instance().register_calculator( BuriedUnsatisfiedPolars_, PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator( Sasa_, NumberHBonds_) ) );
@@ -1545,9 +1544,10 @@ void InterfaceAnalyzerMover::setup_score_data() {
 
 /// @details reports all the cool stuff we calculate to tracer output OR puts it into the job object.
 void InterfaceAnalyzerMover::report_data(){
+	basic::TracerImpl my_tr(posename_base_);
 	//make output
 	//std::ostringstream results_oss;
-	//std::ostream & results = which_ostream(T(posename_base_), results_oss, tracer_); //easy swap between tracer/job output
+	//std::ostream & results = which_ostream(my_tr, results_oss, tracer_); //easy swap between tracer/job output
 
 	//std::ostringstream interface_sele, missingHbond;
 
@@ -1555,31 +1555,31 @@ void InterfaceAnalyzerMover::report_data(){
 	//report to job
 	if ( tracer_ ) {
 		//TR<<"Debugging print interface info:" << std::endl;
-		T( posename_base_ ) << "TOTAL SASA: " << data_.complexed_SASA << std::endl;
-		T( posename_base_ ) << "NUMBER OF RESIDUES: " << data_.interface_nres[ total ] << std::endl;
-		T( posename_base_ ) << "AVG RESIDUE ENERGY: " << per_residue_data_.regional_avg_per_residue_energy_int[ total ] << std::endl;
-		T( posename_base_ ) << "INTERFACE DELTA SASA: " << data_.dSASA[ total ] << std::endl;
-		T( posename_base_ ) << "INTERFACE HYDROPHOBIC SASA: " << data_.dhSASA[ total ] << std::endl;
-		T( posename_base_ ) << "INTERFACE POLAR SASA: " << data_.dSASA[ total ] - data_.dhSASA[ total ] << std::endl;
-		T( posename_base_ ) << "CROSS-INTERFACE ENERGY SUMS: " << data_.crossterm_interface_energy << std::endl;
-		T( posename_base_ ) << "SEPARATED INTERFACE ENERGY DIFFERENCE: " << data_.dG[ total ] << std::endl;
-		T( posename_base_ ) << "CROSS-INTERFACE ENERGY/INTERFACE DELTA SASA: " << data_.crossterm_interface_energy_dSASA_ratio << std::endl;
-		T( posename_base_ ) << "SEPARATED INTERFACE ENERGY/INTERFACE DELTA SASA: " << data_.dG_dSASA_ratio << std::endl;
-		T( posename_base_ ) << "DELTA UNSTAT HBONDS: " << data_.delta_unsat_hbonds << std::endl;
-		//T(posename_base_) << "ALL Gly INTERFACE ENERGY:  " << data_.gly_dG << std::endl; does not help
+		my_tr << "TOTAL SASA: " << data_.complexed_SASA << std::endl;
+		my_tr << "NUMBER OF RESIDUES: " << data_.interface_nres[ total ] << std::endl;
+		my_tr << "AVG RESIDUE ENERGY: " << per_residue_data_.regional_avg_per_residue_energy_int[ total ] << std::endl;
+		my_tr << "INTERFACE DELTA SASA: " << data_.dSASA[ total ] << std::endl;
+		my_tr << "INTERFACE HYDROPHOBIC SASA: " << data_.dhSASA[ total ] << std::endl;
+		my_tr << "INTERFACE POLAR SASA: " << data_.dSASA[ total ] - data_.dhSASA[ total ] << std::endl;
+		my_tr << "CROSS-INTERFACE ENERGY SUMS: " << data_.crossterm_interface_energy << std::endl;
+		my_tr << "SEPARATED INTERFACE ENERGY DIFFERENCE: " << data_.dG[ total ] << std::endl;
+		my_tr << "CROSS-INTERFACE ENERGY/INTERFACE DELTA SASA: " << data_.crossterm_interface_energy_dSASA_ratio << std::endl;
+		my_tr << "SEPARATED INTERFACE ENERGY/INTERFACE DELTA SASA: " << data_.dG_dSASA_ratio << std::endl;
+		my_tr << "DELTA UNSTAT HBONDS: " << data_.delta_unsat_hbonds << std::endl;
+		//my_tr << "ALL Gly INTERFACE ENERGY:  " << data_.gly_dG << std::endl; does not help
 		if ( use_centroid_ ) {
-			T( posename_base_ ) << "CENTROID dG: " << data_.centroid_dG << std::endl;
+			my_tr << "CENTROID dG: " << data_.centroid_dG << std::endl;
 		}
-		//T(posename_base_) << "AVG HBOND EXPOSURE RATIO: " << hbond_exposure_ratio_ << std::endl; does not help
-		//T(posename_base_) << "HBOND SASA / INTERFACE dSASA: " << total_hb_sasa_ / interface_delta_sasa_ << std::endl;
-		T( posename_base_ ) << "CROSS INTERFACE HBONDS: " << data_.interface_hbonds << std::endl;
-		T( posename_base_ ) << "HBOND ENERGY: " << data_.total_hb_E << std::endl;
-		T( posename_base_ ) << "HBOND ENERGY/ SEPARATED INTERFACE ENERGY: " << data_.total_hb_E / data_.dG[ total ] << std::endl;
+		//my_tr << "AVG HBOND EXPOSURE RATIO: " << hbond_exposure_ratio_ << std::endl; does not help
+		//my_tr << "HBOND SASA / INTERFACE dSASA: " << total_hb_sasa_ / interface_delta_sasa_ << std::endl;
+		my_tr << "CROSS INTERFACE HBONDS: " << data_.interface_hbonds << std::endl;
+		my_tr << "HBOND ENERGY: " << data_.total_hb_E << std::endl;
+		my_tr << "HBOND ENERGY/ SEPARATED INTERFACE ENERGY: " << data_.total_hb_E / data_.dG[ total ] << std::endl;
 		if ( compute_packstat_ ) {
-			T( posename_base_ ) << "INTERFACE PACK STAT: " << data_.packstat << std::endl;
+			my_tr << "INTERFACE PACK STAT: " << data_.packstat << std::endl;
 		}
 		if ( compute_interface_sc_ ) {
-			T( posename_base_ ) << "SHAPE COMPLEMENTARITY VALUE: " << data_.sc_value << std::endl;
+			my_tr << "SHAPE COMPLEMENTARITY VALUE: " << data_.sc_value << std::endl;
 		}
 
 	} else {
@@ -1664,7 +1664,8 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::P
 {
 	//for tracer or job output
 	std::ostringstream results_oss, unsathbond_oss;
-	std::ostream & results = which_ostream( T( posename_base_ ), results_oss, tracer_); //easy swap between tracer/job output
+	basic::TracerImpl my_tr(posename_base_);
+	std::ostream & results = which_ostream( my_tr, results_oss, tracer_); //easy swap between tracer/job output
 	std::ostream & unsathbond = which_ostream( TRhbonds, unsathbond_oss, tracer_ );
 	results << "Residues missing H-bonds:" << std::endl;
 	results << "Residue \t Chain \t Atom " << std::endl;

@@ -46,14 +46,13 @@
 #include <protocols/moves/mover_schemas.hh>
 
 //Auto Headers
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.ligand_options.rotate" );
+static basic::Tracer TR( "protocols.ligand_docking.ligand_options.rotate" );
 
 // XRW TEMP std::string
 // XRW TEMP RotateCreator::keyname() const

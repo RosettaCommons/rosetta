@@ -34,7 +34,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.AveragePathLengthFilter" );
+static basic::Tracer TR( "protocols.simple_filters.AveragePathLengthFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP AveragePathLengthFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AveragePathLengthFilter ); }

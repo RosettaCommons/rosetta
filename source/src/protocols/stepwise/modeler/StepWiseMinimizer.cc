@@ -55,7 +55,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.StepWiseMinimizer" );
+static basic::Tracer TR( "protocols.stepwise.modeler.StepWiseMinimizer" );
 using ObjexxFCL::format::F;
 using ObjexxFCL::format::I;
 using utility::tools::make_vector1;

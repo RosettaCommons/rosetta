@@ -59,6 +59,7 @@
 #include <basic/database/open.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
+#include <utility/thread/backwards_thread_local.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -88,7 +89,7 @@ using namespace basic::options;
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.GlobalResidueTypeSet" );
+static basic::Tracer TR( "core.chemical.GlobalResidueTypeSet" );
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief c-tor from directory

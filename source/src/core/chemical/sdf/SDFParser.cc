@@ -32,7 +32,7 @@ namespace core {
 namespace chemical {
 namespace sdf {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.sdf.SDFParser" );
+static basic::Tracer TR( "core.chemical.sdf.SDFParser" );
 
 utility::vector1< MolFileIOMoleculeOP >
 SDFParser::parse(std::istream & filein, core::Size n_entries /*=0*/ ) {

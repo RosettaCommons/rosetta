@@ -58,7 +58,7 @@
 using namespace core::scoring;
 using namespace protocols::seeded_abinitio;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.SeedFoldTree" );
+static basic::Tracer TR( "protocols.seeded_abinitio.SeedFoldTree" );
 
 namespace protocols {
 namespace seeded_abinitio {

@@ -63,7 +63,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -71,7 +70,7 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 namespace perturber {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.perturber.GeneralizedKICperturber" );
+static basic::Tracer TR( "protocols.generalized_kinematic_closure.perturber.GeneralizedKICperturber" );
 
 /// @brief Creator for GeneralizedKICperturber.
 GeneralizedKICperturber::GeneralizedKICperturber():

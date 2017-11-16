@@ -52,12 +52,11 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 
-using basic::T;
 using namespace protocols::moves;
 using namespace core;
 using namespace pack::task;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingEnsemblePrepackProtocol" );
+static basic::Tracer TR( "protocols.docking.DockingEnsemblePrepackProtocol" );
 
 namespace protocols {
 namespace docking {

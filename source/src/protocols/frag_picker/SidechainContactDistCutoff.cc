@@ -41,7 +41,7 @@ SidechainContactDistCutoff::~SidechainContactDistCutoff() = default;
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.frag_picker.SidechainContactDistCutoff" );
+static basic::Tracer TR( "protocols.frag_picker.SidechainContactDistCutoff" );
 
 SidechainContactDistCutoff::SidechainContactDistCutoff() {
 	SidechainContactDistCutoff(1.0);

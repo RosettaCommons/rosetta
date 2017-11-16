@@ -28,7 +28,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_OneJump" );
+static basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_OneJump" );
 
 using namespace core;
 

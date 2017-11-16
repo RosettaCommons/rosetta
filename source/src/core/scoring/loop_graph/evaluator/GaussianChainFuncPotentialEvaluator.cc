@@ -25,7 +25,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.evaluator.GaussianChainFuncPotentialEvaluator" );
+static basic::Tracer TR( "core.scoring.loop_graph.evaluator.GaussianChainFuncPotentialEvaluator" );
 
 namespace core {
 namespace scoring {

@@ -77,15 +77,10 @@ typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
 #include <algorithm>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.mmcif.cif_reader" );
+static basic::Tracer TR( "core.io.mmcif.cif_reader" );
 
-// When you move PDBReader and PoseUnbuilder bring these
-
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-
 namespace core {
 namespace io {
 namespace mmcif {

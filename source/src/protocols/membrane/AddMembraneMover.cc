@@ -100,7 +100,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.AddMembraneMover" );
+static basic::Tracer TR( "protocols.membrane.AddMembraneMover" );
 
 namespace protocols {
 namespace membrane {

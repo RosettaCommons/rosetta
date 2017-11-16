@@ -80,7 +80,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -92,7 +91,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "pocket_relax" );
+static basic::Tracer TR( "pocket_relax" );
 OPT_KEY( String, exemplar_target_pdb_num )
 
 //This is copy/pasted from src/apps/public/minimize.cc, but has had the constraints removed

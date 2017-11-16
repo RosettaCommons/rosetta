@@ -44,7 +44,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.pose.util.cxxtest");
+static basic::Tracer TR("core.pose.util.cxxtest");
 
 
 class PoseUtilTests : public CxxTest::TestSuite {

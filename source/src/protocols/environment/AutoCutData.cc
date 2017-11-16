@@ -25,7 +25,7 @@
 
 // ObjexxFCL Headers
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.environment.AutoCutData", basic::t_info );
+static basic::Tracer tr( "protocols.environment.AutoCutData", basic::t_info );
 
 static std::string TYPE_NAME() { return "AutoCutData"; }
 

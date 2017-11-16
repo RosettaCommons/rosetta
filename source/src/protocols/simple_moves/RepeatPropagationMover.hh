@@ -32,7 +32,7 @@
 #include <protocols/moves/Mover.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.RepeatPropagationMover" );
+static basic::Tracer TR( "protocols.simple_moves.RepeatPropagationMover" );
 namespace protocols {
 namespace simple_moves {
 

@@ -74,7 +74,7 @@
 #include <stdio.h>
 
 //Tracer:
-static THREAD_LOCAL basic::Tracer TR( "apps.public.cyclic_peptide.simple_cycpep_predict" );
+static basic::Tracer TR( "apps.public.cyclic_peptide.simple_cycpep_predict" );
 
 /*************************/
 /* FUNCTION PROTOTYPES:  */

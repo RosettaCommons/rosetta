@@ -51,7 +51,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "MPIHPool_ConvergenceCheck" );
+static basic::Tracer tr( "MPIHPool_ConvergenceCheck" );
 
 namespace protocols {
 namespace canonical_sampling {

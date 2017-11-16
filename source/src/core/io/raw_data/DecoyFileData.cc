@@ -28,11 +28,8 @@
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 
-
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 namespace core {
 namespace io {
 namespace raw_data {

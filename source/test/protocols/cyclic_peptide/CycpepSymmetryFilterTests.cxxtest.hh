@@ -30,7 +30,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("CycpepSymmetryFilterTests");
+static basic::Tracer TR("CycpepSymmetryFilterTests");
 
 
 class CycpepSymmetryFilterTests : public CxxTest::TestSuite {

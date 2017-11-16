@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file PCS_main.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file PCS_main.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -239,7 +239,7 @@
 // C++ headers
 
 
-static THREAD_LOCAL basic::Tracer TR_PCS_main( "apps.pilot.christophe.PCS_main" );
+static basic::Tracer TR_PCS_main( "apps.pilot.christophe.PCS_main" );
 
 void run() {
 
@@ -269,46 +269,46 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	using namespace core;
-	using namespace scoring;
-	using namespace methods;
-	using namespace pcs;
-	using namespace pose;
-	using namespace basic::options;
+		using namespace core;
+		using namespace scoring;
+		using namespace methods;
+		using namespace pcs;
+		using namespace pose;
+		using namespace basic::options;
 
 
-	pose::Pose pdb;
-	utility::vector1<std::string> vec_filename;
-	utility::vector1<PCS_tensor> vec_tensor;
-	utility::vector1<core::Real> vec_score;
-	core::Real pcs_score_total;
-	core::Size i;
+		pose::Pose pdb;
+		utility::vector1<std::string> vec_filename;
+		utility::vector1<PCS_tensor> vec_tensor;
+		utility::vector1<core::Real> vec_score;
+		core::Real pcs_score_total;
+		core::Size i;
 
 
-	protocols::abinitio::register_options_broker();
+		protocols::abinitio::register_options_broker();
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	std::string const native( option[ OptionKeys::in::file::native ]() );
-	core::import_pose::pose_from_file( pdb, native , core::import_pose::PDB_file);
+		std::string const native( option[ OptionKeys::in::file::native ]() );
+		core::import_pose::pose_from_file( pdb, native , core::import_pose::PDB_file);
 
-	PCS_Energy PCS_e = PCS_Energy();
+		PCS_Energy PCS_e = PCS_Energy();
 
-	for(i = 1; i <= 1; ++i){
-		pcs_score_total = PCS_e.calculate_pcs_score(pdb, true);
-		TR_PCS_main << "Score for iteration " << i << " " << pcs_score_total << std::endl;
-	}
+		for ( i = 1; i <= 1; ++i ) {
+			pcs_score_total = PCS_e.calculate_pcs_score(pdb, true);
+			TR_PCS_main << "Score for iteration " << i << " " << pcs_score_total << std::endl;
+		}
 
 
-	//utility_exit();
+		//utility_exit();
 
-	TR_PCS_main << "CALLING BROKER_MAIN" << std::endl;
+		TR_PCS_main << "CALLING BROKER_MAIN" << std::endl;
 
-	//protocols::abinitio::Broker_main();
+		//protocols::abinitio::Broker_main();
 
-	run();
+		run();
 
-	TR_PCS_main << "It is going to crash for unknown reason" << std::endl;
+		TR_PCS_main << "It is going to crash for unknown reason" << std::endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

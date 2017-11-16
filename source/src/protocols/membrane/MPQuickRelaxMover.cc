@@ -70,7 +70,7 @@
 #undef small
 #endif
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.MPQuickRelaxMover" );
+static basic::Tracer TR( "protocols.membrane.MPQuickRelaxMover" );
 
 namespace protocols {
 namespace membrane {

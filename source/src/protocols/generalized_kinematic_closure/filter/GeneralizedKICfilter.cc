@@ -57,7 +57,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -65,7 +64,7 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 namespace filter {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.filter.GeneralizedKICfilter" );
+static basic::Tracer TR( "protocols.generalized_kinematic_closure.filter.GeneralizedKICfilter" );
 
 /// @brief Constructor for GeneralizedKICfilter.
 ///

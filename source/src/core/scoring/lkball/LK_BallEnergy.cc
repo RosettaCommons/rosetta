@@ -103,7 +103,7 @@ namespace scoring {
 namespace lkball {
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.LK_BallEnergy");
+static basic::Tracer TR("core.scoring.methods.LK_BallEnergy");
 
 
 class LK_BallInvoker : public etable::count_pair::Invoker {

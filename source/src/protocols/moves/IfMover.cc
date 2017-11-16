@@ -43,7 +43,7 @@
 namespace protocols {
 namespace moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.IfMover" );
+static basic::Tracer TR( "protocols.moves.IfMover" );
 
 void IfMover::apply(core::pose::Pose& pose) {
 	moves::MoverStatus status;

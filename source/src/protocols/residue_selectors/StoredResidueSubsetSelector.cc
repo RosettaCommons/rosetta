@@ -35,7 +35,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.residue_selectors.StoredResidueSubsetSelector" );
+static basic::Tracer TR( "protocols.residue_selectors.StoredResidueSubsetSelector" );
 
 namespace protocols {
 namespace residue_selectors {

@@ -18,7 +18,7 @@
 #include <core/id/TorsionID.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.protein.ProteinMainChainStepWiseSampler" );
+static basic::Tracer TR( "protocols.sampler.protein.ProteinMainChainStepWiseSampler" );
 
 using namespace core;
 

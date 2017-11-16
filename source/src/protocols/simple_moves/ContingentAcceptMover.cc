@@ -19,10 +19,9 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ContingentAcceptMover" );
+static basic::Tracer TR( "protocols.simple_moves.ContingentAcceptMover" );
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>

@@ -48,7 +48,7 @@
 // C++ headers
 #include <set>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.toolbox.task_operations.RestrictOperations.cxxtest");
+static basic::Tracer TR("protocols.toolbox.task_operations.RestrictOperations.cxxtest");
 
 // --------------- Test Class --------------- //
 

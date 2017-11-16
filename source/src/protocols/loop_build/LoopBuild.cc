@@ -64,16 +64,16 @@
 #include <ctime>
 #endif
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace loop_build {
 
+static basic::Tracer TR( "protocols.loop_build.LoopBuild" );
+
 int
 LoopBuild_main( bool  ) {
-	basic::Tracer TR( "protocols.loop_build.LoopBuild" );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

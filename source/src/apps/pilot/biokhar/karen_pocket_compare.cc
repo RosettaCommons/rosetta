@@ -79,7 +79,7 @@ using namespace protocols::rigid;
 OPT_KEY( String, eggshell1_fname )
 OPT_KEY( String, eggshell2_fname )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
+static basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
 
 /// General testing code
 int main( int argc, char * argv [] ) {

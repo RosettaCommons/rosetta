@@ -38,18 +38,17 @@ using core::Real;
 using core::Size;
 using core::SSize;
 
-static THREAD_LOCAL basic::Tracer tr( "hle_predict" );
+static basic::Tracer tr( "hle_predict" );
 
 char get_label(vector1 <Real> ss_pred_pos){
 	char label = 'X';
-	if((ss_pred_pos[1] >= ss_pred_pos[2]) && (ss_pred_pos[1] >= ss_pred_pos[3]))
+	if ( (ss_pred_pos[1] >= ss_pred_pos[2]) && (ss_pred_pos[1] >= ss_pred_pos[3]) ) {
 		label = 'H';
-	else
-		if((ss_pred_pos[2] >= ss_pred_pos[1]) && (ss_pred_pos[2] >= ss_pred_pos[3]))
-			label = 'C';
-		else
-			if((ss_pred_pos[3] >= ss_pred_pos[1]) && (ss_pred_pos[3] >= ss_pred_pos[2]))
-				label = 'E';
+	} else if ( (ss_pred_pos[2] >= ss_pred_pos[1]) && (ss_pred_pos[2] >= ss_pred_pos[3]) ) {
+		label = 'C';
+	} else if ( (ss_pred_pos[3] >= ss_pred_pos[1]) && (ss_pred_pos[3] >= ss_pred_pos[2]) ) {
+		label = 'E';
+	}
 	return(label);
 }
 
@@ -58,10 +57,10 @@ void predict_ss(vector1< vector1 <Real> > ss_pred, string fasta, string id){
 	utility::io::ozstream output(out_file_name_str);
 	output << "# PSIPRED VFORMATED but done with Rosetta v1.0\n" << std::endl;
 	tr << "NOTE HLE produces CHE output identical to psipred" << std::endl;
-	for(Size ii = 1; ii<= ss_pred.size(); ++ii){
+	for ( Size ii = 1; ii<= ss_pred.size(); ++ii ) {
 		char label = get_label(ss_pred[ii]);
 		output << I(4,ii) << " " << fasta.at(ii-1) << " " << label <<" " << F(7,3,ss_pred[ii][2]) << F(7,3,ss_pred[ii][1])  << F(7,3,ss_pred[ii][3]) << std::endl;
- 	}
+	}
 	output.close();
 }
 
@@ -69,21 +68,21 @@ void predict_ss(vector1< vector1 <Real> > ss_pred, string fasta, string id){
 int main( int argc, char * argv [] ) {
 	try {
 
-	using namespace protocols::ss_prediction;
-	using namespace basic;
-	using namespace core::sequence;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	devel::init(argc, argv);
-    typedef vector1< SequenceOP > seqlist;
-    SS_predictor *hle_predictor = new SS_predictor("HLE");
-	for(Size ii = 1; ii<= option[in::file::fasta]().size(); ++ii){
-		seqlist query_seq = read_fasta_file(option[in::file::fasta ]()[ii]);
-		string fasta = query_seq[1]->sequence();
-		string id = option[in::file::fasta ]()[ii];
-		vector1< vector1 <Real> > ss_pred = hle_predictor->predict_ss(fasta);
-		predict_ss(ss_pred,fasta,id);
-    }
+		using namespace protocols::ss_prediction;
+		using namespace basic;
+		using namespace core::sequence;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
+		typedef vector1< SequenceOP > seqlist;
+		SS_predictor *hle_predictor = new SS_predictor("HLE");
+		for ( Size ii = 1; ii<= option[in::file::fasta]().size(); ++ii ) {
+			seqlist query_seq = read_fasta_file(option[in::file::fasta ]()[ii]);
+			string fasta = query_seq[1]->sequence();
+			string id = option[in::file::fasta ]()[ii];
+			vector1< vector1 <Real> > ss_pred = hle_predictor->predict_ss(fasta);
+			predict_ss(ss_pred,fasta,id);
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -46,7 +46,7 @@
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.AtomICoor" );
+static basic::Tracer TR( "core.chemical.AtomICoor" );
 
 ICoorAtomID::ICoorAtomID():
 	type_( INTERNAL ),

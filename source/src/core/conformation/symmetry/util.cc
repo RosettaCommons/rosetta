@@ -58,7 +58,7 @@ get_chain_id_string(){
 	return chr_chains;
 }
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.symmetry.util" );
+static basic::Tracer TR( "core.conformation.symmetry.util" );
 
 
 /// @details A very specific helper function that counts the number of mirror ops from root->each subunit

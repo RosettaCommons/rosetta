@@ -161,7 +161,7 @@
 // using namespace ObjexxFCL::format;
 // using core::import_pose::pose_from_file;
 //  // deprecated though
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.symtest" );
+static basic::Tracer TR( "apps.pilot.phil.symtest" );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -182,11 +182,11 @@ static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.symtest" );
 
 void
 setup_symmetric_dimer(
-											Vector const & axis,
-											Vector const & center,
-											Size const monomer_root_residue,
-											Pose & pose // a dimer, structurally symmetric, but not a "symmetric pose" yet
-											)
+	Vector const & axis,
+	Vector const & center,
+	Size const monomer_root_residue,
+	Pose & pose // a dimer, structurally symmetric, but not a "symmetric pose" yet
+)
 {
 	Size const nres_protein( pose.size() ), nres_monomer( nres_protein/2 );
 	runtime_assert( nres_protein == nres_monomer * 2 );

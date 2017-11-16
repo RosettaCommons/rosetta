@@ -33,7 +33,7 @@
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
 
-static THREAD_LOCAL basic::Tracer TR("TestAutoDetectGlycanConnections");
+static basic::Tracer TR("TestAutoDetectGlycanConnections");
 
 
 class TestAutoDetectGlycanConnections : public CxxTest::TestSuite {

@@ -29,7 +29,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("SetSecStructEnergiesMoverTests");
+static basic::Tracer TR("SetSecStructEnergiesMoverTests");
 
 
 class SetSecStructEnergiesMoverTests : public CxxTest::TestSuite {

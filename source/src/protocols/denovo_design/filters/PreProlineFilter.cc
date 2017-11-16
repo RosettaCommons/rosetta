@@ -42,7 +42,7 @@
 
 //C++ Headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.PreProlineFilter" );
+static basic::Tracer TR( "protocols.denovo_design.PreProlineFilter" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

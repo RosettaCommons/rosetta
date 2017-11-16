@@ -60,7 +60,7 @@
 namespace protocols {
 namespace legacy_sewing  {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.legacy_sewing.Model");
+static basic::Tracer TR("protocols.legacy_sewing.Model");
 
 ///////////////////////////////////////////////////////////////////////
 ////////////////////   SewResidue Class    ////////////////////////////

@@ -48,7 +48,7 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "rna_motif" );
+static basic::Tracer TR( "rna_motif" );
 
 using namespace basic::options::OptionKeys;
 using namespace basic::options;

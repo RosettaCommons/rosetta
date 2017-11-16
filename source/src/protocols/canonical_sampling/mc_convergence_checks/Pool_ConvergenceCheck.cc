@@ -43,7 +43,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <basic/prof.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.mc_convergence_check.Pool", basic::t_info );
+static basic::Tracer tr( "protocols.canonical_sampling.mc_convergence_check.Pool", basic::t_info );
 
 // Forward declarations
 

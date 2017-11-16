@@ -54,7 +54,7 @@ namespace scoring {
 namespace methods {
 namespace pcsTs3 {
 
-static THREAD_LOCAL basic::Tracer TR_tsr_opt_Ts3( "protocols.scoring.methods.pcsTs3.TensorsOptimizer_Ts3" );
+static basic::Tracer TR_tsr_opt_Ts3( "protocols.scoring.methods.pcsTs3.TensorsOptimizer_Ts3" );
 
 TensorsOptimizer_Ts3::TensorsOptimizer_Ts3(PCS_data_Ts3 const & pcs_d):
 	pcs_d_(pcs_d)

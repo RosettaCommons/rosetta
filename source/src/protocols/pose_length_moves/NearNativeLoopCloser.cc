@@ -115,7 +115,7 @@
 
 //#include <unistd.h>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.pose_length_moves.NearNativeLoopCloser" );
+static basic::Tracer TR( "protocols.pose_length_moves.NearNativeLoopCloser" );
 
 namespace protocols {
 namespace pose_length_moves {

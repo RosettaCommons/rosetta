@@ -54,7 +54,7 @@ using namespace scoring;
 
 using basic::Warning;
 using basic::t_warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MinPackMover" );
+static basic::Tracer TR( "protocols.simple_moves.MinPackMover" );
 
 
 // XRW TEMP std::string
@@ -146,7 +146,7 @@ void
 MinPackMover::apply( Pose & pose )
 {
 	if ( scorefxn_ == nullptr ) {
-		Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
+		TR.Warning << "undefined ScoreFunction -- creating a default one" << std::endl;
 		scorefxn_ = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 

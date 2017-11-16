@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.FastForwardToNextRigidBody" );
+static basic::Tracer TR( "protocols.stepwise.screener.FastForwardToNextRigidBody" );
 
 namespace protocols {
 namespace stepwise {

@@ -39,7 +39,7 @@
 
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filters.ConservedPosMutationFilter" );
+static basic::Tracer tr( "protocols.simple_filters.ConservedPosMutationFilter" );
 
 namespace protocols {
 namespace simple_filters {

@@ -45,7 +45,7 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.SymmGly_betanov15_Tests.cxxtest");
+static basic::Tracer TR("core.scoring.SymmGly_betanov15_Tests.cxxtest");
 
 class SymmGly_betanov15_Tests : public CxxTest::TestSuite {
 

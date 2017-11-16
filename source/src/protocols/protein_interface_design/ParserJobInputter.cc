@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.ParserJobInputter" );
+static basic::Tracer TR( "protocols.protein_interface_design.ParserJobInputter" );
 
 namespace protocols {
 namespace protein_interface_design {

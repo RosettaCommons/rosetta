@@ -62,7 +62,7 @@ namespace core {
 namespace scoring {
 namespace vdwaals {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.vdwaals.VDW_Energy" );
+static basic::Tracer TR( "core.scoring.vdwaals.VDW_Energy" );
 
 /// @details This must return a fresh instance of the VDW_Energy class,
 /// never an instance already in use

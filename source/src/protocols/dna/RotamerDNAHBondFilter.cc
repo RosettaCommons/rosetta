@@ -38,7 +38,7 @@
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.dna.RotamerDNAHBondFilter" );
+static basic::Tracer TR( "protocols.dna.RotamerDNAHBondFilter" );
 
 namespace protocols {
 namespace dna {

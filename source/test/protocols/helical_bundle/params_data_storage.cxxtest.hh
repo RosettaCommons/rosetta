@@ -31,7 +31,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.params_data_storage.cxxtest");
+static basic::Tracer TR("protocols.helical_bundle.params_data_storage.cxxtest");
 
 // --------------- Test Class --------------- //
 

@@ -61,7 +61,7 @@ using namespace numeric::conversions;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
+static basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
 
 // XRW TEMP std::string
 // XRW TEMP StorePoseSnapshotCreator::keyname() const

@@ -48,7 +48,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/symmetry/util.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jd3.SilentFilePoseInputter" );
+static basic::Tracer tr( "protocols.jd3.SilentFilePoseInputter" );
 
 namespace protocols {
 namespace jd3 {

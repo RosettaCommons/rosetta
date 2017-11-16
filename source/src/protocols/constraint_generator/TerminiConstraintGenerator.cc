@@ -31,7 +31,7 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.TerminiConstraintGenerator" );
+static basic::Tracer TR( "protocols.constraint_generator.TerminiConstraintGenerator" );
 
 namespace protocols {
 namespace constraint_generator {

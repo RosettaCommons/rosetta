@@ -36,7 +36,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.NcontactsFilter" );
+static basic::Tracer tr( "protocols.fldsgn.filters.NcontactsFilter" );
 
 namespace protocols {
 namespace fldsgn {

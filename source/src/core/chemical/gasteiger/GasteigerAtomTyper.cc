@@ -38,6 +38,7 @@
 #include <utility/numbers.hh>
 
 #include <basic/Tracer.hh>
+#include <utility/thread/backwards_thread_local.hh> //For THREAD_LOCAL
 
 #include <map>
 #include <string>
@@ -46,7 +47,7 @@ namespace core {
 namespace chemical {
 namespace gasteiger {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.gasteiger.GasteigerAtomTyper" );
+static basic::Tracer TR( "core.chemical.gasteiger.GasteigerAtomTyper" );
 
 void
 PossibleAtomTypesForAtom::gasteiger_atom_type_set( GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET ) {

@@ -70,12 +70,12 @@ using namespace core::conformation;
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.blivens.disulfide_handoff" );
+static basic::Tracer TR( "pilot_apps.blivens.disulfide_handoff" );
 
 int
 usage(char* msg)
 {
-	TR	<< "usage: disulfide_staple -s input.pdb -o output.pdb -database db" << endl
+	TR << "usage: disulfide_staple -s input.pdb -o output.pdb -database db" << endl
 		<< msg << endl;
 	exit(1);
 }
@@ -83,62 +83,62 @@ usage(char* msg)
 
 int main( int argc, char * argv [] )
 {
-  try {
-	//init options system
-	option.add_relevant( in::file::s );
-	option.add_relevant( out::prefix );
+	try {
+		//init options system
+		option.add_relevant( in::file::s );
+		option.add_relevant( out::prefix );
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	if( !option[ in::file::s ].user() ) {
-		return usage("No in file given: Use -s to designate a pdb file");
-	}
-	string infile(basic::options::start_file() );
+		if ( !option[ in::file::s ].user() ) {
+			return usage("No in file given: Use -s to designate a pdb file");
+		}
+		string infile(basic::options::start_file() );
 
-	if( ! option[ out::prefix ].user() ) {
-		return usage("No out file given: Use -prefix to designate an output file");
-	}
-	string outprefix(option[ out::prefix ]() );
-	//done with options
+		if ( ! option[ out::prefix ].user() ) {
+			return usage("No out file given: Use -prefix to designate an output file");
+		}
+		string outprefix(option[ out::prefix ]() );
+		//done with options
 
-	pose::Pose pose;
-	core::import_pose::pose_from_file( pose, infile , core::import_pose::PDB_file);
+		pose::Pose pose;
+		core::import_pose::pose_from_file( pose, infile , core::import_pose::PDB_file);
 
-	scoring::ScoreFunctionOP fa_sfxn = scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
-	scoring::ScoreFunctionOP cen_sfxn =scoring::ScoreFunctionFactory::create_score_function(scoring::CENTROID_WTS);
+		scoring::ScoreFunctionOP fa_sfxn = scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		scoring::ScoreFunctionOP cen_sfxn =scoring::ScoreFunctionFactory::create_score_function(scoring::CENTROID_WTS);
 
-	//initialize vectors of all disulf bonds
-	vector1< pair<Size,Size> > initial_disulf;
-	core::conformation::disulfide_bonds(pose, initial_disulf);
-	for(vector1< pair<Size,Size> >::const_iterator ds_it = initial_disulf.begin(); ds_it != initial_disulf.end(); ++ds_it) {
-		TR <<"Found Initial disulf at "<<ds_it->first<<" to "<<ds_it->second<<endl;
-	}
+		//initialize vectors of all disulf bonds
+		vector1< pair<Size,Size> > initial_disulf;
+		core::conformation::disulfide_bonds(pose, initial_disulf);
+		for ( vector1< pair<Size,Size> >::const_iterator ds_it = initial_disulf.begin(); ds_it != initial_disulf.end(); ++ds_it ) {
+			TR <<"Found Initial disulf at "<<ds_it->first<<" to "<<ds_it->second<<endl;
+		}
 
-	//Convert to centroid
-	core::util::switch_to_residue_type_set( pose, chemical::CENTROID);
+		//Convert to centroid
+		core::util::switch_to_residue_type_set( pose, chemical::CENTROID);
 
-	vector1< pair<Size,Size> > cen_disulf;
-	core::conformation::disulfide_bonds(pose, cen_disulf);
-	for(vector1< pair<Size,Size> >::const_iterator ds_it = cen_disulf.begin(); ds_it != cen_disulf.end(); ++ds_it) {
-		TR <<"Found Centroid disulf at "<<ds_it->first<<" to "<<ds_it->second<<endl;
-	}
+		vector1< pair<Size,Size> > cen_disulf;
+		core::conformation::disulfide_bonds(pose, cen_disulf);
+		for ( vector1< pair<Size,Size> >::const_iterator ds_it = cen_disulf.begin(); ds_it != cen_disulf.end(); ++ds_it ) {
+			TR <<"Found Centroid disulf at "<<ds_it->first<<" to "<<ds_it->second<<endl;
+		}
 
-	string outfile = outprefix;
-	outfile.append("centroid.pdb");
-	pose.dump_scored_pdb(outfile, *cen_sfxn, "");
+		string outfile = outprefix;
+		outfile.append("centroid.pdb");
+		pose.dump_scored_pdb(outfile, *cen_sfxn, "");
 
-	//Convert to fa
-	core::util::switch_to_residue_type_set( pose, chemical::FA_STANDARD);
+		//Convert to fa
+		core::util::switch_to_residue_type_set( pose, chemical::FA_STANDARD);
 
-	vector1< pair<Size,Size> > fa_disulf;
-	core::conformation::disulfide_bonds(pose, fa_disulf);
-	for(vector1< pair<Size,Size> >::const_iterator ds_it = fa_disulf.begin(); ds_it != fa_disulf.end(); ++ds_it) {
-		TR <<"Found FA disulf at "<<ds_it->first<<" to "<<ds_it->second<<endl;
-	}
+		vector1< pair<Size,Size> > fa_disulf;
+		core::conformation::disulfide_bonds(pose, fa_disulf);
+		for ( vector1< pair<Size,Size> >::const_iterator ds_it = fa_disulf.begin(); ds_it != fa_disulf.end(); ++ds_it ) {
+			TR <<"Found FA disulf at "<<ds_it->first<<" to "<<ds_it->second<<endl;
+		}
 
-	outfile = outprefix;
-	outfile.append("fa.pdb");
-	pose.dump_scored_pdb(outfile, *fa_sfxn, "");
+		outfile = outprefix;
+		outfile.append("fa.pdb");
+		pose.dump_scored_pdb(outfile, *fa_sfxn, "");
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -44,14 +44,13 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer translate_tracer( "protocols.ligand_docking.ligand_options.translate", basic::t_debug );
+static basic::Tracer translate_tracer( "protocols.ligand_docking.ligand_options.translate", basic::t_debug );
 
 // XRW TEMP std::string
 // XRW TEMP TranslateCreator::keyname() const

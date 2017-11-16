@@ -38,64 +38,64 @@
 
 using namespace basic::options;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.rosetta_retype_check" );
+static basic::Tracer TR( "apps.rosetta_retype_check" );
 
 int
 main( int argc, char * argv [] )
 {
 
-try {
+	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	utility::options::FileVectorOption & fvec
-		= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
+		utility::options::FileVectorOption & fvec
+			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
 
-	core::chemical::ChemicalManager * chem_mang = core::chemical::ChemicalManager::get_instance();
-	core::chemical::AtomTypeSetCAP atom_types = chem_mang->atom_type_set("fa_standard");
-	core::chemical::ElementSetCAP elements = chem_mang->element_set("default");
-	core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
-	core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
+		core::chemical::ChemicalManager * chem_mang = core::chemical::ChemicalManager::get_instance();
+		core::chemical::AtomTypeSetCAP atom_types = chem_mang->atom_type_set("fa_standard");
+		core::chemical::ElementSetCAP elements = chem_mang->element_set("default");
+		core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
+		core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
 
-	TR << "Loading residue types " << std::endl;
-	// We don't need to load all the residue types - just the extra_res_fa ones.
-	// Grab each and go.
+		TR << "Loading residue types " << std::endl;
+		// We don't need to load all the residue types - just the extra_res_fa ones.
+		// Grab each and go.
 
-	for(core::Size i = 1, e = fvec.size(); i <= e; ++i) {
-		utility::file::FileName fname = fvec[i];
-		std::string filename = fname.name();
+		for ( core::Size i = 1, e = fvec.size(); i <= e; ++i ) {
+			utility::file::FileName fname = fvec[i];
+			std::string filename = fname.name();
 
-		core::chemical::ResidueTypeOP ref( read_topology_file(
+			core::chemical::ResidueTypeOP ref( read_topology_file(
 				filename, atom_types, elements, mm_atom_types, orbital_types ) );
 
-		TR << "Typing residue type " << fname.base()<< std::endl;
+			TR << "Typing residue type " << fname.base()<< std::endl;
 
-		core::chemical::ElementMap emap;
-		for( core::Size ii(1); ii <= ref->natoms(); ++ii ) {
-			emap[ ref->vd_from_index( ii ) ] = ref->atom_type(ii).element();
-		}
-		ResidueType rsd( *ref );
-		rsd.retype_atoms(emap);
-		for( core::Size ii(1); ii <= ref->natoms(); ++ii ) {
-			if( ref->atom_type(ii).name() != rsd.atom_type(ii).name() ) {
-				TR << "Atom " << ref->atom_name(ii) << " element " << emap[ ref->vd_from_index( ii ) ] << " was " << ref->atom_type(ii).name() << " now " << rsd.atom_type(ii).name() << std::endl;
-				TR << "<<<<<<<<<<< Difference >>>>>>>>>>>" << std::endl;
+			core::chemical::ElementMap emap;
+			for ( core::Size ii(1); ii <= ref->natoms(); ++ii ) {
+				emap[ ref->vd_from_index( ii ) ] = ref->atom_type(ii).element();
 			}
+			ResidueType rsd( *ref );
+			rsd.retype_atoms(emap);
+			for ( core::Size ii(1); ii <= ref->natoms(); ++ii ) {
+				if ( ref->atom_type(ii).name() != rsd.atom_type(ii).name() ) {
+					TR << "Atom " << ref->atom_name(ii) << " element " << emap[ ref->vd_from_index( ii ) ] << " was " << ref->atom_type(ii).name() << " now " << rsd.atom_type(ii).name() << std::endl;
+					TR << "<<<<<<<<<<< Difference >>>>>>>>>>>" << std::endl;
+				}
+			}
+
+
 		}
 
+		TR << "Done outputing typeinfo" << std::endl;
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-
-	TR << "Done outputing typeinfo" << std::endl;
-
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
 
 }
 

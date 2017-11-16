@@ -29,7 +29,7 @@
 // C++ header
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR("core.import_pose.3-letter_code_ambiguity_resolution.cxxtest");
+static basic::Tracer TR("core.import_pose.3-letter_code_ambiguity_resolution.cxxtest");
 
 class ThreeLetterCodeAmbiguityTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////

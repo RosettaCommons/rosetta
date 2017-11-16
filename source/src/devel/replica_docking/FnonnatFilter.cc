@@ -39,7 +39,7 @@
 // Project Headers
 
 
-static THREAD_LOCAL basic::Tracer TR( "devel.replica_docking.FnonnatFilter" );
+static basic::Tracer TR( "devel.replica_docking.FnonnatFilter" );
 
 namespace devel {
 namespace replica_docking {

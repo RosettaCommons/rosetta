@@ -33,7 +33,7 @@
 #include <boost/algorithm/string/case_conv.hpp> // we don't need all string
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.carbohydrates.CarbohydrateInfo" );
+static basic::Tracer TR( "core.chemical.carbohydrates.CarbohydrateInfo" );
 
 
 namespace core {

@@ -59,7 +59,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.analysis.shobuns.main" );
+static basic::Tracer TR( "apps.public.analysis.shobuns.main" );
 
 using basic::options::option;
 

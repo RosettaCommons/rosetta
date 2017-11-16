@@ -70,7 +70,7 @@
 namespace devel {
 namespace loophash_loopclosure {
 
-static THREAD_LOCAL basic::Tracer TR( "devel.loophash_loopclosure.LoopHashLoopClosureMover" );
+static basic::Tracer TR( "devel.loophash_loopclosure.LoopHashLoopClosureMover" );
 
 std::ostream& operator<< (std::ostream& out , const MyLoop & loop ) {
 	out << loop.r1_ << loop.c1_ << ":" << loop.minn_ << "-" << "x" << ":" << loop.r2_ << loop.c2_ << std::endl;

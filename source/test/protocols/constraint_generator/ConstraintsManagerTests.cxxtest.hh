@@ -32,7 +32,7 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("ConstraintsManagerTests");
+static basic::Tracer TR("ConstraintsManagerTests");
 
 
 class ConstraintsManagerTests : public CxxTest::TestSuite {

@@ -63,7 +63,7 @@ namespace normalmode {
 
 ////////////
 
-static THREAD_LOCAL basic::Tracer nma_tr( "protocols.normalmode", basic::t_debug );
+static basic::Tracer nma_tr( "protocols.normalmode", basic::t_debug );
 
 
 NormalModeMinimizer::NormalModeMinimizer() {

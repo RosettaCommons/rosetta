@@ -33,7 +33,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -61,20 +60,20 @@ namespace moves {
 int
 main( int argc, char * argv [] )
 {
-    try {
-    	devel::init(argc, argv);
-    	using namespace protocols::moves;
-    	core::scoring::ScoreFunctionOP s( new core::scoring::ScoreFunction());
-    	protocols::moves::ShakeStructureMover *ssm = new ShakeStructureMover( );
-    	ssm->set_sc_min(true); //sc min after perturbing backbone
-    	ssm->set_nrounds( (500) );
-    	ssm->set_mc_temperature(  3 );
-    	MoverOP mover = ssm;
-    	protocols::jd2::JobDistributor::get_instance()->go( mover );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	try {
+		devel::init(argc, argv);
+		using namespace protocols::moves;
+		core::scoring::ScoreFunctionOP s( new core::scoring::ScoreFunction());
+		protocols::moves::ShakeStructureMover *ssm = new ShakeStructureMover( );
+		ssm->set_sc_min(true); //sc min after perturbing backbone
+		ssm->set_nrounds( (500) );
+		ssm->set_mc_temperature(  3 );
+		MoverOP mover = ssm;
+		protocols::jd2::JobDistributor::get_instance()->go( mover );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }
 

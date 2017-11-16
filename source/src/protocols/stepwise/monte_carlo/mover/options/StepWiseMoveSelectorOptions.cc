@@ -25,7 +25,7 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.options.StepWiseMoveSelectorOptions" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.options.StepWiseMoveSelectorOptions" );
 
 namespace protocols {
 namespace stepwise {

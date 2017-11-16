@@ -66,7 +66,7 @@ HBond::~HBond() {}
 
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer t( "core.scoring.hbonds.HBondSet" );
+static basic::Tracer t( "core.scoring.hbonds.HBondSet" );
 
 HBond::HBond(
 	Size const dhatm,

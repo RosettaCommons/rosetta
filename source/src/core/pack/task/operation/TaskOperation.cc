@@ -31,7 +31,7 @@ namespace pack {
 namespace task {
 namespace operation {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.TaskOperation" );
+static basic::Tracer TR( "core.pack.task.operation.TaskOperation" );
 
 TaskOperation::~TaskOperation() {}
 

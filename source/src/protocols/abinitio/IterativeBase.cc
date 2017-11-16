@@ -121,8 +121,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.iterative" );
-using basic::mem_tr;
+static basic::Tracer tr( "protocols.iterative" );
+static basic::MemTracer mem_tr;
 
 
 using core::Real;

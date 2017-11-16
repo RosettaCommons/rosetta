@@ -42,7 +42,7 @@
 namespace basic {
 namespace datacache {
 
-static THREAD_LOCAL basic::Tracer TR( "basic.datacache.ConstDataMap" );
+static basic::Tracer TR( "basic.datacache.ConstDataMap" );
 
 ConstDataMap::ConstDataMap() {}
 ConstDataMap::ConstDataMap( ConstDataMap const & src ) : data_map_( src.data_map_ ) {}

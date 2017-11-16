@@ -47,7 +47,7 @@
 #include <utility/vector0.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.Templates" );
+static basic::Tracer tr( "protocols.abinitio.Templates" );
 
 namespace protocols {
 namespace abinitio {

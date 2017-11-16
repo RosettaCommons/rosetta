@@ -75,9 +75,9 @@
 #include <utility/exit.hh>
 
 
-static THREAD_LOCAL basic::Tracer TM( "TMemory" );
+static basic::Tracer TM( "TMemory" );
 
-static THREAD_LOCAL basic::Tracer TR_( "global" );
+static basic::Tracer TR_( "global" );
 
 
 void TracerDiskSpaceTest(void)
@@ -105,7 +105,6 @@ typedef utility::pointer::owning_ptr< OutputMover > OutputMoverOP;
 typedef utility::pointer::owning_ptr< OutputMover const > OutputMoverCOP;
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -242,7 +241,6 @@ int main( int argc, char * argv [] )
 		devel::init(argc, argv);
 
 		{
-			using basic::T;
 			{
 				core::pose::Pose pose;
 				core::import_pose::pose_from_file(pose, "test_in.pdb", core::import_pose::PDB_file);

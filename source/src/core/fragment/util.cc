@@ -74,7 +74,7 @@
 namespace core {
 namespace fragment {
 
-static THREAD_LOCAL basic::Tracer tr( "core.fragment" );
+static basic::Tracer tr( "core.fragment" );
 
 using namespace ObjexxFCL::format;
 

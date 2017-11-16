@@ -41,9 +41,8 @@
 //#include <basic/options/keys/loops.OptionKeys.gen.hh>
 //#include <basic/options/keys/run.OptionKeys.gen.hh>
 
-using basic::T;
 
-static THREAD_LOCAL basic::Tracer tr( "devel.LoopExtend.LoopExtendMover" );
+static basic::Tracer tr( "devel.LoopExtend.LoopExtendMover" );
 
 
 namespace devel {

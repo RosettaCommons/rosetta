@@ -30,11 +30,10 @@
 #include <cmath>
 #include <numeric/xyz.io.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.SurfaceDocking.SurfaceOrientMover" );
+static basic::Tracer TR( "protocols.SurfaceDocking.SurfaceOrientMover" );
 
 namespace protocols {
 namespace surface_docking {

@@ -33,7 +33,7 @@
 // C++ header
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.ResidueProperties.cxxtest");
+static basic::Tracer TR("core.chemical.ResidueProperties.cxxtest");
 
 using namespace core::chemical;
 using namespace utility::excn;

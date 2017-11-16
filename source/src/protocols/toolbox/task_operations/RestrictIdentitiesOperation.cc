@@ -47,7 +47,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.RestrictIdentitiesOperation" );
+static basic::Tracer TR( "protocols.toolbox.task_operations.RestrictIdentitiesOperation" );
 
 namespace protocols {
 namespace toolbox {

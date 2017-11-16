@@ -65,7 +65,6 @@ using std::endl;
 using std::stringstream;
 using std::string;
 using platform::Size;
-using basic::Tracer;
 using basic::resource_manager::ResourceManager;
 using basic::resource_manager::ResourceDescription;
 using basic::resource_manager::ResourceOP;
@@ -82,7 +81,7 @@ using utility::tag::Tag;
 using utility::tag::TagOP;
 using utility::tag::TagCOP;
 
-static THREAD_LOCAL Tracer TR("protocols.resource_manager.planner.JD2ResourceManager");
+static basic::Tracer TR("protocols.resource_manager.planner.JD2ResourceManager");
 
 JD2ResourceManagerCreator::~JD2ResourceManagerCreator() = default;
 

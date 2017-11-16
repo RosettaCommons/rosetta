@@ -37,7 +37,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.calculators.CavityCalculator" );
+static basic::Tracer TR( "devel.denovo_design.calculators.CavityCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

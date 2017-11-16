@@ -44,7 +44,7 @@
 #include <cereal/types/utility.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.StructureDataObserver" );
+static basic::Tracer TR( "protocols.denovo_design.components.StructureDataObserver" );
 
 namespace protocols {
 namespace denovo_design {

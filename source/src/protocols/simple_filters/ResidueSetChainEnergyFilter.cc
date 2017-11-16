@@ -49,7 +49,7 @@ using namespace core;
 using namespace core::scoring;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ResidueSetChainEnergyFilter" );
+static basic::Tracer TR( "protocols.simple_filters.ResidueSetChainEnergyFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP ResidueSetChainEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueSetChainEnergyFilter ); }

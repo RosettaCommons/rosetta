@@ -111,7 +111,7 @@ OPT_KEY( String, input_rna )
 OPT_KEY( String, input_complex )
 OPT_KEY( Integer, rna_base_sasa_cutoff )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ragul.sarah_get_rna_pharmacophore" );
+static basic::Tracer TR( "apps.pilot.ragul.sarah_get_rna_pharmacophore" );
 
 // Returns TRUE if SASA for respective base is <= histogram cutoff
 // cutoff value choosen based on the PDB scan of protein-RNA complxes

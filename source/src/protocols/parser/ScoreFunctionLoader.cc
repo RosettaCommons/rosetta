@@ -43,7 +43,7 @@
 namespace protocols {
 namespace parser {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.parser.ScoreFunctionLoader" );
+static basic::Tracer TR( "protocols.jd2.parser.ScoreFunctionLoader" );
 
 ScoreFunctionLoader::ScoreFunctionLoader() {}
 ScoreFunctionLoader::~ScoreFunctionLoader() {}

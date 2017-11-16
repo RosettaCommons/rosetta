@@ -52,7 +52,7 @@ using namespace ObjexxFCL::format;
 namespace protocols {
 namespace mpi_refinement {
 
-static THREAD_LOCAL basic::Tracer TR("MPI.LHR.O");
+static basic::Tracer TR("MPI.LHR.O");
 
 // Methods should be REGISTERED here in order to use as multi-objective
 MultiObjective::MultiObjective()

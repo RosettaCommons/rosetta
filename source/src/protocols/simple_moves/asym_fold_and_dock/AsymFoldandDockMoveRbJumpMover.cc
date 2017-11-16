@@ -43,7 +43,7 @@ namespace protocols {
 namespace simple_moves {
 namespace asym_fold_and_dock {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.symmetry.AsymFoldandDockMoveRbJumpMover" );
+static basic::Tracer TR( "protocols.simple_moves.symmetry.AsymFoldandDockMoveRbJumpMover" );
 
 AsymFoldandDockMoveRbJumpMover::AsymFoldandDockMoveRbJumpMover( core::Size chain_start )
 : protocols::moves::Mover("AsymFoldandDockMoveRbJumpMover"), chain_start_( chain_start )

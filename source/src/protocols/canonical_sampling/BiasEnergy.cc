@@ -31,7 +31,7 @@
 //#include <math.h>
 //#include <iomanip>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.BiasEnergy" );
+static basic::Tracer tr( "protocols.canonical_sampling.BiasEnergy" );
 
 namespace protocols {
 namespace canonical_sampling {

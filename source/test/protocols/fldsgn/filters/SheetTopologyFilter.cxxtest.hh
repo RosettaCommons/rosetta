@@ -31,7 +31,7 @@
 // Boost headers
 
 // C++ headers
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.SheetTopologyFilter.cxxtest" );
+static basic::Tracer TR( "protocols.fldsgn.filters.SheetTopologyFilter.cxxtest" );
 
 void set_secstruct( core::pose::Pose & pose, std::string const & ss )
 {

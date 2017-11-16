@@ -135,7 +135,7 @@ namespace remodel {
 
 // Tracer instance for this file
 // Named after the original location of this code
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
+static basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
 // RNG
 
 /// @brief default constructor

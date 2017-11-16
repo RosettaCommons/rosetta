@@ -24,7 +24,7 @@ namespace rna {
 
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.rna.RNA_Info" );
+static basic::Tracer TR( "core.chemical.rna.RNA_Info" );
 
 ////////////////////////////////////////////////////////////
 

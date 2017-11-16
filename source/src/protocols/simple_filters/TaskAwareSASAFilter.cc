@@ -49,7 +49,7 @@
 
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.TaskAwareSASAFilter" );
+static basic::Tracer TR( "protocols.simple_filters.TaskAwareSASAFilter" );
 
 namespace protocols {
 namespace simple_filters {

@@ -25,7 +25,7 @@
 // basic headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.the_developer.my_app" );
+static basic::Tracer TR( "apps.pilot.the_developer.my_app" );
 
 int
 main( int argc, char * argv [] )
@@ -39,7 +39,7 @@ main( int argc, char * argv [] )
 
 		protocols::jd2::JobDistributor::get_instance()->go( pmm );
 
-	TR << "************************************d**o**n**e***********************************" << std::endl;
+		TR << "************************************d**o**n**e***********************************" << std::endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -63,7 +63,7 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;
@@ -85,49 +85,49 @@ void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	//  Templates::register_options();
-  OPT( in::file::s );
-  NEW_OPT( score_app::linmin, "Do a quick round of linmin before reporting the score", false );
-  NEW_OPT( dump_all, "show individual RDCs for each structure on screen", false );
-  NEW_OPT( average, "compute average RDC and mean_deviation for each residue", "average.dat" );
+	OPT( in::file::s );
+	NEW_OPT( score_app::linmin, "Do a quick round of linmin before reporting the score", false );
+	NEW_OPT( dump_all, "show individual RDCs for each structure on screen", false );
+	NEW_OPT( average, "compute average RDC and mean_deviation for each residue", "average.dat" );
 }
 
 void run() {
 	protocols::jd2::archive::ArchiveManager archive( 0,0,0 );
 	archive.go();
-//   WriteOut_MpiFileBuffer buffer( 0 );
-//   std::cout << "hello\n" << std::endl;
-// 	buffer.run();
-// 	ozstream out;
-// 	out.open("bla");
-// 	for ( Size i = 1; i<10; i++ ) {
-// 		out << A( 25, "shello") << i << F( 20, 5, 20.42 ) << std::endl;
-// 		for ( Size j = 1; j<20000000; j++ ) {
-// 			Real k = exp( j );
-// 		}
-// 	}
-// 	std::cerr<<"loop-finished" << std::endl;
-// 	using namespace basic::options;
-// 	using namespace basic::options::OptionKeys;
-// 	if ( option[ in::file::s ].user() ) {
-// 		std::cerr << "here" << std::endl;
-// 		core::pose::Pose pose;
-// 		core::import_pose::pose_from_file( pose, "S_2_0091.pdb" , core::import_pose::PDB_file);
-// 		core::io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_silent_struct_out();
-// 		pss->fill_struct( pose, "mala" );
-//  		std::cerr << "start output..." << std::endl;
-//  		pss->print_header( out );
-//  		std::cerr << "header completed" << std::endl;
-//  		pss->print_scores( out );
-//  		std::cerr << "scores completed" << std::endl;
-//  		pss->print_conformation( out );
-//  		std::cerr << "conformation completed" << std::endl;
-// 		out << pss << std::endl;
-// 		out.close();
+	//   WriteOut_MpiFileBuffer buffer( 0 );
+	//   std::cout << "hello\n" << std::endl;
+	//  buffer.run();
+	//  ozstream out;
+	//  out.open("bla");
+	//  for ( Size i = 1; i<10; i++ ) {
+	//   out << A( 25, "shello") << i << F( 20, 5, 20.42 ) << std::endl;
+	//   for ( Size j = 1; j<20000000; j++ ) {
+	//    Real k = exp( j );
+	//   }
+	//  }
+	//  std::cerr<<"loop-finished" << std::endl;
+	//  using namespace basic::options;
+	//  using namespace basic::options::OptionKeys;
+	//  if ( option[ in::file::s ].user() ) {
+	//   std::cerr << "here" << std::endl;
+	//   core::pose::Pose pose;
+	//   core::import_pose::pose_from_file( pose, "S_2_0091.pdb" , core::import_pose::PDB_file);
+	//   core::io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_silent_struct_out();
+	//   pss->fill_struct( pose, "mala" );
+	//    std::cerr << "start output..." << std::endl;
+	//    pss->print_header( out );
+	//    std::cerr << "header completed" << std::endl;
+	//    pss->print_scores( out );
+	//    std::cerr << "scores completed" << std::endl;
+	//    pss->print_conformation( out );
+	//    std::cerr << "conformation completed" << std::endl;
+	//   out << pss << std::endl;
+	//   out.close();
 
-// 		core::io::silent::SilentFileData sfd;
-// 		sfd.add_structure( pss );
-// 		sfd.write_all( "new_file" );
-// 	}
+	//   core::io::silent::SilentFileData sfd;
+	//   sfd.add_structure( pss );
+	//   sfd.write_all( "new_file" );
+	//  }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// =============================== MAIN ============================================================
@@ -136,19 +136,19 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-  register_options();
-  devel::init( argc, argv );
+		register_options();
+		devel::init( argc, argv );
 
-  try{
-    run();
-  } catch ( utility::excn::EXCN_Base& excn ) {
-    excn.show( std::cerr );
-  }
+		try{
+			run();
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			excn.show( std::cerr );
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-  return 0;
+	return 0;
 }
 
 

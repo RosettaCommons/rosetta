@@ -27,7 +27,7 @@
 #include <utility/io/util.hh>
 #include <utility/string_util.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.EnsembleJobInputter" );
+static basic::Tracer TR( "protocols.jd2.EnsembleJobInputter" );
 
 
 namespace protocols {

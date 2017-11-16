@@ -39,7 +39,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer atom_tracer( "protocols.ligand_docking.MolarMassFilter" );
+static basic::Tracer atom_tracer( "protocols.ligand_docking.MolarMassFilter" );
 
 bool
 MolarMassFilter::apply( core::pose::Pose const & pose ) const {

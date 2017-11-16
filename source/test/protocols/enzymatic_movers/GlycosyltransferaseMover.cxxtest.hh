@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.enzymatic_movers.GlycosyltransferaseMover_cxxtest");
+static basic::Tracer TR("protocols.enzymatic_movers.GlycosyltransferaseMover_cxxtest");
 
 class GlycosyltransferaseMoverTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////

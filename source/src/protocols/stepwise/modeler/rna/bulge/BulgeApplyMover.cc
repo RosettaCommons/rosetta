@@ -22,7 +22,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.bulge.BulgeApplyMover" );
+static basic::Tracer TR( "protocols.stepwise.modeler.rna.bulge.BulgeApplyMover" );
 
 namespace protocols {
 namespace stepwise {

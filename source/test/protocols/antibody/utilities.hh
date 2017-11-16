@@ -37,7 +37,7 @@
 #include <iostream>
 
 
-static THREAD_LOCAL basic::Tracer TR_util("protocols.antibody.utilities.cxxtest");
+static basic::Tracer TR_util("protocols.antibody.utilities.cxxtest");
 
 inline
 void
@@ -46,7 +46,7 @@ output_or_test(core::pack::task::TaskFactoryCOP tf,core::pose::Pose const & pose
 
 	std::string inname = inpath+"/"+name+".u";
 	std::string outname = first_run_outpath+"/"+name+".u";
-	if (first_run){
+	if ( first_run ) {
 		//std::cout <<"////"<<  std::endl << inname << std::endl << std::endl;
 		core::pack::task::PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 		//task->show(std::cout);
@@ -60,8 +60,7 @@ output_or_test(core::pack::task::TaskFactoryCOP tf,core::pose::Pose const & pose
 		OUT << std::endl << std::endl;
 		OUT.close();
 
-	}
-	else{
+	} else {
 		test::UTracer UT(inname, true);
 		//std::cout <<"////"<<  std::endl << inname << std::endl << std::endl;
 		//tf->create_task_and_apply_taskoperations(pose)->show(std::cout);
@@ -80,13 +79,13 @@ assert_region_design_is_disabled(
 )
 {
 	std::string r;
-	if (region == protocols::antibody::antigen_region) {r = "antigen";};
-	if (region == protocols::antibody::framework_region) {r = "framework";}
-	if (region == protocols::antibody::cdr_region) {r = "cdr";}
+	if ( region == protocols::antibody::antigen_region ) { r = "antigen";};
+	if ( region == protocols::antibody::framework_region ) { r = "framework";}
+	if ( region == protocols::antibody::cdr_region ) { r = "cdr";}
 
 	TR_util <<"Checking region: " << r << std::endl;
-	for (core::Size i = 1; i <= pose.size(); ++i ){
-		if (ab_info->get_region_of_residue(pose, i, cdr4_as_framework) == region){
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		if ( ab_info->get_region_of_residue(pose, i, cdr4_as_framework) == region ) {
 			TS_ASSERT_EQUALS(task->design_residue( i ), false );
 		}
 	}
@@ -103,13 +102,13 @@ assert_region_packing_is_disabled(
 )
 {
 	std::string r;
-	if (region == protocols::antibody::antigen_region) {r = "antigen";};
-	if (region == protocols::antibody::framework_region) {r = "framework";}
-	if (region == protocols::antibody::cdr_region) {r = "cdr";}
+	if ( region == protocols::antibody::antigen_region ) { r = "antigen";};
+	if ( region == protocols::antibody::framework_region ) { r = "framework";}
+	if ( region == protocols::antibody::cdr_region ) { r = "cdr";}
 
 	TR_util <<"Checking region: " << r << std::endl;
-	for (core::Size i = 1; i <= pose.size(); ++i ){
-		if (ab_info->get_region_of_residue(pose, i, cdr4_as_framework) == region){
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		if ( ab_info->get_region_of_residue(pose, i, cdr4_as_framework) == region ) {
 			TS_ASSERT_EQUALS(task->pack_residue( i ), false );
 		}
 	}
@@ -141,22 +140,21 @@ assert_cdr_design_is_enabled_or_disabled(
 	//Checks to make sure that the cdrs that are set to be disabled are disabled and that the other cdr residues are ALL enabled.
 	TR_util << "Checking CDR Design" << std::endl;
 
-	for (core::Size i = 1; i <= cdrs_to_check_disabled.size(); ++i ){
+	for ( core::Size i = 1; i <= cdrs_to_check_disabled.size(); ++i ) {
 		protocols::antibody::CDRNameEnum cdr = static_cast<protocols::antibody::CDRNameEnum>( i );
 		core::Size start = ab_info->get_CDR_start(cdr, pose);
 		core::Size end = ab_info->get_CDR_end(cdr, pose);
 		TR_util << "CDR: " << ab_info->get_CDR_name(cdr) <<" start: "<<start<<" end: "<< end << std::endl;
 
-		for (core::Size res = start; res <= end; ++res ){
+		for ( core::Size res = start; res <= end; ++res ) {
 
-			if (cdrs_to_check_disabled [ i ]) {
-				if (task->design_residue( res ) != false){
+			if ( cdrs_to_check_disabled [ i ] ) {
+				if ( task->design_residue( res ) != false ) {
 					std::cout << "Res supposed to be OFF! " << res << " PDB: " << pose.pdb_info()->pose2pdb(res) << std::endl;
 				}
 				TS_ASSERT_EQUALS(task->design_residue( res ) , false);
-			}
-			else {
-				if (task->design_residue( res ) != true){
+			} else {
+				if ( task->design_residue( res ) != true ) {
 					std::cout << "Res supposed to be ON! " << res << " PDB: " << pose.pdb_info()->pose2pdb(res) << std::endl;
 				}
 				TS_ASSERT_EQUALS(task->design_residue( res ), true);
@@ -176,13 +174,13 @@ assert_cdr_design_disabled(
 )
 {
 	TR_util << "Checking CDR Design" << std::endl;
-	for (core::Size i = 1; i <= cdrs_to_check_disabled.size(); ++i ) {
+	for ( core::Size i = 1; i <= cdrs_to_check_disabled.size(); ++i ) {
 		protocols::antibody::CDRNameEnum cdr = static_cast<protocols::antibody::CDRNameEnum>( i );
 		core::Size start = ab_info->get_CDR_start(cdr, pose);
 		core::Size end = ab_info->get_CDR_end(cdr, pose);
-		for (core::Size res = start; res <= end; ++res ){
-			if (cdrs_to_check_disabled [ i ]) {
-				if (task->design_residue( res ) != false){
+		for ( core::Size res = start; res <= end; ++res ) {
+			if ( cdrs_to_check_disabled [ i ] ) {
+				if ( task->design_residue( res ) != false ) {
 					std::cout << "Res supposed to be OFF! " << res << " PDB: " << pose.pdb_info()->pose2pdb(res) << std::endl;
 				}
 				TS_ASSERT_EQUALS(task->design_residue( res ) , false);
@@ -200,18 +198,18 @@ assert_cdr_packing_is_enabled_or_disabled(
 	utility::vector1<bool> cdrs_to_check_disabled)
 {
 	TR_util << "Checking packing " << std::endl;
-	for (core::Size i = 1; i <= cdrs_to_check_disabled.size(); ++i ) {
+	for ( core::Size i = 1; i <= cdrs_to_check_disabled.size(); ++i ) {
 		protocols::antibody::CDRNameEnum cdr = static_cast<protocols::antibody::CDRNameEnum>( i );
 		core::Size start = ab_info->get_CDR_start(cdr, pose);
 		core::Size end = ab_info->get_CDR_end(cdr, pose);
-		for (core::Size res = start; res <= end; ++res ) {
-			if (cdrs_to_check_disabled [ i ]) {
-				if (task->pack_residue( res ) != false) {
+		for ( core::Size res = start; res <= end; ++res ) {
+			if ( cdrs_to_check_disabled [ i ] ) {
+				if ( task->pack_residue( res ) != false ) {
 					std::cout << "Res supposed to be OFF! " << res << " PDB: " << pose.pdb_info()->pose2pdb(res) << std::endl;
 				}
 				TS_ASSERT_EQUALS(task->pack_residue( res ) , false);
 			} else {
-				if (task->pack_residue( res ) != true) {
+				if ( task->pack_residue( res ) != true ) {
 					std::cout << "Res supposed to be ON! " << res << "PDB: " << pose.pdb_info()->pose2pdb(res) << std::endl;
 				}
 				TS_ASSERT_EQUALS(task->pack_residue( res ), true);

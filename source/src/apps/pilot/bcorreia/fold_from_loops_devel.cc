@@ -75,7 +75,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 
-static THREAD_LOCAL basic::Tracer TR( "bcorreia_fold_from_loops" );
+static basic::Tracer TR( "bcorreia_fold_from_loops" );
 
 
 // Verifies if it is within the loop or a neighbor range
@@ -89,14 +89,14 @@ void fold_tree_generator( protocols::loops::Loops & loops , std::vector<Size> & 
 
 
 void fold_tree_generator(
-		protocols::loops::Loops & loops ,
-		std::vector<Size> & cutpoints,
-		core::pose::Pose & pose,
-		kinematics::FoldTree & f
+	protocols::loops::Loops & loops ,
+	std::vector<Size> & cutpoints,
+	core::pose::Pose & pose,
+	kinematics::FoldTree & f
 ){
 	f.add_edge( 1, pose.size(), Edge::PEPTIDE );
 
-	for (Size i=1;  i < loops.size() ; ++i){
+	for ( Size i=1;  i < loops.size() ; ++i ) {
 		TR<<"LOOP "<<  i <<std::endl;
 		TR<<"Cut point"<< cutpoints[i-1]<<std::endl;
 		Size cutpoint= cutpoints[i-1];
@@ -118,87 +118,87 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	protocols::abinitio::ClassicAbinitio::register_options();
-	protocols::abinitio::AbrelaxApplication::register_options();
-	// options, random initialization
-	devel::init( argc, argv );
+		protocols::abinitio::ClassicAbinitio::register_options();
+		protocols::abinitio::AbrelaxApplication::register_options();
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::fragment;
-	using namespace protocols;
-	using namespace constraints;
-	using protocols::jd2::JobDistributor;
-
-
-	pose::Pose nat_pose;
-
-	pose::Pose extended_pose;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::fragment;
+		using namespace protocols;
+		using namespace constraints;
+		using protocols::jd2::JobDistributor;
 
 
-	core::import_pose::pose_from_file( nat_pose, basic::options::start_file() , core::import_pose::PDB_file);
+		pose::Pose nat_pose;
 
-	extended_pose = nat_pose; //making working copy
-
-
-	protocols::checkpoint::CheckPointer sliding_checkpoint("closing");
+		pose::Pose extended_pose;
 
 
-	//Reading loops
-	protocols::loops::Loops lr_loops_in;
-	if ( option[ OptionKeys::loops::loop_file ].user() ){
-		std::string filename( protocols::loops::get_loop_file_name() );
+		core::import_pose::pose_from_file( nat_pose, basic::options::start_file() , core::import_pose::PDB_file);
 
-		lr_loops_in.read_loop_file( filename );
-	}
+		extended_pose = nat_pose; //making working copy
 
 
-	//Defining a fold tree
-	kinematics::FoldTree f;
-	f.clear();
-
-	std::vector<Size> cut_points;
+		protocols::checkpoint::CheckPointer sliding_checkpoint("closing");
 
 
-	//put an option here to protect the input
+		//Reading loops
+		protocols::loops::Loops lr_loops_in;
+		if ( option[ OptionKeys::loops::loop_file ].user() ) {
+			std::string filename( protocols::loops::get_loop_file_name() );
 
-    core::pose::Pose target_loops;
-
-	std::string swap_loops = option [OptionKeys::fold_from_loops::swap_loops ]().name();
-
-	core::import_pose::pose_from_file( target_loops , swap_loops , core::import_pose::PDB_file);
-
-
-	fold_tree_cutpoints_generator(lr_loops_in, cut_points, extended_pose, f);
+			lr_loops_in.read_loop_file( filename );
+		}
 
 
-	ConstraintSetOP ca_cst ( new ConstraintSet() );
+		//Defining a fold tree
+		kinematics::FoldTree f;
+		f.clear();
 
-	if (option [OptionKeys::fold_from_loops::native_ca_cst ].user() ){
+		std::vector<Size> cut_points;
+
+
+		//put an option here to protect the input
+
+		core::pose::Pose target_loops;
+
+		std::string swap_loops = option [OptionKeys::fold_from_loops::swap_loops ]().name();
+
+		core::import_pose::pose_from_file( target_loops , swap_loops , core::import_pose::PDB_file);
+
+
+		fold_tree_cutpoints_generator(lr_loops_in, cut_points, extended_pose, f);
+
+
+		ConstraintSetOP ca_cst ( new ConstraintSet() );
+
+		if ( option [OptionKeys::fold_from_loops::native_ca_cst ].user() ) {
 
 			CA_cst_generator( nat_pose, ca_cst , lr_loops_in, cut_points );
 
 
-			}
+		}
 
 
-	FragSetOP fragset_large_;
-	FragSetOP fragset_small_;
+		FragSetOP fragset_large_;
+		FragSetOP fragset_small_;
 
-	get_fragments(fragset_large_, fragset_small_ ); // reading_fragments
-
-
-	FoldFromLoopsMoverOP trial_mover = new FoldFromLoopsMover;
-
-	trial_mover->loops( lr_loops_in );
-	trial_mover->set_frag_3mers( fragset_small_ );
-	trial_mover->set_frag_9mers( fragset_large_ );
-	trial_mover->loops_pdb( target_loops );
-	trial_mover->set_ca_csts( ca_cst );
+		get_fragments(fragset_large_, fragset_small_ ); // reading_fragments
 
 
-	//add the set up of the
+		FoldFromLoopsMoverOP trial_mover = new FoldFromLoopsMover;
+
+		trial_mover->loops( lr_loops_in );
+		trial_mover->set_frag_3mers( fragset_small_ );
+		trial_mover->set_frag_9mers( fragset_large_ );
+		trial_mover->loops_pdb( target_loops );
+		trial_mover->set_ca_csts( ca_cst );
+
+
+		//add the set up of the
 
 
 		JobDistributor::get_instance()->go( trial_mover );

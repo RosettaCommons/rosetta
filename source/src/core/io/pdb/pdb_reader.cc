@@ -43,7 +43,7 @@
 #include <map>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.pdb_reader" );
+static basic::Tracer TR( "core.io.pdb.pdb_reader" );
 
 
 namespace core {

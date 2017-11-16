@@ -72,7 +72,7 @@ using protocols::simple_moves::sidechain_moves::SidechainMover;
 using protocols::simple_moves::sidechain_moves::SidechainMoverOP;
 using protocols::loops::Loop;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kale.monte_carlo" );
+static basic::Tracer TR( "apps.pilot.kale.monte_carlo" );
 
 // Options {{{1
 OPT_2GRP_KEY(File, kale, in, pdb)
@@ -84,133 +84,133 @@ OPT_2GRP_KEY(Integer, kale, out, trajectory)
 
 class SamplingManager { // {{{1
 
-	public:
+public:
 
-		SamplingManager() {
-			using core::pack::task::TaskFactory;
-			using core::pack::task::TaskFactoryOP;
-			using core::pack::task::operation::RestrictToRepacking;
-			using core::pack::task::operation::PreventRepacking;
-			using core::pack::task::operation::PreventRepackingOP;
+	SamplingManager() {
+		using core::pack::task::TaskFactory;
+		using core::pack::task::TaskFactoryOP;
+		using core::pack::task::operation::RestrictToRepacking;
+		using core::pack::task::operation::PreventRepacking;
+		using core::pack::task::operation::PreventRepackingOP;
 
-			pdb_path = option[OptionKeys::kale::in::pdb]();
-			first_residue = option[OptionKeys::kale::in::residues]()[1];
-			last_residue = option[OptionKeys::kale::in::residues]()[2];
-			iterations = option[OptionKeys::kale::in::iterations]();
+		pdb_path = option[OptionKeys::kale::in::pdb]();
+		first_residue = option[OptionKeys::kale::in::residues]()[1];
+		last_residue = option[OptionKeys::kale::in::residues]()[2];
+		iterations = option[OptionKeys::kale::in::iterations]();
 
-			core::import_pose::pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
 
-			TaskFactoryOP task_factory = new TaskFactory;
-			PreventRepackingOP prevent_repacking = new PreventRepacking();
+		TaskFactoryOP task_factory = new TaskFactory;
+		PreventRepackingOP prevent_repacking = new PreventRepacking();
 
-			for (Size i = 1; i <= pose.size(); i++) {
-				if (i < first_residue or i > last_residue) {
-					prevent_repacking->include_residue(i);
-				}
+		for ( Size i = 1; i <= pose.size(); i++ ) {
+			if ( i < first_residue or i > last_residue ) {
+				prevent_repacking->include_residue(i);
 			}
-
-			task_factory->push_back(new RestrictToRepacking);
-			task_factory->push_back(prevent_repacking);
-
-			sidechain_mover = new SidechainMover;
-			sidechain_mover->set_preserve_detailed_balance(true);
-			sidechain_mover->set_task_factory(task_factory);
-
-			score_function = new ScoreFunction;
-			monte_carlo = new MonteCarlo(pose, *score_function, 1);
 		}
 
-		void update() {
-			sidechain_mover->apply(pose);
-			Real proposal_ratio = sidechain_mover->last_proposal_density_ratio();
-			monte_carlo->boltzmann(pose, "sidechain", proposal_ratio);
-		}
+		task_factory->push_back(new RestrictToRepacking);
+		task_factory->push_back(prevent_repacking);
 
-	public:
-		Pose pose;
-		SidechainMoverOP sidechain_mover;
-		ScoreFunctionOP score_function;
-		MonteCarloOP monte_carlo;
+		sidechain_mover = new SidechainMover;
+		sidechain_mover->set_preserve_detailed_balance(true);
+		sidechain_mover->set_task_factory(task_factory);
 
-		string pdb_path;
-		Size first_residue, last_residue;
-		Size iterations;
+		score_function = new ScoreFunction;
+		monte_carlo = new MonteCarlo(pose, *score_function, 1);
+	}
+
+	void update() {
+		sidechain_mover->apply(pose);
+		Real proposal_ratio = sidechain_mover->last_proposal_density_ratio();
+		monte_carlo->boltzmann(pose, "sidechain", proposal_ratio);
+	}
+
+public:
+	Pose pose;
+	SidechainMoverOP sidechain_mover;
+	ScoreFunctionOP score_function;
+	MonteCarloOP monte_carlo;
+
+	string pdb_path;
+	Size first_residue, last_residue;
+	Size iterations;
 
 };
 
 class OutputManager { // {{{1
 
-	public:
+public:
 
-		OutputManager(SamplingManager &master) : sampler(master) { // {{{2
-			log_coordinates.open("coordinates.dat");
-			log_pivots.open("pivots.dat");
+	OutputManager(SamplingManager &master) : sampler(master) { // {{{2
+		log_coordinates.open("coordinates.dat");
+		log_pivots.open("pivots.dat");
 
-			quiet = option[OptionKeys::kale::out::quiet]();
-			dump_pose_freq = option[OptionKeys::kale::out::trajectory]();
-		}
+		quiet = option[OptionKeys::kale::out::quiet]();
+		dump_pose_freq = option[OptionKeys::kale::out::trajectory]();
+	}
 
-		~OutputManager() { // {{{2
-			log_coordinates.close();
-		}
-		// }}}2
+	~OutputManager() { // {{{2
+		log_coordinates.close();
+	}
+	// }}}2
 
-		void write_header() { // {{{2
-			cout << "Peptide:        " << sampler.pdb_path << endl;
-			cout << "Iterations:     " << sampler.iterations << endl;
-			cout << "Random Seed:    " << numeric::random::rg().get_seed() << endl;
+	void write_header() { // {{{2
+		cout << "Peptide:        " << sampler.pdb_path << endl;
+		cout << "Iterations:     " << sampler.iterations << endl;
+		cout << "Random Seed:    " << numeric::random::rg().get_seed() << endl;
 
-			log_pivots << sampler.first_residue << " ";
-			log_pivots << 0 << " ";
-			log_pivots << sampler.last_residue << endl;
-		}
+		log_pivots << sampler.first_residue << " ";
+		log_pivots << 0 << " ";
+		log_pivots << sampler.last_residue << endl;
+	}
 
-		void write_progress(Size iterations_so_far) { // {{{2
-			if (quiet == true) return;
-			cerr << "\r[" << iterations_so_far << "/" << sampler.iterations << "]";
-		}
+	void write_progress(Size iterations_so_far) { // {{{2
+		if ( quiet == true ) return;
+		cerr << "\r[" << iterations_so_far << "/" << sampler.iterations << "]";
+	}
 
-		void write_footer() { // {{{2
-			cerr << endl;
-		}
-		// }}}2
+	void write_footer() { // {{{2
+		cerr << endl;
+	}
+	// }}}2
 
-		void dump_pose(int iteration, bool force=false) { // {{{2
-			if (force == false && dump_pose_freq <= 0) return;
-			if (force == false && iteration % dump_pose_freq != 0) return;
+	void dump_pose(int iteration, bool force=false) { // {{{2
+		if ( force == false && dump_pose_freq <= 0 ) return;
+		if ( force == false && iteration % dump_pose_freq != 0 ) return;
 
-			static int total_dumps = sampler.iterations + 1;
-			static int total_digits = (int) ceil(log10(total_dumps));
+		static int total_dumps = sampler.iterations + 1;
+		static int total_digits = (int) ceil(log10(total_dumps));
 
-			stringstream stream;
-			stream << setw(total_digits) << setfill('0') << iteration;
-			string counter = stream.str();
+		stringstream stream;
+		stream << setw(total_digits) << setfill('0') << iteration;
+		string counter = stream.str();
 
-			sampler.pose.dump_pdb("trajectory/" + counter + ".pdb");
-		}
+		sampler.pose.dump_pdb("trajectory/" + counter + ".pdb");
+	}
 
-		void dump_statistics(int iteration) { // {{{2
-			log_coordinates << endl << "iteration  " << iteration;
-			log_coordinates << endl << "sequence   " << sampler.pose.sequence();
+	void dump_statistics(int iteration) { // {{{2
+		log_coordinates << endl << "iteration  " << iteration;
+		log_coordinates << endl << "sequence   " << sampler.pose.sequence();
 
-			for (int i = sampler.first_residue; i <= sampler.last_residue; i++) {
-				log_coordinates << endl << "chi        ";
-				Size num_chi = sampler.pose.residue(i).nchi();
+		for ( int i = sampler.first_residue; i <= sampler.last_residue; i++ ) {
+			log_coordinates << endl << "chi        ";
+			Size num_chi = sampler.pose.residue(i).nchi();
 
-				for (int j = 1; j <= num_chi; j++) {
-					log_coordinates << setw(10) << sampler.pose.chi(j, i) << " ";
-				}
+			for ( int j = 1; j <= num_chi; j++ ) {
+				log_coordinates << setw(10) << sampler.pose.chi(j, i) << " ";
 			}
-
-			log_coordinates << endl;
 		}
-		// }}}2
 
-	private:
-		SamplingManager & sampler;
-		ofstream log_coordinates, log_pivots;
-		int dump_pose_freq;
-		bool quiet;
+		log_coordinates << endl;
+	}
+	// }}}2
+
+private:
+	SamplingManager & sampler;
+	ofstream log_coordinates, log_pivots;
+	int dump_pose_freq;
+	bool quiet;
 };
 // }}}1
 
@@ -231,7 +231,7 @@ int main(int argc, char* argv []) {
 	output.dump_pose(0, true);
 	output.dump_statistics(0);
 
-	for (int i = 1; i <= sampler.iterations; i++) {
+	for ( int i = 1; i <= sampler.iterations; i++ ) {
 		sampler.update();
 		output.write_progress(i);
 		output.dump_pose(i);

@@ -58,10 +58,9 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.fix_bb_monomer_ddg" );
+static basic::Tracer TR( "pilot_apps.fix_bb_monomer_ddg" );
 
 
 //numeric::random::RandomGenerator RG(54324); // <- Magic number, do not change it!!!

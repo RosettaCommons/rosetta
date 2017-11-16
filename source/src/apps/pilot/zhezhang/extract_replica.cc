@@ -74,7 +74,7 @@
 #include <utility/excn/EXCN_Base.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;
@@ -96,58 +96,55 @@ void register_options(){
 	OPT( in::file::silent );
 	OPT(out::file::residue_type_set);
 	NEW_OPT( reslist, "extract CA coords of atoms in reslist", 1 );
- 	NEW_OPT( points, "which atom to extract", "test.pdb" );
+	NEW_OPT( points, "which atom to extract", "test.pdb" );
 	NEW_OPT( bfac, "which energy column to put in bfactor","");
 }
 
 core::io::silent::SilentStructOP
 extract_replica(std::string filename, std::string jobname, core::Real temp_level)
 {
-        using namespace io::silent;
-        SilentFileData sfd;
-        SilentFileData::iterator final;
-        Real energy;
+	using namespace io::silent;
+	SilentFileData sfd;
+	SilentFileData::iterator final;
+	Real energy;
 
-        sfd.read_file( filename );
-        for ( SilentFileData::iterator it=sfd.begin(); it!=sfd.end(); ++it)
-        {
-                if ( it->has_energy( "temp_level" ) )
-                {
-                        energy = it->get_energy( "temp_level" );
-                        if ( energy == temp_level ) final = it;
-                }
+	sfd.read_file( filename );
+	for ( SilentFileData::iterator it=sfd.begin(); it!=sfd.end(); ++it ) {
+		if ( it->has_energy( "temp_level" ) ) {
+			energy = it->get_energy( "temp_level" );
+			if ( energy == temp_level ) final = it;
+		}
 
-        }
+	}
 
-        final->print_score_header( std::cout );
-        return *final;
+	final->print_score_header( std::cout );
+	return *final;
 }
 
 core::io::silent::SilentStructOP
 extract_replica(std::string filename, std::string jobname, int replica_id)
 {
-        using namespace io::silent;
-				using namespace std;
-        SilentFileData sfd;
-        SilentFileData::iterator final;
-				ostringstream replica_id_str;
-				replica_id_str << setw(3) <<setfill('0') << replica_id;
-				std::string tag = jobname+"_"+replica_id_str.str();
-				std::string full_tag;
-				std::string::size_type pos;
-        sfd.read_file( filename );
+	using namespace io::silent;
+	using namespace std;
+	SilentFileData sfd;
+	SilentFileData::iterator final;
+	ostringstream replica_id_str;
+	replica_id_str << setw(3) <<setfill('0') << replica_id;
+	std::string tag = jobname+"_"+replica_id_str.str();
+	std::string full_tag;
+	std::string::size_type pos;
+	sfd.read_file( filename );
 
-        for ( SilentFileData::iterator it=sfd.begin(); it!=sfd.end(); ++it)
-        {
-					full_tag = it->decoy_tag();
-					pos = full_tag.find( tag );
-					if ( pos!=std::string::npos ){
-						final = it;
-					}
-        }
+	for ( SilentFileData::iterator it=sfd.begin(); it!=sfd.end(); ++it ) {
+		full_tag = it->decoy_tag();
+		pos = full_tag.find( tag );
+		if ( pos!=std::string::npos ) {
+			final = it;
+		}
+	}
 
-        final->print_score_header( std::cout );
-        return *final;
+	final->print_score_header( std::cout );
+	return *final;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,16 +155,16 @@ main( int argc, char * argv [] )
 {
 	try {
 
-// 	register_options();
- 	devel::init( argc, argv );
-	tr.Trace << "test in main" << std::endl;
-	core::io::silent::SilentStructOP ss = extract_replica( "for_test.out" , "test" , 1.000);
-	ss->print_scores( std::cout );
+		//  register_options();
+		devel::init( argc, argv );
+		tr.Trace << "test in main" << std::endl;
+		core::io::silent::SilentStructOP ss = extract_replica( "for_test.out" , "test" , 1.000);
+		ss->print_scores( std::cout );
 
-	core::io::silent::SilentStructOP st = extract_replica( "for_test.out" , "P_0002" , 1);
-	st->print_scores( std::cout );
-	 } catch ( utility::excn::EXCN_Base const & e ) {
-		 std::cout << "caught exception " << e.msg() << std::endl;
+		core::io::silent::SilentStructOP st = extract_replica( "for_test.out" , "P_0002" , 1);
+		st->print_scores( std::cout );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 	return 0;

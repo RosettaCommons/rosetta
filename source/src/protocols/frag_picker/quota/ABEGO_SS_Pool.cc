@@ -34,7 +34,7 @@ namespace quota {
 using core::Real;
 using core::Size;
 
-static THREAD_LOCAL basic::Tracer trABEGO_SS_Pool(
+static basic::Tracer trABEGO_SS_Pool(
 	"protocols.frag_picker.quota.ABEGO_SS_Pool");
 
 /// @brief Creates a pool of a given size and name

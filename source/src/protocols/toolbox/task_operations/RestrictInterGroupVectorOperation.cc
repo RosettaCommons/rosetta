@@ -39,7 +39,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictInterGroupVectorOperation" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictInterGroupVectorOperation" );
 
 namespace protocols {
 namespace toolbox {

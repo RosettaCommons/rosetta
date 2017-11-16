@@ -82,8 +82,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR("apps.pilot.bder.HbondZinc");
+static basic::Tracer TR("apps.pilot.bder.HbondZinc");
 
 typedef std::set< core::Size > SetSize;
 

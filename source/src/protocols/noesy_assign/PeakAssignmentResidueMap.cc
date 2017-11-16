@@ -58,7 +58,7 @@
 #include <set>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.assignments" );
+static basic::Tracer tr( "protocols.noesy_assign.assignments" );
 
 using core::Real;
 using namespace core;

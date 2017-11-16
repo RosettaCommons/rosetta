@@ -50,7 +50,7 @@ using namespace core::scoring::constraints;
 using namespace core::scoring::func;
 using namespace protocols::constraint_generator;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.ResidueTypeConstraintGenerator.cxxtest.hh" );
+static basic::Tracer TR( "protocols.constraint_generator.ResidueTypeConstraintGenerator.cxxtest.hh" );
 
 class ResidueTypeConstraintGeneratorTests : public CxxTest::TestSuite {
 

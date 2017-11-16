@@ -51,7 +51,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.TaskAwareScoreTypeFilter" );
+static basic::Tracer TR( "protocols.simple_filters.TaskAwareScoreTypeFilter" );
 
 /// @brief default ctor
 TaskAwareScoreTypeFilter::TaskAwareScoreTypeFilter() :

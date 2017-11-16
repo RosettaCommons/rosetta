@@ -111,7 +111,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.frag_picker.FragmentPicker" );
+static basic::Tracer tr( "protocols.frag_picker.FragmentPicker" );
 
 FragmentPicker::~FragmentPicker() = default;
 
@@ -627,7 +627,7 @@ void FragmentPicker::nonlocal_pairs( core::Size const fragment_size, utility::ve
 #elif defined USE_BOOST_THREAD
 	boost::thread_group threads;
 #endif
-	tr.super_mute(true); // lets suppress tracer output when running multi threads
+	basic::TracerImpl::super_mute(true); // lets suppress tracer output when running multi threads
 	for ( core::Size j = 1; j <= max_threads_; ++j ) {
 		if ( qPosi_to_run[j].size() > 0 ) {
 			std::cout << "thread: " << j << " - " << qPosi_to_run[j].size() << " positions -";
@@ -654,7 +654,7 @@ void FragmentPicker::nonlocal_pairs( core::Size const fragment_size, utility::ve
 #elif defined USE_BOOST_THREAD
 	threads.join_all();
 #endif
-	tr.super_mute(false);
+	basic::TracerImpl::super_mute(false);
 
 #else // defined MULTI_THREADED || defined USE_BOOST_THREAD
 
@@ -1039,7 +1039,7 @@ void FragmentPicker::pick_candidates() {
 #elif defined USE_BOOST_THREAD
 		boost::thread_group threads;
 #endif
-		tr.super_mute(true); // lets suppress tracer output when running multi threads
+		basic::TracerImpl::super_mute(true); // lets suppress tracer output when running multi threads
 		for ( core::Size j = 1; j <= max_threads_; ++j ) {
 			if ( chunks_to_run[j].size() > 0 ) {
 				std::cout << "thread: " << j << " - " << chunks_to_run[j].size() << " chunks" << std::endl;
@@ -1055,7 +1055,7 @@ void FragmentPicker::pick_candidates() {
 #elif defined USE_BOOST_THREAD
 		threads.join_all();
 #endif
-		tr.super_mute(false);
+		basic::TracerImpl::super_mute(false);
 
 		time_t time_end = time(NULL);
 		tr.Info << "... done.  Processed " << chunks_->size() << " chunks.  Time elapsed: "

@@ -61,7 +61,7 @@
 #include <ostream>
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.SampleTiltProtocol" );
+static basic::Tracer TR( "apps.pilot.ralford.SampleTiltProtocol" );
 
 class SampleTiltProtocol : public protocols::moves::Mover {
 

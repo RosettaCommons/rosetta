@@ -55,7 +55,7 @@
 
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer TRps( "packstat" );
+static basic::Tracer TRps( "packstat" );
 
 using namespace core::scoring::packstat;
 

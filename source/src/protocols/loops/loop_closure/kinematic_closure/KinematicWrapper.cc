@@ -41,11 +41,10 @@
 
 // C++ Headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicWrapper" );
+static basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicWrapper" );
 
 namespace protocols {
 namespace loops {

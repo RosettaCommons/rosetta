@@ -15,7 +15,7 @@
 #include <core/pose/rna/leontis_westhof_util.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.leontis_westhof_util" );
+static basic::Tracer TR( "core.pose.rna.leontis_westhof_util" );
 
 namespace core {
 namespace pose {

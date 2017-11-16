@@ -30,7 +30,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.SequenceDistance" );
+static basic::Tracer TR( "protocols.simple_filters.SequenceDistance" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP SequenceDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SequenceDistance ); }

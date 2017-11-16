@@ -46,7 +46,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
+static basic::Tracer tr( "core.io.constraints" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

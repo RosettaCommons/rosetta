@@ -40,7 +40,7 @@
 #include <utility/options/OptionCollection.hh>
 #include <utility/string_util.hh>
 
-static THREAD_LOCAL basic::Tracer TR("glycan_info");
+static basic::Tracer TR("glycan_info");
 
 
 void register_options() {

@@ -43,7 +43,7 @@
 // C++ headers
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.rosetta_scripts.MultiplePoseMover.cxxtest");
+static basic::Tracer TR("protocols.rosetta_scripts.MultiplePoseMover.cxxtest");
 
 ////////////////////////////////////////////////////////////////////////
 // Dummy Mover that generates derivitives of poses from create_trpcage_ideal_pose()

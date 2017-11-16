@@ -113,7 +113,7 @@
 
 #include <basic/prof.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.bbmc" );
+static basic::Tracer TR( "pilot.wendao.bbmc" );
 
 //params for all
 OPT_1GRP_KEY(Integer, mc, ntrials) //how many steps
@@ -179,192 +179,192 @@ using namespace protocols::simple_moves;
 // public:
 
 // public:
-// 	BBG8T3A_Jump_Mover():BBGaussianMover(3,8,4),
-// 	    dphi(utility::vector1<Real>(n_dof_angle_))
-// 	{
-// 	    protocols::moves::Mover::type("BBG8T3A_Jump_Mover");
-// 	    //build end atom list
-// 	    end_atom_list_.push_back("CA");
-// 	    end_atom_list_.push_back("C");
-// 	    end_atom_list_.push_back("O");
+//  BBG8T3A_Jump_Mover():BBGaussianMover(3,8,4),
+//      dphi(utility::vector1<Real>(n_dof_angle_))
+//  {
+//      protocols::moves::Mover::type("BBG8T3A_Jump_Mover");
+//      //build end atom list
+//      end_atom_list_.push_back("CA");
+//      end_atom_list_.push_back("C");
+//      end_atom_list_.push_back("O");
 
-// 	    //init the A/C factor
-// 	    factorA_ = 0.6;
-// 	    factorB_ = 10;
-// 	}
+//      //init the A/C factor
+//      factorA_ = 0.6;
+//      factorB_ = 10;
+//  }
 
-// 	~BBG8T3A_Jump_Mover(){}
+//  ~BBG8T3A_Jump_Mover(){}
 
-// 	void apply(Pose &pose)
-// 	{
-// 	    //if(available_seg_list_.size()==0)setup_list(pose);
-// 	    //if(available_seg_list_.size()==0)return;
+//  void apply(Pose &pose)
+//  {
+//      //if(available_seg_list_.size()==0)setup_list(pose);
+//      //if(available_seg_list_.size()==0)return;
 
-// 	    //select four hinge
-// 	    //for lysozyme, 104-117
-// 	    Real rA, rB, rC, rD;
-// 	    if (numeric::random::rg().uniform()<0.5) {
-// 	    	Size Ns(numeric::random::rg().uniform()*2+1);
-// 		    Real randn = numeric::random::rg().uniform();
-// 		    rA = Size(randn*(15.0-3.0*Ns))+104;
-// 		    rB = rA+Ns;
-// 		    rC = rB+Ns;
-// 		    rD = rC+Ns;
-// 	    }
-// 	    else {
-// 	    	rA = 105;
-// 	    	rB = 106;
-// 	    	rC = 116;
-// 	    	rD = 117;
-// 	    }
+//      //select four hinge
+//      //for lysozyme, 104-117
+//      Real rA, rB, rC, rD;
+//      if (numeric::random::rg().uniform()<0.5) {
+//       Size Ns(numeric::random::rg().uniform()*2+1);
+//       Real randn = numeric::random::rg().uniform();
+//       rA = Size(randn*(15.0-3.0*Ns))+104;
+//       rB = rA+Ns;
+//       rC = rB+Ns;
+//       rD = rC+Ns;
+//      }
+//      else {
+//       rA = 105;
+//       rB = 106;
+//       rC = 116;
+//       rD = 117;
+//      }
 
-// 	    std::cout << rA << "," << rB << "," << rC << "," << rD << std::endl;
+//      std::cout << rA << "," << rB << "," << rC << "," << rD << std::endl;
 
-// 	    get_VdRdPhi(pose, rA, rB, rC, rD);
-// 	    get_G();
-// 	    get_A();
-// 	    Real W_old = get_L_move(pose, rA, rB, rC, rD);
+//      get_VdRdPhi(pose, rA, rB, rC, rD);
+//      get_G();
+//      get_A();
+//      Real W_old = get_L_move(pose, rA, rB, rC, rD);
 
-// 	    get_VdRdPhi(pose, rA, rB, rC, rD);
-// 	    get_G();
-// 	    get_A();
-// 	    Real W_new = get_L_prime();
+//      get_VdRdPhi(pose, rA, rB, rC, rD);
+//      get_G();
+//      get_A();
+//      Real W_new = get_L_prime();
 
-// 	    last_proposal_density_ratio_ = W_new / W_old;
-// 	}
+//      last_proposal_density_ratio_ = W_new / W_old;
+//  }
 
-// 	virtual std::string get_name() const
-// 	{
-// 		return "BBG8T3A_Jump_Mover";
-// 	}
+//  virtual std::string get_name() const
+//  {
+//   return "BBG8T3A_Jump_Mover";
+//  }
 
 // protected:
-// 	void get_VdRdPhi(Pose const &pose, Size rA, Size rB, Size rC, Size rD)
-// 	{
-// 	    conformation::Residue const & rsd4( pose.residue( rD ) );
-// 	    conformation::Residue const & rsd3( pose.residue( rC ) );
-// 	    conformation::Residue const & rsd2( pose.residue( rB ) );
-// 	    conformation::Residue const & rsd1( pose.residue( rA ) );
+//  void get_VdRdPhi(Pose const &pose, Size rA, Size rB, Size rC, Size rD)
+//  {
+//      conformation::Residue const & rsd4( pose.residue( rD ) );
+//      conformation::Residue const & rsd3( pose.residue( rC ) );
+//      conformation::Residue const & rsd2( pose.residue( rB ) );
+//      conformation::Residue const & rsd1( pose.residue( rA ) );
 
-// 	    for (Size i=1;i<=end_atom_list_.size();i++)
-// 	    {
-// 	        //for each end atom
-// 	        xyzVector end_xyz = rsd4.atom(end_atom_list_[i]).xyz();
-// 	        //TR << "Phi: 8" << endl;
-// 	        matrix_dRdPhi[i][8] = get_dRdPhi(rsd4.atom("CA").xyz(),
-// 	                                         rsd4.atom("C").xyz(),
-// 	                                         end_xyz);
-// 	        //TR << "Phi: 7" << endl;
-// 	        matrix_dRdPhi[i][7] = get_dRdPhi(rsd4.atom("N").xyz(),
-// 	                                         rsd4.atom("CA").xyz(),
-// 	                                         end_xyz);
-// 	        //TR << "Phi: 6" << endl;
-// 	        matrix_dRdPhi[i][6] = get_dRdPhi(rsd3.atom("CA").xyz(),
-// 	                                         rsd3.atom("C").xyz(),
-// 	                                         end_xyz);
-// 	        //TR << "Phi: 5" << endl;
-// 	        matrix_dRdPhi[i][5] = get_dRdPhi(rsd3.atom("N").xyz(),
-// 	                                         rsd3.atom("CA").xyz(),
-// 	                                         end_xyz);
-// 	        //TR << "Phi: 4" << endl;
-// 	        matrix_dRdPhi[i][4] = get_dRdPhi(rsd2.atom("CA").xyz(),
-// 	                                         rsd2.atom("C").xyz(),
-// 	                                         end_xyz);
-// 	        //TR << "Phi: 3" << endl;
-// 	        matrix_dRdPhi[i][3] = get_dRdPhi(rsd2.atom("N").xyz(),
-// 	                                         rsd2.atom("CA").xyz(),
-// 	                                         end_xyz);
-// 	        //TR << "Phi: 2" << endl;
-// 	        matrix_dRdPhi[i][2] = get_dRdPhi(rsd1.atom("CA").xyz(),
-// 	                                         rsd1.atom("C").xyz(),
-// 	                                         end_xyz);
-// 	        //TR << "Phi: 1" << endl;
-// 	        matrix_dRdPhi[i][1] = get_dRdPhi(rsd1.atom("N").xyz(),
-// 	                                         rsd1.atom("CA").xyz(),
-// 	                                         end_xyz);
-// 	    }
-// 	}
+//      for (Size i=1;i<=end_atom_list_.size();i++)
+//      {
+//          //for each end atom
+//          xyzVector end_xyz = rsd4.atom(end_atom_list_[i]).xyz();
+//          //TR << "Phi: 8" << endl;
+//          matrix_dRdPhi[i][8] = get_dRdPhi(rsd4.atom("CA").xyz(),
+//                                           rsd4.atom("C").xyz(),
+//                                           end_xyz);
+//          //TR << "Phi: 7" << endl;
+//          matrix_dRdPhi[i][7] = get_dRdPhi(rsd4.atom("N").xyz(),
+//                                           rsd4.atom("CA").xyz(),
+//                                           end_xyz);
+//          //TR << "Phi: 6" << endl;
+//          matrix_dRdPhi[i][6] = get_dRdPhi(rsd3.atom("CA").xyz(),
+//                                           rsd3.atom("C").xyz(),
+//                                           end_xyz);
+//          //TR << "Phi: 5" << endl;
+//          matrix_dRdPhi[i][5] = get_dRdPhi(rsd3.atom("N").xyz(),
+//                                           rsd3.atom("CA").xyz(),
+//                                           end_xyz);
+//          //TR << "Phi: 4" << endl;
+//          matrix_dRdPhi[i][4] = get_dRdPhi(rsd2.atom("CA").xyz(),
+//                                           rsd2.atom("C").xyz(),
+//                                           end_xyz);
+//          //TR << "Phi: 3" << endl;
+//          matrix_dRdPhi[i][3] = get_dRdPhi(rsd2.atom("N").xyz(),
+//                                           rsd2.atom("CA").xyz(),
+//                                           end_xyz);
+//          //TR << "Phi: 2" << endl;
+//          matrix_dRdPhi[i][2] = get_dRdPhi(rsd1.atom("CA").xyz(),
+//                                           rsd1.atom("C").xyz(),
+//                                           end_xyz);
+//          //TR << "Phi: 1" << endl;
+//          matrix_dRdPhi[i][1] = get_dRdPhi(rsd1.atom("N").xyz(),
+//                                           rsd1.atom("CA").xyz(),
+//                                           end_xyz);
+//      }
+//  }
 
-// 	void get_G()
-// 	{
-// 		for (Size i=1; i<=n_dof_angle_; i++)
-// 	    {
-// 	        for (Size j=i; j<=n_dof_angle_; j++)
-// 	        {
-// 	            matrix_G[i][j] = 0.0;
-// 	            for (Size n=1; n<=end_atom_list_.size();n++)
-// 	            {
-// 	                matrix_G[i][j] += matrix_dRdPhi[n][i].dot(matrix_dRdPhi[n][j]);
-// 	            }
-// 	            //if (matrix_G[i][j]>-ZERO && matrix_G[i][j]<ZERO) matrix_G[i][j] = 0.0;
-// 	            if (i<j) matrix_G[j][i]=matrix_G[i][j];
+//  void get_G()
+//  {
+//   for (Size i=1; i<=n_dof_angle_; i++)
+//      {
+//          for (Size j=i; j<=n_dof_angle_; j++)
+//          {
+//              matrix_G[i][j] = 0.0;
+//              for (Size n=1; n<=end_atom_list_.size();n++)
+//              {
+//                  matrix_G[i][j] += matrix_dRdPhi[n][i].dot(matrix_dRdPhi[n][j]);
+//              }
+//              //if (matrix_G[i][j]>-ZERO && matrix_G[i][j]<ZERO) matrix_G[i][j] = 0.0;
+//              if (i<j) matrix_G[j][i]=matrix_G[i][j];
 
-// 	        }
-// 	    }
-// 	}
+//          }
+//      }
+//  }
 
-// 	void get_A()
-// 	{
-// 	    for (Size i=1; i<=n_dof_angle_; i++)
-// 	    {
-// 	        for (Size j=i; j<=n_dof_angle_; j++)
-// 	        {
-// 	            matrix_A[i][j] = factorB_ * matrix_G[i][j];
-// 	            if (i==j) matrix_A[i][j] += 1.0;
-// 	            matrix_A[i][j] *= factorA_ / 2.0;
-// 	            if (i<j) matrix_A[j][i] = matrix_A[i][j];
-// 	        }
-// 	    }
-// 	}
+//  void get_A()
+//  {
+//      for (Size i=1; i<=n_dof_angle_; i++)
+//      {
+//          for (Size j=i; j<=n_dof_angle_; j++)
+//          {
+//              matrix_A[i][j] = factorB_ * matrix_G[i][j];
+//              if (i==j) matrix_A[i][j] += 1.0;
+//              matrix_A[i][j] *= factorA_ / 2.0;
+//              if (i<j) matrix_A[j][i] = matrix_A[i][j];
+//          }
+//      }
+//  }
 
-// 	void get_VdRdPhi(Pose const &){}
-// 	//Real get_L_move(Pose &){}
+//  void get_VdRdPhi(Pose const &){}
+//  //Real get_L_move(Pose &){}
 
-// 	Real get_L_move(Pose &pose, Size rA, Size rB, Size rC, Size rD)
-// 	{
-// 	    //gerate a Gaussian dx vector
-// 	    utility::vector1<Real> delta(n_dof_angle_);
-// 	    for (Size i=1; i<=n_dof_angle_; i++) delta[i]=RG.gaussian();
-// 	    //calculate d^2 = delta^2
-// 	    Real d2=0.0;
-// 	    for (Size i=1; i<=n_dof_angle_; i++) d2+=delta[i]*delta[i];
-// 	    //cholesky, get L^t, L^-1
-// 	    Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi);
+//  Real get_L_move(Pose &pose, Size rA, Size rB, Size rC, Size rD)
+//  {
+//      //gerate a Gaussian dx vector
+//      utility::vector1<Real> delta(n_dof_angle_);
+//      for (Size i=1; i<=n_dof_angle_; i++) delta[i]=RG.gaussian();
+//      //calculate d^2 = delta^2
+//      Real d2=0.0;
+//      for (Size i=1; i<=n_dof_angle_; i++) d2+=delta[i]*delta[i];
+//      //cholesky, get L^t, L^-1
+//      Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi);
 
-// 	    //W_old *= exp(-d^2)
-// 	    Real W_old = detL*exp(-d2/2.0);
-// 	    //set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
-// 	    pose.set_psi(rD, basic::periodic_range( pose.psi(rD)+dphi[8], 360.0 ) );
-// 	    pose.set_phi(rD, basic::periodic_range( pose.phi(rD)+dphi[7], 360.0 ) );
-// 	    pose.set_psi(rC, basic::periodic_range( pose.psi(rC)+dphi[6], 360.0 ) ) ;
-// 	    pose.set_phi(rC, basic::periodic_range( pose.phi(rC)+dphi[5], 360.0 ) );
-// 	    pose.set_psi(rB, basic::periodic_range( pose.psi(rB)+dphi[4], 360.0 ) );
-// 	    pose.set_phi(rB, basic::periodic_range( pose.phi(rB)+dphi[3], 360.0 ) );
-// 	    pose.set_psi(rA, basic::periodic_range( pose.psi(rA)+dphi[2], 360.0 ) );
-// 	    pose.set_phi(rA, basic::periodic_range( pose.phi(rA)+dphi[1], 360.0 ) );
+//      //W_old *= exp(-d^2)
+//      Real W_old = detL*exp(-d2/2.0);
+//      //set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
+//      pose.set_psi(rD, basic::periodic_range( pose.psi(rD)+dphi[8], 360.0 ) );
+//      pose.set_phi(rD, basic::periodic_range( pose.phi(rD)+dphi[7], 360.0 ) );
+//      pose.set_psi(rC, basic::periodic_range( pose.psi(rC)+dphi[6], 360.0 ) ) ;
+//      pose.set_phi(rC, basic::periodic_range( pose.phi(rC)+dphi[5], 360.0 ) );
+//      pose.set_psi(rB, basic::periodic_range( pose.psi(rB)+dphi[4], 360.0 ) );
+//      pose.set_phi(rB, basic::periodic_range( pose.phi(rB)+dphi[3], 360.0 ) );
+//      pose.set_psi(rA, basic::periodic_range( pose.psi(rA)+dphi[2], 360.0 ) );
+//      pose.set_phi(rA, basic::periodic_range( pose.phi(rA)+dphi[1], 360.0 ) );
 
-// 	    return W_old;
-// 	}
+//      return W_old;
+//  }
 
-// 	Real get_L_prime()
-// 	{
-// 		utility::vector1<Real> delta(n_dof_angle_);
-// 	    //get L
-// 	    Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi, delta);
-// 	    //delta = L^t * dphi
-// 	    //calculate d^2 = delta^2
-// 	    Real d2=0.0;
-// 	    for (Size i=1; i<=n_dof_angle_; i++)d2+=delta[i]*delta[i];
-// 	    Real W_new = detL*exp(-d2/2.0);
-// 	    return W_new;
-// 	}
+//  Real get_L_prime()
+//  {
+//   utility::vector1<Real> delta(n_dof_angle_);
+//      //get L
+//      Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi, delta);
+//      //delta = L^t * dphi
+//      //calculate d^2 = delta^2
+//      Real d2=0.0;
+//      for (Size i=1; i<=n_dof_angle_; i++)d2+=delta[i]*delta[i];
+//      Real W_new = detL*exp(-d2/2.0);
+//      return W_new;
+//  }
 
 // private:
-// 	utility::vector1< std::string > end_atom_list_;
-// 	utility::vector1< Real > dphi;
-// 	Real factorA_;
-// 	Real factorB_;
-// 	Real last_delta_square_;
+//  utility::vector1< std::string > end_atom_list_;
+//  utility::vector1< Real > dphi;
+//  Real factorA_;
+//  Real factorB_;
+//  Real last_delta_square_;
 // };
 
 //////////////////////////////
@@ -373,14 +373,14 @@ using namespace protocols::simple_moves;
 
 core::Real
 periodic_range( core::Real a, core::Real x ){
-  using namespace ObjexxFCL;
-  core::Real const halfx = 0.5f * x;
-  return ( ( a >= halfx || a < -halfx ) ? mod( mod( a, x ) + ( x + halfx ), x ) - halfx : a );
+	using namespace ObjexxFCL;
+	core::Real const halfx = 0.5f * x;
+	return ( ( a >= halfx || a < -halfx ) ? mod( mod( a, x ) + ( x + halfx ), x ) - halfx : a );
 }
 
 std::string get_ABGEO_string( core::pose::Pose & p, core::Size start, core::Size stop ) {
 	std::string ABGEO_assignment = "";
-	for( core::Size ii = start; ii <= stop; ii++ ){
+	for ( core::Size ii = start; ii <= stop; ii++ ) {
 		core::Real phi = p.phi(ii);
 		core::Real psi = p.psi(ii);
 		core::Real omega = p.omega(ii);
@@ -406,14 +406,14 @@ std::string get_ABGEO_string( core::pose::Pose & p, core::Size start, core::Size
 		ABGEO_assignment = ABGEO_assignment + position_assignment;
 	}
 
-  return ABGEO_assignment;
+	return ABGEO_assignment;
 }
 
 std::string get_tag( core::Size itrial, core::Real kT, int rank ) {
 	using namespace ObjexxFCL;
 	return   "S_" + lead_zero_string_of( itrial, 8 ) + "_"
-    + lead_zero_string_of( kT, 5 ).substr(0,8) + "_"
-    + lead_zero_string_of( rank, 5);
+		+ lead_zero_string_of( kT, 5 ).substr(0,8) + "_"
+		+ lead_zero_string_of( rank, 5);
 }
 
 std::string get_filename(std::string const suffix, core::Real t) {
@@ -423,19 +423,18 @@ std::string get_filename(std::string const suffix, core::Real t) {
 	int index=0;
 	core::Size end=option[mc::re_tlist]().size();
 
-	if (end>0) {
-		for(core::Size i=1; i<=end; i++) {
-			if (std::fabs(option[mc::re_tlist]()[i]-t)<1.0e-4) index=static_cast<int>(i-1);
+	if ( end>0 ) {
+		for ( core::Size i=1; i<=end; i++ ) {
+			if ( std::fabs(option[mc::re_tlist]()[i]-t)<1.0e-4 ) index=static_cast<int>(i-1);
 		}
 		runtime_assert(index>=0 && index < static_cast<int>(end));
 	}
 
 	std::ostringstream inputfn;
-	if (option[ mc::re_pdb_prefix ].user()) {
+	if ( option[ mc::re_pdb_prefix ].user() ) {
 		inputfn << option[ mc::re_pdb_prefix ]();
 		inputfn << "_" << index;
-	}
-	else {
+	} else {
 		//using -s
 		inputfn << utility::file::FileName(option[in::file::s]().vector()[0]).base() << "_" << 0;
 	}
@@ -448,55 +447,55 @@ int main( int argc, char * argv [] )
 
 	try {
 
-	//all
-	NEW_OPT(mc::ntrials, "number of Monte Carlo trials to run", 1000);
-	NEW_OPT(mc::kt, "value of kT for Monte Carlo", 0.56);
-	NEW_OPT(mc::mm_bend_weight, "weight of mm_bend bond angle energy term", 0);
-	NEW_OPT(mc::detailed_balance, "preserve detailed balance", true);
-	NEW_OPT(mc::initial_pack, "force a repack at the beginning regardless of whether mutations are set in the resfile", false);
-	NEW_OPT(mc::movemap, "specify degrees of freedom for simulation", "");
-	NEW_OPT(mc::minimize_movemap, "specify degrees of freedom for minimization", "");
-	NEW_OPT(mc::trajectory_tlist, "record trajectory for specified T", utility::vector1<core::Real>());
-	NEW_OPT(mc::trajectory_stride, "write out a trajectory frame every N steps", 0);
-	NEW_OPT(mc::score_stride, "write out a score only silent file every N steps", 0);
-	NEW_OPT(mc::output_stride, "write out a statistical info every N steps", 100);
-	NEW_OPT(mc::cluster_ndx, "index of the center of clusters in silent file", 0);
-	NEW_OPT(mc::centroid, "using centroid mode", false);
-	NEW_OPT(mc::noscore, "in absence of score", false);
-	NEW_OPT(mc::xyzcst, "coordinate constraints", false);
-	NEW_OPT(mc::rmsd_region_start, "beginning of rmsd region", 0);
-	NEW_OPT(mc::rmsd_region_stop, "end of rmsd region", 0);
-	//bb
-	NEW_OPT(mc::sm_prob, "probability of making a small move", 0);
-	NEW_OPT(mc::sm_angle_max, "small move maximum band of angluar perturbation", 6);
-	NEW_OPT(mc::backrub_prob, "probability of making a backrub move", 0);
-	NEW_OPT(mc::conrot_prob, "probability of making a conrot move", 0);
-	//sc
-	NEW_OPT(mc::sc_prob, "probability of making a side chain move", 0);
-	NEW_OPT(mc::sc_prob_uniform, "probability of uniformly sampling chi angles", 0.1);
-	NEW_OPT(mc::sc_prob_withinrot, "probability of sampling within the current rotamer", 0.0);
-	NEW_OPT(mc::sc_prob_random_pert_current, "probability of sampling within the current rotamer", 0.0);
-	NEW_OPT(mc::fast_sc, "using fast sidechainmover", false);
-	NEW_OPT(mc::fast_sc_prob, "probability of making a fast side chain move", 0);
-	NEW_OPT(mc::fast_sc_strategy2, "using fast sidechainmover, strategy II", false);
-	NEW_OPT(mc::sc_strategy2, "using sidechainmover, strategy II", false);
-	NEW_OPT(mc::sc_ntrials, "fast sidechainmover(scmc)'s internal sc move", 100 );
-	NEW_OPT(mc::sc_statistic, "specify residue id which is gona output chis", 0 );
-	NEW_OPT(mc::bb_dih_statistic, "how many dihs to be stat", 0 );
-	//replica exchange
-	NEW_OPT(mc::replica, "using replica exchange -- mpi only", false);
-	NEW_OPT(mc::re_pdb_prefix, "load seperate pdb", "default.pdb");
-	NEW_OPT(mc::re_pdb_suffix, "use suffix or not", false);
-	NEW_OPT(mc::re_ninterval, "exchange interval of RE", 100);
-	NEW_OPT(mc::re_tlist, "temperature list of RE", utility::vector1<core::Real>(1,0));
-	NEW_OPT(mc::restart_from_silent,"restart using a specified silent-file","in.out");
-	NEW_OPT(mc::near_native_threshold,"threshold with which to regard a structure as near-native",2.5);
-	NEW_OPT(mc::follow_classic_naming_convention,"use old (yuan's) naming convention or new (which allows you to track trajectories)",false);
-	NEW_OPT(mc::movable_segment,"","movables");
-	devel::init(argc, argv);
-	protocols::viewer::viewer_main( my_main );
+		//all
+		NEW_OPT(mc::ntrials, "number of Monte Carlo trials to run", 1000);
+		NEW_OPT(mc::kt, "value of kT for Monte Carlo", 0.56);
+		NEW_OPT(mc::mm_bend_weight, "weight of mm_bend bond angle energy term", 0);
+		NEW_OPT(mc::detailed_balance, "preserve detailed balance", true);
+		NEW_OPT(mc::initial_pack, "force a repack at the beginning regardless of whether mutations are set in the resfile", false);
+		NEW_OPT(mc::movemap, "specify degrees of freedom for simulation", "");
+		NEW_OPT(mc::minimize_movemap, "specify degrees of freedom for minimization", "");
+		NEW_OPT(mc::trajectory_tlist, "record trajectory for specified T", utility::vector1<core::Real>());
+		NEW_OPT(mc::trajectory_stride, "write out a trajectory frame every N steps", 0);
+		NEW_OPT(mc::score_stride, "write out a score only silent file every N steps", 0);
+		NEW_OPT(mc::output_stride, "write out a statistical info every N steps", 100);
+		NEW_OPT(mc::cluster_ndx, "index of the center of clusters in silent file", 0);
+		NEW_OPT(mc::centroid, "using centroid mode", false);
+		NEW_OPT(mc::noscore, "in absence of score", false);
+		NEW_OPT(mc::xyzcst, "coordinate constraints", false);
+		NEW_OPT(mc::rmsd_region_start, "beginning of rmsd region", 0);
+		NEW_OPT(mc::rmsd_region_stop, "end of rmsd region", 0);
+		//bb
+		NEW_OPT(mc::sm_prob, "probability of making a small move", 0);
+		NEW_OPT(mc::sm_angle_max, "small move maximum band of angluar perturbation", 6);
+		NEW_OPT(mc::backrub_prob, "probability of making a backrub move", 0);
+		NEW_OPT(mc::conrot_prob, "probability of making a conrot move", 0);
+		//sc
+		NEW_OPT(mc::sc_prob, "probability of making a side chain move", 0);
+		NEW_OPT(mc::sc_prob_uniform, "probability of uniformly sampling chi angles", 0.1);
+		NEW_OPT(mc::sc_prob_withinrot, "probability of sampling within the current rotamer", 0.0);
+		NEW_OPT(mc::sc_prob_random_pert_current, "probability of sampling within the current rotamer", 0.0);
+		NEW_OPT(mc::fast_sc, "using fast sidechainmover", false);
+		NEW_OPT(mc::fast_sc_prob, "probability of making a fast side chain move", 0);
+		NEW_OPT(mc::fast_sc_strategy2, "using fast sidechainmover, strategy II", false);
+		NEW_OPT(mc::sc_strategy2, "using sidechainmover, strategy II", false);
+		NEW_OPT(mc::sc_ntrials, "fast sidechainmover(scmc)'s internal sc move", 100 );
+		NEW_OPT(mc::sc_statistic, "specify residue id which is gona output chis", 0 );
+		NEW_OPT(mc::bb_dih_statistic, "how many dihs to be stat", 0 );
+		//replica exchange
+		NEW_OPT(mc::replica, "using replica exchange -- mpi only", false);
+		NEW_OPT(mc::re_pdb_prefix, "load seperate pdb", "default.pdb");
+		NEW_OPT(mc::re_pdb_suffix, "use suffix or not", false);
+		NEW_OPT(mc::re_ninterval, "exchange interval of RE", 100);
+		NEW_OPT(mc::re_tlist, "temperature list of RE", utility::vector1<core::Real>(1,0));
+		NEW_OPT(mc::restart_from_silent,"restart using a specified silent-file","in.out");
+		NEW_OPT(mc::near_native_threshold,"threshold with which to regard a structure as near-native",2.5);
+		NEW_OPT(mc::follow_classic_naming_convention,"use old (yuan's) naming convention or new (which allows you to track trajectories)",false);
+		NEW_OPT(mc::movable_segment,"","movables");
+		devel::init(argc, argv);
+		protocols::viewer::viewer_main( my_main );
 
-	return 0;
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
@@ -507,28 +506,28 @@ int main( int argc, char * argv [] )
 
 void
 get_resmap( pose::Pose const &pose,
-				pose::Pose const &ref_pose,
-				std::map< Size, Size > &resmap
-		)
+	pose::Pose const &ref_pose,
+	std::map< Size, Size > &resmap
+)
 {
-		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-				Size ii_pdb( pose.pdb_info()->number( ii ) );
-				//pose_resmap[ii_pdb] = ii;
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		Size ii_pdb( pose.pdb_info()->number( ii ) );
+		//pose_resmap[ii_pdb] = ii;
 
-				for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
-						Size jj_pdb( ref_pose.pdb_info()->number( jj ) );
+		for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
+			Size jj_pdb( ref_pose.pdb_info()->number( jj ) );
 
-						if( ii_pdb == jj_pdb ){
-								id::AtomID id1( pose.residue(ii).atom_index( "CA" ), ii );
-								id::AtomID id2( ref_pose.residue(jj).atom_index( "CA" ), jj );
+			if ( ii_pdb == jj_pdb ) {
+				id::AtomID id1( pose.residue(ii).atom_index( "CA" ), ii );
+				id::AtomID id2( ref_pose.residue(jj).atom_index( "CA" ), jj );
 
-								resmap[ii] = jj;
-								TR << "Map: " << ii << " " << ii_pdb << " mapped to ";
-								TR << jj << " " << jj_pdb << std::endl;
-								break;
-						}
-				}
+				resmap[ii] = jj;
+				TR << "Map: " << ii << " " << ii_pdb << " mapped to ";
+				TR << jj << " " << jj_pdb << std::endl;
+				break;
+			}
 		}
+	}
 }
 
 void *
@@ -554,8 +553,7 @@ my_main( void* )
 	main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
 		main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
-	}
-	else {
+	} else {
 		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 	}
@@ -566,21 +564,18 @@ my_main( void* )
 	core::scoring::ScoreFunctionOP score_fxn;
 	if ( option[mc::noscore] ) {
 		score_fxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
-	}
-	else if ( option[mc::centroid] ) {
+	} else if ( option[mc::centroid] ) {
 		if ( option[score::weights].user() ) {
 			score_fxn = core::scoring::get_score_function();
-		}
-		else {
+		} else {
 			score_fxn = core::scoring::ScoreFunctionFactory::create_score_function("cen_std");
 		}
-	}
-	else {
+	} else {
 		score_fxn = core::scoring::get_score_function();
 	}
 
 	//bend score(for conrot and backrub)
-	if ( !(option[mc::centroid]) && option[ mc::mm_bend_weight ]>0) {
+	if ( !(option[mc::centroid]) && option[ mc::mm_bend_weight ]>0 ) {
 		score_fxn->set_weight(core::scoring::mm_bend, option[ mc::mm_bend_weight ]);
 	}
 
@@ -590,8 +585,7 @@ my_main( void* )
 	score_fxn->set_energy_method_options(energymethodoptions);
 	if ( option[ in::file::centroid_input ].user() ) {
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score_fxn);
-	}
-	else {
+	} else {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 	}
 
@@ -601,7 +595,7 @@ my_main( void* )
 	//read known and unknown optimization parameters from the database
 	backrubmover.branchopt().read_database();
 	// tell the branch angle optimizer about the score function MMBondAngleResidueTypeParamSet, if any
-	if (energymethodoptions.bond_angle_residue_type_param_set()) {
+	if ( energymethodoptions.bond_angle_residue_type_param_set() ) {
 		backrubmover.branchopt().bond_angle_residue_type_param_set(energymethodoptions.bond_angle_residue_type_param_set());
 	}
 	backrubmover.set_preserve_detailed_balance(option[ mc::detailed_balance ]);
@@ -655,11 +649,10 @@ my_main( void* )
 	core::scoring::methods::RG_Energy_Fast rge;
 	//score
 	std::ostringstream inputfn;
-	if (option[ mc::re_pdb_prefix ].user()) {
+	if ( option[ mc::re_pdb_prefix ].user() ) {
 		inputfn << option[ mc::re_pdb_prefix ]();
 		inputfn << "_" << rank;
-	}
-	else {
+	} else {
 		//using -s
 		inputfn << utility::file::FileName(option[in::file::s]().vector()[0]).base() << "_0";
 	}
@@ -677,19 +670,16 @@ my_main( void* )
 	Pose &p(*pose);
 	if ( option[ in::file::s ].user() ) {
 		core::import_pose::pose_from_file( p, *rsd_set, option[ in::file::s ]().vector()[ 0 ] , core::import_pose::PDB_file);
-	}
-	else if ( option[ mc::re_pdb_prefix ].user() ) {
+	} else if ( option[ mc::re_pdb_prefix ].user() ) {
 		std::ostringstream infn;
 		infn << option[ mc::re_pdb_prefix ]();
-		if (option[mc::re_pdb_suffix])
-		{
+		if ( option[mc::re_pdb_suffix] ) {
 			infn << "_" << rank;
 		}
 		infn << ".pdb";
 		std::cout << "Loading " << infn.str() << std::endl;
 		core::import_pose::pose_from_file( p, *rsd_set, infn.str(), core::import_pose::PDB_file);
-	}
-	else {
+	} else {
 		std::cerr << "User did not specify the pdb file!" << std::endl;
 		exit( EXIT_FAILURE );
 	}
@@ -711,13 +701,13 @@ my_main( void* )
 		// add cst to pose
 		for ( Size i = 1; i<=nmonomerres; ++i ) {
 			if ( !p.residue(i).is_polymer() ) continue;
-				core::conformation::Residue const & nat_i_rsd( p.residue(i) );
+			core::conformation::Residue const & nat_i_rsd( p.residue(i) );
 
-				//add constraints on CA
-				Size CA_i = nat_i_rsd.atom_index("CA");
-				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-				p.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(
-					AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ), fx ) ) ) );
+			//add constraints on CA
+			Size CA_i = nat_i_rsd.atom_index("CA");
+			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+			p.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(
+				AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ), fx ) ) ) );
 
 		}
 	}
@@ -731,7 +721,7 @@ my_main( void* )
 	}
 
 	//if constraints are specified, add them!
-	if( option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+	if ( option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
 		core::scoring::constraints::add_constraints_from_cmdline( p, *score_fxn);
 	}
 
@@ -749,7 +739,7 @@ my_main( void* )
 	//ss, score only silent file
 	core::io::silent::SilentStructOP ss;
 	core::io::silent::SilentFileData sfd;
-	if (option[mc::score_stride]) {
+	if ( option[mc::score_stride] ) {
 		//dump score only
 		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "score" );
 		ss->fill_struct(p, inputfn.str()+"_"+ObjexxFCL::lead_zero_string_of(0, 6));
@@ -760,10 +750,10 @@ my_main( void* )
 		ss->add_energy( "srmsd", 0.0 );
 
 		std::string score_fn(inputfn.str() + ".out");
-		if (!utility::file::file_exists(score_fn)) {
-		  //new file create header
-		  std::ofstream scoreos(score_fn.c_str());
-  	  ss->print_header( scoreos );
+		if ( !utility::file::file_exists(score_fn) ) {
+			//new file create header
+			std::ofstream scoreos(score_fn.c_str());
+			ss->print_header( scoreos );
 		}
 	}
 
@@ -774,13 +764,13 @@ my_main( void* )
 	//trajactory
 	core::io::silent::SilentStructOP trajss;
 	core::io::silent::SilentFileData trajsfd;
-	if (option[mc::trajectory_stride]>0 ) {
+	if ( option[mc::trajectory_stride]>0 ) {
 		trajss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( p );
-		if (rank==0) { //only one proc do this
-			for (core::Size ndx_traj=1, num_traj=option[mc::trajectory_tlist]().size(); ndx_traj<=num_traj; ++ndx_traj) {
-				if( option[mc::follow_classic_naming_convention ]() ) {
+		if ( rank==0 ) { //only one proc do this
+			for ( core::Size ndx_traj=1, num_traj=option[mc::trajectory_tlist]().size(); ndx_traj<=num_traj; ++ndx_traj ) {
+				if ( option[mc::follow_classic_naming_convention ]() ) {
 					trajss->fill_struct(p, inputfn.str()+"_"+ObjexxFCL::lead_zero_string_of(0, 6));
-				}else {
+				} else {
 					trajss->fill_struct(p, get_tag( 0, option[mc::trajectory_tlist]()[ndx_traj], rank ) );
 				}
 				trajss->add_energy( "temperature", 0.0 );
@@ -789,7 +779,7 @@ my_main( void* )
 				trajss->add_energy( "rmsd", 0.0  );
 				trajss->add_energy( "srmsd", 0.0 );
 				std::string traj_fn = get_filename("_traj.out",option[mc::trajectory_tlist]()[ndx_traj]);
-				if (utility::file::file_exists(traj_fn)) {
+				if ( utility::file::file_exists(traj_fn) ) {
 					//need to restart from a traj
 					std::cout << "Restarting ..." << std::endl;
 					SilentFileData resfd(traj_fn, false, true, option[in::file::silent_struct_type]());
@@ -798,26 +788,25 @@ my_main( void* )
 					resfd.read_file( traj_fn );
 					//tags = resfd.tags();
 					std::cout << "number of tags read in: " << tags.size() << " " << resfd.size() << std::endl;
-					for( core::Size ii = 1; ii <= tags.size(); ii++ ) {
-							std::stringstream stepstr(tags[ii].substr(2,8));
-							Size step; stepstr >> step;
-							if (step>maxstep) {
-									maxstep = step;
-									maxtag = tags[ii];
-							}
+					for ( core::Size ii = 1; ii <= tags.size(); ii++ ) {
+						std::stringstream stepstr(tags[ii].substr(2,8));
+						Size step; stepstr >> step;
+						if ( step>maxstep ) {
+							maxstep = step;
+							maxtag = tags[ii];
+						}
 					}
 					//find last pose
-					if (maxstep>0) {
-							SilentStructOP ress = resfd[ maxtag ];
-							ress->fill_pose(p);
-							core::pose::clearPoseExtraScores(p);
-							i = maxstep+1;
+					if ( maxstep>0 ) {
+						SilentStructOP ress = resfd[ maxtag ];
+						ress->fill_pose(p);
+						core::pose::clearPoseExtraScores(p);
+						i = maxstep+1;
 					}
-				}
-				else {
+				} else {
 					//new file create init
 					std::ofstream trajos(traj_fn.c_str());
-  					trajss->print_header( trajos );
+					trajss->print_header( trajos );
 				}
 			}
 		}
@@ -828,12 +817,11 @@ my_main( void* )
 	core::Size mres = static_cast<core::Size>(p.size()*0.5);
 	core::Size nsegment = static_cast<core::Size>(option[mc::bb_dih_statistic]);
 	core::Size l_offset=mres+1, r_offset=mres;
-	for (core::Size ndx=1; ndx<=nsegment; ndx++) {
-		if (ndx % 2 == 0) {
-			if (r_offset<n_res) r_offset++;
-		}
-		else {
-			if (l_offset>1) l_offset--;
+	for ( core::Size ndx=1; ndx<=nsegment; ndx++ ) {
+		if ( ndx % 2 == 0 ) {
+			if ( r_offset<n_res ) r_offset++;
+		} else {
+			if ( l_offset>1 ) l_offset--;
 		}
 	}
 
@@ -843,19 +831,19 @@ my_main( void* )
 	//rmsd region
 	core::Size rmsd_start=1;
 	core::Size rmsd_stop=p.size();
-	if (option[mc::xyzcst]) rmsd_stop--; //skip virt
-	if (option[mc::rmsd_region_start].user()) rmsd_start=option[mc::rmsd_region_start];
-	if (option[mc::rmsd_region_stop].user()) rmsd_stop=option[mc::rmsd_region_stop];
+	if ( option[mc::xyzcst] ) rmsd_stop--; //skip virt
+	if ( option[mc::rmsd_region_start].user() ) rmsd_start=option[mc::rmsd_region_start];
+	if ( option[mc::rmsd_region_stop].user() ) rmsd_stop=option[mc::rmsd_region_stop];
 
-	if (option[mc::bb_dih_statistic].user()) {
-		if (option[mc::rmsd_region_start].user()) l_offset = rmsd_start;
-		if (option[mc::rmsd_region_stop].user()) r_offset = rmsd_stop;
+	if ( option[mc::bb_dih_statistic].user() ) {
+		if ( option[mc::rmsd_region_start].user() ) l_offset = rmsd_start;
+		if ( option[mc::rmsd_region_stop].user() ) r_offset = rmsd_stop;
 	}
 
 	//init backrub
 	backrubmover.clear_segments();
 	backrubmover.set_input_pose(pose);
-	if( !option[ mc::movable_segment ].user() ) {
+	if ( !option[ mc::movable_segment ].user() ) {
 		backrubmover.add_mainchain_segments_from_options();
 	} else {
 		//backrubmover.add_mainchain_segments_from_options();
@@ -868,13 +856,13 @@ my_main( void* )
 		std::ifstream in;
 		in.open( segments.c_str());
 		core::Size segment_i = 0;
-		while( !in.eof() ) {
+		while ( !in.eof() ) {
 			core::Size mobilestart,rigidstart,rigidend,mobileend;
 			segment_i++;
 			in >> mobilestart >> rigidstart >> rigidend >> mobileend;
 			TR.Debug << "segment-i: " << segment_i << " mobile-start " << mobilestart << " rigid parts: " << rigidstart << " <--> " << rigidend << " mobile-end: " << mobileend << std::endl;
-			for( core::Size ii = mobilestart; ii <= mobileend; ii++ ) {
-				if( (ii < rigidstart || ii > rigidend) && ii > 0 ) { //0 means that there is no rigid segment
+			for ( core::Size ii = mobilestart; ii <= mobileend; ii++ ) {
+				if ( (ii < rigidstart || ii > rigidend) && ii > 0 ) { //0 means that there is no rigid segment
 					atomids.push_back(core::id::AtomID(pose->residue(ii).atom_index("CA"),ii));
 				}
 			}
@@ -884,7 +872,7 @@ my_main( void* )
 	}
 
 	//optimize
-	if (!option[mc::centroid]) {
+	if ( !option[mc::centroid] ) {
 		sidechainmover.idealize_sidechains(p);
 		backrubmover.optimize_branch_angles(p);
 	}
@@ -911,29 +899,27 @@ my_main( void* )
 			minmover.min_type("lbfgs_armijo_nonmonotone");
 
 			// first minimize just the side chains
-			for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
-						   	iter != minimize_movemap->movemap_torsion_id_end(); ++iter) {
-				if (iter->first.second == core::id::CHI) minimize_movemap_progressive->set(iter->first, iter->second);
+			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+				if ( iter->first.second == core::id::CHI ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
 			minmover.movemap(minimize_movemap_progressive);
 			minmover.apply(p);
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminchi.pdb");
 
 			// next minimize the side chains and backbone
-			for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
-					iter != minimize_movemap->movemap_torsion_id_end(); ++iter)
-			{
-				if (iter->first.second == core::id::BB) minimize_movemap_progressive->set(iter->first, iter->second);
+			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+				if ( iter->first.second == core::id::BB ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
 			minmover.movemap(minimize_movemap_progressive);
 			minmover.apply(p);
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminbb.pdb");
 
 			// finally minimize everything
-			for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
-				iter != minimize_movemap->movemap_torsion_id_end(); ++iter)
-			{
-				if (iter->first.second == core::id::JUMP) minimize_movemap_progressive->set(iter->first, iter->second);
+			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+				if ( iter->first.second == core::id::JUMP ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
 			minmover.movemap(minimize_movemap_progressive);
 			minmover.apply(p);
@@ -951,14 +937,13 @@ my_main( void* )
 		std::cout << "Rank: " <<  rank << " Done!" << std::endl;
 		//get the right kT
 		kT = option[mc::re_tlist]()[rank+1];
-	}
-	else {
+	} else {
 		//setup normal mc
 		mc = MonteCarloOP( new MonteCarlo(p, *score_fxn, kT) );
 	}
 
 	//setup Sicechainmover correction
-	if (option[mc::sc_strategy2]) sidechainmover.set_sampling_temperature(kT);
+	if ( option[mc::sc_strategy2] ) sidechainmover.set_sampling_temperature(kT);
 
 	//setup SidechainMC mover
 	protocols::simple_moves::sidechain_moves::SidechainMCMover scmc;
@@ -976,22 +961,22 @@ my_main( void* )
 		scmc.set_temperature( kT ); //only for intra mc criteria
 		core::scoring::ScoreFunctionOP scfxn = score_fxn->clone();
 
-		if (option[mc::fast_sc_strategy2]) {
+		if ( option[mc::fast_sc_strategy2] ) {
 			scfxn->set_weight(core::scoring::fa_dun, 0); //turn off the dunbrack term
 			scmc.set_preserve_detailed_balance( false ); //don't use detailed balance correction
 			scmc.set_sampling_temperature( kT ); //using temperature correction
 		}
 		//else {
-			//fa_dun should be in the original score term
-			//unless you know what you are doing
-			//scmc.set_preserve_detailed_balance( true );
+		//fa_dun should be in the original score term
+		//unless you know what you are doing
+		//scmc.set_preserve_detailed_balance( true );
 		//}
 		scmc.set_scorefunction( *scfxn );
 		scmc.setup( scfxn );
 	}
 
 	//viewer
-	if (!option[mc::replica]) protocols::viewer::add_monte_carlo_viewer(*mc, "Gaussian", 600, 600);
+	if ( !option[mc::replica] ) protocols::viewer::add_monte_carlo_viewer(*mc, "Gaussian", 600, 600);
 	//pymol viewer
 	//protocols::moves::AddPyMOLLink(p, false);
 
@@ -1006,13 +991,13 @@ my_main( void* )
 	//only if in fullatom model
 	core::Real sc_prob = option[ mc::sc_prob ];
 	core::Real fast_sc_prob = option[ mc::fast_sc_prob ];
-	if (option[mc::centroid]) sc_prob=0.0;
+	if ( option[mc::centroid] ) sc_prob=0.0;
 
 
 	// if this is a continuation of a previous rep-exch run, then read in the
 	// structure that corresponds to this temperature
 	TR << "reading in structure corresponding to this node's temperature: " << kT << std::endl;
-	if( option[mc::restart_from_silent].user() ){
+	if ( option[mc::restart_from_silent].user() ) {
 		std::string silent_input = option[mc::restart_from_silent]();
 		//read in silent-file
 		//read tags and pick temperature that matches
@@ -1024,12 +1009,12 @@ my_main( void* )
 		tags = sfd.tags();
 		bool decoy_found = false;
 		std::cout << "number of tags read in: " << tags.size() << " " << sfd.size() << std::endl;
-		for( core::Size ii = 1; ii <= tags.size(); ii++ ) {
+		for ( core::Size ii = 1; ii <= tags.size(); ii++ ) {
 			TR << "tag of structure: |" << tags[ ii ] << "|" << std::endl;
 			SilentStructOP ss = sfd[ tags[ ii ] ];
 			core::Real temp = ss->get_energy( "temperature" );
 			TR << "temperature of structure with tag: " << tags[ii] << " is: " << temp << " comparing the kT " << kT << std::endl;
-			if( fabs(temp - kT) <= 1.0e-4 ) {
+			if ( fabs(temp - kT) <= 1.0e-4 ) {
 				runtime_assert( ss != 0 );
 				TR << "found the structure!" << std::endl;
 				//runtime_assert(p);
@@ -1042,7 +1027,7 @@ my_main( void* )
 			}
 			//
 		}
-		if( !decoy_found ) {
+		if ( !decoy_found ) {
 			utility_exit_with_message("we did not find structure corresponding to temperature:  you cannot use option:  mc::restart_from_silent, exiting");
 		} else {
 			//TR << "starting from decoy "  << ss->decoy_tag() << " corresponding to a kT of " << kT << std::endl;
@@ -1056,7 +1041,7 @@ my_main( void* )
 	std::cout << "Job is working ..." << std::endl;
 	basic::prof_reset();
 	//"i", init from 1 or traj
-	for (; i <= ntrials; ++i) {
+	for ( ; i <= ntrials; ++i ) {
 		//init
 		std::string move_type("fake");
 		Real proposal_density_ratio=1.0;
@@ -1070,39 +1055,34 @@ my_main( void* )
 			proposal_density_ratio = bbgmover.last_proposal_density_ratio();
 
 			//if xyzcst, refit
-			if (option[mc::xyzcst]) {
+			if ( option[mc::xyzcst] ) {
 				cstmin.run( p, cstmm, *score_fxn, cstoptions );
 			}
 
 			mc->boltzmann(p, move_type, proposal_density_ratio);
-		}
-		else if ( prob > backrub_prob+conrot_prob+sc_prob+ fast_sc_prob ) { //small
+		} else if ( prob > backrub_prob+conrot_prob+sc_prob+ fast_sc_prob ) { //small
 			smallmover.apply(p);
 			move_type = smallmover.type();
 			proposal_density_ratio = smallmover.last_proposal_density_ratio();
 			mc->boltzmann(p, move_type, proposal_density_ratio);
-		}
-		else if ( prob > conrot_prob+sc_prob+fast_sc_prob ) { //backrub
+		} else if ( prob > conrot_prob+sc_prob+fast_sc_prob ) { //backrub
 			backrubmover.apply(p);
 			move_type = backrubmover.type();
 			proposal_density_ratio = backrubmover.last_proposal_density_ratio();
 			mc->boltzmann(p, move_type, proposal_density_ratio);
-		}
-		else if ( prob > sc_prob+fast_sc_prob ) { //conrot
+		} else if ( prob > sc_prob+fast_sc_prob ) { //conrot
 			bbcrmover.apply(p);
 			move_type = bbcrmover.type();
 			proposal_density_ratio = bbcrmover.last_proposal_density_ratio();
 			mc->boltzmann(p, move_type, proposal_density_ratio);
-		}
-		else if ( prob > fast_sc_prob && !option[mc::centroid] ) { //sidechain
+		} else if ( prob > fast_sc_prob && !option[mc::centroid] ) { //sidechain
 			//TR << "probabilities are: (SC) " << sidechainmover.prob_uniform() << " " << sidechainmover.prob_withinrot() << " " << sidechainmover.prob_random_pert_current() << std::endl;
-			//	exit(1);
+			// exit(1);
 			sidechainmover.apply(p);
 			move_type = sidechainmover.type();
 			proposal_density_ratio = sidechainmover.last_proposal_density_ratio();
 			mc->boltzmann(p, move_type, proposal_density_ratio);
-		}
-		else if (!option[mc::centroid]) { //fast sidechain
+		} else if ( !option[mc::centroid] ) { //fast sidechain
 			//TR << "probabilities are (FAST-SC): " << scmc.prob_uniform() << " " << scmc.prob_withinrot() << " " << scmc.prob_random_pert_current() << std::endl;
 			//exit(1);
 			scmc.apply(p);
@@ -1110,7 +1090,7 @@ my_main( void* )
 		}
 
 		//fast sidechain
-		if (option[ mc::fast_sc ] && !option[mc::centroid]) {
+		if ( option[ mc::fast_sc ] && !option[mc::centroid] ) {
 			//only if using fast_sc in fullatom model
 			scmc.apply(p);
 			//save the last accepted pose, but we will lost the lowest energy pose
@@ -1118,10 +1098,10 @@ my_main( void* )
 		}
 
 		//sync temperature
-		if (!option[mc::centroid]) {
+		if ( !option[mc::centroid] ) {
 			//reset sidechainmover's temperature
-			if (option[mc::sc_strategy2]) sidechainmover.set_sampling_temperature(mc->temperature());
-			if (option[mc::fast_sc_strategy2]) scmc.set_sampling_temperature(mc->temperature());
+			if ( option[mc::sc_strategy2] ) sidechainmover.set_sampling_temperature(mc->temperature());
+			if ( option[mc::fast_sc_strategy2] ) scmc.set_sampling_temperature(mc->temperature());
 			scmc.set_temperature(mc->temperature()); //should be
 		}
 
@@ -1129,16 +1109,16 @@ my_main( void* )
 			//output
 			TR << "STEP=" << i;
 			TR << " T=" << mc->temperature() << " " << get_ABGEO_string(p, rmsd_start, rmsd_stop) ;
-			if (mres>1) TR << " RG=" << rge.calculate_rg_score(p);
+			if ( mres>1 ) TR << " RG=" << rge.calculate_rg_score(p);
 			core::Real rmsd = 10000;
-			if (native_pose) {
+			if ( native_pose ) {
 				rmsd = core::scoring::CA_rmsd(p,*native_pose, rmsd_start, rmsd_stop);
 				TR << " RMSD=" << rmsd;
 			}
 			TR << " SCORE=" << (*score_fxn)(p);
 			TR << std::endl;
 
-			if( rmsd <= option[ mc::near_native_threshold ]() ){
+			if ( rmsd <= option[ mc::near_native_threshold ]() ) {
 				TR << "near native structure produced! " << rmsd << std::endl;
 				SilentFileData sfd_nn("near_natives.out",false,false,option[ out::file::silent_struct_type ]());
 				core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
@@ -1149,12 +1129,12 @@ my_main( void* )
 			}
 
 			//side chain stat
-			if (option[mc::sc_statistic].user()) {
-				for (core::Size ndx=1, nr=option[mc::sc_statistic]().size(); ndx<=nr; ++ndx) {
+			if ( option[mc::sc_statistic].user() ) {
+				for ( core::Size ndx=1, nr=option[mc::sc_statistic]().size(); ndx<=nr; ++ndx ) {
 					int nres = option[mc::sc_statistic]()[ndx];
 					TR << "STAT_RES_" << nres << "_CHI: ";
 					utility::vector1<core::Real> const &chis(p.residue(nres).chi());
-					for (core::Size j=1; j<=chis.size(); j++) {
+					for ( core::Size j=1; j<=chis.size(); j++ ) {
 						TR << chis[j] << " ";
 					}
 					TR << std::endl;
@@ -1162,10 +1142,9 @@ my_main( void* )
 			}
 
 			//middle dihs stat
-			if (l_offset<=mres && mres>1) {
+			if ( l_offset<=mres && mres>1 ) {
 				TR << "STAT_DIHS: ";
-				for (core::Size j=l_offset; j<=r_offset; j++)
-				{
+				for ( core::Size j=l_offset; j<=r_offset; j++ ) {
 					TR << p.phi(j) << " " << p.psi(j) << " ";
 				}
 				TR << std::endl;
@@ -1181,15 +1160,15 @@ my_main( void* )
 			if ( i%option[mc::score_stride]==0 ) {
 				//dump silent file
 				int ndump = static_cast<int>(i/option[mc::score_stride]);
-				if(option[mc::follow_classic_naming_convention]()) {
+				if ( option[mc::follow_classic_naming_convention]() ) {
 					ss->fill_struct(p, inputfn.str()+"_"+ObjexxFCL::lead_zero_string_of(ndump, 6));
-				}else{
+				} else {
 					ss->fill_struct(p, get_tag(i,mc->temperature(),rank) );
 				}
 				ss->add_energy( "temperature", mc->temperature() );
-				if( option[ in::file::native ].user() ) {
-				  ss->add_energy( "GDTMM", core::scoring::CA_gdtmm(*native_pose, p, resmap) );
-				  ss->add_energy( "GDTHA", core::scoring::gdtha(*native_pose, p, resmap) );
+				if ( option[ in::file::native ].user() ) {
+					ss->add_energy( "GDTMM", core::scoring::CA_gdtmm(*native_pose, p, resmap) );
+					ss->add_energy( "GDTHA", core::scoring::gdtha(*native_pose, p, resmap) );
 					ss->add_energy( "rmsd", core::scoring::CA_rmsd( *native_pose, p) ); //ek add rmsd to native in silent-structure header information
 				}
 				ss->add_energy( "srmsd", core::scoring::CA_rmsd( start_pose, p ) ); //ek add rmsd to starting structure in silent-structure header information
@@ -1200,19 +1179,19 @@ my_main( void* )
 		//save trajctory for specified temperature
 		if ( option[mc::trajectory_stride]>0 ) {
 			if ( i%option[mc::trajectory_stride]==0 ) {
-				for (core::Size ndx_traj=1, num_traj=option[mc::trajectory_tlist]().size(); ndx_traj<=num_traj; ++ndx_traj) {
-					if (fabs(mc->temperature() - option[mc::trajectory_tlist]()[ndx_traj])>1.0e-4) continue;
+				for ( core::Size ndx_traj=1, num_traj=option[mc::trajectory_tlist]().size(); ndx_traj<=num_traj; ++ndx_traj ) {
+					if ( fabs(mc->temperature() - option[mc::trajectory_tlist]()[ndx_traj])>1.0e-4 ) continue;
 					//dump silent file
 					int ndump = static_cast<int>(i/option[mc::trajectory_stride]);
-					if( option[mc::follow_classic_naming_convention]() ){
+					if ( option[mc::follow_classic_naming_convention]() ) {
 						trajss->fill_struct(p, inputfn.str()+"_"+ObjexxFCL::lead_zero_string_of(ndump, 6));
 					} else {
 						trajss->fill_struct(p, get_tag(i,mc->temperature(),rank) );
 					}
 					trajss->add_energy( "temperature", mc->temperature() );
-					if( option[ in::file::native ].user() ) {
-					trajss->add_energy( "GDTMM", core::scoring::CA_gdtmm(*native_pose, p, resmap) );
-					trajss->add_energy( "GDTHA", core::scoring::gdtha(*native_pose, p, resmap) );
+					if ( option[ in::file::native ].user() ) {
+						trajss->add_energy( "GDTMM", core::scoring::CA_gdtmm(*native_pose, p, resmap) );
+						trajss->add_energy( "GDTHA", core::scoring::gdtha(*native_pose, p, resmap) );
 						trajss->add_energy( "rmsd", core::scoring::CA_rmsd( *native_pose, p) ); //ek add rmsd to native in silent-structure header information
 					}
 					trajss->add_energy( "srmsd", core::scoring::CA_rmsd( start_pose, p ) ); //ek add rmsd to starting structure in silent-structure header information

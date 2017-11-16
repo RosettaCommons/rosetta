@@ -43,7 +43,7 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
-static THREAD_LOCAL Tracer TR("protocol.moves.RRProtocolPackRotamers");
+static Tracer TR("protocol.moves.RRProtocolPackRotamers");
 
 RRProtocolPackRotamers::RRProtocolPackRotamers() {}
 

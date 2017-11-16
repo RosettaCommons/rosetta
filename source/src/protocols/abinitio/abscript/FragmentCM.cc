@@ -58,7 +58,7 @@
 
 // ObjexxFCL Headers
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.environment.movers.FragmentCM", basic::t_info );
+static basic::Tracer tr( "protocols.environment.movers.FragmentCM", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

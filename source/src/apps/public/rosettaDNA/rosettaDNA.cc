@@ -32,7 +32,7 @@ using namespace moves;
 using namespace jd2;
 using namespace viewer;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.rosettaDNA" );
+static basic::Tracer TR( "apps.public.rosettaDNA" );
 
 /// @brief this "DummyMover" is employed simply to prevent NULL pointer exceptions in case internal classes try to call Mover methods without checking for pointer validity. The JobDistributor/DockDesignParser will/should reassign this pointer to a real Mover.
 class DummyMover : public Mover {

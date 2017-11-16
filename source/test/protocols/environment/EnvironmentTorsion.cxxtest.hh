@@ -38,7 +38,7 @@
 //C++ headers
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.environment.EnvironmentTorsion.cxxtest");
+static basic::Tracer TR("protocols.environment.EnvironmentTorsion.cxxtest");
 
 // --------------- Test Class --------------- //
 

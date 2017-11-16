@@ -62,7 +62,7 @@ using namespace std;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MutateResidue" );
+static basic::Tracer TR( "protocols.simple_moves.MutateResidue" );
 
 /// @brief default ctor
 MutateResidue::MutateResidue() :

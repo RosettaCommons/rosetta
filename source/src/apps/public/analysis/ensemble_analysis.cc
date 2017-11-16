@@ -51,7 +51,7 @@
 #include <utility/excn/EXCN_Base.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;

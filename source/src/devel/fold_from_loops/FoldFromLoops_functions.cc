@@ -79,7 +79,7 @@ using namespace scoring::constraints;
 using namespace core::fragment;
 
 
-static THREAD_LOCAL basic::Tracer TR( "FoldFromLoops_function" );
+static basic::Tracer TR( "FoldFromLoops_function" );
 
 
 bool is_loop (

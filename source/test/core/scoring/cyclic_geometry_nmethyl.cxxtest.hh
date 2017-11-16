@@ -51,7 +51,7 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometryTests_nmethyl.cxxtest");
+static basic::Tracer TR("core.scoring.CyclicGeometryTests_nmethyl.cxxtest");
 
 class CyclicGeometryTests_nmethyl : public CxxTest::TestSuite {
 

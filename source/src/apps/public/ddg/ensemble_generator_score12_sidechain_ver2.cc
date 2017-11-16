@@ -145,7 +145,6 @@
 //#include "james_util.hh" //for calculation of burial
 #include <basic/Tracer.hh>
 #include <time.h>
-using basic::T;
 using basic::Warning;
 using basic::Error;
 

@@ -52,7 +52,7 @@
 namespace core {
 namespace sequence {
 
-static THREAD_LOCAL basic::Tracer tr( "core.sequence.SequenceProfile" );
+static basic::Tracer tr( "core.sequence.SequenceProfile" );
 
 void SequenceProfile::read_from_checkpoint(
 	utility::file::FileName const & fn,

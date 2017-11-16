@@ -289,11 +289,10 @@ void dump_atom_tree_diff(
 {
 	using core::Size;
 	using core::Real;
-	using basic::Warning;
 	using namespace core::id;
 	using namespace core::scoring;
 
-	if ( bb_precision < sc_precision ) Warning() << "Crazy fool, bb_precision should be >= sc_precision!" << std::endl;
+	if ( bb_precision < sc_precision ) basic::Warning() << "Crazy fool, bb_precision should be >= sc_precision!" << std::endl;
 	Real bb_tol = 1.0, sc_tol = 1.0, bondlen_tol = 1.0;
 	for ( int i = 0; i < bb_precision; ++i ) bb_tol /= 10.0;
 	for ( int i = 0; i < sc_precision; ++i ) sc_tol /= 10.0;
@@ -454,7 +453,7 @@ bool pose_from_atom_tree_diff(
 	// start with pose as a copy of ref_pose:
 	pose = ref_pose; // deep copy
 
-	basic::Tracer TR( "core.import_pose.atom_tree_diffs.atom_tree_diff.pose_from_atom_tree_diff" );
+	basic::TracerImpl TR( "core.import_pose.atom_tree_diffs.atom_tree_diff.pose_from_atom_tree_diff" );
 	while ( in.good() ) {
 		std::string line, key;
 		getline(in, line);
@@ -629,6 +628,8 @@ void map_of_weighted_scores(
 }
 
 
+static basic::Tracer TR_rms_error_with_noise("rms_error_with_noise");
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details Copies the pose and adds random noise to the AtomTree DOFs
 /// in the Nth digit (specified by bb_precision and sc_precision).
@@ -651,13 +652,11 @@ void rms_error_with_noise(
 {
 	using core::Size;
 	using core::Real;
-	using basic::T;
-	using basic::Warning;
 
 	using namespace core::id;
 	using namespace core::scoring;
 
-	if ( bb_precision < sc_precision ) Warning() << "Crazy fool, bb_precision should be >= sc_precision!" << std::endl;
+	if ( bb_precision < sc_precision ) basic::Warning() << "Crazy fool, bb_precision should be >= sc_precision!" << std::endl;
 	Real bb_tol = 1.0, sc_tol = 1.0;
 	for ( int i = 0; i < bb_precision; ++i ) bb_tol /= 10.0;
 	for ( int i = 0; i < sc_precision; ++i ) sc_tol /= 10.0;
@@ -691,7 +690,7 @@ void rms_error_with_noise(
 		}// end loop over atoms
 	}// end loop over residues
 
-	T("rms_error_with_noise") << "bb=" << bb_precision << "," << bb_tol << "  sc=" << sc_precision << "," << sc_tol
+	TR_rms_error_with_noise << "bb=" << bb_precision << "," << bb_tol << "  sc=" << sc_precision << "," << sc_tol
 		<< "  rms_no_super=" << rmsd_no_super(ref_pose, pose, is_heavyatom) << "  rms_with_super=" << rmsd_with_super(ref_pose, pose, is_heavyatom)
 		<< "  polymer_rms_no_super=" << rmsd_no_super(ref_pose, pose, is_polymer_heavyatom) << "  polymer_rms_with_super=" << rmsd_with_super(ref_pose, pose, is_polymer_heavyatom)
 		<< std::endl;

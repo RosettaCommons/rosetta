@@ -105,14 +105,13 @@ using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::id;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
 
 // tracer - used to replace cout
-static THREAD_LOCAL basic::Tracer TR( "OopDesign" );
+static basic::Tracer TR( "OopDesign" );
 
 // application specific options
 namespace oop_design {

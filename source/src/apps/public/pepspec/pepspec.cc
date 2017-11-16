@@ -169,7 +169,7 @@ using namespace protocols::moves;
 using namespace id;
 using namespace protocols::frags;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.pepspec" );
+static basic::Tracer TR( "apps.public.pepspec" );
 
 
 Size prot_chain( 0 );

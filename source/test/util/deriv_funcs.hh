@@ -40,7 +40,7 @@
 #include <list>
 
 
-static THREAD_LOCAL basic::Tracer TR_deriv_funcs("util.deriv_funcs");
+static basic::Tracer TR_deriv_funcs("util.deriv_funcs");
 
 inline
 core::kinematics::MoveMap
@@ -120,7 +120,7 @@ public:
 		pose_( new core::pose::Pose( pose )),
 		sfxn_( sfxn.clone() ),
 		move_map_( new core::kinematics::MoveMap( move_map )),
- 		auto_update_( false ),
+		auto_update_( false ),
 		nonzero_deriv_only_( false )
 	{}
 	inline void set_score_function( core::scoring::ScoreFunction const & sfxn ) { sfxn_ = sfxn.clone(); }
@@ -337,9 +337,9 @@ public:
 
 		// Whole-pose-context energies should have their contribution calculated here.
 		for ( auto
-						iter     = mingraph->whole_pose_context_enmeths_begin(),
-						iter_end = mingraph->whole_pose_context_enmeths_end();
-					iter != iter_end; ++iter ) {
+				iter     = mingraph->whole_pose_context_enmeths_begin(),
+				iter_end = mingraph->whole_pose_context_enmeths_end();
+				iter != iter_end; ++iter ) {
 			for ( Size ii = 1; ii <= pose_->size(); ++ii ) {
 				for ( Size jj = 1; jj <= pose_->residue(ii).natoms(); ++jj ) {
 					(*iter)->eval_atom_derivative( id::AtomID( jj, ii ), *pose_, min_map_->domain_map(),

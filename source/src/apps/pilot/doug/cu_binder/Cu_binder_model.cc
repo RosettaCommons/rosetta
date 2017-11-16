@@ -38,7 +38,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/cyclization.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "Cyclization" );
+static basic::Tracer TR( "Cyclization" );
 
 int
 main( int argc, char * argv [] )
@@ -48,7 +48,7 @@ main( int argc, char * argv [] )
 	using namespace protocols::simple_moves;
 
 	// init
-  devel::init( argc, argv );
+	devel::init( argc, argv );
 
 	// setup the cyclization mover
 	CyclizationMoverOP cyc_mvr( new CyclizationMover( option[chain_to_cyclize].value(), true, true, option[num_min_rebuild].value() ) );
@@ -69,25 +69,25 @@ main( int argc, char * argv [] )
 
 	/*
 
-		WRITE going to need a rebuild at residue connection mover (ctor with position)
-		WRITE going to need a omega flipper mover that resists down chain propagation
+	WRITE going to need a rebuild at residue connection mover (ctor with position)
+	WRITE going to need a omega flipper mover that resists down chain propagation
 
-		CREATE a sequence mover
-		CREATE a rotamer trails mover
-		CREATE a pack rotamers mover
-		CREATE a min mover (or use the cyclization mover)
-		CREATE a monte carlo mover
+	CREATE a sequence mover
+	CREATE a rotamer trails mover
+	CREATE a pack rotamers mover
+	CREATE a min mover (or use the cyclization mover)
+	CREATE a monte carlo mover
 
-		ADD copper constraints
+	ADD copper constraints
 
 	*/
 
 	// go go go
 	protocols::jd2::JobDistributor::get_instance()->go( seq_mvr );
 
-  TR << "\n+-----------------------------------------------------------------+\n"
-     <<   "|                              DONE                               |\n"
-     <<   "+-----------------------------------------------------------------+" << std::endl;
+	TR << "\n+-----------------------------------------------------------------+\n"
+		<<   "|                              DONE                               |\n"
+		<<   "+-----------------------------------------------------------------+" << std::endl;
 
-  return 0;
+	return 0;
 }

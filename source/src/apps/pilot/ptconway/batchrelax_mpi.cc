@@ -63,13 +63,13 @@ using namespace std;
 
 void wait_for_gdb()
 {
-    int i = 0;
-    char hostname[256];
-    gethostname(hostname, sizeof(hostname));
-    printf("PID %d on %s ready for attach\n", getpid(), hostname);
-    fflush(stdout);
-    while (0 == i)
-        sleep(5);
+	int i = 0;
+	char hostname[256];
+	gethostname(hostname, sizeof(hostname));
+	printf("PID %d on %s ready for attach\n", getpid(), hostname);
+	fflush(stdout);
+	while ( 0 == i )
+			sleep(5);
 }
 
 string split_string( string str, int index ) {
@@ -83,125 +83,131 @@ bool isUnique( utility::vector1<string> & str )
 	//brute force
 	for ( utility::vector1<string>::iterator it = str.begin(); it != str.end(); ++it ) {
 		for ( utility::vector1<string>::iterator it2 = it + 1; it2 != str.end(); ++it2 ) {
-			if ( *it == *it2 )
+			if ( *it == *it2 ) {
 				return false;
+			}
 		}
 	}
 	return true;
 }
 
-static THREAD_LOCAL basic::Tracer TR( "main" );
+static basic::Tracer TR( "main" );
 
 int main(int argc, char *argv[]) {
 
 	try {
 
-	using namespace core;
-	using namespace protocols;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::io::silent;
-	using io::silent::SilentStructFactory;
-	using io::silent::SilentStructOP;
+		using namespace core;
+		using namespace protocols;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::io::silent;
+		using io::silent::SilentStructFactory;
+		using io::silent::SilentStructOP;
 
-	// new options
-	NEW_OPT(batchrelax_mpi::jobfile, "jobfile - format is <silentfile native.pdb> on each line", "");
+		// new options
+		NEW_OPT(batchrelax_mpi::jobfile, "jobfile - format is <silentfile native.pdb> on each line", "");
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	// initialize evaluators
-	evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
-	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
+		// initialize evaluators
+		evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
+		evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
 
-	// handle options
-	core::Size nstruct = option[ OptionKeys::out::nstruct ];
-	core::Size batch_size = option[ OptionKeys::batch_relax::batch_size ];
+		// handle options
+		core::Size nstruct = option[ OptionKeys::out::nstruct ];
+		core::Size batch_size = option[ OptionKeys::batch_relax::batch_size ];
 
-	// init residue set
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	if ( option[ in::file::fullatom ]() )
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	else
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+		// init residue set
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		if ( option[ in::file::fullatom ]() ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		} else {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+		}
 
-	// init sfxn
-	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::get_score_function();
+		// init sfxn
+		core::scoring::ScoreFunctionOP scorefxn;
+		scorefxn = core::scoring::get_score_function();
 
-	//mpi init
-	int numprocs = 1, rank = 1;
-	int EXIT_BATCH_ID = -1;
-	int BLANK;
+		//mpi init
+		int numprocs = 1, rank = 1;
+		int EXIT_BATCH_ID = -1;
+		int BLANK;
 
-	#ifdef USEMPI
+#ifdef USEMPI
 	MPI_Status status;
 	//MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	#endif
+#endif
 
-// finish init, start batchrelaxing
+		// finish init, start batchrelaxing
 
-	//handle master here
-	if (rank == 0 && numprocs > 1) {
-		// create job list
-		if ( ! option[ OptionKeys::batchrelax_mpi::jobfile ].user() )
-			utility_exit_with_message( "supply a jobfile with flag -batchrelax_mpi::jobfile in format <silentfile native.pdb>" );
-		string jobs_file_str = option[ OptionKeys::batchrelax_mpi::jobfile ];
-		ifstream jobs_file( jobs_file_str.c_str() );
-		vector<string> jobs;
-		string line;
-		map<string, bool> filelock;			//only used on master node
+		//handle master here
+		if ( rank == 0 && numprocs > 1 ) {
+			// create job list
+			if ( ! option[ OptionKeys::batchrelax_mpi::jobfile ].user() ) {
+				utility_exit_with_message( "supply a jobfile with flag -batchrelax_mpi::jobfile in format <silentfile native.pdb>" );
+			}
+			string jobs_file_str = option[ OptionKeys::batchrelax_mpi::jobfile ];
+			ifstream jobs_file( jobs_file_str.c_str() );
+			vector<string> jobs;
+			string line;
+			map<string, bool> filelock;   //only used on master node
 
-		if (jobs_file.is_open()) {
-			while ( jobs_file.good() ) {
-				getline (jobs_file,line);
-				if (line.size() > 0) {
-					jobs.push_back( line );
-					//cout << line << endl;
+			if ( jobs_file.is_open() ) {
+				while ( jobs_file.good() ) {
+					getline (jobs_file,line);
+					if ( line.size() > 0 ) {
+						jobs.push_back( line );
+						//cout << line << endl;
+					}
+				}
+				jobs_file.close();
+			}
+
+			// parse jobs list and split into batches
+			vector<string> batches;    // yes, im mixing vector0 and vector1 in this app - sue me
+			SilentFileData sfd;
+			string silent_file_name;
+			int infile_size;    // number of incoming structures
+			int num_batches_in_file;
+			utility::vector1<string> tags;
+			for ( vector<string>::iterator it = jobs.begin(); it != jobs.end(); ++it ) { // for each job in list, get structures and divide into batches
+				silent_file_name = split_string( *it, 0 );    // sf path is first word on job line (native path is second word)
+				tags = sfd.read_tags_fast(silent_file_name);
+				infile_size = tags.size();
+				if ( !isUnique( tags ) ) {
+					utility_exit_with_message( silent_file_name + " does not have unique tags. this breaks the batching algorithm because SilentFileData is too stupid to handle tag collision and doesn't support indexing by number" );
+				}
+				num_batches_in_file = infile_size / batch_size + 1;
+				int start, end = 1;
+				bool breakLoop = false;
+				// create batches by computing tag indexes and pushing start/end of range with silent file name
+				for ( start = 1; ; start += batch_size ) {
+					end = start + batch_size - 1;
+					if ( end >= infile_size ) {
+						end = infile_size;       // don't run over end of file, recompute index of last structure
+						breakLoop = true;       // we're done with this file, signal exit from loop
+					}
+					for ( int nstruct_i = 0; nstruct_i < nstruct; ++nstruct_i ) {   // duplicate batch for each nstruct
+						batches.push_back( *it + " " + SSTR(start) + " " + SSTR(end) );
+					}
+					if ( breakLoop ) {
+						break;
+					}
 				}
 			}
-			jobs_file.close();
-		}
 
-		// parse jobs list and split into batches
-		vector<string> batches;				// yes, im mixing vector0 and vector1 in this app - sue me
-		SilentFileData sfd;
-		string silent_file_name;
-		int infile_size;				// number of incoming structures
-		int num_batches_in_file;
-		utility::vector1<string> tags;
-		for ( vector<string>::iterator it = jobs.begin(); it != jobs.end(); ++it ) {	// for each job in list, get structures and divide into batches
-			silent_file_name = split_string( *it, 0 );				// sf path is first word on job line (native path is second word)
-			tags = sfd.read_tags_fast(silent_file_name);
-			infile_size = tags.size();
-			if (!isUnique( tags ))
-				utility_exit_with_message( silent_file_name + " does not have unique tags. this breaks the batching algorithm because SilentFileData is too stupid to handle tag collision and doesn't support indexing by number" );
-			num_batches_in_file = infile_size / batch_size + 1;
-			int start, end = 1;
-			bool breakLoop = false;
-			// create batches by computing tag indexes and pushing start/end of range with silent file name
-			for ( start = 1; ; start += batch_size ) {
-				end = start + batch_size - 1;
-				if ( end >= infile_size ) {
-					end = infile_size;							// don't run over end of file, recompute index of last structure
-					breakLoop = true;							// we're done with this file, signal exit from loop
-				}
-				for ( int nstruct_i = 0; nstruct_i < nstruct; ++nstruct_i )			// duplicate batch for each nstruct
-					batches.push_back( *it + " " + SSTR(start) + " " + SSTR(end) );
-				if (breakLoop)
-					break;
-			}
-		}
+			// if batch size is less than 1/4 of batch_size, move it to the end - "stable sort" preserves input order
+			// do this later - it's not THAT important, but a good idea nonetheless
 
-		// if batch size is less than 1/4 of batch_size, move it to the end - "stable sort" preserves input order
-		// do this later - it's not THAT important, but a good idea nonetheless
-
-		//for ( vector<string>::iterator it = batches.begin(); it != batches.end(); ++it )
+			//for ( vector<string>::iterator it = batches.begin(); it != batches.end(); ++it )
 			//cout << *it << endl;
 
-		#ifdef USEMPI
+#ifdef USEMPI
 		// broadcast batch list - send size, then each batch line by line
 		int batch_size = batches.size();
 		char* batch_string = new char[BATCH_STRING_SIZE];
@@ -297,20 +303,17 @@ int main(int argc, char *argv[]) {
 			// insert timeout code here
 
 		} //end recv loop
-		#endif
-	} //end master
+#endif
+		} else if ( numprocs > 1 ) { //end master
+			//handle slaves here
+			vector<string> batches;
+			int batch_id;
+			SilentFileDataOP sfd_in;
+			core::pose::PoseOP native_pose;
+			string silent_filename = "";
+			string silent_out_filename = "";
 
-
-	//handle slaves here
-	else if (numprocs > 1) {
-		vector<string> batches;
-		int batch_id;
-		SilentFileDataOP sfd_in;
-		core::pose::PoseOP native_pose;
-		string silent_filename = "";
-		string silent_out_filename = "";
-
-		#ifdef USEMPI
+#ifdef USEMPI
 
 		// receive batch list here
 		char batch_string[BATCH_STRING_SIZE];
@@ -413,16 +416,15 @@ int main(int argc, char *argv[]) {
 			//cout << "writing to " << split_string( batches[batch_id], 0 ) << endl;
 			MPI_Send( &batch_id, 1, MPI_INT, 0, TAG_WRITE_SUCCESS, MPI_COMM_WORLD );
 		}
-		#endif
-	}
-	//if no slaves, run batches on master
-	else {
-		TR << "only 1 core? use src/apps/pilot/mtyka/batchrelax.cc - dont want to refactor for this use case" << endl;
-	}
+#endif
+		} else {
+			//if no slaves, run batches on master
+			TR << "only 1 core? use src/apps/pilot/mtyka/batchrelax.cc - dont want to refactor for this use case" << endl;
+		}
 
-	#ifdef USEMPI
+#ifdef USEMPI
 	MPI_Finalize();
-	#endif
+#endif
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << endl;

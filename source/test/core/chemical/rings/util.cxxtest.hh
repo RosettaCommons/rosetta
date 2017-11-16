@@ -38,7 +38,7 @@
 // C++ header
 #include <math.h>
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.rings.util.cxxtest.hh" );
+static basic::Tracer TR( "core.chemical.rings.util.cxxtest.hh" );
 
 class RingUtilityFunctionTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////

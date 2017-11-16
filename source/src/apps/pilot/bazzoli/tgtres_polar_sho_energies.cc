@@ -44,7 +44,7 @@
 #include <core/types.hh>
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.tgtres_polar_sho_energies" );
+static basic::Tracer TR( "apps.pilot.tgtres_polar_sho_energies" );
 
 using core::Size;
 using core::Real;

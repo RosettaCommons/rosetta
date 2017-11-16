@@ -37,7 +37,7 @@
 #include <boost/assign.hpp>
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.connection.ConnectionArchitect" );
+static basic::Tracer TR( "protocols.denovo_design.connection.ConnectionArchitect" );
 
 namespace protocols {
 namespace denovo_design {

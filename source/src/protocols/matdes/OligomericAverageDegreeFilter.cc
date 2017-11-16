@@ -53,7 +53,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.OligomericAverageDegreeFilter" );
+static basic::Tracer TR( "protocols.matdes.OligomericAverageDegreeFilter" );
 
 namespace protocols {
 namespace matdes {

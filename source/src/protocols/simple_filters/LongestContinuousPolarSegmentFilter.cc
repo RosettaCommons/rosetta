@@ -31,7 +31,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.LongestContinuousPolarSegmentFilter" );
+static basic::Tracer TR( "protocols.simple_filters.LongestContinuousPolarSegmentFilter" );
 
 namespace protocols {
 namespace simple_filters {

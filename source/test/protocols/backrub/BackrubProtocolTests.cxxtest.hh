@@ -29,7 +29,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("BackrubProtocolTests");
+static basic::Tracer TR("BackrubProtocolTests");
 
 
 class BackrubProtocolTests : public CxxTest::TestSuite {

@@ -30,11 +30,10 @@
 
 // C++ Headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-//static THREAD_LOCAL basic::Tracer TR( "protocols.canonical_sampling.ThermodynamicObserver" );
+//static basic::Tracer TR( "protocols.canonical_sampling.ThermodynamicObserver" );
 
 namespace protocols {
 namespace canonical_sampling {

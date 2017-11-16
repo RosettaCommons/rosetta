@@ -49,85 +49,87 @@
 
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "call_saxs_score" );
+static basic::Tracer TR( "call_saxs_score" );
 
 using namespace core;
 
 void register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  OPT(casp::repack);
-  OPT(casp::sc_min);
-  OPT(in::file::native);
-  OPT(in::file::residue_type_set);
-  OPT(score::saxs::q_min);
-  OPT(score::saxs::q_max);
-  OPT(score::saxs::q_step);
-  OPT(score::saxs::custom_ff);
-  OPT(score::saxs::ref_cen_spectrum);
-  OPT(score::saxs::ref_fa_spectrum);
-//  OPT(relax::fast);
+	OPT(casp::repack);
+	OPT(casp::sc_min);
+	OPT(in::file::native);
+	OPT(in::file::residue_type_set);
+	OPT(score::saxs::q_min);
+	OPT(score::saxs::q_max);
+	OPT(score::saxs::q_step);
+	OPT(score::saxs::custom_ff);
+	OPT(score::saxs::ref_cen_spectrum);
+	OPT(score::saxs::ref_fa_spectrum);
+	//  OPT(relax::fast);
 }
 
 core::Real saxs_energy(core::pose::Pose & a_pose) {
 
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-    core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-    if ( option[ casp::repack ].user() ) {
-	core::pack::task::PackerTaskOP task(
-                            core::pack::task::TaskFactory::create_packer_task( a_pose ));
-	task->initialize_from_command_line();
-        task->restrict_to_repacking();
-        core::pack::pack_rotamers(a_pose, (*scorefxn), task);
-    }
-    if ( option[ casp::sc_min ] ) {
-//	std::string const min_type( option[ run::min_type ]() );
-	std::string min_type("lbfgs_armijo_nonmonotone");
-        core::kinematics::MoveMap final_mm;
-        final_mm.set_chi( true );
-        final_mm.set_bb( false );
-        core::optimization::AtomTreeMinimizer().run( a_pose, final_mm, *scorefxn,
-    		core::optimization::MinimizerOptions( min_type, 0.001, true ) );
-    }
-    core::scoring::saxs::SAXSEnergyFA en;
-    return en.total_energy(a_pose);
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+	if ( option[ casp::repack ].user() ) {
+		core::pack::task::PackerTaskOP task(
+			core::pack::task::TaskFactory::create_packer_task( a_pose ));
+		task->initialize_from_command_line();
+		task->restrict_to_repacking();
+		core::pack::pack_rotamers(a_pose, (*scorefxn), task);
+	}
+	if ( option[ casp::sc_min ] ) {
+		// std::string const min_type( option[ run::min_type ]() );
+		std::string min_type("lbfgs_armijo_nonmonotone");
+		core::kinematics::MoveMap final_mm;
+		final_mm.set_chi( true );
+		final_mm.set_bb( false );
+		core::optimization::AtomTreeMinimizer().run( a_pose, final_mm, *scorefxn,
+			core::optimization::MinimizerOptions( min_type, 0.001, true ) );
+	}
+	core::scoring::saxs::SAXSEnergyFA en;
+	return en.total_energy(a_pose);
 }
 
 
 ////////////////////////////////////////////////////////
 int main( int argc, char * argv [] ) {
-    try {
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
-    register_options();
-    devel::init( argc, argv );
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		register_options();
+		devel::init( argc, argv );
 
-    core::pose::Pose native_pose;
-    bool if_native = false;
-//------------- Read the native pose  ----------
-    if ( option[ in::file::native ].user() )
-        core::import_pose::pose_from_file( native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
+		core::pose::Pose native_pose;
+		bool if_native = false;
+		//------------- Read the native pose  ----------
+		if ( option[ in::file::native ].user() ) {
+			core::import_pose::pose_from_file( native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
+		}
 
-//------------- Read the pose for scoring ----------
-//    core::chemical::ResidueTypeSetCAP rsd_set_fa = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-    core::pose::Pose fa_pose;
-    utility::vector1<utility::file::FileName> s = option[in::file::s]();
-    for(Size i=1;i<=s.size();i++) {
-	core::import_pose::pose_from_file( fa_pose, s[i].name(), core::import_pose::PDB_file);
-	std::cout<< saxs_energy(fa_pose);
-	if( if_native )
-	    std::cout << ' ' << core::scoring::CA_rmsd( native_pose, fa_pose ) << std::endl;
-	else
-	    std::cout << std::endl;
-    }
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		//------------- Read the pose for scoring ----------
+		//    core::chemical::ResidueTypeSetCAP rsd_set_fa = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		core::pose::Pose fa_pose;
+		utility::vector1<utility::file::FileName> s = option[in::file::s]();
+		for ( Size i=1; i<=s.size(); i++ ) {
+			core::import_pose::pose_from_file( fa_pose, s[i].name(), core::import_pose::PDB_file);
+			std::cout<< saxs_energy(fa_pose);
+			if ( if_native ) {
+				std::cout << ' ' << core::scoring::CA_rmsd( native_pose, fa_pose ) << std::endl;
+			} else {
+				std::cout << std::endl;
+			}
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
+	}
 
-    return 0;
+	return 0;
 }
 

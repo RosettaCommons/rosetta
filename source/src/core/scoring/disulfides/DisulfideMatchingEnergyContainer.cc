@@ -50,7 +50,7 @@ namespace core {
 namespace scoring {
 namespace disulfides {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.disulfides.DisulfideMatchingEnergyContainer" );
+static basic::Tracer TR( "core.scoring.disulfides.DisulfideMatchingEnergyContainer" );
 
 /// @brief constructor
 DisulfideMatchingNeighborIterator::DisulfideMatchingNeighborIterator(

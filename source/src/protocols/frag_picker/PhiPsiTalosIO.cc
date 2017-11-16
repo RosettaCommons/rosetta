@@ -36,7 +36,7 @@
 namespace protocols {
 namespace frag_picker {
 
-static THREAD_LOCAL basic::Tracer
+static basic::Tracer
 tr("protocols.frag_picker.PhiPsiTalosIO");
 
 void PhiPsiTalosIO::read(std::string const & file_name) {

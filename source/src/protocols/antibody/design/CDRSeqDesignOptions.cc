@@ -35,7 +35,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.design.CDRSeqDesignOptionsParser");
+static basic::Tracer TR("protocols.antibody.design.CDRSeqDesignOptionsParser");
 
 
 namespace protocols {

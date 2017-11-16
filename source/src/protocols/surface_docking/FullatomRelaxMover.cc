@@ -48,11 +48,10 @@
 #include <utility/exit.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.SurfaceDocking.FullatomRelaxMover" );
+static basic::Tracer TR( "protocols.SurfaceDocking.FullatomRelaxMover" );
 
 namespace protocols {
 namespace surface_docking {

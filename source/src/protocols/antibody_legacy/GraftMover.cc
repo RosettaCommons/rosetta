@@ -64,8 +64,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.GraftMover" );
-static THREAD_LOCAL basic::Tracer TRO( "protocols.antibody.GraftOneMover" );
+static basic::Tracer TR( "protocols.antibody.GraftMover" );
+static basic::Tracer TRO( "protocols.antibody.GraftOneMover" );
 
 namespace protocols {
 namespace antibody_legacy {

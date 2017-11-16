@@ -60,7 +60,7 @@ MMBondLengthEnergyCreator::score_types_for_method() const {
 }
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.mm.MMBondLengthEnergy" );
+static basic::Tracer TR( "core.mm.MMBondLengthEnergy" );
 
 MMBondLengthEnergy::MMBondLengthEnergy( methods::EnergyMethodOptions const & /*options*/):
 	parent( methods::EnergyMethodCreatorOP( new MMBondLengthEnergyCreator ) )

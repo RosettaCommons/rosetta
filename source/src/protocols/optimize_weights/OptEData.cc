@@ -58,7 +58,6 @@
 #include <basic/options/option.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -78,7 +77,7 @@ PNatRotOptERotamerData::~PNatRotOptERotamerData() = default;
 /// @details Auto-generated virtual destructor
 PNatAAOptERotamerData::~PNatAAOptERotamerData() = default;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.optimize_weights.OptEData" );
+static basic::Tracer TR( "protocols.optimize_weights.OptEData" );
 
 /// @author ashworth
 std::ostream & operator << ( std::ostream & os, PNatAAOptERotamerDataOP rd )

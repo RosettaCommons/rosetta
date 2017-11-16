@@ -52,7 +52,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.AngleConstraint" );
+static basic::Tracer TR( "core.scoring.constraints.AngleConstraint" );
 
 AngleConstraint::AngleConstraint(
 	AtomID const & a1,

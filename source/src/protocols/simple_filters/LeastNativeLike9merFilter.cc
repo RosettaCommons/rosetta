@@ -50,7 +50,7 @@
 
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer TR("protocols.filters.LeastNativeLike9merFilter");
+static basic::Tracer TR("protocols.filters.LeastNativeLike9merFilter");
 
 namespace protocols {
 namespace simple_filters {

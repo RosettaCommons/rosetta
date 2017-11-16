@@ -35,22 +35,21 @@
 // C++ headers
 #include <string>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.Extender" );
+static basic::Tracer TR( "apps.pilot.smlewis.Extender" );
 
-namespace basic{ namespace options{ namespace OptionKeys{
+namespace basic { namespace options { namespace OptionKeys {
 utility::options::FileOptionKey const extension("extension");
 }}}//basic::options::OptionKeys
 
 
 /// @brief helper parses extension file
 void read_in_extension(
-											 core::pose::Pose const & pose,
-											 core::Size & loop_start,
-											 std::string & extension)
+	core::pose::Pose const & pose,
+	core::Size & loop_start,
+	std::string & extension)
 {
 	std::string filename(basic::options::option[ basic::options::OptionKeys::extension ].value());
 
@@ -58,7 +57,7 @@ void read_in_extension(
 	utility::io::izstream extension_stream( filename );
 	if ( !extension_stream ) {
 		Error() << "Can't open extension file, looked for: " << filename
-						<< " use -extension <filename> to specify" << std::endl;
+			<< " use -extension <filename> to specify" << std::endl;
 		utility_exit();
 	}
 
@@ -68,12 +67,12 @@ void read_in_extension(
 	extension_stream >> chain >> PDBloopstart >> extension;
 
 	//if the stream fails, bad formatting
-	if( extension_stream.fail() ){
+	if ( extension_stream.fail() ) {
 		Error() << "Can't parse extension file.  Using the PDB numbering, format is:\n    chain loopstart extension\n where extension is presented as CAPITAL SINGLE LETTER CODES out of ACDEFGHIKLMNPQRSTVWY" << std::endl;
 		utility_exit();
 	}
 
- 	if (chain == '_') chain = ' ';
+	if ( chain == '_' ) chain = ' ';
 
 	core::pose::PDBPoseMap const & pose_map(pose.pdb_info()->pdb2pose());
 	loop_start = pose_map.find(chain, PDBloopstart);
@@ -85,68 +84,68 @@ int main( int argc, char* argv[] )
 
 	try {
 
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	option.add( extension, "extension file").def("extension");
-	devel::init(argc, argv);
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		option.add( extension, "extension file").def("extension");
+		devel::init(argc, argv);
 
-	//set up our pose
-	core::pose::Pose pose;
-	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
-	core::Size const poselength = pose.size();
+		//set up our pose
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
+		core::Size const poselength = pose.size();
 
-	//setup ultimate numberings in the combined pose
-	core::Size loop_start;
-	std::string extension;
-	read_in_extension( pose, loop_start, extension);
+		//setup ultimate numberings in the combined pose
+		core::Size loop_start;
+		std::string extension;
+		read_in_extension( pose, loop_start, extension);
 
-	if( (loop_start > poselength) || (loop_start < 1) ){
-		utility_exit_with_message("loop_start is not inside pose");
-	}	else if (loop_start == 1) {
-		utility_exit_with_message("N-terminal extension not supported yet");
-	} else if (loop_start < poselength && loop_start != 1) {
-		utility_exit_with_message("internal extension not supported yet");
-	} else if (loop_start == poselength){
-		TR << "C-terminal extension" << std::endl;
-	} else {
-		utility_exit_with_message("Whaaaat?");
-	}
+		if ( (loop_start > poselength) || (loop_start < 1) ) {
+			utility_exit_with_message("loop_start is not inside pose");
+		} else if ( loop_start == 1 ) {
+			utility_exit_with_message("N-terminal extension not supported yet");
+		} else if ( loop_start < poselength && loop_start != 1 ) {
+			utility_exit_with_message("internal extension not supported yet");
+		} else if ( loop_start == poselength ) {
+			TR << "C-terminal extension" << std::endl;
+		} else {
+			utility_exit_with_message("Whaaaat?");
+		}
 
-	core::chemical::ResidueTypeSetCOP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
+		core::chemical::ResidueTypeSetCOP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 
-	core::Size const ext_length(extension.size());
-	for(core::Size i(0); i<ext_length; ++i){
-		core::Size insert_pos(loop_start+i);
+		core::Size const ext_length(extension.size());
+		for ( core::Size i(0); i<ext_length; ++i ) {
+			core::Size insert_pos(loop_start+i);
 
-		//name3 of new residue
-		std::string name3(core::chemical::name_from_aa(core::chemical::aa_from_oneletter_code(extension[i])));
+			//name3 of new residue
+			std::string name3(core::chemical::name_from_aa(core::chemical::aa_from_oneletter_code(extension[i])));
 
-		//concrete new residue
-		core::conformation::Residue newres(typeset->name_map(name3), true);
+			//concrete new residue
+			core::conformation::Residue newres(typeset->name_map(name3), true);
 
-		pose.conformation().safely_append_polymer_residue_after_seqpos( newres, insert_pos, true );
-		pose.set_phi(insert_pos, -150.0);
-		pose.set_psi(insert_pos, 150.0);
-		pose.set_omega(insert_pos, 180.0);
+			pose.conformation().safely_append_polymer_residue_after_seqpos( newres, insert_pos, true );
+			pose.set_phi(insert_pos, -150.0);
+			pose.set_psi(insert_pos, 150.0);
+			pose.set_omega(insert_pos, 180.0);
 
-	} //finish inserting
+		} //finish inserting
 
 
-	pose.dump_pdb("result.pdb");
+		pose.dump_pdb("result.pdb");
 
-	//internal loops ruminations
-	//make loops fold tree; jump from  insert point-1 to insert point plus two
-	//insert between insert point and insert point +1
+		//internal loops ruminations
+		//make loops fold tree; jump from  insert point-1 to insert point plus two
+		//insert between insert point and insert point +1
 
-	//feed loop into movemap, remember to leave omegas fixed at 180
+		//feed loop into movemap, remember to leave omegas fixed at 180
 
-	// 	protocols::loops::CCDLoopClosureMover close( interface_->loop(1), movemap );
-	// 	close.apply(combined); //close the other gap
-	// 	combined.dump_pdb("combined_nopretty.pdb");
+		//  protocols::loops::CCDLoopClosureMover close( interface_->loop(1), movemap );
+		//  close.apply(combined); //close the other gap
+		//  combined.dump_pdb("combined_nopretty.pdb");
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
-	return 0;
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

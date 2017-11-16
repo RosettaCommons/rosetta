@@ -24,7 +24,7 @@
 namespace basic {
 namespace mpi {
 
-static THREAD_LOCAL basic::Tracer TR( "basic.mpi.DbMoverMessageListener" );
+static basic::Tracer TR( "basic.mpi.DbMoverMessageListener" );
 
 DbMoverMessageListener::DbMoverMessageListener():
 	protocol_id_(0)

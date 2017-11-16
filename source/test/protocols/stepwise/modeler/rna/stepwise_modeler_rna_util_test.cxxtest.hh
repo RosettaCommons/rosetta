@@ -31,7 +31,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("stepwise_modeler_rna_util_test");
+static basic::Tracer TR("stepwise_modeler_rna_util_test");
 
 
 class stepwise_modeler_rna_util_test : public CxxTest::TestSuite {

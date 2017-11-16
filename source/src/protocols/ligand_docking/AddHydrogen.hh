@@ -29,7 +29,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer add_hydrogen_tracer( "protocols.ligand_docking.AddHydrogen", basic::t_debug );
+static basic::Tracer add_hydrogen_tracer( "protocols.ligand_docking.AddHydrogen", basic::t_debug );
 
 /// @brief
 ///

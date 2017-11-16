@@ -38,7 +38,7 @@
 //// C++ headers
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.DistanceScoreMover" );
+static basic::Tracer tr( "protocols.noesy_assign.DistanceScoreMover" );
 
 using core::Real;
 using namespace core;

@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.rna.util" );
+static basic::Tracer tr( "core.scoring.rna.util" );
 
 namespace core {
 namespace scoring {

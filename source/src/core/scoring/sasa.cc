@@ -51,7 +51,7 @@
 //#define FILE_DEBUG 1
 
 //#ifdef FILE_DEBUG
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.sasa" );
+static basic::Tracer TR( "core.scoring.sasa" );
 //#endif
 
 using namespace ObjexxFCL::format;

@@ -31,7 +31,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static THREAD_LOCAL basic::Tracer tr(
+static basic::Tracer tr(
 	"protocols.frag_picker.scores.LAMBEGO_Similarity"
 );
 

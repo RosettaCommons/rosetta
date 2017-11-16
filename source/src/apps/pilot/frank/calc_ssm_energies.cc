@@ -115,10 +115,9 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 using utility::file::FileName;
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "calc_ssm_energies" );
+static basic::Tracer TR( "calc_ssm_energies" );
 
 OPT_1GRP_KEY(Boolean, ssm, interface)
 OPT_1GRP_KEY(Boolean, ssm, packing)

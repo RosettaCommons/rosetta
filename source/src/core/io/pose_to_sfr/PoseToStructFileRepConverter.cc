@@ -72,7 +72,7 @@ namespace io {
 namespace pose_to_sfr {
 using utility::to_string;
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.pose_to_sfr.PoseToStructFileRepConverter" );
+static basic::Tracer TR( "core.io.pose_to_sfr.PoseToStructFileRepConverter" );
 
 // Pose to StructFileRep methods ///////////////////////////////////////////////////
 

@@ -30,7 +30,7 @@
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer trRotateSAXS("RotateSAXS");
+static basic::Tracer trRotateSAXS("RotateSAXS");
 
 
 void register_options() {

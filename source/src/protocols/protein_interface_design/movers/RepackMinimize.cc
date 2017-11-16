@@ -48,7 +48,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.RepackMinimize" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.RepackMinimize" );
 
 // XRW TEMP std::string
 // XRW TEMP RepackMinimizeCreator::keyname() const

@@ -40,11 +40,9 @@ namespace mm {
 /// @details Auto-generated virtual destructor
 MMLJLibrary::~MMLJLibrary() {}
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-static THREAD_LOCAL basic::Tracer TR( "core.mm.MMLJLibrary" );
+static basic::Tracer TR( "core.mm.MMLJLibrary" );
 
 /// @details Constructs a MMLJLibrary instance from a filename string and constant access pointer to an MMAtomTypeSet
 MMLJLibrary::MMLJLibrary(

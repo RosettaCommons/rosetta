@@ -88,7 +88,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "apps.public.beta_strand_homodimer_design.homodimer_design" );
+static basic::Tracer TR( "apps.public.beta_strand_homodimer_design.homodimer_design" );
 
 using namespace core;
 using namespace utility;

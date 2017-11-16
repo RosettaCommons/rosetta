@@ -52,7 +52,7 @@
 #include <fstream>
 
 
-static THREAD_LOCAL basic::Tracer TR( "main" );
+static basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
 using namespace core::scoring;

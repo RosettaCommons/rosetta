@@ -37,7 +37,7 @@
 // C++ headers
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR("core.select.residue_selector.ResidueSelectorFactory.cxxtest.hh");
+static basic::Tracer TR("core.select.residue_selector.ResidueSelectorFactory.cxxtest.hh");
 
 using namespace utility::tag;
 using namespace core::select::residue_selector;

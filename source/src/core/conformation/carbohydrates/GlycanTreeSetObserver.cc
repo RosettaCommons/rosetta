@@ -37,7 +37,7 @@
 
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.carbohydrates.GlycanTreeSetObserver" );
+static basic::Tracer TR( "core.conformation.carbohydrates.GlycanTreeSetObserver" );
 
 
 namespace core {

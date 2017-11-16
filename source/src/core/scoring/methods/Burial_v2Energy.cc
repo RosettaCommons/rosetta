@@ -37,7 +37,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.Burial_v2Energy" );
+static basic::Tracer TR( "core.scoring.Burial_v2Energy" );
 
 namespace core {
 namespace scoring {

@@ -39,7 +39,7 @@
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.LarvalJob" );
+static basic::Tracer TR( "protocols.jd3.LarvalJob" );
 
 namespace protocols {
 namespace jd3 {

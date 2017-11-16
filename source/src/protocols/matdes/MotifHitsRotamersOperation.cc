@@ -29,7 +29,7 @@ namespace protocols {
 namespace matdes {
 
 
-static THREAD_LOCAL basic::Tracer TR("protocols.matdes.MotifHitsRotamersOperation");
+static basic::Tracer TR("protocols.matdes.MotifHitsRotamersOperation");
 
 //Constructor
 

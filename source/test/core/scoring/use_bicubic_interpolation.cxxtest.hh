@@ -32,7 +32,6 @@
 #include <sstream>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

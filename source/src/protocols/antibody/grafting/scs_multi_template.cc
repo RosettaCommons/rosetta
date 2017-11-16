@@ -22,7 +22,7 @@ namespace protocols {
 namespace antibody {
 namespace grafting {
 
-//static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting");
+//static basic::Tracer TR("protocols.antibody.grafting");
 
 /// @brief Select CDR's template without filtering or sorting. In general you probably need to call select(...) instead
 /// @throw _AE_scs_failed_ on failure

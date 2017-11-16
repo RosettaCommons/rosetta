@@ -94,7 +94,7 @@ using core::id::DOF_ID;
 using core::scoring::ScoreFunctionOP;
 
 
-static THREAD_LOCAL basic::Tracer TR( "bpy" );
+static basic::Tracer TR( "bpy" );
 
 
 struct PoseWrap {
@@ -105,10 +105,12 @@ struct PoseWrap {
 	void dump_pdb(std::string fname) {
 		utility::io::ozstream out(fname);
 		pose.dump_pdb(out);
-		if(basic::options::option[basic::options::OptionKeys::smhybrid::add_metal_at_0]())
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::add_metal_at_0]() ) {
 			out << "HETATM 9999 ZN    ZN A 999       0.000   0.000   0.000  1.00  0.00              " << std::endl;
-		if(basic::options::option[basic::options::OptionKeys::smhybrid::add_cavities]())
+		}
+		if ( basic::options::option[basic::options::OptionKeys::smhybrid::add_cavities]() ) {
 			core::scoring::packstat::output_packstat_pdb(pose,out);
+		}
 
 	}
 };
@@ -119,10 +121,10 @@ void switch_to_fa(PoseWrap & pw) {
 	core::id::AtomID_Map<bool> missing;
 	core::pose::initalize_atomid_map(missing,pw.pose,false);
 	bool anymissing = false;
-	for(Size attach = pw.attach; attach < pw.nsub*pw.nres; attach += pw.nres) {
-		for(Size i = 1; i <= pw.pose.residue(attach).natoms(); ++i) {
+	for ( Size attach = pw.attach; attach < pw.nsub*pw.nres; attach += pw.nres ) {
+		for ( Size i = 1; i <= pw.pose.residue(attach).natoms(); ++i ) {
 			std::string aname = pw.pose.residue(attach).atom_name(i);
-			if( cen.residue(attach).type().has(aname) ) {
+			if ( cen.residue(attach).type().has(aname) ) {
 				// std::cerr << "setting coords for res " << attach << " atom " << aname << std::endl;
 				pw.pose.set_xyz(core::id::AtomID(i,attach),cen.residue(attach).xyz(aname));
 			} else {
@@ -132,7 +134,7 @@ void switch_to_fa(PoseWrap & pw) {
 			}
 		}
 	}
-	if(anymissing) pw.pose.conformation().fill_missing_atoms( missing );
+	if ( anymissing ) pw.pose.conformation().fill_missing_atoms( missing );
 }
 
 void switch_to_cen(PoseWrap & pw) {
@@ -141,10 +143,10 @@ void switch_to_cen(PoseWrap & pw) {
 	core::id::AtomID_Map<bool> missing;
 	core::pose::initalize_atomid_map(missing,pw.pose,false);
 	bool anymissing = false;
-	for(Size attach = pw.attach; attach < pw.nsub*pw.nres; attach += pw.nres) {
-		for(Size i = 1; i <= pw.pose.residue(attach).natoms(); ++i) {
+	for ( Size attach = pw.attach; attach < pw.nsub*pw.nres; attach += pw.nres ) {
+		for ( Size i = 1; i <= pw.pose.residue(attach).natoms(); ++i ) {
 			std::string aname = pw.pose.residue(attach).atom_name(i);
-			if( fa.residue(attach).type().has(aname) ) {
+			if ( fa.residue(attach).type().has(aname) ) {
 				// std::cerr << "setting coords for res " << attach << " atom " << aname << std::endl;
 				pw.pose.set_xyz(core::id::AtomID(i,attach),fa.residue(attach).xyz(aname));
 			} else {
@@ -154,7 +156,7 @@ void switch_to_cen(PoseWrap & pw) {
 			}
 		}
 	}
-	if(anymissing) pw.pose.conformation().fill_missing_atoms( missing );
+	if ( anymissing ) pw.pose.conformation().fill_missing_atoms( missing );
 }
 
 
@@ -168,11 +170,11 @@ void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID ai
 void read_fragdata( FragDataCOPs& fds, utility::io::izstream & in, bool /*design = false*/ ) {
 	using namespace core::fragment;
 	Size n,count=0;
-	while( in >> n ) {
-	 	std::string pdb;
+	while ( in >> n ) {
+		std::string pdb;
 		char buf[999];
 		FragDataOP fd = new FragData;
-		for( Size i = 1; i <= n; ++i ) {
+		for ( Size i = 1; i <= n; ++i ) {
 			utility::pointer::owning_ptr<SingleResidueFragData> srfd;
 			srfd = new BBTorsionSRFD;
 			in >> pdb;
@@ -226,12 +228,12 @@ core::fragment::FragSetOP make_frag_set(Size start, std::string ss, std::map<std
 	using namespace core::fragment;
 	FragSetOP frags = new ConstantLengthFragSet();
 	Size const stop = ss.size() + start - 3;
-	if(start >= stop) return NULL;
-	for( Size i = start; i <= stop; ++i ) {
+	if ( start >= stop ) return NULL;
+	for ( Size i = start; i <= stop; ++i ) {
 		FrameOP frame = new Frame(i,3);
 		FragDataCOPs::const_iterator beg = fds[ss.substr(i-start,3)].begin();
 		FragDataCOPs::const_iterator end = fds[ss.substr(i-start,3)].end();
-		for( FragDataCOPs::const_iterator fi = beg; fi != end; ++fi ) {
+		for ( FragDataCOPs::const_iterator fi = beg; fi != end; ++fi ) {
 			frame->add_fragment(*fi);
 		}
 		frags->add(frame);
@@ -248,8 +250,8 @@ public:
 		using namespace core::pack::dunbrack;
 		using namespace core::chemical;
 		std::string name3 = pose.residue(residue).name3();
-		if(name3=="BPY") name3 = "TRP";
-		if(name3=="TIA") name3 = "LYS";
+		if ( name3=="BPY" ) name3 = "TRP";
+		if ( name3=="TIA" ) name3 = "LYS";
 		ResidueTypeSetCAP rs( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		lib_ = core::pack::dunbrack::RotamerLibrary::get_rsd_library( rs->name_map(name3) );
 		assert(lib_);
@@ -258,7 +260,7 @@ public:
 		using namespace core::pack::dunbrack;
 		ChiVector chis;
 		lib_->assign_random_rotamer_with_bias(pose.residue(residue_),scratch_,numeric::random::rg(),chis,true);
-		for(size_t i = 1; i <= chis.size(); ++i)	{
+		for ( size_t i = 1; i <= chis.size(); ++i ) {
 			pose.set_chi(i,residue_,chis[i]);
 		}
 		// Real a =  5.0*numeric::random::gaussian();
@@ -289,7 +291,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf) {
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	task->or_include_current(true);
 	task->nonconst_residue_task(pw.attach).prevent_repacking();
-	for(Size i = 1; i <= task->size(); ++i) {
+	for ( Size i = 1; i <= task->size(); ++i ) {
 		task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 	}
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
@@ -317,7 +319,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags, Real temp
 
 	RandomMoverOP random_mover = new RandomMover;
 	random_mover->add_mover(new ChiMover(pw.pose,pw.attach),0.1);
-	if( frags() != NULL ) {
+	if ( frags() != NULL ) {
 		protocols::moves::MoverOP fragins = new protocols::abinitio::ClassicFragmentMover(frags);
 		random_mover->add_mover(fragins,0.9);
 	}
@@ -360,28 +362,28 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags, Real temp
 
 	// NO SHEETS AT THE MOMENT....
 	// for( Size i = 1; i <= 5; ++i ) {
-	// 	TR << "stage 3 " << i << std::endl;
-	// 	mc = new MonteCarlo( pose, *sf2, 2.0 );
-	// 	RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
-	// 	mc->reset( pose );
-	// 	// design(pose,sf2);
-	// 	mc = new MonteCarlo( pose, *sf5, 2.0 );
-	// 	RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
-	// 	mc->reset( pose );
-	// 	// design(pose,sf5);
+	//  TR << "stage 3 " << i << std::endl;
+	//  mc = new MonteCarlo( pose, *sf2, 2.0 );
+	//  RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
+	//  mc->reset( pose );
+	//  // design(pose,sf2);
+	//  mc = new MonteCarlo( pose, *sf5, 2.0 );
+	//  RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
+	//  mc->reset( pose );
+	//  // design(pose,sf5);
 	// }
 	// // pose.dump_pdb("stage3.pdb");
 
-	for( Size i = 1; i <= 10; ++i ) {
+	for ( Size i = 1; i <= 10; ++i ) {
 		TR << "stage 3" << i << std::endl;
 		mc = new MonteCarlo( pose, *sf3, 2.0 );
 		RepeatMover( new TrialMover( random_mover, mc ), NCYCLES/5 ).apply( pose );
 		mc->reset( pose );
 	}
-	if(basic::options::option[basic::options::OptionKeys::smhybrid::abinitio_design]()) {
+	if ( basic::options::option[basic::options::OptionKeys::smhybrid::abinitio_design]() ) {
 		design(pw,sf3);
 	}
-	for( Size i = 1; i <= 10; ++i ) {
+	for ( Size i = 1; i <= 10; ++i ) {
 		TR << "stage 3" << i << std::endl;
 		mc = new MonteCarlo( pose, *sf3, 2.0 );
 		RepeatMover( new TrialMover( random_mover, mc ), NCYCLES/5 ).apply( pose );
@@ -414,13 +416,13 @@ PoseWrap make_pose(Size Nprev, Size Npost) {
 
 
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-	for( Size i = 1; i <= Nprev; ++i ) {
+	for ( Size i = 1; i <= Nprev; ++i ) {
 		std::string name3 = name_from_aa(aa_from_oneletter_code('L'));
 		pw.pose.prepend_polymer_residue_before_seqpos(*ResidueFactory::create_residue(residue_set->name_map(name3)),1,true);
 	}
 	core::pose::add_lower_terminus_type_to_pose_residue(pw.pose,1);
 	// pw.pose.dump_pdb("init1.pdb");
-	for( Size i = 1; i <= Npost; ++i ) {
+	for ( Size i = 1; i <= Npost; ++i ) {
 		std::string name3 = name_from_aa(aa_from_oneletter_code('L'));
 		pw.pose.append_residue_by_bond(*ResidueFactory::create_residue(residue_set->name_map(name3)),true);
 	}
@@ -435,9 +437,9 @@ PoseWrap make_pose(Size Nprev, Size Npost) {
 
 	// pw.pose.dump_pdb("make_pose_asym.pdb");
 	// for( Size i = 1; i <= pw.nres; ++i ) {
-	// 	pw.pose.set_phi  (i,-60.16731);
-	// 	pw.pose.set_psi  (i,-45.19451);
-	// 	pw.pose.set_omega(i,180.00000);
+	//  pw.pose.set_phi  (i,-60.16731);
+	//  pw.pose.set_psi  (i,-45.19451);
+	//  pw.pose.set_omega(i,180.00000);
 	// }
 	// { ChiMover cm(pw.pose,pw.attach); cm.apply(pw.pose); }
 	// pw.pose.dump_pdb("make_pose_helix.pdb");
@@ -454,9 +456,9 @@ PoseWrap make_pose(Size Nprev, Size Npost) {
 	// pw.pose.set_chi(1,pw.attach,pw.pose.chi(1,pw.attach) + uniform()*10.-5. );
 	// pw.pose.set_chi(2,pw.attach,pw.pose.chi(2,pw.attach) + uniform()*10.-5. );
 	// for( Size i = 1; i <= pw.nres; ++i ) {
-	// 	pw.pose.set_phi  (i,pw.pose.phi(i)   + uniform()*10.- 5.);
-	// 	pw.pose.set_psi  (i,pw.pose.psi(i)   + uniform()*10.- 5.);
-	// 	pw.pose.set_omega(i,pw.pose.omega(i) + uniform()* 1.-.5 );
+	//  pw.pose.set_phi  (i,pw.pose.phi(i)   + uniform()*10.- 5.);
+	//  pw.pose.set_psi  (i,pw.pose.psi(i)   + uniform()*10.- 5.);
+	//  pw.pose.set_omega(i,pw.pose.omega(i) + uniform()* 1.-.5 );
 	// }
 
 	// switch_to_cen(pw);
@@ -505,9 +507,9 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	// sf4->show(pose);
 
 	// for( Size i = 0; i < 4; ++i ) {
-	// 	Size nres_mono = (pose.size()-4)/4;
-	// 	ref_rep += pose.energies().residue_total_energies(i*nres_mono+1)[scoring::fa_rep];
-	//    	ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
+	//  Size nres_mono = (pose.size()-4)/4;
+	//  ref_rep += pose.energies().residue_total_energies(i*nres_mono+1)[scoring::fa_rep];
+	//     ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
 	// }
 	Real sym_lig      = pose.energies().total_energies()[ scoring::sym_lig      ];
 	Real fa_atr       = pose.energies().total_energies()[ scoring::fa_atr       ];
@@ -527,30 +529,30 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	Real rholes       = pose.energies().total_energies()[ scoring::holes_min    ];
 	Real score = (*sf_fa)(pose);
 	oss << LJ(20,tag)          << " "
-	    << F(8,3,score/nres_mono)<< " "
+		<< F(8,3,score/nres_mono)<< " "
 		<< I(3,nres_mono)      << " "
-	    << F(8,3,score)        << " "
-	    << F(8,3,censcore)     << " "
+		<< F(8,3,score)        << " "
+		<< F(8,3,censcore)     << " "
 		<< F(8,3,sym_lig     ) << " "
-        << F(8,3,fa_atr      ) << " "
-        << F(8,3,fa_rep      ) << " "
-        << F(8,3,fa_sol      ) << " "
-        << F(8,3,fa_intra_rep) << " "
-        << F(8,3,pro_close   ) << " "
-        << F(8,3,fa_pair     ) << " "
-        << F(8,3,hbond_sr_bb ) << " "
-        << F(8,3,hbond_lr_bb ) << " "
-        << F(8,3,hbond_bb_sc ) << " "
-        << F(8,3,hbond_sc    ) << " "
-        << F(8,3,fa_dun      ) << " "
-        << F(8,3,p_aa_pp     ) << " "
-        << F(8,3,ref         ) << " "
-        << F(8,3,surface     ) << " "
-        << F(8,3,rholes      ) << " "
- 	    << pose.sequence().substr(0,pw.nres) << std::endl;
+		<< F(8,3,fa_atr      ) << " "
+		<< F(8,3,fa_rep      ) << " "
+		<< F(8,3,fa_sol      ) << " "
+		<< F(8,3,fa_intra_rep) << " "
+		<< F(8,3,pro_close   ) << " "
+		<< F(8,3,fa_pair     ) << " "
+		<< F(8,3,hbond_sr_bb ) << " "
+		<< F(8,3,hbond_lr_bb ) << " "
+		<< F(8,3,hbond_bb_sc ) << " "
+		<< F(8,3,hbond_sc    ) << " "
+		<< F(8,3,fa_dun      ) << " "
+		<< F(8,3,p_aa_pp     ) << " "
+		<< F(8,3,ref         ) << " "
+		<< F(8,3,surface     ) << " "
+		<< F(8,3,rholes      ) << " "
+		<< pose.sequence().substr(0,pw.nres) << std::endl;
 
 
-	if( score/nres_mono <= basic::options::option[basic::options::OptionKeys::in::file::silent_energy_cut]() ) {
+	if ( score/nres_mono <= basic::options::option[basic::options::OptionKeys::in::file::silent_energy_cut]() ) {
 		using namespace basic::options;
 		// cenpose.dump_pdb(std::string(option[OptionKeys::out::file::o]())+"/bpy"+tag+"_cen.pdb.gz");
 		// posebefore .dump_pdb(std::string(option[OptionKeys::out::file::o]())+"/bpy"+tag+"_fa.pdb.gz");
@@ -567,10 +569,10 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 
 std::string make_rand_ss(core::Size len) {
 	std::string ss;
-	for(int i = 1; i <= uniform()*15+5; ++i) ss += "H";
-	while(ss.size()<len) {
-		for(int i = 1; i <= uniform()*6   ; ++i) ss += "L";
-		for(int i = 1; i <= uniform()*15+5; ++i) ss += "H";
+	for ( int i = 1; i <= uniform()*15+5; ++i ) ss += "H";
+	while ( ss.size()<len ) {
+		for ( int i = 1; i <= uniform()*6   ; ++i ) ss += "L";
+		for ( int i = 1; i <= uniform()*15+5; ++i ) ss += "H";
 	}
 	return ss;
 }
@@ -583,39 +585,39 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace core;
-	using namespace pose;
-	using namespace protocols;
-	using namespace moves;
-	using namespace ObjexxFCL::format;
-	using numeric::random::uniform;
+		using namespace core;
+		using namespace pose;
+		using namespace protocols;
+		using namespace moves;
+		using namespace ObjexxFCL::format;
+		using numeric::random::uniform;
 
-	devel::init(argc,argv);
-	std::map<std::string, FragDataCOPs > fds = get_frags_map( true );
-	std::ostringstream oss;
+		devel::init(argc,argv);
+		std::map<std::string, FragDataCOPs > fds = get_frags_map( true );
+		std::ostringstream oss;
 
-	while(true) {
-		// make topology
-		Size N = basic::options::option[basic::options::OptionKeys::smhybrid::nres_mono]();
-		Size Ncycle = basic::options::option[basic::options::OptionKeys::smhybrid::abinitio_cycles]();
-		std::string SS = make_rand_ss(10);
-		Size attach = basic::options::option[basic::options::OptionKeys::smhybrid::attach_rsd]();
-		if( 0 == attach ) attach = (Size)(uniform()*((Real)(SS.size()-min(20.,2.*N/3.))))+min((Size)10,(Size)(N/3.));
-		TR << "attaching at " << attach << std::endl;
-		PoseWrap pw = make_pose(attach-1,SS.size()-attach);
+		while ( true ) {
+			// make topology
+			Size N = basic::options::option[basic::options::OptionKeys::smhybrid::nres_mono]();
+			Size Ncycle = basic::options::option[basic::options::OptionKeys::smhybrid::abinitio_cycles]();
+			std::string SS = make_rand_ss(10);
+			Size attach = basic::options::option[basic::options::OptionKeys::smhybrid::attach_rsd]();
+			if ( 0 == attach ) attach = (Size)(uniform()*((Real)(SS.size()-min(20.,2.*N/3.))))+min((Size)10,(Size)(N/3.));
+			TR << "attaching at " << attach << std::endl;
+			PoseWrap pw = make_pose(attach-1,SS.size()-attach);
 
-		// fold up
-		core::fragment::FragSetOP frags = make_frag_set(1,SS,fds);
-		scoring::ScoreFunctionOP sf_cen = cen_fold(pw,Ncycle,frags);
-		Real censcore = (*sf_cen)(pw.pose);
+			// fold up
+			core::fragment::FragSetOP frags = make_frag_set(1,SS,fds);
+			scoring::ScoreFunctionOP sf_cen = cen_fold(pw,Ncycle,frags);
+			Real censcore = (*sf_cen)(pw.pose);
 
-		// design and refine using Nobu's protocol
-		switch_to_fa(pw);
-		ScoreFunctionOP sf_fa = flxbb_nobu(pw);
+			// design and refine using Nobu's protocol
+			switch_to_fa(pw);
+			ScoreFunctionOP sf_fa = flxbb_nobu(pw);
 
-		report(pw,sf_fa,oss,censcore);
+			report(pw,sf_fa,oss,censcore);
 
-	}
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

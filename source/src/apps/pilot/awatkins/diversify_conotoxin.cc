@@ -102,13 +102,12 @@ using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::id;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static THREAD_LOCAL basic::Tracer TR("DiversifyConotoxin");
+static basic::Tracer TR("DiversifyConotoxin");
 
 utility::vector1< utility::vector1< Size > >
 power_set( utility::vector1< Size > thiol_positions ) {

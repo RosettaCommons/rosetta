@@ -53,10 +53,8 @@
 #include <math.h>
 #endif
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 // C++
 
 namespace core {
@@ -83,7 +81,7 @@ ElecDensEnergyCreator::score_types_for_method() const {
 
 using namespace core::scoring::methods;
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density.ElecDensEnergy" );
+static basic::Tracer TR( "core.scoring.electron_density.ElecDensEnergy" );
 
 inline core::Real SQ( core::Real N ) { return N*N; }
 

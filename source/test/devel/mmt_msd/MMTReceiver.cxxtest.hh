@@ -40,7 +40,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("devel.mmt_msd.MMTReceiver.cxxtest");
+static basic::Tracer TR("devel.mmt_msd.MMTReceiver.cxxtest");
 
 // --------------- Test Class --------------- //
 

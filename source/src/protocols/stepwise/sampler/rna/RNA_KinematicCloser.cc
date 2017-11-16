@@ -59,7 +59,7 @@ using numeric::angle_radians;
 using numeric::principal_angle;
 using numeric::dihedral_radians;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rna.RNA_KinematicCloser" );
+static basic::Tracer TR( "protocols.sampler.rna.RNA_KinematicCloser" );
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /// @details

@@ -55,7 +55,7 @@
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.InsertChunkMover" );
+static basic::Tracer TR( "protocols.hybridization.InsertChunkMover" );
 
 using utility::operator <<;
 

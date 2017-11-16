@@ -80,9 +80,8 @@ using namespace core;
 using namespace core::chemical::rna;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
-using basic::T;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.util" );
+static basic::Tracer TR( "protocols.rna.denovo.util" );
 
 using namespace protocols::rna::denovo::secstruct_legacy;
 using namespace protocols::rna::denovo::fragments;

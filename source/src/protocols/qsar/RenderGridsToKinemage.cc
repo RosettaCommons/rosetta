@@ -42,7 +42,7 @@
 namespace protocols {
 namespace qsar {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.qsar.RenderGridsToKinemage" );
+static basic::Tracer TR( "protocols.qsar.RenderGridsToKinemage" );
 
 // XRW TEMP std::string RenderGridsToKinemageCreator::keyname() const
 // XRW TEMP {

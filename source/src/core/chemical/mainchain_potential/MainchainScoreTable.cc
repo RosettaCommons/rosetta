@@ -42,7 +42,7 @@ namespace core {
 namespace chemical {
 namespace mainchain_potential {
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.mainchain_potential.MainchainScoreTable");
+static basic::Tracer TR("core.chemical.mainchain_potential.MainchainScoreTable");
 
 /// @brief Default constructor.
 ///

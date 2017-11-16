@@ -37,7 +37,7 @@
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.util" );
+static basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.util" );
 
 using namespace core;
 using namespace core::pose;

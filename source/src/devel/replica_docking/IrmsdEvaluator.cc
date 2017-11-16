@@ -40,7 +40,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.WrapFilterAsEvaluator" );
+static basic::Tracer tr( "devel.replica_docking.WrapFilterAsEvaluator" );
 
 namespace devel {
 namespace replica_docking {
@@ -48,7 +48,7 @@ namespace replica_docking {
 using namespace core;
 WrapFilterAsEvaluator::WrapFilterAsEvaluator( std::string tag ) :
 	protocols::evaluation::SingleValuePoseEvaluator<core::Real>( tag )
-	//	iscfilter_( scorefxn_name )
+	// iscfilter_( scorefxn_name )
 {
 	irmsfilter_ = new devel::replica_docking::InteractionScoreFilter();
 	tr << " Interaction Score/I_sc Evaluator " << std::endl;
@@ -60,7 +60,7 @@ Real WrapFilterAsEvaluator::apply( pose::Pose& pose ) const {
 }
 
 bool WrapFilterAsEvaluator::applicable( pose::Pose const& pose ) const {
-  return pose.is_fullatom();
+	return pose.is_fullatom();
 }
 
 }

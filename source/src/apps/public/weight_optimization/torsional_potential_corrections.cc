@@ -120,7 +120,6 @@
 #include <queue>
 #include <cstdarg>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -143,7 +142,7 @@ OPT_1GRP_KEY(Real, tors, smoothing)
 OPT_1GRP_KEY(Real, tors, cap)
 OPT_1GRP_KEY(Real, tors, scale)
 
-static THREAD_LOCAL basic::Tracer TR( "torsion.corrections" );
+static basic::Tracer TR( "torsion.corrections" );
 
 struct FragInfo {
 	FragInfo ( ) : weight_(0), center_(0) {}

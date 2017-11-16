@@ -39,7 +39,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.NMerPSSMEnergy" );
+static basic::Tracer TR( "core.scoring.methods.NMerPSSMEnergy" );
 
 namespace core {
 namespace scoring {

@@ -29,7 +29,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ChainBreak" );
+static basic::Tracer TR( "protocols.simple_filters.ChainBreak" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP ChainBreakFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ChainBreak ); }

@@ -147,7 +147,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -162,7 +161,7 @@ using std::endl;
 
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.loop_model" );
+static basic::Tracer TR( "apps.pilot.phil.loop_model" );
 
 ////////////////////////////////////////////////
 // danger USING ////////////////////////////////
@@ -185,17 +184,17 @@ typedef std::map< std::string, std::string > SS_Map;
 /// FWD DEC
 void
 capri15_relax(
-							pose::Pose & pose,
-							protocols::loops::Loops const & loops
-							);
+	pose::Pose & pose,
+	protocols::loops::Loops const & loops
+);
 
 ScoreFunctionOP
 get_relax_scorefxn();
 
 void
 setup_sam_constraints_for_t033(
-															 pose::Pose & pose
-															 );
+	pose::Pose & pose
+);
 
 SS_Map
 get_t033_ss();
@@ -204,10 +203,10 @@ get_t033_ss();
 
 void
 get_sequence_and_secstruct_from_dssp(
-																		 std::string const & filename,
-																		 std::string & sequence,
-																		 std::string & secstruct
-																		 )
+	std::string const & filename,
+	std::string & sequence,
+	std::string & secstruct
+)
 {
 	sequence.clear();
 	secstruct.clear();
@@ -249,23 +248,23 @@ filebase( std::string const & file )
 
 /**
 
-	 centroid score for docking / loop building:
+centroid score for docking / loop building:
 
-	 "cyan" experimental data
-	 reward RNA contacts to conserved residues in protein
+"cyan" experimental data
+reward RNA contacts to conserved residues in protein
 
-	 for the latter, seems like we need an alignment to t033_.fasta ? In case we've done some trimming??
+for the latter, seems like we need an alignment to t033_.fasta ? In case we've done some trimming??
 
-	 K/R     centroid contacts to phosphate backbone OP2/OP1
-	 S/T/N/Q centroid contacts to phosphate backbone OP2/OP1
-	 D/E/H   centroid contacts to O2'
+K/R     centroid contacts to phosphate backbone OP2/OP1
+S/T/N/Q centroid contacts to phosphate backbone OP2/OP1
+D/E/H   centroid contacts to O2'
 
-	 vdw/hybrid vdw
+vdw/hybrid vdw
 
-	 backbone O to O2'
-	 backbone N to OP2, OP1
+backbone O to O2'
+backbone N to OP2, OP1
 
-	 distance between SAM CE and rGU N1
+distance between SAM CE and rGU N1
 
 **/
 
@@ -305,13 +304,13 @@ trim_back_t033_pose( pose::Pose & pose )
 	mapping.reverse();
 
 	Size i_end(0);
-	while( mapping[i_end+1 ] == 0 ) ++i_end;
+	while ( mapping[i_end+1 ] == 0 ) ++i_end;
 	if ( i_end ) {
 		TR.Warning << "NOT TRIMMING BACK AN N-TERMINAL LOOP!! " << i_end << std::endl;
 	}
 
 	Size i_begin( mapping.size1() );
-	while( mapping[ i_begin ] == 0 ) --i_begin;
+	while ( mapping[ i_begin ] == 0 ) --i_begin;
 	if ( i_begin < mapping.size1() ) {
 		TR.Warning << "NOT TRIMMING BACK A C-TERMINAL LOOP!! " << mapping.size1() - i_begin << std::endl;
 	}
@@ -338,9 +337,9 @@ trim_back_t033_pose( pose::Pose & pose )
 
 void
 setup_bonded_protein_rna_pose(
-															pose::Pose & pose,
-															pose::Pose rna_pose // make a local copy
-															)
+	pose::Pose & pose,
+	pose::Pose rna_pose // make a local copy
+)
 {
 
 	Size const sam_pos( pose.size() ); // SAM comes last
@@ -367,13 +366,13 @@ setup_bonded_protein_rna_pose(
 	assert(   root_rsd.n_non_polymeric_residue_connections() == 1 );
 	assert( anchor_rsd.n_non_polymeric_residue_connections() == 1 );
 	pose.append_residue_by_bond( root_rsd, false, root_rsd.n_possible_residue_connections(), sam_pos,
-															 anchor_rsd.n_possible_residue_connections() );
+		anchor_rsd.n_possible_residue_connections() );
 
 
 	// now add the other rna residues
 	for ( Size i=rna_root_pos-1; i>= 1; --i ) {
 		pose.prepend_polymer_residue_before_seqpos( rna_pose.residue(i), pose.size() - ( rna_root_pos-i )+1,
-																								false );
+			false );
 	}
 	for ( Size i=rna_root_pos+1; i<= rna_pose.size(); ++i ) {
 		pose.append_polymer_residue_after_seqpos( rna_pose.residue(i), pose.size(), false );
@@ -422,10 +421,10 @@ get_bonded_rna_dof_ids( pose::Pose const & pose )
 
 void
 make_bonded_rna_move(
-										 pose::Pose & pose,
-										 Real const scale,
-										 bool const reorient
-										 )
+	pose::Pose & pose,
+	Real const scale,
+	bool const reorient
+)
 {
 	using numeric::conversions::radians;
 	using numeric::random::gaussian;
@@ -515,7 +514,7 @@ get_loop_scorefxn()
 	//ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(function_tag, patch_tag) );
 	ScoreFunctionOP scorefxn( new ScoreFunction() );
 
-	//	scorefxn->energy_method_options().atom_vdw_atom_type_set_name( chemical::HYBRID_FA_STANDARD_CENTROID );
+	// scorefxn->energy_method_options().atom_vdw_atom_type_set_name( chemical::HYBRID_FA_STANDARD_CENTROID );
 	// Safer:
 	methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
 	options.atom_vdw_atom_type_set_name( chemical::HYBRID_FA_STANDARD_CENTROID );
@@ -559,7 +558,7 @@ get_loop_scorefxn_old()
 	//ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(function_tag, patch_tag) );
 	ScoreFunctionOP scorefxn( new ScoreFunction() );
 
-	//	scorefxn->energy_method_options().atom_vdw_atom_type_set_name( chemical::HYBRID_FA_STANDARD_CENTROID );
+	// scorefxn->energy_method_options().atom_vdw_atom_type_set_name( chemical::HYBRID_FA_STANDARD_CENTROID );
 	//Safer:
 	methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
 	options.atom_vdw_atom_type_set_name( chemical::HYBRID_FA_STANDARD_CENTROID );
@@ -638,11 +637,11 @@ get_centroid_dock_scorefxn_old()
 /// @details  Take a trimmed, docked model and add the loops
 protocols::loops::Loops
 rebuild_trimmed_loops(
-											pose::Pose & pose,
-											std::string const & t033_seq,
-											id::SequenceMapping const & mapping_from_t033_to_pose, // just to the protein rsds
-											SS_Map const & ss_map
-											)
+	pose::Pose & pose,
+	std::string const & t033_seq,
+	id::SequenceMapping const & mapping_from_t033_to_pose, // just to the protein rsds
+	SS_Map const & ss_map
+)
 {
 
 	id::SequenceMapping mapping( mapping_from_t033_to_pose );
@@ -659,7 +658,7 @@ rebuild_trimmed_loops(
 	protocols::loops::extend_sequence_mapping( pose /* const */, mapping, source_seq, target_seq );
 
 	assert( source_seq == pose.sequence() && mapping.size1() == source_seq.size() &&
-					mapping.size2()==target_seq.size() );
+		mapping.size2()==target_seq.size() );
 
 	protocols::loops::apply_sequence_mapping( pose, target_seq, mapping );
 
@@ -701,21 +700,21 @@ rebuild_trimmed_loops(
 
 void
 sample_rna_dofs_new(
-										pose::Pose const & start_pose,
-										std::string const & output_tag,
-										Size const nstruct,
-										std::string const & t033_seq,
-										id::SequenceMapping const & mapping_from_t033_to_pose,
-										SS_Map const & ss_map,
-										bool const fa_relax
-										)
+	pose::Pose const & start_pose,
+	std::string const & output_tag,
+	Size const nstruct,
+	std::string const & t033_seq,
+	id::SequenceMapping const & mapping_from_t033_to_pose,
+	SS_Map const & ss_map,
+	bool const fa_relax
+)
 {
-// 	Size const n1( 5 );
-// 	Size const n2_outer( 1 );
-// 	Size const n2_inner( 10 );
- 	Size const n1( 50 );
- 	Size const n2_outer( 5 );
- 	Size const n2_inner( 100 );
+	//  Size const n1( 5 );
+	//  Size const n2_outer( 1 );
+	//  Size const n2_inner( 10 );
+	Size const n1( 50 );
+	Size const n2_outer( 5 );
+	Size const n2_inner( 100 );
 	Real const scale_factor( 0.2 );
 
 	bool const fa_output( true );
@@ -837,8 +836,8 @@ capri_t033_centroid_trim_dock_test()
 
 
 			std::string const tag( output_tag +
-														 "_protein" + string_of(n) +
-														 "_loop" + string_of(k) );
+				"_protein" + string_of(n) +
+				"_loop" + string_of(k) );
 
 			Pose pose( protein_pose );
 
@@ -890,8 +889,8 @@ trim_dock_rebuild_relax_test_rhiju()
 
 
 			std::string const tag( output_tag +
-														 "_protein" + string_of(n) +
-														 "_loop" + string_of(k) );
+				"_protein" + string_of(n) +
+				"_loop" + string_of(k) );
 
 			Pose pose( protein_pose );
 
@@ -951,8 +950,8 @@ trim_dock_rebuild_relax_test()
 
 
 			std::string const tag( output_tag + "relax"
-														 "_protein" + string_of(n) +
-														 "_loop" + string_of(k) );
+				"_protein" + string_of(n) +
+				"_loop" + string_of(k) );
 
 			Pose pose( protein_pose );
 
@@ -1035,10 +1034,10 @@ pose_pos_from_pdb_pos( int const pdb_pos, char const pdb_chain, pose::Pose const
 
 void
 setup_sam_constraints(
-											pose::Pose & pose,
-											id::SequenceMapping const & mapping_from_1p91A_to_pose,
-											pose::Pose const & p91A_pose // for pdb numbering
-											)
+	pose::Pose & pose,
+	id::SequenceMapping const & mapping_from_1p91A_to_pose,
+	pose::Pose const & p91A_pose // for pdb numbering
+)
 {
 	/// get some important positions -- use the mapping to get sequence numbers
 	char const P91_chain( 'A' );
@@ -1084,8 +1083,8 @@ setup_sam_constraints(
 
 void
 setup_sam_constraints_for_t033(
-															 pose::Pose & pose
-															 )
+	pose::Pose & pose
+)
 {
 	static bool init( false );
 	static Pose p91A_pose;
@@ -1109,10 +1108,10 @@ setup_sam_constraints_for_t033(
 
 void
 juke_sam_pos(
-						 pose::Pose & pose,
-						 id::SequenceMapping const & mapping_from_1p91A_to_pose,
-						 pose::Pose const & p91A_pose // for pdb numbering
-						 )
+	pose::Pose & pose,
+	id::SequenceMapping const & mapping_from_1p91A_to_pose,
+	pose::Pose const & p91A_pose // for pdb numbering
+)
 {
 
 	/// get some important positions -- use the mapping to get sequence numbers
@@ -1196,37 +1195,37 @@ get_relax_scorefxn()
 
 /**
 
-	 start with a docked, loop-rebuilt pose containing protein+sam+rna
+start with a docked, loop-rebuilt pose containing protein+sam+rna
 
-	 -- switch to fullatom residue set
+-- switch to fullatom residue set
 
-	 -- ramp up the repulsive
+-- ramp up the repulsive
 
-	 -- scorefxn:
+-- scorefxn:
 
-	    * standard wts
-			* atompair constraints holding the sam
-			* capri15 scores
+* standard wts
+* atompair constraints holding the sam
+* capri15 scores
 
-	 -- dofs:
+-- dofs:
 
-	    * protein-SAM jump
-			* sam-rna dofs (6)
-			* protein chi angles
+* protein-SAM jump
+* sam-rna dofs (6)
+* protein chi angles
 
-	 -- moves: ( use nbr-atom dme filter as in zf-relax )
+-- moves: ( use nbr-atom dme filter as in zf-relax )
 
-	    * sam-jump move
-			* sam-rna dof move as in centroid docking, but with smaller scale
-			* loop small moves
+* sam-jump move
+* sam-rna dof move as in centroid docking, but with smaller scale
+* loop small moves
 
 **/
 
 void
 capri15_relax(
-							pose::Pose & pose,
-							protocols::loops::Loops const & loops
-							)
+	pose::Pose & pose,
+	protocols::loops::Loops const & loops
+)
 {
 
 	// params
@@ -1257,7 +1256,7 @@ capri15_relax(
 	pack::task::PackerTaskOP pack_task( pack::task::TaskFactory::create_packer_task( pose ));
 	pack_task->initialize_from_command_line();
 	pack_task->or_include_current( true );
-	Size const nres( pose.size() );	for ( Size i = 1; i <= nres; ++i ) {
+	Size const nres( pose.size() ); for ( Size i = 1; i <= nres; ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			pack_task->nonconst_residue_task( i ).restrict_to_repacking();
 		} else {
@@ -1302,19 +1301,19 @@ capri15_relax(
 	}
 
 
-	// 	{ // test mm dof min
-	// 		mm->set_bb( false );
-	// 		mm->set_chi( false );
-	// 		mm->set_jump( false );
+	//  { // test mm dof min
+	//   mm->set_bb( false );
+	//   mm->set_chi( false );
+	//   mm->set_jump( false );
 
-	// 		/// confirm that nangles == 6 here!
-	// 		pose.dump_pdb( "start.pdb");
-	// 		optimization::AtomTreeMinimizer().run( pose, *mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
+	//   /// confirm that nangles == 6 here!
+	//   pose.dump_pdb( "start.pdb");
+	//   optimization::AtomTreeMinimizer().run( pose, *mm, *scorefxn, optimization::MinimizerOptions("lbfgs_armijo_nonmonotone",0.001,true));
 
-	// 		pose.dump_pdb( "final.pdb");
+	//   pose.dump_pdb( "final.pdb");
 
-	// 		exit(0);
-	// 	}
+	//   exit(0);
+	//  }
 
 	//// MonteCarlo object
 	using namespace protocols::moves;
@@ -1420,15 +1419,15 @@ capri15_relax(
 
 /**
 
-	 read in a full-length model from recent simulations
+read in a full-length model from recent simulations
 
-	 make chemical bond modifications
+make chemical bond modifications
 
-	 setup foldtree:: attach sam by jump, attach rna by bond from sam
+setup foldtree:: attach sam by jump, attach rna by bond from sam
 
-	 read alignment_for_trimming, setup an extended, trimmed mapping from 1p91a pdb to pose
+read alignment_for_trimming, setup an extended, trimmed mapping from 1p91a pdb to pose
 
-	 setup loops from this mapping
+setup loops from this mapping
 
 
 **/
@@ -1493,7 +1492,7 @@ relax_test()
 		protocols::loops::extend_sequence_mapping( p91A_pose /* const */, mapping, source_seq, target_seq );
 
 		assert( source_seq == p91A_pose.sequence() && mapping.size1() == source_seq.size() &&
-						mapping.size2()==target_seq.size() );
+			mapping.size2()==target_seq.size() );
 
 		// stochastic:
 		// this will add cutpoints+jumps to the pose's foldtree
@@ -1578,9 +1577,9 @@ centroid_rescore_test()
 			for ( Size seqpos=1; seqpos<= pose.size(); ++seqpos ) {
 				if ( !pose.residue(seqpos).is_protein() ) continue;
 				for ( utility::graph::Graph::EdgeListConstIter
-								iru  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
-								irue = energy_graph.get_node( seqpos )->const_edge_list_end();
-							iru != irue; ++iru ) {
+						iru  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
+						irue = energy_graph.get_node( seqpos )->const_edge_list_end();
+						iru != irue; ++iru ) {
 					EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
 					Size const other_pos( edge->get_other_ind( seqpos ) );
 					if ( pose.residue( other_pos ).is_RNA() ) ++n_protein_rna_nbrs;
@@ -1649,7 +1648,7 @@ diversify_sam_loop_test()
 	protocols::loops::extend_sequence_mapping( pose /* pose is const */, mapping, source_seq, target_seq );
 
 	assert( source_seq == pose.sequence() && mapping.size1() == source_seq.size() &&
-					mapping.size2()==target_seq.size() );
+		mapping.size2()==target_seq.size() );
 
 	protocols::loops::apply_sequence_mapping( pose, target_seq, mapping );
 
@@ -1759,7 +1758,7 @@ capri_t033_trim_dock_test()
 	protocols::loops::extend_sequence_mapping( pose /* pose is const */, mapping, source_seq, target_seq );
 
 	assert( source_seq == pose.sequence() && mapping.size1() == source_seq.size() &&
-					mapping.size2()==target_seq.size() );
+		mapping.size2()==target_seq.size() );
 
 	protocols::loops::apply_sequence_mapping( pose, target_seq, mapping );
 
@@ -1869,7 +1868,7 @@ capri_t033_trim_dock_test()
 
 	assert( false );
 	Size const rna_root_pos( 54 );
-// 	Size const rna_root_pos( 5 );
+	//  Size const rna_root_pos( 5 );
 
 	core::pose::add_variant_type_to_pose_residue( rna_pose, "RGU_H1_DELETION", rna_root_pos );
 
@@ -1891,13 +1890,13 @@ capri_t033_trim_dock_test()
 		assert(   root_rsd.n_non_polymeric_residue_connections() == 1 );
 		assert( anchor_rsd.n_non_polymeric_residue_connections() == 1 );
 		pose.append_residue_by_bond( root_rsd, false, root_rsd.n_possible_residue_connections(), sam_pos,
-																 anchor_rsd.n_possible_residue_connections() );
+			anchor_rsd.n_possible_residue_connections() );
 
 
 		// now add the other rna residues
 		for ( Size i=rna_root_pos-1; i>= 1; --i ) {
 			pose.prepend_polymer_residue_before_seqpos( rna_pose.residue(i), pose.size() - ( rna_root_pos-i )+1,
-																									false );
+				false );
 		}
 		for ( Size i=rna_root_pos+1; i<= rna_pose.size(); ++i ) {
 			pose.append_polymer_residue_after_seqpos( rna_pose.residue(i), pose.size(), false );
@@ -2005,7 +2004,7 @@ capri_t033_loop_test()
 		protocols::loops::extend_sequence_mapping( pose /* const */, mapping, source_seq, target_seq );
 
 		assert( source_seq == pose.sequence() && mapping.size1() == source_seq.size() &&
-						mapping.size2()==target_seq.size() );
+			mapping.size2()==target_seq.size() );
 
 		protocols::loops::apply_sequence_mapping( pose, target_seq, mapping );
 
@@ -2182,14 +2181,14 @@ void*
 my_main( void* )
 {
 
- 	std::string const mode( option[ OK::dna::specificity::mode ].value() );
+	std::string const mode( option[ OK::dna::specificity::mode ].value() );
 	if ( mode == "loop" ) {
 		capri_t033_loop_test();
 		exit(0);
 	} else if ( mode == "trim_dock" ) {
 		capri_t033_trim_dock_test();
-// 	} else if ( mode == "rhiju_trim_dock" ) {
-// 		capri_t033_rhiju_trim_dock_test();
+		//  } else if ( mode == "rhiju_trim_dock" ) {
+		//   capri_t033_rhiju_trim_dock_test();
 	} else if ( mode == "centroid_trim_dock" ) {
 		capri_t033_centroid_trim_dock_test();
 	} else if ( mode == "diversify_sam_loop" ) {
@@ -2214,10 +2213,10 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

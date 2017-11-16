@@ -51,7 +51,7 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.MultiplePoseMover" );
+static basic::Tracer TR( "protocols.rosetta_scripts.MultiplePoseMover" );
 
 ////////////////////////////////////////////////////////////////////////
 

@@ -55,7 +55,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.carbohydrates.util" );
+static basic::Tracer TR( "core.conformation.carbohydrates.util" );
 
 
 namespace core {

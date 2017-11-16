@@ -24,7 +24,7 @@ namespace protocols {
 namespace ligand_docking {
 namespace ligand_options {
 
-static THREAD_LOCAL basic::Tracer interface_distance_tracer( "protocols.ligand_docking.ligand_options.InterfaceBuilder", basic::t_debug );
+static basic::Tracer interface_distance_tracer( "protocols.ligand_docking.ligand_options.InterfaceBuilder", basic::t_debug );
 
 bool check_all_ligand_atoms(
 	core::conformation::Residue const & ligand_interface_residue,

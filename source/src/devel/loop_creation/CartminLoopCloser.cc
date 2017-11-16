@@ -48,7 +48,7 @@
 namespace devel {
 namespace loop_creation {
 
-static THREAD_LOCAL basic::Tracer TR( "devel.loop_creation.CartminLoopCloser" );
+static basic::Tracer TR( "devel.loop_creation.CartminLoopCloser" );
 
 //****CREATOR METHODS****//
 std::string

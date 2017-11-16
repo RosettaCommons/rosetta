@@ -51,17 +51,15 @@
 #include <math.h>
 #endif
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 // C++
 
 namespace core {
 namespace scoring {
 namespace electron_density {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density.FastDensEnergy" );
+static basic::Tracer TR( "core.scoring.electron_density.FastDensEnergy" );
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////

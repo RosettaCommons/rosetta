@@ -29,7 +29,7 @@ using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.strand_assembly.WriteToFileFromSandwichFeatures" );
+static basic::Tracer TR( "protocols.features.strand_assembly.WriteToFileFromSandwichFeatures" );
 
 //get_vector_of_loop_AA_distribution
 utility::vector1<Size>

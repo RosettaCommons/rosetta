@@ -95,91 +95,91 @@ OPT_1GRP_KEY( Integer, feat_stats, grid_steps )
 OPT_1GRP_KEY( Real, toy_relax, constraint_slope )
 
 
-namespace apps{
-namespace pilot{
-namespace momeara{
+namespace apps {
+namespace pilot {
+namespace momeara {
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.hbonds.HBondDatabase" );
+static basic::Tracer tr( "core.scoring.hbonds.HBondDatabase" );
 
-	void register_options() {
-		OPT(out::prefix);
+void register_options() {
+	OPT(out::prefix);
 
-		using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys;
 #ifdef DB_SQLITE3
 		NEW_OPT(in::feature_schema, "schema file for feature database", "schema.sql" );
 		NEW_OPT(feat_stats::sample_source,"Identifier for the sample source", "toy" );
 		NEW_OPT(out::feature_database, "sqlite3 database file", "feature_database.sl3" );
 #endif //DB_SQLITE3
-		NEW_OPT(feat_stats::grid_steps, "Number of points in each dimension of the sample grid", 6);
-		NEW_OPT(toy_relax::constraint_slope, "LinearPenality constraint slope parameter", 30);
+	NEW_OPT(feat_stats::grid_steps, "Number of points in each dimension of the sample grid", 6);
+	NEW_OPT(toy_relax::constraint_slope, "LinearPenality constraint slope parameter", 30);
 
-	}
+}
 
 
 class HBondConformation {
 
 public:
-  HBondConformation(){}
+	HBondConformation(){}
 
 
-  ~HBondConformation(){}
+	~HBondConformation(){}
 
 
-  HBondConformation( HBondConformation const & src);
+	HBondConformation( HBondConformation const & src);
 
-  HBondConformation const &
-  operator=(HBondConformation const & src);
+	HBondConformation const &
+	operator=(HBondConformation const & src);
 
 
 	/*
-		Inputs: hydrogen bond donor, hydrogen bond acceptor, sequence separation
-    Output: A minimal pose containing that makes the hydrogen bond
-		        More precisely it has sequene 'xA..D', A and D are the acceptor
-						and donor residues.  There fold tree has a jump from the acceptor
-						residue to the donor hydrogen.
+	Inputs: hydrogen bond donor, hydrogen bond acceptor, sequence separation
+	Output: A minimal pose containing that makes the hydrogen bond
+	More precisely it has sequene 'xA..D', A and D are the acceptor
+	and donor residues.  There fold tree has a jump from the acceptor
+	residue to the donor hydrogen.
 
-		This is a tool to diagnose the scoring overlab between hydrogen
-		bonding and other scoring terms.
+	This is a tool to diagnose the scoring overlab between hydrogen
+	bonding and other scoring terms.
 
-		Building the pose and the conformation of the residues is not
-		robust:
-		  - The default configuration of residues are not energetically
-		favorable.  So either configurations need to be checked by hand or
-		minimimization should be applied.  To apply minimization will
-		probably require adding more residues to fully define torsion
-		angles?
-		  - Only seq_sep_other has been even partially tested.
+	Building the pose and the conformation of the residues is not
+	robust:
+	- The default configuration of residues are not energetically
+	favorable.  So either configurations need to be checked by hand or
+	minimimization should be applied.  To apply minimization will
+	probably require adding more residues to fully define torsion
+	angles?
+	- Only seq_sep_other has been even partially tested.
 	*/
 
-  PoseOP
-  make_conformation(
-		    HBSeqSep const seq_sep,
-		    Residue & don_rsd,
-		    Size const hatm,
-		    Residue & acc_rsd,
-		    Size const & aatm,
-		    RT const & hbond_geometry) const {
-    ResidueTypeSetCAP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	PoseOP
+	make_conformation(
+		HBSeqSep const seq_sep,
+		Residue & don_rsd,
+		Size const hatm,
+		Residue & acc_rsd,
+		Size const & aatm,
+		RT const & hbond_geometry) const {
+		ResidueTypeSetCAP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
 		int ss;
 		switch(seq_sep){
-		case seq_sep_other: ss = 100; break;
-		case seq_sep_M4:    ss = 6;   break;
-		case seq_sep_M3:    ss = 7;   break;
-		case seq_sep_M2:    ss = 8;   break;
-		case seq_sep_PM1:   ss = 9;   break;
-		case seq_sep_P2:    ss = 11;  break;
-		case seq_sep_P3:    ss = 12;  break;
-		case seq_sep_P4:    ss = 13;  break;
-		default:
+		case seq_sep_other : ss = 100; break;
+		case seq_sep_M4 :    ss = 6;   break;
+		case seq_sep_M3 :    ss = 7;   break;
+		case seq_sep_M2 :    ss = 8;   break;
+		case seq_sep_PM1 :   ss = 9;   break;
+		case seq_sep_P2 :    ss = 11;  break;
+		case seq_sep_P3 :    ss = 12;  break;
+		case seq_sep_P4 :    ss = 13;  break;
+		default :
 			tr << "Cannot build pose: Unrecognized HBSeqSep type '"
-				 << HBondTypeManager::name_from_seq_sep_type( seq_sep ) << endl;
+				<< HBondTypeManager::name_from_seq_sep_type( seq_sep ) << endl;
 		}
 
 
-    PoseOP pose( new Pose() );
-    Residue dummy( RTS->name_map( "VRT" ), true/*no-op param*/ );
+		PoseOP pose( new Pose() );
+		Residue dummy( RTS->name_map( "VRT" ), true/*no-op param*/ );
 
 		pose->append_residue_by_bond(dummy);
 
@@ -188,13 +188,13 @@ public:
 		string const hatm_name(don_rsd.atom_name(hatm));
 		Size don_pos(0), acc_pos(0);
 		switch(seq_sep){
-		case seq_sep_other:
+		case seq_sep_other :
 			pose->append_residue_by_jump( acc_rsd, 1 );
 			acc_pos = 2;
 			pose->append_residue_by_jump( don_rsd, 2, aatm_name, hatm_name, true );
 			don_pos = 3;
 			break;
-		case seq_sep_M4:
+		case seq_sep_M4 :
 			pose->append_residue_by_jump( acc_rsd, 1 );
 			acc_pos = 2;
 			pose->append_residue_by_bond( *dummy.clone(), 2 );
@@ -203,7 +203,7 @@ public:
 			pose->append_residue_by_jump( don_rsd, 2, aatm_name, hatm_name, false );
 			don_pos = 6;
 			break;
-		case seq_sep_M3:
+		case seq_sep_M3 :
 			pose->append_residue_by_jump( acc_rsd, 1 );
 			acc_pos = 2;
 			pose->append_residue_by_bond( *dummy.clone(), 2 );
@@ -211,27 +211,27 @@ public:
 			pose->append_residue_by_jump( don_rsd, 2, aatm_name, hatm_name, false );
 			don_pos = 5;
 			break;
-		case seq_sep_M2:
+		case seq_sep_M2 :
 			pose->append_residue_by_jump( acc_rsd, 1 );
 			acc_pos = 2;
 			pose->append_residue_by_bond( *dummy.clone(), 2 );
 			pose->append_residue_by_jump( don_rsd, 2, aatm_name, hatm_name, false );
 			don_pos = 4;
 			break;
-		case seq_sep_PM1:
+		case seq_sep_PM1 :
 			pose->append_residue_by_jump( acc_rsd, 1 );
 			acc_pos = 2;
 			pose->append_residue_by_jump( don_rsd, 2, aatm_name, hatm_name, false );
 			don_pos = 3;
 			break;
-		case seq_sep_P2:
+		case seq_sep_P2 :
 			pose->append_residue_by_jump( don_rsd, 1 );
 			don_pos = 2;
 			pose->append_residue_by_bond( *dummy.clone(), 2 );
 			pose->append_residue_by_jump( acc_rsd, 2, aatm_name, hatm_name, false );
 			acc_pos = 4;
 			break;
-		case seq_sep_P3:
+		case seq_sep_P3 :
 			pose->append_residue_by_jump( don_rsd, 1 );
 			don_pos = 2;
 			pose->append_residue_by_bond( *dummy.clone(), 2 );
@@ -239,7 +239,7 @@ public:
 			pose->append_residue_by_jump( acc_rsd, 2, aatm_name, hatm_name, false );
 			acc_pos = 5;
 			break;
-		case seq_sep_P4:
+		case seq_sep_P4 :
 			pose->append_residue_by_jump( don_rsd, 1 );
 			don_pos = 2;
 			pose->append_residue_by_bond( *dummy.clone(), 2 );
@@ -252,10 +252,10 @@ public:
 		acc_rsd.seqpos(acc_pos);
 
 		// Try to set reasonable residue conformations
-		if( acc_rsd.nchi() > 0 ){
+		if ( acc_rsd.nchi() > 0 ) {
 			pose->set_torsion( id::TorsionID( acc_pos, id::CHI, 1), 180);
 		}
-		if( don_rsd.nchi() > 0 ){
+		if ( don_rsd.nchi() > 0 ) {
 			pose->set_torsion( id::TorsionID( don_pos, id::CHI, 1), 180);
 		}
 		// this is for serine donor
@@ -291,11 +291,11 @@ public:
 		tr.Debug << "b:" << b << endl;
 
 		return pose;
-  }
+	}
 
 	Stub
 	build_donor_frame(
-	  Residue const & rsd,
+		Residue const & rsd,
 		Size const & hatm) const
 	{
 		Vector const & Hxyz( rsd.atom( hatm ).xyz() );
@@ -306,8 +306,8 @@ public:
 
 	Stub
 	build_acceptor_frame(
-    Residue const & rsd,
-    Size const & aatm) const
+		Residue const & rsd,
+		Size const & aatm) const
 	{
 		Vector const & Axyz( rsd.atom( aatm ).xyz() );
 		Vector const & ABxyz( rsd.atom( rsd.atom_base( aatm ) ).xyz() );
@@ -315,28 +315,28 @@ public:
 		Hybridization const & acc_hybrid( rsd.atom_type(aatm).hybridization());
 
 		switch(acc_hybrid){
-		case SP2_HYBRID:
+		case SP2_HYBRID :
 			return Stub(Axyz, Axyz, ABxyz, AB2xyz );
 			break;
-		case SP3_HYBRID:
+		case SP3_HYBRID :
 			return Stub(Axyz, Axyz, AB2xyz, ABxyz );
 			break;
-		case RING_HYBRID:
+		case RING_HYBRID :
 			return Stub(Axyz, Axyz, Real(0.5)*(ABxyz+AB2xyz), ABxyz);
 			break;
-		default:
+		default :
 			tr << "Cannot build acceptor frame: Unrecognized acceptor hybridization '"
-				 << HBondTypeManager::name_from_hybridization_type( acc_hybrid ) << endl;
+				<< HBondTypeManager::name_from_hybridization_type( acc_hybrid ) << endl;
 		}
 		return Stub();
 	}
 
 
-		// Lock hbond atoms in place quite rigidy
+	// Lock hbond atoms in place quite rigidy
 	void
 	relax_pose_around_hbond(
-	  PoseOP pose,
-    ScoreFunctionOP scfxn,
+		PoseOP pose,
+		ScoreFunctionOP scfxn,
 		Size const don_seqpos,
 		Size const hatm,
 		Size const acc_seqpos,
@@ -369,42 +369,42 @@ public:
 		{ // acceptor -- hydrogen
 			Real x_middle = distance(Axyz, Hxyz);
 			FuncOP const func( new LinearPenaltyFunction(
-												 x_middle, well_depth, half_width, slope));
+				x_middle, well_depth, half_width, slope));
 			tr.Debug << "acceptor -- hydrogen constraint before: " << func->func( Axyz.distance(Hxyz)) << endl;
 			cst_set->add_constraint( new AtomPairConstraint( A, H, func ) );
 		}
 		{ // acceptor -- donor
 			Real x_middle = distance(Axyz, Dxyz);
 			FuncOP const func( new LinearPenaltyFunction(
-                         x_middle, well_depth, half_width, slope));
+				x_middle, well_depth, half_width, slope));
 			tr.Debug << "acceptor -- donor constraint before: " << func->func( Axyz.distance(Dxyz)) << endl;
 			cst_set->add_constraint( new AtomPairConstraint( A, D, func ) );
 		}
 		{ // acceptor base -- hydrogen
 			Real x_middle = distance(ABxyz, Hxyz);
 			FuncOP const func( new LinearPenaltyFunction(
-                         x_middle, well_depth, half_width, slope));
+				x_middle, well_depth, half_width, slope));
 			tr.Debug << "acceptor base -- hydrogen constraint before: " << func->func( ABxyz.distance(Hxyz)) << endl;
 			cst_set->add_constraint( new AtomPairConstraint( AB, H, func ) );
 		}
 		{// acceptor base -- donor
 			Real x_middle = distance(ABxyz, Dxyz);
 			FuncOP const func( new LinearPenaltyFunction(
-                         x_middle, well_depth, half_width, slope));
+				x_middle, well_depth, half_width, slope));
 			tr.Debug << "acceptor base -- donor constraint before: " << func->func( ABxyz.distance(Dxyz)) << endl;
 			cst_set->add_constraint( new AtomPairConstraint( AB, D, func ) );
 		}
-		{	// acceptor base 2 -- hydrogen
+		{ // acceptor base 2 -- hydrogen
 			Real x_middle = distance(AB2xyz, Hxyz);
 			FuncOP const func( new LinearPenaltyFunction(
-                         x_middle, well_depth, half_width, slope));
+				x_middle, well_depth, half_width, slope));
 			tr.Debug << "acceptor base 2 -- hydrogen constraint before: " << func->func( AB2xyz.distance(Hxyz)) << endl;
 			cst_set->add_constraint( new AtomPairConstraint( AB2, H, func ) );
 		}
 		{ // acceptor base 2 -- donor
 			Real x_middle = distance(AB2xyz, Dxyz);
 			FuncOP const func( new LinearPenaltyFunction(
-                         x_middle, well_depth, half_width, slope));
+				x_middle, well_depth, half_width, slope));
 			tr.Debug << "acceptor base 2 -- donor constraint before: " << func->func( AB2xyz.distance(Dxyz)) << endl;
 			cst_set->add_constraint( new AtomPairConstraint( AB2, D, func ) );
 		}
@@ -453,18 +453,18 @@ public:
 		EnergyMap cst_emap_after;
 		cst_set->residue_pair_energy(new_acc_rsd, new_don_rsd, *pose, *scfxn, cst_emap_after);
 		tr.Debug << "Constraint energy after: " << cst_emap_after.sum() << endl;
-		//		assert(cst_emap_after.sum() < cst_emap_initial.sum() + tolerance );
+		//  assert(cst_emap_after.sum() < cst_emap_initial.sum() + tolerance );
 
 		Vector const & new_Axyz( new_acc_rsd.atom( aatm ).xyz() );
 		Vector const & new_ABxyz(new_acc_rsd.atom(
-														 new_acc_rsd.atom_base(aatm)).xyz());
+			new_acc_rsd.atom_base(aatm)).xyz());
 		Vector const & new_AB2xyz( new_acc_rsd.atom(new_acc_rsd.abase2(aatm)).xyz());
 		Vector const & new_Hxyz( new_don_rsd.atom(hatm).xyz() );
 		Vector const & new_Dxyz( new_don_rsd.atom(
-                             new_don_rsd.atom_base(hatm)).xyz());
+			new_don_rsd.atom_base(hatm)).xyz());
 		{
 			Real delta( std::abs(distance(Axyz,Hxyz) - distance(new_Axyz,new_Hxyz)));
-			if(delta > threshold){
+			if ( delta > threshold ) {
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
 				message << "delta(distance(Axyz,Hxyz))=" << delta;
@@ -473,7 +473,7 @@ public:
 		}
 		{
 			Real delta( std::abs(distance(Axyz,Dxyz) - distance(new_Axyz,new_Dxyz)));
-			if(delta > threshold){
+			if ( delta > threshold ) {
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
 				message << "delta(distance(Axyz,Dxyz))=" << delta;
@@ -482,7 +482,7 @@ public:
 		}
 		{
 			Real delta( std::abs(distance(ABxyz,Hxyz) - distance(new_ABxyz,new_Hxyz)));
-			if(delta > threshold){
+			if ( delta > threshold ) {
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
 				message << "delta(distance(ABxyz,Hxyz))=" << delta;
@@ -491,7 +491,7 @@ public:
 		}
 		{
 			Real delta( std::abs(distance(ABxyz,Dxyz) - distance(new_ABxyz,new_Dxyz)));
-			if(delta > threshold){
+			if ( delta > threshold ) {
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
 				message << "delta(distance(ABxyz,Dxyz))=" << delta;
@@ -500,7 +500,7 @@ public:
 		}
 		{
 			Real delta( std::abs(distance(AB2xyz,Hxyz) - distance(new_AB2xyz,new_Hxyz)));
-			if(delta > threshold){
+			if ( delta > threshold ) {
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
 				message << "delta(distance(AB2xyz,Hxyz))=" << delta;
@@ -509,7 +509,7 @@ public:
 		}
 		{
 			Real delta( std::abs(distance(AB2xyz,Dxyz) - distance(new_AB2xyz,new_Dxyz)));
-			if(delta > threshold){
+			if ( delta > threshold ) {
 				stringstream message;
 				message << "Relax pose around hbond moved the structure:";
 				message << "Struture: " << pose->pdb_info()->name() << endl;
@@ -523,8 +523,8 @@ public:
 	void
 	example_OH_pose() const
 	{
-    ResidueTypeSetCAP residue_type_set(
-		  ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		ResidueTypeSetCAP residue_type_set(
+			ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
 		HBSeqSep seq_sep( seq_sep_other );
 
@@ -537,21 +537,21 @@ public:
 		PoseOP pose;
 
 
- 		for (Size i=0; i <3; i++){
-			for (Size j=0; j <3; j++){
-				for (Size k=0; k <3; k++){
+		for ( Size i=0; i <3; i++ ) {
+			for ( Size j=0; j <3; j++ ) {
+				for ( Size k=0; k <3; k++ ) {
 
 					Stub don_frame( Vector(i,j,k)/*center*/,
-													Vector(0,0,1)/*a*/,
-													Vector(0,1,0)/*b*/,
-													Vector(1,0,0)/*c*/);
+						Vector(0,0,1)/*a*/,
+						Vector(0,1,0)/*b*/,
+						Vector(1,0,0)/*c*/);
 					RT hbond_geometry(acc_frame, don_frame);
 					pose = make_conformation(seq_sep,
-																	 don_res, hatm, acc_res, aatm,
-																	 hbond_geometry);
+						don_res, hatm, acc_res, aatm,
+						hbond_geometry);
 					stringstream fname_stringstream;
 					fname_stringstream << "/tmp/example_OH_conformation_cartesian_"
-														 << i <<"-"<< j <<"-"<< k <<".pdb";
+						<< i <<"-"<< j <<"-"<< k <<".pdb";
 					tr.Debug << "outputing structure '" << fname_stringstream.str() << "'" << endl;
 					pose->dump_pdb( fname_stringstream.str() );
 				}
@@ -576,7 +576,7 @@ public:
 		string const & sample_source,
 		string const & database_fname
 #endif // DB_SQLITE3
-) const {
+	) const {
 
 		ScoreFunctionOP scfxn( get_score_function() );
 		scfxn->set_weight( atom_pair_constraint, 1 );
@@ -603,96 +603,96 @@ public:
 		Real cosAHD_min(MIN_xD), cosAHD_max(MAX_xD); Size cosAHD_steps(steps);
 
 		// Variables to complete the rigid body motions of an hbond
-		//		Real AHchi(0), HDchi(0);
+		//  Real AHchi(0), HDchi(0);
 
 		Size nmodels( AHdist_steps*cosBAH_steps*cosAHD_steps );
 		tr << "creating " << nmodels << " hydrogen bond models:" << endl;
 		tr << "\tAHdist: ["<<AHdist_min<<", " << AHdist_max << "], n_step: " << AHdist_steps << endl;
 		tr << "\tcosBAH: ["<<cosBAH_min<<", " << cosBAH_max << "], n_step: " << cosBAH_steps << endl;
-		//		tr << "\tchi:    ["<<chi_min<<", " << chi_max << "], n_step: " << chi_steps << endl;
+		//  tr << "\tchi:    ["<<chi_min<<", " << chi_max << "], n_step: " << chi_steps << endl;
 		tr << "\tcosAHD: ["<<cosAHD_min<<", " << cosAHD_max << "], n_step: " << cosAHD_steps << endl;
 
 
 		vector1< PoseOP > features;
-		for( Real AHdist = AHdist_min; AHdist <= AHdist_max;
-				 AHdist += (AHdist_max - AHdist_min)/static_cast<Real>(AHdist_steps-1)){
-			for( Real cosBAH = cosBAH_min; cosBAH <= cosBAH_max;
-					 cosBAH += (cosBAH_max - cosBAH_min)/static_cast<Real>(cosBAH_steps-1)){
+		for ( Real AHdist = AHdist_min; AHdist <= AHdist_max;
+				AHdist += (AHdist_max - AHdist_min)/static_cast<Real>(AHdist_steps-1) ) {
+			for ( Real cosBAH = cosBAH_min; cosBAH <= cosBAH_max;
+					cosBAH += (cosBAH_max - cosBAH_min)/static_cast<Real>(cosBAH_steps-1) ) {
 				Real chi = 0;
-				//				for( Real chi = chi_min; chi <= chi_max;
-				//		 chi += (chi_max - chi_min)/static_cast<Real>(chi_steps-1)){
-					for( Real cosAHD = cosAHD_min - .0001; cosAHD <= cosAHD_max;
-							 cosAHD += (cosAHD_max - cosAHD_min)/static_cast<Real>(cosAHD_steps-1)){
+				//    for( Real chi = chi_min; chi <= chi_max;
+				//   chi += (chi_max - chi_min)/static_cast<Real>(chi_steps-1)){
+				for ( Real cosAHD = cosAHD_min - .0001; cosAHD <= cosAHD_max;
+						cosAHD += (cosAHD_max - cosAHD_min)/static_cast<Real>(cosAHD_steps-1) ) {
 
-						// In the frame at the acceptor
-						Vector Hxyz(cosBAH*AHdist,
-												sin(chi)*sqrt(1-cosBAH*cosBAH)*AHdist,
-												cos(chi)*sqrt(1-cosBAH*cosBAH)*AHdist);
+					// In the frame at the acceptor
+					Vector Hxyz(cosBAH*AHdist,
+						sin(chi)*sqrt(1-cosBAH*cosBAH)*AHdist,
+						cos(chi)*sqrt(1-cosBAH*cosBAH)*AHdist);
 
-						Real ADdist, cosBAD;
-						Vector Dxyz;
-						if ( cosBAH < .5 ) {
-							// make AHchi = -180
+					Real ADdist, cosBAD;
+					Vector Dxyz;
+					if ( cosBAH < .5 ) {
+						// make AHchi = -180
 
-							// triangle AHD the AHD angle is
-							ADdist = sqrt(AHdist*AHdist + 1 +2*AHdist*cosAHD);
-							cosBAD = (cosBAH*AHdist + cosBAH*cosAHD + sqrt(1-cosBAH*cosBAH)*sqrt(1-cosAHD*cosAHD))/ADdist;
-							//cosBAD = (cosBAH*AHdist + cos(acos(cosBAH)-acos(cosAHD)))/ADdist;
+						// triangle AHD the AHD angle is
+						ADdist = sqrt(AHdist*AHdist + 1 +2*AHdist*cosAHD);
+						cosBAD = (cosBAH*AHdist + cosBAH*cosAHD + sqrt(1-cosBAH*cosBAH)*sqrt(1-cosAHD*cosAHD))/ADdist;
+						//cosBAD = (cosBAH*AHdist + cos(acos(cosBAH)-acos(cosAHD)))/ADdist;
 
-							Dxyz = Vector(cosBAD*ADdist,
-														sin(chi)*sqrt(1-cosBAD*cosBAD)*ADdist,
-														cos(chi)*sqrt(1-cosBAD*cosBAD)*ADdist);
-						} else {
-							// make AHchi = 0
-							ADdist = sqrt(AHdist*AHdist + 1 +2*AHdist*cosAHD);
-							cosBAD = (cosBAH*AHdist + cosBAH*cosAHD - sqrt(1-cosBAH*cosBAH)*sqrt(1-cosAHD*cosAHD))/ADdist;
-							Dxyz = Vector(cosBAD*ADdist,
-														sin(chi)*sqrt(1-cosBAD*cosBAD)*ADdist,
-														cos(chi)*sqrt(1-cosBAD*cosBAD)*ADdist);
-						}
+						Dxyz = Vector(cosBAD*ADdist,
+							sin(chi)*sqrt(1-cosBAD*cosBAD)*ADdist,
+							cos(chi)*sqrt(1-cosBAD*cosBAD)*ADdist);
+					} else {
+						// make AHchi = 0
+						ADdist = sqrt(AHdist*AHdist + 1 +2*AHdist*cosAHD);
+						cosBAD = (cosBAH*AHdist + cosBAH*cosAHD - sqrt(1-cosBAH*cosBAH)*sqrt(1-cosAHD*cosAHD))/ADdist;
+						Dxyz = Vector(cosBAD*ADdist,
+							sin(chi)*sqrt(1-cosBAD*cosBAD)*ADdist,
+							cos(chi)*sqrt(1-cosBAD*cosBAD)*ADdist);
+					}
 
-						tr.Debug << "hbond geomerty:" << endl;
-						tr.Debug << "\tAHdist: " << AHdist << endl;
-						tr.Debug << "\tcosBAH: " << cosBAH << endl;
-						tr.Debug << "\tchi:    " << chi << endl;
-						tr.Debug << "\tcosAHD: " << cosAHD << endl;
-						tr.Debug << "\tHxyz:   " << "(" << Hxyz.x() << "," << Hxyz.y() << "," << Hxyz.z() << ")" << endl;
-						tr.Debug << "\tAHdist: " << AHdist << endl;
-						tr.Debug << "\tcosBAD: " << cosBAD << endl;
-						tr.Debug << "\tDxyz: " << Dxyz.x() << "," << Dxyz.y() << "," << Dxyz.z() << ")" << endl;
+					tr.Debug << "hbond geomerty:" << endl;
+					tr.Debug << "\tAHdist: " << AHdist << endl;
+					tr.Debug << "\tcosBAH: " << cosBAH << endl;
+					tr.Debug << "\tchi:    " << chi << endl;
+					tr.Debug << "\tcosAHD: " << cosAHD << endl;
+					tr.Debug << "\tHxyz:   " << "(" << Hxyz.x() << "," << Hxyz.y() << "," << Hxyz.z() << ")" << endl;
+					tr.Debug << "\tAHdist: " << AHdist << endl;
+					tr.Debug << "\tcosBAD: " << cosBAD << endl;
+					tr.Debug << "\tDxyz: " << Dxyz.x() << "," << Dxyz.y() << "," << Dxyz.z() << ")" << endl;
 
-						Stub don_frame( Hxyz,
-														Hxyz,
-														Dxyz,
-														2*Hxyz);
-						RT hbond_geometry(acc_frame, don_frame);
+					Stub don_frame( Hxyz,
+						Hxyz,
+						Dxyz,
+						2*Hxyz);
+					RT hbond_geometry(acc_frame, don_frame);
 
-						pose = make_conformation(seq_sep,
-																		 *don_rsd, hatm, *acc_rsd, aatm,
-																		 hbond_geometry);
+					pose = make_conformation(seq_sep,
+						*don_rsd, hatm, *acc_rsd, aatm,
+						hbond_geometry);
 
-						stringstream pose_name;
-						pose_name << pose_name_prefix << "_";
-						pose_name << don_rsd->type().name() << "_" << hatm << "_";
-						pose_name << acc_rsd->type().name() << "_" << aatm << "_";
-						pose_name << AHdist << "-" << cosBAH << "-" << chi << "-" << cosAHD;
-						PDBInfoOP pdb_info( new PDBInfo( *pose ) );
-						assert( pdb_info->nres() == pose->size() );
-						pdb_info->name( pose_name.str());
-					  pose->pdb_info( pdb_info );
-						// features.push_back(pose);
+					stringstream pose_name;
+					pose_name << pose_name_prefix << "_";
+					pose_name << don_rsd->type().name() << "_" << hatm << "_";
+					pose_name << acc_rsd->type().name() << "_" << aatm << "_";
+					pose_name << AHdist << "-" << cosBAH << "-" << chi << "-" << cosAHD;
+					PDBInfoOP pdb_info( new PDBInfo( *pose ) );
+					assert( pdb_info->nres() == pose->size() );
+					pdb_info->name( pose_name.str());
+					pose->pdb_info( pdb_info );
+					// features.push_back(pose);
 
-						relax_pose_around_hbond(pose, scfxn,
-																		don_rsd->seqpos(), hatm,
-																		acc_rsd->seqpos(), aatm);
+					relax_pose_around_hbond(pose, scfxn,
+						don_rsd->seqpos(), hatm,
+						acc_rsd->seqpos(), aatm);
 
-						pose->dump_pdb( pose_name.str() + ".pdb" );
+					pose->dump_pdb( pose_name.str() + ".pdb" );
 #ifdef DB_SQLITE3
 						report_to_db_mover.apply(*pose);
 #endif // DB_SQLITE3
 
-					}
-					//				}
+				}
+				//    }
 			}
 		}
 		return features;
@@ -701,18 +701,18 @@ public:
 	ResidueOP
 	build_residue(
 		ResidueTypeSetCAP residue_type_set,
-    std::string const & res_name3,
+		std::string const & res_name3,
 		bool const uterm_cap = true,
 		bool const lterm_cap = true){
 
 		ResidueTypeCOPs possible_types(residue_type_set->name3_map( res_name3 ));
 		for ( ResidueTypeCOPs::const_iterator
-						type_iter = possible_types.begin(), type_end = possible_types.end();
-					type_iter != type_end; ++type_iter ){
-			if (uterm_cap != (*type_iter)->has_variant_type( UPPER_TERMINUS )){
+				type_iter = possible_types.begin(), type_end = possible_types.end();
+				type_iter != type_end; ++type_iter ) {
+			if ( uterm_cap != (*type_iter)->has_variant_type( UPPER_TERMINUS ) ) {
 				continue;
 			}
-			if (lterm_cap != (*type_iter)->has_variant_type( LOWER_TERMINUS )){
+			if ( lterm_cap != (*type_iter)->has_variant_type( LOWER_TERMINUS ) ) {
 				continue;
 			}
 
@@ -727,14 +727,14 @@ public:
 
 	vector1<PoseOP>
 	run_example_hbond_sweep(
-	  string const & don_res_name,
-    string const & hatm_name,
+		string const & don_res_name,
+		string const & hatm_name,
 		string const & acc_res_name,
 		string const & aatm_name,
 		Size steps){
 
 		ResidueTypeSetCAP residue_type_set(
-		  ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+			ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		HBSeqSep seq_sep( seq_sep_other );
 
 		ResidueOP acc_res( build_residue(residue_type_set, acc_res_name));
@@ -746,34 +746,34 @@ public:
 		string const pose_name_prefix( "hbond");
 		utility::vector1<PoseOP> features
 			(hbond_param_sweep
-			 (seq_sep, don_res, hatm, acc_res, aatm, pose_name_prefix, steps
+			(seq_sep, don_res, hatm, acc_res, aatm, pose_name_prefix, steps
 #ifdef DB_SQLITE3
 				,
 				basic::options::option[ basic::options::OptionKeys::in::feature_schema ](),
 				basic::options::option[ basic::options::OptionKeys::feat_stats::sample_source](),
 				basic::options::option[ basic::options::OptionKeys::out::feature_database ]()
 #endif  // DB_SQLITE3
-				));
+			));
 
 		stringstream fname_prefix;
-		if ( basic::options::option[ basic::options::OptionKeys::out::prefix ].user() ){
+		if ( basic::options::option[ basic::options::OptionKeys::out::prefix ].user() ) {
 			fname_prefix << basic::options::option[ basic::options::OptionKeys::out::prefix ]();
 			fname_prefix << "/";
 		} else {
 			fname_prefix << "";
 		}
 
-		if(features.size() > 0){
+		if ( features.size() > 0 ) {
 			tr << "Outputing " << features.size() << " structures like: '"
-				 << fname_prefix.str() << features[1]->pdb_info()->name() << ".pdb'" << endl;
+				<< fname_prefix.str() << features[1]->pdb_info()->name() << ".pdb'" << endl;
 		}
 
-		for( utility::vector1<PoseOP>::const_iterator
-					 feat_iter = features.begin(), end_iter = features.end();
-				 feat_iter != end_iter; ++feat_iter ){
+		for ( utility::vector1<PoseOP>::const_iterator
+				feat_iter = features.begin(), end_iter = features.end();
+				feat_iter != end_iter; ++feat_iter ) {
 			stringstream fname_ss;
 			fname_ss << fname_prefix.str()
-							 << (*feat_iter)->pdb_info()->name() << ".pdb";
+				<< (*feat_iter)->pdb_info()->name() << ".pdb";
 			(*feat_iter)->dump_pdb( fname_ss.str() );
 		}
 		return features;
@@ -781,16 +781,16 @@ public:
 
 	void
 	score_conformations(
-	  vector1<PoseOP> features){
+		vector1<PoseOP> features){
 
 		ScoreFunctionOP scfxn( get_score_function() );
 
 		stringstream scores;
 		scfxn->show_line_headers(scores);
 		scores << endl;
-		for( utility::vector1<PoseOP>::const_iterator
-					 feat_iter = features.begin(), end_iter = features.end();
-				 feat_iter != end_iter; ++feat_iter ){
+		for ( utility::vector1<PoseOP>::const_iterator
+				feat_iter = features.begin(), end_iter = features.end();
+				feat_iter != end_iter; ++feat_iter ) {
 			(*scfxn)(**feat_iter);
 			scores << (*feat_iter)->pdb_info()->name() << " ";
 			scfxn->show_line(scores,**feat_iter);
@@ -837,19 +837,19 @@ int
 main( int argc, char ** argv )
 {
 	try {
-	apps::pilot::momeara::register_options();
+		apps::pilot::momeara::register_options();
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	apps::pilot::momeara::HBondConformation hb_conformation;
+		apps::pilot::momeara::HBondConformation hb_conformation;
 
-	hb_conformation.example_OH_pose();
+		hb_conformation.example_OH_pose();
 
-	Size steps( basic::options::option[ basic::options::OptionKeys::feat_stats::grid_steps]());
+		Size steps( basic::options::option[ basic::options::OptionKeys::feat_stats::grid_steps]());
 
-	vector1<PoseOP> features
-		(hb_conformation.run_example_hbond_sweep
-		 ("SER", "HG", "GLY", "O", steps));
+		vector1<PoseOP> features
+			(hb_conformation.run_example_hbond_sweep
+			("SER", "HG", "GLY", "O", steps));
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

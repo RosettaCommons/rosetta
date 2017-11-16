@@ -36,7 +36,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.nmarze.hemagg_trimer" );
+static basic::Tracer TR( "apps.pilot.nmarze.hemagg_trimer" );
 
 
 class HemaggTrimer : public protocols::moves::Mover {

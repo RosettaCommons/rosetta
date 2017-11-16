@@ -36,7 +36,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.util" );
+static basic::Tracer TR( "protocols.constraint_generator.util" );
 
 namespace protocols {
 namespace constraint_generator {

@@ -42,7 +42,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SequenceProfileMover" );
+static basic::Tracer TR( "protocols.simple_moves.SequenceProfileMover" );
 
 namespace protocols {
 namespace simple_moves {

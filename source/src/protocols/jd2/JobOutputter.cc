@@ -48,9 +48,11 @@
 namespace protocols {
 namespace jd2 {
 
+static basic::MemTracer mem_tr;
+
 JobOutputter::JobOutputter() : evaluators_(evaluation::PoseEvaluatorsOP( new protocols::evaluation::PoseEvaluators() )) {
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
-	basic::mem_tr << "JobOutputter CSTOR" << std::endl;
+	mem_tr << "JobOutputter CSTOR" << std::endl;
 	set_defaults();
 }
 

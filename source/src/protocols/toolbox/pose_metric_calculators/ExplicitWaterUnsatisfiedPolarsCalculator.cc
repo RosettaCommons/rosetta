@@ -78,7 +78,7 @@ using namespace basic::options::OptionKeys;
 using namespace optimization;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.ExplicitWaterUnsatisfiedPolarsCalculator" );
+static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.ExplicitWaterUnsatisfiedPolarsCalculator" );
 
 ///@brief default constructor sets shell_cutoff to 4.0.
 ExplicitWaterUnsatisfiedPolarsCalculator::ExplicitWaterUnsatisfiedPolarsCalculator( ScoreFunctionOP scorefxn ):

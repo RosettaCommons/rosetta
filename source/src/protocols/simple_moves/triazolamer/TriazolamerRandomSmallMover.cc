@@ -39,11 +39,10 @@
 
 // C++ Headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.triazolamer.TriazolamerRandomSmallMover" );
+static basic::Tracer TR( "protocols.simple_moves.triazolamer.TriazolamerRandomSmallMover" );
 
 
 using namespace core;

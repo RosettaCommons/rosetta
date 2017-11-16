@@ -56,7 +56,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "extract_atomtree_diffs.main" );
+static basic::Tracer TR( "extract_atomtree_diffs.main" );
 
 class ExtractATD : public protocols::moves::Mover {
 public:

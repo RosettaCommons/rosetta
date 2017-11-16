@@ -65,7 +65,6 @@
 #include <utility/file/FileName.hh>
 
 
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
@@ -90,67 +89,67 @@ using namespace std;
 int
 main( int argc, char* argv [] )
 {
-    try {
-	// options, random initialization
-	devel::init( argc, argv );
+	try {
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace core::scoring;
-	using namespace core::scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace utility::file;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility::file;
 
-	// setup residue types
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	if ( option[ in::file::fullatom ]() ) {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	} else {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-	}
-
-	// configure score functions (energy and constraint score functions)
-  core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-	core::scoring::ScoreFunctionOP constraintscorefxn( new core::scoring::ScoreFunction );
-	constraintscorefxn->set_weight( atom_pair_constraint, 1.0 );
-	ConstraintSetOP cstset_ = NULL;
-
-
-	// initialize ConstraintSet (required!)
-	std::string cstfile = option[ basic::options::OptionKeys::constraints::cst_file ]();
-	if ( ! utility::file::file_exists( cstfile ) ) {
-		utility_exit_with_message( "Error: can't read file " + cstfile );
-	}
-
-	// initialize native pose (if user specifies to do so)
-	core::pose::Pose native_pose;
-	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
-	}
-
-	utility::vector1< FileName > pdb_file_names;
-	if ( option[ in::file::s ].user() ) {
-		pdb_file_names = option[ in::file::s ]().vector();
-	}
-
-	for ( utility::vector1< FileName >::const_iterator it = pdb_file_names.begin(), end = pdb_file_names.end();
-				it != end;
-				++it ) {
-		core::pose::Pose target_pose;
-		core::import_pose::pose_from_file( target_pose, *rsd_set, (std::string) *it , core::import_pose::PDB_file);
-		if ( !cstset_ ) {
-			cstset_ = ConstraintIO::read( cstfile, new ConstraintSet, target_pose );
+		// setup residue types
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		if ( option[ in::file::fullatom ]() ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		} else {
-			target_pose.constraint_set( cstset_ );
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		}
 
-		core::Real constraint_score = (*constraintscorefxn)(target_pose);
-		core::Real score = (*scorefxn)(target_pose);
-		cout << *it << '\t' << constraint_score << '\t' << score << '\n';
-	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		// configure score functions (energy and constraint score functions)
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+		core::scoring::ScoreFunctionOP constraintscorefxn( new core::scoring::ScoreFunction );
+		constraintscorefxn->set_weight( atom_pair_constraint, 1.0 );
+		ConstraintSetOP cstset_ = NULL;
+
+
+		// initialize ConstraintSet (required!)
+		std::string cstfile = option[ basic::options::OptionKeys::constraints::cst_file ]();
+		if ( ! utility::file::file_exists( cstfile ) ) {
+			utility_exit_with_message( "Error: can't read file " + cstfile );
+		}
+
+		// initialize native pose (if user specifies to do so)
+		core::pose::Pose native_pose;
+		if ( option[ in::file::native ].user() ) {
+			core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
+		}
+
+		utility::vector1< FileName > pdb_file_names;
+		if ( option[ in::file::s ].user() ) {
+			pdb_file_names = option[ in::file::s ]().vector();
+		}
+
+		for ( utility::vector1< FileName >::const_iterator it = pdb_file_names.begin(), end = pdb_file_names.end();
+				it != end;
+				++it ) {
+			core::pose::Pose target_pose;
+			core::import_pose::pose_from_file( target_pose, *rsd_set, (std::string) *it , core::import_pose::PDB_file);
+			if ( !cstset_ ) {
+				cstset_ = ConstraintIO::read( cstfile, new ConstraintSet, target_pose );
+			} else {
+				target_pose.constraint_set( cstset_ );
+			}
+
+			core::Real constraint_score = (*constraintscorefxn)(target_pose);
+			core::Real score = (*scorefxn)(target_pose);
+			cout << *it << '\t' << constraint_score << '\t' << score << '\n';
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
+	}
 	return 0;
 }
 

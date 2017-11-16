@@ -54,7 +54,7 @@
 using namespace protocols;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rhiju.stepwise_lores_test" );
+static basic::Tracer TR( "apps.pilot.rhiju.stepwise_lores_test" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

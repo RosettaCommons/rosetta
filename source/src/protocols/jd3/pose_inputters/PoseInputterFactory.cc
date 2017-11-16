@@ -37,7 +37,7 @@ namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.pose_inputters.PoseInputterFactory" );
+static basic::Tracer TR( "protocols.jd3.pose_inputters.PoseInputterFactory" );
 
 PoseInputterFactory::PoseInputterFactory() :
 	throw_on_double_registration_( false )

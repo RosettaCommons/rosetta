@@ -29,12 +29,12 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 namespace protocols {
 namespace rigid {
 
+static basic::Tracer TR("protocols.rigid.rigid_body");
 using namespace core;
 
 
@@ -54,7 +54,7 @@ gaussian_jump_move(
 	}
 
 	if ( moving_jumps.empty() ) {
-		T("protocols.rigid.rigid_body").Warning << "no movable jumps!" << std::endl;
+		TR.Warning << "no movable jumps!" << std::endl;
 		return 0;
 	}
 

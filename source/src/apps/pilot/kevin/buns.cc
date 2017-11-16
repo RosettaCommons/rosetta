@@ -76,8 +76,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kevin.buns" );
+static basic::Tracer TR( "apps.pilot.kevin.buns" );
 
 //basic::options::BooleanOptionKey const use_varsoldist_sasa_calc( "use_varsoldist_sasa_calc" );
 //basic::options::BooleanOptionKey const water_dist_H( "water_dist_H_cutoff" );
@@ -94,21 +93,21 @@ using core::Distance;
 using platform::Size;
 
 void read_FileVector(const basic::options::FileVectorOptionKey& fv_key, std::vector<std::string>& str_vec) {
-	if(!basic::options::option[fv_key].user()) return;
+	if ( !basic::options::option[fv_key].user() ) return;
 	std::string list_file = basic::options::option[fv_key]()[1];
 	utility::io::izstream list;
 	list.open(list_file,std::_S_in);
-	while(!list.eof()) {
+	while ( !list.eof() ) {
 		std::string line;
 		getline(list,line);
-		if(line.size() > 0) str_vec.push_back(line);
+		if ( line.size() > 0 ) str_vec.push_back(line);
 	}
 	list.close();
 }
 
 
 class hbond_strat {
-	public:
+public:
 	hbond_strat() {};
 	//hbond_strat(const hbond_strat&) = default;
 	//hbond_strat(hbond_strat&&) = default;
@@ -121,19 +120,19 @@ class hbond_strat {
 
 
 class hbond_energy_strat : public hbond_strat {
-	public:
+public:
 	hbond_energy_strat(Real energy_cutoff) : energy_cutoff_(energy_cutoff) {}
 
 	bool evaluate(const pose::Pose&, scoring::hbonds::HBondCOP h) const {
 		return ( h->energy() * h->weight() <= energy_cutoff_ );
 	}
-	private:
+private:
 	Real energy_cutoff_;
 };
 
 
 class hbond_geom_strat : public hbond_strat {
-	public:
+public:
 	hbond_geom_strat (
 		Real AHdist_geom_eval_threshold,
 		Real AHD_geom_eval_threshold
@@ -147,10 +146,10 @@ class hbond_geom_strat : public hbond_strat {
 		Real AHD = h->get_AHDangle(pose);
 
 		return (AHdist <= AHdist_geom_eval_threshold_ &&
-		       AHD >= AHD_geom_eval_threshold_);
+			AHD >= AHD_geom_eval_threshold_);
 	}
 
-	private:
+private:
 	Real AHdist_geom_eval_threshold_;
 	Real AHD_geom_eval_threshold_;
 };
@@ -194,14 +193,13 @@ bunsats(
 		conformation::PointGraphEdgeData>(pg, neighbor_cutoff);
 
 
-    id::AtomID_Map<Real> atom_sasa;
+	id::AtomID_Map<Real> atom_sasa;
 
-	if (vsasa) {
+	if ( vsasa ) {
 		VarSolDistSasaCalculator vsasa_calc;
 		atom_sasa = vsasa_calc.calculate(pose);
-	}
-	else {
-    	utility::vector1< core::Real > residue_sasa;
+	} else {
+		utility::vector1< core::Real > residue_sasa;
 		core::scoring::calc_per_atom_sasa(pose, atom_sasa, residue_sasa, probe_radius);
 	}
 
@@ -213,11 +211,11 @@ bunsats(
 	const scoring::hbonds::HBondDatabaseCOP hb_database = scoring::hbonds::HBondDatabase::get_database();
 	const scoring::TenANeighborGraph& tenA_neighbor_graph(pose.energies().tenA_neighbor_graph());
 
-	for (Size lowerResNum = 1; lowerResNum <= nres; ++lowerResNum ) {
+	for ( Size lowerResNum = 1; lowerResNum <= nres; ++lowerResNum ) {
 		const conformation::Residue& lowerRes(pose.residue(lowerResNum));
 		const Size nbl = tenA_neighbor_graph.get_node(lowerResNum)->
 			num_neighbors_counting_self_static();
-		for (conformation::PointGraph::UpperEdgeListConstIter
+		for ( conformation::PointGraph::UpperEdgeListConstIter
 				ue  = pg->get_vertex(lowerResNum).const_upper_edge_list_begin(),
 				ue_end = pg->get_vertex(lowerResNum).const_upper_edge_list_end();
 				ue != ue_end; ++ue ) {
@@ -235,32 +233,32 @@ bunsats(
 
 	Size buns = 0;
 	const pose::PDBInfo& pdb_info = *(pose.pdb_info());
-	for (Size resNum = 1; resNum <= nres; ++resNum) {
+	for ( Size resNum = 1; resNum <= nres; ++resNum ) {
 		const conformation::Residue& res = pose.residue(resNum);
 		const chemical::ResidueType& res_type = res.type();
-		for (Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum){
-			if (!res.heavyatom_is_an_acceptor(atomNum) && !res.atom_is_polar_hydrogen(atomNum)) continue;
-			if (pdb_info.temperature(resNum, atomNum) > 30) continue;
-			if (pdb_info.occupancy(resNum, atomNum) < 1) continue;
+		for ( Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum ) {
+			if ( !res.heavyatom_is_an_acceptor(atomNum) && !res.atom_is_polar_hydrogen(atomNum) ) continue;
+			if ( pdb_info.temperature(resNum, atomNum) > 30 ) continue;
+			if ( pdb_info.occupancy(resNum, atomNum) < 1 ) continue;
 
 			id::AtomID at(atomNum, resNum);
 			const Real vsasa = atom_sasa[at];
 
 			const core::chemical::AtomType& atom_type = res_type.atom_type(atomNum);
 			//std::cout << atom_type.name() << "\n";
-			//std::cout << "	vsasa: " << vsasa << "\n";
+			//std::cout << " vsasa: " << vsasa << "\n";
 
-			if (vsasa > burial_cutoff) continue;
+			if ( vsasa > burial_cutoff ) continue;
 			utility::vector1<scoring::hbonds::HBondCOP> hbonds = hbond_set.atom_hbonds(at, false /*include only allowed*/);
 			bool hbonded = false;
-			for (utility::vector1<scoring::hbonds::HBondCOP>::iterator h = hbonds.begin(), end = hbonds.end();
-			     h != end; h++) {
-				if (hb_eval.evaluate(pose, *h)){
+			for ( utility::vector1<scoring::hbonds::HBondCOP>::iterator h = hbonds.begin(), end = hbonds.end();
+					h != end; h++ ) {
+				if ( hb_eval.evaluate(pose, *h) ) {
 					hbonded = true;
 					break;
 				}
 			}
-			if (!hbonded) {
+			if ( !hbonded ) {
 				++buns;
 			}
 		}
@@ -270,14 +268,14 @@ bunsats(
 
 
 int separation(const std::vector<std::string>& nat_list,
-                      const std::vector<std::string>& rlx_list,
-                      const Real AHdist_geom_eval_threshold,
-                      const hbond_strat& hb_eval,
-                      const bool vsasa,
-                      const Real probe,
-                      const Real burial_cutoff) {
+	const std::vector<std::string>& rlx_list,
+	const Real AHdist_geom_eval_threshold,
+	const hbond_strat& hb_eval,
+	const bool vsasa,
+	const Real probe,
+	const Real burial_cutoff) {
 	int separation = 0;
-	for (Size i = 1, size = nat_list.size(); i != size; i++) {
+	for ( Size i = 1, size = nat_list.size(); i != size; i++ ) {
 		pose::Pose pose;
 		//poses.push_back(new pose::Pose);
 		//pose::Pose& pose = *poses.back();
@@ -285,24 +283,23 @@ int separation(const std::vector<std::string>& nat_list,
 		//std::cout << nat_list[i] << std::endl;
 		import_pose::pose_from_file(pose, nat_list[i], core::import_pose::PDB_file);
 		Size nat_buns = bunsats(pose,
-		                        AHdist_geom_eval_threshold,
-		                        hb_eval,
-								vsasa,
-								probe,
-			                    burial_cutoff);
+			AHdist_geom_eval_threshold,
+			hb_eval,
+			vsasa,
+			probe,
+			burial_cutoff);
 		import_pose::pose_from_file(pose, rlx_list[i], core::import_pose::PDB_file);
 		Size rlx_buns = bunsats(pose,
-		                        AHdist_geom_eval_threshold,
-		                        hb_eval,
-								vsasa,
-								probe,
-			                    burial_cutoff);
+			AHdist_geom_eval_threshold,
+			hb_eval,
+			vsasa,
+			probe,
+			burial_cutoff);
 		//std::string nat_vs_rlx = nat_buns < rlx_buns ? "nat_less" : (nat_buns == rlx_buns ? "nat_same" : "nat_more");
 		//std::cout << nat_buns << "," << rlx_buns << "," << nat_vs_rlx << "\n";
-		if (nat_buns < rlx_buns) {
+		if ( nat_buns < rlx_buns ) {
 			separation++;
-		}
-		else if (nat_buns > rlx_buns) {
+		} else if ( nat_buns > rlx_buns ) {
 			separation--;
 		}
 	}
@@ -314,27 +311,27 @@ int main( int argc, char* argv[] )
 {
 	try {
 
-	basic::options::option.add(nat_list_opkey, "nat_list");
-	basic::options::option.add(rlx_list_opkey, "rlx_list");
+		basic::options::option.add(nat_list_opkey, "nat_list");
+		basic::options::option.add(rlx_list_opkey, "rlx_list");
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	std::vector<std::string> nat_list;
-	read_FileVector(nat_list_opkey, nat_list);
-	std::vector<std::string> rlx_list;
-	read_FileVector(rlx_list_opkey, rlx_list);
+		std::vector<std::string> nat_list;
+		read_FileVector(nat_list_opkey, nat_list);
+		std::vector<std::string> rlx_list;
+		read_FileVector(rlx_list_opkey, rlx_list);
 
-	//Real AHdist_geom_eval_threshold = 4.0;
-	Real AHdist_geom_eval_threshold = 2.8;
-	Real AHD_geom_eval_threshold = 90.0;
-	const hbond_geom_strat hb_geom_strat1(AHdist_geom_eval_threshold, AHD_geom_eval_threshold);
-	Real burial_cutoff = 0.0;
+		//Real AHdist_geom_eval_threshold = 4.0;
+		Real AHdist_geom_eval_threshold = 2.8;
+		Real AHD_geom_eval_threshold = 90.0;
+		const hbond_geom_strat hb_geom_strat1(AHdist_geom_eval_threshold, AHD_geom_eval_threshold);
+		Real burial_cutoff = 0.0;
 
-	int sep = separation(nat_list, rlx_list, AHdist_geom_eval_threshold, hb_geom_strat1, false, 1.4, burial_cutoff);
+		int sep = separation(nat_list, rlx_list, AHdist_geom_eval_threshold, hb_geom_strat1, false, 1.4, burial_cutoff);
 
-	std::cout << "separation: " << sep << std::endl;
+		std::cout << "separation: " << sep << std::endl;
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
 	} catch (utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

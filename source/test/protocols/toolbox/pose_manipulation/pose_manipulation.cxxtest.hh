@@ -41,7 +41,7 @@
 using namespace core;
 using namespace protocols::toolbox::pose_manipulation;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.toolbox.pose_manipulation.PoseManipulationTests");
+static basic::Tracer TR("protocols.toolbox.pose_manipulation.PoseManipulationTests");
 
 
 class PoseManipulationTests : public CxxTest::TestSuite {

@@ -72,7 +72,6 @@
 
 
 #include <basic/Tracer.hh>
-using basic::T;
 
 // option key includes
 
@@ -85,7 +84,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.symmetric_docking.SymDockingHiRes" );
+static basic::Tracer TR( "protocols.symmetric_docking.SymDockingHiRes" );
 
 using namespace core;
 

@@ -30,7 +30,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.DeltaFilter" );
+static basic::Tracer TR( "protocols.simple_filters.DeltaFilter" );
 
 /// @brief default ctor
 DeltaFilter::DeltaFilter() :

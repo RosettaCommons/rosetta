@@ -35,7 +35,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictByCalculatorsOperation" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictByCalculatorsOperation" );
 
 namespace protocols {
 namespace toolbox {

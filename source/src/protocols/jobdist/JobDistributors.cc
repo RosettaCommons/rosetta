@@ -67,7 +67,7 @@
 namespace protocols {
 namespace jobdist {
 
-static THREAD_LOCAL basic::Tracer JobDistributorTracer( "protocols.jobdist.JobDistributors" );
+static basic::Tracer JobDistributorTracer( "protocols.jobdist.JobDistributors" );
 
 BaseJobDistributor::BaseJobDistributor(JobVector jobs):
 	overwrite_( basic::options::option[ basic::options::OptionKeys::out::overwrite ] ),

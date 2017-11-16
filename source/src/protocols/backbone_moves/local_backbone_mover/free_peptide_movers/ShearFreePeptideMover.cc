@@ -19,7 +19,7 @@
 // Numeric headers
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.free_peptide_movers.ShearFreePeptideMover" );
+static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.free_peptide_movers.ShearFreePeptideMover" );
 
 
 namespace protocols {

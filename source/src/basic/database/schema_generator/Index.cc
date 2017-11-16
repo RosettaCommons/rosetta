@@ -28,7 +28,7 @@
 #include <string>
 #include <sstream>
 
-static THREAD_LOCAL basic::Tracer TR( "utility.sql_database.Index" );
+static basic::Tracer TR( "utility.sql_database.Index" );
 
 namespace basic {
 namespace database {

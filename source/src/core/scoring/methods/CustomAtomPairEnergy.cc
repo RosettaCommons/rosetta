@@ -51,7 +51,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.methods.CustomAtomPairEnergy" );
+static basic::Tracer tr( "core.scoring.methods.CustomAtomPairEnergy" );
 
 /// @details This must return a fresh instance of the CustomAtomPairEnergy class,
 /// never an instance already in use

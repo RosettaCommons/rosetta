@@ -29,7 +29,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.full_model_info.FullModelParameters" );
+static basic::Tracer TR( "core.pose.full_model_info.FullModelParameters" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

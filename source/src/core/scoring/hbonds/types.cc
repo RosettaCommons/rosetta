@@ -31,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.hbonds.types");
+static basic::Tracer TR("core.scoring.hbonds.types");
 
 Size
 hb_eval_type(

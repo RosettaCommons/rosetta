@@ -38,7 +38,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.NMerRefEnergy" );
+static basic::Tracer TR( "core.scoring.methods.NMerRefEnergy" );
 
 namespace core {
 namespace scoring {

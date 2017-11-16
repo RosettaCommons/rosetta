@@ -32,7 +32,7 @@
 // Numeric header
 #include <numeric/angle.functions.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfo.cxxtest");
+static basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfo.cxxtest");
 
 class CarbohydrateInfoTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////

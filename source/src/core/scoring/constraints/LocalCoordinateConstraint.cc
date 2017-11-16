@@ -39,7 +39,7 @@
 #include <numeric/xyz.functions.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.LocalCoordinateConstraint" );
+static basic::Tracer tr( "core.LocalCoordinateConstraint" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

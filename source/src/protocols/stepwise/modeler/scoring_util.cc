@@ -27,7 +27,7 @@
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.scoring_util" );
+static basic::Tracer TR( "protocols.stepwise.modeler.scoring_util" );
 
 namespace protocols {
 namespace stepwise {

@@ -25,11 +25,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.LoopAnalyzerMover" );
+static basic::Tracer TR( "apps.pilot.smlewis.LoopAnalyzerMover" );
 
 class hackLAMMover : public protocols::moves::Mover {
 public:

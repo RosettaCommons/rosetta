@@ -40,7 +40,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.WrapFilterAsEvaluator" );
+static basic::Tracer tr( "devel.replica_docking.WrapFilterAsEvaluator" );
 
 namespace devel {
 namespace replica_docking {

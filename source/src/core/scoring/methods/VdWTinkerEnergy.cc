@@ -40,7 +40,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.VdWTinkerEnergy" );
+static basic::Tracer TR( "core.scoring.methods.VdWTinkerEnergy" );
 
 // Utility headers
 

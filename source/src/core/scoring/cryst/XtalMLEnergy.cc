@@ -67,7 +67,7 @@ namespace scoring {
 namespace cryst {
 
 // tracer
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.cryst.XtalMLEnergy" );
+static basic::Tracer TR( "core.scoring.cryst.XtalMLEnergy" );
 
 ScoreTypes XtalMLEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;

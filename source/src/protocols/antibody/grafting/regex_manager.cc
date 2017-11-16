@@ -32,7 +32,7 @@ namespace protocols {
 namespace antibody {
 namespace grafting {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting");
+static basic::Tracer TR("protocols.antibody.grafting");
 
 // using namespace std;
 // using namespace core;

@@ -30,7 +30,7 @@ using namespace devel::balanced_kic;
 
 // Global Variables {{{1
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kale" );
+static basic::Tracer TR( "apps.pilot.kale" );
 
 // }}}1
 
@@ -57,10 +57,10 @@ int main(int argc, char* argv []) {
 	mover->set_pivots(first_index, cut_index, last_index);
 	mover->set_temperature(temperature);
 
-	// Apply a kinematic closure move to the pose.  Because the move seems to be 
-	// random (i.e. I can't fix the random seed), I can't compare future results 
-	// against a single fixed structure.  However, I do know that this structure 
-	// with these pivots should generally give good results.  Hopefully this will 
+	// Apply a kinematic closure move to the pose.  Because the move seems to be
+	// random (i.e. I can't fix the random seed), I can't compare future results
+	// against a single fixed structure.  However, I do know that this structure
+	// with these pivots should generally give good results.  Hopefully this will
 	// change if I accidentally break the closure algorithm.
 
 	mover->apply(pose);
@@ -69,7 +69,7 @@ int main(int argc, char* argv []) {
 	TR << (mover->last_move_succeeded() ? "yes" : "no") << std::endl;
 
 	// Save the resulting structure.
-	
+
 	pose.dump_pdb("trial-closure.pdb");
 
 }

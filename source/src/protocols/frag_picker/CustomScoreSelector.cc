@@ -27,7 +27,7 @@
 namespace protocols {
 namespace frag_picker {
 
-static THREAD_LOCAL basic::Tracer trCustomScoreSelector( "protocols.frag_picker.CustomScoreSelector" );
+static basic::Tracer trCustomScoreSelector( "protocols.frag_picker.CustomScoreSelector" );
 
 typedef utility::vector1<std::pair< ScoredCandidate, core::Real> > ExtraScoreVector;
 

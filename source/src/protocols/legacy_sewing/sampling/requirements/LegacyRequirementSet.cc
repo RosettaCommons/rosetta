@@ -26,7 +26,7 @@ namespace legacy_sewing  {
 namespace sampling {
 namespace requirements {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.legacy_sewing.sampling.requirements.LegacyRequirementSet");
+static basic::Tracer TR("protocols.legacy_sewing.sampling.requirements.LegacyRequirementSet");
 
 LegacyRequirementSet::LegacyRequirementSet():
 	min_segments_(0),

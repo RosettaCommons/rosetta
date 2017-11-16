@@ -66,7 +66,6 @@
 #include <string>
 #include <algorithm>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -88,7 +87,7 @@ using namespace core;
 using namespace core::pack::task::operation;
 using namespace utility::tag;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.LayerDesignOperation" );
+static basic::Tracer TR( "protocols.flxbb.LayerDesignOperation" );
 
 // AMW: Note--there's no Creator for CombinedTaskOperation
 // So I'm not doing anything with it yet.

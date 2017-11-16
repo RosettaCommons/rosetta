@@ -33,7 +33,7 @@
 // Utility, etc Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("EnergyBasedClusteringTests");
+static basic::Tracer TR("EnergyBasedClusteringTests");
 
 class EnergyBasedClusteringTests_alpha_aa : public CxxTest::TestSuite {
 	//Define Variables

@@ -76,9 +76,8 @@
 #include <core/kinematics/FoldTree.hh>
 
 using namespace core;
-using basic::T;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.movers.RNA_Minimizer" );
+static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_Minimizer" );
 
 namespace protocols {
 namespace rna {

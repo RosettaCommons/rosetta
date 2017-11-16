@@ -32,7 +32,7 @@
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.PoseResidueTypeSet.cxxtest");
+static basic::Tracer TR("core.chemical.PoseResidueTypeSet.cxxtest");
 
 
 class PoseResidueTypeSetTests : public CxxTest::TestSuite {

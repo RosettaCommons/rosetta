@@ -33,11 +33,10 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.SurfaceDocking.CentroidRelaxMover" );
+static basic::Tracer TR( "protocols.SurfaceDocking.CentroidRelaxMover" );
 
 
 namespace protocols {

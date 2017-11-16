@@ -51,7 +51,7 @@
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "devel.buns.BuriedUnsatisfiedPolarsCalculator2" );
+static basic::Tracer TR( "devel.buns.BuriedUnsatisfiedPolarsCalculator2" );
 
 
 #ifdef    SERIALIZATION

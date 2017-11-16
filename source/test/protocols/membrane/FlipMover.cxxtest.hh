@@ -41,7 +41,7 @@
 #include <string>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.FlipMover.cxxtest");
+static basic::Tracer TR("protocols.membrane.FlipMover.cxxtest");
 
 using namespace core;
 using namespace core::pose;

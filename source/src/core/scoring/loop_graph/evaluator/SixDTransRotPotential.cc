@@ -26,7 +26,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.evaluator.SixDTransRotPotential" );
+static basic::Tracer TR( "core.scoring.loop_graph.evaluator.SixDTransRotPotential" );
 
 using namespace utility;
 using namespace utility::tools;

@@ -41,7 +41,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer trProfScoreL1(
+static basic::Tracer trProfScoreL1(
 	"protocols.frag_picker.scores.ProfileScoreStructL1");
 
 ProfileScoreStructL1::~ProfileScoreStructL1() {}

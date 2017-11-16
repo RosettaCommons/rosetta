@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.BaseCentroidScreener" );
+static basic::Tracer TR( "protocols.stepwise.screener.BaseCentroidScreener" );
 
 namespace protocols {
 namespace stepwise {

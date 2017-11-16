@@ -57,7 +57,7 @@ namespace simple_moves {
 /// @details Auto-generated virtual destructor
 MinimalRotamer::~MinimalRotamer() = default;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.GreenPacker" );
+static basic::Tracer TR( "protocols.simple_moves.GreenPacker" );
 
 MinimalRotamer::MinimalRotamer( core::conformation::Residue const & res ) :
 	residue_type_( res.type() ),

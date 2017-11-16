@@ -40,7 +40,7 @@
 using core::kinematics::FoldTree;
 using core::kinematics::Edge;
 
-static THREAD_LOCAL basic::Tracer TR( "core.kinematics.FoldTree.cxxtest.hh" );
+static basic::Tracer TR( "core.kinematics.FoldTree.cxxtest.hh" );
 
 class FoldTreeTest : public CxxTest::TestSuite {
 public:

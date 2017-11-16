@@ -56,7 +56,7 @@
 //Basic headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.grafting.util" );
+static basic::Tracer TR( "protocols.grafting.util" );
 
 namespace protocols {
 namespace grafting {

@@ -85,7 +85,6 @@
 #include <basic/Tracer.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -93,7 +92,7 @@ using basic::Warning;
 namespace protocols {
 namespace electron_density {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.DockIntoDensityMover" );
+static basic::Tracer TR( "protocols.electron_density.DockIntoDensityMover" );
 
 struct
 	ScoredPoint {

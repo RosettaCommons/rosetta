@@ -46,7 +46,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.task_operations.HighestEnergyRegion" );
+static basic::Tracer TR( "devel.denovo_design.task_operations.HighestEnergyRegion" );
 
 namespace devel {
 namespace denovo_design {

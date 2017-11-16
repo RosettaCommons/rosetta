@@ -82,7 +82,6 @@ using namespace ObjexxFCL::format; // AUTO USING NS
 //////////////////////////////////////////////////////////////////////////////////////
 
 using namespace core;
-using basic::T;
 
 namespace protocols {
 namespace rna {
@@ -90,7 +89,7 @@ namespace denovo {
 namespace coarse {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.coarse.CoarseRNA_DeNovoProtocol" );
+static basic::Tracer TR( "protocols.rna.denovo.coarse.CoarseRNA_DeNovoProtocol" );
 
 CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 	Size const nstruct,

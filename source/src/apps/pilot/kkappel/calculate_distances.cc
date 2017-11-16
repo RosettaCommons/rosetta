@@ -95,7 +95,7 @@ OPT_KEY( Boolean, get_restypes )
 OPT_KEY( Boolean, use_CEN )
 OPT_KEY( Boolean, dump_pdbs )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kkappel.calculate_distances" );
+static basic::Tracer TR( "apps.pilot.kkappel.calculate_distances" );
 
 void get_distances( core::pose::Pose const & pose, std::string struct_name, std::ofstream & out_file ) {
 

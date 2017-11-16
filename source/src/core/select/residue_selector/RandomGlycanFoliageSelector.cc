@@ -36,7 +36,7 @@
 #include <numeric/random/random.hh>
 #include <utility/assert.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.RandomGlycanFoliageSelector" );
+static basic::Tracer TR( "core.select.residue_selector.RandomGlycanFoliageSelector" );
 
 namespace core {
 namespace select {

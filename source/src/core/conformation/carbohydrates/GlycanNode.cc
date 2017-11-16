@@ -44,7 +44,7 @@
 #endif // SERIALIZATION
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.carbohydrates.GlycanNode" );
+static basic::Tracer TR( "core.pose.carbohydrates.GlycanNode" );
 
 
 namespace core {

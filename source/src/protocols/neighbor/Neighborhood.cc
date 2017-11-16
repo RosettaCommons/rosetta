@@ -28,7 +28,7 @@ using core::pose::Pose;
 using utility::vector1;
 using core::conformation::Residue;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.neighbor" );
+static basic::Tracer TR( "protocols.neighbor" );
 
 
 /// @brief Neighborhood's constructor.

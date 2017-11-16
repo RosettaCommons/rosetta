@@ -27,7 +27,7 @@ namespace scores {
 using core::Real;
 using core::Size;
 
-static THREAD_LOCAL basic::Tracer trAdaptiveScoreHistogram(
+static basic::Tracer trAdaptiveScoreHistogram(
 	"fragment.picking.scores.AdaptiveScoreHistogram");
 
 AdaptiveScoreHistogram::AdaptiveScoreHistogram(core::Real bin_size,core::Real initial_max_score) {

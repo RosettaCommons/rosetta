@@ -71,7 +71,7 @@ using namespace std;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DockWithHotspotMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.DockWithHotspotMover" );
 
 // XRW TEMP std::string
 // XRW TEMP DockWithHotspotMoverCreator::keyname() const

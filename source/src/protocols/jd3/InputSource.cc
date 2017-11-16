@@ -36,7 +36,7 @@
 namespace protocols {
 namespace jd3 {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.InputSource" );
+static basic::Tracer TR( "protocols.jd3.InputSource" );
 
 InputSource::InputSource() :
 	origin_( "unknown" ),

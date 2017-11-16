@@ -50,7 +50,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.hbonds.HBondGraph.cxxtest");
+static basic::Tracer TR("core.pack.hbonds.HBondGraph.cxxtest");
 
 class HBondGraphTests : public CxxTest::TestSuite
 {

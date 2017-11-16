@@ -80,7 +80,6 @@
 #include <utility/io/ozstream.hh>
 
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
@@ -113,8 +112,8 @@ class ConstraintMinimizer : public protocols::moves::Mover {
 
 		ConstraintSetOP orig_cstset
 			= core::scoring::constraints::ConstraintIO::read_constraints(
-			  core::scoring::constraints::get_cst_file_option(),
-			  new core::scoring::constraints::ConstraintSet,pose
+			core::scoring::constraints::get_cst_file_option(),
+			new core::scoring::constraints::ConstraintSet,pose
 		);
 
 		MaxSeqSepConstraintSetOP mss_cstset;
@@ -165,9 +164,9 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( my_main );
+		// options, random initialization
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -41,7 +41,7 @@
 #include <string>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.OptimizeMembranePositionMover.cxxtest");
+static basic::Tracer TR("protocols.membrane.OptimizeMembranePositionMover.cxxtest");
 
 using namespace core;
 using namespace core::pose;

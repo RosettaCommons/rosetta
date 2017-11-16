@@ -112,7 +112,7 @@ using namespace protocols::simple_moves;
 namespace protocols {
 namespace hbnet {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hbnet.HBNetStapleInterface" );
+static basic::Tracer TR( "protocols.hbnet.HBNetStapleInterface" );
 
 HBNetStapleInterface::HBNetStapleInterface( ) :
 	HBNet( "HBNetStapleInterface" ),

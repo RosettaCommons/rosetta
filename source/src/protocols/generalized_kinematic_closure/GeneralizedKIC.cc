@@ -58,7 +58,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -66,7 +65,7 @@ using basic::Warning;
 namespace protocols {
 namespace generalized_kinematic_closure {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.GeneralizedKIC" );
+static basic::Tracer TR( "protocols.generalized_kinematic_closure.GeneralizedKIC" );
 
 // XRW TEMP std::string
 // XRW TEMP GeneralizedKICCreator::keyname() const

@@ -47,7 +47,7 @@
 #include <boost/assign.hpp>
 
 // C++ headers
-static THREAD_LOCAL basic::Tracer TR("protocols.denovo_design.StructureData.cxxtest");
+static basic::Tracer TR("protocols.denovo_design.StructureData.cxxtest");
 
 // --------------- Test Class --------------- //
 class StructureDataTests : public CxxTest::TestSuite {

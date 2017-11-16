@@ -34,7 +34,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.calculators.ResidueCentralityCalculator" );
+static basic::Tracer TR( "devel.denovo_design.calculators.ResidueCentralityCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

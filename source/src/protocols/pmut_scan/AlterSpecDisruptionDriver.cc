@@ -31,7 +31,7 @@
 namespace protocols {
 namespace pmut_scan {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.pmut_scan.AlterSpecDisruptionDriver" );
+static basic::Tracer TR( "protocols.pmut_scan.AlterSpecDisruptionDriver" );
 
 ///
 /// @brief

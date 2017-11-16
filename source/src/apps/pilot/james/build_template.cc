@@ -53,7 +53,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
@@ -131,9 +130,9 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( build_template );
+		// options, random initialization
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( build_template );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

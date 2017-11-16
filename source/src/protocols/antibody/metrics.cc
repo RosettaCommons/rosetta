@@ -48,7 +48,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "antibody.metrics" );
+static basic::Tracer TR( "antibody.metrics" );
 using namespace core;
 using utility::vector1;
 

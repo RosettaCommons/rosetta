@@ -47,7 +47,7 @@
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.coarse.CoarseRNA_LoopCloser" );
+static basic::Tracer TR( "protocols.rna.denovo.coarse.CoarseRNA_LoopCloser" );
 using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 using core::id::AtomID;

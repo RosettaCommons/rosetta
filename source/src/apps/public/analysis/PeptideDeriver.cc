@@ -33,7 +33,6 @@
 #include <protocols/moves/NullMover.hh>
 
 // C++ headers
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -41,7 +40,7 @@ using basic::Warning;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR("apps.public.peptide_deriver.PeptideDeriver");
+static basic::Tracer TR("apps.public.peptide_deriver.PeptideDeriver");
 
 
 // PeptideDeriver app

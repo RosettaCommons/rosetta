@@ -34,7 +34,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("CrosslinkerMoverTests");
+static basic::Tracer TR("CrosslinkerMoverTests");
 
 
 class CrosslinkerMoverTests : public CxxTest::TestSuite {

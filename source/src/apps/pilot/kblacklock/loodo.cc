@@ -78,7 +78,7 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "app.loodo" );
+static basic::Tracer TR( "app.loodo" );
 
 //protocols::forge::components::VarLengthBuild::FrameList
 //pick_fragments(

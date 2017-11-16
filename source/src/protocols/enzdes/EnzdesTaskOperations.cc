@@ -76,7 +76,7 @@ namespace enzdes {
 using namespace core::pack::task::operation;
 using namespace utility::tag;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.EnzdesTaskOperations" );
+static basic::Tracer tr( "protocols.enzdes.EnzdesTaskOperations" );
 
 SetCatalyticResPackBehavior::SetCatalyticResPackBehavior():
 	fix_catalytic_aa_(basic::options::option[basic::options::OptionKeys::enzdes::fix_catalytic_aa]),

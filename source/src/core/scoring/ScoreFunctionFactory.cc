@@ -39,9 +39,7 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <sstream>
 
-using basic::T;
-
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.ScoreFunctionFactory" );
+static basic::Tracer TR( "core.scoring.ScoreFunctionFactory" );
 
 namespace core {
 namespace scoring {
@@ -436,7 +434,7 @@ get_score_function(
 		//TR << "get_score_function2: weight set " << weight_set << std::endl;
 	}
 
-	T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION: " << utility::CSI_Green() << weight_set << utility::CSI_Reset() << std::endl;
+	TR << "SCOREFUNCTION: " << utility::CSI_Green() << weight_set << utility::CSI_Reset() << std::endl;
 
 	core::scoring::ScoreFunctionOP scorefxn;
 
@@ -446,7 +444,7 @@ get_score_function(
 	} else {
 		for ( Size ii = 1; ii <= patch_tags.size(); ++ii ) {
 			if ( patch_tags[ii]!="" ) {
-				T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION PATCH: " << patch_tags[ii] << std::endl;
+				TR << "SCOREFUNCTION PATCH: " << patch_tags[ii] << std::endl;
 			}
 		}
 		scorefxn = scoring::ScoreFunctionFactory::create_score_function( weight_set, patch_tags );
@@ -461,7 +459,7 @@ get_score_function(
 	//Turn on constraints if the user has used the auto_setup_metals flag.  Constraints are added automatically on PDB import.
 	if ( options[in::auto_setup_metals].user() ) {
 		if ( scorefxn->get_weight(metalbinding_constraint) < 1.0e-10 ) {
-			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no metalbinding_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
+			TR << "The -auto_setup_metals flag was used with no metalbinding_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
 			scorefxn->set_weight(metalbinding_constraint, 1.0); // Turn on the atom_pair_constraint weight if and only if it isn't already turned on.
 			// If it is already turned on, then the automatic constraint adder will adjust constraint strengths appropriately, which means that we
 			// don't need to set this to 1.0 -- any nonzero value is fine.

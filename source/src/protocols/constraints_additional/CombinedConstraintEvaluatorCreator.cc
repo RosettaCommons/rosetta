@@ -49,7 +49,7 @@
 #endif
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.CombinedConstraintsEvaluatorCreator" );
+static basic::Tracer tr( "protocols.evalution.CombinedConstraintsEvaluatorCreator" );
 
 namespace protocols {
 namespace constraints_additional {

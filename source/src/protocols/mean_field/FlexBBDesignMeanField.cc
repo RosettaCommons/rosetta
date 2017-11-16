@@ -40,7 +40,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR("protocols.mean_field.FlexBBDesignMeanField");
+static basic::Tracer TR("protocols.mean_field.FlexBBDesignMeanField");
 
 
 namespace protocols {

@@ -26,7 +26,7 @@
 
 using std::string;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.Scs_functor_filtering_tests");
+static basic::Tracer TR("protocols.antibody.Scs_functor_filtering_tests");
 class Scs_functor_filtering_tests : public CxxTest::TestSuite
 {
 public:

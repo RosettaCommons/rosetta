@@ -33,7 +33,7 @@ namespace grafting {
 
 using std::string;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting");
+static basic::Tracer TR("protocols.antibody.grafting");
 
 void RegEx_based_CDR_Detector::detect(AntibodySequence &A)
 {

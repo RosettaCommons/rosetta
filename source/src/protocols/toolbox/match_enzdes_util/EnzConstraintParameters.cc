@@ -71,7 +71,7 @@
 #include <sstream>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintParameters" );
+static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintParameters" );
 
 #ifdef    SERIALIZATION
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>

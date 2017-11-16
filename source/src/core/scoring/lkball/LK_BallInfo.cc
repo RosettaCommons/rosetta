@@ -84,7 +84,7 @@ namespace lkball {
 LKB_ResidueInfo::~LKB_ResidueInfo() {}
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.LK_BallInfo" );
+static basic::Tracer TR("core.scoring.methods.LK_BallInfo" );
 
 
 /// LAZY

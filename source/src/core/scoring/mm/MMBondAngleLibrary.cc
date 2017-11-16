@@ -53,11 +53,9 @@ namespace mm {
 /// @details Auto-generated virtual destructor
 MMBondAngleLibrary::~MMBondAngleLibrary() {}
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-static THREAD_LOCAL basic::Tracer TR( "core.mm.MMBondAngleLibrary" );
+static basic::Tracer TR( "core.mm.MMBondAngleLibrary" );
 
 /// @details Construct a MMBondAngleLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondAngleLibrary::MMBondAngleLibrary(

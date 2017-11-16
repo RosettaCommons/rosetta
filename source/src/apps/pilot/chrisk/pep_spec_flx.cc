@@ -165,9 +165,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-using basic::T;
-using basic::Error;
-using basic::Warning;
 
 
 using namespace core;

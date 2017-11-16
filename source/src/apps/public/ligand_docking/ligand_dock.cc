@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "ligand_dock.main" );
+static basic::Tracer TR( "ligand_dock.main" );
 
 int
 main( int argc, char * argv [] )

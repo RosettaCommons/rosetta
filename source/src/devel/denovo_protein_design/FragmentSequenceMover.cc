@@ -39,11 +39,10 @@
 
 // C++ Headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "devel.DenovoProteinDesign.FragmentSequenceMover" );
+static basic::Tracer TR( "devel.DenovoProteinDesign.FragmentSequenceMover" );
 
 namespace devel {
 namespace denovo_protein_design {
@@ -102,7 +101,7 @@ FragmentSequenceMover::FragmentSequenceMover(
 
 /// @brief
 FragmentSequenceMover::FragmentSequenceMover( core::fragment::FragSetCOP fragset, core::kinematics::MoveMapCOP movemap
-																							) : Mover(), fragset_(std::move(fragset)), movemap_(std::move(movemap))
+) : Mover(), fragset_(std::move(fragset)), movemap_(std::move(movemap))
 {
 	Mover::type( "FragmentSequenceMover" );
 }

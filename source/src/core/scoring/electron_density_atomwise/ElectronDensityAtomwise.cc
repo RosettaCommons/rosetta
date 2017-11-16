@@ -70,7 +70,7 @@ namespace electron_density_atomwise {
 using namespace core;
 using namespace basic::options;
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density_atomwise.ElectronDensityAtomwise" );
+static basic::Tracer TR( "core.scoring.electron_density_atomwise.ElectronDensityAtomwise" );
 
 
 /// null constructor

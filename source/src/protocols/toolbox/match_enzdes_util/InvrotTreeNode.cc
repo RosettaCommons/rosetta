@@ -42,7 +42,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.InvrotTreeNode" );
+static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.InvrotTreeNode" );
 
 InvrotTreeNode::InvrotTreeNode( InvrotTreeNodeBaseCAP parent )
 : InvrotTreeNodeBase( parent ),

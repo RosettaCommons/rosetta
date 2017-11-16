@@ -41,7 +41,7 @@
 namespace basic {
 namespace options {
 
-static THREAD_LOCAL basic::Tracer TR( "basic.options" );
+static basic::Tracer TR( "basic.options" );
 
 /// @details OptionCollection global
 utility::options::OptionCollection option;

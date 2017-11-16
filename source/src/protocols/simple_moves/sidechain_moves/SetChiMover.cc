@@ -43,7 +43,7 @@ using namespace std;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SetChiMover" );
+static basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SetChiMover" );
 
 // XRW TEMP std::string
 // XRW TEMP SetChiMoverCreator::keyname() const

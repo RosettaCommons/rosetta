@@ -73,7 +73,7 @@ namespace scoring {
 namespace methods {
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.RamaPreProEnergy" );
+static basic::Tracer TR( "core.scoring.RamaPreProEnergy" );
 
 //////////////////////
 /// EnergyMethod Creator

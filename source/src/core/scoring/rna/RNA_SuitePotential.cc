@@ -33,7 +33,7 @@
 // Utility Headers
 #include <utility/io/izstream.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNA_SuitePotential", basic::t_info );
+static basic::Tracer TR( "core.scoring.rna.RNA_SuitePotential", basic::t_info );
 
 using namespace boost::numeric;
 using namespace core::chemical;

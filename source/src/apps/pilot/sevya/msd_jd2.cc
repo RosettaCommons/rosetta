@@ -25,7 +25,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
-static THREAD_LOCAL basic::Tracer TR("msd_jd2.main");
+static basic::Tracer TR("msd_jd2.main");
 
 int
 main( int argc, char * argv [] )

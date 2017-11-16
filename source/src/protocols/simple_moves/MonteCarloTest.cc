@@ -39,7 +39,7 @@
 
 //// C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MonteCarloTest" );
+static basic::Tracer TR( "protocols.simple_moves.MonteCarloTest" );
 
 using namespace core;
 using namespace protocols::moves;

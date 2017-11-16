@@ -29,7 +29,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.alt_codes_io" );
+static basic::Tracer TR( "core.io.pdb.alt_codes_io" );
 
 
 namespace core {

@@ -31,7 +31,7 @@
 
 #include <protocols/moves/PyMOLMover.hh>
 
-static THREAD_LOCAL basic::Tracer TR("PyMOLMoverTest");
+static basic::Tracer TR("PyMOLMoverTest");
 
 
 class PyMOLMoverTest : public CxxTest::TestSuite {

@@ -49,7 +49,7 @@ namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.pose_inputter.PDBPoseInputter" );
+static basic::Tracer TR( "protocols.jd3.pose_inputter.PDBPoseInputter" );
 
 
 PDBPoseInputter::PDBPoseInputter() {}

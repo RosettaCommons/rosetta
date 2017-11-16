@@ -26,9 +26,7 @@
 
 // C++ Headers
 
-using basic::T;
-using basic::Tracer;
-static THREAD_LOCAL basic::Tracer TR("core.scoring.fiber_diffraction.xray_scattering");
+static basic::Tracer TR("core.scoring.fiber_diffraction.xray_scattering");
 
 
 #ifdef    SERIALIZATION

@@ -43,7 +43,7 @@
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.residue_support" );
+static basic::Tracer TR( "core.chemical.residue_support" );
 
 ObjexxFCL::FArray2D_int
 get_residue_path_distances( ResidueType const & res )

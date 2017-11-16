@@ -46,7 +46,7 @@ using namespace ObjexxFCL::format;
 namespace protocols {
 namespace wum {
 
-static THREAD_LOCAL basic::Tracer TR( "MPI_WUM" );
+static basic::Tracer TR( "MPI_WUM" );
 
 int mpi_rank(){
 	int mpi_rank_=0;

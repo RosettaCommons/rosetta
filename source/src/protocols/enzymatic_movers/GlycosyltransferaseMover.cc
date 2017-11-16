@@ -37,7 +37,7 @@
 
 
 // Construct tracers.
-static THREAD_LOCAL basic::Tracer TR( "protocols.enzymatic_movers.GlycosyltransferaseMover" );
+static basic::Tracer TR( "protocols.enzymatic_movers.GlycosyltransferaseMover" );
 
 
 namespace protocols {

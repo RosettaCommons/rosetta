@@ -47,7 +47,7 @@ using namespace core;
 using namespace protocols::loops;
 using namespace protocols::forge::methods;
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.weitzner.long_loop" );
+static basic::Tracer TR( "pilot_apps.weitzner.long_loop" );
 
 LoopsOP
 read_loops_from_text_file() {
@@ -68,8 +68,7 @@ set_all_loop_dihedrals_to_180( pose::PoseOP pose, const Loops::LoopList & loop_l
 	TR << "Setting all loop dihedrals to 180 degrees (opening the loop)." << std::endl;
 
 	Real my_dihedral = 180.;
-	for(Size i=loop_list[1].start(); i <= loop_list[1].stop(); i++)
-	{
+	for ( Size i=loop_list[1].start(); i <= loop_list[1].stop(); i++ ) {
 		pose->set_phi(i, my_dihedral);
 		pose->set_psi(i, my_dihedral);
 	}
@@ -117,8 +116,8 @@ main( int argc, char * argv [] ) {
 
 	try {
 
-	devel::init(argc, argv);
-	protocols::viewer::viewer_main( my_main );
+		devel::init(argc, argv);
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -57,7 +57,7 @@
 namespace core {
 namespace util {
 
-static THREAD_LOCAL basic::Tracer TR( "core.util.switchresiduetypeset" );
+static basic::Tracer TR( "core.util.switchresiduetypeset" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details the function allows a pose to use a different residue_type_set to represent all its residues,

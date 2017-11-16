@@ -46,11 +46,10 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.DockingEnsemble" );
+static basic::Tracer TR( "protocols.moves.DockingEnsemble" );
 
 namespace protocols {
 namespace docking {

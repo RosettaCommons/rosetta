@@ -28,7 +28,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.range_relax" );
+static basic::Tracer TR( "apps.pilot.jkleman.range_relax" );
 
 //////////////////////////////////////////////////////////////////////
 

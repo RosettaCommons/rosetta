@@ -136,88 +136,88 @@ using protocols::scoring::ImplicitFastClashCheck;
 using core::pose::Pose;
 using core::conformation::ResidueOP;
 
-static THREAD_LOCAL basic::Tracer TR( "CXdock" );
+static basic::Tracer TR( "CXdock" );
 static core::io::silent::SilentFileData sfd;
 
 // computes the fast slide-into-contact between point counds pa & pb
 // separate cb lists... could be more efficient
 // 2*BIN is the min. contact distance.. same for all points
 Real sicfast(
-  vector1<Vec> & pa , vector1<Vec> & pb ,
-  vector1<Vec> & cba, vector1<Vec> & cbb,
-  const double contact_dis,
-  Size & cbcount // output arg!!!
+	vector1<Vec> & pa , vector1<Vec> & pb ,
+	vector1<Vec> & cba, vector1<Vec> & cbb,
+	const double contact_dis,
+	Size & cbcount // output arg!!!
 ){
-  const Real BIN = contact_dis / 2.0;
-  // get bounds for plane hashes
-  double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
-  for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-    xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
-    ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
-  }
-  for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-    xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
-    ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
-  }
-  xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
-  ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
-  int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
-  int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
+	const Real BIN = contact_dis / 2.0;
+	// get bounds for plane hashes
+	double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
+	for ( vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia ) {
+		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
+		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
+	}
+	for ( vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib ) {
+		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
+		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
+	}
+	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
+	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
+	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
+	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
 
-  // insert points into hashes
-  int const xsize = xub-xlb+1;
-  int const ysize = yub-ylb+1;
-  ObjexxFCL::FArray2D<Vec> ha(xsize,ysize,Vec(0,0,-9e9)),hb(xsize,ysize,Vec(0,0,9e9));
-  for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-    int const ix = (int)ceil(ia->x()/BIN)-xlb;
-    int const iy = (int)ceil(ia->y()/BIN)-ylb;
-    if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-    if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
-  }
-  for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-    int const ix = (int)ceil(ib->x()/BIN)-xlb;
-    int const iy = (int)ceil(ib->y()/BIN)-ylb;
-    if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-    if( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
-  }
-  // check hashes for min dis
-  double mindis = 9e9;
-  for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-    for(int j = 1; j <= ysize; ++j) {
-      for(int k = -2; k <= 2; ++k) {
-        if(i+k < 1 || i+k > xsize) continue;
-        for(int l = -2; l <= 2; ++l) {
-          if(j+l < 1 || j+l > ysize) continue;
-          double const xa = ha(i  ,j  ).x();
-          double const ya = ha(i  ,j  ).y();
-          double const xb = hb(i+k,j+l).x();
-          double const yb = hb(i+k,j+l).y();
-          double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
-          if( d2 < BIN*BIN*4.0 ) {
-            double dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(BIN*BIN*4.0-d2);
-            mindis = min(dz,mindis);
-          }
-        }
-      }
-    }
-  }
-  // cb contact count... could be another objective func is better
-  cbcount = 0;
-  for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
-    for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-      if( ib->distance_squared( (*ia) + (mindis*Vec(0,0,1)) ) < CONTACT_D2 ) {
-        cbcount++;
-      }
-    }
-  }
-  return cbcount;
+	// insert points into hashes
+	int const xsize = xub-xlb+1;
+	int const ysize = yub-ylb+1;
+	ObjexxFCL::FArray2D<Vec> ha(xsize,ysize,Vec(0,0,-9e9)),hb(xsize,ysize,Vec(0,0,9e9));
+	for ( vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia ) {
+		int const ix = (int)ceil(ia->x()/BIN)-xlb;
+		int const iy = (int)ceil(ia->y()/BIN)-ylb;
+		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+		if ( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
+	}
+	for ( vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib ) {
+		int const ix = (int)ceil(ib->x()/BIN)-xlb;
+		int const iy = (int)ceil(ib->y()/BIN)-ylb;
+		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+		if ( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
+	}
+	// check hashes for min dis
+	double mindis = 9e9;
+	for ( int i = 1; i <= xsize; ++i ) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+		for ( int j = 1; j <= ysize; ++j ) {
+			for ( int k = -2; k <= 2; ++k ) {
+				if ( i+k < 1 || i+k > xsize ) continue;
+				for ( int l = -2; l <= 2; ++l ) {
+					if ( j+l < 1 || j+l > ysize ) continue;
+					double const xa = ha(i  ,j  ).x();
+					double const ya = ha(i  ,j  ).y();
+					double const xb = hb(i+k,j+l).x();
+					double const yb = hb(i+k,j+l).y();
+					double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
+					if ( d2 < BIN*BIN*4.0 ) {
+						double dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(BIN*BIN*4.0-d2);
+						mindis = min(dz,mindis);
+					}
+				}
+			}
+		}
+	}
+	// cb contact count... could be another objective func is better
+	cbcount = 0;
+	for ( vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia ) {
+		for ( vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib ) {
+			if ( ib->distance_squared( (*ia) + (mindis*Vec(0,0,1)) ) < CONTACT_D2 ) {
+				cbcount++;
+			}
+		}
+	}
+	return cbcount;
 }
 
 // basic info for a "hit"
 struct Hit {
-  int iss,irt,cbc,sym;
-  core::kinematics::Stub s1,s2;
-  Hit(int is, int ir, int cb, int sm) : iss(is),irt(ir),cbc(cb),sym(sm) {}
+	int iss,irt,cbc,sym;
+	core::kinematics::Stub s1,s2;
+	Hit(int is, int ir, int cb, int sm) : iss(is),irt(ir),cbc(cb),sym(sm) {}
 };
 bool cmp(Hit i,Hit j) { return i.cbc > j.cbc; }
 
@@ -225,76 +225,77 @@ bool cmp(Hit i,Hit j) { return i.cbc > j.cbc; }
 // dock against rotated-self, rotation based on sym
 void dock(Pose const init, std::string const & fn, vector1<xyzVector<double> > const & ssamp) {
 
-  // rotation angle samples.. in theory, should NOT be evenly spaced but this is simpler
-  // probably "wastes" 1/3 of calculation with extra resolution at small rotations (somewhat
-  // redundant with close axes of rot. from sphere points)
-  vector1<double> asamp; for(Real i = 0; i < 180; ++i) asamp.push_back(i);
+	// rotation angle samples.. in theory, should NOT be evenly spaced but this is simpler
+	// probably "wastes" 1/3 of calculation with extra resolution at small rotations (somewhat
+	// redundant with close axes of rot. from sphere points)
+	vector1<double> asamp; for ( Real i = 0; i < 180; ++i ) asamp.push_back(i);
 
-  // cache initial BB and CB coords (if no CB, use CA)
-  vector1<Vec> bb0,cb0;
-  for(int ir = 1; ir <= init.size(); ++ir) {
-    if(!init.residue(ir).is_protein()) continue;
-    for(int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia) bb0.push_back(init.xyz(AtomID(ia,ir)));
-    // only count helix CBs!!!!!!!!!!
-    if(init.secstruct(ir)=='H') cb0.push_back(init.xyz(AtomID(((init.residue(ir).has("CB"))?5:4),ir)));
-  }
+	// cache initial BB and CB coords (if no CB, use CA)
+	vector1<Vec> bb0,cb0;
+	for ( int ir = 1; ir <= init.size(); ++ir ) {
+		if ( !init.residue(ir).is_protein() ) continue;
+		for ( int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia ) bb0.push_back(init.xyz(AtomID(ia,ir)));
+		// only count helix CBs!!!!!!!!!!
+		if ( init.secstruct(ir)=='H' ) cb0.push_back(init.xyz(AtomID(((init.residue(ir).has("CB"))?5:4),ir)));
+	}
 
-  // searches for CX, X in 2...NSYM
-  TR << "searching symmetries C"<<C_LO<<" to C"<<C_HI<<"."<<std::endl;
-  vector1<Mat> Rsym(C_HI,Mat::identity());
-  for(int ic = C_LO; ic <= C_HI; ic++) Rsym[ic] = rotation_matrix_degrees(Vec(1,0,0),360.0/Real(ic));
-  vector1<vector1<Hit> > hits(C_HI); // bit wasteful... whatever
-  // loop over axes
-  for(int iss = 1; iss <= ssamp.size(); ++iss) { // loop over sphere samples "ssamp"
-    // status message
-    if(iss%100==0) { TR << iss << " of " << NSS << " Nhits:"; for(int ic = C_LO; ic <= C_HI; ic++) TR << " " << hits[ic].size(); TR <<std::endl; }
-    // axis of rot from sphere surf samples
-    Vec axs = ssamp[iss];
-    // loop axis of rot from sphere surf samples
-    for(int irt = 1; irt <= asamp.size(); ++irt) {
-      // set up point cloud A
-      Mat const R = rotation_matrix_degrees( axs, asamp[irt] );
-      vector1<Vec> bb1 = bb0;
-      vector1<Vec> cb1 = cb0;
-      for(vector1<Vec>::iterator i = bb1.begin(); i != bb1.end(); ++i) *i = R*(*i);
-      for(vector1<Vec>::iterator i = cb1.begin(); i != cb1.end(); ++i) *i = R*(*i);
-      for(int ic = C_LO; ic <= C_HI; ic++) {
-        // set up point cloud B
-        vector1<Vec> bb2 = bb1;
-        vector1<Vec> cb2 = cb1;
-        for(vector1<Vec>::iterator i = bb2.begin(); i != bb2.end(); ++i) *i = Rsym[ic]*(*i);
-        for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*(*i);
-        // fast slide-into-contact along Z
-        Size cbc = 0;
-        Real t = sicfast(bb1,bb2,cb1,cb2,CONTACT_DIS,cbc);
-        // remember if good
-        if(cbc >= CONTACT_TH) {
-          Hit h(iss,irt,cbc,ic);
-          h.s1.from_four_points(bb1[1],bb1[1],bb1[2],bb1[3]);
-          h.s2.from_four_points(bb2[1],bb2[1],bb2[2],bb2[3]);
-          h.s1.v += t*Vec(0,0,1);
-          hits[ic].push_back(h);
-        }
-      }
-    }
-  }
+	// searches for CX, X in 2...NSYM
+	TR << "searching symmetries C"<<C_LO<<" to C"<<C_HI<<"."<<std::endl;
+	vector1<Mat> Rsym(C_HI,Mat::identity());
+	for ( int ic = C_LO; ic <= C_HI; ic++ ) Rsym[ic] = rotation_matrix_degrees(Vec(1,0,0),360.0/Real(ic));
+	vector1<vector1<Hit> > hits(C_HI); // bit wasteful... whatever
+	// loop over axes
+	for ( int iss = 1; iss <= ssamp.size(); ++iss ) { // loop over sphere samples "ssamp"
+		// status message
+		if ( iss%100==0 ) { TR << iss << " of " << NSS << " Nhits:"; for ( int ic = C_LO; ic <= C_HI; ic++ ) TR << " " << hits[ic].size();
+			TR <<std::endl; }
+		// axis of rot from sphere surf samples
+		Vec axs = ssamp[iss];
+		// loop axis of rot from sphere surf samples
+		for ( int irt = 1; irt <= asamp.size(); ++irt ) {
+			// set up point cloud A
+			Mat const R = rotation_matrix_degrees( axs, asamp[irt] );
+			vector1<Vec> bb1 = bb0;
+			vector1<Vec> cb1 = cb0;
+			for ( vector1<Vec>::iterator i = bb1.begin(); i != bb1.end(); ++i ) *i = R*(*i);
+			for ( vector1<Vec>::iterator i = cb1.begin(); i != cb1.end(); ++i ) *i = R*(*i);
+			for ( int ic = C_LO; ic <= C_HI; ic++ ) {
+				// set up point cloud B
+				vector1<Vec> bb2 = bb1;
+				vector1<Vec> cb2 = cb1;
+				for ( vector1<Vec>::iterator i = bb2.begin(); i != bb2.end(); ++i ) *i = Rsym[ic]*(*i);
+				for ( vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = Rsym[ic]*(*i);
+				// fast slide-into-contact along Z
+				Size cbc = 0;
+				Real t = sicfast(bb1,bb2,cb1,cb2,CONTACT_DIS,cbc);
+				// remember if good
+				if ( cbc >= CONTACT_TH ) {
+					Hit h(iss,irt,cbc,ic);
+					h.s1.from_four_points(bb1[1],bb1[1],bb1[2],bb1[3]);
+					h.s2.from_four_points(bb2[1],bb2[1],bb2[2],bb2[3]);
+					h.s1.v += t*Vec(0,0,1);
+					hits[ic].push_back(h);
+				}
+			}
+		}
+	}
 
-  // report top 10 hits by CB count
-  for(int ic = C_LO; ic <= C_HI; ic++) {
-    std::sort(hits[ic].begin(),hits[ic].end(),cmp);
-    for(int i = 1; i <= min((Size)10,hits[ic].size()); ++i) {
-      Hit & h(hits[ic][i]);
-      cout << "RESULT " << fn << " " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.cbc << endl;
-    }
-  }
+	// report top 10 hits by CB count
+	for ( int ic = C_LO; ic <= C_HI; ic++ ) {
+		std::sort(hits[ic].begin(),hits[ic].end(),cmp);
+		for ( int i = 1; i <= min((Size)10,hits[ic].size()); ++i ) {
+			Hit & h(hits[ic][i]);
+			cout << "RESULT " << fn << " " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.cbc << endl;
+		}
+	}
 
-  // for testing, dump first hit
-  Pose p(init),q(init);
-  core::kinematics::Stub s(init.xyz(AtomID(1,1)),init.xyz(AtomID(2,1)),init.xyz(AtomID(3,1)));
-  xform_pose_rev(p,s); xform_pose(p,hits[C_LO][1].s1);
-  xform_pose_rev(q,s); xform_pose(q,hits[C_LO][1].s2);
-  p.dump_pdb(utility::file_basename(fn)+"_hit1_A.pdb");
-  q.dump_pdb(utility::file_basename(fn)+"_hit1_B.pdb");
+	// for testing, dump first hit
+	Pose p(init),q(init);
+	core::kinematics::Stub s(init.xyz(AtomID(1,1)),init.xyz(AtomID(2,1)),init.xyz(AtomID(3,1)));
+	xform_pose_rev(p,s); xform_pose(p,hits[C_LO][1].s1);
+	xform_pose_rev(q,s); xform_pose(q,hits[C_LO][1].s2);
+	p.dump_pdb(utility::file_basename(fn)+"_hit1_A.pdb");
+	q.dump_pdb(utility::file_basename(fn)+"_hit1_B.pdb");
 
 }
 
@@ -302,42 +303,42 @@ int main(int argc, char *argv[]) {
 
 	try {
 
-  devel::init(argc,argv);
-  using namespace basic::options::OptionKeys;
+		devel::init(argc,argv);
+		using namespace basic::options::OptionKeys;
 
-  vector1<xyzVector<double> > ssamp(NSS);
-  {
-    izstream is;
-    basic::database::open(is,"geometry/sphere_"+str(NSS)+".dat");
-    for(int i = 1; i <= NSS; ++i) {
-      double x,y,z;
-      is >> x >> y >> z;
-      ssamp[i] = xyzVector<double>(x,y,z);
-    }
-    is.close();
-  }
+		vector1<xyzVector<double> > ssamp(NSS);
+		{
+			izstream is;
+			basic::database::open(is,"geometry/sphere_"+str(NSS)+".dat");
+			for ( int i = 1; i <= NSS; ++i ) {
+				double x,y,z;
+				is >> x >> y >> z;
+				ssamp[i] = xyzVector<double>(x,y,z);
+			}
+			is.close();
+		}
 
-  for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
-    string fn = option[in::file::s]()[ifn];
-    Pose pnat;
-    TR << "searching " << fn << std::endl;
-    core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
-    trans_pose(pnat,-center_of_geom(pnat,1,pnat.size()));
-    core::scoring::dssp::Dssp dssp(pnat);
-    dssp.insert_ss_into_pose(pnat);
-    if( pnat.size() > 200 ) continue;
-    Size cyscnt=0, nhelix=0;
-    for(Size ir = 2; ir <= pnat.size()-1; ++ir) {
-      if(pnat.secstruct(ir) == 'H') nhelix++;
-      //if(!pnat.residue(ir).is_protein()) goto cont1;
-      if(pnat.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
-      if(pnat.residue(ir).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
-      if(pnat.residue(ir).name3()=="CYS") { if(++cyscnt > 3) goto cont1; }
-    } goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
-    if( nhelix < 20 ) continue;
-    Pose pala(pnat);
-    dock(pala,fn,ssamp);
-  }
+		for ( Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn ) {
+			string fn = option[in::file::s]()[ifn];
+			Pose pnat;
+			TR << "searching " << fn << std::endl;
+			core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
+			trans_pose(pnat,-center_of_geom(pnat,1,pnat.size()));
+			core::scoring::dssp::Dssp dssp(pnat);
+			dssp.insert_ss_into_pose(pnat);
+			if ( pnat.size() > 200 ) continue;
+			Size cyscnt=0, nhelix=0;
+			for ( Size ir = 2; ir <= pnat.size()-1; ++ir ) {
+				if ( pnat.secstruct(ir) == 'H' ) nhelix++;
+				//if(!pnat.residue(ir).is_protein()) goto cont1;
+				if ( pnat.residue(ir).is_lower_terminus() ) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
+				if ( pnat.residue(ir).is_upper_terminus() ) remove_upper_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
+				if ( pnat.residue(ir).name3()=="CYS" ) { if ( ++cyscnt > 3 ) goto cont1; }
+			} goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
+			if ( nhelix < 20 ) continue;
+			Pose pala(pnat);
+			dock(pala,fn,ssamp);
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

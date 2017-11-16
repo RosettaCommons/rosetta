@@ -47,7 +47,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer trProfScore(
+static basic::Tracer trProfScore(
 	"protocols.frag_picker.scores.ProfileScore");
 
 ProfileScore::~ProfileScore() {}

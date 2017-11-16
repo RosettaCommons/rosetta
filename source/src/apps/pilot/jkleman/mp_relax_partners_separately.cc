@@ -23,7 +23,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mp_relax_partners_separately" );
+static basic::Tracer TR( "apps.pilot.jkleman.mp_relax_partners_separately" );
 
 //////////////////////////////////////////////////////////////////////
 

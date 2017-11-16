@@ -59,7 +59,7 @@ using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.trajectory.DbTrajectoryWriter" );
+static basic::Tracer TR( "protocols.trajectory.DbTrajectoryWriter" );
 // }}}1
 
 DbTrajectoryWriter::DbTrajectoryWriter( // {{{1

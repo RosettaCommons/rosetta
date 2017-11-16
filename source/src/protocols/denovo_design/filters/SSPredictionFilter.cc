@@ -39,7 +39,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.filters.SSPredictionfilter" );
+static basic::Tracer TR( "protocols.denovo_design.filters.SSPredictionfilter" );
 
 namespace protocols {
 namespace denovo_design {

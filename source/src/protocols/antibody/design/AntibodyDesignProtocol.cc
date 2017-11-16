@@ -64,7 +64,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.design.AntibodyDesignProtocol" );
+static basic::Tracer TR( "protocols.antibody.design.AntibodyDesignProtocol" );
 namespace protocols {
 namespace antibody {
 namespace design {

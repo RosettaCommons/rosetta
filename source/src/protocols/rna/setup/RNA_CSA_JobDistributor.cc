@@ -33,7 +33,7 @@
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.setup.RNA_CSA_JobDistributor" );
+static basic::Tracer TR( "protocols.rna.setup.RNA_CSA_JobDistributor" );
 
 using namespace core;
 using namespace core::io::silent;

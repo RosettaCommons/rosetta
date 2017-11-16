@@ -39,7 +39,7 @@
 // C++ header
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR("core.io.NomenclatureManagerTests.cxxtest");
+static basic::Tracer TR("core.io.NomenclatureManagerTests.cxxtest");
 
 // Without the command line (wocl)
 class NomenclatureManagerTestsWOCL : public CxxTest::TestSuite {

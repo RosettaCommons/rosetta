@@ -74,11 +74,10 @@
 using namespace ObjexxFCL::format;
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyModelerProtocol" );
+static basic::Tracer TR( "protocols.antibody.AntibodyModelerProtocol" );
 using namespace core;
 
 namespace protocols {

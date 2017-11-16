@@ -44,7 +44,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PDBReloadMover" );
+static basic::Tracer TR( "protocols.simple_moves.PDBReloadMover" );
 
 // XRW TEMP std::string
 // XRW TEMP PDBReloadMoverCreator::keyname() const

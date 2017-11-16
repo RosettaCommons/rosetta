@@ -36,7 +36,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr( "protocols.filters.RangeFilter" );
+static basic::Tracer tr( "protocols.filters.RangeFilter" );
 
 namespace protocols {
 namespace simple_filters {

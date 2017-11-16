@@ -36,7 +36,7 @@
 #include <utility/tag/Tag.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.ResidueTypeConstraintGenerator" );
+static basic::Tracer TR( "protocols.constraint_generator.ResidueTypeConstraintGenerator" );
 
 namespace protocols {
 namespace constraint_generator {

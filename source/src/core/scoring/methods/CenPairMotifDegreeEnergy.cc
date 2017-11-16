@@ -48,7 +48,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.CenPairMotifDegreeEnergy" );
+static basic::Tracer TR( "core.scoring.CenPairMotifDegreeEnergy" );
 
 using namespace core::scoring::motif;
 using utility::vector1;

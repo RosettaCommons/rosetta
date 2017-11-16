@@ -101,7 +101,7 @@ using utility::vector1;
 
 namespace protocols {
 namespace simple_moves {
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.RepeatPropagationMover" );
+static basic::Tracer TR( "protocols.simple_moves.RepeatPropagationMover" );
 // XRW TEMP std::string RepeatPropagationMoverCreator::keyname() const
 // XRW TEMP {
 // XRW TEMP  return RepeatPropagationMover::mover_name();

@@ -54,7 +54,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack" );
+static basic::Tracer TR( "core.pack.dunbrack" );
 
 Real const SingleResidueDunbrackLibrary::NEUTRAL_PHI = -90; // R++ value.  Roland Dunbrack suggests -60.
 Real const SingleResidueDunbrackLibrary::NEUTRAL_PSI = 130; // R++ value.  Roland Dunbrack suggests  60.

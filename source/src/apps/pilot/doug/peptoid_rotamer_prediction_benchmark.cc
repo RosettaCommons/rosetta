@@ -71,7 +71,7 @@
 #include <map>
 
 // tracer
-static THREAD_LOCAL basic::Tracer TR( "PeptoidRotamerRecoverer" );
+static basic::Tracer TR( "PeptoidRotamerRecoverer" );
 
 // local options
 basic::options::BooleanOptionKey const cyclic( "cyclic" );
@@ -90,9 +90,9 @@ get_symm_corrected_angle( core::Size chi_num, core::conformation::Residue res )
 	// if else chain of all symm side chains that we can model in the peptoid databank
 	if ( res_type_name3 == "601" && chi_num == 2 && temp_chi >= 135 && temp_chi <= 315 ) {
 		return temp_chi - 180;
-	}	else if ( res_type_name3 == "101" && chi_num == 2 && temp_chi >= 135 && temp_chi <= 315 ) {
+	} else if ( res_type_name3 == "101" && chi_num == 2 && temp_chi >= 135 && temp_chi <= 315 ) {
 		return temp_chi - 180;
-	}	else if ( res_type_name3 == "401" && chi_num == 3 && temp_chi >= 135 && temp_chi <= 315 ) {
+	} else if ( res_type_name3 == "401" && chi_num == 3 && temp_chi >= 135 && temp_chi <= 315 ) {
 		return temp_chi - 180;
 	} else {
 		return res.chi( chi_num );
@@ -122,7 +122,7 @@ calc_dist( core::conformation::Residue res1, core::conformation::Residue res2 )
 	Size nchi( res1.type().nchi() );
 	Real sd( 0 );
 
-	for( Size i( 1 ); i <= nchi; ++i ) {
+	for ( Size i( 1 ); i <= nchi; ++i ) {
 		sd += pow( angle_diff( get_symm_corrected_angle( i, res1 ), get_symm_corrected_angle( i, res2 ) ), 2 );
 	}
 
@@ -133,25 +133,25 @@ calc_dist( core::conformation::Residue res1, core::conformation::Residue res2 )
 // super simple class to grab and print stuff
 class PeptoidRotamerRecoverer : public protocols::moves::Mover {
 public:
-// ctor
-PeptoidRotamerRecoverer( bool cyclic );
+	// ctor
+	PeptoidRotamerRecoverer( bool cyclic );
 
-//dtor
-virtual ~PeptoidRotamerRecoverer(){}
+	//dtor
+	virtual ~PeptoidRotamerRecoverer(){}
 
-// mover interface
-virtual void apply( core::pose::Pose & pose );
-virtual std::string get_name() const { return "PeptoidRotamerRecoverer"; }
-virtual protocols::moves::MoverOP clone() const { return new PeptoidRotamerRecoverer( *this ); }
-virtual protocols::moves::MoverOP fresh_instance() const { return clone(); }
+	// mover interface
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "PeptoidRotamerRecoverer"; }
+	virtual protocols::moves::MoverOP clone() const { return new PeptoidRotamerRecoverer( *this ); }
+	virtual protocols::moves::MoverOP fresh_instance() const { return clone(); }
 
 private:
-bool cyclic_;
+	bool cyclic_;
 
 };
 
 PeptoidRotamerRecoverer::PeptoidRotamerRecoverer( bool cyclic ) :
-  cyclic_( cyclic )
+	cyclic_( cyclic )
 {}
 
 void
@@ -161,8 +161,8 @@ PeptoidRotamerRecoverer::apply( core::pose::Pose & pose )
 	using namespace pose;
 	using namespace conformation;
 	using namespace chemical;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys::packing;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::packing;
 
 	// first copy the original pose
 	Pose orig_pose( pose );
@@ -196,7 +196,7 @@ PeptoidRotamerRecoverer::apply( core::pose::Pose & pose )
 	Size x1x2_correct( 0 );
 	Real const max_diff( 30 );
 
-	for( Size i( 1 ); i <= pose.size(); ++i ) { // total residue might not be compatible with symetric poses
+	for ( Size i( 1 ); i <= pose.size(); ++i ) { // total residue might not be compatible with symetric poses
 
 		Size chain_id( orig_pose.residue( i ).chain() );
 		bool chain_match( false );
@@ -213,17 +213,17 @@ PeptoidRotamerRecoverer::apply( core::pose::Pose & pose )
 			conformation::Residue res_orig( orig_pose.residue( i ) ) ;
 			conformation::Residue res_pack( pose.residue( i ) ) ;
 
-			if( res_orig.type().nchi() >= 1 ) {
+			if ( res_orig.type().nchi() >= 1 ) {
 				x1_total++;
 				Real x1_diff( angle_diff( get_symm_corrected_angle( 1, res_orig ), get_symm_corrected_angle( 1, res_pack ) ) );
-				if( x1_diff <= max_diff ) x1_correct++;
+				if ( x1_diff <= max_diff ) x1_correct++;
 			}
 
-			if( res_orig.type().nchi() >= 2 ) {
+			if ( res_orig.type().nchi() >= 2 ) {
 				x1x2_total++;
 				Real x1_diff( angle_diff( get_symm_corrected_angle( 1, res_orig ), get_symm_corrected_angle( 1, res_pack ) ) );
 				Real x2_diff( angle_diff( get_symm_corrected_angle( 2, res_orig ), get_symm_corrected_angle( 2, res_pack ) ) );
-				if( ( x1_diff <= max_diff ) && (x2_diff <= max_diff ) ) x1x2_correct++;
+				if ( ( x1_diff <= max_diff ) && (x2_diff <= max_diff ) ) x1x2_correct++;
 			}
 		}
 	}
@@ -238,22 +238,22 @@ typedef utility::pointer::owning_ptr< PeptoidRotamerRecoverer > PeptoidRotamerRe
 int
 main( int argc, char * argv [] )
 {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys::cyclization;
-  using namespace protocols::simple_moves;
-  using namespace protocols::moves;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::cyclization;
+	using namespace protocols::simple_moves;
+	using namespace protocols::moves;
 
-  // add local options
- 	option.add( cyclic, "cyclic" ).def("False");
+	// add local options
+	option.add( cyclic, "cyclic" ).def("False");
 	option.add( chains_to_compare, "chains_to_compare");
 
-  // init
-  devel::init( argc, argv );
+	// init
+	devel::init( argc, argv );
 
 	// setup sequence mover
 	SequenceMoverOP sm( new SequenceMover() );
 
-  // setup the cyclization mover(s) ( just add patches and constraints don't minimize )
+	// setup the cyclization mover(s) ( just add patches and constraints don't minimize )
 	if ( option[chains_to_cyclize].user() && option[cyclic].value() == true ) {
 		core::Size num_cyclic_chains( option[chains_to_cyclize].value().size() );
 		for ( core::Size i(1); i <= num_cyclic_chains; ++i ) {
@@ -265,12 +265,12 @@ main( int argc, char * argv [] )
 	PeptoidRotamerRecovererOP prr( new PeptoidRotamerRecoverer( option[cyclic].value() ) );
 	sm->add_mover( prr );
 
-  // go go go
-  protocols::jd2::JobDistributor::get_instance()->go( sm );
+	// go go go
+	protocols::jd2::JobDistributor::get_instance()->go( sm );
 
-  TR << "\n+-----------------------------------------------------------------+\n"
-     <<   "|                              DONE                               |\n"
-     <<   "+-----------------------------------------------------------------+" << std::endl;
+	TR << "\n+-----------------------------------------------------------------+\n"
+		<<   "|                              DONE                               |\n"
+		<<   "+-----------------------------------------------------------------+" << std::endl;
 
-  return 0;
+	return 0;
 }

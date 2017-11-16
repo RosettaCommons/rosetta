@@ -41,7 +41,7 @@
 #include <core/import_pose/import_pose.hh>
 // #include <protocols/constraint_generator/AtomPairConstraintGenerator.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.struct_fragment_app" );
+static basic::Tracer TR( "apps.struct_fragment_app" );
 
 // Declaring namespaces
 // Alias namespaces are used to keep track of the source of the functions/objects
@@ -75,10 +75,10 @@ main( int argc, char* argv [] )
 		// The Template PDB is provided with -in:file:s option
 		// This option is MANDATORY and will rise an exeption if not provided
 		// if ( !bo::option[ oi::s ].user() ) {
-		// 	std::string msg = "A Template PDB file must be provided through the -in:file:s option";
-		// 	throw ue::EXCN_Msg_Exception( msg );
+		//  std::string msg = "A Template PDB file must be provided through the -in:file:s option";
+		//  throw ue::EXCN_Msg_Exception( msg );
 		// }
-    core::pose::Pose pose;
+		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose , "obj01.pdb" );
 		// // Prepare Sequence of Events
 		// if ( bo::option[ of::native_ca_cst ].user() ) {}
@@ -127,20 +127,20 @@ main( int argc, char* argv [] )
 		// TR << large.nr_frames() << std::endl;
 
 		// if ( testMap.has( "StructFragmentMover" ) ) {
-		// 	TR << "category found" << std::endl;
+		//  TR << "category found" << std::endl;
 		// }
 		//
 		// if ( testMap.has( "StructFragmentMover", "large" ) ) {
-		// 	TR << "category and name found" << std::endl;
-		// 	// core::fragment::ConstantLengthFragSet output = testMap.get<core::fragment::ConstantLengthFragSet>( "StructFragmentMover", "Fragments");
-		// 	core::fragment::ConstantLengthFragSet small = testMap.get<core::fragment::ConstantLengthFragSet >( "StructFragmentMover", "small");
-		// 	core::fragment::ConstantLengthFragSet large = testMap.get<core::fragment::ConstantLengthFragSet >( "StructFragmentMover", "large");
+		//  TR << "category and name found" << std::endl;
+		//  // core::fragment::ConstantLengthFragSet output = testMap.get<core::fragment::ConstantLengthFragSet>( "StructFragmentMover", "Fragments");
+		//  core::fragment::ConstantLengthFragSet small = testMap.get<core::fragment::ConstantLengthFragSet >( "StructFragmentMover", "small");
+		//  core::fragment::ConstantLengthFragSet large = testMap.get<core::fragment::ConstantLengthFragSet >( "StructFragmentMover", "large");
 		//
 		//
-		// 	TR << small.size() << std::endl;
-		// 	TR << small.nr_frames() << std::endl;
-		// 	TR << large.size() << std::endl;
-		// 	TR << large.nr_frames() << std::endl;
+		//  TR << small.size() << std::endl;
+		//  TR << small.nr_frames() << std::endl;
+		//  TR << large.size() << std::endl;
+		//  TR << large.nr_frames() << std::endl;
 		//
 		// }
 

@@ -44,7 +44,7 @@ using namespace protocols::antibody;
 using namespace protocols::antibody::design;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.AntibodyConstraintTests");
+static basic::Tracer TR("protocols.antibody.AntibodyConstraintTests");
 class AntibodyDesignOptions: public CxxTest::TestSuite {
 	core::pose::Pose pose;
 	AntibodyInfoOP ab_info;

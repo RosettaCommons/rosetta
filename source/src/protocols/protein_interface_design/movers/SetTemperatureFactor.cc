@@ -43,7 +43,7 @@ using namespace std;
 using namespace core::scoring;
 using protocols::moves::ResId;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SetTemperatureFactor" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.SetTemperatureFactor" );
 
 // XRW TEMP std::string
 // XRW TEMP SetTemperatureFactorCreator::keyname() const

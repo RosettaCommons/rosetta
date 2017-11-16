@@ -85,7 +85,7 @@ namespace chemical {
 
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer tr( "core.chemical.ResidueType" );
+static basic::Tracer tr( "core.chemical.ResidueType" );
 
 // must be a better place for this, probably already exists!
 inline
@@ -4895,10 +4895,10 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	using namespace core::chemical;
 
 	arc( CEREAL_NVP( atom_types_ ) ); // AtomTypeSetCOP
-    // vec_atom_types_ is reset in finalize()
-    // EXEMPT vec_atom_types_
-   // arc( CEREAL_NVP( vec_atom_types_ ) ); // utility::vector1< AtomType >
-    arc( CEREAL_NVP( elements_ ) ); // ElementSetCOP
+	// vec_atom_types_ is reset in finalize()
+	// EXEMPT vec_atom_types_
+	// arc( CEREAL_NVP( vec_atom_types_ ) ); // utility::vector1< AtomType >
+	arc( CEREAL_NVP( elements_ ) ); // ElementSetCOP
 	arc( CEREAL_NVP( mm_atom_types_ ) ); // MMAtomTypeSetCOP
 	arc( CEREAL_NVP( gasteiger_atom_types_ ) ); // gasteiger::GasteigerAtomTypeSetCOP
 	arc( CEREAL_NVP( orbital_types_ ) ); // orbitals::OrbitalTypeSetCOP
@@ -5067,8 +5067,8 @@ core::chemical::ResidueType::load( Archive & arc ) {
 
 	arc( atom_types_ ); // AtomTypeSetCOP
 	// vec_atom_types_ is reset in finalize()
-    // EXEMPT vec_atom_types_
-    //arc( vec_atom_types_ ); // utility::vector1< AtomType >
+	// EXEMPT vec_atom_types_
+	//arc( vec_atom_types_ ); // utility::vector1< AtomType >
 	arc( elements_ ); // ElementSetCOP
 	arc( mm_atom_types_ ); // MMAtomTypeSetCOP
 	arc( gasteiger_atom_types_ ); // gasteiger::GasteigerAtomTypeSetCOP

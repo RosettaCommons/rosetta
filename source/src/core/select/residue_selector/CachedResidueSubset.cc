@@ -35,7 +35,7 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.CachedResidueSubset" );
+static basic::Tracer TR( "core.select.residue_selector.CachedResidueSubset" );
 
 // @brief default constructor
 CachedResidueSubset::CachedResidueSubset():

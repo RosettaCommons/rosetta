@@ -35,7 +35,7 @@
 // C++ headers
 #include <utility/assert.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.ReturnResidueSubsetSelector" );
+static basic::Tracer TR( "core.select.residue_selector.ReturnResidueSubsetSelector" );
 
 namespace core {
 namespace select {

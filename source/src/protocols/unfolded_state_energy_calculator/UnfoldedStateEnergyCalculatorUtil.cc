@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorUtil" );
+static basic::Tracer TR( "protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorUtil" );
 
 namespace protocols {
 namespace unfolded_state_energy_calculator {

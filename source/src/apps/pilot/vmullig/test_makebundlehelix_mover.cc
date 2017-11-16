@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 //Tracer:
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.vmullig.test_makebundlehelix_mover" );
+static basic::Tracer TR( "apps.pilot.vmullig.test_makebundlehelix_mover" );
 
 //Options (ugh -- global variables):
 OPT_KEY (Real, r0)

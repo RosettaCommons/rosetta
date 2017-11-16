@@ -92,7 +92,7 @@ namespace ccd {
 using namespace core;
 using namespace pose;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.loops.loop_closure.ccd.SlidingWindowLoopClosure" );
+static basic::Tracer tr( "protocols.loops.loop_closure.ccd.SlidingWindowLoopClosure" );
 
 std::string const VDW_FRAG_STORE( "closure_loop_vdw" );
 std::string const SCORE_FRAG_STORE( "closure_loop_score" );

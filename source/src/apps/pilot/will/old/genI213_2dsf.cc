@@ -61,99 +61,99 @@ using protocols::scoring::ImplicitFastClashCheck;
 using core::pose::Pose;
 using core::conformation::ResidueOP;
 
-static THREAD_LOCAL basic::Tracer TR( "genI213" );
+static basic::Tracer TR( "genI213" );
 static core::io::silent::SilentFileData sfd;
 
 
 inline Real sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
-  if( sqdist > 9.*9. ) {
-    return 0.0;
-  } else if( sqdist < 6.*6. ) {
-    return 1.0;
-  } else {
-    Real dist = sqrt( sqdist );
-    return sqr(1.0  - sqr( (dist - 6.) / (9. - 6.) ) );
-  }
+	if ( sqdist > 9.*9. ) {
+		return 0.0;
+	} else if ( sqdist < 6.*6. ) {
+		return 1.0;
+	} else {
+		Real dist = sqrt( sqdist );
+		return sqr(1.0  - sqr( (dist - 6.) / (9. - 6.) ) );
+	}
 }
 
 vector1<Size> get_scanres(Pose const & pose) {
-  vector1<Size> scanres;
-  if(basic::options::option[basic::options::OptionKeys::willmatch::residues].user()) {
-    TR << "input scanres!!!!!!" << std::endl;
-    scanres = basic::options::option[basic::options::OptionKeys::willmatch::residues]();
-  } else {
-    for(Size i = 1; i <= pose.size(); ++i) {
-      if(!pose.residue(i).has("N" )) { continue; }
-      if(!pose.residue(i).has("CA")) { continue; }
-      if(!pose.residue(i).has("C" )) { continue; }
-      if(!pose.residue(i).has("O" )) { continue; }
-      if(!pose.residue(i).has("CB")) { continue; }
-      if(pose.residue(i).name3()=="PRO") { continue; }
-      scanres.push_back(i);
-    }
-  }
-  return scanres;
+	vector1<Size> scanres;
+	if ( basic::options::option[basic::options::OptionKeys::willmatch::residues].user() ) {
+		TR << "input scanres!!!!!!" << std::endl;
+		scanres = basic::options::option[basic::options::OptionKeys::willmatch::residues]();
+	} else {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
+			if ( !pose.residue(i).has("N" ) ) { continue; }
+			if ( !pose.residue(i).has("CA") ) { continue; }
+			if ( !pose.residue(i).has("C" ) ) { continue; }
+			if ( !pose.residue(i).has("O" ) ) { continue; }
+			if ( !pose.residue(i).has("CB") ) { continue; }
+			if ( pose.residue(i).name3()=="PRO" ) { continue; }
+			scanres.push_back(i);
+		}
+	}
+	return scanres;
 }
 
 void run() {
 
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys;
 
-  core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-  Pose init,cys;
-  core::import_pose::pose_from_file(init,*rs,option[in::file::s]()[1], core::import_pose::PDB_file);
-  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
-  remove_lower_terminus_type_from_pose_residue(cys,1);
-  remove_upper_terminus_type_from_pose_residue(cys,1);
+	core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	Pose init,cys;
+	core::import_pose::pose_from_file(init,*rs,option[in::file::s]()[1], core::import_pose::PDB_file);
+	make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
+	remove_lower_terminus_type_from_pose_residue(cys,1);
+	remove_upper_terminus_type_from_pose_residue(cys,1);
 	add_variant_type_to_pose_residue(cys,"DISULF_PARTNER",1);
 
-	for(Size ir = 1; ir <= init.size(); ++ir) {
+	for ( Size ir = 1; ir <= init.size(); ++ir ) {
 		init.replace_residue(ir,cys.residue(1),true);
 		replace_pose_residue_copying_existing_coordinates(init,ir,init.residue(ir).residue_type_set().name_map("ALA"));
 	}
 
 	protocols::scoring::ImplicitFastClashCheck ifc(init,3.0);
 
-  // Size nres = init.size();
-  // ScoreFunctionOP sf = core::scoring::get_score_function();
-  ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
+	// Size nres = init.size();
+	// ScoreFunctionOP sf = core::scoring::get_score_function();
+	ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
-  Pose pose = init;
+	Pose pose = init;
 
-  Mat R1 = rotation_matrix_degrees(Vec(0,0,1), 120.0);
-  Mat R2 = rotation_matrix_degrees(Vec(0,0,1),-120.0);
+	Mat R1 = rotation_matrix_degrees(Vec(0,0,1), 120.0);
+	Mat R2 = rotation_matrix_degrees(Vec(0,0,1),-120.0);
 
-  vector1<Size> scanres = get_scanres(pose);
+	vector1<Size> scanres = get_scanres(pose);
 
-  for(vector1<Size>::const_iterator iiter = scanres.begin(); iiter != scanres.end(); ++iiter) {
-    Size irsd = *iiter;
-    //if( pose.residue(irsd).name3()=="GLY" || pose.residue(irsd).name3()=="PRO" ) continue;
-    ResidueOP rprev = pose.residue(irsd).clone();
-    pose.replace_residue(irsd,cys.residue(1),true);
-		for(Real ch1 = 0.0; ch1 < 360.0; ch1+=5.0) {
+	for ( vector1<Size>::const_iterator iiter = scanres.begin(); iiter != scanres.end(); ++iiter ) {
+		Size irsd = *iiter;
+		//if( pose.residue(irsd).name3()=="GLY" || pose.residue(irsd).name3()=="PRO" ) continue;
+		ResidueOP rprev = pose.residue(irsd).clone();
+		pose.replace_residue(irsd,cys.residue(1),true);
+		for ( Real ch1 = 0.0; ch1 < 360.0; ch1+=5.0 ) {
 			pose.set_chi(1,irsd,ch1);
-			for(Real ch2 = 0.0; ch2 < 360.0; ch2+=10.0) {
+			for ( Real ch2 = 0.0; ch2 < 360.0; ch2+=10.0 ) {
 				pose.set_chi(2,irsd,ch2);
 				Vec const  SG  = pose.residue(irsd).xyz( "SG");
 				Vec const PSG  = pose.residue(irsd).xyz("PSG");
 				Vec const PCB1 = pose.residue(irsd).xyz("PCB1");
 				Vec const PCB2 = pose.residue(irsd).xyz("PCB2");
-				if(!ifc.clash_check( SG,irsd)) continue;
-				if(!ifc.clash_check(PSG,irsd)) continue;
-				for(vector1<Size>::const_iterator jiter = scanres.begin(); jiter != scanres.end(); ++jiter) {
+				if ( !ifc.clash_check( SG,irsd) ) continue;
+				if ( !ifc.clash_check(PSG,irsd) ) continue;
+				for ( vector1<Size>::const_iterator jiter = scanres.begin(); jiter != scanres.end(); ++jiter ) {
 					Size jrsd = *jiter;
 					Real dtgt = pose.residue(jrsd).xyz("CB").distance(PSG);
-					if(dtgt < 10.0) continue;
+					if ( dtgt < 10.0 ) continue;
 					ResidueOP rprev2 = pose.residue(jrsd).clone();
 					pose.replace_residue(jrsd,cys.residue(1),true);
 					Pose tmp(pose);
 					alignaxis(tmp,(PSG-PCB1).normalized(),(tmp.residue(jrsd).xyz("SG")-tmp.residue(jrsd).xyz("CB")).normalized());
 					trans_pose(tmp, PSG - tmp.residue(jrsd).xyz("SG") );
 
-					for(Size ir = 1; ir <= pose.size(); ++ir) {
-						for(Size ia = 1; ia <= 5; ++ia) {
-							if(!ifc.clash_check( tmp.xyz(AtomID(ia,ir)) )) goto cont1;
+					for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+						for ( Size ia = 1; ia <= 5; ++ia ) {
+							if ( !ifc.clash_check( tmp.xyz(AtomID(ia,ir)) ) ) goto cont1;
 						}
 					}
 					goto done1; cont1:
@@ -167,8 +167,8 @@ void run() {
 
 			}
 		}
-    pose.replace_residue(irsd,*rprev,false);
-  }
+		pose.replace_residue(irsd,*rprev,false);
+	}
 
 }
 
@@ -176,8 +176,8 @@ int main (int argc, char *argv[]) {
 
 	try {
 
-  devel::init(argc,argv);
-  run();
+		devel::init(argc,argv);
+		run();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

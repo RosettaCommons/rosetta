@@ -29,7 +29,7 @@
 #include <basic/Tracer.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.carbohydrates.OmegaPreferencesFunction.cxxtest" );
+static basic::Tracer TR( "core.scoring.carbohydrates.OmegaPreferencesFunction.cxxtest" );
 
 
 class OmegaPreferencesFunctionTests : public CxxTest::TestSuite {

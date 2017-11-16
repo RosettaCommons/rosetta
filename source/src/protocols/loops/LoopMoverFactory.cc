@@ -47,7 +47,7 @@ using std::pair;
 using std::stringstream;
 using core::pose::Pose;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.loops.LoopMoverFactory" );
+static basic::Tracer tr( "protocols.loops.LoopMoverFactory" );
 
 /// @details Private constructor insures correctness of singleton.
 LoopMoverFactory::LoopMoverFactory() {}

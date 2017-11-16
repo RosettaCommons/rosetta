@@ -53,7 +53,7 @@ using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL;
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer trRmsScore(
+static basic::Tracer trRmsScore(
 	"protocols.frag_picker.scores.FragmentAllAtomCrmsd");
 
 FragmentAllAtomCrmsd::~FragmentAllAtomCrmsd() {}

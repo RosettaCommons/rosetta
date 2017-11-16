@@ -48,7 +48,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.BuildAlaPose" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.BuildAlaPose" );
 
 // XRW TEMP std::string
 // XRW TEMP BuildAlaPoseCreator::keyname() const

@@ -70,7 +70,7 @@
 
 // ObjexxFCL Headers
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.abscript.FragmentJumpCM", basic::t_info );
+static basic::Tracer tr( "protocols.abinitio.abscript.FragmentJumpCM", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

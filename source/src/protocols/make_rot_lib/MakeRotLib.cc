@@ -51,7 +51,7 @@
 #include <cmath>
 
 
-static THREAD_LOCAL basic::Tracer TR("protocols.make_rot_lib.MakeRotLib");
+static basic::Tracer TR("protocols.make_rot_lib.MakeRotLib");
 
 namespace protocols {
 namespace make_rot_lib {

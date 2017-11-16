@@ -67,7 +67,7 @@
 #include <basic/datacache/ConstDataMap.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.FullModelJobQueen" );
+static basic::Tracer TR( "protocols.jd3.FullModelJobQueen" );
 
 
 namespace protocols {

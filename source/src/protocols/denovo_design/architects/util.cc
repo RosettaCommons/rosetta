@@ -21,7 +21,7 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.util" );
+static basic::Tracer TR( "protocols.denovo_design.architects.util" );
 
 namespace protocols {
 namespace denovo_design {

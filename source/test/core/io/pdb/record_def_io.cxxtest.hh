@@ -29,7 +29,7 @@
 #include <utility>
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR("core.io.pdb.record_def_io.cxxtest");
+static basic::Tracer TR("core.io.pdb.record_def_io.cxxtest");
 
 class RecordDefIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////

@@ -36,35 +36,37 @@
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
+static basic::MemTracer mem_tr;
+
 void register_options_broker() {
-  using namespace protocols;
-  using namespace abinitio;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace core;
-  using namespace fragment;
+	using namespace protocols;
+	using namespace abinitio;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core;
+	using namespace fragment;
 
-  option.add_relevant( broker::setup );
+	option.add_relevant( broker::setup );
 
-  option.add_relevant(in::file::native);
-  option.add_relevant(in::file::silent);
-  option.add_relevant(in::file::frag3);
-  option.add_relevant(in::file::frag9);
-  option.add_relevant(in::file::fasta);
+	option.add_relevant(in::file::native);
+	option.add_relevant(in::file::silent);
+	option.add_relevant(in::file::frag3);
+	option.add_relevant(in::file::frag9);
+	option.add_relevant(in::file::fasta);
 
-  option.add_relevant(out::file::silent);
-  option.add_relevant(out::nstruct);
+	option.add_relevant(out::file::silent);
+	option.add_relevant(out::nstruct);
 
-  option.add_relevant(run::test_cycles);
-  // constraints
-  option.add_relevant(constraints::cst_file);
+	option.add_relevant(run::test_cycles);
+	// constraints
+	option.add_relevant(constraints::cst_file);
 
-  option.add_relevant(frags::nr_large_copies);
-  option.add_relevant(frags::annotate);
+	option.add_relevant(frags::nr_large_copies);
+	option.add_relevant(frags::annotate);
 
-  protocols::abinitio::AbrelaxApplication::register_options();
-  protocols::abinitio::IterativeAbrelax::register_options();
-  protocols::jd2::archive::ArchiveManager::register_options();
+	protocols::abinitio::AbrelaxApplication::register_options();
+	protocols::abinitio::IterativeAbrelax::register_options();
+	protocols::jd2::archive::ArchiveManager::register_options();
 
 }
 
@@ -73,15 +75,15 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using std::string;
-  using utility::vector1;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using std::string;
+		using utility::vector1;
 
-	// basic::get_usage_from_procfilesystem( std::cerr );
-// 	std::cerr << " @ program start" << std::endl;
+		// basic::get_usage_from_procfilesystem( std::cerr );
+		//  std::cerr << " @ program start" << std::endl;
 
-	int rank( 0 );
+		int rank( 0 );
 #ifdef USEMPI
 	{ // scope
 	int already_initialized( 0 );
@@ -90,30 +92,30 @@ main( int argc, char * argv [] )
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &rank ) );
 	}
 #endif
-	if ( rank == 0 ) {
-		basic::get_usage_from_procfilesystem( std::cerr );
-		std::cerr << " @ program start" << std::endl;
-	}
+		if ( rank == 0 ) {
+			basic::get_usage_from_procfilesystem( std::cerr );
+			std::cerr << " @ program start" << std::endl;
+		}
 
-	register_options_broker();
+		register_options_broker();
 
-	if ( rank == 0 ) {
-		basic::get_usage_from_procfilesystem( std::cerr );
-		std::cerr << " @ register_options" << std::endl;
-	}
+		if ( rank == 0 ) {
+			basic::get_usage_from_procfilesystem( std::cerr );
+			std::cerr << " @ register_options" << std::endl;
+		}
 
-  try {
-    devel::init( argc, argv );//
-		basic::mem_tr << "devel::init" << std::endl;
-		//    protocols::abinitio::Broker_main();
-		protocols::jd2::JobDistributor::get_instance()->go( NULL );
-  } catch ( utility::excn::EXCN_Base& excn ) {
-    std::cerr << "Exception : " << std::endl;
-    excn.show( std::cerr );
-  }
+		try {
+			devel::init( argc, argv );//
+			mem_tr << "devel::init" << std::endl;
+			//    protocols::abinitio::Broker_main();
+			protocols::jd2::JobDistributor::get_instance()->go( NULL );
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			std::cerr << "Exception : " << std::endl;
+			excn.show( std::cerr );
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-  return 0;
+	return 0;
 }

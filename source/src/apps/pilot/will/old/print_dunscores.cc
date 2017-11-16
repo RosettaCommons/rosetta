@@ -62,7 +62,7 @@ using basic::options::option;
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
-static THREAD_LOCAL basic::Tracer TR( "dunscores" );
+static basic::Tracer TR( "dunscores" );
 
 
 void run() {
@@ -70,20 +70,20 @@ void run() {
 	using namespace core::id;
 
 	vector1<string> infiles;
-	if( option[in::file::l].user() ) {
+	if ( option[in::file::l].user() ) {
 		utility::io::izstream in(option[in::file::l]()[1]);
 		string tmp;
-		while(in >> tmp) infiles.push_back(tmp);
-	} else if(option[in::file::s].user()) {
+		while ( in >> tmp ) infiles.push_back(tmp);
+	} else if ( option[in::file::s].user() ) {
 		infiles = option[in::file::s]();
 	} else {
 		utility_exit_with_message("no input!");
 	}
 
 	core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function(); //new core::scoring::ScoreFunction;
-		//sf->set_weight(core::scoring::fa_dun,1.0);
+	//sf->set_weight(core::scoring::fa_dun,1.0);
 
-	for(Size ifile = 1; ifile <= infiles.size(); ifile++) {
+	for ( Size ifile = 1; ifile <= infiles.size(); ifile++ ) {
 		string infile = infiles[ifile];
 		Pose pose;
 		pose_from_file(pose,infile, core::import_pose::PDB_file);
@@ -96,9 +96,9 @@ void run() {
 		m.apply(pose);
 
 		sf->score(pose);
-		for(Size i = 1; i <= pose.size(); ++i) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			vector1<Real> c(4,0.0);
-			for(Size j = 1; j <= pose.residue(i).nchi(); ++j) c[j] = pose.chi(j,i);
+			for ( Size j = 1; j <= pose.residue(i).nchi(); ++j ) c[j] = pose.chi(j,i);
 			TR << utility::file_basename(infile) << " " << pose.residue(i).name3() << " " << pose.energies().residue_total_energies(i)[core::scoring::fa_dun] << " " << c[1] << " " << c[2] << " " << c[3] << " " << c[4] << std::endl;
 		}
 	}
@@ -109,8 +109,8 @@ int main (int argc, char *argv[]) {
 
 	try {
 
-	devel::init(argc,argv);
-	run();
+		devel::init(argc,argv);
+		run();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

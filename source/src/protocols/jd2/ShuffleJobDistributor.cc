@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.ShuffleFileSystemJobDistributor" );
+static basic::Tracer TR( "protocols.jd2.ShuffleFileSystemJobDistributor" );
 
 
 namespace protocols {

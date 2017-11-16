@@ -35,7 +35,7 @@
 #include <stdio.h>
 
 //Tracer:
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.vmullig.cycpep_analysis" );
+static basic::Tracer TR( "apps.pilot.vmullig.cycpep_analysis" );
 
 /*************************/
 /* FUNCTION PROTOTYPES:  */

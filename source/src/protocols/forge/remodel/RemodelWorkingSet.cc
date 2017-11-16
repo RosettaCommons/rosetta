@@ -62,7 +62,7 @@ namespace protocols {
 namespace forge {
 namespace remodel {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelWorkingSet" );
+static basic::Tracer TR( "protocols.forge.remodel.RemodelWorkingSet" );
 
 RemodelWorkingSet::RemodelWorkingSet()
 {

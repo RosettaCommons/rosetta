@@ -50,7 +50,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.io" );
+static basic::Tracer tr( "protocols.noesy_assign.io" );
 
 namespace protocols {
 namespace noesy_assign {

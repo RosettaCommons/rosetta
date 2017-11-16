@@ -119,7 +119,6 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -138,157 +137,158 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	// is this also done inside devel::init?
-	//numeric::random::RandomGenerator::initializeRandomGenerators(
-	//	 111111, numeric::random::_RND_TestRun_, "ran3");
+		// is this also done inside devel::init?
+		//numeric::random::RandomGenerator::initializeRandomGenerators(
+		//  111111, numeric::random::_RND_TestRun_, "ran3");
 
-	using namespace protocols::moves;
-	using namespace scoring;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-  using namespace core::chemical;
-  using namespace core::io::silent;
+		using namespace protocols::moves;
+		using namespace scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
+		using namespace core::chemical;
+		using namespace core::io::silent;
 
-  // setup residue types
-  ResidueTypeSetCAP rsd_set;
-  if ( option[ in::file::fullatom ]() )
-     rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		// setup residue types
+		ResidueTypeSetCAP rsd_set;
+		if ( option[ in::file::fullatom ]() ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		}
 
-  // configure silent-file data object
-  ScoreFunctionOP scorefxn = get_score_function();
+		// configure silent-file data object
+		ScoreFunctionOP scorefxn = get_score_function();
 
-  // configure silent-file data object
-  core::io::silent::SilentFileData sfd;
-  pose::Pose pose;
-  std::string infile  = *(option[ in::file::silent ]().begin());
-  std::string const spanfile = option[ in::file::spanfile ]();
-  std::string outfile = option[ out::file::silent ]();
-  utility::io::ozstream output;
-  output.open( outfile.c_str() );
-  std::cout << "spanfile: " << spanfile << "\n";
-  //  core::scoring::MembraneTopologyOP topology=new core:scoring:MembraneTopology;
+		// configure silent-file data object
+		core::io::silent::SilentFileData sfd;
+		pose::Pose pose;
+		std::string infile  = *(option[ in::file::silent ]().begin());
+		std::string const spanfile = option[ in::file::spanfile ]();
+		std::string outfile = option[ out::file::silent ]();
+		utility::io::ozstream output;
+		output.open( outfile.c_str() );
+		std::cout << "spanfile: " << spanfile << "\n";
+		//  core::scoring::MembraneTopologyOP topology=new core:scoring:MembraneTopology;
 
-  core::scoring::MembraneTopologyOP topologyOP = new core::scoring::MembraneTopology;
-  pose.data().set( MEMBRANE_TOPOLOGY, topologyOP );
-  //  core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( basic::MEMBRANE_TOPOLOGY )() ));
-  core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( MEMBRANE_TOPOLOGY )() ));
-  topology.initialize(spanfile);
+		core::scoring::MembraneTopologyOP topologyOP = new core::scoring::MembraneTopology;
+		pose.data().set( MEMBRANE_TOPOLOGY, topologyOP );
+		//  core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( basic::MEMBRANE_TOPOLOGY )() ));
+		core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( MEMBRANE_TOPOLOGY )() ));
+		topology.initialize(spanfile);
 
-  SilentFileData silent_file_data;
-  std::string silent_file( "fa_memb.out" );
+		SilentFileData silent_file_data;
+		std::string silent_file( "fa_memb.out" );
 
-  std::cout << "READING start.pdb" << std::endl;
-	core::import_pose::pose_from_file( pose, *rsd_set, "start.pdb" , core::import_pose::PDB_file); // default is standard fullatom residue_set
+		std::cout << "READING start.pdb" << std::endl;
+		core::import_pose::pose_from_file( pose, *rsd_set, "start.pdb" , core::import_pose::PDB_file); // default is standard fullatom residue_set
 
-	kinematics::MoveMap mm;
-	// setup moving dofs
-	//for ( int i=30; i<= 35; ++i ) {
+		kinematics::MoveMap mm;
+		// setup moving dofs
+		//for ( int i=30; i<= 35; ++i ) {
 		mm.set_bb ( true );
 		mm.set_chi( true );
-	//}
+		//}
 
-	using namespace optimization;
-	/*using pose::Pose;
-	using id::AtomID;
-	using id::DOF_ID;
-	using id::PHI;
-	using id::THETA;
-	using id::D;*/
+		using namespace optimization;
+		/*using pose::Pose;
+		using id::AtomID;
+		using id::DOF_ID;
+		using id::PHI;
+		using id::THETA;
+		using id::D;*/
 
-  pose.data().set( MEMBRANE_TOPOLOGY, topologyOP );
+		pose.data().set( MEMBRANE_TOPOLOGY, topologyOP );
 
-	//scoring::ScoreFunction scorefxn;
-	//scorefxn.set_weight( scoring::envsmooth, 1.0 );
-	//scorefxn.set_weight( scoring::fa_elec , 1.0 );
-	//scorefxn.set_weight( scoring::fa_rep , 1.0 );
-  /*scorefxn->set_weight( fa_atr, 0.80 );
-  scorefxn->set_weight( fa_rep, 0.44 );
-  scorefxn->set_weight( fa_sol, 0.00 );
-  scorefxn->set_weight( fa_pair, 0.49 );
-  scorefxn->set_weight( fa_dun, 0.00 );
-  scorefxn->set_weight( rama, 0.2 );
-  scorefxn->set_weight( omega, 0.5 );
-  scorefxn->set_weight( hbond_lr_bb, 0.00 );
-  scorefxn->set_weight( hbond_sr_bb, 0.00 );
-  scorefxn->set_weight( hbond_bb_sc, 0.00 );
-  scorefxn->set_weight( hbond_sc   , 1.10 );
-  scorefxn->set_weight( fa_mbenv   , 2.00 );
-  */
+		//scoring::ScoreFunction scorefxn;
+		//scorefxn.set_weight( scoring::envsmooth, 1.0 );
+		//scorefxn.set_weight( scoring::fa_elec , 1.0 );
+		//scorefxn.set_weight( scoring::fa_rep , 1.0 );
+		/*scorefxn->set_weight( fa_atr, 0.80 );
+		scorefxn->set_weight( fa_rep, 0.44 );
+		scorefxn->set_weight( fa_sol, 0.00 );
+		scorefxn->set_weight( fa_pair, 0.49 );
+		scorefxn->set_weight( fa_dun, 0.00 );
+		scorefxn->set_weight( rama, 0.2 );
+		scorefxn->set_weight( omega, 0.5 );
+		scorefxn->set_weight( hbond_lr_bb, 0.00 );
+		scorefxn->set_weight( hbond_sr_bb, 0.00 );
+		scorefxn->set_weight( hbond_bb_sc, 0.00 );
+		scorefxn->set_weight( hbond_sc   , 1.10 );
+		scorefxn->set_weight( fa_mbenv   , 2.00 );
+		*/
 
-	(*scorefxn)(pose);
+		(*scorefxn)(pose);
 
-  output << "SCORE: TOTAL\t" ;
-  scorefxn->show_line_headers(output);
-  output << "SCORE: ";
-  scorefxn->show_line(output,pose);
+		output << "SCORE: TOTAL\t" ;
+		scorefxn->show_line_headers(output);
+		output << "SCORE: ";
+		scorefxn->show_line(output,pose);
 
-	scorefxn->show(std::cout, pose);
+		scorefxn->show(std::cout, pose);
 
-	// setup the options
+		// setup the options
 
-  MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true , /*was 0.000001*/
-                          false , false );
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true , /*was 0.000001*/
+			false , false );
 
-	AtomTreeMinimizer minimizer;
-	std::cout << "MINTEST: " << "\n";
-	std::cout << "start score: " << (*scorefxn)( pose ) << "\n";
-  int starttime = time(NULL);
-  int startclock = clock();
-	minimizer.run( pose, mm, *scorefxn, options );
-  int endtime = time(NULL);
-  int endclock = clock();
-  std::cout << "Time: " << (endtime - starttime) << "   " << (endclock - startclock) << std::endl;
-	pose.dump_pdb( "toto.pdb" );
-  scorefxn->show(std::cout, pose);
-	std::cout << "end score: " << (*scorefxn)( pose ) << "\n";
+		AtomTreeMinimizer minimizer;
+		std::cout << "MINTEST: " << "\n";
+		std::cout << "start score: " << (*scorefxn)( pose ) << "\n";
+		int starttime = time(NULL);
+		int startclock = clock();
+		minimizer.run( pose, mm, *scorefxn, options );
+		int endtime = time(NULL);
+		int endclock = clock();
+		std::cout << "Time: " << (endtime - starttime) << "   " << (endclock - startclock) << std::endl;
+		pose.dump_pdb( "toto.pdb" );
+		scorefxn->show(std::cout, pose);
+		std::cout << "end score: " << (*scorefxn)( pose ) << "\n";
 
 
-//	core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
-//
-////	// aiming for standard packer weights
-//	scorefxn->set_weight( envsmooth, 0.80 );
-//
-//	(*scorefxn)(*pose);
-//	scorefxn->show(std::cout, *pose);
-//
-////	using namespace optimization;
-////	core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
-////	scorefxn->set_weight( fa_atr, 0.80 );
-////	scorefxn->set_weight( fa_rep, 0.44 );
-////	scorefxn->set_weight( fa_sol, 0.65 );
-////	scorefxn->set_weight( fa_pair, 0.49 );
-////	scorefxn->set_weight( fa_dun, 0.56 );
-////	scorefxn->set_weight( rama, 0.2 );
-////	scorefxn->set_weight( omega, 0.5 );
-////	scorefxn->set_weight( hbond_lr_bb, 1.17 );
-////	scorefxn->set_weight( hbond_sr_bb, 1.17 );
-////	scorefxn->set_weight( hbond_bb_sc, 1.17 );
-////	scorefxn->set_weight( hbond_sc   , 1.10 );
-//
-//
-//
-//	kinematics::MoveMap mm;
-//	mm.set_bb (  true );
-//	mm.set_chi(  true );
-//	AtomTreeMinimizer minimizer;
-//	std::cout << "MINTEST: p_aa_pp" << "\n";
-//	std::cout << "start score: " << (*scorefxn)( *pose ) << "\n";
-//	int starttime = time(NULL);
-//	int startclock = clock();
-//	minimizer.run( *pose, mm, *scorefxn, options );
-//	int endtime = time(NULL);
-//	int endclock = clock();
-//	std::cout << "Time: " << (endtime - starttime) << "   " << (endclock - startclock) << std::endl;
-//
-//	(*scorefxn)(*pose);
-//	scorefxn->show(std::cout, *pose);
+		// core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
+		//
+		//// // aiming for standard packer weights
+		// scorefxn->set_weight( envsmooth, 0.80 );
+		//
+		// (*scorefxn)(*pose);
+		// scorefxn->show(std::cout, *pose);
+		//
+		//// using namespace optimization;
+		//// core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
+		//// scorefxn->set_weight( fa_atr, 0.80 );
+		//// scorefxn->set_weight( fa_rep, 0.44 );
+		//// scorefxn->set_weight( fa_sol, 0.65 );
+		//// scorefxn->set_weight( fa_pair, 0.49 );
+		//// scorefxn->set_weight( fa_dun, 0.56 );
+		//// scorefxn->set_weight( rama, 0.2 );
+		//// scorefxn->set_weight( omega, 0.5 );
+		//// scorefxn->set_weight( hbond_lr_bb, 1.17 );
+		//// scorefxn->set_weight( hbond_sr_bb, 1.17 );
+		//// scorefxn->set_weight( hbond_bb_sc, 1.17 );
+		//// scorefxn->set_weight( hbond_sc   , 1.10 );
+		//
+		//
+		//
+		// kinematics::MoveMap mm;
+		// mm.set_bb (  true );
+		// mm.set_chi(  true );
+		// AtomTreeMinimizer minimizer;
+		// std::cout << "MINTEST: p_aa_pp" << "\n";
+		// std::cout << "start score: " << (*scorefxn)( *pose ) << "\n";
+		// int starttime = time(NULL);
+		// int startclock = clock();
+		// minimizer.run( *pose, mm, *scorefxn, options );
+		// int endtime = time(NULL);
+		// int endclock = clock();
+		// std::cout << "Time: " << (endtime - starttime) << "   " << (endclock - startclock) << std::endl;
+		//
+		// (*scorefxn)(*pose);
+		// scorefxn->show(std::cout, *pose);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

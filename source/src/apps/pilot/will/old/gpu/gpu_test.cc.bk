@@ -49,7 +49,7 @@
 
 #include <sys/stat.h>
 
-static THREAD_LOCAL basic::Tracer TR( "gpu_test" );
+static basic::Tracer TR( "gpu_test" );
 
 // // #ifdef MAC
 // // #include <OpenCL/cl.h>

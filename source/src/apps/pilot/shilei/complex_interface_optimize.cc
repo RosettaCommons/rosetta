@@ -90,10 +90,9 @@
 
 //#include <protocols/medal/MedalMain.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-        
+
 using namespace ObjexxFCL;
 using namespace core;
 using namespace conformation;
@@ -106,61 +105,61 @@ public:
 	complex_interface_optimize(){}
 	void apply( pose::Pose & pose) {
 
-	//check if pose has two chains only
-	if (pose.conformation().num_chains()!=2) {
-		utility_exit_with_message( "expect pose to have TWO chains only, this one has " + pose.conformation().num_chains());
-	}
+		//check if pose has two chains only
+		if ( pose.conformation().num_chains()!=2 ) {
+			utility_exit_with_message( "expect pose to have TWO chains only, this one has " + pose.conformation().num_chains());
+		}
 
-        //set up foldtree, which one?
-        //The one from hybridize
-        //Chris Miles' star fold-tree, medal mover
-        //detect interface residues/secondary structures
-        //figure out interface (does it work on centroid models? )
-
-
-	//core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
-
-        //sequence alignment
-        core::sequence::SequenceOP seq1 ( new core::sequence::Sequence(pose) );
-        core::sequence::SequenceOP seq2 ( new core::sequence::Sequence(pose) );
-        core::sequence::NWAligner nw_aligner;
-	utility::file::FileName blosum62( basic::database::full_name("sequence/substitution_matrix/BLOSUM62"));
-        core::sequence::ScoringSchemeOP blosum_score( new core::sequence::MatrixScoringScheme( -11, -1, blosum62 ) );
-        core::sequence::SequenceAlignment global_align = nw_aligner.align( seq1, seq2, blosum_score ) ;        
-	std::cout << global_align;
-        std::cout << std::endl;
-
-        core::scoring::ScoreFunctionOP tmpscorefxn = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::TALARIS_2013);
-        (*tmpscorefxn)(pose);
-        protocols::scoring::Interface interface( 1 );
-        interface.distance( 8 );
-        interface.calculate( pose );
-
-        ObjexxFCL::FArray1D_bool is_interface ( (pose).size(), false );
-        std::string strseq2=(*global_align.sequence(2)).sequence();
-        for ( Size i=1; i<= (pose).size(); ++i ) {
-                if (interface.is_interface(i))  {
-                        is_interface(i) = true;
-                }
-        }
-
-        //print out interface
-        std::cout << "interface" << std::endl;  
-        for ( Size i=1; i<= (pose).size(); ++i ) {
-                std::cout << is_interface(i);
-        }        
-	std::cout<< std::endl;
+		//set up foldtree, which one?
+		//The one from hybridize
+		//Chris Miles' star fold-tree, medal mover
+		//detect interface residues/secondary structures
+		//figure out interface (does it work on centroid models? )
 
 
-        //identify secondary structures
-        ObjexxFCL::FArray1D_char ssPose ( (pose).size() );
-        core::scoring::dssp::Dssp dssp_obj( pose );
-        dssp_obj.dssp_reduced(ssPose);
-        std::cout << "ss structure" << std::endl;
-        for ( Size i=1; i<= (pose).size(); ++i ) {                
-		std::cout << ssPose(i);
-        }
-        std::cout<< std::endl;
+		//core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+
+		//sequence alignment
+		core::sequence::SequenceOP seq1 ( new core::sequence::Sequence(pose) );
+		core::sequence::SequenceOP seq2 ( new core::sequence::Sequence(pose) );
+		core::sequence::NWAligner nw_aligner;
+		utility::file::FileName blosum62( basic::database::full_name("sequence/substitution_matrix/BLOSUM62"));
+		core::sequence::ScoringSchemeOP blosum_score( new core::sequence::MatrixScoringScheme( -11, -1, blosum62 ) );
+		core::sequence::SequenceAlignment global_align = nw_aligner.align( seq1, seq2, blosum_score ) ;
+		std::cout << global_align;
+		std::cout << std::endl;
+
+		core::scoring::ScoreFunctionOP tmpscorefxn = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::TALARIS_2013);
+		(*tmpscorefxn)(pose);
+		protocols::scoring::Interface interface( 1 );
+		interface.distance( 8 );
+		interface.calculate( pose );
+
+		ObjexxFCL::FArray1D_bool is_interface ( (pose).size(), false );
+		std::string strseq2=(*global_align.sequence(2)).sequence();
+		for ( Size i=1; i<= (pose).size(); ++i ) {
+			if ( interface.is_interface(i) )  {
+				is_interface(i) = true;
+			}
+		}
+
+		//print out interface
+		std::cout << "interface" << std::endl;
+		for ( Size i=1; i<= (pose).size(); ++i ) {
+			std::cout << is_interface(i);
+		}
+		std::cout<< std::endl;
+
+
+		//identify secondary structures
+		ObjexxFCL::FArray1D_char ssPose ( (pose).size() );
+		core::scoring::dssp::Dssp dssp_obj( pose );
+		dssp_obj.dssp_reduced(ssPose);
+		std::cout << "ss structure" << std::endl;
+		for ( Size i=1; i<= (pose).size(); ++i ) {
+			std::cout << ssPose(i);
+		}
+		std::cout<< std::endl;
 
 	}//end of apply
 
@@ -176,7 +175,7 @@ my_main( void* ) {
 	using namespace protocols::moves;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	//seq->add_mover(protocols::medal::Medal_main); 
+	//seq->add_mover(protocols::medal::Medal_main);
 	seq->add_mover( new complex_interface_optimize() );
 
 	try{

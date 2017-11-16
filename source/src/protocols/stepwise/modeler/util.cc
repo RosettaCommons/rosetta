@@ -79,7 +79,7 @@ using ObjexxFCL::string_of;
 using utility::operator<<;
 using core::kinematics::FoldTree;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.util" );
+static basic::Tracer TR( "protocols.stepwise.modeler.util" );
 
 //////////////////////////////////////////////////////////////////////////
 //

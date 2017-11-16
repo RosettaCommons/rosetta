@@ -64,7 +64,7 @@
 using namespace core;
 using namespace core::pose;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.simple_moves.sidechain_moves.SidechainMoverBase" );
+static basic::Tracer tr( "protocols.simple_moves.sidechain_moves.SidechainMoverBase" );
 
 namespace protocols {
 namespace simple_moves {

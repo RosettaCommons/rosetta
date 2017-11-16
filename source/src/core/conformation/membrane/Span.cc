@@ -30,7 +30,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.Span" );
+static basic::Tracer TR( "core.conformation.membrane.Span" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

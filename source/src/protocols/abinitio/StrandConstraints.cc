@@ -50,7 +50,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.StrandConstraints" );
+static basic::Tracer tr( "protocols.abinitio.StrandConstraints" );
 using namespace core;
 using namespace basic;
 

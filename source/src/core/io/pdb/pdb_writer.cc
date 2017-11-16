@@ -74,7 +74,7 @@
 #include <algorithm>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.pdb_writer" );
+static basic::Tracer TR( "core.io.pdb.pdb_writer" );
 
 
 namespace core {
@@ -90,11 +90,8 @@ using utility::pad_left;
 using utility::pad_right;
 using utility::fmt_real;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-
 
 /// @brief Writes  <pose>  to a PDB file, returns false if an error occurs
 ///  Use default StructFileRepOptions
@@ -117,7 +114,7 @@ dump_pdb(
 ) {
 	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
 	if ( !file ) {
-		Error() << "StructFileRep::dump_pdb: Unable to open file:" << file_name << " for writing!!!" << std::endl;
+		TR.Error << "StructFileRep::dump_pdb: Unable to open file:" << file_name << " for writing!!!" << std::endl;
 		return false;
 	}
 	dump_pdb(pose, file, options);

@@ -48,7 +48,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/trig.functions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.StrandCurvatureByLevels" );
+static basic::Tracer TR( "protocols.fldsgn.filters.StrandCurvatureByLevels" );
 
 namespace protocols {
 namespace fldsgn {

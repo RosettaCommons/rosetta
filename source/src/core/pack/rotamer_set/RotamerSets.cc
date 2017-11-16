@@ -45,7 +45,7 @@
 
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
-static THREAD_LOCAL basic::Tracer TR( "core.pack.rotamer_set.RotamerSets", basic::t_info );
+static basic::Tracer TR( "core.pack.rotamer_set.RotamerSets", basic::t_info );
 
 // C++
 #include <fstream>
@@ -435,8 +435,6 @@ RotamerSets::compute_energies(
 {
 	using namespace interaction_graph;
 	using namespace scoring;
-
-	//basic::Tracer tt("core.pack.rotamer_set", basic::t_trace );
 
 	ig->initialize( *this );
 	compute_one_body_energies( pose, scfxn, packer_neighbor_graph, ig );

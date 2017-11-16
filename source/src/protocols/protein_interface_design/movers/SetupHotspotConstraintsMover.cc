@@ -38,7 +38,7 @@ namespace movers {
 
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SetupHotspotConstraintsMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.SetupHotspotConstraintsMover" );
 
 // XRW TEMP std::string
 // XRW TEMP SetupHotspotConstraintsMoverCreator::keyname() const

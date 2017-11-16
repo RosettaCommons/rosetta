@@ -68,11 +68,10 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
+static basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
 
 
 bool protocols::canonical_sampling::HamiltonianExchange::options_registered_( false );

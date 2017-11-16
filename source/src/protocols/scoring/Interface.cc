@@ -62,12 +62,11 @@
 #include <core/kinematics/FoldTree.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.Interface" );
+static basic::Tracer TR( "core.conformation.Interface" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

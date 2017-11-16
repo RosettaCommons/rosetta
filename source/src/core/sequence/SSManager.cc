@@ -19,7 +19,7 @@
 #include <cmath>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.sequence.SSManager" );
+static basic::Tracer TR( "core.sequence.SSManager" );
 
 namespace core {
 namespace sequence {

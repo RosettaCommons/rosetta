@@ -96,7 +96,7 @@
 namespace protocols {
 namespace enzdes {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.EnzdesFlexBBProtocol" );
+static basic::Tracer tr( "protocols.enzdes.EnzdesFlexBBProtocol" );
 
 EnzdesFlexBBProtocol::~EnzdesFlexBBProtocol() = default;
 

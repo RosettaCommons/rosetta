@@ -24,7 +24,7 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.generate_database_cache" );
+static basic::Tracer TR( "apps.public.generate_database_cache" );
 
 void
 generate_dunbrack_binaries() {

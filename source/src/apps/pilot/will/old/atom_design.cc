@@ -54,7 +54,7 @@
 
 using numeric::conversions::radians;
 
-static THREAD_LOCAL basic::Tracer TR( "atom_design" );
+static basic::Tracer TR( "atom_design" );
 
 using core::Size;
 using core::Real;
@@ -71,14 +71,14 @@ void adesign(core::pose::Pose & pose, ScoreFunctionOP sf, core::chemical::Residu
 
 	std::map<std::string,utility::vector1<std::string> > adtypemap;
 	utility::vector1<std::string> tgrp1; tgrp1.push_back("CH5"); tgrp1.push_back("CR5"); tgrp1.push_back("NH5");
-	for(utility::vector1<std::string>::iterator i = tgrp1.begin(); i != tgrp1.end(); ++i) adtypemap[*i] = tgrp1;
+	for ( utility::vector1<std::string>::iterator i = tgrp1.begin(); i != tgrp1.end(); ++i ) adtypemap[*i] = tgrp1;
 
 	using namespace core::pack::task;
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	utility::vector1< bool > aas(20,false);
-	for(Size i = 1; i <= pose.size(); ++i) {
-		if( adtypemap.find(pose.residue(i).name()) != adtypemap.end() ) {
-			for(Size j = 1; j <= adtypemap.size(); ++j) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( adtypemap.find(pose.residue(i).name()) != adtypemap.end() ) {
+			for ( Size j = 1; j <= adtypemap.size(); ++j ) {
 				task->nonconst_residue_task(i).allow_noncanonical_aa(adtypemap[pose.residue(i).name()][j],rs);
 			}
 		} else {
@@ -109,56 +109,56 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace core;
-	using namespace chemical;
-	using namespace pose;
+		using namespace core;
+		using namespace chemical;
+		using namespace pose;
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	core::chemical::ResidueTypeSet & rs = core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD );
-	// for(ResidueTypeSet::const_residue_iterator i = rs->all_residues_begin(); i != rs->all_residues_end(); ++i) {
-	// 	TR << i->first << " " << i->second->name() << std::endl;
-	// }
-	// rs.nonconst_name_map("CH5").set_RotamerLibraryName("input/CH5.pdb");
-	// rs.nonconst_name_map("NH5").set_RotamerLibraryName("input/NH5.pdb");
-	// rs.nonconst_name_map("CR5").set_RotamerLibraryName("input/CR5.pdb");
+		core::chemical::ResidueTypeSet & rs = core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD );
+		// for(ResidueTypeSet::const_residue_iterator i = rs->all_residues_begin(); i != rs->all_residues_end(); ++i) {
+		//  TR << i->first << " " << i->second->name() << std::endl;
+		// }
+		// rs.nonconst_name_map("CH5").set_RotamerLibraryName("input/CH5.pdb");
+		// rs.nonconst_name_map("NH5").set_RotamerLibraryName("input/NH5.pdb");
+		// rs.nonconst_name_map("CR5").set_RotamerLibraryName("input/CR5.pdb");
 
-	ScoreFunctionOP sf = core::scoring::get_score_function();
+		ScoreFunctionOP sf = core::scoring::get_score_function();
 
-	Pose pose;
-	import_pose::pose_from_file(pose,rs,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
-	pose.dump_pdb("init.pdb");
+		Pose pose;
+		import_pose::pose_from_file(pose,rs,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+		pose.dump_pdb("init.pdb");
 
-	// replace_pose_residue_copying_existing_coordinates(pose,1,rs.name_map("NH5"));
-	// replace_pose_residue_copying_existing_coordinates(pose,2,rs->name_map("CR5"));
+		// replace_pose_residue_copying_existing_coordinates(pose,1,rs.name_map("NH5"));
+		// replace_pose_residue_copying_existing_coordinates(pose,2,rs->name_map("CR5"));
 
-	core::pack::optimizeH(pose,*sf);
-	mydumppdb(pose,"pre_design.pdb");
-	utility::vector1<std::string> tgrp1; tgrp1.push_back("CH5"); /*tgrp1.push_back("CR5");*/ /*tgrp1.push_back("NH5");*/
+		core::pack::optimizeH(pose,*sf);
+		mydumppdb(pose,"pre_design.pdb");
+		utility::vector1<std::string> tgrp1; tgrp1.push_back("CH5"); /*tgrp1.push_back("CR5");*/ /*tgrp1.push_back("NH5");*/
 
-	Size start_pos = 0;
-	for(Size i = 1; i <= 2; ++i) {
-		for(Size j = 1; j <= tgrp1.size(); ++j) {
-			replace_pose_residue_copying_existing_coordinates(pose,start_pos+i,rs.name_map(tgrp1[j]));
-			// core::pack::optimizeH(pose,*sf);
+		Size start_pos = 0;
+		for ( Size i = 1; i <= 2; ++i ) {
+			for ( Size j = 1; j <= tgrp1.size(); ++j ) {
+				replace_pose_residue_copying_existing_coordinates(pose,start_pos+i,rs.name_map(tgrp1[j]));
+				// core::pack::optimizeH(pose,*sf);
+				sf->score(pose);
+				std::cout << tgrp1[j] << " " << std::endl;
+				pose.energies().show(std::cout,start_pos+i);
+			}
+		}
+		// utility_exit_with_message("DBEUG");
+
+		for ( Size i = 1; i <= 2; ++i ) {
 			sf->score(pose);
-			std::cout << tgrp1[j] << " " << std::endl;
 			pose.energies().show(std::cout,start_pos+i);
 		}
-	}
-	// utility_exit_with_message("DBEUG");
-
-	for(Size i = 1; i <= 2; ++i) {
-		sf->score(pose);
-		pose.energies().show(std::cout,start_pos+i);
-	}
 
 
-	sf->show(pose);
-	adesign(pose,sf,rs);
-	sf->show(pose);
+		sf->show(pose);
+		adesign(pose,sf,rs);
+		sf->show(pose);
 
-	mydumppdb(pose,"post_design.pdb");
+		mydumppdb(pose,"post_design.pdb");
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

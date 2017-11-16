@@ -30,7 +30,7 @@
 namespace protocols {
 namespace filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.filters.TimeFilter" );
+static basic::Tracer TR( "protocols.filters.TimeFilter" );
 
 /// @brief default ctor
 TimeFilter::TimeFilter() :

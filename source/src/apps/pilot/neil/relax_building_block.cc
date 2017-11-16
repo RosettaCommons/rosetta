@@ -77,7 +77,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "relax_building_block" );
+static basic::Tracer TR( "relax_building_block" );
 
 using std::string;
 using ObjexxFCL::string_of;
@@ -115,7 +115,7 @@ void
 	ScoreFunctionOP sf = get_score_function();
 
 	utility::vector1<std::string> files = option[in::file::s]();
-	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
+	for ( Size ifile = 1; ifile <= files.size(); ++ifile ) {
 		std::string file = files[ifile];
 
 		// Read in pose
@@ -124,31 +124,31 @@ void
 		Pose mono = pose;
 
 		// Parse the input filename so that the output filenames can be constructed
-/*
-	  	std::vector<std::string> path_fn_vector = string_split(string_of(file), '/');
-	  	std::vector<std::string> fn_vector = string_split(path_fn_vector[(path_fn_vector.size()-1)], '_');
-	  	Real input_trans = (Real) atoi(fn_vector[3].c_str()); // THIS REALLY NEEDS TO BE FIXED TO HANDLE NON-INT VALUES.
-	  	Real input_angle = (Real) atoi(fn_vector[4].c_str()); // THIS REALLY NEEDS TO BE FIXED TO HANDLE NON-INT VALUES.
+		/*
+		std::vector<std::string> path_fn_vector = string_split(string_of(file), '/');
+		std::vector<std::string> fn_vector = string_split(path_fn_vector[(path_fn_vector.size()-1)], '_');
+		Real input_trans = (Real) atoi(fn_vector[3].c_str()); // THIS REALLY NEEDS TO BE FIXED TO HANDLE NON-INT VALUES.
+		Real input_angle = (Real) atoi(fn_vector[4].c_str()); // THIS REALLY NEEDS TO BE FIXED TO HANDLE NON-INT VALUES.
 		//TR << "Symm: " << fn_vector[0] << " bb: " << fn_vector[1] << " pdb: " << fn_vector[2] << " radial_disp: " << fn_vector[3].c_str() << " angle:  " << fn_vector[4]  << std::endl;
 		//TR << input_trans << " " << input_angle << std::endl;
-*/
+		*/
 
 		// Handle all of the symmetry stuff
 		core::pose::symmetry::make_symmetric_pose(pose);
 		SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 		std::map<Size,SymDof> dofs = sym_info->get_dofs();
-	 	int sym_jump = 0;
-	 	for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
-	   	Size jump_num = i->first;
-	   	if (sym_jump == 0) {
-		 		sym_jump = jump_num;
-	   	} else {
-	   		utility_exit_with_message("Can only handle one subunit!");
-	   	}
-	 	}
-	 	if (sym_jump == 0) {
-	   	utility_exit_with_message("No jump defined!");
-	 	}
+		int sym_jump = 0;
+		for ( std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++ ) {
+			Size jump_num = i->first;
+			if ( sym_jump == 0 ) {
+				sym_jump = jump_num;
+			} else {
+				utility_exit_with_message("Can only handle one subunit!");
+			}
+		}
+		if ( sym_jump == 0 ) {
+			utility_exit_with_message("No jump defined!");
+		}
 		//Vec start_trans = pose.jump(sym_jump).get_translation();
 		//Mat start_rot   = pose.jump(sym_jump).get_rotation();
 
@@ -160,20 +160,20 @@ void
 		frelax.apply(pose_for_relax);
 		TR << "Finished relaxing" << std::endl;
 
-/*
-				std::string tag = string_of(numeric::random::uniform()).substr(2,4);
-				std::string fn = string_of(fn_vector[0])+"_"+string_of(fn_vector[1])+"_"+string_of(fn_vector[2])+"_"+string_of(input_trans+trans.x())+"_"+string_of(input_angle+delta_ang)+"_"+tag+"_final.pdb.gz";
-*/
+		/*
+		std::string tag = string_of(numeric::random::uniform()).substr(2,4);
+		std::string fn = string_of(fn_vector[0])+"_"+string_of(fn_vector[1])+"_"+string_of(fn_vector[2])+"_"+string_of(input_trans+trans.x())+"_"+string_of(input_angle+delta_ang)+"_"+tag+"_final.pdb.gz";
+		*/
 
-				// Rescore with scorefxn
-				//ScoreFunctionOP scorefxn = get_score_function();
-				//scorefxn->score(pose_for_design);
+		// Rescore with scorefxn
+		//ScoreFunctionOP scorefxn = get_score_function();
+		//scorefxn->score(pose_for_design);
 
-				// Write the pdb file of the design
-				utility::io::ozstream out( option[out::file::o]() + "/" + fn );
-				pose_for_relax.dump_pdb(out);
-				core::io::pdb::extract_scores(pose_for_relax,out);
-				out.close();
+		// Write the pdb file of the design
+		utility::io::ozstream out( option[out::file::o]() + "/" + fn );
+		pose_for_relax.dump_pdb(out);
+		core::io::pdb::extract_scores(pose_for_relax,out);
+		out.close();
 
 	} // ifile
 
@@ -185,15 +185,15 @@ int
 main (int argc, char *argv[])
 {
 	try{
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	void* (*func)(void*) = &dostuff;
+		void* (*func)(void*) = &dostuff;
 
-	if (basic::options::option[ basic::options::OptionKeys::parser::view ]()) {
-		protocols::viewer::viewer_main( func );
-	} else {
-		func(NULL);
-	}
+		if ( basic::options::option[ basic::options::OptionKeys::parser::view ]() ) {
+			protocols::viewer::viewer_main( func );
+		} else {
+			func(NULL);
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

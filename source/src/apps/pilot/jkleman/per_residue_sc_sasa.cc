@@ -35,7 +35,7 @@
 #include <core/pose/util.hh>
 #include <core/scoring/sasa/util.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.per_residue_sc_sasa" );
+static basic::Tracer TR( "apps.pilot.jkleman.per_residue_sc_sasa" );
 
 //////////////////////////////////////////////////////////////////////
 

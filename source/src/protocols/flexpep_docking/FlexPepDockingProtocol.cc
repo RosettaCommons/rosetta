@@ -116,11 +116,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "FlexPepDockingProtocol" );
+static basic::Tracer TR( "FlexPepDockingProtocol" );
 using namespace core;
 using namespace ObjexxFCL;
 

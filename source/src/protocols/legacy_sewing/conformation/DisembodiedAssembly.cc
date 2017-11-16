@@ -59,7 +59,7 @@
 namespace protocols {
 namespace legacy_sewing  {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.legacy_sewing.DisembodiedAssembly");
+static basic::Tracer TR("protocols.legacy_sewing.DisembodiedAssembly");
 
 DisembodiedAssembly::DisembodiedAssembly():
 	Assembly()

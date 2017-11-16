@@ -86,7 +86,7 @@ namespace motif_grafting
 namespace movers
 {
 /**@brief Global class rosetta protocols tracer**/
-static THREAD_LOCAL basic::Tracer TR( "protocols.motif_grafting.movers.MotifGraftMover" );
+static basic::Tracer TR( "protocols.motif_grafting.movers.MotifGraftMover" );
 
 
 MotifGraftMover::MotifGraftMover()

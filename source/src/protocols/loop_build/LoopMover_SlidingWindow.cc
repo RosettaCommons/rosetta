@@ -61,7 +61,7 @@
 namespace protocols {
 namespace loop_build {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loop_build.LoopMover_SlidingWindow" );
+static basic::Tracer TR( "protocols.loop_build.LoopMover_SlidingWindow" );
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 

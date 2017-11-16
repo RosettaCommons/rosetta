@@ -25,7 +25,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.loops.loopmodel" );
+static basic::Tracer TR( "apps.public.loops.loopmodel" );
 
 ////////////////////////////////////////////////////////
 void *

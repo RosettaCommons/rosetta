@@ -41,7 +41,7 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.RotateSegmentMover" );
+static basic::Tracer TR( "protocols.denovo_design.movers.RotateSegmentMover" );
 
 namespace protocols {
 namespace denovo_design {

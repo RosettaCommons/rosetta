@@ -35,7 +35,7 @@
 // Basic/Utililty headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.RemodelLoopMoverPoseFolder" );
+static basic::Tracer TR( "protocols.denovo_design.components.RemodelLoopMoverPoseFolder" );
 
 namespace protocols {
 namespace denovo_design {

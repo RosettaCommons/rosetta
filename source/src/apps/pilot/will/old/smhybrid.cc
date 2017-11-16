@@ -104,7 +104,7 @@
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
-static THREAD_LOCAL basic::Tracer TR( "smhybrid" );
+static basic::Tracer TR( "smhybrid" );
 
 
 string & replace_string(string & s, string const & f, string const & r) {

@@ -30,7 +30,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <numeric/constants.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "check_cubic_conv" );
+static basic::Tracer TR( "check_cubic_conv" );
 
 using namespace utility;
 using namespace numeric;
@@ -49,7 +49,7 @@ periodic_test_function( Real const & X, Real const & Y)
 
 Real
 cubic_test_function( Real const & X, Real const & Y,
-										 Real const & Z = 0.0, Real const & W = 0.0)
+	Real const & Z = 0.0, Real const & W = 0.0)
 {
 	return 3*X + Y + 3*X*X - X*X*X - 3*Y*Y*Y - 2*X*Y + Y*Z + W*W*W - W*X + 0.5*W;
 }
@@ -57,38 +57,38 @@ cubic_test_function( Real const & X, Real const & Y,
 template< typename T, numeric::Size N >
 void
 test_numerical_deriv(
-										 MathNTensor< T, N > const & F,
-										 utility::fixedsizearray1< Real, N > const & x,
-										 Real const & minval,
-										 Real const & binwidth,
-										 CatmullRomSplineBoundaryType const & boundary,
-										 Real & val,
-										 utility::fixedsizearray1< T, N > & deriv_analytic )
+	MathNTensor< T, N > const & F,
+	utility::fixedsizearray1< Real, N > const & x,
+	Real const & minval,
+	Real const & binwidth,
+	CatmullRomSplineBoundaryType const & boundary,
+	Real & val,
+	utility::fixedsizearray1< T, N > & deriv_analytic )
 {
-		utility::fixedsizearray1< Real, N > minval_array( minval );
-		utility::fixedsizearray1< Real, N > binwidth_array( binwidth );
-		utility::fixedsizearray1< CatmullRomSplineBoundaryType, N > boundary_array( boundary );
-		TR << std::endl;
-		val = polycubic_interpolate_catmull_rom( F, minval_array, binwidth_array, x, boundary_array, deriv_analytic);
-		TR << "Value at ";
-		for ( Size n = 1; n <= N; n++ ) TR << ' ' << x[n];
-		TR << ": "<< val << std::endl;
-		TR << "Analytical deriv: ";
-		for ( Size n = 1; n <= N; n++ ) TR << ' ' << deriv_analytic[ n ];
-		TR << " (boundary: " << to_string( boundary ) << ")" << std::endl;
-		TR << std::endl;
+	utility::fixedsizearray1< Real, N > minval_array( minval );
+	utility::fixedsizearray1< Real, N > binwidth_array( binwidth );
+	utility::fixedsizearray1< CatmullRomSplineBoundaryType, N > boundary_array( boundary );
+	TR << std::endl;
+	val = polycubic_interpolate_catmull_rom( F, minval_array, binwidth_array, x, boundary_array, deriv_analytic);
+	TR << "Value at ";
+	for ( Size n = 1; n <= N; n++ ) TR << ' ' << x[n];
+	TR << ": "<< val << std::endl;
+	TR << "Analytical deriv: ";
+	for ( Size n = 1; n <= N; n++ ) TR << ' ' << deriv_analytic[ n ];
+	TR << " (boundary: " << to_string( boundary ) << ")" << std::endl;
+	TR << std::endl;
 
-		Real delta( 1.0e-8 );
-		utility::fixedsizearray1< Real, N > deriv_numeric;
-		for ( Size n = 1; n <= N; n++ ) {
-			utility::fixedsizearray1< Real, N > x_perturb( x );
-			x_perturb[ n ] += delta;
-			Real const val_perturb = polycubic_interpolate_catmull_rom( F, minval_array, binwidth_array, x_perturb, boundary_array );
-			deriv_numeric[ n ] = ( val_perturb - val ) / delta;
-		}
-		for ( Size n = 1; n <= N; n++ ) {
-			runtime_assert( std::abs( deriv_numeric[ n ] - deriv_analytic[ n ] ) < 1.0e-3 );
-		}
+	Real delta( 1.0e-8 );
+	utility::fixedsizearray1< Real, N > deriv_numeric;
+	for ( Size n = 1; n <= N; n++ ) {
+		utility::fixedsizearray1< Real, N > x_perturb( x );
+		x_perturb[ n ] += delta;
+		Real const val_perturb = polycubic_interpolate_catmull_rom( F, minval_array, binwidth_array, x_perturb, boundary_array );
+		deriv_numeric[ n ] = ( val_perturb - val ) / delta;
+	}
+	for ( Size n = 1; n <= N; n++ ) {
+		runtime_assert( std::abs( deriv_numeric[ n ] - deriv_analytic[ n ] ) < 1.0e-3 );
+	}
 }
 
 // @brief tests, based on vals & derivs computed in a prototype MATLAB implementation
@@ -100,7 +100,7 @@ check_cubic_conv_test()
 	Real minval( 0.0 );
 	Real binwidth( 0.1 );
 	Size n_bins( 10 );
-  utility::vector1< Real> ctrs( 10, 0 ); // 0, 0.1, ... 0.9
+	utility::vector1< Real> ctrs( 10, 0 ); // 0, 0.1, ... 0.9
 	for ( Size i = 1; i <= n_bins; i++ ) ctrs[ i ] = (i - 1) * binwidth + minval;
 	utility::fixedsizearray1< Size, 1 > n_bins_1D( n_bins );
 	utility::fixedsizearray1< Size, 2 > n_bins_2D( n_bins );
@@ -211,7 +211,7 @@ check_cubic_conv_test()
 	}
 
 
-		{
+	{
 		TR << "--- Checking 4D cubic ---" << std::endl;
 		utility::fixedsizearray1< Real, 4 > x, deriv;
 		x[1] = 0.1211; x[2] = 0.5555; x[3] = 0.4461; x[4] = 0.0022;

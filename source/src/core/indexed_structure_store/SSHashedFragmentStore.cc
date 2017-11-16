@@ -42,7 +42,7 @@
 #include <set>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.indexed_structure_store.SSHashedFragmentStore" );
+static basic::Tracer TR( "core.indexed_structure_store.SSHashedFragmentStore" );
 
 
 namespace core {

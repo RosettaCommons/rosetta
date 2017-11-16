@@ -66,11 +66,10 @@ using namespace ObjexxFCL::format;
 //JQX:: this header file took care of the "CUTPOINT_LOWER" options below
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.LHRepulsiveRampLegacy" );
+static basic::Tracer TR( "protocols.antibody.LHRepulsiveRampLegacy" );
 
 
 using namespace core;

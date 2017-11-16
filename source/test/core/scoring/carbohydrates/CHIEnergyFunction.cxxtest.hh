@@ -31,7 +31,7 @@
 // Utility Headers
 #include <utility/excn/EXCN_Base.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.carbohydrates.CHIEnergyFunction.cxxtest" );
+static basic::Tracer TR( "core.scoring.carbohydrates.CHIEnergyFunction.cxxtest" );
 
 
 class CHIEnergyFunctionTests : public CxxTest::TestSuite {

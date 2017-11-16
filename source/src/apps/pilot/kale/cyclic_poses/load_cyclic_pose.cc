@@ -37,7 +37,7 @@ using namespace protocols::loops::loop_closure;
 
 // Global Variables {{{1
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kale" );
+static basic::Tracer TR( "apps.pilot.kale" );
 
 // Application {{{1
 
@@ -50,12 +50,12 @@ int main(int argc, char* argv []) {
 
 	// Make sure the needed command line flags were given.
 
-	if (option[OptionKeys::in::file::s].active() == false) {
-			utility_exit_with_message("No input PDB file specified.");
+	if ( option[OptionKeys::in::file::s].active() == false ) {
+		utility_exit_with_message("No input PDB file specified.");
 	}
 
-	if (option[OptionKeys::loops::output_pdb].active() == false) {
-			utility_exit_with_message("No output PDB file specified.");
+	if ( option[OptionKeys::loops::output_pdb].active() == false ) {
+		utility_exit_with_message("No output PDB file specified.");
 	}
 
 	input_path = option[OptionKeys::in::file::s]()[1];

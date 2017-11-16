@@ -57,7 +57,7 @@ void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues,
 	core::fragment::FrameList overlapping_frames;
 	const Size region_start=residues.front();
 	const Size region_end=residues.back();
-	static THREAD_LOCAL basic::Tracer TR( "protocols.looprelax.FragmentPerturber" );
+	static basic::Tracer TR( "protocols.looprelax.FragmentPerturber" );
 	//TR << endl << "residues to sample: " << region_start << " to " << region_end << endl;//debug
 	core::kinematics::MoveMap move_map;
 	//allow all motions in the movemap, since the pose itself is not changed by this method

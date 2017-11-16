@@ -83,7 +83,7 @@ using namespace core;
 // const core::Size chi_deviation_threshold = 40; // for now we're only reporting really bad repacking, deviations of 40+ in chi1 or chi2 -- might be interesting to control this via a flag though
 const core::Size rot_trials_iterations = 10;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.amelie.design_tight_clusters" );
+static basic::Tracer TR( "apps.pilot.amelie.design_tight_clusters" );
 
 OPT_1GRP_KEY(Boolean, design_tight_clusters, generate_output_structures) // (no semicolon here!) -- this would generate huge amounts of output, so by default it runs silently, only reporting which residues are involved in clusters
 OPT_1GRP_KEY(Boolean, design_tight_clusters, require_renumbered_structures) // requires numbering to match length of structures -- hack for making the output work with external tools like OSCARstar, but has some drawbacks (see below)

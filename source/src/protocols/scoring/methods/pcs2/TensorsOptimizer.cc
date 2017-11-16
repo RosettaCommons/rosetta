@@ -55,7 +55,7 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-static THREAD_LOCAL basic::Tracer TR_TensorsOptimizer( "protocols.scoring.methods.pcs.TensorsOptimizer" );
+static basic::Tracer TR_TensorsOptimizer( "protocols.scoring.methods.pcs.TensorsOptimizer" );
 
 
 /*

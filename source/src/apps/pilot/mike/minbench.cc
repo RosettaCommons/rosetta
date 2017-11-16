@@ -46,13 +46,12 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
 using namespace ObjexxFCL;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -63,7 +62,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "sctrials" );
+static basic::Tracer TR( "sctrials" );
 
 class Benchmark : public moves::Mover {
 
@@ -138,18 +137,18 @@ Benchmark::get_name() const {
 int
 main( int argc, char * argv [] )
 {
-    try {
-    	using namespace protocols::jobdist;
-    	using namespace protocols::moves;
-    	using namespace scoring;
+	try {
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace scoring;
 
-    	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-    	MoverOP protocol = new Benchmark();
-    	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+		MoverOP protocol = new Benchmark();
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

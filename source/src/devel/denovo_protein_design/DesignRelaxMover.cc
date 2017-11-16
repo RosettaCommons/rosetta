@@ -57,13 +57,12 @@
 
 
 // C++ Headers
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core::scoring;
 using namespace basic::options;
 
-static THREAD_LOCAL basic::Tracer TR( "devel.DenovoProteinDesign.DesignRelaxMover" );
+static basic::Tracer TR( "devel.DenovoProteinDesign.DesignRelaxMover" );
 
 namespace devel {
 namespace denovo_protein_design {

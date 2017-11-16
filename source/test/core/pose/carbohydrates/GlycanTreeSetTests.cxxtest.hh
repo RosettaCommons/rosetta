@@ -40,7 +40,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("GlycanTreeSetTests");
+static basic::Tracer TR("GlycanTreeSetTests");
 
 //using namespace core::pose::carbohydrates;
 using namespace core::conformation::carbohydrates;

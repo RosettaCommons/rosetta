@@ -94,7 +94,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core;
@@ -103,7 +102,7 @@ using utility::vector1;
 
 
 
-static THREAD_LOCAL basic::Tracer TR( "min_test" );
+static basic::Tracer TR( "min_test" );
 
 bool rama_list_pred( const std::pair < core::Size, core::Real > &left, const std::pair < core::Size, core::Real > &right ) {
 	return left.second > right.second;
@@ -152,7 +151,7 @@ public:
 		core::pose::symmetry::make_symmetric_movemap( pose, mm );
 		TR << "*** setup_for_symmetry done ***" <<std::endl;
 
-pose.dump_pdb("test1.pdb");
+		pose.dump_pdb("test1.pdb");
 
 		// set lattice
 		SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );

@@ -25,7 +25,7 @@
 
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting.regex_based_cdr_detection.cxxtest");
+static basic::Tracer TR("protocols.antibody.grafting.regex_based_cdr_detection.cxxtest");
 
 using std::string;
 

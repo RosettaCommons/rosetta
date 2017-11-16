@@ -35,7 +35,7 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("GeneralizedKIC_Tests_ramaprepro_NCAA");
+static basic::Tracer TR("GeneralizedKIC_Tests_ramaprepro_NCAA");
 
 
 // --------------- Test Class --------------- //

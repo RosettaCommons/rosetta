@@ -68,11 +68,10 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.metal_interface.ZincHeterodimerMover" );
+static basic::Tracer TR( "protocols.metal_interface.ZincHeterodimerMover" );
 
 namespace protocols {
 namespace metal_interface {

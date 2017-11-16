@@ -35,7 +35,7 @@
 namespace protocols {
 namespace jd2 {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.JobOutputterFactory" );
+static basic::Tracer TR( "protocols.jd2.JobOutputterFactory" );
 
 JobOutputterFactory::JobOutputterFactory()
 {}

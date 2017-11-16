@@ -30,7 +30,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.simple_moves.SimpleThreadingMoverTests.cxxtest.hh");
+static basic::Tracer TR("protocols.simple_moves.SimpleThreadingMoverTests.cxxtest.hh");
 
 // --------------- Test Class --------------- //
 

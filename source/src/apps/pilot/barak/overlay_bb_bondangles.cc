@@ -47,88 +47,84 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using core::pose::Pose;
 
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_app.barak.overlay_sidechains" );
+static basic::Tracer TR( "pilot_app.barak.overlay_sidechains" );
 
 
 void overlay_bb_bondangles(
-  Pose& ref_pose,
-  Pose& pose,
-  core::Size ref_fromres,
-  core::Size fromres,
-  core::Size nres)
+	Pose& ref_pose,
+	Pose& pose,
+	core::Size ref_fromres,
+	core::Size fromres,
+	core::Size nres)
 {
-  using namespace core;
-  using namespace core::conformation;
-  using namespace id;
+	using namespace core;
+	using namespace core::conformation;
+	using namespace id;
 
-  core::conformation::Conformation& conformation
-    = pose.conformation();
-  core::conformation::Conformation const& ref_conformation
-    = ref_pose.conformation();
-  for(Size k=0; k < nres ; k++)
-    {
-      Size resid = fromres + k;
-      Size ref_resid = ref_fromres + k;
-      Residue const & rsd( conformation.residue( resid ) );
-      Residue const & ref_rsd( ref_conformation.residue( ref_resid ) );
+	core::conformation::Conformation& conformation
+		= pose.conformation();
+	core::conformation::Conformation const& ref_conformation
+		= ref_pose.conformation();
+	for ( Size k=0; k < nres ; k++ ) {
+		Size resid = fromres + k;
+		Size ref_resid = ref_fromres + k;
+		Residue const & rsd( conformation.residue( resid ) );
+		Residue const & ref_rsd( ref_conformation.residue( ref_resid ) );
 
-      // bond-angle just before residue (C=N-CA if protein)
-      if ( ref_resid>1 && ref_rsd.is_polymer() && !ref_rsd.is_lower_terminus() )
-	{
-	  Residue const& prev_ref_rsd( ref_conformation.residue( ref_resid-1 ) );
-	  Size const nbb_prev( prev_ref_rsd.n_mainchain_atoms() );
-	  AtomID
-	    bb1_ref    ( prev_ref_rsd.mainchain_atom( nbb_prev ),  ref_resid-1 ),
-	    bb2_ref    ( ref_rsd.mainchain_atom( 1 ),  ref_resid ),
-	    bb3_ref    ( ref_rsd.mainchain_atom( 2 ),  ref_resid );
-	  Residue const& prev_rsd( conformation.residue( resid-1 ) );
-	  AtomID
-	    bb1    ( prev_rsd.mainchain_atom( nbb_prev ),  resid-1 ),
-	    bb2    ( rsd.mainchain_atom( 1 ),  resid ),
-	    bb3    ( rsd.mainchain_atom( 2 ),  resid );
-	  double ref_angle = ref_conformation.bond_angle( bb1_ref, bb2_ref, bb3_ref) ;
-	  conformation.set_bond_angle(bb1, bb2, bb3, ref_angle);
+		// bond-angle just before residue (C=N-CA if protein)
+		if ( ref_resid>1 && ref_rsd.is_polymer() && !ref_rsd.is_lower_terminus() ) {
+			Residue const& prev_ref_rsd( ref_conformation.residue( ref_resid-1 ) );
+			Size const nbb_prev( prev_ref_rsd.n_mainchain_atoms() );
+			AtomID
+				bb1_ref    ( prev_ref_rsd.mainchain_atom( nbb_prev ),  ref_resid-1 ),
+				bb2_ref    ( ref_rsd.mainchain_atom( 1 ),  ref_resid ),
+				bb3_ref    ( ref_rsd.mainchain_atom( 2 ),  ref_resid );
+			Residue const& prev_rsd( conformation.residue( resid-1 ) );
+			AtomID
+				bb1    ( prev_rsd.mainchain_atom( nbb_prev ),  resid-1 ),
+				bb2    ( rsd.mainchain_atom( 1 ),  resid ),
+				bb3    ( rsd.mainchain_atom( 2 ),  resid );
+			double ref_angle = ref_conformation.bond_angle( bb1_ref, bb2_ref, bb3_ref) ;
+			conformation.set_bond_angle(bb1, bb2, bb3, ref_angle);
+		}
+
+		// intra-residue mainchain bonds and angles
+		Size const nbb( ref_rsd.n_mainchain_atoms() );
+		assert( nbb >= 2 ); // or logic gets a bit trickier
+		for ( Size i=2; i < nbb; ++i ) {
+			AtomID
+				bb1_ref    ( ref_rsd.mainchain_atom(i-1),  ref_resid ),
+				bb2_ref    ( ref_rsd.mainchain_atom(  i),  ref_resid ),
+				bb3_ref    ( ref_rsd.mainchain_atom(i+1),  ref_resid );
+			AtomID
+				bb1    ( rsd.mainchain_atom(i-1),  resid ),
+				bb2    ( rsd.mainchain_atom(  i),  resid ),
+				bb3    ( rsd.mainchain_atom(i+1),  resid );
+			double ref_angle = ref_conformation.bond_angle( bb1_ref, bb2_ref, bb3_ref) ;
+			conformation.set_bond_angle(bb1, bb2, bb3, ref_angle);
+		}
+
+		// bond angle between residues (CA-C=N if protein)
+		if ( ref_resid < ref_conformation.size() && ref_rsd.is_polymer() && !ref_rsd.is_upper_terminus() ) {
+			Residue const & next_ref_rsd(  ref_conformation.residue( ref_resid+1 ) );
+			AtomID
+				bb1_ref    ( ref_rsd.mainchain_atom( nbb-1 ),  ref_resid ),
+				bb2_ref    ( ref_rsd.mainchain_atom( nbb   ),  ref_resid ),
+				bb3_ref    ( next_ref_rsd.mainchain_atom( 1 ),  ref_resid+1 );
+			Residue const& next_rsd( conformation.residue( resid+1 ) );
+			AtomID
+				bb1    ( rsd.mainchain_atom( nbb-1 ),  resid ),
+				bb2    ( rsd.mainchain_atom( nbb   ),  resid ),
+				bb3    ( next_rsd.mainchain_atom( 1 ),  resid+1 );
+			double ref_angle = ref_conformation.bond_angle( bb1_ref, bb2_ref, bb3_ref) ;
+			conformation.set_bond_angle(bb1, bb2, bb3, ref_angle);
+		}
 	}
-
-      // intra-residue mainchain bonds and angles
-      Size const nbb( ref_rsd.n_mainchain_atoms() );
-      assert( nbb >= 2 ); // or logic gets a bit trickier
-      for ( Size i=2; i < nbb; ++i ) {
-	AtomID
-	  bb1_ref    ( ref_rsd.mainchain_atom(i-1),  ref_resid ),
-	  bb2_ref    ( ref_rsd.mainchain_atom(  i),  ref_resid ),
-	  bb3_ref    ( ref_rsd.mainchain_atom(i+1),  ref_resid );
-	AtomID
-	  bb1    ( rsd.mainchain_atom(i-1),  resid ),
-	  bb2    ( rsd.mainchain_atom(  i),  resid ),
-	  bb3    ( rsd.mainchain_atom(i+1),  resid );
-	double ref_angle = ref_conformation.bond_angle( bb1_ref, bb2_ref, bb3_ref) ;
-	conformation.set_bond_angle(bb1, bb2, bb3, ref_angle);
-      }
-
-      // bond angle between residues (CA-C=N if protein)
-      if ( ref_resid < ref_conformation.size() && ref_rsd.is_polymer() && !ref_rsd.is_upper_terminus() )
-	{
-	  Residue const & next_ref_rsd(  ref_conformation.residue( ref_resid+1 ) );
-	  AtomID
-	    bb1_ref    ( ref_rsd.mainchain_atom( nbb-1 ),  ref_resid ),
-	    bb2_ref    ( ref_rsd.mainchain_atom( nbb   ),  ref_resid ),
-	    bb3_ref    ( next_ref_rsd.mainchain_atom( 1 ),  ref_resid+1 );
-	  Residue const& next_rsd( conformation.residue( resid+1 ) );
-	  AtomID
-	    bb1    ( rsd.mainchain_atom( nbb-1 ),  resid ),
-	    bb2    ( rsd.mainchain_atom( nbb   ),  resid ),
-	    bb3    ( next_rsd.mainchain_atom( 1 ),  resid+1 );
-	  double ref_angle = ref_conformation.bond_angle( bb1_ref, bb2_ref, bb3_ref) ;
-	  conformation.set_bond_angle(bb1, bb2, bb3, ref_angle);
-	}
-    }
 }
 
 
@@ -138,40 +134,40 @@ main( int argc, char * argv [] )
 {
 	try {
 
-  using namespace core;
-  using namespace basic::options;
-  using namespace std;
+		using namespace core;
+		using namespace basic::options;
+		using namespace std;
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  pose::Pose pose;
+		pose::Pose pose;
 
-  // read params and poses
-  core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
-  if ( !option[ OptionKeys::in::file::native ].user() ) {
-    TR << "specify reference native file (-native option)" << std::endl;
-    exit(-1);
-  }
-  string native_fname = option[ OptionKeys::in::file::native ];
-  pose::Pose ref_pose;
-  core::import_pose::pose_from_file( ref_pose, native_fname, core::import_pose::PDB_file);
-  if ( !option[ OptionKeys::out::file::o ].user() ) {
-    TR << "specify output file (-o option)" << std::endl;
-    exit(-1);
-  }
-  string output_fname = option[ OptionKeys::out::file::o ];
+		// read params and poses
+		core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
+		if ( !option[ OptionKeys::in::file::native ].user() ) {
+			TR << "specify reference native file (-native option)" << std::endl;
+			exit(-1);
+		}
+		string native_fname = option[ OptionKeys::in::file::native ];
+		pose::Pose ref_pose;
+		core::import_pose::pose_from_file( ref_pose, native_fname, core::import_pose::PDB_file);
+		if ( !option[ OptionKeys::out::file::o ].user() ) {
+			TR << "specify output file (-o option)" << std::endl;
+			exit(-1);
+		}
+		string output_fname = option[ OptionKeys::out::file::o ];
 
-  // overlay bond angles
-  core::pose::PDBInfoCOP ref_pdbinfo = ref_pose.pdb_info();
-  core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
-  Size ref_fromres = ref_pdbinfo->pdb2pose('C',0);
-  Size trg_fromres = pdbinfo->pdb2pose('C',1);
-  Size nres = 10;
-  overlay_bb_bondangles(ref_pose, pose, ref_fromres, trg_fromres, nres);
+		// overlay bond angles
+		core::pose::PDBInfoCOP ref_pdbinfo = ref_pose.pdb_info();
+		core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
+		Size ref_fromres = ref_pdbinfo->pdb2pose('C',0);
+		Size trg_fromres = pdbinfo->pdb2pose('C',1);
+		Size nres = 10;
+		overlay_bb_bondangles(ref_pose, pose, ref_fromres, trg_fromres, nres);
 
-  // output overlayed pose
-  TR << "Output to [" << output_fname << "]" << endl;
-  core::io::pdb::traced_dump_pdb(TR, pose, output_fname);
+		// output overlayed pose
+		TR << "Output to [" << output_fname << "]" << endl;
+		core::io::pdb::traced_dump_pdb(TR, pose, output_fname);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -37,14 +37,13 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer rotates_tracer( "protocols.ligand_docking.ligand_options.rotates", basic::t_debug );
+static basic::Tracer rotates_tracer( "protocols.ligand_docking.ligand_options.rotates", basic::t_debug );
 
 // XRW TEMP std::string
 // XRW TEMP RotatesCreator::keyname() const

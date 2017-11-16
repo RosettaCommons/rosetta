@@ -53,7 +53,7 @@
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/antibody/AntibodyFeaturesCreator.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyFeatures" );
+static basic::Tracer TR( "protocols.antibody.AntibodyFeatures" );
 
 namespace protocols {
 namespace antibody {

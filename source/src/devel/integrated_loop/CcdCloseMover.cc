@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: LoopModeler
+///   Contains currently: LoopModeler
 ///
 ///
 /// @author Vatsan Raman
@@ -20,7 +20,6 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -46,8 +45,8 @@ void CcdCloseMover::apply(
 	// ccd close this loop
 	protocols::loops::fast_ccd_loop_closure( pose_, movemap_, loop_begin, loop_end, cutpoint,
 		ccd_cycles, ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
-			max_total_delta_strand, max_total_delta_loop, forward_deviation,
-			backward_deviation, torsion_delta, rama_delta );
+		max_total_delta_strand, max_total_delta_loop, forward_deviation,
+		backward_deviation, torsion_delta, rama_delta );
 }
 
 

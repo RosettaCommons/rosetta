@@ -138,7 +138,7 @@ using namespace core::scoring::hbonds::graph;
 namespace protocols {
 namespace hbnet {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hbnet.HBNet" );
+static basic::Tracer TR( "protocols.hbnet.HBNet" );
 
 HBNet::HBNet( ) :
 	protocols::moves::Mover( "HBNet" ),

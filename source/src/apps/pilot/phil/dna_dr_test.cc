@@ -138,7 +138,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -153,7 +152,7 @@ using std::endl;
 
 
 
-static THREAD_LOCAL basic::Tracer tt( "demo.phil.dna_dr_test", basic::t_info );
+static basic::Tracer tt( "demo.phil.dna_dr_test", basic::t_info );
 
 ///////////////////////////////////////////////////////////////////////////////
 

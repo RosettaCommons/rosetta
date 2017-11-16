@@ -22,7 +22,7 @@ namespace core {
 namespace scoring {
 namespace interface_ {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.Interface_.DDPlookup" );
+static basic::Tracer TR( "core.scoring.Interface_.DDPlookup" );
 
 DDPlookup::DDPlookup(std::string const & filename)
 {

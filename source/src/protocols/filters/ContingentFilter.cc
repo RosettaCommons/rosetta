@@ -30,7 +30,7 @@
 namespace protocols {
 namespace filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.filters.ContingentFilter" );
+static basic::Tracer TR( "protocols.filters.ContingentFilter" );
 
 /// @brief default ctor
 ContingentFilter::ContingentFilter() :

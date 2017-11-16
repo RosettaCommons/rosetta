@@ -18,7 +18,7 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.full_model_info.FullModelParameterType" );
+static basic::Tracer TR( "core.pose.full_model_info.FullModelParameterType" );
 
 namespace core {
 namespace pose {

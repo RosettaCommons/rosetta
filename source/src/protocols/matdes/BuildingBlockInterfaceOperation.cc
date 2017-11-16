@@ -41,7 +41,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.BuildingBlockInterfaceOperation" );
+static basic::Tracer TR( "protocols.matdes.BuildingBlockInterfaceOperation" );
 
 namespace protocols {
 namespace matdes {

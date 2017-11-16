@@ -112,18 +112,18 @@
 namespace protocols {
 namespace abinitio {
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 using namespace core;
 class Application {
 public:
-  Application();
-  static void register_options();
-  void setup();
-  void fix_chainbreaks( pose::Pose &pose );
-  void copy_native_structure( core::pose::Pose &extended_pose );
-  void run();
+	Application();
+	static void register_options();
+	void setup();
+	void fix_chainbreaks( pose::Pose &pose );
+	void copy_native_structure( core::pose::Pose &extended_pose );
+	void run();
 private:
-  pose::PoseOP native_pose_;
+	pose::PoseOP native_pose_;
 };
 }
 }
@@ -134,8 +134,8 @@ private:
 OPT_KEY( File, fold_tree )
 /// @details registering of options that are relevant for Application
 void protocols::abinitio::Application::register_options() {
-    OPT( in::file::native );
-  NEW_OPT( fold_tree, "a fold-tree","fold_tree.dat");
+	OPT( in::file::native );
+	NEW_OPT( fold_tree, "a fold-tree","fold_tree.dat");
 }
 
 
@@ -155,22 +155,22 @@ using namespace basic::options;
 
 /// @detail c'stor - nothing special
 Application::Application() :
-  native_pose_( NULL )
+	native_pose_( NULL )
 {}
 
 
 /// @details setup of Application data that is used for both, fold() and run()
 /// this is mainly stuff for scoring and evaluation ( process_decoys(), evaluator_ )
 void Application::setup() {
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys;
 
-  // read native pose
-  if ( option[ in::file::native ].user() ) {
-    native_pose_ = new pose::Pose;
-    core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
-    core::util::switch_to_residue_type_set( *native_pose_, chemical::CENTROID ); //so that in do_rerun the native pose is the same as the other poses
-    pose::set_ss_from_phipsi( *native_pose_ );
-  }
+	// read native pose
+	if ( option[ in::file::native ].user() ) {
+		native_pose_ = new pose::Pose;
+		core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
+		core::util::switch_to_residue_type_set( *native_pose_, chemical::CENTROID ); //so that in do_rerun the native pose is the same as the other poses
+		pose::set_ss_from_phipsi( *native_pose_ );
+	}
 }
 
 
@@ -179,101 +179,101 @@ void Application::setup() {
 /// steals the fragment from the native and applies it to the decoy
 /// native needs to be idealized!
 void Application::copy_native_structure( core::pose::Pose &extended_pose ) {
-  // requires that the sequences match at the beginning (1..nmatch_res) -- > use sequence alignment later
-  tr.Info << " *** use native structure as starting template -- NEEDS TO BE IDEALIZED !!! *** \n";
-  // determine length of segment to copy from native
-  Size seg_len = std::min(extended_pose.size(), native_pose_->size() );
-  fragment::Frame long_frame(1, seg_len);
+	// requires that the sequences match at the beginning (1..nmatch_res) -- > use sequence alignment later
+	tr.Info << " *** use native structure as starting template -- NEEDS TO BE IDEALIZED !!! *** \n";
+	// determine length of segment to copy from native
+	Size seg_len = std::min(extended_pose.size(), native_pose_->size() );
+	fragment::Frame long_frame(1, seg_len);
 
 	//create apropriate length FragData object
-  FragData frag; //there should be some kind of factory to do this.
-  Size nbb ( 3 ); //3 backbone torsions to steal
-  for ( Size pos = 1; pos<= seg_len; pos++ ) {
-    frag.add_residue( new BBTorsionSRFD( nbb, native_pose_->secstruct( pos ), 'X' ) );
-  };
-  // get torsion angles from native pose
-  frag.steal( *native_pose_, long_frame);
+	FragData frag; //there should be some kind of factory to do this.
+	Size nbb ( 3 ); //3 backbone torsions to steal
+	for ( Size pos = 1; pos<= seg_len; pos++ ) {
+		frag.add_residue( new BBTorsionSRFD( nbb, native_pose_->secstruct( pos ), 'X' ) );
+	};
+	// get torsion angles from native pose
+	frag.steal( *native_pose_, long_frame);
 
-  // apply native torsions to extended structue
-  frag.apply(extended_pose, long_frame);
+	// apply native torsions to extended structue
+	frag.apply(extended_pose, long_frame);
 }
 
 
 void Application::run() {
-  using namespace basic::options::OptionKeys;
-  using namespace pose;
-  using namespace jumping;
-  using namespace scoring;
-  setup(); //read native
+	using namespace basic::options::OptionKeys;
+	using namespace pose;
+	using namespace jumping;
+	using namespace scoring;
+	setup(); //read native
 
-  utility::io::izstream file( option[ fold_tree ]() );
-  core::kinematics::FoldTree f;
-  file >> f;
-  JumpSample jump_setup = JumpSample( f );
+	utility::io::izstream file( option[ fold_tree ]() );
+	core::kinematics::FoldTree f;
+	file >> f;
+	JumpSample jump_setup = JumpSample( f );
 
-  Pose pose = *native_pose_;
-  pose.fold_tree( f );
-  jump_setup.add_chainbreaks( pose );
+	Pose pose = *native_pose_;
+	pose.fold_tree( f );
+	jump_setup.add_chainbreaks( pose );
 
-  ScoreFunction score;
-  score.set_weight( scoring::chainbreak, 1.0 );
+	ScoreFunction score;
+	score.set_weight( scoring::chainbreak, 1.0 );
 
-  tr.Info << "just a pose with cuts" << std::endl;
-  score.show( std::cout, pose );
-  pose.dump_pdb("pose1.pdb");
+	tr.Info << "just a pose with cuts" << std::endl;
+	score.show( std::cout, pose );
+	pose.dump_pdb("pose1.pdb");
 
-  Size seg_len = native_pose_->size();
-  fragment::Frame long_frame(1, seg_len);
+	Size seg_len = native_pose_->size();
+	fragment::Frame long_frame(1, seg_len);
 
-  //create apropriate length FragData object
-  FragData frag; //there should be some kind of factory to do this.
-  Size nbb ( 3 ); //3 backbone torsions to steal
-  for ( Size pos = 1; pos<= seg_len; pos++ ) {
-    frag.add_residue( new BBTorsionSRFD( nbb, native_pose_->secstruct( pos ), 'X' ) );
-  };
-  // get torsion angles from native pose
-  frag.steal( *native_pose_, long_frame);
+	//create apropriate length FragData object
+	FragData frag; //there should be some kind of factory to do this.
+	Size nbb ( 3 ); //3 backbone torsions to steal
+	for ( Size pos = 1; pos<= seg_len; pos++ ) {
+		frag.add_residue( new BBTorsionSRFD( nbb, native_pose_->secstruct( pos ), 'X' ) );
+	};
+	// get torsion angles from native pose
+	frag.steal( *native_pose_, long_frame);
 
 
-  Pose pose2 = *native_pose_;
-  pose2.fold_tree( f );
+	Pose pose2 = *native_pose_;
+	pose2.fold_tree( f );
 
- // make  chain
-  for ( Size pos = 1; pos <= pose2.size(); pos++ ) {
-    pose2.set_phi( pos, -150 );
-    pose2.set_psi( pos, 150);
-    pose2.set_omega( pos, 180 );
-  }
+	// make  chain
+	for ( Size pos = 1; pos <= pose2.size(); pos++ ) {
+		pose2.set_phi( pos, -150 );
+		pose2.set_psi( pos, 150);
+		pose2.set_omega( pos, 180 );
+	}
 
-  jump_setup.add_chainbreaks( pose2 );
+	jump_setup.add_chainbreaks( pose2 );
 
-  tr.Info << "just a extended-pose" << std::endl;
-  score.show( std::cout, pose2 );
-  pose2.dump_pdb("pose2.pdb");
+	tr.Info << "just a extended-pose" << std::endl;
+	score.show( std::cout, pose2 );
+	pose2.dump_pdb("pose2.pdb");
 
-  frag.apply( pose2, long_frame );
+	frag.apply( pose2, long_frame );
 
-  tr.Info << " after re-application of frags" << std::endl;
-  score.show( std::cout, pose2 );
-  pose2.dump_pdb("pose3.pdb");
+	tr.Info << " after re-application of frags" << std::endl;
+	score.show( std::cout, pose2 );
+	pose2.dump_pdb("pose3.pdb");
 }
 
- }
+}
 }
 
 using namespace protocols::abinitio;
 int main( int argc, char** argv ) {
 	try{
-  Application::register_options();
-  devel::init( argc, argv );
-  basic::options::option[ basic::options::OptionKeys::in::path::database ].def( "~/minirosetta_database");
+		Application::register_options();
+		devel::init( argc, argv );
+		basic::options::option[ basic::options::OptionKeys::in::path::database ].def( "~/minirosetta_database");
 
-  Application app;
-  app.run();
+		Application app;
+		app.run();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-  return 0;
+	return 0;
 }
 

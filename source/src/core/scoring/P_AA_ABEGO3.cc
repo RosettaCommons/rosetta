@@ -38,7 +38,7 @@
 
 #include <fstream>
 //MaximCode:
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.P_AA_ABEGO3" );
+static basic::Tracer TR( "core.scoring.P_AA_ABEGO3" );
 
 namespace core {
 namespace scoring {

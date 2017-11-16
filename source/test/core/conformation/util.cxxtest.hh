@@ -34,7 +34,7 @@
 #include <basic/Tracer.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.util.cxxtest.hh" );
+static basic::Tracer TR( "core.conformation.util.cxxtest.hh" );
 
 
 class ConformationUtilityFunctionTests : public CxxTest::TestSuite {

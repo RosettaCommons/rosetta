@@ -75,34 +75,37 @@ using utility::vector1;
 using core::Size;
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer tr( "evalFullLength" );
+static basic::Tracer tr( "evalFullLength" );
 
 
 Size ala_ct(const core::pose::Pose& pose){
-  Size score = 0;
+	Size score = 0;
 	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
-		if(pose.residue(ii).name3() == "ALA")
-            score++;
+		if ( pose.residue(ii).name3() == "ALA" ) {
+			score++;
+		}
 	}
 	std::cout << "score: " << score << std::endl;
 	return score;
 }
 
 Size glu_ct(const core::pose::Pose& pose){
-  Size score = 0;
+	Size score = 0;
 	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
-		if(pose.residue(ii).name3() == "GLU")
-            score++;
+		if ( pose.residue(ii).name3() == "GLU" ) {
+			score++;
+		}
 	}
 	std::cout << "score: " << score << std::endl;
 	return score;
 }
 
 Size tyr_ct(const core::pose::Pose& pose){
-  Size score = 0;
+	Size score = 0;
 	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
-		if(pose.residue(ii).name3() == "TYR")
-            score++;
+		if ( pose.residue(ii).name3() == "TYR" ) {
+			score++;
+		}
 	}
 	std::cout << "score: " << score << std::endl;
 	return score;
@@ -118,45 +121,45 @@ Real get_holes_score(const core::pose::Pose& pose){
 
 
 int main( int argc, char * argv [] ) {
-    try {
-	using namespace core::chemical;
-	using namespace core::import_pose::pose_stream;
-	using core::import_pose::pose_from_file;
-	using protocols::loops::Loops;
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	devel::init(argc, argv);
-	std::string out_nametag = option[ out::file::o ];
-	std::string out_file_name_str( out_nametag + ".scores");
-	utility::io::ozstream output(out_file_name_str);
-	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
-	std::cout << "rsd_name: " << rsd_set->name() << std::endl;
-	//create vector of input poses.
-	MetaPoseInputStream input = streams_from_cmd_line();
-	vector1<core::pose::PoseOP> poses;
-	output << "score  holes  alaCt  gluCt tyrCt tag" << std::endl;
- 	while(input.has_another_pose()){
-		core::pose::PoseOP input_poseOP;
-		input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
-		input.fill_pose(*input_poseOP,*rsd_set);
-		std::string tag = core::pose::tag_from_pose(*input_poseOP);
-	    Real holesScore = 0;
-        Real score = 0;
-        if("fa_standard" == rsd_set->name()){
-            holesScore = get_holes_score(*input_poseOP);
-            core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(TALARIS_2013 ));
-			score = scorefxn->score(*input_poseOP);
-        }else{
-            core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function("score3"));
-            score = scorefxn->score(*input_poseOP);
-        }
-        Size alaCt = ala_ct(*input_poseOP);
-        Size gluCt = glu_ct(*input_poseOP);
-        Size tyrCt = tyr_ct(*input_poseOP);
-        output << F(8,3,score) << " " << F(8,3,holesScore) <<" "<< I(4,alaCt) << " "<< I(4,gluCt) << " " << I(4,tyrCt) << " " << tag << " " << std::endl;
-        }
-    } catch ( utility::excn::EXCN_Base const & e ) {
+	try {
+		using namespace core::chemical;
+		using namespace core::import_pose::pose_stream;
+		using core::import_pose::pose_from_file;
+		using protocols::loops::Loops;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
+		std::string out_nametag = option[ out::file::o ];
+		std::string out_file_name_str( out_nametag + ".scores");
+		utility::io::ozstream output(out_file_name_str);
+		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
+		std::cout << "rsd_name: " << rsd_set->name() << std::endl;
+		//create vector of input poses.
+		MetaPoseInputStream input = streams_from_cmd_line();
+		vector1<core::pose::PoseOP> poses;
+		output << "score  holes  alaCt  gluCt tyrCt tag" << std::endl;
+		while ( input.has_another_pose() ) {
+			core::pose::PoseOP input_poseOP;
+			input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
+			input.fill_pose(*input_poseOP,*rsd_set);
+			std::string tag = core::pose::tag_from_pose(*input_poseOP);
+			Real holesScore = 0;
+			Real score = 0;
+			if ( "fa_standard" == rsd_set->name() ) {
+				holesScore = get_holes_score(*input_poseOP);
+				core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(TALARIS_2013 ));
+				score = scorefxn->score(*input_poseOP);
+			} else {
+				core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function("score3"));
+				score = scorefxn->score(*input_poseOP);
+			}
+			Size alaCt = ala_ct(*input_poseOP);
+			Size gluCt = glu_ct(*input_poseOP);
+			Size tyrCt = tyr_ct(*input_poseOP);
+			output << F(8,3,score) << " " << F(8,3,holesScore) <<" "<< I(4,alaCt) << " "<< I(4,gluCt) << " " << I(4,tyrCt) << " " << tag << " " << std::endl;
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

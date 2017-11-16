@@ -47,7 +47,7 @@
 #include <protocols/grafting/util.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.grafting.GraftMoverBase" );
+static basic::Tracer TR( "protocols.grafting.GraftMoverBase" );
 
 namespace protocols {
 namespace grafting {

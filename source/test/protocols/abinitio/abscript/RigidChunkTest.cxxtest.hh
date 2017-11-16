@@ -43,7 +43,7 @@
 //C++ headers
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.abinitio.abscript.RigidChunkTest.cxxtest");
+static basic::Tracer TR("protocols.abinitio.abscript.RigidChunkTest.cxxtest");
 
 using namespace core;
 using namespace protocols::environment;

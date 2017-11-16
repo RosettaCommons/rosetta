@@ -23,7 +23,7 @@
 // Package headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mpdocking_setup" );
+static basic::Tracer TR( "apps.pilot.jkleman.mpdocking_setup" );
 
 ////////////////////////////////////////////////////////////////////////////////
 

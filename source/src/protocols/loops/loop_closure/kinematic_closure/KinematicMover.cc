@@ -58,7 +58,7 @@
 #include <numeric/conversions.hh>
 
 //Auto Headers
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicMover" );
+static basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicMover" );
 
 using namespace numeric::kinematic_closure;
 using namespace core;

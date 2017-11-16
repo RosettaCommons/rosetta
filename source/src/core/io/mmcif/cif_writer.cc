@@ -79,7 +79,7 @@ typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.mmcif.cif_writer.hh" );
+static basic::Tracer TR( "core.io.mmcif.cif_writer.hh" );
 
 namespace core {
 namespace io {
@@ -106,7 +106,7 @@ dump_cif(
 
 	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
 	if ( !file ) {
-		Error() << "cif_writer:dump_cif Unable to open file:" << file_name << " for writing!!!" << std::endl;
+		TR.Error << "cif_writer:dump_cif Unable to open file:" << file_name << " for writing!!!" << std::endl;
 		return false;
 	}
 	dump_cif( file, cif_sfr, *options);
@@ -172,7 +172,7 @@ dump_cif(
 
 	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
 	if ( !file ) {
-		Error() << "cif_writer:dump_cif Unable to open file:" << file_name << " for writing!!!" << std::endl;
+		TR.Error << "cif_writer:dump_cif Unable to open file:" << file_name << " for writing!!!" << std::endl;
 		return false;
 	}
 

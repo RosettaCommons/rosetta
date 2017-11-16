@@ -37,7 +37,7 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("RamaMutationSelectorTests");
+static basic::Tracer TR("RamaMutationSelectorTests");
 
 
 class RamaMutationSelectorTests : public CxxTest::TestSuite {

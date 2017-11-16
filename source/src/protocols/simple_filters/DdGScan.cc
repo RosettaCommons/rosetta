@@ -67,7 +67,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.DdGScan" );
+static basic::Tracer TR( "protocols.simple_filters.DdGScan" );
 
 namespace protocols {
 namespace simple_filters {

@@ -32,7 +32,7 @@
 // C++ Headers
 #include <iterator>
 
-static THREAD_LOCAL basic::Tracer TR("MotifArchitectBase");
+static basic::Tracer TR("MotifArchitectBase");
 
 using namespace protocols::denovo_design::architects;
 using namespace protocols::denovo_design::components;

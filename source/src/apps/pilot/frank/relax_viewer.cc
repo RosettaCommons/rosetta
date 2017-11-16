@@ -37,7 +37,6 @@
 #include <protocols/viewer/viewers.hh>
 #include <basic/options/option_macros.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -59,26 +58,26 @@ relax_main_local( void* ) {
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using namespace scoring;
-	using namespace basic::options;
+	try {
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace scoring;
+		using namespace basic::options;
 
 
-	relax::ClassicRelax::register_options();
-	register_options_universal_main();
-	option.add_relevant( OptionKeys::in::file::fullatom );
-	option.add_relevant( OptionKeys::relax::sequence );
-	devel::init(argc, argv);
+		relax::ClassicRelax::register_options();
+		register_options_universal_main();
+		option.add_relevant( OptionKeys::in::file::fullatom );
+		option.add_relevant( OptionKeys::relax::sequence );
+		devel::init(argc, argv);
 
-	// use viewer if flag given
-	protocols::viewer::viewer_main( relax_main_local );
-	relax_main_local(NULL);
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		// use viewer if flag given
+		protocols::viewer::viewer_main( relax_main_local );
+		relax_main_local(NULL);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
+	}
 	return 0;
 }
 

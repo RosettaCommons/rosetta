@@ -64,7 +64,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.RotamerBoltzmannWeight" );
+static basic::Tracer TR( "protocols.simple_filters.RotamerBoltzmannWeight" );
 
 /// @brief default ctor
 RotamerBoltzmannWeight::RotamerBoltzmannWeight() :

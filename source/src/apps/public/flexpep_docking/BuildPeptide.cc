@@ -50,12 +50,11 @@
 
 // C++ headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 
-static THREAD_LOCAL basic::Tracer TR( "BuildPeptide" );
+static basic::Tracer TR( "BuildPeptide" );
 
 using namespace core;
 using namespace basic::options;

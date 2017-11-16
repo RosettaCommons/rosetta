@@ -50,7 +50,7 @@ using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.features.FeaturesReporterFactory" );
+static basic::Tracer tr( "protocols.features.FeaturesReporterFactory" );
 
 /// @details Private constructor insures correctness of singleton.
 FeaturesReporterFactory::FeaturesReporterFactory() {}

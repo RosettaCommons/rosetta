@@ -34,7 +34,7 @@ namespace indexed_structure_store
 {
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.indexed_structure_store.BinaryFragmentStoreBackend" );
+static basic::Tracer TR( "core.indexed_structure_store.BinaryFragmentStoreBackend" );
 
 BinaryFragmentStoreBackend::BinaryFragmentStoreBackend(std::string target_path) :
 	target_path_(target_path)

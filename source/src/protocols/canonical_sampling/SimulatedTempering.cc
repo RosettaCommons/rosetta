@@ -63,11 +63,10 @@ OPT_2GRP_KEY( Integer, tempering, reweight, stride )
 OPT_2GRP_KEY( Boolean, tempering, temp, jump )
 OPT_2GRP_KEY( Real, tempering, temp, offset )
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.SimulatedTempering" );
+static basic::Tracer tr( "protocols.canonical_sampling.SimulatedTempering" );
 
 
 bool protocols::canonical_sampling::SimulatedTempering::options_registered_( false );

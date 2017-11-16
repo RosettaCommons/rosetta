@@ -44,7 +44,7 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "main" );
+static basic::Tracer TR( "main" );
 
 
 class ThisApplication  {
@@ -66,37 +66,37 @@ void ThisApplication::register_options() {
 	using namespace basic::options::OptionKeys;
 	NEW_OPT( profile, "blast .checkpoint sequence profile","");
 	NEW_OPT( vall, "vall","");
-  OPT(in::file::native);
-  OPT(in::file::s);
-  OPT(in::file::xyz);
-  OPT(in::file::fasta);
-  OPT(in::file::pssm);
-  OPT(in::file::checkpoint);
-  OPT(in::file::talos_phi_psi);
-  OPT(in::file::torsion_bin_probs);
-  OPT(in::path::database);
+	OPT(in::file::native);
+	OPT(in::file::s);
+	OPT(in::file::xyz);
+	OPT(in::file::fasta);
+	OPT(in::file::pssm);
+	OPT(in::file::checkpoint);
+	OPT(in::file::talos_phi_psi);
+	OPT(in::file::torsion_bin_probs);
+	OPT(in::path::database);
 
-  OPT(frags::scoring::config);
-  OPT(frags::scoring::profile_score);
-  OPT(frags::ss_pred);
-  OPT(frags::n_frags);
-  OPT(frags::n_candidates);
-  OPT(frags::frag_sizes);
-  OPT(frags::write_ca_coordinates);
-  OPT(frags::allowed_pdb);
-  OPT(frags::denied_pdb);
-  OPT(frags::describe_fragments);
-  OPT(frags::keep_all_protocol);
-  OPT(frags::bounded_protocol);
-  OPT(frags::quota_protocol);
-  OPT(frags::picking::selecting_rule);
-  OPT(frags::picking::selecting_scorefxn);
-  OPT(frags::picking::quota_config_file);
-  OPT(frags::picking::query_pos);
+	OPT(frags::scoring::config);
+	OPT(frags::scoring::profile_score);
+	OPT(frags::ss_pred);
+	OPT(frags::n_frags);
+	OPT(frags::n_candidates);
+	OPT(frags::frag_sizes);
+	OPT(frags::write_ca_coordinates);
+	OPT(frags::allowed_pdb);
+	OPT(frags::denied_pdb);
+	OPT(frags::describe_fragments);
+	OPT(frags::keep_all_protocol);
+	OPT(frags::bounded_protocol);
+	OPT(frags::quota_protocol);
+	OPT(frags::picking::selecting_rule);
+	OPT(frags::picking::selecting_scorefxn);
+	OPT(frags::picking::quota_config_file);
+	OPT(frags::picking::query_pos);
 
-  OPT(constraints::cst_file);
+	OPT(constraints::cst_file);
 
-  OPT(out::file::frag_prefix);
+	OPT(out::file::frag_prefix);
 
 	OPT(frags::nonlocal_pairs);
 	OPT(frags::nonlocal::min_contacts_per_res);
@@ -117,11 +117,11 @@ public:
 	typedef core::sequence::SequenceProfileOP SequenceProfileOP;
 public:
 	FragmentBasedDesign(utility::file::FileName seqprof, utility::file::FileName vall) {
-	//	SequenceProfileOP profile = new SequenceProfile();
-//		picker_ = new FragmentPicker();
-//		picker_->parse_command_line();
-//		profile->read_from_checkpoint(seqprof);
-//		picker_->set_query_seq(profile);
+		// SequenceProfileOP profile = new SequenceProfile();
+		//  picker_ = new FragmentPicker();
+		//  picker_->parse_command_line();
+		//  profile->read_from_checkpoint(seqprof);
+		//  picker_->set_query_seq(profile);
 		//picker_->read_vall(vall);
 	}
 
@@ -151,14 +151,14 @@ using namespace basic::options::OptionKeys;
 int main( int argc, char** argv ) {
 	try {
 
-	ThisApplication::register_options();
-	devel::init( argc, argv );
-	// mover
-	protocols::moves::MoverOP protocol;
-	protocol = new FragmentBasedDesign( option[profile], option[vall]);
+		ThisApplication::register_options();
+		devel::init( argc, argv );
+		// mover
+		protocols::moves::MoverOP protocol;
+		protocol = new FragmentBasedDesign( option[profile], option[vall]);
 
-	// run
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+		// run
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

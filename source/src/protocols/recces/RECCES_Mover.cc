@@ -31,7 +31,7 @@
 #include <protocols/moves/SimulatedTempering.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.RECCES_Mover" );
+static basic::Tracer TR( "protocols.recces.RECCES_Mover" );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /// TODO: The post-processing of the energies from this Mover are carried out with scripts in

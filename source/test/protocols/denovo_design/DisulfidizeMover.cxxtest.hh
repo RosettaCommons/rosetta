@@ -43,7 +43,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.DisulfidizeMover.cxxtest" );
+static basic::Tracer TR( "protocols.denovo_design.DisulfidizeMover.cxxtest" );
 
 //Uncomment the following line to dump PDBs, to debug:
 //#define test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs

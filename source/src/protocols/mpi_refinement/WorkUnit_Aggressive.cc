@@ -83,7 +83,7 @@
 namespace protocols {
 namespace mpi_refinement {
 
-static THREAD_LOCAL basic::Tracer TR("WorkUnit_Sampler.AggressiveType");
+static basic::Tracer TR("WorkUnit_Sampler.AggressiveType");
 
 ////////////////////////////////////////////
 //////// WorkUnit Combine

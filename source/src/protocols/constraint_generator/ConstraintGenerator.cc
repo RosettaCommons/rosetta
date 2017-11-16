@@ -30,7 +30,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.ConstraintGenerator" );
+static basic::Tracer TR( "protocols.moves.ConstraintGenerator" );
 
 namespace protocols {
 namespace constraint_generator {

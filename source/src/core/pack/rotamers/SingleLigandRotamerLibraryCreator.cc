@@ -31,7 +31,7 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.rotamers.SingleLigandRotamerLibraryCreator");
+static basic::Tracer TR("core.pack.rotamers.SingleLigandRotamerLibraryCreator");
 
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
 SingleLigandRotamerLibraryCreator::create( core::chemical::ResidueType const & restype) const {

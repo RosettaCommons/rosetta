@@ -86,7 +86,7 @@
 #include <ctime>
 #include <algorithm>
 
-static THREAD_LOCAL basic::Tracer tr( "devel.dna.MotifLoopBuild" );
+static basic::Tracer tr( "devel.dna.MotifLoopBuild" );
 
 //using namespace basic::options;
 using namespace protocols;

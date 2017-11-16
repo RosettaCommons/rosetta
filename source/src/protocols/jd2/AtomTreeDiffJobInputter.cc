@@ -35,7 +35,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.AtomTreeDiffJobInputter" );
+static basic::Tracer tr( "protocols.jd2.AtomTreeDiffJobInputter" );
 
 namespace protocols {
 namespace jd2 {

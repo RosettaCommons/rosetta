@@ -62,7 +62,7 @@
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/helixAssembly/HelixBundleFeaturesCreator.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.helixAssembly.HelixBundleFeatures" );
+static basic::Tracer TR( "protocols.features.helixAssembly.HelixBundleFeatures" );
 
 namespace protocols {
 namespace features {

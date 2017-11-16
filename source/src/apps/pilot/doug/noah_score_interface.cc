@@ -42,18 +42,18 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.score_interface" );
+static basic::Tracer TR( "apps.score_interface" );
 
 void register_metrics() {
 
 	core::pose::metrics::PoseMetricCalculatorOP interface_neighbor_calculator = new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator((core::Size)1,(core::Size)2);
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "interface_neighbor", interface_neighbor_calculator );
-	
+
 }
 
 core::Real compute_interface_energy(
 	core::pose::Pose & this_pose) {
-	
+
 	basic::MetricValue<core::Size> mv_size;
 	this_pose.metric("interface_neighbor","first_chain_first_resnum",mv_size);
 	core::Size ch1_begin_num = mv_size.value();
@@ -67,20 +67,20 @@ core::Real compute_interface_energy(
 	// Clear the energy-holders, get the (unweighted) energies from the pose
 	core::scoring::EnergyMap delta_energies_unweighted_;
 	delta_energies_unweighted_.clear();
-	
+
 	core::scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );
-	
+
 	std::vector<core::Size> interface_positions;
-	
+
 	// Loop over interactions across the interface
 	for ( core::Size i = ch1_begin_num; i <= ch1_end_num; ++i ) {
 		for ( utility::graph::Graph::EdgeListConstIter
-						iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-						irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 			const core::scoring::EnergyEdge * edge( static_cast< const core::scoring::EnergyEdge *> (*iru) );
 			core::Size const j( edge->get_second_node_ind() );
-						
+
 			if ( ( j >= ch2_begin_num ) && ( j <= ch2_end_num ) ) {
 				delta_energies_unweighted_ += edge->fill_energy_map();
 			}
@@ -90,22 +90,22 @@ core::Real compute_interface_energy(
 	// Graph is asymmetric, so switch i/j and redo
 	for ( core::Size i = ch2_begin_num; i <= ch2_end_num; ++i ) {
 		for ( utility::graph::Graph::EdgeListConstIter
-						iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-						irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 			const core::scoring::EnergyEdge * edge( static_cast< const core::scoring::EnergyEdge *> (*iru) );
 			core::Size const j( edge->get_second_node_ind() );
-						
+
 			if ( ( j >= ch1_begin_num ) && ( j <= ch1_end_num ) ) {
 				delta_energies_unweighted_ += edge->fill_energy_map();
 			}
 		}
 	}
-	
+
 	core::scoring::EnergyMap weights_ = this_pose.energies().weights();
 	core::Real weighted_total_ = delta_energies_unweighted_.dot(weights_);
 	return weighted_total_;
-	
+
 }
 
 int main( int argc, char * argv [] )
@@ -113,44 +113,44 @@ int main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pack::task;
-		
+
 	// initialize Rosetta
 	devel::init(argc, argv);
-	
+
 	register_metrics();
-	
+
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
-	
+
 	utility::vector1<std::string> pdbs = basic::options::option[ in::file::s ]();
-	
+
 	core::Real min_interface_score = std::numeric_limits<core::Real>::infinity();
 	core::Real min_total_score = std::numeric_limits<core::Real>::infinity();
 	std::string min_interface_filename;
 	std::string min_total_filename;
-	
-	for(core::Size i = 1; i <= pdbs.size(); i++) {
-	
+
+	for ( core::Size i = 1; i <= pdbs.size(); i++ ) {
+
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file(pose, pdbs[i], core::import_pose::PDB_file);
 		(*score_fxn)(pose);
 
 		core::Real interface_score = compute_interface_energy(pose);
-		if (min_interface_score > interface_score) {
+		if ( min_interface_score > interface_score ) {
 			min_interface_score = interface_score;
 			min_interface_filename = pdbs[i];
 		}
-		
+
 		core::Real total_score = pose.energies().total_energy();
-		if (min_total_score > total_score) {
+		if ( min_total_score > total_score ) {
 			min_total_score = total_score;
 			min_total_filename = pdbs[i];
 		}
 		TR << pdbs[i] << "\t" << "\t" << total_score << "\t" << interface_score << std::endl;
 
 	}
-	
+
 	TR << "MINIMUM TOTAL" << "\t" << min_total_filename << "\t" << min_total_score << std::endl;
 	TR << "MINIMUM INTERFACE" << "\t" << min_interface_filename << "\t" << min_interface_score << std::endl;
-	
+
 	return 0;
 }

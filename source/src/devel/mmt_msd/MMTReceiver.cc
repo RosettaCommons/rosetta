@@ -53,7 +53,7 @@
 namespace devel {
 namespace mmt_msd {
 
-static THREAD_LOCAL basic::Tracer TR( "devel.mmt_msd.MMTReceiver" );
+static basic::Tracer TR( "devel.mmt_msd.MMTReceiver" );
 
 StateData::StateData() {}
 StateData::~StateData() = default;

@@ -38,7 +38,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 namespace core {
 namespace fragment {
 
-static THREAD_LOCAL basic::Tracer tr( "core.fragment" );
+static basic::Tracer tr( "core.fragment" );
 
 
 bool SecstructSRFD::apply( pose::Pose& pose, Size seqpos ) const {

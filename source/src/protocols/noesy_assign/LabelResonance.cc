@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.resonances" );
+static basic::Tracer tr( "protocols.noesy_assign.resonances" );
 
 using core::Real;
 using namespace core;

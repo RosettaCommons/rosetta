@@ -40,7 +40,7 @@
 
 using ObjexxFCL::format::I;
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.rna.RNA_VDW_Energy" );
+static basic::Tracer tr( "core.scoring.rna.RNA_VDW_Energy" );
 
 namespace core {
 namespace scoring {

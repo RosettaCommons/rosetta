@@ -51,7 +51,7 @@
 using namespace core;
 using namespace core::scoring::mm;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.branch_angle.BranchAngleOptimizer" );
+static basic::Tracer TR( "protocols.moves.branch_angle.BranchAngleOptimizer" );
 
 namespace protocols {
 namespace branch_angle {

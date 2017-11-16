@@ -64,7 +64,7 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.krishna.mtransferase" );
+static basic::Tracer TR( "apps.pilot.krishna.mtransferase" );
 
 class mtransferase : public protocols::moves::Mover {
 
@@ -89,17 +89,17 @@ public:
 
 		//accumulate required residues for loop 1
 		for ( Size i=0; i<15 ; ++i ) {
-			if (i%5 == 0)	pose.append_polymer_residue_after_seqpos( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("SER")) ), i+85, false );
-			else	pose.append_polymer_residue_after_seqpos( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("GLY")) ), i+85, false );
+			if ( i%5 == 0 ) pose.append_polymer_residue_after_seqpos( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("SER")) ), i+85, false );
+			else pose.append_polymer_residue_after_seqpos( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("GLY")) ), i+85, false );
 		}
 
 		//accumulate required residues for loop 2
 		for ( Size j=0; j<15 ; ++j ) {
-			if ((j+1)%5 == 0)	pose.append_polymer_residue_after_seqpos( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("SER")) ), j+427, false );
-			else	pose.append_polymer_residue_after_seqpos( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("GLY")) ), j+427, false );
+			if ( (j+1)%5 == 0 ) pose.append_polymer_residue_after_seqpos( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("SER")) ), j+427, false );
+			else pose.append_polymer_residue_after_seqpos( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("GLY")) ), j+427, false );
 		}
 
-//		pose.dump_pdb("loop1_complex.pdb");
+		//  pose.dump_pdb("loop1_complex.pdb");
 	}
 
 	std::string get_name() const { return "mtransferase"; }
@@ -118,7 +118,7 @@ public:
 	bool
 	reinitialize_for_new_input() const { return false; }
 
-//private:
+	//private:
 
 };
 

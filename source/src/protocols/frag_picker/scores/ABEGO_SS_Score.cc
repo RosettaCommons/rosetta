@@ -37,7 +37,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static THREAD_LOCAL basic::Tracer trABEGO_SS_Score(
+static basic::Tracer trABEGO_SS_Score(
 	"protocols.frag_picker.scores.ABEGO_SS_Score");
 
 bool ABEGO_SS_Score::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {

@@ -22,7 +22,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.output_util" );
+static basic::Tracer TR( "protocols.stepwise.modeler.output_util" );
 
 using namespace core;
 

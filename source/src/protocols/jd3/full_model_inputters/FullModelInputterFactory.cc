@@ -37,7 +37,7 @@ namespace protocols {
 namespace jd3 {
 namespace full_model_inputters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.full_model_inputters.FullModelInputterFactory" );
+static basic::Tracer TR( "protocols.jd3.full_model_inputters.FullModelInputterFactory" );
 
 FullModelInputterFactory::FullModelInputterFactory() :
 	throw_on_double_registration_( false )

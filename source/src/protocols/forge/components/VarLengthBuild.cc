@@ -86,7 +86,7 @@ namespace components {
 
 // Tracer instance for this file
 // Named after the original location of this code
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.components.VarLengthBuild" );
+static basic::Tracer TR( "protocols.forge.components.VarLengthBuild" );
 
 
 /// @brief default constructor

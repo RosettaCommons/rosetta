@@ -33,7 +33,7 @@
 
 
 
-static THREAD_LOCAL basic::Tracer TR_util("core.selector.residue_selector.utilities_for_testing");
+static basic::Tracer TR_util("core.selector.residue_selector.utilities_for_testing");
 
 
 
@@ -42,13 +42,13 @@ inline
 void
 compare_bool_vector(utility::vector1< bool > const & vec1, utility::vector1< bool > const & vec2){
 	TS_ASSERT(vec1.size() == vec2.size());
-	for( core::Size i = 1; i <= vec1.size(); ++i){
+	for ( core::Size i = 1; i <= vec1.size(); ++i ) {
 		//
 
 		//Debugging:
-		if ( vec1[ i ] != vec2[ i ]){
+		if ( vec1[ i ] != vec2[ i ] ) {
 			TR_util <<"NE "<< i << " " << utility::to_string(vec1[ i ]) << " " << utility::to_string(vec2[ i ]) << std::endl;
-			for (core::Size x = 1; x <= vec1.size(); ++x){
+			for ( core::Size x = 1; x <= vec1.size(); ++x ) {
 				TR_util << utility::to_string(vec1[ i ] != vec2[ i ]) << " " << x << " " << utility::to_string(vec1[ x ]) << " " << utility::to_string(vec2[ x ]) << std::endl;
 			}
 			TR_util.flush();

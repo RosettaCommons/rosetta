@@ -27,7 +27,6 @@
 
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 
 // option key includes
 
@@ -44,7 +43,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.analysis.packstat" );
+static basic::Tracer TR( "protocols.analysis.packstat" );
 using namespace core;
 
 namespace protocols {

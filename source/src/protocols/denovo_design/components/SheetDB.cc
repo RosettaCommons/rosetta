@@ -47,7 +47,7 @@
 #include <map>
 #include <stack>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.SheetDB" );
+static basic::Tracer TR( "protocols.denovo_design.components.SheetDB" );
 
 namespace protocols {
 namespace denovo_design {

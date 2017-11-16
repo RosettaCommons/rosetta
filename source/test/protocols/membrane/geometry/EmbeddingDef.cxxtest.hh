@@ -38,7 +38,7 @@
 #include <string>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.geometry.EmbeddingDef.cxxtest");
+static basic::Tracer TR("protocols.membrane.geometry.EmbeddingDef.cxxtest");
 
 using namespace core;
 using namespace core::conformation;

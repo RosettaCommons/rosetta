@@ -80,11 +80,10 @@
 
 //#include <utility/io/mpistream.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.relax.ClassicRelax" );
+static basic::Tracer TR( "protocols.relax.ClassicRelax" );
 
 using namespace core;
 ////////////////////////////////////////////////////////////////////////////////////////////////////

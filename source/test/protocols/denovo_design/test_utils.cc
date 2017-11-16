@@ -28,7 +28,7 @@
 
 // C++ Headers
 
-static THREAD_LOCAL basic::Tracer utilTR( "test.protocols.denovo_design.test_utils.cc" );
+static basic::Tracer utilTR( "test.protocols.denovo_design.test_utils.cc" );
 
 namespace protocols {
 namespace denovo_design {
@@ -70,18 +70,18 @@ check_unwanted_movement(
 		for ( core::Size j=res_s4.start(); j<=res_s4.stop(); ++j ) {
 			utilTR.Debug << i << "__" << j << " vs " << new_res( i, orig, test ) << "__" << new_res( j, orig, test ) << std::endl;
 			TS_ASSERT_DELTA(
-					orig_pose.residue(i).xyz("CA").distance(orig_pose.residue(j).xyz("CA")),
-					test_pose.residue(new_res(i, orig, test)).xyz("CA").distance(test_pose.residue(new_res(j, orig, test)).xyz("CA")),
-					1e-4 );
+				orig_pose.residue(i).xyz("CA").distance(orig_pose.residue(j).xyz("CA")),
+				test_pose.residue(new_res(i, orig, test)).xyz("CA").distance(test_pose.residue(new_res(j, orig, test)).xyz("CA")),
+				1e-4 );
 		}
 	}
 }
 
 void
 check_movable_group(
-		StructureData const & orig, core::pose::Pose const & orig_pose,
-		StructureData const & test, core::pose::Pose const & test_pose,
-		core::Size const group )
+	StructureData const & orig, core::pose::Pose const & orig_pose,
+	StructureData const & test, core::pose::Pose const & test_pose,
+	core::Size const group )
 {
 	SegmentNames const components1 = orig.segments_in_movable_group( group );
 	SegmentNames const components2 = test.segments_in_movable_group( group );

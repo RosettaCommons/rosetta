@@ -94,7 +94,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.BackrubDDMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.BackrubDDMover" );
 
 typedef core::Real Real;
 typedef core::pose::Pose Pose;

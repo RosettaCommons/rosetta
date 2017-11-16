@@ -52,7 +52,7 @@
 namespace protocols {
 namespace match {
 namespace downstream {
-static THREAD_LOCAL basic::Tracer TR( "core.protocols.match.downstream" );
+static basic::Tracer TR( "core.protocols.match.downstream" );
 ScoringSecMatchRPE::~ScoringSecMatchRPE() {}
 
 

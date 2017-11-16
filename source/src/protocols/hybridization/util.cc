@@ -71,7 +71,7 @@
 #include <numeric/xyzVector.hh>
 
 #include <basic/Tracer.hh>
-static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.util" );
+static basic::Tracer TR( "protocols.hybridization.util" );
 
 namespace protocols {
 //namespace comparative_modeling {

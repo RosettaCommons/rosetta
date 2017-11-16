@@ -32,7 +32,7 @@
 namespace protocols {
 namespace docking {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingHighResFactory" );
+static basic::Tracer TR( "protocols.docking.DockingHighResFactory" );
 
 /// @details Private constructor insures correctness of singleton.
 DockingHighResFactory::DockingHighResFactory() {}

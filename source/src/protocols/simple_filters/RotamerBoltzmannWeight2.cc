@@ -38,7 +38,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.RotamerBoltzmannWeight2" );
+static basic::Tracer TR( "protocols.simple_filters.RotamerBoltzmannWeight2" );
 
 namespace protocols {
 namespace simple_filters {

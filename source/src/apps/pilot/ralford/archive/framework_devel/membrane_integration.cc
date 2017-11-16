@@ -63,7 +63,7 @@ using basic::Warning;
 
 using namespace core::membrane;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_integration" );
+static basic::Tracer TR( "apps.pilot.ralford.membrane_integration" );
 
 ///// Individual Unit Tests ////////////
 
@@ -73,12 +73,12 @@ static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_integration" 
 ///             in the pose
 void test_membrane_chain( core::pose::Pose & pose ) {
 
-    // Calculate the number of chains in the original pose
+	// Calculate the number of chains in the original pose
 
-    // Check the contents of the last chain
-    // - first residue is a membrane residue
-    // - the next n residues are embedding residues where n
-    // is equal to the original n pose chains
+	// Check the contents of the last chain
+	// - first residue is a membrane residue
+	// - the next n residues are embedding residues where n
+	// is equal to the original n pose chains
 
 }
 
@@ -90,17 +90,17 @@ void test_membrane_chain( core::pose::Pose & pose ) {
 ///             with the actual total residue.
 void test_membrane_conformation( core::pose::Pose & pose ) {
 
-    // check access info in membrane and embedding data getters
+	// check access info in membrane and embedding data getters
 
-    // check consistency in the root
+	// check consistency in the root
 
-    // check consistency in the embedding data map
+	// check consistency in the embedding data map
 
-    // check that the total residue in span file (accross all span files) is equal to the total
-    // number of residues in the pose minus the number of residues in the embedding
-    // chain for consistency
+	// check that the total residue in span file (accross all span files) is equal to the total
+	// number of residues in the pose minus the number of residues in the embedding
+	// chain for consistency
 
-    // check that the membrane conformation is valid
+	// check that the membrane conformation is valid
 
 }
 
@@ -108,13 +108,13 @@ void test_membrane_conformation( core::pose::Pose & pose ) {
 /// @details    Check that a valid memrbane fold tree has been constructed
 void test_membrane_fold_tree( core::pose::Pose & pose ) {
 
-    // Check that all appropriate jump edges exist
+	// Check that all appropriate jump edges exist
 
-    // check the number of edges in the pose is correct
+	// check the number of edges in the pose is correct
 
-    // check the membrane residue is the root
+	// check the membrane residue is the root
 
-    // check the fold tree is a valid fold tree
+	// check the fold tree is a valid fold tree
 
 }
 
@@ -122,12 +122,12 @@ void test_membrane_fold_tree( core::pose::Pose & pose ) {
 /// @details    Check that membrane scores do not change across iterations in lowres scoring
 void test_membrane_scoring_lowres( core::pose::Pose & pose ) {
 
-    using namespace core::scoring;
+	using namespace core::scoring;
 
-    // calculate ddGs are 0
+	// calculate ddGs are 0
 
-    //	pose.dump_scored_pdb( "repacked_once.pdb", *scorefxn );
-//	TR << "Score after repacking once: " << pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
+	// pose.dump_scored_pdb( "repacked_once.pdb", *scorefxn );
+	// TR << "Score after repacking once: " << pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
 
 }
 
@@ -140,33 +140,33 @@ void test_membrane_scoring_lowres( core::pose::Pose & pose ) {
 int main( int argc, char* argv[] )
 {
 
-    try {
+	try {
 
-        using namespace protocols::membrane;
-        using namespace protocols::jd2;
+		using namespace protocols::membrane;
+		using namespace protocols::jd2;
 
-        // Initialize Options System, RG, and All Factory_Registrators
-        devel::init(argc, argv);
+		// Initialize Options System, RG, and All Factory_Registrators
+		devel::init(argc, argv);
 
-        TR << "Starting to test the membrane mover!" << std::endl;
+		TR << "Starting to test the membrane mover!" << std::endl;
 
-        // Initialize Membrane Mover
-        MembraneMoverOP mp = new MembraneMover();
-        JobDistributor::get_instance()->go(mp);
+		// Initialize Membrane Mover
+		MembraneMoverOP mp = new MembraneMover();
+		JobDistributor::get_instance()->go(mp);
 
-        // Grab Membrane Pose from the Membrane Mover
-        core::pose::PoseOP pose = mp->get_pose();
+		// Grab Membrane Pose from the Membrane Mover
+		core::pose::PoseOP pose = mp->get_pose();
 
-        // Run Benchmarking tests
-        test_membrane_chain( *pose );
-        test_membrane_conformation( *pose );
-        test_membrane_fold_tree( *pose );
-        test_membrane_scoring_lowres( *pose ); // function I am going to write
-        test_membrane_scoring_highres( *pose ): // function I am going to write
-        test_talaris( *pose ); // function I am going to write
+		// Run Benchmarking tests
+		test_membrane_chain( *pose );
+		test_membrane_conformation( *pose );
+		test_membrane_fold_tree( *pose );
+		test_membrane_scoring_lowres( *pose ); // function I am going to write
+		test_membrane_scoring_highres( *pose ): // function I am going to write
+		test_talaris( *pose ); // function I am going to write
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cout << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

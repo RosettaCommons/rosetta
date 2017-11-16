@@ -43,7 +43,7 @@
 // unit test utility functions
 #include <protocols/denovo_design/test_utils.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.connection.ExtendChainMover.cxxtest" );
+static basic::Tracer TR( "protocols.denovo_design.connection.ExtendChainMover.cxxtest" );
 
 // --------------- Test Class --------------- //
 class ExtendChainMoverTests : public CxxTest::TestSuite {

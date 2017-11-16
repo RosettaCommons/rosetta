@@ -43,7 +43,7 @@ using namespace core::scoring;
 
 //using namespace ObjexxFCL::format;
 
-//static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ReportFilter" );
+//static basic::Tracer TR( "protocols.simple_filters.ReportFilter" );
 
 /// @brief Writes all filter results to the pose file.
 /// @details This mover goes through all filters in the RosettaScripts file and writes their

@@ -54,13 +54,12 @@ using namespace core::scoring;
 using namespace pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
 // tracer - used to replace cout
-static THREAD_LOCAL basic::Tracer TR("TorsionScoring");
+static basic::Tracer TR("TorsionScoring");
 
 OPT_KEY( String, resname )
 

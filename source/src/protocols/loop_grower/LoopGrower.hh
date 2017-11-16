@@ -67,7 +67,7 @@
 namespace protocols {
 namespace loop_grower {
 
-static THREAD_LOCAL basic::Tracer TRACER("protocols.loop_grower.LoopGrower");
+static basic::Tracer TRACER("protocols.loop_grower.LoopGrower");
 
 // 56 bytes
 struct ResTorsions {

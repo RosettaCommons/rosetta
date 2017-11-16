@@ -46,7 +46,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filters.SheetFilter" );
+static basic::Tracer tr( "protocols.simple_filters.SheetFilter" );
 
 using core::Real;
 using namespace core;

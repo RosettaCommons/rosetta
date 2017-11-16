@@ -28,7 +28,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.AtomProperties" );
+static basic::Tracer TR( "core.chemical.AtomProperties" );
 
 
 #ifdef    SERIALIZATION

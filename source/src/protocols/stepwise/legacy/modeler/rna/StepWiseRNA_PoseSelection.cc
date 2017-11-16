@@ -30,7 +30,7 @@ using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::modeler::rna;
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSelection" );
+static basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSelection" );
 
 namespace protocols {
 namespace stepwise {

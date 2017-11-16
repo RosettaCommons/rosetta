@@ -56,7 +56,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.visualize.VisualizeEmbeddingMover" );
+static basic::Tracer TR( "protocols.membrane.visualize.VisualizeEmbeddingMover" );
 
 namespace protocols {
 namespace membrane {

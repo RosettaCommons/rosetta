@@ -142,7 +142,7 @@ using namespace utility::tag;
 /// @details Auto-generated virtual destructor
 FindZnCoordinatingResidues::~FindZnCoordinatingResidues() = default;
 
-static THREAD_LOCAL basic::Tracer TR( "devel.znhash.SymmZnMoversAndTaskOps" );
+static basic::Tracer TR( "devel.znhash.SymmZnMoversAndTaskOps" );
 
 InitializeZNCoordinationConstraintMover::InitializeZNCoordinationConstraintMover() :
 	parent( "InitializeZNCoordinationConstraintMover" ),

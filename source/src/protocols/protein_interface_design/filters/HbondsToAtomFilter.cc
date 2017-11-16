@@ -83,7 +83,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToAtomFilter" );
+static basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToAtomFilter" );
 using core::pose::Pose;
 
 // XRW TEMP protocols::filters::FilterOP

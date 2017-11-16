@@ -48,7 +48,7 @@
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.AlignmentEnergy" );
+static basic::Tracer TR( "protocols.rna.AlignmentEnergy" );
 
 namespace protocols {
 namespace rna {

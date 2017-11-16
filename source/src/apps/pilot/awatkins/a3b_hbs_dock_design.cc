@@ -92,7 +92,6 @@ using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::id;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
@@ -129,7 +128,7 @@ using utility::file::FileName;
 //
 
 // tracer - used to replace cout
-static THREAD_LOCAL basic::Tracer TR("A3BHDDM");
+static basic::Tracer TR("A3BHDDM");
 
 // application specific options
 namespace a3b_hddm {

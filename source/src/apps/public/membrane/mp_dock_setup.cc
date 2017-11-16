@@ -26,7 +26,7 @@
 // Package headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.membrane.mp_dock_setup" );
+static basic::Tracer TR( "apps.public.membrane.mp_dock_setup" );
 
 int
 main( int argc, char * argv [] )

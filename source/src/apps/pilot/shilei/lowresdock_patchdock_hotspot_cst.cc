@@ -79,7 +79,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot_apps.shilei.lowresdock_patchdock_hotspot_cst" );
+static basic::Tracer TR( "apps.pilot_apps.shilei.lowresdock_patchdock_hotspot_cst" );
 
 typedef core::Size Size;
 typedef core::Real Real;

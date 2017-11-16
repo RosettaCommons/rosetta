@@ -62,7 +62,7 @@ namespace seeded_abinitio {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.SeedSetupMover" );
+static basic::Tracer TR( "protocols.seeded_abinitio.SeedSetupMover" );
 
 // XRW TEMP std::string
 // XRW TEMP SeedSetupMoverCreator::keyname() const

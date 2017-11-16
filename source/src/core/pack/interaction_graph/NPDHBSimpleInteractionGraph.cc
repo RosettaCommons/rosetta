@@ -90,7 +90,7 @@ create_hbonds_one_way(
 
 
 
-//static THREAD_LOCAL basic::Tracer TR( "core.pack.interaction_graph.NPDHBSimpleInteractionGraph" );
+//static basic::Tracer TR( "core.pack.interaction_graph.NPDHBSimpleInteractionGraph" );
 
 NPDHBSimpleNode::NPDHBSimpleNode( Graph* owner, Size node_id ):
 	parent( owner, node_id  ),

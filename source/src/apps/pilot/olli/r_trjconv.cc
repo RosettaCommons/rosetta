@@ -58,7 +58,7 @@
 #include <core/id/types.hh>
 
 
-static THREAD_LOCAL basic::Tracer tracer( "r_trjconv" );
+static basic::Tracer tracer( "r_trjconv" );
 
 using namespace core;
 using namespace protocols;

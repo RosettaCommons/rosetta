@@ -14,7 +14,7 @@
 #include <protocols/backbone_moves/local_backbone_mover/gap_solution_pickers/GapSolutionPicker.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.gap_solution_pickers.GapSolutionPicker" );
+static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.gap_solution_pickers.GapSolutionPicker" );
 
 
 namespace protocols {

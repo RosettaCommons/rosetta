@@ -31,7 +31,7 @@
 namespace protocols {
 namespace evolution {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.evolution.AASynthesisFitnessCost" );
+static basic::Tracer TR( "protocols.evolution.AASynthesisFitnessCost" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP AASynthesisFitnessCostFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AASynthesisFitnessCost ); }

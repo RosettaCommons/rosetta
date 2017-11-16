@@ -80,11 +80,10 @@ using namespace ObjexxFCL::format;
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.AntibodyModeler" );
+static basic::Tracer TR( "protocols.AntibodyModeler" );
 
 namespace protocols {
 namespace antibody_legacy {

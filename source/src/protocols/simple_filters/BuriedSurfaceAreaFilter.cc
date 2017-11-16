@@ -39,7 +39,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.BuriedSurfaceAreaFilter" );
+static basic::Tracer TR( "protocols.simple_filters.BuriedSurfaceAreaFilter" );
 
 namespace protocols {
 namespace simple_filters {

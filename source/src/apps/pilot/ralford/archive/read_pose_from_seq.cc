@@ -10,8 +10,8 @@
 /// @file    read_pose_from_seq.cc
 ///
 /// @brief   Use the membrane framework reading in a pose from seuqnece. Involves a modified
-///			 mover that might handle chains differently? 
-///			 Last Modified: 3/27/14
+///    mover that might handle chains differently?
+///    Last Modified: 3/27/14
 ///
 /// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 
@@ -39,7 +39,7 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.read_mp_pose_from_seq" );
+static basic::Tracer TR( "apps.pilot.ralford.read_mp_pose_from_seq" );
 
 void*
 my_main( void* )
@@ -49,16 +49,16 @@ my_main( void* )
 
 	/// how this should work
 	/// CreateMPMover( fasta, )
-	/// 
-	
+	///
+
 	// Setup MP Unit Testing Mover
 	MembraneUnitTestMoverOP mp = new MembraneUnitTestMover();
 	JobDistributor::get_instance()->go(mp);
-	
+
 	// Score a Membrane Pose and
 	mp->score_lowres();
 	mp->score_highres();
-	
+
 	return NULL;
 }
 
@@ -67,13 +67,13 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		
+
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
-	
+
 }
 

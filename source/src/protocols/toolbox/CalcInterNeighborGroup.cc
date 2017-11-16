@@ -45,7 +45,7 @@
 //#include <set>
 //#include <utility>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.CalcInterNeighborGroup" );
+static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.CalcInterNeighborGroup" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

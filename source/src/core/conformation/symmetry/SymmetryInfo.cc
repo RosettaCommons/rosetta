@@ -45,11 +45,9 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.SymmetryInfo" );
+static basic::Tracer TR( "core.conformation.SymmetryInfo" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

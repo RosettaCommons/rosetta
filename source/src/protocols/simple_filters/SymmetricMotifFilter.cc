@@ -58,7 +58,7 @@ namespace protocols {
 namespace simple_filters {
 
 // tracer
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.SymmetricMotifFilter" );
+static basic::Tracer TR( "protocols.simple_filters.SymmetricMotifFilter" );
 
 // creator
 // XRW TEMP protocols::filters::FilterOP

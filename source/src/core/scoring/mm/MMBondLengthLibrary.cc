@@ -47,11 +47,9 @@ namespace mm {
 /// @details Auto-generated virtual destructor
 MMBondLengthLibrary::~MMBondLengthLibrary() {}
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-static THREAD_LOCAL basic::Tracer TR( "core.mm.MMBondLengthLibrary" );
+static basic::Tracer TR( "core.mm.MMBondLengthLibrary" );
 
 /// @details Construct a MMBondLengthLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondLengthLibrary::MMBondLengthLibrary(

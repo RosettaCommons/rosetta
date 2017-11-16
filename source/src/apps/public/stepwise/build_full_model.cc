@@ -97,7 +97,7 @@ OPT_KEY( Boolean, fragment_assembly_mode )
 OPT_KEY( Boolean, caleb_legacy )
 OPT_KEY( Boolean, focus_on_largest_pose )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.calebgeniesse.build_full_model" );
+static basic::Tracer TR( "apps.pilot.calebgeniesse.build_full_model" );
 
 void
 output_seq_with_residue_emphasis( std::string const & seq, Size const res ) {

@@ -61,7 +61,7 @@
 #include <numeric/conversions.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR("make_retroinverso");
+static basic::Tracer TR("make_retroinverso");
 
 
 void register_options() {

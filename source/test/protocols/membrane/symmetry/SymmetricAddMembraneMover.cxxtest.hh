@@ -48,7 +48,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.symmetry.SymmetricAddMembraneMover.cxxtest");
+static basic::Tracer TR("protocols.membrane.symmetry.SymmetricAddMembraneMover.cxxtest");
 
 using namespace core::kinematics;
 using namespace core::conformation;

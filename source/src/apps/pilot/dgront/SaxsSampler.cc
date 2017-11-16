@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 /*
- * SaxsSampler.cc
- *
- *  Created on: Jan 15, 2009
- *      Author: dgront
- */
+* SaxsSampler.cc
+*
+*  Created on: Jan 15, 2009
+*      Author: dgront
+*/
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/Protocol.hh>
@@ -54,97 +54,97 @@ void register_options() {
 
 // #include "AbrelaxWithCutpoint.cc"
 
-static THREAD_LOCAL basic::Tracer trSaxs( "SaxsSampler" );
+static basic::Tracer trSaxs( "SaxsSampler" );
 
 int main(int argc, char * argv[]) {
-    try {
-	using namespace core;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using std::string;
-	using utility::vector1;
+	try {
+		using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using std::string;
+		using utility::vector1;
 
-//	protocols::abinitio::AbrelaxWithCutpoint::register_options();
-	register_options();
-	devel::init(argc, argv);
+		// protocols::abinitio::AbrelaxWithCutpoint::register_options();
+		register_options();
+		devel::init(argc, argv);
 
-	//-------------- SET UP ABRELAX APPLICATION -------------
-	protocols::abinitio::AbrelaxWithCutpoint *abrelax =
+		//-------------- SET UP ABRELAX APPLICATION -------------
+		protocols::abinitio::AbrelaxWithCutpoint *abrelax =
 			new protocols::abinitio::AbrelaxWithCutpoint();
 
-	// setup pose and abinitio
-	protocols::Protocol* prot_ptr;
-	pose::Pose init_pose;
+		// setup pose and abinitio
+		protocols::Protocol* prot_ptr;
+		pose::Pose init_pose;
 
-	abrelax->setup();
-	abrelax->setup_fold(init_pose, (protocols::ProtocolOP&) prot_ptr);
-	init_pose.dump_pdb("init_pose.pdb");
+		abrelax->setup();
+		abrelax->setup_fold(init_pose, (protocols::ProtocolOP&) prot_ptr);
+		init_pose.dump_pdb("init_pose.pdb");
 
-	//-------------- Rotable parts for random restart
-	utility::vector1<Size> rot_points;
+		//-------------- Rotable parts for random restart
+		utility::vector1<Size> rot_points;
 
-	//-------------- SET UP DOMAINS -------------
-	kinematics::MoveMapOP movemap = new kinematics::MoveMap;
-	movemap->set_bb(true);
-	if (option[saxs::declare_domain].user()) {
-		trSaxs.Info << "The fixed residues are:" << std::endl;
-		utility::vector1<int> const& domainBoundaries(
+		//-------------- SET UP DOMAINS -------------
+		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+		movemap->set_bb(true);
+		if ( option[saxs::declare_domain].user() ) {
+			trSaxs.Info << "The fixed residues are:" << std::endl;
+			utility::vector1<int> const& domainBoundaries(
 				option[saxs::declare_domain]());
-		for (Size i = 1; i <= domainBoundaries.size() / 2; i++) {
-			for (Size iRes = domainBoundaries[i * 2 - 1]; iRes
-					<= (Size) domainBoundaries[i * 2]; iRes++) {
-				movemap->set_bb(iRes, false);
-				trSaxs.Info << init_pose.residue(iRes).seqpos() << " "
+			for ( Size i = 1; i <= domainBoundaries.size() / 2; i++ ) {
+				for ( Size iRes = domainBoundaries[i * 2 - 1]; iRes
+						<= (Size) domainBoundaries[i * 2]; iRes++ ) {
+					movemap->set_bb(iRes, false);
+					trSaxs.Info << init_pose.residue(iRes).seqpos() << " "
 						<< init_pose.residue(iRes).name() << std::endl;
-			}
-			for (Size iRes = domainBoundaries[i * 2 - 1] + 1; iRes
-					< (Size) domainBoundaries[i * 2]; iRes++) {
-				rot_points.push_back(iRes);
+				}
+				for ( Size iRes = domainBoundaries[i * 2 - 1] + 1; iRes
+						< (Size) domainBoundaries[i * 2]; iRes++ ) {
+					rot_points.push_back(iRes);
+				}
 			}
 		}
-	}
 
-	if (option[saxs::declare_loop].user()) {
-		movemap->set_bb(false);
-		trSaxs.Info << "The moveble residues are:" << std::endl;
-		utility::vector1<int> const& domainBoundaries(
+		if ( option[saxs::declare_loop].user() ) {
+			movemap->set_bb(false);
+			trSaxs.Info << "The moveble residues are:" << std::endl;
+			utility::vector1<int> const& domainBoundaries(
 				option[saxs::declare_loop]());
 
-		for (Size i = 1; i <= domainBoundaries.size() / 2; i++) {
-			for (Size iRes = domainBoundaries[i * 2 - 1]; iRes
-					<= (Size) domainBoundaries[i * 2]; iRes++) {
-				movemap->set_bb(iRes, true);
-				trSaxs.Info << init_pose.residue(iRes).seqpos() << " "
+			for ( Size i = 1; i <= domainBoundaries.size() / 2; i++ ) {
+				for ( Size iRes = domainBoundaries[i * 2 - 1]; iRes
+						<= (Size) domainBoundaries[i * 2]; iRes++ ) {
+					movemap->set_bb(iRes, true);
+					trSaxs.Info << init_pose.residue(iRes).seqpos() << " "
 						<< init_pose.residue(iRes).name() << std::endl;
-				//-------------- Random restart
-				if (option[saxs::randomize].user()) {
-					trSaxs.Debug << "Randomizing loops" << std::endl;
-					Real phi = -((Real) (rand() % 50000)) - 120.0;
-					Real psi = ((Real) (rand() % 50000)) + 120.0;
-					init_pose.set_phi(iRes, phi);
-					init_pose.set_psi(iRes, psi);
-				}
-				//-------------- Restart at 150
-				if (option[saxs::start_150].user()) {
-					trSaxs.Debug << "Expanding loops" << std::endl;
-					Real phi = -150.0;
-					Real psi = 150.0;
-					init_pose.set_phi(iRes, phi);
-					init_pose.set_psi(iRes, psi);
+					//-------------- Random restart
+					if ( option[saxs::randomize].user() ) {
+						trSaxs.Debug << "Randomizing loops" << std::endl;
+						Real phi = -((Real) (rand() % 50000)) - 120.0;
+						Real psi = ((Real) (rand() % 50000)) + 120.0;
+						init_pose.set_phi(iRes, phi);
+						init_pose.set_psi(iRes, psi);
+					}
+					//-------------- Restart at 150
+					if ( option[saxs::start_150].user() ) {
+						trSaxs.Debug << "Expanding loops" << std::endl;
+						Real phi = -150.0;
+						Real psi = 150.0;
+						init_pose.set_phi(iRes, phi);
+						init_pose.set_psi(iRes, psi);
+					}
 				}
 			}
 		}
-	}
 
-	//--------------- set jump ---------------
-/*	if (option[saxs::declare_jump].user()) {
+		//--------------- set jump ---------------
+		/* if (option[saxs::declare_jump].user()) {
 		Size res1, res2, cutpoint;
 		utility::vector1<int> const& jump(option[saxs::declare_jump]());
 		res1 = jump[1];
 		res2 = jump[2];
 		cutpoint = jump[3];
 		tr.Info << "The jump positions are: " << res1 << " " << res2 << " "
-				<< cutpoint << std::endl;
+		<< cutpoint << std::endl;
 		chemical::ResidueType const& rt1(init_pose.residue_type(res1));
 		chemical::ResidueType const& rt2(init_pose.residue_type(res2));
 		id::AtomID a1(rt1.atom_index("N"), res1);
@@ -157,31 +157,31 @@ int main(int argc, char * argv[]) {
 		id::AtomID b3(rt2.atom_index("C"), res2);
 		id::StubID up_stub(b1, b2, b3);
 		kinematics::Stub up =
-				init_pose.conformation().atom_tree().stub_from_id(up_stub);
+		init_pose.conformation().atom_tree().stub_from_id(up_stub);
 		kinematics::Stub down =
-				init_pose.conformation().atom_tree().stub_from_id(down_stub);
+		init_pose.conformation().atom_tree().stub_from_id(down_stub);
 		kinematics::RT rt(up, down);
 		kinematics::Jump nat_jump(rt);
 		init_pose.set_jump(1,nat_jump);
 		core::pose::add_variant_type_to_pose_residue(init_pose,
-				chemical::CUTPOINT_LOWER, cutpoint);
+		chemical::CUTPOINT_LOWER, cutpoint);
 		core::pose::add_variant_type_to_pose_residue(init_pose,
-				chemical::CUTPOINT_UPPER, cutpoint + 1);
-	}*/
+		chemical::CUTPOINT_UPPER, cutpoint + 1);
+		}*/
 
-	//-------------- RUN IT -------------
-	trSaxs.Debug << "Runnig the sampler" << std::endl;
-	protocols::abinitio::ClassicAbinitio* abinitio =
+		//-------------- RUN IT -------------
+		trSaxs.Debug << "Runnig the sampler" << std::endl;
+		protocols::abinitio::ClassicAbinitio* abinitio =
 			static_cast<protocols::abinitio::ClassicAbinitio*> (prot_ptr);
-	abinitio->bSkipStage3_ = true;
-	abinitio->bSkipStage4_ = true;
-	// plug in the new move map
-	abinitio->set_movemap(movemap);
-	// RUN
-	abrelax->fold(init_pose, prot_ptr);
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+		abinitio->bSkipStage3_ = true;
+		abinitio->bSkipStage4_ = true;
+		// plug in the new move map
+		abinitio->set_movemap(movemap);
+		// RUN
+		abrelax->fold(init_pose, prot_ptr);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                }
-       return 0;
+	}
+	return 0;
 }

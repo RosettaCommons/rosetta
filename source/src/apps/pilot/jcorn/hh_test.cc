@@ -32,7 +32,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -41,7 +40,7 @@ using namespace basic::options::OptionKeys;
 using namespace core;
 using namespace protocols::hotspot_hashing;
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.jcorn.hh_test" );
+static basic::Tracer TR( "pilot_apps.jcorn.hh_test" );
 FileOptionKey const hashfile( "hashfile" );
 StringOptionKey const residue( "residue");
 
@@ -50,26 +49,25 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace scoring;
-	option.add( hashfile, "PDB containing existing hash of target");
-	option.add( residue, "The 3-letter Rosetta name for the residue to be docked." );
+		using namespace scoring;
+		option.add( hashfile, "PDB containing existing hash of target");
+		option.add( residue, "The 3-letter Rosetta name for the residue to be docked." );
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	protocols::hotspot_hashing::HotspotStubSetOP stubset( new protocols::hotspot_hashing::HotspotStubSet );
-	protocols::hotspot_hashing::HotspotStubSetOP new_set( new protocols::hotspot_hashing::HotspotStubSet );
-	std::string hashin_fname = "";
-	if (option[hashfile].user() )
-	{
-		hashin_fname = option[hashfile]();
-		stubset->read( hashin_fname );
-	}
+		protocols::hotspot_hashing::HotspotStubSetOP stubset( new protocols::hotspot_hashing::HotspotStubSet );
+		protocols::hotspot_hashing::HotspotStubSetOP new_set( new protocols::hotspot_hashing::HotspotStubSet );
+		std::string hashin_fname = "";
+		if ( option[hashfile].user() ) {
+			hashin_fname = option[hashfile]();
+			stubset->read( hashin_fname );
+		}
 
-	new_set = stubset->cluster();
-	new_set->write_all( "clustered.stubs" );
+		new_set = stubset->cluster();
+		new_set->write_all( "clustered.stubs" );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
- }
+}

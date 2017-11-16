@@ -29,7 +29,7 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.util.cxxtest");
+static basic::Tracer TR("core.pack.util.cxxtest");
 
 using namespace core;
 using namespace core::pack;

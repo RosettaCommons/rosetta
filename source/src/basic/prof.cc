@@ -29,6 +29,8 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 
 namespace basic {
 
+static basic::Tracer tt( "core.util.prof", basic::t_info, true /*muted by default*/ );
+
 utility::vector1< std::string > tag2string;
 
 utility::vector1< clock_t > start_clock( n_prof_tags, 0 );
@@ -328,7 +330,6 @@ DynamicProfileThis::~DynamicProfileThis() {
 
 void prof_show() {
 	using namespace ObjexxFCL;
-	basic::Tracer tt( "core.util.prof", basic::t_info, true /*muted by default*/ );
 
 	// clocks are shown in the unit of 0.01 sec
 	using namespace basic::options;

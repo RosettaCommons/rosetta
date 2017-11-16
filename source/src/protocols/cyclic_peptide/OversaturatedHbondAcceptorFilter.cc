@@ -37,7 +37,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.OversaturatedHbondAcceptorFilter" );
+static basic::Tracer TR( "protocols.cyclic_peptide.OversaturatedHbondAcceptorFilter" );
 
 namespace protocols {
 namespace cyclic_peptide {

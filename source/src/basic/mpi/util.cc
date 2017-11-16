@@ -37,7 +37,7 @@ using utility::send_string_to_node;
 using utility::receive_string_from_node;
 
 
-static THREAD_LOCAL basic::Tracer TR( "basic.mpi" );
+static basic::Tracer TR( "basic.mpi" );
 
 /// @brief used for message passing to the
 ///MPIWorkPoolJobDistributor. This function will ask the head node for

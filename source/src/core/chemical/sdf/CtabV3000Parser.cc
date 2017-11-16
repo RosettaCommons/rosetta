@@ -27,7 +27,7 @@ namespace core {
 namespace chemical {
 namespace sdf {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.sdf.CtabV3000Parser" );
+static basic::Tracer TR( "core.chemical.sdf.CtabV3000Parser" );
 
 
 bool CtabV3000Parser::parse(std::istream & tablein, std::string const & ASSERT_ONLY(headerline), MolFileIOMolecule & molecule) {

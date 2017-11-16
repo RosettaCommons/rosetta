@@ -41,7 +41,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer TR( "app.public.comparative_modeling.spheregrinder" );
+static basic::Tracer TR( "app.public.comparative_modeling.spheregrinder" );
 
 utility::vector1< Vector >
 get_sphere_xyz( pose::Pose const &pose,

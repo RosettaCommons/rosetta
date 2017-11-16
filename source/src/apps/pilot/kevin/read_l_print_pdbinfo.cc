@@ -74,8 +74,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kevin.buns" );
+static basic::Tracer TR( "apps.pilot.kevin.buns" );
 
 //basic::options::BooleanOptionKey const use_varsoldist_sasa_calc( "use_varsoldist_sasa_calc" );
 //basic::options::BooleanOptionKey const water_dist_H( "water_dist_H_cutoff" );
@@ -90,14 +89,14 @@ using core::Distance;
 using platform::Size;
 
 static void read_FileVector(const basic::options::FileVectorOptionKey& fv_key, std::vector<std::string>& str_vec) {
-	if(!basic::options::option[basic::options::OptionKeys::in::file::l].user()) return;
+	if ( !basic::options::option[basic::options::OptionKeys::in::file::l].user() ) return;
 	std::string list_file = basic::options::option[basic::options::OptionKeys::in::file::l]()[1];
 	utility::io::izstream list;
 	list.open(list_file,std::_S_in);
-	while(!list.eof()) {
+	while ( !list.eof() ) {
 		std::string line;
 		getline(list,line);
-		if(line.size() > 0) str_vec.push_back(line);
+		if ( line.size() > 0 ) str_vec.push_back(line);
 	}
 	list.close();
 }
@@ -111,7 +110,7 @@ private:
 
 	bool evaluate_hbond_geom(Real AHdist, Real AHD) {
 		return(AHdist <= AHdist_geom_eval_threshold &&
-		       AHD >= AHD_geom_eval_threshold);
+			AHD >= AHD_geom_eval_threshold);
 	}
 
 public:
@@ -119,7 +118,7 @@ public:
 	{
 	}
 	~xtal_water_bunsat(){};
-	
+
 	std::string
 	get_name() const { return "xtal_water_bunsat"; }
 
@@ -145,9 +144,9 @@ public:
 		Size nres = pose.size();
 
 		utility::vector1< VarSolDRotamerDotsOP > rotamer_dots(nres);
-		for (Size resNum = 1; resNum <= nres; ++resNum ) {
+		for ( Size resNum = 1; resNum <= nres; ++resNum ) {
 			rotamer_dots[resNum] = new VarSolDRotamerDots(
-					new conformation::Residue( pose.residue(resNum) ), true);
+				new conformation::Residue( pose.residue(resNum) ), true);
 			rotamer_dots[resNum]->increment_self_overlap();
 		}
 
@@ -156,21 +155,21 @@ public:
 		const scoring::hbonds::HBondDatabaseCOP hb_database = scoring::hbonds::HBondDatabase::get_database();
 		const scoring::TenANeighborGraph& tenA_neighbor_graph(pose.energies().tenA_neighbor_graph());
 
-		for (Size lowerResNum = 1; lowerResNum < nres; ++lowerResNum ) {
-		const conformation::Residue& lowerRes(pose.residue(lowerResNum));
-		const Size nbl = tenA_neighbor_graph.get_node(lowerResNum)->
+		for ( Size lowerResNum = 1; lowerResNum < nres; ++lowerResNum ) {
+			const conformation::Residue& lowerRes(pose.residue(lowerResNum));
+			const Size nbl = tenA_neighbor_graph.get_node(lowerResNum)->
 				num_neighbors_counting_self_static();
-			for (conformation::PointGraph::UpperEdgeListConstIter
+			for ( conformation::PointGraph::UpperEdgeListConstIter
 					ue  = pg->get_vertex(lowerResNum).const_upper_edge_list_begin(),
 					ue_end = pg->get_vertex(lowerResNum).const_upper_edge_list_end();
 					ue != ue_end; ++ue ) {
 				Size upperResNum = ue->upper_vertex();
-    	    	const conformation::Residue& upperRes(pose.residue(lowerResNum));
-    	    	const Size nbu = tenA_neighbor_graph.get_node(upperResNum)->
+				const conformation::Residue& upperRes(pose.residue(lowerResNum));
+				const Size nbu = tenA_neighbor_graph.get_node(upperResNum)->
 					num_neighbors_counting_self_static();
-    	        scoring::hbonds::identify_hbonds_1way_AHdist(*hb_database,
+				scoring::hbonds::identify_hbonds_1way_AHdist(*hb_database,
 					lowerRes, upperRes, nbl, nbu, AHdist_threshold, hbond_set);
-    	        scoring::hbonds::identify_hbonds_1way_AHdist(*hb_database,
+				scoring::hbonds::identify_hbonds_1way_AHdist(*hb_database,
 					upperRes, lowerRes, nbu, nbl, AHdist_threshold, hbond_set);
 				rotamer_dots[lowerResNum]->intersect_residues(*rotamer_dots[upperResNum]);
 			}
@@ -178,8 +177,8 @@ public:
 
 		id::AtomID_Map< Real > vsasa_map;
 		core::pose::initialize_atomid_map(vsasa_map, pose, 0.0);
-		for (Size resNum = 1; resNum <= nres; ++resNum) {
-			for ( Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum ){
+		for ( Size resNum = 1; resNum <= nres; ++resNum ) {
+			for ( Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum ) {
 				id::AtomID at(atomNum, resNum);
 				vsasa_map[at] = rotamer_dots[resNum]->msas_for_atom(atomNum);
 			}
@@ -188,21 +187,21 @@ public:
 		std::vector<id::AtomID> buns;
 
 		const core::pose::PDBInfo& pdb_info = *(pose.pdb_info());
-		for (Size resNum = 1; resNum < nres; ++resNum) {
+		for ( Size resNum = 1; resNum < nres; ++resNum ) {
 			const core::conformation::Residue& res = pose.residue(resNum);
 			const core::chemical::ResidueType& res_type = res.type();
-			for (Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum){
-				if (pdb_info.temperature(resNum, atomNum) > 30) continue;
-				if (pdb_info.occupancy(resNum, atomNum) < 1) continue;
+			for ( Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum ) {
+				if ( pdb_info.temperature(resNum, atomNum) > 30 ) continue;
+				if ( pdb_info.occupancy(resNum, atomNum) < 1 ) continue;
 
 				id::AtomID at(atomNum, resNum);
 				const Real vsasa = vsasa_map[at];
 				utility::vector1<scoring::hbonds::HBondCOP> hbonds = hbond_set.atom_hbonds(at, false);
 
-				for (auto h : hbonds) {
+				for ( auto h : hbonds ) {
 					Real AHdist = h->get_HAdist(pose);
 					Real AHD = h->get_AHDangle(pose);
-					if (evaluate_hbond_geom(AHdist, AHD)){
+					if ( evaluate_hbond_geom(AHdist, AHD) ) {
 						h->show(pose, true, std::cout);
 						break;
 					}
@@ -212,13 +211,13 @@ public:
 				//const char& raw_icode = pdb_info.icode(resNum);
 				//utility::file::FileName filename(pdb_info.modeltag());
 				//std::cout << filename.base() << ","
-				//	<< pdb_info.chain(resNum)                             << ","
-				//	<< pdb_info.number(resNum)                            << ","
-				//	<< raw_icode                                          << ","
-				//	<< res_type.name3()                                   << ","
-				//	<< atom_type.name()                                   << ","
-				//	<< atom_type.element()                                << ","
-				//	<< vsasa                                              << "\n";
+				// << pdb_info.chain(resNum)                             << ","
+				// << pdb_info.number(resNum)                            << ","
+				// << raw_icode                                          << ","
+				// << res_type.name3()                                   << ","
+				// << atom_type.name()                                   << ","
+				// << atom_type.element()                                << ","
+				// << vsasa                                              << "\n";
 			}
 		}
 
@@ -236,55 +235,55 @@ int main( int argc, char* argv[] )
 {
 	try {
 
-	basic::options::option.add(nat_list_opkey, "nat_list");
-	basic::options::option.add(rlx_list_opkey, "nat_list");
+		basic::options::option.add(nat_list_opkey, "nat_list");
+		basic::options::option.add(rlx_list_opkey, "nat_list");
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	// Basic -l parsing snippet	
+		// Basic -l parsing snippet
 
-	//std::list<std::string> file_list;
-	//if(basic::options::option[basic::options::OptionKeys::in::file::l].user()) {
-	//	std::string list_file = basic::options::option[basic::options::OptionKeys::in::file::l]()[1];
-	//	utility::io::izstream list;
-	//	list.open(list_file,std::_S_in);
-	//	while(!list.eof())
-	//	{
-	//		std::string line;
-	//		getline(list,line);
-	//		if(line.size() > 0) file_list.push_back(line);
-	//	}
-	//	list.close();
-	//} else if(basic::options::option[basic::options::OptionKeys::in::file::s].user()) {
-	//	std::string mol_file = basic::options::option[basic::options::OptionKeys::in::file::s]()[1];
-	//	file_list.push_back(mol_file);
-	//}
+		//std::list<std::string> file_list;
+		//if(basic::options::option[basic::options::OptionKeys::in::file::l].user()) {
+		// std::string list_file = basic::options::option[basic::options::OptionKeys::in::file::l]()[1];
+		// utility::io::izstream list;
+		// list.open(list_file,std::_S_in);
+		// while(!list.eof())
+		// {
+		//  std::string line;
+		//  getline(list,line);
+		//  if(line.size() > 0) file_list.push_back(line);
+		// }
+		// list.close();
+		//} else if(basic::options::option[basic::options::OptionKeys::in::file::s].user()) {
+		// std::string mol_file = basic::options::option[basic::options::OptionKeys::in::file::s]()[1];
+		// file_list.push_back(mol_file);
+		//}
 
 
-	std::vector<std::string> nat_list;
-	read_FileVector(nat_list_opkey, nat_list);
-	std::vector<std::string> rlx_list;
-	read_FileVector(rlx_list_opkey, rlx_list);
+		std::vector<std::string> nat_list;
+		read_FileVector(nat_list_opkey, nat_list);
+		std::vector<std::string> rlx_list;
+		read_FileVector(rlx_list_opkey, rlx_list);
 
-	for (auto i : nat_list) {
-		std::cout << i << std::endl;
-	}
-	for (auto i : rlx_list) {
-		std::cout << i << std::endl;
-	}
+		for ( auto i : nat_list ) {
+			std::cout << i << std::endl;
+		}
+		for ( auto i : rlx_list ) {
+			std::cout << i << std::endl;
+		}
 
-	return 0;
+		return 0;
 
-	//protocols::jd2::JobDistributor::get_instance()->go(new xtal_water_bunsat);
-	pose::Pose pose;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	import_pose::pose_from_file(pose, option[in::file::s]()[1], core::import_pose::PDB_file);
-	import_pose::pose_from_file(pose, option[in::file::s]()[1], core::import_pose::PDB_file);
-	xtal_water_bunsat xwb;
-	xwb.apply(pose);
+		//protocols::jd2::JobDistributor::get_instance()->go(new xtal_water_bunsat);
+		pose::Pose pose;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		import_pose::pose_from_file(pose, option[in::file::s]()[1], core::import_pose::PDB_file);
+		import_pose::pose_from_file(pose, option[in::file::s]()[1], core::import_pose::PDB_file);
+		xtal_water_bunsat xwb;
+		xwb.apply(pose);
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
 	} catch (utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -52,7 +52,7 @@ namespace optimize_weights {
 
 typedef utility::vector1< std::string > Strings;
 
-static THREAD_LOCAL basic::Tracer TR( "NestedEnergyTermOptEData" );
+static basic::Tracer TR( "NestedEnergyTermOptEData" );
 
 #define CAP_FA_REP 1
 

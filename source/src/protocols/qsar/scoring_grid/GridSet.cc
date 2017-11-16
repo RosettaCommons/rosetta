@@ -28,7 +28,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.qsar.scoring_grid.GridSet" );
+static basic::Tracer TR( "protocols.qsar.scoring_grid.GridSet" );
 
 
 namespace protocols {

@@ -55,7 +55,7 @@ using basic::Tracer;
 using protocols::moves::Mover;
 using utility::vector1;
 
-static THREAD_LOCAL Tracer TR("protocol.rotamer_recovery.RotamerRecovery");
+static Tracer TR("protocol.rotamer_recovery.RotamerRecovery");
 
 RotamerRecovery::RotamerRecovery() :
 	protocol_( RRProtocolOP( new RRProtocolMinPack )),

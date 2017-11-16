@@ -56,7 +56,7 @@
 #include <mpi.h>
 #endif
 
-static THREAD_LOCAL basic::Tracer TR( "main" );
+static basic::Tracer TR( "main" );
 
 
 // MPI headers
@@ -95,42 +95,42 @@ protocols::loophash::BackboneSegment get_backbone_segment(  protocols::loophash:
 
 int main( int argc, char * argv [] )
 {
-    try {
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
-using namespace core;
-using namespace protocols;
-using namespace protocols::loophash;
-using namespace conformation;
-using namespace kinematics;
-using namespace numeric::geometry::hashing;
-using namespace optimization;
-using namespace id;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core;
+		using namespace protocols;
+		using namespace protocols::loophash;
+		using namespace conformation;
+		using namespace kinematics;
+		using namespace numeric::geometry::hashing;
+		using namespace optimization;
+		using namespace id;
 
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	TR << "Testing..." << std::endl;
-	core::pose::Pose	sample_pose;
+		TR << "Testing..." << std::endl;
+		core::pose::Pose sample_pose;
 
- 	std::string seq = "TAKESMEFCKANDSMSHITMAKEAFCKSHITSTACKAFCKSHITSTACK";
-	make_pose_from_sequence(sample_pose, seq , core::chemical::FA_STANDARD );
+		std::string seq = "TAKESMEFCKANDSMSHITMAKEAFCKSHITSTACKAFCKSHITSTACK";
+		make_pose_from_sequence(sample_pose, seq , core::chemical::FA_STANDARD );
 
-	// make an alpha helix
-	for( core::Size ir = 1; ir < sample_pose.size(); ir ++ ) {
-		sample_pose.set_phi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
-		sample_pose.set_psi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
-		sample_pose.set_omega( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
-	}
+		// make an alpha helix
+		for ( core::Size ir = 1; ir < sample_pose.size(); ir ++ ) {
+			sample_pose.set_phi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
+			sample_pose.set_psi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
+			sample_pose.set_omega( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
+		}
 
-	sample_pose.dump_pdb("testout.pdb");
+		sample_pose.dump_pdb("testout.pdb");
 
-	TR << "Importing test pose ..." << std::endl;
-//	if(  option[ in::file::s ]().size() != 1){
-//		TR.Error << "Please supply a single inputfile with -in:file:s " << std::endl;
-//	}
-//	core::import_pose::pose_from_file( sample_pose, option[ in::file::s ]()[1] , core::import_pose::PDB_file);
+		TR << "Importing test pose ..." << std::endl;
+		// if(  option[ in::file::s ]().size() != 1){
+		//  TR.Error << "Please supply a single inputfile with -in:file:s " << std::endl;
+		// }
+		// core::import_pose::pose_from_file( sample_pose, option[ in::file::s ]()[1] , core::import_pose::PDB_file);
 
 		utility::vector1 < core::Size > loop_sizes;
 		loop_sizes.push_back( 10 );
@@ -152,39 +152,39 @@ using namespace id;
 		read_loop_hash_library->test_saving_library( sample_pose, 14, false /*dont deposit structure*/ ) ;
 
 		TR << "Done test" << std::endl;
-	return -1;
+		return -1;
 
-	// add pose to the backbone database
+		// add pose to the backbone database
 
-	// Ok, take an example loop
+		// Ok, take an example loop
 
-	BackboneSegment pose_bs;
-	core::Size ir = 16;
-	core::Size loop_size = 15;
-	TR << "Taking a sample loop from pose: " << ir <<  "  " << loop_size << std::endl;
-	pose_bs.read_from_pose( sample_pose, ir, loop_size );
-	Real6 loop_transform;
-	if(!get_rt_over_leap( sample_pose, ir, ir + loop_size, loop_transform )){
-		std::cerr << "Something went wrong" << std::endl;
-	 	return -1;
+		BackboneSegment pose_bs;
+		core::Size ir = 16;
+		core::Size loop_size = 15;
+		TR << "Taking a sample loop from pose: " << ir <<  "  " << loop_size << std::endl;
+		pose_bs.read_from_pose( sample_pose, ir, loop_size );
+		Real6 loop_transform;
+		if ( !get_rt_over_leap( sample_pose, ir, ir + loop_size, loop_transform ) ) {
+			std::cerr << "Something went wrong" << std::endl;
+			return -1;
+		}
+
+
+		BackboneSegment new_bs = get_backbone_segment( loop_hash_library,  loop_transform, loop_size );
+		new_bs.print();
+
+		loophash::LoopHashLibraryOP loop_hash_library_loaded = new loophash::LoopHashLibrary( loop_sizes );
+		loop_hash_library_loaded->load_db();
+
+		BackboneSegment new_bs_loaded = get_backbone_segment( loop_hash_library,  loop_transform, loop_size );
+		new_bs_loaded.print();
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-
-
-	BackboneSegment new_bs = get_backbone_segment( loop_hash_library,  loop_transform, loop_size );
-	new_bs.print();
-
-	loophash::LoopHashLibraryOP loop_hash_library_loaded = new loophash::LoopHashLibrary( loop_sizes );
-  loop_hash_library_loaded->load_db();
-
-	BackboneSegment new_bs_loaded = get_backbone_segment( loop_hash_library,  loop_transform, loop_size );
-	new_bs_loaded.print();
-
-
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	return 0;
 }
 
 

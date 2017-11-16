@@ -83,7 +83,7 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 //local options
-namespace basic{ namespace options{ namespace OptionKeys{
+namespace basic { namespace options { namespace OptionKeys {
 }}}//basic::options::OptionKeys
 
 ////////////////////////////////////////////////
@@ -102,16 +102,15 @@ namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
 using import_pose::pose_from_pdb;
- // deprecated though
+// deprecated though
 using namespace ObjexxFCL;
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
-static THREAD_LOCAL basic::Tracer TRnat( "rot_anl.nat" );
-static THREAD_LOCAL basic::Tracer TRmin( "rot_anl.min" );
-static THREAD_LOCAL basic::Tracer TRrtmin( "rot_anl.rtmin" );
-static THREAD_LOCAL basic::Tracer TRscmove( "rot_anl.scmove" );
+static basic::Tracer TRnat( "rot_anl.nat" );
+static basic::Tracer TRmin( "rot_anl.min" );
+static basic::Tracer TRrtmin( "rot_anl.rtmin" );
+static basic::Tracer TRscmove( "rot_anl.scmove" );
 
 //Map of the atoms that are used in each motif
 std::map < std::string, utility::vector1< std::string > > sc_rmsd_AtomIDs(
@@ -149,11 +148,11 @@ set_pose_occ_and_bfac(
 	Pose const native_pose
 )
 {
-	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
-		if( pose.residue( seqpos ).name3().compare( native_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
+	for ( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
+		if ( pose.residue( seqpos ).name3().compare( native_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
 		Residue rsd( pose.residue( seqpos ) );
-		for( Size ii = 1; ii <= rsd.natoms(); ++ii ){
-			if( rsd.atom_is_hydrogen( ii ) ) continue;
+		for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+			if ( rsd.atom_is_hydrogen( ii ) ) continue;
 			pose.pdb_info()->occupancy( seqpos, ii, native_pose.pdb_info()->occupancy( seqpos, ii ) );
 			pose.pdb_info()->temperature( seqpos, ii, native_pose.pdb_info()->temperature( seqpos, ii ) );
 		}
@@ -164,15 +163,15 @@ set_pose_occ_and_bfac(
 //graciously stolen from pbradley
 Real
 get_atom_lk_energy_by_residue_no_count_pair(
-		scoring::ScoreFunctionOP scorefxn,
-		conformation::Residue const & rsd1,
-		Size const atom1,
-		conformation::Residue const & rsd2
-		)
+	scoring::ScoreFunctionOP scorefxn,
+	conformation::Residue const & rsd1,
+	Size const atom1,
+	conformation::Residue const & rsd2
+)
 {
-//  solv1             (  ScoringManager::get_instance()->etable( options.etable_type() )->solv1()),
-//  safe_max_dis2     (  ScoringManager::get_instance()->etable( options.etable_type() )->get_safe_max_dis2() ),
-//  etable_bins_per_A2(  ScoringManager::get_instance()->etable( options.etable_type() )->get_bins_per_A2() ),
+	//  solv1             (  ScoringManager::get_instance()->etable( options.etable_type() )->solv1()),
+	//  safe_max_dis2     (  ScoringManager::get_instance()->etable( options.etable_type() )->get_safe_max_dis2() ),
+	//  etable_bins_per_A2(  ScoringManager::get_instance()->etable( options.etable_type() )->get_bins_per_A2() ),
 
 	ObjexxFCL::FArray3D< Real > const & solv1( ScoringManager::get_instance()->etable(
 		scorefxn->energy_method_options().etable_type() )->solv1() );
@@ -204,7 +203,7 @@ get_atom_lk_energy_by_residue_no_count_pair(
 			( ( ( 1. - frac ) * solv1[ l1 ] + frac * solv1[ l1+1 ] ) );
 
 		total_lk_energy += lk_energy_of_atom1_by_atom2;
-//		std::cout << rsd1.name3() + " " + rsd1.atom_name( atom1 ) + " <- " + rsd2.name3() + " " + rsd2.atom_name( atom2 ) + "\t" + string_of( lk_energy_of_atom1_by_atom2 ) + "\n";
+		//  std::cout << rsd1.name3() + " " + rsd1.atom_name( atom1 ) + " <- " + rsd2.name3() + " " + rsd2.atom_name( atom2 ) + "\t" + string_of( lk_energy_of_atom1_by_atom2 ) + "\n";
 
 	}
 	return total_lk_energy;
@@ -214,62 +213,62 @@ get_atom_lk_energy_by_residue_no_count_pair(
 //total LK burial for single atom, sums over self residue atoms and energy graph nbr atoms
 Real
 calc_lk_burial_for_single_atom(
-		Size const atom1,
-		conformation::Residue const & rsd1,
-		pose::Pose const & pose
-		)
+Size const atom1,
+conformation::Residue const & rsd1,
+pose::Pose const & pose
+)
 {
 
 
-	PROF_START( util::CALC_LK_BURIAL_FOR_SINGLE_ATOM );
+PROF_START( util::CALC_LK_BURIAL_FOR_SINGLE_ATOM );
 
-	/// this could be bad if atom type sets don't match up
-	static chemical::ResidueTypeSet const * fa_standard_rsd_set
-		( & ( *chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) ) );
+/// this could be bad if atom type sets don't match up
+static chemical::ResidueTypeSet const * fa_standard_rsd_set
+( & ( *chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) ) );
 
-	static methods::EnergyMethodOptions energy_method_options;
+static methods::EnergyMethodOptions energy_method_options;
 
-	static lkball::LK_BallEnergy lk_ball_energy( energy_method_options );
+static lkball::LK_BallEnergy lk_ball_energy( energy_method_options );
 
 
-	if ( & ( rsd1.residue_type_set() ) != fa_standard_rsd_set ) {
-		TR.Trace << "skipping lk desolvation calculation for non-fa-standard residue" << std::endl;
-		return 0.0;
-	}
+if ( & ( rsd1.residue_type_set() ) != fa_standard_rsd_set ) {
+TR.Trace << "skipping lk desolvation calculation for non-fa-standard residue" << std::endl;
+return 0.0;
+}
 
-	/// what is this atom's desolvation parameter?
+/// what is this atom's desolvation parameter?
 
-	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	Size const pos1( rsd1.seqpos() );
+Size const pos1( rsd1.seqpos() );
 
-	Real weighted_desolvation_no_count_pair( 0.0 );
-	Real const lk_dgfree( -1.0 * rsd1.atom_type( atom1 ).lk_dgfree() );
-	for ( utility::graph::Graph::EdgeListConstIter
-			ir  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
-			ire = energy_graph.get_node( pos1 )->const_edge_list_end();
-			ir != ire; ++ir ) {
-		EnergyEdge const * edge( static_cast< EnergyEdge const *> (*ir) );
-		Size const pos2( edge->get_other_ind( pos1 ) );
-		conformation::Residue const & rsd2( pose.residue( pos2 ) );
-		if ( rsd2.aa() == chemical::aa_h2o || rsd2.aa() == chemical::aa_vrt ) continue;
-		assert( pos2 != pos1 );
-		weighted_desolvation_no_count_pair +=
-			lk_ball_energy.calculate_lk_desolvation_of_single_atom_by_residue_no_count_pair( atom1, rsd1, rsd2 );
-	}
+Real weighted_desolvation_no_count_pair( 0.0 );
+Real const lk_dgfree( -1.0 * rsd1.atom_type( atom1 ).lk_dgfree() );
+for ( utility::graph::Graph::EdgeListConstIter
+ir  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
+ire = energy_graph.get_node( pos1 )->const_edge_list_end();
+ir != ire; ++ir ) {
+EnergyEdge const * edge( static_cast< EnergyEdge const *> (*ir) );
+Size const pos2( edge->get_other_ind( pos1 ) );
+conformation::Residue const & rsd2( pose.residue( pos2 ) );
+if ( rsd2.aa() == chemical::aa_h2o || rsd2.aa() == chemical::aa_vrt ) continue;
+assert( pos2 != pos1 );
+weighted_desolvation_no_count_pair +=
+lk_ball_energy.calculate_lk_desolvation_of_single_atom_by_residue_no_count_pair( atom1, rsd1, rsd2 );
+}
 
-	/// add something here to check for water rotamers built where there was a virtual residue -- will have no neighbors!
-	if ( energy_graph.get_node( pos1 )->const_edge_list_begin() ==
-			energy_graph.get_node( pos1 )->const_edge_list_end() ) {
-		TR.Trace << "calc_lk_desolvation_for_single_atom: no nbrs!" << std::endl;
-	}
+/// add something here to check for water rotamers built where there was a virtual residue -- will have no neighbors!
+if ( energy_graph.get_node( pos1 )->const_edge_list_begin() ==
+energy_graph.get_node( pos1 )->const_edge_list_end() ) {
+TR.Trace << "calc_lk_desolvation_for_single_atom: no nbrs!" << std::endl;
+}
 
-	weighted_desolvation_no_count_pair +=
-		lk_ball_energy.calculate_lk_desolvation_of_single_atom_by_residue_no_count_pair( atom1, rsd1, rsd1 );
+weighted_desolvation_no_count_pair +=
+lk_ball_energy.calculate_lk_desolvation_of_single_atom_by_residue_no_count_pair( atom1, rsd1, rsd1 );
 
-	PROF_STOP( util::CALC_LK_BURIAL_FOR_SINGLE_ATOM );
+PROF_STOP( util::CALC_LK_BURIAL_FOR_SINGLE_ATOM );
 
-	return weighted_desolvation_no_count_pair / lk_dgfree;
+return weighted_desolvation_no_count_pair / lk_dgfree;
 
 }
 */
@@ -303,18 +302,18 @@ get_atom_lk_energy(
 		//this just gets symmetrized energy!!
 		//over all atoms in nbr residue
 		for ( Size jatom=1, jatom_end = resu.nheavyatoms(); jatom <= jatom_end; ++jatom ) {
-			core::conformation::Atom const & atomu( resu.atom(jatom) );
-			core::DistanceSquared dsq;
-			core::scoring::Weight weight = 1.0;
-			core::Size path_dist(0);
-			core::Energy atr, rep, solv, bb;
-			dsq = atoml.xyz().distance_squared( atomu.xyz() );
+		core::conformation::Atom const & atomu( resu.atom(jatom) );
+		core::DistanceSquared dsq;
+		core::scoring::Weight weight = 1.0;
+		core::Size path_dist(0);
+		core::Energy atr, rep, solv, bb;
+		dsq = atoml.xyz().distance_squared( atomu.xyz() );
 
-			core::scoring::etable::count_pair::CountPairFunctionOP cpfxn = core::scoring::etable::count_pair::CountPairFactory::create_count_pair_function( resl, resu, scoring::etable::count_pair::CP_CROSSOVER_4 );
-			if ( cpfxn->count( iatom, jatom, weight, path_dist ) ) {
-				etable_energy.atom_pair_energy(atoml,atomu,weight,atr,rep,solv,bb,dsq);
-				fa_sol_atom += solv;
-			}
+		core::scoring::etable::count_pair::CountPairFunctionOP cpfxn = core::scoring::etable::count_pair::CountPairFactory::create_count_pair_function( resl, resu, scoring::etable::count_pair::CP_CROSSOVER_4 );
+		if ( cpfxn->count( iatom, jatom, weight, path_dist ) ) {
+		etable_energy.atom_pair_energy(atoml,atomu,weight,atr,rep,solv,bb,dsq);
+		fa_sol_atom += solv;
+		}
 		}
 		*/
 		fa_sol_atom += get_atom_lk_energy_by_residue_no_count_pair( scorefxn, resl, iatom, resu );
@@ -324,20 +323,20 @@ get_atom_lk_energy(
 	//this just gets symmetrized energy!!
 	//over all other atoms in self residue
 	for ( Size jatom=1, jatom_end = resl.nheavyatoms(); jatom <= jatom_end; ++jatom ) {
-		//skip self
-		if( jatom == iatom ) continue;
-		core::conformation::Atom const & atomu( resl.atom(jatom) );
-		core::DistanceSquared dsq;
-		core::scoring::Weight weight = 1.0;
-		core::Size path_dist(0);
-		core::Energy atr, rep, solv, bb;
-		dsq = atoml.xyz().distance_squared( atomu.xyz() );
+	//skip self
+	if( jatom == iatom ) continue;
+	core::conformation::Atom const & atomu( resl.atom(jatom) );
+	core::DistanceSquared dsq;
+	core::scoring::Weight weight = 1.0;
+	core::Size path_dist(0);
+	core::Energy atr, rep, solv, bb;
+	dsq = atoml.xyz().distance_squared( atomu.xyz() );
 
-		core::scoring::etable::count_pair::CountPairFunctionOP cpfxn = core::scoring::etable::count_pair::CountPairFactory::create_count_pair_function( resl, resl, scoring::etable::count_pair::CP_CROSSOVER_4 );
-		if ( cpfxn->count( iatom, jatom, weight, path_dist ) ) {
-			etable_energy.atom_pair_energy(atoml,atomu,weight,atr,rep,solv,bb,dsq);
-			fa_sol_atom += solv;
-		}
+	core::scoring::etable::count_pair::CountPairFunctionOP cpfxn = core::scoring::etable::count_pair::CountPairFactory::create_count_pair_function( resl, resl, scoring::etable::count_pair::CP_CROSSOVER_4 );
+	if ( cpfxn->count( iatom, jatom, weight, path_dist ) ) {
+	etable_energy.atom_pair_energy(atoml,atomu,weight,atr,rep,solv,bb,dsq);
+	fa_sol_atom += solv;
+	}
 	}
 	*/
 	fa_sol_atom += get_atom_lk_energy_by_residue_no_count_pair( scorefxn, resl, iatom, resl );
@@ -356,9 +355,9 @@ get_atom_lk_burial(
 	Real const atom_lk_energy( get_atom_lk_energy( pose, scorefxn, seqpos, iatom ) );
 	Real const lk_dgfree( pose.residue( seqpos ).atom_type( iatom ).lk_dgfree() );
 	//HACKATTACK! carbonyl carbons have 0 dgfree! returns bogus -1 if dgfree == 0
-	if( lk_dgfree == 0 ) return -1;
+	if ( lk_dgfree == 0 ) return -1;
 	Real atom_lk_burial( atom_lk_energy / ( -1 * lk_dgfree ) );
-//	std::cout << pose.residue( seqpos ).atom_name( iatom ) + "\t" << atom_lk_burial << "\t" + string_of( lk_dgfree ) + "\n";
+	// std::cout << pose.residue( seqpos ).atom_name( iatom ) + "\t" << atom_lk_burial << "\t" + string_of( lk_dgfree ) + "\n";
 	return atom_lk_burial;
 }
 
@@ -375,18 +374,18 @@ get_res_avg_lk_burial(
 	Real res_lk_burial( 0. );
 	Size n_atoms( 0 );
 	//HACKATTACK! carbonyl carbons have 0 dgfree! skip val if is NAN
-	for( Size iatom = 1; iatom <= pose.residue( seqpos ).nheavyatoms(); ++iatom ){
+	for ( Size iatom = 1; iatom <= pose.residue( seqpos ).nheavyatoms(); ++iatom ) {
 		//exclude bb or sc atoms?
-		if( !incl_bb && iatom < pose.residue( seqpos ).first_sidechain_atom() ) continue;
-		if( !incl_sc && iatom >= pose.residue( seqpos ).first_sidechain_atom() ) continue;
+		if ( !incl_bb && iatom < pose.residue( seqpos ).first_sidechain_atom() ) continue;
+		if ( !incl_sc && iatom >= pose.residue( seqpos ).first_sidechain_atom() ) continue;
 		Real atom_lk_burial( get_atom_lk_burial( pose, scorefxn, seqpos, iatom ) );
 		//check for bogus neg value
-		if( atom_lk_burial < 0 ) continue;
+		if ( atom_lk_burial < 0 ) continue;
 		res_lk_burial += get_atom_lk_burial( pose, scorefxn, seqpos, iatom );
 		++n_atoms;
 	}
 	//return 0 if skipped all atoms
-	if( n_atoms == 0 ) return 0;
+	if ( n_atoms == 0 ) return 0;
 	return res_lk_burial / n_atoms;
 }
 
@@ -404,12 +403,12 @@ get_res_hbond_bb_score_raw(
 	//exclude bbsc, scbb, and scsc
 	fill_hbond_set( pose, false, hbond_bb_set, false, true, true, true );
 	Real rsd_hbond_bb_energy( 0.0 );
-	for( Size i_hb = 1; i_hb <= Size ( hbond_bb_set.nhbonds() ); ++i_hb ){
-			HBond hb( hbond_bb_set.hbond( i_hb ) );
-			if ( hb.don_res() == seqpos || hb.acc_res() == seqpos ) {
-					//divide by 2 for half of interacting pair
-					rsd_hbond_bb_energy += ( hb.energy() / 2.0 );
-			}
+	for ( Size i_hb = 1; i_hb <= Size ( hbond_bb_set.nhbonds() ); ++i_hb ) {
+		HBond hb( hbond_bb_set.hbond( i_hb ) );
+		if ( hb.don_res() == seqpos || hb.acc_res() == seqpos ) {
+			//divide by 2 for half of interacting pair
+			rsd_hbond_bb_energy += ( hb.energy() / 2.0 );
+		}
 	}
 	return rsd_hbond_bb_energy;
 }
@@ -417,18 +416,18 @@ get_res_hbond_bb_score_raw(
 //get # sidechain hbonds
 Size
 get_n_bb_hbonds(
-		Pose const pose,
-		Size const seqpos
-		)
+	Pose const pose,
+	Size const seqpos
+)
 {
 	using namespace core::scoring::hbonds;
 	Size n_hbonds( 0 );
 	HBondSet hbset;
 	hbset.setup_for_residue_pair_energies( pose, false, false );
-	for( Size i = 1; i <= hbset.nhbonds(); ++i ){
+	for ( Size i = 1; i <= hbset.nhbonds(); ++i ) {
 		HBond hb( hbset.hbond( i ) );
-		if( hb.don_res() == seqpos && hb.don_hatm_is_protein_backbone() ) ++n_hbonds;
-		else if( hb.acc_res() == seqpos && hb.acc_atm_is_protein_backbone() ) ++n_hbonds;
+		if ( hb.don_res() == seqpos && hb.don_hatm_is_protein_backbone() ) ++n_hbonds;
+		else if ( hb.acc_res() == seqpos && hb.acc_atm_is_protein_backbone() ) ++n_hbonds;
 	}
 	return n_hbonds;
 }
@@ -437,18 +436,18 @@ get_n_bb_hbonds(
 //get # sidechain hbonds
 Size
 get_n_sc_hbonds(
-		Pose const pose,
-		Size const seqpos
-		)
+	Pose const pose,
+	Size const seqpos
+)
 {
 	using namespace core::scoring::hbonds;
 	Size n_hbonds( 0 );
 	HBondSet hbset;
 	hbset.setup_for_residue_pair_energies( pose, false, false );
-	for( Size i = 1; i <= hbset.nhbonds(); ++i ){
+	for ( Size i = 1; i <= hbset.nhbonds(); ++i ) {
 		HBond hb( hbset.hbond( i ) );
-		if( hb.don_res() == seqpos && !hb.don_hatm_is_protein_backbone() ) ++n_hbonds;
-		else if( hb.acc_res() == seqpos && !hb.acc_atm_is_protein_backbone() ) ++n_hbonds;
+		if ( hb.don_res() == seqpos && !hb.don_hatm_is_protein_backbone() ) ++n_hbonds;
+		else if ( hb.acc_res() == seqpos && !hb.acc_atm_is_protein_backbone() ) ++n_hbonds;
 	}
 	return n_hbonds;
 }
@@ -456,19 +455,19 @@ get_n_sc_hbonds(
 //get sidechain avg bfactor of seqpos, ignore hydrogens
 Real
 get_sc_bfactor(
-		Pose const native_pose,
-		Size const seqpos
-		)
+	Pose const native_pose,
+	Size const seqpos
+)
 {
 	Residue native_rsd( native_pose.residue( seqpos ) );
 	Real sc_bfactor( 0.0 );
 	Size count( 0 );
 	//skip if no sidechain
-	if( native_rsd.first_sidechain_atom() > native_rsd.natoms() ) return 0;
+	if ( native_rsd.first_sidechain_atom() > native_rsd.natoms() ) return 0;
 	//get bfacs
-	for( Size ii = native_rsd.first_sidechain_atom(); ii <= native_rsd.natoms(); ++ii ){
-		if( native_rsd.atom_is_hydrogen( ii ) ) continue;
-		if( native_pose.pdb_info()->occupancy( seqpos, ii ) >= 0.5 ){
+	for ( Size ii = native_rsd.first_sidechain_atom(); ii <= native_rsd.natoms(); ++ii ) {
+		if ( native_rsd.atom_is_hydrogen( ii ) ) continue;
+		if ( native_pose.pdb_info()->occupancy( seqpos, ii ) >= 0.5 ) {
 			sc_bfactor += native_pose.pdb_info()->temperature( seqpos, ii );
 			++count;
 		}
@@ -480,19 +479,19 @@ get_sc_bfactor(
 //get sidechain rmsd of seqpos, ignore hydrogens and low occ
 Real
 get_sc_rmsd(
-		Pose const pose,
-		Pose const native_pose,
-		Size const seqpos
-		)
+	Pose const pose,
+	Pose const native_pose,
+	Size const seqpos
+)
 {
-	if( pose.residue( seqpos ).name3().compare( native_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
+	if ( pose.residue( seqpos ).name3().compare( native_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
 	Residue rsd( pose.residue( seqpos ) );
 	Residue native_rsd( native_pose.residue( seqpos ) );
 	Real sc_rmsd( 0.0 );
 	Size count( 0 );
-	for( Size ii = rsd.first_sidechain_atom(); ii <= rsd.natoms(); ++ii ){
-		if( rsd.atom_is_hydrogen( ii ) ) continue;
-		if( native_pose.pdb_info()->occupancy( seqpos, ii ) >= 0.5 ){
+	for ( Size ii = rsd.first_sidechain_atom(); ii <= rsd.natoms(); ++ii ) {
+		if ( rsd.atom_is_hydrogen( ii ) ) continue;
+		if ( native_pose.pdb_info()->occupancy( seqpos, ii ) >= 0.5 ) {
 			sc_rmsd += rsd.xyz( ii ).distance_squared( native_rsd.xyz( ii ) );
 			++count;
 		}
@@ -504,12 +503,12 @@ get_sc_rmsd(
 //get automorphic rmsd
 Real
 get_sc_automorphic_rmsd(
-		Pose pose,
-		Pose ref_pose,
-		Size const seqpos
-		)
+	Pose pose,
+	Pose ref_pose,
+	Size const seqpos
+)
 {
-	if( pose.residue( seqpos ).name3().compare( ref_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
+	if ( pose.residue( seqpos ).name3().compare( ref_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
 	//add variant type to virt bb atoms
 	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BB", seqpos );
 	pose::add_variant_type_to_pose_residue( ref_pose, "VIRTUAL_BB", seqpos );
@@ -524,18 +523,18 @@ get_sc_automorphic_rmsd(
 //get sidechain rmsd of seqpos, ignore hydrogens and low occ
 Real
 get_three_atom_sc_rmsd(
-		Pose const pose,
-		Pose const native_pose,
-		Size const seqpos
-		)
+	Pose const pose,
+	Pose const native_pose,
+	Size const seqpos
+)
 {
-	if( pose.residue( seqpos ).name3().compare( native_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
+	if ( pose.residue( seqpos ).name3().compare( native_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
 	Residue rsd( pose.residue( seqpos ) );
 	Residue native_rsd( native_pose.residue( seqpos ) );
 	vector1< std::string > atom_ids( sc_rmsd_AtomIDs[ rsd.name3() ] );
 	Real sc_rmsd( 0.0 );
 	Size count( 0 );
-	for( Size ii = 1; ii <= atom_ids.size(); ++ii ){
+	for ( Size ii = 1; ii <= atom_ids.size(); ++ii ) {
 		sc_rmsd += rsd.xyz( rsd.atom_index( atom_ids[ ii ] ) ).distance_squared( native_rsd.xyz( native_rsd.atom_index( atom_ids[ ii ] ) ) );
 		++count;
 	}
@@ -545,12 +544,12 @@ get_three_atom_sc_rmsd(
 
 void
 split_fa_dun(
-		Pose const pose,
-		Size const seqpos,
-		Real & fa_dun_rot,
-		Real & fa_dun_dev,
-		pack::dunbrack::RotVector & rotvec
-		)
+	Pose const pose,
+	Size const seqpos,
+	Real & fa_dun_rot,
+	Real & fa_dun_dev,
+	pack::dunbrack::RotVector & rotvec
+)
 {
 
 	using namespace scoring;
@@ -558,7 +557,7 @@ split_fa_dun(
 
 	conformation::Residue const & rsd( pose.residue( seqpos ) );
 	bool is_dun02( true );
-        if( option[ corrections::correct ].user() || option[ corrections::score::dun10 ].user() ) is_dun02 = false;
+	if ( option[ corrections::correct ].user() || option[ corrections::score::dun10 ].user() ) is_dun02 = false;
 	RotamerLibrary const & rlib( * RotamerLibrary::get_instance() );
 	RotamerLibraryScratchSpace scratch;
 
@@ -566,36 +565,36 @@ split_fa_dun(
 	fa_dun_rot = scratch.fa_dun_rot();
 	fa_dun_dev = scratch.fa_dun_dev();
 	//semirotameric returns 0 for fa_dun_rot!
-	if( std::abs( fa_dun_tot - fa_dun_rot - fa_dun_dev ) > 0.01 ) fa_dun_rot = ( fa_dun_tot - fa_dun_dev );
+	if ( std::abs( fa_dun_tot - fa_dun_rot - fa_dun_dev ) > 0.01 ) fa_dun_rot = ( fa_dun_tot - fa_dun_dev );
 
 	rotamer_from_chi( rsd, rotvec );
 }
 
 std::string
 get_aa_torsion_string(
-		Pose const pose,
-		Size const seqpos
-		)
+	Pose const pose,
+	Size const seqpos
+)
 {
 	std::string tor_anl;
 	tor_anl += ( "phi: " + string_of( pose.phi( seqpos ) ) + " " );
 	tor_anl += ( "psi: " + string_of( pose.psi( seqpos ) ) + " " );
-	if( pose.residue( seqpos ).nchi() < 1 ){
+	if ( pose.residue( seqpos ).nchi() < 1 ) {
 		tor_anl += ( "chi1: 0 chi2: 0 chi3: 0 chi4: 0 " );
 		return tor_anl;
 	}
 	tor_anl += ( "chi1: " + string_of( pose.chi( 1, seqpos ) ) + " " );
-	if( pose.residue( seqpos ).nchi() < 2 ){
+	if ( pose.residue( seqpos ).nchi() < 2 ) {
 		tor_anl += ( "chi2: 0 chi3: 0 chi4: 0 " );
 		return tor_anl;
 	}
 	tor_anl += ( "chi2: " + string_of( pose.chi( 2, seqpos ) ) + " " );
-	if( pose.residue( seqpos ).nchi() < 3 ){
+	if ( pose.residue( seqpos ).nchi() < 3 ) {
 		tor_anl += ( "chi3: 0 chi4: 0 " );
 		return tor_anl;
 	}
 	tor_anl += ( "chi3: " + string_of( pose.chi( 3, seqpos ) ) + " " );
-	if( pose.residue( seqpos ).nchi() < 4 ){
+	if ( pose.residue( seqpos ).nchi() < 4 ) {
 		tor_anl += ( "chi4: 0 " );
 		return tor_anl;
 	}
@@ -605,13 +604,13 @@ get_aa_torsion_string(
 
 std::string
 res_lvl_analysis(
-		Pose pose,
-		Pose const native_pose,
-		Size const seqpos,
-		ScoreFunctionOP scorefxn,
-		ScoreFunctionOP scorefxn_edens,
-		bool const do_sc_rmsd
-		)
+	Pose pose,
+	Pose const native_pose,
+	Size const seqpos,
+	ScoreFunctionOP scorefxn,
+	ScoreFunctionOP scorefxn_edens,
+	bool const do_sc_rmsd
+)
 {
 
 	scorefxn->score( pose );
@@ -620,14 +619,14 @@ res_lvl_analysis(
 	Real total_score( pose.energies().residue_total_energies( seqpos ).dot( scorefxn->weights() ) );
 	Real sc_auto_rmsd_nat( 0 );
 	Real sc_auto_rmsd_min( 0 );
-	if( do_sc_rmsd ){
+	if ( do_sc_rmsd ) {
 		sc_auto_rmsd_nat = get_sc_automorphic_rmsd( pose, native_pose, seqpos );
 	}
 	Real sc_bfactor( get_sc_bfactor( native_pose, seqpos ) );
 	Size n_sc_hbonds( get_n_sc_hbonds( pose, seqpos ) );
 	Real res_lk_burial( get_res_avg_lk_burial( pose, scorefxn, seqpos, true, true ) );
 	Real edens_score( 0.0 );
-	if( option[ edensity::mapfile ].user() ){
+	if ( option[ edensity::mapfile ].user() ) {
 		scorefxn_edens->score( pose );
 		edens_score = pose.energies().residue_total_energies( seqpos )[ elec_dens_window ];
 	}
@@ -640,15 +639,15 @@ res_lvl_analysis(
 	fa_dun_rot *= fa_dun_wt;
 	fa_dun_dev *= fa_dun_wt;
 	std::string rotbin_str( "" );
-	for( Size i_rotvec = 1; i_rotvec <= 4; ++i_rotvec ){
-		if( i_rotvec <= rotvec.size() ) rotbin_str += ( string_of( rotvec[ i_rotvec ] ) );
+	for ( Size i_rotvec = 1; i_rotvec <= 4; ++i_rotvec ) {
+		if ( i_rotvec <= rotvec.size() ) rotbin_str += ( string_of( rotvec[ i_rotvec ] ) );
 		else rotbin_str += "0";
 	}
 
 	//output
 	std::string score_data( pose.energies().residue_total_energies( seqpos ).weighted_string_of( scorefxn->weights() ) + " total_score: " + string_of( total_score ) );
 	std::string extra_data( " n_sc_hbonds: " + string_of( n_sc_hbonds ) + " scauto_rmsd_nat: " + string_of( sc_auto_rmsd_nat ) );
-	if( option[ edensity::mapfile ].user() ) extra_data += " elec_dens_window: " + string_of( edens_score );
+	if ( option[ edensity::mapfile ].user() ) extra_data += " elec_dens_window: " + string_of( edens_score );
 	extra_data += " sc_bfactor: " + string_of( sc_bfactor ) + " fa_dun_rot: " + string_of( fa_dun_rot ) + " fa_dun_dev: " + string_of( fa_dun_dev ) + " rotbin: " + rotbin_str + " res_lk_burial: " + string_of( res_lk_burial );
 	std::string torsion_data( get_aa_torsion_string( pose, seqpos ) );
 	return score_data + " " + extra_data + " " + torsion_data;
@@ -656,14 +655,14 @@ res_lvl_analysis(
 
 void
 get_res_data_ss(
-		io::silent::SilentStructOP & ss,
-		Pose pose,
-		Pose const native_pose,
-		Size const seqpos,
-		ScoreFunctionOP scorefxn,
-		ScoreFunctionOP scorefxn_edens,
-		bool const do_sc_rmsd
-		)
+	io::silent::SilentStructOP & ss,
+	Pose pose,
+	Pose const native_pose,
+	Size const seqpos,
+	ScoreFunctionOP scorefxn,
+	ScoreFunctionOP scorefxn_edens,
+	bool const do_sc_rmsd
+)
 {
 	using namespace core;
 	using namespace core::scoring;
@@ -671,7 +670,7 @@ get_res_data_ss(
 	std::map< std::string, Real > res_data_map;
 
 	scorefxn->score( pose );
-    EnergyMap weights( pose.energies().weights() );
+	EnergyMap weights( pose.energies().weights() );
 	EnergyMap rsd_energies( pose.energies().residue_total_energies( seqpos )  );
 
 	Real total_score( pose.energies().residue_total_energies( seqpos ).dot( scorefxn->weights() ) );
@@ -709,7 +708,7 @@ get_res_data_ss(
 
 	//electron density res score
 	Real edens_score( 0.0 );
-	if( option[ edensity::mapfile ].user() ){
+	if ( option[ edensity::mapfile ].user() ) {
 		scorefxn_edens->score( pose );
 		edens_score = pose.energies().residue_total_energies( seqpos )[ elec_dens_window ];
 	}
@@ -726,8 +725,8 @@ get_res_data_ss(
 	//this will xform 4 rotbin indices into a 4 digit number
 	Real rotbin_val( 0 );
 	Size n_rotbins( 4 );
-	for( Size i_rotvec = 1; i_rotvec <= n_rotbins; ++i_rotvec ){
-		if( i_rotvec <= rotvec.size() ) rotbin_val += ( ( rotvec[ i_rotvec ] + 1 ) * std::pow( 10.0, static_cast< Real >( 4 - i_rotvec ) ) );
+	for ( Size i_rotvec = 1; i_rotvec <= n_rotbins; ++i_rotvec ) {
+		if ( i_rotvec <= rotvec.size() ) rotbin_val += ( ( rotvec[ i_rotvec ] + 1 ) * std::pow( 10.0, static_cast< Real >( 4 - i_rotvec ) ) );
 		else rotbin_val += std::pow( 10.0, static_cast< Real >( 4 - i_rotvec ) );
 	}
 	ss->add_energy( "rotbin", static_cast< Real >( rotbin_val ) );
@@ -746,7 +745,7 @@ get_res_data_ss(
 
 	//sidechain rmsd
 	Real sc_auto_rmsd_nat( 0 );
-	if( do_sc_rmsd ){
+	if ( do_sc_rmsd ) {
 		sc_auto_rmsd_nat = get_sc_automorphic_rmsd( pose, native_pose, seqpos );
 	}
 	ss->add_energy( "sc_rmsd", sc_auto_rmsd_nat );
@@ -759,20 +758,20 @@ get_res_data_ss(
 //minimizes sidechains
 void
 minimize_all_sidechains(
-		Pose & pose,
-		scoring::ScoreFunctionOP const scorefxn,
-		bool const min_dna
-		)
+	Pose & pose,
+	scoring::ScoreFunctionOP const scorefxn,
+	bool const min_dna
+)
 {
 	using namespace protocols;
 	using namespace protocols::moves;
 
 	( *scorefxn )( pose );
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
-	for( Size i = 1; i <= pose.size(); ++i ){
-		if( pose.residue( i ).is_protein() ) mm->set_chi( i, true );
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue( i ).is_protein() ) mm->set_chi( i, true );
 		//min dna?
-		else if( min_dna && pose.residue( i ).is_DNA() ){
+		else if ( min_dna && pose.residue( i ).is_DNA() ) {
 			mm->set_chi( i, true );
 			//and sugar
 			mm->set( id::TorsionID( i, id::CHI, 2 ), true );
@@ -787,10 +786,10 @@ minimize_all_sidechains(
 
 void
 minimize_sidechain(
-		Pose & pose,
-		scoring::ScoreFunctionOP const scorefxn,
-		Size const seqpos
-		)
+	Pose & pose,
+	scoring::ScoreFunctionOP const scorefxn,
+	Size const seqpos
+)
 {
 	using namespace protocols;
 	using namespace protocols::moves;
@@ -808,17 +807,17 @@ minimize_sidechain(
 //gen packer task for repacking one res
 core::pack::task::PackerTaskOP
 single_res_task(
-		Pose pose,
-		Size const seqpos,
-		bool const no_incl_curr,
-		bool design
-		)
+	Pose pose,
+	Size const seqpos,
+	bool const no_incl_curr,
+	bool design
+)
 {
 	//define task
 	core::pack::task::PackerTaskOP packer_task( pack::task::TaskFactory::create_packer_task( pose ) );
 	packer_task->initialize_from_command_line();
-	if( !no_incl_curr ) packer_task->or_include_current( true );
-	if( !design ) packer_task->restrict_to_repacking();
+	if ( !no_incl_curr ) packer_task->or_include_current( true );
+	if ( !design ) packer_task->restrict_to_repacking();
 	vector1< bool > repack_this( pose.size(), false );
 	repack_this[ seqpos ]  = true;
 	packer_task->restrict_to_residues( repack_this );
@@ -827,11 +826,11 @@ single_res_task(
 
 void
 scmove_residue(
-		Pose & pose,
-		scoring::ScoreFunctionOP const scorefxn,
-		Size const seqpos,
-		bool const no_incl_curr
-		)
+	Pose & pose,
+	scoring::ScoreFunctionOP const scorefxn,
+	Size const seqpos,
+	bool const no_incl_curr
+)
 {
 	using namespace protocols;
 	using namespace protocols::moves;
@@ -854,7 +853,7 @@ scmove_residue(
 	//and apply in loop
 	Size n = option[ rot_anl::nloop_scmove ];
 	Size nloop = static_cast< Size >( std::pow( static_cast< Real >( n ), static_cast< Real >( pose.residue( seqpos ).nchi() ) ) );
-	for( Size i = 1; i <= nloop; ++i ){
+	for ( Size i = 1; i <= nloop; ++i ) {
 		scmover->apply( pose );
 		minimize_sidechain( pose, scorefxn, seqpos );
 		mc->boltzmann( pose );
@@ -864,12 +863,12 @@ scmove_residue(
 
 void
 rottrial_residue(
-		Pose & pose,
-		scoring::ScoreFunctionOP const scorefxn,
-		Size const seqpos,
-		bool const no_incl_curr,
-		bool const design
-		)
+	Pose & pose,
+	scoring::ScoreFunctionOP const scorefxn,
+	Size const seqpos,
+	bool const no_incl_curr,
+	bool const design
+)
 {
 	using namespace protocols;
 	using namespace protocols::moves;
@@ -887,11 +886,11 @@ rottrial_residue(
 
 void
 rottrialmin_residue(
-		Pose & pose,
-		scoring::ScoreFunctionOP const scorefxn,
-		Size const seqpos,
-		bool const design
-		)
+	Pose & pose,
+	scoring::ScoreFunctionOP const scorefxn,
+	Size const seqpos,
+	bool const design
+)
 {
 	using namespace protocols;
 	using namespace protocols::moves;
@@ -909,11 +908,11 @@ rottrialmin_residue(
 	//and apply
 	rottrialmin->apply( pose );
 	//double check score did not incr.
-	if( total_score_in < scorefxn->score( pose ) ) pose = pose_in;
+	if ( total_score_in < scorefxn->score( pose ) ) pose = pose_in;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-	void
+void
 RotamerAnalysis()
 {
 
@@ -926,14 +925,14 @@ RotamerAnalysis()
 
 	//tag is "." or "tag."
 	std::string tag( option[ rot_anl::tag ] );
-	if( option[ rot_anl::tag ].user() ) tag = tag + ".";
+	if ( option[ rot_anl::tag ].user() ) tag = tag + ".";
 
 	//allow design in packer tasks?
 	bool const design( option[ rot_anl::design ] );
 
 	std::string pdbname( start_file() );
 	Size pdbnamestart( 0 );
-	if( pdbname.find_last_of( "/" ) < ( pdbname.size() - 1 ) ) pdbnamestart = pdbname.find_last_of( "/" ) + 1;
+	if ( pdbname.find_last_of( "/" ) < ( pdbname.size() - 1 ) ) pdbnamestart = pdbname.find_last_of( "/" ) + 1;
 	std::string pdbnametag( pdbname, pdbnamestart, pdbname.size() - pdbnamestart - 4 );
 	Pose pose;
 	pose_from_file( pose, pdbname , core::import_pose::PDB_file);
@@ -943,7 +942,7 @@ RotamerAnalysis()
 	core::scoring::ScoreFunctionOP scorefxn_edens( ( *scorefxn ).clone() );
 
 	//add edens score?
-	if( option[ edensity::mapfile ].user() ){
+	if ( option[ edensity::mapfile ].user() ) {
 		protocols::electron_density::SetupForDensityScoringMoverOP edens_mover( new protocols::electron_density::SetupForDensityScoringMover );
 		edens_mover->apply( pose );
 		std::string const pdbname_out( pdbnametag + ".edock." + "pdb" );
@@ -956,10 +955,10 @@ RotamerAnalysis()
 
 	std::string native_pdbname( pdbname );
 	Pose native_pose( pose );
-	if( option[ in::file::native ].user() ){
+	if ( option[ in::file::native ].user() ) {
 		native_pdbname = option[ in::file::native ]();
 		pose_from_file( native_pose, native_pdbname , core::import_pose::PDB_file);
-		if( option[ edensity::mapfile ].user() ) core::scoring::calpha_superimpose_pose( native_pose, pose );
+		if ( option[ edensity::mapfile ].user() ) core::scoring::calpha_superimpose_pose( native_pose, pose );
 	}
 	set_pose_occ_and_bfac( pose, native_pose );
 
@@ -970,14 +969,14 @@ RotamerAnalysis()
 	// end of setup
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*
+	/*
 	//if premin flag, min and dump
 	if( option[ rot_anl::premin ] ){
-		minimize_all_sidechains( pose, scorefxn, false );
-		std::string const pdbname_out( pdbnametag + "." + tag + "pdb" );
-		pose.dump_scored_pdb( pdbname_out, *scorefxn );
+	minimize_all_sidechains( pose, scorefxn, false );
+	std::string const pdbname_out( pdbnametag + "." + tag + "pdb" );
+	pose.dump_scored_pdb( pdbname_out, *scorefxn );
 	}
-*/
+	*/
 
 	//silent-type output
 	io::silent::SilentFileData sfd;
@@ -986,52 +985,51 @@ RotamerAnalysis()
 	core::pack::task::TaskFactoryOP task_factory = new core::pack::task::TaskFactory;
 	//use resfile to note residues to analyze...
 	Pose start_pose( pose );
-	if( option[ packing::resfile ].user() ) task_factory->push_back( new core::pack::task::operation::ReadResfile );
+	if ( option[ packing::resfile ].user() ) task_factory->push_back( new core::pack::task::operation::ReadResfile );
 	else task_factory->push_back( new core::pack::task::operation::RestrictToRepacking() );
 	core::pack::task::PackerTaskOP packer_task( task_factory->create_task_and_apply_taskoperations( pose ) );
 	//each residue
-	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
-		if( !pose.residue( seqpos ).is_protein() ) continue;
-		if( packer_task->being_packed( seqpos ) ){
+	for ( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
+		if ( !pose.residue( seqpos ).is_protein() ) continue;
+		if ( packer_task->being_packed( seqpos ) ) {
 			pose = start_pose;
 			std::string reschain( pose.pdb_info()->pose2pdb( seqpos ) );
 			std::string pdbname_reschain( reschain );
-			if( option[ edensity::mapfile ].user() ) reschain = pdbname_reschain = string_of( seqpos );
+			if ( option[ edensity::mapfile ].user() ) reschain = pdbname_reschain = string_of( seqpos );
 			else pdbname_reschain = reschain.replace( reschain.find( " " ), 1, "_" );
 
 			{
-			//res analysis
-			//			TRnat << pdbname + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
-			//silent file stylee
-					io::silent::SilentStructOP ss( new io::silent::ScoreFileSilentStruct );
-					std::string const decoytag_out( pdbnametag + "." + tag + string_of( seqpos ) );
-					ss->decoy_tag( decoytag_out );
-					get_res_data_ss( ss, pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design );
-					std::string const scname_out( pdbnametag + "." + tag + "sc" );
-					sfd.write_silent_struct( *ss, scname_out );
+				//res analysis
+				//   TRnat << pdbname + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
+				//silent file stylee
+				io::silent::SilentStructOP ss( new io::silent::ScoreFileSilentStruct );
+				std::string const decoytag_out( pdbnametag + "." + tag + string_of( seqpos ) );
+				ss->decoy_tag( decoytag_out );
+				get_res_data_ss( ss, pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design );
+				std::string const scname_out( pdbnametag + "." + tag + "sc" );
+				sfd.write_silent_struct( *ss, scname_out );
 			}
 
 			//begin perturbations
-			if( option[ rot_anl::min ] ){
+			if ( option[ rot_anl::min ] ) {
 				//if edens, min+repack "minimized" rotamer
-				if( option[ edensity::mapfile ].user() ){
+				if ( option[ edensity::mapfile ].user() ) {
 					minimize_sidechain( pose, scorefxn_edens, seqpos );
 					rottrial_residue( pose, scorefxn_edens, seqpos, false, design );
 					minimize_sidechain( pose, scorefxn_edens, seqpos );
-				}
-				else	minimize_sidechain( pose, scorefxn, seqpos );
+				} else minimize_sidechain( pose, scorefxn, seqpos );
 
 				std::string const pdbname_out( pdbnametag + "." + tag + "min." + pdbname_reschain + ".pdb" );
 				//dump_pdb
-				if( option[ rot_anl::dump_pdb ] ) pose.dump_scored_pdb( pdbname_out, *scorefxn );
+				if ( option[ rot_anl::dump_pdb ] ) pose.dump_scored_pdb( pdbname_out, *scorefxn );
 				//res analysis
-//				TRmin << pdbname_out + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
+				//    TRmin << pdbname_out + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
 			}
 			Pose const min_pose( pose );
 
-			if( option[ rot_anl::repack ] ){
+			if ( option[ rot_anl::repack ] ) {
 				//if did edens, reset pose so can incl native rotamer!
-				if( option[ edensity::mapfile ].user() ) pose = native_pose;
+				if ( option[ edensity::mapfile ].user() ) pose = native_pose;
 				minimize_sidechain( pose, scorefxn, seqpos );
 				rottrial_residue( pose, scorefxn, seqpos, false, design );
 				minimize_sidechain( pose, scorefxn, seqpos );
@@ -1039,27 +1037,27 @@ RotamerAnalysis()
 				//dump_pdb
 				pose.dump_scored_pdb( pdbname_out, *scorefxn );
 				//res analysis
-//				TRrtmin << pdbname_out + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
+				//    TRrtmin << pdbname_out + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
 			}
 
-			if( option[ rot_anl::rtmin ] ){
+			if ( option[ rot_anl::rtmin ] ) {
 				//if did edens, reset pose so can incl native rotamer!
-				if( option[ edensity::mapfile ].user() ) pose = native_pose;
+				if ( option[ edensity::mapfile ].user() ) pose = native_pose;
 				rottrialmin_residue( pose, scorefxn, seqpos, design );
 				std::string const pdbname_out( pdbnametag + "." + tag + "rtmin." + pdbname_reschain + ".pdb" );
 				//dump_pdb
-				if( option[ rot_anl::dump_pdb ] ) pose.dump_scored_pdb( pdbname_out, *scorefxn );
+				if ( option[ rot_anl::dump_pdb ] ) pose.dump_scored_pdb( pdbname_out, *scorefxn );
 				//res analysis
-//				TRrtmin << pdbname_out + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
+				//    TRrtmin << pdbname_out + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
 			}
 
-			if( option[ rot_anl::scmove ] ){
+			if ( option[ rot_anl::scmove ] ) {
 				scmove_residue( pose, scorefxn, seqpos, false );
 				std::string const pdbname_out( pdbnametag + "." + tag + "scmove." + pdbname_reschain + ".pdb" );
 				//dump_pdb
-				if( option[ rot_anl::dump_pdb ] ) pose.dump_scored_pdb( pdbname_out, *scorefxn );
+				if ( option[ rot_anl::dump_pdb ] ) pose.dump_scored_pdb( pdbname_out, *scorefxn );
 				//res analysis
-//				TRscmove << pdbname_out + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
+				//    TRscmove << pdbname_out + " " + reschain + " " + pose.residue( seqpos ).name3() + res_lvl_analysis( pose, native_pose, seqpos, scorefxn, scorefxn_edens, !design ) << std::endl;
 			}
 
 
@@ -1071,7 +1069,7 @@ RotamerAnalysis()
 			//dump pdb if given flag
 			if( option[ rot_anl::dump_pdb ] ) pose.dump_scored_pdb( pdbname_out, *scorefxn );
 			}
-			 */
+			*/
 
 
 		}
@@ -1079,7 +1077,7 @@ RotamerAnalysis()
 }
 
 
-	void*
+void*
 my_main( void*)
 {
 
@@ -1088,7 +1086,7 @@ my_main( void*)
 
 }
 
-	int
+int
 main( int argc, char * argv [] )
 {
 	try {

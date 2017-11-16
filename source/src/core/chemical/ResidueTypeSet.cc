@@ -82,7 +82,7 @@ using namespace basic::options;
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.ResidueTypeSet" );
+static basic::Tracer TR( "core.chemical.ResidueTypeSet" );
 
 ResidueTypeSet::ResidueTypeSet( TypeSetMode mode /*= INVALID_t*/ ) :
 	mode_( mode ),

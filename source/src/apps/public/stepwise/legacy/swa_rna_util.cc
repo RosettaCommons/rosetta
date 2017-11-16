@@ -134,7 +134,7 @@ using namespace protocols::stepwise::legacy::modeler::rna;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
-static THREAD_LOCAL basic::Tracer TR( "swa_rna_util" );
+static basic::Tracer TR( "swa_rna_util" );
 
 OPT_KEY( String,  algorithm )
 OPT_KEY( Real, surrounding_radius )

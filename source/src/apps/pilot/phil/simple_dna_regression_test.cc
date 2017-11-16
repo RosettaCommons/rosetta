@@ -166,7 +166,7 @@ using core::import_pose::pose_from_file;
 ////////////////////////////////////////////////
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.simple_dna_regression_test" );
+static basic::Tracer TR( "apps.pilot.phil.simple_dna_regression_test" );
 
 /// @details  Show details of the internal DNA geometry
 void
@@ -256,7 +256,7 @@ read_list_file( std::string const & filename, utility::vector1< std::string > & 
 
 void
 extract_pdb_id(
-  std::string const file,
+	std::string const file,
 	std::string & pdb_id
 )
 {
@@ -265,10 +265,11 @@ extract_pdb_id(
 	folder_ind = (folder_ind==std::string::npos)? 0 : folder_ind+1;
 
 	Size ext_ind( file.find_last_of(".") );
-	if (ext_ind==std::string::npos)
+	if ( ext_ind==std::string::npos ) {
 		ext_ind = file.length();
+	}
 
-	 pdb_id= file.substr( folder_ind, ext_ind-folder_ind ) ;
+	pdb_id= file.substr( folder_ind, ext_ind-folder_ind ) ;
 }
 
 
@@ -295,9 +296,9 @@ retrieve_residue_pair_energies(
 	assert( pos2 > pos1 );
 	are_they_neighbors = false;
 	for ( utility::graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node( pos1 )->const_upper_edge_list_begin(),
-					irue = energy_graph.get_node( pos1 )->const_upper_edge_list_end();
-				iru != irue; ++iru ) {
+			iru  = energy_graph.get_node( pos1 )->const_upper_edge_list_begin(),
+			irue = energy_graph.get_node( pos1 )->const_upper_edge_list_end();
+			iru != irue; ++iru ) {
 		EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
 		if ( Size( edge->get_second_node_ind() ) == pos2 ) {
 			edge->add_to_energy_map( emap );
@@ -313,9 +314,9 @@ retrieve_residue_pair_energies(
 		if ( lrec && !lrec->empty() ) {
 
 			for ( ResidueNeighborConstIteratorOP
-							rni = lrec->const_upper_neighbor_iterator_begin( pos1 ),
-							rniend = lrec->const_upper_neighbor_iterator_end( pos2 );
-						(*rni) != (*rniend); ++(*rni) ) {
+					rni = lrec->const_upper_neighbor_iterator_begin( pos1 ),
+					rniend = lrec->const_upper_neighbor_iterator_end( pos2 );
+					(*rni) != (*rniend); ++(*rni) ) {
 				if ( rni->upper_neighbor_id() == pos2 ) {
 					assert( rni->energy_computed() );
 					rni->retrieve_energy( emap ); // pbmod
@@ -400,7 +401,7 @@ dump_clash_pdb(
 	EnergyGraph & energy_graph( energies.energy_graph() );
 	TableLookupEtableEnergy const etable_energy
 		( *ScoringManager::get_instance()->etable( scorefxn.energy_method_options().etable_type() ),
-			scorefxn.energy_method_options() );
+		scorefxn.energy_method_options() );
 
 	// setup the global atom numbering that would be used for pdb output
 	id::AtomID_Map< int > atom_number;
@@ -458,9 +459,9 @@ dump_clash_pdb(
 ///////////////////////////////////////////////////////////////////////////////
 void
 show_pairing_info(
-									pose::Pose const & pose,
-									Size const seqpos
-									)
+	pose::Pose const & pose,
+	Size const seqpos
+)
 {
 	using namespace ObjexxFCL::format;
 
@@ -517,8 +518,8 @@ show_rasmol_hbonds(
 ///////////////////////////////////////////////////////////////////////////////
 void
 show_residue_hbonds(
-										pose::Pose const & pose,
-										Size const seqpos
+	pose::Pose const & pose,
+	Size const seqpos
 )
 {
 	using namespace scoring::hbonds;
@@ -541,9 +542,9 @@ show_residue_hbonds(
 ///////////////////////////////////////////////////////////////////////////////
 void
 wriggle_test(
-						 pose::Pose const & start_pose,
-						 Size const seqpos
-						 )
+	pose::Pose const & start_pose,
+	Size const seqpos
+)
 {
 	using namespace conformation;
 	using namespace pose;
@@ -553,7 +554,7 @@ wriggle_test(
 
 	Residue const &
 		prev_rsd( start_pose.residue(seqpos-1) ),
-				 rsd( start_pose.residue(seqpos  ) ),
+		rsd( start_pose.residue(seqpos  ) ),
 		next_rsd( start_pose.residue(seqpos+1) );
 
 	assert( rsd.is_DNA() && prev_rsd.is_DNA() );
@@ -626,62 +627,62 @@ wriggle_test(
 			bool const subdot1( rr%2 == 1 );
 			bool const subdot2( rr/2 == 1 );
 
-		// choose random starting points
-		utility::vector1< Real > e(4);
-		Real dot1(0.0), dot2(0.0);
-		for ( int i=1; i<= 4; ++i ) {
-			e[i] = max_rot - 2*numeric::random::uniform()*max_rot;
-			dot1 += e[i] * v1[i];
-			dot2 += e[i] * v2[i];
-		}
-
-		for ( int i=1; i<= 4; ++i ) {
-			if ( subdot1 ) e[i] -= dot1 * v1[i];
-			if ( subdot2 ) e[i] -= dot2 * v2[i];
-		}
-
-		{ //debug
-			dot1 = 0; dot2 = 0;
+			// choose random starting points
+			utility::vector1< Real > e(4);
+			Real dot1(0.0), dot2(0.0);
 			for ( int i=1; i<= 4; ++i ) {
+				e[i] = max_rot - 2*numeric::random::uniform()*max_rot;
 				dot1 += e[i] * v1[i];
 				dot2 += e[i] * v2[i];
 			}
-			if ( subdot1 ) assert( std::abs( dot1 ) < 1e-3 );
-			if ( subdot2 ) assert( std::abs( dot2 ) < 1e-3 );
-		}
 
-		// now make torsion angle changes:
-		Pose pose;
-		pose = start_pose;
+			for ( int i=1; i<= 4; ++i ) {
+				if ( subdot1 ) e[i] -= dot1 * v1[i];
+				if ( subdot2 ) e[i] -= dot2 * v2[i];
+			}
 
-		Size const nbb( rsd.n_mainchain_atoms() );
-		std::cout << "e[i] ";
-		for ( int i=1; i<= 4; ++i ) {
+			{ //debug
+				dot1 = 0; dot2 = 0;
+				for ( int i=1; i<= 4; ++i ) {
+					dot1 += e[i] * v1[i];
+					dot2 += e[i] * v2[i];
+				}
+				if ( subdot1 ) assert( std::abs( dot1 ) < 1e-3 );
+				if ( subdot2 ) assert( std::abs( dot2 ) < 1e-3 );
+			}
 
-			TorsionID const id( ( i==1 ) ? ( TorsionID( seqpos-1, BB, nbb ) ) : ( TorsionID( seqpos, BB, i-1 ) ) );
-			pose.set_torsion( id, pose.torsion(id) + e[i] );
-			std::cout << F(9,3,e[i]);
-		}
-		std::cout << std::endl;
+			// now make torsion angle changes:
+			Pose pose;
+			pose = start_pose;
 
-		if ( false ) { // chi
-			TorsionID const id( seqpos, CHI, 1 );
-			pose.set_torsion( id, pose.torsion(id) + max_rot - 2*numeric::random::uniform()*max_rot );
-		}
+			Size const nbb( rsd.n_mainchain_atoms() );
+			std::cout << "e[i] ";
+			for ( int i=1; i<= 4; ++i ) {
 
-		std::string tag;
-		if ( subdot1 ) tag += "dot1";
-		else tag += "____";
-		if ( subdot2 ) tag += "dot2";
-		else tag += "____";
+				TorsionID const id( ( i==1 ) ? ( TorsionID( seqpos-1, BB, nbb ) ) : ( TorsionID( seqpos, BB, i-1 ) ) );
+				pose.set_torsion( id, pose.torsion(id) + e[i] );
+				std::cout << F(9,3,e[i]);
+			}
+			std::cout << std::endl;
 
-		dump_pdb( pose, "test_"+tag+"_"+lead_zero_string_of(seqpos,4)+"_"+lead_zero_string_of(r,4)+".pdb" );
+			if ( false ) { // chi
+				TorsionID const id( seqpos, CHI, 1 );
+				pose.set_torsion( id, pose.torsion(id) + max_rot - 2*numeric::random::uniform()*max_rot );
+			}
 
-		// check dr:
-		Vector const r0( pose.residue(seqpos).xyz("O4'") - start_pose.residue(seqpos).xyz("O4'") );
-		Vector const r ( pose.residue(seqpos).xyz("O3'") - start_pose.residue(seqpos).xyz("O3'") );
+			std::string tag;
+			if ( subdot1 ) tag += "dot1";
+			else tag += "____";
+			if ( subdot2 ) tag += "dot2";
+			else tag += "____";
 
-		std::cout << "r: " << tag << F(9,3,r.length()) << F(9,3,r.dot( n1 )) << F(9,3,r.dot( n2 ) ) << std::endl;
+			dump_pdb( pose, "test_"+tag+"_"+lead_zero_string_of(seqpos,4)+"_"+lead_zero_string_of(r,4)+".pdb" );
+
+			// check dr:
+			Vector const r0( pose.residue(seqpos).xyz("O4'") - start_pose.residue(seqpos).xyz("O4'") );
+			Vector const r ( pose.residue(seqpos).xyz("O3'") - start_pose.residue(seqpos).xyz("O3'") );
+
+			std::cout << "r: " << tag << F(9,3,r.length()) << F(9,3,r.dot( n1 )) << F(9,3,r.dot( n2 ) ) << std::endl;
 		} // rr
 	} // r
 }
@@ -725,7 +726,7 @@ show_residue_residue_clashes(
 	scoring::ScoreFunction const & scorefxn,
 	Real const threshold,
 	std::string const & output_tag
-	)
+)
 {
 
 	using namespace scoring;
@@ -737,7 +738,7 @@ show_residue_residue_clashes(
 
 	TableLookupEtableEnergy const etable_energy
 		( *ScoringManager::get_instance()->etable( scorefxn.energy_method_options().etable_type() ),
-			scorefxn.energy_method_options() );
+		scorefxn.energy_method_options() );
 
 	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
@@ -788,7 +789,7 @@ show_protein_DNA_interactions(
 
 	TableLookupEtableEnergy const etable_energy
 		( *ScoringManager::get_instance()->etable( scorefxn.energy_method_options().etable_type() ),
-			scorefxn.energy_method_options() );
+		scorefxn.energy_method_options() );
 	FA_ElecEnergy const elec_energy( scorefxn.energy_method_options() );
 
 	for ( int i=1; i<= hbond_set.nhbonds(); ++i ) {
@@ -796,8 +797,8 @@ show_protein_DNA_interactions(
 		Residue const & don_rsd( pose.residue( hb.don_res() ) );
 		Residue const & acc_rsd( pose.residue( hb.acc_res() ) );
 		if ( don_rsd.is_DNA() || acc_rsd.is_DNA() ) {
-// 		if ( ( don_rsd.is_DNA() && acc_rsd.is_protein() ) ||
-// 				 ( acc_rsd.is_DNA() && don_rsd.is_protein() ) ) {
+			//   if ( ( don_rsd.is_DNA() && acc_rsd.is_protein() ) ||
+			//      ( acc_rsd.is_DNA() && don_rsd.is_protein() ) ) {
 			// calculate also the atr,rep,sol and fa_elec energies of interaction, maybe also the sigmoidal electrostatic energy
 
 			Size const dhatm( hb.don_hatm() ), datm( don_rsd.atom_base( dhatm ) ), aatm( hb.acc_atm() );
@@ -809,9 +810,9 @@ show_protein_DNA_interactions(
 			etable_energy.atom_pair_energy( don_rsd.atom( dhatm ), acc_rsd.atom( aatm ), 1.0, emap, dsq );
 			Real elecE(0.0);
 			elecE += elec_energy.eval_atom_atom_fa_elecE( don_rsd.xyz(  datm ), don_rsd.atomic_charge(  datm ),
-																											acc_rsd.xyz(  aatm ), acc_rsd.atomic_charge(  aatm ) );
+				acc_rsd.xyz(  aatm ), acc_rsd.atomic_charge(  aatm ) );
 			elecE += elec_energy.eval_atom_atom_fa_elecE( don_rsd.xyz( dhatm ), don_rsd.atomic_charge( dhatm ),
-																											acc_rsd.xyz(  aatm ), acc_rsd.atomic_charge(  aatm ) );
+				acc_rsd.xyz(  aatm ), acc_rsd.atomic_charge(  aatm ) );
 
 			std::cout << "HBOND: " << F(9,3,hb.energy() * hb.weight() ) << ' ' <<
 				don_rsd.name1() << I(4,don_rsd.seqpos()) << ' ' << acc_rsd.name1() << I(4,acc_rsd.seqpos()) << ' ' <<
@@ -830,9 +831,9 @@ show_protein_DNA_interactions(
 
 void
 find_dna_rotamers(
- std::ofstream & pdb_lib,
- std::ofstream & dihedral_lib
- )
+	std::ofstream & pdb_lib,
+	std::ofstream & dihedral_lib
+)
 {
 	using utility::vector1;
 	using namespace basic::options;
@@ -872,11 +873,11 @@ find_dna_rotamers(
 			Pose mini_pose;
 			mini_pose.append_residue_by_bond( prev_rsd );
 			mini_pose.append_residue_by_bond(      rsd );
- 			mini_pose.append_residue_by_bond( next_rsd );
+			mini_pose.append_residue_by_bond( next_rsd );
 
 			// kinematics::Stub const takeoff(      rsd.xyz("P"), prev_rsd.xyz("O3'"), prev_rsd.xyz("C3'") );
- 			kinematics::Stub const takeoff(      rsd.xyz("C4'"), rsd.xyz("O4'"), rsd.xyz("C1'") );
- 			// kinematics::Stub const landing( next_rsd.xyz("P"),      rsd.xyz("O3'"),      rsd.xyz("C3'") );
+			kinematics::Stub const takeoff(      rsd.xyz("C4'"), rsd.xyz("O4'"), rsd.xyz("C1'") );
+			// kinematics::Stub const landing( next_rsd.xyz("P"),      rsd.xyz("O3'"),      rsd.xyz("C3'") );
 
 			id::AtomID_Mask mask;
 			id::initialize( mask, mini_pose );
@@ -884,7 +885,7 @@ find_dna_rotamers(
 			for ( Size j=1; j<= rsd.natoms(); ++j ) {
 				id::AtomID const atom_id(  );
 				mask[ id::AtomID( j,2 ) ] = ( ( j<=rsd.last_backbone_atom() )
-																			|| j==rsd.first_sidechain_atom() );
+					|| j==rsd.first_sidechain_atom() );
 #ifndef NDEBUG
 				// release build does not compile...
 				mini_pose.set_xyz(  id::AtomID( j,2 ), takeoff.global2local( rsd.xyz( j ) ) );
@@ -903,31 +904,32 @@ find_dna_rotamers(
 			pdb_lib << "ENDMDL\n\n";
 
 			dihedral_lib << files[nn]   << ' ' << prev_rsd.name1() << ' '
-									 << rsd.name1() << ' ' << next_rsd.name1() << ' '
-									 << I( 4,rsd.seqpos() ) << ' ' << rsd.chain();
+				<< rsd.name1() << ' ' << next_rsd.name1() << ' '
+				<< I( 4,rsd.seqpos() ) << ' ' << rsd.chain();
 			dihedral_lib << F(10,3,rsd.mainchain_torsion(6) );
-			for (Size i=1; i <= 5; ++i)
+			for ( Size i=1; i <= 5; ++i ) {
 				dihedral_lib << F(10,3,rsd.mainchain_torsion(i) );
+			}
 			dihedral_lib << F(10,3,rsd.chi(1) ) << "\n";
 
 
-// 			Real const   alpha( rsd.mainchain_torsion(1) );
-// 			Real const    beta( rsd.mainchain_torsion(2) );
-// 			Real const   gamma( rsd.mainchain_torsion(3) );
-// 			Real const   delta( rsd.mainchain_torsion(4) );
-// 			Real const epsilon( rsd.mainchain_torsion(5) );
-// 			Real const    zeta( rsd.mainchain_torsion(5) );
-// 			Real const     chi( rsd.chi(1) );
+			//    Real const   alpha( rsd.mainchain_torsion(1) );
+			//    Real const    beta( rsd.mainchain_torsion(2) );
+			//    Real const   gamma( rsd.mainchain_torsion(3) );
+			//    Real const   delta( rsd.mainchain_torsion(4) );
+			//    Real const epsilon( rsd.mainchain_torsion(5) );
+			//    Real const    zeta( rsd.mainchain_torsion(5) );
+			//    Real const     chi( rsd.chi(1) );
 
-// 			Vector const o3( rsd.xyz( "O3'" ) ); // look at RotamerSet_.cc dna rotamer code for examples of getting positions
+			//    Vector const o3( rsd.xyz( "O3'" ) ); // look at RotamerSet_.cc dna rotamer code for examples of getting positions
 
 
-// 			Matrix const transform( landing.M * takeoff.M.transposed() );
+			//    Matrix const transform( landing.M * takeoff.M.transposed() );
 
-// 			Vector const translation( landing.v - takeoff.v );
+			//    Vector const translation( landing.v - takeoff.v );
 
-// 			Vector const local_coordinate_translation( takeoff.global_to_local( landing.v ) );
-// 			Vector const local_coordinate_translation( takeoff.global_to_local( next_rsd.xyz("P") ) );
+			//    Vector const local_coordinate_translation( takeoff.global_to_local( landing.v ) );
+			//    Vector const local_coordinate_translation( takeoff.global_to_local( next_rsd.xyz("P") ) );
 		}
 	}
 }
@@ -1077,7 +1079,7 @@ rescore_test()
 
 					if ( are_they_neighbors ) {
 						sc_sc_out << std::setw(4) << i  << std::setw(2) <<  res.chain() << std::setw(4) <<  res.name3()
-											<< std::setw(4) << i2 << std::setw(2) << res2.chain() << std::setw(4) << res2.name3();
+							<< std::setw(4) << i2 << std::setw(2) << res2.chain() << std::setw(4) << res2.name3();
 
 						for ( iter=types.begin(); iter!=types.end(); ++iter ) {
 							ScoreType const t =  (*iter);
@@ -1098,15 +1100,15 @@ void
 motif_scan()
 {
 
-	vector1< string > const files( basic::options::start_files() );
+vector1< string > const files( basic::options::start_files() );
 
-	for ( Size m=1; m<= files.size(); ++m ) {
-		string const & file( files[m] );
+for ( Size m=1; m<= files.size(); ++m ) {
+string const & file( files[m] );
 
-		pose::Pose pose;
-		core::import_pose::pose_from_file( pose, file , core::import_pose::PDB_file);
+pose::Pose pose;
+core::import_pose::pose_from_file( pose, file , core::import_pose::PDB_file);
 
-		// read the motif positions
+// read the motif positions
 
 
 }
@@ -1115,11 +1117,11 @@ motif_scan()
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
-	 Collect stats on intra-dna interactions for the purposes of parametrizing DNA reference energies
+Collect stats on intra-dna interactions for the purposes of parametrizing DNA reference energies
 
-	 fa_atr, rep, sol
-	 hbond
-	 fa_elec
+fa_atr, rep, sol
+hbond
+fa_elec
 
 **/
 
@@ -1295,12 +1297,12 @@ kono_sarai_stats()
 		core::import_pose::pose_from_file( pose, files[nn] , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 
-// 		set_base_partner( pose ); // fills base partner info
-// 		BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
+		//   set_base_partner( pose ); // fills base partner info
+		//   BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
-// 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
+		//   std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::dump_pdb( pose, tag );
+		//   io::pdb::dump_pdb( pose, tag );
 
 		for ( Size i=1; i<= pose.size(); ++i ) {
 
@@ -1336,8 +1338,8 @@ kono_sarai_stats()
 				Real const zz( dot(calpha,z) );
 
 				if ( ( xx >= -13.5 && xx <= 13.5  ) &&
-						 ( yy >= -13.5 && yy <= 13.5  ) &&
-						 ( zz >=  -6.0 && zz <=  6.0  ) ) {
+						( yy >= -13.5 && yy <= 13.5  ) &&
+						( zz >=  -6.0 && zz <=  6.0  ) ) {
 					int aa_num = rsd2.aa() - 1;
 					int na_num = rsd.aa() - chemical::first_DNA_aa;
 					std::cout << "CONTACT " << F(9,3,xx) << F(9,3,yy) << F(9,3,zz) <<
@@ -1383,14 +1385,14 @@ kono_sarai_zscore()
 		if ( pose.empty() ) continue;
 		Pose start_pose = pose;
 
- 		set_base_partner( pose ); // fills base partner info
- 		BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
+		set_base_partner( pose ); // fills base partner info
+		BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
 		pose.dump_pdb( "test.pdb");
 
-// 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
+		//   std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::dump_pdb( pose, tag );
+		//   io::pdb::dump_pdb( pose, tag );
 
 		utility::vector1< int > motif_pos;
 		for ( Size i=1; i<= pose.size(); ++i ) {
@@ -1403,8 +1405,7 @@ kono_sarai_zscore()
 			}
 		}
 
-		for ( int k=0; k<500; k++ ) // number of random sequences (set as commandline option)
-		{
+		for ( int k=0; k<500; k++ ) { // number of random sequences (set as commandline option)
 			std::ofstream out( "zscore.tmp" );
 			// recover the starting conformation
 			pose = start_pose;
@@ -1459,13 +1460,13 @@ kono_sarai_zscore()
 					// output contact info to tempfile
 
 					if ( ( xx >= -13.5 && xx <= 13.5  ) &&
-							 ( yy >= -13.5 && yy <= 13.5  ) &&
-							 ( zz >=  -6.0 && zz <=  6.0  ) ) {
+							( yy >= -13.5 && yy <= 13.5  ) &&
+							( zz >=  -6.0 && zz <=  6.0  ) ) {
 
 						out << "CONTACT " << F(9,3,xx) << F(9,3,yy) << F(9,3,zz) <<
 							' ' << rsd.name1() << rsd2.name1() << ' ' << files[nn] << std::endl;
 						//std::cout << "CONTACT " << F(9,3,xx) << F(9,3,yy) << F(9,3,zz) <<
-						//	' ' << rsd.name1() << rsd2.name1() << ' ' << files[nn] << I(4,i) << I(4,j) << std::endl;
+						// ' ' << rsd.name1() << rsd2.name1() << ' ' << files[nn] << I(4,i) << I(4,j) << std::endl;
 					}
 				}
 			}
@@ -1507,7 +1508,7 @@ phosphate_stats()
 			Residue const & rsd( pose.residue(i) );
 			Residue const & prev_rsd( pose.residue(i-1) );
 			if ( !rsd.is_DNA() || !prev_rsd.is_DNA() ||
-					 rsd.is_terminus() || prev_rsd.is_terminus() ) continue;
+					rsd.is_terminus() || prev_rsd.is_terminus() ) continue;
 
 			kinematics::Stub stub( rsd.xyz("P"), prev_rsd.xyz("O3'"), rsd.xyz("O5'") );
 
@@ -1544,11 +1545,11 @@ phosphate_stats()
 
 void
 spec_test(
-					pose::Pose const & start_pose,
-					scoring::ScoreFunction const & scorefxn,
-					utility::vector1< Size > const & pos_list,
-					std::string const & output_tag
-					)
+	pose::Pose const & start_pose,
+	scoring::ScoreFunction const & scorefxn,
+	utility::vector1< Size > const & pos_list,
+	std::string const & output_tag
+)
 {
 	using namespace pose;
 	using namespace devel::dna;
@@ -1602,7 +1603,7 @@ spec_test(
 			using namespace pack::rotamer_set;
 			RotamerCouplingsOP couplings( new RotamerCouplings() );
 			couplings->resize( nres );
-			for ( Size i=1;i<= nres; ++i ){
+			for ( Size i=1; i<= nres; ++i ) {
 				if ( partner[i] ) {
 					(*couplings)[i].first = partner[i];
 					(*couplings)[i].second = new conformation::WatsonCrickResidueMatcher();
@@ -1653,8 +1654,8 @@ spec_test(
 
 
 	/**
-		 Go through the positions in pos_list one at a time, mutating to the different bases
-		 and showing the energies by component.
+	Go through the positions in pos_list one at a time, mutating to the different bases
+	and showing the energies by component.
 	**/
 
 	// setup the task
@@ -1724,58 +1725,58 @@ spec_test(
 		AA const nat_na( start_pose.residue(seqpos).aa() );
 		EnergyMap nat_emap;
 
-		for ( Size r=1;r<=2; ++r ) {
+		for ( Size r=1; r<=2; ++r ) {
 
-		for ( int nn=first_DNA_aa; nn<= last_DNA_aa; ++nn ) {
+			for ( int nn=first_DNA_aa; nn<= last_DNA_aa; ++nn ) {
 
-			AA na; na = AA(nn);
+				AA na; na = AA(nn);
 
-			if ( ( r == 1 && na != nat_na ) ||
-					 ( r == 2 && na == nat_na ) ) continue;
+				if ( ( r == 1 && na != nat_na ) ||
+						( r == 2 && na == nat_na ) ) continue;
 
-			Pose pose;
-			pose = start_pose;
+				Pose pose;
+				pose = start_pose;
 
-			// make the mutation
-			make_base_pair_mutation( pose, seqpos, na );
+				// make the mutation
+				make_base_pair_mutation( pose, seqpos, na );
 
-			// repack at nbring positions
-			scorefxn(pose); // hack -- fills 10A nbr graph
-			utility::vector1< std::pair< Real, std::string > > results;
-			pack::pack_rotamers_loop( pose, scorefxn, task, nloop, results );
+				// repack at nbring positions
+				scorefxn(pose); // hack -- fills 10A nbr graph
+				utility::vector1< std::pair< Real, std::string > > results;
+				pack::pack_rotamers_loop( pose, scorefxn, task, nloop, results );
 
-			Energy pack_score = scorefxn( pose );
+				Energy pack_score = scorefxn( pose );
 
-			std::string seq;
-			for ( Size i=1; i<= pos_list.size(); ++i ) {
-				Size const pos( pos_list[i] );
-				if ( pos == seqpos ) {
-					seq += uppercased( start_pose.residue(pos).name1() );
+				std::string seq;
+				for ( Size i=1; i<= pos_list.size(); ++i ) {
+					Size const pos( pos_list[i] );
+					if ( pos == seqpos ) {
+						seq += uppercased( start_pose.residue(pos).name1() );
+					} else {
+						seq += pose.residue(pos).name1();
+					}
+				}
+
+				if ( r == 1 ) {
+					nat_emap = pose.energies().total_energies();
+
+					std::cout << "nat_mut pairings: "<< std::endl;
+
+					show_pairing_info( pose, seqpos );
+					show_protein_DNA_interactions( pose, scorefxn );
+
+
 				} else {
-					seq += pose.residue(pos).name1();
+					EnergyMap emap( pose.energies().total_energies() );
+					emap -= nat_emap;
+
+					std::cout << "mutate: " << output_tag << I(4,seqpos) << ' ' << seq <<
+						" from " << start_pose.residue(seqpos).aa() <<
+						" to " << na << ' ' << F(9,3,pack_score) << ' ' << emap.show_nonzero() << std::endl;
+
+					show_pairing_info( pose, seqpos );
 				}
 			}
-
-			if ( r == 1 ) {
-				nat_emap = pose.energies().total_energies();
-
-				std::cout << "nat_mut pairings: "<< std::endl;
-
-				show_pairing_info( pose, seqpos );
-				show_protein_DNA_interactions( pose, scorefxn );
-
-
-			} else {
-				EnergyMap emap( pose.energies().total_energies() );
-				emap -= nat_emap;
-
-				std::cout << "mutate: " << output_tag << I(4,seqpos) << ' ' << seq <<
-					" from " << start_pose.residue(seqpos).aa() <<
-					" to " << na << ' ' << F(9,3,pack_score) << ' ' << emap.show_nonzero() << std::endl;
-
-				show_pairing_info( pose, seqpos );
-			}
-		}
 		} // repeat twice
 		basic::prof_show();
 	}
@@ -1838,11 +1839,11 @@ idealize_tf_pose( pose::Pose & pose )
 						Real const d( i_rsd.xyz(ii).distance( j_rsd.xyz(jj) ) );
 						if ( d < contact_distance ) {
 							//std::cout << "add_constraint: " <<
-							//	i << ' ' << i_rsd.name() << ' ' << i_rsd.atom_name(ii) << ' ' <<
-							//	j << ' ' << j_rsd.name() << ' ' << j_rsd.atom_name(jj) << ' ' << d << ' ' << sdev << std::endl;
+							// i << ' ' << i_rsd.name() << ' ' << i_rsd.atom_name(ii) << ' ' <<
+							// j << ' ' << j_rsd.name() << ' ' << j_rsd.atom_name(jj) << ' ' << d << ' ' << sdev << std::endl;
 
 							cst_set->add_constraint( new AtomPairConstraint( AtomID(ii,i), AtomID(jj,j),
-																															 new HarmonicFunc( d, atom_pair_sdev ) ) );
+								new HarmonicFunc( d, atom_pair_sdev ) ) );
 						}
 					} // jj
 				} // ii
@@ -1876,11 +1877,11 @@ idealize_tf_pose( pose::Pose & pose )
 
 			// setup the options
 			MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/,
-																false /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
+				false /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 			kinematics::MoveMap mm;
 
 			utility::vector1< Size > pos_list;
-			for (Size i=1; i<= nres; ++i ) {
+			for ( Size i=1; i<= nres; ++i ) {
 				if ( pose.residue(i).is_protein() ) pos_list.push_back( i );
 			}
 
@@ -1939,7 +1940,7 @@ idealize_tf_pose( pose::Pose & pose )
 
 			// setup the options
 			MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/,
-																true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
+				true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 
 			AtomTreeMinimizer().run( pose, mm, scorefxn, options );
 			std::cout << "min_score: " << scorefxn( pose ) << std::endl;
@@ -1988,7 +1989,7 @@ zif268_test()
 	utility::vector1< int > pos_list;
 	utility::vector1< bool > interface;
 	for ( Size i=1; i<= nres; ++i ) {
-		if ( pose.residue(i).is_DNA()) pos_list.push_back(i);
+		if ( pose.residue(i).is_DNA() ) pos_list.push_back(i);
 	}
 
 	detect_allatom_interface_residues( pose, pos_list, 4.5, interface );
@@ -2028,7 +2029,7 @@ zif268_test()
 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
 		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, "lbfgs_armijo_nonmonotone", 0.001, true,
-																					option[ out::output_tag ]+weights_files[j], !option[ fast ] );
+			option[ out::output_tag ]+weights_files[j], !option[ fast ] );
 
 	}
 
@@ -2080,7 +2081,7 @@ bzip_test()
 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
 		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, "lbfgs_armijo_nonmonotone", 0.001, true,
-																					weights_files[j] );
+			weights_files[j] );
 
 	}
 
@@ -2133,7 +2134,7 @@ endo_test()
 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
 		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, "lbfgs_armijo_nonmonotone", 0.001, true,
-																					weights_files[j] );
+			weights_files[j] );
 
 		utility::vector1< int > motif_positions;
 		for ( int i=1; i<= 14; ++i ) {
@@ -2141,8 +2142,8 @@ endo_test()
 		}
 
 		devel::dna::packing_specificity_test_fast( pose, *scorefxn, motif_positions, option[ nloop ],
-																							 option[ min_type ], option[ minimize_tolerance ],
-																							 option[ post_minimize ], weights_files[j] /* tag */ );
+			option[ min_type ], option[ minimize_tolerance ],
+			option[ post_minimize ], weights_files[j] /* tag */ );
 	}
 }
 
@@ -2350,8 +2351,8 @@ tf_specificity_test(
 
 
 	devel::dna::packing_specificity_test_fast( pose, *scorefxn, new_motif_positions, option[ nloop ],
-																						 option[ min_type ], option[ minimize_tolerance ],
-																						 option[ post_minimize ], output_tag );
+		option[ min_type ], option[ minimize_tolerance ],
+		option[ post_minimize ], output_tag );
 }
 
 void
@@ -2374,7 +2375,7 @@ tf_specificity_test()
 			std::string const outtag( tfs[i] + "_" + weights_files[j] + "_" + option[ out::output_tag ] );
 
 			tf_specificity_test( tfs[i], weights_files[j], outtag, option[ Wfa_elec ], option[ Wdna_bp ],
-													 option[ Wdna_bs ] );
+				option[ Wdna_bs ] );
 		}
 	}
 }
@@ -2428,81 +2429,81 @@ dna_specificity_test(
 
 	if ( option[ fast ] ) {
 		devel::dna::packing_specificity_test_fast( pose, *scorefxn, motif_begin, motif_size, option[ nloop ],
-																							 option[ min_type ], option[ minimize_tolerance ],
-																							 option[ post_minimize ], output_tag );
+			option[ min_type ], option[ minimize_tolerance ],
+			option[ post_minimize ], output_tag );
 	} else {
 		devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin, motif_size, option[ min_type ],
-																					option[ minimize_tolerance ], option[ post_minimize ], "" );
+			option[ minimize_tolerance ], option[ post_minimize ], "" );
 	}
 
-// 	{ // hacking
-// 		ScoreFunction scorefxn;
-// 		scorefxn.set_weight( fa_atr, 0.8 );
-// 		scorefxn.set_weight( fa_rep, 0.4 );
-// 		scorefxn.set_weight( fa_sol, 0.6 );
-// 		scorefxn.set_weight( fa_intra_rep, 0.00004 );
+	//  { // hacking
+	//   ScoreFunction scorefxn;
+	//   scorefxn.set_weight( fa_atr, 0.8 );
+	//   scorefxn.set_weight( fa_rep, 0.4 );
+	//   scorefxn.set_weight( fa_sol, 0.6 );
+	//   scorefxn.set_weight( fa_intra_rep, 0.00004 );
 
-// 		devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
-// 																							 option[ post_minimize ] );
-// 	}
+	//   devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
+	//                         option[ post_minimize ] );
+	//  }
 
-// 	{ // hacking
-// 		ScoreFunction scorefxn;
-// 		scorefxn.set_weight( fa_atr, 0.8 );
-// 		scorefxn.set_weight( fa_rep, 0.4 );
-// 		scorefxn.set_weight( fa_sol, 0.6 );
-// 		scorefxn.set_weight( fa_intra_rep, 0.004 );
+	//  { // hacking
+	//   ScoreFunction scorefxn;
+	//   scorefxn.set_weight( fa_atr, 0.8 );
+	//   scorefxn.set_weight( fa_rep, 0.4 );
+	//   scorefxn.set_weight( fa_sol, 0.6 );
+	//   scorefxn.set_weight( fa_intra_rep, 0.004 );
 
-// 		devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
-// 																							 option[ post_minimize ] );
-// 	}
+	//   devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
+	//                         option[ post_minimize ] );
+	//  }
 
-// 	{ // hacking
-// 		ScoreFunction scorefxn;
-// 		scorefxn.set_weight( fa_atr, 0.8 );
-// 		scorefxn.set_weight( fa_rep, 0.4 );
-// 		scorefxn.set_weight( fa_sol, 0.6 );
-// 		scorefxn.set_weight( hbond_lr_bb, 1.2 );
-// 		scorefxn.set_weight( hbond_sr_bb, 1.2 );
-// 		scorefxn.set_weight( hbond_sc, 1.2 );
-// 		scorefxn.set_weight( hbond_bb_sc, 1.4 );
-// 		devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
-// 																							 option[ post_minimize ] );
-// 	}
+	//  { // hacking
+	//   ScoreFunction scorefxn;
+	//   scorefxn.set_weight( fa_atr, 0.8 );
+	//   scorefxn.set_weight( fa_rep, 0.4 );
+	//   scorefxn.set_weight( fa_sol, 0.6 );
+	//   scorefxn.set_weight( hbond_lr_bb, 1.2 );
+	//   scorefxn.set_weight( hbond_sr_bb, 1.2 );
+	//   scorefxn.set_weight( hbond_sc, 1.2 );
+	//   scorefxn.set_weight( hbond_bb_sc, 1.4 );
+	//   devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
+	//                         option[ post_minimize ] );
+	//  }
 
-// 	{ // hacking
-// 		ScoreFunction scorefxn;
-// 		scorefxn.set_weight( fa_atr, 0.8 );
-// 		scorefxn.set_weight( fa_rep, 0.4 );
-// 		scorefxn.set_weight( fa_sol, 0.6 );
+	//  { // hacking
+	//   ScoreFunction scorefxn;
+	//   scorefxn.set_weight( fa_atr, 0.8 );
+	//   scorefxn.set_weight( fa_rep, 0.4 );
+	//   scorefxn.set_weight( fa_sol, 0.6 );
 
-// 		devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
-// 																							 option[ post_minimize ] );
-// 	}
+	//   devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
+	//                         option[ post_minimize ] );
+	//  }
 
 
-// 	{ // hacking
-// 		ScoreFunction scorefxn;
-// 		scorefxn.set_weight( fa_atr, 0.8 );
-// 		scorefxn.set_weight( fa_rep, 0.4 );
-// 		scorefxn.set_weight( fa_sol, 0.6 );
-// 		scorefxn.set_weight( fa_dun, 0.5 );
+	//  { // hacking
+	//   ScoreFunction scorefxn;
+	//   scorefxn.set_weight( fa_atr, 0.8 );
+	//   scorefxn.set_weight( fa_rep, 0.4 );
+	//   scorefxn.set_weight( fa_sol, 0.6 );
+	//   scorefxn.set_weight( fa_dun, 0.5 );
 
-// 		devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
-// 																							 option[ post_minimize ] );
-// 	}
+	//   devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
+	//                         option[ post_minimize ] );
+	//  }
 
-// 	{ // hacking
-// 		ScoreFunction scorefxn;
-// 		scorefxn.set_weight( fa_atr, 0.8 );
-// 		scorefxn.set_weight( fa_rep, 0.4 );
-// 		scorefxn.set_weight( fa_sol, 0.6 );
-// 		scorefxn.set_weight( p_aa_pp, 0.5 );
-// 		scorefxn.set_weight( ref, 0.25 );
+	//  { // hacking
+	//   ScoreFunction scorefxn;
+	//   scorefxn.set_weight( fa_atr, 0.8 );
+	//   scorefxn.set_weight( fa_rep, 0.4 );
+	//   scorefxn.set_weight( fa_sol, 0.6 );
+	//   scorefxn.set_weight( p_aa_pp, 0.5 );
+	//   scorefxn.set_weight( ref, 0.25 );
 
-// 		devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
-// 																							 option[ post_minimize ] );
-// 	}
+	//   devel::dna::packing_specificity_test_fast( pose, scorefxn, motif_begin, motif_size, option[ min_type ],
+	//                         option[ post_minimize ] );
+	//  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2651,7 +2652,7 @@ loop_modeling_test()
 
 		assert( pose_seq.find( source_seq ) == 0 );
 
-		while( source_seq.size() < pose_seq.size() ) {
+		while ( source_seq.size() < pose_seq.size() ) {
 			assert( mapping.size1() == source_seq.size() );
 
 			Size const pos( source_seq.size() + 1 );
@@ -2722,9 +2723,9 @@ loop_modeling_test()
 	}
 
 	/**
-		 fragment setup:
-		 1. pick 3mer library from vall
-		 2. derive 1mer libary from 3mers
+	fragment setup:
+	1. pick 3mer library from vall
+	2. derive 1mer libary from 3mers
 
 
 	**/
@@ -2834,26 +2835,26 @@ loop_rebuilding_test()
 	// setup Chu's loops object
 	Loops loops;
 
- 	if (! loops.read_file( option[ OptionKeys::loops::loop_file ]().name() ) ) {
+	if ( ! loops.read_file( option[ OptionKeys::loops::loop_file ]().name() ) ) {
 
 		basic::Error() << "loops_main: can not retrieve loops info\n"
-											<< "exit ......\n";
- 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
- 	}
+			<< "exit ......\n";
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+	}
 
- 	std::cout << "************************************************\n"
-						<< "loops to be modeled:\n" << loops
-						<< "************************************************"
-						<< std::endl;
+	std::cout << "************************************************\n"
+		<< "loops to be modeled:\n" << loops
+		<< "************************************************"
+		<< std::endl;
 
 
- 	// need to set up fold_tree and allow_bb_move properly ?
+	// need to set up fold_tree and allow_bb_move properly ?
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
-		 fragment setup:
-		 1. pick 3mer library from vall
-		 2. derive 1mer libary from 3mers
+	fragment setup:
+	1. pick 3mer library from vall
+	2. derive 1mer libary from 3mers
 	**/
 	utility::vector1<int> frag_sizes; //( option[ OptionKeys::loops::frag_sizes ] );
 
@@ -2917,18 +2918,18 @@ luxr_setup()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-// 	using namespace scoring;
- 	using namespace scoring::dna;
- 	using namespace conformation;
- 	using namespace chemical;
-// 	using namespace optimization;
-// 	using namespace id;
-// 	using namespace io::pdb;
- 	using namespace pose;
-// 	using namespace protocols::loops;
-// 	using namespace protocols::frags;
-// 	using namespace protocols::moves;
-// 	using namespace scoring::dna; //a
+	//  using namespace scoring;
+	using namespace scoring::dna;
+	using namespace conformation;
+	using namespace chemical;
+	//  using namespace optimization;
+	//  using namespace id;
+	//  using namespace io::pdb;
+	using namespace pose;
+	//  using namespace protocols::loops;
+	//  using namespace protocols::frags;
+	//  using namespace protocols::moves;
+	//  using namespace scoring::dna; //a
 
 	// read the pose
 	Pose start_pose;
@@ -2945,7 +2946,7 @@ luxr_setup()
 	protocols::loops::extend_sequence_mapping( start_pose /*const*/, mapping, source_seq, target_seq );
 
 	assert( source_seq == start_pose.sequence() && mapping.size1() == source_seq.size() &&
-					mapping.size2()==target_seq.size() );
+		mapping.size2()==target_seq.size() );
 
 	protocols::loops::apply_sequence_mapping( start_pose, target_seq, mapping );
 
@@ -3005,8 +3006,8 @@ luxr_setup()
 			utility_exit_with_message( "Expected exactly three chains in the pdb file!" );
 		}
 		if ( !( start_pose.residue(1).is_protein() &&
-						start_pose.residue(n3+1).is_DNA() &&
-						start_pose.residue(n5+1).is_DNA() ) ) {
+				start_pose.residue(n3+1).is_DNA() &&
+				start_pose.residue(n5+1).is_DNA() ) ) {
 			utility_exit_with_message( "Expected three chains: first protein, then dna1, then dna2" );
 		}
 	}
@@ -3050,15 +3051,15 @@ luxr_test()
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::dna::specificity;
 	using namespace devel::dna;
- 	using namespace scoring::dna;
+	using namespace scoring::dna;
 
- 	using namespace scoring;
- 	using namespace pose;
+	using namespace scoring;
+	using namespace pose;
 
 	Size const nstruct( option[ out::nstruct] ); // how many structures to make
 
 	if ( !( option[ motif_begin  ].user() ) || !( option[ motif_size   ].user() ) ||
-			 !( option[ moving_jump  ].user() ) ) {
+			!( option[ moving_jump  ].user() ) ) {
 		utility_exit_with_message( "motif_begin and motif_size are required args");
 	}
 	Size const m_begin( option[ motif_begin ] );
@@ -3228,7 +3229,7 @@ dna_specificity_test()
 			std::cout << "FILES: " << outtag << ' ' << pdb_files[i] << ' ' << weights_files[j] << std::endl;
 
 			dna_specificity_test( pdb_files[i], option[ motif_begin ], option[ motif_size ], weights_files[j],
-														outtag, option[ Wfa_elec ], option[ Wdna_bp ], option[ Wdna_bs ] );
+				outtag, option[ Wfa_elec ], option[ Wdna_bp ], option[ Wdna_bs ] );
 		}
 	}
 
@@ -3346,10 +3347,10 @@ water_test()
 
 		//Size const anchor1( 21 );
 		std::string const anchor1_atom( "O4" );
-// 		Size const anchor2( 20 );
-// 		std::string const anchor2_atom( "N7" );
- 		//Size const anchor2( 29 );
- 		std::string const anchor2_atom( "H62" );
+		//   Size const anchor2( 20 );
+		//   std::string const anchor2_atom( "N7" );
+		//Size const anchor2( 29 );
+		std::string const anchor2_atom( "H62" );
 
 		kinematics::MoveMap mm;
 
@@ -3386,27 +3387,27 @@ water_test()
 				}
 			}
 		}
-// 		{ // just hydrate at 2 positions
-// 			ResidueOP tp3( ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("TP3") ) );
-// 			tp3->set_xyz( "O", pose.residue( anchor1 ).xyz( anchor1_atom ) ); // for nbr calculation
-// 			pose.append_residue_by_jump( *tp3, anchor1 );
-// 			Size const pos1( pose.size() );
-// 			mm.set_jump( pose.num_jump(), true );
-// 			tp3->set_xyz( "O", pose.residue( anchor2 ).xyz( anchor2_atom ) ); // for nbr calculation
-// 			pose.append_residue_by_jump( *tp3, anchor2 );
-// 			Size const pos2( pose.size() );
-// 			mm.set_jump( pose.num_jump(), true );
+		//   { // just hydrate at 2 positions
+		//    ResidueOP tp3( ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("TP3") ) );
+		//    tp3->set_xyz( "O", pose.residue( anchor1 ).xyz( anchor1_atom ) ); // for nbr calculation
+		//    pose.append_residue_by_jump( *tp3, anchor1 );
+		//    Size const pos1( pose.size() );
+		//    mm.set_jump( pose.num_jump(), true );
+		//    tp3->set_xyz( "O", pose.residue( anchor2 ).xyz( anchor2_atom ) ); // for nbr calculation
+		//    pose.append_residue_by_jump( *tp3, anchor2 );
+		//    Size const pos2( pose.size() );
+		//    mm.set_jump( pose.num_jump(), true );
 
-// 			(*water_info)[ pos1 ].anchor_residue( anchor1 );
-// 			(*water_info)[ pos1 ].anchor_atom   ( anchor1_atom );
-// 			(*water_info)[ pos1 ].aa( pose.residue( anchor1 ).aa() );
-// 			(*water_info)[ pos1 ].nstep( nstep );
+		//    (*water_info)[ pos1 ].anchor_residue( anchor1 );
+		//    (*water_info)[ pos1 ].anchor_atom   ( anchor1_atom );
+		//    (*water_info)[ pos1 ].aa( pose.residue( anchor1 ).aa() );
+		//    (*water_info)[ pos1 ].nstep( nstep );
 
-// 			(*water_info)[ pos2 ].anchor_residue( anchor2 );
-// 			(*water_info)[ pos2 ].anchor_atom   ( anchor2_atom );
-// 			(*water_info)[ pos2 ].aa( pose.residue( anchor2 ).aa() );
-// 			(*water_info)[ pos2 ].nstep( nstep );
-// 		}
+		//    (*water_info)[ pos2 ].anchor_residue( anchor2 );
+		//    (*water_info)[ pos2 ].anchor_atom   ( anchor2_atom );
+		//    (*water_info)[ pos2 ].aa( pose.residue( anchor2 ).aa() );
+		//    (*water_info)[ pos2 ].nstep( nstep );
+		//   }
 
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 		//kinematics::MoveMap mm;
@@ -3445,15 +3446,15 @@ water_test()
 		assert( option[ score_function ].user() );
 		ScoreFunctionOP scorefxn( new ScoreFunction() );
 		scorefxn->initialize_from_file( option[ score_function ] );
-// 		ScoreFunction scorefxn;
-// 		scorefxn.set_weight( fa_atr, 0.80 );
-// 		scorefxn.set_weight( fa_rep, 0.44 );
-// 		scorefxn.set_weight( fa_sol, 0.65 );
-// 		scorefxn.set_weight( fa_elec, 0.5 );
-// 		scorefxn.set_weight( hbond_lr_bb, 2.0 );
-// 		scorefxn.set_weight( hbond_sr_bb, 2.0 );
-// 		scorefxn.set_weight( hbond_bb_sc, 2.0 );
-// 		scorefxn.set_weight( hbond_sc, 2.0 );
+		//   ScoreFunction scorefxn;
+		//   scorefxn.set_weight( fa_atr, 0.80 );
+		//   scorefxn.set_weight( fa_rep, 0.44 );
+		//   scorefxn.set_weight( fa_sol, 0.65 );
+		//   scorefxn.set_weight( fa_elec, 0.5 );
+		//   scorefxn.set_weight( hbond_lr_bb, 2.0 );
+		//   scorefxn.set_weight( hbond_sr_bb, 2.0 );
+		//   scorefxn.set_weight( hbond_bb_sc, 2.0 );
+		//   scorefxn.set_weight( hbond_sc, 2.0 );
 
 		(*scorefxn)( pose );
 		utility::vector1< std::pair< Real, std::string > > results;
@@ -3694,13 +3695,13 @@ not1_test()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::dna::specificity;
- 	using namespace scoring;
+	using namespace scoring;
 	using namespace conformation;
 	using namespace chemical;
 	using namespace kinematics;
 	using namespace optimization;
- 	using namespace scoring::dna;
- 	using namespace pose;
+	using namespace scoring::dna;
+	using namespace pose;
 
 
 	// read structure
@@ -3792,8 +3793,8 @@ not1_test()
 		show_residue_hbonds( pose, 178 );
 
 		{
- 			Residue const & rsd1( pose.residue( 178 ) );
- 			Residue const & rsd2( pose.residue( 217 ) );
+			Residue const & rsd1( pose.residue( 178 ) );
+			Residue const & rsd2( pose.residue( 217 ) );
 
 			hbonds::HBondSet hbond_set;
 			hbond_set.use_hb_env_dep(true);
@@ -3813,20 +3814,20 @@ not1_test()
 			// accepting atom on rsd2 is side chain and donating atom of
 			// rsd2 is backbone.
 			hbonds::identify_hbonds_1way( hbond_database, rsd1, rsd2, 10, 10, false /*evaluate_derivative*/,
-																		true, false, true, false, hbond_set);
+				true, false, true, false, hbond_set);
 			// rsd2 as donor rsd1 as acceptor.  Exclude hbonds where the
 			// accepting atom on rsd2 is backbone and the donating atom on
 			// rsd1 is sidechain.
 			hbonds::identify_hbonds_1way( hbond_database, rsd2, rsd1, 10, 10, false /*evaluate_derivative*/,
-																		true, true, false, false, hbond_set);
+				true, true, false, false, hbond_set);
 			EnergyMap hbond_emap;
 			get_hbond_energies_new( hbond_set, hbond_emap);
 
 			std::cout << "HBE: "
-								<< hbond_emap[ hbond_sc ]	<< ' '
-								<< hbond_emap[ hbond_sr_bb ] << ' '
-								<< hbond_emap[ hbond_lr_bb ] << ' '
-								<< hbond_emap[ hbond_sr_bb_sc ] + hbond_emap[ hbond_lr_bb_sc ] << std::endl;
+				<< hbond_emap[ hbond_sc ] << ' '
+				<< hbond_emap[ hbond_sr_bb ] << ' '
+				<< hbond_emap[ hbond_lr_bb ] << ' '
+				<< hbond_emap[ hbond_sr_bb_sc ] + hbond_emap[ hbond_lr_bb_sc ] << std::endl;
 
 		}
 	}
@@ -3858,13 +3859,13 @@ design_test()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::dna::specificity;
- 	using namespace scoring;
+	using namespace scoring;
 	using namespace conformation;
 	using namespace chemical;
 	using namespace kinematics;
 	using namespace optimization;
- 	using namespace scoring::dna;
- 	using namespace pose;
+	using namespace scoring::dna;
+	using namespace pose;
 
 	// read structure
 
@@ -3917,13 +3918,13 @@ compare_dna_energies()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::dna::specificity;
- 	using namespace scoring;
+	using namespace scoring;
 	using namespace conformation;
 	using namespace chemical;
 	using namespace kinematics;
 	using namespace optimization;
- 	using namespace scoring::dna;
- 	using namespace pose;
+	using namespace scoring::dna;
+	using namespace pose;
 
 
 	// read structure
@@ -3971,13 +3972,13 @@ compare_energies()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::dna::specificity;
- 	using namespace scoring;
+	using namespace scoring;
 	using namespace conformation;
 	using namespace chemical;
 	using namespace kinematics;
 	using namespace optimization;
- 	using namespace scoring::dna;
- 	using namespace pose;
+	using namespace scoring::dna;
+	using namespace pose;
 
 
 	// read structure
@@ -4020,8 +4021,8 @@ compare_energies()
 void
 zf_test()
 {
-// 	using utility::vector1;
- 	using namespace basic::options;
+	//  using utility::vector1;
+	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::dna::specificity;
 
@@ -4030,7 +4031,7 @@ zf_test()
 	using namespace scoring::dna;
 	using namespace conformation;
 	using namespace chemical;
- 	using namespace pose;
+	using namespace pose;
 
 	// Read reference pose
 	Pose ref_pose;
@@ -4064,7 +4065,7 @@ zf_test()
 		Pose pose;
 		core::import_pose::pose_from_file( pose, file , core::import_pose::PDB_file);
 		scoring::dna::set_base_partner( pose );
-	core::pose::PDBPoseMap pose_map(pose.pdb_info()->pdb2pose());
+		core::pose::PDBPoseMap pose_map(pose.pdb_info()->pdb2pose());
 
 
 		// read the extra motif data
@@ -4096,9 +4097,9 @@ zf_test()
 			motif_begin_protein_next << std::endl;
 
 		assert( pose.conformation().num_chains() == 3 &&
-						pose.chain( motif_begin_protein ) == 1 &&
-						pose.chain( motif_begin_dna ) == 2 &&
-						( motif_begin_protein_next == 0 || pose.chain( motif_begin_protein_next ) == 1 ) );
+			pose.chain( motif_begin_protein ) == 1 &&
+			pose.chain( motif_begin_dna ) == 2 &&
+			( motif_begin_protein_next == 0 || pose.chain( motif_begin_protein_next ) == 1 ) );
 
 		// Change pose's zf sequence to reference pose's
 		vector1< Size >::const_iterator pos_iter;
@@ -4107,19 +4108,19 @@ zf_test()
 			Size const pose_i( motif_begin_protein + (*pos_iter) );
 			ResidueTypeCOP rsd_type( ref_pose.residue( ref_motif_begin_protein+(*pos_iter) ).type() );
 
- 			Residue const & existing_residue( pose.residue( pose_i ) );
- 			assert( existing_residue.is_protein() );
+			Residue const & existing_residue( pose.residue( pose_i ) );
+			assert( existing_residue.is_protein() );
 
- 			ResidueOP rsd = ResidueFactory::create_residue( *rsd_type, existing_residue,
-																											pose.conformation() );
+			ResidueOP rsd = ResidueFactory::create_residue( *rsd_type, existing_residue,
+				pose.conformation() );
 
 			std::cout << pdb_id << ": MUTATING " << ( pose.residue( pose_i ).type() ).name() << pose_i << " to " << rsd_type->name() << std::endl;
 
- 			pose.replace_residue( pose_i, *rsd, false );
+			pose.replace_residue( pose_i, *rsd, false );
 		}
 
 		// Change pose's adjacent C-terminal zf (if any) sequence to reference pose's
-		if (motif_begin_protein_next) {
+		if ( motif_begin_protein_next ) {
 			for ( pos_iter=zf2_positions.begin() ; pos_iter<zf2_positions.end(); ++pos_iter ) {
 
 				Size const pose_i( motif_begin_protein_next + (*pos_iter) );
@@ -4129,7 +4130,7 @@ zf_test()
 				assert( existing_residue.is_protein() );
 
 				ResidueOP rsd = ResidueFactory::create_residue( *rsd_type, existing_residue,
-																												pose.conformation() );
+					pose.conformation() );
 
 				std::cout << pdb_id << ": MUTATING " << ( pose.residue( pose_i ).type() ).name() << pose_i << " to " << rsd_type->name() << std::endl;
 				pose.replace_residue( pose_i, *rsd, false );
@@ -4159,7 +4160,7 @@ zf_test()
 			scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
 			devel::dna::packing_specificity_test( pose, *scorefxn, motif_begin_dna, motif_size, "lbfgs_armijo_nonmonotone", 0.001, true,
-																						option[ out::output_tag ]+weights_files[j]+"_"+pdb_id, !option[ fast ] );
+				option[ out::output_tag ]+weights_files[j]+"_"+pdb_id, !option[ fast ] );
 		}
 	} // n -- file loop
 
@@ -4173,7 +4174,7 @@ hbond_stats()
 	using namespace conformation;
 	using numeric::conversions::degrees;
 
-	//	scoring::hbonds::show_poly();
+	// scoring::hbonds::show_poly();
 
 	Real const dis2_threshold( 3.5 * 3.5 );
 
@@ -4303,7 +4304,7 @@ cleanup_dna_chains( pose::Pose & pose )
 	// merge chains which pair with a single chain
 	for ( Size i=1; i<nres; ++i ) {
 		if ( pose.residue(i).is_DNA() && pose.residue(i+1).is_DNA() && pose.chain(i) != pose.chain(i+1) &&
-				 partner[i] && partner[i+1] && pose.chain( partner[i] ) == pose.chain( partner[i+1] ) ) {
+				partner[i] && partner[i+1] && pose.chain( partner[i] ) == pose.chain( partner[i+1] ) ) {
 			tt << "cleanup_dna_chains: merging chains: " << pose.chain(i) << ' ' << pose.chain(i+1) << std::endl;
 			pose.conformation().delete_chain_ending( i );
 		}
@@ -4400,7 +4401,7 @@ dna_chain_check()
 		}
 
 		// show the sequence of strands
-		for ( Size i=1; i<= pose.conformation().num_chains(); ++ i ){
+		for ( Size i=1; i<= pose.conformation().num_chains(); ++ i ) {
 			std::cout << "CHAIN_BEGIN " << file << I(3,i) << ' ' << pose.conformation().chain_begin(i) << std::endl;
 			std::cout << "CHAIN_SEQ " << file << I(3,i) << ' ' << pose.chain_sequence(i) << std::endl;
 		}
@@ -4622,31 +4623,31 @@ my_main( void* )
 	}
 
 
-// 	// Open output files ....
-// 	std::ofstream pdb_lib( "sugar_based_dna_rotamers.pdb" ),
-// 		dihedral_lib ( "sugar_based_dna_rotamers.dih" );
-// 	if ( !pdb_lib.is_open() || !dihedral_lib.is_open() )
-// 		;
+	//  // Open output files ....
+	//  std::ofstream pdb_lib( "sugar_based_dna_rotamers.pdb" ),
+	//   dihedral_lib ( "sugar_based_dna_rotamers.dih" );
+	//  if ( !pdb_lib.is_open() || !dihedral_lib.is_open() )
+	//   ;
 
 	exit(0); // add new mode strings
 
-// 	utility::vector1< conformation::ResidueOP > new_rotamers;
-// 	std::ifstream lib_file;
-// 	lib_file.open( "/home/cyanover/projects/dna/tmp/VQ_DNA_64_rotamers_7_dof" );
-// 	load_dna_rotamers( lib_file, new_rotamers );
+	//  utility::vector1< conformation::ResidueOP > new_rotamers;
+	//  std::ifstream lib_file;
+	//  lib_file.open( "/home/cyanover/projects/dna/tmp/VQ_DNA_64_rotamers_7_dof" );
+	//  load_dna_rotamers( lib_file, new_rotamers );
 
 
-// 	find_dna_rotamers(pdb_lib, dihedral_lib);
+	//  find_dna_rotamers(pdb_lib, dihedral_lib);
 
 	tf_specificity_test();
 	exit(0);
 
 
-// 	// Close output files ....
-// 	pdb_lib.close();
-// 	dihedral_lib.close();
+	//  // Close output files ....
+	//  pdb_lib.close();
+	//  dihedral_lib.close();
 
-// 	exit(0);
+	//  exit(0);
 
 	zif268_test();
 
@@ -4696,55 +4697,55 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 }
 
-		// 		// now do specificity calculation
+//   // now do specificity calculation
 
-		// 		devel::dna::packing_specificity_test_fast( pose, *scorefxn, motif_begin, motif_size, 50, // nloop
-		// 																							 "none", 1000.0, //option[ min_type ], option[ minimize_tolerance ],
-		// 																							 false, filename+"yesWdna", true, false );
+//   devel::dna::packing_specificity_test_fast( pose, *scorefxn, motif_begin, motif_size, 50, // nloop
+//                         "none", 1000.0, //option[ min_type ], option[ minimize_tolerance ],
+//                         false, filename+"yesWdna", true, false );
 
-		// 		scorefxn->set_weight( dna_bp, 0.0 );
-		// 		scorefxn->set_weight( dna_bs, 0.0 );
+//   scorefxn->set_weight( dna_bp, 0.0 );
+//   scorefxn->set_weight( dna_bs, 0.0 );
 
-		// 		devel::dna::packing_specificity_test_fast( pose, *scorefxn, motif_begin, motif_size, 50, // nloop
-		// 																							 "none", 1000.0, //option[ min_type ], option[ minimize_tolerance ],
-		// 																							 false, filename+"noWdna", true, false );
+//   devel::dna::packing_specificity_test_fast( pose, *scorefxn, motif_begin, motif_size, 50, // nloop
+//                         "none", 1000.0, //option[ min_type ], option[ minimize_tolerance ],
+//                         false, filename+"noWdna", true, false );
 
-		// 		scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
-		// 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
+//   scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
+//   scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
-// 	for ( Size i = 1; i <= frag_sizes.size(); ++i ) {
-// 		Size const frag_size = Size(frag_sizes[i]);
-// 		protocols::frags::TorsionFragmentLibraryOP frag_lib_op( new protocols::frags::TorsionFragmentLibrary );
-// 		frag_libs_init.insert( std::make_pair(frag_size, false ) );//frag_lib_op->read_file( frag_files[i], frag_size, 3 ) ) );
-// 		frag_libs.insert( std::make_pair(frag_size, frag_lib_op) );
-// 	}
+//  for ( Size i = 1; i <= frag_sizes.size(); ++i ) {
+//   Size const frag_size = Size(frag_sizes[i]);
+//   protocols::frags::TorsionFragmentLibraryOP frag_lib_op( new protocols::frags::TorsionFragmentLibrary );
+//   frag_libs_init.insert( std::make_pair(frag_size, false ) );//frag_lib_op->read_file( frag_files[i], frag_size, 3 ) ) );
+//   frag_libs.insert( std::make_pair(frag_size, frag_lib_op) );
+//  }
 
-// 	Size prev_size(10000);
-// 	protocols::frags::TorsionFragmentLibraryOP prev_lib_op(0);
-// 	for ( std::map<Size, bool>::const_reverse_iterator it = frag_libs_init.rbegin(),
-// 					it_end = frag_libs_init.rend(); it != it_end; it++ ) {
-// 		Size const frag_size( it->first );
-// 		bool const frag_lib_init( it->second );
-// 		assert( frag_size < prev_size );
-// 		if ( (!frag_lib_init) && prev_lib_op ) {
-// 			std::cout << "set up " << frag_size << "-mer library from " << prev_size << "-mer library" << std::endl;
-// 			protocols::frags::TorsionFragmentLibraryOP current_lib_op( frag_libs.find(frag_size)->second );
-// 			frag_libs_init[frag_size] = current_lib_op->derive_from_src_lib( frag_size, prev_size, prev_lib_op );
-// 		}
-// 		prev_size = frag_size;
-// 		prev_lib_op = frag_libs[frag_size];
-// 		std::cout << "frag_libs_init: " << frag_size << " " << frag_libs_init[frag_size] << std::endl;
-// 	}
+//  Size prev_size(10000);
+//  protocols::frags::TorsionFragmentLibraryOP prev_lib_op(0);
+//  for ( std::map<Size, bool>::const_reverse_iterator it = frag_libs_init.rbegin(),
+//      it_end = frag_libs_init.rend(); it != it_end; it++ ) {
+//   Size const frag_size( it->first );
+//   bool const frag_lib_init( it->second );
+//   assert( frag_size < prev_size );
+//   if ( (!frag_lib_init) && prev_lib_op ) {
+//    std::cout << "set up " << frag_size << "-mer library from " << prev_size << "-mer library" << std::endl;
+//    protocols::frags::TorsionFragmentLibraryOP current_lib_op( frag_libs.find(frag_size)->second );
+//    frag_libs_init[frag_size] = current_lib_op->derive_from_src_lib( frag_size, prev_size, prev_lib_op );
+//   }
+//   prev_size = frag_size;
+//   prev_lib_op = frag_libs[frag_size];
+//   std::cout << "frag_libs_init: " << frag_size << " " << frag_libs_init[frag_size] << std::endl;
+//  }
 
-// 	setup_loops_fragment_libraries( pose.sequence(), loops, frag_libs, frag_libs_init );
+//  setup_loops_fragment_libraries( pose.sequence(), loops, frag_libs, frag_libs_init );
 

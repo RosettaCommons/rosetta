@@ -63,7 +63,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.EnzdesCacheableObserver" );
+static basic::Tracer tr( "protocols.enzdes.EnzdesCacheableObserver" );
 
 
 EnzdesCacheableObserverOP

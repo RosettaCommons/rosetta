@@ -72,7 +72,7 @@
 
 using numeric::conversions::radians;
 
-static THREAD_LOCAL basic::Tracer TR( "dubois" );
+static basic::Tracer TR( "dubois" );
 
 using core::Size;
 using core::Real;
@@ -87,7 +87,7 @@ using numeric::random::uniform;
 
 Vec helix_axis(core::pose::Pose const & pose) {
 	Vec axis(0,0,0);
-	for(Size i = 2; i <= pose.size()-4; ++i) {
+	for ( Size i = 2; i <= pose.size()-4; ++i ) {
 		axis += ( pose.residue(i+4).xyz(1) - pose.residue(i).xyz(3) );
 	}
 	axis.normalize();
@@ -95,11 +95,11 @@ Vec helix_axis(core::pose::Pose const & pose) {
 }
 
 inline Vec center_of_mass( core::pose::Pose const & pose, Size nres = 0 ) {
-	if( 0 == nres ) nres = pose.size();
+	if ( 0 == nres ) nres = pose.size();
 	Vec com(0,0,0);
 	Size count = 0;
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			com += pose.xyz(core::id::AtomID(ia,ir));
 			count++;
 		}
@@ -108,8 +108,8 @@ inline Vec center_of_mass( core::pose::Pose const & pose, Size nres = 0 ) {
 }
 
 inline void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, pose.xyz(aid) + trans );
 		}
@@ -117,8 +117,8 @@ inline void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
 }
 
 inline void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
 		}
@@ -147,12 +147,12 @@ core::pose::Pose make_helix(std::string seq) {
 	core::pose::remove_upper_terminus_type_from_pose_residue(pose,1);
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	Size nres = seq.size();
-	for( Size i = 2; i <= nres; ++i ){
+	for ( Size i = 2; i <= nres; ++i ) {
 		std::string name3 = name_from_aa(aa_from_oneletter_code(seq[i-1]));
 		pose.append_residue_by_bond(*core::conformation::ResidueFactory::create_residue(residue_set->name_map(name3)),true);
 	}
 	core::pose::add_upper_terminus_type_to_pose_residue(pose,pose.size());
-	for( Size i = 1; i <= seq.size(); i++ ) {
+	for ( Size i = 1; i <= seq.size(); i++ ) {
 		pose.set_phi  (i,-60.16731);
 		pose.set_psi  (i,-45.19451);
 		pose.set_omega(i,180.00000);
@@ -182,13 +182,13 @@ make_symm_data(
 	std::string s = "";
 	s += "symmetry_name c12345\nsubunits "+string_of(n)+"\nnumber_of_interfaces "+string_of(n-1)+"\n";
 	s += "E = 1.0*VRT0001";
-	for(Size i = 2; i<=n; i++) s+= " + 1*(VRT1:VRT000"+string_of(i)+")";
+	for ( Size i = 2; i<=n; i++ ) s+= " + 1*(VRT1:VRT000"+string_of(i)+")";
 	s += "\nanchor_residue " + string_of(anchor) + "\n";
 	s += "virtual_transforms_start consecutive\nstart -1,0,0 0,1,0 0,0,0\n";
 	s += "rot Rz_angle " + string_of(rot) + "\n";
 	s += "trans 0,0," + string_of(trans);
 	s += "\nvirtual_transforms_stop\n";
-	for(Size i = 2; i<=n; i++) s+= "connect_virtual J"+string_of(i)+" VRT000"+string_of(i-1)+" VRT000"+string_of(i)+"\n";
+	for ( Size i = 2; i<=n; i++ ) s+= "connect_virtual J"+string_of(i)+" VRT000"+string_of(i-1)+" VRT000"+string_of(i)+"\n";
 	s += "set_dof BASEJUMP x angle_x angle_y angle_z\n";
 	s += "set_dof J2 z angle_z\n";
 	// TR << "================= symm dat ==================" << std::endl;
@@ -219,8 +219,8 @@ struct CCParam {
 		x = 6.0 + 2.0*gaussian();
 		rh = 360.0*uniform();
 		rhx = 7.0*gaussian()+20.0*32.0/(Real)nres;
-		if(uniform()<0.5) rot *= -1.0;
-		if(uniform()<0.5) rhx *= -1.0;
+		if ( uniform()<0.5 ) rot *= -1.0;
+		if ( uniform()<0.5 ) rhx *= -1.0;
 		rhy =  6.0*gaussian();
 		trans = 9.0 + 3*uniform();
 		nsub = 9;
@@ -229,7 +229,7 @@ struct CCParam {
 	Real rot, trans, x, rh, rhx, rhy;
 	void show() {
 		TR << "nres "  << nres << " ";
-		TR << "nsub "	 << nsub << " ";
+		TR << "nsub "  << nsub << " ";
 		TR << "rot "   << rot << " ";
 		TR << "trans " << trans << " ";
 		TR << "x "     << x << " ";
@@ -239,7 +239,7 @@ struct CCParam {
 	}
 	std::string str() {
 		return string_of(nres)+" "+string_of(nsub)+" "+string_of(rot)+" "+string_of(trans)+" "+string_of(x)+" "
-		         +string_of(rh)+" "+string_of(rhx)+" "+string_of(rhy);
+			+string_of(rh)+" "+string_of(rhx)+" "+string_of(rhy);
 	}
 	utility::vector1<Size> cys_pos;
 };
@@ -252,8 +252,8 @@ core::pose::Pose make_coiled_coil(CCParam & p) {
 	using namespace conformation::symmetry;
 
 	std::string seq = "";
-	for(Size i = 1; i <= p.nres; ++i) seq += "A";
-	for(Size i = 1; i <= p.cys_pos.size(); ++i) seq[p.cys_pos[i]-1] = 'C';
+	for ( Size i = 1; i <= p.nres; ++i ) seq += "A";
+	for ( Size i = 1; i <= p.cys_pos.size(); ++i ) seq[p.cys_pos[i]-1] = 'C';
 	Pose helix = make_helix(seq);
 	rot_pose(  helix,Vec(0,0,1), p.rh );
 	rot_pose(  helix,Vec(1,0,0), p.rhx);
@@ -261,11 +261,11 @@ core::pose::Pose make_coiled_coil(CCParam & p) {
 	trans_pose(helix,Vec(p.x,0,0));
 
 	Real mnz=99999,mxz=-99999;
-	for(Size ir = 1; ir <= helix.size(); ++ir) {
-		for(Size ia = 1; ia <= helix.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= helix.size(); ++ir ) {
+		for ( Size ia = 1; ia <= helix.residue_type(ir).natoms(); ++ia ) {
 			Real z = helix.xyz(core::id::AtomID(ia,ir)).z();
-			if(z<mnz) mnz = z;
-			if(z>mxz) mxz = z;
+			if ( z<mnz ) mnz = z;
+			if ( z>mxz ) mxz = z;
 		}
 	}
 	p.nsub = std::ceil(( mxz-mnz+10 ) / p.trans) + 1;
@@ -286,20 +286,20 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace core;
-	using namespace chemical;
-	using namespace conformation;
-	using namespace pose;
-	using namespace protocols;
-	using namespace moves;
-	using namespace ObjexxFCL::format;
-	using numeric::random::uniform;
+		using namespace core;
+		using namespace chemical;
+		using namespace conformation;
+		using namespace pose;
+		using namespace protocols;
+		using namespace moves;
+		using namespace ObjexxFCL::format;
+		using numeric::random::uniform;
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	CCParam cp;
-	Pose pose = make_coiled_coil(cp);
-	pose.dump_pdb("test.pdb");
+		CCParam cp;
+		Pose pose = make_coiled_coil(cp);
+		pose.dump_pdb("test.pdb");
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

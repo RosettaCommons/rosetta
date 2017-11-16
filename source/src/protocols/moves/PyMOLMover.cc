@@ -97,7 +97,7 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 namespace protocols {
 namespace moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.PyMOLMover" );
+static basic::Tracer TR( "protocols.moves.PyMOLMover" );
 
 
 /// We using independent numeric::random::rg() which is not connected to RNG system because we do not want PyMOL to interfere with other Rosetta systems.

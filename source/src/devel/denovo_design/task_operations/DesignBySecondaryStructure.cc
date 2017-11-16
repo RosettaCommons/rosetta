@@ -37,7 +37,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.task_operations.DesignBySecondaryStructure" );
+static basic::Tracer TR( "devel.denovo_design.task_operations.DesignBySecondaryStructure" );
 
 namespace devel {
 namespace denovo_design {

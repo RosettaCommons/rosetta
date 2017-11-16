@@ -40,7 +40,7 @@ using namespace ObjexxFCL;
 //using namespace ObjexxFCL::format;
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.io.silent" );
+static basic::Tracer tr( "core.io.silent" );
 
 void
 RigidBodySilentStruct::fill_struct(

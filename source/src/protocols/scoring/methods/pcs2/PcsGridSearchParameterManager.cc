@@ -50,7 +50,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static THREAD_LOCAL basic::Tracer TR_PcsGridSearchParameterManager( "protocols.scoring.methods.pcs.PcsGridSearchParameterManager" );
+static basic::Tracer TR_PcsGridSearchParameterManager( "protocols.scoring.methods.pcs.PcsGridSearchParameterManager" );
 
 namespace protocols {
 namespace scoring {

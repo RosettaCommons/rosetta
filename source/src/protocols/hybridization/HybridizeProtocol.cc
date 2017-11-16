@@ -173,7 +173,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
+static basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
 
 namespace protocols {
 namespace hybridization {

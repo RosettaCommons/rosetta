@@ -47,7 +47,7 @@
 #include <basic/database/open.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "RosettaHoles" );
+static basic::Tracer TR( "RosettaHoles" );
 
 
 using std::string;

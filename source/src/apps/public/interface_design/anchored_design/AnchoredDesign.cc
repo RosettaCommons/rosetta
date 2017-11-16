@@ -28,12 +28,11 @@
 
 // C++ headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 //replaces cout
-static THREAD_LOCAL basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchoredDesign" );
+static basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchoredDesign" );
 
 /// @brief main method for anchored design.  most activity in the movers.
 int

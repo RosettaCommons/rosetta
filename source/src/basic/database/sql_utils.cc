@@ -80,7 +80,7 @@ using namespace utility::sql_database;
 namespace basic {
 namespace database {
 
-static THREAD_LOCAL basic::Tracer TR( "basic.database.sql_utils" );
+static basic::Tracer TR( "basic.database.sql_utils" );
 
 
 sessionOP

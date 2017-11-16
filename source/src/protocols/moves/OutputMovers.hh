@@ -42,9 +42,6 @@
 namespace protocols {
 namespace moves {
 
-//using basic::T;
-//using basic::Error;
-//using basic::Warning;
 
 // a mover to dump pdbs within cycles using movers (see DockingHighRes and DockingLowRes for examples on usage
 class PDBDumpMover : public Mover

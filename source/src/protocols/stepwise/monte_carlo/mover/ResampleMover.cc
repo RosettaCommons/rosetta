@@ -44,7 +44,7 @@
 using namespace core;
 using namespace protocols::stepwise::modeler;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.ResampleMover" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.ResampleMover" );
 
 
 //////////////////////////////////////////////////////////////////////////

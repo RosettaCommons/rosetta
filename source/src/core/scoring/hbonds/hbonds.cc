@@ -74,7 +74,7 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.hbonds.hbonds" );
+static basic::Tracer tr( "core.scoring.hbonds.hbonds" );
 
 // for hydrate/SPaDES protocol
 bool

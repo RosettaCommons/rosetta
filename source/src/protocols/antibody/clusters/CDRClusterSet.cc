@@ -19,7 +19,7 @@
 #include <basic/datacache/DataCache.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.clusters.CDRClusterSet");
+static basic::Tracer TR("protocols.antibody.clusters.CDRClusterSet");
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

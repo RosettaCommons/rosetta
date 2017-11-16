@@ -64,7 +64,7 @@
 #include <core/scoring/rms_util.hh>
 #include <protocols/membrane/util.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mp_quick_relax" );
+static basic::Tracer TR( "apps.pilot.jkleman.mp_quick_relax" );
 
 using namespace core;
 using namespace core::pose;

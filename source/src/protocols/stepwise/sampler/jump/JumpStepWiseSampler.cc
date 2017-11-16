@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.sampler.jump.JumpStepWiseSampler" );
+static basic::Tracer TR( "protocols.stepwise.sampler.jump.JumpStepWiseSampler" );
 
 ///////////////////////////////////////////////////////////////////
 //

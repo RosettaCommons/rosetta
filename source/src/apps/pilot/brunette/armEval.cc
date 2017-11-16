@@ -73,7 +73,7 @@ using utility::vector1;
 using core::Size;
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer tr( "evalRepeats" );
+static basic::Tracer tr( "evalRepeats" );
 
 void avg_ca_position(
 	const core::pose::Pose& pose,
@@ -83,7 +83,7 @@ void avg_ca_position(
 	assert(point);
 
 	point->zero();
-	for (unsigned i = region.start(); i <= region.stop(); ++i) {
+	for ( unsigned i = region.start(); i <= region.stop(); ++i ) {
 		(*point) += pose.xyz(core::id::NamedAtomID("CA", i));
 	}
 
@@ -97,12 +97,14 @@ void get_helices(core::pose::Pose& pose, protocols::loops::Loops* helices){
 	char lastSecStruct = pose.secstruct(1);
 	Size startHelix = 0;
 	Size endHelix = 0;
-	if(pose.secstruct(1) == 'H')
+	if ( pose.secstruct(1) == 'H' ) {
 		startHelix = 1;
+	}
 	for ( core::Size ii = 2; ii <= pose.size(); ++ii ) {
-		if(pose.secstruct(ii) == 'H' && lastSecStruct != 'H')
+		if ( pose.secstruct(ii) == 'H' && lastSecStruct != 'H' ) {
 			startHelix = ii;
-		if(pose.secstruct(ii) != 'H' && lastSecStruct == 'H'){
+		}
+		if ( pose.secstruct(ii) != 'H' && lastSecStruct == 'H' ) {
 			endHelix = ii-1;
 			helices->add_loop(Loop(startHelix,endHelix));
 		}
@@ -114,7 +116,7 @@ Real get_distance(const core::pose::Pose& pose, const protocols::loops::Loop hel
 	using protocols::loops::Loop;
 	using numeric::xyzVector;
 	//std::cout <<"helix length" << helix1.length() << "," << helix2.length() << std::endl;
-	if((helix1.length() < 3) || (helix2.length() < 3)){
+	if ( (helix1.length() < 3) || (helix2.length() < 3) ) {
 		tr.Warning << "distance invoked with helix shorter than 3 residues" << std::endl;
 		return(-1);
 	}
@@ -128,7 +130,7 @@ Real get_distance_midCA(const core::pose::Pose& pose, const protocols::loops::Lo
 	using protocols::loops::Loop;
 	using numeric::xyzVector;
 	//std::cout <<"helix length" << helix1.length() << "," << helix2.length() << std::endl;
-	if((helix1.length() < 3) || (helix2.length() < 3)){
+	if ( (helix1.length() < 3) || (helix2.length() < 3) ) {
 		tr.Warning << "distance invoked with helix shorter than 3 residues" << std::endl;
 		return(-1);
 	}
@@ -144,7 +146,7 @@ Real get_distance_endpoint(const core::pose::Pose& pose, const protocols::loops:
 	using protocols::loops::Loop;
 	using numeric::xyzVector;
 	//std::cout <<"helix length" << helix1.length() << "," << helix2.length() << std::endl;
-	if((helix1.length() < 3) || (helix2.length() < 3)){
+	if ( (helix1.length() < 3) || (helix2.length() < 3) ) {
 		tr.Warning << "distance invoked with helix shorter than 3 residues" << std::endl;
 		return(-1);
 	}
@@ -165,7 +167,7 @@ void get_angles(const core::pose::Pose& pose, const protocols::loops::Loop helix
 	using protocols::loops::Loop;
 	using numeric::xyzVector;
 	using numeric::conversions::degrees;
-	if((helix1.length() < 3) || (helix2.length() < 3)){
+	if ( (helix1.length() < 3) || (helix2.length() < 3) ) {
 		tr.Warning << "distance invoked with helix shorter than 3 residues" << std::endl;
 	}
 	xyzVector<double> h1_start, h1_stop, h2_start, h2_stop;
@@ -187,13 +189,13 @@ void get_angles(const core::pose::Pose& pose, const protocols::loops::Loop helix
 }
 
 Real res_type_score(const core::pose::Pose& pose){
-  Real score = 0;
+	Real score = 0;
 	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
-		if((pose.residue(ii).name3() == "VAL") || (pose.residue(ii).name3() == "ILE") || (pose.residue(ii).name3() == "LEU"))
+		if ( (pose.residue(ii).name3() == "VAL") || (pose.residue(ii).name3() == "ILE") || (pose.residue(ii).name3() == "LEU") ) {
 			score++;
-		else
-			if((pose.residue(ii).name3() == "ALA") || (pose.residue(ii).name3() == "TRP") || (pose.residue(ii).name3() == "MET"))
-				score=score-1;
+		} else if ( (pose.residue(ii).name3() == "ALA") || (pose.residue(ii).name3() == "TRP") || (pose.residue(ii).name3() == "MET") ) {
+			score=score-1;
+		}
 	}
 	std::cout << "score: " << score << std::endl;
 	return score;
@@ -213,53 +215,53 @@ Real get_hb_srbb_score(const core::pose::Pose& pose){
 int main( int argc, char * argv [] ) {
 	try {
 
-	using namespace core::chemical;
-	using namespace core::import_pose::pose_stream;
-	using core::import_pose::pose_from_file;
-	using protocols::loops::Loops;
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	devel::init(argc, argv);
-	std::string out_nametag = option[ out::file::o ];
-	std::string out_file_name_str( out_nametag + ".scores");
-	utility::io::ozstream output(out_file_name_str);
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-	//create vector of input poses.
-	MetaPoseInputStream input = streams_from_cmd_line();
-	vector1<core::pose::PoseOP> poses;
-	output << "score" <<" " << "holes" << " " << "distance1_4" << " " << "distance2_5" << " "<< "distance3_6" <<" " <<  "distance1_2" << " " << "distance2_3" <<" " << "tag" <<" " <<"resTypeScore" << " " << "hbsrbb" << "  " << "abego" << std::endl;
-	while(input.has_another_pose()){
-		core::pose::PoseOP input_poseOP;
-		input_poseOP = new core::pose::Pose();
-		input.fill_pose(*input_poseOP,*rsd_set);
-		std::string tag = core::pose::tag_from_pose(*input_poseOP);
-		Loops helices;
-	//get_helices(*input_poseOP,&helices);
-		helices.add_loop(2,11);
-    helices.add_loop(13,22);
-    helices.add_loop(26,41);
-    helices.add_loop(44,53);
-    helices.add_loop(55,64);
-    helices.add_loop(68,83);
-	  Real distance1_4 = get_distance(*input_poseOP,helices[1],helices[4]);
-    Real distance2_5 = get_distance(*input_poseOP,helices[2],helices[5]);
-    Real distance3_6 = get_distance(*input_poseOP,helices[3],helices[6]);
-    Real distance1_2 = get_distance(*input_poseOP,helices[1],helices[2]);
-    Real distance2_3 = get_distance(*input_poseOP,helices[2],helices[3]);
-		Real holesScore = get_holes_score(*input_poseOP);
-		core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
-		Real fa_score = scorefxn->score(*input_poseOP);
-		Real resTypeScore = res_type_score(*input_poseOP);
-		Real hb_srbb_score = get_hb_srbb_score(*input_poseOP);
-		utility::vector1< std::string >  abego_vector = core::sequence::get_abego(*input_poseOP,1);
-		output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance1_4) << " "<< F(8,3,distance2_5) << " "<< F(8,3,distance3_6) << " "<< F(8,3,distance1_2)  <<" " << F(8,3,distance2_3) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " " <<F(8,3,hb_srbb_score) << "  " << std::endl;
-  }
-  } catch ( utility::excn::EXCN_Base const & e ) {
+		using namespace core::chemical;
+		using namespace core::import_pose::pose_stream;
+		using core::import_pose::pose_from_file;
+		using protocols::loops::Loops;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
+		std::string out_nametag = option[ out::file::o ];
+		std::string out_file_name_str( out_nametag + ".scores");
+		utility::io::ozstream output(out_file_name_str);
+		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		//create vector of input poses.
+		MetaPoseInputStream input = streams_from_cmd_line();
+		vector1<core::pose::PoseOP> poses;
+		output << "score" <<" " << "holes" << " " << "distance1_4" << " " << "distance2_5" << " "<< "distance3_6" <<" " <<  "distance1_2" << " " << "distance2_3" <<" " << "tag" <<" " <<"resTypeScore" << " " << "hbsrbb" << "  " << "abego" << std::endl;
+		while ( input.has_another_pose() ) {
+			core::pose::PoseOP input_poseOP;
+			input_poseOP = new core::pose::Pose();
+			input.fill_pose(*input_poseOP,*rsd_set);
+			std::string tag = core::pose::tag_from_pose(*input_poseOP);
+			Loops helices;
+			//get_helices(*input_poseOP,&helices);
+			helices.add_loop(2,11);
+			helices.add_loop(13,22);
+			helices.add_loop(26,41);
+			helices.add_loop(44,53);
+			helices.add_loop(55,64);
+			helices.add_loop(68,83);
+			Real distance1_4 = get_distance(*input_poseOP,helices[1],helices[4]);
+			Real distance2_5 = get_distance(*input_poseOP,helices[2],helices[5]);
+			Real distance3_6 = get_distance(*input_poseOP,helices[3],helices[6]);
+			Real distance1_2 = get_distance(*input_poseOP,helices[1],helices[2]);
+			Real distance2_3 = get_distance(*input_poseOP,helices[2],helices[3]);
+			Real holesScore = get_holes_score(*input_poseOP);
+			core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
+			Real fa_score = scorefxn->score(*input_poseOP);
+			Real resTypeScore = res_type_score(*input_poseOP);
+			Real hb_srbb_score = get_hb_srbb_score(*input_poseOP);
+			utility::vector1< std::string >  abego_vector = core::sequence::get_abego(*input_poseOP,1);
+			output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance1_4) << " "<< F(8,3,distance2_5) << " "<< F(8,3,distance3_6) << " "<< F(8,3,distance1_2)  <<" " << F(8,3,distance2_3) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " " <<F(8,3,hb_srbb_score) << "  " << std::endl;
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-  }
-  std::cout <<"complete" << std::endl;
+	}
+	std::cout <<"complete" << std::endl;
 	return 0;
 }
 

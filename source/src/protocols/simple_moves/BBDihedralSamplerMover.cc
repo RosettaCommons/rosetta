@@ -30,7 +30,7 @@
 #include <utility/string_util.hh>
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BBDihedralSamplerMover" );
+static basic::Tracer TR( "protocols.simple_moves.BBDihedralSamplerMover" );
 
 
 namespace protocols {

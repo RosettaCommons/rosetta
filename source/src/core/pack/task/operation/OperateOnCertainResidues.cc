@@ -43,7 +43,7 @@ namespace operation {
 
 using basic::t_info;
 using basic::t_debug;
-static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.OperateOnCertainResidues", t_info );
+static basic::Tracer TR( "core.pack.task.operation.OperateOnCertainResidues", t_info );
 
 OperateOnCertainResidues::OperateOnCertainResidues()
 : parent(),

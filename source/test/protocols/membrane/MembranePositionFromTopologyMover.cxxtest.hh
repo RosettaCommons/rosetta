@@ -48,7 +48,7 @@
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.MembranePositionFromTopologyMover.cxxtest");
+static basic::Tracer TR("protocols.membrane.MembranePositionFromTopologyMover.cxxtest");
 
 /// @brief Test Suite for Membrane Embedding factory
 class MembranePositionFromTopologyMoverTest : public CxxTest::TestSuite {

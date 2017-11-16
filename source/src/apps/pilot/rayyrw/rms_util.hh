@@ -25,7 +25,7 @@
 #ifndef apps_pilot_rayyrw_rms_util_hh
 #define apps_pilot_rayyrw_rms_util_hh
 
-static THREAD_LOCAL basic::Tracer tr_rms_util("rms_util");
+static basic::Tracer tr_rms_util("rms_util");
 
 // calculate distance between two residues from two poses
 core::Real

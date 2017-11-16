@@ -67,7 +67,6 @@
 // C++ headers
 
 #include <basic/Tracer.hh>
-using basic::T;
 
 // option key includes
 
@@ -81,7 +80,7 @@ using basic::Warning;
 namespace protocols {
 namespace checkpoint {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols::checkpoint" );
+static basic::Tracer TR( "protocols::checkpoint" );
 
 using namespace core;
 

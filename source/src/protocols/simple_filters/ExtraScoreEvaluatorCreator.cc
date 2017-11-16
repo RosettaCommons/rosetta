@@ -63,7 +63,7 @@
 #endif
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.evaluation.ExtraScoreEvaluatorCreator" );
+static basic::Tracer tr( "protocols.evaluation.ExtraScoreEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

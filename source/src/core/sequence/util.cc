@@ -59,7 +59,7 @@ namespace sequence {
 using utility::vector1;
 using std::string;
 
-static THREAD_LOCAL basic::Tracer tr( "core.sequence" );
+static basic::Tracer tr( "core.sequence" );
 
 // any of these are OK as strand separators
 vector1< char > spacers = utility::tools::make_vector1( '+','*',' ',',' );
@@ -129,7 +129,7 @@ read_alignment_file(
 		}
 	}
 
-	basic::T("core.sequence.DerivedSequenceMapping") << "align1: " << align1 << "\nalign2: " << align2 <<
+	tr << "DerivedSequenceMapping align1: " << align1 << "\nalign2: " << align2 <<
 		"\nseq1: " << seq1 << "\nseq2: " << seq2 << '\n';
 
 	runtime_assert( mapping.size1() == seq1.size() );

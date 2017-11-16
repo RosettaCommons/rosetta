@@ -20,7 +20,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.FilterMover" );
+static basic::Tracer TR( "protocols.FilterMover" );
 
 
 #include <string>

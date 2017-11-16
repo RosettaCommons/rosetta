@@ -28,7 +28,7 @@ using namespace core;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_Suite" );
+static basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_Suite" );
 
 namespace protocols {
 namespace recces {

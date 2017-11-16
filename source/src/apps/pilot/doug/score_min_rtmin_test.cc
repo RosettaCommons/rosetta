@@ -38,7 +38,7 @@
 // basic headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("score_min_rtmin_test");
+static basic::Tracer TR("score_min_rtmin_test");
 
 int
 main( int argc, char * argv [] )

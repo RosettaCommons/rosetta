@@ -62,7 +62,7 @@ using namespace core::pose;
 using namespace core::conformation::membrane;
 using namespace protocols::membrane;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.helix_from_sequence" );
+static basic::Tracer TR( "apps.pilot.jkleman.helix_from_sequence" );
 
 ////////////////////////////////////////////////////////////////////////////
 

@@ -31,7 +31,7 @@
 #include <utility/io/mpistream.hh>
 
 
-static THREAD_LOCAL basic::Tracer trace( "rescore_fragments" );
+static basic::Tracer trace( "rescore_fragments" );
 
 using namespace core;
 using namespace core::fragment;
@@ -61,64 +61,64 @@ void register_options() {
 }
 
 int main(int argc, char * argv[]) {
-    try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	register_options();
-	devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-	if (option[in::file::native].user()) {
-		trace.Debug << option[in::file::native]() << std::endl;
-	}
+		if ( option[in::file::native].user() ) {
+			trace.Debug << option[in::file::native]() << std::endl;
+		}
 
-	//---------- Set up a picker.
-	FragmentPickerOP pickIt = new FragmentPicker();
-	pickIt->parse_command_line();
-	trace << "After setup; size of a query is: " << pickIt->size_of_query()
+		//---------- Set up a picker.
+		FragmentPickerOP pickIt = new FragmentPicker();
+		pickIt->parse_command_line();
+		trace << "After setup; size of a query is: " << pickIt->size_of_query()
 			<< std::endl;
-	scores::FragmentScoreManagerOP manager = pickIt->get_score_manager();
-	VallProviderOP vall = pickIt->get_vall();
+		scores::FragmentScoreManagerOP manager = pickIt->get_score_manager();
+		VallProviderOP vall = pickIt->get_vall();
 
-	//-------- read fragments
-	utility::vector1<std::string> frag_files;
-	if (option[in::file::fragA].user()) {
-	  frag_files.push_back( option[in::file::fragA]() );
-	}
-        if (option[in::file::fragB].user()) {
-	  frag_files.push_back( option[in::file::fragB]() );
-        }
-	if (option[in::file::frag9].user()) {
-	  frag_files.push_back( option[in::file::frag9]() );
-	}
-        if (option[in::file::frag3].user()) {
-	  frag_files.push_back( option[in::file::frag3]() );
-        }
-	for(Size i_file=1;i_file<=frag_files.size();++i_file) {
-	    std::cerr << "# ------------ Fragments from "<<frag_files[i_file]<<" ---------------"<<std::endl;
-		utility::vector1<FragmentCandidateOP> frags = read_fragment_candidates(
+		//-------- read fragments
+		utility::vector1<std::string> frag_files;
+		if ( option[in::file::fragA].user() ) {
+			frag_files.push_back( option[in::file::fragA]() );
+		}
+		if ( option[in::file::fragB].user() ) {
+			frag_files.push_back( option[in::file::fragB]() );
+		}
+		if ( option[in::file::frag9].user() ) {
+			frag_files.push_back( option[in::file::frag9]() );
+		}
+		if ( option[in::file::frag3].user() ) {
+			frag_files.push_back( option[in::file::frag3]() );
+		}
+		for ( Size i_file=1; i_file<=frag_files.size(); ++i_file ) {
+			std::cerr << "# ------------ Fragments from "<<frag_files[i_file]<<" ---------------"<<std::endl;
+			utility::vector1<FragmentCandidateOP> frags = read_fragment_candidates(
 				frag_files[i_file], vall);
 
-		utility::vector1<std::pair<FragmentCandidateOP,
+			utility::vector1<std::pair<FragmentCandidateOP,
 				scores::FragmentScoreMapOP> > frags_rescored;
-		for (Size i = 1; i <= frags.size(); i++) {
-			scores::FragmentScoreMapOP map = manager->create_empty_map();
-			manager->do_caching(frags[i]->get_chunk());
-			trace.Info << "rescoring: " << *(frags[i]) << std::endl;
-			manager->score_fragment(frags[i], map);
-			manager->clean_up();
-			std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> p(
+			for ( Size i = 1; i <= frags.size(); i++ ) {
+				scores::FragmentScoreMapOP map = manager->create_empty_map();
+				manager->do_caching(frags[i]->get_chunk());
+				trace.Info << "rescoring: " << *(frags[i]) << std::endl;
+				manager->score_fragment(frags[i], map);
+				manager->clean_up();
+				std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> p(
 					frags[i], map);
-			frags_rescored.push_back(p);
-		}
-		pickIt->get_score_manager()->describe_fragments(frags_rescored,
+				frags_rescored.push_back(p);
+			}
+			pickIt->get_score_manager()->describe_fragments(frags_rescored,
 				std::cerr);
-	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 
 }
 

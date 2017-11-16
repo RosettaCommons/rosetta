@@ -62,7 +62,7 @@
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/ModelFeaturesCreator.hh>
 
-static THREAD_LOCAL basic::Tracer TR("devel.sewing.ModelFeatures");
+static basic::Tracer TR("devel.sewing.ModelFeatures");
 
 namespace protocols {
 namespace features {

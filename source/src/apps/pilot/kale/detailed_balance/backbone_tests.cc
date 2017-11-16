@@ -98,7 +98,7 @@ using protocols::kinematic_closure::solution_pickers::RandomSolutions;
 using protocols::simple_moves::sidechain_moves::SidechainMover;
 using protocols::simple_moves::sidechain_moves::SidechainMoverOP;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kale.monte_carlo" );
+static basic::Tracer TR( "apps.pilot.kale.monte_carlo" );
 
 // Options {{{1
 OPT_2GRP_KEY(File, kale, in, pdb)
@@ -131,24 +131,24 @@ class ClosureMover : public Mover { // {{{1
 public:
 
 	ClosureMover(
-			Pose const & pose,
-			Size first, Size last, Size cut,
-			string closure_move, string sampling_move) {
+		Pose const & pose,
+		Size first, Size last, Size cut,
+		string closure_move, string sampling_move) {
 
 		loop_ = Loop(first, last, cut);
 		pivot_picker_ = new FixedPivots(first, last, cut);
 		closure_move_ = closure_move;
 
-		if (sampling_move == "vicinity") perturber_ = new VicinityPerturber(pose);
-		else if (sampling_move == "rama") perturber_ = new RamaPerturber;
-		else if (sampling_move == "uniform") perturber_ = new UniformPerturber;
-		else if (sampling_move == "walking") perturber_ = new WalkingPerturber;
+		if ( sampling_move == "vicinity" ) perturber_ = new VicinityPerturber(pose);
+		else if ( sampling_move == "rama" ) perturber_ = new RamaPerturber;
+		else if ( sampling_move == "uniform" ) perturber_ = new UniformPerturber;
+		else if ( sampling_move == "walking" ) perturber_ = new WalkingPerturber;
 		else utility_exit_with_message("Unknown sampling move: " + sampling_move);
 	}
 
 	void apply(Pose & pose) {
-		if (closure_move_ == "naive") naive_apply(pose);
-		else if (closure_move_ == "balanced") balanced_apply(pose);
+		if ( closure_move_ == "naive" ) naive_apply(pose);
+		else if ( closure_move_ == "balanced" ) balanced_apply(pose);
 		else utility_exit_with_message("Unknown closure move: " + closure_move_);
 	}
 
@@ -166,7 +166,7 @@ protected:
 		problem->solve(solutions);
 
 		// Randomly pick a solution to apply.
-		if (not solutions.empty()) {
+		if ( not solutions.empty() ) {
 			Size index = numeric::random::random_range(1, solutions.size());
 			solutions[index]->apply(pose);
 		}
@@ -187,7 +187,7 @@ protected:
 
 		// Pick a solution to apply.
 		solution = BalancedKicMover::pick_solution(
-				unperturbed_solutions, perturbed_solutions);
+			unperturbed_solutions, perturbed_solutions);
 		solution->apply(pose);
 	}
 
@@ -210,9 +210,9 @@ class BreadthMover : public Mover { // {{{1
 public:
 
 	BreadthMover(
-			Pose const & pose,
-			Size first, Size last, Size cut,
-			string breadth_move, string sampling_move) {
+		Pose const & pose,
+		Size first, Size last, Size cut,
+		string breadth_move, string sampling_move) {
 
 		first_ = first;
 		last_ = last;
@@ -221,9 +221,9 @@ public:
 	}
 
 	void apply(Pose & pose) {
-		if (breadth_move_ == "uniform") uniform_apply(pose);
-		else if (breadth_move_ == "omega") omega_apply(pose);
-		else if (breadth_move_ == "rama") rama_apply(pose);
+		if ( breadth_move_ == "uniform" ) uniform_apply(pose);
+		else if ( breadth_move_ == "omega" ) omega_apply(pose);
+		else if ( breadth_move_ == "rama" ) rama_apply(pose);
 		else utility_exit_with_message("Unknown breadth move: " + breadth_move_);
 	}
 
@@ -237,9 +237,9 @@ private:
 		Real angle_value = 360 * numeric::random::uniform();
 
 		switch (which_angle) {
-			case 1: pose.set_phi(index, angle_value); break;
-			case 2: pose.set_psi(index, angle_value); break;
-			case 3: pose.set_omega(index, angle_value); break;
+		case 1 : pose.set_phi(index, angle_value); break;
+		case 2 : pose.set_psi(index, angle_value); break;
+		case 3 : pose.set_omega(index, angle_value); break;
 		}
 	}
 
@@ -275,256 +275,255 @@ class SamplingManager { // {{{1
 
 	friend class OutputManager;
 
-	public:
+public:
 
-		SamplingManager() { // {{{2
-			if (option[OptionKeys::kale::in::pdb].active() == false) {
-				utility_exit_with_message("No input PDB file specified.");
-			}
-
-			if (option[OptionKeys::kale::kic::closure_move].active() == false) {
-				utility_exit_with_message("No closure move specified.");
-			}
-
-			if (option[OptionKeys::kale::kic::breadth_move].active() == false) {
-				utility_exit_with_message("No breadth move specified.");
-			}
-
-			closure_move = option[OptionKeys::kale::kic::closure_move]();
-			sampling_move = option[OptionKeys::kale::kic::sampling_move]();
-			breadth_move = option[OptionKeys::kale::kic::breadth_move]();
-			weights = option[OptionKeys::kale::kic::move_weights]();
-			score_name = option[OptionKeys::kale::kic::score_function]();
-			pdb_path = option[OptionKeys::kale::in::pdb]();
-			first_index = option[OptionKeys::kale::kic::pivots]()[1];
-			cut_index = option[OptionKeys::kale::kic::pivots]()[2];
-			last_index = option[OptionKeys::kale::kic::pivots]()[3];
-			temperature = option[OptionKeys::kale::mc::temperature]();
-			iterations = option[OptionKeys::kale::mc::iterations]();
-
-			if (temperature < 0) {
-				temperature = numeric_limits<Real>::infinity();
-			}
-
-			if (weights[1] == 0) closure_move = "off";
-			if (weights[2] == 0) breadth_move = "off";
-
-			core::import_pose::pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
-
-			score_function = new ScoreFunction;
-
-			if (score_name == "rama") {
-				score_function->set_weight(core::scoring::rama, 1);
-			}
-			else if (score_name != "off") {
-				utility_exit_with_message("Unknown score function: " + score_name);
-			}
-
-			monte_carlo = new MonteCarlo(pose, *score_function, temperature);
+	SamplingManager() { // {{{2
+		if ( option[OptionKeys::kale::in::pdb].active() == false ) {
+			utility_exit_with_message("No input PDB file specified.");
 		}
 
-		void setup() { // {{{2
-			Size first = first_index;
-			Size cut = cut_index;
-			Size last = last_index;
-
-			closure_mover = new ClosureMover(
-					pose, first, last, cut, closure_move, sampling_move);
-			breadth_mover = new BreadthMover(
-					pose, first, last, cut, breadth_move, sampling_move);
-
-			sidechain_mover = new SidechainMover;
-			sidechain_mover->set_preserve_detailed_balance(true);
-
-			using core::pack::task::TaskFactory;
-			using core::pack::task::TaskFactoryOP;
-			using core::pack::task::operation::InitializeFromCommandline;
-			using core::pack::task::operation::IncludeCurrent;
-
-			TaskFactoryOP task_factory = new TaskFactory;
-			task_factory->push_back(new InitializeFromCommandline);
-			task_factory->push_back(new IncludeCurrent);
-
-			sidechain_mover->set_task_factory(task_factory);
+		if ( option[OptionKeys::kale::kic::closure_move].active() == false ) {
+			utility_exit_with_message("No closure move specified.");
 		}
 
-		void update() { // {{{2
-			Size total_weight = weights[1] + weights[2] + weights[3];
-			Real closure_threshold = weights[1] / total_weight;
-			Real breadth_threshold = weights[2] / total_weight + closure_threshold;
-			Real move_choice = numeric::random::uniform();
-			Real proposal_ratio = 1;
-			string move_name;
-
-			cout << "total_weight:      " << total_weight << endl;
-			cout << "closure_threshold: " << closure_threshold << endl;
-			cout << "breadth_threshold: " << breadth_threshold << endl;
-			cout << "move_choice:       " << move_choice << endl;
-
-			if (total_weight == 0) {
-				utility_exit_with_message("No active movers.");
-			}
-
-			if (move_choice < closure_threshold) {
-				closure_mover->apply(pose);
-				move_name = "closure";
-				cout << "  Picking closure." << endl;
-			}
-			else if (move_choice < breadth_threshold) {
-				breadth_mover->apply(pose);
-				move_name = "breadth";
-				cout << "  Picking breadth." << endl;
-			}
-			else {
-				sidechain_mover->apply(pose);
-				proposal_ratio *= sidechain_mover->last_proposal_density_ratio();
-				move_name = "sidechain";
-				cout << "  Picking sidechain." << endl;
-			}
-			cout << endl;
-
-			monte_carlo->boltzmann(pose, move_name, proposal_ratio);
+		if ( option[OptionKeys::kale::kic::breadth_move].active() == false ) {
+			utility_exit_with_message("No breadth move specified.");
 		}
 
-		int get_iterations() { // {{{2
-			return iterations;
+		closure_move = option[OptionKeys::kale::kic::closure_move]();
+		sampling_move = option[OptionKeys::kale::kic::sampling_move]();
+		breadth_move = option[OptionKeys::kale::kic::breadth_move]();
+		weights = option[OptionKeys::kale::kic::move_weights]();
+		score_name = option[OptionKeys::kale::kic::score_function]();
+		pdb_path = option[OptionKeys::kale::in::pdb]();
+		first_index = option[OptionKeys::kale::kic::pivots]()[1];
+		cut_index = option[OptionKeys::kale::kic::pivots]()[2];
+		last_index = option[OptionKeys::kale::kic::pivots]()[3];
+		temperature = option[OptionKeys::kale::mc::temperature]();
+		iterations = option[OptionKeys::kale::mc::iterations]();
+
+		if ( temperature < 0 ) {
+			temperature = numeric_limits<Real>::infinity();
 		}
-		// }}}2
 
-	private:
+		if ( weights[1] == 0 ) closure_move = "off";
+		if ( weights[2] == 0 ) breadth_move = "off";
 
-		// Sampling helpers {{{2
-		Pose pose;
-		ClosureMoverOP closure_mover;
-		BreadthMoverOP breadth_mover;
-		SidechainMoverOP sidechain_mover;
-		ScoreFunctionOP score_function;
-		MonteCarloOP monte_carlo;
+		core::import_pose::pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
 
-		// Command line options {{{2
-		string pdb_path;
-		string closure_move;
-		string sampling_move;
-		string breadth_move;
-		string score_name;
-		Size first_index, cut_index, last_index;
-		utility::vector1<Real> weights;
-		Size iterations;
-		Real temperature;
-		// }}}2
+		score_function = new ScoreFunction;
+
+		if ( score_name == "rama" ) {
+			score_function->set_weight(core::scoring::rama, 1);
+		} else if ( score_name != "off" ) {
+			utility_exit_with_message("Unknown score function: " + score_name);
+		}
+
+		monte_carlo = new MonteCarlo(pose, *score_function, temperature);
+	}
+
+	void setup() { // {{{2
+		Size first = first_index;
+		Size cut = cut_index;
+		Size last = last_index;
+
+		closure_mover = new ClosureMover(
+			pose, first, last, cut, closure_move, sampling_move);
+		breadth_mover = new BreadthMover(
+			pose, first, last, cut, breadth_move, sampling_move);
+
+		sidechain_mover = new SidechainMover;
+		sidechain_mover->set_preserve_detailed_balance(true);
+
+		using core::pack::task::TaskFactory;
+		using core::pack::task::TaskFactoryOP;
+		using core::pack::task::operation::InitializeFromCommandline;
+		using core::pack::task::operation::IncludeCurrent;
+
+		TaskFactoryOP task_factory = new TaskFactory;
+		task_factory->push_back(new InitializeFromCommandline);
+		task_factory->push_back(new IncludeCurrent);
+
+		sidechain_mover->set_task_factory(task_factory);
+	}
+
+	void update() { // {{{2
+		Size total_weight = weights[1] + weights[2] + weights[3];
+		Real closure_threshold = weights[1] / total_weight;
+		Real breadth_threshold = weights[2] / total_weight + closure_threshold;
+		Real move_choice = numeric::random::uniform();
+		Real proposal_ratio = 1;
+		string move_name;
+
+		cout << "total_weight:      " << total_weight << endl;
+		cout << "closure_threshold: " << closure_threshold << endl;
+		cout << "breadth_threshold: " << breadth_threshold << endl;
+		cout << "move_choice:       " << move_choice << endl;
+
+		if ( total_weight == 0 ) {
+			utility_exit_with_message("No active movers.");
+		}
+
+		if ( move_choice < closure_threshold ) {
+			closure_mover->apply(pose);
+			move_name = "closure";
+			cout << "  Picking closure." << endl;
+		} else if ( move_choice < breadth_threshold ) {
+			breadth_mover->apply(pose);
+			move_name = "breadth";
+			cout << "  Picking breadth." << endl;
+		} else {
+			sidechain_mover->apply(pose);
+			proposal_ratio *= sidechain_mover->last_proposal_density_ratio();
+			move_name = "sidechain";
+			cout << "  Picking sidechain." << endl;
+		}
+		cout << endl;
+
+		monte_carlo->boltzmann(pose, move_name, proposal_ratio);
+	}
+
+	int get_iterations() { // {{{2
+		return iterations;
+	}
+	// }}}2
+
+private:
+
+	// Sampling helpers {{{2
+	Pose pose;
+	ClosureMoverOP closure_mover;
+	BreadthMoverOP breadth_mover;
+	SidechainMoverOP sidechain_mover;
+	ScoreFunctionOP score_function;
+	MonteCarloOP monte_carlo;
+
+	// Command line options {{{2
+	string pdb_path;
+	string closure_move;
+	string sampling_move;
+	string breadth_move;
+	string score_name;
+	Size first_index, cut_index, last_index;
+	utility::vector1<Real> weights;
+	Size iterations;
+	Real temperature;
+	// }}}2
 
 };
 
 class OutputManager { // {{{1
 
-	public:
+public:
 
-		OutputManager(SamplingManager &master) : sampler(master) { // {{{2
-			log_coordinates.open("coordinates.dat");
-			log_solutions.open("solutions.dat");
-			log_pivots.open("pivots.dat");
+	OutputManager(SamplingManager &master) : sampler(master) { // {{{2
+		log_coordinates.open("coordinates.dat");
+		log_solutions.open("solutions.dat");
+		log_pivots.open("pivots.dat");
 
-			quiet = option[OptionKeys::kale::out::quiet]();
-			dump_pose_freq = option[OptionKeys::kale::kic::dump_pose]();
-			dump_stats_freq = option[OptionKeys::kale::kic::dump_stats]();
+		quiet = option[OptionKeys::kale::out::quiet]();
+		dump_pose_freq = option[OptionKeys::kale::kic::dump_pose]();
+		dump_stats_freq = option[OptionKeys::kale::kic::dump_stats]();
+	}
+
+	~OutputManager() { // {{{2
+		log_coordinates.close();
+		log_solutions.close();
+		log_pivots.close();
+	}
+	// }}}2
+
+	void write_header() { // {{{2
+		cout << "Closure Move:   " << sampler.closure_move << endl;
+		cout << "Sampling Move:  " << sampler.sampling_move << endl;
+		cout << "Breadth Move:   " << sampler.breadth_move << endl;
+		cout << "Move Weights:   " << sampler.weights[1] << "/"
+			<< sampler.weights[2] << "/"
+			<< sampler.weights[3] << endl;
+		cout << "Score Function: " << sampler.score_name << endl;
+		cout << "Peptide:        " << sampler.pdb_path << endl;
+		cout << "Pivots:         " << sampler.first_index << "/"
+			<< sampler.cut_index << "/"
+			<< sampler.last_index << endl;
+		cout << "Random Seed:    " << numeric::random::rg().get_seed() << endl;
+		cout << "Iterations:     " << sampler.iterations << endl;
+		cout << "Temperature:    " << sampler.temperature << endl;
+
+		log_pivots << sampler.first_index << " ";
+		log_pivots << sampler.cut_index << " ";
+		log_pivots << sampler.last_index << endl;
+	}
+
+	void write_progress(Size iterations_so_far) { // {{{2
+		if ( quiet == true ) return;
+		cerr << "\r[" << iterations_so_far << "/" << sampler.iterations << "]";
+	}
+
+	void write_footer() { // {{{2
+		cerr << endl;
+		sampler.monte_carlo->show_counters();
+	}
+	// }}}2
+
+	void dump_pose(int iteration, bool force=false) { // {{{2
+		if ( force == false && dump_pose_freq <= 0 ) return;
+		if ( force == false && iteration % dump_pose_freq != 0 ) return;
+
+		static int total_dumps = sampler.iterations + 1;
+		static int total_digits = (int) ceil(log10(total_dumps));
+
+		stringstream stream;
+		stream << setw(total_digits) << setfill('0') << iteration;
+		string counter = stream.str();
+
+		sampler.pose.dump_pdb("trajectory/" + counter + ".pdb");
+	}
+
+	void dump_statistics(int iteration) { // {{{2
+		if ( dump_stats_freq <= 0 ) {
+			return;
 		}
 
-		~OutputManager() { // {{{2
-			log_coordinates.close();
-			log_solutions.close();
-			log_pivots.close();
-		}
-		// }}}2
-
-		void write_header() { // {{{2
-			cout << "Closure Move:   " << sampler.closure_move << endl;
-			cout << "Sampling Move:  " << sampler.sampling_move << endl;
-			cout << "Breadth Move:   " << sampler.breadth_move << endl;
-			cout << "Move Weights:   " << sampler.weights[1] << "/"
-			                           << sampler.weights[2] << "/"
-			                           << sampler.weights[3] << endl;
-			cout << "Score Function: " << sampler.score_name << endl;
-			cout << "Peptide:        " << sampler.pdb_path << endl;
-			cout << "Pivots:         " << sampler.first_index << "/"
-			                           << sampler.cut_index << "/"
-			                           << sampler.last_index << endl;
-			cout << "Random Seed:    " << numeric::random::rg().get_seed() << endl;
-			cout << "Iterations:     " << sampler.iterations << endl;
-			cout << "Temperature:    " << sampler.temperature << endl;
-
-			log_pivots << sampler.first_index << " ";
-			log_pivots << sampler.cut_index << " ";
-			log_pivots << sampler.last_index << endl;
+		if ( iteration % dump_stats_freq != 0 ) {
+			return;
 		}
 
-		void write_progress(Size iterations_so_far) { // {{{2
-			if (quiet == true) return;
-			cerr << "\r[" << iterations_so_far << "/" << sampler.iterations << "]";
+		// Log torsion information.
+
+		log_coordinates << endl << "iteration  " << iteration;
+
+		//if (sampler.closure_mover != NULL) {
+		// Size solution_count = sampler.closure_mover->solutions_to_last_move();
+		// log_coordinates << endl << "solutions  " << solution_count;
+		//}
+
+		log_coordinates << endl << "phi        ";
+		for ( int i = sampler.first_index; i <= sampler.last_index; i++ ) {
+			log_coordinates << setw(10) << sampler.pose.phi(i) << " ";
 		}
 
-		void write_footer() { // {{{2
-			cerr << endl;
-			sampler.monte_carlo->show_counters();
-		}
-		// }}}2
-
-		void dump_pose(int iteration, bool force=false) { // {{{2
-			if (force == false && dump_pose_freq <= 0) return;
-			if (force == false && iteration % dump_pose_freq != 0) return;
-
-			static int total_dumps = sampler.iterations + 1;
-			static int total_digits = (int) ceil(log10(total_dumps));
-
-			stringstream stream;
-			stream << setw(total_digits) << setfill('0') << iteration;
-			string counter = stream.str();
-
-			sampler.pose.dump_pdb("trajectory/" + counter + ".pdb");
+		log_coordinates << endl << "psi        ";
+		for ( int i = sampler.first_index; i <= sampler.last_index; i++ ) {
+			log_coordinates << setw(10) << sampler.pose.psi(i) << " ";
 		}
 
-		void dump_statistics(int iteration) { // {{{2
-			if (dump_stats_freq <= 0)
-				return;
-
-			if (iteration % dump_stats_freq != 0)
-				return;
-
-			// Log torsion information.
-
-			log_coordinates << endl << "iteration  " << iteration;
-
-			//if (sampler.closure_mover != NULL) {
-			//	Size solution_count = sampler.closure_mover->solutions_to_last_move();
-			//	log_coordinates << endl << "solutions  " << solution_count;
-			//}
-
-			log_coordinates << endl << "phi        ";
-			for (int i = sampler.first_index; i <= sampler.last_index; i++) {
-				log_coordinates << setw(10) << sampler.pose.phi(i) << " ";
-			}
-
-			log_coordinates << endl << "psi        ";
-			for (int i = sampler.first_index; i <= sampler.last_index; i++) {
-				log_coordinates << setw(10) << sampler.pose.psi(i) << " ";
-			}
-
-			log_coordinates << endl << "omega      ";
-			for (int i = sampler.first_index; i <= sampler.last_index; i++) {
-				log_coordinates << setw(10) << sampler.pose.omega(i) << " ";
-			}
-
-			// Log solution count information.
-
-			log_coordinates << endl;
+		log_coordinates << endl << "omega      ";
+		for ( int i = sampler.first_index; i <= sampler.last_index; i++ ) {
+			log_coordinates << setw(10) << sampler.pose.omega(i) << " ";
 		}
-		// }}}2
 
-	private:
-		SamplingManager &sampler;
-		ofstream log_coordinates, log_solutions, log_pivots;
+		// Log solution count information.
 
-		bool quiet;
-		int dump_pose_freq, dump_stats_freq;
+		log_coordinates << endl;
+	}
+	// }}}2
+
+private:
+	SamplingManager &sampler;
+	ofstream log_coordinates, log_solutions, log_pivots;
+
+	bool quiet;
+	int dump_pose_freq, dump_stats_freq;
 };
 // }}}1
 
@@ -556,7 +555,7 @@ int main(int argc, char* argv []) {
 
 	int iterations = sampler.get_iterations();
 
-	for (int i = 1; i <= iterations; i++) {
+	for ( int i = 1; i <= iterations; i++ ) {
 		sampler.update();
 		output.write_progress(i);
 		output.dump_pose(i);

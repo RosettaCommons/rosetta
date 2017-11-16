@@ -57,11 +57,10 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.H3PerturbCCD" );
+static basic::Tracer TR( "protocols.antibody.H3PerturbCCD" );
 
 
 using namespace core;

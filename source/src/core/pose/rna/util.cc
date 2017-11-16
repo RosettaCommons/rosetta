@@ -65,7 +65,7 @@
 
 #include <utility/string_util.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.RNA_Util" );
+static basic::Tracer TR( "core.pose.rna.RNA_Util" );
 
 // Utility headers
 

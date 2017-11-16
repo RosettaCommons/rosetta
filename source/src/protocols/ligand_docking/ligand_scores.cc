@@ -56,7 +56,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.ligand_docking.ligand_scores");
+static basic::Tracer TR("protocols.ligand_docking.ligand_scores");
 
 using namespace ObjexxFCL;
 

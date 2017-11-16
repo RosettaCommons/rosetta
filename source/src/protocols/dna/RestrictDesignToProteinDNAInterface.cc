@@ -71,7 +71,7 @@ using namespace utility::tag;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static THREAD_LOCAL basic::Tracer TR( "protocols.dna.RestrictDesignToProteinDNAInterface", t_info );
+static basic::Tracer TR( "protocols.dna.RestrictDesignToProteinDNAInterface", t_info );
 
 TaskOperationOP RestrictDesignToProteinDNAInterfaceCreator::create_task_operation() const
 {

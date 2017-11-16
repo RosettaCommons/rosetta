@@ -86,7 +86,7 @@
 #include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.abscript.AbscriptMover", basic::t_info );
+static basic::Tracer tr( "protocols.abinitio.abscript.AbscriptMover", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

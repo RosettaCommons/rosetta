@@ -39,7 +39,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.methods.Chainbreak", basic::t_info );
+static basic::Tracer tr( "core.scoring.methods.Chainbreak", basic::t_info );
 
 /// @details This must return a fresh instance of the ChainbreakEnergy class, never an instance already in use.
 methods::EnergyMethodOP

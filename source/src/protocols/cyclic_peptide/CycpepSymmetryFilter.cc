@@ -36,7 +36,7 @@
 //Numeric headers
 #include <numeric/angle.functions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.CycpepSymmetryFilter" );
+static basic::Tracer TR( "protocols.cyclic_peptide.CycpepSymmetryFilter" );
 
 namespace protocols {
 namespace cyclic_peptide {

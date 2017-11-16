@@ -39,7 +39,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "symdock_enum" );
+static basic::Tracer TR( "symdock_enum" );
 
 using core::Size;
 using core::Real;
@@ -55,8 +55,8 @@ typedef xyzVector<double> Vecf;
 typedef xyzMatrix<double> Matf;
 
 void trans_pose( Pose & pose, Vec const & trans ) {
-	for(core::Size ir = 1; ir <= pose.size(); ++ir) {
-		for(core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, pose.xyz(aid) + trans );
 		}
@@ -64,8 +64,8 @@ void trans_pose( Pose & pose, Vec const & trans ) {
 }
 
 void rot_pose( Pose & pose, Mat const & rot ) {
-	for(core::Size ir = 1; ir <= pose.size(); ++ir) {
-		for(core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
 		}
@@ -97,17 +97,19 @@ void alignaxis(Pose & pose, Vec newaxis, Vec oldaxis, Vec cen = Vec(0,0,0) ) {
 
 int cbcount_vec(vector1<Vecf> & cba, vector1<Vecf> & cbb) {
 	int cbcount = 0;
-	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia)
-		for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib)
-			if( ib->distance_squared(*ia) < 100.0 ) cbcount++;
+	for ( vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia ) {
+		for ( vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib ) {
+			if ( ib->distance_squared(*ia) < 100.0 ) cbcount++;
+		}
+	}
 	return cbcount;
 }
 
 void set_cb_pairs(vector1<Vecf> & cba, vector1<Vecf> & cbb) {
 	vector1<Vecf> a,b;
-	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
-		for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-			if( ib->distance_squared(*ia) < 100.0 ) {
+	for ( vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia ) {
+		for ( vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib ) {
+			if ( ib->distance_squared(*ia) < 100.0 ) {
 				a.push_back(*ia);
 				b.push_back(*ib);
 			}
@@ -119,9 +121,9 @@ void set_cb_pairs(vector1<Vecf> & cba, vector1<Vecf> & cbb) {
 
 int pose_cbcount(Pose const & a, Pose const & b) {
 	int count = 0;
-	for(core::Size i = 1; i <= a.size(); ++i) {
-		for(core::Size j = 1; j <= b.size(); ++j) {
-			if(a.residue(i).xyz(2).distance_squared(b.residue(j).xyz(2)) < 100.0) {
+	for ( core::Size i = 1; i <= a.size(); ++i ) {
+		for ( core::Size j = 1; j <= b.size(); ++j ) {
+			if ( a.residue(i).xyz(2).distance_squared(b.residue(j).xyz(2)) < 100.0 ) {
 				count++;
 			}
 		}
@@ -131,7 +133,7 @@ int pose_cbcount(Pose const & a, Pose const & b) {
 
 core::Real
 angle_degrees(Vec u, Vec v, Vec w) {
-  return numeric::conversions::degrees(numeric::angle_radians(u,v,w));
+	return numeric::conversions::degrees(numeric::angle_radians(u,v,w));
 }
 
 double
@@ -149,19 +151,19 @@ sicfast(
 	// get points, rotated ro ori is 0,0,1, might already be done
 	Matf rot = Matf::identity();
 	if     ( ori.dot(Vec(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vec(1,0,0).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-	else if( ori.dot(Vec(0,0,1)) <  0.99999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-	if( rot != Matf::identity() ) {
-		for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-		for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
+	else if ( ori.dot(Vec(0,0,1)) <  0.99999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
+	if ( rot != Matf::identity() ) {
+		for ( vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia ) *ia = rot*(*ia);
+		for ( vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib ) *ib = rot*(*ib);
 	}
 
 	// get bounds for plane hashes
 	double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
-	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+	for ( vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia ) {
 		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
 		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
 	}
-	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+	for ( vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib ) {
 		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
 		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
 	}
@@ -179,41 +181,41 @@ sicfast(
 	int const xsize = xub-xlb+1;
 	int const ysize = yub-ylb+1;
 	ObjexxFCL::FArray2D<Vecf> ha(xsize,ysize,Vecf(0,0,-9e9)),hb(xsize,ysize,Vecf(0,0,9e9));
-	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+	for ( vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia ) {
 		// int const ix = min(xsize,max(1,(int)ceil(ia->x()/BIN)-xlb));
 		// int const iy = min(ysize,max(1,(int)ceil(ia->y()/BIN)-ylb));
 		int const ix = (int)ceil(ia->x()/BIN)-xlb;
 		int const iy = (int)ceil(ia->y()/BIN)-ylb;
-		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-		if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
+		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+		if ( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
 	}
-	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+	for ( vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib ) {
 		// int const ix = min(xsize,max(1,(int)ceil(ib->x()/BIN)-xlb));
 		// int const iy = min(ysize,max(1,(int)ceil(ib->y()/BIN)-ylb));
 		int const ix = (int)ceil(ib->x()/BIN)-xlb;
 		int const iy = (int)ceil(ib->y()/BIN)-ylb;
-		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-		if( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
+		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+		if ( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
 	}
 
 	// check hashes for min dis
 	int imna=0,jmna=0,imnb=0,jmnb=0;
 	double mindis = 9e9;
-	for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-		for(int j = 1; j <= ysize; ++j) {
-			for(int k = -2; k <= 2; ++k) {
-				if(i+k < 1 || i+k > xsize) continue;
-				for(int l = -2; l <= 2; ++l) {
-					if(j+l < 1 || j+l > ysize) continue;
+	for ( int i = 1; i <= xsize; ++i ) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+		for ( int j = 1; j <= ysize; ++j ) {
+			for ( int k = -2; k <= 2; ++k ) {
+				if ( i+k < 1 || i+k > xsize ) continue;
+				for ( int l = -2; l <= 2; ++l ) {
+					if ( j+l < 1 || j+l > ysize ) continue;
 					double const xa = ha(i  ,j  ).x();
 					double const ya = ha(i  ,j  ).y();
 					double const xb = hb(i+k,j+l).x();
 					double const yb = hb(i+k,j+l).y();
 					double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
 
-					if( d2 < 16.0 ) {
+					if ( d2 < 16.0 ) {
 						double dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(16.0-d2);
-						if( dz < mindis ) {
+						if ( dz < mindis ) {
 							mindis = dz;
 							imna = i;
 							jmna = j;
@@ -227,33 +229,33 @@ sicfast(
 	}
 
 	// {
-	// 	utility::io::ozstream out("cba.pdb");
-	// 	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
-	// 		Vec viz = (*ia) + (mindis*ori);
-	// 		out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	// 	}
-	// 	out.close();
+	//  utility::io::ozstream out("cba.pdb");
+	//  for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
+	//   Vec viz = (*ia) + (mindis*ori);
+	//   out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"A"<<I(4,100)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	//  }
+	//  out.close();
 	// }
 	// {
-	// 	utility::io::ozstream out("cbb.pdb");
-	// 	for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-	// 		Vec viz = (*ib);
-	// 		out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"B"<<I(4,100)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	// 	}
-	// 	out.close();
+	//  utility::io::ozstream out("cbb.pdb");
+	//  for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
+	//   Vec viz = (*ib);
+	//   out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	//  }
+	//  out.close();
 	// }
 
 	cbcount = 0;
 	// utility::io::ozstream out("cb8.pdb");
 	// TR << "CB0 " << cbcount << std::endl;
-	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
-		for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-			if( ib->distance_squared( (*ia) + (mindis*ori) ) < 100.0 ) {
+	for ( vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia ) {
+		for ( vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib ) {
+			if ( ib->distance_squared( (*ia) + (mindis*ori) ) < 100.0 ) {
 				cbcount++;
 				// Vec viz = (*ia) + (mindis*ori);
-				// out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+				// out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"A"<<I(4,100)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 				// viz = *ib;
-				// out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"B"<<I(4,100)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+				// out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 			}
 		}
 	}
@@ -263,41 +265,41 @@ sicfast(
 	// // rotate points back -- needed iff pa/pb come by reference
 	rot = rot.transposed();
 	// if( rot != Matf::identity() ) {
-	// 	for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-	// 	for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
+	//  for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
+	//  for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
 	// }
 
 	// uncomment this to get hashes in local space
 	// rot = Matf::identity();
 	// ori = Vec(0,0,1);
 
-	if(debug){
-	{
-		utility::io::ozstream out("hasha.pdb");
-		for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-			for(int j = 2; j <= ysize-1; ++j) {
-				Vecf viz = rot*ha(i,j) + mindis*ori;
-				if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
-				out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"B"<<I(4,100+j)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	if ( debug ) {
+		{
+			utility::io::ozstream out("hasha.pdb");
+			for ( int i = 2; i <= xsize-1; ++i ) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+				for ( int j = 2; j <= ysize-1; ++j ) {
+					Vecf viz = rot*ha(i,j) + mindis*ori;
+					if ( viz.z() < -9e8 || 9e8 < viz.z() ) continue;
+					out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100+j)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+				}
 			}
+			Vecf viz = rot*ha(imna,jmna) + mindis*ori;
+			out<<"HETATM"<<I(5,1000+imna)<<' '<<"MIN "<<' ' << "MIN"<<' '<<"B"<<I(4,100+jmna)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+			out.close();
 		}
-		Vecf viz = rot*ha(imna,jmna) + mindis*ori;
-	    out<<"HETATM"<<I(5,1000+imna)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"B"<<I(4,100+jmna)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-		out.close();
-	}
-	{
-		utility::io::ozstream out("hashb.pdb");
-		for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-			for(int j = 2; j <= ysize-1; ++j) {
-				Vecf viz = rot*hb(i,j);
-				if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
-				out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"C"<<I(4,100+j)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+		{
+			utility::io::ozstream out("hashb.pdb");
+			for ( int i = 2; i <= xsize-1; ++i ) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+				for ( int j = 2; j <= ysize-1; ++j ) {
+					Vecf viz = rot*hb(i,j);
+					if ( viz.z() < -9e8 || 9e8 < viz.z() ) continue;
+					out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"C"<<I(4,100+j)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+				}
 			}
+			Vecf viz = rot*hb(imnb,jmnb);
+			out<<"HETATM"<<I(5,1000+imnb)<<' '<<"MIN "<<' ' << "MIN"<<' '<<"C"<<I(4,100+jmnb)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+			out.close();
 		}
-		Vecf viz = rot*hb(imnb,jmnb);
-		out<<"HETATM"<<I(5,1000+imnb)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"C"<<I(4,100+jmnb)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-		out.close();
-	}
 	}
 
 	return mindis;
@@ -315,16 +317,16 @@ double sicfast(
 	Vecf ori = ori_in.normalized();
 	Matf rot = Matf::identity();
 	if     ( ori.dot(Vec(0,0,1)) < -0.999 ) rot = rotation_matrix( Vec(1,0,0).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-	else if( ori.dot(Vec(0,0,1)) <  0.999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-	for(int i = 1; i <= (int)a.size(); ++i) {
+	else if ( ori.dot(Vec(0,0,1)) <  0.999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
+	for ( int i = 1; i <= (int)a.size(); ++i ) {
 		cba.push_back(rot*Vecf(a.residue(i).xyz(2)));
 		int const natom = (a.residue(i).name3()=="GLY") ? 4 : 5;
-		for(int j = 1; j <= natom; ++j) pa.push_back(rot*Vecf(a.residue(i).xyz(j)));
+		for ( int j = 1; j <= natom; ++j ) pa.push_back(rot*Vecf(a.residue(i).xyz(j)));
 	}
-	for(int i = 1; i <= (int)b.size(); ++i) {
+	for ( int i = 1; i <= (int)b.size(); ++i ) {
 		cbb.push_back(rot*Vecf(b.residue(i).xyz(2)));
 		int const natom = (b.residue(i).name3()=="GLY") ? 4 : 5;
-		for(int j = 1; j <= natom; ++j) pb.push_back(rot*Vecf(b.residue(i).xyz(j)));
+		for ( int j = 1; j <= natom; ++j ) pb.push_back(rot*Vecf(b.residue(i).xyz(j)));
 	}
 	return sicfast( pa, pb, cba, cbb, Vec(0,0,1), cbcount );
 }
@@ -367,7 +369,7 @@ void run(  ) {
 
 
 	int ANGLE_INCR = 3;
-	if(ANGLE_INCR != 3) utility_exit_with_message("first ANGLE_INCR must be 3!!!");
+	if ( ANGLE_INCR != 3 ) utility_exit_with_message("first ANGLE_INCR must be 3!!!");
 	ObjexxFCL::FArray3D<int>   cbcount3((core::Size)floor(72.0/ANGLE_INCR),(core::Size)floor(120.0/ANGLE_INCR),(core::Size)floor(360.0/ANGLE_INCR),0);
 	{
 		// compute high/low min dis for pent and tri here, input to sicfast and don't allow any below
@@ -378,92 +380,92 @@ void run(  ) {
 		ObjexxFCL::FArray2D<int>   pntcbneg(72/ANGLE_INCR,97,0),tricbneg(120/ANGLE_INCR,145,0);
 		{
 			Pose p = pinit;
-			for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
+			for ( int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR ) {
 				rot_pose(p,paxs,ANGLE_INCR);
 				vector1<Vecf> ppnt,cbp; // precompute these
-				for(int i = 1; i <= (int)p.size(); ++i) {
+				for ( int i = 1; i <= (int)p.size(); ++i ) {
 					cbp.push_back(Vecf(p.residue(i).xyz(2)));
 					int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
 				}
 				vector1<Vecf> ppn2(ppnt),cb2(cbp);
 				Matf r = rotation_matrix_degrees( paxs.cross(pax2), angle_degrees(paxs,Vec(0,0,0),pax2) );
-				for(vector1<Vecf>::iterator i = ppn2.begin(); i != ppn2.end(); ++i) *i = r*(*i);
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = ppn2.begin(); i != ppn2.end(); ++i ) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = r*(*i);
 				int cbcount = 0;
 				double const d = sicfast(ppnt,ppn2,cbp,cb2,(pax2-paxs).normalized(),cbcount,false);
-				if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntpos! "+ObjexxFCL::string_of(ipnt));
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(pax2-paxs).normalized();
+				if ( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntpos! "+ObjexxFCL::string_of(ipnt));
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = (*i) - d*(pax2-paxs).normalized();
 				pntmnpos[ipnt/ANGLE_INCR+1] = -d/2.0/sin( angle_radians(pax2,Vec(0,0,0),paxs)/2.0 );
 				pntcbpos(ipnt/ANGLE_INCR+1,1) = cbcount;
 				// std::cerr << "compute CB" << std::endl;
 				set_cb_pairs(cbp,cb2);
-				for(int i = 2; i <= 97; ++i) {
-					for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) + 0.1*paxs;
-					for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1*pax2;
-					int cbc = 0; for(core::Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100) cbc++;
+				for ( int i = 2; i <= 97; ++i ) {
+					for ( vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv ) *iv = (*iv) + 0.1*paxs;
+					for ( vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv ) *iv = (*iv) + 0.1*pax2;
+					int cbc = 0; for ( core::Size j = 1; j <= cbp.size(); ++j ) if ( cbp[j].distance_squared(cb2[j]) < 100 ) cbc++;
 					pntcbpos(ipnt/ANGLE_INCR+1,i) = cbc;
-					if(cbc==0) break;
+					if ( cbc==0 ) break;
 				}
 			}
-			for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
+			for ( int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR ) {
 				// Pose p = pinit;
 				rot_pose(p,paxs,ANGLE_INCR);
 				vector1<Vecf> ppnt,cbp; // precompute these
-				for(int i = 1; i <= (int)p.size(); ++i) {
+				for ( int i = 1; i <= (int)p.size(); ++i ) {
 					cbp.push_back(Vecf(p.residue(i).xyz(2)));
 					int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
 				}
 				vector1<Vecf> ppn2(ppnt),cb2(cbp);
 				Matf r = rotation_matrix_degrees( paxs.cross(pax2), angle_degrees(paxs,Vec(0,0,0),pax2) );
-				for(vector1<Vecf>::iterator i = ppn2.begin(); i != ppn2.end(); ++i) *i = r*(*i);
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = ppn2.begin(); i != ppn2.end(); ++i ) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = r*(*i);
 				int cbcount = 0;
 				double const d = sicfast(ppnt,ppn2,cbp,cb2,(paxs-pax2).normalized(),cbcount,false);
-				if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntneg! "+ObjexxFCL::string_of(ipnt));
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(paxs-pax2).normalized();
+				if ( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntneg! "+ObjexxFCL::string_of(ipnt));
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = (*i) - d*(paxs-pax2).normalized();
 				pntmnneg[ipnt/ANGLE_INCR+1] = d/2.0/sin( angle_radians(pax2,Vec(0,0,0),paxs)/2.0 );
 				pntcbneg(ipnt/ANGLE_INCR+1,1) = cbcount;
 				// std::cerr << "compute CB" << std::endl;
 				set_cb_pairs(cbp,cb2);
-				for(int i = 2; i <= 97; ++i) {
-					for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) - 0.1*paxs;
-					for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1*pax2;
-					int cbc = 0; for(core::Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100) cbc++;
+				for ( int i = 2; i <= 97; ++i ) {
+					for ( vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv ) *iv = (*iv) - 0.1*paxs;
+					for ( vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv ) *iv = (*iv) - 0.1*pax2;
+					int cbc = 0; for ( core::Size j = 1; j <= cbp.size(); ++j ) if ( cbp[j].distance_squared(cb2[j]) < 100 ) cbc++;
 					pntcbneg(ipnt/ANGLE_INCR+1,i) = cbc;
-					if(cbc==0) break;
+					if ( cbc==0 ) break;
 				}
 			}
 
 
-			for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
+			for ( int itri = 0; itri < 120; itri+=ANGLE_INCR ) {
 				Pose t = tinit;
 				rot_pose(t,taxs,(core::Real)itri);
 				vector1<Vecf> ptri,cbt; // precompute these
-				for(int i = 1; i <= (int)t.size(); ++i) {
+				for ( int i = 1; i <= (int)t.size(); ++i ) {
 					cbt.push_back(Vecf(t.residue(i).xyz(2)));
 					int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) ptri.push_back(Vecf(t.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) ptri.push_back(Vecf(t.residue(i).xyz(j)));
 				}
 				vector1<Vecf> ptr2(ptri),cb2(cbt);
 				Matf r = rotation_matrix_degrees( taxs.cross(tax2), angle_degrees(taxs,Vec(0,0,0),tax2) );
-				for(vector1<Vecf>::iterator i = ptr2.begin(); i != ptr2.end(); ++i) *i = r*(*i);
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = ptr2.begin(); i != ptr2.end(); ++i ) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = r*(*i);
 				int cbcount = 0;
 				double const d = sicfast(ptri,ptr2,cbt,cb2,(tax2-taxs).normalized(),cbcount,false);
-				if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for tripos! "+ObjexxFCL::string_of(itri));
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(tax2-taxs).normalized();
+				if ( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for tripos! "+ObjexxFCL::string_of(itri));
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = (*i) - d*(tax2-taxs).normalized();
 				trimnpos[itri/ANGLE_INCR+1] = -d/2.0/sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 );
 				tricbpos(itri/ANGLE_INCR+1,1) = cbcount;
 				// std::cerr << "compute CB" << std::endl;
 				set_cb_pairs(cbt,cb2);
-				for(int i = 2; i <= 145; ++i) {
-					for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) + 0.1*taxs;
-					for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1*tax2;
-					int cbc = 0; for(core::Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100) cbc++;
+				for ( int i = 2; i <= 145; ++i ) {
+					for ( vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv ) *iv = (*iv) + 0.1*taxs;
+					for ( vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv ) *iv = (*iv) + 0.1*tax2;
+					int cbc = 0; for ( core::Size j = 1; j <= cbt.size(); ++j ) if ( cbt[j].distance_squared(cb2[j]) < 100 ) cbc++;
 					tricbpos(itri/ANGLE_INCR+1,i) = cbc;
-					if(cbc==0) break;
+					if ( cbc==0 ) break;
 				}
 				// if(itri != 60) continue;
 				// Pose p1(t),p2(t);
@@ -474,40 +476,40 @@ void run(  ) {
 				// p2.dump_pdb("tritri2.pdb");
 				// TR << "PNT NEG D " << -d/2.0/sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 ) << std::endl;
 				// for(int i = 1; i <= 145; ++i) {
-				// 	TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbpos(itri/ANGLE_INCR+1,i) << std::endl;
-				// 	trans_pose(p1,taxs*0.1);
-				// 	trans_pose(p2,tax2*0.1);
+				//  TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbpos(itri/ANGLE_INCR+1,i) << std::endl;
+				//  trans_pose(p1,taxs*0.1);
+				//  trans_pose(p2,tax2*0.1);
 				// }
 				// TR << "D " << trimnpos[itri/ANGLE_INCR+1] << std::endl;
 				// // utility_exit_with_message("test");
 			}
-			for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
+			for ( int itri = 0; itri < 120; itri+=ANGLE_INCR ) {
 				Pose t = tinit;
 				rot_pose(t,taxs,(core::Real)itri);
 				vector1<Vecf> ptri,cbt; // precompute these
-				for(int i = 1; i <= (int)t.size(); ++i) {
+				for ( int i = 1; i <= (int)t.size(); ++i ) {
 					cbt.push_back(Vecf(t.residue(i).xyz(2)));
 					int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) ptri.push_back(Vecf(t.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) ptri.push_back(Vecf(t.residue(i).xyz(j)));
 				}
 				vector1<Vecf> ptr2(ptri),cb2(cbt);
 				Matf r = rotation_matrix_degrees( taxs.cross(tax2), angle_degrees(taxs,Vec(0,0,0),tax2) );
-				for(vector1<Vecf>::iterator i = ptr2.begin(); i != ptr2.end(); ++i) *i = r*(*i);
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = ptr2.begin(); i != ptr2.end(); ++i ) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = r*(*i);
 				int cbcount = 0;
 				double const d = sicfast(ptri,ptr2,cbt,cb2,(taxs-tax2).normalized(),cbcount,false);
-				if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for trineg! "+ObjexxFCL::string_of(itri));
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(taxs-tax2).normalized();
+				if ( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for trineg! "+ObjexxFCL::string_of(itri));
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = (*i) - d*(taxs-tax2).normalized();
 				trimnneg[itri/ANGLE_INCR+1] = d/2.0/sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 );
 				tricbneg(itri/ANGLE_INCR+1,1) = cbcount;
 				// std::cerr << "compute CB" << std::endl;
 				set_cb_pairs(cbt,cb2);
-				for(int i = 2; i <= 145; ++i) {
-					for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) - 0.1*taxs;
-					for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1*tax2;
-					int cbc = 0; for(core::Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100) cbc++;
+				for ( int i = 2; i <= 145; ++i ) {
+					for ( vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv ) *iv = (*iv) - 0.1*taxs;
+					for ( vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv ) *iv = (*iv) - 0.1*tax2;
+					int cbc = 0; for ( core::Size j = 1; j <= cbt.size(); ++j ) if ( cbt[j].distance_squared(cb2[j]) < 100 ) cbc++;
 					tricbneg(itri/ANGLE_INCR+1,i) = cbc;
-					if(cbc==0) break;
+					if ( cbc==0 ) break;
 				}
 				// if(itri < 70) continue;
 				// Pose p1(t),p2(t);
@@ -518,9 +520,9 @@ void run(  ) {
 				// p2.dump_pdb("test2.pdb");
 				// TR << "PNT NEG D " << d << " " << sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 ) << std::endl;
 				// for(int i = 1; i <= 145; ++i) {
-				// 	TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbneg(itri/ANGLE_INCR+1,i) << std::endl;
-				// 	trans_pose(p1,-taxs*0.1);
-				// 	trans_pose(p2,-tax2*0.1);
+				//  TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbneg(itri/ANGLE_INCR+1,i) << std::endl;
+				//  trans_pose(p1,-taxs*0.1);
+				//  trans_pose(p2,-tax2*0.1);
 				// }
 				// TR << "D " << trimnneg[itri/ANGLE_INCR+1] << std::endl;
 				// utility_exit_with_message("test");
@@ -533,39 +535,39 @@ void run(  ) {
 		{
 			double mxd = 0;
 			int cbmax = 0, mxiori = 0, mxipnt = 0, mxitri = 0;
-			for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
-				if(ipnt%3==0 && ipnt!=0) TR << "   loop1 " << (100*ipnt)/72 << "%% done, cbmax:" << cbmax << std::endl;
+			for ( int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR ) {
+				if ( ipnt%3==0 && ipnt!=0 ) TR << "   loop1 " << (100*ipnt)/72 << "%% done, cbmax:" << cbmax << std::endl;
 				Pose p = pinit;
 				rot_pose(p,paxs,(core::Real)ipnt);
 				vector1<Vecf> pb,cbb; // precompute these
-				for(int i = 1; i <= (int)p.size(); ++i) {
+				for ( int i = 1; i <= (int)p.size(); ++i ) {
 					cbb.push_back(Vecf(p.residue(i).xyz(2)));
 					int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) pb.push_back(Vecf(p.residue(i).xyz(j)));
 				}
-				for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
+				for ( int itri = 0; itri < 120; itri+=ANGLE_INCR ) {
 					Pose t = tinit;
 					rot_pose(t,taxs,(core::Real)itri);
 					vector1<Vecf> pa,cba; // precompute these
-					for(int i = 1; i <= (int)t.size(); ++i) {
+					for ( int i = 1; i <= (int)t.size(); ++i ) {
 						cba.push_back(Vecf(t.residue(i).xyz(2)));
 						int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
-						for(int j = 1; j <= natom; ++j) pa.push_back(Vecf(t.residue(i).xyz(j)));
+						for ( int j = 1; j <= natom; ++j ) pa.push_back(Vecf(t.residue(i).xyz(j)));
 					}
 
 					int iori = -1, ori_stage = 1;
 					bool newstage = true;
 					// for(iori = 0; iori < 360; iori+=ANGLE_INCR)
-					while(ori_stage < 5) {
-						if(newstage) {
-							if( ori_stage == 1 || ori_stage == 2 ) iori = ( 90.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
-							if( ori_stage == 3 || ori_stage == 4 ) iori = (270.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
+					while ( ori_stage < 5 ) {
+						if ( newstage ) {
+							if ( ori_stage == 1 || ori_stage == 2 ) iori = ( 90.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
+							if ( ori_stage == 3 || ori_stage == 4 ) iori = (270.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
 							iori = (iori / ANGLE_INCR) * ANGLE_INCR; // round to closest multiple of angle incr
-							if( ori_stage == 2 || ori_stage == 4 ) iori -= ANGLE_INCR;
+							if ( ori_stage == 2 || ori_stage == 4 ) iori -= ANGLE_INCR;
 							newstage = false;
 						} else {
-							if( ori_stage == 1 || ori_stage == 3 ) iori += ANGLE_INCR;
-							if( ori_stage == 2 || ori_stage == 4 ) iori -= ANGLE_INCR;
+							if ( ori_stage == 1 || ori_stage == 3 ) iori += ANGLE_INCR;
+							if ( ori_stage == 2 || ori_stage == 4 ) iori -= ANGLE_INCR;
 						}
 						// TR << "IORI " << iori << std::endl;
 						Vecf sicaxis = (rotation_matrix_degrees(-Vec(0,1,0),(core::Real)iori) * Vec(0,0,1)).normalized();
@@ -580,38 +582,38 @@ void run(  ) {
 						double dpnt = y+z;
 						double dtri = w;
 						double pntmn,trimn;
-						if( w > 0 ) {
+						if ( w > 0 ) {
 							pntmn = pntmnpos[ipnt/ANGLE_INCR+1];
 							trimn = trimnpos[itri/ANGLE_INCR+1];
 							int dp = (dpnt-pntmn)*10+1;
 							int dt = (dtri-trimn)*10+1;
-							if( dp < 1 ) { ori_stage++; newstage=true; continue; };
-							if( dt < 1 ) { ori_stage++; newstage=true; continue; };
+							if ( dp < 1 ) { ori_stage++; newstage=true; continue; };
+							if ( dt < 1 ) { ori_stage++; newstage=true; continue; };
 							// if(ipnt==18 && itri==72 && iori==276)
-							// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos(ipnt/ANGLE_INCR+1,dp)
-							// 	  << "    " << dt << " " << dtri << " " << trimn << " " << tricbpos(itri/ANGLE_INCR+1,dt) << std::endl;
-							if( dp <= 97  ) tmpcbc += pntcbpos(ipnt/ANGLE_INCR+1,dp);
-							if( dt <= 145 ) tmpcbc += tricbpos(itri/ANGLE_INCR+1,dt);
+							//  TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos(ipnt/ANGLE_INCR+1,dp)
+							//    << "    " << dt << " " << dtri << " " << trimn << " " << tricbpos(itri/ANGLE_INCR+1,dt) << std::endl;
+							if ( dp <= 97  ) tmpcbc += pntcbpos(ipnt/ANGLE_INCR+1,dp);
+							if ( dt <= 145 ) tmpcbc += tricbpos(itri/ANGLE_INCR+1,dt);
 							// TR << "CHK " << dpnt << " " << pntmn << "    " << dtri << " " << trimn << std::endl;
 						} else {
 							pntmn = pntmnneg[ipnt/ANGLE_INCR+1];
 							trimn = trimnneg[itri/ANGLE_INCR+1];
 							int dp = (-dpnt+pntmn)*10+1;
 							int dt = (-dtri+trimn)*10+1;
-							if( dp < 1 ) { ori_stage++; newstage=true; continue; };
-							if( dt < 1 ) { ori_stage++; newstage=true; continue; };
+							if ( dp < 1 ) { ori_stage++; newstage=true; continue; };
+							if ( dt < 1 ) { ori_stage++; newstage=true; continue; };
 							// if(ipnt==18 && itri==72 && iori==276)
-							// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg(ipnt/ANGLE_INCR+1,dp)
-							// 	  << "    " << dt << " " << dtri << " " << trimn << " " << pntcbneg(itri/ANGLE_INCR+1,dt) << std::endl;
-							if( dp <= 97  ) tmpcbc += pntcbneg(ipnt/ANGLE_INCR+1,dp);
-							if( dt <= 145 ) tmpcbc += tricbneg(itri/ANGLE_INCR+1,dt);
+							//  TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg(ipnt/ANGLE_INCR+1,dp)
+							//    << "    " << dt << " " << dtri << " " << trimn << " " << pntcbneg(itri/ANGLE_INCR+1,dt) << std::endl;
+							if ( dp <= 97  ) tmpcbc += pntcbneg(ipnt/ANGLE_INCR+1,dp);
+							if ( dt <= 145 ) tmpcbc += tricbneg(itri/ANGLE_INCR+1,dt);
 						}
 
 						surfdis3(ipnt/ANGLE_INCR+1,itri/ANGLE_INCR+1,iori/ANGLE_INCR+1) = d;
 						cbcount(ipnt/ANGLE_INCR+1,itri/ANGLE_INCR+1,iori/ANGLE_INCR+1) = tmpcbc;
 						// d = sicfast(t,p,sicaxis,cbcount);
 						// TR << "trial " << ipnt << " " << itri << " " << iori << " " << d << " " << cbcount << std::endl;
-						if(tmpcbc > cbmax) {
+						if ( tmpcbc > cbmax ) {
 							cbmax = tmpcbc;
 							mxiori = iori;
 							mxipnt = ipnt;
@@ -630,32 +632,32 @@ void run(  ) {
 		// int delta = ceil(3.0/(core::Real)ANGLE_INCR);
 		// TR << "scanning results for local maxima +- " << delta*ANGLE_INCR << "°" << std::endl;
 		// for(int ipnt = 1; ipnt <=  72/ANGLE_INCR; ++ipnt) {
-		// 	for(int itri = 1; itri <= 120/ANGLE_INCR; ++itri) {
-		// 		for(int iori = 1; iori <= 360/ANGLE_INCR; ++iori) {
-		// 			// std::cerr << ipnt << " " << itri << " " << iori << " " << cbcount(ipnt,itri,iori) << std::endl;
-		// 			int lmaxcb = 0;
-		// 			for(int dipnt = -delta; dipnt <= delta; ++dipnt) {
-		// 				for(int ditri = -delta; ditri <= delta; ++ditri) {
-		// 					for(int diori = -delta; diori <= delta; ++diori) {
-		// 						int i = (ipnt+dipnt-1+( 72/ANGLE_INCR)) % ( 72/ANGLE_INCR) + 1;
-		// 						int j = (itri+ditri-1+(120/ANGLE_INCR)) % (120/ANGLE_INCR) + 1;
-		// 						int k = (iori+diori-1+(360/ANGLE_INCR)) % (360/ANGLE_INCR) + 1;
-		// 						if( cbcount(i,j,k) > lmaxcb ) {
-		// 							lmaxcb = cbcount(i,j,k);
-		// 						}
-		// 					}
-		// 				}
-		// 			}
-		// 			if( cbcount(ipnt,itri,iori) >= lmaxcb ) cbcount3(ipnt,itri,iori) = cbcount(ipnt,itri,iori);
-		// 			if( ipnt==2 && itri==15 && iori==99 ) TR << "NEARMAX: " << cbcount(ipnt,itri,iori) << " " << lmaxcb << std::endl;
-		// 		}
-		// 	}
+		//  for(int itri = 1; itri <= 120/ANGLE_INCR; ++itri) {
+		//   for(int iori = 1; iori <= 360/ANGLE_INCR; ++iori) {
+		//    // std::cerr << ipnt << " " << itri << " " << iori << " " << cbcount(ipnt,itri,iori) << std::endl;
+		//    int lmaxcb = 0;
+		//    for(int dipnt = -delta; dipnt <= delta; ++dipnt) {
+		//     for(int ditri = -delta; ditri <= delta; ++ditri) {
+		//      for(int diori = -delta; diori <= delta; ++diori) {
+		//       int i = (ipnt+dipnt-1+( 72/ANGLE_INCR)) % ( 72/ANGLE_INCR) + 1;
+		//       int j = (itri+ditri-1+(120/ANGLE_INCR)) % (120/ANGLE_INCR) + 1;
+		//       int k = (iori+diori-1+(360/ANGLE_INCR)) % (360/ANGLE_INCR) + 1;
+		//       if( cbcount(i,j,k) > lmaxcb ) {
+		//        lmaxcb = cbcount(i,j,k);
+		//       }
+		//      }
+		//     }
+		//    }
+		//    if( cbcount(ipnt,itri,iori) >= lmaxcb ) cbcount3(ipnt,itri,iori) = cbcount(ipnt,itri,iori);
+		//    if( ipnt==2 && itri==15 && iori==99 ) TR << "NEARMAX: " << cbcount(ipnt,itri,iori) << " " << lmaxcb << std::endl;
+		//   }
+		//  }
 		// }
 	}
 
 	vector1<int> hitpnt,hittri,hitori,hitcbc;
 	ANGLE_INCR = 1;
-	if(ANGLE_INCR != 1) utility_exit_with_message("second ANGLE_INCR must be 1!!!");
+	if ( ANGLE_INCR != 1 ) utility_exit_with_message("second ANGLE_INCR must be 1!!!");
 	ObjexxFCL::FArray3D<float> surfdis1((core::Size)floor(72.0/ANGLE_INCR),(core::Size)floor(120.0/ANGLE_INCR),(core::Size)floor(360.0/ANGLE_INCR),0.0);
 	ObjexxFCL::FArray3D<int>   cbcount1((core::Size)floor(72.0/ANGLE_INCR),(core::Size)floor(120.0/ANGLE_INCR),(core::Size)floor(360.0/ANGLE_INCR),0);
 	{
@@ -667,92 +669,92 @@ void run(  ) {
 		ObjexxFCL::FArray2D<int>   pntcbneg(72/ANGLE_INCR,97,0),tricbneg(120/ANGLE_INCR,145,0);
 		{
 			Pose p = pinit;
-			for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
+			for ( int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR ) {
 				rot_pose(p,paxs,ANGLE_INCR);
 				vector1<Vecf> ppnt,cbp; // precompute these
-				for(int i = 1; i <= (int)p.size(); ++i) {
+				for ( int i = 1; i <= (int)p.size(); ++i ) {
 					cbp.push_back(Vecf(p.residue(i).xyz(2)));
 					int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
 				}
 				vector1<Vecf> ppn2(ppnt),cb2(cbp);
 				Matf r = rotation_matrix_degrees( paxs.cross(pax2), angle_degrees(paxs,Vec(0,0,0),pax2) );
-				for(vector1<Vecf>::iterator i = ppn2.begin(); i != ppn2.end(); ++i) *i = r*(*i);
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = ppn2.begin(); i != ppn2.end(); ++i ) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = r*(*i);
 				int cbcount = 0;
 				double const d = sicfast(ppnt,ppn2,cbp,cb2,(pax2-paxs).normalized(),cbcount,false);
-				if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntpos! "+ObjexxFCL::string_of(ipnt));
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(pax2-paxs).normalized();
+				if ( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntpos! "+ObjexxFCL::string_of(ipnt));
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = (*i) - d*(pax2-paxs).normalized();
 				pntmnpos[ipnt/ANGLE_INCR+1] = -d/2.0/sin( angle_radians(pax2,Vec(0,0,0),paxs)/2.0 );
 				pntcbpos(ipnt/ANGLE_INCR+1,1) = cbcount;
 				// std::cerr << "compute CB" << std::endl;
 				set_cb_pairs(cbp,cb2);
-				for(int i = 2; i <= 97; ++i) {
-					for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) + 0.1*paxs;
-					for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1*pax2;
-					int cbc = 0; for(core::Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100) cbc++;
+				for ( int i = 2; i <= 97; ++i ) {
+					for ( vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv ) *iv = (*iv) + 0.1*paxs;
+					for ( vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv ) *iv = (*iv) + 0.1*pax2;
+					int cbc = 0; for ( core::Size j = 1; j <= cbp.size(); ++j ) if ( cbp[j].distance_squared(cb2[j]) < 100 ) cbc++;
 					pntcbpos(ipnt/ANGLE_INCR+1,i) = cbc;
-					if(cbc==0) break;
+					if ( cbc==0 ) break;
 				}
 			}
-			for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
+			for ( int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR ) {
 				// Pose p = pinit;
 				rot_pose(p,paxs,ANGLE_INCR);
 				vector1<Vecf> ppnt,cbp; // precompute these
-				for(int i = 1; i <= (int)p.size(); ++i) {
+				for ( int i = 1; i <= (int)p.size(); ++i ) {
 					cbp.push_back(Vecf(p.residue(i).xyz(2)));
 					int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
 				}
 				vector1<Vecf> ppn2(ppnt),cb2(cbp);
 				Matf r = rotation_matrix_degrees( paxs.cross(pax2), angle_degrees(paxs,Vec(0,0,0),pax2) );
-				for(vector1<Vecf>::iterator i = ppn2.begin(); i != ppn2.end(); ++i) *i = r*(*i);
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = ppn2.begin(); i != ppn2.end(); ++i ) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = r*(*i);
 				int cbcount = 0;
 				double const d = sicfast(ppnt,ppn2,cbp,cb2,(paxs-pax2).normalized(),cbcount,false);
-				if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntneg! "+ObjexxFCL::string_of(ipnt));
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(paxs-pax2).normalized();
+				if ( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntneg! "+ObjexxFCL::string_of(ipnt));
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = (*i) - d*(paxs-pax2).normalized();
 				pntmnneg[ipnt/ANGLE_INCR+1] = d/2.0/sin( angle_radians(pax2,Vec(0,0,0),paxs)/2.0 );
 				pntcbneg(ipnt/ANGLE_INCR+1,1) = cbcount;
 				// std::cerr << "compute CB" << std::endl;
 				set_cb_pairs(cbp,cb2);
-				for(int i = 2; i <= 97; ++i) {
-					for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) - 0.1*paxs;
-					for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1*pax2;
-					int cbc = 0; for(core::Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100) cbc++;
+				for ( int i = 2; i <= 97; ++i ) {
+					for ( vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv ) *iv = (*iv) - 0.1*paxs;
+					for ( vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv ) *iv = (*iv) - 0.1*pax2;
+					int cbc = 0; for ( core::Size j = 1; j <= cbp.size(); ++j ) if ( cbp[j].distance_squared(cb2[j]) < 100 ) cbc++;
 					pntcbneg(ipnt/ANGLE_INCR+1,i) = cbc;
-					if(cbc==0) break;
+					if ( cbc==0 ) break;
 				}
 			}
 
 
-			for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
+			for ( int itri = 0; itri < 120; itri+=ANGLE_INCR ) {
 				Pose t = tinit;
 				rot_pose(t,taxs,(core::Real)itri);
 				vector1<Vecf> ptri,cbt; // precompute these
-				for(int i = 1; i <= (int)t.size(); ++i) {
+				for ( int i = 1; i <= (int)t.size(); ++i ) {
 					cbt.push_back(Vecf(t.residue(i).xyz(2)));
 					int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) ptri.push_back(Vecf(t.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) ptri.push_back(Vecf(t.residue(i).xyz(j)));
 				}
 				vector1<Vecf> ptr2(ptri),cb2(cbt);
 				Matf r = rotation_matrix_degrees( taxs.cross(tax2), angle_degrees(taxs,Vec(0,0,0),tax2) );
-				for(vector1<Vecf>::iterator i = ptr2.begin(); i != ptr2.end(); ++i) *i = r*(*i);
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = ptr2.begin(); i != ptr2.end(); ++i ) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = r*(*i);
 				int cbcount = 0;
 				double const d = sicfast(ptri,ptr2,cbt,cb2,(tax2-taxs).normalized(),cbcount,false);
-				if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for tripos! "+ObjexxFCL::string_of(itri));
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(tax2-taxs).normalized();
+				if ( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for tripos! "+ObjexxFCL::string_of(itri));
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = (*i) - d*(tax2-taxs).normalized();
 				trimnpos[itri/ANGLE_INCR+1] = -d/2.0/sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 );
 				tricbpos(itri/ANGLE_INCR+1,1) = cbcount;
 				// std::cerr << "compute CB" << std::endl;
 				set_cb_pairs(cbt,cb2);
-				for(int i = 2; i <= 145; ++i) {
-					for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) + 0.1*taxs;
-					for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1*tax2;
-					int cbc = 0; for(core::Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100) cbc++;
+				for ( int i = 2; i <= 145; ++i ) {
+					for ( vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv ) *iv = (*iv) + 0.1*taxs;
+					for ( vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv ) *iv = (*iv) + 0.1*tax2;
+					int cbc = 0; for ( core::Size j = 1; j <= cbt.size(); ++j ) if ( cbt[j].distance_squared(cb2[j]) < 100 ) cbc++;
 					tricbpos(itri/ANGLE_INCR+1,i) = cbc;
-					if(cbc==0) break;
+					if ( cbc==0 ) break;
 				}
 				// if(itri != 60) continue;
 				// Pose p1(t),p2(t);
@@ -763,40 +765,40 @@ void run(  ) {
 				// p2.dump_pdb("tritri2.pdb");
 				// TR << "PNT NEG D " << -d/2.0/sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 ) << std::endl;
 				// for(int i = 1; i <= 145; ++i) {
-				// 	TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbpos(itri/ANGLE_INCR+1,i) << std::endl;
-				// 	trans_pose(p1,taxs*0.1);
-				// 	trans_pose(p2,tax2*0.1);
+				//  TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbpos(itri/ANGLE_INCR+1,i) << std::endl;
+				//  trans_pose(p1,taxs*0.1);
+				//  trans_pose(p2,tax2*0.1);
 				// }
 				// TR << "D " << trimnpos[itri/ANGLE_INCR+1] << std::endl;
 				// // utility_exit_with_message("test");
 			}
-			for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
+			for ( int itri = 0; itri < 120; itri+=ANGLE_INCR ) {
 				Pose t = tinit;
 				rot_pose(t,taxs,(core::Real)itri);
 				vector1<Vecf> ptri,cbt; // precompute these
-				for(int i = 1; i <= (int)t.size(); ++i) {
+				for ( int i = 1; i <= (int)t.size(); ++i ) {
 					cbt.push_back(Vecf(t.residue(i).xyz(2)));
 					int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) ptri.push_back(Vecf(t.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) ptri.push_back(Vecf(t.residue(i).xyz(j)));
 				}
 				vector1<Vecf> ptr2(ptri),cb2(cbt);
 				Matf r = rotation_matrix_degrees( taxs.cross(tax2), angle_degrees(taxs,Vec(0,0,0),tax2) );
-				for(vector1<Vecf>::iterator i = ptr2.begin(); i != ptr2.end(); ++i) *i = r*(*i);
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = ptr2.begin(); i != ptr2.end(); ++i ) *i = r*(*i);
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = r*(*i);
 				int cbcount = 0;
 				double const d = sicfast(ptri,ptr2,cbt,cb2,(taxs-tax2).normalized(),cbcount,false);
-				if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for trineg! "+ObjexxFCL::string_of(itri));
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(taxs-tax2).normalized();
+				if ( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for trineg! "+ObjexxFCL::string_of(itri));
+				for ( vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = (*i) - d*(taxs-tax2).normalized();
 				trimnneg[itri/ANGLE_INCR+1] = d/2.0/sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 );
 				tricbneg(itri/ANGLE_INCR+1,1) = cbcount;
 				// std::cerr << "compute CB" << std::endl;
 				set_cb_pairs(cbt,cb2);
-				for(int i = 2; i <= 145; ++i) {
-					for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) - 0.1*taxs;
-					for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1*tax2;
-					int cbc = 0; for(core::Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100) cbc++;
+				for ( int i = 2; i <= 145; ++i ) {
+					for ( vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv ) *iv = (*iv) - 0.1*taxs;
+					for ( vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv ) *iv = (*iv) - 0.1*tax2;
+					int cbc = 0; for ( core::Size j = 1; j <= cbt.size(); ++j ) if ( cbt[j].distance_squared(cb2[j]) < 100 ) cbc++;
 					tricbneg(itri/ANGLE_INCR+1,i) = cbc;
-					if(cbc==0) break;
+					if ( cbc==0 ) break;
 				}
 				// if(itri < 70) continue;
 				// Pose p1(t),p2(t);
@@ -807,9 +809,9 @@ void run(  ) {
 				// p2.dump_pdb("test2.pdb");
 				// TR << "PNT NEG D " << d << " " << sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 ) << std::endl;
 				// for(int i = 1; i <= 145; ++i) {
-				// 	TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbneg(itri/ANGLE_INCR+1,i) << std::endl;
-				// 	trans_pose(p1,-taxs*0.1);
-				// 	trans_pose(p2,-tax2*0.1);
+				//  TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbneg(itri/ANGLE_INCR+1,i) << std::endl;
+				//  trans_pose(p1,-taxs*0.1);
+				//  trans_pose(p2,-tax2*0.1);
 				// }
 				// TR << "D " << trimnneg[itri/ANGLE_INCR+1] << std::endl;
 				// utility_exit_with_message("test");
@@ -819,8 +821,8 @@ void run(  ) {
 		int top100_3 = 0;
 		{
 			vector1<int> cbtmp;
-			for(core::Size i = 0; i < cbcount3.size(); ++i) {
-				if(cbcount3[i] > 0) cbtmp.push_back(cbcount3[i]);
+			for ( core::Size i = 0; i < cbcount3.size(); ++i ) {
+				if ( cbcount3[i] > 0 ) cbtmp.push_back(cbcount3[i]);
 			}
 			std::sort(cbtmp.begin(),cbtmp.end());
 			top100_3 = cbtmp[max(1,(int)cbtmp.size()-999)];
@@ -828,51 +830,51 @@ void run(  ) {
 		}
 		// assuming ANGLE_INCR = 1!!!!!!!!!!!
 		utility::vector1<vector1<int> > pntlmx,trilmx,orilmx;
-		for(int ipnt = 0; ipnt < 72; ipnt+=3) {
-		for(int itri = 0; itri < 120; itri+=3) {
-		for(int iori = 0; iori < 360; iori+=3) {
-			if( cbcount3(ipnt/3+1,itri/3+1,iori/3+1) >= top100_3) {
-				// TR << "checking around " << ipnt << " " << itri << " " << iori << " " << cbcount3(ipnt/3+1,itri/3+1,iori/3+1) << std::endl;
-				vector1<int> pnt,tri,ori;
-				for(int i = -1; i <= 1; ++i) pnt.push_back( (ipnt+i+ 72)% 72 );
-				for(int j = -1; j <= 1; ++j) tri.push_back( (itri+j+120)%120 );
-				for(int k = -1; k <= 1; ++k) ori.push_back( (iori+k+360)%360 );
-				pntlmx.push_back(pnt);
-				trilmx.push_back(tri);
-				orilmx.push_back(ori);
+		for ( int ipnt = 0; ipnt < 72; ipnt+=3 ) {
+			for ( int itri = 0; itri < 120; itri+=3 ) {
+				for ( int iori = 0; iori < 360; iori+=3 ) {
+					if ( cbcount3(ipnt/3+1,itri/3+1,iori/3+1) >= top100_3 ) {
+						// TR << "checking around " << ipnt << " " << itri << " " << iori << " " << cbcount3(ipnt/3+1,itri/3+1,iori/3+1) << std::endl;
+						vector1<int> pnt,tri,ori;
+						for ( int i = -1; i <= 1; ++i ) pnt.push_back( (ipnt+i+ 72)% 72 );
+						for ( int j = -1; j <= 1; ++j ) tri.push_back( (itri+j+120)%120 );
+						for ( int k = -1; k <= 1; ++k ) ori.push_back( (iori+k+360)%360 );
+						pntlmx.push_back(pnt);
+						trilmx.push_back(tri);
+						orilmx.push_back(ori);
+					}
+				}
 			}
-		}
-		}
 		}
 
 		TR << "looping over top " << pntlmx.size() << " 3degree hits, +-1 degree " << std::endl;
 		{
 			int max1 = 0;
-			for(core::Size ilmx = 1; ilmx <= pntlmx.size(); ++ilmx) {
-				if( (ilmx-1)%100==0 && ilmx!=1) TR << "  loop2 " << (double(ilmx-1)/10) << "%% done, cbmax: " << max1 << std::endl;
+			for ( core::Size ilmx = 1; ilmx <= pntlmx.size(); ++ilmx ) {
+				if ( (ilmx-1)%100==0 && ilmx!=1 ) TR << "  loop2 " << (double(ilmx-1)/10) << "%% done, cbmax: " << max1 << std::endl;
 				// TR << "checking around local max # " << ilmx << std::endl;
 				int cbmax = 0, mxiori = 0, mxipnt = 0, mxitri = 0;
-				for(vector1<int>::const_iterator pipnt = pntlmx[ilmx].begin(); pipnt != pntlmx[ilmx].end(); ++pipnt) {
+				for ( vector1<int>::const_iterator pipnt = pntlmx[ilmx].begin(); pipnt != pntlmx[ilmx].end(); ++pipnt ) {
 					int ipnt = *pipnt;
 					Pose p = pinit;
 					rot_pose(p,paxs,(core::Real)ipnt);
 					vector1<Vecf> pb,cbb; // precompute these
-					for(int i = 1; i <= (int)p.size(); ++i) {
+					for ( int i = 1; i <= (int)p.size(); ++i ) {
 						cbb.push_back(Vecf(p.residue(i).xyz(2)));
 						int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
-						for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
+						for ( int j = 1; j <= natom; ++j ) pb.push_back(Vecf(p.residue(i).xyz(j)));
 					}
-					for(vector1<int>::const_iterator pitri = trilmx[ilmx].begin(); pitri != trilmx[ilmx].end(); ++pitri) {
+					for ( vector1<int>::const_iterator pitri = trilmx[ilmx].begin(); pitri != trilmx[ilmx].end(); ++pitri ) {
 						int itri = *pitri;
 						Pose t = tinit;
 						rot_pose(t,taxs,(core::Real)itri);
 						vector1<Vecf> pa,cba; // precompute these
-						for(int i = 1; i <= (int)t.size(); ++i) {
+						for ( int i = 1; i <= (int)t.size(); ++i ) {
 							cba.push_back(Vecf(t.residue(i).xyz(2)));
 							int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
-							for(int j = 1; j <= natom; ++j) pa.push_back(Vecf(t.residue(i).xyz(j)));
+							for ( int j = 1; j <= natom; ++j ) pa.push_back(Vecf(t.residue(i).xyz(j)));
 						}
-						for(vector1<int>::const_iterator piori = orilmx[ilmx].begin(); piori != orilmx[ilmx].end(); ++piori) {
+						for ( vector1<int>::const_iterator piori = orilmx[ilmx].begin(); piori != orilmx[ilmx].end(); ++piori ) {
 							int iori = *piori;
 							Vecf sicaxis = (rotation_matrix_degrees(-Vec(0,1,0),(core::Real)iori) * Vec(0,0,1)).normalized();
 							int tmpcbc;
@@ -886,33 +888,33 @@ void run(  ) {
 							double dpnt = y+z;
 							double dtri = w;
 							double pntmn,trimn;
-							if( w > 0 ) {
+							if ( w > 0 ) {
 								pntmn = pntmnpos[ipnt/ANGLE_INCR+1];
 								trimn = trimnpos[itri/ANGLE_INCR+1];
 								int dp = (dpnt-pntmn)*10+1;
 								int dt = (dtri-trimn)*10+1;
-								if( dp < 1 ) { continue; };
-								if( dt < 1 ) { continue; };
+								if ( dp < 1 ) { continue; };
+								if ( dt < 1 ) { continue; };
 								// if(ipnt==18 && itri==72 && iori==276)
-								// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos(ipnt/ANGLE_INCR+1,dp)
-								// 	  << "    " << dt << " " << dtri << " " << trimn << " " << tricbpos(itri/ANGLE_INCR+1,dt) << std::endl;
-								if( dp <= 97  ) tmpcbc += pntcbpos(ipnt/ANGLE_INCR+1,dp);
-								if( dt <= 145 ) tmpcbc += tricbpos(itri/ANGLE_INCR+1,dt);
+								//  TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos(ipnt/ANGLE_INCR+1,dp)
+								//    << "    " << dt << " " << dtri << " " << trimn << " " << tricbpos(itri/ANGLE_INCR+1,dt) << std::endl;
+								if ( dp <= 97  ) tmpcbc += pntcbpos(ipnt/ANGLE_INCR+1,dp);
+								if ( dt <= 145 ) tmpcbc += tricbpos(itri/ANGLE_INCR+1,dt);
 								// TR << "CHK " << dpnt << " " << pntmn << "    " << dtri << " " << trimn << std::endl;
 							} else {
 								pntmn = pntmnneg[ipnt/ANGLE_INCR+1];
 								trimn = trimnneg[itri/ANGLE_INCR+1];
 								int dp = (-dpnt+pntmn)*10+1;
 								int dt = (-dtri+trimn)*10+1;
-								if( dp < 1 ) { continue; };
-								if( dt < 1 ) { continue; };
+								if ( dp < 1 ) { continue; };
+								if ( dt < 1 ) { continue; };
 								// if(ipnt==18 && itri==72 && iori==276)
-								// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg(ipnt/ANGLE_INCR+1,dp)
-								// 	  << "    " << dt << " " << dtri << " " << trimn << " " << pntcbneg(itri/ANGLE_INCR+1,dt) << std::endl;
-								if( dp <= 97  ) tmpcbc += pntcbneg(ipnt/ANGLE_INCR+1,dp);
-								if( dt <= 145 ) tmpcbc += tricbneg(itri/ANGLE_INCR+1,dt);
+								//  TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg(ipnt/ANGLE_INCR+1,dp)
+								//    << "    " << dt << " " << dtri << " " << trimn << " " << pntcbneg(itri/ANGLE_INCR+1,dt) << std::endl;
+								if ( dp <= 97  ) tmpcbc += pntcbneg(ipnt/ANGLE_INCR+1,dp);
+								if ( dt <= 145 ) tmpcbc += tricbneg(itri/ANGLE_INCR+1,dt);
 							}
-							if(tmpcbc > cbmax) {
+							if ( tmpcbc > cbmax ) {
 								cbmax = tmpcbc;
 								mxiori = iori;
 								mxipnt = ipnt;
@@ -925,7 +927,7 @@ void run(  ) {
 				hittri.push_back(mxitri);
 				hitori.push_back(mxiori);
 				hitcbc.push_back(cbmax);
-				if(cbmax > max1) max1 = cbmax;
+				if ( cbmax > max1 ) max1 = cbmax;
 				// TR << "HIT " << ilmx << " " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << std::endl;
 			}
 		}
@@ -938,12 +940,12 @@ void run(  ) {
 			top10 = hittmp[hittmp.size()-9];
 			TR << "top10 " << top10 << std::endl;
 		}
-		for(core::Size ihit = 1; ihit <= hitcbc.size(); ++ihit) {
-			if(hitcbc[ihit]==max1)	TR << "MAX1 " << hitpnt[ihit] << " " << hittri[ihit] << " " << hitori[ihit] << " " << hitcbc[ihit] << std::endl;
+		for ( core::Size ihit = 1; ihit <= hitcbc.size(); ++ihit ) {
+			if ( hitcbc[ihit]==max1 ) TR << "MAX1 " << hitpnt[ihit] << " " << hittri[ihit] << " " << hitori[ihit] << " " << hitcbc[ihit] << std::endl;
 		}
 
-		for(core::Size ihit = 1; ihit <= hitcbc.size(); ++ihit) {
-			if(hitcbc[ihit] >= top10 ) {
+		for ( core::Size ihit = 1; ihit <= hitcbc.size(); ++ihit ) {
+			if ( hitcbc[ihit] >= top10 ) {
 				int ipnt = hitpnt[ihit];
 				int itri = hittri[ihit];
 				int iori = hitori[ihit];
@@ -954,16 +956,16 @@ void run(  ) {
 				rot_pose(t,taxs,(core::Real)itri);
 
 				vector1<Vecf> pb,cbb; // precompute these
-				for(int i = 1; i <= (int)p.size(); ++i) {
+				for ( int i = 1; i <= (int)p.size(); ++i ) {
 					cbb.push_back(Vecf(p.residue(i).xyz(2)));
 					int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) pb.push_back(Vecf(p.residue(i).xyz(j)));
 				}
 				vector1<Vecf> pa,cba; // precompute these
-				for(int i = 1; i <= (int)t.size(); ++i) {
+				for ( int i = 1; i <= (int)t.size(); ++i ) {
 					cba.push_back(Vecf(t.residue(i).xyz(2)));
 					int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
-					for(int j = 1; j <= natom; ++j) pa.push_back(Vecf(t.residue(i).xyz(j)));
+					for ( int j = 1; j <= natom; ++j ) pa.push_back(Vecf(t.residue(i).xyz(j)));
 				}
 				Vecf sicaxis = (rotation_matrix_degrees(-Vec(0,1,0),(core::Real)iori) * Vec(0,0,1)).normalized();
 				int tmpcbc;
@@ -980,31 +982,31 @@ void run(  ) {
 				double pntmn,trimn;
 				trans_pose(p,dpnt*paxs);
 				trans_pose(t,dtri*taxs);
-				if( w > 0 ) {
+				if ( w > 0 ) {
 					pntmn = pntmnpos[ipnt/ANGLE_INCR+1];
 					trimn = trimnpos[itri/ANGLE_INCR+1];
 					int dp = (dpnt-pntmn)*10+1;
 					int dt = (dtri-trimn)*10+1;
-					if( dp < 1 ) { continue; };
-					if( dt < 1 ) { continue; };
+					if ( dp < 1 ) { continue; };
+					if ( dt < 1 ) { continue; };
 					// if(ipnt==18 && itri==72 && iori==276)
-					// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos(ipnt/ANGLE_INCR+1,dp)
-					// 	  << "    " << dt << " " << dtri << " " << trimn << " " << tricbpos(itri/ANGLE_INCR+1,dt) << std::endl;
-					if( dp <= 97  ) tmpcbc += pntcbpos(ipnt/ANGLE_INCR+1,dp);
-					if( dt <= 145 ) tmpcbc += tricbpos(itri/ANGLE_INCR+1,dt);
+					//  TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos(ipnt/ANGLE_INCR+1,dp)
+					//    << "    " << dt << " " << dtri << " " << trimn << " " << tricbpos(itri/ANGLE_INCR+1,dt) << std::endl;
+					if ( dp <= 97  ) tmpcbc += pntcbpos(ipnt/ANGLE_INCR+1,dp);
+					if ( dt <= 145 ) tmpcbc += tricbpos(itri/ANGLE_INCR+1,dt);
 					// TR << "CHK " << dpnt << " " << pntmn << "    " << dtri << " " << trimn << std::endl;
 				} else {
 					pntmn = pntmnneg[ipnt/ANGLE_INCR+1];
 					trimn = trimnneg[itri/ANGLE_INCR+1];
 					int dp = (-dpnt+pntmn)*10+1;
 					int dt = (-dtri+trimn)*10+1;
-					if( dp < 1 ) { continue; };
-					if( dt < 1 ) { continue; };
+					if ( dp < 1 ) { continue; };
+					if ( dt < 1 ) { continue; };
 					// if(ipnt==18 && itri==72 && iori==276)
-					// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg(ipnt/ANGLE_INCR+1,dp)
-					// 	  << "    " << dt << " " << dtri << " " << trimn << " " << pntcbneg(itri/ANGLE_INCR+1,dt) << std::endl;
-					if( dp <= 97  ) tmpcbc += pntcbneg(ipnt/ANGLE_INCR+1,dp);
-					if( dt <= 145 ) tmpcbc += tricbneg(itri/ANGLE_INCR+1,dt);
+					//  TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg(ipnt/ANGLE_INCR+1,dp)
+					//    << "    " << dt << " " << dtri << " " << trimn << " " << pntcbneg(itri/ANGLE_INCR+1,dt) << std::endl;
+					if ( dp <= 97  ) tmpcbc += pntcbneg(ipnt/ANGLE_INCR+1,dp);
+					if ( dt <= 145 ) tmpcbc += tricbneg(itri/ANGLE_INCR+1,dt);
 				}
 				TR << ihit << " " << ipnt << " " << itri << " " << iori << " " << hitcbc[ihit] << " " << tmpcbc << std::endl;
 
@@ -1022,13 +1024,13 @@ void run(  ) {
 
 				Pose symm;
 				symm.append_residue_by_jump(t.residue(1),1);
-				for(core::Size i = 2; i <= t.size()/3; ++i) {
-					if(symm.residue(i-1).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(symm,i-1);
-					if(   t.residue(i  ).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(t,i);
+				for ( core::Size i = 2; i <= t.size()/3; ++i ) {
+					if ( symm.residue(i-1).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(symm,i-1);
+					if (   t.residue(i  ).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(t,i);
 					symm.append_residue_by_bond(t.residue(i));
 				}
 				symm.append_residue_by_jump(p.residue(1),1);
-				for(core::Size i = 2; i <= p.size()/5; ++i) symm.append_residue_by_bond(p.residue(i));
+				for ( core::Size i = 2; i <= p.size()/5; ++i ) symm.append_residue_by_bond(p.residue(i));
 
 				core::pose::symmetry::make_symmetric_pose(symm);
 				core::io::pdb::dump_pdb(symm,fname);
@@ -1041,8 +1043,8 @@ void run(  ) {
 
 int main (int argc, char *argv[]) {
 	try{
-	devel::init(argc,argv);
-	run();
+		devel::init(argc,argv);
+		run();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

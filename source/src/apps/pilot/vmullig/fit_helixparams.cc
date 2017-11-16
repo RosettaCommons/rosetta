@@ -42,7 +42,7 @@
 #include <utility/vector1.hh>
 
 //Tracer:
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.vmullig.fit_helixparams" );
+static basic::Tracer TR( "apps.pilot.vmullig.fit_helixparams" );
 
 //Options (ugh -- global variables):
 OPT_KEY (StringVector, residue_type)

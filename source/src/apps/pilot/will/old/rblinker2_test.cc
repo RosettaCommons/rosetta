@@ -67,16 +67,16 @@ using core::kinematics::Stub;
 using core::conformation::Residue;
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer TR( "rblinker2" );
+static basic::Tracer TR( "rblinker2" );
 
 
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
-// 	for(Size ir = 1; ir <= pose.size(); ++ir) {
-// 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
-// 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
-// 			pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
-// 		}
-// 	}
+//  for(Size ir = 1; ir <= pose.size(); ++ir) {
+//   for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+//    core::id::AtomID const aid(core::id::AtomID(ia,ir));
+//    pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
+//   }
+//  }
 // }
 //
 //
@@ -85,37 +85,37 @@ static THREAD_LOCAL basic::Tracer TR( "rblinker2" );
 // // hyd   101  156  334  338
 // // psI  1492 1536 1489 1495
 // inline Real hyd_petf_sf4_dis(Pose const & hyd, Stub const & shyd, Pose const & petf, Stub const & spetf ) {
-// 	Vec sf4A = ( hyd.xyz(AtomID(5, 101))+ hyd.xyz(AtomID(5, 156))+ hyd.xyz(AtomID(5, 334))+ hyd.xyz(AtomID(5, 338)))/4.0;
-// 	Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
-// 	return shyd.local2global(sf4A).distance(spetf.local2global(sf4B));
+//  Vec sf4A = ( hyd.xyz(AtomID(5, 101))+ hyd.xyz(AtomID(5, 156))+ hyd.xyz(AtomID(5, 334))+ hyd.xyz(AtomID(5, 338)))/4.0;
+//  Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
+//  return shyd.local2global(sf4A).distance(spetf.local2global(sf4B));
 // }
 // inline Real psI_petf_sf4_dis(Pose const & psI, Pose const & petf, Stub const & spetf ) {
-// 	Vec sf4A = ( psI.xyz(AtomID(5,1492))+ psI.xyz(AtomID(5,1536))+ psI.xyz(AtomID(5,1489))+ psI.xyz(AtomID(5,1495)))/4.0;
-// 	Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
-// 	return sf4A.distance(spetf.local2global(sf4B));
+//  Vec sf4A = ( psI.xyz(AtomID(5,1492))+ psI.xyz(AtomID(5,1536))+ psI.xyz(AtomID(5,1489))+ psI.xyz(AtomID(5,1495)))/4.0;
+//  Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
+//  return sf4A.distance(spetf.local2global(sf4B));
 // }
 //
 // // get stup that aligns r1 to r2
 // Stub getxform(Residue const & r1, Residue const & r2) {
-// 	Stub s;
-// 	s.M = alignVectorSets(r1.xyz(1)-r1.xyz(2),r1.xyz(3)-r1.xyz(2),r2.xyz(1)-r2.xyz(2),r2.xyz(3)-r2.xyz(2));
-// 	s.v = r2.xyz(2)-s.M*r1.xyz(2);
-// 	return s;
+//  Stub s;
+//  s.M = alignVectorSets(r1.xyz(1)-r1.xyz(2),r1.xyz(3)-r1.xyz(2),r2.xyz(1)-r2.xyz(2),r2.xyz(3)-r2.xyz(2));
+//  s.v = r2.xyz(2)-s.M*r1.xyz(2);
+//  return s;
 // }
 
 
 inline void xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres=1, Size eres=0 ) {
-	if(eres==0) eres = pose.size();
-	for(Size ir = sres; ir <= eres; ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	if ( eres==0 ) eres = pose.size();
+	for ( Size ir = sres; ir <= eres; ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
 		}
 	}
 }
 inline void xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s ) {
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, s.global2local(pose.xyz(aid)) );
 		}
@@ -132,7 +132,7 @@ public:
 	void magnitude(Real mag) { mag_ = mag; }
 	void apply(core::pose::Pose & pose) {
 		Size i = start_-1 + std::ceil(uniform()*(stop_-start_+1));
-		if(uniform()<0.5) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
+		if ( uniform()<0.5 ) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
 		else              pose.set_psi(i,pose.psi(i)+gaussian()*mag_);
 	}
 	std::string get_name() const { return "SimpleBBMover"; }
@@ -141,9 +141,9 @@ typedef utility::pointer::owning_ptr<SimpleBBMover> SimpleBBMoverOP;
 
 std::string printbits(unsigned long nn) {
 	std::string s = "";
-	for(Size i = 0; i < 8*sizeof(nn); ++i) {
-		if(i%8==0) s += " ";
-		if(nn & 1UL << (8*sizeof(nn)-1-i)) s += "1";
+	for ( Size i = 0; i < 8*sizeof(nn); ++i ) {
+		if ( i%8==0 ) s += " ";
+		if ( nn & 1UL << (8*sizeof(nn)-1-i) ) s += "1";
 		else                               s += "0";
 	}
 	return s;
@@ -151,12 +151,12 @@ std::string printbits(unsigned long nn) {
 
 std::string bin2string(unsigned long bin, Size nres) {
 	std::string s = "";
-	for(Size i = 0; i < nres; ++i) {
-		for(Size j = 0; j < 2; ++j) {
+	for ( Size i = 0; i < nres; ++i ) {
+		for ( Size j = 0; j < 2; ++j ) {
 			int tmp = ( bin >> 8*i+2*j ) % 4;
 			s += ObjexxFCL::lead_zero_string_of(tmp,1);
 		}
-		if(i+1 < nres) s += "-";
+		if ( i+1 < nres ) s += "-";
 	}
 	return s;
 }
@@ -164,7 +164,7 @@ std::string bin2string(unsigned long bin, Size nres) {
 unsigned long pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	unsigned long bin = 0;
-	for(int i = 0; i < min( 16, (int)pose.size() ); ++i) {
+	for ( int i = 0; i < min( 16, (int)pose.size() ); ++i ) {
 		Real phid = pose.phi(i+1);
 		Real psid = pose.psi(i+1);
 		// TR << phid << " " << psid << std::endl;
@@ -180,23 +180,23 @@ unsigned long pose2bin(core::pose::Pose const & pose) {
 
 Size get_aln_resi(core::pose::Pose const & pose, core::Size const aln_chain, char const aln_termi) {
 	Size resi = 0, nnt = 0, nct = 0;
-	for(Size i = 1; i <= pose.size(); ++i) {
-		if(pose.residue(i).is_lower_terminus()) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue(i).is_lower_terminus() ) {
 			nnt++;
-			if(aln_termi=='N' && nnt==aln_chain) {
+			if ( aln_termi=='N' && nnt==aln_chain ) {
 				resi = i;
 				break;
 			}
 		}
-		if(pose.residue(i).is_upper_terminus()) {
+		if ( pose.residue(i).is_upper_terminus() ) {
 			nct++;
-			if(aln_termi=='C' && nnt==aln_chain) {
+			if ( aln_termi=='C' && nnt==aln_chain ) {
 				resi = i;
 				break;
 			}
 		}
 	}
-	if( 0 == resi ) utility_exit_with_message("ImplicitClashData: could not find aln resi in input pose chain: "+ObjexxFCL::string_of(aln_chain)+" term: "+aln_termi);
+	if ( 0 == resi ) utility_exit_with_message("ImplicitClashData: could not find aln resi in input pose chain: "+ObjexxFCL::string_of(aln_chain)+" term: "+aln_termi);
 	return resi;
 }
 core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, core::conformation::Residue const & fixd_resi) {
@@ -214,13 +214,13 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	Pose lnk;
 	string ggs = "GGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGS";
 	make_pose_from_sequence( lnk , "A"+ggs.substr(0,len)+"A" , *resset , true);
-	for(Size i = 1; i <= lnk.size(); ++i) {
+	for ( Size i = 1; i <= lnk.size(); ++i ) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
 	}
 	FoldTree ft = lnk.fold_tree();
-	if(ft.num_jump() != 0) utility_exit_with_message("why is there a jump in the fold tree alreaduy?!?!?!");
+	if ( ft.num_jump() != 0 ) utility_exit_with_message("why is there a jump in the fold tree alreaduy?!?!?!");
 	ObjexxFCL::FArray2D_int jump_point(2,1);
 	ObjexxFCL::FArray1D_int cuts(1);
 	cuts(1) = lnk.size()/2;
@@ -268,7 +268,7 @@ void* doit(void*) {
 	TR << "linker2 size " << linklen2 << " seq2: " << seq2 << std::endl;
 
 	make_pose_from_sequence(lnk,seq1,*cenresset,true);
-	for(Size i = 1; i <= lnk.size(); ++i) {
+	for ( Size i = 1; i <= lnk.size(); ++i ) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
@@ -288,10 +288,10 @@ void* doit(void*) {
 
 	core::pose::remove_upper_terminus_type_from_pose_residue(test,test.size());
 	core::pose::remove_lower_terminus_type_from_pose_residue(lnk,1);
-	for(Size i = 1; i <= lnk.size(); ++i) test.append_residue_by_bond(lnk.residue(i),true);
+	for ( Size i = 1; i <= lnk.size(); ++i ) test.append_residue_by_bond(lnk.residue(i),true);
 	core::pose::remove_upper_terminus_type_from_pose_residue(test,test.size());
 	core::pose::remove_lower_terminus_type_from_pose_residue(hyd,1);
-	for(Size i = 1; i <= hyd.size(); ++i) test.append_residue_by_bond(hyd.residue(i),true);
+	for ( Size i = 1; i <= hyd.size(); ++i ) test.append_residue_by_bond(hyd.residue(i),true);
 
 	test = lnk;
 
@@ -301,7 +301,7 @@ void* doit(void*) {
 	mc1->set_autotemp( true, 2.0 ); mc1->set_temperature( 2.0 );
 	TrialMover trial(bbmove,mc1);
 
-	for(int j = 1; j <= option[out::nstruct](); j++) {
+	for ( int j = 1; j <= option[out::nstruct](); j++ ) {
 		// TR << "trial " << j << std::endl;
 		trial.apply(test);
 	}
@@ -316,14 +316,14 @@ int main( int argc, char * argv [] ) {
 
 	try {
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	void* (*func)(void*) = &doit;
-	if (option[ basic::options::OptionKeys::parser::view ]()) {
-		protocols::viewer::viewer_main( func );
-	} else {
-		func(NULL);
-	}
+		void* (*func)(void*) = &doit;
+		if ( option[ basic::options::OptionKeys::parser::view ]() ) {
+			protocols::viewer::viewer_main( func );
+		} else {
+			func(NULL);
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

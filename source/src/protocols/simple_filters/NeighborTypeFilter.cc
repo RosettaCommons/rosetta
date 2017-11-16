@@ -29,7 +29,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer neighbor_type_filter_tracer( "protocols.simple_filters.NeighborTypeFilter" );
+static basic::Tracer neighbor_type_filter_tracer( "protocols.simple_filters.NeighborTypeFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP NeighborTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NeighborTypeFilter ); }

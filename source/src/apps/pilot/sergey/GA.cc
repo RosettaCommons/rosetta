@@ -47,7 +47,7 @@
 using core::Real;
 using core::Size;
 
-static THREAD_LOCAL basic::Tracer TR( "GA" );
+static basic::Tracer TR( "GA" );
 
 
 class CheeseFunction : public core::optimization::Multifunc
@@ -63,7 +63,7 @@ public:
 		Real res = 0.;
 		const Real PI = numeric::NumericTraits<Real>::pi();
 
-		for(Size i=1; i<=v.size(); i++) {
+		for ( Size i=1; i<=v.size(); i++ ) {
 			Real x = v[i] - x0;
 			res += 10+x*x - 10.*cos(2.*PI*x);
 			//res += 10 + std::abs(x)/10 - 10.*cos(2.*PI*x);
@@ -72,7 +72,7 @@ public:
 			//double a = 10. + fabs(x)/10. - 10.*cos(2.*PI*x);  res += a;
 		}
 		return res;
-    }
+	}
 
 	void dfunc( core::optimization::Multivec const &, core::optimization::Multivec &) const {}
 };
@@ -80,12 +80,12 @@ public:
 void test_GA(void)
 {
 	core::optimization::Multivec v;
-	for(int i=0; i<200; i++) v.push_back(1000.1);
+	for ( int i=0; i<200; i++ ) v.push_back(1000.1);
 
 	CheeseFunction chf;
 	core::optimization::MinimizerOptions minopt("GA", .1, false);
 	minopt.minimize_tolerance(1.),
-	minopt.ga_mutation_probability(.5);
+		minopt.ga_mutation_probability(.5);
 
 	core::optimization::GA_Minimizer gam(chf, minopt);
 	Real res = gam.run(v, 1000);
@@ -124,7 +124,7 @@ void real_test_GA()
 
 	core::optimization::MinimizerOptions options( stype/*"lbfgs_armijo_nonmonotone"*/, 1e-4, true, true );
 	options.minimize_tolerance(.001),
-	options.ga_mutation_probability(.5);
+		options.ga_mutation_probability(.5);
 	options.max_iter(1000);
 
 	core::pose::Pose pose;
@@ -141,13 +141,13 @@ int main( int argc, char * argv [] )
 
 	try {
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	//test_GA();
-	real_test_GA();
+		//test_GA();
+		real_test_GA();
 
-	TR << "GA test ended. --------------------------------" << std::endl;
-	return 0;
+		TR << "GA test ended. --------------------------------" << std::endl;
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

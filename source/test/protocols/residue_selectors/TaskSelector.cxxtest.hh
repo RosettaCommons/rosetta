@@ -40,7 +40,7 @@
 
 using namespace core::select::residue_selector;
 
-static THREAD_LOCAL basic::Tracer TR( "test.core.select.TaskSelectorTests" );
+static basic::Tracer TR( "test.core.select.TaskSelectorTests" );
 
 class TaskSelectorTests : public CxxTest::TestSuite {
 

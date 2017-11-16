@@ -73,7 +73,7 @@
 namespace core {
 namespace conformation {
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.Residue" );
+static basic::Tracer TR( "core.conformation.Residue" );
 
 /// @brief This function enforces the fact that ResidueTypes must
 /// be constructed with non-null-pointer ResidueTypeCOPs.

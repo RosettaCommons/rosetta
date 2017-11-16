@@ -25,7 +25,7 @@ namespace protocols {
 namespace legacy_sewing  {
 namespace scoring {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.legacy_sewing.scoring.LegacyBlosumScorer");
+static basic::Tracer TR("protocols.legacy_sewing.scoring.LegacyBlosumScorer");
 
 LegacyBlosumScorer::LegacyBlosumScorer() {}
 

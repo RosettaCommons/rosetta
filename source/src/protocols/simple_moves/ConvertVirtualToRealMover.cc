@@ -34,7 +34,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ConvertVirtualToRealMover" );
+static basic::Tracer TR( "protocols.simple_moves.ConvertVirtualToRealMover" );
 
 namespace protocols {
 namespace simple_moves {

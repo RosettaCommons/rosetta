@@ -51,7 +51,7 @@ namespace fragment {
 
 using namespace kinematics;
 
-static THREAD_LOCAL basic::Tracer tr( "core.fragment" );
+static basic::Tracer tr( "core.fragment" );
 
 /// @brief return a list of frames that all sample the specified region, assume all motions are allowed
 Size

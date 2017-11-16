@@ -31,7 +31,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 
-static THREAD_LOCAL basic::Tracer TR("DeNovoArchitectTests");
+static basic::Tracer TR("DeNovoArchitectTests");
 
 using namespace protocols::denovo_design::architects;
 using namespace protocols::denovo_design::components;

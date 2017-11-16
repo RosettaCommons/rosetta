@@ -197,7 +197,7 @@ Patch::~Patch() = default;
 /// @details Auto-generated virtual destructor
 PatchCase::~PatchCase() = default;
 
-static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
+static basic::Tracer tr( "core.chemical" );
 
 std::string tag_from_line( std::string const & line ) {
 	std::string tag;

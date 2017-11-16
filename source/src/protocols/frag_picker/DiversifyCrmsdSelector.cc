@@ -30,7 +30,7 @@ namespace frag_picker {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer trDiversifyCrmsdSelector(
+static basic::Tracer trDiversifyCrmsdSelector(
 	"protocols.frag_picker.DiversifyCrmsdSelector");
 
 void DiversifyCrmsdSelector::copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst) {

@@ -64,7 +64,7 @@
 namespace protocols {
 namespace match {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.match.MatcherMover" );
+static basic::Tracer tr( "protocols.match.MatcherMover" );
 
 // XRW TEMP std::string
 // XRW TEMP MatcherMoverCreator::keyname() const

@@ -43,7 +43,7 @@
 typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
 typedef utility::pointer::shared_ptr< CifParser > CifParserOP;
 
-static THREAD_LOCAL basic::Tracer TR("core.io.mmcif_IO.cxxtest");
+static basic::Tracer TR("core.io.mmcif_IO.cxxtest");
 
 using namespace core;
 

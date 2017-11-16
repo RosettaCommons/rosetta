@@ -42,7 +42,7 @@
 namespace protocols {
 namespace hotspot_hashing {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.hotspot_hashing.StubGenerator" );
+static basic::Tracer tr( "protocols.hotspot_hashing.StubGenerator" );
 
 core::conformation::ResidueOP StubGenerator::getStubByName( std::string name )
 {

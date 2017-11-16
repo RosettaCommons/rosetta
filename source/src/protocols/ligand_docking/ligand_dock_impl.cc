@@ -53,7 +53,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.main" );
+static basic::Tracer TR( "protocols.ligand_docking.main" );
 
 class LigandDockMain : public protocols::ligand_docking::LigandDockProtocol {
 public:

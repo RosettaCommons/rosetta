@@ -42,7 +42,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("RNA_DeNovoProtocolTest");
+static basic::Tracer TR("RNA_DeNovoProtocolTest");
 
 using namespace core;
 using namespace protocols::rna::movers;

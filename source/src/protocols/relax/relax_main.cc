@@ -48,11 +48,10 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.relax" );
+static basic::Tracer tr( "protocols.relax" );
 
 using namespace core;
 ////////////////////////////////////////////////////////////////////////////////////////////////////

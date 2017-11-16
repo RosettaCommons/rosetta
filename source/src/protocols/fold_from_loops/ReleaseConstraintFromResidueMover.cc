@@ -35,7 +35,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fold_from_loops.ReleaseConstraintFromResidueMover" );
+static basic::Tracer TR( "protocols.fold_from_loops.ReleaseConstraintFromResidueMover" );
 
 namespace protocols {
 namespace fold_from_loops {

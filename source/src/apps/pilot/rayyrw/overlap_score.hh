@@ -19,7 +19,7 @@
 #ifndef apps_pilot_rayyrw_overlap_score_hh
 #define apps_pilot_rayyrw_overlap_score_hh
 
-static THREAD_LOCAL basic::Tracer tr_overlap_score("overlap_score");
+static basic::Tracer tr_overlap_score("overlap_score");
 
 // read into 2 fragments pose and find the compatibility between them
 // given a pair of residue-overlapped fragments,

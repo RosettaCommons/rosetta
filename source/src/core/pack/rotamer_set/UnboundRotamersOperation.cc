@@ -43,7 +43,7 @@ namespace pack {
 namespace rotamer_set {
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.rotamer_set.UnboundRotamersOperation" );
+static basic::Tracer TR( "core.pack.rotamer_set.UnboundRotamersOperation" );
 
 
 UnboundRotamersOperation::UnboundRotamersOperation():

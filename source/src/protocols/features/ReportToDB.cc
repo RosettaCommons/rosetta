@@ -97,7 +97,6 @@ namespace features {
 /// Macros are not properly caught and passed along by my #inclusion
 /// cleanup script
 
-using basic::T;
 using basic::Tracer;
 using basic::Error;
 using basic::Warning;
@@ -135,7 +134,7 @@ using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::session;
 using utility::sql_database::sessionOP;
 
-static THREAD_LOCAL Tracer TR("protocols.features.ReportToDB");
+static Tracer TR("protocols.features.ReportToDB");
 
 ReportToDB::ReportToDB():
 	Mover("ReportToDB"),

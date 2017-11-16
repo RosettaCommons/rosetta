@@ -32,7 +32,7 @@ using namespace std;
 using namespace core;
 using namespace core::pose;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.match.LoopGrid" );
+static basic::Tracer TR( "protocols.match.LoopGrid" );
 
 namespace protocols {
 namespace match {

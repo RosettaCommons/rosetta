@@ -47,7 +47,7 @@
 //Auto Headers
 
 
-static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.IrmsdEvaluatorCreator" );
+static basic::Tracer tr( "devel.replica_docking.IrmsdEvaluatorCreator" );
 
 namespace devel {
 namespace replica_docking {

@@ -52,7 +52,6 @@
 #include <numeric/xyzVector.hh>
 #include <utility/excn/Exceptions.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -64,7 +63,7 @@ using namespace basic::options::OptionKeys;
 typedef std::string String;
 
 
-static THREAD_LOCAL basic::Tracer TR( "pair_distance" );
+static basic::Tracer TR( "pair_distance" );
 
 class ThisApplication  {
 public:
@@ -109,7 +108,7 @@ public: // constructor/deconstructor
 		output_.open( filename.str().c_str() ,std::ios::out );
 
 		ssinput_ = false;
-		if( option[ blue ].user() ) {
+		if ( option[ blue ].user() ) {
 			blueprint_ = new BluePrint( option[ blue ]() );
 			ssinfo_ = new SS_Info2( blueprint_->secstruct() );
 			ssinput_ = true;
@@ -166,7 +165,7 @@ public: // apply
 
 		Real cutoff = option[ dist ]();
 
-		if( ssinput_ ) {
+		if ( ssinput_ ) {
 			ssinfo_->set_SSorient( pose );
 			blueprint_->insert_ss_into_pose( pose );
 		} else {
@@ -179,24 +178,24 @@ public: // apply
 		Size max_ssele = ssinfo_->ss_element_id( pose.size() );
 		utility::vector1< utility::vector1< Size > > ncon_sselements( max_ssele, (utility::vector1< Size >(max_ssele, 0)));
 		utility::vector1< utility::vector1< bool > > ncon_calc( max_ssele, (utility::vector1< Size >(max_ssele, false)));
-		for ( Size i=1 ;i<=max_ssele; ++i ) {
-			for ( Size j=1 ;j<=max_ssele; ++j ) {
+		for ( Size i=1 ; i<=max_ssele; ++i ) {
+			for ( Size j=1 ; j<=max_ssele; ++j ) {
 				ncon_sselements[i][j] = 1;
 			}
 		}
 		utility::vector1< Size > ncon_per_res( pose.size(), 1 );
 		utility::vector1< bool > ncon_per_res_calc( pose.size(), false );
 
-		for( Size ii=1; ii<=pose.size(); ii++ ) {
+		for ( Size ii=1; ii<=pose.size(); ii++ ) {
 
-			if( ssinfo_->secstruct( ii ) != 'H' && ssinfo_->secstruct( ii ) != 'E' ) continue;
+			if ( ssinfo_->secstruct( ii ) != 'H' && ssinfo_->secstruct( ii ) != 'E' ) continue;
 			Size ii_ssid = ssinfo_->ss_element_id( ii );
-			for( Size jj=ii+1; jj<=pose.size(); jj++ ) {
+			for ( Size jj=ii+1; jj<=pose.size(); jj++ ) {
 
 				Size jj_ssid = ssinfo_->ss_element_id( jj );
-				if( ssinfo_->secstruct( jj ) != 'H' && ssinfo_->secstruct( jj ) != 'E' ) continue;
-				if( ssinfo_->secstruct( ii ) == 'E' && ssinfo_->secstruct( jj ) == 'E' ) continue;
-				if( ii_ssid == jj_ssid ) continue;
+				if ( ssinfo_->secstruct( jj ) != 'H' && ssinfo_->secstruct( jj ) != 'E' ) continue;
+				if ( ssinfo_->secstruct( ii ) == 'E' && ssinfo_->secstruct( jj ) == 'E' ) continue;
+				if ( ii_ssid == jj_ssid ) continue;
 
 				Real dist = ( bbpos.CB( ii ) - bbpos.CB( jj ) ).length();
 				ncon_calc[ ii_ssid ][ jj_ssid ] = true;
@@ -204,7 +203,7 @@ public: // apply
 				ncon_per_res_calc[ ii ] = true;
 				ncon_per_res_calc[ jj ] = true;
 
-				if( dist <= cutoff ) {
+				if ( dist <= cutoff ) {
 					output_ << me << " " << ii << " " << jj << " " << dist << std::endl;
 					ncon_sselements[ ii_ssid ][ jj_ssid ] ++ ;
 					ncon_per_res[ ii ] ++;
@@ -218,12 +217,12 @@ public: // apply
 		Size h( 0 );
 		Size total( 0 );
 		Size totale( 0 );
-		for( Size iaa=1; iaa<=pose.size(); iaa++ ) {
-			if( ncon_per_res_calc[ iaa ] ) {
+		for ( Size iaa=1; iaa<=pose.size(); iaa++ ) {
+			if ( ncon_per_res_calc[ iaa ] ) {
 				total ++;
 				totale += ncon_per_res[ iaa ];
 				// std::cout << iaa << " " << ncon_per_res[ iaa ] << std::endl;
-				if( ncon_per_res[ iaa ] > 1 ) {
+				if ( ncon_per_res[ iaa ] > 1 ) {
 					h++;
 				}
 			}
@@ -232,8 +231,8 @@ public: // apply
 		Real make_sure = 0.0;
 		Real entropy( 0.0 );
 		Real prob( 0.0 );
-		for( Size iaa=1; iaa<=pose.size(); iaa++ ) {
-			if( ncon_per_res_calc[ iaa ] ) {
+		for ( Size iaa=1; iaa<=pose.size(); iaa++ ) {
+			if ( ncon_per_res_calc[ iaa ] ) {
 				prob = Real( ncon_per_res[ iaa ] )/Real( totale );
 				entropy += -prob*( std::log( prob )/std::log( 2 ) );
 				// std::cout << iaa << " " << prob << std::endl;
@@ -245,9 +244,9 @@ public: // apply
 
 		// finalize
 		Size tot( 0 );
-		for ( Size i=1 ;i<=max_ssele; ++i ) {
-			for ( Size j=1 ;j<=max_ssele; ++j ) {
-				if( ncon_calc[i][j] ){
+		for ( Size i=1 ; i<=max_ssele; ++i ) {
+			for ( Size j=1 ; j<=max_ssele; ++j ) {
+				if ( ncon_calc[i][j] ) {
 					// std::cout << i << " " << j << " " << ncon_sselements[i][j] << std::endl;
 					tot += ncon_sselements[i][j] ;
 				}
@@ -256,9 +255,9 @@ public: // apply
 
 
 		Real ss_entrpy = 0.0;
-		for ( Size i=1 ;i<=max_ssele; ++i ) {
-			for ( Size j=1 ;j<=max_ssele; ++j ) {
-				if( ncon_calc[i][j] ){
+		for ( Size i=1 ; i<=max_ssele; ++i ) {
+			for ( Size j=1 ; j<=max_ssele; ++j ) {
+				if ( ncon_calc[i][j] ) {
 					Real prob = Real(ncon_sselements[i][j])/Real(tot);
 					//std::cout << prob << " " << ncon_sselements[i][j] << " " << Real(tot) << std::endl;
 					ss_entrpy += -prob*( std::log( prob )/ std::log( 2 ) );
@@ -286,7 +285,7 @@ public: // apply
 		Real total_surface( 0.0 );
 		utility::vector1< Real > rsd_sasa( calc_rsd_sasa( pose ) );
 		for ( Size iaa=2; iaa<=pose.size()-1; iaa++ ) {
-			if( ssinfo_->secstruct( iaa ) == 'E' ) {
+			if ( ssinfo_->secstruct( iaa ) == 'E' ) {
 				num++;
 				Real val( 0.0 );
 				if ( rsd_sasa[ iaa ] < minv ) {
@@ -306,8 +305,8 @@ public: // apply
 		}
 
 		std::cout << "SSE " << me << " " << ss_entrpy << " " << entropy << " "
-							<< h << "  " << total << " " << Real( h )/Real( total ) << " "
-							<< total_surface/Real( num ) << std::endl;
+			<< h << "  " << total << " " << Real( h )/Real( total ) << " "
+			<< total_surface/Real( num ) << std::endl;
 
 
 	}
@@ -328,17 +327,17 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	ThisApplication::register_options();
+		ThisApplication::register_options();
 
-	// init
-  devel::init(argc, argv);
+		// init
+		devel::init(argc, argv);
 
-	// mover
-	protocols::moves::MoverOP protocol;
-	protocol = new PairDistance();
+		// mover
+		protocols::moves::MoverOP protocol;
+		protocol = new PairDistance();
 
-	// run
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+		// run
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

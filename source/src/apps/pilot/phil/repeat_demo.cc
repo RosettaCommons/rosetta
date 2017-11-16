@@ -44,7 +44,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.repeat_demo" );
+static basic::Tracer TR( "apps.pilot.phil.repeat_demo" );
 
 // Lazy:
 using namespace basic::options;

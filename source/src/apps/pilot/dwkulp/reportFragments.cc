@@ -109,160 +109,160 @@ typedef utility::pointer::owning_ptr< AnnotatedFragData const > AnnotatedFragDat
 
 void get_fragment_sets(core::pose::Pose &_pose, string _polyAminoAcidSequence,   utility::vector1<core::fragment::ConstantLengthFragSetOP> &fragSets);
 
-static THREAD_LOCAL basic::Tracer TR( "reportFragments" );
+static basic::Tracer TR( "reportFragments" );
 
 
 int main( int argc, char * argv[] ) {
-    try {
-  // init option system
-  devel::init(argc,argv);
+	try {
+		// init option system
+		devel::init(argc,argv);
 
-  // Read in a pdb (assume pre-relaxed structure)
-  core::pose::Pose pose;
-  core::import_pose::pose_from_file(pose,basic::options::start_file(), core::import_pose::PDB_file);
+		// Read in a pdb (assume pre-relaxed structure)
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file(pose,basic::options::start_file(), core::import_pose::PDB_file);
 
-  // poly-Val or poly-Ala sequence for testing fragment picker while designing.
-  string forcePolyAAsequence = "";
-  if (basic::options::option[basic::options::OptionKeys::dwkulp::forcePolyAAfragments].user()){
-    forcePolyAAsequence = basic::options::option[basic::options::OptionKeys::dwkulp::forcePolyAAfragments]();
-  }
+		// poly-Val or poly-Ala sequence for testing fragment picker while designing.
+		string forcePolyAAsequence = "";
+		if ( basic::options::option[basic::options::OptionKeys::dwkulp::forcePolyAAfragments].user() ) {
+			forcePolyAAsequence = basic::options::option[basic::options::OptionKeys::dwkulp::forcePolyAAfragments]();
+		}
 
-  // Get sequence and residues from loop definition
-  utility::vector1<core::fragment::ConstantLengthFragSetOP> fragSets;
-  get_fragment_sets(pose,forcePolyAAsequence,fragSets);
+		// Get sequence and residues from loop definition
+		utility::vector1<core::fragment::ConstantLengthFragSetOP> fragSets;
+		get_fragment_sets(pose,forcePolyAAsequence,fragSets);
 
-  ofstream fout("data.txt");
-  core::fragment::FrameIterator fIt;
+		ofstream fout("data.txt");
+		core::fragment::FrameIterator fIt;
 
-  cout << "Positions affected by fragments: "<<fragSets[1]->min_pos()<<" "<<fragSets[1]->max_pos()<<" max frag length: "<<fragSets[1]->max_frag_length()<<endl;
-  //for (fIt = fragSets[1]->begin(); fIt != fragSets[1]->end();++fIt){
-  FrameList frames;
-  fragSets[1]->region_simple(fragSets[1]->min_pos(),fragSets[1]->max_pos(),frames);
-  //fragSets[1]->region_simple(1,fragSets[1]->max_pos() - fragSets[1]->min_pos() ,frames);
-  cout << "Frames Size: "<<frames.size()<<endl;
-  for (unsigned a = 1; a<= frames.size();a++){
-    FrameOP f = frames[a];
-    f->show(std::cout);
-    for (unsigned int i = 1; i <= f->nr_frags();i++){
-      FragDataOP fd = f->fragment_ptr(i);
-//      //fd->apply(pose,*(*fIt));
-//
-//      // Apply whole fragdata using apply(pose,frame)
-//      for (unsigned int j = 1; j <= fd->size();j++){
-//	SingleResidueFragDataCOP res = fd->get_residue(j);
-//
-//	res->apply(pose,j);
-//	char ss  = res->secstruct();
-//	char seq = res->sequence();
-//
-//	Real phi = pose.torsion(id::TorsionID( j, id::BB, 1 ));
-//	Real psi = pose.torsion(id::TorsionID( j, id::BB, 2 ));
-//
-//	std::cout << a<<" "<<i<<" "<<j<<" "<<ss<<" "<<seq<<" "<<phi<<" "<<psi<<std::endl;
-//      }
-    }
-    a++;
-  }
+		cout << "Positions affected by fragments: "<<fragSets[1]->min_pos()<<" "<<fragSets[1]->max_pos()<<" max frag length: "<<fragSets[1]->max_frag_length()<<endl;
+		//for (fIt = fragSets[1]->begin(); fIt != fragSets[1]->end();++fIt){
+		FrameList frames;
+		fragSets[1]->region_simple(fragSets[1]->min_pos(),fragSets[1]->max_pos(),frames);
+		//fragSets[1]->region_simple(1,fragSets[1]->max_pos() - fragSets[1]->min_pos() ,frames);
+		cout << "Frames Size: "<<frames.size()<<endl;
+		for ( unsigned a = 1; a<= frames.size(); a++ ) {
+			FrameOP f = frames[a];
+			f->show(std::cout);
+			for ( unsigned int i = 1; i <= f->nr_frags(); i++ ) {
+				FragDataOP fd = f->fragment_ptr(i);
+				//      //fd->apply(pose,*(*fIt));
+				//
+				//      // Apply whole fragdata using apply(pose,frame)
+				//      for (unsigned int j = 1; j <= fd->size();j++){
+				// SingleResidueFragDataCOP res = fd->get_residue(j);
+				//
+				// res->apply(pose,j);
+				// char ss  = res->secstruct();
+				// char seq = res->sequence();
+				//
+				// Real phi = pose.torsion(id::TorsionID( j, id::BB, 1 ));
+				// Real psi = pose.torsion(id::TorsionID( j, id::BB, 2 ));
+				//
+				// std::cout << a<<" "<<i<<" "<<j<<" "<<ss<<" "<<seq<<" "<<phi<<" "<<psi<<std::endl;
+				//      }
+			}
+			a++;
+		}
 
-  fout.close();
+		fout.close();
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 
 }
 
 
 void get_fragment_sets(core::pose::Pose &_pose, string _polyAminoAcidSequence,   utility::vector1<core::fragment::ConstantLengthFragSetOP> &fragSets){
 
-  string sequence;
-  string secstruct;
-  for (unsigned int j = 1; j <=_pose.size();j++){
+	string sequence;
+	string secstruct;
+	for ( unsigned int j = 1; j <=_pose.size(); j++ ) {
 
-    if (_polyAminoAcidSequence == ""){
-      sequence += oneletter_code_from_aa(_pose.aa(j));
-    } else {
-      sequence += _polyAminoAcidSequence;
-    }
-      secstruct += "L";
-  }
+		if ( _polyAminoAcidSequence == "" ) {
+			sequence += oneletter_code_from_aa(_pose.aa(j));
+		} else {
+			sequence += _polyAminoAcidSequence;
+		}
+		secstruct += "L";
+	}
 
-  cout << "Sequence is "<<sequence<<" sectstruct is "<<secstruct<<endl;
+	cout << "Sequence is "<<sequence<<" sectstruct is "<<secstruct<<endl;
 
-   // Setup a new FragmentPicker
-  FragmentPickerOP pickIt = new FragmentPicker();
+	// Setup a new FragmentPicker
+	FragmentPickerOP pickIt = new FragmentPicker();
 
-  // Create a VallProvider, which reads in a database and creates VallResidues and VallChunks
-  VallProviderOP chunks = new VallProvider();
-  chunks->vallChunksFromLibrary(basic::options::option[basic::options::OptionKeys::in::file::vall]()[1]);
+	// Create a VallProvider, which reads in a database and creates VallResidues and VallChunks
+	VallProviderOP chunks = new VallProvider();
+	chunks->vallChunksFromLibrary(basic::options::option[basic::options::OptionKeys::in::file::vall]()[1]);
 
-  // Pass the VallProvider to FragmentPicker
-  pickIt->set_vall(chunks);
+	// Pass the VallProvider to FragmentPicker
+	pickIt->set_vall(chunks);
 
-  // Setup the size fragments
-  pickIt->frag_sizes_.push_back(3);
-  if (sequence.size() > 9){
-    pickIt->frag_sizes_.push_back(9);
-  }
+	// Setup the size fragments
+	pickIt->frag_sizes_.push_back(3);
+	if ( sequence.size() > 9 ) {
+		pickIt->frag_sizes_.push_back(9);
+	}
 
-  // Setup the number of pre-filtered fragments (candidates)
-  pickIt->n_candidates_ = 100;
+	// Setup the number of pre-filtered fragments (candidates)
+	pickIt->n_candidates_ = 100;
 
-  // Setup the number of saved fragments
-  pickIt->n_frags_ = 50;
+	// Setup the number of saved fragments
+	pickIt->n_frags_ = 50;
 
-  // Set sequence string
-  pickIt->set_query_seq(sequence);
+	// Set sequence string
+	pickIt->set_query_seq(sequence);
 
-  // Set the SS string
-  pickIt->add_query_ss(secstruct,"loop");
+	// Set the SS string
+	pickIt->add_query_ss(secstruct,"loop");
 
-  // Set the picked position range
-  //pickIt->set_picked_positions(1,10); // range within query sequence
+	// Set the picked position range
+	//pickIt->set_picked_positions(1,10); // range within query sequence
 
-  // Prefix for output to a file..., in the end I will remove this..
-  pickIt->prefix_ = "fragments_design";
+	// Prefix for output to a file..., in the end I will remove this..
+	pickIt->prefix_ = "fragments_design";
 
-  // Read in the set of FragmentScoreMethods.  Look at FragmentScoreManager::create_scores() if you want to avoid reading in this file and do it by hand.
-  //  A reason for doing it by hand is that not all FragmentScoreMethods will work in this "manual" mode, because many rely on a SequenceProfile object
-  //  which normally is read in from a file .. in design mode this won't work.  In place of that, we use a ProfileScoreSubMatrix (BLOSUM62)
-  pickIt->get_score_manager()->create_scores(basic::options::option[basic::options::OptionKeys::frags::scoring::config](),pickIt);
+	// Read in the set of FragmentScoreMethods.  Look at FragmentScoreManager::create_scores() if you want to avoid reading in this file and do it by hand.
+	//  A reason for doing it by hand is that not all FragmentScoreMethods will work in this "manual" mode, because many rely on a SequenceProfile object
+	//  which normally is read in from a file .. in design mode this won't work.  In place of that, we use a ProfileScoreSubMatrix (BLOSUM62)
+	pickIt->get_score_manager()->create_scores(basic::options::option[basic::options::OptionKeys::frags::scoring::config](),pickIt);
 
-  // Setup a comparator, which sorts by the total score.
-  CompareTotalScore comparator( pickIt->get_score_manager() );
+	// Setup a comparator, which sorts by the total score.
+	CompareTotalScore comparator( pickIt->get_score_manager() );
 
 
-  // 3 residue and 9 residue collector
-  CandidatesCollectorOP collector3 = new BoundedCollector<CompareTotalScore> (
-      //10, 	  // collector must know the size of query
-	         sequence.size(), 	  // collector must know the size of query
+	// 3 residue and 9 residue collector
+	CandidatesCollectorOP collector3 = new BoundedCollector<CompareTotalScore> (
+		//10,    // collector must know the size of query
+		sequence.size(),    // collector must know the size of query
 		pickIt->n_candidates_, // how many candidates to collect
-		comparator,		  // yes, here the comparator comes to sort fragments within the collector
+		comparator,    // yes, here the comparator comes to sort fragments within the collector
 		pickIt->get_score_manager()->count_components());
-  pickIt->set_candidates_collector(3, collector3);
+	pickIt->set_candidates_collector(3, collector3);
 
-  if (sequence.size() > 9){
-    CandidatesCollectorOP collector9 = new BoundedCollector<CompareTotalScore> (
-	    			                sequence.size(), 	  // collector must know the size of query
-						pickIt->n_candidates_, // how many candidates to collect
-						comparator,		  // yes, here the comparator comes to sort fragments within the collector
-						pickIt->get_score_manager()->count_components());
+	if ( sequence.size() > 9 ) {
+		CandidatesCollectorOP collector9 = new BoundedCollector<CompareTotalScore> (
+			sequence.size(),    // collector must know the size of query
+			pickIt->n_candidates_, // how many candidates to collect
+			comparator,    // yes, here the comparator comes to sort fragments within the collector
+			pickIt->get_score_manager()->count_components());
 
-    pickIt->set_candidates_collector(9, collector9);
-  }
-
-
-   // Setup a fragment selector
-   pickIt->selector_ = new BestTotalScoreSelector(pickIt->n_frags_, pickIt->get_score_manager());
+		pickIt->set_candidates_collector(9, collector9);
+	}
 
 
-  // Simplest selecting fragments and writing a fragment database file out.... we will have to modify this function later to avoid "save_fragments" call.
-  pickIt->bounded_protocol();
+	// Setup a fragment selector
+	pickIt->selector_ = new BestTotalScoreSelector(pickIt->n_frags_, pickIt->get_score_manager());
 
-  cout << "Get Fragments for "<<_pose.pdb_info()->number(1)<<endl;
-  fragSets = pickIt->getFragSet(_pose.pdb_info()->number(1));
+
+	// Simplest selecting fragments and writing a fragment database file out.... we will have to modify this function later to avoid "save_fragments" call.
+	pickIt->bounded_protocol();
+
+	cout << "Get Fragments for "<<_pose.pdb_info()->number(1)<<endl;
+	fragSets = pickIt->getFragSet(_pose.pdb_info()->number(1));
 }
 
 

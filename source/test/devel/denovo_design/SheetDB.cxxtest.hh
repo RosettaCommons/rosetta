@@ -50,7 +50,7 @@
 
 #include <devel/denovo_design/components/util.hh>
 
-static THREAD_LOCAL basic::Tracer TR("devel.denovo_design.SheetDB.cxxtest");
+static basic::Tracer TR("devel.denovo_design.SheetDB.cxxtest");
 
 // --------------- Test Class --------------- //
 class SheetDBTests : public CxxTest::TestSuite {

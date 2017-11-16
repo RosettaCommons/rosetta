@@ -26,7 +26,7 @@
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_MultiSuite" );
+static basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_MultiSuite" );
 
 namespace protocols {
 namespace recces {

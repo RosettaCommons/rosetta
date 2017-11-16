@@ -50,7 +50,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer trPhiPsiRmsd(
+static basic::Tracer trPhiPsiRmsd(
 	"protocols.frag_picker.scores.PhiPsiRmsd");
 
 PhiPsiRmsd::PhiPsiRmsd(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,

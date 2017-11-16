@@ -67,7 +67,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/coupled_moves.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.coupled_moves" );
+static basic::Tracer TR( "protocols.coupled_moves" );
 
 namespace protocols {
 namespace coupled_moves {

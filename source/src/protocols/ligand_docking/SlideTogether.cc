@@ -39,7 +39,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer slide_together_tracer( "protocols.ligand_docking.ligand_options.slide_together" );
+static basic::Tracer slide_together_tracer( "protocols.ligand_docking.ligand_options.slide_together" );
 
 // XRW TEMP std::string
 // XRW TEMP SlideTogetherCreator::keyname() const

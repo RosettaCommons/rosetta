@@ -44,7 +44,7 @@ using ObjexxFCL::format::I;
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.AtomLevelDomainMap" );
+static basic::Tracer TR( "protocols.toolbox.AtomLevelDomainMap" );
 
 using namespace core;
 using core::id::AtomID;

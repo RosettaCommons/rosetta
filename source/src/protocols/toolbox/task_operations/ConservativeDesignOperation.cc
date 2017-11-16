@@ -28,7 +28,7 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.ConservativeDesignOperation" );
+static basic::Tracer TR( "protocols.toolbox.task_operations.ConservativeDesignOperation" );
 
 namespace protocols {
 namespace toolbox {

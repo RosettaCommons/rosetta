@@ -39,10 +39,9 @@
 
 
 // Forward declarations
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.metal_interface.MatchGrafter" );
+static basic::Tracer TR( "protocols.metal_interface.MatchGrafter" );
 
 typedef core::pose::Pose Pose;
 typedef numeric::xyzVector<core::Real> point;

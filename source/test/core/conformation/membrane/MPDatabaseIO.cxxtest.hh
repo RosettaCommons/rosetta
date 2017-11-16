@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 		core/membrane/MPDatabaseIO.cxxtest.hh
+/// @file   core/membrane/MPDatabaseIO.cxxtest.hh
 ///
-/// @brief 		Test Suite for Membrane Protein Derived Atom and Residue Types
+/// @brief   Test Suite for Membrane Protein Derived Atom and Residue Types
 /// @details    CxxTest suite
 ///
-/// @author 	Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified: 1/26/14
 
 // Test Headers
@@ -40,109 +40,109 @@
 #include <cstdlib>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR("core.conformation.membrane.MPDatabaseIO.cxxtest");
+static basic::Tracer TR("core.conformation.membrane.MPDatabaseIO.cxxtest");
 
 class MPDatabaseIOTest : public CxxTest::TestSuite {
 
 public: // test functions
 
-    /// Test Setup Functions ////////
+	/// Test Setup Functions ////////
 
-    /// @brief Setup Test
-    void setUp() {
+	/// @brief Setup Test
+	void setUp() {
 
-        // Initialize
-        core_init();
-    }
+		// Initialize
+		core_init();
+	}
 
-    /// @brief Standard Tear Down
-    void tearDown() {}
+	/// @brief Standard Tear Down
+	void tearDown() {}
 
 
-    /// @brief Load in a Centroid Pose and Check rsd/atom types
-    void test_centroid_db() {
+	/// @brief Load in a Centroid Pose and Check rsd/atom types
+	void test_centroid_db() {
 
-        using namespace core::chemical;
-        using namespace core::conformation;
+		using namespace core::chemical;
+		using namespace core::conformation;
 
-        TR << "Testing membrane protein centroid database attributes..." << std::endl;
+		TR << "Testing membrane protein centroid database attributes..." << std::endl;
 
-        // Residue type information
-        ResidueTypeSetCAP const & residue_set(
-                                          core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )
-                                          );
+		// Residue type information
+		ResidueTypeSetCAP const & residue_set(
+			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )
+		);
 
-        // Create a membrane and embedding residue
-        ResidueTypeCOPs const & emb_list( residue_set->name3_map("EMB") );
-        ResidueTypeCOPs const & mem_list( residue_set->name3_map("MEM") );
+		// Create a membrane and embedding residue
+		ResidueTypeCOPs const & emb_list( residue_set->name3_map("EMB") );
+		ResidueTypeCOPs const & mem_list( residue_set->name3_map("MEM") );
 
-        ResidueType const & membrane( *mem_list[1] );
-        ResidueType const & embedding( *emb_list[1] );
+		ResidueType const & membrane( *mem_list[1] );
+		ResidueType const & embedding( *emb_list[1] );
 
-        ResidueOP mem( ResidueFactory::create_residue(membrane) );
-        ResidueOP emb( ResidueFactory::create_residue(embedding) );
+		ResidueOP mem( ResidueFactory::create_residue(membrane) );
+		ResidueOP emb( ResidueFactory::create_residue(embedding) );
 
-        // Get AA base types
-        AA mem_aa = mem->aa();
-        AA emb_aa = emb->aa();
+		// Get AA base types
+		AA mem_aa = mem->aa();
+		AA emb_aa = emb->aa();
 
-        // String type checking for membrane residues
-        TS_ASSERT_EQUALS( mem->name().compare("MEM"), 0);
-        TS_ASSERT_EQUALS( name_from_aa( mem_aa ).compare("UNK"), 0);
-        TS_ASSERT_EQUALS( mem->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
-        TS_ASSERT_EQUALS( mem->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
-        TS_ASSERT_EQUALS( mem->type().atom_type( 3 ).atom_type_name().compare("MPtk"), 0 );
+		// String type checking for membrane residues
+		TS_ASSERT_EQUALS( mem->name().compare("MEM"), 0);
+		TS_ASSERT_EQUALS( name_from_aa( mem_aa ).compare("UNK"), 0);
+		TS_ASSERT_EQUALS( mem->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
+		TS_ASSERT_EQUALS( mem->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
+		TS_ASSERT_EQUALS( mem->type().atom_type( 3 ).atom_type_name().compare("MPtk"), 0 );
 
-        // String type checking for embedding residues
-        TS_ASSERT_EQUALS( emb->name().compare("EMB"), 0);
-        TS_ASSERT_EQUALS( name_from_aa( emb_aa ).compare("UNK"), 0);
-        TS_ASSERT_EQUALS( emb->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
-        TS_ASSERT_EQUALS( emb->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
-        TS_ASSERT_EQUALS( emb->type().atom_type( 3 ).atom_type_name().compare("MPdp"), 0 );
+		// String type checking for embedding residues
+		TS_ASSERT_EQUALS( emb->name().compare("EMB"), 0);
+		TS_ASSERT_EQUALS( name_from_aa( emb_aa ).compare("UNK"), 0);
+		TS_ASSERT_EQUALS( emb->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
+		TS_ASSERT_EQUALS( emb->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
+		TS_ASSERT_EQUALS( emb->type().atom_type( 3 ).atom_type_name().compare("MPdp"), 0 );
 
-    }
+	}
 
-    /// @brief Load in a Fullatom Pose and Check rsd/atom types
-    void test_fullatom_db() {
+	/// @brief Load in a Fullatom Pose and Check rsd/atom types
+	void test_fullatom_db() {
 
-        using namespace core::chemical;
-        using namespace core::conformation;
+		using namespace core::chemical;
+		using namespace core::conformation;
 
-        TR << "Testing membrane protein fullatom (fa_standard) database attributes..." << std::endl;
+		TR << "Testing membrane protein fullatom (fa_standard) database attributes..." << std::endl;
 
-        // Residue type information
-        ResidueTypeSetCAP const & residue_set(
-		  core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
-		  );
+		// Residue type information
+		ResidueTypeSetCAP const & residue_set(
+			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
+		);
 
-        // Create a membrane and embedding residue
-        ResidueTypeCOPs const & emb_list( residue_set->name3_map("EMB") );
-        ResidueTypeCOPs const & mem_list( residue_set->name3_map("MEM") );
+		// Create a membrane and embedding residue
+		ResidueTypeCOPs const & emb_list( residue_set->name3_map("EMB") );
+		ResidueTypeCOPs const & mem_list( residue_set->name3_map("MEM") );
 
-        ResidueType const & membrane( *mem_list[1] );
-        ResidueType const & embedding( *emb_list[1] );
+		ResidueType const & membrane( *mem_list[1] );
+		ResidueType const & embedding( *emb_list[1] );
 
-        ResidueOP mem( ResidueFactory::create_residue(membrane) );
-        ResidueOP emb( ResidueFactory::create_residue(embedding) );
+		ResidueOP mem( ResidueFactory::create_residue(membrane) );
+		ResidueOP emb( ResidueFactory::create_residue(embedding) );
 
-        // Get AA base types
-        AA mem_aa = mem->aa();
-        AA emb_aa = emb->aa();
+		// Get AA base types
+		AA mem_aa = mem->aa();
+		AA emb_aa = emb->aa();
 
-        // String type checking for membrane residues
-        TS_ASSERT_EQUALS( mem->name().compare("MEM"), 0);
-        TS_ASSERT_EQUALS( name_from_aa( mem_aa ).compare("UNK"), 0);
-        TS_ASSERT_EQUALS( mem->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
-        TS_ASSERT_EQUALS( mem->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
-        TS_ASSERT_EQUALS( mem->type().atom_type( 3 ).atom_type_name().compare("MPtk"), 0 );
+		// String type checking for membrane residues
+		TS_ASSERT_EQUALS( mem->name().compare("MEM"), 0);
+		TS_ASSERT_EQUALS( name_from_aa( mem_aa ).compare("UNK"), 0);
+		TS_ASSERT_EQUALS( mem->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
+		TS_ASSERT_EQUALS( mem->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
+		TS_ASSERT_EQUALS( mem->type().atom_type( 3 ).atom_type_name().compare("MPtk"), 0 );
 
-        // String type checking for embedding residues
-        TS_ASSERT_EQUALS( emb->name().compare("EMB"), 0);
-        TS_ASSERT_EQUALS( name_from_aa( emb_aa ).compare("UNK"), 0);
-        TS_ASSERT_EQUALS( emb->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
-        TS_ASSERT_EQUALS( emb->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
-        TS_ASSERT_EQUALS( emb->type().atom_type( 3 ).atom_type_name().compare("MPdp"), 0 );
+		// String type checking for embedding residues
+		TS_ASSERT_EQUALS( emb->name().compare("EMB"), 0);
+		TS_ASSERT_EQUALS( name_from_aa( emb_aa ).compare("UNK"), 0);
+		TS_ASSERT_EQUALS( emb->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
+		TS_ASSERT_EQUALS( emb->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
+		TS_ASSERT_EQUALS( emb->type().atom_type( 3 ).atom_type_name().compare("MPdp"), 0 );
 
-    }
+	}
 }; // test suite - MPDatabase IO
 

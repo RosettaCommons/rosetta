@@ -29,7 +29,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/options/OptionCollection.hh>
 
-static THREAD_LOCAL basic::Tracer TR("antibody_numbering_converter");
+static basic::Tracer TR("antibody_numbering_converter");
 
 
 void register_options() {

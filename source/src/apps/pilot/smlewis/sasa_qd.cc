@@ -30,11 +30,10 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.sasa_qd" );
+static basic::Tracer TR( "apps.pilot.smlewis.sasa_qd" );
 
 class sasa_qdMover : public protocols::moves::Mover {
 public:
@@ -42,9 +41,9 @@ public:
 
 		using core::pose::metrics::CalculatorFactory;
 		//create the SasaCalculatorLegacy in the constructor (to ensure it will always exist)
-		if( CalculatorFactory::Instance().check_calculator_exists( Sasa_ ) ){
+		if ( CalculatorFactory::Instance().check_calculator_exists( Sasa_ ) ) {
 			Warning() << "In sasa_qd, calculator " << Sasa_
-			<< " already exists, this is hopefully correct for your purposes" << std::endl;
+				<< " already exists, this is hopefully correct for your purposes" << std::endl;
 		} else {
 			CalculatorFactory::Instance().register_calculator( Sasa_, new core::pose::metrics::simple_calculators::SasaCalculatorLegacy);
 		}
@@ -68,7 +67,7 @@ public:
 		std::string const jobname(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 
 		TR << jobname << " PDBres PDBchain residue restype SASA" << std::endl;
-		for(core::Size i(1); i<=nres; ++i){
+		for ( core::Size i(1); i<=nres; ++i ) {
 			TR
 				<< jobname << " "
 				<< pose.pdb_info()->pose2pdb(i) << " "
@@ -96,13 +95,13 @@ main( int argc, char* argv[] )
 
 	try {
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go(new sasa_qdMover());
+		protocols::jd2::JobDistributor::get_instance()->go(new sasa_qdMover());
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
-	return 0;
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

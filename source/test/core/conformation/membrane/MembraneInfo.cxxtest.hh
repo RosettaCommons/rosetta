@@ -49,7 +49,7 @@ using namespace core::conformation;
 using namespace core::conformation::membrane;
 using namespace protocols::membrane;
 
-static THREAD_LOCAL basic::Tracer TR("core.conformation.membrane.MembraneInfo.cxxtest");
+static basic::Tracer TR("core.conformation.membrane.MembraneInfo.cxxtest");
 
 class MembraneInfoTest : public CxxTest::TestSuite {
 

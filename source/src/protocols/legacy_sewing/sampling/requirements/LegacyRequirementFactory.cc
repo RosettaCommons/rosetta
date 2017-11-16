@@ -46,7 +46,7 @@ namespace legacy_sewing  {
 namespace sampling {
 namespace requirements {
 
-static THREAD_LOCAL basic::Tracer tr("protocols.legacy_sewing.sampling.requirements.LegacyRequirementFactory");
+static basic::Tracer tr("protocols.legacy_sewing.sampling.requirements.LegacyRequirementFactory");
 
 /// @details Private constructor insures correctness of singleton.
 LegacyRequirementFactory::LegacyRequirementFactory() {}

@@ -51,7 +51,7 @@
 #include <string>
 #include <algorithm>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.SilentFileJobOutputter" );
+static basic::Tracer tr( "protocols.jd2.SilentFileJobOutputter" );
 
 namespace protocols {
 namespace jd2 {

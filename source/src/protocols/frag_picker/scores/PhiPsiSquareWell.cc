@@ -51,7 +51,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer tr(
+static basic::Tracer tr(
 	"protocols.frag_picker.scores.PhiPsiSquareWell");
 
 PhiPsiSquareWell::PhiPsiSquareWell(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,

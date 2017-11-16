@@ -16,7 +16,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.free_peptide_movers.CircularPermuteFreePeptideMover" );
+static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.free_peptide_movers.CircularPermuteFreePeptideMover" );
 
 
 namespace protocols {

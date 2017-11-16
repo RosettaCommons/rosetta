@@ -72,7 +72,6 @@
 // //silly using/typedef
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -87,7 +86,7 @@ using std::endl;
 
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer tt( "demo.phil.dna_design_test", basic::t_info );
+static basic::Tracer tt( "demo.phil.dna_design_test", basic::t_info );
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // rescale phosphate charges by desired amount
@@ -155,13 +154,13 @@ design_test()
 	namespace OK = OptionKeys;
 	// using namespace basic::options::OptionKeys;
 	// using namespace basic::options::OptionKeys::dna::specificity;
- 	using namespace scoring;
+	using namespace scoring;
 	using namespace conformation;
 	using namespace chemical;
 	using namespace kinematics;
 	using namespace optimization;
- 	//using namespace scoring::dna;
- 	using namespace pose;
+	//using namespace scoring::dna;
+	using namespace pose;
 
 	bool const dry_run( option[ OK::run::dry_run ] );
 	bool const only_repack( option[ OK::dna::specificity::only_repack ] );
@@ -308,7 +307,7 @@ design_test()
 				using namespace pack::rotamer_set;
 				RotamerCouplingsOP couplings( new RotamerCouplings() );
 				couplings->resize( nres );
-				for ( Size i=1;i<= nres; ++i ){
+				for ( Size i=1; i<= nres; ++i ) {
 					if ( partner[i] ) {
 						(*couplings)[i].first = partner[i];
 						(*couplings)[i].second = new conformation::WatsonCrickResidueMatcher();
@@ -504,10 +503,10 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

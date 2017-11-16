@@ -30,7 +30,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
+static basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
 namespace protocols {
 namespace noesy_assign {

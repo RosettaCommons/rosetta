@@ -141,7 +141,7 @@ OPT_KEY( String, target_pose_start_2)
 OPT_KEY( Boolean, align_bb)
 // OPT_KEY( String, reference)
 
-static THREAD_LOCAL basic::Tracer TR("apps.pilot.zibochen.pad_helices");
+static basic::Tracer TR("apps.pilot.zibochen.pad_helices");
 
 ////////////////////////////////////////////////
 int

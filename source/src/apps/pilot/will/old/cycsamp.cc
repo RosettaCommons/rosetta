@@ -97,7 +97,7 @@ using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using namespace basic::options;
 
-static THREAD_LOCAL basic::Tracer TR( "cycgly_bbg8ta3" );
+static basic::Tracer TR( "cycgly_bbg8ta3" );
 
 
 OPT_1GRP_KEY(Real,probabilities,localbb)
@@ -120,11 +120,11 @@ struct AbsFunc : public core::scoring::constraints::Func {
 	clone() const { return new AbsFunc( *this ); }
 	Real func( Real const x ) const {
 		Real const z = ( x-x0_ )/sd_;
-		if(z < 0) return -z;
+		if ( z < 0 ) return -z;
 		else return z;
 	}
 	Real dfunc( Real const x ) const {
-		if(x-x0_ < 0) return -1.0/sd_;
+		if ( x-x0_ < 0 ) return -1.0/sd_;
 		else return 1.0/sd_;
 	}
 	void read_data( std::istream & in ){ in >> x0_ >> sd_;  }
@@ -140,8 +140,8 @@ private:
 
 
 Real mod360(Real x) {
-	while(x >  180.0) x -= 360.0;
-	while(x < -180.0) x += 360.0;
+	while ( x >  180.0 ) x -= 360.0;
+	while ( x < -180.0 ) x += 360.0;
 	return x;
 }
 
@@ -153,7 +153,7 @@ public:
 	CycBBMover(Pose const & pose, Real mag) : nres_(pose.size()-2),copyres_(pose.size()-1),mag_(mag) {}
 	void apply(core::pose::Pose & pose) {
 		Size i = std::ceil(numeric::random::uniform()*nres_);
-		if(     numeric::random::uniform()<0.5) pose.set_phi(i,pose.phi(i)+numeric::random::gaussian()*mag_);
+		if (     numeric::random::uniform()<0.5 ) pose.set_phi(i,pose.phi(i)+numeric::random::gaussian()*mag_);
 		else                                    pose.set_psi(i,pose.psi(i)+numeric::random::gaussian()*mag_);
 		// if(     numeric::random::uniform()<0.45) pose.set_phi(i,pose.phi(i)+numeric::random::gaussian()*mag_);
 		// else if(numeric::random::uniform()<0.90) pose.set_psi(i,pose.psi(i)+numeric::random::gaussian()*mag_);
@@ -162,11 +162,11 @@ public:
 		// else if(numeric::random::uniform()<0.990) pose.set_psi(i,pose.psi(i)+numeric::random::gaussian()*mag_);
 		// else                                      pose.set_omega(i,mod360(pose.psi(i)+180.0));
 		// make sure end res is identical
-		if( 1 == i ) {
+		if ( 1 == i ) {
 			pose.set_phi(copyres_,pose.phi(1));
 			pose.set_psi(copyres_,pose.psi(1));
 		}
-		if( 2 == i ) {
+		if ( 2 == i ) {
 			pose.set_phi(copyres_+1,pose.phi(1));
 			pose.set_psi(copyres_+1,pose.psi(1));
 		}
@@ -212,13 +212,13 @@ void linmin(Pose & pose, ScoreFunctionOP sf) {
 Pose cyclic_perm(Pose const & orig, Size start, bool mirror=false) {
 	Pose pose;
 	pose.append_residue_by_jump(orig.residue(start),1);
-	for(Size i = 1; i <= orig.size()-1; ++i) {
+	for ( Size i = 1; i <= orig.size()-1; ++i ) {
 		// std::cout << "appending res " << (i+start-1)%orig.size()+1 << std::endl;
 		pose.append_residue_by_bond(orig.residue((start+i-1)%orig.size()+1));
 	}
-	if(mirror) {
-		for(Size i = 1; i <= pose.size(); ++i) {
-			for(Size j = 1; j <= pose.residue_type(i).natoms(); ++j) {
+	if ( mirror ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
+			for ( Size j = 1; j <= pose.residue_type(i).natoms(); ++j ) {
 				numeric::xyzVector<Real> xyz = pose.xyz(AtomID(j,i));
 				xyz.z() = - xyz.z();
 				pose.set_xyz(AtomID(j,i),xyz);
@@ -232,10 +232,10 @@ Pose cyclic_perm(Pose const & orig, Size start, bool mirror=false) {
 
 Real cyclic_all_atom_rmsd(Pose const & pose, Pose const & other) {
 	Real mr = 9e9;
-	for(Size m = 0; m <= 1; ++m) { // true false
-		for(Size i = 1; i <= pose.size(); ++i) {
+	for ( Size m = 0; m <= 1; ++m ) { // true false
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			Real r = core::scoring::all_atom_rmsd( cyclic_perm(pose,i,m==1), other );
-			if( r < mr ) mr = r;
+			if ( r < mr ) mr = r;
 		}
 	}
 	return mr;
@@ -243,10 +243,10 @@ Real cyclic_all_atom_rmsd(Pose const & pose, Pose const & other) {
 
 Real cyclic_ca_rmsd(Pose const & pose, Pose const & other) {
 	Real mr = 9e9;
-	for(Size m = 0; m <= 1; ++m) { // true false
-		for(Size i = 1; i <= pose.size(); ++i) {
+	for ( Size m = 0; m <= 1; ++m ) { // true false
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			Real r = core::scoring::CA_rmsd( cyclic_perm(pose,i,m==1), other );
-			if( r < mr ) mr = r;
+			if ( r < mr ) mr = r;
 		}
 	}
 	return mr;
@@ -256,14 +256,14 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 	Real mr = 9e9;
 	Size am = 0;
 	Size amm = 0;
-	for(Size m = 0; m <= 1; ++m) { // true false
-		for(Size i = 1; i <= move.size(); ++i) {
+	for ( Size m = 0; m <= 1; ++m ) { // true false
+		for ( Size i = 1; i <= move.size(); ++i ) {
 			// Pose tmp = cyclic_perm(move,i,m==1);
 			// tmp.dump_pdb("cyc_sup_test_"+ObjexxFCL::string_of(m)+"_"+ObjexxFCL::string_of(i)+".pdb");
 			// Real r = core::scoring::all_atom_rmsd( tmp, ref );
 			Real r = core::scoring::all_atom_rmsd( cyclic_perm(move,i,m==1), ref );
 			// TR << "RMS " << m << " " << i << " " << r << std::endl;
-			if( r < mr ) {
+			if ( r < mr ) {
 				mr = r;
 				am = i;
 				amm = m;
@@ -283,9 +283,9 @@ Size    const MAXRES  = 16;
 
 std::string printbits(BINTYPE nn) {
 	std::string s = "";
-	for(Size i = 0; i < 8*sizeof(nn); ++i) {
-		if(i%8==0) s += " ";
-		if(nn & BINTYPE(1u) << (8*sizeof(nn)-1-i)) s += "1";
+	for ( Size i = 0; i < 8*sizeof(nn); ++i ) {
+		if ( i%8==0 ) s += " ";
+		if ( nn & BINTYPE(1u) << (8*sizeof(nn)-1-i) ) s += "1";
 		else                                       s += "0";
 	}
 	return s;
@@ -294,12 +294,12 @@ std::string printbits(BINTYPE nn) {
 std::string bin2string(BINTYPE bin, Size nres) {
 	nres = min(nres,MAXRES);
 	std::string s = "";
-	for(Size i = 0; i < nres; ++i) {
-		for(Size j = 0; j < 2; ++j) {
+	for ( Size i = 0; i < nres; ++i ) {
+		for ( Size j = 0; j < 2; ++j ) {
 			int tmp = ( bin >> 2*BINBITS*i+BINBITS*j ) % BINSIZE;
 			s += ObjexxFCL::lead_zero_string_of(tmp,1);
 		}
-		if(i+1 < nres) s += "-";
+		if ( i+1 < nres ) s += "-";
 	}
 	return s;
 }
@@ -309,7 +309,7 @@ BINTYPE pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	int nres = min(pose.size(),MAXRES);
 	BINTYPE bin = 0;
-	for(int i = 0; i < nres; ++i) {
+	for ( int i = 0; i < nres; ++i ) {
 		// Real phid = pose.phi(i+1);
 		// Real psid = pose.psi(i+1);
 		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.size())%pose.size()+1).xyz("C" );
@@ -339,8 +339,8 @@ Size compute_num_bins(Size nres) {
 	float ntot = std::pow((float)BINSIZE,(int)(2*nres));
 	TR << "computing num bins... " << ntot << std::endl;
 	std::set<BINTYPE> uniq;
-	for(BINTYPE bin = 0; bin < ntot; ++bin) {
-		if( bin % 1000000 == 0 ) TR << "compute_num_bins " << uniq.size() << " of " << bin << std::endl;
+	for ( BINTYPE bin = 0; bin < ntot; ++bin ) {
+		if ( bin % 1000000 == 0 ) TR << "compute_num_bins " << uniq.size() << " of " << bin << std::endl;
 		// uniq.insert( cyclic_unique_bin(bin,nres) );
 	}
 	TR << "TOTAL (not cyclicly unique) bins: " << uniq.size() << " of total non-unique " << ntot << std::endl;
@@ -349,12 +349,12 @@ Size compute_num_bins(Size nres) {
 
 
 void fixH(core::pose::Pose & pose) {
-	for(Size i = 1; i <= pose.size(); ++i) {
-		if(!pose.residue(i).has("H")) continue;
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( !pose.residue(i).has("H") ) continue;
 		numeric::xyzVector<Real> n  = pose.residue(i).xyz("N");
 		numeric::xyzVector<Real> ca = pose.residue(i).xyz("CA");
 		Size in = i-1;
-		if(in == 0) in = pose.size();
+		if ( in == 0 ) in = pose.size();
 		numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
 		numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
 		pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
@@ -363,14 +363,14 @@ void fixH(core::pose::Pose & pose) {
 
 void cyclize_pose(core::pose::Pose & pose) {
 	Size N = pose.size();
-	for(Size i = 1; i <= N; ++i) {
-		if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
-		if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
-		if(pose.residue(i).has_variant_type("CUTPOINT_UPPER")) core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_UPPER",i);
-		if(pose.residue(i).has_variant_type("CUTPOINT_LOWER")) core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",i);
+	for ( Size i = 1; i <= N; ++i ) {
+		if ( pose.residue(i).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
+		if ( pose.residue(i).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
+		if ( pose.residue(i).has_variant_type("CUTPOINT_UPPER") ) core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_UPPER",i);
+		if ( pose.residue(i).has_variant_type("CUTPOINT_LOWER") ) core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",i);
 	}
-	if(!pose.residue(1).has_variant_type("CUTPOINT_UPPER")) core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_UPPER",1);
-	if(!pose.residue(N).has_variant_type("CUTPOINT_LOWER")) core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",N);
+	if ( !pose.residue(1).has_variant_type("CUTPOINT_UPPER") ) core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_UPPER",1);
+	if ( !pose.residue(N).has_variant_type("CUTPOINT_LOWER") ) core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",N);
 	pose.conformation().declare_chemical_bond( 1, "N", N, "C" );
 	fixH(pose);
 	using namespace core::scoring::constraints;
@@ -392,7 +392,7 @@ public:
 	void apply(core::pose::Pose & pose) {
 		mover_->apply(pose);
 		fixH(pose);
-		if(numeric::random::uniform() < 0.01) minimize(pose,sf_);
+		if ( numeric::random::uniform() < 0.01 ) minimize(pose,sf_);
 		else                                  linmin  (pose,sf_);
 
 	}
@@ -411,23 +411,23 @@ void* doit(void*) {
 
 	// score functions
 	ScoreFunctionOP sf = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
-	                sf->set_weight(core::scoring::rama,1.0);
-	                sf->set_weight(core::scoring::omega,1.0);
+	sf->set_weight(core::scoring::rama,1.0);
+	sf->set_weight(core::scoring::omega,1.0);
 	ScoreFunctionOP sfc = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
-	                sfc->set_weight(core::scoring::rama,1.0);
-	                sfc->set_weight(core::scoring::atom_pair_constraint,2.0);
-	                sfc->set_weight(core::scoring::omega,1.0);
+	sfc->set_weight(core::scoring::rama,1.0);
+	sfc->set_weight(core::scoring::atom_pair_constraint,2.0);
+	sfc->set_weight(core::scoring::omega,1.0);
 	ScoreFunctionOP sffa = core::scoring::get_score_function();
-	                sffa->set_weight(core::scoring::atom_pair_constraint,5.0);
-	                sffa->set_weight(core::scoring::omega,1.0);
-	                // sffa->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
-	                // sffa->set_weight(core::scoring::hbond_lr_bb,2.0); // up from 1.17
-	                sffa->set_weight(core::scoring::fa_intra_rep,0.4); // up from tiny
+	sffa->set_weight(core::scoring::atom_pair_constraint,5.0);
+	sffa->set_weight(core::scoring::omega,1.0);
+	// sffa->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
+	// sffa->set_weight(core::scoring::hbond_lr_bb,2.0); // up from 1.17
+	sffa->set_weight(core::scoring::fa_intra_rep,0.4); // up from tiny
 	ScoreFunctionOP sffastd = core::scoring::get_score_function();
-	                sffastd->set_weight(core::scoring::omega,1.0);
-	                // sffastd->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
-	                // sffastd->set_weight(core::scoring::hbond_lr_bb,2.0); // up from 1.17
-	                sffastd->set_weight(core::scoring::fa_intra_rep,0.4); // up from tiny
+	sffastd->set_weight(core::scoring::omega,1.0);
+	// sffastd->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
+	// sffastd->set_weight(core::scoring::hbond_lr_bb,2.0); // up from 1.17
+	sffastd->set_weight(core::scoring::fa_intra_rep,0.4); // up from tiny
 
 
 	// compute_num_bins(N);
@@ -441,14 +441,14 @@ void* doit(void*) {
 	// core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
 	core::import_pose::pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
 	Size N = pose.size();
-	if( N > 4 * (Size)sizeof(BINTYPE) ) {
+	if ( N > 4 * (Size)sizeof(BINTYPE) ) {
 		utility_exit_with_message("my stupid way of binning chis uses an unsigned short/long, and can't handle that many residues!\nthere is probably a way around this to get maybe 3 more residues easily, or by making the key a pair of longs o rthe bins smaller....");
 	}
 
-	if (option[parser::view]()) protocols::viewer::add_conformation_viewer(pose.conformation(),"cycsamp",1000,1000);
+	if ( option[parser::view]() ) protocols::viewer::add_conformation_viewer(pose.conformation(),"cycsamp",1000,1000);
 
-	for(Size i = 1; i <= pose.size(); ++i) {
-		if(pose.residue(i).name3()=="GLY" || pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="DPR" ) continue;
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue(i).name3()=="GLY" || pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="DPR" ) continue;
 		core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set().name_map("ALA"));
 	}
 
@@ -488,7 +488,7 @@ void* doit(void*) {
 	core::pose::Pose start_pose = pose;
 	time_t prevt = clock();
 	Size itemp = temps.size();
-	for(int ITER=1; ITER <= option[out::nstruct](); ITER++) {
+	for ( int ITER=1; ITER <= option[out::nstruct](); ITER++ ) {
 
 		trial->apply( pose );
 
@@ -496,18 +496,18 @@ void* doit(void*) {
 		// if(numeric::random::uniform() < 0.001) pose.dump_pdb("test_"+ObjexxFCL::string_of(ITER)+".pdb");
 
 		// temperature changes:
-		if(ITER%1000 == 0) {
+		if ( ITER%1000 == 0 ) {
 			itemp--;
-			if(itemp==0) itemp = temps.size();
+			if ( itemp==0 ) itemp = temps.size();
 			mc->set_temperature(temps[itemp]);
 		}
 
-		if( trial->num_accepts() > nrecorded ) {// last move was an accept
+		if ( trial->num_accepts() > nrecorded ) { // last move was an accept
 			BINTYPE bin = pose2bin(pose);
 			bincount[bin]++;
-			if(pose.energies().total_energy() <= option[cyclic::energy_cut]()) {
-				if( posebins.find(bin)==posebins.end() || (*sffa)(pose) < (*sffa)(*posebins[bin]) ) {
-					if( basic::options::option[basic::options::OptionKeys::out::file::o].user() ) {
+			if ( pose.energies().total_energy() <= option[cyclic::energy_cut]() ) {
+				if ( posebins.find(bin)==posebins.end() || (*sffa)(pose) < (*sffa)(*posebins[bin]) ) {
+					if ( basic::options::option[basic::options::OptionKeys::out::file::o].user() ) {
 						core::pose::PoseOP tmp = new core::pose::Pose(pose);
 						//if( nrecorded == 0 ) refpose = *tmp;
 						//else cyclic_superimpose(*tmp,refpose);
@@ -517,7 +517,7 @@ void* doit(void*) {
 			}
 
 			nrecorded++;
-			if(bin != lastbin) {
+			if ( bin != lastbin ) {
 				ntransitions++;
 				lastbin = bin;
 			}
@@ -528,31 +528,31 @@ void* doit(void*) {
 			sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() + ".sc" );
 
 		}
-		if( ITER % option[cyclic::log_interval]() == 0) {
+		if ( ITER % option[cyclic::log_interval]() == 0 ) {
 			TR << ObjexxFCL::format::I(10, ITER                ) << " ITERs "
-			   << ObjexxFCL::format::I(10, trial->num_accepts()) << " accpets "
-			   << ObjexxFCL::format::I(10, ntransitions        ) << " transitions "
-			   << ObjexxFCL::format::I(10, bincount.size()     ) << " bins sampled "
-			   << ObjexxFCL::format::I(10, posebins.size()     ) << " bins filled "
-			   << ObjexxFCL::format::F(7,3, sffastd->score(pose) ) << " score "
-			   << ObjexxFCL::format::F(7,3, core::scoring::CA_rmsd(pose,start_pose) ) << " rms "
-			   << ObjexxFCL::format::F(7,3,   sqrt(pose.energies().total_energies()[core::scoring::atom_pair_constraint]/3.0)/5.0) << " mean apc violation "
+				<< ObjexxFCL::format::I(10, trial->num_accepts()) << " accpets "
+				<< ObjexxFCL::format::I(10, ntransitions        ) << " transitions "
+				<< ObjexxFCL::format::I(10, bincount.size()     ) << " bins sampled "
+				<< ObjexxFCL::format::I(10, posebins.size()     ) << " bins filled "
+				<< ObjexxFCL::format::F(7,3, sffastd->score(pose) ) << " score "
+				<< ObjexxFCL::format::F(7,3, core::scoring::CA_rmsd(pose,start_pose) ) << " rms "
+				<< ObjexxFCL::format::F(7,3,   sqrt(pose.energies().total_energies()[core::scoring::atom_pair_constraint]/3.0)/5.0) << " mean apc violation "
 				<< Real(clock()-prevt) / 100.0 << " time "
-			   << std::endl;
+				<< std::endl;
 			prevt = clock();
 			{
 				utility::io::ozstream out(option[basic::options::OptionKeys::out::file::o]() + "/coverage.dat");
-				for(std::map<BINTYPE,uint>::const_iterator i = bincount.begin(); i != bincount.end(); ++i) {
+				for ( std::map<BINTYPE,uint>::const_iterator i = bincount.begin(); i != bincount.end(); ++i ) {
 					out << i->first << "          " << i->second << endl;
 				}
 			}
 			bool is_out_iter = (option[cyclic::output_interval]() != 0 && ITER % option[cyclic::output_interval]() == 0);
-			if( is_out_iter || ITER == option[out::nstruct]() ) {
+			if ( is_out_iter || ITER == option[out::nstruct]() ) {
 				core::pose::PoseOP refpose = NULL;
 				TR << "dumping structs..." << std::endl;
-				for(std::map<BINTYPE,core::pose::PoseOP>::const_iterator i = posebins.begin(); i != posebins.end(); ++i) {
+				for ( std::map<BINTYPE,core::pose::PoseOP>::const_iterator i = posebins.begin(); i != posebins.end(); ++i ) {
 					(*sffa)(*(i->second));
-					if(!refpose) refpose = i->second;
+					if ( !refpose ) refpose = i->second;
 					Pose tmp = *(i->second);
 					cyclic_superimpose(tmp,*refpose);
 					cyclize_pose(tmp);
@@ -577,23 +577,23 @@ int main( int argc, char * argv [] ) {
 
 	try {
 
-	using namespace core::pose;
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	using namespace core::scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace core::pose;
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		using namespace core::scoring::constraints;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	protocols::simple_moves::BBG8T3AMover::register_options();
-	devel::init(argc,argv);
+		protocols::simple_moves::BBG8T3AMover::register_options();
+		devel::init(argc,argv);
 
-	void* (*func)(void*) = &doit;
+		void* (*func)(void*) = &doit;
 
-	if (option[parser::view]()) {
-		protocols::viewer::viewer_main( func );
-	} else {
-		func(NULL);
-	}
+		if ( option[parser::view]() ) {
+			protocols::viewer::viewer_main( func );
+		} else {
+			func(NULL);
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

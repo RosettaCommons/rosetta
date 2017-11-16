@@ -30,7 +30,7 @@
 namespace core {
 namespace sequence {
 
-static THREAD_LOCAL basic::Tracer tr( "core.sequence.SequenceFactory" );
+static basic::Tracer tr( "core.sequence.SequenceFactory" );
 
 /// @details Private constructor insures correctness of singleton.
 SequenceFactory::SequenceFactory() {}

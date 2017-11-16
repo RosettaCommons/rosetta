@@ -35,7 +35,7 @@
 // C++ headers
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.SymDofMoverSampler" );
+static basic::Tracer TR( "protocols.matdes.SymDofMoverSampler" );
 
 namespace protocols {
 namespace matdes {

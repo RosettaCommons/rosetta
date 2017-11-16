@@ -47,7 +47,7 @@
 #include <string>
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.SpanningTopology" );
+static basic::Tracer TR( "core.conformation.membrane.SpanningTopology" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

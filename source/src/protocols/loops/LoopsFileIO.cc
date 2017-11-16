@@ -39,7 +39,7 @@ using core::pose::ResidueIndexDescriptionFromFile;
 /// @details Auto-generated virtual destructor
 LoopsFileData::~LoopsFileData() = default;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.loops.LoopsFileIO" );
+static basic::Tracer tr( "protocols.loops.LoopsFileIO" );
 
 bool JSONFormattedLoopsFileReader::initialized_( false );
 utility::vector1<std::string> JSONFormattedLoopsFileReader::valid_loop_file_keys_;

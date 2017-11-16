@@ -54,7 +54,7 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.SymmDLMinTests.cxxtest");
+static basic::Tracer TR("core.scoring.SymmDLMinTests.cxxtest");
 
 class SymmDLMinTests : public CxxTest::TestSuite {
 

@@ -45,6 +45,8 @@ namespace core {
 namespace scoring {
 namespace etable {
 
+static basic::Tracer TR("core.scoring.etable");
+
 /// @details Delegating constructor that passes the global option collection to the other constructor.
 EtableOptions::EtableOptions() :
 	EtableOptions( basic::options::option )
@@ -220,7 +222,7 @@ EtableOptions::initialize_from_options( utility::options::OptionCollection const
 	analytic_etable_evaluation = options[ score::analytic_etable_evaluation ];
 	max_dis = options[ score::fa_max_dis ];
 	if ( options[ score::no_smooth_etables ] && !options[ score::fa_max_dis ].user() ) {
-		basic::T("core.scoring.etable") << "no_smooth_etables requested and fa_max_dis not specified: using 5.5 as default" << std::endl;
+		TR << "no_smooth_etables requested and fa_max_dis not specified: using 5.5 as default" << std::endl;
 		max_dis = 5.5;
 	}
 	if ( options[ score::no_lk_polar_desolvation ] ) {

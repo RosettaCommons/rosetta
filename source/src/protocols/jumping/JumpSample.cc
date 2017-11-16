@@ -106,7 +106,7 @@ Real ChainbreakDistFunc::dfunc( Real const x ) const {
 
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
+static basic::Tracer tr( "protocols.jumping" );
 
 JumpSample::JumpSample( JumpSetup const& def ) :
 	total_residue_( def.total_residue() ),

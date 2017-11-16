@@ -52,7 +52,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.match_enzdes_util.AlignPoseToInvrotTreeMover" );
+static basic::Tracer TR( "protocols.toolbox.match_enzdes_util.AlignPoseToInvrotTreeMover" );
 
 
 AlignPoseToInvrotTreeMover::AlignPoseToInvrotTreeMover(

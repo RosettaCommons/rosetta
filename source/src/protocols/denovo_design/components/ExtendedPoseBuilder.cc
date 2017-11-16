@@ -38,7 +38,7 @@
 // C++ headers
 #include <iterator>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.ExtendedPoseBuilder" );
+static basic::Tracer TR( "protocols.denovo_design.components.ExtendedPoseBuilder" );
 
 namespace protocols {
 namespace denovo_design {

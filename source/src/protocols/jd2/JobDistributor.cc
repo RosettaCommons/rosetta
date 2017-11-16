@@ -75,7 +75,7 @@
 
 namespace protocols {
 namespace jd2 {
-static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.JobDistributor" );
+static basic::Tracer tr( "protocols.jd2.JobDistributor" );
 } //jd2
 } //protocols
 

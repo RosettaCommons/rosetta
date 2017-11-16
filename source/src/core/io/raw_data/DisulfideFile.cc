@@ -33,7 +33,7 @@ using core::Size;
 using utility::vector1;
 using core::pose::Pose;
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.raw_data.DisulfideFile" );
+static basic::Tracer TR( "core.io.raw_data.DisulfideFile" );
 
 /// @brief Get a list of disulfide bonds declared in the file
 /// @details

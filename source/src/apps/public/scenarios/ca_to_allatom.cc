@@ -74,12 +74,11 @@
 
 
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
 // tracer
-static THREAD_LOCAL basic::Tracer TZ( "pilot_apps::ca_to_allatom" );
+static basic::Tracer TZ( "pilot_apps::ca_to_allatom" );
 
 // C++ headers
 #include <fstream>

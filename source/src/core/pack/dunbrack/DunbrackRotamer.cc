@@ -34,11 +34,9 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack" );
+static basic::Tracer TR( "core.pack.dunbrack" );
 
 namespace core {
 namespace pack {

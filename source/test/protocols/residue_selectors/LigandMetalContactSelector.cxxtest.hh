@@ -27,7 +27,7 @@
 
 
 
-static THREAD_LOCAL basic::Tracer TR("protocols.residue_selectors.LigandMetalContactSelectorTests");
+static basic::Tracer TR("protocols.residue_selectors.LigandMetalContactSelectorTests");
 
 class LigandMetalContactSelectorTests : public CxxTest::TestSuite {
 

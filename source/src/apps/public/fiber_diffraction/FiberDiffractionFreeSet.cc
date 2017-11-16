@@ -56,7 +56,7 @@
 
 using namespace core;
 using namespace utility;
-static THREAD_LOCAL basic::Tracer TR("apps.pilot.wojtek.FiberDiffractionFreeSet");
+static basic::Tracer TR("apps.pilot.wojtek.FiberDiffractionFreeSet");
 
 int
 main( int argc, char * argv [] ) {

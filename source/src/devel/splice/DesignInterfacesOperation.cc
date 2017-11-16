@@ -53,7 +53,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "devel.splice.DesignInterfacesOperation" );
+static basic::Tracer TR( "devel.splice.DesignInterfacesOperation" );
 
 namespace devel {
 namespace splice {

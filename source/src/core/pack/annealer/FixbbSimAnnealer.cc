@@ -35,7 +35,7 @@
 using namespace ObjexxFCL;
 
 #ifndef NDEBUG
-static THREAD_LOCAL basic::Tracer TR( "core.pack.annealer.FixbbSimAnnealer" );
+static basic::Tracer TR( "core.pack.annealer.FixbbSimAnnealer" );
 #endif
 
 namespace core {

@@ -66,14 +66,13 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace rbsegment_relax {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rbsegment_relax.OptimizeThreading" );
+static basic::Tracer TR( "protocols.rbsegment_relax.OptimizeThreading" );
 
 using namespace protocols;
 using namespace core;

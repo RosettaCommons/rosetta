@@ -75,7 +75,7 @@ using core::pose::PoseOP;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.StepWiseRNA_CombineLongLoopFilterer" );
+static basic::Tracer TR( "protocols.stepwise.modeler.rna.StepWiseRNA_CombineLongLoopFilterer" );
 
 namespace protocols {
 namespace stepwise {

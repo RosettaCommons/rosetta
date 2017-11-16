@@ -40,7 +40,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fold_from_loops.LabelPoseFromResidueSelectorMover" );
+static basic::Tracer TR( "protocols.fold_from_loops.LabelPoseFromResidueSelectorMover" );
 
 namespace protocols {
 namespace fold_from_loops {

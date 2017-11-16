@@ -47,7 +47,7 @@
 namespace protocols {
 namespace features {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.DatabaseFilters" );
+static basic::Tracer TR( "protocols.features.DatabaseFilters" );
 
 
 core::Real get_current_model_score(core::pose::Pose const & pose, core::Size score_type_id){

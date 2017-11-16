@@ -44,7 +44,7 @@
 // Boost Headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("ExtendedPoseBuilderTests");
+static basic::Tracer TR("ExtendedPoseBuilderTests");
 
 using namespace protocols::denovo_design;
 using namespace protocols::denovo_design::architects;

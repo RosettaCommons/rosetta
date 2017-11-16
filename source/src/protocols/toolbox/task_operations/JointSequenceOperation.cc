@@ -45,7 +45,7 @@
 #include <utility/vector0.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.JointSequenceOperation" );
+static basic::Tracer TR( "protocols.toolbox.task_operations.JointSequenceOperation" );
 
 namespace protocols {
 namespace toolbox {

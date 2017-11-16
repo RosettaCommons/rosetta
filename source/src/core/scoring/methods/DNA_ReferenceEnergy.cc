@@ -44,7 +44,7 @@ namespace scoring {
 namespace methods {
 
 using namespace dna; //////////////////// NOTE NOTE NOTE
-static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.DNA_ReferenceEnergy");
+static basic::Tracer TR("core.scoring.methods.DNA_ReferenceEnergy");
 
 
 

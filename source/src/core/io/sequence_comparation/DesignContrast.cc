@@ -69,16 +69,14 @@ using namespace basic::options::OptionKeys;
 
 using namespace ObjexxFCL::format;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 using core::Size;
 
 using utility::vector1;
 
 /// Tracer instance for this file
-static THREAD_LOCAL basic::Tracer TR( "core.io.sequence_comparation.DesignContrast" );
+static basic::Tracer TR( "core.io.sequence_comparation.DesignContrast" );
 
 DesignContrast::DesignContrast(DesignContrast const & dc) {
 	list_file_names_ = dc.getListNames();

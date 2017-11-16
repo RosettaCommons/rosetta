@@ -36,6 +36,8 @@
 namespace core {
 namespace id {
 
+static basic::Tracer TR("core.id.SequenceMapping");
+
 using namespace ObjexxFCL;
 
 /// @brief ctor
@@ -242,7 +244,7 @@ SequenceMapping::delete_source_residue( Size const pos1 )
 void
 SequenceMapping::show() const
 {
-	show( basic::T("id.SequenceMapping") );
+	show( TR );
 }
 
 void

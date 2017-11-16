@@ -37,7 +37,7 @@ namespace protocols {
 namespace match {
 namespace output {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.match.output.MatchProcessor" );
+static basic::Tracer TR( "protocols.match.output.MatchProcessor" );
 
 MatchProcessor::MatchProcessor()
 : match_processing_successful_(false), writer_(/* NULL */),

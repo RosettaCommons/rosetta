@@ -47,51 +47,51 @@ using namespace basic::options::OptionKeys;
 //using namespace ObjexxFCL::format;
 
 void register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  NEW_OPT( i, "fragment file input", "");
-  NEW_OPT( o, "fragment file in new fornat", "frags.dat");
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	NEW_OPT( i, "fragment file input", "");
+	NEW_OPT( o, "fragment file in new fornat", "frags.dat");
 	NEW_OPT( ntop, "read top n frags " , 0 );
-  NEW_OPT( skip_rate,"if >0 fragments will be stochastically chucked out", 0.0 );
+	NEW_OPT( skip_rate,"if >0 fragments will be stochastically chucked out", 0.0 );
 	NEW_OPT( loop, "only accept frags within loop definition", "loop.dat" );
 }
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 int main( int argc, char** argv ) {
 	try{
-  register_options();
-  devel::init( argc, argv );
+		register_options();
+		devel::init( argc, argv );
 
-  FragSetOP orig_frags,new_frags;
-  orig_frags = FragmentIO( option[ ntop ] ).read_data( option[ OptionKeys::i ]() );
+		FragSetOP orig_frags,new_frags;
+		orig_frags = FragmentIO( option[ ntop ] ).read_data( option[ OptionKeys::i ]() );
 
-	protocols::loops::Loops filter_loops;
-	if ( option[ loop ].user() ) {
-		filter_loops.read_loop_file( option[ loop ]() );
-		FragSetOP loop_frags = new OrderedFragSet;
-		protocols::loops::select_loop_frags( filter_loops, *orig_frags, *loop_frags, false );
-		orig_frags = loop_frags;
-	}
+		protocols::loops::Loops filter_loops;
+		if ( option[ loop ].user() ) {
+			filter_loops.read_loop_file( option[ loop ]() );
+			FragSetOP loop_frags = new OrderedFragSet;
+			protocols::loops::select_loop_frags( filter_loops, *orig_frags, *loop_frags, false );
+			orig_frags = loop_frags;
+		}
 
-	new_frags = orig_frags;
-  if ( option[ skip_rate ]() > 0.0  ) {
-    new_frags = new OrderedFragSet;
-    FragID_Iterator it = orig_frags->begin();
-    FragID_Iterator eit= orig_frags->end();
-    for ( ; it!=eit; ++it ) {
-      if ( option[ skip_rate ]() <= 1.0 ) { //throw out fragments
-				Real r = numeric::random::rg().uniform();
-				if ( r > option[ skip_rate ]() ) { //keep fragment
-					new_frags->add( *it );
+		new_frags = orig_frags;
+		if ( option[ skip_rate ]() > 0.0  ) {
+			new_frags = new OrderedFragSet;
+			FragID_Iterator it = orig_frags->begin();
+			FragID_Iterator eit= orig_frags->end();
+			for ( ; it!=eit; ++it ) {
+				if ( option[ skip_rate ]() <= 1.0 ) { //throw out fragments
+					Real r = numeric::random::rg().uniform();
+					if ( r > option[ skip_rate ]() ) { //keep fragment
+						new_frags->add( *it );
+					}
+				} else {
+					utility_exit_with_message( "skip_rate >= 1 ... nothing written..");
 				}
-      } else {
-				utility_exit_with_message( "skip_rate >= 1 ... nothing written..");
-      }
-    }
-  }
+			}
+		}
 
-  FragmentIO().write_data( option[ OptionKeys::o ](), *new_frags );
+		FragmentIO().write_data( option[ OptionKeys::o ](), *new_frags );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

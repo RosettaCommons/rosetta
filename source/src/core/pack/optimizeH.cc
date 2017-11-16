@@ -46,7 +46,7 @@ namespace pack {
 
 /// Tracer instance for this file
 /// Named after the original location of this code
-static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.file_data" );
+static basic::Tracer TR( "core.io.pdb.file_data" );
 
 void
 optimize_H_and_notify(

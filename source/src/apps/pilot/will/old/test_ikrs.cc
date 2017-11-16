@@ -1,129 +1,129 @@
 // includes
-	#include <basic/options/keys/in.OptionKeys.gen.hh>
-	#include <basic/options/keys/match.OptionKeys.gen.hh>
-	#include <basic/options/option.hh>
-	#include <basic/Tracer.hh>
-	#include <core/chemical/ChemicalManager.hh>
-	#include <core/chemical/ResidueTypeSet.hh>
-	#include <core/chemical/util.hh>
-	#include <core/conformation/Residue.hh>
-	#include <core/import_pose/import_pose.hh>
-	#include <devel/init.hh>
-	#include <core/io/pdb/pdb_writer.hh>
-	#include <core/kinematics/Stub.hh>
-	#include <core/kinematics/MoveMap.hh>
-	#include <utility/graph/Graph.hh>
-	#include <core/pack/packer_neighbors.hh>
-	#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-	#include <core/pack/rotamer_set/RotamerSet.hh>
-	#include <core/pack/task/PackerTask.hh>
-	#include <core/pack/task/TaskFactory.hh>
-	#include <core/pose/annotated_sequence.hh>
-	#include <core/pose/Pose.hh>
-	#include <core/pose/util.hh>
-	#include <core/scoring/Energies.hh>
-	#include <core/scoring/rms_util.hh>
-	#include <core/scoring/sasa.hh>
-	#include <core/scoring/ScoreFunction.hh>
-	#include <core/scoring/ScoreFunctionFactory.hh>
-	#include <core/scoring/ScoringManager.hh>
-	#include <core/scoring/constraints/AtomPairConstraint.hh>
-	#include <core/scoring/constraints/AngleConstraint.hh>
-	#include <core/scoring/constraints/CoordinateConstraint.hh>
-	#include <core/io/silent/ScoreFileSilentStruct.hh>
-	#include <core/io/silent/SilentFileData.hh>
-	#include <numeric/xyz.functions.hh>
-	#include <numeric/xyz.io.hh>
-	#include <ObjexxFCL/FArray2D.hh>
-	#include <ObjexxFCL/format.hh>
-	#include <ObjexxFCL/string.functions.hh>
-	#include <protocols/scoring/ImplicitFastClashCheck.hh>
-	#include <protocols/simple_moves/PackRotamersMover.hh>
-	#include <protocols/simple_moves/MinMover.hh>
-	#include <numeric/kinematic_closure/bridgeObjects.hh>
-	#include <sstream>
-	#include <utility/io/izstream.hh>
-	#include <utility/io/ozstream.hh>
-	#include <numeric/NumericTraits.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/match.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/import_pose/import_pose.hh>
+#include <devel/init.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/kinematics/Stub.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <utility/graph/Graph.hh>
+#include <core/pack/packer_neighbors.hh>
+#include <core/pack/rotamer_set/RotamerSetFactory.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/sasa.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/io/silent/ScoreFileSilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyz.io.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
+#include <protocols/scoring/ImplicitFastClashCheck.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <numeric/kinematic_closure/bridgeObjects.hh>
+#include <sstream>
+#include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
+#include <numeric/NumericTraits.hh>
 
 
-	// #include <devel/init.hh>
+// #include <devel/init.hh>
 
-	// #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
+// #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 
-	#include <utility/vector0.hh>
-	#include <utility/vector1.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
-	//Auto Headers
-	#include <platform/types.hh>
-	#include <core/pose/util.tmpl.hh>
-	#include <apps/pilot/will/will_util.ihh>
-	#include <algorithm>
-	#include <cassert>
-	#include <cmath>
-	#include <complex>
-	#include <cstddef>
-	#include <cstdio>
-	#include <cstdlib>
-	#include <execinfo.h>
-	#include <fstream>
-	#include <iomanip>
-	#include <iosfwd>
-	#include <iostream>
-	#include <istream>
-	#include <limits>
-	#include <list>
-	#include <map>
-	#include <ostream>
-	#include <set>
-	#include <string>
-	#include <typeinfo>
-	#include <utility>
-	#include <vector>
-	#include <boost/algorithm/string/erase.hpp>
-	#include <boost/bind.hpp>
-	#include <boost/function.hpp>
-	#include <boost/functional/hash.hpp>
-	#include <boost/unordered/unordered_map.hpp>
-	#include <zlib/zlib.h>
-	#include <zlib/zutil.h>
+//Auto Headers
+#include <platform/types.hh>
+#include <core/pose/util.tmpl.hh>
+#include <apps/pilot/will/will_util.ihh>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <complex>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <execinfo.h>
+#include <fstream>
+#include <iomanip>
+#include <iosfwd>
+#include <iostream>
+#include <istream>
+#include <limits>
+#include <list>
+#include <map>
+#include <ostream>
+#include <set>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <vector>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/functional/hash.hpp>
+#include <boost/unordered/unordered_map.hpp>
+#include <zlib/zlib.h>
+#include <zlib/zutil.h>
 
 // namespaces
-	namespace std { } using namespace std; // AUTO USING NS
-	namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-	namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-	//Auto using namespaces end
+namespace std { } using namespace std; // AUTO USING NS
+namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
+//Auto using namespaces end
 
 
-	using core::Real;
-	using core::Size;
-	using core::pose::Pose;
-	using core::kinematics::Stub;
-	using protocols::scoring::ImplicitFastClashCheck;
-	using std::string;
-	using utility::vector1;
-	using numeric::min;
-	using core::import_pose::pose_from_file;
-	using basic::options::option;
-	using numeric::min;
-	using numeric::max;
-	using utility::io::ozstream;
-	using ObjexxFCL::format::I;
-	using ObjexxFCL::format::F;
+using core::Real;
+using core::Size;
+using core::pose::Pose;
+using core::kinematics::Stub;
+using protocols::scoring::ImplicitFastClashCheck;
+using std::string;
+using utility::vector1;
+using numeric::min;
+using core::import_pose::pose_from_file;
+using basic::options::option;
+using numeric::min;
+using numeric::max;
+using utility::io::ozstream;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 
-	typedef utility::vector1<core::Real> Reals;
-	typedef utility::vector1<core::Size> Sizes;
-	typedef numeric::xyzVector<Real> Vec;
-	typedef numeric::xyzMatrix<Real> Mat;
-	typedef utility::vector1<Vec> Vecs;
+typedef utility::vector1<core::Real> Reals;
+typedef utility::vector1<core::Size> Sizes;
+typedef numeric::xyzVector<Real> Vec;
+typedef numeric::xyzMatrix<Real> Mat;
+typedef utility::vector1<Vec> Vecs;
 
-static THREAD_LOCAL basic::Tracer TR( "test_ikrs" );
+static basic::Tracer TR( "test_ikrs" );
 
 core::io::silent::SilentFileData sfd;
 
 vector1<Reals> vecs2vv(Vecs const & v) {
 	vector1<Reals> vv;
-	for(Vecs::const_iterator i = v.begin(); i != v.end(); ++i) {
+	for ( Vecs::const_iterator i = v.begin(); i != v.end(); ++i ) {
 		Reals r(3);
 		r[1] = i->x();
 		r[2] = i->y();
@@ -134,7 +134,7 @@ vector1<Reals> vecs2vv(Vecs const & v) {
 }
 vector1<Vec> vv2vecs(vector1<Reals> const & vv) {
 	vector1<Vec> r;
-	for(vector1<Reals>::const_iterator i = vv.begin(); i != vv.end(); ++i) {
+	for ( vector1<Reals>::const_iterator i = vv.begin(); i != vv.end(); ++i ) {
 		r.push_back(Vec( (*i)[1], (*i)[2], (*i)[3] ));
 	}
 	return r;
@@ -142,11 +142,11 @@ vector1<Vec> vv2vecs(vector1<Reals> const & vv) {
 
 struct Hit : utility::pointer::ReferenceCount {
 	Hit(core::conformation::Residue const & r1,
-			core::conformation::Residue const & r2,
-			core::kinematics::Stub & stb,
-			Real pd1 = 0.0,
-			Real pd2 = 0.0,
-			bool frnt_in=false, bool negori=false) : stub(stb), phid1(pd1), phid2(pd2), frnt(frnt_in), nego(negori) {
+		core::conformation::Residue const & r2,
+		core::kinematics::Stub & stb,
+		Real pd1 = 0.0,
+		Real pd2 = 0.0,
+		bool frnt_in=false, bool negori=false) : stub(stb), phid1(pd1), phid2(pd2), frnt(frnt_in), nego(negori) {
 		rsd1 = r1.seqpos();
 		rsd2 = r2.seqpos();
 		k1 = r1.chi(1);
@@ -155,7 +155,7 @@ struct Hit : utility::pointer::ReferenceCount {
 		k4 = r1.chi(4);
 		c1 = r2.chi(1);
 		c2 = r2.chi(2);
-		if(r2.aa()==core::chemical::aa_glu) c3 = r2.chi(3);
+		if ( r2.aa()==core::chemical::aa_glu ) c3 = r2.chi(3);
 		aa1 = r1.aa();
 		aa2 = r2.aa();
 	}
@@ -163,11 +163,11 @@ struct Hit : utility::pointer::ReferenceCount {
 	void apply(Pose & wp) const {
 		core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd1,wp.residue(rsd1).residue_type_set().name_map("GLY")); // reset all SC
 		core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd2,wp.residue(rsd2).residue_type_set().name_map("GLY")); // reset all SC
-		/**/ if(aa1==core::chemical::aa_arg) core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd1,wp.residue(rsd1).residue_type_set().name_map("ARG"));
-		else if(aa1==core::chemical::aa_lys) core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd1,wp.residue(rsd1).residue_type_set().name_map("LYS"));
+		/**/ if ( aa1==core::chemical::aa_arg ) core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd1,wp.residue(rsd1).residue_type_set().name_map("ARG"));
+		else if ( aa1==core::chemical::aa_lys ) core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd1,wp.residue(rsd1).residue_type_set().name_map("LYS"));
 		else utility_exit_with_message("unknown aa "+str(aa1)+" for Hit class rsd1");
-		/**/ if(aa2==core::chemical::aa_asp) core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd2,wp.residue(rsd2).residue_type_set().name_map("ASP"));
-		else if(aa2==core::chemical::aa_glu) core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd2,wp.residue(rsd2).residue_type_set().name_map("GLU"));
+		/**/ if ( aa2==core::chemical::aa_asp ) core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd2,wp.residue(rsd2).residue_type_set().name_map("ASP"));
+		else if ( aa2==core::chemical::aa_glu ) core::pose::replace_pose_residue_copying_existing_coordinates(wp,rsd2,wp.residue(rsd2).residue_type_set().name_map("GLU"));
 		else utility_exit_with_message("unknown aa "+str(aa2)+" for Hit class rsd2");
 		wp.set_chi(   1   ,       rsd1, k1 );
 		wp.set_chi(   2   ,       rsd1, k2 );
@@ -175,16 +175,16 @@ struct Hit : utility::pointer::ReferenceCount {
 		wp.set_chi(   4   ,       rsd1, k4 );
 		wp.set_chi(   1   ,       rsd2, c1 );
 		wp.set_chi(   2   ,       rsd2, c2 );
-		if(wp.residue(rsd2).nchi() > 2) wp.set_chi(3,rsd2, c3 );
-		if(0.0 != phid1) {
+		if ( wp.residue(rsd2).nchi() > 2 ) wp.set_chi(3,rsd2, c3 );
+		if ( 0.0 != phid1 ) {
 			Vec C1 = wp.xyz(AtomID(2,rsd1));
 			Mat M1 = rotation_matrix_degrees( C1-wp.xyz(AtomID(1,rsd1)) , phid1 );
-			for(Size i = 5; i <= wp.residue_type(rsd1).natoms(); ++i) wp.set_xyz( AtomID(i,rsd1), M1 * (wp.xyz(AtomID(i,rsd1))-C1) + C1 );
+			for ( Size i = 5; i <= wp.residue_type(rsd1).natoms(); ++i ) wp.set_xyz( AtomID(i,rsd1), M1 * (wp.xyz(AtomID(i,rsd1))-C1) + C1 );
 		}
-		if(0.0 != phid2) {
+		if ( 0.0 != phid2 ) {
 			Vec C2 = wp.xyz(AtomID(2,rsd2));
 			Mat M2 = rotation_matrix_degrees( C2-wp.xyz(AtomID(1,rsd2)) , phid2 );
-			for(Size i = 5; i <= wp.residue_type(rsd2).natoms(); ++i) wp.set_xyz( AtomID(i,rsd2), M2 * (wp.xyz(AtomID(i,rsd2))-C2) + C2 );
+			for ( Size i = 5; i <= wp.residue_type(rsd2).natoms(); ++i ) wp.set_xyz( AtomID(i,rsd2), M2 * (wp.xyz(AtomID(i,rsd2))-C2) + C2 );
 		}
 	}
 
@@ -200,7 +200,7 @@ typedef utility::pointer::shared_ptr<Hit> HitOP;
 Real ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & ifc, vector1<HitOP> & hits, Pose ctp) {
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
-	if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 144.0 ) return 0;
+	if ( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 144.0 ) return 0;
 	Real mxcb = 0.0;
 	//Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
 	//  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
@@ -252,27 +252,27 @@ Real ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 	db_ang[10] = numeric::angle_degrees(pose.residue(rsd2).xyz("CB"),pose.residue(rsd2).xyz("CG"),pose.residue(rsd2).xyz("CD"));
 	Real phitgt = dt_ang[4];
 	Size count = 0;
-	for(Size idh = 6; idh <= 360; idh += 12) {
+	for ( Size idh = 6; idh <= 360; idh += 12 ) {
 		dt_ang[9] = (Real)idh;
-		for(Size ichi2 = 6; ichi2 <= 360; ichi2 += 12) {
+		for ( Size ichi2 = 6; ichi2 <= 360; ichi2 += 12 ) {
 			dt_ang[6] = (Real)ichi2;
 			bridgeObjects(vecs2vv(atoms), dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
-			for(int isol = 1; isol <= nsol; isol++) {
-				Real phidiff = phitgt-t_ang[isol][4]; while(phidiff < -180.0) phidiff+=360.0; while(phidiff > 180.0) phidiff-=360.0;
-				if( fabs(phidiff) > 10.0 ) continue;
+			for ( int isol = 1; isol <= nsol; isol++ ) {
+				Real phidiff = phitgt-t_ang[isol][4]; while ( phidiff < -180.0 ) phidiff+=360.0; while ( phidiff > 180.0 ) phidiff-=360.0;
+				if ( fabs(phidiff) > 10.0 ) continue;
 
 				utility::vector1<utility::vector1<core::Real> > vv_atm_out;
 				numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
 				Vecs apos = vv2vecs(vv_atm_out);
 
 				bool clash = false;
-				for( Size i = 1; i <= atoms.size(); ++i ) {
-					for( Size j = i+3; j <= atoms.size(); ++j ) {
-						if( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
+				for ( Size i = 1; i <= atoms.size(); ++i ) {
+					for ( Size j = i+3; j <= atoms.size(); ++j ) {
+						if ( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
 					}
-					if(clash) break;
+					if ( clash ) break;
 				}
-				if(clash) continue;
+				if ( clash ) continue;
 
 				pose.set_chi(1,rsd1,t_ang[isol][ 5]);
 				pose.set_chi(2,rsd1,t_ang[isol][ 6]);
@@ -288,22 +288,25 @@ Real ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 
 				Vec CA = pose.xyz(AtomID(2,rsd1));
 				Mat M = rotation_matrix_degrees( CA-pose.xyz(AtomID(1,rsd1)) , -phidiff );
-				for(Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i) pose.set_xyz( AtomID(i,rsd1), M * (pose.xyz(AtomID(i,rsd1))-CA) + CA );
+				for ( Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd1), M * (pose.xyz(AtomID(i,rsd1))-CA) + CA );
 
-				for(Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
-				for(Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
+				for ( Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
+				for ( Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
 				count++;
-				if(clash/*||count!=20*/){if(clash)count--;for(Size i=5; i<=pose.residue_type(rsd1).natoms();++i) pose.set_xyz(AtomID(i,rsd1),M.transposed()*(pose.xyz(AtomID(i,rsd1))-CA)+CA);continue;}
+				if ( clash/*||count!=20*/ ) { if ( clash ) count--;
+					for ( Size i=5; i<=pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz(AtomID(i,rsd1),M.transposed()*(pose.xyz(AtomID(i,rsd1))-CA)+CA);
+					continue;
+				}
 
 				Vec const cen = pose.residue(rsd1).xyz(iCZ);
 				Vec const axs = ((pose.residue(rsd1).xyz(iNH2)+pose.residue(rsd1).xyz(iNE))/2.0 - cen).normalized();
 				Vec const ori = axs.cross(pose.residue(rsd1).xyz(iNE)-cen).normalized();
 				Vec const or2 = ori.cross(axs);
 
-				for(Size negori = 0; negori < 2; negori++) {
+				for ( Size negori = 0; negori < 2; negori++ ) {
 					Vec ctp_axs = (ctp.residue(1).xyz(iC2)-ctp.residue(1).xyz(iC7)).normalized();
 					Vec ctp_ori = ctp_axs.cross( (ctp.residue(1).xyz(iO5) - ctp.residue(1).xyz(iC7)).normalized() );
-					if(negori) ctp_ori = -1.0 * ctp_ori;
+					if ( negori ) ctp_ori = -1.0 * ctp_ori;
 					Mat R = numeric::alignVectorSets( ctp_axs, ctp_ori, axs, ori );
 
 					rot_pose(ctp,R);
@@ -315,10 +318,11 @@ Real ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 
 					core::kinematics::Stub lcstub(ctp.residue(1).xyz(iC5),ctp.residue(1).xyz(iO1),ctp.residue(1).xyz(iO2));
 
-					Vec ccom(0,0,0); for(Size i=1; i<=ctp.residue(1).nheavyatoms(); ++i) ccom+=ctp.residue(1).xyz(i); ccom /= ctp.residue(1).nheavyatoms();
-					#ifdef USE_OPENMP
+					Vec ccom(0,0,0); for ( Size i=1; i<=ctp.residue(1).nheavyatoms(); ++i ) ccom+=ctp.residue(1).xyz(i);
+					ccom /= ctp.residue(1).nheavyatoms();
+#ifdef USE_OPENMP
 					#pragma omp critical
-					#endif
+#endif
 					hits.push_back( HitOP( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, 0.0, true, negori ) ) );
 
 					// ozstream out("ikrs_arg_frnt_glu_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+lzs(idh,3)+"_"+str(ichi2)+"_"+str(isol)+"_"+str(negori)+"_res.pdb");
@@ -345,7 +349,7 @@ Real ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 					// utility_exit_with_message("test.pdb");
 
 				}
-				for(Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i) pose.set_xyz( AtomID(i,rsd1), M.transposed() * (pose.xyz(AtomID(i,rsd1))-CA) + CA );
+				for ( Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd1), M.transposed() * (pose.xyz(AtomID(i,rsd1))-CA) + CA );
 			}
 		}
 	}
@@ -356,7 +360,7 @@ Real ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 Real ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & ifc, vector1<HitOP> & hits, Pose ctp) {
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
-	if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 100.0 ) return 0;
+	if ( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 100.0 ) return 0;
 	Real mxcb = 0.0;
 	//Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
 	//Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
@@ -410,27 +414,27 @@ Real ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 	db_ang[11] =         numeric::angle_degrees(pose.residue(rsd2).xyz("CB"),pose.residue(rsd2).xyz("CG"),pose.residue(rsd2).xyz("CD"));
 	Real phitgt = dt_ang[4];
 	Size count = 0;
-	for(Size idh = 6; idh <= 360; idh += 12) {
+	for ( Size idh = 6; idh <= 360; idh += 12 ) {
 		dt_ang[12] = (Real)idh;
-		for(Size ichi2 = 6; ichi2 <= 360; ichi2 += 12) {
+		for ( Size ichi2 = 6; ichi2 <= 360; ichi2 += 12 ) {
 			dt_ang[6] = (Real)ichi2;
 			bridgeObjects(vecs2vv(atoms), dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
-			for(int isol = 1; isol <= nsol; isol++) {
-				Real phidiff = phitgt-t_ang[isol][4]; while(phidiff < -180.0) phidiff+=360.0; while(phidiff > 180.0) phidiff-=360.0;
-				if( fabs(phidiff) > 10.0 ) continue;
+			for ( int isol = 1; isol <= nsol; isol++ ) {
+				Real phidiff = phitgt-t_ang[isol][4]; while ( phidiff < -180.0 ) phidiff+=360.0; while ( phidiff > 180.0 ) phidiff-=360.0;
+				if ( fabs(phidiff) > 10.0 ) continue;
 
 				utility::vector1<utility::vector1<core::Real> > vv_atm_out;
 				numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
 				Vecs apos = vv2vecs(vv_atm_out);
 
 				bool clash = false;
-				for( Size i = 1; i <= atoms.size(); ++i ) {
-					for( Size j = i+3; j <= atoms.size(); ++j ) {
-						if( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
+				for ( Size i = 1; i <= atoms.size(); ++i ) {
+					for ( Size j = i+3; j <= atoms.size(); ++j ) {
+						if ( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
 					}
-					if(clash) break;
+					if ( clash ) break;
 				}
-				if(clash) continue;
+				if ( clash ) continue;
 
 				pose.set_chi(1,rsd1,t_ang[isol][ 5]);
 				pose.set_chi(2,rsd1,t_ang[isol][ 6]);
@@ -446,15 +450,15 @@ Real ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 
 				Vec CA = pose.xyz(AtomID(2,rsd1));
 				Mat M = rotation_matrix_degrees( CA-pose.xyz(AtomID(1,rsd1)) , -phidiff );
-				for(Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i) pose.set_xyz( AtomID(i,rsd1), M * (pose.xyz(AtomID(i,rsd1))-CA) + CA );
+				for ( Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd1), M * (pose.xyz(AtomID(i,rsd1))-CA) + CA );
 
-				for(Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
-				for(Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
+				for ( Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
+				for ( Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
 
 				count++;
-				if(clash){//||count!=10){
-					if(clash)count--;
-					for(Size i=5; i<=pose.residue_type(rsd1).natoms();++i) pose.set_xyz(AtomID(i,rsd1),M.transposed()*(pose.xyz(AtomID(i,rsd1))-CA)+CA);
+				if ( clash ) { //||count!=10){
+					if ( clash ) count--;
+					for ( Size i=5; i<=pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz(AtomID(i,rsd1),M.transposed()*(pose.xyz(AtomID(i,rsd1))-CA)+CA);
 					continue;
 				}
 
@@ -463,10 +467,10 @@ Real ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 				Vec const ori = axs.cross(pose.residue(rsd1).xyz(iNH1)-cen).normalized();
 				Vec const or2 = ori.cross(axs);
 
-				for(Size negori = 0; negori < 2; negori++) {
+				for ( Size negori = 0; negori < 2; negori++ ) {
 					Vec ctp_axs = (ctp.residue(1).xyz(iC2)-ctp.residue(1).xyz(iC7)).normalized();
 					Vec ctp_ori = ctp_axs.cross( (ctp.residue(1).xyz(iO5) - ctp.residue(1).xyz(iC7)).normalized() );
-					if(negori) ctp_ori = -1.0 * ctp_ori;
+					if ( negori ) ctp_ori = -1.0 * ctp_ori;
 					Mat R = numeric::alignVectorSets( ctp_axs, ctp_ori, axs, ori );
 
 					rot_pose(ctp,R);
@@ -478,10 +482,11 @@ Real ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 
 					core::kinematics::Stub lcstub(ctp.residue(1).xyz(iC5),ctp.residue(1).xyz(iO1),ctp.residue(1).xyz(iO2));
 
-					Vec ccom(0,0,0); for(Size i=1; i<=ctp.residue(1).nheavyatoms(); ++i) ccom+=ctp.residue(1).xyz(i); ccom /= ctp.residue(1).nheavyatoms();
-					#ifdef USE_OPENMP
+					Vec ccom(0,0,0); for ( Size i=1; i<=ctp.residue(1).nheavyatoms(); ++i ) ccom+=ctp.residue(1).xyz(i);
+					ccom /= ctp.residue(1).nheavyatoms();
+#ifdef USE_OPENMP
 					#pragma omp critical
-					#endif
+#endif
 					hits.push_back( HitOP( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, 0.0, false, negori ) ) );
 
 					// ozstream out("ikrs_arg_side_glu_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+lzs(idh,3)+"_"+str(ichi2)+"_"+str(isol)+"_"+str(negori)+"_res.pdb");
@@ -499,7 +504,7 @@ Real ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 
 				}
 
-				for(Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i) pose.set_xyz( AtomID(i,rsd1), M.transposed() * (pose.xyz(AtomID(i,rsd1))-CA) + CA );
+				for ( Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd1), M.transposed() * (pose.xyz(AtomID(i,rsd1))-CA) + CA );
 			}
 		}
 	}
@@ -509,7 +514,7 @@ Real ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 Real ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & ifc, vector1<HitOP> & hits, Pose ctp) {
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
-	if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 120.0 ) return 0;
+	if ( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 120.0 ) return 0;
 	Real mxcb = 0.0;
 	//Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
 	//Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
@@ -560,30 +565,30 @@ Real ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 	Real phitgt = dt_ang[ 4];
 	Real psitgt = dt_ang[11];
 	Size count = 0;
-	for(Size idh = 6; idh <= 360; idh += 12) {
+	for ( Size idh = 6; idh <= 360; idh += 12 ) {
 		dt_ang[ 9] = (Real)idh;
-		for(Size ichi2 = 6; ichi2 <= 360; ichi2 += 12) {
+		for ( Size ichi2 = 6; ichi2 <= 360; ichi2 += 12 ) {
 			dt_ang[6] = (Real)ichi2;
 			bridgeObjects(vecs2vv(atoms), dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
 			//      if(nsol==0) break;
-			for(int isol = 1; isol <= nsol; isol++) {
-				Real phidiff = phitgt-t_ang[isol][ 4]; while(phidiff < -180.0) phidiff+=360.0; while(phidiff > 180.0) phidiff-=360.0;
-				Real ph2diff = psitgt-t_ang[isol][11]; while(ph2diff < -180.0) ph2diff+=360.0; while(ph2diff > 180.0) ph2diff-=360.0;
-				if( fabs(phidiff) > 13.0 ) continue;
-				if( fabs(ph2diff) > 13.0 ) continue;
+			for ( int isol = 1; isol <= nsol; isol++ ) {
+				Real phidiff = phitgt-t_ang[isol][ 4]; while ( phidiff < -180.0 ) phidiff+=360.0; while ( phidiff > 180.0 ) phidiff-=360.0;
+				Real ph2diff = psitgt-t_ang[isol][11]; while ( ph2diff < -180.0 ) ph2diff+=360.0; while ( ph2diff > 180.0 ) ph2diff-=360.0;
+				if ( fabs(phidiff) > 13.0 ) continue;
+				if ( fabs(ph2diff) > 13.0 ) continue;
 
 				utility::vector1<utility::vector1<core::Real> > vv_atm_out;
 				numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
 				Vecs apos = vv2vecs(vv_atm_out);
 
 				bool clash = false;
-				for( Size i = 1; i <= atoms.size(); ++i ) {
-					for( Size j = i+3; j <= atoms.size(); ++j ) {
-						if( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
+				for ( Size i = 1; i <= atoms.size(); ++i ) {
+					for ( Size j = i+3; j <= atoms.size(); ++j ) {
+						if ( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
 					}
-					if(clash) break;
+					if ( clash ) break;
 				}
-				if(clash) continue;
+				if ( clash ) continue;
 
 				//for(Size i = 1; i <= atoms.size(); ++i) TR << "ICHI2 " << ichi2 << " SOL " << isol << " CHI " << i << " " << t_ang[isol][i] << std::endl;
 				pose.set_chi(1,rsd1,t_ang[isol][ 5]);
@@ -599,19 +604,19 @@ Real ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 
 				Vec CA1 = pose.xyz(AtomID(2,rsd1));
 				Mat M1 = rotation_matrix_degrees( CA1-pose.xyz(AtomID(1,rsd1)) , -phidiff );
-				for(Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i) pose.set_xyz( AtomID(i,rsd1), M1 * (pose.xyz(AtomID(i,rsd1))-CA1) + CA1 );
+				for ( Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd1), M1 * (pose.xyz(AtomID(i,rsd1))-CA1) + CA1 );
 				Vec CA2 = pose.xyz(AtomID(2,rsd2));
 				Mat M2 = rotation_matrix_degrees( CA2-pose.xyz(AtomID(1,rsd2)) , -ph2diff );
-				for(Size i = 5; i <= pose.residue_type(rsd2).natoms(); ++i) pose.set_xyz( AtomID(i,rsd2), M2 * (pose.xyz(AtomID(i,rsd2))-CA2) + CA2 );
+				for ( Size i = 5; i <= pose.residue_type(rsd2).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd2), M2 * (pose.xyz(AtomID(i,rsd2))-CA2) + CA2 );
 
-				for(Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
-				for(Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
+				for ( Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
+				for ( Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
 
 				count++;
-				if(clash){//||count!=1){
-					if(clash) count--;
-					for(Size i=5; i<=pose.residue_type(rsd1).natoms();++i) pose.set_xyz(AtomID(i,rsd1),M1.transposed()*(pose.xyz(AtomID(i,rsd1))-CA1)+CA1);
-					for(Size i=5; i<=pose.residue_type(rsd2).natoms();++i) pose.set_xyz(AtomID(i,rsd2),M2.transposed()*(pose.xyz(AtomID(i,rsd2))-CA2)+CA2);
+				if ( clash ) { //||count!=1){
+					if ( clash ) count--;
+					for ( Size i=5; i<=pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz(AtomID(i,rsd1),M1.transposed()*(pose.xyz(AtomID(i,rsd1))-CA1)+CA1);
+					for ( Size i=5; i<=pose.residue_type(rsd2).natoms(); ++i ) pose.set_xyz(AtomID(i,rsd2),M2.transposed()*(pose.xyz(AtomID(i,rsd2))-CA2)+CA2);
 					continue;
 				}
 				Vec const cen = pose.residue(rsd1).xyz(iCZ);
@@ -619,10 +624,10 @@ Real ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 				Vec const ori = axs.cross(pose.residue(rsd1).xyz(iNE)-cen).normalized();
 				Vec const or2 = ori.cross(axs);
 
-				for(Size negori = 0; negori < 2; negori++) {
+				for ( Size negori = 0; negori < 2; negori++ ) {
 					Vec ctp_axs = (ctp.residue(1).xyz(iC2)-ctp.residue(1).xyz(iC7)).normalized();
 					Vec ctp_ori = ctp_axs.cross( (ctp.residue(1).xyz(iO5) - ctp.residue(1).xyz(iC7)).normalized() );
-					if(negori) ctp_ori = -1.0 * ctp_ori;
+					if ( negori ) ctp_ori = -1.0 * ctp_ori;
 					Mat R = numeric::alignVectorSets( ctp_axs, ctp_ori, axs, ori );
 
 					rot_pose(ctp,R);
@@ -632,12 +637,13 @@ Real ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 					// clash check CTP w/ scaffold BB
 					//          for(Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i) { if( !ifc.clash_check(ctp.residue(1).xyz(i)) ) clash=true; if(clash) break; } if(clash) continue;
 
-					Vec ccom(0,0,0); for(Size i=1; i<=ctp.residue(1).nheavyatoms(); ++i) ccom+=ctp.residue(1).xyz(i); ccom /= ctp.residue(1).nheavyatoms();
+					Vec ccom(0,0,0); for ( Size i=1; i<=ctp.residue(1).nheavyatoms(); ++i ) ccom+=ctp.residue(1).xyz(i);
+					ccom /= ctp.residue(1).nheavyatoms();
 					core::kinematics::Stub lcstub(ctp.residue(1).xyz(iC5),ctp.residue(1).xyz(iO1),ctp.residue(1).xyz(iO2));
 
-					#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 					#pragma omp critical
-					#endif
+#endif
 					hits.push_back( HitOP( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, -ph2diff, true, negori ) ) );
 
 					// ozstream out("ikrs_arg_frnt_asp_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+lzs(idh,3)+"_"+str(ichi2)+"_"+str(isol)+"_"+str(negori)+"_res.pdb");
@@ -653,8 +659,8 @@ Real ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 					// out.close();
 
 				}
-				for(Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i) pose.set_xyz( AtomID(i,rsd1), M1.transposed() * (pose.xyz(AtomID(i,rsd1))-CA1) + CA1 );
-				for(Size i = 5; i <= pose.residue_type(rsd2).natoms(); ++i) pose.set_xyz( AtomID(i,rsd2), M2.transposed() * (pose.xyz(AtomID(i,rsd2))-CA2) + CA2 );
+				for ( Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd1), M1.transposed() * (pose.xyz(AtomID(i,rsd1))-CA1) + CA1 );
+				for ( Size i = 5; i <= pose.residue_type(rsd2).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd2), M2.transposed() * (pose.xyz(AtomID(i,rsd2))-CA2) + CA2 );
 			}
 		}
 		//    if(nsol==0) break;
@@ -667,7 +673,7 @@ Real ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
 
-	if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 100.0 ) return 0;
+	if ( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 100.0 ) return 0;
 	Real mxcb = 0.0;
 	//Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
 	//  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
@@ -713,26 +719,26 @@ Real ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 
 	Real phitgt = dt_ang[ 4];
 	Size count = 0;
-	for(Size ichi2 = 6; ichi2 <= 360; ichi2 += 12) {
+	for ( Size ichi2 = 6; ichi2 <= 360; ichi2 += 12 ) {
 		dt_ang[6] = (Real)ichi2;
 		numeric::kinematic_closure::bridgeObjects(vecs2vv(atoms), dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
 		//    if(nsol==0) break;
-		for(int isol = 1; isol <= nsol; isol++) {
-			Real phidiff = phitgt-t_ang[isol][ 4]; while(phidiff < -180.0) phidiff+=360.0; while(phidiff > 180.0) phidiff-=360.0;
-			if( fabs(phidiff) > 13.0 ) continue;
+		for ( int isol = 1; isol <= nsol; isol++ ) {
+			Real phidiff = phitgt-t_ang[isol][ 4]; while ( phidiff < -180.0 ) phidiff+=360.0; while ( phidiff > 180.0 ) phidiff-=360.0;
+			if ( fabs(phidiff) > 13.0 ) continue;
 
 			utility::vector1<utility::vector1<core::Real> > vv_atm_out;
 			numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
 			Vecs apos = vv2vecs(vv_atm_out);
 
 			bool clash = false;
-			for( Size i = 1; i <= atoms.size(); ++i ) {
-				for( Size j = i+3; j <= atoms.size(); ++j ) {
-					if( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
+			for ( Size i = 1; i <= atoms.size(); ++i ) {
+				for ( Size j = i+3; j <= atoms.size(); ++j ) {
+					if ( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
 				}
-				if(clash) break;
+				if ( clash ) break;
 			}
-			if(clash) continue;
+			if ( clash ) continue;
 
 			pose.set_chi(1,rsd1,t_ang[isol][ 5]);
 			pose.set_chi(2,rsd1,t_ang[isol][ 6]);
@@ -747,15 +753,15 @@ Real ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 
 			Vec CA1 = pose.xyz(AtomID(2,rsd1));
 			Mat M1 = rotation_matrix_degrees( CA1-pose.xyz(AtomID(1,rsd1)) , -phidiff );
-			for(Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i) pose.set_xyz( AtomID(i,rsd1), M1 * (pose.xyz(AtomID(i,rsd1))-CA1) + CA1 );
+			for ( Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd1), M1 * (pose.xyz(AtomID(i,rsd1))-CA1) + CA1 );
 
-			for(Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
-			for(Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
+			for ( Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
+			for ( Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
 
 			count++;
-			if(clash){//||count!=1){
-				if(clash) count--;
-				for(Size i=5; i<=pose.residue_type(rsd1).natoms();++i) pose.set_xyz(AtomID(i,rsd1),M1.transposed()*(pose.xyz(AtomID(i,rsd1))-CA1)+CA1);
+			if ( clash ) { //||count!=1){
+				if ( clash ) count--;
+				for ( Size i=5; i<=pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz(AtomID(i,rsd1),M1.transposed()*(pose.xyz(AtomID(i,rsd1))-CA1)+CA1);
 				continue;
 			}
 
@@ -764,10 +770,10 @@ Real ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 			Vec const ori = axs.cross(pose.residue(rsd1).xyz(iNH1)-cen).normalized();
 			Vec const or2 = ori.cross(axs);
 
-			for(Size negori = 0; negori < 2; negori++) {
+			for ( Size negori = 0; negori < 2; negori++ ) {
 				Vec ctp_axs = (ctp.residue(1).xyz(iC2)-ctp.residue(1).xyz(iC7)).normalized();
 				Vec ctp_ori = ctp_axs.cross( (ctp.residue(1).xyz(iO5) - ctp.residue(1).xyz(iC7)).normalized() );
-				if(negori) ctp_ori = -1.0 * ctp_ori;
+				if ( negori ) ctp_ori = -1.0 * ctp_ori;
 				Mat R = numeric::alignVectorSets( ctp_axs, ctp_ori, axs, ori );
 
 				rot_pose(ctp,R);
@@ -777,12 +783,13 @@ Real ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 				// clash check CTP w/ scaffold BB
 				//        for(Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i) { if( !ifc.clash_check(ctp.residue(1).xyz(i)) ) clash=true; if(clash) break; } if(clash) continue;
 
-				Vec ccom(0,0,0); for(Size i=1; i<=ctp.residue(1).nheavyatoms(); ++i) ccom+=ctp.residue(1).xyz(i); ccom /= ctp.residue(1).nheavyatoms();
+				Vec ccom(0,0,0); for ( Size i=1; i<=ctp.residue(1).nheavyatoms(); ++i ) ccom+=ctp.residue(1).xyz(i);
+				ccom /= ctp.residue(1).nheavyatoms();
 				core::kinematics::Stub lcstub(ctp.residue(1).xyz(iC5),ctp.residue(1).xyz(iO1),ctp.residue(1).xyz(iO2));
 
-				#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 				#pragma omp critical
-				#endif
+#endif
 				hits.push_back( HitOP( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, 0.0, false, negori ) ) );
 
 				// ozstream out("ikrs_arg_side_asp_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+str(ichi2)+"_"+str(isol)+"_"+str(negori)+"_res.pdb");
@@ -798,7 +805,7 @@ Real ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 				// out.close();
 
 			}
-			for(Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i) pose.set_xyz( AtomID(i,rsd1), M1.transposed() * (pose.xyz(AtomID(i,rsd1))-CA1) + CA1 );
+			for ( Size i = 5; i <= pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz( AtomID(i,rsd1), M1.transposed() * (pose.xyz(AtomID(i,rsd1))-CA1) + CA1 );
 		}
 		//    if(nsol==0) break;
 	}
@@ -809,14 +816,15 @@ void ik_lys_ctp_asp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
 
-	if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 225.0 ) return;
+	if ( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 225.0 ) return;
 
 	//Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
 	//  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
 
 	core::kinematics::Stub cstub(ctp.residue(1).xyz("C5"),ctp.residue(1).xyz("O1"),ctp.residue(1).xyz("O2"));
-	for(Size i = 1; i <= ctp.residue(1).natoms(); ++i) ctp.set_xyz(AtomID(i,1), cstub.global2local(ctp.xyz(AtomID(i,1))));
-	Vec ccom(0,0,0); for(Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i) ccom += ctp.residue(1).xyz(i); ccom /= ctp.residue(1).nheavyatoms();
+	for ( Size i = 1; i <= ctp.residue(1).natoms(); ++i ) ctp.set_xyz(AtomID(i,1), cstub.global2local(ctp.xyz(AtomID(i,1))));
+	Vec ccom(0,0,0); for ( Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i ) ccom += ctp.residue(1).xyz(i);
+	ccom /= ctp.residue(1).nheavyatoms();
 
 	Size iOD1=pose.residue(rsd2).atom_index("OD1"),iCG=pose.residue(rsd2).atom_index("CG"),iCB=pose.residue(rsd2).atom_index("CB");
 
@@ -850,7 +858,7 @@ void ik_lys_ctp_asp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 	//TR << "ik_lys_ctp_asp" << rsd1 << " " << rsd2 << " " << rotset->num_rotamers() << std::endl;
 
 	// do IK on each lys rot
-	for(Size krot = 1; krot <= rotset->num_rotamers(); ++krot) {
+	for ( Size krot = 1; krot <= rotset->num_rotamers(); ++krot ) {
 		//TR << "ik_lys_ctp_asp" << rsd1 << " " << rsd2 << " " << krot << std::endl;
 		pose.set_chi(1,rsd1,rotset->rotamer(krot)->chi(1));
 		pose.set_chi(2,rsd1,rotset->rotamer(krot)->chi(2));
@@ -887,37 +895,37 @@ void ik_lys_ctp_asp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 		db_ang[11] = 105.0;
 		db_ang[12] = 120.0;
 
-		for(Size ock = 0; ock <= 1; ock++) {
+		for ( Size ock = 0; ock <= 1; ock++ ) {
 			db_ang[ 9] = ock?98.0: 72.9;
 			dt_ang[ 9] = ock?56.0:-62.9;
-			for(Size ocd = 0; ocd <= 1; ocd++) {
+			for ( Size ocd = 0; ocd <= 1; ocd++ ) {
 				dt_ang[12] = ocd?0.0:180.0;
 
 				Size count = 0;
 				numeric::kinematic_closure::bridgeObjects(vecs2vv(atoms), dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
-				for(int isol = 1; isol <= nsol; isol++) {
+				for ( int isol = 1; isol <= nsol; isol++ ) {
 
 					utility::vector1<utility::vector1<core::Real> > vv_atm_out;
 					numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
 					Vecs apos = vv2vecs(vv_atm_out);
 
 					bool clash = false;
-					for( Size i = 1; i <= atoms.size(); ++i ) {
-						for( Size j = i+3; j <= atoms.size(); ++j ) {
-							if( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
+					for ( Size i = 1; i <= atoms.size(); ++i ) {
+						for ( Size j = i+3; j <= atoms.size(); ++j ) {
+							if ( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
 						}
-						if(clash) break;
+						if ( clash ) break;
 					}
-					if(clash) continue;
+					if ( clash ) continue;
 
 					pose.set_chi(2,rsd2,t_ang[isol][13]);
 					pose.set_chi(1,rsd2,t_ang[isol][14]);
 					//Real dun2 = dunlib2->rotamer_energy( pose.residue(rsd2), scratch );
 					//if( dun2 > coo_dun_th*2.0/3.0 ) continue;
 
-					for(Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
-					for(Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
-					if(clash) continue;
+					for ( Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
+					for ( Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
+					if ( clash ) continue;
 
 					core::kinematics::Stub ikstub(apos[12],apos[13],apos[14]);
 					core::kinematics::Stub postub(pose.residue(rsd2).xyz(iOD1),pose.residue(rsd2).xyz(iCG),pose.residue(rsd2).xyz(iCB));
@@ -927,20 +935,20 @@ void ik_lys_ctp_asp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 
 					core::kinematics::Stub lcstub(tmp_ctp_coh,tmp_ctp_oh,tmp_ctp_oc);
 
-					for(Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i) {
+					for ( Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i ) {
 						Vec X = lcstub.local2global(ctp.residue(1).xyz(i));
-						for(Size j = 1; j <= pose.residue(rsd1).nheavyatoms()-1; ++j) if( X.distance_squared(pose.residue(rsd1).xyz(j)) < 8.0 ) clash=true;
-						for(Size j = 1; j <= pose.residue(rsd2).nheavyatoms()-3; ++j) if( X.distance_squared(pose.residue(rsd2).xyz(j)) < 8.0 ) clash=true;
+						for ( Size j = 1; j <= pose.residue(rsd1).nheavyatoms()-1; ++j ) if ( X.distance_squared(pose.residue(rsd1).xyz(j)) < 8.0 ) clash=true;
+						for ( Size j = 1; j <= pose.residue(rsd2).nheavyatoms()-3; ++j ) if ( X.distance_squared(pose.residue(rsd2).xyz(j)) < 8.0 ) clash=true;
 						//if( !ifc.clash_check( X ) ) clash=true;
-						if(clash) break;
+						if ( clash ) break;
 					}
-					if(clash) continue;
+					if ( clash ) continue;
 
 					Vec comtmp = lcstub.local2global(ccom);
 					HitOP h( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub ) );
-					#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 					#pragma omp critical
-					#endif
+#endif
 					hits.push_back(h);
 					count++;
 
@@ -999,14 +1007,15 @@ void ik_lys_ctp_glu(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
 
-	if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 300.0 ) return;
+	if ( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 300.0 ) return;
 
 	//Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
 	//  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
 
 	core::kinematics::Stub cstub(ctp.residue(1).xyz("C5"),ctp.residue(1).xyz("O1"),ctp.residue(1).xyz("O2"));
-	for(Size i = 1; i <= ctp.residue(1).natoms(); ++i) ctp.set_xyz(AtomID(i,1), cstub.global2local(ctp.xyz(AtomID(i,1))));
-	Vec ccom(0,0,0); for(Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i) ccom += ctp.residue(1).xyz(i); ccom /= ctp.residue(1).nheavyatoms();
+	for ( Size i = 1; i <= ctp.residue(1).natoms(); ++i ) ctp.set_xyz(AtomID(i,1), cstub.global2local(ctp.xyz(AtomID(i,1))));
+	Vec ccom(0,0,0); for ( Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i ) ccom += ctp.residue(1).xyz(i);
+	ccom /= ctp.residue(1).nheavyatoms();
 
 	Size iOE1=pose.residue(rsd2).atom_index("OE1"),iCD=pose.residue(rsd2).atom_index("CD"),iCG=pose.residue(rsd2).atom_index("CG");
 
@@ -1043,13 +1052,13 @@ void ik_lys_ctp_glu(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 	//TR << "ik_lys_ctp_glu" << rsd1y << " " << rsd2 << " " << rotset->num_rotamers() << std::endl;
 
 	// do IK on each lys rot
-	for(Size krot = 1; krot <= rotset->num_rotamers(); ++krot) {
+	for ( Size krot = 1; krot <= rotset->num_rotamers(); ++krot ) {
 		pose.set_chi(1,rsd1,rotset->rotamer(krot)->chi(1));
 		pose.set_chi(2,rsd1,rotset->rotamer(krot)->chi(2));
 		pose.set_chi(3,rsd1,rotset->rotamer(krot)->chi(3));
 		pose.set_chi(4,rsd1,rotset->rotamer(krot)->chi(4));
 		Vec const ctp_oc  = pose.residue(rsd1).xyz("NZ" ) + 3.0*(pose.residue(rsd1).xyz("1HZ")-pose.residue(rsd1).xyz("NZ")).normalized();
-		for(Size iech = 1; iech <= echi1.size(); ++iech) {
+		for ( Size iech = 1; iech <= echi1.size(); ++iech ) {
 			Real ech1 = echi1[iech];
 			pose.set_chi(1,rsd2,ech1);
 			Vec const ctp_oh  = pose.residue(rsd2).xyz(iOE1) + 3.0*(pose.residue(rsd2).xyz("CD" )-pose.residue(rsd2).xyz("CG")).normalized();
@@ -1082,28 +1091,28 @@ void ik_lys_ctp_glu(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 			db_ang[11] = 105.0;
 			db_ang[12] = 120.0;
 
-			for(Size ock = 0; ock <= 1; ock++) {
+			for ( Size ock = 0; ock <= 1; ock++ ) {
 				db_ang[ 9] = ock?98.0: 72.9;
 				dt_ang[ 9] = ock?56.0:-62.9;
-				for(Size ocd = 0; ocd <= 1; ocd++) {
+				for ( Size ocd = 0; ocd <= 1; ocd++ ) {
 					dt_ang[12] = ocd?0.0:180.0;
 
 					Size count = 0;
 					numeric::kinematic_closure::bridgeObjects(vecs2vv(atoms), dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
-					for(int isol = 1; isol <= nsol; isol++) {
+					for ( int isol = 1; isol <= nsol; isol++ ) {
 
 						utility::vector1<utility::vector1<core::Real> > vv_atm_out;
 						numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
 						Vecs apos = vv2vecs(vv_atm_out);
 
 						bool clash = false;
-						for( Size i = 1; i <= atoms.size(); ++i ) {
-							for( Size j = i+3; j <= atoms.size(); ++j ) {
-								if( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
+						for ( Size i = 1; i <= atoms.size(); ++i ) {
+							for ( Size j = i+3; j <= atoms.size(); ++j ) {
+								if ( apos[i].distance_squared(apos[j]) < 8.0 ) { clash=true; break; }
 							}
-							if(clash) break;
+							if ( clash ) break;
 						}
-						if(clash) continue;
+						if ( clash ) continue;
 
 						pose.set_chi(3,rsd2,t_ang[isol][13]);
 						pose.set_chi(2,rsd2,t_ang[isol][14]);
@@ -1111,9 +1120,9 @@ void ik_lys_ctp_glu(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 						//Real dun2 = dunlib2->rotamer_energy( pose.residue(rsd2), scratch );
 						//if( dun2 > coo_dun_th ) continue;
 
-						for(Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
-						for(Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i) if(! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
-						if(clash) continue;
+						for ( Size i = 6; i <= pose.residue(rsd1).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd1)), rsd1 ) ) { clash=true; break; }
+						for ( Size i = 6; i <= pose.residue(rsd2).nheavyatoms(); ++i ) if ( ! ifc.clash_check( pose.xyz(AtomID(i,rsd2)), rsd2 ) ) { clash=true; break; }
+						if ( clash ) continue;
 
 						core::kinematics::Stub ikstub(apos[12],apos[13],apos[14]);
 						core::kinematics::Stub postub(pose.residue(rsd2).xyz(iOE1),pose.residue(rsd2).xyz(iCD),pose.residue(rsd2).xyz(iCG));
@@ -1123,20 +1132,20 @@ void ik_lys_ctp_glu(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 
 						core::kinematics::Stub lcstub(tmp_ctp_coh,tmp_ctp_oh,tmp_ctp_oc);
 
-						for(Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i) {
+						for ( Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i ) {
 							Vec X = lcstub.local2global(ctp.residue(1).xyz(i));
-							for(Size j = 1; j <= pose.residue(rsd1).nheavyatoms()-1; ++j) if( X.distance_squared(pose.residue(rsd1).xyz(j)) < 8.0 ) clash=true;
-							for(Size j = 1; j <= pose.residue(rsd2).nheavyatoms()-3; ++j) if( X.distance_squared(pose.residue(rsd2).xyz(j)) < 8.0 ) clash=true;
+							for ( Size j = 1; j <= pose.residue(rsd1).nheavyatoms()-1; ++j ) if ( X.distance_squared(pose.residue(rsd1).xyz(j)) < 8.0 ) clash=true;
+							for ( Size j = 1; j <= pose.residue(rsd2).nheavyatoms()-3; ++j ) if ( X.distance_squared(pose.residue(rsd2).xyz(j)) < 8.0 ) clash=true;
 							//if( !ifc.clash_check( X ) ) clash=true;
-							if(clash) break;
+							if ( clash ) break;
 						}
-						if(clash) continue;
+						if ( clash ) continue;
 
 						Vec comtmp = lcstub.local2global(ccom);
 						HitOP h( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub ) );
-						#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 						#pragma omp critical
-						#endif
+#endif
 						hits.push_back(h);
 						count++;
 
@@ -1204,7 +1213,7 @@ void repack(Pose & arg) {
 int main (int argc, char *argv[]) {
 	try {
 
-	  devel::init(argc,argv);
+		devel::init(argc,argv);
 
 		const core::Real PI = numeric::NumericTraits<Real>::pi();
 
@@ -1219,27 +1228,27 @@ int main (int argc, char *argv[]) {
 
 		string infile = basic::options::option[basic::options::OptionKeys::in::file::s]()[1];
 		core::import_pose::pose_from_file(pose,infile, core::import_pose::PDB_file);
-		for(Size i = 1; i <= pose.size(); ++i) {
-			if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
-			if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
+		for ( Size i = 1; i <= pose.size(); ++i ) {
+			if ( pose.residue(i).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
+			if ( pose.residue(i).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
 		}
 		Pose pala(pose);
-		for(Size ir = 1; ir <= pala.size(); ++ir) {
-			if(pala.residue(ir).name3()!="GLY") pala.replace_residue(ir,ala.residue(1),true);
+		for ( Size ir = 1; ir <= pala.size(); ++ir ) {
+			if ( pala.residue(ir).name3()!="GLY" ) pala.replace_residue(ir,ala.residue(1),true);
 		}
 
 		ImplicitFastClashCheck ifc (pose,2.0);
 		ImplicitFastClashCheck ifc3(pose,2.6);
 		vector1<Real> sasa; { core::id::AtomID_Map<Real> atom_sasa; core::scoring::calc_per_atom_sasa( pose, atom_sasa, sasa, 5.0, false ); }
-		if( basic::options::option[basic::options::OptionKeys::match::scaffold_active_site_residues].user() ) {
+		if ( basic::options::option[basic::options::OptionKeys::match::scaffold_active_site_residues].user() ) {
 			string posfile = basic::options::option[basic::options::OptionKeys::match::scaffold_active_site_residues]();
 			TR << "reading pos file " << posfile << std::endl;
 			utility::io::izstream in(posfile);
 			vector1<Size> pos;
-			Size tmp; while(in >> tmp) pos.push_back(tmp);
+			Size tmp; while ( in >> tmp ) pos.push_back(tmp);
 			in.close();
-			for(Size i = 1; i <= sasa.size(); ++i) {
-				if( std::find(pos.begin(),pos.end(),i) == pos.end() ) sasa[i] = 9e9;
+			for ( Size i = 1; i <= sasa.size(); ++i ) {
+				if ( std::find(pos.begin(),pos.end(),i) == pos.end() ) sasa[i] = 9e9;
 				else sasa[i] = 0.0;
 			}
 		}
@@ -1248,52 +1257,52 @@ int main (int argc, char *argv[]) {
 		vector1<HitOP> khits; {
 			vector1<vector1<HitOP> > hitsvec(pose.size());
 			Size nhit=0;
-			#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 			#pragma omp parallel for schedule(dynamic,1)
-			#endif
-			for(int ir = 3; ir <= (int)pose.size()-2; ++ir) {
-				if(sasa[ir] > 0.1) continue;
+#endif
+			for ( int ir = 3; ir <= (int)pose.size()-2; ++ir ) {
+				if ( sasa[ir] > 0.1 ) continue;
 				Pose wp,lg;
-				#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 				#pragma omp critical
-				#endif
-							{ wp=pose; lg=ctp; }
-							wp.replace_residue(ir,lys.residue(1),true);
-							for(Size jr = 3; jr <= pose.size()-2; ++jr) {
-								if(ir==(int)jr) continue;
-								if(sasa[jr] > 0.1) continue;
-								//if( (ir*jr+jr+3*ir+999999999)%10!=0 ) continue;
-								wp.replace_residue(jr,asp.residue(1),true);
-								ik_lys_ctp_asp(wp,ir,jr,ifc,hitsvec[ir],lg);
-								wp.replace_residue(jr,glu.residue(1),true);
-								ik_lys_ctp_glu(wp,ir,jr,ifc,hitsvec[ir],lg);
-							}
-							nhit += hitsvec[ir].size();
-							if(ir%3==0) TR << Real(ir-2)/Real(pose.size()-4) * 100.0 << " percent done ik_lys_ctp " << nhit << " hits" << std::endl;
-						}
-						for(vector1<vector1<HitOP> >::const_iterator i = hitsvec.begin(); i != hitsvec.end(); ++i) khits.insert(khits.end(),i->begin(),i->end());
-						hitsvec.clear(); // recover mem
-					}
+#endif
+				{ wp=pose; lg=ctp; }
+				wp.replace_residue(ir,lys.residue(1),true);
+				for ( Size jr = 3; jr <= pose.size()-2; ++jr ) {
+					if ( ir==(int)jr ) continue;
+					if ( sasa[jr] > 0.1 ) continue;
+					//if( (ir*jr+jr+3*ir+999999999)%10!=0 ) continue;
+					wp.replace_residue(jr,asp.residue(1),true);
+					ik_lys_ctp_asp(wp,ir,jr,ifc,hitsvec[ir],lg);
+					wp.replace_residue(jr,glu.residue(1),true);
+					ik_lys_ctp_glu(wp,ir,jr,ifc,hitsvec[ir],lg);
+				}
+				nhit += hitsvec[ir].size();
+				if ( ir%3==0 ) TR << Real(ir-2)/Real(pose.size()-4) * 100.0 << " percent done ik_lys_ctp " << nhit << " hits" << std::endl;
+			}
+			for ( vector1<vector1<HitOP> >::const_iterator i = hitsvec.begin(); i != hitsvec.end(); ++i ) khits.insert(khits.end(),i->begin(),i->end());
+			hitsvec.clear(); // recover mem
+		}
 
-					TR << "scanning ARG-OOC" << std::endl;
-					vector1<HitOP> rhits; {
-						vector1<vector1<HitOP> > hitsvec(pose.size());
-						Size nhit=0;
-				#ifdef USE_OPENMP
-				#pragma omp parallel for schedule(dynamic,1)
-				#endif
-			for(int ir = 3; ir <= (int)pose.size()-2; ++ir) {
-				if(sasa[ir] > 0.1) continue;
+		TR << "scanning ARG-OOC" << std::endl;
+		vector1<HitOP> rhits; {
+			vector1<vector1<HitOP> > hitsvec(pose.size());
+			Size nhit=0;
+#ifdef USE_OPENMP
+			#pragma omp parallel for schedule(dynamic,1)
+#endif
+			for ( int ir = 3; ir <= (int)pose.size()-2; ++ir ) {
+				if ( sasa[ir] > 0.1 ) continue;
 				//TR << ir << std::endl;
 				Pose wp,lg;
-				#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 				#pragma omp critical
-				#endif
+#endif
 				{ wp=pose; lg=ctp; }
 				wp.replace_residue(ir,arg.residue(1),true);
-				for(Size jr = 3; jr <= pose.size()-2; ++jr) {
-					if(ir==(int)jr) continue;
-					if(sasa[jr] > 0.1) continue;
+				for ( Size jr = 3; jr <= pose.size()-2; ++jr ) {
+					if ( ir==(int)jr ) continue;
+					if ( sasa[jr] > 0.1 ) continue;
 					//if( (ir*jr+jr+3*ir+999999999)%5!=0 ) continue;
 					wp.replace_residue(jr,asp.residue(1),true);
 					ik_arg_asp_frnt(wp,ir,jr,ifc,hitsvec[ir],lg);
@@ -1303,9 +1312,9 @@ int main (int argc, char *argv[]) {
 					ik_arg_glu_side(wp,ir,jr,ifc,hitsvec[ir],lg);
 				}
 				nhit += hitsvec[ir].size();
-				if(ir%3==0) TR << Real(ir-2)/Real(pose.size()-4) * 100.0 << " percent done ik_arg " << nhit << " hits" << std::endl;
+				if ( ir%3==0 ) TR << Real(ir-2)/Real(pose.size()-4) * 100.0 << " percent done ik_arg " << nhit << " hits" << std::endl;
 			}
-			for(vector1<vector1<HitOP> >::const_iterator i = hitsvec.begin(); i != hitsvec.end(); ++i) rhits.insert(rhits.end(),i->begin(),i->end());
+			for ( vector1<vector1<HitOP> >::const_iterator i = hitsvec.begin(); i != hitsvec.end(); ++i ) rhits.insert(rhits.end(),i->begin(),i->end());
 			hitsvec.clear(); // recover mem
 		}
 		TR << "LYS/OOC HITS: " << khits.size() << std::endl;
@@ -1313,23 +1322,25 @@ int main (int argc, char *argv[]) {
 
 		// set up lig position
 		core::kinematics::Stub const lgstub(ctp.residue(1).xyz("C5"),ctp.residue(1).xyz("O1"),ctp.residue(1).xyz("O2"));
-		for(Size i = 1; i <= ctp.residue(1).natoms(); ++i) ctp.set_xyz(AtomID(i,1), lgstub.global2local(ctp.xyz(AtomID(i,1))));
-		Vec ccom(0,0,0); for(Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i) ccom += ctp.residue(1).xyz(i); ccom /= ctp.residue(1).nheavyatoms();
+		for ( Size i = 1; i <= ctp.residue(1).natoms(); ++i ) ctp.set_xyz(AtomID(i,1), lgstub.global2local(ctp.xyz(AtomID(i,1))));
+		Vec ccom(0,0,0); for ( Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i ) ccom += ctp.residue(1).xyz(i);
+		ccom /= ctp.residue(1).nheavyatoms();
 		Mat LM = numeric::alignVectorSets( ctp.residue(1).xyz("O4")-ctp.residue(1).xyz("C9"), ctp.residue(1).xyz("O3")-ctp.residue(1).xyz("C9"),
-		                                   ctp.residue(1).xyz("O5")-ctp.residue(1).xyz("C7"), ctp.residue(1).xyz("O6")-ctp.residue(1).xyz("C7") );
+			ctp.residue(1).xyz("O5")-ctp.residue(1).xyz("C7"), ctp.residue(1).xyz("O6")-ctp.residue(1).xyz("C7") );
 		Pose lgB(ctp);
 		rot_pose(lgB,LM);
 		trans_pose(lgB,ctp.residue(1).xyz("C7")-lgB.residue(1).xyz("C9"));
-		Vec ccomB(0,0,0); for(Size i = 1; i <= lgB.residue(1).nheavyatoms(); ++i) ccomB += lgB.residue(1).xyz(i); ccomB /= lgB.residue(1).nheavyatoms();
+		Vec ccomB(0,0,0); for ( Size i = 1; i <= lgB.residue(1).nheavyatoms(); ++i ) ccomB += lgB.residue(1).xyz(i);
+		ccomB /= lgB.residue(1).nheavyatoms();
 
 		// set up lys grid
 		Vec lb(9e9,9e9,9e9),ub(-9e9,-9e9,-9e9);
-		for(Size i = 1; i <= khits.size(); ++i) {
+		for ( Size i = 1; i <= khits.size(); ++i ) {
 			Vec com = khits[i]->stub.local2global(ccom ); lb.min( com -3.0 ); ub.max( com +3.0 );
 		}
-		if(rhits.size()==0) { lb = 0; ub = 1; }
+		if ( rhits.size()==0 ) { lb = 0; ub = 1; }
 		ObjexxFCL::FArray3D<vector1<HitOP> > kgrid((int)std::ceil(ub.x()-lb.x()),(int)std::ceil(ub.y()-lb.y()),(int)std::ceil(ub.z()-lb.z()));
-		for(Size i = 1; i <= khits.size(); ++i) {
+		for ( Size i = 1; i <= khits.size(); ++i ) {
 			Vec com  = khits[i]->stub.local2global(ccom );
 			Size ix = (int)std::ceil( com.x() - lb.x() );
 			Size iy = (int)std::ceil( com.y() - lb.y() );
@@ -1344,19 +1355,19 @@ int main (int argc, char *argv[]) {
 		Vec  const lgO1 (ctp.residue(1).xyz(iO1)),lgC7 (ctp.residue(1).xyz(iC7)),lgC9 (ctp.residue(1).xyz(iC9));
 		Vec  const lgBO1(lgB.residue(1).xyz(iO1)),lgBC7(lgB.residue(1).xyz(iC7)),lgBC9(lgB.residue(1).xyz(iC9));
 
-		#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 		#pragma omp parallel for schedule(dynamic,1)
-		#endif
-		for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
-			if(ir%1000==0) TR << Real(ir)/Real(rhits.size()) * 100.0 << " percent done combine " << nhit << " hits" << std::endl;
+#endif
+		for ( int ir = 1; ir <= (int)rhits.size(); ++ir ) {
+			if ( ir%1000==0 ) TR << Real(ir)/Real(rhits.size()) * 100.0 << " percent done combine " << nhit << " hits" << std::endl;
 			Hit const rhit(*rhits[ir]);
 			Vec rcom = rhit.stub.local2global(ccom);
 			Pose wp,lg;
 			ScoreFunctionOP sf,sf2;
 			core::kinematics::MoveMapOP movemap;
-			#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 			#pragma omp critical
-			#endif
+#endif
 			{
 				sf = ScoreFunctionOP( new core::scoring::ScoreFunction() );
 				sf2 = ScoreFunctionOP( new core::scoring::ScoreFunction() );
@@ -1375,25 +1386,25 @@ int main (int argc, char *argv[]) {
 			movemap->set_jump(false);
 			movemap->set_jump(4,true);
 			protocols::simple_moves::MinMover minm( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
-			for(Size is = 1; is <= rhits.size(); ++is) {
+			for ( Size is = 1; is <= rhits.size(); ++is ) {
 				Hit const shit(*rhits[is]);
-				if(rhit.rsd1==shit.rsd1||rhit.rsd1==shit.rsd2||rhit.rsd2==shit.rsd1||rhit.rsd2==shit.rsd2) continue;
+				if ( rhit.rsd1==shit.rsd1||rhit.rsd1==shit.rsd2||rhit.rsd2==shit.rsd1||rhit.rsd2==shit.rsd2 ) continue;
 				Vec scom = shit.stub.local2global(ccomB);
-				if(rcom.distance_squared(scom) > 16.0) continue;
+				if ( rcom.distance_squared(scom) > 16.0 ) continue;
 
-				if(rhit.stub.local2global(lgO1).distance_squared(shit.stub.local2global(lgBO1)) > 16.0) continue;
-				if(rhit.stub.local2global(lgC7).distance_squared(shit.stub.local2global(lgBC7)) > 16.0) continue;
-				if(rhit.stub.local2global(lgC9).distance_squared(shit.stub.local2global(lgBC9)) > 16.0) continue;
+				if ( rhit.stub.local2global(lgO1).distance_squared(shit.stub.local2global(lgBO1)) > 16.0 ) continue;
+				if ( rhit.stub.local2global(lgC7).distance_squared(shit.stub.local2global(lgBC7)) > 16.0 ) continue;
+				if ( rhit.stub.local2global(lgC9).distance_squared(shit.stub.local2global(lgBC9)) > 16.0 ) continue;
 
-				#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 				#pragma omp critical
-				#endif
+#endif
 				{ shit.apply(wp);
 					// wp.dump_pdb("test.pdb");
 					// utility_exit_with_message("test.pdb");
 				}
 
-				Pose lg1=lg; for(Size i = 1; i <= lg1.residue_type(1).natoms(); ++i) lg1.set_xyz(AtomID(i,1), rhit.stub.local2global(lg1.xyz(AtomID(i,1))));
+				Pose lg1=lg; for ( Size i = 1; i <= lg1.residue_type(1).natoms(); ++i ) lg1.set_xyz(AtomID(i,1), rhit.stub.local2global(lg1.xyz(AtomID(i,1))));
 				Pose tmp;
 				tmp.append_residue_by_jump(wp.residue(rhit.rsd1),1);
 				tmp.append_residue_by_jump(wp.residue(rhit.rsd2),1);
@@ -1438,46 +1449,47 @@ int main (int argc, char *argv[]) {
 
 				{
 					bool clash = false;
-					for(Size i = 1; i <= tmp.residue(5).nheavyatoms(); ++i) {
-						if( !ifc.clash_check( tmp.residue(5).xyz(i) ) ) clash = true;
+					for ( Size i = 1; i <= tmp.residue(5).nheavyatoms(); ++i ) {
+						if ( !ifc.clash_check( tmp.residue(5).xyz(i) ) ) clash = true;
 					}
-					if(clash) continue;
+					if ( clash ) continue;
 				}
 
-				#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 				#pragma omp critical
-				#endif
+#endif
 				nrhit++;
 
 				Vec const lg12O1(tmp.residue(5).xyz(iO1));
 				Vec const lg12C7(tmp.residue(5).xyz(iC7));
 				Vec const lg12C9(tmp.residue(5).xyz(iC9));
-				Vec ccom12(0,0,0); for(Size i=1; i <= tmp.residue(5).nheavyatoms(); ++i) ccom12 += tmp.residue(5).xyz(i); ccom12 /= tmp.residue(5).nheavyatoms();
+				Vec ccom12(0,0,0); for ( Size i=1; i <= tmp.residue(5).nheavyatoms(); ++i ) ccom12 += tmp.residue(5).xyz(i);
+				ccom12 /= tmp.residue(5).nheavyatoms();
 				Size ixr = (int)std::ceil( ccom12.x() - lb.x() );
 				Size iyr = (int)std::ceil( ccom12.y() - lb.y() );
 				Size izr = (int)std::ceil( ccom12.z() - lb.z() );
 
-				for(Size ix = max(ixr-1,((Size)1)); ix <= min(ixr+((Size)1),kgrid.size1()); ++ix) {
-					for(Size iy = max(iyr-1,((Size)1)); iy <= min(iyr+((Size)1),kgrid.size2()); ++iy) {
-						for(Size iz = max(izr-1,((Size)1)); iz <= min(izr+((Size)1),kgrid.size3()); ++iz) {
+				for ( Size ix = max(ixr-1,((Size)1)); ix <= min(ixr+((Size)1),kgrid.size1()); ++ix ) {
+					for ( Size iy = max(iyr-1,((Size)1)); iy <= min(iyr+((Size)1),kgrid.size2()); ++iy ) {
+						for ( Size iz = max(izr-1,((Size)1)); iz <= min(izr+((Size)1),kgrid.size3()); ++iz ) {
 							vector1<HitOP> const & ktmphit( kgrid(ix,iy,iz) );
-							for(Size ikh = 1; ikh <= ktmphit.size(); ++ikh) {
+							for ( Size ikh = 1; ikh <= ktmphit.size(); ++ikh ) {
 								Hit const khit(*ktmphit[ikh]);
-								if(khit.rsd1==rhit.rsd1||khit.rsd1==rhit.rsd2||khit.rsd2==rhit.rsd1||khit.rsd2==rhit.rsd2) continue;
-								if(khit.rsd1==shit.rsd1||khit.rsd1==shit.rsd2||khit.rsd2==shit.rsd1||khit.rsd2==shit.rsd2) continue;
+								if ( khit.rsd1==rhit.rsd1||khit.rsd1==rhit.rsd2||khit.rsd2==rhit.rsd1||khit.rsd2==rhit.rsd2 ) continue;
+								if ( khit.rsd1==shit.rsd1||khit.rsd1==shit.rsd2||khit.rsd2==shit.rsd1||khit.rsd2==shit.rsd2 ) continue;
 								Vec kcom = khit.stub.local2global(ccom);
 								//if( kcom.distance_squared(ccom12) > 0.25 ) continue;
 
-								if(lg12O1.distance_squared(khit.stub.local2global(lgO1)) > 16.0) continue;
-								if(lg12C7.distance_squared(khit.stub.local2global(lgC7)) > 16.0) continue;
-								if(lg12C9.distance_squared(khit.stub.local2global(lgC9)) > 16.0) continue;
+								if ( lg12O1.distance_squared(khit.stub.local2global(lgO1)) > 16.0 ) continue;
+								if ( lg12C7.distance_squared(khit.stub.local2global(lgC7)) > 16.0 ) continue;
+								if ( lg12C9.distance_squared(khit.stub.local2global(lgC9)) > 16.0 ) continue;
 
-								#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 								#pragma omp critical
-								#endif
+#endif
 								khit.apply(wp);
 								Pose lgK(lg);
-								for(Size i = 1; i <= lgK.residue_type(1).natoms(); ++i) lgK.set_xyz(AtomID(i,1), khit.stub.local2global(lgK.xyz(AtomID(i,1))));
+								for ( Size i = 1; i <= lgK.residue_type(1).natoms(); ++i ) lgK.set_xyz(AtomID(i,1), khit.stub.local2global(lgK.xyz(AtomID(i,1))));
 
 								Pose tmp2(tmp);
 								tmp2.append_residue_by_jump(wp.residue(khit.rsd1),1);
@@ -1497,25 +1509,25 @@ int main (int argc, char *argv[]) {
 								minm.apply(tmp2);
 								{
 									bool clash = false;
-									for(Size i = 1; i <= tmp.residue(5).nheavyatoms(); ++i) {
-										if( !ifc3.clash_check( tmp.residue(5).xyz(i) ) ) clash = true;
+									for ( Size i = 1; i <= tmp.residue(5).nheavyatoms(); ++i ) {
+										if ( !ifc3.clash_check( tmp.residue(5).xyz(i) ) ) clash = true;
 									}
-									if(clash) continue;
+									if ( clash ) continue;
 								}
 								string fn = lzs(rhit.rsd1,3)+"_"+tmp2.residue(2).name1()+lzs(rhit.rsd2,3)
 									+"_"+lzs(shit.rsd1,3)+"_"+tmp2.residue(4).name1()+lzs(shit.rsd2,3)
 									+"_"+lzs(khit.rsd1,3)+"_"+tmp2.residue(7).name1()+lzs(khit.rsd2,3);
 								//prev.dump_pdb("test_"+fn+".pdb");
 
-								#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 								#pragma omp critical
-								#endif
+#endif
 								nhit++;
 
 								Pose tmp3;
-								#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 								#pragma omp critical
-								#endif
+#endif
 								{
 									tmp3 = pala;
 									rhit.apply(tmp3);
@@ -1549,7 +1561,7 @@ int main (int argc, char *argv[]) {
 								tmp3.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint(    AtomID(tmp2.residue(7).nheavyatoms()-2 ,r7), AtomID(tmp2.residue(7).nheavyatoms()-1,r7), AtomID(iO1,r5), FuncOP( new core::scoring::func::HarmonicFunc(PI*2.0/3.0,0.05)) ) ) ));
 								tmp3.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint(    AtomID(tmp2.residue(7).nheavyatoms()-1 ,r7), AtomID(iO1, r5), AtomID(iC5,r5), FuncOP( new core::scoring::func::HarmonicFunc(1.838,0.05) ) ) ) ) );
 
-								for(Size ir = 1; ir < tmp3.size(); ++ir) {
+								for ( Size ir = 1; ir < tmp3.size(); ++ir ) {
 									tmp3.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(2,ir), AtomID(2,100), tmp3.xyz(AtomID(2,ir)) , FuncOP( new core::scoring::func::HarmonicFunc(0,1.0) ) ) ) ) );
 								}
 
@@ -1617,12 +1629,12 @@ int main (int argc, char *argv[]) {
 								ss_out_all->add_energy( "ka1", ka1 );
 								ss_out_all->add_energy( "ka2", ka2 );
 								ss_out_all->add_energy( "irep" ,
-																				tmp4.energies().residue_total_energies(1)[core::scoring::fa_intra_rep]+
-																				tmp4.energies().residue_total_energies(2)[core::scoring::fa_intra_rep]+
-																				tmp4.energies().residue_total_energies(3)[core::scoring::fa_intra_rep]+
-																				tmp4.energies().residue_total_energies(4)[core::scoring::fa_intra_rep]+
-																				tmp4.energies().residue_total_energies(6)[core::scoring::fa_intra_rep]+
-																				tmp4.energies().residue_total_energies(7)[core::scoring::fa_intra_rep] );
+									tmp4.energies().residue_total_energies(1)[core::scoring::fa_intra_rep]+
+									tmp4.energies().residue_total_energies(2)[core::scoring::fa_intra_rep]+
+									tmp4.energies().residue_total_energies(3)[core::scoring::fa_intra_rep]+
+									tmp4.energies().residue_total_energies(4)[core::scoring::fa_intra_rep]+
+									tmp4.energies().residue_total_energies(6)[core::scoring::fa_intra_rep]+
+									tmp4.energies().residue_total_energies(7)[core::scoring::fa_intra_rep] );
 
 								ss_out_all->add_energy( "irep1" , tmp4.energies().residue_total_energies(1)[core::scoring::fa_intra_rep] );
 								ss_out_all->add_energy( "irep2" , tmp4.energies().residue_total_energies(2)[core::scoring::fa_intra_rep] );

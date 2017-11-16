@@ -1,16 +1,15 @@
 /*
- * CycPepMover.cpp
- *
- *  Created on: Nov 18, 2009
- *      Author: liorz06
- */
+* CycPepMover.cpp
+*
+*  Created on: Nov 18, 2009
+*      Author: liorz06
+*/
 #include "CycPepMover.hh"
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.CycPepMover" );
+static basic::Tracer TR( "protocols.moves.CycPepMover" );
 using namespace core;
 using namespace ObjexxFCL;
 
@@ -62,11 +61,11 @@ void CycPepMover::rotateUntilCys(core::pose::Pose& workpose, Size untilCys){
 	core::pose::remove_lower_terminus_type_from_pose_residue(workpose,workpose.size());
 	core::pose::remove_upper_terminus_type_from_pose_residue(workpose,1);
 
-		Size counter = 1;
-		pose::Pose tempPose(workpose,untilCys,untilCys);
-		core::pose::remove_lower_terminus_type_from_pose_residue(tempPose,tempPose.size());
-		core::pose::remove_upper_terminus_type_from_pose_residue(tempPose,1);
-	for( Size j=untilCys+1; j%workpose.size()!=untilCys; ++j){
+	Size counter = 1;
+	pose::Pose tempPose(workpose,untilCys,untilCys);
+	core::pose::remove_lower_terminus_type_from_pose_residue(tempPose,tempPose.size());
+	core::pose::remove_upper_terminus_type_from_pose_residue(tempPose,1);
+	for ( Size j=untilCys+1; j%workpose.size()!=untilCys; ++j ) {
 
 		//handle the case where j % n_residue == 0.. we actually want it to point to the last residue
 		Size resi = (j%workpose.size() == 0)?workpose.size():j%workpose.size();
@@ -80,11 +79,11 @@ void CycPepMover::rotateUntilCys(core::pose::Pose& workpose, Size untilCys){
 void CycPepMover::updateSSAtoms(pose::Pose& workpose, Size upNum, utility::vector1_int& vec, Size pepsize) {
 	Size toAdd = pepsize+1-upNum;
 	utility::vector1<std::pair<Size,Size> > dss;
-	for(Size i=1; i<=vec.size(); ++i){
+	for ( Size i=1; i<=vec.size(); ++i ) {
 		vec[i] = (vec[i] + toAdd) % pepsize;
 	}
 	std::sort(vec.begin(),vec.end());
-	for (Size i=1; i<=vec.size(); i+=2) {
+	for ( Size i=1; i<=vec.size(); i+=2 ) {
 		std::pair<Size,Size> p(vec[i],vec[i+1]);
 		dss.push_back(p);
 	}
@@ -95,12 +94,12 @@ void CycPepMover::updateSSAtoms(pose::Pose& workpose, Size upNum, utility::vecto
 core::scoring::constraints::ConstraintSetOP CycPepMover::createDihedralConstraint(pose::Pose& workpose) {
 	core::scoring::constraints::ConstraintSetOP cst_set( new core::scoring::constraints::ConstraintSet() );
 	core::scoring::constraints::HarmonicFuncOP spring = new core::scoring::constraints::HarmonicFunc(180,3);
-    const core::pose::Pose::Residue & lastRes = workpose.residue(workpose.size());
-    const core::pose::Pose::Residue & firstRes = workpose.residue(1);
+	const core::pose::Pose::Residue & lastRes = workpose.residue(workpose.size());
+	const core::pose::Pose::Residue & firstRes = workpose.residue(1);
 
-    id::AtomID atom1(lastRes.atom_index("CA"),workpose.size());
+	id::AtomID atom1(lastRes.atom_index("CA"),workpose.size());
 	id::AtomID atom2(lastRes.atom_index("C"),workpose.size());
-    id::AtomID atom3(firstRes.atom_index("N"),1);
+	id::AtomID atom3(firstRes.atom_index("N"),1);
 	id::AtomID atom4(firstRes.atom_index("CA"),1);
 
 	//create atompair constraint:
@@ -110,7 +109,7 @@ core::scoring::constraints::ConstraintSetOP CycPepMover::createDihedralConstrain
 	core::scoring::constraints::HarmonicFuncOP springAtomPair = new core::scoring::constraints::HarmonicFunc(distance,0.01);
 
 	cst_set->add_constraint(new core::scoring::constraints::DihedralConstraint(atom1,atom2,atom3,atom4,spring));
-//	cst_set->add_constraint(new core::scoring::constraints::AtomPairConstraint(atom3,atom2,springAtomPair));
+	// cst_set->add_constraint(new core::scoring::constraints::AtomPairConstraint(atom3,atom2,springAtomPair));
 	return cst_set;
 }
 Real CycPepMover::scoreNoConstraint(pose::Pose& workpose){
@@ -133,7 +132,7 @@ void CycPepMover::modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose){
 }
 
 void CycPepMover::printEnergies(pose::Pose& workpose) {
-	for (Size i=1; i<=workpose.size(); ++i) {
+	for ( Size i=1; i<=workpose.size(); ++i ) {
 		std::cout<<"=========Residue "<< i<<": "<< workpose.residue(i).name()<<"============"<<std::endl;
 		workpose.energies().residue_total_energies(i).print();
 	}
@@ -147,18 +146,18 @@ void CycPepMover::apply(pose::Pose& workpose) {
 	core::conformation::disulfide_bonds(workpose.conformation(),dss);
 	//declare a bond between N-C terminals
 	workpose.conformation().declare_chemical_bond(1,"N",workpose.size(),"C");
-//	minimize(workpose);
-//	packRotamers(workpose);
+	// minimize(workpose);
+	// packRotamers(workpose);
 
 	//vector of Cys atoms
 	utility::vector1_int ssAtoms;
-	for(Size i=1; i<=dss.size(); ++i){
+	for ( Size i=1; i<=dss.size(); ++i ) {
 		ssAtoms.push_back(dss[i].first);
 		ssAtoms.push_back(dss[i].second);
 	}
 
 	std::sort(ssAtoms.begin(),ssAtoms.end());
-	for(Size i=1; i<=ssAtoms.size(); ++i){
+	for ( Size i=1; i<=ssAtoms.size(); ++i ) {
 		rotateUntilCys(workpose,ssAtoms[i]);
 		updateSSAtoms(workpose,ssAtoms[i],ssAtoms,workpose.size());
 		core::scoring::constraints::ConstraintSetOP cst_set = createDihedralConstraint(workpose);
@@ -180,17 +179,18 @@ void CycPepMover::apply(pose::Pose& workpose) {
 		dss.clear();
 		core::conformation::disulfide_bonds(workpose.conformation(),dss);
 		modelSSLoop(ssAtoms[1],ssAtoms[2],workpose);
-		if ( i == 1 )
+		if ( i == 1 ) {
 			workpose.dump_pdb("after_modeling1.pdb");
+		}
 
 		sc = scoreNoConstraint(workpose);
 		TR<<"Score after loopmodel + minimization + repacking: "<<sc<<std::endl;
 		workpose.remove_constraints(cst_set->get_all_constraints());
 	}
-		packRotamers(workpose);
+	packRotamers(workpose);
 
-		minimize(workpose);
-	
+	minimize(workpose);
+
 	_scorefxn->set_weight(core::scoring::dihedral_constraint,0);
 	TR<<"Finished with a score of " << _scorefxn->score(workpose)<<std::endl;
 }

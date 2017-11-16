@@ -57,7 +57,7 @@
 
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BackboneMover" );
+static basic::Tracer TR( "protocols.simple_moves.BackboneMover" );
 
 
 namespace protocols {

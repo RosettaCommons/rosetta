@@ -45,14 +45,13 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.ligand_options.InterfaceScoreCalculator" );
+static basic::Tracer TR( "protocols.ligand_docking.ligand_options.InterfaceScoreCalculator" );
 
 /// @brief
 InterfaceScoreCalculator::InterfaceScoreCalculator():

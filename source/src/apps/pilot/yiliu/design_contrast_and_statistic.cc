@@ -67,60 +67,53 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 using utility::file::FileName;
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yiliu.DC" );
+static basic::Tracer TR( "apps.pilot.yiliu.DC" );
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
 
 int isHydroNonPolar(std::string const & resname ){
-	if (resname == "VAL" || resname == "ILE" || resname == "LEU" ||
+	if ( resname == "VAL" || resname == "ILE" || resname == "LEU" ||
 			resname == "MET" || resname == "PHE" || resname == "GLY" ||
 			resname == "ALA" || resname == "PRO" ||
-			resname == "TRP" || resname == "TYR") {
+			resname == "TRP" || resname == "TYR" ) {
 		return 1;
-	}
-	else return 0;
+	} else return 0;
 }
 
 
 int isPolarUncharge(std::string const & resname ){
-	if (resname == "SER" || resname == "THR" || resname == "GLN" || resname == "ASN") {
+	if ( resname == "SER" || resname == "THR" || resname == "GLN" || resname == "ASN" ) {
 		return 1;
-	}
-	else return 0;
+	} else return 0;
 }
 
 int isNegative(std::string const & resname ){
-	if (resname == "ASP" || resname == "GLU") {
+	if ( resname == "ASP" || resname == "GLU" ) {
 		return 1;
-	}
-	else return 0;
+	} else return 0;
 }
 
 int isPositive(std::string const & resname ){
-	if (resname == "ARG" || resname == "LYS" || resname == "HIS" ) {
+	if ( resname == "ARG" || resname == "LYS" || resname == "HIS" ) {
 		return 1;
-	}
-	else return 0;
+	} else return 0;
 }
 
 
 int isBoundary(Size const & neighbor ) {
-	if ((neighbor>13)&&(neighbor<=18)) {
+	if ( (neighbor>13)&&(neighbor<=18) ) {
 		return 1;
-	}
-	else return 0;
+	} else return 0;
 }
 
 int isBuried(Size const & neighbor ) {
-	if ((neighbor>18)) {
+	if ( (neighbor>18) ) {
 		return 1;
-	}
-	else return 0;
+	} else return 0;
 }
 
 // Statistics
@@ -142,97 +135,85 @@ void statistics( std::string filename ) {
 	Real idTotal(0.0), idHydroNonPolar(0.0), idpolarUncharge(0.0), idNegative(0.0), idPositive(0.0);
 	//std::map<std::string,Size> NativeRes, DesignRes, NativeBoundary, DesignBoundary, NativeBuried, DesignBuried, NativeSurface,DesignSurface, unchangedRes;
 	//std::string aas[] = {"ALA", "VAL", "ILE", "LEU", "PHE",
-	//										 "MET", "GLY", "PRO", "TRP", "TYR",
-	//										 "THR", "GLN", "ASN", "SER", "GLU",
-	//										 "ASP", "ARG", "LYS", "HIS", "TRP"};
+	//           "MET", "GLY", "PRO", "TRP", "TYR",
+	//           "THR", "GLN", "ASN", "SER", "GLU",
+	//           "ASP", "ARG", "LYS", "HIS", "TRP"};
 	//for (Size i = 0; i < 20; i++) {
-	//	NativeRes.insert(std::make_pair(aas[i],0));
-	//	DesignRes.insert(std::make_pair(aas[i],0));
-	//	NativeBoundary.insert(std::make_pair(aas[i],0));
-	//	DesignBoundary.insert(std::make_pair(aas[i],0));
-	//	NativeBuried.insert(std::make_pair(aas[i],0));
-	//	DesignBuried.insert(std::make_pair(aas[i],0));
-	//	NativeSurface.insert(std::make_pair(aas[i],0));
-	//	DesignSurface.insert(std::make_pair(aas[i],0));
-	//	unchangedRes.insert(std::make_pair(aas[i],0));
+	// NativeRes.insert(std::make_pair(aas[i],0));
+	// DesignRes.insert(std::make_pair(aas[i],0));
+	// NativeBoundary.insert(std::make_pair(aas[i],0));
+	// DesignBoundary.insert(std::make_pair(aas[i],0));
+	// NativeBuried.insert(std::make_pair(aas[i],0));
+	// DesignBuried.insert(std::make_pair(aas[i],0));
+	// NativeSurface.insert(std::make_pair(aas[i],0));
+	// DesignSurface.insert(std::make_pair(aas[i],0));
+	// unchangedRes.insert(std::make_pair(aas[i],0));
 	//}
 
-	while (getline(redesign_file,line)) {
+	while ( getline(redesign_file,line) ) {
 		nres = line.substr(13,3);
 		dres = line.substr(17,3);
 		neighbor = std::atol(line.substr(24,2).c_str());
-		if ( line.substr(0,4) != pdbCode) {
+		if ( line.substr(0,4) != pdbCode ) {
 			//dont count those N terminus MET
-			if (( nres == "MET") || (dres == "MET")) {
+			if ( ( nres == "MET") || (dres == "MET") ) {
 				isTer = 1;
-			}
-			else {
+			} else {
 				isTer = 0;
 			}
-		}
-		else {
+		} else {
 			isTer = 0;
 		}
 		pdbCode = line.substr(0,4);
-		if(isTer == 0){
+		if ( isTer == 0 ) {
 			totalNo++;
 			//NativeRes[nres]++;
 			//DesignRes[dres]++;
 		}
 		//NatBoundary[i] keeps track of the numbers in boundary for each residue in native state
 		//DesBoundary[i] keeps track of the numbers in boundary for each residue in redesign state
-		if (isBoundary(neighbor)) {
+		if ( isBoundary(neighbor) ) {
 			//NativeBoundary[nres]++;
 			//DesignBoundary[dres]++;
 			BoundaryNum++;
-		}
-		//NatBuried[i] keeps track of the numbers in buried for each residue in native state
-		//DesBuried[i] keeps track of the numbers in buried for each residues in redesign state
-		else if (isBuried(neighbor)) {
+		} else if ( isBuried(neighbor) ) {
+			//NatBuried[i] keeps track of the numbers in buried for each residue in native state
+			//DesBuried[i] keeps track of the numbers in buried for each residues in redesign state
 			//NativeBuried[nres]++;
 			//DesignBuried[dres]++;
 			BuriedNum++;
-		}
-		//NatSurface[i] keeps track of the numbers in surface for each residue in native state
-		//DesSurface[i] keeps track of the numbers in surface for each residue in redesign state
-		else{
+		} else {
+			//NatSurface[i] keeps track of the numbers in surface for each residue in native state
+			//DesSurface[i] keeps track of the numbers in surface for each residue in redesign state
 			//NativeSurface[nres]++;
 			//DesignSurface[dres]++;
 			SurfaceNum++;
 		}
 		//matrix[a,b] keeps all residues
-		//---	matrix[a,b]++
+		//--- matrix[a,b]++
 		//group[i,j] is grouped by four categories
-		if (isHydroNonPolar(nres)) {
+		if ( isHydroNonPolar(nres) ) {
 			hydroNonPolarTotal++;
-		}
-		else if (isPolarUncharge(nres)) {
+		} else if ( isPolarUncharge(nres) ) {
 			polarUnchargeTotal++;
-		}
-		else if (isNegative(nres)) {
+		} else if ( isNegative(nres) ) {
 			polarChargeTotal++;
-		}
-		else if (isPositive(nres)) {
+		} else if ( isPositive(nres) ) {
 			basicTotal++;
-		}
-		else cysTotal++;
-		if (nres == dres) {
+		} else cysTotal++;
+		if ( nres == dres ) {
 			//unchangedRes[nres]++;
 			sum++;
-			if (isHydroNonPolar(nres)) {
+			if ( isHydroNonPolar(nres) ) {
 				hydroNonPolarSum++;
-			}
-			else if (isPolarUncharge(nres)) {
-					polarUnchargeSum++;
-			}
-			else if (isNegative(nres)) {
+			} else if ( isPolarUncharge(nres) ) {
+				polarUnchargeSum++;
+			} else if ( isNegative(nres) ) {
 				polarChargeSum++;
-			}
-			else if (isPositive(nres)) {
+			} else if ( isPositive(nres) ) {
 				basicSum++;
-			}
-			else cysSum++;
-			}
+			} else cysSum++;
+		}
 		++lineNo;
 	}
 	// Final calculations
@@ -244,10 +225,9 @@ void statistics( std::string filename ) {
 	idNegative = polarChargeSum/polarChargeTotal;
 	idPositive = basicSum/basicTotal;
 	std::ofstream staResult("staResult");
-	if (!staResult) {
+	if ( !staResult ) {
 		TR.Error << "Can not open file " << staResult;
-	}
-	else {
+	} else {
 
 		char idT[100], idH[100], idPU[100],idN[100], idP[100];
 		sprintf(idT,"%.1f%%",idTotal*100);
@@ -273,56 +253,56 @@ int main( int argc, char * argv [] )
 {
 	try {
 
-  using namespace core;
-	using namespace core::io;
-  devel::init(argc, argv);
+		using namespace core;
+		using namespace core::io;
+		devel::init(argc, argv);
 
-	TR << "in the main" << std::endl;
-	std::string out_path, redesign_name;
-  vector1 <std::string> in_pdb_names, pdb_codes;
-	sequence_comparation::DesignContrast dc;
-	vector1 <pose::Pose> native_poses, decoy_poses;
-	std::string sqc_file;
+		TR << "in the main" << std::endl;
+		std::string out_path, redesign_name;
+		vector1 <std::string> in_pdb_names, pdb_codes;
+		sequence_comparation::DesignContrast dc;
+		vector1 <pose::Pose> native_poses, decoy_poses;
+		std::string sqc_file;
 
-  dc.setNames();
-	dc.setPdbCodes();
-	in_pdb_names = dc.getPdbNames();
-	pdb_codes = dc.getPdbCodes();
-	// Initialize and use the mover
-	using namespace core::pack::task;
-	TaskFactoryOP main_task_factory = new TaskFactory;
-	main_task_factory->push_back( new operation::InitializeFromCommandline );
-	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( new operation::ReadResfile );
-	}
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
-	pack_mover->task_factory( main_task_factory );
-	pack_mover->score_function( score_fxn );
-	TR << "before the loop" << std::endl;
-	for (Size i=1; i <= pdb_codes.size(); ++i){
-		pose::Pose single_in_pose, single_out_pose;
-		core::import_pose::pose_from_file(single_in_pose, in_pdb_names[i], core::import_pose::PDB_file);
-		single_out_pose = single_in_pose;
-		// Fixbb run
-		pack_mover->apply(single_out_pose);
-		dc.setNeighbors(single_in_pose);
-		native_poses.push_back(single_in_pose);
-		decoy_poses.push_back(single_out_pose);
-	}
-
-	if (option [ out::file::design_contrast ].active()){
-		//		std::string sqc_file = option [ out::file::design_contrast ].default_value();
-		sqc_file = option [ out::file::design_contrast ].value();
-		std::ofstream sqc;
-		sqc.open(sqc_file.c_str());
-		for (Size j=1;j <=  decoy_poses.size(); ++j){
-			dc.output_sqc_file(native_poses[j], decoy_poses[j], pdb_codes[j], sqc);
+		dc.setNames();
+		dc.setPdbCodes();
+		in_pdb_names = dc.getPdbNames();
+		pdb_codes = dc.getPdbCodes();
+		// Initialize and use the mover
+		using namespace core::pack::task;
+		TaskFactoryOP main_task_factory = new TaskFactory;
+		main_task_factory->push_back( new operation::InitializeFromCommandline );
+		if ( option[ packing::resfile ].user() ) {
+			main_task_factory->push_back( new operation::ReadResfile );
 		}
-		sqc.close();
-		statistics(sqc_file);
-	}
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
+		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+		pack_mover->task_factory( main_task_factory );
+		pack_mover->score_function( score_fxn );
+		TR << "before the loop" << std::endl;
+		for ( Size i=1; i <= pdb_codes.size(); ++i ) {
+			pose::Pose single_in_pose, single_out_pose;
+			core::import_pose::pose_from_file(single_in_pose, in_pdb_names[i], core::import_pose::PDB_file);
+			single_out_pose = single_in_pose;
+			// Fixbb run
+			pack_mover->apply(single_out_pose);
+			dc.setNeighbors(single_in_pose);
+			native_poses.push_back(single_in_pose);
+			decoy_poses.push_back(single_out_pose);
+		}
+
+		if ( option [ out::file::design_contrast ].active() ) {
+			//  std::string sqc_file = option [ out::file::design_contrast ].default_value();
+			sqc_file = option [ out::file::design_contrast ].value();
+			std::ofstream sqc;
+			sqc.open(sqc_file.c_str());
+			for ( Size j=1; j <=  decoy_poses.size(); ++j ) {
+				dc.output_sqc_file(native_poses[j], decoy_poses[j], pdb_codes[j], sqc);
+			}
+			sqc.close();
+			statistics(sqc_file);
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

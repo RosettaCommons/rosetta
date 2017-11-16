@@ -46,7 +46,7 @@ RNA_JumpLibrary::~RNA_JumpLibrary() {}
 RNA_PairingTemplate::~RNA_PairingTemplate() {}
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.rna.denovo.libraries.RNA_JumpLibrary" );
+static basic::Tracer tr( "protocols.rna.denovo.libraries.RNA_JumpLibrary" );
 
 std::string
 BasePairType::tag() const {

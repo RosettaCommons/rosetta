@@ -30,7 +30,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
+static basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
 using core::Real;
 using namespace core;

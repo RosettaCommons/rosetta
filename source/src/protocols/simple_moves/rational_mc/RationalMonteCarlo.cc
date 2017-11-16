@@ -46,7 +46,7 @@ using core::scoring::ScoreFunctionOP;
 using protocols::moves::Mover;
 using protocols::moves::MoverOP;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.RationalMonteCarlo" );
+static basic::Tracer TR( "protocols.simple_moves.RationalMonteCarlo" );
 
 RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, Size num_trials, Real temperature, bool recover_low)
 : Mover("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {

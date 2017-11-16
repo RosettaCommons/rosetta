@@ -19,10 +19,9 @@
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover" );
+static basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover" );
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>

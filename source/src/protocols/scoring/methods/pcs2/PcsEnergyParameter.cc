@@ -52,7 +52,7 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-static THREAD_LOCAL basic::Tracer TR_PcsEnergyParameter( "protocols.scoring.methods.pcs.PcsEnergyParameter" );
+static basic::Tracer TR_PcsEnergyParameter( "protocols.scoring.methods.pcs.PcsEnergyParameter" );
 
 PcsEnergyParameter::PcsEnergyParameter(){
 

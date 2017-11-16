@@ -69,7 +69,7 @@
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "procotols.looprelax" );
+static basic::Tracer TR( "procotols.looprelax" );
 
 // some functions copied from loops_main (they were private)
 
@@ -81,10 +81,10 @@ static THREAD_LOCAL basic::Tracer TR( "procotols.looprelax" );
 //////////////////////////////////////////////////////////////////////////////////////
 void
 loops_set_move_map(
-				   protocols::loops::Loops const & loops,
-				   bool const fix_template_sc,
-				   core::kinematics::MoveMap & mm
-				   )
+	protocols::loops::Loops const & loops,
+	bool const fix_template_sc,
+	core::kinematics::MoveMap & mm
+)
 {
 	using namespace core::id;
 
@@ -93,9 +93,9 @@ loops_set_move_map(
 	mm.set_chi( !fix_template_sc );
 	mm.set_jump( false );
 	// allow phi/psi in loops to move
-	for( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end();
-		 it != it_end; ++it ) {
-		for( int i=it->start(); i<=it->stop(); ++i ) {
+	for ( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end();
+			it != it_end; ++it ) {
+		for ( int i=it->start(); i<=it->stop(); ++i ) {
 			mm.set_bb(i, true);
 			mm.set(TorsionID(i,BB,3), false); // omega is fixed
 			mm.set_chi(i, true); // chi of loop residues
@@ -110,9 +110,9 @@ loops_set_move_map(
 /// repacked or minimized in fullatom refinement.
 void
 get_tenA_neighbor_residues(
-						   pose::Pose const & pose,
-						   utility::vector1<bool> & residue_positions
-						   )
+	pose::Pose const & pose,
+	utility::vector1<bool> & residue_positions
+)
 {
 	//make a local copy first because we will change content in residue_positions
 	utility::vector1<bool> local_residue_positions = residue_positions;
@@ -121,7 +121,7 @@ get_tenA_neighbor_residues(
 		if ( ! local_residue_positions[i] ) continue;
 		utility::graph::Node const * current_node( tenA_neighbor_graph.get_node(i)); // find neighbors for this node
 		for ( utility::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
-			  it != current_node->const_edge_list_end(); ++it ) {
+				it != current_node->const_edge_list_end(); ++it ) {
 			residue_positions[ (*it)->get_other_ind(i) ] = true;
 		}
 	}
@@ -129,10 +129,10 @@ get_tenA_neighbor_residues(
 
 void
 fold_tree_from_loops(
-					 int const total_residue,
-					 protocols::loops::Loops const & loops,
-					 kinematics::FoldTree & f
-					 )
+	int const total_residue,
+	protocols::loops::Loops const & loops,
+	kinematics::FoldTree & f
+)
 {
 	using namespace kinematics;
 
@@ -142,8 +142,8 @@ fold_tree_from_loops(
 	tmp_loops.sequential_order();
 
 	int jump_num = 0;
-	for( protocols::loops::Loops::const_iterator it=tmp_loops.begin(), it_end=tmp_loops.end(),
-		 it_next; it != it_end; ++it ) {
+	for ( protocols::loops::Loops::const_iterator it=tmp_loops.begin(), it_end=tmp_loops.end(),
+			it_next; it != it_end; ++it ) {
 		it_next = it;
 		it_next++;
 		int const jump_start =
@@ -153,11 +153,11 @@ fold_tree_from_loops(
 		int const jump_cut   = it->cut();
 		int const jump_next_start =
 			( it_next == it_end ) ? total_residue : it_next->start()-1;
-		if(  it->start() == 1 ){
+		if (  it->start() == 1 ) {
 			f.add_edge( jump_start, jump_stop, Edge::PEPTIDE );
 			f.add_edge( jump_stop, jump_next_start, Edge::PEPTIDE );
 			continue;
-		}else if( it->stop() == total_residue ){
+		} else if ( it->stop() == total_residue ) {
 			f.add_edge( jump_start, jump_stop, Edge::PEPTIDE );
 			continue;
 		}
@@ -165,20 +165,20 @@ fold_tree_from_loops(
 		f.add_edge( jump_start, jump_stop, jump_num );
 		f.add_edge( jump_start, jump_cut,  Edge::PEPTIDE );
 		f.add_edge( jump_cut+1, jump_stop, Edge::PEPTIDE );
-		//		if ( jump_stop < jump_next_start )
+		//  if ( jump_stop < jump_next_start )
 		f.add_edge( jump_stop, jump_next_start, Edge::PEPTIDE );
 	}
 	int const first_start =
 		( tmp_loops.begin()->start() == 1 ) ? tmp_loops.begin()->start() : tmp_loops.begin()->start() - 1;
-	//	if ( first_start != 1 )
+	// if ( first_start != 1 )
 	f.add_edge( 1, first_start, Edge::PEPTIDE );
 
 	// reorder
 	int root;
-	if( tmp_loops.begin()->start() == 1 &&
-		tmp_loops.begin()->stop() != total_residue )
+	if ( tmp_loops.begin()->start() == 1 &&
+			tmp_loops.begin()->stop() != total_residue ) {
 		root = tmp_loops.begin()->stop()+1;
-	else root = 1;
+	} else root = 1;
 	f.reorder(root);
 
 }
@@ -191,8 +191,8 @@ fold_tree_from_loops(
 ///////////////////////////////////////////////////////////////////
 bool
 set_secstruct_from_psipred_ss2(
-							   pose::Pose & pose
-							   )
+	pose::Pose & pose
+)
 {
 	using namespace basic::options;
 
@@ -207,7 +207,7 @@ set_secstruct_from_psipred_ss2(
 	utility::vector1< char > secstructs;
 	std::string line;
 	Size count(0);
-	while( getline( data, line ) ) {
+	while ( getline( data, line ) ) {
 		std::istringstream line_stream( line );
 		Size pos;
 		char aa, sec;
@@ -215,7 +215,7 @@ set_secstruct_from_psipred_ss2(
 		count++;
 		if ( aa != oneletter_code_from_aa( pose.aa(count) ) ) {
 			TR.Error << " sequence mismatch between pose and psipred_ss2 " << oneletter_code_from_aa( pose.aa(count) )
-			<< " vs " << aa << " at seqpos " << count << std::endl;
+				<< " vs " << aa << " at seqpos " << count << std::endl;
 			return false;
 		}
 		if ( sec != 'H' && sec != 'E' && sec != 'C' ) {
@@ -243,20 +243,20 @@ set_secstruct_from_psipred_ss2(
 /////////////////////////////////////////////////////////////////////////////////
 void
 select_loop_residues(
-										 pose::Pose const & pose,
-										 protocols::loops::Loops const & loops,
-										 bool const include_neighbors,
-										 utility::vector1<bool> & map
-										 )
+	pose::Pose const & pose,
+	protocols::loops::Loops const & loops,
+	bool const include_neighbors,
+	utility::vector1<bool> & map
+)
 {
-	for( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end();
-		 it != it_end; ++it ) {
-		for( int i=it->start(); i<=it->stop(); ++i ) {
+	for ( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end();
+			it != it_end; ++it ) {
+		for ( int i=it->start(); i<=it->stop(); ++i ) {
 			map[i] = true;
 		}
 	}
 
-	if ( include_neighbors) get_tenA_neighbor_residues( pose, map );
+	if ( include_neighbors ) get_tenA_neighbor_residues( pose, map );
 
 	return;
 }
@@ -276,26 +276,26 @@ my_main( void* )
 
 	core::pose::Pose pose;
 	core::import_pose::pose_from_file( pose, option[ OptionKeys::loops::template_pdb ]().name() , core::import_pose::PDB_file);
- 	int const nres( pose.size() );
+	int const nres( pose.size() );
 
- 	// define loop regions
- 	protocols::loops::Loops loops;
+	// define loop regions
+	protocols::loops::Loops loops;
 
- 	if (! loops.read_file( option[ OptionKeys::loops::loop_file ]().name() ) ) {
+	if ( ! loops.read_file( option[ OptionKeys::loops::loop_file ]().name() ) ) {
 
 		basic::Error() << "loop_minimize.cc: can not retrieve loops info" << std::endl
-		<< "exit ......" << std::endl;
- 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
- 	}
+			<< "exit ......" << std::endl;
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+	}
 
- 	// set up fold_tree and allow_bb_move properly
- 	kinematics::FoldTree f;
- 	fold_tree_from_loops( nres, loops, f );
- 	pose.fold_tree( f );
+	// set up fold_tree and allow_bb_move properly
+	kinematics::FoldTree f;
+	fold_tree_from_loops( nres, loops, f );
+	pose.fold_tree( f );
 
 	set_secstruct_from_psipred_ss2( pose );
 
- 	scoring::ScoreFunctionOP scorefxn( get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	//scorefxn->set_weight(scoring::mm_bend, 1.00);
 
 	//bool const fa_input( option[OptionKeys::loops::fa_input] );
@@ -343,10 +343,10 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -29,7 +29,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.DensitySymmInfo" );
+static basic::Tracer TR( "protocols.electron_density.DensitySymmInfo" );
 
 namespace protocols {
 namespace electron_density {

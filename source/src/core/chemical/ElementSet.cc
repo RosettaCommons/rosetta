@@ -38,7 +38,7 @@ namespace core {
 namespace chemical {
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.chemical.ElementSet" );
+static basic::Tracer tr( "core.chemical.ElementSet" );
 
 ElementSet::ElementSet(std::string const & name): name_(name) {}
 

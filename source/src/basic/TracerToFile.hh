@@ -15,7 +15,7 @@
 #define INCLUDED_basic_TracerToFile_hh
 
 
-#include <basic/Tracer.hh>  // for otstream
+#include <basic/TracerImpl.hh>  // for otstream
 #include <iosfwd>           // for string, ofstream
 #include <fstream>
 #include <ostream>

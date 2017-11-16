@@ -43,7 +43,7 @@ using utility::vector1;
 using core::Real;
 using core::Size;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.clusters" );
+static basic::Tracer TR( "protocols.antibody.clusters" );
 
 void
 add_cluster_comments_to_pose(core::pose::Pose& pose, AntibodyInfoCOP ab_info){

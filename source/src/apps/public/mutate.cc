@@ -61,7 +61,7 @@ using namespace utility;
 using namespace core::scoring;
 using namespace core::pack::task;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.mutate" );
+static basic::Tracer TR( "apps.public.mutate" );
 
 ////////////////////////////////////////////////////////////////////////////////
 

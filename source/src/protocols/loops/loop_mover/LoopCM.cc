@@ -53,7 +53,7 @@ namespace protocols {
 namespace loops {
 namespace loop_mover {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.loops.loop_mover.LoopCM", basic::t_info );
+static basic::Tracer tr( "protocols.loops.loop_mover.LoopCM", basic::t_info );
 
 // creator
 // XRW TEMP std::string

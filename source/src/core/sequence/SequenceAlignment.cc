@@ -39,7 +39,7 @@ SequenceAlignment::~SequenceAlignment() {
 	// clear(); // APL NOTE: originally, this dstor called clear(), but clear() doesn't do anything that the dstor itself doesn't do
 }
 
-static THREAD_LOCAL basic::Tracer tr( "core.sequence.SequenceAlignment" );
+static basic::Tracer tr( "core.sequence.SequenceAlignment" );
 
 void SequenceAlignment::add_sequence( SequenceOP myseq ) {
 	sequences_.push_back( myseq );

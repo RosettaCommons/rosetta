@@ -42,7 +42,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer sidechain_rmsd_filter_tracer( "protocols.simple_filters.SidechainRmsdFilter" );
+static basic::Tracer sidechain_rmsd_filter_tracer( "protocols.simple_filters.SidechainRmsdFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP SidechainRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SidechainRmsdFilter ); }

@@ -11,7 +11,7 @@
 ///
 /// @brief   MP Framework: Read Membrane Pose and Dump Result to PDB
 /// @details ast Modified: 3/26/14
-///			 
+///
 ///
 /// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 
@@ -22,12 +22,12 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/membrane/CreateMembranePoseMover.hh>
 
-#include <core/scoring/ScoreFunction.hh> 
-#include <core/scoring/ScoreTypes.hh> 
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreTypes.hh>
 
 // Package Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh> 
+#include <core/pose/Pose.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -43,26 +43,26 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.membrane.read_mp_pose" );
+static basic::Tracer TR( "apps.pilot.membrane.read_mp_pose" );
 
 void*
 my_main( void* )
 {
 	using namespace protocols::membrane;
 	using namespace protocols::jd2;
-	
+
 	// Setup MP Unit Testing Mover
 	CreateMembranePoseMoverOP mp = new CreateMembranePoseMover();
 	JobDistributor::get_instance()->go(mp);
-	
+
 	// Score a Membrane Pose and
 	core::pose::PoseOP pose = mp->get_membrane_pose();
-	
+
 	// Create Sfxn
 	core::scoring::ScoreFunctionOP sfxn = new ScoreFunciton();
 	sfxn->set_weight( MPPair, 1.0 );
 	core::Real total = sfxn->score( pose );
-	
+
 	return NULL;
 }
 
@@ -71,13 +71,13 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		
+
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
-	
+
 }
 

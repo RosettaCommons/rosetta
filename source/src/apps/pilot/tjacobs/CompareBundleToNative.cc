@@ -58,7 +58,7 @@
 //Protocol headers
 #include <protocols/features/ProteinSilentReport.hh>
 
-static THREAD_LOCAL basic::Tracer TR("BundleDumper");
+static basic::Tracer TR("BundleDumper");
 
 static int BLOCK_SIZE = 512;
 

@@ -21,7 +21,7 @@
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.bb_sampler.SmallBBSampler" );
+static basic::Tracer TR( "protocols.simple_moves.bb_sampler.SmallBBSampler" );
 
 
 namespace protocols {

@@ -106,7 +106,7 @@ load(
 namespace protocols {
 namespace pockets {
 
-static THREAD_LOCAL basic::Tracer TR("core.grid.Pockets.PocketGrid");
+static basic::Tracer TR("core.grid.Pockets.PocketGrid");
 
 // Visual Studio is more particular about implicit upconversion than gcc
 #ifdef _WIN32

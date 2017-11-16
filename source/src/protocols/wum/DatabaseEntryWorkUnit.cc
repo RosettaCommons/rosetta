@@ -29,7 +29,7 @@
 #include <string>
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR( "DatabaseEntryWorkUnit" );
+static basic::Tracer TR( "DatabaseEntryWorkUnit" );
 
 namespace protocols {
 namespace wum {

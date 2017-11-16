@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.magnesium.util" );
+static basic::Tracer TR( "core.scoring.magnesium.util" );
 
 using namespace core::chemical::rna;
 

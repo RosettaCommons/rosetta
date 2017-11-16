@@ -63,8 +63,8 @@ using namespace core;
 using namespace scoring::constraints;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.CoordinateCst" );
-static THREAD_LOCAL basic::Tracer TR_debug( "CoordinateCst.Debug" );
+static basic::Tracer TR( "protocols.seeded_abinitio.CoordinateCst" );
+static basic::Tracer TR_debug( "CoordinateCst.Debug" );
 
 // XRW TEMP std::string
 // XRW TEMP CoordinateCstCreator::keyname() const

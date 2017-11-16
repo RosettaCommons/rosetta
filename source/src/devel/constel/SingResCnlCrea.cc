@@ -21,7 +21,7 @@
 #include <sstream>
 #include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR("devel.constel.SingResCnlCrea");
+static basic::Tracer TR("devel.constel.SingResCnlCrea");
 
 namespace devel {
 namespace constel {

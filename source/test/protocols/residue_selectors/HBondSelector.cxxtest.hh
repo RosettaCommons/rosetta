@@ -35,7 +35,7 @@
 
 using namespace protocols::residue_selectors;
 
-static THREAD_LOCAL basic::Tracer TR( "test.core.select.HBondSelectorTests" );
+static basic::Tracer TR( "test.core.select.HBondSelectorTests" );
 
 class HBondSelectorTests : public CxxTest::TestSuite {
 

@@ -74,7 +74,7 @@
 #include <iomanip>
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 
 core::io::silent::SilentStructOP

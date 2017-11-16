@@ -83,7 +83,7 @@
 namespace protocols {
 namespace motifs {
 
-static THREAD_LOCAL basic::Tracer mu_tr( "protocols.motifs.motif_utils", basic::t_info );
+static basic::Tracer mu_tr( "protocols.motifs.motif_utils", basic::t_info );
 
 //this function uses the constructor that accepts two residues, rather than input atoms, because if the constructors that allow you to setup the atoms explicitly are necessary you are likely to have the information setup in a motif_file (or you can simply make another matching function that allows input atoms as well as a pdb, rather than a istream)
 SingleMotifOP

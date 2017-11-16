@@ -104,7 +104,7 @@ OPT_KEY( Boolean, lig_rmsd )
 OPT_KEY( String, ref_decoy )
 OPT_KEY( Boolean, score_only )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ragul_darc_minimize.main" );
+static basic::Tracer TR( "apps.pilot.ragul_darc_minimize.main" );
 
 //set to store pdb info keys
 std::set <std::string> interface;

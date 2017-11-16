@@ -111,14 +111,14 @@
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 
-static THREAD_LOCAL basic::Tracer TR( "genmatch" );
+static basic::Tracer TR( "genmatch" );
 
 
 inline Real const sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
-	if( sqdist > 9.*9. ) {
+	if ( sqdist > 9.*9. ) {
 		return 0.0;
-	} else if( sqdist < 6.*6. ) {
+	} else if ( sqdist < 6.*6. ) {
 		return 1.0;
 	} else {
 		Real dist = sqrt( sqdist );
@@ -129,8 +129,8 @@ inline Real sigmoidish_neighbor( Real const & sqdist ) {
 
 Real iface_check_c3(Pose & pose, Size nres, vector1<Size> const & iface_candidates) {
 	Real num = 0;
-	for(vector1<Size>::const_iterator i=iface_candidates.begin(),ie=iface_candidates.end(); i != ie; ++i) {
-		for(vector1<Size>::const_iterator j=iface_candidates.begin(),je=iface_candidates.end(); j != je; ++j) {
+	for ( vector1<Size>::const_iterator i=iface_candidates.begin(),ie=iface_candidates.end(); i != ie; ++i ) {
+		for ( vector1<Size>::const_iterator j=iface_candidates.begin(),je=iface_candidates.end(); j != je; ++j ) {
 			num += sigmoidish_neighbor(pose.residue(*i).xyz(5).distance_squared(pose.residue(*j+1*nres).xyz(5)));
 			num += sigmoidish_neighbor(pose.residue(*i).xyz(5).distance_squared(pose.residue(*j+2*nres).xyz(5)));
 		}
@@ -140,15 +140,15 @@ Real iface_check_c3(Pose & pose, Size nres, vector1<Size> const & iface_candidat
 
 vector1<Size> read_res_list(string fn) {
 	vector1<Size> l;
-	if(fn=="") return l;
-	if(fn=="_") return l;
-	if(fn.size()==1 && fn[0]==(char)0) return l;
+	if ( fn=="" ) return l;
+	if ( fn=="_" ) return l;
+	if ( fn.size()==1 && fn[0]==(char)0 ) return l;
 	izstream in(fn);
-	if(!in.good()) {
+	if ( !in.good() ) {
 		utility_exit_with_message("can't open res list file '"+fn+"'");
 	}
 	Size r;
-	while( in >> r ) l.push_back(r);
+	while ( in >> r ) l.push_back(r);
 	return l;
 }
 
@@ -156,8 +156,8 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	using namespace core::pack::task;
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	task->initialize_extra_rotamer_flags_from_command_line();
-	for(Size i = 1; i <= nres; ++i) {
-		if(pose.residue(i).name3()=="BPY") {
+	for ( Size i = 1; i <= nres; ++i ) {
+		if ( pose.residue(i).name3()=="BPY" ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else {
 			task->nonconst_residue_task(i).restrict_to_repacking();
@@ -178,7 +178,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	}
 	core::id::AtomID_Map<Real> atom_sasa; utility::vector1<Real> sasa;
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, sasa, 2.3, false, atom_map );
-	for(Size i = 1; i <= sasa.size(); ++i) if( atom_sasa.n_atom(i) > 4 ) sasa[i] = atom_sasa[AtomID(5,i)];
+	for ( Size i = 1; i <= sasa.size(); ++i ) if ( atom_sasa.n_atom(i) > 4 ) sasa[i] = atom_sasa[AtomID(5,i)];
 
 	using namespace core::pack::task;
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
@@ -189,8 +189,8 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	aas[core::chemical::aa_pro] = false;
 	aas[core::chemical::aa_gly] = false;
 	aas[core::chemical::aa_gly] = false;
-	if(option[basic::options::OptionKeys::willmatch::exclude_ala]()) aas[core::chemical::aa_ala] = false;
-	if(option[basic::options::OptionKeys::smhybrid::design_hydrophobic]()) {
+	if ( option[basic::options::OptionKeys::willmatch::exclude_ala]() ) aas[core::chemical::aa_ala] = false;
+	if ( option[basic::options::OptionKeys::smhybrid::design_hydrophobic]() ) {
 		aas[core::chemical::aa_ser] = false;
 		aas[core::chemical::aa_thr] = false;
 		aas[core::chemical::aa_asp] = false;
@@ -202,42 +202,42 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	}
 
 	vector1<Size> fixed;
-	if(option[basic::options::OptionKeys::willmatch::fixed_res].user()) {
+	if ( option[basic::options::OptionKeys::willmatch::fixed_res].user() ) {
 		utility::io::izstream in(option[basic::options::OptionKeys::willmatch::fixed_res]());
 		Size tmp;
-		while(in>>tmp) fixed.push_back(tmp);
+		while ( in>>tmp ) fixed.push_back(tmp);
 		in.close();
 	}
 
 	vector1<Size> interface;
-	if(option[basic::options::OptionKeys::willmatch::design_interface]()) {
-		for(Size i = 1; i <= nres; ++i) {
-			if( sasa.size() >= i && sasa[i] > 15.0 ) continue;
+	if ( option[basic::options::OptionKeys::willmatch::design_interface]() ) {
+		for ( Size i = 1; i <= nres; ++i ) {
+			if ( sasa.size() >= i && sasa[i] > 15.0 ) continue;
 			AtomID aid(5,i);
-			if(pose.residue(i).nheavyatoms() < 5) aid.atomno() = 2;
-			for(Size j = nres+1; j <= 3*nres; ++j) {
+			if ( pose.residue(i).nheavyatoms() < 5 ) aid.atomno() = 2;
+			for ( Size j = nres+1; j <= 3*nres; ++j ) {
 				AtomID aid2(5,j);
-				if(pose.residue(j).nheavyatoms() < 5) aid.atomno() = 2;
-				if(pose.xyz(aid).distance_squared(pose.xyz(aid2)) < 49) {
+				if ( pose.residue(j).nheavyatoms() < 5 ) aid.atomno() = 2;
+				if ( pose.xyz(aid).distance_squared(pose.xyz(aid2)) < 49 ) {
 					interface.push_back(i);
 				}
 			}
 		}
-		for(Size i = 1; i <= nres; ++i) {
+		for ( Size i = 1; i <= nres; ++i ) {
 			Vec xyz = pose.xyz(AtomID(5,i));
 			xyz.z() = 0;
-			if( xyz.length() < 8.0 ) interface.push_back(i);
+			if ( xyz.length() < 8.0 ) interface.push_back(i);
 		}
 	}
-	for(Size i = 1; i <= nres; ++i) {
-		if(pose.residue(i).name3()=="BPY") {
+	for ( Size i = 1; i <= nres; ++i ) {
+		if ( pose.residue(i).name3()=="BPY" ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 			// std::exit(-1);
-		} else if(std::find(fixed.begin(),fixed.end(),i)!=fixed.end()){
+		} else if ( std::find(fixed.begin(),fixed.end(),i)!=fixed.end() ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).or_ex1_sample_level( core::pack::task::EX_ONE_STDDEV );
 			task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
-		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){
+		} else if ( std::find(interface.begin(),interface.end(),i)!=interface.end() ) {
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 			task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();
 		} else {
@@ -246,7 +246,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 			task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
 		}
 	}
-	for(Size i = nres+1; i <= pose.size(); ++i) {
+	for ( Size i = nres+1; i <= pose.size(); ++i ) {
 		task->nonconst_residue_task(i).prevent_repacking();
 	}
 	TR << *task << std::endl;
@@ -277,29 +277,29 @@ void design_dyad(Pose & pose, Size const r1, Size const r2, ScoreFunctionOP sf, 
 
 	sf->score(pose);
 	Real worig = sf->get_weight(core::scoring::res_type_constraint);
-	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
+	if ( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
 
 	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
 
 	// aas[core::chemical::aa_trp] = false;
-	if(ex) task->initialize_extra_rotamer_flags_from_command_line();
+	if ( ex ) task->initialize_extra_rotamer_flags_from_command_line();
 
-	for(Size i = 1; i <= pose.size(); ++i) {
-		if( pose.residue(i).name3()=="GLY" || pose.residue(i).name3()=="CYS" || pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="CYD" ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue(i).name3()=="GLY" || pose.residue(i).name3()=="CYS" || pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="CYD" ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 			continue;
 		}
 		Real d = 9e9; // set d by min dist to any heavy on r1,r2
-		for(Size ia = 1; ia <= pose.residue(i).nheavyatoms(); ++ia ) {
+		for ( Size ia = 1; ia <= pose.residue(i).nheavyatoms(); ++ia ) {
 			numeric::xyzVector<Real> xyzi = pose.residue(i).xyz(ia);
-			for(Size ja = 1; ja <= pose.residue(r1).nheavyatoms(); ++ja) {
-				if( xyzi.distance_squared(pose.residue(r1).xyz(ja)) < d ) d = xyzi.distance_squared( pose.residue(r1).xyz(ja) );
+			for ( Size ja = 1; ja <= pose.residue(r1).nheavyatoms(); ++ja ) {
+				if ( xyzi.distance_squared(pose.residue(r1).xyz(ja)) < d ) d = xyzi.distance_squared( pose.residue(r1).xyz(ja) );
 			}
-			for(Size ja = 1; ja <= pose.residue(r2).nheavyatoms(); ++ja) {
-				if( xyzi.distance_squared(pose.residue(r2).xyz(ja)) < d ) d = xyzi.distance_squared( pose.residue(r2).xyz(ja) );
+			for ( Size ja = 1; ja <= pose.residue(r2).nheavyatoms(); ++ja ) {
+				if ( xyzi.distance_squared(pose.residue(r2).xyz(ja)) < d ) d = xyzi.distance_squared( pose.residue(r2).xyz(ja) );
 			}
 		}
-		if( r1 == i || r2 == i ) {
+		if ( r1 == i || r2 == i ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else if ( d <  7.0* 7.0 ) {
 			bool tmp = aas[pose.residue(i).aa()];
@@ -331,8 +331,8 @@ void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
 	movemap->set_chi(true);
 	movemap->set_bb(false);
 	movemap->set_jump(false);
-	if(bb==1) for(Size i = 1; i <= nres; ++i) if(pose.secstruct(i)=='L') movemap->set_bb(i,true);
-	if(bb>=2) for(Size i = 1; i <= nres; ++i) movemap->set_bb(i,true);
+	if ( bb==1 ) for ( Size i = 1; i <= nres; ++i ) if ( pose.secstruct(i)=='L' ) movemap->set_bb(i,true);
+	if ( bb>=2 ) for ( Size i = 1; i <= nres; ++i ) movemap->set_bb(i,true);
 	// movemap->set_chi(bpyres,false);
 
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
@@ -348,12 +348,12 @@ std::pair<Size,Size> makesplitwork_3bpy(Size total) {
 	using namespace basic::options::OptionKeys;
 	Size size1 = 1;
 	Size size2 = total;
-	if( option[willmatch::splitwork].user() ) {
+	if ( option[willmatch::splitwork].user() ) {
 		Size part   = option[willmatch::splitwork]()[1];
 		Size nparts = option[willmatch::splitwork]()[2];
 		size1 = (part-1)*std::ceil(((Real)total)/(Real)nparts)+1;
 		size2 = (part  )*std::ceil(((Real)total)/(Real)nparts);
-		if( option[in::file::s]().size() == 1 ) {
+		if ( option[in::file::s]().size() == 1 ) {
 			Real frac1 = ((Real)part-1)/(Real)nparts;
 			Real frac2 = ((Real)part  )/(Real)nparts;
 			frac1 = 1.0 - sqrt(1.0-frac1);
@@ -372,26 +372,26 @@ std::pair<vector1<Size>,vector1<Size> > makesplitwork(Size total, Size total2 = 
 	vector1<Size> idx2;
 	Size part   = 1;
 	Size nparts = 1;
-	if( option[willmatch::splitwork].user() ) {
+	if ( option[willmatch::splitwork].user() ) {
 		part   = option[willmatch::splitwork]()[1];
 		nparts = option[willmatch::splitwork]()[2];
 	}
 	TR << "makesplitwork " << total << " " << total2 << " " << part << " " << nparts << std::endl;
-	if( total2 == 0 ){
-		for( Size i = part; i <= total; i += nparts ) {
+	if ( total2 == 0 ) {
+		for ( Size i = part; i <= total; i += nparts ) {
 			idx1.push_back(i);
 		}
 	} else {
-		if( option[in::file::s]().size() == 1 ) {
-			for( Size i = part; i <= total; i += nparts ) {
-				for( Size j = i; j <= total; j += 1 ) {
+		if ( option[in::file::s]().size() == 1 ) {
+			for ( Size i = part; i <= total; i += nparts ) {
+				for ( Size j = i; j <= total; j += 1 ) {
 					idx1.push_back(i);
 					idx2.push_back(j);
 				}
 			}
 		} else {
-			for( Size i = part; i <= total; i += nparts ) {
-				for( Size j = 1; j <= total2; j += 1 ) {
+			for ( Size i = part; i <= total; i += nparts ) {
+				for ( Size j = 1; j <= total2; j += 1 ) {
 					idx1.push_back(i);
 					idx2.push_back(j);
 				}
@@ -407,13 +407,13 @@ std::pair<vector1<Size>,vector1<Size> > makesplitwork( utility::vector1<Size> re
 	vector1<Size> idx2;
 	Size part   = 1;
 	Size nparts = 1;
-	if( option[willmatch::splitwork].user() ) {
+	if ( option[willmatch::splitwork].user() ) {
 		part   = option[willmatch::splitwork]()[1];
 		nparts = option[willmatch::splitwork]()[2];
 	}
 	TR << "makesplitwork " << res1.size() << " " << res2.size() << " " << part << " " << nparts << std::endl;
-	for( Size i = part; i <= res1.size(); i += nparts ) {
-		for( Size j = 1; j <= res2.size(); j += 1 ) {
+	for ( Size i = part; i <= res1.size(); i += nparts ) {
+		for ( Size j = 1; j <= res2.size(); j += 1 ) {
 			idx1.push_back(res1[i]);
 			idx2.push_back(res2[j]);
 		}
@@ -468,7 +468,7 @@ void run_m8() {
 	core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
 	// core::chemical::ResidueType const & hise( in_fa.residue(1).residue_type_set().name_map("HIS") );
 	// core::chemical::ResidueType const & hisd( in_fa.residue(1).residue_type_set().name_map("HIS_D") );
-	for(Size i = 1; i <= nres; ++i) {
+	for ( Size i = 1; i <= nres; ++i ) {
 		core::pose::replace_pose_residue_copying_existing_coordinates(in_cen,i,ala);
 		core::pose::replace_pose_residue_copying_existing_coordinates(in_fa,i,alafa);
 	}
@@ -481,8 +481,8 @@ void run_m8() {
 	Real chi1incr = option[willmatch::chi1_increment]();
 	Real chi2incr = option[willmatch::chi2_increment]();
 	vector1<Real> CHI1,CHI2;
-	for(Real i = 0; i < 360; i+= chi1incr) CHI1.push_back(i);
-	for(Real i = 0; i < 360; i+= chi2incr) CHI2.push_back(i);
+	for ( Real i = 0; i < 360; i+= chi1incr ) CHI1.push_back(i);
+	for ( Real i = 0; i < 360; i+= chi2incr ) CHI2.push_back(i);
 
 	// setup HIS residues for checking
 	Pose glu;
@@ -492,10 +492,10 @@ void run_m8() {
 	// ObjexxFCL::FArray2D<Vec> mcentroid(2,CHI1.size());
 	Stub stub(glu.xyz(AtomID(5,1)),glu.xyz(AtomID(2,1)),glu.xyz(AtomID(1,1)));
 	// precompute cen and ori for hisd and hise
-	for(Size i = 1; i <= CHI1.size(); ++i) {
+	for ( Size i = 1; i <= CHI1.size(); ++i ) {
 		glu.set_chi(1,1,CHI1[i]);
 		//mcentroid(1,i) = stub.global2local(  he.residue(1).xyz("CG") );
-		for(Size j = 1; j <= CHI2.size(); ++j) {
+		for ( Size j = 1; j <= CHI2.size(); ++j ) {
 			glu.set_chi(2,1,CHI2[j]);
 			Vec cd = glu.residue(1).xyz("CD");
 			Vec cg = glu.residue(1).xyz("CG");
@@ -509,17 +509,17 @@ void run_m8() {
 	// Pose tmp_pose = init_pose;
 	//set residues to scan
 	vector1<Size> residues;
-	if(option[willmatch::residues].user()) {
+	if ( option[willmatch::residues].user() ) {
 		residues = option[willmatch::residues]();
 	} else {
-		for(Size i = 1; i <= nres; ++i) residues.push_back(i);
+		for ( Size i = 1; i <= nres; ++i ) residues.push_back(i);
 	}
 	string fname = utility::file_basename(infile)+"_glu_m8_matches.pdb";
-	if(option[willmatch::splitwork].user()) {
+	if ( option[willmatch::splitwork].user() ) {
 		fname = utility::file_basename(infile)+"_glu_m8_matches_part"+string_of(option[willmatch::splitwork]()[1])+".pdb";
 	}
 	utility::io::ozstream out(fname);
-	out << "MODEL BASE"	<< endl;
+	out << "MODEL BASE" << endl;
 	fa_pose.dump_pdb(out);
 	out << "ENDMDL" << endl;
 
@@ -535,23 +535,23 @@ void run_m8() {
 	Pose pose = fa_pose;
 
 	Size count = 0;
-	for( Size iwork = 1; iwork <= IRES.size(); ++iwork) {
+	for ( Size iwork = 1; iwork <= IRES.size(); ++iwork ) {
 		Size irsd = IRES[iwork];
 		Size jrsd = JRES[iwork];
 		vector1<Vec> foundcen;
 		vector1<Vec> foundori;
 		// TR << "HIS HIS genmatch " << irsd << " " << jrsd << std::endl;
 		// continue;
-	// for(Size irsd = 1; irsd <= init_pose.size(); ++irsd) {
-		if( std::find(residues.begin(),residues.end(),irsd) == residues.end() ) continue; // should just loop?
-		if( std::find(residues.begin(),residues.end(),jrsd) == residues.end() ) continue; // should just loop?
+		// for(Size irsd = 1; irsd <= init_pose.size(); ++irsd) {
+		if ( std::find(residues.begin(),residues.end(),irsd) == residues.end() ) continue; // should just loop?
+		if ( std::find(residues.begin(),residues.end(),jrsd) == residues.end() ) continue; // should just loop?
 		Stub s1(init_pose.xyz(AtomID(5,irsd)),init_pose.xyz(AtomID(2,irsd)),init_pose.xyz(AtomID(1,irsd)));
 		Stub s2(init_pose.xyz(AtomID(5,jrsd)),init_pose.xyz(AtomID(2,jrsd)),init_pose.xyz(AtomID(1,jrsd)));
 		// for(Size jrsd = irsd+1; jrsd <= init_pose.size(); ++jrsd) {
-		if(init_pose.xyz(AtomID(5,irsd)).distance_squared(init_pose.xyz(AtomID(5,jrsd))) > 100.0) continue;
+		if ( init_pose.xyz(AtomID(5,irsd)).distance_squared(init_pose.xyz(AtomID(5,jrsd))) > 100.0 ) continue;
 		TR << irsd << " " << jrsd << " found " << count << std::endl;
-		for(Size ich1 = 1; ich1 <= CHI1.size(); ++ich1) {
-			for(Size jch1 = 1; jch1 <= CHI1.size(); ++jch1) {
+		for ( Size ich1 = 1; ich1 <= CHI1.size(); ++ich1 ) {
+			for ( Size jch1 = 1; jch1 <= CHI1.size(); ++jch1 ) {
 				// Vec mcen1d = s1.local2global(mcentroid(1,ich1));
 				// Vec mcen2d = s2.local2global(mcentroid(1,jch1));
 				// Vec mcen1e = s1.local2global(mcentroid(2,ich1));
@@ -561,12 +561,12 @@ void run_m8() {
 				//     mcen1e.distance_squared(mcen2d) > 15.0*15.0 &&
 				//     mcen1e.distance_squared(mcen2e) > 14.0*14.0
 				// ) continue;
-				for(Size ich2 = 1; ich2 <= CHI2.size(); ++ich2) {
-					for(Size jch2 = 1; jch2 <= CHI2.size(); ++jch2) {
+				for ( Size ich2 = 1; ich2 <= CHI2.size(); ++ich2 ) {
+					for ( Size jch2 = 1; jch2 <= CHI2.size(); ++jch2 ) {
 						Vec const ceni = s1.local2global(chi2cen(ich1,ich2));
 						Vec const cenj = s2.local2global(chi2cen(jch1,jch2));
 						Real const d2 = ceni.distance_squared(cenj);
-						if( d2 > MXDSMTL ) {
+						if ( d2 > MXDSMTL ) {
 							// TR << "dist fail " << sqrt(d2) << std::endl;
 							continue;
 						}
@@ -575,7 +575,7 @@ void run_m8() {
 						Vec const orij = s2.local2global(chi2ori(jch1,jch2))-cenj;
 						Real angle = numeric::conversions::degrees(acos(orii.dot(orij)));
 						// TR << "ORI " << angle << " " << orii << " " << orij << std::endl;
-						if( angle < 90.0-MXAGMTL || 90.0+MXAGMTL < angle ) {
+						if ( angle < 90.0-MXAGMTL || 90.0+MXAGMTL < angle ) {
 							// TR << "angle fail" << angle << " " << orii << " " << orij << std::endl;
 							continue;
 						}
@@ -587,9 +587,9 @@ void run_m8() {
 						pose.set_chi(1,jrsd,CHI1[jch1]);
 						pose.set_chi(2,jrsd,CHI2[jch2]);
 						bool clash = false;
-						for(Size i = 6; i <= pose.residue(irsd).nheavyatoms() - 2; ++i) { // excludes OE1 and OE2
-							for(Size j = 6; j <= pose.residue(jrsd).nheavyatoms() - 2; ++j) {
-								if(pose.xyz(AtomID(i,irsd)).distance_squared(pose.xyz(AtomID(j,jrsd))) < 3.0*3.0) {
+						for ( Size i = 6; i <= pose.residue(irsd).nheavyatoms() - 2; ++i ) { // excludes OE1 and OE2
+							for ( Size j = 6; j <= pose.residue(jrsd).nheavyatoms() - 2; ++j ) {
+								if ( pose.xyz(AtomID(i,irsd)).distance_squared(pose.xyz(AtomID(j,jrsd))) < 3.0*3.0 ) {
 									clash=true;
 									// TR << "HIS CLASH " << i << " " << j << std::endl;
 									break;
@@ -597,9 +597,9 @@ void run_m8() {
 									// std::exit(-1);
 								}
 							}
-							if(clash) break;
+							if ( clash ) break;
 						}
-						if(clash) continue;
+						if ( clash ) continue;
 
 						// core::id::AtomID_Mask mask;
 						// core::pose::initialize_atomid_map(mask,pose,false);
@@ -608,49 +608,49 @@ void run_m8() {
 						// core::pack::optimize_H_and_notify(pose,mask);
 
 
-						for(Size iatm = 6; iatm <= pose.residue(irsd).nheavyatoms()-2; ++iatm) {
-							if(!clashcheck.clash_check(pose.residue(irsd).xyz(iatm),irsd)) clash=true;
+						for ( Size iatm = 6; iatm <= pose.residue(irsd).nheavyatoms()-2; ++iatm ) {
+							if ( !clashcheck.clash_check(pose.residue(irsd).xyz(iatm),irsd) ) clash=true;
 						}
-						for(Size jatm = 6; jatm <= pose.residue(jrsd).nheavyatoms()-2; ++jatm) {
-							if(!clashcheck.clash_check(pose.residue(jrsd).xyz(jatm),jrsd)) clash=true;
+						for ( Size jatm = 6; jatm <= pose.residue(jrsd).nheavyatoms()-2; ++jatm ) {
+							if ( !clashcheck.clash_check(pose.residue(jrsd).xyz(jatm),jrsd) ) clash=true;
 						}
-						if(clash) continue;
+						if ( clash ) continue;
 
 						Vec mori = (orii+orij).normalized();
 						// check room for other ligands
-						if( !clashcheck.clash_check((cen+0.0*mori)       ) ) { continue; }
+						if ( !clashcheck.clash_check((cen+0.0*mori)       ) ) { continue; }
 
 
 						align_carboxyl_m8(pose,irsd,jrsd,cen);
 						//now clash check OE1/2
-						for(Size iatm = pose.residue(irsd).nheavyatoms()-1; iatm <= pose.residue(irsd).nheavyatoms(); ++iatm) {
-							if(!clashcheck.clash_check(pose.residue(irsd).xyz(iatm),irsd)) clash=true;
+						for ( Size iatm = pose.residue(irsd).nheavyatoms()-1; iatm <= pose.residue(irsd).nheavyatoms(); ++iatm ) {
+							if ( !clashcheck.clash_check(pose.residue(irsd).xyz(iatm),irsd) ) clash=true;
 						}
-						for(Size jatm = pose.residue(jrsd).nheavyatoms()-1; jatm <= pose.residue(jrsd).nheavyatoms(); ++jatm) {
-							if(!clashcheck.clash_check(pose.residue(jrsd).xyz(jatm),jrsd)) clash=true;
+						for ( Size jatm = pose.residue(jrsd).nheavyatoms()-1; jatm <= pose.residue(jrsd).nheavyatoms(); ++jatm ) {
+							if ( !clashcheck.clash_check(pose.residue(jrsd).xyz(jatm),jrsd) ) clash=true;
 						}
-						if(clash) continue;
+						if ( clash ) continue;
 
-						for(Size iatm = pose.residue(irsd).nheavyatoms()-1; iatm <= pose.residue(irsd).nheavyatoms(); ++iatm) {
-							for(Size jatm = pose.residue(jrsd).nheavyatoms()-1; jatm <= pose.residue(jrsd).nheavyatoms(); ++jatm) {
-								if( pose.residue(jrsd).xyz(jatm).distance_squared(pose.residue(irsd).xyz(iatm)) < 7.0 ) clash=true;
+						for ( Size iatm = pose.residue(irsd).nheavyatoms()-1; iatm <= pose.residue(irsd).nheavyatoms(); ++iatm ) {
+							for ( Size jatm = pose.residue(jrsd).nheavyatoms()-1; jatm <= pose.residue(jrsd).nheavyatoms(); ++jatm ) {
+								if ( pose.residue(jrsd).xyz(jatm).distance_squared(pose.residue(irsd).xyz(iatm)) < 7.0 ) clash=true;
 							}
 						}
-						if(clash) continue;
+						if ( clash ) continue;
 
 
 						// is cross better than what was in HIS/HIS?
 						Vec ori = (orii.cross(orij)).normalized();
 						bool overlap = false;
-						for(Size i = 1; i <= foundori.size(); ++i) {
-							if( cen.distance_squared(foundcen[i]) < option[willmatch::match_overlap_dis]() &&
-							    ori .dot(foundori [i])            > MATCH_OVERLAP_DOT                      ){
+						for ( Size i = 1; i <= foundori.size(); ++i ) {
+							if ( cen.distance_squared(foundcen[i]) < option[willmatch::match_overlap_dis]() &&
+									ori .dot(foundori [i])            > MATCH_OVERLAP_DOT                      ) {
 								// TR << "overlap!" << std::endl;
 								overlap = true;
 								break;
 							}
 						}
-						if(overlap) continue;
+						if ( overlap ) continue;
 						count++;
 						foundcen.push_back(cen);
 						foundori.push_back(ori);
@@ -670,9 +670,9 @@ void run_m8() {
 						core::io::pdb::dump_pdb_residue(r2,two,out);
 
 						Vec viz;
-						viz = cen+2.0*mori      ; out<<"HETATM"<<I(5,9997)<<' '<<"ZN  "<<' ' <<	" ZN"<<' '<<"B"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-						viz = cen+4.0*mori      ; out<<"HETATM"<<I(5,9998)<<' '<<"ZN  "<<' ' <<	" ZN"<<' '<<"C"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-						viz = cen               ; out<<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' ' <<	" ZN"<<' '<<"Z"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+						viz = cen+2.0*mori      ; out<<"HETATM"<<I(5,9997)<<' '<<"ZN  "<<' ' << " ZN"<<' '<<"B"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+						viz = cen+4.0*mori      ; out<<"HETATM"<<I(5,9998)<<' '<<"ZN  "<<' ' << " ZN"<<' '<<"C"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+						viz = cen               ; out<<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' ' << " ZN"<<' '<<"Z"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 
 						out << "ENDMDL" << std::endl;
 
@@ -680,32 +680,32 @@ void run_m8() {
 						Vec axis2 = ((cen-pose.residue(irsd).xyz("CD")).cross(cen-pose.residue(jrsd).xyz("CD"))).normalized();
 						axis1 = projperp(axis2,axis1).normalized();
 
-						for(Size ii = 1; ii <= 4; ii++) {
+						for ( Size ii = 1; ii <= 4; ii++ ) {
 							Pose pose2 = pose;
 							rot_pose(pose2,axis2,180,cen);
 
-							for(Size ir = 1; ir <= pose.size(); ++ir) {
-								for(Size ia = 1; ia <= pose.residue(ir).nheavyatoms()-2; ++ia) {
-									for(Size jr = 1; jr <= pose.size(); ++jr) {
-										for(Size ja = 1; ja <= pose.residue(jr).nheavyatoms()-2; ++ja) {
-											if(pose.residue(ir).xyz(ia).distance_squared(pose2.residue(jr).xyz(ja)) < 9.0 ) clash=true;
+							for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+								for ( Size ia = 1; ia <= pose.residue(ir).nheavyatoms()-2; ++ia ) {
+									for ( Size jr = 1; jr <= pose.size(); ++jr ) {
+										for ( Size ja = 1; ja <= pose.residue(jr).nheavyatoms()-2; ++ja ) {
+											if ( pose.residue(ir).xyz(ia).distance_squared(pose2.residue(jr).xyz(ja)) < 9.0 ) clash=true;
 										}
 									}
 								}
 							}
-							if(clash) continue;
+							if ( clash ) continue;
 
 							utility::io::ozstream out(tag+"_homodimer_"+string_of(ii)+".pdb");
 							pose.dump_pdb(out);
-							for(Size jj = 1; jj <= pose2.size(); ++jj) {
+							for ( Size jj = 1; jj <= pose2.size(); ++jj ) {
 								core::conformation::Residue r(pose2.residue(jj));
 								r.chain(2);
 								pose2.replace_residue(jj,r,false);
 							}
 							pose2.dump_pdb(out);
-							viz = cen;         out<<"HETATM"<<I(5,9999)<<' '<<"CA  "<<' ' <<	" CA"<<' '<<"Z"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-							// viz = cen+2*axis1; out<<"HETATM"<<I(5,9999)<<' '<<"CA  "<<' ' <<	" CA"<<' '<<"Y"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-							// viz = cen+2*axis2; out<<"HETATM"<<I(5,9999)<<' '<<"CA  "<<' ' <<	" CA"<<' '<<"X"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+							viz = cen;         out<<"HETATM"<<I(5,9999)<<' '<<"CA  "<<' ' << " CA"<<' '<<"Z"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+							// viz = cen+2*axis1; out<<"HETATM"<<I(5,9999)<<' '<<"CA  "<<' ' << " CA"<<' '<<"Y"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+							// viz = cen+2*axis2; out<<"HETATM"<<I(5,9999)<<' '<<"CA  "<<' ' << " CA"<<' '<<"X"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 							out.close();
 							axis2 = rotation_matrix_degrees(axis1,45.0)*axis2;
 						}
@@ -726,11 +726,11 @@ int main (int argc, char *argv[]) {
 	try {
 
 
-	using namespace basic::options::OptionKeys;
-	using namespace core::id;
-	devel::init(argc,argv);
+		using namespace basic::options::OptionKeys;
+		using namespace core::id;
+		devel::init(argc,argv);
 
-	run_m8();
+		run_m8();
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

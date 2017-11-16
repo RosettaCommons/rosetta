@@ -69,7 +69,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -78,8 +77,8 @@ namespace rigid {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rigid.RigidBodyMover" );
-static THREAD_LOCAL basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
+static basic::Tracer TR( "protocols.rigid.RigidBodyMover" );
+static basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
 
 // Large rotational perturbations produce a distribution of orientations
 // that are neither uniform nor similar to the input orientation.
@@ -216,7 +215,7 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 	}
 
 	if ( movable_jumps_.empty() ) {
-		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
+		TRBM.Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 }
@@ -279,7 +278,7 @@ RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 
 	// this should probably be changed so that instead of doing this here, it calls the randomize apply
 	if ( rot_mag_ >= max_allowed_rot_mag ) {
-		Warning() << "Large Gaussian rotational perturbations don't make sense!  Bad choices with -dock_pert?  Use -randomize[12] instead." << std::endl;
+		TR.Warning << "Large Gaussian rotational perturbations don't make sense!  Bad choices with -dock_pert?  Use -randomize[12] instead." << std::endl;
 	}
 
 	if ( !freeze_ ) {
@@ -430,7 +429,7 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	}
 
 	if ( movable_jumps_.empty() ) {
-		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
+		TRBM.Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	dir_ = dir_in;
@@ -1446,14 +1445,14 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 	}
 
 	if ( trans_jumps.empty() ) {
-		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
+		TRBM.Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	rb_jump_ = numeric::random::rg().random_element( trans_jumps );
 	auto jump_iterator =
 		dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
-		T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
+		TRBM.Warning << "jump dof not found!" << std::endl;
 	} else {
 		dof_ = (*jump_iterator).second ;
 		// This is fishy. We should not have different directions for the same jump
@@ -1549,7 +1548,7 @@ RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover(
 	}
 
 	if ( trans_jumps.empty() ) {
-		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
+		TRBM.Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	dofs_ = dofs;
@@ -1582,7 +1581,7 @@ void RigidBodyDofSeqTransMover::apply( core::pose::Pose & pose )
 	for ( it = start; it != end; ++it ) {
 		jump_iterator = dofs_.find( *it );
 		if ( jump_iterator == dofs_.end() ) {
-			T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
+			TRBM.Warning << "jump dof not found!" << std::endl;
 		} else {
 			core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
 			RigidBodyDofTransMover dofmover( dof, *it, step_size_ );
@@ -1635,7 +1634,7 @@ RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover(
 	}
 
 	if ( trans_jumps.empty() ) {
-		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
+		TRBM.Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	dofs_ = dofs;
@@ -1670,7 +1669,7 @@ void RigidBodyDofRandomTransMover::apply( core::pose::Pose & pose )
 	else jump_ = rb_jumps_[1];
 	jump_iterator = dofs_.find( jump_ );
 	if ( jump_iterator == dofs_.end() ) {
-		T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
+		TRBM.Warning << "jump dof not found!" << std::endl;
 	} else {
 		core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
 		RigidBodyDofTransMover dofmover( dof, (*jump_iterator).first, step_size_ );
@@ -1737,14 +1736,14 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 	}
 
 	if ( moving_jumps.empty() ) {
-		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
+		TRBM.Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	rb_jump_ = numeric::random::rg().random_element( moving_jumps );
 	auto jump_iterator =
 		dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
-		T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
+		TRBM.Warning << "jump dof not found!" << std::endl;
 	} else {
 		core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
 		dof_ = dof;
@@ -1829,7 +1828,7 @@ RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover(
 	}
 
 	if ( moving_jumps.empty() ) {
-		T("protocols.moves.rigid_body").Warning << "no movable jumps!" << std::endl;
+		TRBM.Warning << "no movable jumps!" << std::endl;
 		return;
 	}
 	rb_jumps_ = moving_jumps;
@@ -1863,7 +1862,7 @@ void RigidBodyDofSeqPerturbMover::apply( core::pose::Pose & pose )
 	for ( it = start; it != end; ++it ) {
 		jump_iterator = dofs_.find( *it );
 		if ( jump_iterator == dofs_.end() ) {
-			T("protocols.moves.rigid_body").Warning << "jump dof not found!" << std::endl;
+			TRBM.Warning << "jump dof not found!" << std::endl;
 		} else {
 			core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
 			RigidBodyDofPerturbMover dofmover( *it, dof, rot_mag_, trans_mag_ );

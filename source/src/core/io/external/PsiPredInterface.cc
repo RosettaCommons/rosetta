@@ -36,7 +36,7 @@
 // C headers
 #include <time.h>
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.external.psipredinterface" );
+static basic::Tracer TR( "core.io.external.psipredinterface" );
 
 namespace core {
 namespace io {

@@ -48,7 +48,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -57,45 +56,45 @@ using basic::Warning;
 int
 main( int argc, char * argv [] )
 {
-  try {
+	try {
 
-    using namespace core;
+		using namespace core;
 
-    devel::init(argc, argv);
+		devel::init(argc, argv);
 
-    pose::Pose pose;
-    core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
-    using namespace core::scoring;
-    // standard packer wts
-    std::cout << "Standard packer weights without fa_rep term:" << std::endl;
-    ScoreFunctionOP scorefxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
-    scorefxn->set_weight( fa_rep, 0.0 );
-    (*scorefxn)(pose);
-    scorefxn->show(std::cout,pose);
+		pose::Pose pose;
+		core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
+		using namespace core::scoring;
+		// standard packer wts
+		std::cout << "Standard packer weights without fa_rep term:" << std::endl;
+		ScoreFunctionOP scorefxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+		scorefxn->set_weight( fa_rep, 0.0 );
+		(*scorefxn)(pose);
+		scorefxn->show(std::cout,pose);
 
-    //  std::cout << *scorefxn;
+		//  std::cout << *scorefxn;
 
-    /// soft rep packer wts
-    std::cout << "Soft repulsive weights" << std::endl;
-    ScoreFunctionOP scorefxn2( ScoreFunctionFactory::create_score_function( SOFT_REP_WTS ) );
-    (*scorefxn2)(pose);
+		/// soft rep packer wts
+		std::cout << "Soft repulsive weights" << std::endl;
+		ScoreFunctionOP scorefxn2( ScoreFunctionFactory::create_score_function( SOFT_REP_WTS ) );
+		(*scorefxn2)(pose);
 
-    std::cout << *scorefxn2;
-    scorefxn2->show(std::cout,pose);
+		std::cout << *scorefxn2;
+		scorefxn2->show(std::cout,pose);
 
-    /// score12 w/ std packer wts
-    std::cout << "Score12 with standard packer weights:" << std::endl;
-    ScoreFunctionOP score12( get_score_function() );
-    (*score12)(pose);
+		/// score12 w/ std packer wts
+		std::cout << "Score12 with standard packer weights:" << std::endl;
+		ScoreFunctionOP score12( get_score_function() );
+		(*score12)(pose);
 
-    std::cout << *score12;
-    score12->show(std::cout,pose);
+		std::cout << *score12;
+		score12->show(std::cout,pose);
 
 
-  } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-  }
+	}
 
-  return 0;
+	return 0;
 }

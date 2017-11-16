@@ -48,7 +48,7 @@
 #define foreach_ BOOST_FOREACH
 #include <utility>
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.interaction_graph.ResidueArrayAnnealingEvaluator");
+static basic::Tracer TR("core.pack.interaction_graph.ResidueArrayAnnealingEvaluator");
 
 namespace core {
 namespace pack {

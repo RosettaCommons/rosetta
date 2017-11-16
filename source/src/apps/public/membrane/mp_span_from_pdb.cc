@@ -62,7 +62,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::membrane;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.membrane.mp_span_from_pdb" );
+static basic::Tracer TR( "apps.public.membrane.mp_span_from_pdb" );
 
 ////////////////////////////////////////////////////////////////////////////////
 // vector show function

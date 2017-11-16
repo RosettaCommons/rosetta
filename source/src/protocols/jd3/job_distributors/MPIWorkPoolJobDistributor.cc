@@ -58,7 +58,7 @@
 // C++
 #include <utility>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.job_distributors..MPIWorkPoolJobDistributor" );
+static basic::Tracer TR( "protocols.jd3.job_distributors.MPIWorkPoolJobDistributor" );
 
 namespace protocols {
 namespace jd3 {

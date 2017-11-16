@@ -14,7 +14,7 @@
 #include <protocols/backbone_moves/local_backbone_mover/free_peptide_movers/FreePeptideMover.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.FreePeptideMover" );
+static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.FreePeptideMover" );
 
 
 namespace protocols {

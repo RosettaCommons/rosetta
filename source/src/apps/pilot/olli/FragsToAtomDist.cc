@@ -24,7 +24,7 @@
 #include <basic/options/option_macros.hh>
 #include <utility/excn/EXCN_Base.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 OPT_KEY( Integer, cycles )
 OPT_KEY( Integer, freq )

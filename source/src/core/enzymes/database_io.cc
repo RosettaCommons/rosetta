@@ -26,7 +26,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.enzymes.database_io" );
+static basic::Tracer TR( "core.enzymes.database_io" );
 
 
 namespace core {

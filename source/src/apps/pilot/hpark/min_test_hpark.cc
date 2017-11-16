@@ -77,7 +77,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core;
@@ -111,12 +110,15 @@ public:
 		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_mainchain_bond_angles ]() );
 		mm.set( core::id::D, option[ OptionKeys::relax::minimize_mainchain_bond_lengths ]() );
 
-		if ( option[ OptionKeys::relax::jump_move ].user() )
+		if ( option[ OptionKeys::relax::jump_move ].user() ) {
 			mm.set_jump( option[ OptionKeys::relax::jump_move ]() );
-		if ( option[ OptionKeys::relax::bb_move ].user() )
+		}
+		if ( option[ OptionKeys::relax::bb_move ].user() ) {
 			mm.set_bb( option[ OptionKeys::relax::bb_move ]() );
-		if ( option[ OptionKeys::relax::chi_move ].user() )
+		}
+		if ( option[ OptionKeys::relax::chi_move ].user() ) {
 			mm.set_chi( option[ OptionKeys::relax::chi_move ]() );
+		}
 
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
@@ -128,9 +130,9 @@ public:
 		/*
 		// csts
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-				protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
-				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
-				loadCsts->apply(pose);
+		protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+		loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
+		loadCsts->apply(pose);
 		}
 		*/
 
@@ -143,14 +145,14 @@ public:
 		//   + (potentially) dock map into density
 		if ( option[ edensity::mapfile ].user() || option[ cryst::mtzfile ].user() ) {
 			protocols::electron_density::SetupForDensityScoringMoverOP edens
-											 ( new protocols::electron_density::SetupForDensityScoringMover );
+				( new protocols::electron_density::SetupForDensityScoringMover );
 			edens->apply( pose );
 		}
 
 		Vector COM( 0.0, 0.0, 0.0 );
 		utility::vector1< id::AtomID > IDs;
-		for( Size ires = 1; ires <= pose.size(); ++ires){
-			for( Size iatm = 1; iatm <= pose.residue(ires).natoms(); ++iatm){
+		for ( Size ires = 1; ires <= pose.size(); ++ires ) {
+			for ( Size iatm = 1; iatm <= pose.residue(ires).natoms(); ++iatm ) {
 				//Size atmno = pose.residue(ires).atom_index(" CA ");
 				//std::cout << ires << " " << atmno << std::endl;
 				IDs.push_back( id::AtomID(iatm, ires) );

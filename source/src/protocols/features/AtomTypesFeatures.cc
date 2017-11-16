@@ -59,7 +59,7 @@ using core::chemical::AtomTypeSet;
 using utility::vector1;
 using basic::Tracer;
 
-static THREAD_LOCAL Tracer TR("protocols.features.AtomTypesFeatures");
+static Tracer TR("protocols.features.AtomTypesFeatures");
 
 AtomTypesFeatures::AtomTypesFeatures() {}
 

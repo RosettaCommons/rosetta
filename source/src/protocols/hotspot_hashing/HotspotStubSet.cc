@@ -110,7 +110,6 @@
 #include <numeric/random/random_permutation.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -120,7 +119,7 @@ using ObjexxFCL::lead_zero_string_of;
 namespace protocols {
 namespace hotspot_hashing {
 typedef platform::Size Size;
-static THREAD_LOCAL basic::Tracer TR( "protocols.hotspot_hashing" );
+static basic::Tracer TR( "protocols.hotspot_hashing" );
 
 HotspotStubSet::HotspotStubSet() :
 	ReferenceCount(),

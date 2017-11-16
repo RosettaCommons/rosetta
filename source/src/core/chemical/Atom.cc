@@ -45,7 +45,7 @@
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.Atom" );
+static basic::Tracer TR( "core.chemical.Atom" );
 
 /// @details All its properties are un-set by default.
 Atom::Atom() :

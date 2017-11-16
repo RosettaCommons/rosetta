@@ -28,7 +28,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hbnet.HBNetScore" );
+static basic::Tracer TR( "protocols.hbnet.HBNetScore" );
 
 namespace protocols {
 namespace hbnet {

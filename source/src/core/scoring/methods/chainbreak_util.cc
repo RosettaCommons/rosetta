@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.chainbreak_util" );
+static basic::Tracer TR( "core.scoring.methods.chainbreak_util" );
 
 namespace core {
 namespace scoring {

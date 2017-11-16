@@ -65,7 +65,7 @@ using core::conformation::Residue;
 #include <core/import_pose/import_pose.hh>
 #include <protocols/jumping/StrandPairing.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.blivens.disulfide_scorer" );
+static basic::Tracer TR( "pilot_apps.blivens.disulfide_scorer" );
 
 int
 usage(char* msg)
@@ -121,25 +121,25 @@ public:
 		chainB_   = pdbinfo->chain(posB_);
 
 		potential.score_disulfide(resA,resB,
-				cbcb_distance_sq_,
-				centroid_distance_sq_,
-				cacbcb_angle_1_,
-				cacbcb_angle_2_,
-				cacbcbca_dihedral_,
-				backbone_dihedral_,
-				cbcb_distance_score_,
-				centroid_distance_score_,
-				cacbcb_angle_1_score_,
-				cacbcb_angle_2_score_,
-				cacbcbca_dihedral_score_,
-				backbone_dihedral_score_,
-				cb_score_factor_
-				);
+			cbcb_distance_sq_,
+			centroid_distance_sq_,
+			cacbcb_angle_1_,
+			cacbcb_angle_2_,
+			cacbcbca_dihedral_,
+			backbone_dihedral_,
+			cbcb_distance_score_,
+			centroid_distance_score_,
+			cacbcb_angle_1_score_,
+			cacbcb_angle_2_score_,
+			cacbcbca_dihedral_score_,
+			backbone_dihedral_score_,
+			cb_score_factor_
+		);
 
-		if(isDS_ == ' ') {
+		if ( isDS_ == ' ' ) {
 			isDS_ = actual_disulfide(pose,posA_,posB_)?'T':'F';
 		}
-		if(sameSecondary_ == ' ') {
+		if ( sameSecondary_ == ' ' ) {
 			sameSecondary_ = same_secondary_structure(pose,posA_,posB_)?'T':'F';
 		}
 
@@ -255,86 +255,82 @@ const string PairScore::sep = "\t";
 
 int main( int argc, char * argv [] )
 {
-  try {
+	try {
 
-	//init options system
-	option.add(blivens::disulfide_scorer::nds_prob,"Probability of outputing a bond");
-	devel::init(argc, argv);
+		//init options system
+		option.add(blivens::disulfide_scorer::nds_prob,"Probability of outputing a bond");
+		devel::init(argc, argv);
 
-	vector1<string> pdbs;
-	if( option[ in::file::s ].user() || option[in::file::l].user() ) {
-		pdbs = basic::options::start_files();
-	}
-	else return usage("No in file given: Use -s or -l to designate pdb files to search for disulfides");
+		vector1<string> pdbs;
+		if ( option[ in::file::s ].user() || option[in::file::l].user() ) {
+			pdbs = basic::options::start_files();
+		} else return usage("No in file given: Use -s or -l to designate pdb files to search for disulfides");
 
-	string outfile;
-	ofstream out;
-	if( option[ out::file::o ].user() ) {
-		outfile = option[ out::file::o ]();
-		out.open(outfile.c_str());
-	}
-	else return usage("No out file given: Use -o to designate an output file");
+		string outfile;
+		ofstream out;
+		if ( option[ out::file::o ].user() ) {
+			outfile = option[ out::file::o ]();
+			out.open(outfile.c_str());
+		} else return usage("No out file given: Use -o to designate an output file");
 
 
-	Real prob = option[blivens::disulfide_scorer::nds_prob]();
-	Real cys_prob = option[blivens::disulfide_scorer::cys_prob]();
+		Real prob = option[blivens::disulfide_scorer::nds_prob]();
+		Real cys_prob = option[blivens::disulfide_scorer::cys_prob]();
 
-	if(prob<0.0 || 1.0<prob) {
-		prob = 0.0;
-		TR.Warning << "nds_prob out of range; using "<<prob <<std::endl;
-	}
-	if(cys_prob<0.0 || 1.0<cys_prob) {
-		cys_prob = prob;
-		TR.Warning << "cys_prob out of range; using "<<cys_prob <<std::endl;
-	}
-
-
-	PairScore::printHeader(out);
-
-	core::scoring::disulfides::CentroidDisulfidePotential potential;
-
-	for(vector1<string>::const_iterator infile_it = pdbs.begin();   infile_it != pdbs.end(); ++infile_it)
-	{
-
-		pose::Pose pose;
-		core::import_pose::centroid_pose_from_pdb( pose, *infile_it , core::import_pose::PDB_file);
-
-		//Assign secodary structure
-		core::scoring::dssp::Dssp dssp(pose);
-		dssp.insert_ss_into_pose(pose);
-
-		TR << pose.secstruct() << endl;
+		if ( prob<0.0 || 1.0<prob ) {
+			prob = 0.0;
+			TR.Warning << "nds_prob out of range; using "<<prob <<std::endl;
+		}
+		if ( cys_prob<0.0 || 1.0<cys_prob ) {
+			cys_prob = prob;
+			TR.Warning << "cys_prob out of range; using "<<cys_prob <<std::endl;
+		}
 
 
-		//for each residue pair
-		for(Size i(1); i<= pose.size()-1; ++i) {
-			char i_name = pose.residue_type(i).name1();
-			for(Size j(i+1); j<= pose.size(); ++j) {
-				bool isDS = actual_disulfide(pose,i,j);
-				char j_name = pose.residue_type(j).name1();
+		PairScore::printHeader(out);
 
-				double coin = numeric::random::uniform();
+		core::scoring::disulfides::CentroidDisulfidePotential potential;
 
-				//Decide whether to score this pair
-				//Score all disulfides
-				//Score everything (except Gly) that passes cointoss
-				//Score Cys pairs that pass cointoss
-				if( isDS ||
-						coin < prob && i_name != 'G' && j_name != 'G' ||
-						coin < cys_prob && i_name == 'C' && j_name == 'C' )
-				{
-					//score the pair
-					PairScore scores(i,j);
-					scores.setFilename(*infile_it);
-					scores.setDS(isDS);
-					scores.score(pose, potential);
-					scores.print(out);
+		for ( vector1<string>::const_iterator infile_it = pdbs.begin();   infile_it != pdbs.end(); ++infile_it ) {
+
+			pose::Pose pose;
+			core::import_pose::centroid_pose_from_pdb( pose, *infile_it , core::import_pose::PDB_file);
+
+			//Assign secodary structure
+			core::scoring::dssp::Dssp dssp(pose);
+			dssp.insert_ss_into_pose(pose);
+
+			TR << pose.secstruct() << endl;
+
+
+			//for each residue pair
+			for ( Size i(1); i<= pose.size()-1; ++i ) {
+				char i_name = pose.residue_type(i).name1();
+				for ( Size j(i+1); j<= pose.size(); ++j ) {
+					bool isDS = actual_disulfide(pose,i,j);
+					char j_name = pose.residue_type(j).name1();
+
+					double coin = numeric::random::uniform();
+
+					//Decide whether to score this pair
+					//Score all disulfides
+					//Score everything (except Gly) that passes cointoss
+					//Score Cys pairs that pass cointoss
+					if ( isDS ||
+							coin < prob && i_name != 'G' && j_name != 'G' ||
+							coin < cys_prob && i_name == 'C' && j_name == 'C' ) {
+						//score the pair
+						PairScore scores(i,j);
+						scores.setFilename(*infile_it);
+						scores.setDS(isDS);
+						scores.score(pose, potential);
+						scores.print(out);
+					}
 				}
-			}
-		}//end residue pair
-	}
+			}//end residue pair
+		}
 
-	out.close();
+		out.close();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

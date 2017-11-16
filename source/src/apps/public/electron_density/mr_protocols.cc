@@ -54,7 +54,7 @@ OPT_1GRP_KEY(Real, MR, censcale)
 OPT_1GRP_KEY(StringVector, MR, disulf)
 OPT_1GRP_KEY(String, MR, mode)
 
-static THREAD_LOCAL basic::Tracer TR( "rosetta_MR" );
+static basic::Tracer TR( "rosetta_MR" );
 
 void*
 my_main( void* ) {

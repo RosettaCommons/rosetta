@@ -46,7 +46,7 @@ using namespace ObjexxFCL::format;
 namespace core {
 namespace optimization {
 
-static THREAD_LOCAL basic::Tracer TR( "core.optimization.AtomTreeMinimizer" );
+static basic::Tracer TR( "core.optimization.AtomTreeMinimizer" );
 
 AtomTreeMinimizer::AtomTreeMinimizer()
 {}
@@ -135,7 +135,7 @@ AtomTreeMinimizer::run(
 	// we may not really need all these extra function evaluations
 	// good for diagnostics though
 
-	basic::Tracer core_optimize( "core.optimize", basic::t_debug );
+	basic::TracerImpl core_optimize( "core.optimize", basic::t_debug );
 	core_optimize << "AtomTreeMinimizer::run: nangles= " << min_map.nangles() <<
 		" start_score: " << F(12,3,start_score) <<
 		" start_func: "  << F(12,3,start_func ) <<

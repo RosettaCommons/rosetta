@@ -49,7 +49,6 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
@@ -72,80 +71,80 @@ using namespace core;
 using namespace core::chemical;
 using utility::file::FileName;
 using utility::vector1;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yiliu.silent" );
+static basic::Tracer TR( "apps.pilot.yiliu.silent" );
 
 int
 main( int argc, char* argv [] ) {
 	try {
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::io::silent;
-	using namespace core::import_pose::pose_stream;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::io::silent;
+		using namespace core::import_pose::pose_stream;
 
-  //YL, declare silent file data
-	SilentFileData sfd, sfd_out;
+		//YL, declare silent file data
+		SilentFileData sfd, sfd_out;
 
-  //YL, declare residue type
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
-		option[ in::file::residue_type_set ]()
-	);
+		//YL, declare residue type
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
+			option[ in::file::residue_type_set ]()
+		);
 
-	core::pose::Pose native_pose, current_pose;
-	if ( option[ in::file::native ].user() ) {
-		TR << option[ in::file::native].user() << std::endl;
-		core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
-	}
+		core::pose::Pose native_pose, current_pose;
+		if ( option[ in::file::native ].user() ) {
+			TR << option[ in::file::native].user() << std::endl;
+			core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
+		}
 
-	//YL, declare score function
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	//YL, declare NullMover
-	protocols::moves::NullMover mover;
-	protocols::jobdist::not_universal_main( mover );
+		//YL, declare score function
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+		//YL, declare NullMover
+		protocols::moves::NullMover mover;
+		protocols::jobdist::not_universal_main( mover );
 
-//	MetaPoseInputStream input;
-//	if ( option[ in::file::s ].user() ) {
-//		PoseInputStreamOP pdb_input( new PDBPoseInputStream( option[ in::file::s ]() ) );
-//		input.add_pose_input_stream( pdb_input );
-//	}
-//
-//	if ( option[ in::file::silent ].user() ) {
-//		utility::vector1< std::string > tags;
-//		PoseInputStreamOP silent_input;
-//		if ( option[ in::file::tags ].user() ) {
-//			tags = option[ in::file::tags ]();
-//			silent_input = new SilentFilePoseInputStream( option[ in::file::silent ](), option[ in::file::tags ]() );
-//		} else {
-//			silent_input = new SilentFilePoseInputStream( option[ in::file::silent ]() );
-//		}
-//		input.add_pose_input_stream( silent_input );
-//	}
-//	// if ( option[ in::file::l ].user() )  pdb_input->add_file_list( option[ in::file::l ]() );
-//
-//
-//	while( input.has_another_pose() ) {
-//		input.fill_pose( current_pose, *rsd_set );
-//		(*scorefxn)( current_pose );
-//
-//		SilentStructOP ss = SilentStructFactory::get_instance()->get_silent_struct();
-//		ss->fill_struct( current_pose );
-//
-//		// add rmsd information if a native was given.
-//		if ( option[ in::file::native ].user() ) {
-//			// calculate RMS
-//			Real rmsd = core::scoring::CA_rmsd( native_pose, current_pose );
-//			ss->add_energy( "CA_rmsd", rmsd );
-//		}
-//		std::cerr << "writing " << ss->decoy_tag() << std::endl;
-//		sfd_out.write_silent_struct( *ss, option[ out::file::silent ]() );
-//	}
+		// MetaPoseInputStream input;
+		// if ( option[ in::file::s ].user() ) {
+		//  PoseInputStreamOP pdb_input( new PDBPoseInputStream( option[ in::file::s ]() ) );
+		//  input.add_pose_input_stream( pdb_input );
+		// }
+		//
+		// if ( option[ in::file::silent ].user() ) {
+		//  utility::vector1< std::string > tags;
+		//  PoseInputStreamOP silent_input;
+		//  if ( option[ in::file::tags ].user() ) {
+		//   tags = option[ in::file::tags ]();
+		//   silent_input = new SilentFilePoseInputStream( option[ in::file::silent ](), option[ in::file::tags ]() );
+		//  } else {
+		//   silent_input = new SilentFilePoseInputStream( option[ in::file::silent ]() );
+		//  }
+		//  input.add_pose_input_stream( silent_input );
+		// }
+		// // if ( option[ in::file::l ].user() )  pdb_input->add_file_list( option[ in::file::l ]() );
+		//
+		//
+		// while( input.has_another_pose() ) {
+		//  input.fill_pose( current_pose, *rsd_set );
+		//  (*scorefxn)( current_pose );
+		//
+		//  SilentStructOP ss = SilentStructFactory::get_instance()->get_silent_struct();
+		//  ss->fill_struct( current_pose );
+		//
+		//  // add rmsd information if a native was given.
+		//  if ( option[ in::file::native ].user() ) {
+		//   // calculate RMS
+		//   Real rmsd = core::scoring::CA_rmsd( native_pose, current_pose );
+		//   ss->add_energy( "CA_rmsd", rmsd );
+		//  }
+		//  std::cerr << "writing " << ss->decoy_tag() << std::endl;
+		//  sfd_out.write_silent_struct( *ss, option[ out::file::silent ]() );
+		// }
 
-	return 0;
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+		return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

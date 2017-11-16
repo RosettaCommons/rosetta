@@ -62,7 +62,7 @@ CentroidDisulfideEnergyCreator::score_types_for_method() const {
 }
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.disulfides.CentroidDisulfideEnergy" );
+static basic::Tracer TR( "core.scoring.disulfides.CentroidDisulfideEnergy" );
 
 CentroidDisulfideEnergy::CentroidDisulfideEnergy(
 	CentroidDisulfidePotential const & potential

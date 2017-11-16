@@ -94,7 +94,7 @@ using namespace core;
 using namespace core::scoring;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.EnzFilters" );
+static basic::Tracer TR( "protocols.enzdes.EnzFilters" );
 
 namespace protocols {
 namespace enzdes {

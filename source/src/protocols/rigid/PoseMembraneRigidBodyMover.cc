@@ -51,7 +51,7 @@ namespace rigid {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.PoseMembraneRigidBodyMover" );
+static basic::Tracer TR( "protocols.moves.PoseMembraneRigidBodyMover" );
 
 /// move pose into a membrane/*
 MovePoseToMembraneCenterMover::MovePoseToMembraneCenterMover() : moves::Mover("MovePoseToMembraneCenterMover")

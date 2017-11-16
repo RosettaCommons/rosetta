@@ -40,7 +40,7 @@ namespace fragment {
 /// @details Auto-generated virtual destructor
 SingleResidueFragData::~SingleResidueFragData() = default;
 
-//static THREAD_LOCAL basic::Tracer tr("core.fragment");
+//static basic::Tracer tr("core.fragment");
 
 bool SingleResidueFragData::steal(pose::Pose const& pose,  Size seq_pos) {
 	sequence_ = oneletter_code_from_aa( pose.residue( seq_pos ).aa() );

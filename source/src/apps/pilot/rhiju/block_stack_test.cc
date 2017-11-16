@@ -56,7 +56,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rhiju.block_stack_test" );
+static basic::Tracer TR( "apps.pilot.rhiju.block_stack_test" );
 
 using namespace core;
 using utility::tools::make_vector1;
@@ -66,7 +66,7 @@ using utility::tools::make_vector1;
 ///////////////////////////////////////////////////////////////
 Vector
 get_repl_xyz( pose::Pose const & pose,
-							Size const & i, utility::vector1< std::string > const & atom_names )
+	Size const & i, utility::vector1< std::string > const & atom_names )
 {
 	using namespace kinematics;
 	using namespace id;
@@ -87,9 +87,9 @@ get_repl_xyz( pose::Pose const & pose,
 	}
 
 	// if ( i < pose.size() ) {
-	// 	for ( Size n = 1; n <= pose.residue( i+1 ).natoms(); n++ ) {
-	// 		TR << pose.residue( i+1 ).atom_name( n ) << " --> " << stub.global2local( pose.xyz( AtomID( n, i+1 ) ) ).z() << std::endl;
-	// 	}
+	//  for ( Size n = 1; n <= pose.residue( i+1 ).natoms(); n++ ) {
+	//   TR << pose.residue( i+1 ).atom_name( n ) << " --> " << stub.global2local( pose.xyz( AtomID( n, i+1 ) ) ).z() << std::endl;
+	//  }
 	// }
 
 	return ( stub.local2global( Vector( 0.0, 0.0, STACK_DIST ) ) );
@@ -106,12 +106,12 @@ block_stack_test()
 	using namespace core::pose::rna;
 	using namespace core::import_pose;
 	using namespace core::id;
-  using namespace core::scoring;
-  using namespace core::chemical;
-  using namespace core::kinematics;
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace core::kinematics;
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	PoseOP pose_op =	pose_from_file( "ucga_ucga_helix.pdb" , core::import_pose::PDB_file);
+	PoseOP pose_op = pose_from_file( "ucga_ucga_helix.pdb" , core::import_pose::PDB_file);
 	Pose & pose = *pose_op;
 
 	EnergyBaseStackList energy_stack_list = get_scored_base_stack_list( pose );
@@ -149,20 +149,20 @@ block_stack_test()
 
 	// u
 	pose.set_xyz( NamedAtomID( "RPB1", 5),
-								get_repl_xyz( pose, 5, make_vector1( " N1 ", " C2 ", " N3 ",  " C4 ", " C5 ", " C6 " ) ) );
+		get_repl_xyz( pose, 5, make_vector1( " N1 ", " C2 ", " N3 ",  " C4 ", " C5 ", " C6 " ) ) );
 	// c
 	pose.set_xyz( NamedAtomID( "RPB1", 6),
-								get_repl_xyz( pose, 6, make_vector1( " N1 ", " C2 ", " N3 ",  " C4 ", " C5 ", " C6 " ) ) );
+		get_repl_xyz( pose, 6, make_vector1( " N1 ", " C2 ", " N3 ",  " C4 ", " C5 ", " C6 " ) ) );
 	// g
 	pose.set_xyz( NamedAtomID( "RPB1", 7),
-								get_repl_xyz( pose, 7, make_vector1( " N9 ", " C4 ", " C5 ",  " N7 ", " C8 " ) ) );
+		get_repl_xyz( pose, 7, make_vector1( " N9 ", " C4 ", " C5 ",  " N7 ", " C8 " ) ) );
 	pose.set_xyz( NamedAtomID( "RPB2", 7),
-								get_repl_xyz( pose, 7, make_vector1( " C4 ", " N3 ", " C2 ", " N1 ", " C6 ", " C5 "  ) ) );
+		get_repl_xyz( pose, 7, make_vector1( " C4 ", " N3 ", " C2 ", " N1 ", " C6 ", " C5 "  ) ) );
 	// a
 	pose.set_xyz( NamedAtomID( "RPB1", 8),
-								get_repl_xyz( pose, 8, make_vector1( " N9 ", " C4 ", " C5 ",  " N7 ", " C8 " ) ) );
+		get_repl_xyz( pose, 8, make_vector1( " N9 ", " C4 ", " C5 ",  " N7 ", " C8 " ) ) );
 	pose.set_xyz( NamedAtomID( "RPB2", 8),
-								get_repl_xyz( pose, 8, make_vector1( " C4 ", " N3 ", " C2 ", " N1 ", " C6 ", " C5 "  ) ) );
+		get_repl_xyz( pose, 8, make_vector1( " C4 ", " N3 ", " C2 ", " N1 ", " C6 ", " C5 "  ) ) );
 
 	protocols::rna::denovo::print_internal_coords( pose );
 	pose.dump_pdb( "test2.pdb" );
@@ -183,7 +183,7 @@ my_main( void* )
 {
 	block_stack_test();
 	protocols::viewer::clear_conformation_viewers();
-  exit( 0 );
+	exit( 0 );
 }
 
 

@@ -35,7 +35,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("CopyDofsTest");
+static basic::Tracer TR("CopyDofsTest");
 
 
 class CopyDofsTest : public CxxTest::TestSuite {

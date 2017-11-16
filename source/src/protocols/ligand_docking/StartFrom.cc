@@ -59,14 +59,13 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
+static basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
 
 // XRW TEMP std::string
 // XRW TEMP StartFromCreator::keyname() const

@@ -39,7 +39,7 @@
 
 // option key includes
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.PDBJobInputter" );
+static basic::Tracer TR( "protocols.jd2.PDBJobInputter" );
 
 namespace protocols {
 namespace jd2 {

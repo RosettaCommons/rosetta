@@ -84,7 +84,7 @@ using basic::database::safely_write_to_database;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.DdGFeatures" );
+static basic::Tracer TR( "protocols.features.DdGFeatures" );
 
 DdGFeatures::DdGFeatures() {}
 

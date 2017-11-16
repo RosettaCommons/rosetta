@@ -77,7 +77,7 @@ namespace rna {
 namespace denovo {
 namespace fragments {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.fragments.FullAtomRNA_Fragments" );
+static basic::Tracer TR( "protocols.rna.denovo.fragments.FullAtomRNA_Fragments" );
 
 using core::Size;
 using core::Real;

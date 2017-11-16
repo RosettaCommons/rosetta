@@ -62,7 +62,7 @@ namespace cf = core::fragment;
 namespace cp = core::pose;
 namespace pfp = protocols::frag_picker;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.struct_fragment.StructFragmentMover");
+static basic::Tracer TR("protocols.struct_fragment.StructFragmentMover");
 
 StructFragmentMover::StructFragmentMover():
 	structPicker_( new pfp::FragmentPicker() ),

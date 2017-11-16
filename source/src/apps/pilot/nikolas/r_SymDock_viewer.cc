@@ -51,11 +51,10 @@
 //local options
 
 /*namespace basic{ namespace options{ namespace OptionKeys{
-		basic::options::BooleanOptionKey const r_SymDock_app_viewer("enable viewer");
+basic::options::BooleanOptionKey const r_SymDock_app_viewer("enable viewer");
 }}}//basic::options::OptionKeys
 */
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -85,17 +84,18 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-	//	NEW_OPT( r_SymDock_app::viewer, "enable viewer", false );
-	//  option.add(r_SymDock_app_viewer, "Enable viewer").def(false);
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		// NEW_OPT( r_SymDock_app::viewer, "enable viewer", false );
+		//  option.add(r_SymDock_app_viewer, "Enable viewer").def(false);
 
-	devel::init( argc, argv );
-	// use viewer if flag given
-	if ( option[ OptionKeys::docking::view ]() ){
-		protocols::viewer::viewer_main( SymDock_main_local );}
-	else{
-		SymDock_main_local(NULL);}
+		devel::init( argc, argv );
+		// use viewer if flag given
+		if ( option[ OptionKeys::docking::view ]() ) {
+			protocols::viewer::viewer_main( SymDock_main_local );
+		} else {
+			SymDock_main_local(NULL);
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

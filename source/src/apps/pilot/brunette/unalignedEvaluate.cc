@@ -89,7 +89,7 @@
 #include <iostream>
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer tr( "unalignedEvaluate" );
+static basic::Tracer tr( "unalignedEvaluate" );
 using std::string;
 using std::map;
 using std::vector;
@@ -107,29 +107,30 @@ Real region_density_score(Pose & pose,Pose const templatePose, SequenceAlignment
 	superimpose_pose_using_aln(pose,templatePose,aln,2);
 	core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 	EnergyMap weights( pose.energies().weights() );
-	for ( int ii = 1; ii <= n_score_types; ++ii )
+	for ( int ii = 1; ii <= n_score_types; ++ii ) {
 		weights[ ScoreType(ii) ] = 0.0;
+	}
 	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn );
 	scorefxn->score(pose);
 	protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
 	seqmov->add_mover( new protocols::electron_density::SetupForDensityScoringMover );
 	seqmov->apply(pose);
 	Real density_score = 0;
-	for(Size ii = start_res; ii <= end_res; ++ii){
+	for ( Size ii = start_res; ii <= end_res; ++ii ) {
 		Real score = pose.energies().residue_total_energies(ii)[core::scoring::elec_dens_fast];
 		density_score += score;
 	}
 	//Real density_score = scorefxn->get_sub_score( pose, mask );
-		/*core::scoring::EnergyMap emap;
+	/*core::scoring::EnergyMap emap;
 	emap.zero();
 	Real total_score = 0;
 	core::scoring::methods::EnergyMethodOptionsOP emopts(
-			new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() )
+	new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() )
 	);
 	for(Size ii = start_res; ii <= end_res; ++ii){
-	  Size jj = pose.size();
-		emopts->residue_pair_energy(pose.residue(ii), pose.residue(jj), pose, *scorefxn, emap);
-		total_score += emap[ core::scoring::elec_dens_fast ];
+	Size jj = pose.size();
+	emopts->residue_pair_energy(pose.residue(ii), pose.residue(jj), pose, *scorefxn, emap);
+	total_score += emap[ core::scoring::elec_dens_fast ];
 	}
 	*/
 	return (density_score);
@@ -142,8 +143,8 @@ Real region_constraint_score(Pose & pose, Size start_res, Size end_res,Constrain
 	core::scoring::EnergyMap emap;
 	emap.zero();
 	Real total_score = 0;
-	for(Size ii = start_res; ii <= end_res; ++ii){
-		for(Size jj=1; jj <= pose.size(); ++jj){
+	for ( Size ii = start_res; ii <= end_res; ++ii ) {
+		for ( Size jj=1; jj <= pose.size(); ++jj ) {
 			cstSet_->residue_pair_energy(pose.residue(ii), pose.residue(jj), pose, *scorefxn, emap);
 			total_score += emap[ core::scoring::atom_pair_constraint ];
 		}
@@ -157,8 +158,9 @@ Real region_score(Pose & pose, Size start_res, Size end_res){
 	core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	Real all_res_score = scorefxn->score(pose);
 	utility::vector1< bool > mask( pose.size(), true );
-	for(Size ii= start_res; ii<=end_res; ++ii)
+	for ( Size ii= start_res; ii<=end_res; ++ii ) {
 		mask[ii] = false;
+	}
 	Real excluded_region_score = scorefxn->get_sub_score( pose, mask );
 	return(all_res_score-excluded_region_score);
 }
@@ -169,7 +171,7 @@ Real region_rmsd_structures_aligned(Pose & mod_pose, Pose const & ref_pose, Sequ
 	superimpose_pose_using_aln(mod_pose,ref_pose,aln,2);
 	SequenceMapping map = aln.sequence_mapping(2,1);
 	Real sum = 0;
-	for (Size ii =start_res; ii<= end_res; ++ii){
+	for ( Size ii =start_res; ii<= end_res; ++ii ) {
 		Size ref_res = map[ii];
 		sum += mod_pose.residue(ii).xyz("CA").distance(ref_pose.residue(ref_res).xyz("CA"));
 	}
@@ -183,12 +185,12 @@ Real two_region_rmsd(Pose & mod_pose, Pose const & ref_pose, SequenceAlignment a
 	vector1<Size> mod_pose_positions;
 	vector1<Size> ref_pose_positions;
 	SequenceMapping map = aln.sequence_mapping(2,1);
-	for (Size ii=start_res; ii<= end_res; ++ii){
+	for ( Size ii=start_res; ii<= end_res; ++ii ) {
 		mod_pose_positions.push_back(ii);
 		ref_pose_positions.push_back(map[ii]);
 	}
-	if(region2_start_res != 0){
-		for(Size ii=region2_start_res; ii<=region2_end_res; ++ii){
+	if ( region2_start_res != 0 ) {
+		for ( Size ii=region2_start_res; ii<=region2_end_res; ++ii ) {
 			mod_pose_positions.push_back(ii);
 			ref_pose_positions.push_back(map[ii]);
 		}
@@ -211,11 +213,14 @@ bool present_in_native(Size start_res, Size end_res, SequenceAlignment native_al
 	using namespace core::id;
 	SequenceMapping map = native_aln.sequence_mapping(2,1);
 	bool allResiduesFound = true;
-	if(start_res <= 0)
+	if ( start_res <= 0 ) {
 		return(false);
-	for(Size ii=start_res;ii<=end_res; ii++)
-		if(map[ii] == 0)
+	}
+	for ( Size ii=start_res; ii<=end_res; ii++ ) {
+		if ( map[ii] == 0 ) {
 			allResiduesFound = false;
+		}
+	}
 	return(allResiduesFound);
 }
 
@@ -231,22 +236,22 @@ void score_loop(Pose & pose, Pose const & native_pose, SequenceAlignment native_
 	Real rmsd_stem = 9999;
 	bool tail = false;
 	bool disorded_stem = false;
-	if((present_in_native(start_stem,start_res-1,native_aln))&&(present_in_native(end_res+1,end_stem,native_aln))){
+	if ( (present_in_native(start_stem,start_res-1,native_aln))&&(present_in_native(end_res+1,end_stem,native_aln)) ) {
 		rmsd_stem = two_region_rmsd(pose,native_pose,native_aln,start_stem,start_res-1,end_res+1,end_stem);
-	}
-	else if(present_in_native(start_stem,start_res-1,native_aln)){
+	} else if ( present_in_native(start_stem,start_res-1,native_aln) ) {
 		rmsd_stem = region_rmsd(pose,native_pose,native_aln,start_stem,start_res-1);
-		if (start_stem <= 0)
+		if ( start_stem <= 0 ) {
 			tail = true;
-		else
+		} else {
 			disorded_stem = true;
-	}
- 	else if(present_in_native(end_res+1,end_stem,native_aln)){
+		}
+	} else if ( present_in_native(end_res+1,end_stem,native_aln) ) {
 		rmsd_stem = region_rmsd(pose,native_pose,native_aln,end_res+1,end_stem);
-		if(end_res >= map.size2())
+		if ( end_res >= map.size2() ) {
 			tail = true;
-		else
+		} else {
 			disorded_stem = true;
+		}
 	}
 	Real rmsd_loop_wStruct = region_rmsd_structures_aligned(pose,native_pose,native_aln,start_res,end_res);
 	Real rmsd_loop = region_rmsd(pose,native_pose,native_aln,start_res,end_res);
@@ -263,12 +268,12 @@ void score_loop(Pose & pose, Pose const & native_pose, SequenceAlignment native_
 	out <<"score \t" << start_res << "\t" << end_res << "\t" << length << "\t" << rmsd_loop << "\t" << rmsd_loop_wStruct << "\t"<< rmsd_stem << "\t" << constraint_score <<"\t" << score12 <<"\t" << native_constraint_score << "\t" << native_score12 << "\t" << tail << "\t" << disorded_stem << "\t" << all_res_score << "\t" << density_score <<"\t" << lookBack_constraint_score <<  std::endl;
 }
 
-void score_loops(Pose pose,	Loops const unalignedLoops, Pose native_pose,SequenceAlignment native_alignment, SequenceAlignment template_alignment, Pose native_relaxed_pose, Pose const templatePoseData,ConstraintSetOP cstSet_, ConstraintSetOP lookBackCstSet_, std::ostream& out){
+void score_loops(Pose pose, Loops const unalignedLoops, Pose native_pose,SequenceAlignment native_alignment, SequenceAlignment template_alignment, Pose native_relaxed_pose, Pose const templatePoseData,ConstraintSetOP cstSet_, ConstraintSetOP lookBackCstSet_, std::ostream& out){
 
-	for(Loops::const_iterator ii = unalignedLoops.begin(); ii != unalignedLoops.end(); ++ii){
+	for ( Loops::const_iterator ii = unalignedLoops.begin(); ii != unalignedLoops.end(); ++ii ) {
 		Size start_res = ii->start();
 		Size end_res = ii->stop();
-		if(present_in_native(start_res,end_res,native_alignment)){
+		if ( present_in_native(start_res,end_res,native_alignment) ) {
 			score_loop(pose,native_pose,native_alignment, template_alignment, native_relaxed_pose, start_res,end_res,cstSet_,lookBackCstSet_, templatePoseData, out);
 		}
 	}
@@ -285,71 +290,71 @@ basic::options::FileOptionKey lookback_csts("unalignedEvaluate:lookback_csts");
 int main( int argc, char * argv [] ) {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::sequence;
-	using namespace core::id;
-	using namespace core::chemical;
-	using namespace core::import_pose::pose_stream;
-	using namespace protocols::comparative_modeling;
-	using core::import_pose::pose_from_file;
-	using core::sequence::read_fasta_file;
-	using utility::file_basename;
-	option.add (unalignedEvaluate::relaxed_native, "relaxed native");
-	option.add (unalignedEvaluate::core_pdb,"core pdb probably want to use theseus");
-	option.add (unalignedEvaluate::lookback_csts,"lookback_csts");
-	devel::init(argc, argv);
-	map< string, SequenceAlignment> alnDataMapped = input_alignmentsMapped(true);
-	map< string, SequenceAlignment>::iterator alnDataMapped_itr;
-	string query_sequence (
-			read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence()	);
-	map< string, const Loops > unalignedLoopsMapped = get_unalignedLoopsMapped(alnDataMapped,query_sequence.size());
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-	Pose native_pose;
-	pose_from_file(
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::sequence;
+		using namespace core::id;
+		using namespace core::chemical;
+		using namespace core::import_pose::pose_stream;
+		using namespace protocols::comparative_modeling;
+		using core::import_pose::pose_from_file;
+		using core::sequence::read_fasta_file;
+		using utility::file_basename;
+		option.add (unalignedEvaluate::relaxed_native, "relaxed native");
+		option.add (unalignedEvaluate::core_pdb,"core pdb probably want to use theseus");
+		option.add (unalignedEvaluate::lookback_csts,"lookback_csts");
+		devel::init(argc, argv);
+		map< string, SequenceAlignment> alnDataMapped = input_alignmentsMapped(true);
+		map< string, SequenceAlignment>::iterator alnDataMapped_itr;
+		string query_sequence (
+			read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence() );
+		map< string, const Loops > unalignedLoopsMapped = get_unalignedLoopsMapped(alnDataMapped,query_sequence.size());
+		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		Pose native_pose;
+		pose_from_file(
 			native_pose,
 			*rsd_set,
 			option[ in::file::native ]()
-			);
-	Pose native_relaxed_pose;
-	pose_from_file(
+		);
+		Pose native_relaxed_pose;
+		pose_from_file(
 			native_relaxed_pose,
 			*rsd_set,
 			option[unalignedEvaluate::relaxed_native]()
-			);
-	Pose core_pose;
-	pose_from_file(
+		);
+		Pose core_pose;
+		pose_from_file(
 			core_pose,
 			*rsd_set,
 			option[unalignedEvaluate::core_pdb]()
-			);
-	map< string, Pose > templatePoseData = poses_from_cmd_line_noPDBtag(
+		);
+		map< string, Pose > templatePoseData = poses_from_cmd_line_noPDBtag(
 			option[ in::file::template_pdb ]());
-	using namespace core::scoring::constraints;
-	std::string cstfile = core::scoring::constraints::get_cst_file_option();
-	ConstraintSetOP cstSet_ = ConstraintIO::read_constraints( cstfile, new ConstraintSet, native_relaxed_pose );
-	ConstraintSetOP lookBackCstSet_ = ConstraintIO::read_constraints(option[unalignedEvaluate::lookback_csts]() , new ConstraintSet, native_relaxed_pose );
-	MetaPoseInputStream input = streams_from_cmd_line();
-	SequenceOP native_sequence = new Sequence(native_pose);
-	SequenceOP fasta_sequence = new Sequence(query_sequence,"fasta",1);
-	SequenceAlignment native_alignment =  align_naive(native_sequence, fasta_sequence);
-	std::string out_nametag = option[ out::file::o ];
-	Pose const templatePose = templatePoseData.begin()->second;
-	SequenceOP template_sequence = new Sequence(templatePose);
-	SequenceAlignment template_aln =  align_naive(template_sequence, fasta_sequence);
-	SequenceOP core_sequence = new Sequence(core_pose);
-	SequenceAlignment core_aln =  align_naive( fasta_sequence, core_sequence);
-	SequenceMapping map = core_aln.sequence_mapping(1,2);
-	protocols::loops::LoopsOP unconverged_loops = loops_from_alignment(query_sequence.size(),core_aln,1);
-	std::string out_file_name_str( out_nametag + ".scores" );
-	utility::io::ozstream output(out_file_name_str);
-	output << "labels \t start_res \t end_res \t length \t rmsd_loop \t rmsd_loop_struct_aln \t rmsd_stem \t constraint_score \t score12 \t native_constraint_score \t native_score12 \t disorded_stem \t all_res_score \t density_score \t lookback_cst_score" << std::endl;
-	while(input.has_another_pose()){
-		core::pose::PoseOP input_poseOP;
-		input_poseOP = new core::pose::Pose();
-		input.fill_pose(*input_poseOP,*rsd_set);
-		score_loops(*input_poseOP,*unconverged_loops,native_pose,native_alignment,template_aln,native_relaxed_pose,templatePose,cstSet_, lookBackCstSet_, output);
-	}
+		using namespace core::scoring::constraints;
+		std::string cstfile = core::scoring::constraints::get_cst_file_option();
+		ConstraintSetOP cstSet_ = ConstraintIO::read_constraints( cstfile, new ConstraintSet, native_relaxed_pose );
+		ConstraintSetOP lookBackCstSet_ = ConstraintIO::read_constraints(option[unalignedEvaluate::lookback_csts]() , new ConstraintSet, native_relaxed_pose );
+		MetaPoseInputStream input = streams_from_cmd_line();
+		SequenceOP native_sequence = new Sequence(native_pose);
+		SequenceOP fasta_sequence = new Sequence(query_sequence,"fasta",1);
+		SequenceAlignment native_alignment =  align_naive(native_sequence, fasta_sequence);
+		std::string out_nametag = option[ out::file::o ];
+		Pose const templatePose = templatePoseData.begin()->second;
+		SequenceOP template_sequence = new Sequence(templatePose);
+		SequenceAlignment template_aln =  align_naive(template_sequence, fasta_sequence);
+		SequenceOP core_sequence = new Sequence(core_pose);
+		SequenceAlignment core_aln =  align_naive( fasta_sequence, core_sequence);
+		SequenceMapping map = core_aln.sequence_mapping(1,2);
+		protocols::loops::LoopsOP unconverged_loops = loops_from_alignment(query_sequence.size(),core_aln,1);
+		std::string out_file_name_str( out_nametag + ".scores" );
+		utility::io::ozstream output(out_file_name_str);
+		output << "labels \t start_res \t end_res \t length \t rmsd_loop \t rmsd_loop_struct_aln \t rmsd_stem \t constraint_score \t score12 \t native_constraint_score \t native_score12 \t disorded_stem \t all_res_score \t density_score \t lookback_cst_score" << std::endl;
+		while ( input.has_another_pose() ) {
+			core::pose::PoseOP input_poseOP;
+			input_poseOP = new core::pose::Pose();
+			input.fill_pose(*input_poseOP,*rsd_set);
+			score_loops(*input_poseOP,*unconverged_loops,native_pose,native_alignment,template_aln,native_relaxed_pose,templatePose,cstSet_, lookBackCstSet_, output);
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

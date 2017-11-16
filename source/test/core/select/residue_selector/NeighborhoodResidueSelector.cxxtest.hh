@@ -44,7 +44,7 @@
 
 using namespace core::select::residue_selector;
 
-static THREAD_LOCAL basic::Tracer TR("core.select.residue_selector.NeighborhoodResidueSelectorTests");
+static basic::Tracer TR("core.select.residue_selector.NeighborhoodResidueSelectorTests");
 
 
 class NeighborhoodResidueSelectorTests : public CxxTest::TestSuite {

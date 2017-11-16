@@ -37,7 +37,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/PackstatCalculator" );
+static basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/PackstatCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

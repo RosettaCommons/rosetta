@@ -71,7 +71,7 @@ using utility::vector1;
 using core::Size;
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer tr( "alphaRepeatIdenfier" );
+static basic::Tracer tr( "alphaRepeatIdenfier" );
 
 void avg_ca_position(
 	const core::pose::Pose& pose,
@@ -81,7 +81,7 @@ void avg_ca_position(
 	assert(point);
 
 	point->zero();
-	for (unsigned i = region.start(); i <= region.stop(); ++i) {
+	for ( unsigned i = region.start(); i <= region.stop(); ++i ) {
 		(*point) += pose.xyz(core::id::NamedAtomID("CA", i));
 	}
 
@@ -95,15 +95,18 @@ void get_helices(core::pose::Pose& pose, protocols::loops::Loops* helices){
 	char lastSecStruct = pose.secstruct(1);
 	Size startHelix = 0;
 	Size endHelix = 0;
-	if(pose.secstruct(1) == 'H')
+	if ( pose.secstruct(1) == 'H' ) {
 		startHelix = 1;
+	}
 	for ( core::Size ii = 2; ii <= pose.size(); ++ii ) {
-		if(pose.secstruct(ii) == 'H' && lastSecStruct != 'H')
+		if ( pose.secstruct(ii) == 'H' && lastSecStruct != 'H' ) {
 			startHelix = ii;
-		if(pose.secstruct(ii) != 'H' && lastSecStruct == 'H'){
+		}
+		if ( pose.secstruct(ii) != 'H' && lastSecStruct == 'H' ) {
 			endHelix = ii-1;
-			if(endHelix-startHelix >= 2)
+			if ( endHelix-startHelix >= 2 ) {
 				helices->add_loop(Loop(startHelix,endHelix));
+			}
 		}
 		lastSecStruct = pose.secstruct(ii);
 	}
@@ -115,12 +118,14 @@ void get_sheets(core::pose::Pose& pose, protocols::loops::Loops* sheets){
 	char lastSecStruct = pose.secstruct(1);
 	Size startSheet = 0;
 	Size endSheet = 0;
-	if(pose.secstruct(1) == 'E')
+	if ( pose.secstruct(1) == 'E' ) {
 		startSheet = 1;
+	}
 	for ( core::Size ii = 2; ii <= pose.size(); ++ii ) {
-		if(pose.secstruct(ii) == 'E' && lastSecStruct != 'E')
+		if ( pose.secstruct(ii) == 'E' && lastSecStruct != 'E' ) {
 			startSheet = ii;
-		if(pose.secstruct(ii) != 'E' && lastSecStruct == 'E'){
+		}
+		if ( pose.secstruct(ii) != 'E' && lastSecStruct == 'E' ) {
 			endSheet = ii-1;
 			sheets->add_loop(Loop(startSheet,endSheet));
 		}
@@ -133,7 +138,7 @@ Real get_distance(const core::pose::Pose& pose, const protocols::loops::Loop hel
 	using protocols::loops::Loop;
 	using numeric::xyzVector;
 	//std::cout <<"helix length" << helix1.length() << "," << helix2.length() << std::endl;
-	if((helix1.length() < 3) || (helix2.length() < 3)){
+	if ( (helix1.length() < 3) || (helix2.length() < 3) ) {
 		tr.Warning << "distance invoked with helix shorter than 3 residues" << std::endl;
 		return(-1);
 	}
@@ -146,7 +151,7 @@ Real get_distance_endpoint(const core::pose::Pose& pose, const protocols::loops:
 	using protocols::loops::Loop;
 	using numeric::xyzVector;
 	//std::cout <<"helix length" << helix1.length() << "," << helix2.length() << std::endl;
-	if((helix1.length() < 3) || (helix2.length() < 3)){
+	if ( (helix1.length() < 3) || (helix2.length() < 3) ) {
 		tr.Warning << "distance invoked with helix shorter than 3 residues" << std::endl;
 		return(-1);
 	}
@@ -160,41 +165,42 @@ Real get_distance_endpoint(const core::pose::Pose& pose, const protocols::loops:
 int main( int argc, char * argv [] ) {
 	try {
 
-	using namespace core::chemical;
-	using namespace core::import_pose::pose_stream;
-	using core::import_pose::pose_from_file;
-	using protocols::loops::Loops;
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	devel::init(argc, argv);
-	std::string out_nametag = option[ out::file::o ];
-	std::string out_file_name_str( out_nametag + ".scores");
-	utility::io::ozstream output(out_file_name_str);
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-	//create vector of input poses.
-	MetaPoseInputStream input = streams_from_cmd_line();
-	vector1<core::pose::PoseOP> poses;
-	output << "tag" << " " <<   "distance" << " " << "distance_endpoint" <<" " << "numb_helices numb_sheets" << std::endl;
-	while(input.has_another_pose()){
-		core::pose::PoseOP input_poseOP;
-		input_poseOP = new core::pose::Pose();
-		input.fill_pose(*input_poseOP,*rsd_set);
-		std::string tag = core::pose::tag_from_pose(*input_poseOP);
-		std::cout << "working on" << tag << std::endl;
-		Loops helices;
-		Loops sheets;
-		get_helices(*input_poseOP,&helices);
-		get_sheets(*input_poseOP,&sheets);
-		//for(int ii=1; ii<=helices.size(); ++ii)
-		//	std::cout << helices[ii].start() <<"," << helices[ii].stop() << std::endl;
-		if(helices.num_loop() > 4)
-			if((helices[1].length() >= 3)&&(helices[2].length() >= 3)){//assumes repeat proteins with > 1 loops
-				Real distance = get_distance(*input_poseOP,helices[1],helices[2]);
-				Real distance_endpoint = get_distance_endpoint(*input_poseOP,helices[1],helices[2]);
-				output << I(6,tag) <<" "  << F(8,3,distance) << " " << F(8,3,distance_endpoint) << " " << I(4,helices.size()) << " " << I(4,sheets.size())  << std::endl;
+		using namespace core::chemical;
+		using namespace core::import_pose::pose_stream;
+		using core::import_pose::pose_from_file;
+		using protocols::loops::Loops;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
+		std::string out_nametag = option[ out::file::o ];
+		std::string out_file_name_str( out_nametag + ".scores");
+		utility::io::ozstream output(out_file_name_str);
+		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		//create vector of input poses.
+		MetaPoseInputStream input = streams_from_cmd_line();
+		vector1<core::pose::PoseOP> poses;
+		output << "tag" << " " <<   "distance" << " " << "distance_endpoint" <<" " << "numb_helices numb_sheets" << std::endl;
+		while ( input.has_another_pose() ) {
+			core::pose::PoseOP input_poseOP;
+			input_poseOP = new core::pose::Pose();
+			input.fill_pose(*input_poseOP,*rsd_set);
+			std::string tag = core::pose::tag_from_pose(*input_poseOP);
+			std::cout << "working on" << tag << std::endl;
+			Loops helices;
+			Loops sheets;
+			get_helices(*input_poseOP,&helices);
+			get_sheets(*input_poseOP,&sheets);
+			//for(int ii=1; ii<=helices.size(); ++ii)
+			// std::cout << helices[ii].start() <<"," << helices[ii].stop() << std::endl;
+			if ( helices.num_loop() > 4 ) {
+				if ( (helices[1].length() >= 3)&&(helices[2].length() >= 3) ) { //assumes repeat proteins with > 1 loops
+					Real distance = get_distance(*input_poseOP,helices[1],helices[2]);
+					Real distance_endpoint = get_distance_endpoint(*input_poseOP,helices[1],helices[2]);
+					output << I(6,tag) <<" "  << F(8,3,distance) << " " << F(8,3,distance_endpoint) << " " << I(4,helices.size()) << " " << I(4,sheets.size())  << std::endl;
+				}
 			}
-	}
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

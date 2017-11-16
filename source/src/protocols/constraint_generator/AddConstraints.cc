@@ -31,7 +31,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.AddConstraints" );
+static basic::Tracer TR( "protocols.constraint_generator.AddConstraints" );
 
 namespace protocols {
 namespace constraint_generator {

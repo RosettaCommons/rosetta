@@ -52,8 +52,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR("apps.pilot.bder.zinc_helix_cap");
+static basic::Tracer TR("apps.pilot.bder.zinc_helix_cap");
 
 
 using namespace core;

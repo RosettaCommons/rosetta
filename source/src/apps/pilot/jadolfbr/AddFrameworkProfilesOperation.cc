@@ -28,13 +28,13 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.task_operations.AddFrameworkProfilesOperation");
+static basic::Tracer TR("protocols.antibody.task_operations.AddFrameworkProfilesOperation");
 
 namespace protocols {
 namespace antibody {
 namespace task_operations {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 AddFrameworkProfilesOperation::AddFrameworkProfilesOperation() {
 

@@ -140,7 +140,6 @@
 #include <basic/Tracer.hh>
 
 //#include <core/util/tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core;
@@ -153,7 +152,7 @@ using utility::vector1;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 
-OPT_KEY( String, 	output_silent_file)
+OPT_KEY( String,  output_silent_file)
 
 
 //~/src/mini/bin/convert_pdb_to_silent_file.macosgccrelease  -s 1zih_RNA.pdb -output_silent_file output_test.out -database ~/minirosetta_database/
@@ -165,7 +164,7 @@ get_tag_from_pdb_filename(std::string const pdb_filename){
 
 	size_t found=pdb_filename.rfind('/');
 
-	if(found!=std::string::npos){
+	if ( found!=std::string::npos ) {
 		tag = pdb_filename.substr(found+1);
 	} else {
 		tag=pdb_filename;
@@ -173,7 +172,7 @@ get_tag_from_pdb_filename(std::string const pdb_filename){
 
 	size_t found_2=tag.rfind(".pdb");
 
-	if(found_2!=std::string::npos){
+	if ( found_2!=std::string::npos ) {
 		tag = tag.substr(0,tag.size()-4);
 	}
 
@@ -219,11 +218,11 @@ pdb_to_silent_file_simple(){
 	// NEW! from rhiju -- pay attention to chain breaks.
 	protocols::rna::denovo::figure_out_reasonable_rna_fold_tree( pose );
 
-	if(pose.residue(1).atom(1).xyz().length() < 2.0){
-	    numeric::xyzMatrix< Real > R( 0.0 );
-	    R.to_identity();
-	    Vector v( 5.0 );
-	    pose.apply_transform_Rx_plus_v( R, v );
+	if ( pose.residue(1).atom(1).xyz().length() < 2.0 ) {
+		numeric::xyzMatrix< Real > R( 0.0 );
+		R.to_identity();
+		Vector v( 5.0 );
+		pose.apply_transform_Rx_plus_v( R, v );
 	}
 
 	BinarySilentStruct s( pose, tag );
@@ -238,10 +237,10 @@ void*
 my_main( void* )
 {
 
-  using namespace basic::options;
+	using namespace basic::options;
 
 	pdb_to_silent_file_simple();
-  exit( 0 );
+	exit( 0 );
 
 }
 
@@ -251,22 +250,22 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-  using namespace basic::options;
+		using namespace basic::options;
 
-	NEW_OPT( output_silent_file, "output_silent_file", "");
-
-
-  ////////////////////////////////////////////////////////////////////////////
-  // setup
-  ////////////////////////////////////////////////////////////////////////////
-  devel::init(argc, argv);
+		NEW_OPT( output_silent_file, "output_silent_file", "");
 
 
-  ////////////////////////////////////////////////////////////////////////////
-  // end of setup
-  ////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-  protocols::viewer::viewer_main( my_main );
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

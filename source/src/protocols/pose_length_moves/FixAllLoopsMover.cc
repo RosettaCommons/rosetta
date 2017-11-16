@@ -49,7 +49,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.pose_length_moves.FixAllLoopsMover" );
+static basic::Tracer TR( "protocols.pose_length_moves.FixAllLoopsMover" );
 
 namespace protocols {
 namespace pose_length_moves {

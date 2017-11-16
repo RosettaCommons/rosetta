@@ -84,11 +84,10 @@
 #include <set>
 #include <utility>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.HECT" );
+static basic::Tracer TR( "apps.pilot.smlewis.HECT" );
 
 namespace basic { namespace options { namespace OptionKeys {
 basic::options::IntegerOptionKey const e3_hinge_start_resnum("e3_hinge_start_resnum");

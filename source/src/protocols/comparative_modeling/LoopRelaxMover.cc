@@ -149,6 +149,8 @@
 namespace protocols {
 namespace comparative_modeling {
 
+static basic::Tracer TR( "protocols.looprelax" );
+
 //constructors
 LoopRelaxMover::LoopRelaxMover() : moves::Mover(),
 	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile ) )
@@ -310,7 +312,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// this typedef belongs in its own .fwd.hh file.
 	//typedef utility::pointer::owning_ptr< loops::IndependentLoopMover > loops::IndependentLoopMoverOP;
 
-	basic::Tracer TR( "protocols.looprelax" );
 
 	TR.Warning << "The LoopRelaxMover is no longer maintained. Please use the LoopModeler mover as replacement." << std::endl;
 

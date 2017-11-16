@@ -19,7 +19,7 @@
 #include <core/id/TorsionID.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.MC_Comb" );
+static basic::Tracer TR( "protocols.recces.sampler.MC_Comb" );
 
 using namespace core;
 

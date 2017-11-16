@@ -62,7 +62,7 @@
 
 #define UPPER_MULTIPLE(n,d) (((n)%(d)) ? (((n)/(d)+1)*(d)) : (n))
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.sc.ShapeComplementarityCalculator" );
+static basic::Tracer TR( "core.scoring.sc.ShapeComplementarityCalculator" );
 
 using namespace core;
 

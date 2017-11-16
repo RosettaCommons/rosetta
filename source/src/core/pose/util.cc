@@ -103,7 +103,7 @@
 namespace core {
 namespace pose {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.util" );
+static basic::Tracer TR( "core.pose.util" );
 
 void swap_transform(Size jump_num, kinematics::RT const & xform, Pose & pose) {
 	debug_assert(jump_num <= pose.num_jump());

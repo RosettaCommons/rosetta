@@ -36,7 +36,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.bb_sampler.SugarBBSampler" );
+static basic::Tracer TR( "protocols.simple_moves.bb_sampler.SugarBBSampler" );
 
 namespace protocols {
 namespace simple_moves {

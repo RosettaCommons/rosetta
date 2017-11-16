@@ -39,6 +39,8 @@
 namespace basic {
 namespace options {
 
+static basic::Tracer TR("basic.options.util");
+
 /// kind of like the old -s -- just one file
 std::string
 start_file()
@@ -146,7 +148,7 @@ start_files()
 
 
 	if ( filenames.empty() ) {
-		basic::T("basic.options.util").Fatal << "Use either -s or -l to designate one or more start_files" << std::endl;
+		TR.Fatal << "Use either -s or -l to designate one or more start_files" << std::endl;
 		utility_exit();
 	}
 

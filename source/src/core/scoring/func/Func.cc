@@ -41,6 +41,8 @@ namespace core {
 namespace scoring {
 namespace func {
 
+static basic::Tracer tr( "core.scoring.constraints.Func" );
+
 /// @details Auto-generated virtual destructor
 Func::~Func() {}
 
@@ -51,7 +53,6 @@ Func::operator != ( Func const & other ) const {
 
 void
 Func::read_data( std::istream& ) {
-	basic::Tracer tr( "core.scoring.constraints.Func" );
 	tr.Warning << " Base clase Func::read_data stubbed out ---  virtual function not overloaded " << std::endl;
 }
 

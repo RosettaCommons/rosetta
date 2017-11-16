@@ -36,60 +36,60 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "avital.stabilize" );
+static basic::Tracer TR( "avital.stabilize" );
 
 ///////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace basic;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::moves;
-	using namespace protocols;
+		using namespace basic;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace protocols::moves;
+		using namespace protocols;
 
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	// read the pose
-	 core::pose::Pose pose;
-	 core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
+		// read the pose
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
 
-	using namespace core::pack::task;
-	TaskFactoryOP main_task_factory = new TaskFactory;
-	main_task_factory->push_back( new operation::InitializeFromCommandline );
-	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( new operation::ReadResfile );
-	}
+		using namespace core::pack::task;
+		TaskFactoryOP main_task_factory = new TaskFactory;
+		main_task_factory->push_back( new operation::InitializeFromCommandline );
+		if ( option[ packing::resfile ].user() ) {
+			main_task_factory->push_back( new operation::ReadResfile );
+		}
 
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
+		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 
-	MoverOP relax_mover = new ClassicRelax ( score_fxn );
+		MoverOP relax_mover = new ClassicRelax ( score_fxn );
 
-	// protocol
-	SequenceMoverOP full_seq = new SequenceMover;
-	full_seq->add_mover( pack_mover );
-	//full_seq->add_mover( relax_mover );
+		// protocol
+		SequenceMoverOP full_seq = new SequenceMover;
+		full_seq->add_mover( pack_mover );
+		//full_seq->add_mover( relax_mover );
 
-	std::map < std::string, core::Real > score_map;
-	//jobdist->dump_pose_and_map( curr_job->output_tag(curr_nstruct), *the_pose )
-	score_map["trying"]=(*score_fxn)(pose);
-	//	pack_mover->apply(pose);
-	//	pose.dump_pdb("design.pdb");
-	TR<<(*score_fxn)(pose)<<std::endl;
-	TR << "This structure rules!!! " << std::endl;
+		std::map < std::string, core::Real > score_map;
+		//jobdist->dump_pose_and_map( curr_job->output_tag(curr_nstruct), *the_pose )
+		score_map["trying"]=(*score_fxn)(pose);
+		// pack_mover->apply(pose);
+		// pose.dump_pdb("design.pdb");
+		TR<<(*score_fxn)(pose)<<std::endl;
+		TR << "This structure rules!!! " << std::endl;
 
-	protocols::jobdist::main_plain_pdb_mover( *full_seq, score_fxn );
+		protocols::jobdist::main_plain_pdb_mover( *full_seq, score_fxn );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

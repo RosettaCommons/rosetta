@@ -43,11 +43,10 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ShortBackrubMover" );
+static basic::Tracer TR( "protocols.simple_moves.ShortBackrubMover" );
 //static numeric::random::RandomGenerator RG(415609);
 
 namespace protocols {

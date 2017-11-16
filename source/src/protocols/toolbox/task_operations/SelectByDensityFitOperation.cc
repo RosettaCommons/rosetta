@@ -51,7 +51,7 @@
 
 // C++ Headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.SelectByDensityFitOperation" );
+static basic::Tracer TR( "protocols.toolbox.task_operations.SelectByDensityFitOperation" );
 
 namespace protocols {
 namespace toolbox {

@@ -35,7 +35,7 @@
 #define ANGTHRESH 0.01745329251 // 1 degree
 
 
-static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide.BetaAlphaDisulfide_betanov16_Tests");
+static basic::Tracer TR("protocols.cyclic_peptide.BetaAlphaDisulfide_betanov16_Tests");
 
 class BetaAlphaDisulfide_betanov16_Tests : public CxxTest::TestSuite {
 

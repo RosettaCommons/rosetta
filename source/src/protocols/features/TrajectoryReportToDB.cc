@@ -129,7 +129,7 @@ TrajectoryReportToDB::get_cycle_counts() const {
 // XRW TEMP  return "TrajectoryReportToDB";
 // XRW TEMP }
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.TrajectoryReportToDB" );
+static basic::Tracer TR( "protocols.features.TrajectoryReportToDB" );
 
 moves::MoverOP
 TrajectoryReportToDB::fresh_instance() const { return moves::MoverOP( new TrajectoryReportToDB ); }

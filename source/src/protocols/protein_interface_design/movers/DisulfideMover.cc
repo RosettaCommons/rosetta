@@ -79,7 +79,7 @@ using core::pose::Pose;
 using core::pose::PoseOP;
 using core::conformation::Residue;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DisulfideMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.DisulfideMover" );
 
 const core::scoring::disulfides::CentroidDisulfidePotential DisulfideMover::potential_;
 

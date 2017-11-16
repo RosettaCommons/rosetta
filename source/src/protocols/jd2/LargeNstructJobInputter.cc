@@ -40,7 +40,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.LargeNstructJobInputter" );
+static basic::Tracer tr( "protocols.jd2.LargeNstructJobInputter" );
 
 namespace protocols {
 namespace jd2 {

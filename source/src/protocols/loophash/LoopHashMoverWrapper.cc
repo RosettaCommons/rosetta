@@ -72,7 +72,7 @@ using std::string;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.LoopHashMoverWrapper" );
+static basic::Tracer TR( "protocols.loophash.LoopHashMoverWrapper" );
 
 // XRW TEMP std::string
 // XRW TEMP LoopHashMoverWrapperCreator::keyname() const

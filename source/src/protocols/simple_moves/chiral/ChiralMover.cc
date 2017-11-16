@@ -39,11 +39,10 @@
 
 // C++ Headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.chiral.ChiralMover" );
+static basic::Tracer TR( "protocols.simple_moves.chiral.ChiralMover" );
 
 using namespace core;
 using namespace conformation;

@@ -35,7 +35,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.ScoreTermValueBasedSelector" );
+static basic::Tracer TR( "core.select.residue_selector.ScoreTermValueBasedSelector" );
 
 namespace core {
 namespace select {

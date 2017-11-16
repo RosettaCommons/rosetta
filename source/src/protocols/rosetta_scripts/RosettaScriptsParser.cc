@@ -88,7 +88,7 @@ using namespace basic::options;
 using namespace scoring;
 using namespace moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
+static basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
 
 RosettaScriptsParser::RosettaScriptsParser() :
 	validator_( new utility::tag::XMLValidator ) {

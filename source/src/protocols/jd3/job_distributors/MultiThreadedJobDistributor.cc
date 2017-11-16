@@ -54,7 +54,7 @@ namespace protocols {
 namespace jd3 {
 namespace job_distributors {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.MultiThreadedJobDistributor" );
+static basic::Tracer TR( "protocols.jd3.MultiThreadedJobDistributor" );
 
 MultiThreadedJobDistributor::MultiThreadedJobDistributor() :
 	job_extractor_( new JobExtractor ),

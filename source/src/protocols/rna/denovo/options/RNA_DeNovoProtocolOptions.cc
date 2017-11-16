@@ -26,7 +26,7 @@
 #include <utility/options/keys/OptionKeyList.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.options.RNA_DeNovoProtocolOptions" );
+static basic::Tracer TR( "protocols.rna.denovo.options.RNA_DeNovoProtocolOptions" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

@@ -30,7 +30,7 @@ namespace core {
 namespace scoring {
 namespace fiber_diffraction {
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionKernelGpu");
+static basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionKernelGpu");
 
 __global__
 void calculate_bessels_kernel(

@@ -83,7 +83,7 @@ namespace perturb {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_CCD" );
+static basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_CCD" );
 
 //constructors
 LoopMover_Perturb_CCD::LoopMover_Perturb_CCD() :

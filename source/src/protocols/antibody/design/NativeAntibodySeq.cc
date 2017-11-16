@@ -27,7 +27,7 @@
 #include <basic/datacache/DataCache.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.NativeAntibodySeq");
+static basic::Tracer TR("protocols.antibody.NativeAntibodySeq");
 
 namespace protocols {
 namespace antibody {

@@ -38,7 +38,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("RNA_DeNovoOptimizerTest");
+static basic::Tracer TR("RNA_DeNovoOptimizerTest");
 
 
 class RNA_DeNovoOptimizerTest : public CxxTest::TestSuite {

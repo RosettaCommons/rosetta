@@ -30,7 +30,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.task_operations.DisableAntibodyRegionOperation");
+static basic::Tracer TR("protocols.antibody.task_operations.DisableAntibodyRegionOperation");
 
 namespace protocols {
 namespace antibody {

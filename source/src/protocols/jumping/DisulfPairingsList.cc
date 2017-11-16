@@ -45,7 +45,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
+static basic::Tracer tr( "protocols.jumping" );
 
 using core::Real;
 using namespace core;

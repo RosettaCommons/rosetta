@@ -75,7 +75,7 @@
 
 using numeric::conversions::radians;
 
-static THREAD_LOCAL basic::Tracer TR( "dump_res" );
+static basic::Tracer TR( "dump_res" );
 
 using core::Size;
 using core::Real;
@@ -96,35 +96,35 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace core;
-	using namespace chemical;
-	using namespace pose;
+		using namespace core;
+		using namespace chemical;
+		using namespace pose;
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	// for(ResidueTypeSet::const_residue_iterator i = rs->all_residues_begin(); i != rs->all_residues_end(); ++i) {
-	// 	TR << i->first << " " << i->second->name() << std::endl;
-	// }
+		core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+		// for(ResidueTypeSet::const_residue_iterator i = rs->all_residues_begin(); i != rs->all_residues_end(); ++i) {
+		//  TR << i->first << " " << i->second->name() << std::endl;
+		// }
 
-	{
-		Pose pose;
-		conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rs->name_map("CH5") );
-		pose.append_residue_by_jump(*new_rsd,1);
-		pose.dump_pdb("CH5.pdb");
-	}
-	{
-		Pose pose;
-		conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rs->name_map("NH5") );
-		pose.append_residue_by_jump(*new_rsd,1);
-		pose.dump_pdb("NH5.pdb");
-	}
-	{
-		Pose pose;
-		conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rs->name_map("CR5") );
-		pose.append_residue_by_jump(*new_rsd,1);
-		pose.dump_pdb("CR5.pdb");
-	}
+		{
+			Pose pose;
+			conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rs->name_map("CH5") );
+			pose.append_residue_by_jump(*new_rsd,1);
+			pose.dump_pdb("CH5.pdb");
+		}
+		{
+			Pose pose;
+			conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rs->name_map("NH5") );
+			pose.append_residue_by_jump(*new_rsd,1);
+			pose.dump_pdb("NH5.pdb");
+		}
+		{
+			Pose pose;
+			conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rs->name_map("CR5") );
+			pose.append_residue_by_jump(*new_rsd,1);
+			pose.dump_pdb("CR5.pdb");
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

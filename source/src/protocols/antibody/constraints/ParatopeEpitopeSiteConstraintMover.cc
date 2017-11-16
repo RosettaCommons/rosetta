@@ -34,7 +34,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.constraints.ParatopeEpitopeSiteConstraintMover");
+static basic::Tracer TR("protocols.antibody.constraints.ParatopeEpitopeSiteConstraintMover");
 
 namespace protocols {
 namespace antibody {

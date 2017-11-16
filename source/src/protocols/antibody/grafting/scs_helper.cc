@@ -39,7 +39,7 @@
 #endif
 
 #include <basic/Tracer.hh>
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.SCS_Helper");
+static basic::Tracer TR("protocols.antibody.SCS_Helper");
 
 namespace protocols {
 namespace antibody {

@@ -30,7 +30,7 @@ namespace core {
 namespace chemical {
 namespace sdf {
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.sdf.MolFileIOReader" );
+static basic::Tracer TR( "core.io.sdf.MolFileIOReader" );
 
 MolFileIOReader::MolFileIOReader()
 {}

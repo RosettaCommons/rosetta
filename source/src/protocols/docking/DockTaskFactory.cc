@@ -49,11 +49,10 @@
 #include <utility/vector0.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockTaskFactory" );
+static basic::Tracer TR( "protocols.docking.DockTaskFactory" );
 
 using namespace core;
 

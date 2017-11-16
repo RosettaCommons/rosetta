@@ -10,20 +10,21 @@
 /// @file   src/basic/unti/tracer.fwd.hh
 /// @brief  Tracer IO system
 /// @author Sergey Lyskov
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
 #ifndef INCLUDED_basic_Tracer_fwd_hh
 #define INCLUDED_basic_Tracer_fwd_hh
 
 
-#include <ostream>
-
+#include <basic/TracerImpl.fwd.hh> // For TracerPriority
 
 namespace basic {
 
-
 class Tracer;
 
+typedef int TracerOP;  // Cheeky way of ensuring that people don't attempt to make dynamically allocated Tracer objects
+typedef int TracerCOP;
 
 }
 

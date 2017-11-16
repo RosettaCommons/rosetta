@@ -24,7 +24,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR("utility.graph.ring_detection.cxxtest.hh");
+static basic::Tracer TR("utility.graph.ring_detection.cxxtest.hh");
 
 // Use this for simple integer VD of verticies.
 typedef boost::adjacency_list< boost::listS, boost::vecS, boost::undirectedS > Graph;
@@ -56,10 +56,10 @@ public:
 		boost::add_edge(4, 10,g);
 		boost::add_edge(5, 11,g);
 
-		for( core::Size ii(0); ii < 6; ++ii ) {
+		for ( core::Size ii(0); ii < 6; ++ii ) {
 			TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( ii, g ), 6);
 		}
-		for( core::Size ii(6); ii < 12; ++ii ) {
+		for ( core::Size ii(6); ii < 12; ++ii ) {
 			TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( ii, g ), 999999);
 		}
 	}
@@ -82,7 +82,7 @@ public:
 		boost::add_edge(2, 6, g);
 		boost::add_edge(3, 7, g);
 
-		for( core::Size ii(0); ii < 8; ++ii ) {
+		for ( core::Size ii(0); ii < 8; ++ii ) {
 			TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( ii, g ), 4);
 		}
 	}

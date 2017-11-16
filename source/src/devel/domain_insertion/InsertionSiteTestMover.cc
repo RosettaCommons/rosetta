@@ -70,7 +70,7 @@
 namespace devel {
 namespace domain_insertion {
 
-static THREAD_LOCAL basic::Tracer tr( "devel.domain_insertion.InsertionSiteTestMover" );
+static basic::Tracer tr( "devel.domain_insertion.InsertionSiteTestMover" );
 
 InsertionSiteTestMover::InsertionSiteTestMover()
 :

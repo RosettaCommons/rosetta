@@ -39,7 +39,7 @@
 #include <map>
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMoveSelector" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMoveSelector" );
 
 using namespace core;
 using namespace core::pose;

@@ -51,7 +51,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.constraints.ConstraintsIO" );
+static basic::Tracer tr( "core.scoring.constraints.ConstraintsIO" );
 
 namespace core {
 namespace scoring {

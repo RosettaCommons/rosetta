@@ -47,7 +47,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.D2H_SA_Energy.cc" );
+static basic::Tracer TR( "core.scoring.methods.D2H_SA_Energy.cc" );
 
 /// @details This must return a fresh instance of the D2H_SA_Energy class,
 /// never an instance already in use

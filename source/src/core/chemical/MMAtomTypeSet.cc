@@ -36,7 +36,7 @@
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
+static basic::Tracer tr( "core.chemical" );
 
 
 MMAtomTypeSet::MMAtomTypeSet( std::string const & name ):

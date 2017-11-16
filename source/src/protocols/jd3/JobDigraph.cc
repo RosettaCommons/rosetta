@@ -43,7 +43,7 @@
 
 // #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.JobDigraph" );
+static basic::Tracer TR( "protocols.jd3.JobDigraph" );
 using namespace ObjexxFCL;
 
 namespace protocols {

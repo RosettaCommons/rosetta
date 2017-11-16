@@ -68,7 +68,7 @@ using namespace core;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.packer.StepWisePacker" );
+static basic::Tracer TR( "protocols.stepwise.modeler.packer.StepWisePacker" );
 
 namespace protocols {
 namespace stepwise {

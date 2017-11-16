@@ -30,7 +30,7 @@ namespace denovo_protein_design {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer tr( "SS" );
+static basic::Tracer tr( "SS" );
 
 
 std::ostream & operator<< ( std::ostream & os, const SSs & sss_ ) {

@@ -16,7 +16,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.AlignChainMover" );
+static basic::Tracer TR( "protocols.simple_moves.AlignChainMover" );
 
 #include <utility/tag/Tag.hh>
 

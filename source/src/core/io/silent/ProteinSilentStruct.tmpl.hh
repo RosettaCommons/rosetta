@@ -90,7 +90,7 @@ namespace core {
 namespace io {
 namespace silent {
 
-static THREAD_LOCAL basic::Tracer pss_tr( "core.io.silent" );
+static basic::Tracer pss_tr( "core.io.silent" );
 
 //explciit instantiation
 

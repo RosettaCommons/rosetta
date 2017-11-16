@@ -50,7 +50,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.HelixPairingFilter" );
+static basic::Tracer TR( "protocols.fldsgn.filters.HelixPairingFilter" );
 
 namespace protocols {
 namespace fldsgn {

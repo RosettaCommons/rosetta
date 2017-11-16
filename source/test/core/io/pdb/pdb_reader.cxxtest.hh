@@ -32,7 +32,7 @@
 // C++ header
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR("core.io.pdb.pdb_reader.cxxtest");
+static basic::Tracer TR("core.io.pdb.pdb_reader.cxxtest");
 
 class PDBReaderTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////

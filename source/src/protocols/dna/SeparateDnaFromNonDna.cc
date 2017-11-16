@@ -36,7 +36,7 @@ using namespace chemical;
 using namespace kinematics;
 using namespace conformation;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.dna.SeparateDnaFromNonDna", basic::t_info );
+static basic::Tracer TR( "protocols.dna.SeparateDnaFromNonDna", basic::t_info );
 
 // XRW TEMP std::string
 // XRW TEMP SeparateDnaFromNonDnaCreator::keyname() const

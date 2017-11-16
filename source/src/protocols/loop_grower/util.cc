@@ -33,7 +33,7 @@
 namespace protocols {
 namespace loop_grower {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loop_grower.util" );
+static basic::Tracer TR( "protocols.loop_grower.util" );
 
 using namespace protocols;
 using namespace core;

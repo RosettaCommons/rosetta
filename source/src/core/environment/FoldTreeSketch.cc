@@ -36,7 +36,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.environment.FoldTreeSketch", basic::t_info );
+static basic::Tracer tr( "core.environment.FoldTreeSketch", basic::t_info );
 
 namespace core {
 namespace environment {

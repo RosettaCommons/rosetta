@@ -88,7 +88,7 @@ OPT_KEY( String, template_pdb_name )
 OPT_KEY( String, source_contact_list )
 OPT_KEY( String, template_contact_list )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.david_pocket_align_and_save.main" );
+static basic::Tracer TR( "apps.pilot.david_pocket_align_and_save.main" );
 
 //set to store pdb info keys
 std::list <std::string> source_interface;
@@ -223,11 +223,9 @@ int main( int argc, char * argv [] ) {
 		NEW_OPT ( source_contact_list, "File name for optional list of contact residues to align the source pdb on","");
 		NEW_OPT ( template_contact_list, "File name for optional list of contact residues to align to the template pdb","");
 
-		TR << "Calling init" << std::endl;
 		//initializes Rosetta functions
 		devel::init(argc, argv);
 
-		TR << "done" << std::endl;
 		//allows output when running the program
 		//sets input residue numbers to resid and resid_c
 		std::string const resid_c = option[comparison_relax_pdb_num];

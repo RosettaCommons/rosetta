@@ -34,7 +34,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.rings.util" );
+static basic::Tracer TR( "core.chemical.rings.util" );
 
 
 namespace core {

@@ -28,7 +28,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.BlueprintArchitect" );
+static basic::Tracer TR( "protocols.denovo_design.architects.BlueprintArchitect" );
 
 namespace protocols {
 namespace denovo_design {

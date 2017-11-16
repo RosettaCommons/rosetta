@@ -64,7 +64,7 @@
 
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.RosettaScripts.util" );
+static basic::Tracer TR( "protocols.RosettaScripts.util" );
 
 namespace protocols {
 namespace rosetta_scripts {

@@ -48,7 +48,7 @@ namespace protocols {
 namespace helical_bundle {
 namespace parameters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.helical_bundle.parameters.BundleParametersSet" );
+static basic::Tracer TR( "protocols.helical_bundle.parameters.BundleParametersSet" );
 
 /// @brief Constructor.
 ///

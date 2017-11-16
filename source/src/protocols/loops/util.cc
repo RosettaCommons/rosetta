@@ -80,7 +80,7 @@
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.util" );
+static basic::Tracer TR( "protocols.loops.util" );
 
 namespace protocols {
 namespace loops {

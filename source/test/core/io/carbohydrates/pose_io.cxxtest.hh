@@ -21,7 +21,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.io.carbohydrates.pose_io.cxxtest");
+static basic::Tracer TR("core.io.carbohydrates.pose_io.cxxtest");
 
 class CarbohydratePoseIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////

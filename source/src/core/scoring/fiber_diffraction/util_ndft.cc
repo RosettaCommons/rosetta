@@ -25,7 +25,7 @@ namespace core {
 namespace scoring {
 namespace fiber_diffraction {
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.fiber_diffraction.util_ndft");
+static basic::Tracer TR("core.scoring.fiber_diffraction.util_ndft");
 
 void
 FBnl_R(

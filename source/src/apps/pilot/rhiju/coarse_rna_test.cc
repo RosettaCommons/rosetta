@@ -106,7 +106,6 @@
 //silly using/typedef
 
 #include <basic/Tracer.hh>
-using basic::T;
 using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 using ObjexxFCL::format::A;
@@ -176,8 +175,8 @@ using core::pose::ResMap;
 void
 coarse_frag_test(){
 
- 	using namespace core::scoring;
- 	using namespace core::chemical;
+	using namespace core::scoring;
+	using namespace core::chemical;
 	using namespace core::id;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -205,7 +204,7 @@ coarse_frag_test(){
 
 	// start doing some copy_dofs at an arbitrary position
 	Size insert_res( 4 );
-	for( Size n = 1; n <= frag_source_pose.size()-2 ; n++ ){
+	for ( Size n = 1; n <= frag_source_pose.size()-2 ; n++ ) {
 
 		std::map< AtomID, AtomID > atom_id_map;
 		std::map< Size, Size > res_map;
@@ -267,33 +266,33 @@ pdb_stats( pose::Pose const & pose, utility::vector1< protocols::stepwise::model
 		}
 
 		angle_P_S_CEN = degrees(angle_radians( pose.xyz( NamedAtomID( " P  ", n) ),
-																					 pose.xyz( NamedAtomID( " S  ", n) ),
-																					 pose.xyz( NamedAtomID( " CEN", n) ) ) );
+			pose.xyz( NamedAtomID( " S  ", n) ),
+			pose.xyz( NamedAtomID( " CEN", n) ) ) );
 		if ( n < pose.size() ) {
 			angle_S_P_S = degrees(angle_radians( pose.xyz( NamedAtomID( " S  ", n) ),
-																					 pose.xyz( NamedAtomID( " P  ", n+1) ),
-																					 pose.xyz( NamedAtomID( " S  ", n+1) ) ) );
+				pose.xyz( NamedAtomID( " P  ", n+1) ),
+				pose.xyz( NamedAtomID( " S  ", n+1) ) ) );
 			angle_P_S_P = degrees(angle_radians( pose.xyz( NamedAtomID( " P  ", n) ),
-																					 pose.xyz( NamedAtomID( " S  ", n) ),
-																					 pose.xyz( NamedAtomID( " P  ", n+1) ) ) );
+				pose.xyz( NamedAtomID( " S  ", n) ),
+				pose.xyz( NamedAtomID( " P  ", n+1) ) ) );
 			angle_CEN_S_P = degrees(angle_radians( pose.xyz( NamedAtomID( " CEN", n) ),
-																						 pose.xyz( NamedAtomID( " S  ", n) ),
-																						 pose.xyz( NamedAtomID( " P  ", n+1) ) ) );
+				pose.xyz( NamedAtomID( " S  ", n) ),
+				pose.xyz( NamedAtomID( " P  ", n+1) ) ) );
 		}
 
 
 		if ( n < pose.size() ) {
 			torsion_P_S_P_S = dihedral_degrees( pose.xyz( NamedAtomID( " P  ", n) ),
-																					pose.xyz( NamedAtomID( " S  ", n) ),
-																					pose.xyz( NamedAtomID( " P  ", n+1) ),
-																					pose.xyz( NamedAtomID( " S  ", n+1) ) );
+				pose.xyz( NamedAtomID( " S  ", n) ),
+				pose.xyz( NamedAtomID( " P  ", n+1) ),
+				pose.xyz( NamedAtomID( " S  ", n+1) ) );
 		}
 		if ( n < pose.size()-1 ) {
 			torsion_S_P_S_P = dihedral_degrees(
-																					pose.xyz( NamedAtomID( " S  ", n) ),
-																					pose.xyz( NamedAtomID( " P  ", n+1) ),
-																					pose.xyz( NamedAtomID( " S  ", n+1) ),
-																					pose.xyz( NamedAtomID( " P  ", n+2) ) );
+				pose.xyz( NamedAtomID( " S  ", n) ),
+				pose.xyz( NamedAtomID( " P  ", n+1) ),
+				pose.xyz( NamedAtomID( " S  ", n+1) ),
+				pose.xyz( NamedAtomID( " P  ", n+2) ) );
 		}
 
 		out1 << is_purine(  pose.residue( n ) );
@@ -303,23 +302,23 @@ pdb_stats( pose::Pose const & pose, utility::vector1< protocols::stepwise::model
 		out1 << ' ' << torsion_P_S_P_S << ' ' << torsion_S_P_S_P;
 		out1 << std::endl;
 
-		if ( n > 1 && n < pose.size()) {
-			Stub stub1(	pose.xyz( NamedAtomID( " S  ", n) ),
-									pose.xyz( NamedAtomID( " S  ", n) ),
-									pose.xyz( NamedAtomID( " P  ", n) ),
-									pose.xyz( NamedAtomID( " S  ", n-1) )
-									);
+		if ( n > 1 && n < pose.size() ) {
+			Stub stub1( pose.xyz( NamedAtomID( " S  ", n) ),
+				pose.xyz( NamedAtomID( " S  ", n) ),
+				pose.xyz( NamedAtomID( " P  ", n) ),
+				pose.xyz( NamedAtomID( " S  ", n-1) )
+			);
 			Vector cen_vec1 = stub1.global2local( pose.xyz( NamedAtomID( " CEN", n) ) );
 
-			Stub stub2(	pose.xyz( NamedAtomID( " S  ", n) ),
-									pose.xyz( NamedAtomID( " S  ", n) ),
-									pose.xyz( NamedAtomID( " P  ", n) ),
-									pose.xyz( NamedAtomID( " P  ", n+1) )
-									);
+			Stub stub2( pose.xyz( NamedAtomID( " S  ", n) ),
+				pose.xyz( NamedAtomID( " S  ", n) ),
+				pose.xyz( NamedAtomID( " P  ", n) ),
+				pose.xyz( NamedAtomID( " P  ", n+1) )
+			);
 			Vector cen_vec2 = stub2.global2local( pose.xyz( NamedAtomID( " CEN", n) ) );
 
 			out2 << is_purine( pose.residue( n ) ) << ' '
-					 << cen_vec1( 1 ) << ' ' <<  cen_vec1( 2 ) << ' ' << cen_vec1( 3 ) <<
+				<< cen_vec1( 1 ) << ' ' <<  cen_vec1( 2 ) << ' ' << cen_vec1( 3 ) <<
 				' ' << cen_vec2( 1 ) << ' ' <<  cen_vec2( 2 ) << ' ' << cen_vec2( 3 )  << std::endl;
 		}
 
@@ -361,7 +360,7 @@ vdw_stats( pose::Pose const & pose ) {
 				}
 			}
 
-			if ( min_dist < CUTOFF ){
+			if ( min_dist < CUTOFF ) {
 				for ( Size k = 1; k <= dists.size(); k++ ) {
 					out1 << ' ' << dists[ k ];
 				}
@@ -378,7 +377,7 @@ vdw_stats( pose::Pose const & pose ) {
 /////////////////////////////////////////////////
 void
 icoor_test(){
- 	using namespace core::chemical;
+	using namespace core::chemical;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
@@ -402,7 +401,7 @@ icoor_test(){
 /////////////////////////////////////////////////
 void
 convert_to_coarse_test(){
- 	using namespace core::chemical;
+	using namespace core::chemical;
 	using namespace core::io::silent;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -439,7 +438,7 @@ convert_to_coarse_test(){
 /////////////////////////////////////////////////
 void
 output_minipose_coords_test(){
- 	using namespace core::chemical;
+	using namespace core::chemical;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
@@ -477,7 +476,7 @@ output_minipose_coords_test(){
 void
 pdbstats_test(){
 
- 	using namespace core::chemical;
+	using namespace core::chemical;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
@@ -536,7 +535,7 @@ create_bp_jump_database_test( ){
 	utility::io::ozstream dataout( outfile );
 
 	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-				it != scored_base_pair_list.end(); ++it ){
+			it != scored_base_pair_list.end(); ++it ) {
 
 		BasePair const base_pair = it->second;
 
@@ -555,11 +554,11 @@ create_bp_jump_database_test( ){
 		conformation::Residue const & rsd_i( pose.residue( i ) );
 		conformation::Residue const & rsd_j( pose.residue( j ) );
 		kinematics::Stub const stub_i( rsd_i.xyz( " Y  " ),
-																	 rsd_i.xyz( " X  " ),
-																	 rsd_i.xyz( " CEN" ) );
+			rsd_i.xyz( " X  " ),
+			rsd_i.xyz( " CEN" ) );
 		kinematics::Stub const stub_j( rsd_j.xyz( " Y  " ),
-																	 rsd_j.xyz( " X  " ),
-																	 rsd_j.xyz( " CEN" ) );
+			rsd_j.xyz( " X  " ),
+			rsd_j.xyz( " CEN" ) );
 
 		dataout << "PAIR " <<
 			I(5, i) << ' ' << edge_i << ' ' <<
@@ -568,7 +567,7 @@ create_bp_jump_database_test( ){
 			pose.residue(i).name1() << ' ' << pose.residue(j).name1() << " " <<
 			" Y  "  <<  " " <<
 			" Y  "  <<  " " <<
-		  kinematics::Jump( stub_i, stub_j) <<
+			kinematics::Jump( stub_i, stub_j) <<
 			std::endl;
 
 	}
@@ -584,12 +583,12 @@ create_bp_jump_database_test( ){
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
-general_initialize( 	pose::Pose & pose,
-											pose::PoseOP & native_pose,
-											protocols::rna::denovo::RNA_DeNovoPoseInitializerOP & rna_structure_parameters_,
-											protocols::coarse_rna::CoarseRNA_LoopCloserOP & rna_loop_closer_,
-											protocols::rna::denovo::RNA_ChunkLibraryOP & rna_chunk_library_,
-											protocols::toolbox::AtomLevelDomainMapOP &  atom_level_domain_map_
+general_initialize(  pose::Pose & pose,
+	pose::PoseOP & native_pose,
+	protocols::rna::denovo::RNA_DeNovoPoseInitializerOP & rna_structure_parameters_,
+	protocols::coarse_rna::CoarseRNA_LoopCloserOP & rna_loop_closer_,
+	protocols::rna::denovo::RNA_ChunkLibraryOP & rna_chunk_library_,
+	protocols::toolbox::AtomLevelDomainMapOP &  atom_level_domain_map_
 ){
 
 	using namespace core::chemical;
@@ -631,7 +630,7 @@ general_initialize( 	pose::Pose & pose,
 	rna_structure_parameters_->initialize( pose, rna_params_file_, jump_library_file_, true /*ignore_secstruct*/ );
 
 	utility::vector1< Size > input_res_( option[ input_res ]() );
-	if( input_res_.size() > 0 ) {
+	if ( input_res_.size() > 0 ) {
 		rna_chunk_library_ = new protocols::rna::denovo::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
 	} else {
 		rna_chunk_library_ = new protocols::rna::denovo::RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() );
@@ -650,7 +649,7 @@ general_initialize( 	pose::Pose & pose,
 	rna_loop_closer_ = new CoarseRNA_LoopCloser;
 	rna_loop_closer_->set_atom_level_domain_map( atom_level_domain_map_ );
 
-	//	if ( choose_best_solution_ ) rna_loop_closer_->choose_best_solution_based_on_score_function( denovo_scorefxn_ );
+	// if ( choose_best_solution_ ) rna_loop_closer_->choose_best_solution_based_on_score_function( denovo_scorefxn_ );
 
 	// read in helix PDB
 	pose.dump_pdb( "start.pdb" );
@@ -729,13 +728,13 @@ output_angles( core::pose::Pose const & pose ){
 
 	for ( core::Size i = 1; i < pose.size(); i++ ) {
 		theta_angle = degrees( angle_radians( pose.xyz( NamedAtomID( " P  ", i) ),
-																		pose.xyz( NamedAtomID( " S  ", i) ),
-																		pose.xyz( NamedAtomID( " P  ", i+1) ) ) );
+			pose.xyz( NamedAtomID( " S  ", i) ),
+			pose.xyz( NamedAtomID( " P  ", i+1) ) ) );
 		std::cout << ' ' << theta_angle;
 
 		theta_angle = degrees( angle_radians( pose.xyz( NamedAtomID( " S  ", i) ),
-																		pose.xyz( NamedAtomID( " P  ", i+1) ),
-																		pose.xyz( NamedAtomID( " S  ", i+1) ) ) );
+			pose.xyz( NamedAtomID( " P  ", i+1) ),
+			pose.xyz( NamedAtomID( " S  ", i+1) ) ) );
 		std::cout << ' ' << theta_angle;
 	}
 
@@ -744,9 +743,9 @@ output_angles( core::pose::Pose const & pose ){
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
-get_ideal_angle_sets(  	 utility::vector1< utility::vector1< Real > > & angle_sets,
-												 utility::vector1< utility::vector1< core::id::AtomID > > const & angle_ids,
-												 utility::vector1< Real >  angle_set ){
+get_ideal_angle_sets(    utility::vector1< utility::vector1< Real > > & angle_sets,
+	utility::vector1< utility::vector1< core::id::AtomID > > const & angle_ids,
+	utility::vector1< Real >  angle_set ){
 
 	using numeric::conversions::radians;
 
@@ -767,14 +766,14 @@ get_ideal_angle_sets(  	 utility::vector1< utility::vector1< Real > > & angle_se
 //////////////////////////////////////////////////////////////////////////////////////
 void
 get_angle_sets(  pose::Pose const & pose,
-								 protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map,
-								 utility::vector1< utility::vector1< Real > > & angle_sets,
-								 utility::vector1< utility::vector1< core::id::AtomID > > & angle_ids,
-								 bool const sample_angles_ ){
+	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map,
+	utility::vector1< utility::vector1< Real > > & angle_sets,
+	utility::vector1< utility::vector1< core::id::AtomID > > & angle_ids,
+	bool const sample_angles_ ){
 
 	using namespace core::id;
 
-	for ( Size i = 1; i < pose.size(); i++ ){
+	for ( Size i = 1; i < pose.size(); i++ ) {
 
 		utility::vector1< AtomID > ids;
 		// P-S-P
@@ -831,8 +830,8 @@ get_angle_sets(  pose::Pose const & pose,
 //////////////////////////////////////////////////////////////////////////////////////
 void
 apply_angle_set( pose::Pose & pose,
-								 utility::vector1< utility::vector1< core::id::AtomID > > const & angle_ids,
-								 utility::vector1< Real > const & angle_set ){
+	utility::vector1< utility::vector1< core::id::AtomID > > const & angle_ids,
+	utility::vector1< Real > const & angle_set ){
 	using namespace core::id;
 	std::cout << "ANGLE_SET_SIZE " << angle_set.size() << " " << angle_ids.size() << std::endl;
 
@@ -842,11 +841,11 @@ apply_angle_set( pose::Pose & pose,
 		pose.conformation().set_bond_angle( angle_ids[i][1], angle_ids[i][2], angle_ids[i][3], angle_set[ i ] );
 
 		// FOLLOWING DOES NOT WORK; WOULD NEED TO USE SPHERICAL COORDS CRAP.
-		//		if ( angle_ids[i][3].atomno() == 4 ) {  //special case --> OVL2. Also change next guy's bond angle
-		//			Size const n = angle_ids[i][3].rsd();
-		//			std::cout << "SPECIAL CASE " << n << pose.residue_type( n+1).has_variant_type( chemical::CUTPOINT_UPPER ) << std::endl;
-		//			pose.conformation().set_bond_angle( AtomID( n+1, 2 ) /*S=OVU1*/, AtomID( n+1, 1 ) /*P*/, AtomID( n+1, 3 ) /*S*/ , angle_set[ i ] );
-		//		}
+		//  if ( angle_ids[i][3].atomno() == 4 ) {  //special case --> OVL2. Also change next guy's bond angle
+		//   Size const n = angle_ids[i][3].rsd();
+		//   std::cout << "SPECIAL CASE " << n << pose.residue_type( n+1).has_variant_type( chemical::CUTPOINT_UPPER ) << std::endl;
+		//   pose.conformation().set_bond_angle( AtomID( n+1, 2 ) /*S=OVU1*/, AtomID( n+1, 1 ) /*P*/, AtomID( n+1, 3 ) /*S*/ , angle_set[ i ] );
+		//  }
 
 	}
 }
@@ -985,7 +984,7 @@ get_base_pair_coordinate_system( pose::Pose const & pose, Size const res1, Size 
 
 	centroid = 0.5 * ( pose.xyz( NamedAtomID(" C1'", res2 ) ) +  pose.xyz( NamedAtomID(" C1'", res1 )  ) );
 
-  Size res_type = pose.residue( res1 ).aa();
+	Size res_type = pose.residue( res1 ).aa();
 
 	// Make a perpendicular axis pointing from centroid towards
 	// Hoogstein edge (e.g., major groove in a double helix).
@@ -1001,7 +1000,7 @@ get_base_pair_coordinate_system( pose::Pose const & pose, Size const res1, Size 
 
 	y = cross( z, x );
 
-	for ( Size k = 1; k <= 3; k++ ){
+	for ( Size k = 1; k <= 3; k++ ) {
 		M(k,1) =x(k);
 		M(k,2) =y(k);
 		M(k,3) =z(k);
@@ -1020,10 +1019,10 @@ reorient_to_base_pair_coordinate_system( pose::Pose & pose, Size const res1, Siz
 	Matrix M;
 	get_base_pair_coordinate_system( pose, res1, res2, centroid, M );
 
-	for ( Size i = 1; i <= pose.size(); i++ ){
-		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
 			pose.set_xyz(  AtomID( j,i ),
-										 M.transposed() * (pose.xyz( AtomID( j, i ) ) - centroid) );
+				M.transposed() * (pose.xyz( AtomID( j, i ) ) - centroid) );
 		}
 	}
 
@@ -1033,7 +1032,7 @@ reorient_to_base_pair_coordinate_system( pose::Pose & pose, Size const res1, Siz
 Matrix
 cycle( Matrix const & M0 ){
 	Matrix M;
-	for ( Size k = 1; k <= 3; k++ ){
+	for ( Size k = 1; k <= 3; k++ ) {
 		M(k,1) = M0(k,3);
 		M(k,2) = M0(k,2);
 		M(k,3) = M0(k,1);
@@ -1044,26 +1043,26 @@ cycle( Matrix const & M0 ){
 //////////////////////////////////////////////////////////////////////////////////////
 void
 determine_delx_dely_delz_alpha_beta_gamma( pose::Pose const & pose,
-																					 Size const bp1_partner1,
-																					 Size const bp1_partner2,
-																					 Size const bp2_partner1,
-																					 Size const bp2_partner2,
-																					 utility::io::ozstream & out,
-																					 bool const cycle_xyz_to_yzx = false ){
+	Size const bp1_partner1,
+	Size const bp1_partner2,
+	Size const bp2_partner1,
+	Size const bp2_partner2,
+	utility::io::ozstream & out,
+	bool const cycle_xyz_to_yzx = false ){
 
 	Vector centroid1, centroid2;
 	Matrix M1, M2;
 	get_base_pair_coordinate_system( pose, bp1_partner1, bp1_partner2, centroid1, M1 );
 	get_base_pair_coordinate_system( pose, bp2_partner1, bp2_partner2, centroid2, M2 );
 
-	if (cycle_xyz_to_yzx){
+	if ( cycle_xyz_to_yzx ) {
 		M1 = cycle( M1 );
 		M2 = cycle( M2 );
 	}
 
-	Real const	delx = centroid2(1) - centroid1(1);
-	Real const	dely = centroid2(2) - centroid1(2);
-	Real const	delz = centroid2(3) - centroid1(3);
+	Real const delx = centroid2(1) - centroid1(1);
+	Real const dely = centroid2(2) - centroid1(2);
+	Real const delz = centroid2(3) - centroid1(3);
 
 	Real alpha, beta, gamma;
 	protocols::stepwise::get_euler_angles( alpha, beta, gamma, M1, M2, false /*verbose*/ );
@@ -1101,7 +1100,7 @@ tar_motif_test(){
 	utility::io::ozstream out1( outfile1 );
 	utility::io::ozstream out2( outfile2 );
 
-	for( Size n = 1; n <= infiles.size(); n++ ) {
+	for ( Size n = 1; n <= infiles.size(); n++ ) {
 
 		std::string infile  = infiles[n];
 		std::cout << " about to read from: " << infile << std::endl;
@@ -1128,7 +1127,7 @@ tar_motif_test(){
 			if ( partner.find( partner[i+1] + NBULGE + 1  ) == partner.end() ) continue;
 			if ( partner[ partner[i+1] + NBULGE + 1 ] != i ) continue;
 
-			for ( Size k = 0; k <= NBULGE+1; k++ ){
+			for ( Size k = 0; k <= NBULGE+1; k++ ) {
 				motif_res.push_back( partner[i+1] + k );
 			}
 
@@ -1181,10 +1180,10 @@ mismatch_test(){
 	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
 	utility::vector1< std::string > const & infiles  = option[ in::file::s ]();
 
-	//	std::string const outfile = option[ out::file::o ]();
-	//	utility::io::ozstream out( outfile );
+	// std::string const outfile = option[ out::file::o ]();
+	// utility::io::ozstream out( outfile );
 
-	for( Size n = 1; n <= infiles.size(); n++ ) {
+	for ( Size n = 1; n <= infiles.size(); n++ ) {
 
 		std::string infile  = infiles[n];
 		std::cout << " about to read from: " << infile << std::endl;
@@ -1213,7 +1212,7 @@ mismatch_test(){
 			if ( !possibly_canonical_strict( pose.aa(i),   pose.aa(partner[i]  ) ) ) continue;
 			if ( !possibly_canonical_strict( pose.aa(i+2), pose.aa(partner[i+2]) ) ) continue;
 
-			for ( Size k = 0; k <= 2; k++ )	 motif_res.push_back( i + k );
+			for ( Size k = 0; k <= 2; k++ )  motif_res.push_back( i + k );
 
 			if ( partner.find( partner[i+2] + 2  ) == partner.end() ) continue;
 			if ( partner[ partner[i+2] + 2 ] != i ) continue;
@@ -1221,7 +1220,7 @@ mismatch_test(){
 			if ( is_rna_chainbreak( pose, partner[i+2] ) ) continue;
 			if ( is_rna_chainbreak( pose, partner[i+1]+1 ) ) continue;
 
-			for ( Size k = 0; k <= 2; k++ )	 motif_res.push_back( partner[i+2] + k );
+			for ( Size k = 0; k <= 2; k++ )  motif_res.push_back( partner[i+2] + k );
 
 			Pose mini_pose;
 			protocols::stepwise::pdbslice( mini_pose, pose, motif_res );
@@ -1278,16 +1277,16 @@ modeler_map_test(){
 	utility::vector1< TorsionID > moving_torsions;
 	utility::vector1< bool > is_moving_res;
 
-	for ( Size i = 2; i <= pose.size(); i++ ){
+	for ( Size i = 2; i <= pose.size(); i++ ) {
 
 		is_moving_res.push_back( false );
 
-		//		bool check_domain_boundary = ( atom_level_domain_map_->get_domain( AtomID(1,i) /*phosphate*/ ) != atom_level_domain_map_->get_domain( AtomID(2,i-1) /*sugar*/) );
-		//		std::cout << "CHECK " << i << ' ' << atom_level_domain_map_->get( AtomID(i,1) ) << ' ' << check_domain_boundary << std::endl;
+		//  bool check_domain_boundary = ( atom_level_domain_map_->get_domain( AtomID(1,i) /*phosphate*/ ) != atom_level_domain_map_->get_domain( AtomID(2,i-1) /*sugar*/) );
+		//  std::cout << "CHECK " << i << ' ' << atom_level_domain_map_->get( AtomID(i,1) ) << ' ' << check_domain_boundary << std::endl;
 
 		if// (atom_level_domain_map_->get( AtomID(i,1) ) && check_domain_boundary ){
-			(atom_level_domain_map_->get( TorsionID( i-1, BB, 2 ), pose.conformation() ) &&
-			 atom_level_domain_map_->get( TorsionID( i, BB, 1 ), pose.conformation() ) ){
+				( atom_level_domain_map_->get( TorsionID( i-1, BB, 2 ), pose.conformation() ) &&
+						atom_level_domain_map_->get( TorsionID( i, BB, 1 ), pose.conformation() ) ) {
 			if ( sample_res == 0 ) sample_res = i;
 			std::cout << "FOUND SAMPLE RES: " << i << std::endl;
 			moving_torsions.push_back( TorsionID( i - 1, BB, 2 ) );
@@ -1306,8 +1305,8 @@ modeler_map_test(){
 	get_angle_sets( pose, atom_level_domain_map_, angle_sets, angle_ids, sample_angles_ );
 
 	// virtualize base for internal residues.
-	for ( Size i = 1; i < pose.size(); i++ ){
-		if ( is_moving_res[ i ] && is_moving_res[ i+1 ] ){
+	for ( Size i = 1; i < pose.size(); i++ ) {
+		if ( is_moving_res[ i ] && is_moving_res[ i+1 ] ) {
 			add_variant_type_to_pose_residue( pose,  "VIRTUAL_BASE", i );
 		}
 	}
@@ -1345,14 +1344,14 @@ modeler_map_test(){
 		std::string const vdw_silent_file_out = "vdw_"+silent_file_out;
 
 
-		for ( Size i = 1; i <= nbins; i++ ){
+		for ( Size i = 1; i <= nbins; i++ ) {
 
 			Real const tau1( i * bin_size );
 			pose.set_torsion( torsion1, tau1 );
 			std::cout << "Doing " << I( 5,i) << " out of " <<  I( 5, nbins ) << std::endl;
 			//std::cout <<  torsion1 << ' ' << tau1 << std::endl;
 
-			for ( Size j = 1; j <= nbins; j++ ){
+			for ( Size j = 1; j <= nbins; j++ ) {
 
 				Real const tau2( j * bin_size );
 				pose.set_torsion( torsion2, tau2 );
@@ -1367,7 +1366,7 @@ modeler_map_test(){
 
 				//std::cout << "POSE_LIST_SIZE: " << pose_list.size() << std::endl;
 
-				for ( Size n = 1; n <= pose_list.size(); n++ ){
+				for ( Size n = 1; n <= pose_list.size(); n++ ) {
 					Real const score = (*scorefxn)( *pose_list[n] );
 					EnergyMap const & energy_map = pose_list[n]->energies().total_energies();
 					Real const & vdw_score = energy_map[ vdw ];
@@ -1378,19 +1377,19 @@ modeler_map_test(){
 					s.add_energy( "nsol", nsol );
 
 
-					//				output_angles( pose );
+					//    output_angles( pose );
 
 					for ( Size k = 1; k <= moving_torsions.size(); k++ ) {
 						s.add_energy( "tau"+string_of( k ),  pose.torsion( moving_torsions[ k ]  ) );
 					}
 
-					if ( native_pose ){
+					if ( native_pose ) {
 						s.add_energy( "all_rms", all_atom_rmsd( pose, *native_pose ) );
 					}
 
 					silent_file_data.write_silent_struct( s, silent_file_out, true /*false*/ );
 
-					if ( option[ output_vdw_pose]() && vdw_score < VDW_CUTOFF ){
+					if ( option[ output_vdw_pose]() && vdw_score < VDW_CUTOFF ) {
 						silent_file_data.write_silent_struct( s, vdw_silent_file_out, false );
 					}
 
@@ -1403,7 +1402,7 @@ modeler_map_test(){
 
 
 	// Later put in score stuff.
-	//	denovo_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( lores_scorefxn_ );
+	// denovo_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( lores_scorefxn_ );
 
 }
 
@@ -1430,7 +1429,7 @@ coarse_close_loop_test( ){
 	FoldTree f( pose.size() );
 
 	f.new_jump( 4, 5, 4 );
-	//	f.new_jump( 3, 6, 4 );
+	// f.new_jump( 3, 6, 4 );
 
 	Size const cutpos = 6;
 	f.new_jump( 1, 8, cutpos );
@@ -1502,7 +1501,7 @@ coarse_to_full_test( ){
 
 	Pose pose = pose_scratch;
 
-	for ( Size i = 1; i <= pose.size(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		// A couple coordinate systems to allow easy superposition.
 		Vector const origin1 =  pose_coarse.xyz( NamedAtomID( " P  ", i ) );
 		Vector const x1 =  pose_coarse.xyz( NamedAtomID( " P  ", i ) );
@@ -1517,7 +1516,7 @@ coarse_to_full_test( ){
 		Vector const z2 =  pose_scratch_coarsened.xyz( NamedAtomID( " CEN", i ) );
 		Stub stub2( origin2, x2, y2, z2 );
 
-		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ){
+		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
 			pose.set_xyz( AtomID(j,i), stub1.local2global( stub2.global2local( pose_scratch.xyz( AtomID(j,i) ) ) ) );
 		}
 
@@ -1558,7 +1557,7 @@ coarse_rna_denovo_test(){
 		import_pose::pose_from_file( *native_pose, *rsd_set_coarse, native_pdb_file , core::import_pose::PDB_file);
 	}
 
-		//Constraints?
+	//Constraints?
 	if ( option[ cst_file ].user() ) {
 		ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[cst_file], new ConstraintSet, pose );
 		pose.constraint_set( cst_set );
@@ -1568,21 +1567,21 @@ coarse_rna_denovo_test(){
 	CoarseRNA_DeNovoProtocol de_novo_protocol( option[ out::nstruct ](), option[ cycles ](), option[ out::file::silent]() );
 	de_novo_protocol.set_native_pose( native_pose );
 	de_novo_protocol.set_temperature( option[ temperature]() );
-	if( option[ score::weights ].user() ) de_novo_protocol.set_lores_scorefxn( option[ score::weights  ]() );
+	if ( option[ score::weights ].user() ) de_novo_protocol.set_lores_scorefxn( option[ score::weights  ]() );
 	if ( option[ params_file ].user() ) de_novo_protocol.set_rna_params_file( option[ params_file ]() );
-	if ( option[data_file].user() )	de_novo_protocol.set_rna_data_file( option[ data_file ]() );
+	if ( option[data_file].user() ) de_novo_protocol.set_rna_data_file( option[ data_file ]() );
 	de_novo_protocol.set_sim_anneal( !option[ no_sim_anneal ]() );
 	de_novo_protocol.set_staged_constraints( option[ staged_constraints ]() );
 	de_novo_protocol.set_close_loops( option[ close_loops ]() );
 	de_novo_protocol.set_choose_best_solution( option[ choose_best_solution ]() );
-	//	de_novo_protocol.set_force_ideal_chainbreak( option[ force_ideal_chainbreak ]() );
+	// de_novo_protocol.set_force_ideal_chainbreak( option[ force_ideal_chainbreak ]() );
 	de_novo_protocol.set_check_pairing_dists( option[ check_pairing_dists ]() );
 	de_novo_protocol.set_add_base_pair_constraints( !option[skip_base_pair_constraints ]() );
 	de_novo_protocol.set_dump_pdb( option[ dump ]() );
 	de_novo_protocol.set_input_res( option[ input_res ]() );
 	de_novo_protocol.set_freeze_domains( option[ freeze_domains ]() );
 
-	if ( option[ in::file::silent ].user()	) de_novo_protocol.set_chunk_silent_files( option[ in::file::silent ]() );
+	if ( option[ in::file::silent ].user() ) de_novo_protocol.set_chunk_silent_files( option[ in::file::silent ]() );
 
 	// visualize it.
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
@@ -1601,7 +1600,7 @@ my_main( void* )
 
 	if ( option[ frag_test ]() ) {
 		coarse_frag_test();
-	}	else if ( option[ icoor ]() ) {
+	} else if ( option[ icoor ]() ) {
 		icoor_test();
 	} else if ( option[ pdbstats ]() ) {
 		pdbstats_test();
@@ -1624,7 +1623,7 @@ my_main( void* )
 	} else if ( option[ mismatch ]() ) {
 		mismatch_test();
 	} else if ( option[ coarse_to_full ]() ) {
-	  coarse_to_full_test();
+		coarse_to_full_test();
 	} else {
 		coarse_rna_denovo_test();
 	}
@@ -1642,57 +1641,57 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace basic::options;
+		using namespace basic::options;
 
-	utility::vector1< Size > blank_size_vector;
+		utility::vector1< Size > blank_size_vector;
 
-	//Uh, options?
-	NEW_OPT( frag_test, "blah",false);
-	NEW_OPT( icoor, "blah",false);
-	NEW_OPT( pdbstats, "blah",false);
-	NEW_OPT( convert, "blah",false);
-	NEW_OPT( output_coords, "blah",false);
-	NEW_OPT( jump_database, "blah",false);
-	NEW_OPT( no_sim_anneal, "blah",false);
-	NEW_OPT( staged_constraints, "blah",false);
-	NEW_OPT( close_loop_test, "blah",false);
-	NEW_OPT( close_loops, "blah",false);
-	NEW_OPT( choose_best_solution, "blah",false);
-	//	NEW_OPT( force_ideal_chainbreak, "blah",false);
-	NEW_OPT( check_pairing_dists, "blah",false);
-	NEW_OPT( skip_base_pair_constraints, "blah",false);
-	NEW_OPT( dump, "blah",false);
-	NEW_OPT( rb_test, "blah",false);
-	NEW_OPT( modeler, "blah",false);
-	NEW_OPT( sample_angles, "blah",false);
-	NEW_OPT( output_vdw_pose, "blah",false);
-	NEW_OPT( little_motif, "blah",false);
-	NEW_OPT( tar_motif, "blah",false);
-	NEW_OPT( mismatch, "blah",false);
-	NEW_OPT( freeze_domains, "blah",false);
-	NEW_OPT( coarse_to_full, "blah",false);
-	NEW_OPT( cycles, "Default number of Monte Carlo cycles", 10000 );
-	NEW_OPT( nbulge, "No. bulge residues", 3 );
-	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
-	NEW_OPT( data_file, "Input file for RNA exposure data", "" );
-	NEW_OPT( temperature, "Monte Carlo temperature", 5.0 );
-	NEW_OPT( bin_width, "Monte Carlo temperature", 2.0 );
-	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
-	NEW_OPT( input_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector ); //I am here.
+		//Uh, options?
+		NEW_OPT( frag_test, "blah",false);
+		NEW_OPT( icoor, "blah",false);
+		NEW_OPT( pdbstats, "blah",false);
+		NEW_OPT( convert, "blah",false);
+		NEW_OPT( output_coords, "blah",false);
+		NEW_OPT( jump_database, "blah",false);
+		NEW_OPT( no_sim_anneal, "blah",false);
+		NEW_OPT( staged_constraints, "blah",false);
+		NEW_OPT( close_loop_test, "blah",false);
+		NEW_OPT( close_loops, "blah",false);
+		NEW_OPT( choose_best_solution, "blah",false);
+		// NEW_OPT( force_ideal_chainbreak, "blah",false);
+		NEW_OPT( check_pairing_dists, "blah",false);
+		NEW_OPT( skip_base_pair_constraints, "blah",false);
+		NEW_OPT( dump, "blah",false);
+		NEW_OPT( rb_test, "blah",false);
+		NEW_OPT( modeler, "blah",false);
+		NEW_OPT( sample_angles, "blah",false);
+		NEW_OPT( output_vdw_pose, "blah",false);
+		NEW_OPT( little_motif, "blah",false);
+		NEW_OPT( tar_motif, "blah",false);
+		NEW_OPT( mismatch, "blah",false);
+		NEW_OPT( freeze_domains, "blah",false);
+		NEW_OPT( coarse_to_full, "blah",false);
+		NEW_OPT( cycles, "Default number of Monte Carlo cycles", 10000 );
+		NEW_OPT( nbulge, "No. bulge residues", 3 );
+		NEW_OPT( params_file, "Input file for pairings", "default.prm" );
+		NEW_OPT( data_file, "Input file for RNA exposure data", "" );
+		NEW_OPT( temperature, "Monte Carlo temperature", 5.0 );
+		NEW_OPT( bin_width, "Monte Carlo temperature", 2.0 );
+		NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
+		NEW_OPT( input_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector ); //I am here.
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+		exit( 0 );
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

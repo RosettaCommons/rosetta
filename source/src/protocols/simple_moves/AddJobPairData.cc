@@ -28,7 +28,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.AddJobPairData" );
+static basic::Tracer TR( "protocols.simple_moves.AddJobPairData" );
 
 // XRW TEMP std::string AddJobPairDataCreator::keyname() const
 // XRW TEMP {

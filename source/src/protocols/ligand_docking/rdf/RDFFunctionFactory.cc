@@ -46,7 +46,7 @@ using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.ligand_docking.rdf.RDFFunctionFactory" );
+static basic::Tracer tr( "protocols.ligand_docking.rdf.RDFFunctionFactory" );
 
 /// @details Private constructor insures correctness of singleton.
 RDFFunctionFactory::RDFFunctionFactory() {}

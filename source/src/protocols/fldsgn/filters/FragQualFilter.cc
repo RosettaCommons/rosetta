@@ -37,7 +37,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.FragQualFilter" );
+static basic::Tracer tr( "protocols.fldsgn.filters.FragQualFilter" );
 
 namespace protocols {
 namespace fldsgn {

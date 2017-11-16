@@ -96,8 +96,7 @@ void get_usage_from_procfilesystem( std::ostream& mem_report ) {
 #endif
 }
 
-bool MemTracer::single_line_ = false;
-void MemTracer::t_flush( std::string const &str ) {
+void MemTracerImpl::t_flush( std::string const &str ) {
 #ifdef _WIN32
 	return;  // disabled on windows
 #else
@@ -112,6 +111,9 @@ void MemTracer::t_flush( std::string const &str ) {
 #endif
 }
 
-MemTracer mem_tr;
+std::unique_ptr< TracerImpl >
+MemTracer::create_impl() {
+	return std::unique_ptr< TracerImpl >( new MemTracerImpl );
+}
 
 } // basic

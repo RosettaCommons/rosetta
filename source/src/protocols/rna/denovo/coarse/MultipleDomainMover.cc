@@ -49,7 +49,6 @@
 #include <sstream>
 
 using namespace core;
-using basic::T;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 

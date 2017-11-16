@@ -52,7 +52,7 @@ namespace core {
 namespace optimization {
 namespace symmetry {
 
-static THREAD_LOCAL basic::Tracer TR( "core.optimize" );
+static basic::Tracer TR( "core.optimize" );
 
 
 ///////////////////////////////////////////////////////////////////////////////

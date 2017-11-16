@@ -73,7 +73,7 @@ polymeric_termini_incomplete( conformation::Residue res ) {
 // @brief Auto-generated virtual destructor
 Ramachandran2B::~Ramachandran2B() = default;
 
-static THREAD_LOCAL basic::Tracer T( "core.scoring.Ramachandran2B" );
+static basic::Tracer T( "core.scoring.Ramachandran2B" );
 
 Real const Ramachandran2B::binw_( 10.0 );
 

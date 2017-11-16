@@ -70,7 +70,7 @@
 //#include <basic/options/keys/pick.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 
 OPT_1GRP_KEY( File, pick, f )
@@ -91,181 +91,181 @@ using namespace ObjexxFCL::format;
 
 class ThisApplication  {
 public:
-  ThisApplication();
-  static void register_options();
-  void setup();
-  void run();
+	ThisApplication();
+	static void register_options();
+	void setup();
+	void run();
 private:
-  fragment::FragSetOP fragset_;
-  Pose aligned_;
-  std::string aligned_seq_;
-  std::string target_seq_;
-  Size frag_length_;
-  core::id::SequenceMapping mapping_;
+	fragment::FragSetOP fragset_;
+	Pose aligned_;
+	std::string aligned_seq_;
+	std::string target_seq_;
+	Size frag_length_;
+	core::id::SequenceMapping mapping_;
 };
 
 ThisApplication::ThisApplication()
 {}
 
 void ThisApplication::register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  NEW_OPT( pick::f ,"the structure of the aligned sequence", "aligned.pdb" );
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	NEW_OPT( pick::f ,"the structure of the aligned sequence", "aligned.pdb" );
 	NEW_OPT( pick::a ,"the alignment file ", "alignment.hhpred");
-  NEW_OPT( pick::o ,"the fragments for the target sequence", "fragout.dat" );
-  NEW_OPT( pick::no_idealize, "idealize structure", false );
-  NEW_OPT( pick::size, "size of fragments to pick", 9 );
+	NEW_OPT( pick::o ,"the fragments for the target sequence", "fragout.dat" );
+	NEW_OPT( pick::no_idealize, "idealize structure", false );
+	NEW_OPT( pick::size, "size of fragments to pick", 9 );
 }
 
 
 void make_your_own_alignment( id::SequenceMapping &mapping ) {
-  Size starts1[ 5 ] = {1, 78, 81, 136, 138 };
-  Size stops1[ 5 ] = {75, 80, 133, 136, 143 };
-  Size starts2[ 5 ] = {4, 79, 82, 135,136 };
-  Size stops2[ 5 ] = {78, 81, 134, 135, 141 };
-  for ( Size n = 0; n< 5; n++ ) {
-    for ( Size s1 = starts1[ n ], s2 = starts2[ n ]; s1<=stops1[ n ]; s1++,s2++ ) {
-      assert( s2 <= stops2[ n ] );
-      mapping.insert_aligned_residue_safe( s1, s2 );
-    }
-  }
+	Size starts1[ 5 ] = {1, 78, 81, 136, 138 };
+	Size stops1[ 5 ] = {75, 80, 133, 136, 143 };
+	Size starts2[ 5 ] = {4, 79, 82, 135,136 };
+	Size stops2[ 5 ] = {78, 81, 134, 135, 141 };
+	for ( Size n = 0; n< 5; n++ ) {
+		for ( Size s1 = starts1[ n ], s2 = starts2[ n ]; s1<=stops1[ n ]; s1++,s2++ ) {
+			assert( s2 <= stops2[ n ] );
+			mapping.insert_aligned_residue_safe( s1, s2 );
+		}
+	}
 }
 
 void ThisApplication::setup() {
-  //read it
+	//read it
 	std::string pdb_file( option[ pick::f ]() );
-  core::import_pose::pose_from_file( aligned_, pdb_file , core::import_pose::PDB_file);
-  //core::util::switch_to_residue_type_set( aligned_, chemical::CENTROID );
+	core::import_pose::pose_from_file( aligned_, pdb_file , core::import_pose::PDB_file);
+	//core::util::switch_to_residue_type_set( aligned_, chemical::CENTROID );
 
-  //idealize
-  if ( !option[ pick::no_idealize ] ) {
-    std::cerr << "idealization not implemented yet" << std::endl;
+	//idealize
+	if ( !option[ pick::no_idealize ] ) {
+		std::cerr << "idealization not implemented yet" << std::endl;
 		protocols::IdealizeMover idealizer;
 		idealizer.fast( true );
 		idealizer.apply( aligned_ );
 		aligned_.dump_pdb(  +"_ideal.pdb");
-  } else {
-    tr.Info << "stealing from structure without idealization ... hope it is already " << std::endl;
-  }
+	} else {
+		tr.Info << "stealing from structure without idealization ... hope it is already " << std::endl;
+	}
 
-  std::string const align_file( option[ pick::a ]() );
-  read_alignment_file(align_file,target_seq_, aligned_seq_, mapping_);
+	std::string const align_file( option[ pick::a ]() );
+	read_alignment_file(align_file,target_seq_, aligned_seq_, mapping_);
 	//  make_your_own_alignment( mapping_ );
-  tr.Info << "no alignment reading implemented ,,, use constant alignment " << std::endl;
-  frag_length_ = option[ pick::size ];
-  fragset_ = new ConstantLengthFragSet( frag_length_ );
+	tr.Info << "no alignment reading implemented ,,, use constant alignment " << std::endl;
+	frag_length_ = option[ pick::size ];
+	fragset_ = new ConstantLengthFragSet( frag_length_ );
 }
 
 void
 dump_movemap( kinematics::MoveMap const& mm, Size nres, std::ostream& out ) {
-  for ( Size i = 1; i<=nres; i++ ) {
-    if ( (i-1)%10 == 0 ) { out << i; continue; }
-    //large numbers take several characters... skip appropriate
-    if ( (i>=10) && (i-2)%10 == 0 ) { continue; }
-    if ( (i>=100) && (i-3)%10 == 0 ) { continue; }
-    if ( (i>=1000) && (i-4)%10 == 0 ) { continue; }
-    out << ".";
-  }
-  out << std::endl;
-  for ( Size i = 1; i<=nres; i++ ) {
-    if ( mm.get_bb( i ) ) out << 'F'; //cuttable
-    else out << '.';
-  }
-  out << std::endl;
+	for ( Size i = 1; i<=nres; i++ ) {
+		if ( (i-1)%10 == 0 ) { out << i; continue; }
+		//large numbers take several characters... skip appropriate
+		if ( (i>=10) && (i-2)%10 == 0 ) { continue; }
+		if ( (i>=100) && (i-3)%10 == 0 ) { continue; }
+		if ( (i>=1000) && (i-4)%10 == 0 ) { continue; }
+		out << ".";
+	}
+	out << std::endl;
+	for ( Size i = 1; i<=nres; i++ ) {
+		if ( mm.get_bb( i ) ) out << 'F'; //cuttable
+		else out << '.';
+	}
+	out << std::endl;
 }
 
 void dump_sequences( utility::vector1< std::string > seq, std::ostream& out ) {
-  Size nres( 0 );
-  for ( Size i = 1; i<=seq.size(); i++ ){
-    nres = std::max( nres, seq[ i ].size() );
-  }
-  for ( Size i = 1; i<=nres; i++ ) {
-    if ( (i-1)%10 == 0 ) { out << i; continue; }
-    //large numbers take several characters... skip appropriate
-    if ( (i>=10) && (i-2)%10 == 0 ) { continue; }
-    if ( (i>=100) && (i-3)%10 == 0 ) { continue; }
-    if ( (i>=1000) && (i-4)%10 == 0 ) { continue; }
-    out << ".";
-  }
-  out << std::endl;
-  for ( Size s = 1; s<=seq.size(); s++ ) {
-    for ( Size i = 1; i<=nres; i++ ) {
-      out << seq[ s][ i ];
-    }
-  }
-  out << std::endl;
+	Size nres( 0 );
+	for ( Size i = 1; i<=seq.size(); i++ ) {
+		nres = std::max( nres, seq[ i ].size() );
+	}
+	for ( Size i = 1; i<=nres; i++ ) {
+		if ( (i-1)%10 == 0 ) { out << i; continue; }
+		//large numbers take several characters... skip appropriate
+		if ( (i>=10) && (i-2)%10 == 0 ) { continue; }
+		if ( (i>=100) && (i-3)%10 == 0 ) { continue; }
+		if ( (i>=1000) && (i-4)%10 == 0 ) { continue; }
+		out << ".";
+	}
+	out << std::endl;
+	for ( Size s = 1; s<=seq.size(); s++ ) {
+		for ( Size i = 1; i<=nres; i++ ) {
+			out << seq[ s][ i ];
+		}
+	}
+	out << std::endl;
 }
 
 
 void ThisApplication::run() {
-  std::string pose_seq = aligned_.sequence();
-  if ( pose_seq.substr(0,10) != aligned_seq_ ) {
+	std::string pose_seq = aligned_.sequence();
+	if ( pose_seq.substr(0,10) != aligned_seq_ ) {
 		// tr.Error << "aligned sequence and sequence of structure are not compatible! " << std::endl;
-    tr.Error << aligned_seq_ << std::endl << pose_seq << std::endl;
-    //    return;
-  }
+		tr.Error << aligned_seq_ << std::endl << pose_seq << std::endl;
+		//    return;
+	}
 
-  //create movemap that is true for every properly aligned residue
-  //but not for phi right after gap and not for psi right before gap --> this will mean that no fragment is picked for these residues
-  // this will already be enough to take care of gaps and insertions
-  // after mm is setup we go throug target sequence and if a aligned pos is present we attempt to pick fragment at this position
-  // if it hits a gap or insertion this picking will fail.
-  kinematics::MoveMap mm;
-  mm.set_bb( false );
-  bool bConnected( true );
-  for ( Size pos = 1; pos<=mapping_.size1(); pos++ ) {
-    Size tpos = mapping_[ pos ];
-    tr.Trace << "pos: " << pos << "tpos: " << tpos << std::endl;
-    if ( tpos > 0 ) {
-      if ( bConnected ) {
+	//create movemap that is true for every properly aligned residue
+	//but not for phi right after gap and not for psi right before gap --> this will mean that no fragment is picked for these residues
+	// this will already be enough to take care of gaps and insertions
+	// after mm is setup we go throug target sequence and if a aligned pos is present we attempt to pick fragment at this position
+	// if it hits a gap or insertion this picking will fail.
+	kinematics::MoveMap mm;
+	mm.set_bb( false );
+	bool bConnected( true );
+	for ( Size pos = 1; pos<=mapping_.size1(); pos++ ) {
+		Size tpos = mapping_[ pos ];
+		tr.Trace << "pos: " << pos << "tpos: " << tpos << std::endl;
+		if ( tpos > 0 ) {
+			if ( bConnected ) {
 				mm.set_bb( tpos, true );
-      }
-      bConnected = true;
-    } else {
-      if ( bConnected ) {
+			}
+			bConnected = true;
+		} else {
+			if ( bConnected ) {
 				mm.set_bb( tpos-1, false );
-      }
-      bConnected = false;
-    }
-  }
-  tr.Trace << "insertion mask " << std::endl;
-  dump_movemap( mm, mapping_.size1(), tr.Trace );
+			}
+			bConnected = false;
+		}
+	}
+	tr.Trace << "insertion mask " << std::endl;
+	dump_movemap( mm, mapping_.size1(), tr.Trace );
 	pose::set_ss_from_phipsi( aligned_);
 	for ( Size pos = 1; pos <= 20; pos ++ ) {
 		tr.Trace << aligned_.torsion( id::TorsionID( pos, id::BB, 1 )) << " ";
 	}
 	tr.Trace << std::endl;
-  FragData frag( new BBTorsionSRFD, frag_length_ );
-  for ( Size pos = 1; pos <= mapping_.size1(); pos++ ) {
+	FragData frag( new BBTorsionSRFD, frag_length_ );
+	for ( Size pos = 1; pos <= mapping_.size1(); pos++ ) {
 		Size tpos = mapping_[ pos ];
-    if ( tpos > 0 && frag.is_applicable( mm, tpos, tpos+frag_length_ - 1/*, aligned_*/) == frag_length_ ) {
+		if ( tpos > 0 && frag.is_applicable( mm, tpos, tpos+frag_length_ - 1/*, aligned_*/) == frag_length_ ) {
 			frag.steal( aligned_, tpos, tpos + frag_length_ - 1 );
-      FrameOP frame = new Frame( pos, frag_length_ );
-      bool success = frame->add_fragment( frag.clone() );
-      assert( success );
-      fragset_->add( frame );
-    } else {
+			FrameOP frame = new Frame( pos, frag_length_ );
+			bool success = frame->add_fragment( frag.clone() );
+			assert( success );
+			fragset_->add( frame );
+		} else {
 			tr.Info << "no frag at pos " << pos << std::endl;
 		}
-  }
+	}
 
-  utility::io::ozstream dump_frag( option[ pick::o ]() );
-  Size ct( 1 );
-  for ( FrameIterator it=fragset_->begin(), eit=fragset_->end(); it!=eit; ++it, ++ct ) {
-    tr.Trace << ct << std::endl;
-    (*it)->show( dump_frag );
-  }
+	utility::io::ozstream dump_frag( option[ pick::o ]() );
+	Size ct( 1 );
+	for ( FrameIterator it=fragset_->begin(), eit=fragset_->end(); it!=eit; ++it, ++ct ) {
+		tr.Trace << ct << std::endl;
+		(*it)->show( dump_frag );
+	}
 }
 
 int main( int argc, char** argv ) {
 	try{
-  ThisApplication::register_options();
-  devel::init( argc, argv );
+		ThisApplication::register_options();
+		devel::init( argc, argv );
 
-  ThisApplication app;
-  app.setup();
+		ThisApplication app;
+		app.setup();
 
-  app.run();
+		app.run();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

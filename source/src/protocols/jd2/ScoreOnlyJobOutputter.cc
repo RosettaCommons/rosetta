@@ -28,7 +28,7 @@
 namespace protocols {
 namespace jd2 {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.ScoreOnlyJobOutputter" );
+static basic::Tracer TR( "protocols.jd2.ScoreOnlyJobOutputter" );
 
 ScoreOnlyJobOutputter::ScoreOnlyJobOutputter(): FileJobOutputter()
 {

@@ -29,7 +29,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.packer.util" );
+static basic::Tracer TR( "protocols.stepwise.modeler.packer.util" );
 
 using namespace core::scoring;
 using namespace core;

@@ -87,7 +87,7 @@
 //      in certain situations. The code below contains check statements to
 //      prevent double-counting in these situations.
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.VirtualSugarJustInTimeInstantiator" );
+static basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.VirtualSugarJustInTimeInstantiator" );
 
 using namespace core;
 using namespace core::pose;

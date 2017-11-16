@@ -40,7 +40,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.HelixBendFilter" );
+static basic::Tracer TR( "protocols.fldsgn.filters.HelixBendFilter" );
 
 namespace protocols {
 namespace fldsgn {

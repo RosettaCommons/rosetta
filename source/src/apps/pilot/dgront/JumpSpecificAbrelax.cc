@@ -190,7 +190,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.JumpSpecificAbrelax" );
+static basic::Tracer tr( "protocols.abinitio.JumpSpecificAbrelax" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //Definition of new OptionKeys
@@ -314,7 +314,7 @@ void protocols::abinitio::JumpSpecificAbrelax::register_options() {
 	NEW_OPT( abinitio::process_store, "run process_decoy on each structure in the structure store", false );
 	NEW_OPT( abinitio::fix_residues_to_native, "these residues torsions are copied from native and fixed",0);
 	NEW_OPT( abinitio::return_full_atom, "return a full-atom structure even if no relax is done", false );
-// new options that haven't been defined in global option file
+	// new options that haven't been defined in global option file
 
 	NEW_OPT( loopfcst::use_general_protocol, "use the new machinery around classes KinematicXXX", false );
 	NEW_OPT( loopfcst::coord_cst_weight, "use coord constraints for template", 0.0 );
@@ -379,7 +379,7 @@ void protocols::abinitio::JumpSpecificAbrelax::register_options() {
 	NEW_OPT( templates::config,"read a list of templates and alignments","templates.dat");
 	NEW_OPT( templates::pairings, "use pairings from templates",false);
 
-	//large default number means all frags are used	if this option is not specified
+	//large default number means all frags are used if this option is not specified
 	NEW_OPT( templates::min_nr_large_frags, "how many large fragments should be present", 100000 );
 	NEW_OPT( templates::min_nr_small_frags, "how many small fragments should be present", 100000 );
 
@@ -392,7 +392,7 @@ void protocols::abinitio::JumpSpecificAbrelax::register_options() {
 	NEW_OPT( templates::no_pick_fragments, "no further fragment picking from templates", false);
 	NEW_OPT( templates::pick_multiple_sizes,"pick 9mers, 18mers and 27mers",false);
 	NEW_OPT( templates::strand_constraint,"use the template-based strand-constraints",false);
-	//	NEW_OPT( homologs::steal,"steal fragments from homologs", true);
+	// NEW_OPT( homologs::steal,"steal fragments from homologs", true);
 
 	NEW_OPT( frags::nr_large_copies, "make N copies for each standard 9mer (or so) fragment",1 );
 	NEW_OPT( frags::annotate, "read the annotation from the rosetta++ fragment file", false );
@@ -500,9 +500,9 @@ void JumpSpecificAbrelax::setup() {
 #endif
 
 		core::util::switch_to_residue_type_set( *native_pose_, chemical::CENTROID ); //so that in do_rerun the native pose is the same as the other poses
-		//		for ( Size i = 1; i<=native_pose_->size(); i++ ) {
-		//			std::cout << native_pose_->phi(i) << ' ' << native_pose_->psi(i) << std::endl;
-		//		}
+		//  for ( Size i = 1; i<=native_pose_->size(); i++ ) {
+		//   std::cout << native_pose_->phi(i) << ' ' << native_pose_->psi(i) << std::endl;
+		//  }
 	}
 
 	// specify sequence -- from fasta file or native_pose
@@ -526,18 +526,18 @@ void JumpSpecificAbrelax::setup() {
 	if ( native_pose_ ) {
 		if ( option[ in::file::native_exclude_res ].user() ) {
 			add_evaluation( new SelectRmsdEvaluator(
-						native_pose_,
-						invert_exclude_residues( native_pose_->size(), option[ in::file::native_exclude_res ]()),
-						native_tag)
+				native_pose_,
+				invert_exclude_residues( native_pose_->size(), option[ in::file::native_exclude_res ]()),
+				native_tag)
 			);
 			if ( option[ bGDT ]() ) {
 				add_evaluation( new SelectGdtEvaluator(
-						native_pose_,
-						invert_exclude_residues( native_pose_->size(), option[ in::file::native_exclude_res ]()),
-						native_tag)
+					native_pose_,
+					invert_exclude_residues( native_pose_->size(), option[ in::file::native_exclude_res ]()),
+					native_tag)
 				);
 			}
-		} else if ( option[ rmsd_residues ].user() ){
+		} else if ( option[ rmsd_residues ].user() ) {
 			core::Size start = option[ rmsd_residues ]()[ 1 ];
 			Size end = option[ rmsd_residues ]()[ 2 ];
 			add_evaluation( new RmsdEvaluator( native_pose_, start, end,  native_tag, option[ bGDT ]() ) );
@@ -572,31 +572,31 @@ void JumpSpecificAbrelax::setup() {
 // /// it is probably due to random placement of the variant atoms -> short minimization and they sit in the right place
 // /// only small improvement when called after fold()
 // void JumpSpecificAbrelax::fix_chainbreaks( pose::Pose &pose ) {
-// 	using namespace kinematics;
-// 	using namespace basic::options::OptionKeys;
+//  using namespace kinematics;
+//  using namespace basic::options::OptionKeys;
 
-// 	scorefxn_->set_weight( scoring::linear_chainbreak, 1.0 );
-// 	FoldTree const &f ( pose.fold_tree() );
+//  scorefxn_->set_weight( scoring::linear_chainbreak, 1.0 );
+//  FoldTree const &f ( pose.fold_tree() );
 
-// 	// make a MoveMap
-// 	kinematics::MoveMapOP movemap = new kinematics::MoveMap;
-// 	// disallow bb moves
-// 	movemap->set_bb( false );
+//  // make a MoveMap
+//  kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+//  // disallow bb moves
+//  movemap->set_bb( false );
 
-// 	for ( int i = 1; i<=f.num_cutpoint(); i++ ) {
-// 		Size cut = f.cutpoint( i );
-// 		movemap->set_bb( cut, true );
-// 		movemap->set_bb( cut+1, true );
-// 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cut );
-// 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cut+1 );
-// 	}
+//  for ( int i = 1; i<=f.num_cutpoint(); i++ ) {
+//   Size cut = f.cutpoint( i );
+//   movemap->set_bb( cut, true );
+//   movemap->set_bb( cut+1, true );
+//   core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cut );
+//   core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cut+1 );
+//  }
 
-// 	protocols::simple_moves::MinMoverOP min_move_ = new protocols::simple_moves::MinMover;
-// 	min_move_->movemap( movemap );
-// 	min_move_->min_type( "lbfgs_armijo_nonmonotone" );
-// 	//get currently used score_function...
-// 	min_move_->score_function( scorefxn_ );
-// 	min_move_->apply( pose );
+//  protocols::simple_moves::MinMoverOP min_move_ = new protocols::simple_moves::MinMover;
+//  min_move_->movemap( movemap );
+//  min_move_->min_type( "lbfgs_armijo_nonmonotone" );
+//  //get currently used score_function...
+//  min_move_->score_function( scorefxn_ );
+//  min_move_->apply( pose );
 // }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool JumpSpecificAbrelax::close_loops( pose::Pose &pose, scoring::ScoreFunctionOP scorefxn, std::string const& tag /*for checkpoints*/ ) {
@@ -640,10 +640,10 @@ bool JumpSpecificAbrelax::close_loops( pose::Pose &pose, scoring::ScoreFunctionO
 /// otherwise you can also use "manual" code right here in process_decoy --> this will only appear in final
 /// silent_out and silent_score - files.
 void JumpSpecificAbrelax::process_decoy(
-	 pose::Pose &pose,
-	 scoring::ScoreFunction const& scorefxn,
-	 std::string tag,
-	 io::silent::ProteinSilentStruct &pss ) const
+	pose::Pose &pose,
+	scoring::ScoreFunction const& scorefxn,
+	std::string tag,
+	io::silent::ProteinSilentStruct &pss ) const
 {
 	using namespace basic::options::OptionKeys;
 	//pose.dump_pdb("test.pdb");
@@ -674,7 +674,7 @@ void JumpSpecificAbrelax::process_decoy(
 void JumpSpecificAbrelax::initialize_constraint_forest( pose::Pose & pose ) {
 	using namespace basic::options::OptionKeys;
 	if ( option[ constraints::forest_file ].user() ) {
-		if( ! constraint_forest_ ) {
+		if ( ! constraint_forest_ ) {
 			tr.Info << "read ConstraintForest... : " << std::endl;
 			constraint_forest_ = ConstraintIO::get_instance()->
 				read_constraint_forest( option[ constraints::forest_file ](), pose );
@@ -696,10 +696,10 @@ void JumpSpecificAbrelax::add_constraints( pose::Pose & pose ) {
 
 	if ( bFirst ) {
 		if ( option[ constraints::cst_file ].user() ) {
-				// reads and sets constraints
-				tr.Info << "read constraints... : " << std::endl;
-				cstset_ = ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_file_option(), new ConstraintSet, pose );
-	}
+			// reads and sets constraints
+			tr.Info << "read constraints... : " << std::endl;
+			cstset_ = ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_file_option(), new ConstraintSet, pose );
+		}
 	}
 	if ( constraint_forest_ ) {
 		if ( !cstset_ ) cstset_ = new ConstraintSet;
@@ -723,12 +723,12 @@ void JumpSpecificAbrelax::add_constraints( pose::Pose & pose ) {
 					utility_exit_with_message(" did not find topology_file: " + std::string( option[ jumps::topology_file ]() ) );
 				}
 			} else {
-					utility_exit_with_message(" strand_constraint nees a topology info: either via templates or -topology_file ");
+				utility_exit_with_message(" strand_constraint nees a topology info: either via templates or -topology_file ");
 			}
 			cstset_->add_constraints( my_strand_cst );
 			add_evaluation( new evaluation::ConstraintEvaluator( "strand", my_strand_cst ) );
 
-			if ( native_pose_ ) {//just a temporary hack to test the StrandConstraint
+			if ( native_pose_ ) { //just a temporary hack to test the StrandConstraint
 				pose::Pose test_pose = *native_pose_;
 				test_pose.add_constraints( my_strand_cst );
 
@@ -750,8 +750,8 @@ void JumpSpecificAbrelax::add_constraints( pose::Pose & pose ) {
 
 	if ( option[ constraints::cull_with_native ].user() && native_pose_ ) {
 		tr.Warning << "************************************************************************************\n"
-						<< "*********************  CULL CONSTRAINTS WITH NATIVE STRUCTURE *********************\n"
-						<< "************************************************************************************\n" << std::endl;
+			<< "*********************  CULL CONSTRAINTS WITH NATIVE STRUCTURE *********************\n"
+			<< "************************************************************************************\n" << std::endl;
 		ConstraintCOPs filtered;
 		core::scoring::constraints::cull_violators( cstset_->get_all_constraints(),
 			filtered, *native_pose_, option[ constraints::cull_with_native ]() );
@@ -784,7 +784,7 @@ public:
 		core::kinematics::MoveMapCOP movemap
 	) : ClassicAbinitio( fragset_large, fragset_large, movemap ) {};
 
-	Stage1Sampler( protocols::abinitio::FragmentMoverOP brute_move_large	)
+	Stage1Sampler( protocols::abinitio::FragmentMoverOP brute_move_large )
 	: ClassicAbinitio( brute_move_large, brute_move_large, brute_move_large, 1 /*dummy*/ ) {};
 
 	virtual void apply( core::pose::Pose &pose );
@@ -829,7 +829,7 @@ void JumpSpecificAbrelax::do_rerun() {
 
 	core::io::silent::SilentFileDataOP outsfd( NULL );
 	if ( option[ out::file::silent ].user() ) {
-		outsfd = new	core::io::silent::SilentFileData();
+		outsfd = new core::io::silent::SilentFileData();
 	}
 
 	scoring::ScoreFunctionOP scorefxn( NULL );
@@ -845,18 +845,18 @@ void JumpSpecificAbrelax::do_rerun() {
 			std::string tag = it->decoy_tag();
 			if ( option[ tag_selector ].user() == 0 || std::find( option[ tag_selector ]().begin(), option[ tag_selector ]().end(), tag ) != option[ tag_selector ]().end() ) {
 				if ( option[ in::file::fullatom ].user() ) {
-						it->fill_pose( pose,
-							option[ in::file::fullatom ] ?
-							*(chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD )) :
-							*(chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ) ));
-					}	else {
-						it->fill_pose( pose );
-					}
-					//      if ( tag == "NATIVE" ) pose = *native_pose_; // replace structure with NATIVE so that we don't suffer from non-idealized stuff
+					it->fill_pose( pose,
+						option[ in::file::fullatom ] ?
+						*(chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD )) :
+						*(chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ) ));
+				} else {
+					it->fill_pose( pose );
+				}
+				//      if ( tag == "NATIVE" ) pose = *native_pose_; // replace structure with NATIVE so that we don't suffer from non-idealized stuff
 				add_constraints( pose );
 				scorefxn = generate_scorefxn( pose.is_fullatom() );
 				//screen output
-				if ( sfd.size() < 10 )	{
+				if ( sfd.size() < 10 ) {
 					tr.Info << tag << " " << std::endl;
 				} else {
 					if ( (ct++ % 50) == 0 ) {
@@ -866,14 +866,14 @@ void JumpSpecificAbrelax::do_rerun() {
 				}
 
 				// set score terms
-				//		if ( pose.fold_tree().num_cutpoint() != 0 ) {
-					//  activate the CUTPOINTS by setting the pose variants -- is done in SilentFile now...
-					//					JumpSample jumps( pose.fold_tree() );
-					//					jumps.add_chainbreaks( pose );
-					// and set score term
-					scorefxn->set_weight( scoring::linear_chainbreak, 1.0 );
-					scorefxn->set_weight( scoring::overlap_chainbreak, 1.0 );
-					//}
+				//  if ( pose.fold_tree().num_cutpoint() != 0 ) {
+				//  activate the CUTPOINTS by setting the pose variants -- is done in SilentFile now...
+				//     JumpSample jumps( pose.fold_tree() );
+				//     jumps.add_chainbreaks( pose );
+				// and set score term
+				scorefxn->set_weight( scoring::linear_chainbreak, 1.0 );
+				scorefxn->set_weight( scoring::overlap_chainbreak, 1.0 );
+				//}
 
 
 				if ( option[ loop::close_loops ] ) {
@@ -886,7 +886,7 @@ void JumpSpecificAbrelax::do_rerun() {
 				tr.Info << "Total clashes " << mr.value() << std::endl;
 
 				bool passes_filters = check_filters( pose );
-				if( !passes_filters ) {
+				if ( !passes_filters ) {
 					tag = "F_"+tag.substr(2);
 				}
 
@@ -1003,15 +1003,15 @@ void JumpSpecificAbrelax::do_distributed_rerun() {
 		tr.Info << "Starting " << jobdist.get_current_output_tag() << " ..." << std::endl;
 		tr.Info << "read " << curr_job->input_tag() << "..." << std::endl;
 		Pose pose;
-		//		ResidueTypeSetOP residue_types;
-		//		if ( option[ in:file:fullatom ] ) {
-		//		}
+		//  ResidueTypeSetOP residue_types;
+		//  if ( option[ in:file:fullatom ] ) {
+		//  }
 		sfd.get_structure( curr_job->input_tag() ).fill_pose( pose );/*,
-					*chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID )
-					);*/
+		*chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID )
+		);*/
 		std::string tag = jobdist.get_current_output_tag();
 
-		if( option[ OptionKeys::loops::random_grow_loops_by ].user() ){
+		if ( option[ OptionKeys::loops::random_grow_loops_by ].user() ) {
 			protocols::loops::LoopMover loopmover( loops_in_ );
 			loopmover.grow_all_loops( pose, option[ OptionKeys::loops::random_grow_loops_by ]() );
 			loops_in_ = loopmover.loops();
@@ -1057,18 +1057,18 @@ void JumpSpecificAbrelax::do_distributed_rerun() {
 				relax( pose, fullatom_scorefxn, jobdist.get_current_output_tag() );
 			} else { //cannot relax
 				//need proper atom set to score with full-atom
-				//				if ( !pose.is_fullatom() ) core::util::switch_to_residue_type_set( pose, chemical::FA_STANDARD );
+				//    if ( !pose.is_fullatom() ) core::util::switch_to_residue_type_set( pose, chemical::FA_STANDARD );
 			}
 		} // if ( bRelax_ )
 
 		// process decoy if this hasn't happened yet
-			// analyze result
+		// analyze result
 		std::string output_tag = jobdist.get_current_output_tag();
 		if ( !passes_filters  && loop_closure_failed ) {
 			output_tag = "X_"+output_tag.substr(2);
-		} else if( loop_closure_failed ) {
+		} else if ( loop_closure_failed ) {
 			output_tag = "C_"+output_tag.substr(2);
-		} else if( !passes_filters ) {
+		} else if ( !passes_filters ) {
 			output_tag = "F_"+output_tag.substr(2);
 		}
 
@@ -1108,7 +1108,7 @@ void JumpSpecificAbrelax::copy_structure( core::pose::Pose & extended_pose, core
 	// chu workaround when folding with ligand/metal
 	Size protein_len = 0;
 	for ( Size i = 1; i <= seg_len; ++i ) {
-		if( extended_pose.residue(i).is_protein() && desired_pose.residue(i).is_protein() ) {
+		if ( extended_pose.residue(i).is_protein() && desired_pose.residue(i).is_protein() ) {
 			protein_len ++;
 		}
 	}
@@ -1117,9 +1117,9 @@ void JumpSpecificAbrelax::copy_structure( core::pose::Pose & extended_pose, core
 
 	//create apropriate length FragData object
 	FragData frag( new BBTorsionSRFD, seg_len );
-	//	for ( Size pos = 1; pos<= seg_len; pos++ ) {
-	//		frag.add_residue( new BBTorsionSRFD( nbb, native_pose_->secstruct( pos ), 'X' ) );
-	//	}
+	// for ( Size pos = 1; pos<= seg_len; pos++ ) {
+	//  frag.add_residue( new BBTorsionSRFD( nbb, native_pose_->secstruct( pos ), 'X' ) );
+	// }
 
 	// get torsion angles from native pose
 	frag.steal( desired_pose, long_frame );
@@ -1133,10 +1133,10 @@ void JumpSpecificAbrelax::copy_structure( core::pose::Pose & extended_pose, core
 void JumpSpecificAbrelax::generate_extended_pose( core::pose::Pose &extended_pose, std::string const& sequence ) const {
 
 	core::pose::make_pose_from_sequence(
-		 extended_pose,
-		 sequence,
-		 *( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ))
-	 );
+		extended_pose,
+		sequence,
+		*( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ))
+	);
 
 	// make extended chain
 	for ( Size pos = 1; pos <= extended_pose.size(); pos++ ) {
@@ -1145,9 +1145,9 @@ void JumpSpecificAbrelax::generate_extended_pose( core::pose::Pose &extended_pos
 		extended_pose.set_psi( pos, 150);
 		extended_pose.set_omega( pos, 180 );
 	}
-	tr.Debug 	<< "CHECK PHI/PSI/OMEGA pos 8: " << extended_pose.phi( 8 ) <<  " "
-						<< extended_pose.psi( 8 ) << " " << extended_pose.omega( 8 )
-						<< std::endl;
+	tr.Debug  << "CHECK PHI/PSI/OMEGA pos 8: " << extended_pose.phi( 8 ) <<  " "
+		<< extended_pose.psi( 8 ) << " " << extended_pose.omega( 8 )
+		<< std::endl;
 
 #ifdef BOINC_GRAPHICS
 	// attach boinc graphics pose observer
@@ -1164,40 +1164,40 @@ void JumpSpecificAbrelax::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& 
 	using namespace basic::options::OptionKeys;
 
 	std::string frag_large_file, frag_small_file;
-	if (option[ in::file::fragA ].user()) {
+	if ( option[ in::file::fragA ].user() ) {
 		frag_large_file  = option[ in::file::fragA ]();
 	} else {
 		frag_large_file  = option[ in::file::frag9 ]();
 	}
 
-	if (option[ in::file::fragB ].user()) {
+	if ( option[ in::file::fragB ].user() ) {
 		frag_small_file  = option[ in::file::fragB ]();
 	} else {
 		frag_small_file  = option[ in::file::frag3 ]();
 	}
 
 
-//   ConstantLengthFragSetOP _fragset_large = new ConstantLengthFragSet;
-//   ConstantLengthFragSetOP _fragset_small = new ConstantLengthFragSet;
-//   _fragset_large->read_fragment_file( frag_large_file, option[ OptionKeys::abinitio::number_9mer_frags ], option[ frags::nr_large_copies ], option[ frags::annotate ] );
-//   _fragset_small->read_fragment_file( frag_small_file, option[ OptionKeys::abinitio::number_3mer_frags ] );
+	//   ConstantLengthFragSetOP _fragset_large = new ConstantLengthFragSet;
+	//   ConstantLengthFragSetOP _fragset_small = new ConstantLengthFragSet;
+	//   _fragset_large->read_fragment_file( frag_large_file, option[ OptionKeys::abinitio::number_9mer_frags ], option[ frags::nr_large_copies ], option[ frags::annotate ] );
+	//   _fragset_small->read_fragment_file( frag_small_file, option[ OptionKeys::abinitio::number_3mer_frags ] );
 
-// 	//copy pointers to member_variables
-// 	fragset_large_ = _fragset_large;
-// 	fragset_small_ = _fragset_small;
+	//  //copy pointers to member_variables
+	//  fragset_large_ = _fragset_large;
+	//  fragset_small_ = _fragset_small;
 
-//	fragset_large_ = FragmentIO().read( frag_large_file );
+	// fragset_large_ = FragmentIO().read( frag_large_file );
 	fragset_large_ = FragmentIO(
 		option[ OptionKeys::abinitio::number_9mer_frags ](),
 		option[ OptionKeys::frags::nr_large_copies ](),
 		option[ OptionKeys::frags::annotate ]()
-	).read( frag_large_file );
+		).read( frag_large_file );
 
 	fragset_small_ = FragmentIO(
 		option[ OptionKeys::abinitio::number_3mer_frags ],
 		1, //nr_copies
 		option[ OptionKeys::frags::annotate ]
-	).read( frag_small_file );
+		).read( frag_small_file );
 
 	if ( templates_ && !option[ templates::no_pick_fragments ]() ) {
 		if ( option[ templates::vary_frag_size ] ) {
@@ -1205,10 +1205,10 @@ void JumpSpecificAbrelax::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& 
 			templates_->pick_large_frags( *fragset_templates_, new BBTorsionSRFD, option[ templates::nr_large_copies ] );
 			tr.Info << " merge template frags with standard library " << std::endl;
 			fragset_large_ = merge_frags(
-																	 *fragset_templates_,
-																	 *fragset_large_,
-																	 option[ templates::min_nr_large_frags ],
-																	 true /* random selection of fill frags */
+				*fragset_templates_,
+				*fragset_large_,
+				option[ templates::min_nr_large_frags ],
+				true /* random selection of fill frags */
 			);
 		} else { // use old-way of picking:
 			//pick torsion fragments fragset_large
@@ -1217,23 +1217,23 @@ void JumpSpecificAbrelax::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& 
 				Size const min_nr_frags( option[ templates::min_nr_large_frags ] );
 				Size const nr_large_copies( option[ templates::nr_large_copies ] );
 				fragset_large_ = templates_->pick_frags(
-								fragset_large_,
-								new FragData( new BBTorsionSRFD, fragset_large_->max_frag_length() ),
-								min_nr_frags,
-								nr_large_copies );
+					fragset_large_,
+					new FragData( new BBTorsionSRFD, fragset_large_->max_frag_length() ),
+					min_nr_frags,
+					nr_large_copies );
 			} else {
 				Size nr = templates_->pick_frags( *fragset_large_, new FragData( new BBTorsionSRFD, fragset_large_->max_frag_length() ) );
 				tr.Info << nr << " " << fragset_large_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 			}
 			if ( option[ templates::pick_multiple_sizes ] ) {
 				Size nr = templates_->pick_frags(
-								*fragset_large_,
-								new FragData( new BBTorsionSRFD, 18 )
+					*fragset_large_,
+					new FragData( new BBTorsionSRFD, 18 )
 				);
 				tr.Info << nr << " 18mer fragments picked from homolog structures" << std::endl;
 				nr = templates_->pick_frags(
-								*fragset_large_,
-								new FragData( new BBTorsionSRFD, 24 )
+					*fragset_large_,
+					new FragData( new BBTorsionSRFD, 24 )
 				);
 				tr.Info << nr << " 27mer fragments picked from homolog structures" << std::endl;
 			}
@@ -1243,10 +1243,10 @@ void JumpSpecificAbrelax::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& 
 			Size const min_nr_frags( option[ templates::min_nr_small_frags ] );
 			Size const nr_small_copies( option[ templates::nr_small_copies ] );
 			fragset_small_ = templates_->pick_frags(
-								fragset_small_,
-								 new FragData( new BBTorsionSRFD, fragset_small_->max_frag_length() ),
-								 min_nr_frags,
-								 nr_small_copies );
+				fragset_small_,
+				new FragData( new BBTorsionSRFD, fragset_small_->max_frag_length() ),
+				min_nr_frags,
+				nr_small_copies );
 		} else {
 			//pick torsion fragments fragset_small
 			Size nr2 = templates_->pick_frags( *fragset_small_, new FragData( new BBTorsionSRFD, fragset_small_->max_frag_length() ) );
@@ -1254,13 +1254,17 @@ void JumpSpecificAbrelax::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& 
 		}
 	} // templates && !templates:no_pick_fragments
 
-	if ( option[ steal ]() && native_pose_ && ( option[ steal_3mers ]() || option[ steal_9mers ]() )) {
+	if ( option[ steal ]() && native_pose_ && ( option[ steal_3mers ]() || option[ steal_9mers ]() ) ) {
 		tr.Info << " stealing fragments from native pose: ATTENTION: native pose has to be IDEALIZED!!! " << std::endl;
-		//		utility_exit_with_message(" stealing fragments from pose: currently not supported! ask Oliver " );
-		if ( option[ steal_9mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_large_,
-			new FragData( new BBTorsionSRFD, fragset_large_->max_frag_length() ) );
-		if ( option[ steal_3mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_small_,
-			new FragData( new BBTorsionSRFD, fragset_small_->max_frag_length() ) );
+		//  utility_exit_with_message(" stealing fragments from pose: currently not supported! ask Oliver " );
+		if ( option[ steal_9mers ]() ) {
+			steal_frag_set_from_pose( *native_pose_, *fragset_large_,
+				new FragData( new BBTorsionSRFD, fragset_large_->max_frag_length() ) );
+		}
+		if ( option[ steal_3mers ]() ) {
+			steal_frag_set_from_pose( *native_pose_, *fragset_small_,
+				new FragData( new BBTorsionSRFD, fragset_small_->max_frag_length() ) );
+		}
 	} else if ( option[ steal ]() && !native_pose_ && !templates_ ) {
 		tr.Warning << "cannot steal fragments without native pose or homologue structures " << std::endl;
 	}
@@ -1285,8 +1289,9 @@ void JumpSpecificAbrelax::setup_templates() {
 
 	bool const bTemplates( option[ templates::config ].user() );
 	if ( !bTemplates ) { // jump-out if not used
-		if ( option[ templates::pairings ].user() )
+		if ( option[ templates::pairings ].user() ) {
 			tr.Warning << "option templates:pairings ignored... specify templates:config!" << std::endl;
+		}
 		//...
 		return;
 	}
@@ -1297,7 +1302,7 @@ void JumpSpecificAbrelax::setup_templates() {
 	// want to pick fragments from templates... make sure they are not initialized yet
 	assert( !fragset_large_ );
 
-	if( !templates_->is_good() ){
+	if ( !templates_->is_good() ) {
 		utility_exit_with_message("ERRORS occured during template setup. check BAD_SEQUENCES file!");
 	}
 
@@ -1306,7 +1311,7 @@ void JumpSpecificAbrelax::setup_templates() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @detail called by setup_fold(). Read jump definitions / barcodes (not yet) etc.
 /// if jump_def_ points to an object we will use JumpFoldConstraint-protocol in fold()
-void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
+void JumpSpecificAbrelax::setup_jumps( pose::Pose const& extended_pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	// setup jumps
@@ -1326,8 +1331,8 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 	}
 
 	if ( option[ jumps::fix_jumps ].user() ) {
-	  JumpSetup *ptr = new JumpSetup( extended_pose.size() );
-	  ptr->read_file( option[ jumps::fix_jumps ]() );
+		JumpSetup *ptr = new JumpSetup( extended_pose.size() );
+		ptr->read_file( option[ jumps::fix_jumps ]() );
 		// initialize jumping
 		jumping::JumpSample current_jumps( ptr->create_jump_sample() );
 		if ( native_pose_ && !current_jumps.has_orientation_and_pleating() ) {
@@ -1335,39 +1340,39 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 			current_jumps.steal_orientation_and_pleating( *native_pose_ );
 			ptr->set_jump_sample( current_jumps );
 		}
-	  jump_def_ = ptr;
+		jump_def_ = ptr;
 	}
 	if ( option[ dgront::jump_from_library ].user() ) {
 		utility::vector1< int> const& jump_point( option[ dgront::jump_from_library ]() );
 		std::cout << "abinitio:dgront:jump_from_library Jumping parameters are: [";
-		for(core::Size i=1;i<=jump_point.size();i++)
+		for ( core::Size i=1; i<=jump_point.size(); i++ ) {
 			std::cout<<jump_point[i]<<" ";
-		  std::cout<<"]"<<std::endl;
-		  if(jump_point.size()==4) {
-		    BaseJumpSetup *ptr = new LibraryJumpSetup( extended_pose.size(), ss_def_, native_pose_,jump_point[1], jump_point[2],jump_point[3], jump_point[4]);
-		    std::cout << "abinitio:dgront:jump_from_library Jumping position is: " << jump_point[1]<< jump_point[2]<<jump_point[3]<< jump_point[4]<<std::endl;
-		    jump_def_ = ptr;
-		  }
-		  else {
-			  int nJumps = (int)(jump_point.size() / 4);
-			  int* ir = new int[nJumps];
-			  int* jr = new int[nJumps];
-			  int* o = new int[nJumps];
-			  int* p = new int[nJumps];
-			  for(int i=0;i<nJumps;i++) {
-				  ir[i] = jump_point[i*4+1];
-				  jr[i] = jump_point[i*4+2];
-				  o[i] = jump_point[i*4+3];
-				  p[i] = jump_point[i*4+4];
-			  }
-			  BaseJumpSetup *ptr = new LibraryJumpSetup( extended_pose.size(), ss_def_, native_pose_,nJumps,ir, jr,o, p);
-			  std::cout << "abinitio:dgront:jump_from_library Jumping with " << nJumps<< " jumps"<<std::endl;
-			  jump_def_ = ptr;
-			  delete ir;
-			  delete jr;
-			  delete o;
-			  delete p;
-		  }
+		}
+		std::cout<<"]"<<std::endl;
+		if ( jump_point.size()==4 ) {
+			BaseJumpSetup *ptr = new LibraryJumpSetup( extended_pose.size(), ss_def_, native_pose_,jump_point[1], jump_point[2],jump_point[3], jump_point[4]);
+			std::cout << "abinitio:dgront:jump_from_library Jumping position is: " << jump_point[1]<< jump_point[2]<<jump_point[3]<< jump_point[4]<<std::endl;
+			jump_def_ = ptr;
+		} else {
+			int nJumps = (int)(jump_point.size() / 4);
+			int* ir = new int[nJumps];
+			int* jr = new int[nJumps];
+			int* o = new int[nJumps];
+			int* p = new int[nJumps];
+			for ( int i=0; i<nJumps; i++ ) {
+				ir[i] = jump_point[i*4+1];
+				jr[i] = jump_point[i*4+2];
+				o[i] = jump_point[i*4+3];
+				p[i] = jump_point[i*4+4];
+			}
+			BaseJumpSetup *ptr = new LibraryJumpSetup( extended_pose.size(), ss_def_, native_pose_,nJumps,ir, jr,o, p);
+			std::cout << "abinitio:dgront:jump_from_library Jumping with " << nJumps<< " jumps"<<std::endl;
+			jump_def_ = ptr;
+			delete ir;
+			delete jr;
+			delete o;
+			delete p;
+		}
 	}
 
 	if ( option[ jumps::jump_lib ].user() ) {
@@ -1388,11 +1393,12 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 		ss_def_->show( tr.Trace );
 		// get pairings file
 		PairingsList pairings;
-		if ( option[ jumps::pairing_file ].user() )
+		if ( option[ jumps::pairing_file ].user() ) {
 			read_pairing_list( option[ jumps::pairing_file ](), pairings );
-		else if ( option[ constraints::forest_file ].user() )
+		} else if ( option[ constraints::forest_file ].user() ) {
 			pairings = constraint_forest_->get_pairings();
-			// perhaps get_all_pairings()?
+		}
+		// perhaps get_all_pairings()?
 
 		// done: instantiate sheet-builder
 		jump_def_ = new SheetBuilder( ss_def_, pairings, sheets );
@@ -1409,15 +1415,15 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 		jump_def_ = new TemplateJumpSetup( NULL, ss_def_, ps, helix_pairings );
 	}
 	if ( option[ constraints::forest_file ].user() ) {
-		if( jump_def_ == 0 && constraint_forest_->get_pairings().size() > 0 ) { //constraint_forest pairings but no -sheet option
+		if ( jump_def_ == 0 && constraint_forest_->get_pairings().size() > 0 ) { //constraint_forest pairings but no -sheet option
 			jump_def_ = new JumpsFromConstraintForest(extended_pose.size(),
-																							 constraint_forest_,
-																							 ss_def_->loop_fraction());
-//			jump_def_	= new JumpsFromAllPairings(
-//				extended_pose.size(),
-//				constraint_forest_->get_pairings(),
-//				ss_def_->loop_fraction()
-//			);
+				constraint_forest_,
+				ss_def_->loop_fraction());
+			//   jump_def_ = new JumpsFromAllPairings(
+			//    extended_pose.size(),
+			//    constraint_forest_->get_pairings(),
+			//    ss_def_->loop_fraction()
+			//   );
 		}
 	}
 	if ( option[ templates::pairings ] ) {
@@ -1429,14 +1435,14 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 			bDoubleDef = jump_def_ != 0;
 			jump_def_ = templates_->create_jump_def( ss_def_ );
 		}
-		//		templates_->read_pairings( option[ templates::pairings ] );
+		//  templates_->read_pairings( option[ templates::pairings ] );
 
-// 		assert( native_pose_ );
-// 		SecondaryStructureOP ss_contr = new jumping::SecondaryStructure( *native_pose_ );
-// 		utility::io::ozstream dump("ss_def__from_frags");
-// 		for ( Size i = 1; i<=ss_def_->size(); i++ ) {
-// 			dump << i << " " << ss_def_->loop_fraction()(i) << " " << ss_contr->loop_fraction()(i) << std::endl;
-// 		}
+		//   assert( native_pose_ );
+		//   SecondaryStructureOP ss_contr = new jumping::SecondaryStructure( *native_pose_ );
+		//   utility::io::ozstream dump("ss_def__from_frags");
+		//   for ( Size i = 1; i<=ss_def_->size(); i++ ) {
+		//    dump << i << " " << ss_def_->loop_fraction()(i) << " " << ss_contr->loop_fraction()(i) << std::endl;
+		//   }
 
 		// no argument means ss_def_ is taken from homologues --> loop_fraction() controls cutpoint placement
 
@@ -1464,7 +1470,7 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 ///    extended_pose to run A) with ( might actually contain native starting structure (option!) )
 ///    prot_ptr: an initialized instance of ClassicAbinitio, FoldConstraints or JumpingFoldConstraints depending on
 ///   user settings.
-void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& prot_ptr ) {
+void JumpSpecificAbrelax::setup_fold(  pose::Pose& extended_pose, ProtocolOP& prot_ptr ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	// ==========================================================================
@@ -1546,7 +1552,7 @@ void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& pr
 				core::import_pose::pose_from_file( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
 				if ( extended_pose.is_fullatom() ) utility_exit_with_message(" this centroid pose should not be a full-atom pose, no? ");
 			}
-			if( option[ OptionKeys::loops::random_grow_loops_by ].user() ){
+			if ( option[ OptionKeys::loops::random_grow_loops_by ].user() ) {
 				protocols::loops::LoopMover loopmover( loops_in_ );
 				loopmover.grow_all_loops( extended_pose, option[ OptionKeys::loops::random_grow_loops_by ]() );
 				loops_in_ = loopmover.loops();
@@ -1558,10 +1564,10 @@ void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& pr
 		core::kinematics::simple_visualize_fold_tree( extended_pose.fold_tree(), tr.Debug );
 		KinematicAbinitioOP sampler = new KinematicAbinitio( fragset_small_, fragset_large_, movemap /*this movemap will be ignored*/ );
 		ResolutionSwitcher res_switch(
-																	extended_pose,
-																	extended_pose.is_fullatom(),
-																	sampler->start_from_centroid(),
-																	sampler->return_centroid()
+			extended_pose,
+			extended_pose.is_fullatom(),
+			sampler->start_from_centroid(),
+			sampler->return_centroid()
 		);
 		if ( native_pose_ ) sampler->set_native_pose( native_pose_ );
 		sampler->set_show_viol_level( option[ viol_level ] );
@@ -1584,7 +1590,7 @@ void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& pr
 
 			KinematicAbinitioOP stage1_sampler = new KinematicAbinitio( *sampler );
 			sampler->bSkipStage1_ = true;
-	//	if ( sampling_protocol_ ) sampling_protocol_->init(  res_switch.start_pose() ); this overwrites all settings with defaults...
+			// if ( sampling_protocol_ ) sampling_protocol_->init(  res_switch.start_pose() ); this overwrites all settings with defaults...
 
 			stage1_sampler->init( res_switch.start_pose() ); //sets default options
 			stage1_sampler->bSkipStage3_ = true;
@@ -1592,23 +1598,23 @@ void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& pr
 			stage1_sampler->closure_protocol( NULL );
 			loops::Loops rigid_core( loops_in_.invert( extended_pose.size() ) );
 			controller = new DoubleLayerKinematicAbinitio(
-						 jump_def_,
-						 extended_loops_in,
-						 rigid_core,
-						 sampler,
-						 stage1_sampler,
-						 ss_def_,
-						 option[ loopfcst::coord_cst_weight ],
-						 option[ loopfcst::coord_cst_all_atom ]
+				jump_def_,
+				extended_loops_in,
+				rigid_core,
+				sampler,
+				stage1_sampler,
+				ss_def_,
+				option[ loopfcst::coord_cst_weight ],
+				option[ loopfcst::coord_cst_all_atom ]
 			);
 		} else {
 			controller = new LoopJumpFoldCst(
-							 jump_def_,
-							 loops_in_,
-							 sampler,
-							 ss_def_,
-							 option[ loopfcst::coord_cst_weight ],
-							 option[ loopfcst::coord_cst_all_atom ]
+				jump_def_,
+				loops_in_,
+				sampler,
+				ss_def_,
+				option[ loopfcst::coord_cst_weight ],
+				option[ loopfcst::coord_cst_all_atom ]
 			);
 		}
 
@@ -1639,7 +1645,7 @@ void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& pr
 			if ( native_pose_ ) pp->set_native_pose( native_pose_ ); //to steal native jumps
 			pp->set_show_viol_level( option[ viol_level ] );
 			prot_ptr = pp;
-		}	else {
+		} else {
 			if ( extended_pose.constraint_set()->has_residue_pair_constraints() ) {
 				// We have constraints: run xxxFoldConstraints
 				tr.Info << "run FoldConstraints....." << std::endl;
@@ -1802,34 +1808,34 @@ void JumpSpecificAbrelax::fold() {
 		// don't relax if we failed filters or loop_closing, or if option[ relax_with_jumps ] is true
 		bool bCanRelax = success && passes_filters && ( !loop_closure_failed || option[ OptionKeys::abinitio::relax_with_jumps ]() );
 		if ( bRelax_ ) {
-				if ( !option[ OptionKeys::loopfcst::use_general_protocol ] ) {
-					//					utility_exit_with_message("Cannot proceed (about to crash), because pose is fullatom and loopcose expects centroid. Use -use_general_protocol if you want to postrelax foldcst models.");
+			if ( !option[ OptionKeys::loopfcst::use_general_protocol ] ) {
+				//     utility_exit_with_message("Cannot proceed (about to crash), because pose is fullatom and loopcose expects centroid. Use -use_general_protocol if you want to postrelax foldcst models.");
 				//This part of code i think is obsolete and will soon disappear.");
+				if ( !fold_pose.is_fullatom() ) core::util::switch_to_residue_type_set( fold_pose, chemical::FA_STANDARD );
+			}
+			if ( bCanRelax ) {
+				if ( option[ basic::options::OptionKeys::abinitio::multifastrelax ]() ) {
+					bEndrun = multi_fast_relax( abinitio_protocol, fullatom_scorefxn, jobdist, curr_nstruct, curr_job );
+					bProcessDecoy = false;
+					if ( bEndrun ) break;
+				} else {
+					fold_pose.constraint_set( NULL );
+					//if ( abinitio_protocol.return_centroid() ) core::util::switch_to_residue_type_set( fold_pose, chemical::FA_STANDARD );
 					if ( !fold_pose.is_fullatom() ) core::util::switch_to_residue_type_set( fold_pose, chemical::FA_STANDARD );
+					relax( fold_pose, fullatom_scorefxn, jobdist.get_current_output_tag() );
 				}
-				if ( bCanRelax ) {
-					if ( option[ basic::options::OptionKeys::abinitio::multifastrelax ]() ) {
-						bEndrun = multi_fast_relax( abinitio_protocol, fullatom_scorefxn, jobdist, curr_nstruct, curr_job );
-						bProcessDecoy = false;
-						if ( bEndrun ) break;
-					} else {
-						fold_pose.constraint_set( NULL );
-						//if ( abinitio_protocol.return_centroid() ) core::util::switch_to_residue_type_set( fold_pose, chemical::FA_STANDARD );
-						if ( !fold_pose.is_fullatom() ) core::util::switch_to_residue_type_set( fold_pose, chemical::FA_STANDARD );
-						relax( fold_pose, fullatom_scorefxn, jobdist.get_current_output_tag() );
-					}
-				} else { //cannot relax
-					//need proper atom set to score with full-atom
-					if ( !fold_pose.is_fullatom() ) {
-						core::util::switch_to_residue_type_set( fold_pose, chemical::FA_STANDARD );
-					}
-					(*fullatom_scorefxn)( fold_pose );
-					if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {	//FastRelax adds another two columns, grr
-						relax::FastRelax::setPoseExtraScore( fold_pose );
-					} else {
-						relax::ClassicRelax().setPoseExtraScore( fold_pose ); // so we the same number of columns
-					}
+			} else { //cannot relax
+				//need proper atom set to score with full-atom
+				if ( !fold_pose.is_fullatom() ) {
+					core::util::switch_to_residue_type_set( fold_pose, chemical::FA_STANDARD );
 				}
+				(*fullatom_scorefxn)( fold_pose );
+				if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) { //FastRelax adds another two columns, grr
+					relax::FastRelax::setPoseExtraScore( fold_pose );
+				} else {
+					relax::ClassicRelax().setPoseExtraScore( fold_pose ); // so we the same number of columns
+				}
+			}
 		} // if ( bRelax_ )
 
 		// process decoy if this hasn't happened yet
@@ -1850,9 +1856,9 @@ void JumpSpecificAbrelax::fold() {
 
 			if ( !passes_filters  && loop_closure_failed ) {
 				new_output_tag = "X_"+new_output_tag.substr(2);
-			} else if( loop_closure_failed ) {
+			} else if ( loop_closure_failed ) {
 				new_output_tag = "C_"+new_output_tag.substr(2);
-			} else if( !passes_filters ) {
+			} else if ( !passes_filters ) {
 				new_output_tag = "F_"+new_output_tag.substr(2);
 			}
 
@@ -1871,7 +1877,7 @@ void JumpSpecificAbrelax::fold() {
 				tr.Info <<" storing intermediate stage3 and stage4 structures: these are currently not relaxed "<< std::endl;
 				Size ct( 1 );
 				for ( Protocol::StructureStore::iterator it = abinitio_protocol.structure_store().begin(),
-								eit = abinitio_protocol.structure_store().end(); ct < n_stored && it!=eit; ++it,++ct ) { //13th structure is identical to fold_pose...
+						eit = abinitio_protocol.structure_store().end(); ct < n_stored && it!=eit; ++it,++ct ) { //13th structure is identical to fold_pose...
 					io::silent::ProteinSilentStruct pss;
 					std::string extra_tag( "S" );
 					std::string current_tag( extra_tag + string_of( ct ) + "_" + output_tag.substr(2) );
@@ -1885,9 +1891,9 @@ void JumpSpecificAbrelax::fold() {
 					bool passes_filters = check_filters( *it );
 					if ( !passes_filters  && loop_closure_failed ) {
 						current_tag = "X_"+current_tag.substr(2);
-					} else if( loop_closure_failed ) {
+					} else if ( loop_closure_failed ) {
 						current_tag = "C_"+current_tag.substr(2);
-					} else if( !passes_filters ) {
+					} else if ( !passes_filters ) {
 						current_tag = "F_"+current_tag.substr(2);
 					}
 					bool bCanRelax = passes_filters && ( !loop_closure_failed || option[ OptionKeys::abinitio::relax_with_jumps ]() );
@@ -1899,7 +1905,7 @@ void JumpSpecificAbrelax::fold() {
 							//need proper atom set to score with full-atom
 							if ( !it->is_fullatom() ) core::util::switch_to_residue_type_set( *it, chemical::FA_STANDARD );
 							(*fullatom_scorefxn)( *it );
-							if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {	//FastRelax adds another two columns, grr
+							if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) { //FastRelax adds another two columns, grr
 								relax::FastRelax::setPoseExtraScore(  *it );
 							} else {
 								relax::ClassicRelax().setPoseExtraScore( *it ); // so we the same number of columns
@@ -1938,17 +1944,17 @@ bool sort_PoseWithScore( const PoseWithScore& left, const PoseWithScore& right )
 /// @detail do fast relax on multiple structures that have been visited during abinitio-protocol.
 /// MIKE: please give more documentation to this
 bool JumpSpecificAbrelax::multi_fast_relax(
-	 Protocol& abinitio_protocol,
-	 core::scoring::ScoreFunctionOP scorefxn,
-	 jobdist::PlainSilentFileJobDistributor< jobdist::BasicJobOP > jobdist,
-	 int& curr_nstruct,
-	 jobdist::BasicJobOP& curr_job
+	Protocol& abinitio_protocol,
+	core::scoring::ScoreFunctionOP scorefxn,
+	jobdist::PlainSilentFileJobDistributor< jobdist::BasicJobOP > jobdist,
+	int& curr_nstruct,
+	jobdist::BasicJobOP& curr_job
 )
 {
 	using namespace protocols::jobdist;
 	using namespace basic::options::OptionKeys;
 	std::vector < PoseWithScore > candidates;
-	for(platform::Size i=0; i < abinitio_protocol.structure_store().size(); i ++ ){
+	for ( platform::Size i=0; i < abinitio_protocol.structure_store().size(); i ++ ) {
 		pose::Pose cpose;
 
 		cpose = abinitio_protocol.structure_store()[i];
@@ -1993,9 +1999,9 @@ bool JumpSpecificAbrelax::multi_fast_relax(
 		// write to silent file
 		jobdist.dump_silent( curr_nstruct, pss );
 
-		if ( !jobdist.next_job(curr_job, curr_nstruct) ){
-		endrun = true;
-		break;
+		if ( !jobdist.next_job(curr_job, curr_nstruct) ) {
+			endrun = true;
+			break;
 		}
 	}
 	abinitio_protocol.structure_store().clear();

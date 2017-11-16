@@ -62,7 +62,7 @@
 
 using namespace protocols::protein_interface_design;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PlacementAuctionMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.PlacementAuctionMover" );
 
 namespace protocols {
 namespace protein_interface_design {

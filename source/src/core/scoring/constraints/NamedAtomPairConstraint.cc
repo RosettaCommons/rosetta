@@ -38,7 +38,7 @@
 //Auto Headers
 #include <core/id/types.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.constraints" );
+static basic::Tracer tr( "core.scoring.constraints" );
 
 
 #ifdef SERIALIZATION

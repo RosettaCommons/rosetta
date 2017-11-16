@@ -55,7 +55,7 @@
 namespace core {
 namespace pose {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.subpose_manipulation_util" );
+static basic::Tracer TR( "core.pose.subpose_manipulation_util" );
 
 void
 append_pose_to_pose(

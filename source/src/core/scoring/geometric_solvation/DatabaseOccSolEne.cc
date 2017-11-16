@@ -39,7 +39,7 @@ namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.geometric_solvation.DatabaseOccSolEne" );
+static basic::Tracer tr( "core.scoring.geometric_solvation.DatabaseOccSolEne" );
 
 /// @details ctor, reads data file. Need to configure to allow alternate tables/atom_sets
 DatabaseOccSolEne::DatabaseOccSolEne( std::string const & etable_name, Real const & min_occ_energy ):

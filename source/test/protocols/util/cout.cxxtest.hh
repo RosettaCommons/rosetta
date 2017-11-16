@@ -61,7 +61,7 @@ public:
 	///        If this test failed that mean that some of the testes functions have working 'cout'
 	///        inside them - replace it with Tracer output to fix the test.
 	void test_cout_io() {
-		basic::Tracer::super_mute(true);  // Mute all channels no mater what...
+		basic::TracerImpl::super_mute(true);  // Mute all channels no mater what...
 
 		std::stringbuf sb;
 		std::streambuf * cout_buff = std::cout.rdbuf();
@@ -89,7 +89,7 @@ public:
 		// setting back old cout streambuf
 		std::cout.rdbuf(cout_buff);
 		//std::cout << "sb=" << sb.str() << std::endl;
-		basic::Tracer::super_mute(false);  // unmute all channels
+		basic::TracerImpl::super_mute(false);  // unmute all channels
 
 		if ( sb.str() != "" ) {
 			std::cout << "Pose code contain cout statements: " << sb.str() << std::endl;

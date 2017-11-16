@@ -55,7 +55,7 @@
 #include <ObjexxFCL/format.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ChemicalShiftAnisotropy" );
+static basic::Tracer tr( "core.scoring.ChemicalShiftAnisotropy" );
 
 namespace core {
 namespace scoring {

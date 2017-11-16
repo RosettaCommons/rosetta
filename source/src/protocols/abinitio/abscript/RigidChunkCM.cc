@@ -69,7 +69,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.abscript.RigidChunkCM", basic::t_info );
+static basic::Tracer tr( "protocols.abinitio.abscript.RigidChunkCM", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

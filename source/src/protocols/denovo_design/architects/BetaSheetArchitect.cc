@@ -36,7 +36,7 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.BetaSheetArchitect" );
+static basic::Tracer TR( "protocols.denovo_design.architects.BetaSheetArchitect" );
 
 namespace protocols {
 namespace denovo_design {

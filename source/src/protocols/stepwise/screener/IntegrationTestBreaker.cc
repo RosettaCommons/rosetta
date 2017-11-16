@@ -18,7 +18,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.IntegrationTestBreaker" );
+static basic::Tracer TR( "protocols.stepwise.screener.IntegrationTestBreaker" );
 
 using namespace protocols::stepwise::sampler;
 using namespace protocols::stepwise::sampler::rigid_body;

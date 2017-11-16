@@ -42,7 +42,7 @@ namespace build {
 
 // Tracer instance for this file
 // Named after the original location of this code
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.build.BuildInstruction" );
+static basic::Tracer TR( "protocols.forge.build.BuildInstruction" );
 
 
 /// @brief default constructor

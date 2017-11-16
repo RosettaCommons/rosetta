@@ -68,7 +68,7 @@ namespace core {
 namespace scoring {
 namespace fiber_diffraction {
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.fiber_diffraction.util");
+static basic::Tracer TR("core.scoring.fiber_diffraction.util");
 
 void setup_cylindrical_coords(
 	pose::Pose const & pose,

@@ -56,7 +56,7 @@
 namespace protocols {
 namespace jd2 {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.ScreeningJobInputter" );
+static basic::Tracer TR( "protocols.jd2.ScreeningJobInputter" );
 
 //CREATOR SECTION
 std::string

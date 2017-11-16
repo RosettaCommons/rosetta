@@ -42,7 +42,7 @@
 
 using namespace protocols::membrane::ddG;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_ddG" );
+static basic::Tracer TR( "apps.pilot.ralford.membrane_ddG" );
 
 /// @brief ompLA Task
 utility::vector1< MutationOP >

@@ -75,7 +75,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.io.silent" );
+static basic::Tracer tr( "core.io.silent" );
 
 namespace core {
 namespace io {

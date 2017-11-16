@@ -43,7 +43,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.FlxbbDesign.utility" );
+static basic::Tracer TR( "protocols.flxbb.FlxbbDesign.utility" );
 
 namespace protocols {
 namespace flxbb {

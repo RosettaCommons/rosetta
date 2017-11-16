@@ -50,7 +50,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DesignMinimizeHbonds" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.DesignMinimizeHbonds" );
 
 // XRW TEMP std::string
 // XRW TEMP DesignMinimizeHbondsCreator::keyname() const

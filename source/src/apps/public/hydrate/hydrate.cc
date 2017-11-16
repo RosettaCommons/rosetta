@@ -27,7 +27,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.hydrate.Hydrate" );
+static basic::Tracer TR( "apps.public.hydrate.Hydrate" );
 
 int
 main( int argc, char * argv [] )

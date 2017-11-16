@@ -55,7 +55,7 @@ using core::kinematics::MoveMap;
 using core::kinematics::MoveMapOP;
 using protocols::loops::loop_closure::ccd::CCDLoopClosureMover;
 
-static THREAD_LOCAL basic::Tracer TR( "test.protocols.loops.closers.CCDLoopClosureMover.cxxtest" );
+static basic::Tracer TR( "test.protocols.loops.closers.CCDLoopClosureMover.cxxtest" );
 
 class TestCCDLoopClosureMover : public CxxTest::TestSuite {
 

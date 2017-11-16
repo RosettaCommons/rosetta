@@ -100,7 +100,7 @@ namespace refine {
 using namespace core;
 using namespace core::conformation;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopMover_Refine_KIC" );
+static basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopMover_Refine_KIC" );
 
 LoopMover_Refine_KIC::LoopMover_Refine_KIC() : LoopMover()
 {

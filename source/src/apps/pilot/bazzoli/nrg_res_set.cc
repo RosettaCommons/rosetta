@@ -57,7 +57,7 @@ using basic::options::option;
 using core::Size;
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.nrg_res_set" );
+static basic::Tracer TR( "apps.pilot.nrg_res_set" );
 
 
 /// @brief Returns the residue number of a residue in a pose.

@@ -64,7 +64,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.FlxbbDesign" );
+static basic::Tracer TR( "protocols.flxbb.FlxbbDesign" );
 
 using namespace core;
 using namespace core::pack::task::operation;

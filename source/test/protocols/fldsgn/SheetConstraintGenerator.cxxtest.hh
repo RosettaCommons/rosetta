@@ -49,7 +49,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.SheetConstraintGeneratorTests.cxxtest" );
+static basic::Tracer TR( "protocols.denovo_design.SheetConstraintGeneratorTests.cxxtest" );
 
 namespace mytest {
 

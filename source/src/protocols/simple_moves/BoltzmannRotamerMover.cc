@@ -47,11 +47,10 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BoltzmannRotamerMover" );
+static basic::Tracer TR( "protocols.simple_moves.BoltzmannRotamerMover" );
 
 bool compare_values(
 	const std::pair<core::Size, core::Real> &lhs,

@@ -68,7 +68,7 @@
 using namespace ObjexxFCL;
 
 //MaximCode
-static THREAD_LOCAL basic::Tracer TR("core.scoring.ramachandran");
+static basic::Tracer TR("core.scoring.ramachandran");
 
 namespace core {
 namespace scoring {

@@ -43,7 +43,7 @@ using namespace core;
 using namespace pose;
 using namespace kinematics;
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.dssp" );
+static basic::Tracer tr( "core.scoring.dssp" );
 
 void
 get_CA_vectors(

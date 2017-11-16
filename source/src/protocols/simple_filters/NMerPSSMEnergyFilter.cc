@@ -50,7 +50,7 @@ using namespace core;
 using namespace core::scoring;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.NMerPSSMEnergyFilter" );
+static basic::Tracer TR( "protocols.simple_filters.NMerPSSMEnergyFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP NMerPSSMEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NMerPSSMEnergyFilter ); }

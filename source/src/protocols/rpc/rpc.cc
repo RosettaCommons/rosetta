@@ -82,7 +82,7 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 
 // RPC Class
 
-static THREAD_LOCAL basic::Tracer TR( "rpc" );
+static basic::Tracer TR( "rpc" );
 using namespace utility::json_spirit;
 
 
@@ -345,11 +345,11 @@ catch( ... ){
 
 
 void JSON_RPC::output_capture_start(){
-	basic::Tracer::set_new_final_stream( &tracer_output_stream_ );
+	basic::TracerImpl::set_new_final_stream( &tracer_output_stream_ );
 }
 
 void JSON_RPC::output_capture_stop(){
-	basic::Tracer::set_default_final_stream();
+	basic::TracerImpl::set_default_final_stream();
 }
 
 void JSON_RPC::output_capture_clear(){

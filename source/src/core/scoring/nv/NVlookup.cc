@@ -30,7 +30,7 @@
 
 using namespace std;
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.NV" );
+static basic::Tracer TR( "core.scoring.NV" );
 
 namespace core {
 namespace scoring {

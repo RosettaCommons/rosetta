@@ -58,7 +58,7 @@
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/WaterFeaturesCreator.hh>
 using basic::Tracer;
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.WaterFeatures" );
+static basic::Tracer TR( "protocols.features.WaterFeatures" );
 
 namespace protocols {
 namespace features {

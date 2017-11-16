@@ -37,7 +37,7 @@
 namespace protocols {
 namespace legacy_sewing  {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyGreedyAssemblyMover" );
+static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyGreedyAssemblyMover" );
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////

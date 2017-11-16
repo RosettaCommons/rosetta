@@ -45,7 +45,7 @@ using cppdb::result;
 using utility::sql_database::session;
 using utility::sql_database::sessionOP;
 
-static THREAD_LOCAL Tracer TR("basic.resource_manager.locator.DatabaseResourceLocator");
+static Tracer TR("basic.resource_manager.locator.DatabaseResourceLocator");
 
 
 ///// DatabaseResourceLocatorCreator /////

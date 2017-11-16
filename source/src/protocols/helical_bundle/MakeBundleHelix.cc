@@ -41,7 +41,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -50,7 +49,7 @@ using basic::Warning;
 namespace protocols {
 namespace helical_bundle {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.MakeBundleHelix");
+static basic::Tracer TR("protocols.helical_bundle.MakeBundleHelix");
 
 /// @brief Constructor for MakeBundleHelix mover.
 MakeBundleHelix::MakeBundleHelix():

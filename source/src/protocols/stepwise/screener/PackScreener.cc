@@ -20,7 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.PackScreener" );
+static basic::Tracer TR( "protocols.stepwise.screener.PackScreener" );
 
 namespace protocols {
 namespace stepwise {

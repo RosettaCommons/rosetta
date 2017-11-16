@@ -47,7 +47,7 @@
 #include <utility/vector1.hh>
 
 //MaximCode:
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.P_AA" );
+static basic::Tracer TR( "core.scoring.P_AA" );
 
 
 namespace core {

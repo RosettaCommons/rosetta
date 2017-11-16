@@ -228,7 +228,7 @@ public: // library operations
 	/// @return true if creation successful, false otherwise (e.g. no VallFragmentEval or VallFragmentGen found)
 	template< typename LessThan >
 	bool catalog( VallLibrary const & library, LessThan const & lt ) {
-		basic::Tracer TR( "core.fragment.picking_old.vall.VallLibrarian" );
+		basic::TracerImpl TR( "core.fragment.picking_old.vall.VallLibrarian" );
 		pre_catalog_ops( library );
 
 		if ( TR.Debug.visible() ) {

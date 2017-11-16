@@ -76,7 +76,7 @@ ConstraintsEnergyCreator::score_types_for_method() const {
 }
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ConstraintsEnergy" );
+static basic::Tracer tr( "core.scoring.ConstraintsEnergy" );
 
 ConstraintsEnergy::ConstraintsEnergy() : parent( methods::EnergyMethodCreatorOP( new ConstraintsEnergyCreator ) ) {}
 

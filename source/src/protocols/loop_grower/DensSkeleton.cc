@@ -46,7 +46,7 @@
 
 #include <boost/unordered/unordered_map.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loop_grower.DensSkeleton" );
+static basic::Tracer TR( "protocols.loop_grower.DensSkeleton" );
 
 namespace protocols {
 namespace loop_grower {

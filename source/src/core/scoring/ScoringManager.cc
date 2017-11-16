@@ -122,7 +122,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.ScoringManager" );
+static basic::Tracer TR( "core.scoring.ScoringManager" );
 
 namespace core {
 namespace scoring {

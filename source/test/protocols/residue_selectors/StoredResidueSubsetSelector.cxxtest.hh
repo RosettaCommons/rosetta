@@ -39,7 +39,7 @@
 
 using namespace core::select::residue_selector;
 
-static THREAD_LOCAL basic::Tracer TR( "test.core.select.StoredResidueSubsetSelectorTests" );
+static basic::Tracer TR( "test.core.select.StoredResidueSubsetSelectorTests" );
 
 class StoredResidueSubsetSelectorTests : public CxxTest::TestSuite {
 

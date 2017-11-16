@@ -63,7 +63,7 @@
 #include <basic/datacache/ConstDataMap.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.standard.StandardJobQueen" );
+static basic::Tracer TR( "protocols.jd3.standard.StandardJobQueen" );
 
 
 namespace protocols {

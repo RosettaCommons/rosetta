@@ -68,7 +68,7 @@
 #include <fstream>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.backrub" );
+static basic::Tracer TR( "apps.backrub" );
 
 OPT_1GRP_KEY(Integer, backrub, ntrials)
 OPT_1GRP_KEY(Real, backrub, sc_prob)
@@ -87,36 +87,36 @@ my_main( void* );
 int
 main( int argc, char * argv [] )
 {
-    try {
-	OPT(in::path::database);
-	OPT(in::file::s);
-	OPT(in::file::l);
-	OPT(in::ignore_unrecognized_res);
-	OPT(out::nstruct);
-	OPT(packing::resfile);
-	OPT(backrub::pivot_residues);
-	OPT(backrub::pivot_atoms);
-	OPT(backrub::min_atoms);
-	OPT(backrub::max_atoms);
-	NEW_OPT(backrub::ntrials, "number of Monte Carlo trials to run", 1000);
-	NEW_OPT(backrub::sc_prob, "probability of making a side chain move", 0.25);
-	NEW_OPT(backrub::sm_prob, "probability of making a small move", 0.25);
-	NEW_OPT(backrub::sc_prob_uniform, "probability of uniformly sampling chi angles", 0.1);
-	NEW_OPT(backrub::mc_kt, "value of kT for Monte Carlo", 0.6);
-	NEW_OPT(backrub::mc_kt_initial, "initial value of kT for Monte Carlo", 0.6);
-	NEW_OPT(backrub::mm_bend_weight, "weight of mm_bend bond angle energy term", 1.0);
-	NEW_OPT(backrub::pack_frequency, "number of moves between PackRotamers", 1000);
-	NEW_OPT(backrub::chains1, "chains on one side of the interface", utility::vector1<std::string>(1, "A"));
-	NEW_OPT(backrub::chains2, "chains on the other side of the interface", utility::vector1<std::string>(1, "B"));
+	try {
+		OPT(in::path::database);
+		OPT(in::file::s);
+		OPT(in::file::l);
+		OPT(in::ignore_unrecognized_res);
+		OPT(out::nstruct);
+		OPT(packing::resfile);
+		OPT(backrub::pivot_residues);
+		OPT(backrub::pivot_atoms);
+		OPT(backrub::min_atoms);
+		OPT(backrub::max_atoms);
+		NEW_OPT(backrub::ntrials, "number of Monte Carlo trials to run", 1000);
+		NEW_OPT(backrub::sc_prob, "probability of making a side chain move", 0.25);
+		NEW_OPT(backrub::sm_prob, "probability of making a small move", 0.25);
+		NEW_OPT(backrub::sc_prob_uniform, "probability of uniformly sampling chi angles", 0.1);
+		NEW_OPT(backrub::mc_kt, "value of kT for Monte Carlo", 0.6);
+		NEW_OPT(backrub::mc_kt_initial, "initial value of kT for Monte Carlo", 0.6);
+		NEW_OPT(backrub::mm_bend_weight, "weight of mm_bend bond angle energy term", 1.0);
+		NEW_OPT(backrub::pack_frequency, "number of moves between PackRotamers", 1000);
+		NEW_OPT(backrub::chains1, "chains on one side of the interface", utility::vector1<std::string>(1, "A"));
+		NEW_OPT(backrub::chains2, "chains on the other side of the interface", utility::vector1<std::string>(1, "B"));
 
-	// initialize Rosetta
-	devel::init(argc, argv);
+		// initialize Rosetta
+		devel::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                }
+	}
 	return 0;
 }
 
@@ -131,17 +131,17 @@ interface_energymap(
 	core::scoring::EnergyGraph const & energygraph(pose.energies().energy_graph());
 
 	// iterate over all residues in the first set
-	for (std::set<core::Size>::const_iterator res_iter1 = res_set1.begin(); res_iter1 != res_set1.end(); ++res_iter1) {
+	for ( std::set<core::Size>::const_iterator res_iter1 = res_set1.begin(); res_iter1 != res_set1.end(); ++res_iter1 ) {
 
 		// get the node for the particular residue
 		core::scoring::EnergyNode const * const node1(energygraph.get_energy_node(*res_iter1));
 
 		// iterate over all edges connected to that node
-		for (utility::graph::EdgeListConstIterator edge_iter = node1->const_edge_list_begin();
-		     edge_iter != node1->const_edge_list_end(); ++edge_iter) {
+		for ( utility::graph::EdgeListConstIterator edge_iter = node1->const_edge_list_begin();
+				edge_iter != node1->const_edge_list_end(); ++edge_iter ) {
 
 			// check to see if the other node connected to the edge is in the second set of residues
-			if (res_set2.count((*edge_iter)->get_other_ind(*res_iter1))) {
+			if ( res_set2.count((*edge_iter)->get_other_ind(*res_iter1)) ) {
 				core::scoring::EnergyEdge const * const energyedge(dynamic_cast<core::scoring::EnergyEdge const *>(*edge_iter));
 				assert(energyedge);
 				// accumulate the energes in the overall TwoBodyEMapVector
@@ -164,30 +164,30 @@ interface_energymap(
 {
 	std::set<char> chains_intersect;
 	std::set_intersection(chain_set1.begin(), chain_set1.end(), chain_set2.begin(), chain_set2.end(),
-	                      std::insert_iterator<std::set<char> >(chains_intersect, chains_intersect.begin()));
+		std::insert_iterator<std::set<char> >(chains_intersect, chains_intersect.begin()));
 	assert(chains_intersect.empty() );//size() == 0);
 
 	std::set<core::Size> res_set1;
 	std::set<core::Size> res_set2;
 
-	for (core::Size i = 1; i <= pose.pdb_info()->nres(); ++i) {
+	for ( core::Size i = 1; i <= pose.pdb_info()->nres(); ++i ) {
 
 		char chain = pose.pdb_info()->chain(i);
-		if (chain_set1.count(chain)) {
+		if ( chain_set1.count(chain) ) {
 			res_set1.insert(i);
-		} else if (chain_set2.count(chain)) {
+		} else if ( chain_set2.count(chain) ) {
 			res_set2.insert(i);
 		}
 	}
 	/*
 	TR << "Chain 1 Residues:";
 	for (std::set<core::Size>::iterator iter = res_set1.begin(); iter != res_set1.end(); ++iter) {
-		TR << " " << (*iter);
+	TR << " " << (*iter);
 	}
 	TR << std::endl;
 	TR << "Chain 2 Residues:";
 	for (std::set<core::Size>::iterator iter = res_set2.begin(); iter != res_set2.end(); ++iter) {
-		TR << " " << (*iter);
+	TR << " " << (*iter);
 	}
 	TR << std::endl;
 	*/
@@ -245,16 +245,16 @@ my_main( void* )
 	utility::vector1<std::string> const & chain_vector2(option[ backrub::chains2 ]);
 	std::set<char> chain_set1;
 	std::set<char> chain_set2;
-	for (utility::vector1<std::string>::const_iterator iter = chain_vector1.begin(); iter != chain_vector1.end(); ++iter) {
-		if (iter->size() == 1) chain_set1.insert((*iter)[0]);
+	for ( utility::vector1<std::string>::const_iterator iter = chain_vector1.begin(); iter != chain_vector1.end(); ++iter ) {
+		if ( iter->size() == 1 ) chain_set1.insert((*iter)[0]);
 	}
-	for (utility::vector1<std::string>::const_iterator iter = chain_vector2.begin(); iter != chain_vector2.end(); ++iter) {
-		if (iter->size() == 1) chain_set2.insert((*iter)[0]);
+	for ( utility::vector1<std::string>::const_iterator iter = chain_vector2.begin(); iter != chain_vector2.end(); ++iter ) {
+		if ( iter->size() == 1 ) chain_set2.insert((*iter)[0]);
 	}
 
 	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 
-	for (core::Size jobnum = 1; jobnum <= input_jobs.size(); ++jobnum) {
+	for ( core::Size jobnum = 1; jobnum <= input_jobs.size(); ++jobnum ) {
 
 		TR << "Processing " << input_jobs[jobnum]->input_tag() << "..." << std::endl;
 
@@ -271,7 +271,7 @@ my_main( void* )
 		backrubmover.set_input_pose(input_pose);
 
 		TR << "Backrub segment lengths: " << option[ backrub::min_atoms ] << "-" << option[ backrub::max_atoms ] << " atoms"
-		   << std::endl;
+			<< std::endl;
 
 		TR << "Backrub main chain pivot atoms: " << option[ backrub::pivot_atoms ].value_string() << std::endl;
 
@@ -296,8 +296,7 @@ my_main( void* )
 		protocols::viewer::add_monte_carlo_viewer(mc, "Backrub", 600, 600);
 
 		// iterate to generate multiple structures
-		for (int structnum = 1; structnum <= input_jobs[jobnum]->nstruct(); ++structnum)
-		{
+		for ( int structnum = 1; structnum <= input_jobs[jobnum]->nstruct(); ++structnum ) {
 			// reset to the starting optimized pose
 			core::pose::PoseOP pose(new core::pose::Pose(*input_pose));
 			//mc.reset(*pose);
@@ -312,19 +311,19 @@ my_main( void* )
 
 			TR << "Running " << option[ backrub::ntrials ] << " trials..." << std::endl;
 
-			for (int i = 1; i <= option[ backrub::ntrials ]; ++i) {
+			for ( int i = 1; i <= option[ backrub::ntrials ]; ++i ) {
 
 				std::string move_type;
 
 				// could use random mover for this...
 				core::Real move_prob = numeric::random::rg().uniform();
-				if (i % option[ backrub::pack_frequency ] == 0) {
+				if ( i % option[ backrub::pack_frequency ] == 0 ) {
 					packrotamersmover.apply(*pose);
 					move_type = packrotamersmover.type();
-				} else if (move_prob > option[ backrub::sm_prob ] + option[ backrub::sc_prob ]) {
+				} else if ( move_prob > option[ backrub::sm_prob ] + option[ backrub::sc_prob ] ) {
 					backrubmover.apply(*pose);
 					move_type = backrubmover.type();
-				} else if (move_prob > option[ backrub::sc_prob ]) {
+				} else if ( move_prob > option[ backrub::sc_prob ] ) {
 					smallmover.apply(*pose);
 					move_type = smallmover.type();
 				} else {

@@ -17,10 +17,9 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR("devel.splice.AddFoldUnitMover");
+static basic::Tracer TR("devel.splice.AddFoldUnitMover");
 
 #include <utility/tag/Tag.hh>
 #include <core/util/SwitchResidueTypeSet.hh>

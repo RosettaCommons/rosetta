@@ -39,7 +39,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictToNeighborhoodOperation" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictToNeighborhoodOperation" );
 
 namespace protocols {
 namespace toolbox {
@@ -108,7 +108,7 @@ void RestrictToNeighborhoodOperation::make_calculator(
 
 	using namespace core::pose::metrics;
 	if ( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ) {
-		Warning() << "In RestrictToNeighborhoodOperation, calculator " << calculator_name_
+		TR.Warning << "In RestrictToNeighborhoodOperation, calculator " << calculator_name_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
@@ -122,7 +122,7 @@ void RestrictToNeighborhoodOperation::make_calculator( std::set< core::Size > co
 
 	using namespace core::pose::metrics;
 	if ( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ) {
-		Warning() << "In RestrictToNeighborhoodOperation, calculator " << calculator_name_
+		TR.Warning << "In RestrictToNeighborhoodOperation, calculator " << calculator_name_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;

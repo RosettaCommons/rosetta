@@ -34,7 +34,7 @@ using namespace core;
 using namespace std;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopOver" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopOver" );
 
 // XRW TEMP std::string
 // XRW TEMP LoopOverCreator::keyname() const

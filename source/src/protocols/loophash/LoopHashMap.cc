@@ -72,7 +72,7 @@ namespace protocols {
 namespace loophash {
 
 
-static THREAD_LOCAL basic::Tracer TR( "LoopHashMap" );
+static basic::Tracer TR( "LoopHashMap" );
 
 
 /// @brief This takes a pose and two residue positions and determines the rigid body transform of the Leap described by those two residues.

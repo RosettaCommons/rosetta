@@ -43,7 +43,6 @@
 #include <cereal/types/polymorphic.hpp>
 #endif
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

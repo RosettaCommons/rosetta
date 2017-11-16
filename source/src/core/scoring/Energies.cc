@@ -64,7 +64,7 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.Energies" );
+static basic::Tracer tr( "core.scoring.Energies" );
 
 using namespace ObjexxFCL::format;
 

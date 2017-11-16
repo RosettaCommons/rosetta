@@ -64,11 +64,10 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.ParallelTempering" );
+static basic::Tracer tr( "protocols.canonical_sampling.ParallelTempering" );
 
 
 bool protocols::canonical_sampling::ParallelTempering::options_registered_( false );
@@ -198,7 +197,7 @@ ParallelTempering::finalize_simulation(
 		std::ios_base::fmtflags oldflags( tr.flags() );
 		tr.width(5);
 		tr.precision(3);
-		tr.setf(std::ios_base::fixed);
+		tr << std::fixed;
 		for ( core::Size i=0; i<n_temp_levels()-1; ++i ) {
 			std::pair<int, int> elem(i, i+1);
 			//Original code (line below) fails on some versions of GCC (4.4.3 and 4.3.4 reported by users)

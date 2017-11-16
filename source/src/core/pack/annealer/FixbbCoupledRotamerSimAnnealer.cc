@@ -42,7 +42,7 @@ namespace core {
 namespace pack {
 namespace annealer {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.annealer.FixbbCoupledRotamerSimAnnealer", basic::t_info );
+static basic::Tracer TR( "core.pack.annealer.FixbbCoupledRotamerSimAnnealer", basic::t_info );
 
 ////////////////////////////////////////////////////////////////////////////////
 ///

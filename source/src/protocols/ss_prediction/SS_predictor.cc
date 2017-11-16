@@ -39,7 +39,7 @@ using core::Size;
 using core::SSize;
 using namespace utility::libsvm;
 
-static THREAD_LOCAL basic::Tracer tr( "ss_prediction.ss_predictor" );
+static basic::Tracer tr( "ss_prediction.ss_predictor" );
 
 /////////////////////////////////////////////////////////////////////////////////
 //@brief: This class does single sequence prediction for either HLE or ABEGO

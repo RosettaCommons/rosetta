@@ -32,7 +32,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-static THREAD_LOCAL basic::Tracer RepGridTracer( "protocols.ligand_docking.scoring_grid.RepGrid" );
+static basic::Tracer RepGridTracer( "protocols.ligand_docking.scoring_grid.RepGrid" );
 
 std::string RepGridCreator::keyname() const
 {

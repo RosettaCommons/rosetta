@@ -47,7 +47,7 @@
 
 // ObjexxFCL Headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.residue_selectors.StoreResidueSubsetMover" );
+static basic::Tracer TR( "protocols.residue_selectors.StoreResidueSubsetMover" );
 
 namespace protocols {
 namespace residue_selectors {

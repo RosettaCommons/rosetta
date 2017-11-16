@@ -52,7 +52,7 @@
 namespace protocols {
 namespace match {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.match.MatchPositionModifiers" );
+static basic::Tracer tr( "protocols.match.MatchPositionModifiers" );
 
 /// @brief "factory" function to create the match position modifiers
 MatchPositionModifierCOP

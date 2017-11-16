@@ -39,7 +39,7 @@
 #include <set>
 #include <iterator>
 
-static THREAD_LOCAL basic::Tracer TR("SewAppend");
+static basic::Tracer TR("SewAppend");
 
 namespace SewAppend {
 basic::options::FileOptionKey const model_file( "model_file" );

@@ -118,7 +118,7 @@ using core::import_pose::pose_from_file;
 using numeric::geometry::hashing::Real3;
 using numeric::geometry::hashing::Real6;
 
-static THREAD_LOCAL basic::Tracer TR( "helix_assembly" );
+static basic::Tracer TR( "helix_assembly" );
 // options
 // OPT_1GRP_KEY( Integer    , ha, ideal_helix_size                             )
 // OPT_1GRP_KEY( Real       , ha, helix_match_rmsd                             )

@@ -57,16 +57,14 @@
 #include <core/optimization/MinimizerMap.hh>
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 using namespace ObjexxFCL::format;
 
 namespace core {
 namespace optimization {
 
-static THREAD_LOCAL basic::Tracer TR( "core.optimization" );
+static basic::Tracer TR( "core.optimization" );
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details

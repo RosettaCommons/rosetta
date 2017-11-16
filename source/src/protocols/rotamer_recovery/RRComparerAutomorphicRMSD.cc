@@ -56,7 +56,7 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
-static THREAD_LOCAL Tracer TR("protocol.moves.RRComparerAutomorphicRMSD");
+static Tracer TR("protocol.moves.RRComparerAutomorphicRMSD");
 
 RRComparerAutomorphicRMSD::RRComparerAutomorphicRMSD() :
 	include_backbone_atoms_( false ),

@@ -62,7 +62,7 @@ using namespace chemical;
 //  //IntegerOptionKey const da_nruns( "DomainAssembly::da_nruns" );
 // }
 
-//static THREAD_LOCAL basic::Tracer TR_da( "DomainAssemblySetup" );
+//static basic::Tracer TR_da( "DomainAssemblySetup" );
 
 /// @brief adds linkers and/or truncates a domain
 ///  instructions are contained in the DomainInfo member variables

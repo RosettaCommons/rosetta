@@ -105,14 +105,13 @@
 #endif
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer T_design( "protocols.AnchoredDesign.AnchoredDesignMover" );
-static THREAD_LOCAL basic::Tracer T_perturb( "protocols.AnchoredDesign.AnchoredPerturbMover" );
-static THREAD_LOCAL basic::Tracer T_refine( "protocols.AnchoredDesign.AnchoredRefineMover" );
-static THREAD_LOCAL basic::Tracer T_shared( "protocols.AnchoredDesign.Anchor_Movers" );
+static basic::Tracer T_design( "protocols.AnchoredDesign.AnchoredDesignMover" );
+static basic::Tracer T_perturb( "protocols.AnchoredDesign.AnchoredPerturbMover" );
+static basic::Tracer T_refine( "protocols.AnchoredDesign.AnchoredRefineMover" );
+static basic::Tracer T_shared( "protocols.AnchoredDesign.Anchor_Movers" );
 
 namespace protocols {
 namespace anchored_design {

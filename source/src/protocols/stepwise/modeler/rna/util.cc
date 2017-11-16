@@ -90,7 +90,7 @@ using namespace core;
 using namespace core::chemical::rna;
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.util" );
+static basic::Tracer TR( "protocols.stepwise.modeler.rna.util" );
 
 namespace protocols {
 namespace stepwise {

@@ -35,7 +35,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.Operator" );
+static basic::Tracer TR( "protocols.simple_filters.Operator" );
 using namespace protocols::filters;
 
 // XRW TEMP protocols::filters::FilterOP

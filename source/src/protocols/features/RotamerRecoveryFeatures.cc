@@ -98,7 +98,7 @@ using utility::tag::TagCOP;
 using utility::vector1;
 using cppdb::statement;
 
-static THREAD_LOCAL Tracer TR("protocols.features.RotamerRecoveryFeatures");
+static Tracer TR("protocols.features.RotamerRecoveryFeatures");
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
 	scfxn_(get_score_function()),

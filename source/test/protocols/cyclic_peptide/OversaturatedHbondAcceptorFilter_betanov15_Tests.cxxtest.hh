@@ -28,7 +28,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide.OversaturatedHbondAcceptorFilter_betanov15_Tests");
+static basic::Tracer TR("protocols.cyclic_peptide.OversaturatedHbondAcceptorFilter_betanov15_Tests");
 
 
 class OversaturatedHbondAcceptorFilter_betanov15_Tests : public CxxTest::TestSuite {

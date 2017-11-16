@@ -39,7 +39,7 @@
 #include <core/io/pdb/pdb_writer.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody2" );
+static basic::Tracer TR( "protocols.antibody2" );
 
 int
 main( int argc, char * argv [] )

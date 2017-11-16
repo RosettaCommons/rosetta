@@ -84,6 +84,8 @@ using namespace kinematics;
 namespace devel {
 namespace fold_from_loops {
 
+static basic::Tracer TR( "FoldFromLoopsMover" );
+
 FoldFromLoopsMover::FoldFromLoopsMover()
 {}
 
@@ -105,7 +107,6 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 	using protocols::moves::FAIL_RETRY;
 
 
-	basic::Tracer TR( "FoldFromLoopsMover" );
 
 	protocols::checkpoint::CheckPointer sliding_checkpoint("closing"); // annoying  see if you can take it out of here
 

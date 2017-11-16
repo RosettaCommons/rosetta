@@ -69,7 +69,7 @@ using core::io::pdb::Record;
 using core::io::pdb::Field;
 using core::io::pdb::RecordCollection;
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.HeaderInformation" );
+static basic::Tracer TR( "core.io.pdb.HeaderInformation" );
 
 HeaderInformation::HeaderInformation() : utility::pointer::ReferenceCount(),
 	classification_(""),

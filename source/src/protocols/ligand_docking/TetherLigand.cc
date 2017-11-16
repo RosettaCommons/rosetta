@@ -37,14 +37,13 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer tether_ligand_tracer( "protocols.ligand_docking.ligand_options.Tether_ligand", basic::t_debug );
+static basic::Tracer tether_ligand_tracer( "protocols.ligand_docking.ligand_options.Tether_ligand", basic::t_debug );
 
 TetherLigand::TetherLigand(){}
 

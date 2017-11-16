@@ -39,7 +39,7 @@
 // C++ Headers
 #include <set>
 
-static THREAD_LOCAL basic::Tracer TR("FoldGraphTests");
+static basic::Tracer TR("FoldGraphTests");
 
 
 class FoldGraphTests : public CxxTest::TestSuite {

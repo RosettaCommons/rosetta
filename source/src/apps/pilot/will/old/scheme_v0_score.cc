@@ -42,7 +42,7 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/kinematics/MoveMap.hh>
 
-static THREAD_LOCAL basic::Tracer TR("scheme_score");
+static basic::Tracer TR("scheme_score");
 
 bool DUMP = false;
 

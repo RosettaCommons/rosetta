@@ -46,7 +46,7 @@
 #include <string>
 
 
-static THREAD_LOCAL basic::Tracer TR_REMODEL( "protocols.forge.remodel.RemodelData" );
+static basic::Tracer TR_REMODEL( "protocols.forge.remodel.RemodelData" );
 
 using namespace basic::options::OptionKeys;
 using namespace basic::options;

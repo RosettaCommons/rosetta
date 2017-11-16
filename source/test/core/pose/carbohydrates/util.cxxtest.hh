@@ -45,7 +45,7 @@
 #include <basic/Tracer.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.carbohydrates.util.cxxtest" );
+static basic::Tracer TR( "core.pose.carbohydrates.util.cxxtest" );
 
 
 class CarbohydratePoseUtilityFunctionTests : public CxxTest::TestSuite {

@@ -56,7 +56,7 @@ namespace jumping {
 MembraneJump::~MembraneJump() = default;
 using namespace core;
 using namespace fragment;
-static THREAD_LOCAL basic::Tracer tr( "protocols.jumping.MembraneJump" );
+static basic::Tracer tr( "protocols.jumping.MembraneJump" );
 
 //default constructor
 MembraneJump::MembraneJump()

@@ -29,7 +29,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.io.PDB_IO.cxxtest");
+static basic::Tracer TR("core.io.PDB_IO.cxxtest");
 
 using namespace core;
 

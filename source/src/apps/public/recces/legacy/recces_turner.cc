@@ -38,7 +38,7 @@
 // Exception handling
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "recces_turner" );
+static basic::Tracer TR( "recces_turner" );
 
 using namespace core;
 using namespace basic::options::OptionKeys;

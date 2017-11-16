@@ -48,7 +48,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ConsensusDesignMover" );
+static basic::Tracer TR( "protocols.simple_moves.ConsensusDesignMover" );
 
 // c++ headerss
 #include <string>

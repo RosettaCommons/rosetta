@@ -49,7 +49,7 @@
 #include <cstdlib>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.MembraneData" );
+static basic::Tracer TR( "core.scoring.membrane.MembraneData" );
 
 namespace core {
 namespace scoring {

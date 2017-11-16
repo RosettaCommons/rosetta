@@ -44,7 +44,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.StubScoreFilter" );
+static basic::Tracer TR( "protocols.protein_interface_design.filters.StubScoreFilter" );
 
 /// @brief default ctor
 StubScoreFilter::StubScoreFilter() :

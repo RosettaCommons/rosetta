@@ -26,7 +26,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.FillAUTOTaskOperation" );
+static basic::Tracer TR( "core.pack.task.operation.FillAUTOTaskOperation" );
 
 namespace core {
 namespace pack {

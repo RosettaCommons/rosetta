@@ -30,7 +30,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.parser.BluePrint" );
+static basic::Tracer TR( "protocols.jd2.parser.BluePrint" );
 
 using namespace core;
 

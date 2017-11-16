@@ -45,8 +45,7 @@ typedef numeric::xyzVector<core::Real> point;
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kevin.khxtal_water_bunsat" );
+static basic::Tracer TR( "apps.pilot.kevin.khxtal_water_bunsat" );
 
 
 using namespace core;
@@ -71,15 +70,14 @@ public:
 
 		using namespace core::pose::metrics;
 
-		if(basic::options::option[use_varsoldist_sasa_calc]) {
+		if ( basic::options::option[use_varsoldist_sasa_calc] ) {
 			TR << "Registering Andrew's SASA Calculator" << std::endl;
-			if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc_name" ) ){
+			if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc_name" ) ) {
 				CalculatorFactory::Instance().register_calculator( "sasa_calc_name", new devel::vardist_solaccess::VarSolDistSasaCalculator() );
 			}
-		}
-		else {
+		} else {
 			TR << "Registering SASA Calculator" << std::endl;
-			if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc_name" ) ){
+			if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc_name" ) ) {
 				CalculatorFactory::Instance().register_calculator( "sasa_calc_name", new pose::metrics::simple_calculators::SasaCalculatorLegacy() );
 			}
 		}
@@ -90,29 +88,29 @@ public:
 		utility::vector1<point> water_points;
 		water_points.clear();
 		//for(Size i(1); i<=wet_pose.size(); ++i) {
-		//	if(wet_pose.residue(i).name() == "TP3") {
-		//		water_points.push_back(wet_pose.residue(i).atom(1).xyz());
-		//	}
+		// if(wet_pose.residue(i).name() == "TP3") {
+		//  water_points.push_back(wet_pose.residue(i).atom(1).xyz());
+		// }
 		//}
 
-        //utility::vector1< numeric::xyzVector<core::Real> > water_points;
+		//utility::vector1< numeric::xyzVector<core::Real> > water_points;
 
-        //for (auto w : pose.pdb_info()->get_unrecognized_atoms()) {
+		//for (auto w : pose.pdb_info()->get_unrecognized_atoms()) {
 		const utility::vector1< core::pose::UnrecognizedAtomRecord >& ua = pose.pdb_info()->get_unrecognized_atoms();
-        for (Size i=1, end=ua.size(); i<=end; i++) {
-                const std::string& res_name = ua[i].res_name();
-                const std::string& atom_name = ua[i].atom_name();
-                if ( (res_name  == "HOH" ||
-                      res_name  == "DOD" ||
-                      res_name  == "SOL" ||
-                      res_name  == "H2O" ||
-                      res_name  == "D2O"   ) &&
-                      atom_name == "O"       &&
-                      ua[i].temp() <= 30
-                ) {
-                    water_points.push_back(ua[i].coords());
-                }
-        }
+		for ( Size i=1, end=ua.size(); i<=end; i++ ) {
+			const std::string& res_name = ua[i].res_name();
+			const std::string& atom_name = ua[i].atom_name();
+			if ( (res_name  == "HOH" ||
+					res_name  == "DOD" ||
+					res_name  == "SOL" ||
+					res_name  == "H2O" ||
+					res_name  == "D2O"   ) &&
+					atom_name == "O"       &&
+					ua[i].temp() <= 30
+					) {
+				water_points.push_back(ua[i].coords());
+			}
+		}
 		TR << "waters: " << water_points.size() << std::endl;
 
 		core::conformation::Conformation const dry_conf = pose.conformation();
@@ -121,7 +119,7 @@ public:
 		utility::vector1< core::Size > cter_resnums;
 		nter_resnums.resize(num_chains);
 		cter_resnums.resize(num_chains);
-		for (Size i=1; i<=num_chains; i++) {
+		for ( Size i=1; i<=num_chains; i++ ) {
 			nter_resnums[i] = dry_conf.chain_begin(i);
 			cter_resnums[i] = dry_conf.chain_end(i);
 		}
@@ -130,20 +128,20 @@ public:
 		water_H_dist_cutoff = 2.3;
 		TR << "water_H_dist_cutoff: " << water_H_dist_cutoff << std::endl;
 		//check NH
-		for(Size i=1; i<=pose.size(); ++i) {
-			if (!pose.residue(i).is_protein()) continue;
-			if (nter_resnums.has_value(i)) {
+		for ( Size i=1; i<=pose.size(); ++i ) {
+			if ( !pose.residue(i).is_protein() ) continue;
+			if ( nter_resnums.has_value(i) ) {
 				report_sasa_if_contacting_water(pose, i, "1H  ", atom_sasa,
-						water_points, water_H_dist_cutoff);
+					water_points, water_H_dist_cutoff);
 				report_sasa_if_contacting_water(pose, i, "2H  ", atom_sasa,
-						water_points, water_H_dist_cutoff);
-				if(pose.residue(i).name3() != "PRO")
+					water_points, water_H_dist_cutoff);
+				if ( pose.residue(i).name3() != "PRO" ) {
 					report_sasa_if_contacting_water(pose, i, "3H  ", atom_sasa,
-							water_points, water_H_dist_cutoff);
-			}
-			else if(pose.residue(i).name3() != "PRO") {
-				report_sasa_if_contacting_water(pose, i, " H  ", atom_sasa,
 						water_points, water_H_dist_cutoff);
+				}
+			} else if ( pose.residue(i).name3() != "PRO" ) {
+				report_sasa_if_contacting_water(pose, i, " H  ", atom_sasa,
+					water_points, water_H_dist_cutoff);
 			}
 		}
 
@@ -151,13 +149,13 @@ public:
 		water_O_dist_cutoff = 3.1;
 		TR << "water_O_dist_cutoff: " << water_O_dist_cutoff << std::endl;
 		//check O
-		for(Size i=1; i<=pose.size(); ++i) {
-			if (!pose.residue(i).is_protein()) continue;
+		for ( Size i=1; i<=pose.size(); ++i ) {
+			if ( !pose.residue(i).is_protein() ) continue;
 			report_sasa_if_contacting_water(pose, i, " O  ", atom_sasa,
-					water_points, water_O_dist_cutoff);
-			if (cter_resnums.has_value(i)) {
+				water_points, water_O_dist_cutoff);
+			if ( cter_resnums.has_value(i) ) {
 				report_sasa_if_contacting_water(pose, i, " OXT", atom_sasa,
-						water_points, water_O_dist_cutoff);
+					water_points, water_O_dist_cutoff);
 			}
 		}
 
@@ -174,9 +172,9 @@ public:
 		Real min_water_dist(9999.9);
 		point atid_point = dry_pose.residue(atid.rsd()).atom(atid.atomno()).xyz();
 
-		for(Size i(1); i<=water_points.size(); ++i) {
+		for ( Size i(1); i<=water_points.size(); ++i ) {
 			Real water_dist = atid_point.distance(water_points[i]);
-			if(water_dist < min_water_dist) {
+			if ( water_dist < min_water_dist ) {
 				min_water_dist = water_dist;
 			}
 		}
@@ -196,7 +194,7 @@ public:
 		return this_sasa;
 
 	}
-	
+
 	virtual
 	std::string
 	get_name() const { return "xtal_water_bunsat"; }
@@ -217,22 +215,21 @@ private:
 		core::Real closest_xtal_water_dist =
 			closest_crystallographic_water_dist(dry_pose, atid, water_points);
 
-		if(closest_xtal_water_dist <= max_dist_contact) {
+		if ( closest_xtal_water_dist <= max_dist_contact ) {
 			Real this_sasa = check_sasa(dry_pose, atid, atom_sasa);
 
 			std::ios  state(NULL);
 			state.copyfmt(TR);
-	
+
 			TR << std::setprecision(3) << std::fixed;
 			TR << dry_pose.pdb_info()->name() << " res " << std::setw(6)
 				<< dry_pose.pdb_info()->pose2pdb(resi) << ", atom \""
 				<< dry_pose.residue(atid.rsd()).atom_name(atid.atomno())
 				<< "\" contacting water at dist " << std::setw(7) << closest_xtal_water_dist
 				<< " A, with SASA " << std::setw(7) << this_sasa << " A2" << std::endl;
-	
+
 			TR.copyfmt(state);
-		}
-		else return;
+		} else return;
 
 	}
 
@@ -242,17 +239,17 @@ typedef utility::pointer::owning_ptr< xtal_water_bunsat > xtal_water_bunsatOP;
 
 int main( int argc, char* argv[] ) {
 	try {
-	using basic::options::option;
-	option.add( use_varsoldist_sasa_calc, "var sol d sasa calculator" ).def(true);
-	option.add( water_dist_H, "water_dist_H" ).def(core::Real(2.3));
-	option.add( water_dist_O, "water_dist_O" ).def(core::Real(3.1));
+		using basic::options::option;
+		option.add( use_varsoldist_sasa_calc, "var sol d sasa calculator" ).def(true);
+		option.add( water_dist_H, "water_dist_H" ).def(core::Real(2.3));
+		option.add( water_dist_O, "water_dist_O" ).def(core::Real(3.1));
 
-	devel::init(argc, argv);
-	protocols::jd2::JobDistributor::get_instance()->go(new xtal_water_bunsat);
+		devel::init(argc, argv);
+		protocols::jd2::JobDistributor::get_instance()->go(new xtal_water_bunsat);
 
-	TR << "Recommended option:   -sasa_calculator_probe_radius 1.2" << std::endl;
+		TR << "Recommended option:   -sasa_calculator_probe_radius 1.2" << std::endl;
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
 	} catch (utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

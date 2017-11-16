@@ -51,7 +51,7 @@ using core::Size;
 using core::Real;
 using core::pose::Pose;
 
-static THREAD_LOCAL basic::Tracer tr( "ouputLayerDesignBurial" );
+static basic::Tracer tr( "ouputLayerDesignBurial" );
 
 vector1< Real> calc_sasa(Pose const & pose, Real pore_radius){
 	// define atom_map for main-chain and CB
@@ -71,49 +71,50 @@ vector1< Real> calc_sasa(Pose const & pose, Real pore_radius){
 }
 
 std::string calc_burial(Pose const & pose, Real pore_radius, Real boundarySasaThreshold, Real surfaceSasaThreshold){
-    std::string burial = "";
-    vector1<Real> sasa_score;
-    sasa_score = calc_sasa(pose,pore_radius);
-    for(int ii=1; ii<=pose.size(); ++ii){
-        if(sasa_score[ii] < boundarySasaThreshold)
-            burial+='C';
-        else if(sasa_score[ii] < surfaceSasaThreshold)
-            burial+='B';
-            else
-            burial+='S';
-    }
-    return(burial);
+	std::string burial = "";
+	vector1<Real> sasa_score;
+	sasa_score = calc_sasa(pose,pore_radius);
+	for ( int ii=1; ii<=pose.size(); ++ii ) {
+		if ( sasa_score[ii] < boundarySasaThreshold ) {
+			burial+='C';
+		} else if ( sasa_score[ii] < surfaceSasaThreshold ) {
+			burial+='B';
+		} else {
+			burial+='S';
+		}
+	}
+	return(burial);
 }
 
 
 int main( int argc, char * argv [] ) {
 	try{
 
-    using namespace core::chemical;
-	using namespace core::import_pose::pose_stream;
-	using core::import_pose::pose_from_file;
-	devel::init(argc, argv);
-	MetaPoseInputStream input = streams_from_cmd_line();
-    ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-    Real PORE_RADIUS = 2.0;
-    Real BOUNDARY_SASA_THRESH = 20.0;
-    Real SURFACE_SASA_THRESH = 40.0;
-    while(input.has_another_pose()){
-		core::pose::PoseOP input_poseOP;
-		input_poseOP = new core::pose::Pose();
-		input.fill_pose(*input_poseOP,*rsd_set);
-		std::string tag = core::pose::tag_from_pose(*input_poseOP);
-        std::string outFile = (tag + ".burial");
-        utility::io::ozstream output(outFile);
-        output << ">" << tag << std::endl;
-        std::string burial =  calc_burial(*input_poseOP,PORE_RADIUS, BOUNDARY_SASA_THRESH,SURFACE_SASA_THRESH);
-        output << burial << std::endl;
-        output.close();
-        std::cout <<"finished " << tag << std::endl;
-    }
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+		using namespace core::chemical;
+		using namespace core::import_pose::pose_stream;
+		using core::import_pose::pose_from_file;
+		devel::init(argc, argv);
+		MetaPoseInputStream input = streams_from_cmd_line();
+		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		Real PORE_RADIUS = 2.0;
+		Real BOUNDARY_SASA_THRESH = 20.0;
+		Real SURFACE_SASA_THRESH = 40.0;
+		while ( input.has_another_pose() ) {
+			core::pose::PoseOP input_poseOP;
+			input_poseOP = new core::pose::Pose();
+			input.fill_pose(*input_poseOP,*rsd_set);
+			std::string tag = core::pose::tag_from_pose(*input_poseOP);
+			std::string outFile = (tag + ".burial");
+			utility::io::ozstream output(outFile);
+			output << ">" << tag << std::endl;
+			std::string burial =  calc_burial(*input_poseOP,PORE_RADIUS, BOUNDARY_SASA_THRESH,SURFACE_SASA_THRESH);
+			output << burial << std::endl;
+			output.close();
+			std::cout <<"finished " << tag << std::endl;
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

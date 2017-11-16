@@ -31,7 +31,7 @@ using namespace core;
 using namespace protocols::loops;
 using namespace protocols::forge::methods;
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.weitzner.long_loop" );
+static basic::Tracer TR( "pilot_apps.weitzner.long_loop" );
 
 LoopsOP
 read_loops_from_text_file() {
@@ -52,8 +52,7 @@ set_all_loop_dihedrals_to_180( pose::PoseOP pose, const Loops::LoopList & loop_l
 	TR << "Setting all loop dihedrals to 180 degrees (opening the loop)." << std::endl;
 
 	Real my_dihedral = 180.;
-	for(Size i=loop_list[1].start(); i <= loop_list[1].stop(); i++)
-	{
+	for ( Size i=loop_list[1].start(); i <= loop_list[1].stop(); i++ ) {
 		pose->set_phi(i, my_dihedral);
 		pose->set_psi(i, my_dihedral);
 	}
@@ -64,31 +63,31 @@ main( int argc, char * argv [] ) {
 
 	try {
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	pose::PoseOP pose = new pose::Pose();
+		pose::PoseOP pose = new pose::Pose();
 
-	core::import_pose::pose_from_file(*pose, "src/apps/pilot/weitzner/1bzq.pdb");// changing to relative path, so it could work from diff places... "/work/rosetta/rosetta_source/apps/pilot/weitzner/1bzq.pdb", core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(*pose, "src/apps/pilot/weitzner/1bzq.pdb");// changing to relative path, so it could work from diff places... "/work/rosetta/rosetta_source/apps/pilot/weitzner/1bzq.pdb", core::import_pose::PDB_file);
 
-	TR << "The pose's sequence is: " << pose->sequence() << std::endl;
+		TR << "The pose's sequence is: " << pose->sequence() << std::endl;
 
-	// Hey... let's check how its actually looks like... →→→ ☆★PyMOL★☆ ←←←
-	protocols::moves::AddPyMOLObserver(*pose, true); // Lets ask PyMOL to store history...
+		// Hey... let's check how its actually looks like... →→→ ☆★PyMOL★☆ ←←←
+		protocols::moves::AddPyMOLObserver(*pose, true); // Lets ask PyMOL to store history...
 
-	// Eventually this will take a text file as input
-	LoopsOP loops = read_loops_from_text_file();
+		// Eventually this will take a text file as input
+		LoopsOP loops = read_loops_from_text_file();
 
-	pose->fold_tree( fold_tree_from_loops( *pose, *loops ) );
-	TR << pose->fold_tree();
-	set_all_loop_dihedrals_to_180( pose, loops->loops() );
+		pose->fold_tree( fold_tree_from_loops( *pose, *loops ) );
+		TR << pose->fold_tree();
+		set_all_loop_dihedrals_to_180( pose, loops->loops() );
 
-	kinematics::MoveMapOP mm = new kinematics::MoveMap();
-	mm->set_bb(false);
-	loops->loops()[1].switch_movemap( *mm, id::BB, true);
+		kinematics::MoveMapOP mm = new kinematics::MoveMap();
+		mm->set_bb(false);
+		loops->loops()[1].switch_movemap( *mm, id::BB, true);
 
-	CCDLoopClosureMover ccd  = CCDLoopClosureMover( loops->loops()[1], mm);
-	ccd.apply(*pose);
-	pose->dump_pdb("src/apps/pilot/weitzner/1bzq_closed.pdb");
+		CCDLoopClosureMover ccd  = CCDLoopClosureMover( loops->loops()[1], mm);
+		ccd.apply(*pose);
+		pose->dump_pdb("src/apps/pilot/weitzner/1bzq_closed.pdb");
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -66,7 +66,6 @@
 
 #include <protocols/membrane/util.hh>
 
-using basic::T;
 
 // option key includes
 
@@ -85,7 +84,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingInitialPerturbation" );
+static basic::Tracer TR( "protocols.docking.DockingInitialPerturbation" );
 static core::Size trans ( 1 ), rot ( 2 );
 
 using namespace core;

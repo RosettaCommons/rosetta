@@ -98,7 +98,7 @@ namespace protocols {
 namespace pmut_scan {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.pmut_scan.PointMutScanDriver" );
+static basic::Tracer TR( "protocols.pmut_scan.PointMutScanDriver" );
 
 ///
 /// @brief

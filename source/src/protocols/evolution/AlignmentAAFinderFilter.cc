@@ -66,7 +66,7 @@ typedef utility::vector1< bool > bools;
 using namespace std;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.evolution.AlignmentAAFinder" );
+static basic::Tracer TR( "protocols.evolution.AlignmentAAFinder" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP AlignmentAAFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AlignmentAAFinder ); }

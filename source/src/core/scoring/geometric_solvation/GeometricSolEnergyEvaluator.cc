@@ -63,7 +63,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.geometric_solvation.GeometricSolEnergyEvaluator" );
+static basic::Tracer TR( "core.scoring.geometric_solvation.GeometricSolEnergyEvaluator" );
 
 using namespace core::scoring::hbonds;
 using namespace ObjexxFCL::format;

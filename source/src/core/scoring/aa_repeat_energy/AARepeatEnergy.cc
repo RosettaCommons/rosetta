@@ -46,7 +46,7 @@ namespace scoring {
 namespace aa_repeat_energy {
 
 using namespace core::scoring::methods;
-static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.AARepeatEnergy");
+static basic::Tracer TR("core.scoring.methods.AARepeatEnergy");
 
 /// @brief This must return a fresh instance of the AARepeatEnergy class, never an instance already in use.
 ///

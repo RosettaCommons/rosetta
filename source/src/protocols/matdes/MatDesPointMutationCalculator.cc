@@ -73,7 +73,7 @@
 namespace protocols {
 namespace matdes {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.MatDesPointMutationCalculator" );
+static basic::Tracer TR( "protocols.matdes.MatDesPointMutationCalculator" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;

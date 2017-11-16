@@ -39,7 +39,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.forge.constraints.InvrotTreeRCG" );
+static basic::Tracer tr( "protocols.forge.constraints.InvrotTreeRCG" );
 
 namespace protocols {
 namespace forge {

@@ -68,7 +68,7 @@ typedef point axis;
 using namespace core;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.bder.zinc2_homodimer_setup" );
+static basic::Tracer TR( "apps.pilot.bder.zinc2_homodimer_setup" );
 
 basic::options::StringOptionKey const match1( "match1" ); // match refers to 2 residues (Cys/His/Asp/Glu) + zinc, found by the matcher
 basic::options::StringOptionKey const match2( "match2" );

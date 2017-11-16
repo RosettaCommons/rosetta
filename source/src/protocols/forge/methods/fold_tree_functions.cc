@@ -55,7 +55,7 @@ namespace methods {
 
 // Tracer instance for this file
 // Named after the original location of this code
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.methods.fold_tree_functions" );
+static basic::Tracer TR( "protocols.forge.methods.fold_tree_functions" );
 
 
 /// @brief enforce Edge has start <= stop (swap if necessary)

@@ -31,7 +31,7 @@
 namespace protocols {
 namespace jd3 {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.JobDistributorFactory" );
+static basic::Tracer TR( "protocols.jd3.JobDistributorFactory" );
 
 JobDistributorOP
 JobDistributorFactory::create_job_distributor()

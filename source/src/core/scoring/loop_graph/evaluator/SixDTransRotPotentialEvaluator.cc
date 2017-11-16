@@ -26,7 +26,7 @@
 #include <numeric/constants.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.evaluator.SixDTransRotPotentialEvaluator" );
+static basic::Tracer TR( "core.scoring.loop_graph.evaluator.SixDTransRotPotentialEvaluator" );
 
 using namespace core;
 using numeric::constants::r::pi;

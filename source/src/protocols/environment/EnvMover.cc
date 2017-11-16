@@ -35,7 +35,7 @@
 
 // ObjexxFCL Headers
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.environment.EnvMover", basic::t_info );
+static basic::Tracer tr( "protocols.environment.EnvMover", basic::t_info );
 
 namespace protocols {
 namespace environment {

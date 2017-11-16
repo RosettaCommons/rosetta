@@ -49,7 +49,7 @@
 
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.MetalContactsConstraintGenerator" );
+static basic::Tracer TR( "protocols.constraint_generator.MetalContactsConstraintGenerator" );
 
 namespace protocols {
 namespace constraint_generator {

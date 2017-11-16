@@ -41,7 +41,7 @@
 using namespace core;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer TR( "app.public.comparative_modeling.avrg_silent" );
+static basic::Tracer TR( "app.public.comparative_modeling.avrg_silent" );
 
 utility::vector1< Real >
 calculate_variations( utility::vector1< utility::vector1< Real > > const deviation ){

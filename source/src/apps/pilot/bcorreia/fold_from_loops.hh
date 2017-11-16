@@ -32,7 +32,7 @@
 using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-static THREAD_LOCAL basic::Tracer TRA( "fold_from_loops", basic::t_info );
+static basic::Tracer TRA( "fold_from_loops", basic::t_info );
 
 
 void write_checkpoint( Size iter )

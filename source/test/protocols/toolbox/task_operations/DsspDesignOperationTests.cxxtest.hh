@@ -34,7 +34,7 @@
 #include <string>
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR("protocolstoolbox.task_operations.DsspDesignOperationTests.cxxtest");
+static basic::Tracer TR("protocolstoolbox.task_operations.DsspDesignOperationTests.cxxtest");
 
 using namespace protocols::toolbox::task_operations;
 using namespace core::pack::task;

@@ -40,7 +40,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.HSSTripletFilter" );
+static basic::Tracer TR( "protocols.fldsgn.filters.HSSTripletFilter" );
 
 namespace protocols {
 namespace fldsgn {

@@ -52,12 +52,11 @@ seems to have a solution not found here.
 
 */
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 static numeric::random::RandomGenerator RG(953732);
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsRandomSmallMover" );
+static basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsRandomSmallMover" );
 
 
 using namespace core;

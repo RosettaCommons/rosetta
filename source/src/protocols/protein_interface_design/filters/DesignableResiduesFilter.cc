@@ -38,8 +38,8 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.DesignableResiduesFilter" );
-static THREAD_LOCAL basic::Tracer TR_pymol( "protocols.protein_interface_design.filters.DesignableResiduesFilter_pymol" );
+static basic::Tracer TR( "protocols.protein_interface_design.filters.DesignableResiduesFilter" );
+static basic::Tracer TR_pymol( "protocols.protein_interface_design.filters.DesignableResiduesFilter_pymol" );
 
 /// @brief default ctor
 DesignableResiduesFilter::DesignableResiduesFilter() :

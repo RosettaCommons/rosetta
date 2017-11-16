@@ -36,19 +36,19 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "serialization_test" );
+static basic::Tracer TR( "serialization_test" );
 
 class ThisApplication {
-    public:
-        ThisApplication(){};
-        static void register_options();
-		};
+public:
+	ThisApplication(){};
+	static void register_options();
+};
 
-		OPT_KEY( String , pdb)
+OPT_KEY( String , pdb)
 
-		void ThisApplication::register_options() {
-				NEW_OPT( pdb, "pdb file", "");
-		}
+void ThisApplication::register_options() {
+	NEW_OPT( pdb, "pdb file", "");
+}
 
 
 std::string
@@ -76,16 +76,16 @@ string_to_pose(const std::string& silent_string){
 }
 
 class SerializablePose: public core::pose::Pose {
-	public:
-		SerializablePose(const core::pose::Pose& p)
-					: Pose(p)
-			{ }
+public:
+	SerializablePose(const core::pose::Pose& p)
+	: Pose(p)
+	{ }
 
-		SerializablePose();
+	SerializablePose();
 
-		virtual core::pose::PoseOP clone() const {
-				return new SerializablePose( *this );
-		}
+	virtual core::pose::PoseOP clone() const {
+		return new SerializablePose( *this );
+	}
 };
 
 typedef utility::pointer::owning_ptr< SerializablePose > SerializablePoseOP;
@@ -119,5 +119,5 @@ main ( int argc, char* argv[] ){
 		return -1;
 	}
 
-    return 0;
+	return 0;
 }

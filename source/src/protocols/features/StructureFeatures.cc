@@ -60,7 +60,7 @@
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/StructureFeaturesCreator.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.StructureFeatures" );
+static basic::Tracer TR( "protocols.features.StructureFeatures" );
 
 namespace protocols {
 namespace features {

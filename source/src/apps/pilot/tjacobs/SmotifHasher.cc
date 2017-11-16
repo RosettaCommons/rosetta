@@ -44,7 +44,7 @@
 //C++ headers
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR("SmotifHasher");
+static basic::Tracer TR("SmotifHasher");
 
 namespace SmotifHasher {
 basic::options::IntegerOptionKey const num_bundles( "num_bundles" );

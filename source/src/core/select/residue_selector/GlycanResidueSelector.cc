@@ -37,7 +37,7 @@
 #include <utility/assert.hh>
 #include <utility/string_util.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.GlycanResidueSelector" );
+static basic::Tracer TR( "core.select.residue_selector.GlycanResidueSelector" );
 
 
 namespace core {

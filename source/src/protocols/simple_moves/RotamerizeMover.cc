@@ -55,7 +55,7 @@ using namespace conformation;
 
 using basic::Warning;
 using basic::t_warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RotamerizeMover" );
+static basic::Tracer TR( "protocols.moves.RotamerizeMover" );
 
 /// RotamerizeMover
 
@@ -250,7 +250,7 @@ void RotamerizeMover::setup( Pose & pose )
 	if ( task_factory_ != nullptr ) {
 		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
 	} else if ( task_ == nullptr ) {
-		Warning() << "undefined PackerTask -- creating a default one" << std::endl;
+		TR.Warning << "undefined PackerTask -- creating a default one" << std::endl;
 		task_ = TaskFactory::create_packer_task( pose );
 	} else runtime_assert( task_is_valid( pose ) );
 	// in case PackerTask was not generated locally, verify compatibility with pose

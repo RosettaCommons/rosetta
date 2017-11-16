@@ -55,7 +55,7 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
-static THREAD_LOCAL basic::Tracer TZ( "protocols.simple_moves.symmetry.SetupNCSMover" );
+static basic::Tracer TZ( "protocols.simple_moves.symmetry.SetupNCSMover" );
 
 // creators
 // XRW TEMP std::string

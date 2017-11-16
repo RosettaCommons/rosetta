@@ -48,59 +48,56 @@ using namespace core;
 using namespace std;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.blivens.create_disulf_file" );
+static basic::Tracer TR( "apps.pilot.blivens.create_disulf_file" );
 
 int
 usage(string msg)
 {
-	TR	<< "usage: create_disulf_file -database db -s in.pdb -o out.disulf" << endl
-        << msg << endl;
+	TR << "usage: create_disulf_file -database db -s in.pdb -o out.disulf" << endl
+		<< msg << endl;
 	exit(1);
 }
 
 int main( int argc, char * argv [] )
 {
-  try {
+	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	//init options system
-	devel::init(argc, argv);
+		//init options system
+		devel::init(argc, argv);
 
-	//get i/o files
-	string pdbfile, outfile;
-	if( option[ in::file::s ].user() ) {
-		pdbfile = start_file();
-	}
-	else return usage("No in file given: Use -s to designate pdb files to search for disulfides");
+		//get i/o files
+		string pdbfile, outfile;
+		if ( option[ in::file::s ].user() ) {
+			pdbfile = start_file();
+		} else return usage("No in file given: Use -s to designate pdb files to search for disulfides");
 
-	if( option[ out::file::o ].user() ) {
-		outfile = option[ out::file::o ]();
-	}
-	else return usage("No out file given: Use -o to designate a file or directory to output to");
+		if ( option[ out::file::o ].user() ) {
+			outfile = option[ out::file::o ]();
+		} else return usage("No out file given: Use -o to designate a file or directory to output to");
 
-	//read in pose
-	pose::Pose pose;
-	core::import_pose::pose_from_file( pose, pdbfile , core::import_pose::PDB_file);
+		//read in pose
+		pose::Pose pose;
+		core::import_pose::pose_from_file( pose, pdbfile , core::import_pose::PDB_file);
 
-	ofstream out(outfile.c_str());
-	if(!out.good()) {
-		return usage( "Error opening "+outfile+" for writing." );
-	}
+		ofstream out(outfile.c_str());
+		if ( !out.good() ) {
+			return usage( "Error opening "+outfile+" for writing." );
+		}
 
-	//find disulfides
-	vector1< std::pair<Size,Size> > disulf_bonds(0); //zero needed to disambiguate constructor?
-	find_disulfides(pose,disulf_bonds);
+		//find disulfides
+		vector1< std::pair<Size,Size> > disulf_bonds(0); //zero needed to disambiguate constructor?
+		find_disulfides(pose,disulf_bonds);
 
-	//output
-	for(vector1<pair<Size,Size> >::const_iterator disulf_it = disulf_bonds.begin();
-			disulf_it != disulf_bonds.end(); ++disulf_it )
-	{
-		out << disulf_it->first << "\t" << disulf_it->second << endl;
-	}
+		//output
+		for ( vector1<pair<Size,Size> >::const_iterator disulf_it = disulf_bonds.begin();
+				disulf_it != disulf_bonds.end(); ++disulf_it ) {
+			out << disulf_it->first << "\t" << disulf_it->second << endl;
+		}
 
-	out.close();
+		out.close();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

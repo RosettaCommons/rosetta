@@ -85,7 +85,6 @@
 //#include <basic/options/keys/specificity.OptionKeys.gen.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -97,21 +96,21 @@ using utility::vector1;
 using std::string;
 
 
-static THREAD_LOCAL basic::Tracer tt( "demo.phil.zf_relax", basic::t_trace );
-static THREAD_LOCAL basic::Tracer td( "demo.phil.zf_relax", basic::t_debug );
-static THREAD_LOCAL basic::Tracer ti( "demo.phil.zf_relax", basic::t_info );
-static THREAD_LOCAL basic::Tracer tw( "demo.phil.zf_relax", basic::t_warning );
+static basic::Tracer tt( "demo.phil.zf_relax", basic::t_trace );
+static basic::Tracer td( "demo.phil.zf_relax", basic::t_debug );
+static basic::Tracer ti( "demo.phil.zf_relax", basic::t_info );
+static basic::Tracer tw( "demo.phil.zf_relax", basic::t_warning );
 
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace zf_relax_ns {
 
-	Size const protein_root_mpos( 3 ); // dna->protein jump has downstream pos at motif pos=3
-	Size const   dna_anchor_mpos( 2 ); // anchored at position 2 in each triplet
+Size const protein_root_mpos( 3 ); // dna->protein jump has downstream pos at motif pos=3
+Size const   dna_anchor_mpos( 2 ); // anchored at position 2 in each triplet
 
-	Size const   cutpoint_mpos( 13 ); // gly
-	Size const loop_begin_mpos( 12 ); // ser
-	Size const   loop_end_mpos( 17 ); // phe
+Size const   cutpoint_mpos( 13 ); // gly
+Size const loop_begin_mpos( 12 ); // ser
+Size const   loop_end_mpos( 17 ); // phe
 }
 
 
@@ -169,8 +168,8 @@ ccd_close_zf_chainbreak( Size const finger, pose::Pose & pose )
 	// try to close using ccd closure
 	Real fwd_dev, bwd_dev, tor_delta, rama_delta;
 	protocols::loops::fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles, tolerance, rama_check,
-																			 max_rama_score_increase, max_tdH, max_tdS, max_tdL, fwd_dev, bwd_dev,
-																			 tor_delta, rama_delta );
+		max_rama_score_increase, max_tdH, max_tdS, max_tdL, fwd_dev, bwd_dev,
+		tor_delta, rama_delta );
 
 	tt << "after ccd: " << fwd_dev << ' ' << bwd_dev << ' ' << tor_delta << ' ' << rama_delta << std::endl;
 
@@ -223,7 +222,7 @@ public:
 
 			if ( delta1 > chainbreak_distance_delta_threshold || delta2 > chainbreak_distance_delta_threshold ) {
 				// undo the move, try again
- 				pose = start_pose;
+				pose = start_pose;
 				continue;
 			}
 
@@ -281,7 +280,7 @@ setup_zf_pose(
 	Size protein_dna_cutpoint(0);
 	for ( Size i=1; i< nres; ++i ) {
 		if ( ( pose.residue(i  ).is_DNA() && pose.residue(i+1).is_protein() ) ||
-				 ( pose.residue(i+1).is_DNA() && pose.residue(i  ).is_protein() ) ) {
+				( pose.residue(i+1).is_DNA() && pose.residue(i  ).is_protein() ) ) {
 			protein_dna_cutpoint = i;
 			break;
 		}
@@ -330,20 +329,20 @@ setup_zf_pose(
 ///////////////////////////////////////////////////////////////////////////////
 /**
 
-	 Test zinc finger relaxation protocol.
+Test zinc finger relaxation protocol.
 
-	 for starters, hard code 1aay, later extend to other guys, read Zinc atoms, calculate motif positions...
+for starters, hard code 1aay, later extend to other guys, read Zinc atoms, calculate motif positions...
 
 
-	 setup a foldtree for DNA fragment insertions with jumps from triplet position 2 to each finger,
-	 and chainbreaks between the three fingers, after the glycine residue.
+setup a foldtree for DNA fragment insertions with jumps from triplet position 2 to each finger,
+and chainbreaks between the three fingers, after the glycine residue.
 
-	 moves:
-	  1. rigid-body perturbation of one of the fingers, followed by closure of the loop
-		2. internal dna flex-move followed by closure of one of the fingers, if necessary
+moves:
+1. rigid-body perturbation of one of the fingers, followed by closure of the loop
+2. internal dna flex-move followed by closure of one of the fingers, if necessary
 
-	 experiment with ccd closure ? to close the finger chainbreaks, or fragment-based closure? or
-	 torsion/angle minimization as above?
+experiment with ccd closure ? to close the finger chainbreaks, or fragment-based closure? or
+torsion/angle minimization as above?
 
 
 **/
@@ -449,7 +448,7 @@ zf_relax_test()
 
 	scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
 
-	//	scorefxn->energy_method_options().exclude_DNA_DNA( exclude_DNA_DNA );
+	// scorefxn->energy_method_options().exclude_DNA_DNA( exclude_DNA_DNA );
 	methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
 	options.exclude_DNA_DNA( exclude_DNA_DNA );
 	scorefxn->set_energy_method_options( options );
@@ -540,17 +539,17 @@ zf_relax_test()
 
 		// movers
 		MoverOP bp_mover( new ZF_PatchupMover( new BasePairMover( fraglib,
-																															base_mover_frag_dev_threshold,
-																															base_mover_max_tries,
-																															base_mover_max_score_increase,
-																															cst_scorefxn ) ) );
+			base_mover_frag_dev_threshold,
+			base_mover_max_tries,
+			base_mover_max_score_increase,
+			cst_scorefxn ) ) );
 		MoverOP bs_mover( new ZF_PatchupMover( new BaseStepMover( fraglib,
-																															base_mover_frag_dev_threshold,
-																															base_mover_max_tries,
-																															base_mover_max_score_increase,
-																															cst_scorefxn ) ) );
+			base_mover_frag_dev_threshold,
+			base_mover_max_tries,
+			base_mover_max_score_increase,
+			cst_scorefxn ) ) );
 		MoverOP rb_mover( new ZF_PatchupMover( new devel::dna::RB_Mover( protein_jumps_mm, rb_mover_trans_mag,
-																																		 rb_mover_rot_mag ) ) );
+			rb_mover_rot_mag ) ) );
 		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( min_mm, scorefxn, "lbfgs_armijo_nonmonotone", min_tol, true ) );
 		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scorefxn, pack_task, 25 ) );
 
@@ -642,10 +641,10 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

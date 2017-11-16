@@ -63,7 +63,7 @@
 namespace protocols {
 namespace mean_field {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.mean_field.GenMeanFieldMover" );
+static basic::Tracer TR( "protocols.mean_field.GenMeanFieldMover" );
 
 using namespace core;
 using namespace utility;

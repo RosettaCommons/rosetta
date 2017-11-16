@@ -17,7 +17,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.Histogram" );
+static basic::Tracer TR( "protocols.recces.Histogram" );
 
 namespace protocols {
 namespace recces {

@@ -25,7 +25,7 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.IdealAbegoGenerator" );
+static basic::Tracer TR( "protocols.denovo_design.components.IdealAbegoGenerator" );
 
 namespace protocols {
 namespace denovo_design {

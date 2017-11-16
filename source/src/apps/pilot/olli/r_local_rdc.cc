@@ -78,7 +78,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 class ThisApplication  {
 public:

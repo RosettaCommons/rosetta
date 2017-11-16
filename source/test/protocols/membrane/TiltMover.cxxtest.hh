@@ -47,7 +47,7 @@ using namespace core::conformation::membrane;
 using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.TiltMover.cxxtest");
+static basic::Tracer TR("protocols.membrane.TiltMover.cxxtest");
 
 class TiltMoverTest : public CxxTest::TestSuite {
 

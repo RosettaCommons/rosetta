@@ -53,7 +53,7 @@ using namespace protocols::toolbox::task_operations;
 
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.ConservativeDesignOperationTests");
+static basic::Tracer TR("protocols.antibody.ConservativeDesignOperationTests");
 
 class ConservativeDesignOperationTests: public CxxTest::TestSuite {
 

@@ -55,7 +55,7 @@ CA  5 CA 71 HARMONIC 4.68 2.0
 #include <core/kinematics/Jump.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
+static basic::Tracer tr( "core.io.constraints" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

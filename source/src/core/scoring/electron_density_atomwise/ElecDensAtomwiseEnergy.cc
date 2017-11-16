@@ -39,17 +39,14 @@
 #include <core/id/AtomID.hh>
 #include <basic/Tracer.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-
 namespace core {
 namespace scoring {
 namespace electron_density_atomwise {
 
 using namespace core;
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density_atomwise.ElecDensAtomwiseEnergy" );
+static basic::Tracer TR( "core.scoring.electron_density_atomwise.ElecDensAtomwiseEnergy" );
 
 /// @details This must return a fresh instance of the ElecDensAtomwiseEnergy class,
 /// never an instance already in use

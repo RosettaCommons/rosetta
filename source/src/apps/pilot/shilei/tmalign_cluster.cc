@@ -74,7 +74,7 @@ using namespace core::io::silent;
 
 OPT_1GRP_KEY(Real,tmalign_cluster,cluster_radius)
 
-static THREAD_LOCAL basic::Tracer TR( "tmalign_cluster" );
+static basic::Tracer TR( "tmalign_cluster" );
 
 void do_tmscore( core::pose::Pose const &pose1, core::pose::Pose const &pose2, core::Real &tmscore) {
 	protocols::hybridization::TMalign tm_align;

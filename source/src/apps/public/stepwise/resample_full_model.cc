@@ -68,7 +68,7 @@ using namespace basic::options::OptionKeys;
 
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.calebgeniesse.resample_full_model" );
+static basic::Tracer TR( "apps.pilot.calebgeniesse.resample_full_model" );
 
 ///////////////////////////////////////////////////////////////////////////////
 void

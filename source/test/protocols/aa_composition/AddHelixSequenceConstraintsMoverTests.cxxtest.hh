@@ -39,7 +39,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("AddHelixSequenceConstraintsMoverTests");
+static basic::Tracer TR("AddHelixSequenceConstraintsMoverTests");
 
 
 class AddHelixSequenceConstraintsMoverTests : public CxxTest::TestSuite {

@@ -17,7 +17,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.cm_main" );
+static basic::Tracer tr( "protocols.comparative_modeling.cm_main" );
 
 namespace protocols  {
 namespace comparative_modeling {

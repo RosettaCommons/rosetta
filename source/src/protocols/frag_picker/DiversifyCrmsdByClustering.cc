@@ -33,7 +33,7 @@ namespace frag_picker {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer trDiversifyCrmsdByClustering(
+static basic::Tracer trDiversifyCrmsdByClustering(
 	"protocols.frag_picker.DiversifyCrmsdByClustering");
 
 void DiversifyCrmsdByClustering::copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst) {

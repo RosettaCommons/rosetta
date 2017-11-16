@@ -34,7 +34,7 @@
 namespace protocols {
 namespace fibril {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.symmetry.SetupForFibrilMover" );
+static basic::Tracer TR( "protocols.moves.symmetry.SetupForFibrilMover" );
 
 SetupForFibrilMover::SetupForFibrilMover()
 : Mover("SetupForFibrilMover") {}

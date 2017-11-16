@@ -42,76 +42,76 @@
 
 using namespace basic::options;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.gasteiger_type_check" );
+static basic::Tracer TR( "apps.gasteiger_type_check" );
 
 int
 main( int argc, char * argv [] )
 {
 
-try {
+	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	utility::options::FileVectorOption & fvec
-		= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
+		utility::options::FileVectorOption & fvec
+			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
 
-	core::chemical::ChemicalManager * chem_mang = core::chemical::ChemicalManager::get_instance();
-	core::chemical::AtomTypeSetCAP atom_types = chem_mang->atom_type_set("fa_standard");
-	core::chemical::ElementSetCAP elements = chem_mang->element_set("default");
-	core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
-	core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
-	core::chemical::gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_type_set = chem_mang->gasteiger_atom_type_set("default");
+		core::chemical::ChemicalManager * chem_mang = core::chemical::ChemicalManager::get_instance();
+		core::chemical::AtomTypeSetCAP atom_types = chem_mang->atom_type_set("fa_standard");
+		core::chemical::ElementSetCAP elements = chem_mang->element_set("default");
+		core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
+		core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
+		core::chemical::gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_type_set = chem_mang->gasteiger_atom_type_set("default");
 
-	std::ofstream datafile( "rosetta.types" );
-	core::chemical::sdf::MolWriter molwriter;
+		std::ofstream datafile( "rosetta.types" );
+		core::chemical::sdf::MolWriter molwriter;
 
-	TR << "Loading residue types " << std::endl;
-	// We don't need to load all the residue types - just the extra_res_fa ones.
-	// Grab each and go.
+		TR << "Loading residue types " << std::endl;
+		// We don't need to load all the residue types - just the extra_res_fa ones.
+		// Grab each and go.
 
-	for(core::Size i = 1, e = fvec.size(); i <= e; ++i) {
-		utility::file::FileName fname = fvec[i];
-		std::string filename = fname.name();
+		for ( core::Size i = 1, e = fvec.size(); i <= e; ++i ) {
+			utility::file::FileName fname = fvec[i];
+			std::string filename = fname.name();
 
-		core::chemical::ResidueTypeOP restype( read_topology_file(
+			core::chemical::ResidueTypeOP restype( read_topology_file(
 				filename, atom_types, elements, mm_atom_types, orbital_types ) );
 
-		TR << "Typing residue type " << fname.base()<< std::endl;
+			TR << "Typing residue type " << fname.base()<< std::endl;
 
-		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, gasteiger_atom_type_set, false);
+			core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, gasteiger_atom_type_set, false);
 
-		//TR << "Outputting residue type " << fname.base()<< std::endl;
+			//TR << "Outputting residue type " << fname.base()<< std::endl;
 
-		for( core::Size ii(1); ii <= restype->natoms(); ++ii ) {
-			if ( ! restype->atom(ii).gasteiger_atom_type() ) {
-				TR.Warning << "Untyped atom: " << restype->name() << " " << restype->atom(ii).name() << std::endl;
-				continue;
-			}
-			datafile << "TYPE " << restype->name()
+			for ( core::Size ii(1); ii <= restype->natoms(); ++ii ) {
+				if ( ! restype->atom(ii).gasteiger_atom_type() ) {
+					TR.Warning << "Untyped atom: " << restype->name() << " " << restype->atom(ii).name() << std::endl;
+					continue;
+				}
+				datafile << "TYPE " << restype->name()
 					//<< " " << restype->atom(ii).name()  //The sdf output doesn't include atom names
 					<< " " << ii
 					<<" : " << restype->atom(ii).gasteiger_atom_type()->get_name() << std::endl;
+			}
+
+			std::string outfile = fname.base() + "_post.sdf";
+			//TR << "Outputing SDF file " << outfile << std::endl;
+
+			molwriter.output_residue(outfile, restype);
+
+			//TR << "Done with sdf output." << std::endl;
 		}
 
-		std::string outfile = fname.base() + "_post.sdf";
-		//TR << "Outputing SDF file " << outfile << std::endl;
+		datafile.close();
 
-		molwriter.output_residue(outfile, restype);
+		TR << "Done outputing typeinfo" << std::endl;
 
-		//TR << "Done with sdf output." << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-
-	datafile.close();
-
-	TR << "Done outputing typeinfo" << std::endl;
-
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
 
 }
 

@@ -41,7 +41,7 @@ using std::string;
 using utility::CSI_Reset;  using utility::CSI_Bold;  using utility::CSI_Red;
 
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting");
+static basic::Tracer TR("protocols.antibody.grafting");
 
 // /// \details return true if s is in array
 // inline bool is_in(string const &s, std::vector<string> const &array)

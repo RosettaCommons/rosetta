@@ -48,7 +48,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -60,7 +59,7 @@ using namespace basic::options::OptionKeys;
 typedef std::string String;
 
 
-static THREAD_LOCAL basic::Tracer TR( "pick_bab" );
+static basic::Tracer TR( "pick_bab" );
 
 class ThisApplication  {
 public:
@@ -95,19 +94,19 @@ public: // constructor/deconstructor
 
 		// set delted segments
 		utility::vector1< String > parts;
-		if( option[ segments ]() != "" ) {
+		if ( option[ segments ]() != "" ) {
 			parts = string_split( option[ segments ](), ',' );
 		} else {
 			utility_exit_with_message( "[ERROR] No segments to be deleted. " );
 		}
-		if( parts.size() < 1 ) {
+		if ( parts.size() < 1 ) {
 			utility_exit_with_message( "[ERROR] Segments are not defined properly: ',' is required to separete segments. " );
 		}
 
 		utility::vector1< String > residue_pair;
-		for( Size ii=1; ii<=parts.size(); ii++ ) {
+		for ( Size ii=1; ii<=parts.size(); ii++ ) {
 			residue_pair = string_split( parts[ ii ], '-' );
-			if( residue_pair.size() != 2 ) {
+			if ( residue_pair.size() != 2 ) {
 				utility_exit_with_message( "[ERROR] Segment is not defined properly, '-' is required between begin and end positions. " );
 			}
 			TR << "deleted segment : " << residue_pair[ 1 ] << " " << residue_pair[ 2 ]  << std::endl;
@@ -148,7 +147,7 @@ public: // apply
 		JobOP job_me( JobDistributor::get_instance()->current_job() );
 		String me( JobDistributor::get_instance()->job_outputter()->output_name( job_me ) );
 
-		if( ! pose.is_fullatom() ) {
+		if ( ! pose.is_fullatom() ) {
 			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 		}
 		Pose copy_pose( pose );
@@ -159,8 +158,8 @@ public: // apply
 			Size begin = it->first - removed_residues;
 			Size end = it->second - removed_residues;
 
-			if( begin < 1 || end > pose.size() ) {
-        if( option[ ignore_error ]() ) {
+			if ( begin < 1 || end > pose.size() ) {
+				if ( option[ ignore_error ]() ) {
 					TR << "Segments to be deleted are out of range of pose. There might be a junk in a readin silent files. " << me << std::endl;
 					TR << pose.size() << " " << begin << " " << end << std::endl;
 					continue;
@@ -176,8 +175,8 @@ public: // apply
 		( *scorefxn_ )( pose );
 
 
-		if( option[ in::file::native ].user() ) {
-			if( copy_pose.size() != native_.size() ) {
+		if ( option[ in::file::native ].user() ) {
+			if ( copy_pose.size() != native_.size() ) {
 				TR << copy_pose.size() << " " << native_.size() << " " << me << std::endl;
 			}
 			Real rms = core::scoring::CA_rmsd( copy_pose, native_ );
@@ -200,17 +199,17 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	ThisApplication::register_options();
+		ThisApplication::register_options();
 
-	// init
-	devel::init(argc, argv);
+		// init
+		devel::init(argc, argv);
 
-	// mover
-	protocols::moves::MoverOP protocol;
-	protocol = new DeleteSegments();
+		// mover
+		protocols::moves::MoverOP protocol;
+		protocol = new DeleteSegments();
 
-	// run
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+		// run
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

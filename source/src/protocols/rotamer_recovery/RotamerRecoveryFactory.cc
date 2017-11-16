@@ -47,7 +47,7 @@ using std::stringstream;
 using core::pose::Pose;
 using core::scoring::ScoreFunctionCOP;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.rotamer_recovery.RotamerRecoveryFactory" );
+static basic::Tracer tr( "protocols.rotamer_recovery.RotamerRecoveryFactory" );
 
 /// @details Private constructor insures correctness of singleton.
 RotamerRecoveryFactory::RotamerRecoveryFactory() {}

@@ -41,7 +41,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.InterfaceSasaFilter" );
+static basic::Tracer TR( "protocols.simple_filters.InterfaceSasaFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP InterfaceSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceSasaFilter ); }

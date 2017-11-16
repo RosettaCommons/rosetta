@@ -55,7 +55,7 @@
 namespace protocols {
 namespace enzdes {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.ModifyStoredLigandRBConfsMovers" );
+static basic::Tracer tr( "protocols.enzdes.ModifyStoredLigandRBConfsMovers" );
 //static core::Size applycalls_ = 0;
 
 ModifyStoredRBConfs::ModifyStoredRBConfs( std::string const & name )

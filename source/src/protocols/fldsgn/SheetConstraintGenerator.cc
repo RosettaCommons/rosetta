@@ -57,7 +57,7 @@
 #include <boost/assign.hpp>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.SheetConstraintGenerator" );
+static basic::Tracer TR( "protocols.fldsgn.SheetConstraintGenerator" );
 
 namespace protocols {
 namespace fldsgn {

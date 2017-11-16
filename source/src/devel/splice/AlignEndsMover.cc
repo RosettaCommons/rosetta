@@ -15,10 +15,9 @@
 #include <devel/splice/AlignEndsMoverCreator.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "devel.splice.AlignEndsMover" );
+static basic::Tracer TR( "devel.splice.AlignEndsMover" );
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>

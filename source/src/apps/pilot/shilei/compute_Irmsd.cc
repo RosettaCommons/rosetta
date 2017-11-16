@@ -90,7 +90,6 @@
 
 #include <protocols/docking/metrics.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

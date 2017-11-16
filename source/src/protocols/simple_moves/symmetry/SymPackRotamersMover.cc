@@ -36,11 +36,10 @@
 #include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.symmetry.SymPackRotamersMover" );
+static basic::Tracer TR( "protocols.simple_moves.symmetry.SymPackRotamersMover" );
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -137,7 +136,7 @@ void SymPackRotamersMover::setup( pose::Pose & pose )
 	pose.update_residue_neighbors();
 	// guarantee of valid ScoreFunction and PackerTask postponed until now
 	if ( score_function() == 0 ) {
-		Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
+		TR.Warning << "undefined ScoreFunction -- creating a default one" << std::endl;
 		ScoreFunctionCOP scfx ( get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		score_function( scfx );
 	}
@@ -149,7 +148,7 @@ void SymPackRotamersMover::setup( pose::Pose & pose )
 	if ( task_factory() != 0 ) {
 		symmetric_task_ = task_factory()->create_task_and_apply_taskoperations( pose );
 	} else if ( task() == 0 ) {
-		Warning() << "undefined PackerTask -- creating a default one" << std::endl;
+		basic::Warning() << "undefined PackerTask -- creating a default one" << std::endl;
 		symmetric_task_ = core::pack::task::TaskFactory::create_packer_task( pose );
 	}
 	// in case PackerTask was not generated locally, verify compatibility with pose

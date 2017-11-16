@@ -27,7 +27,7 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.ResidueProbDesignOperation" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.ResidueProbDesignOperation" );
 
 namespace protocols {
 namespace toolbox {

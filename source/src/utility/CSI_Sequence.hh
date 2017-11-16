@@ -31,6 +31,9 @@ public:
 	/// @brief constructor
 	CSI_Sequence(std::string const & sequence = "") : sequence_( sequence ) {}
 
+	// @details This is explicit such that we don't get odd int conversions based on
+	explicit CSI_Sequence(CSI::CSI_Enum sq );
+
 	// No! No implicit conversion to string : we need the special output overloading.
 	// operator std::string() const { return sequence_; }
 
@@ -56,34 +59,72 @@ private:
 	static bool & suppress_CSI_seq();
 };
 
+/// @details Initialize from a CSI_Enum
+///          Codes below is all Hogwarts-approved magic numbers, so do not modify them.
+///          For reference see: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
+inline
+CSI_Sequence::CSI_Sequence( CSI::CSI_Enum sq ) {
+	switch( sq ) {
+	case CSI::Nothing :   sequence_ = ""; break;
+	case CSI::Reset :     sequence_ = "\x1b[0m"; break;
+	case CSI::Bold :      sequence_ = "\x1b[1m"; break;
+	case CSI::Underline : sequence_ = "\x1b[4m"; break;
+	case CSI::Black :     sequence_ = "\x1b[30m"; break;
+	case CSI::Red :       sequence_ = "\x1b[31m"; break;
+	case CSI::Green :     sequence_ = "\x1b[32m"; break;
+	case CSI::Yellow :    sequence_ = "\x1b[33m"; break;
+	case CSI::Blue :      sequence_ = "\x1b[34m"; break;
+	case CSI::Magenta :   sequence_ = "\x1b[35m"; break;
+	case CSI::Cyan :      sequence_ = "\x1b[36m"; break;
+	case CSI::White :     sequence_ = "\x1b[37m"; break;
+	case CSI::Default :   sequence_ = "\x1b[39m"; break;
+	case CSI::bgBlack :   sequence_ = "\x1b[40m"; break;
+	case CSI::bgRed :     sequence_ = "\x1b[41m"; break;
+	case CSI::bgGreen :   sequence_ = "\x1b[42m"; break;
+	case CSI::bgYellow :  sequence_ = "\x1b[43m"; break;
+	case CSI::bgBlue :    sequence_ = "\x1b[44m"; break;
+	case CSI::bgMagenta : sequence_ = "\x1b[45m"; break;
+	case CSI::bgCyan :    sequence_ = "\x1b[46m"; break;
+	case CSI::bgWhite :   sequence_ = "\x1b[47m"; break;
+	case CSI::bgDefault : sequence_ = "\x1b[49m"; break;
+	default :             sequence_ = ""; break;
+	};
+}
 
 /// @details Functions to return CSI_Seqeunce objects.
 ///          These are not static constants, due to the static initilization order fiasco.
-///          Codes below is all Hogwarts-approved magic numbers, so do not modify them.
-///          For reference see: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
-inline CSI_Sequence CSI_Nothing()   { return CSI_Sequence(""); }
-inline CSI_Sequence CSI_Reset()     { return CSI_Sequence("\x1b[0m"); }
-inline CSI_Sequence CSI_Bold()      { return CSI_Sequence("\x1b[1m"); }
-inline CSI_Sequence CSI_Underline() { return CSI_Sequence("\x1b[4m"); }
-inline CSI_Sequence CSI_Black()     { return CSI_Sequence("\x1b[30m"); }
-inline CSI_Sequence CSI_Red()       { return CSI_Sequence("\x1b[31m"); }
-inline CSI_Sequence CSI_Green()     { return CSI_Sequence("\x1b[32m"); }
-inline CSI_Sequence CSI_Yellow()    { return CSI_Sequence("\x1b[33m"); }
-inline CSI_Sequence CSI_Blue()      { return CSI_Sequence("\x1b[34m"); }
-inline CSI_Sequence CSI_Magenta()   { return CSI_Sequence("\x1b[35m"); }
-inline CSI_Sequence CSI_Cyan()      { return CSI_Sequence("\x1b[36m"); }
-inline CSI_Sequence CSI_White()     { return CSI_Sequence("\x1b[37m"); }
-inline CSI_Sequence CSI_Default()   { return CSI_Sequence("\x1b[39m"); }
-inline CSI_Sequence CSI_bgBlack()   { return CSI_Sequence("\x1b[40m"); }
-inline CSI_Sequence CSI_bgRed()     { return CSI_Sequence("\x1b[41m"); }
-inline CSI_Sequence CSI_bgGreen()   { return CSI_Sequence("\x1b[42m"); }
-inline CSI_Sequence CSI_bgYellow()  { return CSI_Sequence("\x1b[43m"); }
-inline CSI_Sequence CSI_bgBlue()    { return CSI_Sequence("\x1b[44m"); }
-inline CSI_Sequence CSI_bgMagenta() { return CSI_Sequence("\x1b[45m"); }
-inline CSI_Sequence CSI_bgCyan()    { return CSI_Sequence("\x1b[46m"); }
-inline CSI_Sequence CSI_bgWhite()   { return CSI_Sequence("\x1b[47m"); }
-inline CSI_Sequence CSI_bgDefault() { return CSI_Sequence("\x1b[49m"); }
+inline CSI_Sequence CSI_Nothing()   { return CSI_Sequence(CSI::Nothing)  ; }
+inline CSI_Sequence CSI_Reset()     { return CSI_Sequence(CSI::Reset)    ; }
+inline CSI_Sequence CSI_Bold()      { return CSI_Sequence(CSI::Bold)     ; }
+inline CSI_Sequence CSI_Underline() { return CSI_Sequence(CSI::Underline); }
+inline CSI_Sequence CSI_Black()     { return CSI_Sequence(CSI::Black)    ; }
+inline CSI_Sequence CSI_Red()       { return CSI_Sequence(CSI::Red)      ; }
+inline CSI_Sequence CSI_Green()     { return CSI_Sequence(CSI::Green)    ; }
+inline CSI_Sequence CSI_Yellow()    { return CSI_Sequence(CSI::Yellow)   ; }
+inline CSI_Sequence CSI_Blue()      { return CSI_Sequence(CSI::Blue)     ; }
+inline CSI_Sequence CSI_Magenta()   { return CSI_Sequence(CSI::Magenta)  ; }
+inline CSI_Sequence CSI_Cyan()      { return CSI_Sequence(CSI::Cyan)     ; }
+inline CSI_Sequence CSI_White()     { return CSI_Sequence(CSI::White)    ; }
+inline CSI_Sequence CSI_Default()   { return CSI_Sequence(CSI::Default)  ; }
+inline CSI_Sequence CSI_bgBlack()   { return CSI_Sequence(CSI::bgBlack)  ; }
+inline CSI_Sequence CSI_bgRed()     { return CSI_Sequence(CSI::bgRed)    ; }
+inline CSI_Sequence CSI_bgGreen()   { return CSI_Sequence(CSI::bgGreen)  ; }
+inline CSI_Sequence CSI_bgYellow()  { return CSI_Sequence(CSI::bgYellow) ; }
+inline CSI_Sequence CSI_bgBlue()    { return CSI_Sequence(CSI::bgBlue)   ; }
+inline CSI_Sequence CSI_bgMagenta() { return CSI_Sequence(CSI::bgMagenta); }
+inline CSI_Sequence CSI_bgCyan()    { return CSI_Sequence(CSI::bgCyan)   ; }
+inline CSI_Sequence CSI_bgWhite()   { return CSI_Sequence(CSI::bgWhite)  ; }
+inline CSI_Sequence CSI_bgDefault() { return CSI_Sequence(CSI::bgDefault); }
 
+namespace CSI {
+
+inline
+std::ostream & operator << (std::ostream & os, CSI_Enum const &sq) {
+	os << CSI_Sequence( sq );
+	return os;
+}
+
+} // CSI
 
 } // utility
 

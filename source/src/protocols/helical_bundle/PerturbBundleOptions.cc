@@ -37,7 +37,7 @@
 namespace protocols {
 namespace helical_bundle {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.helical_bundle.PerturbBundleOptions" );
+static basic::Tracer TR( "protocols.helical_bundle.PerturbBundleOptions" );
 
 /// @brief Constructor.
 ///

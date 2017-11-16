@@ -22,7 +22,7 @@
 #include <numeric/random/random.hh>
 
 using namespace core;
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerOneValue" );
+static basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerOneValue" );
 
 namespace protocols {
 namespace stepwise {

@@ -46,7 +46,7 @@ namespace fldsgn {
 namespace potentials {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.potentials.SetAACompositionPotential" );
+static basic::Tracer TR( "protocols.fldsgn.potentials.SetAACompositionPotential" );
 
 
 /// @brief

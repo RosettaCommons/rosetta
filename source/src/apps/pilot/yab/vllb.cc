@@ -47,7 +47,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yab.vllb" );
+static basic::Tracer TR( "apps.pilot.yab.vllb" );
 
 
 void * ligand_test( void * ) {
@@ -248,13 +248,13 @@ void * picking_test( void * ) {
 
 int main( int argc, char * argv [] ) {
 	try {
-	// initialize rosetta
-	devel::init( argc, argv );
+		// initialize rosetta
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( ligand_test );
+		protocols::viewer::viewer_main( ligand_test );
 
-	 } catch ( utility::excn::EXCN_Base const & e ) {
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 

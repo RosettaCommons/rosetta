@@ -37,7 +37,7 @@
 namespace devel {
 namespace replica_docking {
 
-static THREAD_LOCAL basic::Tracer TR( "devel.replica_docking.InteractionScoreFilter" );
+static basic::Tracer TR( "devel.replica_docking.InteractionScoreFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP InteractionScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InteractionScoreFilter ); }

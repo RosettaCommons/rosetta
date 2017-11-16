@@ -59,7 +59,8 @@
 namespace protocols {
 namespace jd2 {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.util" );
+static basic::Tracer TR( "protocols.jd2.util" );
+static basic::Tracer tr_score("protocols.jd2.score", basic::t_info, true /*muted by default*/ );
 
 bool jd2_used() {
 	JobDistributor* jd
@@ -262,7 +263,6 @@ add_current_job_data_to_ss( core::io::silent::SilentStructOP ss ) {
 
 void
 write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) {
-	basic::Tracer tr_score("protocols.jd2.score", basic::t_info, true /*muted by default*/ );
 
 	if ( !tr_score.visible() ) return;
 

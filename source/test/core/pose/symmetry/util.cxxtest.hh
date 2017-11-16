@@ -33,7 +33,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "SymmetryUtilTests" );
+static basic::Tracer TR( "SymmetryUtilTests" );
 
 class SymmetryUtilTests : public CxxTest::TestSuite
 {

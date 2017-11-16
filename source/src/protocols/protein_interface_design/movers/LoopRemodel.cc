@@ -94,7 +94,7 @@ namespace movers {
 
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopRemodel" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopRemodel" );
 
 // XRW TEMP std::string
 // XRW TEMP LoopRemodelCreator::keyname() const

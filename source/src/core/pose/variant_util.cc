@@ -101,7 +101,7 @@
 namespace core {
 namespace pose {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.variant_util" );
+static basic::Tracer TR( "core.pose.variant_util" );
 
 core::conformation::ResidueOP
 remove_variant_type_from_residue(

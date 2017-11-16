@@ -59,7 +59,7 @@
 
 namespace core {
 namespace scoring {
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.ProQPotential" );
+static basic::Tracer TR( "core.scoring.ProQPotential" );
 
 ProQPotential::ProQPotential()
 {

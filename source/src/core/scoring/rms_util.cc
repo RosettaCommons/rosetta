@@ -73,7 +73,7 @@ using namespace ObjexxFCL;
 namespace core {
 namespace scoring {
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.rms_util" );
+static basic::Tracer tr( "core.scoring.rms_util" );
 
 core::Real gdtsc(const core::pose::Pose& ref,
 	const core::pose::Pose& mod,

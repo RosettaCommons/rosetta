@@ -59,7 +59,7 @@ using namespace core::kinematics;
 using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.MembraneUtil.cxxtest");
+static basic::Tracer TR("protocols.membrane.MembraneUtil.cxxtest");
 
 /// @brief Unit Test suite for protocols-level membrane util class
 class MembraneUtil : public CxxTest::TestSuite {

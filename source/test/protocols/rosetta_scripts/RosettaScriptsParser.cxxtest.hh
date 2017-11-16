@@ -43,7 +43,7 @@
 #include <string>
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.rosetta_scripts.RosettaScriptsParser.cxxtest");
+static basic::Tracer TR("protocols.rosetta_scripts.RosettaScriptsParser.cxxtest");
 
 
 ////////////////////////////////////////////////////////////////////////

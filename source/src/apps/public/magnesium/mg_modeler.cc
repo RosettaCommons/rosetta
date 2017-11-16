@@ -50,7 +50,7 @@ using namespace basic::options::OptionKeys;
 using utility::vector1;
 
 
-static THREAD_LOCAL basic::Tracer TR( "mg_modeler" );
+static basic::Tracer TR( "mg_modeler" );
 
 OPT_KEY( Boolean, use_virtual_waters )
 

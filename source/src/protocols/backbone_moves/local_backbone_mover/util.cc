@@ -24,7 +24,7 @@
 #include <basic/Tracer.hh>
 #include <utility/fixedsizearray1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.util" );
+static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.util" );
 
 
 namespace protocols {

@@ -96,7 +96,7 @@ using utility::vector1;
 using core::Size;
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer TR( "repeat_dock" );
+static basic::Tracer TR( "repeat_dock" );
 
 struct Dock{
 	Size h1_pos_start;

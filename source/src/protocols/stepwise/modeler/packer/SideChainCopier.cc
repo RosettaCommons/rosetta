@@ -22,7 +22,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.packer.SideChainCopier" );
+static basic::Tracer TR( "protocols.stepwise.modeler.packer.SideChainCopier" );
 
 namespace protocols {
 namespace stepwise {

@@ -40,7 +40,7 @@
 #include <basic/Tracer.hh>
 
 // Tracer
-static THREAD_LOCAL basic::Tracer TR( "apps.public.rosetta_scripts.validate_rosetta_script" );
+static basic::Tracer TR( "apps.public.rosetta_scripts.validate_rosetta_script" );
 
 /// @details dock_design_scripting provides an xml-based scripting capability
 /// to run rosetta movers and filters defined in a text file provided by the

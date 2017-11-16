@@ -83,7 +83,7 @@
 #endif
 
 
-static THREAD_LOCAL basic::Tracer TR( "LocalHashRelaxProtocol" );
+static basic::Tracer TR( "LocalHashRelaxProtocol" );
 
 
 namespace protocols {

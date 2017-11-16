@@ -55,7 +55,7 @@
 namespace core {
 namespace scoring {
 
-static THREAD_LOCAL basic::Tracer trKillHairpinsIO( "core.score.SS_Killhairpins_Info" );
+static basic::Tracer trKillHairpinsIO( "core.score.SS_Killhairpins_Info" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 

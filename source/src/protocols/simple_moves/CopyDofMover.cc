@@ -24,7 +24,7 @@
 #include <basic/Tracer.hh>
 #include <utility>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.CopyDofMover" );
+static basic::Tracer TR( "protocols.simple_moves.CopyDofMover" );
 
 /////////////////////////////////////////////////////////////////////////////////////
 //

@@ -76,7 +76,7 @@ using utility::vector1;
 using cppdb::statement;
 using protocols::features::StructureID;
 
-static THREAD_LOCAL Tracer TR("protocols.rotamer_recovery.RRReporterSQLite");
+static Tracer TR("protocols.rotamer_recovery.RRReporterSQLite");
 
 RRReporterSQLite::RRReporterSQLite() :
 	output_level_( OL_full ),

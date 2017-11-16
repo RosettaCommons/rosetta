@@ -10,13 +10,13 @@
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kale.examples.Tracer" );
+static basic::Tracer TR( "apps.pilot.kale.examples.Tracer" );
 
 int main(int argc, char* argv[]) {
 
-	// This function is necessary.  The tracer will not work until the rosetta 
+	// This function is necessary.  The tracer will not work until the rosetta
 	// libraries have been initialized.
-	
+
 	devel::init(argc, argv);
 
 	TR << "Use the '-out:level' argument to control how " << std::endl;

@@ -32,7 +32,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer residue_distance_filter_tracer( "protocols.simple_filters.ResidueDistanceFilter" );
+static basic::Tracer residue_distance_filter_tracer( "protocols.simple_filters.ResidueDistanceFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP ResidueDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueDistanceFilter ); }

@@ -91,7 +91,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -103,7 +102,7 @@ using namespace core::scoring::etable::count_pair;
 using namespace core::scoring::lkball;
 using namespace core::scoring::methods;
 
-static THREAD_LOCAL basic::Tracer TR("fasol_refit");
+static basic::Tracer TR("fasol_refit");
 
 OPT_1GRP_KEY(Real, fasol, del_ddg)
 OPT_1GRP_KEY(Real, fasol, max_sasa)

@@ -39,7 +39,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/symmetry/util.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.SilentFileJobInputter" );
+static basic::Tracer tr( "protocols.jd2.SilentFileJobInputter" );
 
 namespace protocols {
 namespace jd2 {

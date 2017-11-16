@@ -54,7 +54,7 @@
 namespace protocols {
 namespace loop_grower {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.loop_grower.SheetSampler");
+static basic::Tracer TR("protocols.loop_grower.SheetSampler");
 
 class SheetSampler: public protocols::moves::Mover {
 	protocols::jumping::PairingLibraryOP instance_;

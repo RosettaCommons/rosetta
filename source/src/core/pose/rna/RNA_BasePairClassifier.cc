@@ -50,13 +50,12 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.RNA_BasePairClassifier" );
+static basic::Tracer TR( "core.pose.rna.RNA_BasePairClassifier" );
 
 namespace core {
 namespace pose {
 namespace rna {
 
-using basic::T;
 using namespace core::chemical::rna;
 
 ///////////////////////////////////////////////////////////////////////////////

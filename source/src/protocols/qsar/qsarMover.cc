@@ -36,7 +36,7 @@
 
 namespace protocols {
 namespace qsar {
-static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.qsar.qsarMover" );
+static basic::Tracer TR( "protocols.ligand_docking.qsar.qsarMover" );
 
 
 std::string

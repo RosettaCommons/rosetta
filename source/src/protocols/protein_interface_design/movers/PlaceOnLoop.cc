@@ -71,7 +71,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceOnLoop" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceOnLoop" );
 
 // XRW TEMP std::string
 // XRW TEMP PlaceOnLoopCreator::keyname() const

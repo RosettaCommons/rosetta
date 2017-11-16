@@ -87,7 +87,7 @@
 namespace protocols {
 namespace md {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.md.Cartesian" );
+static basic::Tracer TR( "protocols.md.Cartesian" );
 
 using namespace devel::md;
 using namespace core::optimization;

@@ -63,13 +63,12 @@
 #endif
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 
 //typedef utility::pointer::owning_ptr< BaseJobDistributor< BasicJobOP > > BaseJobDistributorOP
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.FlexPepDock" );
+static basic::Tracer TR( "pilot_apps.FlexPepDock" );
 
 
 ///////////////////////////////////////////////////////////////////////////////

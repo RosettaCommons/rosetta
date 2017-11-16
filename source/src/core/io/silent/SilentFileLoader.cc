@@ -31,7 +31,7 @@
 // C++ Headers
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.silent.SilentFileLoader" );
+static basic::Tracer TR( "core.io.silent.SilentFileLoader" );
 
 namespace core {
 namespace io {

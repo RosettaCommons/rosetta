@@ -78,7 +78,7 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "main" );
+static basic::Tracer TR( "main" );
 
 
 class ThisApplication  {
@@ -96,7 +96,7 @@ ThisApplication::ThisApplication()
 void ThisApplication::register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-//  OPT(in::file::s);
+	//  OPT(in::file::s);
 }
 
 // make 2 copies of the input pose, fix from one chain everything below the junction
@@ -133,84 +133,85 @@ public:
 		distance_threshold_( 1.5 ),
 		nfrags_(500),
 		frag_length_(7)
-	{	 }
+	{  }
 
-  /// @brief pick fragments of a given length, padding when necessary
-  /// @param[in] complete_ss The complete secondary structure string, typically from a Pose.
-  /// @param[in] complete_aa The complete amino acid string, typically from a Pose;
-  ///            can be empty.  If empty, sequence bias is not used to pick fragments.
-  /// @param[in] interval The interval [left, right] to pick fragments from; Pose
-  ///  numbering (i.e. 1-based indexing).
-  /// @param[in] frag_length The desired length of the fragments
-  /// @param[in] n_frags The number of fragments to pick per position.
-  FrameList pick_fragments(
-  	std::string const & complete_ss,
-  	std::string const & complete_aa,
-  	utility::vector1< std::string > const & complete_abego,
-  	Interval const & interval,
-  	Size const frag_length,
-  	Size const n_frags
-  )
-  {
-  	using core::fragment::Frame;
-  	using core::fragment::FrameOP;
-  	using core::fragment::IndependentBBTorsionSRFD;
+	/// @brief pick fragments of a given length, padding when necessary
+	/// @param[in] complete_ss The complete secondary structure string, typically from a Pose.
+	/// @param[in] complete_aa The complete amino acid string, typically from a Pose;
+	///            can be empty.  If empty, sequence bias is not used to pick fragments.
+	/// @param[in] interval The interval [left, right] to pick fragments from; Pose
+	///  numbering (i.e. 1-based indexing).
+	/// @param[in] frag_length The desired length of the fragments
+	/// @param[in] n_frags The number of fragments to pick per position.
+	FrameList pick_fragments(
+		std::string const & complete_ss,
+		std::string const & complete_aa,
+		utility::vector1< std::string > const & complete_abego,
+		Interval const & interval,
+		Size const frag_length,
+		Size const n_frags
+	)
+	{
+		using core::fragment::Frame;
+		using core::fragment::FrameOP;
+		using core::fragment::IndependentBBTorsionSRFD;
 
-  	using core::fragment::picking_old::vall::pick_fragments;
-  	using core::fragment::picking_old::vall::pick_fragments_by_ss;
-  	using core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa;
+		using core::fragment::picking_old::vall::pick_fragments;
+		using core::fragment::picking_old::vall::pick_fragments_by_ss;
+		using core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa;
 
-  	FrameList frames;
+		FrameList frames;
 
-  	for ( Size j = 0, je = interval.length(); j < je; ++j ) {
-  		TR << "picking " << n_frags << " " << frag_length << "-mers for position " << ( interval.left + j ) << std::endl;
+		for ( Size j = 0, je = interval.length(); j < je; ++j ) {
+			TR << "picking " << n_frags << " " << frag_length << "-mers for position " << ( interval.left + j ) << std::endl;
 
-  		std::string ss_sub = complete_ss.substr( interval.left + j - 1, frag_length );
-  		if ( ss_sub.length() < frag_length ) {
-  			ss_sub.append( frag_length - ss_sub.length(), 'D' );
-  		}
+			std::string ss_sub = complete_ss.substr( interval.left + j - 1, frag_length );
+			if ( ss_sub.length() < frag_length ) {
+				ss_sub.append( frag_length - ss_sub.length(), 'D' );
+			}
 
-  		std::string aa_sub;
-  		if ( !complete_aa.empty() ) {
-  			aa_sub = complete_aa.substr( interval.left + j - 1, frag_length );
-  			if ( aa_sub.length() < frag_length ) {
-  				aa_sub.append( frag_length - aa_sub.length(), '.' );
-  			}
-  		} else {
-  			aa_sub = "";
-  		}
-  		utility::vector1< std::string > abego_sub;
-  		if ( complete_abego.size() > 0 ) {
-  			runtime_assert( complete_ss.length() == complete_abego.size() );
-  			Size pos( 1 );
-  			abego_sub.resize( frag_length );
-  			for( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
-  				if ( ii > complete_abego.size() ) {
-  					abego_sub[ pos ] = "X";
-  				} else {
-  					abego_sub[ pos ] = complete_abego[ ii ];
-  				}
-  			}
-  		} else {
-  			abego_sub.clear(); // make sure it is empty
-  		}
+			std::string aa_sub;
+			if ( !complete_aa.empty() ) {
+				aa_sub = complete_aa.substr( interval.left + j - 1, frag_length );
+				if ( aa_sub.length() < frag_length ) {
+					aa_sub.append( frag_length - aa_sub.length(), '.' );
+				}
+			} else {
+				aa_sub = "";
+			}
+			utility::vector1< std::string > abego_sub;
+			if ( complete_abego.size() > 0 ) {
+				runtime_assert( complete_ss.length() == complete_abego.size() );
+				Size pos( 1 );
+				abego_sub.resize( frag_length );
+				for ( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
+					if ( ii > complete_abego.size() ) {
+						abego_sub[ pos ] = "X";
+					} else {
+						abego_sub[ pos ] = complete_abego[ ii ];
+					}
+				}
+			} else {
+				abego_sub.clear(); // make sure it is empty
+			}
 
-  		FrameOP frame = new Frame( interval.left + j, frag_length );
+			FrameOP frame = new Frame( interval.left + j, frag_length );
 
-  		frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
-  		frames.push_back( frame );
-  	}
+			frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
+			frames.push_back( frame );
+		}
 
-  	return frames;
-  }
+		return frames;
+	}
 
 	bool clash_monomer(Pose const & pose) {
-		for(Size i = 1; i <= pose.size(); i++)
-			for(Size j =  1; j <= pose.size(); j++) {
-				if( i == j) continue;
-				if( pose.residue( i ).xyz("CA") - pose.residue( j ).xyz("CA") < clash_distance_);
-					return true;
+		for ( Size i = 1; i <= pose.size(); i++ ) {
+			for ( Size j =  1; j <= pose.size(); j++ ) {
+				if ( i == j ) continue;
+				if ( pose.residue( i ).xyz("CA") - pose.residue( j ).xyz("CA") < clash_distance_ ) ;
+				return true;
 			}
+		}
 		return false;
 	}
 
@@ -240,13 +241,14 @@ public:
 		working_pose.append_residue_by_jump( *anchor, pose.size() );
 
 		working_pose.append_residue_by_jump( pose.residue(1), pose.size(),"","",true );
-		for(Size i=2; i <= pose.size(); i++)
+		for ( Size i=2; i <= pose.size(); i++ ) {
 			working_pose.append_residue_by_bond( pose.residue(i) );
+		}
 		// fix the backbone of half of one copy and half of the other.
 		MoveMap movemap;
 		movemap.set_jump(1,false);
 		movemap.set_jump(2,false);
-		for(Size i = 1; i <= working_pose.size(); i++) {
+		for ( Size i = 1; i <= working_pose.size(); i++ ) {
 			movemap.set_bb(true);
 			movemap.set_chi(true);
 		}
@@ -267,10 +269,10 @@ public:
 
 		bool clash = true;
 		Size trial = 1;
-		for(FrameList::iterator frame = frames.begin(); frame != frames.end(); frame++) {
-			for(Size i = 1; i <= frames.size(); i++) {
+		for ( FrameList::iterator frame = frames.begin(); frame != frames.end(); frame++ ) {
+			for ( Size i = 1; i <= frames.size(); i++ ) {
 				FrameOP frame = frames[i];
-				for(Size j = 1; j <= frame->length(); j++) {
+				for ( Size j = 1; j <= frame->length(); j++ ) {
 					FragData frag = frame->fragment(j);
 					// insert fragment simultaneusly in the two junctions
 					frag.apply( movemap,  working_pose, junction_start_, junction_end_);
@@ -278,21 +280,21 @@ public:
 					Real dist = working_pose.residue(idx_a).xyz("X").distance( working_pose.residue(idx_b).xyz("X") );
 					TR << "distance " << dist << std::endl;
 					clash =  clash_monomer(working_pose);
-					if( !clash && dist < distance_threshold_ )
+					if ( !clash && dist < distance_threshold_ ) {
 						break;
-					else {
+					} else {
 						TR << "monomer clash, trial "<< trial <<" of " << rebuild_max_iterations_ << std::endl;
 						trial += 1;
 						clash = ( trial <= rebuild_max_iterations_ ) ? true : false;
 					}
 				}
-				if( !clash ) break;
+				if ( !clash ) break;
 			}
-			if( !clash ) break;
+			if ( !clash ) break;
 		}
 		// check if the insertion move away the moving region and if it is close to the its partner
-			//check for clashes
-		if( ! clash_monomer(working_pose) ) {
+		//check for clashes
+		if ( ! clash_monomer(working_pose) ) {
 			set_last_move_status( MS_SUCCESS );
 			pose = working_pose;
 		} else {
@@ -350,84 +352,85 @@ public:
 		nfrags_(5000),
 		frag_length_(5),
 		symm_min_( false )
-	{	 }
+	{  }
 
-  /// @brief pick fragments of a given length, padding when necessary
-  /// @param[in] complete_ss The complete secondary structure string, typically from a Pose.
-  /// @param[in] complete_aa The complete amino acid string, typically from a Pose;
-  ///            can be empty.  If empty, sequence bias is not used to pick fragments.
-  /// @param[in] interval The interval [left, right] to pick fragments from; Pose
-  ///  numbering (i.e. 1-based indexing).
-  /// @param[in] frag_length The desired length of the fragments
-  /// @param[in] n_frags The number of fragments to pick per position.
-  FrameList pick_fragments(
-  	std::string const & complete_ss,
-  	std::string const & complete_aa,
-  	utility::vector1< std::string > const & complete_abego,
-  	Interval const & interval,
-  	Size const frag_length,
-  	Size const n_frags
-  )
-  {
-  	using core::fragment::Frame;
-  	using core::fragment::FrameOP;
-  	using core::fragment::IndependentBBTorsionSRFD;
+	/// @brief pick fragments of a given length, padding when necessary
+	/// @param[in] complete_ss The complete secondary structure string, typically from a Pose.
+	/// @param[in] complete_aa The complete amino acid string, typically from a Pose;
+	///            can be empty.  If empty, sequence bias is not used to pick fragments.
+	/// @param[in] interval The interval [left, right] to pick fragments from; Pose
+	///  numbering (i.e. 1-based indexing).
+	/// @param[in] frag_length The desired length of the fragments
+	/// @param[in] n_frags The number of fragments to pick per position.
+	FrameList pick_fragments(
+		std::string const & complete_ss,
+		std::string const & complete_aa,
+		utility::vector1< std::string > const & complete_abego,
+		Interval const & interval,
+		Size const frag_length,
+		Size const n_frags
+	)
+	{
+		using core::fragment::Frame;
+		using core::fragment::FrameOP;
+		using core::fragment::IndependentBBTorsionSRFD;
 
-  	using core::fragment::picking_old::vall::pick_fragments;
-  	using core::fragment::picking_old::vall::pick_fragments_by_ss;
-  	using core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa;
+		using core::fragment::picking_old::vall::pick_fragments;
+		using core::fragment::picking_old::vall::pick_fragments_by_ss;
+		using core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa;
 
-  	FrameList frames;
+		FrameList frames;
 
-  	for ( Size j = 0, je = interval.length(); j < je; ++j ) {
-  		TR << "picking " << n_frags << " " << frag_length << "-mers for position " << ( interval.left + j ) << std::endl;
+		for ( Size j = 0, je = interval.length(); j < je; ++j ) {
+			TR << "picking " << n_frags << " " << frag_length << "-mers for position " << ( interval.left + j ) << std::endl;
 
-  		std::string ss_sub = complete_ss.substr( interval.left + j - 1, frag_length );
-  		if ( ss_sub.length() < frag_length ) {
-  			ss_sub.append( frag_length - ss_sub.length(), 'D' );
-  		}
+			std::string ss_sub = complete_ss.substr( interval.left + j - 1, frag_length );
+			if ( ss_sub.length() < frag_length ) {
+				ss_sub.append( frag_length - ss_sub.length(), 'D' );
+			}
 
-  		std::string aa_sub;
-  		if ( !complete_aa.empty() ) {
-  			aa_sub = complete_aa.substr( interval.left + j - 1, frag_length );
-  			if ( aa_sub.length() < frag_length ) {
-  				aa_sub.append( frag_length - aa_sub.length(), '.' );
-  			}
-  		} else {
-  			aa_sub = "";
-  		}
-  		utility::vector1< std::string > abego_sub;
-  		if ( complete_abego.size() > 0 ) {
-  			runtime_assert( complete_ss.length() == complete_abego.size() );
-  			Size pos( 1 );
-  			abego_sub.resize( frag_length );
-  			for( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
-  				if ( ii > complete_abego.size() ) {
-  					abego_sub[ pos ] = "X";
-  				} else {
-  					abego_sub[ pos ] = complete_abego[ ii ];
-  				}
-  			}
-  		} else {
-  			abego_sub.clear(); // make sure it is empty
-  		}
+			std::string aa_sub;
+			if ( !complete_aa.empty() ) {
+				aa_sub = complete_aa.substr( interval.left + j - 1, frag_length );
+				if ( aa_sub.length() < frag_length ) {
+					aa_sub.append( frag_length - aa_sub.length(), '.' );
+				}
+			} else {
+				aa_sub = "";
+			}
+			utility::vector1< std::string > abego_sub;
+			if ( complete_abego.size() > 0 ) {
+				runtime_assert( complete_ss.length() == complete_abego.size() );
+				Size pos( 1 );
+				abego_sub.resize( frag_length );
+				for ( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
+					if ( ii > complete_abego.size() ) {
+						abego_sub[ pos ] = "X";
+					} else {
+						abego_sub[ pos ] = complete_abego[ ii ];
+					}
+				}
+			} else {
+				abego_sub.clear(); // make sure it is empty
+			}
 
-  		FrameOP frame = new Frame( interval.left + j, frag_length );
+			FrameOP frame = new Frame( interval.left + j, frag_length );
 
-  		frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
-  		frames.push_back( frame );
-  	}
+			frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
+			frames.push_back( frame );
+		}
 
-  	return frames;
-  }
+		return frames;
+	}
 
 	Size count_clashes(Pose const & pose) {
 		Size clashes = 0;
-		for(Size i = 1; i <= pose.size(); i++) {
-			for(Size j =  1; j <= pose.size(); j++) {
-				if( i == j) continue;
-				if( pose.residue( i ).xyz("CA") - pose.residue( j ).xyz("CA") < clash_distance_)
+		for ( Size i = 1; i <= pose.size(); i++ ) {
+			for ( Size j =  1; j <= pose.size(); j++ ) {
+				if ( i == j ) continue;
+				if ( pose.residue( i ).xyz("CA") - pose.residue( j ).xyz("CA") < clash_distance_ ) {
 					clashes++;
+				}
 			}
 		}
 		return clashes;
@@ -484,10 +487,10 @@ public:
 		// z-axis and append the new pose
 		Pose best_pose_after_fragment_insertion;
 		Size best_pose_nclashes(999999);
-		for(FrameList::iterator frame = frames.begin(); frame != frames.end(); frame++) {
-			for(Size i = 1; i <= frames.size(); i++) {
+		for ( FrameList::iterator frame = frames.begin(); frame != frames.end(); frame++ ) {
+			for ( Size i = 1; i <= frames.size(); i++ ) {
 				FrameOP frame = frames[i];
-				for(Size j = 1; j <= frame->length(); j++) {
+				for ( Size j = 1; j <= frame->length(); j++ ) {
 					Pose pose_for_fragment_insertion ( working_pose );
 					FragData frag = frame->fragment(j);
 					frag.apply( pose_for_fragment_insertion, junction_start_, junction_end_);
@@ -502,11 +505,11 @@ public:
 					const Vector new_center_to_a_1 = pose_for_fragment_insertion.residue( idx_center_to_a ).xyz("X");
 					const Vector new_center_to_b_1 = pose_for_fragment_insertion.residue( idx_center_to_b ).xyz("X");
 					const Vector to_origin = ( new_center_to_a_1 + new_center_to_b_1 ) / 2;
-  				Matrix id_rot_mat = numeric::xyzMatrix< core::Real >::identity();
-					pose_for_fragment_insertion.apply_transform_Rx_plus_v( id_rot_mat, -1 *to_origin	);
+					Matrix id_rot_mat = numeric::xyzMatrix< core::Real >::identity();
+					pose_for_fragment_insertion.apply_transform_Rx_plus_v( id_rot_mat, -1 *to_origin );
 					Real angle_vrt_a_orig_x_axis = numeric::angle_degrees(Vector(new_center_to_a_1[0],to_origin[1],new_center_to_a_1[2]), to_origin, Vector(to_origin[0] + 1, to_origin[1],to_origin[2]));
 					Matrix y_rot = numeric::y_rotation_matrix_degrees(  angle_vrt_a_orig_x_axis );
-					pose_for_fragment_insertion.apply_transform_Rx_plus_v( y_rot, Vector(0,0,0)	);
+					pose_for_fragment_insertion.apply_transform_Rx_plus_v( y_rot, Vector(0,0,0) );
 					// rotate around the z-axis and align the guides to the x-axis
 					const Vector new_center_to_a_2 = pose_for_fragment_insertion.residue( idx_center_to_a ).xyz("X");
 					const Vector new_center_to_b_2 = pose_for_fragment_insertion.residue( idx_center_to_b ).xyz("X");
@@ -534,7 +537,7 @@ public:
 					// rotate 180 degrees in the z axis to get the partner
 					Pose pose_for_rotation = pose_for_fragment_insertion;
 					Matrix z_rot = numeric::z_rotation_matrix_degrees( -180.0 );
-					pose_for_rotation.apply_transform_Rx_plus_v( z_rot  , Vector(0,0,0)	);
+					pose_for_rotation.apply_transform_Rx_plus_v( z_rot  , Vector(0,0,0) );
 					/*
 					std::ofstream transformed_z( "transformed_z.pdb");
 					core::io::pdb::dump_pdb(pose_for_rotation, transformed_z);
@@ -551,26 +554,26 @@ public:
 					transformed_z.close();
 					*/
 
-    			// append pose_for_fragment_insertion and pose_for_rotation into the working pose
-    //			core::pose::remove_virtual_residues( &pose_for_fragment_insertion );
-    //			core::pose::remove_virtual_residues( &pose_for_rotation );
-    			//core::pose::remove_upper_terminus_type_from_pose_residue( pose_for_rotation, 1);
-    			//core::pose::remove_lower_terminus_type_from_pose_residue( two_chains_pose, two_chains_pose.size() );
-    			//two_chains_pose.append_residue_by_jump( pose_for_rotation.residue(1), two_chains_pose.size(), "", "", true);
+					// append pose_for_fragment_insertion and pose_for_rotation into the working pose
+					//   core::pose::remove_virtual_residues( &pose_for_fragment_insertion );
+					//   core::pose::remove_virtual_residues( &pose_for_rotation );
+					//core::pose::remove_upper_terminus_type_from_pose_residue( pose_for_rotation, 1);
+					//core::pose::remove_lower_terminus_type_from_pose_residue( two_chains_pose, two_chains_pose.size() );
+					//two_chains_pose.append_residue_by_jump( pose_for_rotation.residue(1), two_chains_pose.size(), "", "", true);
 
-    			Pose two_chains_pose;
-    			for(Size i = 1; i <= pose_for_fragment_insertion.size(); i++) {
-    				if( pose_for_fragment_insertion.residue( i ).name1() == 'X' ) continue;
-    				two_chains_pose.append_residue_by_bond( pose_for_fragment_insertion.residue(i));
-    			}
-    			two_chains_pose.append_residue_by_jump( pose_for_rotation.residue(1), two_chains_pose.size(), "", "", true);
-    			for(Size i = 2; i <= pose_for_rotation.size(); i++) {
-    				if( pose_for_rotation.residue( i ).name1() == 'X' ) continue;
-    				two_chains_pose.append_residue_by_bond( pose_for_rotation.residue(i));
-    			}
+					Pose two_chains_pose;
+					for ( Size i = 1; i <= pose_for_fragment_insertion.size(); i++ ) {
+						if ( pose_for_fragment_insertion.residue( i ).name1() == 'X' ) continue;
+						two_chains_pose.append_residue_by_bond( pose_for_fragment_insertion.residue(i));
+					}
+					two_chains_pose.append_residue_by_jump( pose_for_rotation.residue(1), two_chains_pose.size(), "", "", true);
+					for ( Size i = 2; i <= pose_for_rotation.size(); i++ ) {
+						if ( pose_for_rotation.residue( i ).name1() == 'X' ) continue;
+						two_chains_pose.append_residue_by_bond( pose_for_rotation.residue(i));
+					}
 					//eval the pose
 					Size nclashes = count_clashes( two_chains_pose );
-					if( nclashes < best_pose_nclashes ) {
+					if ( nclashes < best_pose_nclashes ) {
 						best_pose_after_fragment_insertion = two_chains_pose;
 						best_pose_nclashes = nclashes;
 					}
@@ -581,7 +584,7 @@ public:
 
 		TR << "best dimer number of clashes " << best_pose_nclashes << std::endl;
 		// Set the movemap, add constraints and perform symmetric minimization to the pose
-		if( symm_min_ ) {
+		if ( symm_min_ ) {
 			TR << "Performing a symmetric minimization of the swapped dimer" << std::endl;
 			// make a symmetric version of the pose
 			Pose symm_pose = best_pose_after_fragment_insertion.split_by_chain( 1 );
@@ -591,7 +594,7 @@ public:
 			const Size junction_new_end = junction_end_ - (junction_aa_.size() - (junction_end_ - junction_start_ + 1) );
 			// set the junction as movable
 			MoveMapOP movemap = new MoveMap;
-			for(Size i = junction_start_; i <= junction_new_end; i++) {
+			for ( Size i = junction_start_; i <= junction_new_end; i++ ) {
 				movemap->set_bb(i, true);
 				movemap->set_chi(i,true);
 			}
@@ -605,7 +608,7 @@ public:
 			Size resi_nearest_to_com_A_chB = protocols::geometry::core::pose::return_nearest_residue( symm_pose, mono_size + 1, mono_size + junction_start_, com_A_chB);
 			Vector com_B_chB = core::pose::center_of_mass(symm_pose,mono_size + junction_new_end, 2*mono_size );
 			Size resi_nearest_to_com_B_chB = protocols::geometry::core::pose::return_nearest_residue( symm_pose, mono_size + junction_new_end, 2*mono_size, com_B_chA);
-			 //add guides and constraints between them
+			//add guides and constraints between them
 			core::conformation::ResidueOP vrt_A_chA( core::conformation::ResidueFactory::create_residue( vrt ) );
 			core::conformation::ResidueOP vrt_A_chB( core::conformation::ResidueFactory::create_residue( vrt ) );
 			core::conformation::ResidueOP vrt_B_chA( core::conformation::ResidueFactory::create_residue( vrt ) );
@@ -637,18 +640,18 @@ public:
 			option[OptionKeys::symmetry::symmetry_definition].value( "" );
 
 			pose = core::pose::symmetry::get_asymmetric_pose_copy_from_symmetric_pose( symm_pose );
-*/
+			*/
 
 		} else {
 			pose = best_pose_after_fragment_insertion;
 		}
 
-	//	if( ! clash_monomer(pose_for_fragment_insertion) ) {
-	//		set_last_move_status( MS_SUCCESS );
-//			pose = working_pose;
-	//	} else {
-	//		set_last_move_status( FAIL_DO_NOT_RETRY );
-	//	}
+		// if( ! clash_monomer(pose_for_fragment_insertion) ) {
+		//  set_last_move_status( MS_SUCCESS );
+		//   pose = working_pose;
+		// } else {
+		//  set_last_move_status( FAIL_DO_NOT_RETRY );
+		// }
 
 
 	}
@@ -675,14 +678,14 @@ using namespace basic::options::OptionKeys;
 int main( int argc, char** argv ) {
 	try {
 
-	ThisApplication::register_options();
-	devel::init( argc, argv );
-	// mover
-	protocols::moves::MoverOP protocol;
-	protocol = new SwapElementsMover2( );
+		ThisApplication::register_options();
+		devel::init( argc, argv );
+		// mover
+		protocols::moves::MoverOP protocol;
+		protocol = new SwapElementsMover2( );
 
-	// run
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+		// run
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

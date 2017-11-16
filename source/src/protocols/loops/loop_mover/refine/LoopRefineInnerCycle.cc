@@ -37,7 +37,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopRefineInnerCycle" );
+static basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopRefineInnerCycle" );
 using namespace core;
 
 namespace protocols {

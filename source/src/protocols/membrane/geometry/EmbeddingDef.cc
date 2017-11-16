@@ -32,7 +32,7 @@
 #include <cstdlib>
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.geometry.EmbeddingDef" );
+static basic::Tracer TR( "protocols.membrane.geometry.EmbeddingDef" );
 
 namespace protocols {
 namespace membrane {

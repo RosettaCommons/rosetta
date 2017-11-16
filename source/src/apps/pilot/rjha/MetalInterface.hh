@@ -22,7 +22,6 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Warning;
 
 // C++ headers
@@ -33,9 +32,6 @@ using basic::Warning;
 
 
 //tracers
-// using basic::Error;
-// using basic::Warning;
-// using basic::T;
 
 //local enum - this names the (hopefully 5) residues in the input from RosettaMatch
 enum MatchPosition {
@@ -53,21 +49,21 @@ std::string const find_closest_atom( core::conformation::Residue const & res, co
 	core::Real temp_dis(dis);
 
 	//atom ordering rules are in ResidueType.hh; briefly sidechain heavy atoms are between first_sidechain_heavyatom and nheavyatoms
-	for( core::Size i(res.first_sidechain_atom()); i <= res.nheavyatoms(); ++i){
+	for ( core::Size i(res.first_sidechain_atom()); i <= res.nheavyatoms(); ++i ) {
 		temp_dis = res.xyz(i).distance(xyz);
 		T("apps.pilot.rhja.find_closest_atom") << "testing atom name " << res.atom_name(i) << std::endl;
 		//T("apps.pilot.rhja.find_closest_atom") << temp_dis << std::endl;
-		if (res.is_virtual(i) ){
+		if ( res.is_virtual(i) ) {
 			T("apps.pilot.rhja.find_closest_atom") << "skipping virtual atom " << res.atom_name(i) << std::endl;
 			continue;
 		}
-		if ( (temp_dis < dis) && (res.atom_type(i).element() != "C") ){
+		if ( (temp_dis < dis) && (res.atom_type(i).element() != "C") ) {
 			dis = temp_dis;
 			index = i;
 			//T("apps.pilot.rhja.find_closest_atom") << "accepting change" << std::endl;
 		}//if shorter and non-carbon
 	}//for all sidechain heavyatoms
-	if (!(res.atom_type(index).element() == "N") && !(res.atom_type(index).element() == "S")){
+	if ( !(res.atom_type(index).element() == "N") && !(res.atom_type(index).element() == "S") ) {
 		Warning() << "irregular ligand atom - not N or S" << std::endl;
 	}
 

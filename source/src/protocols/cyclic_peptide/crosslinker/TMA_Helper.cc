@@ -46,7 +46,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.TMA_Helper" );
+static basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.TMA_Helper" );
 
 namespace protocols {
 namespace cyclic_peptide {

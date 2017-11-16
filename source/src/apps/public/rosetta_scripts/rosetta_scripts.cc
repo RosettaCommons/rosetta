@@ -48,7 +48,7 @@
 #include <fstream>
 
 // Tracer
-static THREAD_LOCAL basic::Tracer TR( "apps.public.rosetta_scripts.rosetta_scripts" );
+static basic::Tracer TR( "apps.public.rosetta_scripts.rosetta_scripts" );
 
 // FUNCTION PROTOTYPES
 void* my_main( void *);

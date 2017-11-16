@@ -44,7 +44,7 @@
 // C++ headers
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.transform_into_mem" );
+static basic::Tracer TR( "apps.pilot.ralford.transform_into_mem" );
 
 using namespace protocols::moves;
 

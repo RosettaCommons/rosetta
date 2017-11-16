@@ -49,7 +49,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer trProfScore(
+static basic::Tracer trProfScore(
 	"protocols.frag_picker.scores.ScoreEValuator");
 
 void ScoreEValuator::do_caching(VallChunkOP chunk) {

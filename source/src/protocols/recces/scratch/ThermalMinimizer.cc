@@ -79,7 +79,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.scratch.ThermalMinimizer" );
+static basic::Tracer TR( "protocols.recces.scratch.ThermalMinimizer" );
 
 using namespace protocols::stepwise::sampler::rna;
 using namespace protocols::recces::sampler;

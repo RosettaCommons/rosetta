@@ -41,7 +41,7 @@
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.constraints" );
+static basic::Tracer tr( "core.scoring.constraints" );
 
 namespace core {
 namespace scoring {

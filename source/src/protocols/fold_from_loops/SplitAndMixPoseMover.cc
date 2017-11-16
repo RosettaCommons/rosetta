@@ -47,7 +47,7 @@
 namespace protocols {
 namespace fold_from_loops {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fold_from_loops.SplitAndMixPoseMover", basic::t_trace );
+static basic::Tracer TR( "protocols.fold_from_loops.SplitAndMixPoseMover", basic::t_trace );
 
 SplitAndMixPoseMover::SplitAndMixPoseMover():
 	selector_( NULL ),

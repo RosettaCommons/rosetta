@@ -104,7 +104,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 //////////////////////////////////////////////////////////////////
-static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.cenrot" );
+static basic::Tracer TR( "pilot.wendao.cenrot" );
 std::map<std::string, Real> masslst;
 
 utility::vector1<core::Size> nrecovery(20);
@@ -127,139 +127,139 @@ void rescore_pose(
 ///////////////////////////////////////////////////////////////////
 // class SwitchResidueTypeSetCenrot : public protocols::moves::Mover {
 // public:
-// 	SwitchResidueTypeSetCenrot(){}
-// 	void apply (core::pose::Pose & pose) {
-// 		//clear old energy cache
-// 		pose.energies().clear();
-// 		//get restype
-// 		ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
+//  SwitchResidueTypeSetCenrot(){}
+//  void apply (core::pose::Pose & pose) {
+//   //clear old energy cache
+//   pose.energies().clear();
+//   //get restype
+//   ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
 
-// 		//loop for each residue
-// 		for ( core::Size i=1; i<= pose.size(); ++i ) {
-// 			//get the residue
-// 			Residue const & rsd( pose.residue(i) );
-// 			//check current restype
-// 			std::string const & current_type_set_name ( rsd.type().residue_type_set().name() );
-// 			if ( current_type_set_name == "centroid_rot" ) {
-// 				TR.Warning << "core::util::switch_to_residue_type_set: residue " << i
-// 				<< " already in centroid_rot residue_type_set" << std::endl;
-// 				continue;
-// 			}
+//   //loop for each residue
+//   for ( core::Size i=1; i<= pose.size(); ++i ) {
+//    //get the residue
+//    Residue const & rsd( pose.residue(i) );
+//    //check current restype
+//    std::string const & current_type_set_name ( rsd.type().residue_type_set().name() );
+//    if ( current_type_set_name == "centroid_rot" ) {
+//     TR.Warning << "core::util::switch_to_residue_type_set: residue " << i
+//     << " already in centroid_rot residue_type_set" << std::endl;
+//     continue;
+//    }
 
-// 			//get temperature
-// 			core::Real maxB=0.0;
-// 			for (Size k=rsd.first_sidechain_atom(); k<=rsd.nheavyatoms(); ++k) {
-// 				if (rsd.is_virtual(k)) continue;
-// 				Real B = pose.pdb_info()->temperature( i, k );
-// 				maxB = std::max( B, maxB );
-// 			}
-// 			if (maxB==0.0) {maxB = pose.pdb_info()->temperature( i, rsd.atom_index("CA") );}
+//    //get temperature
+//    core::Real maxB=0.0;
+//    for (Size k=rsd.first_sidechain_atom(); k<=rsd.nheavyatoms(); ++k) {
+//     if (rsd.is_virtual(k)) continue;
+//     Real B = pose.pdb_info()->temperature( i, k );
+//     maxB = std::max( B, maxB );
+//    }
+//    if (maxB==0.0) {maxB = pose.pdb_info()->temperature( i, rsd.atom_index("CA") );}
 
-// 			//gen new residue
-// 			core::conformation::ResidueOP new_rsd( 0 );
-// 			if( ( rsd.aa() == aa_unk ) ){
-// 				//skip
-// 			}
-// 			else if ( rsd.name().substr(0,3)=="CYD" ) {
-// 				core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( "CYS" ) );
-// 				for (core::Size j=1; j<=rsd_types.size(); ++j ) {
-// 					core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-// 					if ( new_rsd_type.name3()=="CYS" ) {
-// 						new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-// 						break;
-// 					}
-// 				}
-// 			}
-// 			else if ( rsd.name().substr(0,5)=="HIS_D" ) {
-// 				core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( rsd.name3() ) );
-// 				for (core::Size j=1; j<=rsd_types.size(); ++j ) {
-// 					core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-// 					if ( new_rsd_type.name3()=="HIS" ) {
-// 						new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-// 						break;
-// 					}
-// 				}
-// 			}
-// 			else  if (rsd.is_terminus()) {
-// 				//get the terminal type (maybe no need, but to consist with reading a cenrot pdb)
-// 				core::chemical::ResidueType const & new_rsd_type( rsd_set->name_map(rsd.name()) );
-// 				new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-// 			}
-// 			else {
-// 				//just find the standard aa restype
-// 				core::chemical::ResidueType const & new_rsd_type( rsd_set->name_map(rsd.name3()) );
-// 				new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-// 			}
+//    //gen new residue
+//    core::conformation::ResidueOP new_rsd( 0 );
+//    if( ( rsd.aa() == aa_unk ) ){
+//     //skip
+//    }
+//    else if ( rsd.name().substr(0,3)=="CYD" ) {
+//     core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( "CYS" ) );
+//     for (core::Size j=1; j<=rsd_types.size(); ++j ) {
+//      core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
+//      if ( new_rsd_type.name3()=="CYS" ) {
+//       new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
+//       break;
+//      }
+//     }
+//    }
+//    else if ( rsd.name().substr(0,5)=="HIS_D" ) {
+//     core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( rsd.name3() ) );
+//     for (core::Size j=1; j<=rsd_types.size(); ++j ) {
+//      core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
+//      if ( new_rsd_type.name3()=="HIS" ) {
+//       new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
+//       break;
+//      }
+//     }
+//    }
+//    else  if (rsd.is_terminus()) {
+//     //get the terminal type (maybe no need, but to consist with reading a cenrot pdb)
+//     core::chemical::ResidueType const & new_rsd_type( rsd_set->name_map(rsd.name()) );
+//     new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
+//    }
+//    else {
+//     //just find the standard aa restype
+//     core::chemical::ResidueType const & new_rsd_type( rsd_set->name_map(rsd.name3()) );
+//     new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
+//    }
 
-// 			if ( ! new_rsd ) {
-// 				TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
-// 				<< " at position " << i << ". Trying to find acceptable match. " << std::endl;
+//    if ( ! new_rsd ) {
+//     TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
+//     << " at position " << i << ". Trying to find acceptable match. " << std::endl;
 
-// 				core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( rsd.name3() ) );
-// 				for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
-// 					core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-// 					if ( rsd.type().name3()  == new_rsd_type.name3()  ) {
-// 						new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-// 						break;
-// 					}
-// 				}
-// 				if (  new_rsd ) {
-// 					TR.Warning << "Found an acceptable match: " << rsd.type().name() << " --> " << new_rsd->name() << std::endl;
-// 				}
-// 				else {
-// 					//bug here?
-// 					utility_exit_with_message( "switch_to_cenrot_residue_type_set fails\n" );
-// 				}
-// 			}
+//     core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( rsd.name3() ) );
+//     for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
+//      core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
+//      if ( rsd.type().name3()  == new_rsd_type.name3()  ) {
+//       new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
+//       break;
+//      }
+//     }
+//     if (  new_rsd ) {
+//      TR.Warning << "Found an acceptable match: " << rsd.type().name() << " --> " << new_rsd->name() << std::endl;
+//     }
+//     else {
+//      //bug here?
+//      utility_exit_with_message( "switch_to_cenrot_residue_type_set fails\n" );
+//     }
+//    }
 
-// 			//find the centroid postion
-// 			PointPosition cenrotxyz(0,0,0);
-// 			Real mass = 0.0;
-// 			if (rsd.name3()=="GLY") {
-// 				cenrotxyz = rsd.atom("CA").xyz();
-// 			}
-// 			else if (rsd.name3()=="ALA") {
-// 				cenrotxyz = rsd.atom("CB").xyz();
-// 			}
-// 			else {
-// 				//std::cout<<rsd.name()<<std::endl;
-// 				for (	Size na=rsd.type().first_sidechain_atom();
-// 						na<=rsd.type().nheavyatoms();
-// 						na++) {
-// 					if (rsd.atom_name(na)==" CB ") continue;
-// 					std::string elem = rsd.atom_name(na).substr(1,1);
-// 					cenrotxyz += (rsd.atoms()[na].xyz()*masslst[elem]);
-// 					mass += masslst[elem];
-// 					TR.Debug << "|" << rsd.atom_name(na) << "|"
-// 					<< " (" << masslst[elem] << ") "
-// 					<< rsd.atoms()[na].xyz().x() << ","
-// 					<< rsd.atoms()[na].xyz().y() << ","
-// 					<< rsd.atoms()[na].xyz().z() << std::endl;
-// 				}
-// 				cenrotxyz = cenrotxyz/mass;
-// 			}
+//    //find the centroid postion
+//    PointPosition cenrotxyz(0,0,0);
+//    Real mass = 0.0;
+//    if (rsd.name3()=="GLY") {
+//     cenrotxyz = rsd.atom("CA").xyz();
+//    }
+//    else if (rsd.name3()=="ALA") {
+//     cenrotxyz = rsd.atom("CB").xyz();
+//    }
+//    else {
+//     //std::cout<<rsd.name()<<std::endl;
+//     for ( Size na=rsd.type().first_sidechain_atom();
+//       na<=rsd.type().nheavyatoms();
+//       na++) {
+//      if (rsd.atom_name(na)==" CB ") continue;
+//      std::string elem = rsd.atom_name(na).substr(1,1);
+//      cenrotxyz += (rsd.atoms()[na].xyz()*masslst[elem]);
+//      mass += masslst[elem];
+//      TR.Debug << "|" << rsd.atom_name(na) << "|"
+//      << " (" << masslst[elem] << ") "
+//      << rsd.atoms()[na].xyz().x() << ","
+//      << rsd.atoms()[na].xyz().y() << ","
+//      << rsd.atoms()[na].xyz().z() << std::endl;
+//     }
+//     cenrotxyz = cenrotxyz/mass;
+//    }
 
-// 			//replace
-// 			if ( ! new_rsd ) {
-// 				std::cerr << pose.sequence() << std::endl;
-// 				std::cerr  << "can not find a residue type that matches the residue " << rsd.name()
-// 				<< " at position " << i << std::endl;
-// 				utility_exit_with_message( "switch_to_cenrot_residue_type_set fails\n" );
-// 				//continue;
-// 			}
+//    //replace
+//    if ( ! new_rsd ) {
+//     std::cerr << pose.sequence() << std::endl;
+//     std::cerr  << "can not find a residue type that matches the residue " << rsd.name()
+//     << " at position " << i << std::endl;
+//     utility_exit_with_message( "switch_to_cenrot_residue_type_set fails\n" );
+//     //continue;
+//    }
 
-// 			//replace it
-// 			pose.replace_residue( i, *new_rsd, false );
-// 			//set centroid_rot xyz
-// 			pose.set_xyz(id::AtomID(pose.residue(i).atom_index("CEN"), i), cenrotxyz);
-// 			//set temperature
-// 			pose.pdb_info()->temperature(i, pose.residue(i).nbr_atom(), maxB);
-// 		}
-// 	}
+//    //replace it
+//    pose.replace_residue( i, *new_rsd, false );
+//    //set centroid_rot xyz
+//    pose.set_xyz(id::AtomID(pose.residue(i).atom_index("CEN"), i), cenrotxyz);
+//    //set temperature
+//    pose.pdb_info()->temperature(i, pose.residue(i).nbr_atom(), maxB);
+//   }
+//  }
 
-// 	virtual std::string get_name() const {
-// 		return "SwitchResidueTypeSetCenrot";
-// 	}
+//  virtual std::string get_name() const {
+//   return "SwitchResidueTypeSetCenrot";
+//  }
 // };
 
 ///////////////////////////////////////////////////////////////////
@@ -327,9 +327,9 @@ int main( int argc, char * argv [] ) {
 ////////////////////////////////////////////////////////////////////
 void * my_main( void* ) {
 	ResidueTypeSetCAP rsd_set;
-	if (option[input_cenrot_pdb])
+	if ( option[input_cenrot_pdb] ) {
 		rsd_set=ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
-	else {
+	} else {
 		rsd_set=ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	}
 	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
@@ -338,12 +338,12 @@ void * my_main( void* ) {
 
 	//load native pdb
 	PoseOP native_pose;
-	if (option[in::file::native].user()) {
+	if ( option[in::file::native].user() ) {
 		native_pose = new Pose();
 		core::import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
-	if (option[in::file::silent].user()) {
+	if ( option[in::file::silent].user() ) {
 		//TR.Error << "No pdb file found, use -in::file::l to specify a list of pdb!" << std::endl;
 		// try load a silent file
 		ResidueTypeSetCAP fa_rsd_set;
@@ -356,15 +356,15 @@ void * my_main( void* ) {
 		silent_file_data_in.read_file( infile );
 
 		for ( core::io::silent::SilentFileData::iterator
-			iter = silent_file_data_in.begin(),
-			end = silent_file_data_in.end();
-			iter != end; ++iter ) {
+				iter = silent_file_data_in.begin(),
+				end = silent_file_data_in.end();
+				iter != end; ++iter ) {
 			Pose p;
 			iter->fill_pose( p, *fa_rsd_set ); // reading fa silent structure as decoys
 			std::string const tag = iter->decoy_tag();
 			clearPoseExtraScores( p ); // clean all the old score
 
-			if (option[switch_to_centroid]) {
+			if ( option[switch_to_centroid] ) {
 				//for centroid model, rescore only
 				to_centroid.apply(p);
 				// core::scoring::ScoreFunctionOP score_fxn = new core::scoring::ScoreFunction();
@@ -373,8 +373,7 @@ void * my_main( void* ) {
 				//core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 				core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function(option[cenrot_score]);
 				rescore_pose(score_fxn, native_pose, p, tag);
-			}
-			else {
+			} else {
 				//switch_to_residue_type_set_cenrot(p);
 				to_cenrot.apply(p);
 				process_the_pose(native_pose, p, tag);
@@ -382,17 +381,16 @@ void * my_main( void* ) {
 		}
 	}
 
-	if (option[ in::file::l ].user()) {
+	if ( option[ in::file::l ].user() ) {
 		Size npdbs = option[ in::file::l ]().size();
 		// -in:file:l
-		for (Size npdb=1; npdb<=npdbs; npdb++)
-		{
+		for ( Size npdb=1; npdb<=npdbs; npdb++ ) {
 			PoseOP pose = new Pose();
 			Pose &p(*pose);
 			pose_from_file( p, *rsd_set, option[ in::file::l ]()[npdb] , core::import_pose::PDB_file);
 
 			//std::cerr << option[ in::file::l ]()[npdb] << " start..." << std::endl;
-			if (option[switch_to_centroid]) {
+			if ( option[switch_to_centroid] ) {
 				to_centroid.apply(p);
 				// core::scoring::ScoreFunctionOP score_fxn = new core::scoring::ScoreFunction();
 				// score_fxn->set_weight(core::scoring::pair, 1.0);
@@ -404,12 +402,11 @@ void * my_main( void* ) {
 				continue;
 			}
 
-			if (!option[input_cenrot_pdb]) to_cenrot.apply(p); //switch_to_residue_type_set_cenrot(p);
+			if ( !option[input_cenrot_pdb] ) to_cenrot.apply(p); //switch_to_residue_type_set_cenrot(p);
 
-			if (option[relax_cenrot]) {
+			if ( option[relax_cenrot] ) {
 				relax_cenrot_pose(native_pose, p, option[ in::file::l ]()[npdb]);
-			}
-			else {
+			} else {
 				process_the_pose(native_pose, p, option[ in::file::l ]()[npdb]);
 			}
 		}
@@ -418,38 +415,38 @@ void * my_main( void* ) {
 	//output for repack
 	//if "fit" output recovery rate
 	//else output distance errors
-	if(option[repack_cenrot]) {
+	if ( option[repack_cenrot] ) {
 		// if (option[fit_best_rotamer]) {
-		// 	TR << "Recovery Rate: " << std::endl;
-		// 	for ( int i=core::chemical::aa_ala;
-		// 		i <= core::chemical::num_canonical_aas; i++ ) {
-		// 		core::chemical::AA aa=static_cast<core::chemical::AA>(i);
-		// 		TR << aa << ": " << std::fixed
-		// 		<< std::setw(6) << std::setprecision(3)
-		// 		<< core::Real(nrecovery[aa])/n_total[aa]*100
-		// 		<< "% of " << n_total[aa] << std::endl;
-		// 	}
+		//  TR << "Recovery Rate: " << std::endl;
+		//  for ( int i=core::chemical::aa_ala;
+		//   i <= core::chemical::num_canonical_aas; i++ ) {
+		//   core::chemical::AA aa=static_cast<core::chemical::AA>(i);
+		//   TR << aa << ": " << std::fixed
+		//   << std::setw(6) << std::setprecision(3)
+		//   << core::Real(nrecovery[aa])/n_total[aa]*100
+		//   << "% of " << n_total[aa] << std::endl;
+		//  }
 		// }
 		// else {
-		// 	TR << "Repacking error: " << std::endl;
-		// 	for ( int i=core::chemical::aa_ala;
-		// 		i <= core::chemical::num_canonical_aas; i++ ) {
-		// 		core::chemical::AA aa=static_cast<core::chemical::AA>(i);
-		// 		TR << aa << ": " << err_buried[aa]/n_total[aa] << std::fixed
-		// 		<< std::setw(4) << std::setprecision(3) << std::endl;
-		// 	}
+		//  TR << "Repacking error: " << std::endl;
+		//  for ( int i=core::chemical::aa_ala;
+		//   i <= core::chemical::num_canonical_aas; i++ ) {
+		//   core::chemical::AA aa=static_cast<core::chemical::AA>(i);
+		//   TR << aa << ": " << err_buried[aa]/n_total[aa] << std::fixed
+		//   << std::setw(4) << std::setprecision(3) << std::endl;
+		//  }
 		// }
 
 		Size sum_re=0, sum_all=0;
 		TR << "Recovery Rate: " << std::endl;
 		for ( int i=core::chemical::aa_ala;
-			i <= core::chemical::num_canonical_aas; i++ ) {
+				i <= core::chemical::num_canonical_aas; i++ ) {
 			core::chemical::AA aa=static_cast<core::chemical::AA>(i);
-			if (n_total[aa]==0) continue;
+			if ( n_total[aa]==0 ) continue;
 			TR << aa << ": " << std::fixed
-			<< std::setw(6) << std::setprecision(3)
-			<< core::Real(nrecovery[aa])/n_total[aa]*100
-			<< " % of " << n_total[aa] << std::endl;
+				<< std::setw(6) << std::setprecision(3)
+				<< core::Real(nrecovery[aa])/n_total[aa]*100
+				<< " % of " << n_total[aa] << std::endl;
 			sum_re += nrecovery[aa];
 			sum_all += n_total[aa];
 		}
@@ -513,7 +510,7 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 	combo2->add_mover(minmover);
 
 	//this is not real relax
-	for (int i=1; i<=option[relax_cycle_number]; i++) {
+	for ( int i=1; i<=option[relax_cycle_number]; i++ ) {
 		run->apply(p);
 
 		score_bb_fxn->show(TR,p);
@@ -524,12 +521,12 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 		mc->show_counters();
 		mc->reset_counters();
 
-		if (option[output_cenrot_pdb]) {
+		if ( option[output_cenrot_pdb] ) {
 			outputfn << "traj_" << i << ".pdb";
 			p.dump_pdb(outputfn.str());
 		}
 
-		if (option[opt_after_relax]) {
+		if ( option[opt_after_relax] ) {
 			pose::Pose bestpose(mc->lowest_score_pose());
 			mc->reset(bestpose);
 			p = bestpose;
@@ -540,7 +537,7 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 			TR.flush();
 
 			std::ostringstream outputmin;
-			if (option[output_cenrot_pdb]) {
+			if ( option[output_cenrot_pdb] ) {
 				outputmin << "minimized_" << i << ".pdb";
 				bestpose.dump_pdb(outputmin.str());
 			}
@@ -555,22 +552,20 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 	core::scoring::ScoreFunctionOP score_fxn;
 	if ( option[cenrot_score].user() ) {
 		//score_fxn = core::scoring::get_score_function();
-	  score_fxn = core::scoring::ScoreFunctionFactory::create_score_function(option[cenrot_score]);
-	}
-	else {
+		score_fxn = core::scoring::ScoreFunctionFactory::create_score_function(option[cenrot_score]);
+	} else {
 		score_fxn = new core::scoring::ScoreFunction();
 		score_fxn->set_weight(core::scoring::cen_rot_pair, 1.0);
 		score_fxn->set_weight(core::scoring::cen_rot_env, 1.0);
 	}
 
 	(*score_fxn)(p); //score, update nbr, fixing the tenA graph bug
-	if (option[output_cenrot_score].user()) {
+	if ( option[output_cenrot_score].user() ) {
 		rescore_pose( score_fxn, native_pose, p, tag);
 	}
 
-	if (option[output_cenrot_intcoord]) {
-		for ( core::Size i=1; i<= p.size(); ++i )
-		{
+	if ( option[output_cenrot_intcoord] ) {
+		for ( core::Size i=1; i<= p.size(); ++i ) {
 			Residue const & rsd( p.residue(i) );
 			/// for each residue, find out the dof-id of CEN
 			id::DOF_ID id_dis(id::AtomID(p.residue(i).atom_index("CEN"), i), id::D);
@@ -581,20 +576,20 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 			//as well as phi/psi angle
 			if ( !rsd.is_terminus() ) {
 				TR << "CEN-INT: " << rsd.name3() << " " << i << " "
-				<< p.dof(id_dis) << " "
-				<< p.dof(id_ang) << " "
-				<< p.dof(id_dih) << " "
-				<< p.psi(i) << " "
-				<< p.phi(i) << std::endl;
+					<< p.dof(id_dis) << " "
+					<< p.dof(id_ang) << " "
+					<< p.dof(id_dih) << " "
+					<< p.psi(i) << " "
+					<< p.phi(i) << std::endl;
 			}
 		}
 	}
 
 	//save close native rot
 	utility::vector1<Size> old_rotlist;
-	if (option[fit_best_rotamer]) fit_centroid_to_the_best_rot(p, old_rotlist);
+	if ( option[fit_best_rotamer] ) fit_centroid_to_the_best_rot(p, old_rotlist);
 
-	if (option[repack_cenrot]) {
+	if ( option[repack_cenrot] ) {
 		//save the old pose
 		Pose::Pose ref(p);
 
@@ -609,7 +604,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 
 		core::scoring::ScoreFunctionOP sf_pack = score_fxn->clone();
 
-		if (option[repack_high_vdw]) {
+		if ( option[repack_high_vdw] ) {
 			sf_pack->set_weight(core::scoring::vdw, 4.0);
 		}
 
@@ -617,17 +612,17 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 		packrotamersmover.task_factory(main_task_factory);
 		packrotamersmover.score_function(sf_pack);
 
-		for (int np=0; np<option[repack_ncycle]; np++) {
+		for ( int np=0; np<option[repack_ncycle]; np++ ) {
 			p=ref;
 			packrotamersmover.apply(p);
 
-			if (option[min_after_repack]) {
+			if ( option[min_after_repack] ) {
 				core::kinematics::MoveMap mm;
 				mm.set_bb  ( false );
 				mm.set_chi ( false );
 
 				Size const n_res( p.size() );
-				for (Size i=1; i<=n_res; i++) {
+				for ( Size i=1; i<=n_res; i++ ) {
 					core::conformation::Residue const &res_i = p.residue(i);
 					mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), i ), core::id::RB1 ), true );
 				}
@@ -640,23 +635,23 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 			}
 
 			//rescore
-			if (option[output_cenrot_score].user()) {
+			if ( option[output_cenrot_score].user() ) {
 				rescore_pose( score_fxn, native_pose, p, "packed_"+tag);
 			}
 
 			for ( core::Size i=1; i<= ref.size(); ++i ) {
-				if (ref.pdb_info()->temperature(i, p.residue(i).nbr_atom()) > option[repack_bfactor_cutoff]) continue;
-				if (ref.energies().tenA_neighbor_graph().get_node(i)->num_edges() < Size(option[repack_buried_cutoff])) continue;
+				if ( ref.pdb_info()->temperature(i, p.residue(i).nbr_atom()) > option[repack_bfactor_cutoff] ) continue;
+				if ( ref.energies().tenA_neighbor_graph().get_node(i)->num_edges() < Size(option[repack_buried_cutoff]) ) continue;
 
 				Real dis= ( p.residue(i).atom("CEN").xyz()-ref.residue(i).atom("CEN").xyz()).length();
 				Real r = (ref.residue(i).atom(ref.residue(i).nbr_atom()).xyz()-ref.residue(i).atom("CEN").xyz()).length();
 
-				if (r < 0.5) continue; //gly and ala should be discard
+				if ( r < 0.5 ) continue; //gly and ala should be discard
 				//save this
 				n_total[p.residue(i).aa()]++;
 
-				if (dis/r > 0.6427876) continue; //sin(20)=0.342, sin(40)=0.6427876
-				if (p.residue(i).aa()==chemical::aa_pro && (dis/r > 0.156)) continue; //for pro sin(18/2)
+				if ( dis/r > 0.6427876 ) continue; //sin(20)=0.342, sin(40)=0.6427876
+				if ( p.residue(i).aa()==chemical::aa_pro && (dis/r > 0.156) ) continue; //for pro sin(18/2)
 				nrecovery[p.residue(i).aa()]++;
 			}
 
@@ -666,42 +661,42 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 			// ** fit only: out put err distribution(?)
 			//stat
 			// if (option[fit_best_rotamer]) {
-			// 	utility::vector1<Size> new_rotlist;
-			// 	fit_centroid_to_the_best_rot(p, new_rotlist);
-			// 	for ( core::Size i=1; i<= old_rotlist.size(); ++i ) {
-			// 		//only count the buried residue !!!
-			// 		//std::cout << "res: " << ref.residue(i).name() << std::endl;
-			// 		if (ref.pdb_info()->temperature(i, p.residue(i).nbr_atom()) < option[repack_bfactor_cutoff]) {
-			// 			if ( p.pdb_info()->temperature(i, p.residue(i).nbr_atom())>0 &&
-			// 				p.energies().tenA_neighbor_graph().get_node(i)
-			// 				->num_edges()<option[repack_buried_cutoff]) continue;
-			// 			//save the number of buried AA
-			// 			n_total[p.residue(i).aa()]++;
-			// 			//count right number
-			// 			if (old_rotlist[i]==new_rotlist[i])
-			// 				nrecovery[p.residue(i).aa()]++;
-			// 		}
-			// 	}
+			//  utility::vector1<Size> new_rotlist;
+			//  fit_centroid_to_the_best_rot(p, new_rotlist);
+			//  for ( core::Size i=1; i<= old_rotlist.size(); ++i ) {
+			//   //only count the buried residue !!!
+			//   //std::cout << "res: " << ref.residue(i).name() << std::endl;
+			//   if (ref.pdb_info()->temperature(i, p.residue(i).nbr_atom()) < option[repack_bfactor_cutoff]) {
+			//    if ( p.pdb_info()->temperature(i, p.residue(i).nbr_atom())>0 &&
+			//     p.energies().tenA_neighbor_graph().get_node(i)
+			//     ->num_edges()<option[repack_buried_cutoff]) continue;
+			//    //save the number of buried AA
+			//    n_total[p.residue(i).aa()]++;
+			//    //count right number
+			//    if (old_rotlist[i]==new_rotlist[i])
+			//     nrecovery[p.residue(i).aa()]++;
+			//   }
+			//  }
 			// }
 			// else {
-			// 	//save err
-			// 	for ( core::Size i=1; i<=p.size(); ++i ) {
-			// 		//cutoff Bfactor
-			// 		if (ref.pdb_info()->temperature(i, p.residue(i).nbr_atom()) < option[repack_bfactor_cutoff]) {
-			// 			if ( p.pdb_info()->temperature(i, p.residue(i).nbr_atom())>0 &&
-			// 				p.energies().tenA_neighbor_graph().get_node(i)
-			// 				->num_edges()<option[repack_buried_cutoff]) continue;
-			// 			//save the number of buried AA
-			// 			n_total[p.residue(i).aa()]++;
-			// 			err_buried[p.residue(i).aa()]+=(p.residue(i).atom("CEN").xyz()
-			// 			-ref.residue(i).atom("CEN").xyz()).length();
-			// 		}
-			// 	}
+			//  //save err
+			//  for ( core::Size i=1; i<=p.size(); ++i ) {
+			//   //cutoff Bfactor
+			//   if (ref.pdb_info()->temperature(i, p.residue(i).nbr_atom()) < option[repack_bfactor_cutoff]) {
+			//    if ( p.pdb_info()->temperature(i, p.residue(i).nbr_atom())>0 &&
+			//     p.energies().tenA_neighbor_graph().get_node(i)
+			//     ->num_edges()<option[repack_buried_cutoff]) continue;
+			//    //save the number of buried AA
+			//    n_total[p.residue(i).aa()]++;
+			//    err_buried[p.residue(i).aa()]+=(p.residue(i).atom("CEN").xyz()
+			//    -ref.residue(i).atom("CEN").xyz()).length();
+			//   }
+			//  }
 			// }
 		}
 	}
 
-	if (option[output_cenrot_pdb]) {
+	if ( option[output_cenrot_pdb] ) {
 		//output
 		std::ostringstream outfn;
 		std::string outdir(option[output_cenrot_dir]());
@@ -731,16 +726,16 @@ void rescore_pose(
 
 	ss->fill_struct(p, tag);
 	// get rmsd
-	if (native_pose) {
+	if ( native_pose ) {
 		Real rmsd = core::scoring::CA_rmsd(p, *native_pose);
 		ss->add_energy("rmsd", rmsd);
 	}
 
 	// header
 	// if ( npdb==1 ) {
-	// 	std::string fn(option[output_cenrot_score]());
-	// 	std::ofstream scoreos(fn.c_str());
-	// 	ss->print_header( scoreos );
+	//  std::string fn(option[output_cenrot_score]());
+	//  std::ofstream scoreos(fn.c_str());
+	//  ss->print_header( scoreos );
 	// }
 	//write
 	sfd.write_silent_struct(*ss, option[output_cenrot_score](), true );
@@ -764,7 +759,7 @@ void fit_centroid_to_the_best_rot( core::pose::Pose & p, utility::vector1<Size> 
 		SingleResidueCenrotLibraryCAP residue_cenrot_library(
 			dynamic_cast< SingleResidueCenrotLibrary const * >(residue_rotamer_library.get()));
 
-		if (residue_rotamer_library==0){
+		if ( residue_rotamer_library==0 ) {
 			rotlist.push_back(1);
 			continue;
 		}
@@ -773,7 +768,7 @@ void fit_centroid_to_the_best_rot( core::pose::Pose & p, utility::vector1<Size> 
 		Real closest_dis;
 		CentroidRotamerSampleData const sampledata (
 			residue_cenrot_library->get_closest_rotamer(
-				p.residue(i), closest_rot, closest_dis));
+			p.residue(i), closest_rot, closest_dis));
 
 		//get the best rot int
 		id::DOF_ID id_dis(id::AtomID(p.residue(i).atom_index("CEN"), i), id::D);
@@ -783,9 +778,9 @@ void fit_centroid_to_the_best_rot( core::pose::Pose & p, utility::vector1<Size> 
 		p.set_dof(id_ang, sampledata.angle());
 		p.set_dof(id_dih, sampledata.dihedral());
 
-		if (option[output_bestrot_err]) {
+		if ( option[output_bestrot_err] ) {
 			TR << "FIT-ROT: res: " << p.residue(i).name3()
-			<< " dis= "<< sqrt(closest_dis) << std::endl;
+				<< " dis= "<< sqrt(closest_dis) << std::endl;
 		}
 
 		rotlist.push_back(closest_rot);

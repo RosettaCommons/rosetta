@@ -53,7 +53,7 @@
 
 #include <map>
 
-static THREAD_LOCAL basic::Tracer tr( "filterImperfectAln" );
+static basic::Tracer tr( "filterImperfectAln" );
 
 using utility::vector1;
 using core::Size;
@@ -63,14 +63,14 @@ using namespace core::sequence;
 using namespace core::id;
 
 namespace filterImperfectAln {
-	basic::options::FileVectorOptionKey perfect_alignment("filterImperfectAln:perfect_alignment");
+basic::options::FileVectorOptionKey perfect_alignment("filterImperfectAln:perfect_alignment");
 }
 
 multimap<string,SequenceAlignment> input_alignmentsMapped(vector1< std::string > align_fns){
 	using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys;
 	vector1< SequenceAlignment > tmp_alns =core::sequence::read_aln(
-																																	option[ cm::aln_format ](), align_fns[1]);
+		option[ cm::aln_format ](), align_fns[1]);
 	multimap<string,SequenceAlignment> alns;
 	for ( Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
 		string aln_id = tmp_alns[jj].sequence(2)->id();
@@ -81,9 +81,9 @@ multimap<string,SequenceAlignment> input_alignmentsMapped(vector1< std::string >
 }
 
 void output_alignments(vector1 <SequenceAlignment> alns, std::ostream & out){
-  for ( Size ii = 1; ii <= alns.size(); ++ii ) {
-    alns[ii].printGrishinFormat(out);
-  }
+	for ( Size ii = 1; ii <= alns.size(); ++ii ) {
+		alns[ii].printGrishinFormat(out);
+	}
 }
 
 SequenceAlignment filterAln(SequenceAlignment perfect_aln, SequenceAlignment orig_aln){
@@ -93,9 +93,9 @@ SequenceAlignment filterAln(SequenceAlignment perfect_aln, SequenceAlignment ori
 	const Size nres1 = orig_aln.sequence(1)->ungapped_sequence().size()+orig_aln.sequence(1)->start()-1;
 	const Size nres2 = orig_aln.sequence(2)->ungapped_sequence().size()+orig_aln.sequence(2)->start()-1;
 	SequenceMapping filt_mapping(nres1,nres2);
-	for(Size ii=1; ii<=nres2; ++ii){
+	for ( Size ii=1; ii<=nres2; ++ii ) {
 		//create new mapping
-		if((perfectMapping[ii] == origMapping[ii]) && (origMapping[ii] != 0)){
+		if ( (perfectMapping[ii] == origMapping[ii]) && (origMapping[ii] != 0) ) {
 			filt_mapping[origMapping[ii]]=ii;
 		}
 	}
@@ -107,26 +107,26 @@ SequenceAlignment filterAln(SequenceAlignment perfect_aln, SequenceAlignment ori
 
 int main( int argc, char * argv [] ) {
 	try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::sequence;
- 	using utility::file_basename;
-	option.add (filterImperfectAln::perfect_alignment, "perfect alignments");
-	devel::init(argc, argv);
-	vector1< std::string > align_fns = option[ in::file::alignment ]();
-	vector1< std::string > perfect_align_fns = option [filterImperfectAln::perfect_alignment]();
-	vector1 <SequenceAlignment> out_alns;
-	multimap<string,SequenceAlignment> align_map = input_alignmentsMapped(align_fns);
-	multimap<string,SequenceAlignment> perfect_align_map = input_alignmentsMapped(perfect_align_fns);
-	multimap<string,SequenceAlignment>::iterator itr,foundAln_itr;
-	for(itr = align_map.begin(); itr != align_map.end(); ++itr){
-		foundAln_itr = perfect_align_map.find(itr->first);
-		SequenceAlignment tmp_aln = filterAln(foundAln_itr->second,itr->second);
-		out_alns.push_back(tmp_aln);
-	}
-	string out_filename = option[out::file::alignment ]();
-	std::ofstream out_aln_stream( out_filename.c_str() );
-	output_alignments(out_alns,out_aln_stream);
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::sequence;
+		using utility::file_basename;
+		option.add (filterImperfectAln::perfect_alignment, "perfect alignments");
+		devel::init(argc, argv);
+		vector1< std::string > align_fns = option[ in::file::alignment ]();
+		vector1< std::string > perfect_align_fns = option [filterImperfectAln::perfect_alignment]();
+		vector1 <SequenceAlignment> out_alns;
+		multimap<string,SequenceAlignment> align_map = input_alignmentsMapped(align_fns);
+		multimap<string,SequenceAlignment> perfect_align_map = input_alignmentsMapped(perfect_align_fns);
+		multimap<string,SequenceAlignment>::iterator itr,foundAln_itr;
+		for ( itr = align_map.begin(); itr != align_map.end(); ++itr ) {
+			foundAln_itr = perfect_align_map.find(itr->first);
+			SequenceAlignment tmp_aln = filterAln(foundAln_itr->second,itr->second);
+			out_alns.push_back(tmp_aln);
+		}
+		string out_filename = option[out::file::alignment ]();
+		std::ofstream out_aln_stream( out_filename.c_str() );
+		output_alignments(out_alns,out_aln_stream);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

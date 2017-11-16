@@ -31,7 +31,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("CompoundArchitectTests");
+static basic::Tracer TR("CompoundArchitectTests");
 
 class CompoundArchitectTests : public CxxTest::TestSuite {
 	//Define Variables

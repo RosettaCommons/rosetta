@@ -39,7 +39,7 @@
 #include <apps/pilot/rayyrw/rms_util.hh>
 #include <apps/pilot/rayyrw/util.hh>
 
-static THREAD_LOCAL basic::Tracer TR("test_score_methods");
+static basic::Tracer TR("test_score_methods");
 
 using namespace ObjexxFCL::format;
 

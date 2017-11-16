@@ -35,14 +35,14 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer trmain( "test" );
+static basic::Tracer trmain( "test" );
 
 OPT_1GRP_KEY(File, m, file)
 
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 		// initialize core
 		NEW_OPT(m::file, "file", "");
 
@@ -77,9 +77,9 @@ main( int argc, char * argv [] )
 		trmain << "dumping" << std::endl;
 		out->dump_pdb(option[ m::file]().name()+".redump");
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-			std::cerr << "caught exception " << e.msg() << std::endl;
-			return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

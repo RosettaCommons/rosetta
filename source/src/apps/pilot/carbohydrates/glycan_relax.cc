@@ -28,7 +28,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/options/OptionCollection.hh>
 
-static THREAD_LOCAL basic::Tracer TR("glycan_relax");
+static basic::Tracer TR("glycan_relax");
 
 
 void register_options() {

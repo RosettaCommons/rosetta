@@ -91,7 +91,7 @@ namespace dunbrack {
 template < class P >
 bool
 BBDepNRChiSample< P >::operator==( BBDepNRChiSample<P> const & other ) const {
-	static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack.BBDepNRChiSample" );
+	static basic::Tracer TR( "core.pack.dunbrack.BBDepNRChiSample" );
 
 	core::Real const & ANGLE_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::ANGLE_DELTA;
 	core::Real const & PROB_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::PROB_DELTA;
@@ -125,7 +125,7 @@ BBDepNRChiSample< P >::operator==( BBDepNRChiSample<P> const & other ) const {
 template < class P >
 bool
 BBIndNRChiSample< P >::operator==( BBIndNRChiSample<P> const & other ) const {
-	static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack.BBIndNRChiSample" );
+	static basic::Tracer TR( "core.pack.dunbrack.BBIndNRChiSample" );
 
 	core::Real const & ANGLE_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::ANGLE_DELTA;
 	core::Real const & PROB_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::PROB_DELTA;
@@ -156,7 +156,7 @@ template < Size N >
 inline
 bool
 BBDepScoreInterpData< N >::operator==( BBDepScoreInterpData< N > const & other ) const {
-	static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack.BBDepScoreInterpData" );
+	static basic::Tracer TR( "core.pack.dunbrack.BBDepScoreInterpData" );
 
 	core::Real const & COEF_DELTA = core::pack::dunbrack::SingleResidueDunbrackLibrary::COEF_DELTA;
 
@@ -1268,7 +1268,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io
 template < Size T, Size N >
 bool
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::operator ==( rotamers::SingleResidueRotamerLibrary const & rhs) const {
-	static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack.SemiRotamericSingleResidueDunbrackLibrary" );
+	static basic::Tracer TR( "core.pack.dunbrack.SemiRotamericSingleResidueDunbrackLibrary" );
 
 	// Raw pointer okay, we're just using it to check for conversion
 	SemiRotamericSingleResidueDunbrackLibrary< T, N> const * ptr( dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< T, N > const * > ( &rhs ) );

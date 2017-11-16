@@ -31,7 +31,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.evaluation.AlignEvaluator" );
+static basic::Tracer tr( "protocols.evaluation.AlignEvaluator" );
 
 namespace protocols {
 namespace evaluation {

@@ -41,7 +41,7 @@
 
 // #include <basic/Tracer.hh>
 
-//static THREAD_LOCAL basic::Tracer TR( "utility.graph.Graph" );
+//static basic::Tracer TR( "utility.graph.Graph" );
 using namespace ObjexxFCL;
 
 namespace utility {

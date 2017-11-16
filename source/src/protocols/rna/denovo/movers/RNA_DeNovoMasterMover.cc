@@ -35,7 +35,7 @@
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/format.hh>
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.movers.RNA_DeNovoMasterMover" );
+static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_DeNovoMasterMover" );
 
 using namespace core;
 using namespace ObjexxFCL::format; // AUTO USING NS

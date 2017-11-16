@@ -54,15 +54,14 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace helical_bundle {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.BackboneGridSampler");
-static THREAD_LOCAL basic::Tracer TR_Results("protocols.helical_bundle.BackboneGridSampler.Results");
+static basic::Tracer TR("protocols.helical_bundle.BackboneGridSampler");
+static basic::Tracer TR_Results("protocols.helical_bundle.BackboneGridSampler.Results");
 
 // XRW TEMP std::string
 // XRW TEMP BackboneGridSamplerCreator::keyname() const

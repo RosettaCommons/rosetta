@@ -64,6 +64,8 @@ using basic::datacache::DataMap;
 namespace protocols {
 namespace loop_modeling {
 
+static basic::Tracer tr( "protocols.loop_modeling.LoopBuilder" );
+
 // XRW TEMP moves::MoverOP LoopBuilderCreator::create_mover() const { // {{{1
 // XRW TEMP  return moves::MoverOP( new LoopBuilder );
 // XRW TEMP }
@@ -149,7 +151,6 @@ void LoopBuilder::use_fragments( // {{{1
 }
 
 bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
-	basic::Tracer tr( "protocols.loop_modeling.LoopBuilder" );
 
 	// Only attempt to rebuild loops that are marked as "extended".
 

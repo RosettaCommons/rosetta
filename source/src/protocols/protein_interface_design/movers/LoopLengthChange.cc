@@ -46,7 +46,7 @@ namespace movers {
 using namespace std;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopLengthChange" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopLengthChange" );
 
 // XRW TEMP std::string
 // XRW TEMP LoopLengthChangeCreator::keyname() const

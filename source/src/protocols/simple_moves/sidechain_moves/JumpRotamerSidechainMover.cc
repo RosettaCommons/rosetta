@@ -59,7 +59,7 @@
 using namespace core;
 using namespace core::pose;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.simple_moves.sidechain_moves.JumpRotamerSidechainMover" );
+static basic::Tracer tr( "protocols.simple_moves.sidechain_moves.JumpRotamerSidechainMover" );
 
 namespace protocols {
 namespace simple_moves {

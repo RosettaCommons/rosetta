@@ -33,7 +33,7 @@ using utility::vector1;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static THREAD_LOCAL basic::Tracer TR( "protocols.multistate_design.MultiStatePacker", t_info );
+static basic::Tracer TR( "protocols.multistate_design.MultiStatePacker", t_info );
 
 #include <ObjexxFCL/format.hh>
 using namespace ObjexxFCL::format;

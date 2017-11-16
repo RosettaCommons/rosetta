@@ -72,7 +72,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.carbohydrates.GlycanRelaxMover" );
+static basic::Tracer TR( "protocols.carbohydrates.GlycanRelaxMover" );
 
 
 namespace protocols {

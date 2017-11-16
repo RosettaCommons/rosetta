@@ -40,7 +40,7 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
+static basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @details

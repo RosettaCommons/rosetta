@@ -23,7 +23,7 @@
 // C++ headers
 #include <ostream>
 
-static THREAD_LOCAL basic::Tracer tr( "core.id.NamedAtomID", basic::t_info );
+static basic::Tracer tr( "core.id.NamedAtomID", basic::t_info );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

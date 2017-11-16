@@ -54,7 +54,7 @@ namespace rotamers {
 
 using namespace core::pack::dunbrack;
 
-static THREAD_LOCAL basic::Tracer SRPL_TR( "core.pack.rotamers.SingleResiduePeptoidLibrary" );
+static basic::Tracer SRPL_TR( "core.pack.rotamers.SingleResiduePeptoidLibrary" );
 
 // static const Real MIN_ROT_PROB = 1.e-8; - KAB - unused variable
 

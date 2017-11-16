@@ -69,7 +69,7 @@
 #include <ctime>
 #endif
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.normalmode.NormalModeRelaxMover" );
+static basic::Tracer TR( "protocols.normalmode.NormalModeRelaxMover" );
 
 namespace protocols {
 namespace normalmode {

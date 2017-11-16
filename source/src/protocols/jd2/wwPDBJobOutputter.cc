@@ -50,7 +50,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.wwPDBJobOutputter" );
+static basic::Tracer TR( "protocols.jd2.wwPDBJobOutputter" );
 
 namespace protocols {
 namespace jd2 {

@@ -44,7 +44,7 @@
 
 //C++ Headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.ExtendChainMover" );
+static basic::Tracer TR( "protocols.denovo_design.movers.ExtendChainMover" );
 
 ///////////////////////////////////////////////////////////////////////////////
 

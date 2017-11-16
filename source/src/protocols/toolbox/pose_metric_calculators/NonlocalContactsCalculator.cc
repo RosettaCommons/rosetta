@@ -41,7 +41,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/NonlocalContactsCalculator" );
+static basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/NonlocalContactsCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

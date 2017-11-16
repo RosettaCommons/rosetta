@@ -78,8 +78,8 @@
 #include <utility/vector0.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.beta_strand_homodimer_design.exposed_strand_finder" );
-static THREAD_LOCAL basic::Tracer TRout( "ExposedStrand" );
+static basic::Tracer TR( "apps.public.beta_strand_homodimer_design.exposed_strand_finder" );
+static basic::Tracer TRout( "ExposedStrand" );
 
 using namespace core;
 using namespace utility;

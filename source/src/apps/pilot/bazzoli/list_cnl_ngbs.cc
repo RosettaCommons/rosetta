@@ -53,7 +53,7 @@
 #include <fstream>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.list_cnl_ngbs" );
+static basic::Tracer TR( "apps.pilot.list_cnl_ngbs" );
 
 using namespace basic::options::OptionKeys;
 using core::Size;

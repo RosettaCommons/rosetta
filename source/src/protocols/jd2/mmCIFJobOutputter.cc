@@ -51,7 +51,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.mmCIFJobOutputter" );
+static basic::Tracer TR( "protocols.jd2.mmCIFJobOutputter" );
 
 namespace protocols {
 namespace jd2 {

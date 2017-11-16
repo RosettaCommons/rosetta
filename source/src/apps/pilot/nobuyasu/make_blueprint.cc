@@ -36,7 +36,7 @@
 #include <fstream>
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "make_blueprint" );
+static basic::Tracer TR( "make_blueprint" );
 
 typedef core::Size Size;
 typedef std::string String;

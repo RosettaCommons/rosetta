@@ -36,14 +36,13 @@
 
 
 //Auto Headers
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer translate_tracer( "protocols.ligand_docking.CompoundTranslate", basic::t_debug );
+static basic::Tracer translate_tracer( "protocols.ligand_docking.CompoundTranslate", basic::t_debug );
 
 
 // XRW TEMP std::string

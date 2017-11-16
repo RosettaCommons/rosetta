@@ -39,12 +39,11 @@
 #include <string> //making sure that residue_type.name() comparison works
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ReturnSidechainMover" );
+static basic::Tracer TR( "protocols.simple_moves.ReturnSidechainMover" );
 
 
 namespace protocols {

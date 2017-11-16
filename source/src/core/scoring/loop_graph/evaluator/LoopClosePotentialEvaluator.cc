@@ -17,7 +17,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.evaluator.LoopClosePotentialEvaluator" );
+static basic::Tracer TR( "core.scoring.loop_graph.evaluator.LoopClosePotentialEvaluator" );
 
 namespace core {
 namespace scoring {

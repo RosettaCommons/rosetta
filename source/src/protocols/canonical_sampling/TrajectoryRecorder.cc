@@ -30,7 +30,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.TrajectoryRecorder" );
+static basic::Tracer tr( "protocols.canonical_sampling.TrajectoryRecorder" );
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

@@ -41,7 +41,7 @@
 using std::endl;
 using std::string;
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.ResidueTypeSetTests.cxxtest");
+static basic::Tracer TR("core.chemical.ResidueTypeSetTests.cxxtest");
 
 class ResidueTypeSetTests : public CxxTest::TestSuite {
 

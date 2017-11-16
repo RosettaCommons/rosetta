@@ -29,7 +29,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("HelixPairingFilterTests");
+static basic::Tracer TR("HelixPairingFilterTests");
 
 using namespace protocols::fldsgn::filters;
 

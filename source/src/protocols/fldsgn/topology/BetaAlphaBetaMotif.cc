@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.topology.BetaAlphaBetaMotif" );
+static basic::Tracer TR( "protocols.fldsgn.topology.BetaAlphaBetaMotif" );
 
 using namespace core;
 

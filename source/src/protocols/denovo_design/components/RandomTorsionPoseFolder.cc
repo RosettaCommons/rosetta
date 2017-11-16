@@ -28,7 +28,7 @@
 // Numeric headers
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.RandomTorsionPoseFolder" );
+static basic::Tracer TR( "protocols.denovo_design.components.RandomTorsionPoseFolder" );
 
 namespace protocols {
 namespace denovo_design {

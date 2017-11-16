@@ -79,7 +79,7 @@
 #include <string>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 //silly using/typedef
@@ -118,12 +118,11 @@
 
 #include <protocols/filters/Filter.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 OPT_KEY( File, hotspots )
 OPT_KEY( File, filter_hotspots1 )
@@ -169,8 +168,8 @@ private:
 
 
 core::Size SetupHotspotMover::generate_csts( core::pose::Pose const& pose,  core::scoring::constraints::ConstraintCOPs& constraints ) {
-core::id::AtomID fixed_atom(1, 1);
-		//	core::pack::task::PackerTaskCOP const packer_task,
+	core::id::AtomID fixed_atom(1, 1);
+	// core::pack::task::PackerTaskCOP const packer_task,
 	core::Real CB_force_constant = 0.5;
 	core::Real worst_allowed_stub_bonus = 0;
 	bool apply_self_energies = false;
@@ -193,7 +192,7 @@ core::id::AtomID fixed_atom(1, 1);
 
 	protocols::filters::FilterCOP true_filter( new protocols::filters::TrueFilter );
 	for ( core::Size resnum=55; resnum <= 71; ++resnum ) {
-		//		if ( task->pack_residue(resnum) )	{
+		//  if ( task->pack_residue(resnum) ) {
 		hotspot_stub_set_->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );
 		break;
 		//}
@@ -205,7 +204,7 @@ core::id::AtomID fixed_atom(1, 1);
 	for ( core::Size resnum=55; resnum <= 71; ++resnum ) {
 
 		// Check that this position is allowed to be used for stub constraints
-		//		if ( ! task->pack_residue(resnum) ) continue;
+		//  if ( ! task->pack_residue(resnum) ) continue;
 
 		// sets the index used by the hotspot for its associated scaffold
 		scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );
@@ -214,13 +213,13 @@ core::id::AtomID fixed_atom(1, 1);
 		utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;
 		// Loop over all allowed AAs at this position
 		std::list< core::chemical::ResidueTypeCOP > allowed_aas = task->residue_task( resnum ).allowed_residue_types();
-		for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
-				 restype != allowed_aas.end(); ++restype) {
+		for ( std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
+				restype != allowed_aas.end(); ++restype ) {
 
 			// Loop over all stubs with this restype
 			HotspotStubSet::Hotspots res_stub_set( hotspot_stub_set_->retrieve( (*restype )->name3() ) );
-			for (std::multimap<core::Real,HotspotStubOP >::iterator hs_stub = res_stub_set.begin();
-					 hs_stub != res_stub_set.end(); ++hs_stub) {
+			for ( std::multimap<core::Real,HotspotStubOP >::iterator hs_stub = res_stub_set.begin();
+					hs_stub != res_stub_set.end(); ++hs_stub ) {
 
 				// prevent Gly/Pro constraints
 				if ( (hs_stub->second->residue()->aa() == core::chemical::aa_gly) || (hs_stub->second->residue()->aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) ) {
@@ -230,8 +229,8 @@ core::id::AtomID fixed_atom(1, 1);
 
 				// prevent Gly/Pro constraints
 				if ( (pose.residue(resnum).aa() == core::chemical::aa_gly) || (pose.residue(resnum).aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline]) ) {
-									tr.Debug << "ERROR - Position " << resnum << " is currently Gly/Pro and cannot be used for stub constraints." << std::endl;
-									continue;
+					tr.Debug << "ERROR - Position " << resnum << " is currently Gly/Pro and cannot be used for stub constraints." << std::endl;
+					continue;
 				}
 
 				core::Real stub_bonus_value = hs_stub->second->bonus_value();
@@ -250,7 +249,7 @@ core::id::AtomID fixed_atom(1, 1);
 						// Apply it directly
 						constraints.push_back( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) );
 					}
-				}	else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
+				} else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else tr.Info << " FailSelfEnergy=" << stub_bonus_value << std::endl;
 				// ****** reject the pairing
 				// ******else hs_stub->scaffold_status( resnum, reject );
@@ -258,8 +257,9 @@ core::id::AtomID fixed_atom(1, 1);
 		}
 
 		// Finally, add the constraint corresponding to this resnum to the main set
-		if ( ( apply_ambiguous_constraints ) && ( ambig_csts.size() > 0 ) )
+		if ( ( apply_ambiguous_constraints ) && ( ambig_csts.size() > 0 ) ) {
 			constraints.push_back( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) );
+		}
 	}
 	return ct_cst;
 }
@@ -345,8 +345,8 @@ LoopBuild_main() {
 
 	// symmetrize start pose & loopfile
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
-			pre_mover.apply( start_pose );
+		protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+		pre_mover.apply( start_pose );
 	}
 
 	// bit of a hack for looprelax-into-density
@@ -364,7 +364,7 @@ LoopBuild_main() {
 			native_pose, option[ OptionKeys::in::file::native ]()
 		);
 		core::pose::set_ss_from_phipsi( native_pose );
-	} else	{
+	} else {
 		native_pose = start_pose;
 	}
 
@@ -375,10 +375,10 @@ LoopBuild_main() {
 			remodel == "quick_ccd_moves" || remodel == "old_loop_relax" ||
 			remodel == "sdwindow" ||
 			option[ OptionKeys::loops::build_initial ].value() ||
-	   	( option[ OptionKeys::loops::frag_files ].user()
-	      	&& (refine == "refine_ccd" || intermedrelax != "no" || relax != "no")
+			( option[ OptionKeys::loops::frag_files ].user()
+			&& (refine == "refine_ccd" || intermedrelax != "no" || relax != "no")
 			)
-	) {
+			) {
 		// these protocols optionally take a fragment set .. only load if
 		// specified
 		loops::read_loop_fragments( frag_libs );
@@ -415,7 +415,7 @@ LoopBuild_main() {
 		tr.Info << "read hotspot set..." << std::endl;
 		HotspotStubSetOP hotspot_set = new HotspotStubSet;
 		hotspot_set->read_data( option[ OptionKeys::hotspots ]() );
-		moves::MoverOP hotspot_mover =	new SetupHotspotMover( hotspot_set );
+		moves::MoverOP hotspot_mover = new SetupHotspotMover( hotspot_set );
 		moves::SequenceMoverOP seq_mover = new moves::SequenceMover;
 		seq_mover->add_mover( hotspot_mover );
 		seq_mover->add_mover( mover );
@@ -441,9 +441,9 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	register_options();
-	devel::init( argc, argv );
-	LoopBuild_main();
+		register_options();
+		devel::init( argc, argv );
+		LoopBuild_main();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

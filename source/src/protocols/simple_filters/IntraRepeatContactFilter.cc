@@ -37,7 +37,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr("protocols.filters.IntraRepeatContactFilter");
+static basic::Tracer tr("protocols.filters.IntraRepeatContactFilter");
 
 namespace protocols {
 namespace simple_filters {

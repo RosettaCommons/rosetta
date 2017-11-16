@@ -64,7 +64,6 @@
 
 #include <utility/excn/Exceptions.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -72,84 +71,84 @@ int
 main( int argc, char* argv[] ) {
 	try {
 
-	basic::Tracer tr( "james.add_calcium" );
-	// options, random initialization
-	devel::init( argc, argv );
+		basic::Tracer tr( "james.add_calcium" );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using core::Size;
-	using utility::vector1;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using core::Size;
+		using utility::vector1;
 
-	// add the ligand:
+		// add the ligand:
 
-	core::pose::Pose query_pose, ligand_pose;
+		core::pose::Pose query_pose, ligand_pose;
 
-	std::string query_pose_file  = option[ in::file::s ]()[1];
-	std::string ligand_pose_file = option[ in::file::template_pdb ]()[1];
+		std::string query_pose_file  = option[ in::file::s ]()[1];
+		std::string ligand_pose_file = option[ in::file::template_pdb ]()[1];
 
-	core::import_pose::pose_from_file( query_pose , query_pose_file , core::import_pose::PDB_file);
-	core::import_pose::pose_from_file( ligand_pose, ligand_pose_file , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( query_pose , query_pose_file , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( ligand_pose, ligand_pose_file , core::import_pose::PDB_file);
 
-	tr.Error << ligand_pose.fold_tree() << std::endl;
+		tr.Error << ligand_pose.fold_tree() << std::endl;
 
-	// configuration stuff
-	core::Size  const query_pose_anchor ( 10 ); // GLU10 in query
-	core::Size  const ligand_pose_anchor( 12 ); // is like GLU12 in template
-	std::string const anchor_atom_name("CA");
-	std::string const ligand_atom_name("CA");
+		// configuration stuff
+		core::Size  const query_pose_anchor ( 10 ); // GLU10 in query
+		core::Size  const ligand_pose_anchor( 12 ); // is like GLU12 in template
+		std::string const anchor_atom_name("CA");
+		std::string const ligand_atom_name("CA");
 
-	vector1< core::Size > ligand_indices;
-	ligand_indices.push_back( 320 );
-	ligand_indices.push_back( 321 );
-	ligand_indices.push_back( 322 );
+		vector1< core::Size > ligand_indices;
+		ligand_indices.push_back( 320 );
+		ligand_indices.push_back( 321 );
+		ligand_indices.push_back( 322 );
 
-	core::kinematics::FoldTree new_fold_tree;
+		core::kinematics::FoldTree new_fold_tree;
 
-	// peptide edges
-	new_fold_tree.add_edge(
-		1,
-		ligand_pose_anchor,
-		core::kinematics::Edge::PEPTIDE
-	);
-	new_fold_tree.add_edge(
-		ligand_pose_anchor,
-		ligand_pose.size() - 3,
-		core::kinematics::Edge::PEPTIDE
-	);
-	tr.Error << "adding ligand residues to fold-tree" << std::endl;
-
-	// edges from anchor to ligand residues
-	for ( Size jj = 1; jj <= ligand_indices.size(); ++jj ) {
-		tr.Error << "adding " << jj << std::endl;
-		core::kinematics::Edge out_edge(
-			ligand_pose_anchor, // start
-			ligand_indices[jj],
-			(int)jj, // label
-			std::string(anchor_atom_name), // start_atom
-			std::string(ligand_atom_name), // stop_atom
-			false // bKeepStubInResidue
+		// peptide edges
+		new_fold_tree.add_edge(
+			1,
+			ligand_pose_anchor,
+			core::kinematics::Edge::PEPTIDE
 		);
-		tr.Error << out_edge << std::endl;
-		new_fold_tree.add_edge( out_edge );
-	}
-
-	tr.Error << ligand_pose.fold_tree();
-	ligand_pose.fold_tree( new_fold_tree );
-
-	for ( Size jj = 1; jj <= ligand_indices.size(); ++jj ) {
-		query_pose.append_residue_by_jump(
-			ligand_pose.residue( ligand_indices[jj] ),
-			query_pose_anchor,
-			anchor_atom_name,
-			ligand_atom_name
+		new_fold_tree.add_edge(
+			ligand_pose_anchor,
+			ligand_pose.size() - 3,
+			core::kinematics::Edge::PEPTIDE
 		);
-		query_pose.set_jump( jj, ligand_pose.jump(jj) );
-	}
+		tr.Error << "adding ligand residues to fold-tree" << std::endl;
 
-	// remodel loops
+		// edges from anchor to ligand residues
+		for ( Size jj = 1; jj <= ligand_indices.size(); ++jj ) {
+			tr.Error << "adding " << jj << std::endl;
+			core::kinematics::Edge out_edge(
+				ligand_pose_anchor, // start
+				ligand_indices[jj],
+				(int)jj, // label
+				std::string(anchor_atom_name), // start_atom
+				std::string(ligand_atom_name), // stop_atom
+				false // bKeepStubInResidue
+			);
+			tr.Error << out_edge << std::endl;
+			new_fold_tree.add_edge( out_edge );
+		}
 
-	query_pose.dump_pdb( "pose_with_ligand.pdb" );
+		tr.Error << ligand_pose.fold_tree();
+		ligand_pose.fold_tree( new_fold_tree );
+
+		for ( Size jj = 1; jj <= ligand_indices.size(); ++jj ) {
+			query_pose.append_residue_by_jump(
+				ligand_pose.residue( ligand_indices[jj] ),
+				query_pose_anchor,
+				anchor_atom_name,
+				ligand_atom_name
+			);
+			query_pose.set_jump( jj, ligand_pose.jump(jj) );
+		}
+
+		// remodel loops
+
+		query_pose.dump_pdb( "pose_with_ligand.pdb" );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

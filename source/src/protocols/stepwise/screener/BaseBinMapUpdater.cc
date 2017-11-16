@@ -19,7 +19,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.BaseBinMapUpdater" );
+static basic::Tracer TR( "protocols.stepwise.screener.BaseBinMapUpdater" );
 
 using namespace core;
 using namespace protocols::stepwise::sampler;

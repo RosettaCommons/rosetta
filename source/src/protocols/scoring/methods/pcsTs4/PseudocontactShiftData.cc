@@ -75,8 +75,8 @@ namespace pcsTs4 {
 
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer TR_pcs_d_p_l_Ts4( "protocols.scoring.methods.pcsTs4.PCS_data_per_lanthanides_Ts4" );
-static THREAD_LOCAL basic::Tracer TR_pcs_d_Ts4( "protocols.scoring.methods.pcsTs4.PCS_data_Ts4" );
+static basic::Tracer TR_pcs_d_p_l_Ts4( "protocols.scoring.methods.pcsTs4.PCS_data_per_lanthanides_Ts4" );
+static basic::Tracer TR_pcs_d_Ts4( "protocols.scoring.methods.pcsTs4.PCS_data_Ts4" );
 
 PCS_data_per_lanthanides_Ts4::~PCS_data_per_lanthanides_Ts4(){
 }

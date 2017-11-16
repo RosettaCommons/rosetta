@@ -58,7 +58,7 @@ namespace util {
 typedef std::pair< std::set<core::Size>,std::set<core::Size> > InterfacePair;
 typedef numeric::HomogeneousTransform< core::Real > HTReal;
 
-//static THREAD_LOCAL basic::Tracer TR("core.select.util.interface_vector_calculate");
+//static basic::Tracer TR("core.select.util.interface_vector_calculate");
 
 
 //forward declarations of funtions that do the work

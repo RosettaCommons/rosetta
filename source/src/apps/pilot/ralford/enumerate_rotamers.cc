@@ -30,7 +30,7 @@
 #include <cstdlib>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.enumerate_rotamers" );
+static basic::Tracer TR( "apps.pilot.ralford.enumerate_rotamers" );
 
 int
 main( int argc, char * argv [] )

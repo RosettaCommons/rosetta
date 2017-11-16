@@ -54,7 +54,7 @@ using namespace protocols;
 using namespace core::scoring;
 using namespace protocols::scoring;
 
-static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.AddEncounterConstraintMover" );
+static basic::Tracer tr( "devel.replica_docking.AddEncounterConstraintMover" );
 
 // XRW TEMP std::string
 // XRW TEMP AddEncounterConstraintMoverCreator::keyname() const

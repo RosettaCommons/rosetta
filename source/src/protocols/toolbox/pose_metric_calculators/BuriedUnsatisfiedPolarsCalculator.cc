@@ -66,7 +66,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.BuriedUnsatisfiedPolarsCalculator" );
+static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.BuriedUnsatisfiedPolarsCalculator" );
 
 #ifdef    SERIALIZATION
 // Project serialization headers

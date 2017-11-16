@@ -50,7 +50,7 @@ namespace environment {
 
 std::string const NOT_SET = "[NOT_SET]";
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.environment.ScriptCM", basic::t_info );
+static basic::Tracer tr( "protocols.environment.ScriptCM", basic::t_info );
 
 using namespace core::environment;
 using namespace protocols::environment;

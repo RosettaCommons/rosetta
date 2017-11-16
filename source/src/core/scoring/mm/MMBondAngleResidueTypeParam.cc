@@ -33,7 +33,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "core.mm.MMBondAngleResidueTypeParam" );
+static basic::Tracer TR( "core.mm.MMBondAngleResidueTypeParam" );
 
 
 #ifdef SERIALIZATION

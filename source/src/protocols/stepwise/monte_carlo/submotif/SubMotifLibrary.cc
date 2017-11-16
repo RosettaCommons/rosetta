@@ -35,7 +35,7 @@
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.submotif.SubMotifLibrary" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.submotif.SubMotifLibrary" );
 
 ///////////////////////////////////////////////////////////////////////////////////
 //

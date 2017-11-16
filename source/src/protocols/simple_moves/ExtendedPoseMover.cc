@@ -52,7 +52,7 @@
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.simple_moves.ExtendedPoseMover" );
+static basic::Tracer tr( "protocols.simple_moves.ExtendedPoseMover" );
 
 namespace protocols {
 namespace simple_moves {

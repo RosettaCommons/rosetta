@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.bulge.util" );
+static basic::Tracer TR( "protocols.stepwise.modeler.rna.bulge.util" );
 using namespace core;
 
 namespace protocols {

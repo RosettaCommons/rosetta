@@ -64,7 +64,6 @@
 #include <utility/vector0.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -76,7 +75,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 typedef std::vector<Real> ddGs;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yiliu.ddg" );
+static basic::Tracer TR( "apps.pilot.yiliu.ddg" );
 
 ///////////////////////////////////////////////////////////////////////////////
 // YAML helper function

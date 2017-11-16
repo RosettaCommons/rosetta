@@ -26,7 +26,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.align.StepWiseClusterer" );
+static basic::Tracer TR( "protocols.stepwise.modeler.align.StepWiseClusterer" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //

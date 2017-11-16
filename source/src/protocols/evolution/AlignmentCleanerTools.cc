@@ -26,7 +26,7 @@ namespace protocols {
 namespace evolution {
 namespace AlignmentCleanerTools {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.evolution.AlignmentCleanerTools" );
+static basic::Tracer TR( "protocols.evolution.AlignmentCleanerTools" );
 
 
 void

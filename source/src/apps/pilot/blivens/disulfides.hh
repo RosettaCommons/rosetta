@@ -38,15 +38,15 @@ using namespace core;
 using namespace std;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR_apps_pilot_blivens_disulfides_hh( "apps.pilot.blivens.disulfides" );
+static basic::Tracer TR_apps_pilot_blivens_disulfides_hh( "apps.pilot.blivens.disulfides" );
 
 /*! @brief Determines the distance between two residues.
- *  @param atom The atom to measure from within each residue, eg "CA"
- *  @return -1 on error (for instance, CB distance of Gly)
- */
+*  @param atom The atom to measure from within each residue, eg "CA"
+*  @return -1 on error (for instance, CB distance of Gly)
+*/
 Real residue_distance(pose::Pose const& pose,
-		Size residueA_pos, string atomA,
-		Size residueB_pos, string atomB)
+	Size residueA_pos, string atomA,
+	Size residueB_pos, string atomB)
 {
 	Vector a( pose.residue( residueA_pos ).xyz(atomA) );
 	Vector b( pose.residue( residueB_pos ).xyz(atomB) );
@@ -64,20 +64,20 @@ Real CB_distance(pose::Pose const& pose, Size posA, Size posB)
 }
 
 /*! @brief Decides whether a disulfide bond could exist between two residues based on backbone orientation
- *
- * @details Looks at the backbone distance and orientation between two residues.
- * Returns whether this backbone would be a reasonable place to put a disulfide
- * bond.
- *
- * Current criteria used:
- *  1. Distance between CA-CA
- * possible enhancements:
- *  - CB distance
- *  - general orientation (pointing towards one another)
- *  - ramachandra plot orientation
- *  - other sidechains which need to be repacked/mutated
- */
-	bool
+*
+* @details Looks at the backbone distance and orientation between two residues.
+* Returns whether this backbone would be a reasonable place to put a disulfide
+* bond.
+*
+* Current criteria used:
+*  1. Distance between CA-CA
+* possible enhancements:
+*  - CB distance
+*  - general orientation (pointing towards one another)
+*  - ramachandra plot orientation
+*  - other sidechains which need to be repacked/mutated
+*/
+bool
 reasonable_disulfide_orientation( pose::Pose const& pose, Size residueA_pos, Size residueB_pos)
 {
 	//Typical Disulfide Ca-Ca distances:
@@ -88,9 +88,10 @@ reasonable_disulfide_orientation( pose::Pose const& pose, Size residueA_pos, Siz
 	Real r = CA_distance(pose,residueA_pos,residueB_pos);
 	//TR_apps_pilot_blivens_disulfides_hh << "Bond "<<residueA_pos<<"-"<<residueB_pos<<" has length "<< r << endl;
 
-	if( ( r < ds_CA_length_mean - 2*ds_CA_length_sd) ||
-			( r > ds_CA_length_mean + 2*ds_CA_length_sd) )
+	if ( ( r < ds_CA_length_mean - 2*ds_CA_length_sd) ||
+			( r > ds_CA_length_mean + 2*ds_CA_length_sd) ) {
 		return false;
+	}
 
 	//All filters passed!
 	return true;
@@ -98,24 +99,24 @@ reasonable_disulfide_orientation( pose::Pose const& pose, Size residueA_pos, Siz
 
 
 /*! @brief Detect whether a disulfide bond could exist.
- */
-	bool
+*/
+bool
 possible_disulfide(pose::Pose const& pose, Size residueA_pos, Size residueB_pos)
 {
 	return reasonable_disulfide_orientation(pose,residueA_pos,residueB_pos);
 }
 
 /*! @brief Detect 'actual' disulfide bonds.
- *
- * @details Since disulfide bonds are generally not annotated, we define a
- * disulfide to exist between a pair of residues if
- *   1) They are both cysteines
- *   2) They are bonded (which is marked by conformer.detect_disulfides)
- */
+*
+* @details Since disulfide bonds are generally not annotated, we define a
+* disulfide to exist between a pair of residues if
+*   1) They are both cysteines
+*   2) They are bonded (which is marked by conformer.detect_disulfides)
+*/
 bool
 actual_disulfide( pose::Pose const& pose, Size residueA_pos, Size residueB_pos)
 {
-  return core::conformation::is_disulfide_bond(pose.conformation(), residueA_pos, residueB_pos);
+	return core::conformation::is_disulfide_bond(pose.conformation(), residueA_pos, residueB_pos);
 }
 
 void find_disulfides( pose::Pose const & pose, vector1< pair<Size,Size> > /*out*/ & disulfides )
@@ -146,7 +147,7 @@ void find_disulfides( pose::Pose const & pose, vector1< pair<Size,Size> > /*out*
 			assert( other_res_ii > ii );
 			//Can only bond residues of the same residue type set (eg centroid to centroid)
 			assert( pose.residue_type(other_res_ii).residue_type_set().name() ==
-					pose.residue_type(ii).residue_type_set().name() );
+				pose.residue_type(ii).residue_type_set().name() );
 
 			TR_apps_pilot_blivens_disulfides_hh.Info << "Found disulf between " << ii << " and " << other_res_ii << std::endl;
 			is_disulfide[ii] = true;
@@ -160,21 +161,20 @@ void find_disulfides( pose::Pose const & pose, vector1< pair<Size,Size> > /*out*
 
 
 /*! @brief Determines whether two residues are on the same secondary structure element
- * @details Before running the correct secondary structure must be assigned to
- * each residue.
- *
- * @par Algorithm
- * Walk from one residue to the next, stopping if you cross a ss border.
- * O(longest ss element).
- */
+* @details Before running the correct secondary structure must be assigned to
+* each residue.
+*
+* @par Algorithm
+* Walk from one residue to the next, stopping if you cross a ss border.
+* O(longest ss element).
+*/
 bool same_secondary_structure(pose::Pose const& pose, Size resA_pos, Size resB_pos)
 {
 	Size l,u;//lower & upper positions
-	if( resA_pos < resB_pos) {
+	if ( resA_pos < resB_pos ) {
 		l = resA_pos;
 		u = resB_pos;
-	}
-	else {
+	} else {
 		l = resB_pos;
 		u = resA_pos;
 	}
@@ -183,8 +183,9 @@ bool same_secondary_structure(pose::Pose const& pose, Size resA_pos, Size resB_p
 
 	do {
 		++l;
-		if(pose.secstruct(l) != structure) //ss changed
+		if ( pose.secstruct(l) != structure ) { //ss changed
 			return false;
+		}
 	}while(l<u);
 
 	return true;

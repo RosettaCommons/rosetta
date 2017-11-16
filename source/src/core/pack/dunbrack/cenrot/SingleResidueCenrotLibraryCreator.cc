@@ -34,7 +34,7 @@ namespace pack {
 namespace dunbrack {
 namespace cenrot {
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.dunbrack.cenrot.SingleResidueCenrotLibraryCreator");
+static basic::Tracer TR("core.pack.dunbrack.cenrot.SingleResidueCenrotLibraryCreator");
 
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
 SingleResidueCenrotLibraryCreator::create( core::chemical::ResidueType const & restype) const {

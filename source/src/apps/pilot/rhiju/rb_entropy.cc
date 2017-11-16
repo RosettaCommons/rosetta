@@ -86,7 +86,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "rb_entropy" );
+static basic::Tracer TR( "rb_entropy" );
 
 using namespace core;
 using namespace protocols;

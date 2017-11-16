@@ -42,7 +42,7 @@
 namespace protocols {
 namespace matdes {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.InterfacePackingFilter" );
+static basic::Tracer TR( "protocols.matdes.InterfacePackingFilter" );
 
 /// @brief default ctor
 InterfacePackingFilter::InterfacePackingFilter() :

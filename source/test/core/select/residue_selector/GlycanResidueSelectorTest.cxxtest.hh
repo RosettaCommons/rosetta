@@ -32,7 +32,7 @@
 
 #include <utility/string_util.hh>
 
-static THREAD_LOCAL basic::Tracer TR("GlycanResidueSelectorTest");
+static basic::Tracer TR("GlycanResidueSelectorTest");
 
 using namespace core::select;
 using namespace core::select::residue_selector;

@@ -43,7 +43,7 @@
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.PhiSelector" );
+static basic::Tracer TR( "core.select.residue_selector.PhiSelector" );
 
 
 namespace core {

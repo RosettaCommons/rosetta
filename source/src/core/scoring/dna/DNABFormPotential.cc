@@ -42,7 +42,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.dna.DNABFormPotential" );
+static basic::Tracer tr( "core.scoring.dna.DNABFormPotential" );
 
 using namespace ObjexxFCL;
 

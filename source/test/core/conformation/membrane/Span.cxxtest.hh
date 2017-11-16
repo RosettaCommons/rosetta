@@ -32,7 +32,7 @@
 #include <string>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR("core.conformation.membrane.Span.cxxtest");
+static basic::Tracer TR("core.conformation.membrane.Span.cxxtest");
 
 using namespace core;
 using namespace core::conformation;

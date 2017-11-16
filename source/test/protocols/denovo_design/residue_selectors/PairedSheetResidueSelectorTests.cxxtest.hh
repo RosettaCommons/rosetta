@@ -31,7 +31,7 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("PairedSheetResidueSelectorTests");
+static basic::Tracer TR("PairedSheetResidueSelectorTests");
 
 class PairedSheetResidueSelectorTests : public CxxTest::TestSuite {
 	//Define Variables

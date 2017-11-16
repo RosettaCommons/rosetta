@@ -40,7 +40,7 @@ namespace protocols {
 namespace moves {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.MoverFactory" );
+static basic::Tracer TR( "protocols.moves.MoverFactory" );
 
 MoverFactory::MoverFactory()
 {

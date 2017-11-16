@@ -77,7 +77,7 @@ OPT_KEY( Boolean, minimize_jump )
 OPT_KEY( Boolean, do_repack )
 OPT_KEY( Boolean, use_geosol )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.johnk_test_interface_geosol_minimization.main" );
+static basic::Tracer TR( "apps.pilot.johnk_test_interface_geosol_minimization.main" );
 
 // NOTE: GLOBAL VARIABLE - this would better be done with a static (and could be used to ensure it's filled, too...)
 utility::vector1 <bool> interface;
@@ -114,94 +114,94 @@ is_interface_sc(
 int
 main( int argc, char * argv [] )
 {
-    try {
-	NEW_OPT( minimize_chi, "include chi angles in minimization", false );
-	NEW_OPT( minimize_bb, "include backbone in minimization", false );
-	NEW_OPT( minimize_jump, "include jumps in minimization", false );
-	NEW_OPT( do_repack, "repack the interface", false );
-	NEW_OPT( use_geosol, "use geosol instead of LK", false );
+	try {
+		NEW_OPT( minimize_chi, "include chi angles in minimization", false );
+		NEW_OPT( minimize_bb, "include backbone in minimization", false );
+		NEW_OPT( minimize_jump, "include jumps in minimization", false );
+		NEW_OPT( do_repack, "repack the interface", false );
+		NEW_OPT( use_geosol, "use geosol instead of LK", false );
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	TR << "jk doing geosol interface minimiations" << std::endl;
+		TR << "jk doing geosol interface minimiations" << std::endl;
 
-	// scoring function
-	scoring::ScoreFunctionOP scorefxn( get_score_function() );
+		// scoring function
+		scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
-	if ( option[ use_geosol ] ) {
-		//	scorefxn->reset();
-		//	scorefxn->set_weight( core::scoring::fa_sol, 0.65 );
-		scorefxn->set_weight( core::scoring::fa_sol, 0.0 );
-		scorefxn->set_weight( core::scoring::occ_sol_fitted, 0.65 );
+		if ( option[ use_geosol ] ) {
+			// scorefxn->reset();
+			// scorefxn->set_weight( core::scoring::fa_sol, 0.65 );
+			scorefxn->set_weight( core::scoring::fa_sol, 0.0 );
+			scorefxn->set_weight( core::scoring::occ_sol_fitted, 0.65 );
+		}
+
+		// Read input pose, with support for waters
+		pose::Pose input_pose, pose;
+		std::string const input_pdb_name ( basic::options::start_file() );
+		core::import_pose::pose_from_file( input_pose, input_pdb_name , core::import_pose::PDB_file);
+		(*scorefxn)(input_pose);
+		pose = input_pose;
+
+		define_interface( pose );
+
+		// setup a packertask
+		utility::vector1 <bool> allow_moving( pose.size(), false );
+		pack::task::PackerTaskOP packer_task( pack::task::TaskFactory::create_packer_task( pose) );
+
+		// setting degrees of freedom which can move during minimization
+		kinematics::MoveMap mm_all;
+		mm_all.set_chi( false );
+		mm_all.set_bb( false );
+		mm_all.set_jump( false );
+
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+			if ( ! interface.at(ii) ) continue;
+			mm_all.set_chi( ii, option[ minimize_chi ] );
+			mm_all.set_bb( ii, option[ minimize_bb ] );
+			mm_all.set_jump( ii, option[ minimize_jump ] );
+			allow_moving.at(ii) = true;
+			packer_task->nonconst_residue_task( ii ).restrict_to_repacking();
+		}
+		packer_task->restrict_to_residues( allow_moving );
+
+		// do the repack
+		if ( option[ do_repack ] ) {
+			TR << "Starting repack...." << std::endl;
+			pack::pack_rotamers( pose, *scorefxn, packer_task );
+		}
+
+		// minimize protein
+		if ( option[ minimize_chi ] || option[ minimize_bb ] || option[ minimize_jump ] ) {
+			TR << "Starting minimization...." << std::endl;
+			AtomTreeMinimizer minimizer;
+			MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.001, true );
+			minimizer.run( pose, mm_all, *scorefxn, min_options );
+		}
+
+		(*scorefxn)(pose);
+
+		TR << "jk done minimizing" << std::endl;
+
+		// compute sidechain interface rmsd
+		// core::Real interface_sc_rms = rmsd_no_super_subset( input_pose, pose, interface, is_interface_sc );
+		core::Real interface_sc_rms = rmsd_no_super( input_pose, pose, is_interface_sc );
+		TR << "jk interface sidechain rmsd is " << interface_sc_rms << std::endl;
+
+		// compute per-residue interface rmsd
+		// JK FILL THIS IN IF NEEDED....
+
+		if ( option[ use_geosol ] ) {
+			pose.dump_pdb("geosol_min.pdb");
+		} else {
+			pose.dump_pdb("LK_min.pdb");
+		}
+
+		TR << "jk done analysis" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-
-	// Read input pose, with support for waters
-	pose::Pose input_pose, pose;
-	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_file( input_pose, input_pdb_name , core::import_pose::PDB_file);
-	(*scorefxn)(input_pose);
-	pose = input_pose;
-
-	define_interface( pose );
-
-	// setup a packertask
-	utility::vector1 <bool>	allow_moving( pose.size(), false );
-	pack::task::PackerTaskOP packer_task( pack::task::TaskFactory::create_packer_task( pose) );
-
-	// setting degrees of freedom which can move during minimization
-	kinematics::MoveMap mm_all;
-	mm_all.set_chi( false );
-	mm_all.set_bb( false );
-	mm_all.set_jump( false );
-
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( ! interface.at(ii) ) continue;
-		mm_all.set_chi( ii, option[ minimize_chi ] );
-		mm_all.set_bb( ii, option[ minimize_bb ] );
-		mm_all.set_jump( ii, option[ minimize_jump ] );
-		allow_moving.at(ii) = true;
-		packer_task->nonconst_residue_task( ii ).restrict_to_repacking();
-	}
-	packer_task->restrict_to_residues( allow_moving );
-
-	// do the repack
-	if ( option[ do_repack ] ) {
-		TR << "Starting repack...." << std::endl;
-		pack::pack_rotamers( pose, *scorefxn, packer_task );
-	}
-
-	// minimize protein
-	if ( option[ minimize_chi ] || option[ minimize_bb ] || option[ minimize_jump ] ) {
-		TR << "Starting minimization...." << std::endl;
-		AtomTreeMinimizer minimizer;
-		MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.001, true );
-		minimizer.run( pose, mm_all, *scorefxn, min_options );
-	}
-
-	(*scorefxn)(pose);
-
-	TR << "jk done minimizing" << std::endl;
-
-	// compute sidechain interface rmsd
-	//	core::Real interface_sc_rms = rmsd_no_super_subset( input_pose, pose, interface, is_interface_sc );
-	core::Real interface_sc_rms = rmsd_no_super( input_pose, pose, is_interface_sc );
-	TR << "jk interface sidechain rmsd is " << interface_sc_rms << std::endl;
-
-	// compute per-residue interface rmsd
-	// JK FILL THIS IN IF NEEDED....
-
-	if ( option[ use_geosol ] ) {
-		pose.dump_pdb("geosol_min.pdb");
-	} else {
-		pose.dump_pdb("LK_min.pdb");
-	}
-
-	TR << "jk done analysis" << std::endl;
-
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	return 0;
 }
 

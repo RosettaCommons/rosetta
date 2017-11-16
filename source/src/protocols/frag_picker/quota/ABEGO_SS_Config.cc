@@ -32,7 +32,7 @@ namespace protocols {
 namespace frag_picker {
 namespace quota {
 
-static THREAD_LOCAL basic::Tracer trABEGO_SS_Config(
+static basic::Tracer trABEGO_SS_Config(
 	"protocols.frag_picker.quota.ABEGO_SS_Config");
 
 using core::Size;

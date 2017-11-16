@@ -82,7 +82,7 @@
 // Added 101103
 //Auto Headers
 
-static THREAD_LOCAL basic::Tracer TR( "design_symm" );
+static basic::Tracer TR( "design_symm" );
 
 using std::string;
 using ObjexxFCL::string_of;

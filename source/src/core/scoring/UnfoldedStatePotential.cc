@@ -40,7 +40,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.UnfoldedStatePotential" );
+static basic::Tracer tr( "core.scoring.UnfoldedStatePotential" );
 
 
 namespace core {

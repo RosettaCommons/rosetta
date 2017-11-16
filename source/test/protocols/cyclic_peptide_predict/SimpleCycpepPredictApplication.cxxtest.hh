@@ -30,7 +30,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide_predict.simple_cycpep_predict.cxxtest.hh");
+static basic::Tracer TR("protocols.cyclic_peptide_predict.simple_cycpep_predict.cxxtest.hh");
 
 
 // --------------- Test Class --------------- //

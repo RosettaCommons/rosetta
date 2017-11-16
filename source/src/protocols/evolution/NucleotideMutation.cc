@@ -76,7 +76,7 @@ using namespace core::kinematics;
 typedef utility::vector1< bool > bools;
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.evolution.NucleotideMutation" );
+static basic::Tracer TR( "protocols.evolution.NucleotideMutation" );
 
 // XRW TEMP std::string
 // XRW TEMP NucleotideMutationCreator::keyname() const

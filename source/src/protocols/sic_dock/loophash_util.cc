@@ -19,7 +19,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sic_dock.loophash_util" );
+static basic::Tracer TR( "protocols.sic_dock.loophash_util" );
 
 namespace protocols {
 namespace sic_dock {

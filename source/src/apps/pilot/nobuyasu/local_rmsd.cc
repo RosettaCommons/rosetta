@@ -47,7 +47,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -58,12 +57,12 @@ using namespace basic::options::OptionKeys;
 typedef core::Size Size;
 typedef std::string String;
 
-static THREAD_LOCAL basic::Tracer TR( "localrmsd" );
+static basic::Tracer TR( "localrmsd" );
 
 namespace localrmsd
 {
-	//StringOptionKey blueprint( "foldptn:blueprint" );
-	StringOptionKey output_name( "localrmsd:output_name" );
+//StringOptionKey blueprint( "foldptn:blueprint" );
+StringOptionKey output_name( "localrmsd:output_name" );
 }
 
 /// local mover for testing purposes
@@ -81,14 +80,14 @@ public:
 
 		// read scorefxn
 		//scorefxn_ = core::scoring::get_score_function();
-		//		TR << "score will be calculated by remodel_cen.wts" << std::endl;
+		//  TR << "score will be calculated by remodel_cen.wts" << std::endl;
 		scorefxn_ = core::scoring::get_score_function();
 
 		// set output
 		std::ostringstream filename;
-		if( option[ localrmsd::output_name ].active() ){
+		if ( option[ localrmsd::output_name ].active() ) {
 			filename <<  option[ localrmsd::output_name ]() << ".localrmsd.dat";
-		}else{
+		} else {
 			filename <<  "localrmsd.dat";
 		}
 		output_.open( filename.str().c_str(), std::ios::out );
@@ -101,15 +100,15 @@ public:
 	void
 	apply( core::pose::Pose & pose ){
 
-		if( ! initialize_ ){
+		if ( ! initialize_ ) {
 
 			output_ << "# tag score rmsd  ";
 			Size ntrial( pose.size()/skip_ );
-			for( Size i=1; i<=ntrial; i++ ){
+			for ( Size i=1; i<=ntrial; i++ ) {
 
 				Size begin = ( i - 1 )*skip_ + 1;
 				Size end = begin + window_ - 1;
-				if( end > pose.size() ){
+				if ( end > pose.size() ) {
 					break;
 				}
 				output_ << begin << '-' << end;
@@ -137,11 +136,11 @@ public:
 		Size ntrial( pose.size()/skip_ );
 		utility::vector1< Real > local_rmsd;
 
-		for( Size i=1; i<=ntrial; i++ ){
+		for ( Size i=1; i<=ntrial; i++ ) {
 
 			Size begin = ( i - 1 )*skip_ + 1;
 			Size end = begin + window_ - 1;
-			if( end > pose.size() ){
+			if ( end > pose.size() ) {
 				break;
 			}
 			Real rmsd = CA_rmsd( pose, native_pose, begin, end );
@@ -150,7 +149,7 @@ public:
 		}
 
 		output_ << me << ' ' << totE << ' ' << overall_rmsd << ' ';
-		for( utility::vector1< Real>::iterator it=local_rmsd.begin(), ite=local_rmsd.end(); it != ite; ++it ){
+		for ( utility::vector1< Real>::iterator it=local_rmsd.begin(), ite=local_rmsd.end(); it != ite; ++it ) {
 			output_ << *it << ' ';
 		}
 		output_ << std::endl;
@@ -192,18 +191,18 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	//
-	option.add( localrmsd::output_name, "output name" );
+		//
+		option.add( localrmsd::output_name, "output name" );
 
-	// init
-  devel::init(argc, argv);
+		// init
+		devel::init(argc, argv);
 
-	// mover
-	protocols::moves::MoverOP protocol;
-	protocol = new LocalRmsd();
+		// mover
+		protocols::moves::MoverOP protocol;
+		protocol = new LocalRmsd();
 
-	// run
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+		// run
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

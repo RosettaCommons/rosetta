@@ -26,7 +26,7 @@ namespace basic {
 namespace resource_manager {
 namespace locator {
 
-static THREAD_LOCAL Tracer file_list_tracer("basic.resource_manager.locator.FileListResourceLocator");
+static Tracer file_list_tracer("basic.resource_manager.locator.FileListResourceLocator");
 
 FileListResourceLocatorCreator::FileListResourceLocatorCreator() {}
 

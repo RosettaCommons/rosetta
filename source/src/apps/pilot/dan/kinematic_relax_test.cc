@@ -40,7 +40,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kinematic_relax_test.main" );
+static basic::Tracer TR( "apps.pilot.kinematic_relax_test.main" );
 
 void*
 my_main( void* )
@@ -49,9 +49,6 @@ my_main( void* )
 	using namespace protocols;
 	using namespace protocols::jobdist;
 
-	using basic::T;
-	using basic::Error;
-	using basic::Warning;
 
 	TR << "start loops modeling" << std::endl;
 
@@ -86,7 +83,7 @@ my_main( void* )
 		out << "total_energy: " << kin_looprelaxer.get_last_total_energy() << std::endl;
 		out << "chainbreak: " << kin_looprelaxer.get_last_chainbreak() << std::endl;
 
-		if (option[ OptionKeys::out::pdb_gz ]()) {
+		if ( option[ OptionKeys::out::pdb_gz ]() ) {
 			utility::file::gzip( outname, true );
 		}
 		// prepare for next iteration
@@ -102,14 +99,14 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	}	catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-  }
-  return 0;
+	}
+	return 0;
 }

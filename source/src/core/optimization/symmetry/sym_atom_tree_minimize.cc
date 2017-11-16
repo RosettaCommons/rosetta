@@ -54,17 +54,15 @@
 #include <core/kinematics/FoldTree.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 using namespace ObjexxFCL::format;
 
 namespace core {
 namespace optimization {
 namespace symmetry {
 
-static THREAD_LOCAL basic::Tracer TR( "core.optimization.symmetry.sym_atom_tree_minimize" );
+static basic::Tracer TR( "core.optimization.symmetry.sym_atom_tree_minimize" );
 
 typedef id::DOF_ID DOF_ID;
 

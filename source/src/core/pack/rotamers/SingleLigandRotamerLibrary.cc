@@ -59,7 +59,7 @@ namespace pack {
 namespace rotamers {
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.rotamers.SingleLigandRotamerLibrary" );
+static basic::Tracer TR( "core.pack.rotamers.SingleLigandRotamerLibrary" );
 
 
 // helper for debugging

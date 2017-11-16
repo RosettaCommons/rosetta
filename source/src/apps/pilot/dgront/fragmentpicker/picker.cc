@@ -41,7 +41,7 @@
 #include <utility/io/mpistream.hh>
 
 
-static THREAD_LOCAL basic::Tracer trace( "picker" );
+static basic::Tracer trace( "picker" );
 
 using namespace core;
 using namespace core::fragment;
@@ -75,60 +75,61 @@ void register_options() {
 	OPT(frags::picking::selecting_rule);
 	OPT(frags::picking::quota_config_file);
 	OPT(frags::picking::query_pos);
-//	OPT(frags::p_value_selection);
+	// OPT(frags::p_value_selection);
 	OPT(in::file::torsion_bin_probs);
 	OPT(out::file::frag_prefix);
 	OPT(constraints::cst_file);
 	OPT(in::path::database);
 
-//	OPT(rdc::correct_NH_length);
-//	OPT(rdc::reduced_couplings);
+	// OPT(rdc::correct_NH_length);
+	// OPT(rdc::reduced_couplings);
 }
 
 int main(int argc, char * argv[]) {
-        try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	register_options();
-	devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-	if (option[in::file::native].user()) {
-		trace.Debug << option[in::file::native]() << std::endl;
-	}
+		if ( option[in::file::native].user() ) {
+			trace.Debug << option[in::file::native]() << std::endl;
+		}
 
-	//---------- Set up a picker.
-	FragmentPickerOP pickIt;
-	if(option[frags::p_value_selection]() == true)
-	    pickIt = new FragmentPicker("PValuedFragmentScoreManager");
-	else
-	    pickIt = new FragmentPicker();
-	pickIt->parse_command_line();
-	trace << "After setup; size of a query is: " << pickIt->size_of_query()
+		//---------- Set up a picker.
+		FragmentPickerOP pickIt;
+		if ( option[frags::p_value_selection]() == true ) {
+			pickIt = new FragmentPicker("PValuedFragmentScoreManager");
+		} else {
+			pickIt = new FragmentPicker();
+		}
+		pickIt->parse_command_line();
+		trace << "After setup; size of a query is: " << pickIt->size_of_query()
 			<< std::endl;
 
-	//-------- Trata ta ta, tra ta... (picking fragment candidates)
-	trace << "Picking candidates" << std::endl;
+		//-------- Trata ta ta, tra ta... (picking fragment candidates)
+		trace << "Picking candidates" << std::endl;
 
-	if (option[frags::picking::quota_config_file].user() || option[frags::quota_protocol].user() ) {
-	    trace << "Running quota protocol" << std::endl;
-	    pickIt->quota_protocol();
-	} else {
-	    if (option[frags::keep_all_protocol].user()) {
-		trace << "Running keep-all protocol" << std::endl;
-		pickIt->keep_all_protocol();
-	    } else {
-		trace << "Running bounded protocol" << std::endl;
-		pickIt->bounded_protocol();
-	    }
-	}
+		if ( option[frags::picking::quota_config_file].user() || option[frags::quota_protocol].user() ) {
+			trace << "Running quota protocol" << std::endl;
+			pickIt->quota_protocol();
+		} else {
+			if ( option[frags::keep_all_protocol].user() ) {
+				trace << "Running keep-all protocol" << std::endl;
+				pickIt->keep_all_protocol();
+			} else {
+				trace << "Running bounded protocol" << std::endl;
+				pickIt->bounded_protocol();
+			}
+		}
 
-	basic::prof_show();
-        } catch ( utility::excn::EXCN_Base const & e ) {
-                                  std::cout << "caught exception " << e.msg() << std::endl;
+		basic::prof_show();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                      }
-            return 0;
+	}
+	return 0;
 
 }
 

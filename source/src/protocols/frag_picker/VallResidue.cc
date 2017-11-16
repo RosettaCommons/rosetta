@@ -37,7 +37,7 @@
 namespace protocols {
 namespace frag_picker {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.frag_picker.VallResidue" );
+static basic::Tracer TR( "protocols.frag_picker.VallResidue" );
 
 // static initialization
 utility::vector1<core::chemical::AA> VallResidue::order_ = order_vector();

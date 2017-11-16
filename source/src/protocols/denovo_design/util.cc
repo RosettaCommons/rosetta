@@ -55,7 +55,7 @@
 
 //C++ Headers
 
-static THREAD_LOCAL basic::Tracer TR("protocols.denovo_design.components.util");
+static basic::Tracer TR("protocols.denovo_design.components.util");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

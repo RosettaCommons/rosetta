@@ -47,7 +47,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR_PcsGridSearchParameter( "protocols.scoring.methods.pcs.PcsGridSearchParameter" );
+static basic::Tracer TR_PcsGridSearchParameter( "protocols.scoring.methods.pcs.PcsGridSearchParameter" );
 
 
 namespace protocols {

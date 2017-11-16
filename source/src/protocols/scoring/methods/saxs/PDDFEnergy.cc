@@ -57,7 +57,7 @@ namespace scoring {
 namespace methods {
 namespace saxs {
 
-static THREAD_LOCAL basic::Tracer trPDDFEnergy( "protocols.scoring.methods.saxs.PDDFEnergy" );
+static basic::Tracer trPDDFEnergy( "protocols.scoring.methods.saxs.PDDFEnergy" );
 
 core::scoring::ScoreTypes PDDFEnergyCreator::score_types_for_method() const {
 	core::scoring::ScoreTypes sts;

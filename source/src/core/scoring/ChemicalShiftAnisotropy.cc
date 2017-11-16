@@ -57,7 +57,7 @@
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ChemicalShiftAnisotropy" );
+static basic::Tracer tr( "core.scoring.ChemicalShiftAnisotropy" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

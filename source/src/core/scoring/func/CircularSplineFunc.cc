@@ -37,7 +37,7 @@
 #include <sstream>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.CircularSplineFunc" );
+static basic::Tracer TR( "core.scoring.constraints.CircularSplineFunc" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

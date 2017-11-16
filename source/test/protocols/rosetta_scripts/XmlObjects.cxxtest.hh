@@ -39,7 +39,7 @@
 #include <string>
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.rosetta_scripts.XmlObjects.cxxtest");
+static basic::Tracer TR("protocols.rosetta_scripts.XmlObjects.cxxtest");
 
 using namespace protocols::rosetta_scripts;
 

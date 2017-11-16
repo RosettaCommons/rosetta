@@ -20,14 +20,14 @@
 #ifndef apps_pilot_rayyrw_util_hh
 #define apps_pilot_rayyrw_util_hh
 
-static THREAD_LOCAL basic::Tracer tr_util("rayyrw_util");
+static basic::Tracer tr_util("rayyrw_util");
 
 // read frag_filename and parse the string out of it
 core::Size
 get_pos_from_fragfn(
 	utility::file::FileName const &fragfn
 ){
-	//static THREAD_LOCAL basic::Tracer tr_get_pos_from_fragfn("get_pos_from_fragfn");
+	//static basic::Tracer tr_get_pos_from_fragfn("get_pos_from_fragfn");
 	if ( ! utility::file::file_exists( fragfn ) ) {
 		utility_exit_with_message( "Unable to open file: " + fragfn.name() + '\n' );
 	}
@@ -130,7 +130,7 @@ swap_poses(
 	core::pose::Pose & pose2,
 	core::Size pos2
 ){
-	static THREAD_LOCAL basic::Tracer tr_swap_poses("swap_poses");
+	static basic::Tracer tr_swap_poses("swap_poses");
 	runtime_assert ( pos1 > pos2 ); // "=" mean 1 overlap
 
 	tr_swap_poses << "poses got swapped by reference" << std::endl;

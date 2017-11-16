@@ -50,7 +50,7 @@
 
 #include <math.h>
 
-static THREAD_LOCAL basic::Tracer TR("glycan_clash_check");
+static basic::Tracer TR("glycan_clash_check");
 
 
 void register_options() {

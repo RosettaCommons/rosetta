@@ -29,7 +29,7 @@
 // C++ headers
 #include <sstream>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.jump_selector.util" );
+static basic::Tracer TR( "core.select.jump_selector.util" );
 
 namespace core {
 namespace select {

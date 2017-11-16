@@ -20,6 +20,35 @@ namespace utility {
 
 class CSI_Sequence;
 
+namespace CSI {
+
+enum CSI_Enum {
+	Nothing,
+	Reset,
+	Bold,
+	Underline,
+	Black,
+	Red,
+	Green,
+	Yellow,
+	Blue,
+	Magenta,
+	Cyan,
+	White,
+	Default,
+	bgBlack,
+	bgRed,
+	bgGreen,
+	bgYellow,
+	bgBlue,
+	bgMagenta,
+	bgCyan,
+	bgWhite,
+	bgDefault
+};
+
+}
+
 }
 
 #endif // INCLUDED_utility_CSI_Sequence_FWD_HH

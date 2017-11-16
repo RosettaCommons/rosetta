@@ -71,7 +71,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.krishna.PhDocking" );
+static basic::Tracer TR( "apps.pilot.krishna.PhDocking" );
 
 class PhDocking : public protocols::moves::Mover {
 
@@ -85,8 +85,8 @@ public:
 
 	void
 	set_default(){
-//		pka_value_ = 1.0;
-//		ipka_ = 1.0;
+		//  pka_value_ = 1.0;
+		//  ipka_ = 1.0;
 		pH_mode_ = false;
 		resfile_ = false;
 		unbound_avail_ = false;
@@ -98,19 +98,19 @@ public:
 
 		set_default();
 
-		if (option[ OptionKeys::in::file::s ].user()){
+		if ( option[ OptionKeys::in::file::s ].user() ) {
 			set_file_name(option[ OptionKeys::in::file::s ]()[1]);
 		}
-		if (option[ OptionKeys::docking::partners ].user()){
+		if ( option[ OptionKeys::docking::partners ].user() ) {
 			set_partners(option[ OptionKeys::docking::partners ]());
 		}
-		if (option[ OptionKeys::pH::pH_mode ].user()){
+		if ( option[ OptionKeys::pH::pH_mode ].user() ) {
 			set_pH_mode(true);
 		}
-		if (option[ OptionKeys::packing::resfile ].user()){
+		if ( option[ OptionKeys::packing::resfile ].user() ) {
 			set_resfile(true);
 		}
-		if (option[ OptionKeys::pH::pH_unbound ].user()){
+		if ( option[ OptionKeys::pH::pH_unbound ].user() ) {
 			set_unbound_pdbs(option[ OptionKeys::pH::pH_unbound ]());
 		}
 
@@ -168,11 +168,11 @@ public:
 		using namespace kinematics;
 		FoldTree f( pose.fold_tree() );
 
-		for (Size i=1; i<=partner_chainID.length()-1; i++){ //identify second chain from input partner_chainID
-			if (partner_chainID[i-1] == '_') second_chain = partner_chainID[i];
+		for ( Size i=1; i<=partner_chainID.length()-1; i++ ) { //identify second chain from input partner_chainID
+			if ( partner_chainID[i-1] == '_' ) second_chain = partner_chainID[i];
 		}
 		for ( Size i=2; i<= pose.size(); ++i ) {
-			if(pdb_info->chain( i ) == second_chain){ //identify cutpoint corresponding to second chain in partner_chainID
+			if ( pdb_info->chain( i ) == second_chain ) { //identify cutpoint corresponding to second chain in partner_chainID
 				cutpoint = i-1;
 				break;
 			}
@@ -193,7 +193,7 @@ public:
 		//rebuild jumps between chains N-terminal to the docking cutpoint
 		chain_end = cutpoint;
 		chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
-		while (chain_begin != 1){
+		while ( chain_begin != 1 ) {
 			chain_end = chain_begin-1;
 			f.new_jump( chain_end, chain_begin, chain_end);
 			chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
@@ -202,7 +202,7 @@ public:
 		//rebuild jumps between chains C-terminal to the docking cutpoint
 		chain_begin = cutpoint+1;
 		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-		while (chain_end != pose.size()){
+		while ( chain_end != pose.size() ) {
 			chain_begin = chain_end+1;
 			f.new_jump( chain_end, chain_begin, chain_end);
 			chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
@@ -211,7 +211,7 @@ public:
 		f.reorder( 1 );
 		f.check_fold_tree();
 		pose.fold_tree( f );
-//		f.show( std::cout );
+		//  f.show( std::cout );
 
 	}
 
@@ -248,12 +248,12 @@ public:
 		core::pose::Pose complex_pose = pose;
 
 		docking_scorefxn = new core::scoring::ScoreFunction( *scorefxn ) ;
-	    docking_scorefxn->set_weight( core::scoring::atom_pair_constraint, 0.0 );
+		docking_scorefxn->set_weight( core::scoring::atom_pair_constraint, 0.0 );
 
 		// calculate energy of complexed pose
 		Real const complex_energy = (*docking_scorefxn)( complex_pose );
 
-		for( utility::vector1_int::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
+		for ( utility::vector1_int::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
 
 			Size const rb_jump = *it;
 			core::pose::Pose separated_pose = complex_pose;
@@ -274,7 +274,7 @@ public:
 		}
 
 		//calculate energies of unbound structures if available
-		if (unbound_avail_){
+		if ( unbound_avail_ ) {
 			unbound_energy = ( complex_energy - calc_unbound_score(docking_scorefxn));
 		}
 
@@ -302,10 +302,11 @@ public:
 					pose.residue( ii ).type().aa() == aa_glu ||
 					pose.residue( ii ).type().aa() == aa_his ||
 					pose.residue( ii ).type().aa() == aa_tyr ||
-					pose.residue( ii ).type().aa() == aa_lys)
+					pose.residue( ii ).type().aa() == aa_lys ) {
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
-			else
+			} else {
 				task->nonconst_residue_task( ii ).prevent_repacking();
+			}
 		}
 
 		//std::cout << *task << std::endl;
@@ -356,12 +357,12 @@ public:
 		core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "docking" ) );
 		(*score_fxn)(pose);
 
-		if (pH_mode_){
+		if ( pH_mode_ ) {
 			setup_pH_mode(pose, score_fxn);
 		}
 
 		//setup for ddG calculation for mutants given a resfile
-		if (resfile_){
+		if ( resfile_ ) {
 			score12_native = (*mut_score_fxn)(pose);
 			pack::task::TaskFactoryOP mut_task_factory = new pack::task::TaskFactory;
 			mut_task_factory->push_back( new pack::task::operation::ReadResfile );
@@ -374,14 +375,14 @@ public:
 		core::kinematics::MoveMapOP movemap ( new core::kinematics::MoveMap );
 		movemap->set_bb( false );
 		movemap->set_chi( true );
-		for( utility::vector1_int::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
+		for ( utility::vector1_int::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
 			movemap->set_jump(*it, true);
 		}
 		protocols::simple_moves::MinMoverOP minmover ( new protocols::simple_moves::MinMover(movemap, score_fxn, "linmin", 0.1, false /*use_nblist*/) );
 		minmover->apply( pose );
 
 		//calculate ddG for mutants given a resfile
-		if (resfile_){
+		if ( resfile_ ) {
 			(*mut_score_fxn)(pose);
 			score12_mut = (*mut_score_fxn)(pose);
 			score12_ddG = score12_mut - score12_native;

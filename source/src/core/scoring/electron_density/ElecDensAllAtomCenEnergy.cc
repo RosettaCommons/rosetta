@@ -47,10 +47,8 @@
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 #ifdef WIN32
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -79,7 +77,7 @@ ElecDensAllAtomCenEnergyCreator::score_types_for_method() const {
 }
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.ElecDensEnergy" );
+static basic::Tracer TR( "core.scoring.methods.ElecDensEnergy" );
 
 inline core::Real SQ( core::Real N ) { return N*N; }
 

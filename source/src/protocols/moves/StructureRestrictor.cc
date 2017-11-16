@@ -42,7 +42,7 @@ using namespace core;
 using namespace boost;
 using namespace pose;
 
-static THREAD_LOCAL basic::Tracer TR_SR( "protocols.moves.StructureRestrictor" );
+static basic::Tracer TR_SR( "protocols.moves.StructureRestrictor" );
 
 namespace protocols {
 namespace moves {

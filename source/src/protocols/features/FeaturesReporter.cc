@@ -71,7 +71,7 @@ using utility::trim;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 
-static THREAD_LOCAL Tracer TR("protocols.features.FeaturesReporter");
+static Tracer TR("protocols.features.FeaturesReporter");
 
 void
 FeaturesReporter::write_schema_to_db(

@@ -38,7 +38,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.metrics.ClashCountCalculator" );
+static basic::Tracer tr( "protocols.metrics.ClashCountCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

@@ -72,7 +72,7 @@ using namespace numeric::conversions;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SetTorsion" );
+static basic::Tracer TR( "protocols.simple_moves.SetTorsion" );
 
 // XRW TEMP std::string
 // XRW TEMP SetTorsionCreator::keyname() const

@@ -56,7 +56,6 @@
 //C++ Headers
 #include <string>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -64,7 +63,7 @@ using namespace protocols::surface_docking;
 using namespace protocols;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.SurfaceDocking.SurfaceDockingProtocol" );
+static basic::Tracer TR( "protocols.SurfaceDocking.SurfaceDockingProtocol" );
 
 namespace protocols {
 namespace surface_docking {

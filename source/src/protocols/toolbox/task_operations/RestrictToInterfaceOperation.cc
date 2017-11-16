@@ -38,7 +38,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictToInterfaceOperation" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictToInterfaceOperation" );
 
 namespace protocols {
 namespace toolbox {
@@ -70,7 +70,7 @@ void RestrictToInterfaceOperation::make_calculator( core::Size upper_chain, core
 
 	using namespace core::pose::metrics;
 	if ( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ) {
-		Warning() << "In RestrictToInterfaceOperation, calculator " << calculator_name_
+		TR.Warning << "In RestrictToInterfaceOperation, calculator " << calculator_name_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		using core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator;

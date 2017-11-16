@@ -28,7 +28,7 @@
 namespace devel {
 namespace constel {
 
-static THREAD_LOCAL basic::Tracer TR( "src.devel.constel.SearchOptions" );
+static basic::Tracer TR( "src.devel.constel.SearchOptions" );
 
 
 /// @brief Searches pair-constellations by target residue.

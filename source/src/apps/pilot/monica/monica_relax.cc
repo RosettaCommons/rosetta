@@ -35,7 +35,6 @@
 //Auto Headers
 #include <protocols/relax/ClassicRelax.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -45,20 +44,20 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace protocols;
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::get_score_function();
+		core::scoring::ScoreFunctionOP scorefxn;
+		scorefxn = core::scoring::get_score_function();
 
-	MoverOP relax = new relax::ClassicRelax( scorefxn );
+		MoverOP relax = new relax::ClassicRelax( scorefxn );
 
-	protocols::jobdist::main_plain_mover( *relax);
-	std::cout << "Done! -------------------------------\n";
+		protocols::jobdist::main_plain_mover( *relax);
+		std::cout << "Done! -------------------------------\n";
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

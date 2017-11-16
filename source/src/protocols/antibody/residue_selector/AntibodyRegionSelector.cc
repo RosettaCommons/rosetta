@@ -35,7 +35,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.residue_selector.AntibodyRegionSelector" );
+static basic::Tracer TR( "protocols.antibody.residue_selector.AntibodyRegionSelector" );
 
 
 namespace protocols {

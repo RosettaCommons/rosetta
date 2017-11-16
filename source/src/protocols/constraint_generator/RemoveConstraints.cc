@@ -32,7 +32,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.RemoveConstraints" );
+static basic::Tracer TR( "protocols.constraint_generator.RemoveConstraints" );
 
 namespace protocols {
 namespace constraint_generator {

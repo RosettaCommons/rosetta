@@ -34,7 +34,7 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.topo_broker", basic::t_info );
+static basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {

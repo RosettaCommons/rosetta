@@ -29,7 +29,7 @@ namespace core {
 namespace chemical {
 namespace orbitals {
 
-static THREAD_LOCAL basic::Tracer TR( "core::chemical::orbitals::AssignOrbitals" );
+static basic::Tracer TR( "core::chemical::orbitals::AssignOrbitals" );
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

@@ -48,7 +48,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -56,7 +55,7 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 namespace selector {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.selector.GeneralizedKICselector" );
+static basic::Tracer TR( "protocols.generalized_kinematic_closure.selector.GeneralizedKICselector" );
 
 /// @brief Constructor for GeneralizedKICselector.
 GeneralizedKICselector::GeneralizedKICselector():

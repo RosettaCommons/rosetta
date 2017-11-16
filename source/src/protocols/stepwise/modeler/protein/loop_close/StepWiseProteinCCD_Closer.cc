@@ -59,7 +59,7 @@ using namespace protocols::stepwise::modeler;
 //
 //////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.protein.loop_close.StepWiseProteinCCD_Closer" );
+static basic::Tracer TR( "protocols.stepwise.modeler.protein.loop_close.StepWiseProteinCCD_Closer" );
 
 namespace protocols {
 namespace stepwise {

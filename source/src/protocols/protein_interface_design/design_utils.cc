@@ -67,7 +67,7 @@ using ObjexxFCL::format::F;
 using namespace core;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.design_utils" );
+static basic::Tracer TR( "protocols.protein_interface_design.design_utils" );
 
 using namespace core;
 

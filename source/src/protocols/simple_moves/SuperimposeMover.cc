@@ -51,7 +51,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SuperimposeMover" );
+static basic::Tracer TR( "protocols.simple_moves.SuperimposeMover" );
 
 // XRW TEMP std::string
 // XRW TEMP SuperimposeMoverCreator::keyname() const

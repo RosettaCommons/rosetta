@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 /*
- * iterative_design.cc
- *
- *  Created on: Nov 18, 2008
- *      Author: bcorreia
- */
+* iterative_design.cc
+*
+*  Created on: Nov 18, 2008
+*      Author: bcorreia
+*/
 
 /* parse loops file Loops
-	loops::Loops loops;
-	std::string filename( option[ OptionKeys::loops::loop_file ]().name() );
-	loops.read_loop_file( filename );   // <== TODO: select these using density score
+loops::Loops loops;
+std::string filename( option[ OptionKeys::loops::loop_file ]().name() );
+loops.read_loop_file( filename );   // <== TODO: select these using density score
 
-	check stuff about the job distributor*/
+check stuff about the job distributor*/
 
 #include <devel/init.hh>
 #include <core/types.hh>
@@ -56,7 +56,7 @@
 #include <core/pack/pack_rotamers.hh>
 
 #include <basic/Tracer.hh>
-static THREAD_LOCAL basic::Tracer TR( "apps.iterative_design" );
+static basic::Tracer TR( "apps.iterative_design" );
 
 // Utility Headers
 #include <utility/file/file_sys_util.hh> // file_exists
@@ -99,11 +99,11 @@ using namespace protocols;
 /*utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 
 
-		for (core::Size jobnum = 1; jobnum <= input_jobs.size(); ++jobnum) {
+for (core::Size jobnum = 1; jobnum <= input_jobs.size(); ++jobnum) {
 
-				TR << "Processing " << input_jobs[jobnum]->input_tag() << "..." << std::endl;
+TR << "Processing " << input_jobs[jobnum]->input_tag() << "..." << std::endl;
 
-		}
+}
 */
 // Checkpoint Stuff
 // Iteration of perturbation-Design
@@ -116,8 +116,8 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
 		devel::init( argc, argv ); // reading options--name should be more descriptive
 
@@ -133,25 +133,25 @@ main( int argc, char * argv [] )
 
 
 		if ( option[ in::file::l ].user() ) {
-				Filenames listnames( option[ in::file::l ]().vector() );
-				for ( Filenames::const_iterator filename( listnames.begin() );
-				      filename != listnames.end(); ++filename ) {
-					std::ifstream list( (*filename).name().c_str() );
-					while ( list ) {
-						std::string pdbname;
-						list >> pdbname;
-						pdbnames.push_back( pdbname );
-					}
+			Filenames listnames( option[ in::file::l ]().vector() );
+			for ( Filenames::const_iterator filename( listnames.begin() );
+					filename != listnames.end(); ++filename ) {
+				std::ifstream list( (*filename).name().c_str() );
+				while ( list ) {
+					std::string pdbname;
+					list >> pdbname;
+					pdbnames.push_back( pdbname );
 				}
-
-			} else if ( option[ in::file::s ].user() ) {
-				pdbnames = option[ in::file::s ]().vector();
-
-			} else {
-				std::cerr << "No files given: Use either -file:s or -file:l "
-				          << "to design a single pdb or a list of pdbs"
-				          << std::endl;
 			}
+
+		} else if ( option[ in::file::s ].user() ) {
+			pdbnames = option[ in::file::s ]().vector();
+
+		} else {
+			std::cerr << "No files given: Use either -file:s or -file:l "
+				<< "to design a single pdb or a list of pdbs"
+				<< std::endl;
+		}
 
 
 		TR << "Reading Loop File" << '\n';
@@ -165,51 +165,48 @@ main( int argc, char * argv [] )
 
 		std::vector<Size> natro_res;
 
-		if ( option[ OptionKeys::loops::keep_natro ].user() ){
+		if ( option[ OptionKeys::loops::keep_natro ].user() ) {
 			std::string filename( option[ OptionKeys::loops::keep_natro ]().name() );
 			std::ifstream infile( filename.c_str() );
 			TR << "Reading keep_natro file " << '\n';
 			std::string res;
 
-			while (getline(infile,res)){
+			while ( getline(infile,res) ) {
 				Size conv_res = (Size) atoi(res.c_str());
 				TR << "Residues to keep "<< conv_res <<"\n";
 				natro_res.push_back( conv_res );
-				}
-
 			}
+
+		}
 
 
 		for ( Filenames::const_iterator filename( pdbnames.begin() );
-					filename != pdbnames.end(); ++filename ) {
-				std::cout << "Input pdb file " << *filename;
-				if ( !utility::file::file_exists( *filename ) ) {
-					std::cout << " not found, skipping" << std::endl;
-					continue;
-				}
-				std::cout << std::endl;
-
-				std::string pdbprefix( string_split( string_split( *filename, '/' ).back(), '.' ).front() );
-
-
-				pose::Pose pose;
-				core::import_pose::pose_from_file( pose, *filename , core::import_pose::PDB_file);
-				input_poses.push_back( pose );
-
-
-				std::cout << pdbprefix  <<std::endl;
+				filename != pdbnames.end(); ++filename ) {
+			std::cout << "Input pdb file " << *filename;
+			if ( !utility::file::file_exists( *filename ) ) {
+				std::cout << " not found, skipping" << std::endl;
+				continue;
 			}
+			std::cout << std::endl;
+
+			std::string pdbprefix( string_split( string_split( *filename, '/' ).back(), '.' ).front() );
+
+
+			pose::Pose pose;
+			core::import_pose::pose_from_file( pose, *filename , core::import_pose::PDB_file);
+			input_poses.push_back( pose );
+
+
+			std::cout << pdbprefix  <<std::endl;
+		}
 
 
 		Size refine_design_iterations;
 
-		if ( option[ OptionKeys::loops::refine_design_iterations ].user() ){
+		if ( option[ OptionKeys::loops::refine_design_iterations ].user() ) {
 
 			refine_design_iterations = option[ OptionKeys::loops::refine_design_iterations ]();
-		}
-
-
-		else{
+		} else {
 
 			refine_design_iterations = 1;
 		}
@@ -217,11 +214,9 @@ main( int argc, char * argv [] )
 
 		std::string pdb_prefix;
 
-		if ( option[ out::prefix ].user() ){
+		if ( option[ out::prefix ].user() ) {
 			pdb_prefix= option[ out::prefix ]()+"_"+"S";
-			}
-
-		else {
+		} else {
 
 			pdb_prefix="S";
 
@@ -246,8 +241,7 @@ main( int argc, char * argv [] )
 		core::io::silent::SilentFileData sfd;
 
 
-		for ( Poses::const_iterator iter = input_poses.begin(); iter != input_poses.end(); ++iter)
-		{
+		for ( Poses::const_iterator iter = input_poses.begin(); iter != input_poses.end(); ++iter ) {
 
 
 			std::string filename_init (pdb_prefix+ "_" + ObjexxFCL::right_string_of(pose_number,3,'0')+"_init");
@@ -267,7 +261,7 @@ main( int argc, char * argv [] )
 			setPoseExtraScore( init_pose, "loop_rms", 0 );
 
 			core::io::silent::BinarySilentStructOP pss_init (
-											new core::io::silent::BinarySilentStruct ( init_pose , filename_init ));
+				new core::io::silent::BinarySilentStruct ( init_pose , filename_init ));
 
 			sfd.add_structure( pss_init );
 
@@ -280,44 +274,44 @@ main( int argc, char * argv [] )
 			std::vector<Size> loops_nbr;
 
 
-			for (core::Size i=1; i<=init_pose.size(); ++i ) {
+			for ( core::Size i=1; i<=init_pose.size(); ++i ) {
 
 				for ( int j = 1; j <= (int)loops.size(); ++j ) {
 					if ( i >= core::Size( loops[j].start() ) && i <= core::Size( loops[j].stop() ) ) {
 						TR << "Repacking because in loop: " << i << std::endl;
 						loop_residues.push_back(i) ;
-						}
 					}
-				}//vector of loop residues
+				}
+			}//vector of loop residues
 
 
-			for ( int iter_res= 1; iter_res < (int)loop_residues.size(); ++iter_res  ){
+			for ( int iter_res= 1; iter_res < (int)loop_residues.size(); ++iter_res  ) {
 
 
 				Vector const  & nbr_atom( init_pose.residue(loop_residues[iter_res]).nbr_atom_xyz() );
 
-				for ( Size i=1 ; i <= init_pose.size() ; ++i){
+				for ( Size i=1 ; i <= init_pose.size() ; ++i ) {
 
 					//bool isloop = false;
 
-					if ( nbr_atom.distance( init_pose.residue(i).nbr_atom_xyz() ) < 5.0 ){
+					if ( nbr_atom.distance( init_pose.residue(i).nbr_atom_xyz() ) < 5.0 ) {
 						loops_nbr.push_back(i);
-						}
-
 					}
 
+				}
 
-				}// vector of the neighbors
+
+			}// vector of the neighbors
 
 
 			//clean redundancy on the neighbors vector
 
-			for (std::vector<Size>::const_iterator pos=loops_nbr.begin(); pos !=loops_nbr.end(); ++pos ){
+			for ( std::vector<Size>::const_iterator pos=loops_nbr.begin(); pos !=loops_nbr.end(); ++pos ) {
 
 				//TR <<"Loops before filtering " << *pos << std::endl;
 
 			}
-				TR << "Residues Before Filtering  "<< loops_nbr.size()<< std::endl;
+			TR << "Residues Before Filtering  "<< loops_nbr.size()<< std::endl;
 
 			std::sort( loops_nbr.begin(), loops_nbr.end() );
 
@@ -326,13 +320,13 @@ main( int argc, char * argv [] )
 
 			loops_nbr.erase( new_end_pos, loops_nbr.end() );
 
-			for (std::vector<Size>::iterator pos=loops_nbr.begin(); pos !=loops_nbr.end(); ++pos ){
+			for ( std::vector<Size>::iterator pos=loops_nbr.begin(); pos !=loops_nbr.end(); ++pos ) {
 				//bool redundant_res( false );
 
-				for (std::vector<Size>::const_iterator pos_residues=loop_residues.begin(); pos_residues !=loop_residues.end(); ++pos_residues){
+				for ( std::vector<Size>::const_iterator pos_residues=loop_residues.begin(); pos_residues !=loop_residues.end(); ++pos_residues ) {
 
 
-					if (*pos == *pos_residues && pos < loops_nbr.end()-1 ){
+					if ( *pos == *pos_residues && pos < loops_nbr.end()-1 ) {
 
 						loops_nbr.erase( pos );
 					}
@@ -340,11 +334,11 @@ main( int argc, char * argv [] )
 
 				}
 
-				if  ( option[ OptionKeys::loops::keep_natro ].user() ){
+				if  ( option[ OptionKeys::loops::keep_natro ].user() ) {
 
-					for (std::vector<Size>::const_iterator pos_natro= natro_res.begin(); pos_natro != natro_res.end(); ++pos_natro ){
+					for ( std::vector<Size>::const_iterator pos_natro= natro_res.begin(); pos_natro != natro_res.end(); ++pos_natro ) {
 
-						if (*pos == *pos_natro){
+						if ( *pos == *pos_natro ) {
 							loops_nbr.erase( pos );
 						}
 					}
@@ -355,15 +349,15 @@ main( int argc, char * argv [] )
 
 			}
 
-				TR << "Residues after filtering "<< loops_nbr.size()<< std::endl;
+			TR << "Residues after filtering "<< loops_nbr.size()<< std::endl;
 
 
-			if ( option [OptionKeys::loops::keep_natro ].user() ){
-				for (std::vector<Size>::iterator pos_loop= loop_residues.begin(); pos_loop != loop_residues.end(); ++pos_loop ){
+			if ( option [OptionKeys::loops::keep_natro ].user() ) {
+				for ( std::vector<Size>::iterator pos_loop= loop_residues.begin(); pos_loop != loop_residues.end(); ++pos_loop ) {
 
-					for (std::vector<Size>::const_iterator pos_natro = natro_res.begin(); pos_natro != natro_res.end(); ++pos_natro){
+					for ( std::vector<Size>::const_iterator pos_natro = natro_res.begin(); pos_natro != natro_res.end(); ++pos_natro ) {
 
-						if (*pos_loop == *pos_natro){loop_residues.erase( pos_loop ); }
+						if ( *pos_loop == *pos_natro ) { loop_residues.erase( pos_loop ); }
 
 					}
 
@@ -374,7 +368,7 @@ main( int argc, char * argv [] )
 			}
 
 
-			for (Size iteration = 1 ; iteration <= refine_design_iterations ; ++iteration ) {
+			for ( Size iteration = 1 ; iteration <= refine_design_iterations ; ++iteration ) {
 
 
 				loops.auto_choose_cutpoints( init_pose );
@@ -400,7 +394,7 @@ main( int argc, char * argv [] )
 
 
 				core::io::silent::BinarySilentStructOP pss_ref (
-									new core::io::silent::BinarySilentStruct ( init_pose , filename_ref ));
+					new core::io::silent::BinarySilentStruct ( init_pose , filename_ref ));
 
 				sfd.add_structure( pss_ref );
 
@@ -414,64 +408,64 @@ main( int argc, char * argv [] )
 				core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( init_pose ));
 
 
-				for (core::Size j=0; j < loop_residues.size(); ++j ) {
+				for ( core::Size j=0; j < loop_residues.size(); ++j ) {
 
-						TR <<"Loop to design " << loop_residues[j] << std::endl;
+					TR <<"Loop to design " << loop_residues[j] << std::endl;
 
-						task->nonconst_residue_task(loop_residues[j]).restrict_absent_canonical_aas( allowed_aas );
+					task->nonconst_residue_task(loop_residues[j]).restrict_absent_canonical_aas( allowed_aas );
 
-						residues_to_mutate[loop_residues[j]] = true;
+					residues_to_mutate[loop_residues[j]] = true;
 
-						mm.set_chi(loop_residues[j],true);
-
-
-					}//Design loops
+					mm.set_chi(loop_residues[j],true);
 
 
-				for (core::Size j=0; j < loops_nbr.size(); ++j ) {
+				}//Design loops
 
-						TR <<"neighbors to design " << loops_nbr[j] << std::endl;
 
-						task->nonconst_residue_task(loops_nbr[j]).restrict_absent_canonical_aas( allowed_aas );
+				for ( core::Size j=0; j < loops_nbr.size(); ++j ) {
 
-						residues_to_mutate[loops_nbr[j]] = true;
+					TR <<"neighbors to design " << loops_nbr[j] << std::endl;
 
-						mm.set_chi(loops_nbr[j],true);
+					task->nonconst_residue_task(loops_nbr[j]).restrict_absent_canonical_aas( allowed_aas );
+
+					residues_to_mutate[loops_nbr[j]] = true;
+
+					mm.set_chi(loops_nbr[j],true);
 
 				}//Designing Neighbors
 
 
-			task->restrict_to_residues( residues_to_mutate );
+				task->restrict_to_residues( residues_to_mutate );
 
-			task->initialize_extra_rotamer_flags_from_command_line();
+				task->initialize_extra_rotamer_flags_from_command_line();
 
-			pack::pack_rotamers( init_pose, *scorefxn , task );
-
-
-			//Place To minimize designed side chains
-
-			mzr.run( init_pose, mm, *scorefxn, options );
-
-			mm.set_chi(false);
+				pack::pack_rotamers( init_pose, *scorefxn , task );
 
 
-			protocols::loops::remove_cutpoint_variants( init_pose );
+				//Place To minimize designed side chains
 
-			std::string filename_ref_des (pdb_prefix +"_"+ ObjexxFCL::right_string_of(pose_number,3,'0')+"_"+ObjexxFCL::right_string_of( iteration,3,'0') + "_ref_des");
+				mzr.run( init_pose, mm, *scorefxn, options );
 
-
-			(*scorefxn)(init_pose);
-
-			setPoseExtraScore( init_pose, "packing", core::scoring::packstat::compute_residue_packing_score( init_pose, 2 ) );
-
-			setPoseExtraScore( init_pose, "loop_rms", 0 );
+				mm.set_chi(false);
 
 
-			core::io::silent::BinarySilentStructOP pss (
+				protocols::loops::remove_cutpoint_variants( init_pose );
+
+				std::string filename_ref_des (pdb_prefix +"_"+ ObjexxFCL::right_string_of(pose_number,3,'0')+"_"+ObjexxFCL::right_string_of( iteration,3,'0') + "_ref_des");
+
+
+				(*scorefxn)(init_pose);
+
+				setPoseExtraScore( init_pose, "packing", core::scoring::packstat::compute_residue_packing_score( init_pose, 2 ) );
+
+				setPoseExtraScore( init_pose, "loop_rms", 0 );
+
+
+				core::io::silent::BinarySilentStructOP pss (
 					new core::io::silent::BinarySilentStruct ( init_pose , filename_ref_des ));
 
 
-			sfd.add_structure( pss );
+				sfd.add_structure( pss );
 
 
 			}// iteration on the refine_design
@@ -479,11 +473,9 @@ main( int argc, char * argv [] )
 
 			std::string pdb_silent_file;
 
-			if ( option[ out::file::silent ].user() ){
+			if ( option[ out::file::silent ].user() ) {
 				pdb_silent_file= option[ out::file::silent ]();
-				}
-
-			else {
+			} else {
 				pdb_silent_file = "test";
 			}
 

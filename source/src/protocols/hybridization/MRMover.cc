@@ -85,7 +85,6 @@
 #include <basic/Tracer.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -93,7 +92,7 @@ using basic::Warning;
 namespace protocols {
 namespace hybridization {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.util" );
+static basic::Tracer TR( "protocols.electron_density.util" );
 
 using namespace protocols;
 using namespace core;

@@ -34,7 +34,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.benchmark.MakeCanonicalHelixTest.cxxtest");
+static basic::Tracer TR("protocols.membrane.benchmark.MakeCanonicalHelixTest.cxxtest");
 
 using namespace core;
 using namespace core::pose;

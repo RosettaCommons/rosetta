@@ -42,7 +42,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.ParallelBetaPairingPreferenceFilter" );
+static basic::Tracer TR( "protocols.fldsgn.filters.ParallelBetaPairingPreferenceFilter" );
 
 namespace protocols {
 namespace fldsgn {

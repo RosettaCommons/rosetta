@@ -22,7 +22,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMove" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMove" );
 
 using utility::make_tag_with_dashes;
 using namespace core;

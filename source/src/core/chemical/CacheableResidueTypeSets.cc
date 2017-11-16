@@ -28,7 +28,7 @@
 #endif // SERIALIZATION
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.CacheableResidueTypeSets" );
+static basic::Tracer TR( "core.chemical.CacheableResidueTypeSets" );
 
 
 namespace core {

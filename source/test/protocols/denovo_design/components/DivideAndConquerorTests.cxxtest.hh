@@ -32,7 +32,7 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("DivideAndConquerorTests");
+static basic::Tracer TR("DivideAndConquerorTests");
 
 class DivideAndConquerorTests : public CxxTest::TestSuite {
 	//Define Variables

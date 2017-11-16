@@ -62,11 +62,10 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "rbsegmove_test" );
+static basic::Tracer TR( "rbsegmove_test" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -84,7 +83,7 @@ RBSegmentRelax_test()
 {
 
 	// Parses command line options and inits RNG.
-	//	devel::init(argc, argv);
+	// devel::init(argc, argv);
 
 	core::pose::Pose pose;
 	core::import_pose::pose_from_file( pose, option[ OptionKeys::RBSegmentRelax::input_pdb ]().name() , core::import_pose::PDB_file);
@@ -92,10 +91,10 @@ RBSegmentRelax_test()
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 
 	//HelixRegisterShiftMoverOP reg_shift( new protocols::moves::HelixRegisterShiftMover( 3,28 ) );
-	//	std::string function_tag("cen_std"),patch_tag("score4L");
-	//	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( function_tag, patch_tag ) );
+	// std::string function_tag("cen_std"),patch_tag("score4L");
+	// ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( function_tag, patch_tag ) );
 
-	//	core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "cen_std" ) );
+	// core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "cen_std" ) );
 
 	core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
 	scorefxn->set_weight( vdw, 1.0 );
@@ -116,31 +115,31 @@ RBSegmentRelax_test()
 	fix_segments.clear();
 
 	std::string line;
-	while( getline( data, line ) ) {
+	while ( getline( data, line ) ) {
 		std::istringstream line_stream( line );
 		int index, seg_begin, seg_end;
 		char ss;
 		std::string identifier;
-		//		int seg1, seg2;
-		//		line_stream >> identifier >> index >> seg_begin >> seg_end >> ss;
+		//  int seg1, seg2;
+		//  line_stream >> identifier >> index >> seg_begin >> seg_end >> ss;
 		line_stream >> identifier;
-		if( !line_stream.fail() ) {
+		if ( !line_stream.fail() ) {
 			if ( identifier == "SEG" ) {
 				line_stream >> index >> seg_begin >> seg_end >> ss;
 				TR << identifier << " " << index << " " << seg_begin << " " << seg_end << " " << ss << "\n";
 				rbsegs.push_back( protocols::moves::RBSegment( index, seg_begin, seg_end, ss ) );
 			}
-			/*			if ( identifier == "FIX" ) {
-				line_stream >> seg1 >> seg2;
-				TR << identifier << " " << seg1 << " " << seg2 << "\n";
-				fix_segments.push_back( std::make_pair( seg1, seg2 ) );
-				} */
- 		}
+			/*   if ( identifier == "FIX" ) {
+			line_stream >> seg1 >> seg2;
+			TR << identifier << " " << seg1 << " " << seg2 << "\n";
+			fix_segments.push_back( std::make_pair( seg1, seg2 ) );
+			} */
+		}
 	}
 
 	protocols::moves::RBSegmentRelax rb_mover(scorefxn , rbsegs, fix_segments );
-	//	protocols::moves::MonteCarloOP mc_view = rb_mover.get_mc( pose );
-	//	protocols::viewer::add_monte_carlo_viewer( *mc_view );
+	// protocols::moves::MonteCarloOP mc_view = rb_mover.get_mc( pose );
+	// protocols::viewer::add_monte_carlo_viewer( *mc_view );
 
 
 	rb_mover.apply( pose );
@@ -156,7 +155,7 @@ void*
 my_main( void* )
 {
 	numeric::random::RandomGenerator::initializeRandomGenerators(
-		 111111, numeric::random::_RND_TestRun_, "ran3");
+		111111, numeric::random::_RND_TestRun_, "ran3");
 
 	RBSegmentRelax_test();
 	return 0;
@@ -170,9 +169,9 @@ main( int argc, char * argv [] )
 
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( my_main );
+		// options, random initialization
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

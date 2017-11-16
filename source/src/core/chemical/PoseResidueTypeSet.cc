@@ -32,7 +32,7 @@
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.PoseResidueTypeSet" );
+static basic::Tracer TR( "core.chemical.PoseResidueTypeSet" );
 
 
 namespace core {

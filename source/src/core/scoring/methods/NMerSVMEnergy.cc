@@ -42,7 +42,7 @@
 #include <utility/libsvm/Svm_rosetta.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.NMerSVMEnergy" );
+static basic::Tracer TR( "core.scoring.methods.NMerSVMEnergy" );
 
 namespace core {
 namespace scoring {

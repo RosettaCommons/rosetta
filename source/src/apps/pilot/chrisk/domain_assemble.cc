@@ -136,11 +136,10 @@ using std::string;
 using import_pose::pose_from_pdb;
 // deprecated though
 using namespace ObjexxFCL;
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
-static THREAD_LOCAL basic::Tracer TR( "chrisk" );
+static basic::Tracer TR( "chrisk" );
 
 
 //local options

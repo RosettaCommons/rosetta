@@ -46,52 +46,50 @@ using namespace basic::options::OptionKeys;
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/Tracer.hh>
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.blivens.disulfide_filter" );
+static basic::Tracer TR( "pilot_apps.blivens.disulfide_filter" );
 
 int
 usage(char* msg)
 {
-	TR	<< "usage: disulfide_filter -s in.pdb -o out.txt -database db" << endl
-        << msg << endl;
+	TR << "usage: disulfide_filter -s in.pdb -o out.txt -database db" << endl
+		<< msg << endl;
 	exit(1);
 }
 
 int main( int argc, char * argv [] )
 {
-  try {
+	try {
 
-	//init options system
-	devel::init(argc, argv);
+		//init options system
+		devel::init(argc, argv);
 
-    vector1<string> pdbs;
-    if( option[ in::file::s ].user() || option[in::file::l].user() ) {
-        pdbs = basic::options::start_files();
-    }
-    else return usage("No in file given: Use -s or -l to designate pdb files to search for disulfides");
-
-
-    ofstream out;
-    if( option[ out::file::o ].user() ) {
-        string outfile = option[ out::file::o ]();
-        out.open(outfile.c_str());
-	}
-	else return usage("No out file given: Use -o to designate an output file");
-
-	pose::Pose pose;
-	core::import_pose::pose_from_file( pose, pdbs[1] , core::import_pose::PDB_file);
-
-    //Assign secodary structure
-    core::scoring::dssp::Dssp dssp(pose);
-    dssp.insert_ss_into_pose(pose);
-
-    TR << pose.secstruct() << endl;
+		vector1<string> pdbs;
+		if ( option[ in::file::s ].user() || option[in::file::l].user() ) {
+			pdbs = basic::options::start_files();
+		} else return usage("No in file given: Use -s or -l to designate pdb files to search for disulfides");
 
 
-    //for each residue pair
-    for(Size i(1); i<= pose.size()-1; ++i)
-        for(Size j(i+1); j<= pose.size(); ++j) {
+		ofstream out;
+		if ( option[ out::file::o ].user() ) {
+			string outfile = option[ out::file::o ]();
+			out.open(outfile.c_str());
+		} else return usage("No out file given: Use -o to designate an output file");
 
-        }//end residue pair
+		pose::Pose pose;
+		core::import_pose::pose_from_file( pose, pdbs[1] , core::import_pose::PDB_file);
+
+		//Assign secodary structure
+		core::scoring::dssp::Dssp dssp(pose);
+		dssp.insert_ss_into_pose(pose);
+
+		TR << pose.secstruct() << endl;
+
+
+		//for each residue pair
+		for ( Size i(1); i<= pose.size()-1; ++i ) {
+			for ( Size j(i+1); j<= pose.size(); ++j ) {}
+		//end residue pair
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

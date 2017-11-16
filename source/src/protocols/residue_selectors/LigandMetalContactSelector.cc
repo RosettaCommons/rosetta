@@ -47,7 +47,7 @@
 #endif // SERIALIZATION
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.residue_selectors.LigandMetalContactSelector" );
+static basic::Tracer TR( "protocols.residue_selectors.LigandMetalContactSelector" );
 
 namespace protocols {
 namespace residue_selectors {

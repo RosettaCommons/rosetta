@@ -43,7 +43,7 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.match.downstream.ClassicMatchAlgorithm" );
+static basic::Tracer TR( "protocols.match.downstream.ClassicMatchAlgorithm" );
 
 ClassicMatchAlgorithm::ClassicMatchAlgorithm( Size geom_cst_id ) :
 	parent( geom_cst_id ),

@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNA_Motif" );
+static basic::Tracer TR( "core.scoring.rna.RNA_Motif" );
 
 using namespace core::pose;
 

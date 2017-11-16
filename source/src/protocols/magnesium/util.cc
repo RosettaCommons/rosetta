@@ -39,7 +39,7 @@
 #include <numeric/xyzMatrix.io.hh>
 #include <ObjexxFCL/format.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.magnesium.util" );
+static basic::Tracer TR( "protocols.magnesium.util" );
 
 using namespace core;
 using namespace ObjexxFCL::format;

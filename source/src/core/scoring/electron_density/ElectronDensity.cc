@@ -81,9 +81,7 @@ namespace electron_density {
 /// @details Auto-generated virtual destructor
 ElectronDensity::~ElectronDensity() {}
 
-using basic::T;
-using basic::Tracer;
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density.ElectronDensity" );
+static basic::Tracer TR( "core.scoring.electron_density.ElectronDensity" );
 
 #ifdef GL_GRAPHICS
 // protect access to density from viewer thread

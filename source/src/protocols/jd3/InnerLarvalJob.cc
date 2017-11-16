@@ -48,7 +48,7 @@
 namespace protocols {
 namespace jd3 {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.InnerLarvalJob" );
+static basic::Tracer TR( "protocols.jd3.InnerLarvalJob" );
 
 InnerLarvalJob::InnerLarvalJob() :
 	input_sources_(),

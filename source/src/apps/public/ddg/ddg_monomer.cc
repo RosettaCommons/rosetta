@@ -61,10 +61,9 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "apps.public.ddg.ddg_monomer" );
+static basic::Tracer TR( "apps.public.ddg.ddg_monomer" );
 
 using namespace core;
 using namespace scoring;

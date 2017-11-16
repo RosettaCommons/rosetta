@@ -34,7 +34,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.VirtualSugarSamplerFromStringList" );
+static basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.VirtualSugarSamplerFromStringList" );
 
 using namespace core;
 using namespace core::pose;

@@ -67,16 +67,16 @@ using core::kinematics::Stub;
 using core::conformation::Residue;
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer TR( "rblinker2" );
+static basic::Tracer TR( "rblinker2" );
 
 
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
-// 	for(Size ir = 1; ir <= pose.size(); ++ir) {
-// 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
-// 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
-// 			pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
-// 		}
-// 	}
+//  for(Size ir = 1; ir <= pose.size(); ++ir) {
+//   for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+//    core::id::AtomID const aid(core::id::AtomID(ia,ir));
+//    pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
+//   }
+//  }
 // }
 //
 //
@@ -85,37 +85,37 @@ static THREAD_LOCAL basic::Tracer TR( "rblinker2" );
 // // hyd   101  156  334  338
 // // psI  1492 1536 1489 1495
 // inline Real hyd_petf_sf4_dis(Pose const & hyd, Stub const & shyd, Pose const & petf, Stub const & spetf ) {
-// 	Vec sf4A = ( hyd.xyz(AtomID(5, 101))+ hyd.xyz(AtomID(5, 156))+ hyd.xyz(AtomID(5, 334))+ hyd.xyz(AtomID(5, 338)))/4.0;
-// 	Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
-// 	return shyd.local2global(sf4A).distance(spetf.local2global(sf4B));
+//  Vec sf4A = ( hyd.xyz(AtomID(5, 101))+ hyd.xyz(AtomID(5, 156))+ hyd.xyz(AtomID(5, 334))+ hyd.xyz(AtomID(5, 338)))/4.0;
+//  Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
+//  return shyd.local2global(sf4A).distance(spetf.local2global(sf4B));
 // }
 // inline Real psI_petf_sf4_dis(Pose const & psI, Pose const & petf, Stub const & spetf ) {
-// 	Vec sf4A = ( psI.xyz(AtomID(5,1492))+ psI.xyz(AtomID(5,1536))+ psI.xyz(AtomID(5,1489))+ psI.xyz(AtomID(5,1495)))/4.0;
-// 	Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
-// 	return sf4A.distance(spetf.local2global(sf4B));
+//  Vec sf4A = ( psI.xyz(AtomID(5,1492))+ psI.xyz(AtomID(5,1536))+ psI.xyz(AtomID(5,1489))+ psI.xyz(AtomID(5,1495)))/4.0;
+//  Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
+//  return sf4A.distance(spetf.local2global(sf4B));
 // }
 //
 // // get stup that aligns r1 to r2
 // Stub getxform(Residue const & r1, Residue const & r2) {
-// 	Stub s;
-// 	s.M = alignVectorSets(r1.xyz(1)-r1.xyz(2),r1.xyz(3)-r1.xyz(2),r2.xyz(1)-r2.xyz(2),r2.xyz(3)-r2.xyz(2));
-// 	s.v = r2.xyz(2)-s.M*r1.xyz(2);
-// 	return s;
+//  Stub s;
+//  s.M = alignVectorSets(r1.xyz(1)-r1.xyz(2),r1.xyz(3)-r1.xyz(2),r2.xyz(1)-r2.xyz(2),r2.xyz(3)-r2.xyz(2));
+//  s.v = r2.xyz(2)-s.M*r1.xyz(2);
+//  return s;
 // }
 
 
 inline void xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres=1, Size eres=0 ) {
-	if(eres==0) eres = pose.size();
-	for(Size ir = sres; ir <= eres; ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	if ( eres==0 ) eres = pose.size();
+	for ( Size ir = sres; ir <= eres; ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
 		}
 	}
 }
 inline void xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s ) {
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, s.global2local(pose.xyz(aid)) );
 		}
@@ -132,7 +132,7 @@ public:
 	void magnitude(Real mag) { mag_ = mag; }
 	void apply(core::pose::Pose & pose) {
 		Size i = start_-1 + (Size)std::ceil(uniform()*(stop_-start_+1));
-		if(uniform()<0.5) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
+		if ( uniform()<0.5 ) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
 		else              pose.set_psi(i,pose.psi(i)+gaussian()*mag_);
 	}
 	std::string get_name() const { return "SimpleBBMover"; }
@@ -141,9 +141,9 @@ typedef utility::pointer::owning_ptr<SimpleBBMover> SimpleBBMoverOP;
 
 std::string printbits(unsigned long nn) {
 	std::string s = "";
-	for(Size i = 0; i < 8*sizeof(nn); ++i) {
-		if(i%8==0) s += " ";
-		if(nn & 1UL << (8*sizeof(nn)-1-i)) s += "1";
+	for ( Size i = 0; i < 8*sizeof(nn); ++i ) {
+		if ( i%8==0 ) s += " ";
+		if ( nn & 1UL << (8*sizeof(nn)-1-i) ) s += "1";
 		else                               s += "0";
 	}
 	return s;
@@ -151,12 +151,12 @@ std::string printbits(unsigned long nn) {
 
 std::string bin2string(unsigned long bin, Size nres) {
 	std::string s = "";
-	for(Size i = 0; i < nres; ++i) {
-		for(Size j = 0; j < 2; ++j) {
+	for ( Size i = 0; i < nres; ++i ) {
+		for ( Size j = 0; j < 2; ++j ) {
 			int tmp = ( bin >> 8*i+2*j ) % 4;
 			s += ObjexxFCL::lead_zero_string_of(tmp,1);
 		}
-		if(i+1 < nres) s += "-";
+		if ( i+1 < nres ) s += "-";
 	}
 	return s;
 }
@@ -164,7 +164,7 @@ std::string bin2string(unsigned long bin, Size nres) {
 unsigned long pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	unsigned long bin = 0;
-	for(int i = 0; i < min( 16, (int)pose.size() ); ++i) {
+	for ( int i = 0; i < min( 16, (int)pose.size() ); ++i ) {
 		Real phid = pose.phi(i+1);
 		Real psid = pose.psi(i+1);
 		// TR << phid << " " << psid << std::endl;
@@ -180,23 +180,23 @@ unsigned long pose2bin(core::pose::Pose const & pose) {
 
 Size get_aln_resi(core::pose::Pose const & pose, core::Size const aln_chain, char const aln_termi) {
 	Size resi = 0, nnt = 0, nct = 0;
-	for(Size i = 1; i <= pose.size(); ++i) {
-		if(pose.residue(i).is_lower_terminus()) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue(i).is_lower_terminus() ) {
 			nnt++;
-			if(aln_termi=='N' && nnt==aln_chain) {
+			if ( aln_termi=='N' && nnt==aln_chain ) {
 				resi = i;
 				break;
 			}
 		}
-		if(pose.residue(i).is_upper_terminus()) {
+		if ( pose.residue(i).is_upper_terminus() ) {
 			nct++;
-			if(aln_termi=='C' && nnt==aln_chain) {
+			if ( aln_termi=='C' && nnt==aln_chain ) {
 				resi = i;
 				break;
 			}
 		}
 	}
-	if( 0 == resi ) utility_exit_with_message("ImplicitClashData: could not find aln resi in input pose chain: "+ObjexxFCL::string_of(aln_chain)+" term: "+aln_termi);
+	if ( 0 == resi ) utility_exit_with_message("ImplicitClashData: could not find aln resi in input pose chain: "+ObjexxFCL::string_of(aln_chain)+" term: "+aln_termi);
 	return resi;
 }
 core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, core::conformation::Residue const & fixd_resi) {
@@ -214,13 +214,13 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	Pose lnk;
 	string ggs = "GGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGS";
 	make_pose_from_sequence( lnk , "A"+ggs.substr(0,len)+"A" , *resset , true);
-	for(Size i = 1; i <= lnk.size(); ++i) {
+	for ( Size i = 1; i <= lnk.size(); ++i ) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
 	}
 	FoldTree ft = lnk.fold_tree();
-	if(ft.num_jump() != 0) utility_exit_with_message("why is there a jump in the fold tree alreaduy?!?!?!");
+	if ( ft.num_jump() != 0 ) utility_exit_with_message("why is there a jump in the fold tree alreaduy?!?!?!");
 	ObjexxFCL::FArray2D_int jump_point(2,1);
 	ObjexxFCL::FArray1D_int cuts(1);
 	cuts(1) = lnk.size()/2;
@@ -235,13 +235,13 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	xform_pose(lnk, getxform(lnk.residue(     1         ),alnpose.residue(1)) );
 	xform_pose(lnk, getxform(lnk.residue(lnk.size()),alnpose.residue(2)), cuts(1)+1 ); // only after cutpoint
 
-	if( oldlnk.size() != 0 && oldlnk.size()+1 == lnk.size()) {
+	if ( oldlnk.size() != 0 && oldlnk.size()+1 == lnk.size() ) {
 		Size c = oldlnk.fold_tree().cutpoint(1);
-		for(Size i = 1; i <= c; ++i) {
+		for ( Size i = 1; i <= c; ++i ) {
 			lnk.set_phi(i, oldlnk.phi(i) );
 			lnk.set_psi(i, oldlnk.psi(i) );
 		}
-		for(Size i = 0; i < oldlnk.size()-c; ++i) {
+		for ( Size i = 0; i < oldlnk.size()-c; ++i ) {
 			lnk.set_phi(lnk.size()-i, oldlnk.phi(oldlnk.size()-i) );
 			lnk.set_psi(lnk.size()-i, oldlnk.psi(oldlnk.size()-i) );
 		}
@@ -281,64 +281,64 @@ void* doit(void*) {
 	TR << "linker2 size " << linklen2 << " seq2: " << seq2 << std::endl;
 
 	make_pose_from_sequence(lnk,seq1,*cenresset,true);
-	for(Size i = 1; i <= lnk.size(); ++i) {
+	for ( Size i = 1; i <= lnk.size(); ++i ) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
 	}
 
 	// if(linklen2 > 0) {
-	// 	Pose tmp;
-	// 	make_pose_from_sequence(tmp,seq2,*cenresset,true);
-	// 	lnk.append_residue_by_jump(tmp.residue(1),lnk.size(),"C","N"); // is this working????
-	// 	for(Size i = 2; i <= tmp.size(); ++i) {
-	// 		lnk.append_residue_by_bond(tmp.residue(i));
-	// 	}
-	// 	for(Size i = 1; i <= lnk.size(); ++i) {
-	// 		lnk.set_phi  (i,-60);
-	// 		lnk.set_psi  (i,-45);
-	// 		lnk.set_omega(i,180);
-	// 	}
+	//  Pose tmp;
+	//  make_pose_from_sequence(tmp,seq2,*cenresset,true);
+	//  lnk.append_residue_by_jump(tmp.residue(1),lnk.size(),"C","N"); // is this working????
+	//  for(Size i = 2; i <= tmp.size(); ++i) {
+	//   lnk.append_residue_by_bond(tmp.residue(i));
+	//  }
+	//  for(Size i = 1; i <= lnk.size(); ++i) {
+	//   lnk.set_phi  (i,-60);
+	//   lnk.set_psi  (i,-45);
+	//   lnk.set_omega(i,180);
+	//  }
 	//
-	// 	utility::io::izstream in( basic::options::option[basic::options::OptionKeys::score::fastclash::implicit_clash_aln_config]() );
-	// 	Size c1,c2,c3,c4;
-	// 	char t1,t2,t3,t4;
-	// 	std::string fn;
-	// 	Size count = 0;
-	// 	while( in >> c1 >> t1 >> c2 >> t2 >> fn >> c3 >> t3 >> c4 >> t4 ) {
-	// 		count++;
-	// 	}
-	// 	if(count!=1) utility_exit_with_message("require exactly one line in fastclash aln config");
-	// 	if( c1 != 1 || t1 != 'C' || t2 != 'N' || t3 != 'C' || t4 != 'N' || c4 != 2 ) utility_exit_with_message("improper fastclash aln config for 2 linker system!");
-	// 	Pose alnpose;
-	// 	core::import_pose::pose_from_file(alnpose,fn, core::import_pose::PDB_file);
-	// 	Size aln_resi_lnk_ref = get_aln_resi(lnk,c1,t1);
-	// 	Size aln_resi_lnk_mov = get_aln_resi(lnk,c4,t4);
-	// 	Size aln_resi_other_ref = get_aln_resi(alnpose,c3,t3);
-	// 	Size aln_resi_other_mov = get_aln_resi(alnpose,c2,t2);
-	// 	TR << "aligning two linkers lnkref " << aln_resi_lnk_ref << " lnkmov " << aln_resi_lnk_mov << " oref " << aln_resi_other_ref << " omov " << aln_resi_other_mov << std::endl;
-	// 	Stub aln_alnpose = getxform( alnpose.residue(aln_resi_other_mov), lnk.residue(aln_resi_lnk_ref) );
-	// 	xform_pose(alnpose,aln_alnpose);
-	// 	if(option[rblinker::debug]()) alnpose.dump_pdb("init_alnpose.pdb");
-	// 	Stub aln_chain2 = getxform( lnk.residue(aln_resi_lnk_mov), alnpose.residue(aln_resi_other_ref) );
-	// 	{
-	// 		for(Size ir = aln_resi_lnk_mov; ir <= lnk.size(); ++ir) {
-	// 			for(Size ia = 1; ia <= lnk.residue_type(ir).natoms(); ++ia) {
-	// 				core::id::AtomID const aid(core::id::AtomID(ia,ir));
-	// 				lnk.set_xyz( aid, aln_chain2.local2global(lnk.xyz(aid)) );
-	// 			}
-	// 		}
-	// 	}
+	//  utility::io::izstream in( basic::options::option[basic::options::OptionKeys::score::fastclash::implicit_clash_aln_config]() );
+	//  Size c1,c2,c3,c4;
+	//  char t1,t2,t3,t4;
+	//  std::string fn;
+	//  Size count = 0;
+	//  while( in >> c1 >> t1 >> c2 >> t2 >> fn >> c3 >> t3 >> c4 >> t4 ) {
+	//   count++;
+	//  }
+	//  if(count!=1) utility_exit_with_message("require exactly one line in fastclash aln config");
+	//  if( c1 != 1 || t1 != 'C' || t2 != 'N' || t3 != 'C' || t4 != 'N' || c4 != 2 ) utility_exit_with_message("improper fastclash aln config for 2 linker system!");
+	//  Pose alnpose;
+	//  core::import_pose::pose_from_file(alnpose,fn, core::import_pose::PDB_file);
+	//  Size aln_resi_lnk_ref = get_aln_resi(lnk,c1,t1);
+	//  Size aln_resi_lnk_mov = get_aln_resi(lnk,c4,t4);
+	//  Size aln_resi_other_ref = get_aln_resi(alnpose,c3,t3);
+	//  Size aln_resi_other_mov = get_aln_resi(alnpose,c2,t2);
+	//  TR << "aligning two linkers lnkref " << aln_resi_lnk_ref << " lnkmov " << aln_resi_lnk_mov << " oref " << aln_resi_other_ref << " omov " << aln_resi_other_mov << std::endl;
+	//  Stub aln_alnpose = getxform( alnpose.residue(aln_resi_other_mov), lnk.residue(aln_resi_lnk_ref) );
+	//  xform_pose(alnpose,aln_alnpose);
+	//  if(option[rblinker::debug]()) alnpose.dump_pdb("init_alnpose.pdb");
+	//  Stub aln_chain2 = getxform( lnk.residue(aln_resi_lnk_mov), alnpose.residue(aln_resi_other_ref) );
+	//  {
+	//   for(Size ir = aln_resi_lnk_mov; ir <= lnk.size(); ++ir) {
+	//    for(Size ia = 1; ia <= lnk.residue_type(ir).natoms(); ++ia) {
+	//     core::id::AtomID const aid(core::id::AtomID(ia,ir));
+	//     lnk.set_xyz( aid, aln_chain2.local2global(lnk.xyz(aid)) );
+	//    }
+	//   }
+	//  }
 	//
-	// 	// init test...
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp0.pdb",lnk);	lnk.dump_pdb("pose0.pdb"); lnk.set_phi(10,uniform()*360.0);
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp1.pdb",lnk);	lnk.dump_pdb("pose1.pdb"); lnk.set_phi(30,uniform()*360.0);
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp2.pdb",lnk);	lnk.dump_pdb("pose2.pdb"); lnk.set_phi(22,uniform()*360.0);
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp3.pdb",lnk); lnk.dump_pdb("pose3.pdb"); lnk.set_psi(22,uniform()*360.0);
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp4.pdb",lnk);	lnk.dump_pdb("pose4.pdb"); lnk.set_phi(23,uniform()*360.0);
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp5.pdb",lnk);	lnk.dump_pdb("pose5.pdb"); lnk.set_psi(23,uniform()*360.0);
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp6.pdb",lnk);	lnk.dump_pdb("pose6.pdb");
-	// 	utility_exit_with_message("3 RB 2 linker systems not working properly yet!");
+	//  // init test...
+	//  protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp0.pdb",lnk); lnk.dump_pdb("pose0.pdb"); lnk.set_phi(10,uniform()*360.0);
+	//  protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp1.pdb",lnk); lnk.dump_pdb("pose1.pdb"); lnk.set_phi(30,uniform()*360.0);
+	//  protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp2.pdb",lnk); lnk.dump_pdb("pose2.pdb"); lnk.set_phi(22,uniform()*360.0);
+	//  protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp3.pdb",lnk); lnk.dump_pdb("pose3.pdb"); lnk.set_psi(22,uniform()*360.0);
+	//  protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp4.pdb",lnk); lnk.dump_pdb("pose4.pdb"); lnk.set_phi(23,uniform()*360.0);
+	//  protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp5.pdb",lnk); lnk.dump_pdb("pose5.pdb"); lnk.set_psi(23,uniform()*360.0);
+	//  protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp6.pdb",lnk); lnk.dump_pdb("pose6.pdb");
+	//  utility_exit_with_message("3 RB 2 linker systems not working properly yet!");
 	// }
 
 	core::scoring::ScoreFunctionOP sf = new core::scoring::ScoreFunction;
@@ -350,71 +350,71 @@ void* doit(void*) {
 	sf->set_weight(core::scoring::implicitdock,option[rblinker::linearscore_wt]());
 
 	bool CHAINBREAK = false;
-	if(option[in::file::s].user()) {
+	if ( option[in::file::s].user() ) {
 		utility::vector1<std::string> fns = option[in::file::s]();
 		sf->set_weight(core::scoring::linear_chainbreak,20.0);
-		for(Size ifn = 1; ifn <= fns.size(); ++ifn) {
+		for ( Size ifn = 1; ifn <= fns.size(); ++ifn ) {
 			std::string fn = fns[ifn];
 			// if(fns.size() != 1) utility_exit_with_message("rblinker2 currently only accepts 1 in:file:s input");
 			Pose alnpose;
 			core::import_pose::pose_from_file(alnpose,fn, core::import_pose::PDB_file);
-			if(alnpose.size() != 2) utility_exit_with_message("reference pose must have only two residues");
+			if ( alnpose.size() != 2 ) utility_exit_with_message("reference pose must have only two residues");
 
 			try {
 				Pose start;
-				for(Size LNKLEN = 2; LNKLEN < 53; LNKLEN++) {
+				for ( Size LNKLEN = 2; LNKLEN < 53; LNKLEN++ ) {
 					start = build_algned_linker(alnpose,LNKLEN,cenresset,start);
 					Pose best = start;
 					bool linkable = false;
-					for(Size CBTRIAL = 1; CBTRIAL <= 10; CBTRIAL++) {
+					for ( Size CBTRIAL = 1; CBTRIAL <= 10; CBTRIAL++ ) {
 						lnk = start;
-						if(option[rblinker::debug]()) TR << "try to find starting config without clash...." << std::endl;
+						if ( option[rblinker::debug]() ) TR << "try to find starting config without clash...." << std::endl;
 						MoverOP bigbbmove = new SimpleBBMover(1,lnk.size(),9e6);
-						for(int precount = 1; precount < option[rblinker::nclashtrials](); precount++ ) {
+						for ( int precount = 1; precount < option[rblinker::nclashtrials](); precount++ ) {
 							bigbbmove->apply(lnk);
-							if( sf->score(lnk) < 9e5) break;
+							if ( sf->score(lnk) < 9e5 ) break;
 						}
 						Pose cbtrial_best = lnk;
-						if(lnk.energies().total_energies()[core::scoring::fastclash] > 9e5) {
+						if ( lnk.energies().total_energies()[core::scoring::fastclash] > 9e5 ) {
 							throw std::string("EVER-CLASH");
 							utility_exit_with_message("failed to find starting pos w/o clash! nclashtrial "+string_of(option[rblinker::nclashtrials]()));
 						}
 						SimpleBBMoverOP bbmove = new SimpleBBMover(1,lnk.size(),option[rblinker::ntrials]()*2-20);
 						sf->score(cbtrial_best);
-						for(int ITER = 1; ITER <= option[rblinker::ntrials](); ITER++) {
+						for ( int ITER = 1; ITER <= option[rblinker::ntrials](); ITER++ ) {
 							lnk = cbtrial_best;
 							MonteCarloOP mc1 = new MonteCarlo( lnk, *sf, 2.0 );
 							mc1->set_autotemp( true, 2.0 ); mc1->set_temperature( 2.0 );
 							TrialMover trial(bbmove,mc1);
-							for(int j = 1; j <= option[rblinker::nsubtrials](); j++) {
+							for ( int j = 1; j <= option[rblinker::nsubtrials](); j++ ) {
 								trial.apply(lnk);
-								if( lnk.energies().total_energies()[core::scoring::linear_chainbreak] < cbtrial_best.energies().total_energies()[core::scoring::linear_chainbreak] ) {
+								if ( lnk.energies().total_energies()[core::scoring::linear_chainbreak] < cbtrial_best.energies().total_energies()[core::scoring::linear_chainbreak] ) {
 									cbtrial_best = lnk;
 									best = lnk;
-									if( lnk.energies().total_energies()[core::scoring::linear_chainbreak] < 1.0 ) {
+									if ( lnk.energies().total_energies()[core::scoring::linear_chainbreak] < 1.0 ) {
 										linkable = true;
 										break;
 									}
 								}
 							}
-							if(linkable) {
+							if ( linkable ) {
 								break;
-							} else if( ITER > 10 && best.energies().total_energies()[core::scoring::linear_chainbreak] > 10.0 ) {
+							} else if ( ITER > 10 && best.energies().total_energies()[core::scoring::linear_chainbreak] > 10.0 ) {
 								break; // hopeless... don't keep trying at this linker length
 							}
 							Real m = max( 1.0, bbmove->magnitude()-1.0 );
-							if(option[rblinker::debug]()) TR << "len " << LNKLEN << " setting bbmove mag to " << m << std::endl;
+							if ( option[rblinker::debug]() ) TR << "len " << LNKLEN << " setting bbmove mag to " << m << std::endl;
 							bbmove->magnitude( m );
-							if(option[rblinker::debug]()) TR << "len " << LNKLEN << " cb: " << lnk.energies().total_energies()[core::scoring::linear_chainbreak] << " " << cbtrial_best.energies().total_energies()[core::scoring::linear_chainbreak] << std::endl;
+							if ( option[rblinker::debug]() ) TR << "len " << LNKLEN << " cb: " << lnk.energies().total_energies()[core::scoring::linear_chainbreak] << " " << cbtrial_best.energies().total_energies()[core::scoring::linear_chainbreak] << std::endl;
 						}
-						if(linkable) {
+						if ( linkable ) {
 							lnk = best;
 							break;
-						} else if( best.energies().total_energies()[core::scoring::linear_chainbreak] > 3.0 ) {
+						} else if ( best.energies().total_energies()[core::scoring::linear_chainbreak] > 3.0 ) {
 							break; // hopeless... don't keep trying at this linker length
 						}
 					}
-					if(linkable) {
+					if ( linkable ) {
 						TR << "input configuration " << fn << " is linkable with linker size " << lnk.size()-2 << std::endl;
 						std::string fnout = option[out::file::o]()+"/"+utility::file_basename(fn)+"_linker_"+ObjexxFCL::lead_zero_string_of(lnk.size()-2,3)+".pdb.gz";
 						protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures(fnout,lnk);
@@ -424,7 +424,7 @@ void* doit(void*) {
 					}
 				}
 			} catch(std::string s) {
-				if( s == "EVER-CLASH" ) {
+				if ( s == "EVER-CLASH" ) {
 					TR << "EVER-CLASH on file " << fn << std::endl;
 				} else {
 					utility_exit_with_message(s);
@@ -434,18 +434,18 @@ void* doit(void*) {
 	} else {
 		protocols::moves::MoverOP bbmove;
 		string const bb_samp_method = option[ rblinker::bb_samp_method ]();
-		/**/ if( "simplegaussian1"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 1.0); TR << "bb_samp_method bbg1"    << std::endl; }
-		else if( "simplegaussian5"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 5.0); TR << "bb_samp_method bbg5"    << std::endl; }
-		else if( "simplegaussian10" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),10.0); TR << "bb_samp_method bbg10"   << std::endl; }
-		else if( "simplegaussian20" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),20.0); TR << "bb_samp_method bbg20"   << std::endl; }
-		else if( "simplegaussian30" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),30.0); TR << "bb_samp_method bbg30"   << std::endl; }
-		else if( "simplegaussian60" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),60.0); TR << "bb_samp_method bbg60"   << std::endl; }
-		else if( "uniform"          == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 9e6); TR << "bb_samp_method uniform" << std::endl; }
-		else if( "bbg8t3a"          == bb_samp_method ) { bbmove = new protocols::simple_moves::BBG8T3AMover();      TR << "bb_samp_method bbg8t3a" << std::endl; }
-		else if( "jump"             == bb_samp_method ) {
+		/**/ if ( "simplegaussian1"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 1.0); TR << "bb_samp_method bbg1"    << std::endl; }
+		else if ( "simplegaussian5"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 5.0); TR << "bb_samp_method bbg5"    << std::endl; }
+		else if ( "simplegaussian10" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),10.0); TR << "bb_samp_method bbg10"   << std::endl; }
+		else if ( "simplegaussian20" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),20.0); TR << "bb_samp_method bbg20"   << std::endl; }
+		else if ( "simplegaussian30" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),30.0); TR << "bb_samp_method bbg30"   << std::endl; }
+		else if ( "simplegaussian60" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),60.0); TR << "bb_samp_method bbg60"   << std::endl; }
+		else if ( "uniform"          == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 9e6); TR << "bb_samp_method uniform" << std::endl; }
+		else if ( "bbg8t3a"          == bb_samp_method ) { bbmove = new protocols::simple_moves::BBG8T3AMover();      TR << "bb_samp_method bbg8t3a" << std::endl; }
+		else if ( "jump"             == bb_samp_method ) {
 			TR << "bb_samp_method jump" << std::endl;
 			FoldTree ft = lnk.fold_tree();
-			if(ft.num_jump() == 0) {
+			if ( ft.num_jump() == 0 ) {
 				ObjexxFCL::FArray2D_int jump_point(2,1);
 				ObjexxFCL::FArray1D_int cuts(1);
 				cuts(1) = 1;
@@ -455,32 +455,31 @@ void* doit(void*) {
 				lnk.fold_tree(ft);
 			}
 			bbmove = new rigid::RigidBodyPerturbMover(1, 10.0, 1.0);
-		}
-		else utility_exit_with_message("unknown option value for -rblinker:bb_samp_methd");
+		} else utility_exit_with_message("unknown option value for -rblinker:bb_samp_methd");
 
 		TR << "try to find starting config without clash...." << std::endl;
 		MoverOP bigbbmove = new SimpleBBMover(1,lnk.size(),9e6);
-		if( "jump" == bb_samp_method ) bigbbmove = bbmove;
-		for(int precount = 1; precount < option[rblinker::nclashtrials](); precount++ ) {
+		if ( "jump" == bb_samp_method ) bigbbmove = bbmove;
+		for ( int precount = 1; precount < option[rblinker::nclashtrials](); precount++ ) {
 			bigbbmove->apply(lnk);
-			if(option[rblinker::debug]()) lnk.dump_pdb("test_"+ObjexxFCL::lead_zero_string_of(precount,7)+"_0.pdb");
-			if( sf->score(lnk) < 9e5) break;
-			if(option[rblinker::debug]()) lnk.dump_pdb("test_"+ObjexxFCL::lead_zero_string_of(precount,7)+"_1.pdb");
+			if ( option[rblinker::debug]() ) lnk.dump_pdb("test_"+ObjexxFCL::lead_zero_string_of(precount,7)+"_0.pdb");
+			if ( sf->score(lnk) < 9e5 ) break;
+			if ( option[rblinker::debug]() ) lnk.dump_pdb("test_"+ObjexxFCL::lead_zero_string_of(precount,7)+"_1.pdb");
 		}
-		if(lnk.energies().total_energies()[core::scoring::fastclash] > 9e5) utility_exit_with_message("failed to find starting pos w/o clash! nclashtrial "+string_of(option[rblinker::nclashtrials]()));
+		if ( lnk.energies().total_energies()[core::scoring::fastclash] > 9e5 ) utility_exit_with_message("failed to find starting pos w/o clash! nclashtrial "+string_of(option[rblinker::nclashtrials]()));
 		TR << "found starting config without clash...." << std::endl;
 
 		utility::vector1<Size> hist(100,0);
 		std::set<unsigned long> coverage;
 		Size accepts = 0;
-		for(int ITER = 1; ITER <= option[rblinker::ntrials](); ITER++) {
+		for ( int ITER = 1; ITER <= option[rblinker::ntrials](); ITER++ ) {
 			// TR << "ITER " << ITER << std::endl;
 
 			MonteCarloOP mc1 = new MonteCarlo( lnk, *sf, 2.0 );
 			mc1->set_autotemp( true, 2.0 ); mc1->set_temperature( 2.0 );
 			TrialMover trial(bbmove,mc1);
 
-			for(int j = 1; j <= option[rblinker::nsubtrials](); j++) {
+			for ( int j = 1; j <= option[rblinker::nsubtrials](); j++ ) {
 				trial.apply(lnk);
 				coverage.insert( pose2bin(lnk) );
 				Real d = lnk.energies().total_energies()[core::scoring::implicitdock];
@@ -488,10 +487,10 @@ void* doit(void*) {
 			}
 			accepts += trial.num_accepts();
 
-			if(lnk.energies().total_energies()[core::scoring::fastclash] > 9e5) utility_exit_with_message("has clash!!!! exiting!");
+			if ( lnk.energies().total_energies()[core::scoring::fastclash] > 9e5 ) utility_exit_with_message("has clash!!!! exiting!");
 
 			TR << "ITER: " << ITER*10000 << " accepts: " << accepts << " coverage: " << coverage.size() << " HIST ";
-			for(Size i = 1; i <= hist.size(); ++i) {
+			for ( Size i = 1; i <= hist.size(); ++i ) {
 				TR << hist[i] << " ";
 			}
 			TR << "HISTEND" << std::endl;
@@ -499,8 +498,8 @@ void* doit(void*) {
 
 			Real d = lnk.energies().total_energies()[core::scoring::implicitdock];
 			std::string  fn = "rblinker2_out_"+ObjexxFCL::lead_zero_string_of(ITER,9)+"_unbnd.pdb";
-			if(d < 15.0) {
-				int tmp = (int)	d;
+			if ( d < 15.0 ) {
+				int tmp = (int) d;
 				fn = option[out::file::o]()+"/"+"rblinker2_out_"+ObjexxFCL::lead_zero_string_of(ITER,9)+"_bound"+ObjexxFCL::lead_zero_string_of(tmp,2)+".pdb.gz";
 			}
 			protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures(fn,lnk);
@@ -516,14 +515,14 @@ int main( int argc, char * argv [] ) {
 
 	try {
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	void* (*func)(void*) = &doit;
-	if (option[ basic::options::OptionKeys::parser::view ]()) {
-		protocols::viewer::viewer_main( func );
-	} else {
-		func(NULL);
-	}
+		void* (*func)(void*) = &doit;
+		if ( option[ basic::options::OptionKeys::parser::view ]() ) {
+			protocols::viewer::viewer_main( func );
+		} else {
+			func(NULL);
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

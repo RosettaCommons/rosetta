@@ -42,7 +42,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack.DunbrackConstraint" );
+static basic::Tracer TR( "core.pack.dunbrack.DunbrackConstraint" );
 
 DunbrackConstraintCreator::DunbrackConstraintCreator() {}
 DunbrackConstraintCreator::~DunbrackConstraintCreator() {}

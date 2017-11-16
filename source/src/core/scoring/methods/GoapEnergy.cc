@@ -52,7 +52,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.GoapEnergy" );
+static basic::Tracer TR( "core.scoring.GoapEnergy" );
 
 //////////////////////
 /// EnergyMethod Creator

@@ -60,7 +60,7 @@ namespace movers {
 
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopFinder" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopFinder" );
 
 // XRW TEMP std::string
 // XRW TEMP LoopFinderCreator::keyname() const

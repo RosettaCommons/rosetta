@@ -40,7 +40,7 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.util" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.util" );
 
 using ObjexxFCL::lead_zero_string_of;
 using namespace core;

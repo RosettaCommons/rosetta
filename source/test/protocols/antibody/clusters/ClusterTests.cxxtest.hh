@@ -52,7 +52,7 @@ using namespace protocols::antibody::clusters;
 using namespace protocols::antibody::constraints;
 using namespace protocols::features;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.clusters.ClusterTests");
+static basic::Tracer TR("protocols.antibody.clusters.ClusterTests");
 
 class ClusterTests : public CxxTest::TestSuite {
 	core::pose::Pose ab_pose; //Full PDB

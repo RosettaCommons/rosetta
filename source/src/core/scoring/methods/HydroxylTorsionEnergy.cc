@@ -31,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.HydroxylTorsionEnergy" );
+static basic::Tracer TR( "core.scoring.HydroxylTorsionEnergy" );
 
 /// @details This must return a fresh instance of the P_AA_pp_Energy class,
 /// never an instance already in use

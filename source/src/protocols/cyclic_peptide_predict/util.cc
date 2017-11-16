@@ -32,7 +32,7 @@
 // C++ headers
 #include <cstdio>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide_predict.util" );
+static basic::Tracer TR( "protocols.cyclic_peptide_predict.util" );
 
 namespace protocols {
 namespace cyclic_peptide_predict {

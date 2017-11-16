@@ -37,7 +37,7 @@
 #include <utility/fixedsizearray1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-static THREAD_LOCAL basic::Tracer TR( "protocols.fold_from_loops.SegmentedAtomPairConstraintGenerator" );
+static basic::Tracer TR( "protocols.fold_from_loops.SegmentedAtomPairConstraintGenerator" );
 
 namespace protocols {
 namespace fold_from_loops {

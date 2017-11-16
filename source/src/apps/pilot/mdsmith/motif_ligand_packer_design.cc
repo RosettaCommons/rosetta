@@ -36,7 +36,7 @@ using namespace protocols::dna;
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
+static basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 
 #include <core/import_pose/import_pose.hh> // Need since refactor
 
@@ -64,7 +64,7 @@ using namespace core;
 using namespace basic;
 using namespace chemical;
 using namespace pack;
-	using namespace task;
+using namespace task;
 using namespace scoring;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,12 +72,12 @@ ScoreFunctionOP
 get_total_rebuild_fullatom_scorefxn()
 {
 	ScoreFunctionOP scorefxn( new ScoreFunction() );
-//	scorefxn->set_energy_method_options( scoring::methods::EnergyMethodOptions().exclude_DNA_DNA( false ) );
+	// scorefxn->set_energy_method_options( scoring::methods::EnergyMethodOptions().exclude_DNA_DNA( false ) );
 	//scorefxn->add_weights_from_database_file( "my_dna.wts" );
 	//if ( option[ OK::dna::specificity::score_function ].user() ) {
-	//	scorefxn->add_weights_from_file( option[ OK::dna::specificity::score_function ] );
+	// scorefxn->add_weights_from_file( option[ OK::dna::specificity::score_function ] );
 	//} else {
-	//	scorefxn->add_weights_from_database_file( "my_dna.wts" );
+	// scorefxn->add_weights_from_database_file( "my_dna.wts" );
 	//}
 
 	// need to think more about this
@@ -96,105 +96,104 @@ get_total_rebuild_fullatom_scorefxn()
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace options;
-	using namespace OptionKeys;
+	try {
+		using namespace options;
+		using namespace OptionKeys;
 
-	devel::init( argc, argv ); // reading options--name should be more descriptive
+		devel::init( argc, argv ); // reading options--name should be more descriptive
 
-	basic::prof_reset();
+		basic::prof_reset();
 
-	TR << "Getting input filename(s)" << '\n';
+		TR << "Getting input filename(s)" << '\n';
 
-	typedef vector1< utility::file::FileName > Filenames;
-	Filenames pdbnames;
+		typedef vector1< utility::file::FileName > Filenames;
+		Filenames pdbnames;
 
-	if ( option[ in::file::l ].user() ) {
-		Filenames listnames( option[ in::file::l ]().vector() );
-		for ( Filenames::const_iterator filename( listnames.begin() );
-		      filename != listnames.end(); ++filename ) {
-			std::ifstream list( (*filename).name().c_str() );
-			while ( list ) {
-				std::string pdbname;
-				list >> pdbname;
-				pdbnames.push_back( pdbname );
+		if ( option[ in::file::l ].user() ) {
+			Filenames listnames( option[ in::file::l ]().vector() );
+			for ( Filenames::const_iterator filename( listnames.begin() );
+					filename != listnames.end(); ++filename ) {
+				std::ifstream list( (*filename).name().c_str() );
+				while ( list ) {
+					std::string pdbname;
+					list >> pdbname;
+					pdbnames.push_back( pdbname );
+				}
 			}
+
+		} else if ( option[ in::file::s ].user() ) {
+			pdbnames = option[ in::file::s ]().vector();
+
+		} else {
+			std::cerr << "No files given: Use either -file:s or -file:l "
+				<< "to designate a single pdb or a list of pdbs"
+				<< std::endl;
 		}
 
-	} else if ( option[ in::file::s ].user() ) {
-		pdbnames = option[ in::file::s ]().vector();
+		bool const output_pdb( ! option[ OptionKeys::dna::design::nopdb ].user() );
 
-	} else {
-		std::cerr << "No files given: Use either -file:s or -file:l "
-		          << "to designate a single pdb or a list of pdbs"
-		          << std::endl;
-	}
+		for ( Filenames::const_iterator filename( pdbnames.begin() );
+				filename != pdbnames.end(); ++filename ) {
+			if ( !utility::file::file_exists( *filename ) ) {
+				continue;
+			}
+			pose::Pose pose;
+			//devel::blab::motif::motif_pose_from_file( pose, *filename, true , core::import_pose::PDB_file);
+			//devel::blab::viewer::add_conformation_viewer( pose.conformation(), pose.conformation() );
 
-	bool const output_pdb( ! option[ OptionKeys::dna::design::nopdb ].user() );
+			// io::pdb::pose_from_file( pose, *filename , core::import_pose::PDB_file); //Doesn't work anymore since refactor
+			core::import_pose::pose_from_file( pose, *filename , core::import_pose::PDB_file);
+			std::string pdbprefix( string_split( string_split( *filename, '/' ).back(), '.' ).front() );
+			bool minimize( false );
+			if ( option[ OptionKeys::out::prefix ].user() ) pdbprefix = option[ OptionKeys::out::prefix ]();
+			if ( option[OptionKeys::dna::design::minimize].user() ) minimize = option[ OptionKeys::dna::design::minimize ]();
 
-	for ( Filenames::const_iterator filename( pdbnames.begin() );
-	      filename != pdbnames.end(); ++filename ) {
-		if ( !utility::file::file_exists( *filename ) ) {
-			continue;
-		}
-		pose::Pose pose;
-		//devel::blab::motif::motif_pose_from_file( pose, *filename, true , core::import_pose::PDB_file);
-		//devel::blab::viewer::add_conformation_viewer( pose.conformation(), pose.conformation() );
+			// set up scoring
+			std::string const weights( option[ OptionKeys::score::weights ]() );
+			// this sets BasePartner in pose cacheable data
+			scoring::dna::set_base_partner( pose );
+			ScoreFunctionOP scorefxn( get_score_function() );
 
-	//	io::pdb::pose_from_file( pose, *filename , core::import_pose::PDB_file); //Doesn't work anymore since refactor
-		   core::import_pose::pose_from_file( pose, *filename , core::import_pose::PDB_file);
-		std::string pdbprefix( string_split( string_split( *filename, '/' ).back(), '.' ).front() );
-		bool minimize( false );
-		if ( option[ OptionKeys::out::prefix ].user() ) pdbprefix = option[ OptionKeys::out::prefix ]();
-		if ( option[OptionKeys::dna::design::minimize].user() ) minimize = option[ OptionKeys::dna::design::minimize ]();
+			//ScoreFunctionOP scorefxn( get_total_rebuild_fullatom_scorefxn() );
+			//protocols::motifs::make_dna_mutations( pose );
+			//scoring::dna::set_base_partner( pose );
+			// utility::vector1< Size > design_positions;
+			// need 1 to 73 for 2p09
+			//  for ( Size pos_count( 1); pos_count<70; ++pos_count){
+			// design_positions.push_back(pos_count);}
+			// utility::vector1< Size  > design_positions;
+			/*if ( option[OptionKeys::motifs::motif_build_positions].user()) {
+			utility::vector1< Size  > design_positions( option[ OptionKeys::motifs::motif_build_positions ]().vector() );
+			for (  Size position( 1); position<=design_positions.size(); ++position){
+			std::cout << "Design position: " << design_positions[position] << std::endl;
+			}
+			} else {
+			std::cout << "No build positions given, quitting for now" << std::endl;
+			break;
+			} */
+			protocols::motifs::LigandMotifSearchOP motif_search = new protocols::motifs::LigandMotifSearch;
 
-		// set up scoring
-		std::string const weights( option[ OptionKeys::score::weights ]() );
-		// this sets BasePartner in pose cacheable data
-		scoring::dna::set_base_partner( pose );
-		ScoreFunctionOP scorefxn( get_score_function() );
-
-		//ScoreFunctionOP scorefxn( get_total_rebuild_fullatom_scorefxn() );
-		//protocols::motifs::make_dna_mutations( pose );
-		//scoring::dna::set_base_partner( pose );
-	//	utility::vector1< Size > design_positions;
-		// need 1 to 73 for 2p09
-//		for ( Size pos_count( 1); pos_count<70; ++pos_count){
-	//	design_positions.push_back(pos_count);}
-	  // utility::vector1< Size  > design_positions;
-		/*if ( option[OptionKeys::motifs::motif_build_positions].user()) {
-	  utility::vector1< Size  > design_positions( option[ OptionKeys::motifs::motif_build_positions ]().vector() );
-	for (  Size position( 1); position<=design_positions.size(); ++position){
-				std::cout << "Design position: " << design_positions[position] << std::endl;
+			if (  option[ OptionKeys::motifs::motif_build_positions ].user() ) {
+				utility::vector1< Size  > design_positions( option[ OptionKeys::motifs::motif_build_positions ]().vector() );
+				for (  Size position( 1); position<=design_positions.size(); ++position ) {
+					std::cout << "about to run Design position: " << design_positions[position] << std::endl;
 				}
-	  } else {
-		std::cout << "No build positions given, quitting for now" << std::endl;
-		break;
-	  } */
-		protocols::motifs::LigandMotifSearchOP motif_search = new protocols::motifs::LigandMotifSearch;
+				motif_search->run( pose, design_positions );
+			} else { //End if user design positions
+				// core::Real
+				core::Real ligand_motif_sphere( basic::options::option[basic::options::OptionKeys::motifs::ligand_motif_sphere] ) ;
 
-		if (  option[ OptionKeys::motifs::motif_build_positions ].user() ) {
-	  utility::vector1< Size  > design_positions( option[ OptionKeys::motifs::motif_build_positions ]().vector() );
-	for (  Size position( 1); position<=design_positions.size(); ++position){
-				std::cout << "about to run Design position: " << design_positions[position] << std::endl;
-				}
-		motif_search->run( pose, design_positions );
-		} //End if user design positions
-		else {
-		// core::Real
-	core::Real ligand_motif_sphere( basic::options::option[basic::options::OptionKeys::motifs::ligand_motif_sphere] ) ;
+				std::cout << "Using ligand motif sphere of " <<  ligand_motif_sphere << " angstroms." << std::endl;
+				motif_search->run( pose, ligand_motif_sphere );
+			}
+			//protocols::motifs::LigandMotifSearch ligand_search( scorefxn, minimize, pdbprefix );
+			std::cout << "SUCCESSFUL COMPLETION" << std::endl;
 
-		std::cout << "Using ligand motif sphere of " <<  ligand_motif_sphere << " angstroms." << std::endl;
-		motif_search->run( pose, ligand_motif_sphere );
 		}
-		//protocols::motifs::LigandMotifSearch ligand_search( scorefxn, minimize, pdbprefix );
-		std::cout << "SUCCESSFUL COMPLETION" << std::endl;
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	return 0;
 }
 

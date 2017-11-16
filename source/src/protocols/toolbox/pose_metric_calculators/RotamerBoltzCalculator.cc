@@ -68,7 +68,7 @@
 #include <cereal/types/map.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.pose_metric_calculators.RotamerBoltzCalculator" );
+static basic::Tracer TR( "protocols.toolbox.pose_metric_calculators.RotamerBoltzCalculator" );
 
 namespace protocols {
 namespace toolbox {

@@ -56,7 +56,7 @@ using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static THREAD_LOCAL basic::Tracer TR( "protocols.dna.DnaInterfaceMinMover", t_info );
+static basic::Tracer TR( "protocols.dna.DnaInterfaceMinMover", t_info );
 
 // XRW TEMP std::string
 // XRW TEMP DnaInterfaceMinMoverCreator::keyname() const

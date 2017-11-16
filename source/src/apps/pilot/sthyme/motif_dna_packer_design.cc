@@ -27,7 +27,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
+static basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 
 // Utility Headers
 

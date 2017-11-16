@@ -90,7 +90,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-static THREAD_LOCAL basic::Tracer tt( "core.pack.rotamer_set.rotamer_building_functions", basic::t_info );
+static basic::Tracer tt( "core.pack.rotamer_set.rotamer_building_functions", basic::t_info );
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

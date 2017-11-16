@@ -45,7 +45,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.TransformIntoMembraneMover.cxxtest");
+static basic::Tracer TR("protocols.membrane.TransformIntoMembraneMover.cxxtest");
 
 using namespace core;
 using namespace core::conformation::membrane;

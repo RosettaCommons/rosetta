@@ -70,7 +70,7 @@
 namespace protocols {
 namespace rbsegment_relax {
 
-static THREAD_LOCAL basic::Tracer TS( "protocols.moves.RBSegmentRelax" );
+static basic::Tracer TS( "protocols.moves.RBSegmentRelax" );
 using namespace core;
 using basic::Error;
 

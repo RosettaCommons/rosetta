@@ -42,7 +42,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.InterlockingAromaFilter" );
+static basic::Tracer tr( "protocols.fldsgn.filters.InterlockingAromaFilter" );
 
 namespace protocols {
 namespace fldsgn {

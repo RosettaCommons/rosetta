@@ -32,11 +32,10 @@
 #include <utility/file/FileName.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR("");
+static basic::Tracer TR("");
 
 //namespaces
 using namespace core;

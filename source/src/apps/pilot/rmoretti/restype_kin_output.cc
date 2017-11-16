@@ -40,58 +40,58 @@
 
 using namespace basic::options;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.rosetta_retype_check" );
+static basic::Tracer TR( "apps.rosetta_retype_check" );
 
 int
 main( int argc, char * argv [] )
 {
 
-try {
+	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	utility::options::FileVectorOption & fvec
-		= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
+		utility::options::FileVectorOption & fvec
+			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
 
-	core::chemical::ChemicalManager * chem_mang = core::chemical::ChemicalManager::get_instance();
-	core::chemical::AtomTypeSetCAP atom_types = chem_mang->atom_type_set("fa_standard");
-	core::chemical::ElementSetCAP elements = chem_mang->element_set("default");
-	core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
-	core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
+		core::chemical::ChemicalManager * chem_mang = core::chemical::ChemicalManager::get_instance();
+		core::chemical::AtomTypeSetCAP atom_types = chem_mang->atom_type_set("fa_standard");
+		core::chemical::ElementSetCAP elements = chem_mang->element_set("default");
+		core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
+		core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
 
-	core::chemical::ResidueTypeKinWriter kin_writer;
+		core::chemical::ResidueTypeKinWriter kin_writer;
 
-	// We don't need to load all the residue types - just the extra_res_fa ones.
-	// Grab each and go.
+		// We don't need to load all the residue types - just the extra_res_fa ones.
+		// Grab each and go.
 
-	for(core::Size i = 1, e = fvec.size(); i <= e; ++i) {
-		utility::file::FileName fname = fvec[i];
-		std::string filename = fname.name();
+		for ( core::Size i = 1, e = fvec.size(); i <= e; ++i ) {
+			utility::file::FileName fname = fvec[i];
+			std::string filename = fname.name();
 
-		TR << "Processing " << filename << std::endl;
-		core::chemical::ResidueTypeOP restype( read_topology_file(
+			TR << "Processing " << filename << std::endl;
+			core::chemical::ResidueTypeOP restype( read_topology_file(
 				filenam, atom_types, elements, mm_atom_types, orbital_types ) );
 
-		std::string kinname( fname.base() + ".kin" );
+			std::string kinname( fname.base() + ".kin" );
 
-		TR << "Outputting to file " << kinname << std::endl;
+			TR << "Outputting to file " << kinname << std::endl;
 
-		std::ofstream output( kinname.c_str() );
+			std::ofstream output( kinname.c_str() );
 
-		kin_writer.write_restype(output, *restype);
+			kin_writer.write_restype(output, *restype);
 
-		output.close();
+			output.close();
 
+		}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
 
 }
 

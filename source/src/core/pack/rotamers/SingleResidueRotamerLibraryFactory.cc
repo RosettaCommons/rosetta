@@ -36,7 +36,7 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.rotamers.SingleResidueRotamerLibraryFactory");
+static basic::Tracer TR("core.pack.rotamers.SingleResidueRotamerLibraryFactory");
 
 void
 SingleResidueRotamerLibraryFactory::factory_register( SingleResidueRotamerLibraryCreatorOP creator )

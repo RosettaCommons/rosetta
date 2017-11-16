@@ -42,7 +42,7 @@
 #include <numeric/xyzVector.hh>
 
 // static data
-static THREAD_LOCAL basic::Tracer TR( "protocols.sic_dock.read_biounit" );
+static basic::Tracer TR( "protocols.sic_dock.read_biounit" );
 
 using std::endl;
 using core::Real;

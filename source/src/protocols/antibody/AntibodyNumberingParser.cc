@@ -29,7 +29,7 @@
 namespace protocols {
 namespace antibody {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyNumberingParser" );
+static basic::Tracer TR( "protocols.antibody.AntibodyNumberingParser" );
 
 //using namespace boost;
 using utility::vector1;

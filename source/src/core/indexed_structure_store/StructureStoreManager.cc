@@ -34,7 +34,7 @@
 namespace core {
 namespace indexed_structure_store {
 
-static THREAD_LOCAL basic::Tracer TR( "core.indexed_structure_store.StructureStoreManager" );
+static basic::Tracer TR( "core.indexed_structure_store.StructureStoreManager" );
 
 using namespace basic::options;
 using utility::vector1;

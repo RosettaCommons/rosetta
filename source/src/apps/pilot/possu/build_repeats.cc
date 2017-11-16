@@ -76,7 +76,7 @@ typedef std::vector< OptionKey const * > KeyVec;
 
 
 // static
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.possu.build_repeats" );
+static basic::Tracer TR( "apps.pilot.possu.build_repeats" );
 
 void fill_required_options( KeyVec & keys ) {
 	using namespace basic::options::OptionKeys;

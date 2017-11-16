@@ -41,7 +41,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("StructureDataFactoryTests");
+static basic::Tracer TR("StructureDataFactoryTests");
 
 using namespace protocols::denovo_design::components;
 

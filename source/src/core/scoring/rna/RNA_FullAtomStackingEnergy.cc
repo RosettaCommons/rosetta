@@ -89,7 +89,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNA_FullAtomStackingEnergy" );
+static basic::Tracer TR( "core.scoring.rna.RNA_FullAtomStackingEnergy" );
 using namespace core::chemical;
 using namespace core::chemical::rna;
 using namespace basic::options;

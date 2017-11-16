@@ -50,7 +50,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.NetChargeFilter" );
+static basic::Tracer TR( "protocols.simple_filters.NetChargeFilter" );
 
 NetChargeFilter::NetChargeFilter() :
 	Filter( "NetCharge" ),

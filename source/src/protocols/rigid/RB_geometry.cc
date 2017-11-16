@@ -42,11 +42,10 @@
 #define foreach BOOST_FOREACH
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.geometry.RB_geometry" );
+static basic::Tracer TR( "protocols.geometry.RB_geometry" );
 
 using namespace ObjexxFCL;
 

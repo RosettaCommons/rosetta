@@ -71,7 +71,7 @@ typedef std::vector< OptionKey const * > KeyVec;
 
 
 // static
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yab.ufv" );
+static basic::Tracer TR( "apps.pilot.yab.ufv" );
 
 
 void fill_required_options( KeyVec & keys ) {
@@ -227,7 +227,7 @@ core::Size load_loops_from_file(
 	Size count = 0;
 	String line;
 	utility::vector1< String > entries;
-	while( getline( in, line ) ) {
+	while ( getline( in, line ) ) {
 		// split by whitespace " \n\t"
 		boost::tokenizer< boost::char_separator< char > > tokens( line, boost::char_separator< char >( " \n\t" ) );
 		entries.assign( tokens.begin(), tokens.end() );
@@ -253,10 +253,10 @@ core::Size load_loops_from_file(
 
 			bdr.add_instruction(
 				new SegmentRebuild(
-					Interval( left, right ),
-					ss, aa_during_build,
-					core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
-					option[ ufv::keep_junction_torsions ]
+				Interval( left, right ),
+				ss, aa_during_build,
+				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
+				option[ ufv::keep_junction_torsions ]
 				),
 				aa_during_design_refine
 			);
@@ -264,7 +264,7 @@ core::Size load_loops_from_file(
 			++count;
 
 			TR << "added loop: [" << left << ", " << right << "]  " << ss << "  "
-			   << aa_during_build << "  " << aa_during_design_refine << std::endl;
+				<< aa_during_build << "  " << aa_during_design_refine << std::endl;
 
 		} else {
 			// error message
@@ -426,10 +426,10 @@ void * graphics_main( void * ) {
 
 			bdr->add_instruction(
 				new SegmentRebuild(
-					Interval( option[ ufv::left ], option[ ufv::right ] ),
-					option[ ufv::ss ], aa_during_build,
-					core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
-					option[ ufv::keep_junction_torsions ]
+				Interval( option[ ufv::left ], option[ ufv::right ] ),
+				option[ ufv::ss ], aa_during_build,
+				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
+				option[ ufv::keep_junction_torsions ]
 				),
 				aa_during_design_refine
 			);
@@ -483,36 +483,36 @@ void * graphics_main( void * ) {
 
 int main( int argc, char * argv [] ) {
 	try {
-	using namespace basic::options::OptionKeys;
-	using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		using basic::options::option;
 
-	// track options
-	KeyVec required_options;
-	fill_required_options( required_options );
+		// track options
+		KeyVec required_options;
+		fill_required_options( required_options );
 
-	KeyVec optional_options;
-	fill_optional_options( optional_options );
+		KeyVec optional_options;
+		fill_optional_options( optional_options );
 
-	// register options so help file appears correctly
-	register_options( required_options );
-	register_options( optional_options );
+		// register options so help file appears correctly
+		register_options( required_options );
+		register_options( optional_options );
 
-	// initialize rosetta
-	devel::init( argc, argv );
+		// initialize rosetta
+		devel::init( argc, argv );
 
-	// check required options are specified
-	if ( !check_required_options( required_options ) ) {
-		return 1;
-	}
+		// check required options are specified
+		if ( !check_required_options( required_options ) ) {
+			return 1;
+		}
 
-	// check option conflicts
-	if ( !check_option_conflicts() ) {
-		return 1;
-	}
+		// check option conflicts
+		if ( !check_option_conflicts() ) {
+			return 1;
+		}
 
-	protocols::viewer::viewer_main( graphics_main );
-	 } catch ( utility::excn::EXCN_Base const & e ) {
-		 std::cout << "caught exception " << e.msg() << std::endl;
+		protocols::viewer::viewer_main( graphics_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 

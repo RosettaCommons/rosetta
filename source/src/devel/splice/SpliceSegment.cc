@@ -31,7 +31,7 @@
 namespace devel {
 namespace splice {
 
-static THREAD_LOCAL basic::Tracer TR( "devel.splice.SpliceSegment" );
+static basic::Tracer TR( "devel.splice.SpliceSegment" );
 
 using namespace core::sequence;
 using namespace std;

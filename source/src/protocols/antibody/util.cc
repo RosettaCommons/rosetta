@@ -83,7 +83,7 @@
 
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR( "antibody.util" );
+static basic::Tracer TR( "antibody.util" );
 
 
 

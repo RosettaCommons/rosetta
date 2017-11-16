@@ -58,7 +58,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.ShoveResidueMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.ShoveResidueMover" );
 
 // XRW TEMP std::string
 // XRW TEMP ShoveResidueMoverCreator::keyname() const

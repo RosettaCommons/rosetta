@@ -42,7 +42,7 @@
 #include <string>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.geometry.Embedding.cxxtest");
+static basic::Tracer TR("protocols.membrane.geometry.Embedding.cxxtest");
 
 using namespace core;
 using namespace core::pose;

@@ -92,7 +92,7 @@ namespace setup {
 //  to be ported over here. -- rhiju, 2014
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.setup.RNA_DeNovoPoseInitializer" );
+static basic::Tracer TR( "protocols.rna.denovo.setup.RNA_DeNovoPoseInitializer" );
 
 using namespace core;
 

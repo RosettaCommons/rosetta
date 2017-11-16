@@ -51,7 +51,6 @@
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
@@ -70,43 +69,43 @@ using basic::Error;
 int
 main( int argc, char* argv [] )
 {
-    try {
-	// options, random initialization
-	devel::init( argc, argv );
+	try {
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	// setup residue types
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	if ( option[ in::file::fullatom ]() ) {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	} else {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-	}
+		// setup residue types
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		if ( option[ in::file::fullatom ]() ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		} else {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+		}
 
-	// configure silent-file data object
-	std::string infile  = *(option[ in::file::silent ]().begin());
-	core::io::silent::SilentFileData sfd;
-	if ( option[ in::file::silent ].user() ) {
-		sfd.read_file( infile );
-	}
+		// configure silent-file data object
+		std::string infile  = *(option[ in::file::silent ]().begin());
+		core::io::silent::SilentFileData sfd;
+		if ( option[ in::file::silent ].user() ) {
+			sfd.read_file( infile );
+		}
 
-	std::string outfile = option[ out::prefix ]();
+		std::string outfile = option[ out::prefix ]();
 
-	//int counter = 0;
-	for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
-		core::pose::Pose pose;
-		iter->fill_pose( pose, *rsd_set );
+		//int counter = 0;
+		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
+			core::pose::Pose pose;
+			iter->fill_pose( pose, *rsd_set );
 
-		//std::string filename = outfile + "_" + right_string_of(++counter, 8, '0') + ".pdb";
-		std::string filename = outfile + iter->decoy_tag() + ".pdb";
-		core::io::pdb::dump_pdb( pose , filename );
-	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+			//std::string filename = outfile + "_" + right_string_of(++counter, 8, '0') + ".pdb";
+			std::string filename = outfile + iter->decoy_tag() + ".pdb";
+			core::io::pdb::dump_pdb( pose , filename );
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
+	}
 	return 0;
 }

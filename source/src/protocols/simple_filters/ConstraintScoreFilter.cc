@@ -32,7 +32,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ConstraintScoreFilter" );
+static basic::Tracer TR( "protocols.simple_filters.ConstraintScoreFilter" );
 
 namespace protocols {
 namespace simple_filters {

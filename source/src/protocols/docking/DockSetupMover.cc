@@ -54,7 +54,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.docking.DockSetupMover" );
+static basic::Tracer tr( "protocols.docking.DockSetupMover" );
 
 using namespace core;
 

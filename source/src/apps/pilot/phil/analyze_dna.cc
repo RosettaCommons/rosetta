@@ -53,7 +53,6 @@
 #include <core/scoring/constraints/Constraint.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -65,9 +64,9 @@ using utility::vector1;
 using std::string;
 
 
-static THREAD_LOCAL basic::Tracer tt( "demo.phil.analyze_dna", basic::t_trace );
-static THREAD_LOCAL basic::Tracer td( "demo.phil.analyze_dna", basic::t_debug );
-static THREAD_LOCAL basic::Tracer ti( "demo.phil.analyze_dna", basic::t_info );
+static basic::Tracer tt( "demo.phil.analyze_dna", basic::t_trace );
+static basic::Tracer td( "demo.phil.analyze_dna", basic::t_debug );
+static basic::Tracer ti( "demo.phil.analyze_dna", basic::t_info );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -110,16 +109,16 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-// 	{ // add any new options
-// 		using namespace utility::options;
-// 		BooleanOptionKey const myopt = BooleanOptionKey("phil:dof_constraint_weight");
-// 		option.add(myopt, "Does nothing, nothing at all");
-// 	}
+		//  { // add any new options
+		//   using namespace utility::options;
+		//   BooleanOptionKey const myopt = BooleanOptionKey("phil:dof_constraint_weight");
+		//   option.add(myopt, "Does nothing, nothing at all");
+		//  }
 
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

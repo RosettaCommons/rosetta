@@ -40,7 +40,7 @@
 namespace protocols {
 namespace legacy_sewing  {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.legacy_sewing.Hasher");
+static basic::Tracer TR("protocols.legacy_sewing.Hasher");
 
 Hasher::Hasher(){
 	hash_map_.clear();
@@ -82,7 +82,7 @@ Hasher::score_one(
 	}
 	runtime_assert(alignment_scores.size() == 1);
 	//runtime_assert(alignment_scores.begin()->second.segment_matches.size() == 2);
-	if ( TR.Debug ) {
+	if ( TR.Debug.visible() ) {
 		std::map< SegmentPair, AtomMap > segment_matches = alignment_scores.begin()->second.segment_matches;
 		TR.Debug << "After scoring once." << std::endl;
 		TR.Debug << "Models: " << m1.model_id_ << " " << m2.model_id_ << std::endl;

@@ -36,7 +36,7 @@
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("StepWiseMoveSelectorTest");
+static basic::Tracer TR("StepWiseMoveSelectorTest");
 
 
 class StepWiseMoveSelectorTest : public CxxTest::TestSuite {

@@ -48,13 +48,12 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using core::pose::Pose;
 
 
-static THREAD_LOCAL basic::Tracer TR( "thread_bb" );
+static basic::Tracer TR( "thread_bb" );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,75 +61,75 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-  using namespace core;
-  using namespace basic::options;
-  using namespace std;
+		using namespace core;
+		using namespace basic::options;
+		using namespace std;
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  pose::Pose trg_pose;
-  Size tfirst_res, tanchor_res, nres;
-  // verify input params
-  if (!option[ OptionKeys::out::file::o ].user() ||
-    !option[ OptionKeys::threadsc::trg_chain ].user() ||
-    !option[ OptionKeys::threadsc::trg_first_resid ].user() ||
-    !option[ OptionKeys::threadsc::nres ].user() ||
-    !option[ OptionKeys::threadsc::trg_anchor ].user()
-  ) {
-    TR  << "Usage: " << endl <<
-      argv[0] << endl <<
-      "  -s <fname> -out:file:<output_file> -database <minirosetta_db>"  << endl <<
-      "  -threadsc:trg_chain:<chain> -threadsc:trg_first_resid:<resid>" << endl <<
-      "  -threadsc:trg_anchor:<resid> -threadsc:nres <# residues>" << endl;
+		pose::Pose trg_pose;
+		Size tfirst_res, tanchor_res, nres;
+		// verify input params
+		if ( !option[ OptionKeys::out::file::o ].user() ||
+				!option[ OptionKeys::threadsc::trg_chain ].user() ||
+				!option[ OptionKeys::threadsc::trg_first_resid ].user() ||
+				!option[ OptionKeys::threadsc::nres ].user() ||
+				!option[ OptionKeys::threadsc::trg_anchor ].user()
+				) {
+			TR  << "Usage: " << endl <<
+				argv[0] << endl <<
+				"  -s <fname> -out:file:<output_file> -database <minirosetta_db>"  << endl <<
+				"  -threadsc:trg_chain:<chain> -threadsc:trg_first_resid:<resid>" << endl <<
+				"  -threadsc:trg_anchor:<resid> -threadsc:nres <# residues>" << endl;
 
-    exit(-1);
-  }
-  // read poses
-  core::import_pose::pose_from_file( trg_pose, basic::options::start_file() , core::import_pose::PDB_file);
-  string output_fname = option[ OptionKeys::out::file::o ];
-  // compute threading range
-  string tchain_pdb = option[ OptionKeys::threadsc::trg_chain ];
-  Size tresi_pdb =  option[ OptionKeys::threadsc::trg_first_resid ];
-  Size tanchor_pdb = option[ OptionKeys::threadsc::trg_anchor ];
-  tfirst_res = trg_pose.pdb_info()->pdb2pose(tchain_pdb[0],tresi_pdb);
-  tanchor_res = trg_pose.pdb_info()->pdb2pose(tchain_pdb[0],tanchor_pdb);
-  nres = option[ OptionKeys::threadsc::nres ];
-  TR << "anchor residue pdb/pose = " << tanchor_pdb << "/" << tanchor_res << endl;
-  // TODO: also verify no overflow within the same chain
-  if( tfirst_res + nres - 1 > trg_pose.size() ||  // target out of range
-    tanchor_res > trg_pose.size()  // anchor out of range
-  ) {
-    TR << "ERROR: specified resiude IDs beyond range" << std::endl;
-    exit(-1);
-  }
-  // set anchor residue that would remain fixed
-  kinematics::FoldTree ft = trg_pose.fold_tree();
-  if(!ft.is_root(tanchor_res)){
-    // First force anchor to be a vertex in the fold tree
-    if(!ft.is_jump_point(tanchor_res) && !ft.is_cutpoint(tanchor_res)) {
-      using namespace kinematics;
-      Edge e = ft.get_residue_edge(tanchor_res);
-      ft.add_edge( e.start(), tanchor_res, Edge::PEPTIDE );
-      ft.add_edge( tanchor_res, e.stop(), Edge::PEPTIDE );
-      ft.delete_edge( e );
-    }
-    ft.reorder(tanchor_res);
-    ft.delete_extra_vertices();
-    ft.delete_self_edges();
-    trg_pose.fold_tree(ft);
-  }
-  TR << "Fold-tree: " << ft << endl;
-  // copy backbone
-  TR << "Extending residues in [" << basic::options::start_file() << "]" << endl;
-  for(Size i=0; i < nres; i++) {
-    Size tresi = tfirst_res + i;
-    trg_pose.set_phi(tresi, -135);
-    trg_pose.set_psi(tresi, 135);
-  }
+			exit(-1);
+		}
+		// read poses
+		core::import_pose::pose_from_file( trg_pose, basic::options::start_file() , core::import_pose::PDB_file);
+		string output_fname = option[ OptionKeys::out::file::o ];
+		// compute threading range
+		string tchain_pdb = option[ OptionKeys::threadsc::trg_chain ];
+		Size tresi_pdb =  option[ OptionKeys::threadsc::trg_first_resid ];
+		Size tanchor_pdb = option[ OptionKeys::threadsc::trg_anchor ];
+		tfirst_res = trg_pose.pdb_info()->pdb2pose(tchain_pdb[0],tresi_pdb);
+		tanchor_res = trg_pose.pdb_info()->pdb2pose(tchain_pdb[0],tanchor_pdb);
+		nres = option[ OptionKeys::threadsc::nres ];
+		TR << "anchor residue pdb/pose = " << tanchor_pdb << "/" << tanchor_res << endl;
+		// TODO: also verify no overflow within the same chain
+		if ( tfirst_res + nres - 1 > trg_pose.size() ||  // target out of range
+				tanchor_res > trg_pose.size()  // anchor out of range
+				) {
+			TR << "ERROR: specified resiude IDs beyond range" << std::endl;
+			exit(-1);
+		}
+		// set anchor residue that would remain fixed
+		kinematics::FoldTree ft = trg_pose.fold_tree();
+		if ( !ft.is_root(tanchor_res) ) {
+			// First force anchor to be a vertex in the fold tree
+			if ( !ft.is_jump_point(tanchor_res) && !ft.is_cutpoint(tanchor_res) ) {
+				using namespace kinematics;
+				Edge e = ft.get_residue_edge(tanchor_res);
+				ft.add_edge( e.start(), tanchor_res, Edge::PEPTIDE );
+				ft.add_edge( tanchor_res, e.stop(), Edge::PEPTIDE );
+				ft.delete_edge( e );
+			}
+			ft.reorder(tanchor_res);
+			ft.delete_extra_vertices();
+			ft.delete_self_edges();
+			trg_pose.fold_tree(ft);
+		}
+		TR << "Fold-tree: " << ft << endl;
+		// copy backbone
+		TR << "Extending residues in [" << basic::options::start_file() << "]" << endl;
+		for ( Size i=0; i < nres; i++ ) {
+			Size tresi = tfirst_res + i;
+			trg_pose.set_phi(tresi, -135);
+			trg_pose.set_psi(tresi, 135);
+		}
 
-  // output overlayed pose
-  TR << "Output to [" << output_fname << "]" << endl;
-  core::io::pdb::dump_pdb(trg_pose, output_fname);
+		// output overlayed pose
+		TR << "Output to [" << output_fname << "]" << endl;
+		core::io::pdb::dump_pdb(trg_pose, output_fname);
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

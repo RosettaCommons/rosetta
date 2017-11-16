@@ -51,7 +51,7 @@ namespace core {
 namespace kinematics {
 namespace tree {
 
-static THREAD_LOCAL basic::Tracer TR("core.kinematics.tree.BondedAtom");
+static basic::Tracer TR("core.kinematics.tree.BondedAtom");
 
 /// @details Invokes Atom_ dfs function before, optionally recursing to younger siblings
 /// should those younger siblings be effected by a DOF change on this node (e.g. phi_ change).

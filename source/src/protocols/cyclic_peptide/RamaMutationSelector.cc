@@ -51,7 +51,7 @@
 #endif // SERIALIZATION
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.RamaMutationSelector" );
+static basic::Tracer TR( "protocols.cyclic_peptide.RamaMutationSelector" );
 
 namespace protocols {
 namespace cyclic_peptide {

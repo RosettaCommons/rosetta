@@ -118,7 +118,6 @@ void transform_pose( core::pose::Pose & pose,utility::vector1<core::Real> const 
 {
 	using core::Size;
 	using core::Real;
-	using basic::Warning;
 	using namespace core::id;
 	using namespace core::scoring;
 	using core::kinematics::Jump;

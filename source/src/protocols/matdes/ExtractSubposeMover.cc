@@ -43,7 +43,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.ExtractSubposeMover" );
+static basic::Tracer TR( "protocols.matdes.ExtractSubposeMover" );
 
 namespace protocols {
 namespace matdes {

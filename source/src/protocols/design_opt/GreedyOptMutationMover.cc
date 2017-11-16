@@ -57,7 +57,7 @@
 namespace protocols {
 namespace design_opt {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.design_opt.GreedyOptMutationMover" );
+static basic::Tracer TR( "protocols.design_opt.GreedyOptMutationMover" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;

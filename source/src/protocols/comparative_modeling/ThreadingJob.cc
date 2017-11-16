@@ -36,6 +36,8 @@
 namespace protocols {
 namespace comparative_modeling {
 
+static basic::Tracer tr( "protocols.comparative_modeling.ThreadingJob" );
+
 ThreadingJob::ThreadingJob(
 	core::pose::PoseCOP template_pdb,
 	core::sequence::SequenceAlignmentCOP alignment,
@@ -46,7 +48,6 @@ ThreadingJob::ThreadingJob(
 
 	//fpd  Make a transitve map from the template alignment to the template pdb seq
 	//fpd  Accounts for missing density in the PDB
-	basic::Tracer tr( "protocols.comparative_modeling.ThreadingJob" );
 	using namespace core::sequence;
 
 	SequenceOP query_sequence( new Sequence(

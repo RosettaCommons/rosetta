@@ -33,7 +33,7 @@
 
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filters.PDDFScoreFilter" );
+static basic::Tracer tr( "protocols.simple_filters.PDDFScoreFilter" );
 
 namespace protocols {
 namespace simple_filters {

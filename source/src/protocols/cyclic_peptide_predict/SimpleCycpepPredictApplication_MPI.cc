@@ -78,8 +78,8 @@
 #include <thread>
 #endif
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI" );
-static THREAD_LOCAL basic::Tracer TR_summary( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI_summary" );
+static basic::Tracer TR( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI" );
+static basic::Tracer TR_summary( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI_summary" );
 
 namespace protocols {
 namespace cyclic_peptide_predict {

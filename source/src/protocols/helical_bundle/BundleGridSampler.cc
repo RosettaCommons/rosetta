@@ -60,14 +60,13 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace helical_bundle {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.BundleGridSampler");
+static basic::Tracer TR("protocols.helical_bundle.BundleGridSampler");
 
 // XRW TEMP std::string
 // XRW TEMP BundleGridSamplerCreator::keyname() const

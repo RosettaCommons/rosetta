@@ -71,7 +71,7 @@
 namespace devel {
 namespace loop_creation {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.LoophashLoopInserter" );
+static basic::Tracer TR( "protocols.loophash.LoophashLoopInserter" );
 
 //****CREATOR METHODS****//
 // XRW TEMP std::string

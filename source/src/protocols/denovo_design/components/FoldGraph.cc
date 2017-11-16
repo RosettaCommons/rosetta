@@ -34,7 +34,7 @@
 
 //C++ Headers
 
-static THREAD_LOCAL basic::Tracer TR("protocols.denovo_design.components.FoldGraph");
+static basic::Tracer TR("protocols.denovo_design.components.FoldGraph");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

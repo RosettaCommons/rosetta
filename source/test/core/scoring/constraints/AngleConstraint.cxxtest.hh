@@ -44,7 +44,6 @@
 #endif
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

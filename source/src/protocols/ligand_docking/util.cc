@@ -34,7 +34,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.util" );
+static basic::Tracer TR( "protocols.ligand_docking.util" );
 
 /// @brief Move the center of specified chain to the desired_centroid
 void move_ligand_to_desired_centroid(

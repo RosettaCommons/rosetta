@@ -51,7 +51,7 @@
 #include <atomic>
 #endif
 
-static THREAD_LOCAL basic::Tracer TR("test_multithreaded_ramapp_load");
+static basic::Tracer TR("test_multithreaded_ramapp_load");
 
 OPT_KEY( String, testname )
 

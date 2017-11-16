@@ -45,7 +45,7 @@ using namespace protocols::stepwise::sampler::screener;
 using namespace protocols::stepwise::monte_carlo::mover;
 using namespace protocols::stepwise::sampler::rna;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_KIC_Sampler" );
+static basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_KIC_Sampler" );
 
 namespace protocols {
 namespace recces {

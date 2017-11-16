@@ -45,7 +45,7 @@ namespace loops {
 /// @details Auto-generated virtual destructor
 Loop::~Loop() = default;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.loops.Loop" );
+static basic::Tracer tr( "protocols.loops.Loop" );
 
 /// @brief switch DOF_Type for residues in loop. id::CHI, id::BB --- don't use
 /// with id::JUMP

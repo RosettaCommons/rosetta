@@ -53,104 +53,104 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_foldtree" );
+static basic::Tracer TR( "apps.pilot.ralford.membrane_foldtree" );
 
 /// @brief Load Membrane Pose
 core::pose::PoseOP load_pose() {
-    
-    using namespace core::import_pose;
-    using namespace core::pose;
-    
-    TR << "Loading 1afo from PDB" << std::endl;
-    PoseOP pose = new Pose();
-    pose_from_file( *pose, "test/core/membrane/io/1afo_test.pdb" , core::import_pose::PDB_file);
-    
-    return pose;
+
+	using namespace core::import_pose;
+	using namespace core::pose;
+
+	TR << "Loading 1afo from PDB" << std::endl;
+	PoseOP pose = new Pose();
+	pose_from_file( *pose, "test/core/membrane/io/1afo_test.pdb" , core::import_pose::PDB_file);
+
+	return pose;
 }
 
 /// @brief Add Membrane and Embedding virtual residues
 void add_vrts( core::pose::PoseOP pose ) {
-    
-    using namespace core::chemical;
-    using namespace core::conformation;
-    
-    TR << "Adding membrane and embedding style virtual residues at the appropriate jumps" << std::endl;
-    // Option Setting for residue type set
-    ResidueTypeSetCAP const & residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ));
-    core::chemical::ResidueTypeCOPs const & rsd_type_list1( residue_set->name3_map("VRT") );
-    core::chemical::ResidueType const & virtuals( *rsd_type_list1[1] );
-    
-    // Create three virtual residues
-    core::conformation::ResidueOP vrt1( core::conformation::ResidueFactory::create_residue(virtuals) );
-    core::conformation::ResidueOP vrt2( core::conformation::ResidueFactory::create_residue(virtuals) );
-    core::conformation::ResidueOP vrt3( core::conformation::ResidueFactory::create_residue(virtuals) );
-    
-    // Setting up traditional membrane-style coordinates (vrt1 simulates the membrane)
-    core::Vector center(0, 0, 0);
-    core::Vector normal(0, 0, 1);
-    core::Vector depth( 1, 30.0, 1);
 
-    vrt1->set_xyz( 1, center );
-    vrt1->set_xyz( 2, normal );
-    vrt1->set_xyz( 3, depth );
+	using namespace core::chemical;
+	using namespace core::conformation;
 
-    // doing this for 2 and 3 as a quick fix
-    vrt2->set_xyz( 3, depth );
-    vrt3->set_xyz( 3, depth );
-    
-    // Add virtual residues to the existing pose
-    pose->append_residue_by_jump( *vrt1, 1, "", "", true);
-    pose->append_residue_by_jump( *vrt2, 1 );
-    pose->append_residue_by_jump( *vrt3, 41 );
-    
-    // Add an nterm patch
-    
-    return;
+	TR << "Adding membrane and embedding style virtual residues at the appropriate jumps" << std::endl;
+	// Option Setting for residue type set
+	ResidueTypeSetCAP const & residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ));
+	core::chemical::ResidueTypeCOPs const & rsd_type_list1( residue_set->name3_map("VRT") );
+	core::chemical::ResidueType const & virtuals( *rsd_type_list1[1] );
+
+	// Create three virtual residues
+	core::conformation::ResidueOP vrt1( core::conformation::ResidueFactory::create_residue(virtuals) );
+	core::conformation::ResidueOP vrt2( core::conformation::ResidueFactory::create_residue(virtuals) );
+	core::conformation::ResidueOP vrt3( core::conformation::ResidueFactory::create_residue(virtuals) );
+
+	// Setting up traditional membrane-style coordinates (vrt1 simulates the membrane)
+	core::Vector center(0, 0, 0);
+	core::Vector normal(0, 0, 1);
+	core::Vector depth( 1, 30.0, 1);
+
+	vrt1->set_xyz( 1, center );
+	vrt1->set_xyz( 2, normal );
+	vrt1->set_xyz( 3, depth );
+
+	// doing this for 2 and 3 as a quick fix
+	vrt2->set_xyz( 3, depth );
+	vrt3->set_xyz( 3, depth );
+
+	// Add virtual residues to the existing pose
+	pose->append_residue_by_jump( *vrt1, 1, "", "", true);
+	pose->append_residue_by_jump( *vrt2, 1 );
+	pose->append_residue_by_jump( *vrt3, 41 );
+
+	// Add an nterm patch
+
+	return;
 }
 
 /// @brief Modify the current fold tree topology
 void modify_foldtree( core::pose::PoseOP pose ) {
-    
-    using namespace core::membrane;
-    
-    TR << "Constructing a new conformation" << std::endl;
-    
-    // Setup the embedding residue map
-    std::map< int, int > embres_map;
-    embres_map.insert( std::pair< int, int >( 1, 82 ) );
-    embres_map.insert( std::pair< int, int >( 2, 83 ) );
-    
-    // Setup the membrane root
-    int membrane = 81;
-    
-    MembraneConformationOP mp_conf( new MembraneConformation( pose->conformation(), embres_map, membrane ));
+
+	using namespace core::membrane;
+
+	TR << "Constructing a new conformation" << std::endl;
+
+	// Setup the embedding residue map
+	std::map< int, int > embres_map;
+	embres_map.insert( std::pair< int, int >( 1, 82 ) );
+	embres_map.insert( std::pair< int, int >( 2, 83 ) );
+
+	// Setup the membrane root
+	int membrane = 81;
+
+	MembraneConformationOP mp_conf( new MembraneConformation( pose->conformation(), embres_map, membrane ));
 }
 
 /// @brief Main Function
 int main( int argc, char* argv[] )
 {
-    try {
-        
-        // Initialize Options System, RG, and All Factory_Registrators
-        devel::init(argc, argv);
-        
-        TR << "Pilot App: Membrane Fold Tree" << std::endl;
-        TR << "Author: Rebecca Alford" << std::endl;
-        TR << "Testing membrane foldtree topologies" << std::endl;
+	try {
 
-        // Set up a pose from pdb
-        core::pose::PoseOP pose = load_pose();
-        
-        // Add virtual residues
-        add_vrts(pose);
-        
-        // Integrate and print consecutive fold trees
-        modify_foldtree(pose);
-        
-        TR << "Done!" << std::endl;
-        
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cout << "caught exception " << e.msg() << std::endl;
-    }
+		// Initialize Options System, RG, and All Factory_Registrators
+		devel::init(argc, argv);
+
+		TR << "Pilot App: Membrane Fold Tree" << std::endl;
+		TR << "Author: Rebecca Alford" << std::endl;
+		TR << "Testing membrane foldtree topologies" << std::endl;
+
+		// Set up a pose from pdb
+		core::pose::PoseOP pose = load_pose();
+
+		// Add virtual residues
+		add_vrts(pose);
+
+		// Integrate and print consecutive fold trees
+		modify_foldtree(pose);
+
+		TR << "Done!" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 

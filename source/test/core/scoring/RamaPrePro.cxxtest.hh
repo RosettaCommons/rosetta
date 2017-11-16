@@ -43,7 +43,7 @@
 #include <basic/Tracer.hh>
 #include <sstream>
 
-static THREAD_LOCAL basic::Tracer TR("RamaPreProTests");
+static basic::Tracer TR("RamaPreProTests");
 
 
 class RamaPreProTests : public CxxTest::TestSuite {

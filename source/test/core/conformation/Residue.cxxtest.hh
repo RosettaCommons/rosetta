@@ -40,7 +40,7 @@
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.Residue.cxxtest" );
+static basic::Tracer TR( "core.conformation.Residue.cxxtest" );
 
 using core::pose::Pose;
 using core::conformation::PseudoBond;

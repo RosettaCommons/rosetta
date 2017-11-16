@@ -38,7 +38,7 @@
 #include <boost/algorithm/string.hpp>
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.NomenclatureManager" );
+static basic::Tracer TR( "core.io.pdb.NomenclatureManager" );
 
 namespace core {
 namespace io {

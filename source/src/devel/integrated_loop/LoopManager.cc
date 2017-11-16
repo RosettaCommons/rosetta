@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: LoopModeler
+///   Contains currently: LoopModeler
 ///
 ///
 /// @author Vatsan Raman
@@ -31,7 +31,6 @@
 
 //C++ headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -40,7 +39,7 @@ namespace protocols {
 namespace moves {
 
 
-static THREAD_LOCAL basic::Tracer TR( "devel.IntegratedLoop.LoopManager" );
+static basic::Tracer TR( "devel.IntegratedLoop.LoopManager" );
 using namespace core;
 
 //v typedef utility::vector1< protocols::Loop > Loops;
@@ -50,7 +49,7 @@ using namespace core;
 //////////////////////////////////////////////////////////////////////////
 /*Size LoopManager::NumSingleLoops()
 {
-	return LoopList_.size();
+return LoopList_.size();
 }
 */
 //////////////////////////////////////////////////////////////////////////
@@ -61,14 +60,14 @@ loops::Loops LoopManager::LoopsToPerturb()
 
 	std::cout << "LoopManager " << pose_.size() << std::endl;
 
-	for ( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end(); it != it_end; ++it; )
-		{
-			float skip_rate_random = numeric::random::rg().uniform();
-			std::cout << "skip_rate_random " << skip_rate_random << std::endl;
-			if( skip_rate_random > it->skip_rate() )
-				//				tmpLoops.push_back( VaryStems( VaryCutpoint( *it ) ) );
-				if( skip_rate_random > it->skip_rate() ) tmpLoops.push_back( VaryStems( VaryCutpoint( *it ) ) );
+	for ( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end(); it != it_end; ++it; ) {
+		float skip_rate_random = numeric::random::rg().uniform();
+		std::cout << "skip_rate_random " << skip_rate_random << std::endl;
+		if ( skip_rate_random > it->skip_rate() ) {
+			//    tmpLoops.push_back( VaryStems( VaryCutpoint( *it ) ) );
+			if ( skip_rate_random > it->skip_rate() ) tmpLoops.push_back( VaryStems( VaryCutpoint( *it ) ) );
 		}
+	}
 
 	return tmpLoops;
 
@@ -79,7 +78,7 @@ bool LoopManager::IsNtermLoop(
 );
 {
 
-	if( ThisLoop.loop_begin() == 1 ) return true;
+	if ( ThisLoop.loop_begin() == 1 ) return true;
 	return false;
 
 }
@@ -89,7 +88,7 @@ bool LoopManager::IsCtermLoop(
 );
 {
 
-	if( ThisLoop.loop_end() == pose_.size() ) return true;
+	if ( ThisLoop.loop_end() == pose_.size() ) return true;
 	return false;
 
 }
@@ -97,16 +96,16 @@ bool LoopManager::IsCtermLoop(
 void LoopManager::ReorderLoops()
 {
 
-	if( LoopList_.size() <= 1 ) return;
+	if ( LoopList_.size() <= 1 ) return;
 	loops new_loop_list;
 	LoopsIt it_begin = LoopList_.begin();
 	new_loop_list.push_back( *it_begin );
 
 	for ( LoopsIt it = ++it_begin, it_end = LoopList_.end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		bool inserted = false;
-		for( LoopsIt it2 = new_loop_list.begin(), it2_end = new_loop_list.end();
-				 it2 != it2_end; ++it2 ) {
+		for ( LoopsIt it2 = new_loop_list.begin(), it2_end = new_loop_list.end();
+				it2 != it2_end; ++it2 ) {
 			if ( it->loop_begin() < it2->loop_begin() ) {
 				new_loop_list.insert( it2, *it );
 				inserted = true;
@@ -128,13 +127,13 @@ Loop LoopManager::PreviousLoop(
 {
 
 	Loop tmp_loop;
-	for( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end();
-			 it != it_end; ++it )
-		{
-			if( it->loop_begin() == ThisLoop.loop_begin() &&
-				it->loop_end() == ThisLoop.loop_end() )
-				tmp_loop = *( it - 1 );
+	for ( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end();
+			it != it_end; ++it ) {
+		if ( it->loop_begin() == ThisLoop.loop_begin() &&
+				it->loop_end() == ThisLoop.loop_end() ) {
+			tmp_loop = *( it - 1 );
 		}
+	}
 
 	return tmp_loop;
 }
@@ -145,13 +144,13 @@ Loop LoopManager::NextLoop(
 {
 
 	Loop tmp_loop;
-	for( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end();
-			 it != it_end; ++it )
-		{
-			if( it->loop_begin() == ThisLoop.loop_begin() &&
-				it->loop_end() == ThisLoop.loop_end() )
-				tmp_loop = *( it + 1 );
+	for ( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end();
+			it != it_end; ++it ) {
+		if ( it->loop_begin() == ThisLoop.loop_begin() &&
+				it->loop_end() == ThisLoop.loop_end() ) {
+			tmp_loop = *( it + 1 );
 		}
+	}
 	return tmp_loop;
 }
 
@@ -161,9 +160,10 @@ bool LoopManager::IsFirstLoop(
 )
 {
 
-	if( LoopList_.front().loop_begin() == ThisLoop.loop_begin() &&
-		LoopList_.front().loop_end() == ThisLoop.loop_end() )
+	if ( LoopList_.front().loop_begin() == ThisLoop.loop_begin() &&
+			LoopList_.front().loop_end() == ThisLoop.loop_end() ) {
 		return true;
+	}
 	return false;
 
 }
@@ -175,9 +175,10 @@ bool LoopManager::IsLastLoop(
 )
 {
 
-	if( LoopList_.back().loop_begin() == ThisLoop.loop_begin() &&
-		LoopList_.back().loop_end() == ThisLoop.loop_end() )
+	if ( LoopList_.back().loop_begin() == ThisLoop.loop_begin() &&
+			LoopList_.back().loop_end() == ThisLoop.loop_end() ) {
 		return true;
+	}
 	return false;
 
 
@@ -191,27 +192,27 @@ Loop LoopManager::VaryStems(
 	int window_size = 5;//Not sure if this is the right size.
 	Size stem_vary_window_n = 0;
 	Size stem_vary_window_c = 0;
-	if( !IsFirstLoop( ThisLoop ) && !IsLastLoop( ThisLoop ) ) {
+	if ( !IsFirstLoop( ThisLoop ) && !IsLastLoop( ThisLoop ) ) {
 
 		stem_vary_window_n = std::min( window_size, int( ThisLoop.loop_begin() -
-				PreviousLoop( ThisLoop ).loop_end() ) );
+			PreviousLoop( ThisLoop ).loop_end() ) );
 
 		stem_vary_window_c = std::min( window_size, int( NextLoop( ThisLoop ).loop_begin() -
-				ThisLoop.loop_end() ) );
+			ThisLoop.loop_end() ) );
 	} else if ( !IsFirstLoop( ThisLoop )  && IsLastLoop( ThisLoop ) ) {
 		stem_vary_window_n = std::min( window_size, int( ThisLoop.loop_begin() -
-				PreviousLoop( ThisLoop ).loop_end() ) );
-		if( !IsCtermLoop( ThisLoop ) ) {
+			PreviousLoop( ThisLoop ).loop_end() ) );
+		if ( !IsCtermLoop( ThisLoop ) ) {
 			stem_vary_window_c = std::min( window_size, int( pose_.size()  -
-					ThisLoop.loop_end() ) );
+				ThisLoop.loop_end() ) );
 		} else {
 			stem_vary_window_c = 0;
 		}
 	} else if ( !IsLastLoop( ThisLoop )  && IsFirstLoop( ThisLoop ) ) {
 
 		stem_vary_window_c = std::min( window_size, int( NextLoop( ThisLoop ).loop_begin() -
-				ThisLoop.loop_end() ) );
-		if( !IsNtermLoop( ThisLoop ) ) {
+			ThisLoop.loop_end() ) );
+		if ( !IsNtermLoop( ThisLoop ) ) {
 			stem_vary_window_n = std::min( window_size, int( ThisLoop.loop_begin() ) );
 		} else {
 			stem_vary_window_n = 0;
@@ -220,7 +221,7 @@ Loop LoopManager::VaryStems(
 
 		stem_vary_window_n = std::min( window_size, int( ThisLoop.loop_begin() ) );
 		stem_vary_window_c = std::min( window_size, int( pose_.size() -
-				ThisLoop.loop_end() ) );
+			ThisLoop.loop_end() ) );
 	}
 
 
@@ -237,14 +238,14 @@ Loop LoopManager::VaryCutpoint(
 	Loop const & ThisLoop
 )
 {
-	if( ThisLoop.cutpoint() != 0 ) return ThisLoop;
+	if ( ThisLoop.cutpoint() != 0 ) return ThisLoop;
 
 	Size const loop_size( ThisLoop.loop_end() - ThisLoop.loop_begin() );
 	Size const n_cutpoints( loop_size - 1 );
 	std::vector< Real > cut_weight;
 	Real total_cut_weight( 0.0 );
 
-	for( Size i = 1; i <= n_cutpoints; ++i ) {
+	for ( Size i = 1; i <= n_cutpoints; ++i ) {
 		Real const weight( std::max( i, n_cutpoints - i + 1 ) );
 		total_cut_weight += weight;
 		cut_weight.push_back( total_cut_weight );
@@ -252,14 +253,14 @@ Loop LoopManager::VaryCutpoint(
 
 
 	Size cutpoint( 0 );
-	if( ThisLoop.loop_begin() > 1 && ThisLoop.loop_end() < pose_.size() ) {
+	if ( ThisLoop.loop_begin() > 1 && ThisLoop.loop_end() < pose_.size() ) {
 
 		Size nfail( 0 );
 		do {
 			nfail++;
 			Real const weight( total_cut_weight*loopmanager_RG.uniform() );
-			for( Size i = 1; i <= n_cutpoints; ++i ) {
-				if( weight <= cut_weight.at( i - 1 ) ) {
+			for ( Size i = 1; i <= n_cutpoints; ++i ) {
+				if ( weight <= cut_weight.at( i - 1 ) ) {
 					cutpoint = ThisLoop.loop_begin() + i - 1;
 					break;
 				}
@@ -267,10 +268,10 @@ Loop LoopManager::VaryCutpoint(
 			}
 
 		} while( nfail < 20 ); //Need to add secondary structure logic here
-		if( cutpoint == 0 ) {//not sure if it is actually needed though
+		if ( cutpoint == 0 ) { //not sure if it is actually needed though
 			cutpoint = ThisLoop.loop_begin() + n_cutpoints/2;
 			Warning() << "cutpoint choice problem; setting cutpoint = "
-								<< cutpoint << "\n";
+				<< cutpoint << "\n";
 		}
 	} else if ( ThisLoop.loop_begin() == 1 ) {
 		cutpoint = 1;

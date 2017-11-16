@@ -74,7 +74,7 @@ using namespace basic::options::OptionKeys;
 
 OPT_KEY( Boolean, dump )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kkappel.score_rnp_lowres" );
+static basic::Tracer TR( "apps.pilot.kkappel.score_rnp_lowres" );
 
 void check_structures() {
 

@@ -42,7 +42,7 @@ using basic::Error;
 using basic::Warning;
 using std::ofstream;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.simple_rotamer_recovery" );
+static basic::Tracer TR( "apps.pilot.jkleman.simple_rotamer_recovery" );
 
 ////////////////////////////////////////////////////////////////////////////////
 

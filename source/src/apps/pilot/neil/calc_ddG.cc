@@ -76,7 +76,7 @@
 // Added 101103
 //Auto Headers
 
-static THREAD_LOCAL basic::Tracer TR( "design_symm" );
+static basic::Tracer TR( "design_symm" );
 
 using std::string;
 using ObjexxFCL::string_of;
@@ -90,20 +90,20 @@ typedef vector1<Size> Sizes;
 
 void
 *dostuff(void*) {
-  using namespace core;
-  using namespace basic;
-  using namespace options;
-  using namespace OptionKeys;
-  using namespace pose;
-  using namespace core::conformation::symmetry;
-  using namespace scoring;
-  using namespace utility;
-  using basic::options::option;
+	using namespace core;
+	using namespace basic;
+	using namespace options;
+	using namespace OptionKeys;
+	using namespace pose;
+	using namespace core::conformation::symmetry;
+	using namespace scoring;
+	using namespace utility;
+	using basic::options::option;
 
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
 	utility::vector1<std::string> files = option[in::file::s]();
-	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
+	for ( Size ifile = 1; ifile <= files.size(); ++ifile ) {
 		std::string file = files[ifile];
 
 		// Read in pose
@@ -141,15 +141,15 @@ int
 main (int argc, char *argv[])
 {
 	try{
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	void* (*func)(void*) = &dostuff;
+		void* (*func)(void*) = &dostuff;
 
-	if (basic::options::option[ basic::options::OptionKeys::parser::view ]()) {
-		protocols::viewer::viewer_main( func );
-	} else {
-		func(NULL);
-	}
+		if ( basic::options::option[ basic::options::OptionKeys::parser::view ]() ) {
+			protocols::viewer::viewer_main( func );
+		} else {
+			func(NULL);
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

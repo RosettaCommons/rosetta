@@ -44,13 +44,12 @@
 #include <iostream>
 #include <string>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using core::pose::Pose;
 
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_app.phoshporylate_position" );
+static basic::Tracer TR( "pilot_app.phoshporylate_position" );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,38 +58,38 @@ main( int argc, char * argv [] )
 {
 	try {
 
-  using namespace core;
-  using namespace basic::options;
-  using namespace std;
+		using namespace core;
+		using namespace basic::options;
+		using namespace std;
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  pose::Pose pose;
+		pose::Pose pose;
 
-	// verify inputs
-  if ( !option[ OptionKeys::out::file::o ].user() ||
-    !option[ OptionKeys::run::chain ].user() ||
-	 !option[ OptionKeys::threadsc::nres ].user()  // # TODO: I "ride" here over the old nres, better find a param of our own...
-  ) {
-    TR  << "Usage: " << endl <<
-      argv[0] << endl <<
-      "  -s <fname> -chain <chain> -threadsc::nres <resid>" << endl <<
-			"  -o <outfile> -database <minirosetta_db>"  << endl;
-    exit(-1);
-  }
+		// verify inputs
+		if ( !option[ OptionKeys::out::file::o ].user() ||
+				!option[ OptionKeys::run::chain ].user() ||
+				!option[ OptionKeys::threadsc::nres ].user()  // # TODO: I "ride" here over the old nres, better find a param of our own...
+				) {
+			TR  << "Usage: " << endl <<
+				argv[0] << endl <<
+				"  -s <fname> -chain <chain> -threadsc::nres <resid>" << endl <<
+				"  -o <outfile> -database <minirosetta_db>"  << endl;
+			exit(-1);
+		}
 
-  // read params and poses
-	std::string start_file = option[ OptionKeys::in::file::s ][0];
-	core::import_pose::pose_from_file( pose, start_file , core::import_pose::PDB_file);
-  string chain = option[ OptionKeys::run::chain ];
-  Size pdb_res = option[ OptionKeys::threadsc::nres ];
-  string output_fname = option[ OptionKeys::out::file::o ];
+		// read params and poses
+		std::string start_file = option[ OptionKeys::in::file::s ][0];
+		core::import_pose::pose_from_file( pose, start_file , core::import_pose::PDB_file);
+		string chain = option[ OptionKeys::run::chain ];
+		Size pdb_res = option[ OptionKeys::threadsc::nres ];
+		string output_fname = option[ OptionKeys::out::file::o ];
 
-	// phosphorylate
-  core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
-  Size pose_res = pdbinfo->pdb2pose(chain[0], pdb_res);
-	core::pose::add_variant_type_to_pose_residue( pose , chemical::PHOSPHORYLATION, pose_res );
-  core::io::pdb::dump_pdb(pose, output_fname);
+		// phosphorylate
+		core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
+		Size pose_res = pdbinfo->pdb2pose(chain[0], pdb_res);
+		core::pose::add_variant_type_to_pose_residue( pose , chemical::PHOSPHORYLATION, pose_res );
+		core::io::pdb::dump_pdb(pose, output_fname);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

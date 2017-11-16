@@ -189,7 +189,6 @@
 #include <boost/functional/hash.hpp>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

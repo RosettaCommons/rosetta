@@ -39,7 +39,7 @@
 
 
 #include <basic/Tracer.hh>
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.AbegoEnergy" );
+static basic::Tracer TR( "core.scoring.AbegoEnergy" );
 
 namespace core {
 namespace scoring {

@@ -49,7 +49,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotHasherMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotHasherMover" );
 
 // XRW TEMP std::string
 // XRW TEMP HotspotHasherMoverCreator::keyname() const

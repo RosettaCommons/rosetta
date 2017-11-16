@@ -44,11 +44,9 @@
 #include <protocols/boinc/boinc.hh>
 #endif
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.MonteCarlo" );
+static basic::Tracer TR( "protocols.moves.MonteCarlo" );
 
 namespace protocols {
 namespace moves {

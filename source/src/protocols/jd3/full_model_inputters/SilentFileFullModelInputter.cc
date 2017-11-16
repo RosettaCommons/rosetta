@@ -49,7 +49,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/symmetry/util.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jd3.SilentFileFullModelInputter" );
+static basic::Tracer tr( "protocols.jd3.SilentFileFullModelInputter" );
 
 namespace protocols {
 namespace jd3 {

@@ -79,11 +79,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" );
+static basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" );
 
 namespace protocols {
 namespace canonical_sampling {

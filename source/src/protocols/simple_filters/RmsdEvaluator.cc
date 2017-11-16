@@ -40,7 +40,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.RMSD" );
+static basic::Tracer tr( "protocols.evalution.RMSD" );
 namespace protocols {
 namespace simple_filters {
 using namespace core;
@@ -74,7 +74,6 @@ RmsdEvaluator::RmsdEvaluator( core::pose::PoseCOP pose, std::string tag, bool bG
 
 void
 RmsdEvaluator::apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const {
-	basic::Tracer tr( "protocols.Evaluator.RMSD" );
 	tr.Debug << "compute RMSD for " << tag << " for residues " << start_ << "..." << end_ << std::endl;
 
 	core::Real rmsd( apply( pose ) );

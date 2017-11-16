@@ -24,7 +24,7 @@
 //Req'd on WIN32
 #include <utility/tag/Tag.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.options.StepWiseModelerOptions" );
+static basic::Tracer TR( "protocols.stepwise.modeler.options.StepWiseModelerOptions" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

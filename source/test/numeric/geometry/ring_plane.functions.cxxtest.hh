@@ -35,7 +35,7 @@
 // C++ header
 #include <math.h>
 
-static THREAD_LOCAL basic::Tracer TR("numeric.geometry.ring_plane.functions.cxxtest");
+static basic::Tracer TR("numeric.geometry.ring_plane.functions.cxxtest");
 
 class RingPlaneFunctionsTests : public CxxTest::TestSuite {
 public: // Type definitions ///////////////////////////////////////////////////
@@ -149,7 +149,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT( are_coplanar( ring3 ) );
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring3, vector_normal_to_ring_plane_of_best_fit( ring3, false ) ), 0.0, 0.02 );
+			ring3, vector_normal_to_ring_plane_of_best_fit( ring3, false ) ), 0.0, 0.02 );
 
 		// 6-membered ring (ideal hexagon stretched and tilted out of the xy plane by raising or lowering two vertical
 		// sides by 1 unit in the z directions)
@@ -162,7 +162,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT( are_coplanar( ring6 ) );
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.0, 0.02 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.0, 0.02 );
 
 
 		// 6-membered ring in a chair conformation
@@ -180,7 +180,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		// in the ring system from the center of mass would be plus or minus 1/root 32.  So R-squared will be 6 times
 		// 1/32 = 3/16 = 0.1875.
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.1875, 0.02 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.1875, 0.02 );
 
 		// the same 6-membered ring in a chair conformation rotated randomly using DiscoveryStudio
 		ring6[ 1 ] = Coords( -0.9812, -0.0692, 0.2524 );
@@ -192,7 +192,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT( ! are_coplanar( ring6 ) );
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.1875, 0.02 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.1875, 0.02 );
 
 
 		// 6-membered ring in a boat conformation
@@ -210,7 +210,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		// be 2 times 1/9 + 4 times 1/36 = 1/3 = 0.3333.
 
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.3333, 0.002 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.3333, 0.002 );
 
 		TS_ASSERT( ! are_coplanar( ring6 ) );
 
@@ -225,7 +225,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT ( ! are_coplanar( ring6 ) );
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.3333, 0.05 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6, false ) ), 0.3333, 0.05 );
 
 	}
 
@@ -264,7 +264,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT( are_coplanar( ring3 ) );
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring3, vector_normal_to_ring_plane_of_best_fit( ring3 ) ), 0.0, 0.02 );
+			ring3, vector_normal_to_ring_plane_of_best_fit( ring3 ) ), 0.0, 0.02 );
 
 		// 6-membered ring (ideal hexagon stretched and tilted out of the xy plane by raising or lowering two vertical
 		// sides by 1 unit in the z directions)
@@ -277,7 +277,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT( are_coplanar( ring6 ) );
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.0, 0.02 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.0, 0.02 );
 	}
 
 	// Confirm that non-planar rings have the expected residuals from their calculated average planes.
@@ -313,7 +313,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		// in the ring system from the center of mass would be plus or minus 1/root 32.  So R-squared will be 6 times
 		// 1/32 = 3/16 = 0.1875.
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.1875, 0.02 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.1875, 0.02 );
 
 		// the same 6-membered ring in a chair conformation rotated randomly using DiscoveryStudio
 		ring6[ 1 ] = Coords( -0.9812, -0.0692, 0.2524 );
@@ -325,7 +325,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT( ! are_coplanar( ring6 ) );
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.1875, 0.02 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.1875, 0.02 );
 
 
 		// 6-membered ring in a boat conformation
@@ -343,7 +343,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		// be 2 times 1/9 + 4 times 1/36 = 1/3 = 0.3333.
 
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.3333, 0.002 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.3333, 0.002 );
 
 		TS_ASSERT( ! are_coplanar( ring6 ) );
 
@@ -358,6 +358,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT ( ! are_coplanar( ring6 ) );
 		TS_ASSERT_DELTA( residual_squared_of_points_to_plane(
-				ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.3333, 0.05 );
+			ring6, vector_normal_to_ring_plane_of_best_fit( ring6 ) ), 0.3333, 0.05 );
 	}
 };  // class RingPlaneFunctionsTests

@@ -48,7 +48,7 @@ namespace evaluation {
 /// @details Auto-generated virtual destructor
 PCA::~PCA() = default;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.evaluation.PCA", basic::t_info );
+static basic::Tracer tr( "protocols.evaluation.PCA", basic::t_info );
 
 using namespace core;
 

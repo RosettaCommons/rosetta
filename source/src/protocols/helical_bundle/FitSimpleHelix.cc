@@ -39,7 +39,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core::optimization;
@@ -47,7 +46,7 @@ using namespace core::optimization;
 namespace protocols {
 namespace helical_bundle {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.FitSimpleHelix");
+static basic::Tracer TR("protocols.helical_bundle.FitSimpleHelix");
 
 // XRW TEMP std::string
 // XRW TEMP FitSimpleHelixCreator::keyname() const

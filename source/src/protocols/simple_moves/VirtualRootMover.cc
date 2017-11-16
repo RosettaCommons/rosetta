@@ -37,7 +37,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.VirtualRootMover" );
+static basic::Tracer TR( "protocols.simple_moves.VirtualRootMover" );
 
 VirtualRootMover::VirtualRootMover() :
 	moves::Mover( VirtualRootMover::mover_name() ),

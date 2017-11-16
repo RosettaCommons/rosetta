@@ -40,7 +40,7 @@ using std::setw;
 using basic::Tracer;
 using utility::vector1;
 
-static THREAD_LOCAL Tracer TR("basic.resource_manager.LazyResourceManager");
+static Tracer TR("basic.resource_manager.LazyResourceManager");
 
 void
 ResourceConfiguration::show(

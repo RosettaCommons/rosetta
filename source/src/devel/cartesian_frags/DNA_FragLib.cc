@@ -42,10 +42,10 @@ DNA_FragLib::~DNA_FragLib() = default;
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer tt( "devel.cartesian_frags.DNA_FragLib", basic::t_trace );
-static THREAD_LOCAL basic::Tracer td( "devel.cartesian_frags.DNA_FragLib", basic::t_debug );
-static THREAD_LOCAL basic::Tracer ti( "devel.cartesian_frags.DNA_FragLib", basic::t_info );
-static THREAD_LOCAL basic::Tracer tw( "devel.cartesian_frags.DNA_FragLib", basic::t_warning );
+static basic::Tracer tt( "devel.cartesian_frags.DNA_FragLib", basic::t_trace );
+static basic::Tracer td( "devel.cartesian_frags.DNA_FragLib", basic::t_debug );
+static basic::Tracer ti( "devel.cartesian_frags.DNA_FragLib", basic::t_info );
+static basic::Tracer tw( "devel.cartesian_frags.DNA_FragLib", basic::t_warning );
 
 
 core::pose::Pose &

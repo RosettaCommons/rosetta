@@ -47,7 +47,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.qsar.scoring_grid.ShapeGrid" );
+static basic::Tracer TR( "protocols.qsar.scoring_grid.ShapeGrid" );
 
 std::string ShapeGridCreator::keyname() const
 {

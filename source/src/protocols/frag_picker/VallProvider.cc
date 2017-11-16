@@ -47,7 +47,7 @@
 
 // Tracer instance for this file
 // Named after the original location of this code
-static THREAD_LOCAL basic::Tracer TR( "protocols.frag_picker.VallProvider" );
+static basic::Tracer TR( "protocols.frag_picker.VallProvider" );
 
 namespace protocols {
 namespace frag_picker {

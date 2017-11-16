@@ -61,7 +61,7 @@
 #include <cstdlib>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DumpSingleResidueRotamers" );
+static basic::Tracer TR( "protocols.simple_moves.DumpSingleResidueRotamers" );
 
 namespace protocols {
 namespace simple_moves {

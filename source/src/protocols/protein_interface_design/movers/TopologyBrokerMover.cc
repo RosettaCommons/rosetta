@@ -63,7 +63,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.TopologyBrokerMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.TopologyBrokerMover" );
 
 // XRW TEMP std::string
 // XRW TEMP TopologyBrokerMoverCreator::keyname() const

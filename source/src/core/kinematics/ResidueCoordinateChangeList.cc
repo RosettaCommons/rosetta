@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.kinematics", basic::t_info );
+static basic::Tracer tr( "core.kinematics", basic::t_info );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

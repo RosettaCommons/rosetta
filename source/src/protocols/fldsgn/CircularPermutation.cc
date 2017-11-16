@@ -53,7 +53,7 @@
 namespace protocols {
 namespace fldsgn {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.CircularPermutation" );
+static basic::Tracer TR( "protocols.fldsgn.CircularPermutation" );
 
 // XRW TEMP std::string
 // XRW TEMP CircularPermutationCreator::keyname() const

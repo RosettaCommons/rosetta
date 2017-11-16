@@ -56,7 +56,7 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.match.downstream.LigandConformerBuilder" );
+static basic::Tracer TR( "protocols.match.downstream.LigandConformerBuilder" );
 
 LigandConformerBuilder::LigandConformerBuilder() :
 	parent(),

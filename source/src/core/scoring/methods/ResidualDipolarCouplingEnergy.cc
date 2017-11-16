@@ -51,7 +51,7 @@
 #include <ObjexxFCL/format.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCoupling" );
+static basic::Tracer tr( "core.scoring.ResidualDipolarCoupling" );
 
 namespace core {
 namespace scoring {

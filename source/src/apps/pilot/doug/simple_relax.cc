@@ -51,7 +51,6 @@ using namespace scoring;
 using namespace pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
@@ -62,44 +61,46 @@ void simple_relax( std::string pdb_filename, ScoreFunctionOP scorefxn );
 int
 main( int argc, char * argv [] )
 {
-    try {
-	// initialize
-	devel::init(argc, argv);
+	try {
+		// initialize
+		devel::init(argc, argv);
 
-	// concatenate -s and -l flags together to get total list of PDB files
-	// (This was taken from Ian's early job distributor, thanks Ian)
-	std::vector< FileName > pdb_file_names;
-	if ( option[ in::file::s ].active() )
-		pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
-	std::vector< FileName > list_file_names;
-	if ( option[ in::file::l ].active() )
-		list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
-
-	for(std::vector< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i) {
-		std::string filename( i->name() );
-		std::ifstream data( filename.c_str() );
-		if ( !data.good() ) {
-			utility_exit_with_message( "Unable to open file: " + filename + '\n' );
+		// concatenate -s and -l flags together to get total list of PDB files
+		// (This was taken from Ian's early job distributor, thanks Ian)
+		std::vector< FileName > pdb_file_names;
+		if ( option[ in::file::s ].active() ) {
+			pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
 		}
-		std::string line;
-		while( getline(data, line) ) {
-			pdb_file_names.push_back( FileName(line) );
+		std::vector< FileName > list_file_names;
+		if ( option[ in::file::l ].active() ) {
+			list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
 		}
-		data.close();
-	}
 
-	// create score function
-	ScoreFunctionOP scfxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ));
+		for ( std::vector< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
+			std::string filename( i->name() );
+			std::ifstream data( filename.c_str() );
+			if ( !data.good() ) {
+				utility_exit_with_message( "Unable to open file: " + filename + '\n' );
+			}
+			std::string line;
+			while ( getline(data, line) ) {
+				pdb_file_names.push_back( FileName(line) );
+			}
+			data.close();
+		}
 
-	// run simple relax for each name in list
-	for(std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i) {
-		simple_relax( i->name(), scfxn );
-	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		// create score function
+		ScoreFunctionOP scfxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ));
+
+		// run simple relax for each name in list
+		for ( std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i ) {
+			simple_relax( i->name(), scfxn );
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 }
 
 void simple_relax( std::string pdb_filename, ScoreFunctionOP scorefxn )

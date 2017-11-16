@@ -72,13 +72,13 @@ using namespace core::scoring;
 using namespace core::optimization;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.constellation_list.main" );
+static basic::Tracer TR( "apps.pilot.constellation_list.main" );
 
 
 utility::vector1<char> list_allowable_mutations( char const starting_aa ) {
 
 	utility::vector1<char> allowed_list;
-	//	TR << "Found residue " << chemical::oneletter_code_from_aa( aa ) << std::endl;
+	// TR << "Found residue " << chemical::oneletter_code_from_aa( aa ) << std::endl;
 
 	if ( starting_aa == 'G' ) return allowed_list;
 
@@ -108,128 +108,128 @@ utility::vector1<char> list_allowable_mutations( char const starting_aa ) {
 		allowed_list.push_back('L');
 	}
 	// Trp can become Leu
-	if ( starting_aa ==	'W' ) {
+	if ( starting_aa == 'W' ) {
 		allowed_list.push_back('L');
 	}
 
-		// JIMMY ADD MORE HERE, eg. F->L, W->L
+	// JIMMY ADD MORE HERE, eg. F->L, W->L
 
 	return allowed_list;
 }
 
 
-	void zero_occ_for_deleted_atoms(
-									pose::Pose & pose,
-									core::Size seqpos,
-									char const target_aa
-	) {
+void zero_occ_for_deleted_atoms(
+	pose::Pose & pose,
+	core::Size seqpos,
+	char const target_aa
+) {
 
-		// set the occupancy to zero for any target residue atoms that don't need to be printed
-		// leave the occupancy at one for any target residue atoms that *do* need to be printed
+	// set the occupancy to zero for any target residue atoms that don't need to be printed
+	// leave the occupancy at one for any target residue atoms that *do* need to be printed
 
-		char const starting_aa = chemical::oneletter_code_from_aa( pose.aa(seqpos) );
+	char const starting_aa = chemical::oneletter_code_from_aa( pose.aa(seqpos) );
 
-		conformation::Residue const & rsd( pose.residue(seqpos) );
+	conformation::Residue const & rsd( pose.residue(seqpos) );
 
-		// we never need to print backbone atoms or hydrogens
+	// we never need to print backbone atoms or hydrogens
+	for ( Size i=1; i<= rsd.natoms(); ++i ) {
+		if ( rsd.atom_is_hydrogen(i) || rsd.atom_is_backbone(i) ) {
+			pose.pdb_info()->occupancy( seqpos, i, 0. );
+		}
+	}
+
+	// if it's a mutation to Gly, we're done
+	if ( target_aa == 'G' ) return;
+
+	// for anything other than a mutation to Gly, suppress the C-beta
+	pose.pdb_info()->occupancy( seqpos, rsd.atom_index("CB"), 0. );
+	// if it's a mutation to Ala, we're done
+	if ( target_aa == 'A' ) return;
+
+	if ( ( starting_aa == 'I' ) && ( target_aa == 'V' ) ) {
+		// suppress everything other than the CD1
+		Size atom_inx_to_keep = rsd.atom_index("CD1");
 		for ( Size i=1; i<= rsd.natoms(); ++i ) {
-			if ( rsd.atom_is_hydrogen(i) || rsd.atom_is_backbone(i) ) {
+			if ( i != atom_inx_to_keep ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
 			}
 		}
-
-		// if it's a mutation to Gly, we're done
-		if ( target_aa == 'G' ) return;
-
-		// for anything other than a mutation to Gly, suppress the C-beta
-		pose.pdb_info()->occupancy( seqpos, rsd.atom_index("CB"), 0. );
-		// if it's a mutation to Ala, we're done
-		if ( target_aa == 'A' ) return;
-
-		if ( ( starting_aa == 'I' ) && ( target_aa == 'V' ) ) {
-			// suppress everything other than the CD1
-			Size atom_inx_to_keep = rsd.atom_index("CD1");
-			for ( Size i=1; i<= rsd.natoms(); ++i ) {
-				if ( i != atom_inx_to_keep ) {
-					pose.pdb_info()->occupancy( seqpos, i, 0. );
-				}
-			}
-			return;
-		}
-
-		if ( ( starting_aa == 'T' ) && ( target_aa == 'S' ) ) {
-			// suppress everything other than the CG2
-			Size atom_inx_to_keep = rsd.atom_index("CG2");
-			for ( Size i=1; i<= rsd.natoms(); ++i ) {
-				if ( i != atom_inx_to_keep ) {
-					pose.pdb_info()->occupancy( seqpos, i, 0. );
-				}
-			}
-			return;
-		}
-
-		if ( ( starting_aa == 'Y' ) && ( target_aa == 'F' ) ) {
-			// suppress everything other than the OH
-			Size atom_inx_to_keep = rsd.atom_index("OH");
-			for ( Size i=1; i<= rsd.natoms(); ++i ) {
-				if ( i != atom_inx_to_keep ) {
-					pose.pdb_info()->occupancy( seqpos, i, 0. );
-				}
-			}
-			return;
-		}
-
-		if ( ( starting_aa == 'Y' ) && ( target_aa == 'L' ) ) {
-			// suppress everything other than the OH, CE1, CE2, CZ
-			Size inx1 = rsd.atom_index("OH");
-			Size inx2 = rsd.atom_index("CE1");
-			Size inx3 = rsd.atom_index("CE2");
-			Size inx4 = rsd.atom_index("CZ");
-			for ( Size i=1; i<= rsd.natoms(); ++i ) {
-				if ( (i != inx1) && (i != inx2) && (i != inx3) && (i !=inx4) ) {
-					pose.pdb_info()->occupancy( seqpos, i, 0. );
-				}
-			}
-			return;
-		}
-
-		if ( ( starting_aa == 'F' ) && ( target_aa == 'L' ) ) {
-			// suppress everything other than the CE1, CE2, CZ
-			Size inx1 = rsd.atom_index("CE1");
-			Size inx2 = rsd.atom_index("CE2");
-			Size inx3 = rsd.atom_index("CZ");
-			for ( Size i=1; i<= rsd.natoms(); ++i ) {
-				if ( (i != inx1) && (i != inx2) && (i != inx3) ) {
-					pose.pdb_info()->occupancy( seqpos, i, 0. );
-				}
-			}
-			return;
-		}
-
-		if ( ( starting_aa == 'W' ) && ( target_aa == 'L' ) ) {
-			// suppress everything other than the NE1, CE2, CE3, CZ2, CZ3, CH2
-			Size inx1 = rsd.atom_index("NE1");
-			Size inx2 = rsd.atom_index("CE2");
-			Size inx3 = rsd.atom_index("CE3");
-			Size inx4 = rsd.atom_index("CZ2");
-			Size inx5 = rsd.atom_index("CZ3");
-			Size inx6 = rsd.atom_index("CH2");
-			for ( Size i=1; i<= rsd.natoms(); ++i ) {
-				if ( (i != inx1) && (i != inx2) && (i != inx3) && (i != inx4) && (i != inx5) && (i != inx6) ) {
-					pose.pdb_info()->occupancy( seqpos, i, 0. );
-				}
-			}
-			return;
-		}
-
-		// JIMMY ADD MORE HERE, STARTING WITH T->S AND Y->F
-
-		TR << "DANGER DANGER - COULD NOT MAKE A REQUESTED MUTATION!!" << std::endl;
-		TR << "REQUESTED " << starting_aa << " TO " << target_aa << " BUT NO INFO ON WHAT ATOMS TO SUPPRESS....." << std::endl;
-
 		return;
-
 	}
+
+	if ( ( starting_aa == 'T' ) && ( target_aa == 'S' ) ) {
+		// suppress everything other than the CG2
+		Size atom_inx_to_keep = rsd.atom_index("CG2");
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( i != atom_inx_to_keep ) {
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+			}
+		}
+		return;
+	}
+
+	if ( ( starting_aa == 'Y' ) && ( target_aa == 'F' ) ) {
+		// suppress everything other than the OH
+		Size atom_inx_to_keep = rsd.atom_index("OH");
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( i != atom_inx_to_keep ) {
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+			}
+		}
+		return;
+	}
+
+	if ( ( starting_aa == 'Y' ) && ( target_aa == 'L' ) ) {
+		// suppress everything other than the OH, CE1, CE2, CZ
+		Size inx1 = rsd.atom_index("OH");
+		Size inx2 = rsd.atom_index("CE1");
+		Size inx3 = rsd.atom_index("CE2");
+		Size inx4 = rsd.atom_index("CZ");
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i !=inx4) ) {
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+			}
+		}
+		return;
+	}
+
+	if ( ( starting_aa == 'F' ) && ( target_aa == 'L' ) ) {
+		// suppress everything other than the CE1, CE2, CZ
+		Size inx1 = rsd.atom_index("CE1");
+		Size inx2 = rsd.atom_index("CE2");
+		Size inx3 = rsd.atom_index("CZ");
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( (i != inx1) && (i != inx2) && (i != inx3) ) {
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+			}
+		}
+		return;
+	}
+
+	if ( ( starting_aa == 'W' ) && ( target_aa == 'L' ) ) {
+		// suppress everything other than the NE1, CE2, CE3, CZ2, CZ3, CH2
+		Size inx1 = rsd.atom_index("NE1");
+		Size inx2 = rsd.atom_index("CE2");
+		Size inx3 = rsd.atom_index("CE3");
+		Size inx4 = rsd.atom_index("CZ2");
+		Size inx5 = rsd.atom_index("CZ3");
+		Size inx6 = rsd.atom_index("CH2");
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i != inx4) && (i != inx5) && (i != inx6) ) {
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+			}
+		}
+		return;
+	}
+
+	// JIMMY ADD MORE HERE, STARTING WITH T->S AND Y->F
+
+	TR << "DANGER DANGER - COULD NOT MAKE A REQUESTED MUTATION!!" << std::endl;
+	TR << "REQUESTED " << starting_aa << " TO " << target_aa << " BUT NO INFO ON WHAT ATOMS TO SUPPRESS....." << std::endl;
+
+	return;
+
+}
 
 OPT_KEY( Integer, target_resnum )
 OPT_KEY( String, target_chain )
@@ -266,8 +266,8 @@ main( int argc, char * argv [] )
 	core::Size target_rosetta_resnum = 0;
 	for ( core::Size j = 1; j <= pose_init.size(); ++j ) {
 		if ( ( pose_init.pdb_info()->chain(j) == target_pdb_chain ) &&
-				 ( pose_init.pdb_info()->number(j) == target_pdb_number ) ) {
-					 target_rosetta_resnum = j;
+				( pose_init.pdb_info()->number(j) == target_pdb_number ) ) {
+			target_rosetta_resnum = j;
 		}
 	}
 	if ( target_rosetta_resnum == 0 ) {

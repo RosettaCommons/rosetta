@@ -94,7 +94,7 @@ using namespace core::pose;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.MPFolding" );
+static basic::Tracer TR( "apps.pilot.jkleman.MPFolding" );
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// HEADER ////////////////////////////////////////////

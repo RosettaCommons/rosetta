@@ -94,7 +94,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "main" );
+static basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
 using namespace core::scoring;
@@ -116,17 +116,17 @@ typedef utility::pointer::owning_ptr< LoopHashRelax_Sampler const > LoopHashRela
 class LoopHashRelax_Sampler: public protocols::moves::Mover {
 public:
 
-  LoopHashRelax_Sampler(
-    LoopHashLibraryOP library
-  ):
-   library_(library)
+	LoopHashRelax_Sampler(
+		LoopHashLibraryOP library
+	):
+		library_(library)
 
-  {
-  }
+	{
+	}
 
 	virtual void apply( core::pose::Pose& pose );
 
-  virtual protocols::moves::MoverOP clone() const {
+	virtual protocols::moves::MoverOP clone() const {
 		return new LoopHashRelax_Sampler( *this );
 	}
 
@@ -135,31 +135,31 @@ public:
 		return "LoopHashRelax_Sampler";
 	}
 
-	virtual	protocols::moves::MoverOP	fresh_instance() const {
+	virtual protocols::moves::MoverOP fresh_instance() const {
 		return new LoopHashRelax_Sampler( library_ );
 	}
 
 private:
-  LoopHashLibraryOP library_;
+	LoopHashLibraryOP library_;
 
 };
 
 void
 LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 {
-  if( !library_ ) return;
+	if ( !library_ ) return;
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  std::string prefix = option[ out::prefix ]();
-  core::Size skim_size = option[ lh::skim_size ]();
+	std::string prefix = option[ out::prefix ]();
+	core::Size skim_size = option[ lh::skim_size ]();
 
-  LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
+	LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
 
 	core::io::silent::SilentStructOP last_best;
 
-  for(int round = 1; round <= option[ OptionKeys::lh::rounds ]; round ++ ){
+	for ( int round = 1; round <= option[ OptionKeys::lh::rounds ]; round ++ ) {
 
 		LoopHashSampler  lsampler( library_, simple_inserter );
 
@@ -175,74 +175,74 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		lsampler.set_max_rms( 4.0 );
 
 		static int casecount = 0;
-    core::pose::Pose opose = pose;
-    std::vector< core::io::silent::SilentStructOP > lib_structs;
+		core::pose::Pose opose = pose;
+		std::vector< core::io::silent::SilentStructOP > lib_structs;
 
-    TR.Info << "Loophash apply function ! " << std::endl;
+		TR.Info << "Loophash apply function ! " << std::endl;
 
-    // Set up contraints
-    ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
-    //protocols::relax::FastRelax *qrelax = new protocols::relax::FastRelax( fascorefxn, 1 );
-    protocols::relax::FastRelax *relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
+		// Set up contraints
+		ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
+		//protocols::relax::FastRelax *qrelax = new protocols::relax::FastRelax( fascorefxn, 1 );
+		protocols::relax::FastRelax *relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
 
-    // convert pose to centroid pose:
-    core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
-    core::pose::set_ss_from_phipsi( pose );
+		// convert pose to centroid pose:
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
+		core::pose::set_ss_from_phipsi( pose );
 
-    core::Size starttime2 = time(NULL);
+		core::Size starttime2 = time(NULL);
 
 
-    lsampler.build_structures( pose, lib_structs );
-    //get_all( pose, lib_structs, 1, 0, 20,1400.0, 0.5, 4.0  );   // old way
+		lsampler.build_structures( pose, lib_structs );
+		//get_all( pose, lib_structs, 1, 0, 20,1400.0, 0.5, 4.0  );   // old way
 
-    core::Size endtime2 = time(NULL);
-    TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
+		core::Size endtime2 = time(NULL);
+		TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
 
-    numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::rg());
+		numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::rg());
 
-    std::vector< core::io::silent::SilentStructOP > select_lib_structs;
+		std::vector< core::io::silent::SilentStructOP > select_lib_structs;
 
-    for( core::Size k=0;k< std::min(skim_size, lib_structs.size() ) ;k++){
-      select_lib_structs.push_back( lib_structs[k] );
-    }
+		for ( core::Size k=0; k< std::min(skim_size, lib_structs.size() ) ; k++ ) {
+			select_lib_structs.push_back( lib_structs[k] );
+		}
 
-    core::pose::Pose native_pose;
-    if( option[ in::file::native ].user() ){
-      core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
-    } else {
-      utility_exit_with_message("This app requires specifying the -in:file:native flag.");
-    }
+		core::pose::Pose native_pose;
+		if ( option[ in::file::native ].user() ) {
+			core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
+		} else {
+			utility_exit_with_message("This app requires specifying the -in:file:native flag.");
+		}
 
 		core::pose::Pose ref_pose;
-    if( option[ lh::refstruct].user() ){
-      core::import_pose::pose_from_file( ref_pose, option[ lh::refstruct ]() , core::import_pose::PDB_file);
-    }
+		if ( option[ lh::refstruct].user() ) {
+			core::import_pose::pose_from_file( ref_pose, option[ lh::refstruct ]() , core::import_pose::PDB_file);
+		}
 
 
-    core::Real bestcenscore = MAXIMAL_FLOAT;
-    core::Size bestcenindex = 0;
+		core::Real bestcenscore = MAXIMAL_FLOAT;
+		core::Size bestcenindex = 0;
 
- 		if( select_lib_structs.size() == 0 ) continue;
+		if ( select_lib_structs.size() == 0 ) continue;
 
-		if( last_best ) {
+		if ( last_best ) {
 			select_lib_structs.push_back( last_best );
 		}
 
-		for( core::Size h = 0; h < select_lib_structs.size(); h++){
-      core::pose::Pose rpose;
-      select_lib_structs[h]->fill_pose( rpose );
+		for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
+			core::pose::Pose rpose;
+			select_lib_structs[h]->fill_pose( rpose );
 
-   		core::Real refrms = 0;
-			if( option[ lh::refstruct].user()) {
-			 	refrms = scoring::CA_rmsd( ref_pose, rpose );
+			core::Real refrms = 0;
+			if ( option[ lh::refstruct].user() ) {
+				refrms = scoring::CA_rmsd( ref_pose, rpose );
 			}
-		  core::Real rms_factor =  5.0;
+			core::Real rms_factor =  5.0;
 			core::Real decoy_score = select_lib_structs[h]->get_energy("censcore") + refrms * rms_factor;
 
 			select_lib_structs[h]->add_energy( "refrms",     refrms,      1.0 );
 			select_lib_structs[h]->add_energy( "comb_score", decoy_score, 1.0 );
 			std::cout << "refrms: " << refrms << "  Energy: " << decoy_score << std::endl;
-			if( decoy_score < bestcenscore ){
+			if ( decoy_score < bestcenscore ) {
 				bestcenscore = decoy_score;
 				bestcenindex = h;
 				last_best = select_lib_structs[h];
@@ -251,213 +251,213 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		std::cout << "Best:" << "  Energy: " << bestcenscore << std::endl;
 
 
-    if((  option[ OptionKeys::lh::write_centroid_structs ]() ) ||
-       (  option[ OptionKeys::lh::centroid_only ]() )){
+		if ( (  option[ OptionKeys::lh::write_centroid_structs ]() ) ||
+				(  option[ OptionKeys::lh::centroid_only ]() ) ) {
 
-      core::io::silent::SilentFileData sfd;
-      std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
-      if( option[ OptionKeys::lh::centroid_only ]() ){
-        silent_file_ += ".centroid.out" ;
-      }
-
-      for( core::Size h = 0; h < select_lib_structs.size(); h++){
-          core::pose::Pose rpose;
-          select_lib_structs[h]->fill_pose( rpose );
-          core::Real rms = scoring::CA_rmsd( native_pose, rpose );
-          select_lib_structs[h]->add_energy( "round", round, 1.0 );
-          select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
-          select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
-          if( round >= 2.0 ){
-						sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
-      		}
+			core::io::silent::SilentFileData sfd;
+			std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
+			if ( option[ OptionKeys::lh::centroid_only ]() ) {
+				silent_file_ += ".centroid.out" ;
 			}
 
-    }
+			for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
+				core::pose::Pose rpose;
+				select_lib_structs[h]->fill_pose( rpose );
+				core::Real rms = scoring::CA_rmsd( native_pose, rpose );
+				select_lib_structs[h]->add_energy( "round", round, 1.0 );
+				select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
+				select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
+				if ( round >= 2.0 ) {
+					sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
+				}
+			}
+
+		}
 
 		/// In centroid cleanup mode this is IT
-		if( option[ OptionKeys::lh::centroid_only ]() ){
-      select_lib_structs[bestcenindex]->fill_pose( pose );
+		if ( option[ OptionKeys::lh::centroid_only ]() ) {
+			select_lib_structs[bestcenindex]->fill_pose( pose );
 			continue;
 		}
 
 
 		/// For fullatom goodness, continue
-    core::Real bestscore = MAXIMAL_FLOAT;
-    core::Size bestindex = 0;
-    // Batch relax the result:
+		core::Real bestscore = MAXIMAL_FLOAT;
+		core::Size bestindex = 0;
+		// Batch relax the result:
 
-    core::Size starttime = time(NULL);
-    relax->batch_apply( select_lib_structs );
-    core::Size endtime = time(NULL);
-    TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
-
-
-    for( core::Size h = 0; h < select_lib_structs.size(); h++){
-      TR.Info << "DOING: " << h << " / " << select_lib_structs.size() << std::endl;
-      core::pose::Pose rpose;
-
-      select_lib_structs[h]->fill_pose( rpose );
-
-      //core::Real score = scoring::CA_rmsd( native_pose, rpose );
-      core::Real score = (*fascorefxn)(rpose);
-      TR.Info << "score: " << h << "  " << score << std::endl;
-
-      if( score < bestscore ){
-        bestscore = score;
-        bestindex = h;
-        pose = rpose;
-      }
-    }
-    casecount++;
-    //test_loop_sample( pose, pose.size() );
-
-    core::Real bestrms = scoring::CA_rmsd( native_pose, pose );
-    TR.Info << "BESTSCORE: " << bestscore << "BESTRMS" << bestrms << std::endl;
-    //pose.dump_pdb( "lhb_" + prefix + "_" + utility::to_string( round ) + ".pdb" );
+		core::Size starttime = time(NULL);
+		relax->batch_apply( select_lib_structs );
+		core::Size endtime = time(NULL);
+		TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 
 
-    core::io::silent::SilentFileData sfd;
-    std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
-    for( core::Size h = 0; h < select_lib_structs.size(); h++){
+		for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
+			TR.Info << "DOING: " << h << " / " << select_lib_structs.size() << std::endl;
+			core::pose::Pose rpose;
 
-      if( h == bestindex ) {
-        core::pose::Pose rpose;
-        select_lib_structs[h]->fill_pose( rpose );
-        core::Real rms = scoring::CA_rmsd( native_pose, rpose );
-        select_lib_structs[h]->add_energy( "round", round, 1.0 );
-        select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
-        select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
-        sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
-      }
-    }
+			select_lib_structs[h]->fill_pose( rpose );
 
-  }
+			//core::Real score = scoring::CA_rmsd( native_pose, rpose );
+			core::Real score = (*fascorefxn)(rpose);
+			TR.Info << "score: " << h << "  " << score << std::endl;
+
+			if ( score < bestscore ) {
+				bestscore = score;
+				bestindex = h;
+				pose = rpose;
+			}
+		}
+		casecount++;
+		//test_loop_sample( pose, pose.size() );
+
+		core::Real bestrms = scoring::CA_rmsd( native_pose, pose );
+		TR.Info << "BESTSCORE: " << bestscore << "BESTRMS" << bestrms << std::endl;
+		//pose.dump_pdb( "lhb_" + prefix + "_" + utility::to_string( round ) + ".pdb" );
+
+
+		core::io::silent::SilentFileData sfd;
+		std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
+		for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
+
+			if ( h == bestindex ) {
+				core::pose::Pose rpose;
+				select_lib_structs[h]->fill_pose( rpose );
+				core::Real rms = scoring::CA_rmsd( native_pose, rpose );
+				select_lib_structs[h]->add_energy( "round", round, 1.0 );
+				select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
+				select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
+				sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
+			}
+		}
+
+	}
 
 }
 
 void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 
-  core::pose::Pose tgtpose, srcpose;
+	core::pose::Pose tgtpose, srcpose;
 	core::import_pose::pose_from_file( tgtpose, "input/S_00001_0000001_0_0001.pdb" , core::import_pose::PDB_file);
 	core::import_pose::pose_from_file( srcpose, "input/S_00001_0000001_0_1_0001.pdb" , core::import_pose::PDB_file);
 
-  // test silent store class
-/*
-  protocols::wum::SilentStructStore mystore;
+	// test silent store class
+	/*
+	protocols::wum::SilentStructStore mystore;
 
-  mystore.add( tgtpose );
-  mystore.add( srcpose );
-
-
-  std::string sdata;
-  mystore.serialize( sdata );
-  std::cout << "----" << std::endl;
-  mystore.print( std::cout );
+	mystore.add( tgtpose );
+	mystore.add( srcpose );
 
 
-  protocols::wum::SilentStructStore mystore2;
-
-  mystore2.read_from_cmd_line();
-  std::cout << "-------" << std::endl;
-  mystore2.print( std::cout );
-  std::cout << "-AA-AA-" << std::endl;
-
-  mystore.add( mystore2 );
-
-  std::cout << "-------" << std::endl;
-
-  mystore.print( std::cout );
-
-  std::string serial_form;
-  mystore.serialize( serial_form );
-  mystore.serialize_to_file( "testoutput.out" );
+	std::string sdata;
+	mystore.serialize( sdata );
+	std::cout << "----" << std::endl;
+	mystore.print( std::cout );
 
 
-  protocols::wum::SilentStructStore recovered_store;
-  recovered_store.read_from_string( serial_form );
+	protocols::wum::SilentStructStore mystore2;
 
-  recovered_store.print( std::cout );
+	mystore2.read_from_cmd_line();
+	std::cout << "-------" << std::endl;
+	mystore2.print( std::cout );
+	std::cout << "-AA-AA-" << std::endl;
 
-*/
-// Loopgraft
-  // Test 1
-//37 63
-  //loop_hash_library->graft_loop( srcpose, tgtpose, protocols::loops::Loop( 37, 63 ) );
-  //tgtpose.dump_pdb( "output_graft.pdb" );
+	mystore.add( mystore2 );
 
+	std::cout << "-------" << std::endl;
 
-  // Test 2
+	mystore.print( std::cout );
 
-  // results
-  //21396 Fullatom protein
-  //52499     "    binary
-  //13879 Centroid protein
-  //23918     "    binary
-  // 2424 BackboneSegment float
-  // 1212 BackboneSegment word
-
-  {
-    core::io::silent::ProteinSilentStruct pss;
-    pss.fill_struct(tgtpose, "lala" );
-
-    std::ostringstream ss;
-    pss.print_scores( ss );
-    pss.print_conformation( ss );
-   // std::cout << ss.str() << std::endl;
-    std::cout << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
-  }
-
-//  {
-//    core::io::silent::BinarySilentStruct pss;
-//    pss.fill_struct(tgtpose, "lala" );
-//
-//    std::ostringstream ss;
-//    pss.print_scores( ss );
-//    pss.print_conformation( ss );
-//   // std::cout << ss.str() << std::endl;
-//    std::cout << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
-//  }
-
-  core::util::switch_to_residue_type_set( tgtpose, core::chemical::CENTROID_t );
+	std::string serial_form;
+	mystore.serialize( serial_form );
+	mystore.serialize_to_file( "testoutput.out" );
 
 
-  {
-    core::io::silent::ProteinSilentStruct pss;
-    pss.fill_struct(tgtpose, "lala" );
+	protocols::wum::SilentStructStore recovered_store;
+	recovered_store.read_from_string( serial_form );
 
-    std::ostringstream ss;
-    pss.print_scores( ss );
-    pss.print_conformation( ss );
-   // std::cout << ss.str() << std::endl;
-    std::cout <<pss.mem_footprint() << "  " <<  ss.str().length() << std::endl;
-  }
+	recovered_store.print( std::cout );
 
-  {
-    core::io::silent::BinarySilentStruct pss;
-    pss.fill_struct(tgtpose, "lala" );
+	*/
+	// Loopgraft
+	// Test 1
+	//37 63
+	//loop_hash_library->graft_loop( srcpose, tgtpose, protocols::loops::Loop( 37, 63 ) );
+	//tgtpose.dump_pdb( "output_graft.pdb" );
 
-    std::ostringstream ss;
-    pss.print_scores( ss );
-    pss.print_conformation( ss );
-   // std::cout << ss.str() << std::endl;
-    //std::cout <<pss.mem_footprint() << "  " <<  ss.str().length() << std::endl;
-  }
+
+	// Test 2
+
+	// results
+	//21396 Fullatom protein
+	//52499     "    binary
+	//13879 Centroid protein
+	//23918     "    binary
+	// 2424 BackboneSegment float
+	// 1212 BackboneSegment word
+
+	{
+		core::io::silent::ProteinSilentStruct pss;
+		pss.fill_struct(tgtpose, "lala" );
+
+		std::ostringstream ss;
+		pss.print_scores( ss );
+		pss.print_conformation( ss );
+		// std::cout << ss.str() << std::endl;
+		std::cout << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
+	}
+
+	//  {
+	//    core::io::silent::BinarySilentStruct pss;
+	//    pss.fill_struct(tgtpose, "lala" );
+	//
+	//    std::ostringstream ss;
+	//    pss.print_scores( ss );
+	//    pss.print_conformation( ss );
+	//   // std::cout << ss.str() << std::endl;
+	//    std::cout << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
+	//  }
+
+	core::util::switch_to_residue_type_set( tgtpose, core::chemical::CENTROID_t );
+
+
+	{
+		core::io::silent::ProteinSilentStruct pss;
+		pss.fill_struct(tgtpose, "lala" );
+
+		std::ostringstream ss;
+		pss.print_scores( ss );
+		pss.print_conformation( ss );
+		// std::cout << ss.str() << std::endl;
+		std::cout <<pss.mem_footprint() << "  " <<  ss.str().length() << std::endl;
+	}
+
+	{
+		core::io::silent::BinarySilentStruct pss;
+		pss.fill_struct(tgtpose, "lala" );
+
+		std::ostringstream ss;
+		pss.print_scores( ss );
+		pss.print_conformation( ss );
+		// std::cout << ss.str() << std::endl;
+		//std::cout <<pss.mem_footprint() << "  " <<  ss.str().length() << std::endl;
+	}
 }
 
 
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace protocols;
-	using namespace protocols::jd2;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
+	try {
+		using namespace protocols;
+		using namespace protocols::jd2;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core;
 
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
 #ifdef USEMPI
 	int mpi_rank_, mpi_npes_;
@@ -475,47 +475,47 @@ main( int argc, char * argv [] )
 #endif
 
 
-	std::cout << "SIZEOF short: " << sizeof( short ) << std::endl;
-	std::cout << "SIZEOF short*: " << sizeof( short * ) << std::endl;
-	std::cout << "SIZEOF core::Size: " << sizeof( core::Size ) << std::endl;
-	std::cout << "SIZEOF core::Size: " << sizeof( unsigned int ) << std::endl;
+		std::cout << "SIZEOF short: " << sizeof( short ) << std::endl;
+		std::cout << "SIZEOF short*: " << sizeof( short * ) << std::endl;
+		std::cout << "SIZEOF core::Size: " << sizeof( core::Size ) << std::endl;
+		std::cout << "SIZEOF core::Size: " << sizeof( unsigned int ) << std::endl;
 
-	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-	LoopHashLibraryOP loop_hash_library = new LoopHashLibrary( loop_sizes );
+		utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
+		LoopHashLibraryOP loop_hash_library = new LoopHashLibrary( loop_sizes );
 
 
-  // sandbox mode ?
-	if ( option[lh::sandbox]() ){;
-		run_sandbox( loop_hash_library );
-    return 0;
+		// sandbox mode ?
+		if ( option[lh::sandbox]() ) { ;
+			run_sandbox( loop_hash_library );
+			return 0;
+		}
+
+		// Run simple sampling run test or create the db ?
+		if ( option[lh::create_db]() ) { ;
+			loop_hash_library->create_db();
+			loop_hash_library->save_db();
+			return 0;
+		}
+
+		LoopHashRelax_SamplerOP lh_sampler = new LoopHashRelax_Sampler( loop_hash_library );
+
+		// Normal mode with external loophash library
+		loop_hash_library->load_db();
+		try{
+			//protocols::jd2::JobDistributor::get_instance()->go( loop_hash_library );
+			protocols::jd2::JobDistributor::get_instance()->go( lh_sampler );
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			std::cerr << "Exception: " << std::endl;
+			excn.show( std::cerr );
+			std::cout << "Exception: " << std::endl;
+			excn.show( std::cout ); //so its also seen in a >LOG file
+		}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-
-	// Run simple sampling run test or create the db ?
-	if ( option[lh::create_db]() ){;
-		loop_hash_library->create_db();
-		loop_hash_library->save_db();
-		return 0;
-	}
-
-  LoopHashRelax_SamplerOP lh_sampler = new LoopHashRelax_Sampler( loop_hash_library );
-
-  // Normal mode with external loophash library
-  loop_hash_library->load_db();
-  try{
-    //protocols::jd2::JobDistributor::get_instance()->go( loop_hash_library );
-    protocols::jd2::JobDistributor::get_instance()->go( lh_sampler );
-  } catch ( utility::excn::EXCN_Base& excn ) {
-    std::cerr << "Exception: " << std::endl;
-    excn.show( std::cerr );
-    std::cout << "Exception: " << std::endl;
-    excn.show( std::cout ); //so its also seen in a >LOG file
-  }
-
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	return 0;
 }
 
 

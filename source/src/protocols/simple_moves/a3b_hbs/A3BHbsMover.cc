@@ -35,11 +35,10 @@
 
 // C++ Headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsMover" );
+static basic::Tracer TR( "protocols.simple_moves.a3b_hbs.A3BHbsMover" );
 
 
 using namespace core;

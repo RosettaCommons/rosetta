@@ -31,7 +31,7 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.SegmentPairing" );
+static basic::Tracer TR( "protocols.denovo_design.components.SegmentPairing" );
 
 namespace protocols {
 namespace denovo_design {

@@ -40,7 +40,7 @@ namespace core {
 namespace chemical {
 namespace sdf {
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.sdf.MolFileIOData" );
+static basic::Tracer TR( "core.io.sdf.MolFileIOData" );
 
 void dump_graph( MolFileIOGraph const & graph ) {
 	MolFileIOGraph::vertex_iterator aiter, aiter_end;

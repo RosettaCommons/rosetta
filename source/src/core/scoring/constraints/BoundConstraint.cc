@@ -27,7 +27,7 @@
 
 // Utility headers
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.constraints.BoundFunc", basic::t_info );
+static basic::Tracer tr( "core.scoring.constraints.BoundFunc", basic::t_info );
 
 // C++ headers
 
@@ -159,7 +159,6 @@ BoundFunc::show_definition( std::ostream &out ) const {
 void
 BoundFunc::read_data( std::istream& in ) {
 	using namespace ObjexxFCL;
-	basic::Tracer trInfo( "core.io.constraints", basic::t_info );
 	std::string tag;
 	in >> lb_ >> ub_ >> sd_ >> tag;
 	if ( !in.good() ) {

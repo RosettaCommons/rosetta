@@ -59,7 +59,7 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-static THREAD_LOCAL basic::Tracer TR_PcsDataCenter( "protocols.scoring.methods.pcs.PcsDataCenter" );
+static basic::Tracer TR_PcsDataCenter( "protocols.scoring.methods.pcs.PcsDataCenter" );
 
 PcsDataCenter::PcsDataCenter(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PcsDataCenter class" );

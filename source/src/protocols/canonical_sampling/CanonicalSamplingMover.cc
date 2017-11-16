@@ -110,7 +110,7 @@
 namespace protocols {
 namespace canonical_sampling {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.CanonicalSamplingMover" );
+static basic::Tracer tr( "protocols.canonical_sampling.CanonicalSamplingMover" );
 
 using namespace core;
 

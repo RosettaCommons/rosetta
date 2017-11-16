@@ -37,7 +37,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.nmarze.packing_angle" );
+static basic::Tracer TR( "apps.pilot.nmarze.packing_angle" );
 
 using utility::vector1;
 

@@ -64,7 +64,7 @@
 #include <numeric/constants.hh>
 #include <numeric/model_quality/rms.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cluster.energy_based_clustering.EnergyBasedClusteringProtocol" );
+static basic::Tracer TR( "protocols.cluster.energy_based_clustering.EnergyBasedClusteringProtocol" );
 
 #define CNCa_ANGLE 121.7
 #define CNH_ANGLE 119.15

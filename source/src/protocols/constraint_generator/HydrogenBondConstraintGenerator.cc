@@ -50,7 +50,7 @@
 namespace protocols {
 namespace constraint_generator {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.HydrogenBondConstraintGenerator" );
+static basic::Tracer TR( "protocols.constraint_generator.HydrogenBondConstraintGenerator" );
 
 protocols::constraint_generator::ConstraintGeneratorOP
 HydrogenBondConstraintGeneratorCreator::create_constraint_generator() const

@@ -33,7 +33,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.FileRemoveFilter" );
+static basic::Tracer TR( "protocols.simple_filters.FileRemoveFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP FileRemoveFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FileRemoveFilter ); }

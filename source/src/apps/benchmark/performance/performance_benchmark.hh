@@ -20,7 +20,7 @@
 #include <vector>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "benchmark" );
+static basic::Tracer TR( "benchmark" );
 
 
 class PerformanceBenchmark

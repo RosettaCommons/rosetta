@@ -26,7 +26,7 @@ using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.strand_assembly.WriteToDBFromSandwichFeatures" );
+static basic::Tracer TR( "protocols.features.strand_assembly.WriteToDBFromSandwichFeatures" );
 
 //change_sheet_id_if_possible
 bool

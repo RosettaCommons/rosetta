@@ -99,7 +99,7 @@ using core::pose::xyzStripeHashPoseCAP;
 
 
 /************************************************* types ************************************************/
-static THREAD_LOCAL basic::Tracer TR("core.scoring.motif.util");
+static basic::Tracer TR("core.scoring.motif.util");
 
 using core::pose::PoseCoordPickMode_BB;
 using core::pose::PoseCoordPickMode_N_C_O;

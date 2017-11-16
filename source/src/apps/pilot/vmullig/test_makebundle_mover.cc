@@ -39,7 +39,7 @@
 #include <utility/vector1.hh>
 
 //Tracer:
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.vmullig.test_makebundle_mover" );
+static basic::Tracer TR( "apps.pilot.vmullig.test_makebundle_mover" );
 
 //Options (ugh -- global variables):
 OPT_KEY (Integer, animation_frames)

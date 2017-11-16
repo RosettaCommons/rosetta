@@ -62,7 +62,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
@@ -87,76 +86,76 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace core::scoring;
-	using namespace core::scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	// setup residue types
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	if ( option[ in::file::fullatom ]() ) {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	} else {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-	}
-
-	// configure score function
-  core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-	core::scoring::ScoreFunctionOP constraintscorefxn( new core::scoring::ScoreFunction );
-	constraintscorefxn->set_weight( atom_pair_constraint, 1.0 );
-
-	core::pose::Pose pose;
-
-	ConstraintSetOP cstset_;
-	std::string cstfile = option[ basic::options::OptionKeys::constraints::cst_file ]();
-	if ( ! utility::file::file_exists( cstfile ) ) {
-		utility_exit_with_message( "Error: can't read file " + cstfile );
-	}
-
-	// configure silent-file data object
-	core::io::silent::SilentFileData sfd;
-	if ( option[ in::file::silent ].user() ) {
-		sfd.read_file( *(option[ in::file::silent ]().begin()) );
-	}
-
-	core::pose::Pose native_pose;
-	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
-	}
-
-	for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
-		iter->fill_pose( pose, *rsd_set );
-		cstset_ = ConstraintIO::read( cstfile, new ConstraintSet, pose );
-
-		core::io::silent::ProteinSilentStruct ss( pose, iter->decoy_tag(), option[ in::file::fullatom ]() );
-		if ( option[ in::file::native ].user() ) {
-			ss.add_energy( "CA_rmsd",   core::scoring::CA_rmsd  ( native_pose, pose ) );
-			ss.add_energy( "CA_maxsub", core::scoring::CA_maxsub( native_pose, pose ) );
-		}
-		sfd.write_silent_struct( ss, option[ out::file::silent ]() );
-
-		std::string pdbname = iter->decoy_tag();
-
-		if ( !cstset_ ) {
-			cstset_ = ConstraintIO::read( cstfile, new ConstraintSet, pose );
+		// setup residue types
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		if ( option[ in::file::fullatom ]() ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		} else {
-			pose.constraint_set( cstset_ );
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		}
 
-		core::Real constraint_score = (*constraintscorefxn)(pose);
-		core::Real score = (*scorefxn)(pose);
-		core::Real gdtmm_score = CA_gdtmm(pose, native_pose);
-		std::cout << pdbname << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score << '\n';
-	}
+		// configure score function
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+		core::scoring::ScoreFunctionOP constraintscorefxn( new core::scoring::ScoreFunction );
+		constraintscorefxn->set_weight( atom_pair_constraint, 1.0 );
 
-	// and finally, score the native
-	core::Real constraint_score = (*constraintscorefxn)(native_pose);
-	core::Real score = (*scorefxn)(native_pose);
-	core::Real gdtmm_score = CA_gdtmm(native_pose, native_pose);
-	std::cout << "NATIVE" << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score << '\n';
+		core::pose::Pose pose;
+
+		ConstraintSetOP cstset_;
+		std::string cstfile = option[ basic::options::OptionKeys::constraints::cst_file ]();
+		if ( ! utility::file::file_exists( cstfile ) ) {
+			utility_exit_with_message( "Error: can't read file " + cstfile );
+		}
+
+		// configure silent-file data object
+		core::io::silent::SilentFileData sfd;
+		if ( option[ in::file::silent ].user() ) {
+			sfd.read_file( *(option[ in::file::silent ]().begin()) );
+		}
+
+		core::pose::Pose native_pose;
+		if ( option[ in::file::native ].user() ) {
+			core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
+		}
+
+		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
+			iter->fill_pose( pose, *rsd_set );
+			cstset_ = ConstraintIO::read( cstfile, new ConstraintSet, pose );
+
+			core::io::silent::ProteinSilentStruct ss( pose, iter->decoy_tag(), option[ in::file::fullatom ]() );
+			if ( option[ in::file::native ].user() ) {
+				ss.add_energy( "CA_rmsd",   core::scoring::CA_rmsd  ( native_pose, pose ) );
+				ss.add_energy( "CA_maxsub", core::scoring::CA_maxsub( native_pose, pose ) );
+			}
+			sfd.write_silent_struct( ss, option[ out::file::silent ]() );
+
+			std::string pdbname = iter->decoy_tag();
+
+			if ( !cstset_ ) {
+				cstset_ = ConstraintIO::read( cstfile, new ConstraintSet, pose );
+			} else {
+				pose.constraint_set( cstset_ );
+			}
+
+			core::Real constraint_score = (*constraintscorefxn)(pose);
+			core::Real score = (*scorefxn)(pose);
+			core::Real gdtmm_score = CA_gdtmm(pose, native_pose);
+			std::cout << pdbname << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score << '\n';
+		}
+
+		// and finally, score the native
+		core::Real constraint_score = (*constraintscorefxn)(native_pose);
+		core::Real score = (*scorefxn)(native_pose);
+		core::Real gdtmm_score = CA_gdtmm(native_pose, native_pose);
+		std::cout << "NATIVE" << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score << '\n';
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -49,7 +49,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::chemical;
 
-static THREAD_LOCAL basic::Tracer trProfScoreSubMatrix(
+static basic::Tracer trProfScoreSubMatrix(
 	"protocols.frag_picker.scores.ProfileScoreSubMatrix");
 
 ProfileScoreSubMatrix::~ProfileScoreSubMatrix() {}

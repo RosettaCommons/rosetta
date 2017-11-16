@@ -73,7 +73,6 @@
 #include <utility/vector0.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

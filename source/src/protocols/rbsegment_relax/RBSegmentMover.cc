@@ -36,7 +36,7 @@ namespace rbsegment_relax {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols::moves::RBSegmentMover" );
+static basic::Tracer TR( "protocols::moves::RBSegmentMover" );
 
 std::string
 RBSegmentMover::get_name() const {

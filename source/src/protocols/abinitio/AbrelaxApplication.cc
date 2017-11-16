@@ -203,7 +203,7 @@
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.AbrelaxApplication" );
+static basic::Tracer tr( "protocols.abinitio.AbrelaxApplication" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details registering of options that are relevant for AbrelaxApplication

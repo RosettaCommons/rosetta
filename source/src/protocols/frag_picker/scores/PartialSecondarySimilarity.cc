@@ -35,7 +35,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static THREAD_LOCAL basic::Tracer trPartialSecondarySimilarity(
+static basic::Tracer trPartialSecondarySimilarity(
 	"protocols.frag_picker.scores.PartialSecondarySimilarity");
 
 void PartialSecondarySimilarity::do_caching(VallChunkOP chunk) {

@@ -22,7 +22,7 @@
 #include <utility>
 #include <utility/exit.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.WeightedFragmentSmoothTrialMover" );
+static basic::Tracer TR( "protocols.hybridization.WeightedFragmentSmoothTrialMover" );
 
 namespace protocols {
 namespace hybridization {

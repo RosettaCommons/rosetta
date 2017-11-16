@@ -35,11 +35,10 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.analysis.InterfaceAnalyzer" );
+static basic::Tracer TR( "apps.public.analysis.InterfaceAnalyzer" );
 
 //define local options
 basic::options::IntegerOptionKey const jumpnum("jumpnum");

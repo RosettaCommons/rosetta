@@ -91,7 +91,7 @@
 typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
 typedef utility::pointer::shared_ptr< CifParser > CifParserOP;
 
-static THREAD_LOCAL basic::Tracer TR( "core.import_pose.util" );
+static basic::Tracer TR( "core.import_pose.util" );
 
 namespace core {
 namespace import_pose {
@@ -101,16 +101,14 @@ using namespace kinematics;
 using core::Size;
 using core::SSize;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 using namespace core::io;
 using namespace ObjexxFCL;
 using namespace core::pose;
 using namespace core::pose::full_model_info;
 
-static THREAD_LOCAL basic::Tracer TR( "core.import_pose.import_pose" );
+static basic::Tracer TR( "core.import_pose.import_pose" );
 
 using utility::vector1;
 

@@ -30,7 +30,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
-static THREAD_LOCAL basic::Tracer TR("LoopAnalyzerMoverTests");
+static basic::Tracer TR("LoopAnalyzerMoverTests");
 
 class LoopAnalyzerMoverTests : public CxxTest::TestSuite {
 	//Define Variables

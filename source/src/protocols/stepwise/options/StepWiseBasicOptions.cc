@@ -32,7 +32,7 @@
 using namespace basic::options;
 using namespace OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.options.StepWiseBasicOptions" );
+static basic::Tracer TR( "protocols.stepwise.options.StepWiseBasicOptions" );
 
 namespace protocols {
 namespace stepwise {

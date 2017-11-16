@@ -29,7 +29,7 @@ using namespace core;
 using namespace core::chemical::rna;
 using namespace protocols::stepwise::sampler::rna;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_Sugar" );
+static basic::Tracer TR( "protocols.recces.sampler.rna.MC_RNA_Sugar" );
 
 namespace protocols {
 namespace recces {

@@ -58,7 +58,7 @@
 namespace devel {
 namespace mmt_msd {
 
-static THREAD_LOCAL basic::Tracer TR( "devel.mmt_msd.MMTDriver" );
+static basic::Tracer TR( "devel.mmt_msd.MMTDriver" );
 
 std::string
 sequence_from_entity(

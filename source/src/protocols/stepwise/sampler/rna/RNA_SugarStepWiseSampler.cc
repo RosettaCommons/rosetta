@@ -31,14 +31,14 @@
 using namespace core;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rna.RNA_SugarStepWiseSampler" );
+static basic::Tracer TR( "protocols.sampler.rna.RNA_SugarStepWiseSampler" );
 
 namespace protocols {
 namespace stepwise {
 namespace sampler {
 namespace rna {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rna.RNA_SugarStepWiseSampler" );
+static basic::Tracer TR( "protocols.sampler.rna.RNA_SugarStepWiseSampler" );
 //////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 RNA_SugarStepWiseSampler::RNA_SugarStepWiseSampler(

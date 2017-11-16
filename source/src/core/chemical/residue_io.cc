@@ -76,7 +76,7 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
+static basic::Tracer tr( "core.chemical" );
 
 
 ///////////////////////////////////////////////////////////////////////////////

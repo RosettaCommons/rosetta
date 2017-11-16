@@ -39,7 +39,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.MoverContainer" );
+static basic::Tracer TR( "protocols.moves.MoverContainer" );
 
 
 namespace protocols {
@@ -47,7 +47,6 @@ namespace moves {
 
 
 using namespace core;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

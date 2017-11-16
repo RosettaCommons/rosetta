@@ -49,7 +49,7 @@ namespace chemical {
 /// @details Auto-generated virtual destructor
 Metapatch::~Metapatch() = default;
 
-static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
+static basic::Tracer tr( "core.chemical" );
 
 Metapatch::Metapatch() :
 	name_( std::string() ),

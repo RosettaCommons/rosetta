@@ -33,7 +33,7 @@
 //Auto Headers
 #include <core/conformation/Conformation.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.SiteConstraint" );
+static basic::Tracer TR( "core.scoring.constraints.SiteConstraint" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

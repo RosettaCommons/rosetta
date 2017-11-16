@@ -66,7 +66,6 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core;
@@ -111,15 +110,15 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	utility::vector1< std::string > pdbnames( basic::options::start_files() );
-	for ( Size ii = 1; ii <= pdbnames.size(); ++ii ) {
-		score_pdb( pdbnames[ ii ]);
-	}
+		utility::vector1< std::string > pdbnames( basic::options::start_files() );
+		for ( Size ii = 1; ii <= pdbnames.size(); ++ii ) {
+			score_pdb( pdbnames[ ii ]);
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -41,7 +41,7 @@ using core::pose::Pose;
 using core::conformation::Residue;
 
 
-static THREAD_LOCAL basic::Tracer TR( "PyEnTest" );
+static basic::Tracer TR( "PyEnTest" );
 
 
 using namespace core;
@@ -105,21 +105,21 @@ int main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core;
+		using namespace core;
 
-	core::scoring::methods::PyEnergyMethodRegistrator ENC( new MyCI1B_Creator() );
+		core::scoring::methods::PyEnergyMethodRegistrator ENC( new MyCI1B_Creator() );
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	core::pose::PoseOP pose = core::import_pose::pose_from_file("src/python/bindings/test/data/test_in.pdb", core::import_pose::PDB_file);
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("python");
+		core::pose::PoseOP pose = core::import_pose::pose_from_file("src/python/bindings/test/data/test_in.pdb", core::import_pose::PDB_file);
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("python");
 
-	//scorefxn->set_weight(core::scoring::python, 1.0);
+		//scorefxn->set_weight(core::scoring::python, 1.0);
 
-	utility::vector1< double > v;  v.push_back(1.0);
-	scorefxn->set_method_weights(core::scoring::python, v);
+		utility::vector1< double > v;  v.push_back(1.0);
+		scorefxn->set_method_weights(core::scoring::python, v);
 
-	std::cout << "Score:" << scorefxn->score(*pose) << std::endl;
+		std::cout << "Score:" << scorefxn->score(*pose) << std::endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

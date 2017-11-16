@@ -31,7 +31,7 @@
 #include <utility/string_util.hh>
 
 // Tracer instance for this file
-static THREAD_LOCAL basic::Tracer TR( "core.io.StructFileRepOptions" );
+static basic::Tracer TR( "core.io.StructFileRepOptions" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

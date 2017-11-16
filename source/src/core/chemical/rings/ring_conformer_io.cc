@@ -33,7 +33,7 @@
 //#include <string>
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.rings.ring_conformer_io" );
+static basic::Tracer TR( "core.chemical.rings.ring_conformer_io" );
 
 
 namespace core {

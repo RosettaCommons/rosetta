@@ -50,7 +50,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.simple_moves.MSDMover");
+static basic::Tracer TR("protocols.simple_moves.MSDMover");
 
 // XRW TEMP std::string
 // XRW TEMP MSDMoverCreator::keyname() const

@@ -105,7 +105,7 @@
 
 #include <basic/prof.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.bbmc" );
+static basic::Tracer TR( "pilot.wendao.bbmc" );
 
 //params for all
 OPT_1GRP_KEY(Integer, mc, ntrials) //how many steps
@@ -193,8 +193,7 @@ my_main( void* )
 	main_task_factory->push_back( new operation::InitializeFromCommandline );
 	if ( option[ packing::resfile ].user() ) {
 		main_task_factory->push_back( new operation::ReadResfile );
-	}
-	else {
+	} else {
 		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
 		main_task_factory->push_back( rtrop );
 	}
@@ -225,7 +224,7 @@ my_main( void* )
 	Pose &p(*pose);
 
 	//if constraints are specified, add them!
-	if( option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+	if ( option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
 		core::scoring::constraints::add_constraints_from_cmdline( p, *score_fxn);
 	}
 
@@ -248,7 +247,7 @@ my_main( void* )
 
 	scmc.set_prob_uniform( option[ mc::sc_prob_uniform ] );
 	scmc.set_prob_withinrot( option[ mc::sc_prob_withinrot ] );
-	scmc.set_prob_random_pert_current( option[ mc::sc_prob_random_pert_current ] ); 
+	scmc.set_prob_random_pert_current( option[ mc::sc_prob_random_pert_current ] );
 	scmc.set_preserve_detailed_balance( true );
 	scmc.set_temperature( kT ); //only for intra mc criteria
 	scmc.set_scorefunction( *scfxn );
@@ -258,7 +257,7 @@ my_main( void* )
 
 	Size ntrials = option[ mc::ntrials ];
 
-	for (Size i = 1; i <= ntrials; ++i) {
+	for ( Size i = 1; i <= ntrials; ++i ) {
 		//init
 		string move_type( "" );
 		Real proposal_density_ratio=1.0;

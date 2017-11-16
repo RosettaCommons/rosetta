@@ -42,7 +42,6 @@
 #include <protocols/moves/MoverStatistics.hh>
 #include <utility/excn/Exceptions.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -53,12 +52,12 @@ using namespace protocols::jobdist;
 using namespace protocols::moves;
 
 
-static THREAD_LOCAL basic::Tracer TT( "ncontact" );
+static basic::Tracer TT( "ncontact" );
 
 namespace ncontact
 {
-	RealOptionKey dist( "ncontact:dist" );
-	IntegerOptionKey seqsep( "ncontact:sep" );
+RealOptionKey dist( "ncontact:dist" );
+IntegerOptionKey seqsep( "ncontact:sep" );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +82,7 @@ public:
 		return atom_hydrophobic_[ index ];
 	}
 
-	private:
+private:
 	utility::vector1< bool > atom_hydrophobic_;
 
 }; // MyAtom
@@ -115,7 +114,7 @@ public:
 
 	/// @brief value constructor
 	CountContact( Real const cdist,
-								Size const sep ):
+		Size const sep ):
 		Mover( "CountCotact" ),
 		condist_( numeric::square(cdist) ),
 		isep_residue_( sep )
@@ -145,8 +144,8 @@ private:
 	/// @brief
 	/*
 	void write_header() const {
-		TT << "rms" << " "	<< "ncon_res" << " " << "ncon_atm_hpres" << " "
-			 << "ncon_atm" << " " << "ncon_hpatm" << std::endl;
+	TT << "rms" << " " << "ncon_res" << " " << "ncon_atm_hpres" << " "
+	<< "ncon_atm" << " " << "ncon_hpatm" << std::endl;
 	}
 	*/
 
@@ -189,8 +188,8 @@ void CountContact::apply ( pose::Pose & pose ){
 	// intialize
 	Size max_ssele = ssinfo.ss_element_id( pose.size() );
 	utility::vector1< utility::vector1< Size > > ncon_sselements( max_ssele, utility::vector1<core::Size>(max_ssele, 0) );
-	for ( Size i=1 ;i<=max_ssele; ++i ) {
-		for ( Size j=1 ;j<=max_ssele; ++j ) {
+	for ( Size i=1 ; i<=max_ssele; ++i ) {
+		for ( Size j=1 ; j<=max_ssele; ++j ) {
 			ncon_sselements[i][j] = 0;
 		}
 	}
@@ -202,21 +201,21 @@ void CountContact::apply ( pose::Pose & pose ){
 
 	// calc number of contacts
 	MyAtom myatom;
-	for ( Size iaa=1 ;iaa<= pose.size()-isep_residue_; ++iaa ) {
+	for ( Size iaa=1 ; iaa<= pose.size()-isep_residue_; ++iaa ) {
 		Size iaa_ssele( ssinfo.ss_element_id( iaa ) );
 
-		for ( Size jaa=iaa+isep_residue_ ;jaa<=pose.size(); ++jaa ) {
+		for ( Size jaa=iaa+isep_residue_ ; jaa<=pose.size(); ++jaa ) {
 			Size jaa_ssele( ssinfo.ss_element_id( jaa ) );
 
 			Residue const & ires( pose.residue( iaa ) );
 			for ( Size iatm=1, iatm_end=ires.natoms(); iatm<=iatm_end; ++iatm ) {
 
-				if( ires.atom_type( int(iatm) ).is_heavyatom() ){
+				if ( ires.atom_type( int(iatm) ).is_heavyatom() ) {
 					Residue const & jres( pose.residue( jaa ) );
 
 					for ( Size jatm=1, jatm_end=jres.natoms(); jatm<=jatm_end; ++jatm ) {
 
-						if( jres.atom_type(int(jatm)).is_heavyatom() ){
+						if ( jres.atom_type(int(jatm)).is_heavyatom() ) {
 
 							conformation::Atom const & iatom( ires.atom( iatm ) );
 							conformation::Atom const & jatom( jres.atom( jatm ) );
@@ -225,14 +224,14 @@ void CountContact::apply ( pose::Pose & pose ){
 
 							Real const dsq( distance_squared( iatom.xyz(), jatom.xyz() ));
 
-							if( dsq <= condist_ ){
+							if ( dsq <= condist_ ) {
 								ncontact_allatm_ ++;
 
-								if( myatom.is_hydrophobic(iadex) && myatom.is_hydrophobic(jadex) ){
+								if ( myatom.is_hydrophobic(iadex) && myatom.is_hydrophobic(jadex) ) {
 									ncontact_hpatm_ ++;
 
-									if( !ires.atom_is_backbone( int(iatm) ) && !jres.atom_is_backbone( int(jatm) ) &&
-        						   ires.type().is_polar() != 1 && jres.type().is_polar() != 1 ){
+									if ( !ires.atom_is_backbone( int(iatm) ) && !jres.atom_is_backbone( int(jatm) ) &&
+											ires.type().is_polar() != 1 && jres.type().is_polar() != 1 ) {
 										ncontact_atm_hpres_ ++;
 
 										ncon_sselements[iaa_ssele][jaa_ssele] ++ ;
@@ -256,17 +255,17 @@ void CountContact::apply ( pose::Pose & pose ){
 
 
 	Size tot( 0 );
-	for ( Size i=1 ;i<=max_ssele; ++i ) {
-		for ( Size j=1 ;j<=max_ssele; ++j ) {
+	for ( Size i=1 ; i<=max_ssele; ++i ) {
+		for ( Size j=1 ; j<=max_ssele; ++j ) {
 			tot += ncon_sselements[i][j];
 		}
 	}
 
 
 	float ss_entrpy( 0.0 );
-	for ( Size i=1 ;i<=max_ssele; ++i ) {
-		for ( Size j=1 ;j<=max_ssele; ++j ) {
-			if( ncon_sselements[i][j] > 0 ){
+	for ( Size i=1 ; i<=max_ssele; ++i ) {
+		for ( Size j=1 ; j<=max_ssele; ++j ) {
+			if ( ncon_sselements[i][j] > 0 ) {
 				float prob = Real(ncon_sselements[i][j])/Real(tot);
 				ss_entrpy += -prob*std::log( prob );
 			}
@@ -276,7 +275,7 @@ void CountContact::apply ( pose::Pose & pose ){
 
 	float ncatm   ( Real(ncontact_allatm_)/Real(pose.size()));
 	float nchpatm ( Real(ncontact_hpatm_)/Real(pose.size())) ;
-  float nchpres ( Real(ncontact_atm_hpres_)/Real(pose.size()));
+	float nchpres ( Real(ncontact_atm_hpres_)/Real(pose.size()));
 
 	setPoseExtraScore( pose, "nres", float(pose.size()) );
 	setPoseExtraScore( pose, "ncon_atm", ncatm  );
@@ -291,24 +290,24 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	option.add( ncontact::dist, "distance of contact" );
-	option.add( ncontact::seqsep,  "sequence separation distance of sequence to be counted" );
+		option.add( ncontact::dist, "distance of contact" );
+		option.add( ncontact::seqsep,  "sequence separation distance of sequence to be counted" );
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	Size sep( 4 );
-	Real dist( 6.0 );
-	if( option[ ncontact::dist ].user() ){
-		dist = option[ ncontact::dist ];
-	}
-	if( option[ ncontact::seqsep ].user() ){
-		sep = option[ ncontact::seqsep ];
-	}
+		Size sep( 4 );
+		Real dist( 6.0 );
+		if ( option[ ncontact::dist ].user() ) {
+			dist = option[ ncontact::dist ];
+		}
+		if ( option[ ncontact::seqsep ].user() ) {
+			sep = option[ ncontact::seqsep ];
+		}
 
-	MoverOP protocol;
-  protocol = new CountContact( dist, sep );
+		MoverOP protocol;
+		protocol = new CountContact( dist, sep );
 
-	universal_main( *protocol );
+		universal_main( *protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

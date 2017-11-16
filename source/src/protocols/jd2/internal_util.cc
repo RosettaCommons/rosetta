@@ -62,7 +62,7 @@
 namespace protocols {
 namespace jd2 {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.internal_util" );
+static basic::Tracer TR( "protocols.jd2.internal_util" );
 
 void add_job_data_to_ss( core::io::silent::SilentStructOP ss, JobCOP job_op ) {
 	using namespace core::pose;

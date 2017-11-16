@@ -39,7 +39,7 @@
 
 #include <numeric/NumericTraits.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.topology.Sheet" );
+static basic::Tracer TR( "protocols.topology.Sheet" );
 
 using namespace core;
 

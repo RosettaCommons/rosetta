@@ -43,7 +43,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
+static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP DdgFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DdgFilter ); }

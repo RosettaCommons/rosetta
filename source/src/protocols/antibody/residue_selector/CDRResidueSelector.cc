@@ -40,7 +40,7 @@
 
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.residue_selector.CDRResidueSelector" );
+static basic::Tracer TR( "protocols.antibody.residue_selector.CDRResidueSelector" );
 
 
 namespace protocols {

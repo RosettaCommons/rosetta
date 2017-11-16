@@ -65,11 +65,10 @@ OPT_2GRP_KEY( Boolean, tempering, stats, silent )
 OPT_2GRP_KEY( Boolean, tempering, stats, line_output )
 OPT_1GRP_KEY( Integer, tempering, stride )
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.TemperingBase" );
+static basic::Tracer tr( "protocols.canonical_sampling.TemperingBase" );
 
 
 bool protocols::canonical_sampling::TemperingBase::options_registered_( false );

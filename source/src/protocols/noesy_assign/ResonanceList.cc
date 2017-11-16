@@ -56,8 +56,8 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.resonances" );
-static THREAD_LOCAL basic::Tracer tr_labels( "protocols.noesy_assign.resonances.labels" );
+static basic::Tracer tr( "protocols.noesy_assign.resonances" );
+static basic::Tracer tr_labels( "protocols.noesy_assign.resonances.labels" );
 
 using core::Real;
 using namespace core;

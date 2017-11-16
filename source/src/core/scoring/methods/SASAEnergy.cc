@@ -43,7 +43,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.SASAEnergy" );
+static basic::Tracer TR( "core.scoring.methods.SASAEnergy" );
 
 // Utility headers
 

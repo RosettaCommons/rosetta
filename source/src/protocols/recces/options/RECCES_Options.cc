@@ -22,7 +22,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.options.RECCES_Options" );
+static basic::Tracer TR( "protocols.recces.options.RECCES_Options" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

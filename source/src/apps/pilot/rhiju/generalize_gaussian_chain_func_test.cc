@@ -27,7 +27,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rhiju.generalize_gaussian_chain_func_test" );
+static basic::Tracer TR( "apps.pilot.rhiju.generalize_gaussian_chain_func_test" );
 
 
 using namespace utility;
@@ -36,10 +36,10 @@ using namespace core;
 
 Real
 get_gaussian_chain_func( vector1< Distance > const & dists,
-												 Real const & gaussian_variance,
-												 Real const & loop_fixed_cost,
-												 Size const idx,
-												 bool const force_use_general )
+	Real const & gaussian_variance,
+	Real const & loop_fixed_cost,
+	Size const idx,
+	bool const force_use_general )
 {
 	using namespace core::scoring::func;
 	Distance dist( dists[ idx ] );

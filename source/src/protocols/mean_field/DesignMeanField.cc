@@ -37,7 +37,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR("protocols.mean_field.DesignMeanField");
+static basic::Tracer TR("protocols.mean_field.DesignMeanField");
 
 
 namespace protocols {

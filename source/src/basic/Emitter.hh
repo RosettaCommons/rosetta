@@ -16,11 +16,12 @@
 #define INCLUDED_basic_Emitter_hh
 
 #include <basic/Tracer.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 #include <cstddef>
 #include <iosfwd>
 #include <ostream>
-
+#include <sstream>
 
 namespace basic {
 

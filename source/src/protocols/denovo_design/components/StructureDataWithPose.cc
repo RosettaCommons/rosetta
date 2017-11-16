@@ -39,7 +39,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.StructureDataWithPose" );
+static basic::Tracer TR( "protocols.denovo_design.components.StructureDataWithPose" );
 
 namespace protocols {
 namespace denovo_design {

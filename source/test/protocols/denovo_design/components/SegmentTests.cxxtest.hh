@@ -31,7 +31,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.SegmentTests.cxxtest" );
+static basic::Tracer TR( "protocols.denovo_design.SegmentTests.cxxtest" );
 
 // --------------- Test Class --------------- //
 class SegmentTests : public CxxTest::TestSuite {

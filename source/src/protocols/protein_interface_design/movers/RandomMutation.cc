@@ -49,7 +49,7 @@ namespace movers {
 using namespace std;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.RandomMutation" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.RandomMutation" );
 
 // XRW TEMP std::string
 // XRW TEMP RandomMutationCreator::keyname() const

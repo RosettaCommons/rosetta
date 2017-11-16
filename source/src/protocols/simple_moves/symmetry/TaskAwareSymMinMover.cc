@@ -44,7 +44,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.symmetry.TaskAwareSymMinMover" );
+static basic::Tracer TR( "protocols.simple_moves.symmetry.TaskAwareSymMinMover" );
 
 namespace protocols {
 namespace simple_moves {

@@ -23,7 +23,7 @@
 #include <numeric/UniformRotationSampler.hh>
 #include <ObjexxFCL/format.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.magnesium.MgOrbitalFrameFinder" );
+static basic::Tracer TR( "protocols.magnesium.MgOrbitalFrameFinder" );
 
 using namespace core;
 using utility::vector1;

@@ -53,7 +53,7 @@
 // TEMP
 #include <core/pose/PDBInfo.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.SheetTopologyFilter" );
+static basic::Tracer tr( "protocols.fldsgn.filters.SheetTopologyFilter" );
 
 namespace protocols {
 namespace fldsgn {

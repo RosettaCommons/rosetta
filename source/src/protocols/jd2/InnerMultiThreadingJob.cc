@@ -26,7 +26,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.InnerMultiThreadingJob" );
+static basic::Tracer TR( "protocols.jd2.InnerMultiThreadingJob" );
 
 namespace protocols {
 namespace jd2 {

@@ -46,12 +46,12 @@ using namespace basic::options::OptionKeys;
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.blivens.convert" );
+static basic::Tracer TR( "pilot_apps.blivens.convert" );
 
 int
 usage(char* msg)
 {
-	TR	<< "usage: convert -s input.pdb -o output.pdb -database db" << endl
+	TR << "usage: convert -s input.pdb -o output.pdb -database db" << endl
 		<< "Example: convert -s in.pdb -in:file:fullatom -o output.pdb -out:file:residue_type_set centroid" <<endl
 		<< msg << endl;
 	exit(1);
@@ -59,51 +59,53 @@ usage(char* msg)
 
 int main( int argc, char * argv [] )
 {
-  try {
-	//init options system
-	option.add_relevant( in::file::s );
-	option.add_relevant( out::file::o );
-	option.add_relevant( in::file::residue_type_set );
-	option.add_relevant( out::file::residue_type_set );
-	option.add_relevant( in::file::fullatom );
-	option.add_relevant( out::file::fullatom );
-	option.add_relevant( in::file::centroid_input );
-	devel::init(argc, argv);
+	try {
+		//init options system
+		option.add_relevant( in::file::s );
+		option.add_relevant( out::file::o );
+		option.add_relevant( in::file::residue_type_set );
+		option.add_relevant( out::file::residue_type_set );
+		option.add_relevant( in::file::fullatom );
+		option.add_relevant( out::file::fullatom );
+		option.add_relevant( in::file::centroid_input );
+		devel::init(argc, argv);
 
 
-	if( ! option[ in::file::s ].user() )
-		return usage("No in file given: Use -s or -l to designate pdb files to search for disulfides");
-	if( ! option[ out::file::o ].user() )
-		return usage("No out file given: Use -o to designate an output file");
-
-	string pdb = basic::options::start_file();
-	string out = option[ out::file::o ]();
-
-	string in_rsd_set;
-	if( option[ in::file::centroid_input ].user() && option[ in::file::centroid_input]() ) {
-		if( option[ in::file::fullatom ].user() && option[ in::file::fullatom ]() ) {
-			utility_exit_with_message("Conflicting values for -in:file:centroid_input and -in:file:fullatom");
+		if ( ! option[ in::file::s ].user() ) {
+			return usage("No in file given: Use -s or -l to designate pdb files to search for disulfides");
 		}
-		in_rsd_set = chemical::CENTROID;
-	} else {
-		in_rsd_set = option[ in::file::residue_type_set ](); //default fa_standard
-	}
+		if ( ! option[ out::file::o ].user() ) {
+			return usage("No out file given: Use -o to designate an output file");
+		}
 
-	string out_rsd_set;
-	if( option[ out::file::fullatom ].user() && option[ out::file::fullatom ]() ) {
-		out_rsd_set = chemical::FA_STANDARD;
-	} else {
-		out_rsd_set = option[ out::file::residue_type_set ](); //default fa_standard
-	}
+		string pdb = basic::options::start_file();
+		string out = option[ out::file::o ]();
 
-	TR.Info << "Converting from " << in_rsd_set <<" to " << out_rsd_set << endl;
-	chemical::ResidueTypeSetCAP rsd_set =
-		chemical::ChemicalManager::get_instance()->residue_type_set(in_rsd_set);
-	pose::Pose pose;
+		string in_rsd_set;
+		if ( option[ in::file::centroid_input ].user() && option[ in::file::centroid_input]() ) {
+			if ( option[ in::file::fullatom ].user() && option[ in::file::fullatom ]() ) {
+				utility_exit_with_message("Conflicting values for -in:file:centroid_input and -in:file:fullatom");
+			}
+			in_rsd_set = chemical::CENTROID;
+		} else {
+			in_rsd_set = option[ in::file::residue_type_set ](); //default fa_standard
+		}
 
-	core::import_pose::pose_from_file( pose, *rsd_set, pdb, false, core::import_pose::PDB_file);
-	core::util::switch_to_residue_type_set( pose, out_rsd_set);
-	pose.dump_pdb(out);
+		string out_rsd_set;
+		if ( option[ out::file::fullatom ].user() && option[ out::file::fullatom ]() ) {
+			out_rsd_set = chemical::FA_STANDARD;
+		} else {
+			out_rsd_set = option[ out::file::residue_type_set ](); //default fa_standard
+		}
+
+		TR.Info << "Converting from " << in_rsd_set <<" to " << out_rsd_set << endl;
+		chemical::ResidueTypeSetCAP rsd_set =
+			chemical::ChemicalManager::get_instance()->residue_type_set(in_rsd_set);
+		pose::Pose pose;
+
+		core::import_pose::pose_from_file( pose, *rsd_set, pdb, false, core::import_pose::PDB_file);
+		core::util::switch_to_residue_type_set( pose, out_rsd_set);
+		pose.dump_pdb(out);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

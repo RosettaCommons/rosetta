@@ -76,7 +76,7 @@ namespace znhash {
 /// @details Auto-generated virtual destructor
 ZnHash::~ZnHash() = default;
 
-static THREAD_LOCAL basic::Tracer TR( "devel.znhash.ZnHash" );
+static basic::Tracer TR( "devel.znhash.ZnHash" );
 
 ZnMatchData::ZnMatchData() :
 	res1_(0),

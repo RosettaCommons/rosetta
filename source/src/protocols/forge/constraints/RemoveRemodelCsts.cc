@@ -34,7 +34,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.RemoveRemodelCsts" );
+static basic::Tracer TR( "protocols.forge.constraints.RemoveRemodelCsts" );
 
 namespace protocols {
 namespace forge {

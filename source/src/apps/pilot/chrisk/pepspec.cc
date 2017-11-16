@@ -168,7 +168,7 @@ using namespace protocols::moves;
 using namespace id;
 using namespace protocols::frags;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.chrisk/pepspec" );
+static basic::Tracer TR( "apps.pilot.chrisk/pepspec" );
 
 
 Size prot_chain( 0 );

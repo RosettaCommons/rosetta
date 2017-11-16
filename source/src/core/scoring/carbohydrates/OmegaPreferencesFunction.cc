@@ -28,7 +28,7 @@
 #include <cmath>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.carbohydrates.OmegaPreferencesFunction" );
+static basic::Tracer TR( "core.scoring.carbohydrates.OmegaPreferencesFunction" );
 
 
 namespace core {

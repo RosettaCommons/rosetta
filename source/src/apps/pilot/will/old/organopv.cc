@@ -104,11 +104,11 @@
 #include <apps/pilot/will/mynamespaces.ihh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "organopv" );
+static basic::Tracer TR( "organopv" );
 
 
 void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID aid2, core::Real mean, core::Real sd,
-			 core::scoring::ScoreType st = core::scoring::atom_pair_constraint)
+	core::scoring::ScoreType st = core::scoring::atom_pair_constraint)
 {
 	core::scoring::constraints::ConstraintOP cc = new core::scoring::constraints::AtomPairConstraint(
 		aid1, aid2, new core::scoring::constraints::HarmonicFunc(mean,sd), st );
@@ -187,7 +187,7 @@ void* doit(void* /*x = NULL*/) {
 	// chemical::ResidueTypeSetCAP rs( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
 	// chemical::make_pose_from_sequence(pose,std::string("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),*rs,false);
 	// for(Size i = 1; i <= pose.size(); ++i) {
-	// 	pose.set_phi  (i,-60); pose.set_psi  (i,-45); pose.set_omega(i,180);
+	//  pose.set_phi  (i,-60); pose.set_psi  (i,-45); pose.set_omega(i,180);
 	// }
 	// pose.dump_pdb("helix.pdb");
 	// std::exit(-1);
@@ -196,8 +196,8 @@ void* doit(void* /*x = NULL*/) {
 	// chemical::remove_lower_terminus_type_from_pose_residue(pose,1);
 	// chemical::remove_upper_terminus_type_from_pose_residue(pose,1);
 	// for(Size i = 1; i <= 36; ++i) {
-	// 	pose.set_chi(1,1,10.0*i);
-	// 	pose.dump_pdb("pyr_chi_"+string_of(i)+".pdb");
+	//  pose.set_chi(1,1,10.0*i);
+	//  pose.dump_pdb("pyr_chi_"+string_of(i)+".pdb");
 	// }
 	// std::exit(-1);
 
@@ -218,13 +218,13 @@ void* doit(void* /*x = NULL*/) {
 	pose.set_xyz(AtomID(8,1),numeric::xyzVector<Real>(1.404,0.540,-3.183));
 
 	// for(Size i=1; i<= pose.residue(1).natoms(); ++i) {
-	// 	std::cerr << "ATOM " << i << " " << pose.residue(1).atom_name(i) << std::endl;
+	//  std::cerr << "ATOM " << i << " " << pose.residue(1).atom_name(i) << std::endl;
 	// }
 	// for(Size i=1; i<= pose.residue(2).natoms(); ++i) {
-	// 	std::cerr << "ATOM " << i << " " << pose.residue(2).atom_name(i) << std::endl;
+	//  std::cerr << "ATOM " << i << " " << pose.residue(2).atom_name(i) << std::endl;
 	// }
 	// for(Size i=1; i<= pose.residue(3).natoms(); ++i) {
-	// 	std::cerr << "ATOM " << i << " " << pose.residue(3).atom_name(i) << std::endl;
+	//  std::cerr << "ATOM " << i << " " << pose.residue(3).atom_name(i) << std::endl;
 	// }
 	// std::exit(-1);
 
@@ -237,18 +237,18 @@ void* doit(void* /*x = NULL*/) {
 	// std::cerr << "TMP " << pose.residue(3).atom_index("C1") << std::endl;
 	using namespace core::scoring::constraints;
 	std::map<std::string,std::string> atomRO,atomLO,atomL,atomR,atomLO2;
-	atomRO["ALA"]= "CB";	atomR["ALA"]= "CA";
-	atomRO["ASN"]="OD1";	atomR["ASN"]= "CG";
-	atomRO["ASP"]="OD1";	atomR["ASP"]= "CG";
-	atomRO["GLN"]="OE1";	atomR["GLN"]= "CD";
-	atomRO["GLU"]="OE1";	atomR["GLU"]= "CD";
-	atomRO["ILE"]="CD1";	atomR["ILE"]="CG1";
-	atomRO["LEU"]="CD2";	atomR["LEU"]= "CG";
-	atomRO["LYS"]= "NZ";	atomR["LYS"]= "CE";
-	atomRO["SER"]= "OG";	atomR["SER"]= "CB";
-	atomRO["THR"]="OG1";	atomR["THR"]= "CB";
-	atomRO["TYR"]= "OH";	atomR["TYR"]= "CZ";
-	atomRO["VAL"]="CG2";	atomR["VAL"]= "CB";
+	atomRO["ALA"]= "CB"; atomR["ALA"]= "CA";
+	atomRO["ASN"]="OD1"; atomR["ASN"]= "CG";
+	atomRO["ASP"]="OD1"; atomR["ASP"]= "CG";
+	atomRO["GLN"]="OE1"; atomR["GLN"]= "CD";
+	atomRO["GLU"]="OE1"; atomR["GLU"]= "CD";
+	atomRO["ILE"]="CD1"; atomR["ILE"]="CG1";
+	atomRO["LEU"]="CD2"; atomR["LEU"]= "CG";
+	atomRO["LYS"]= "NZ"; atomR["LYS"]= "CE";
+	atomRO["SER"]= "OG"; atomR["SER"]= "CB";
+	atomRO["THR"]="OG1"; atomR["THR"]= "CB";
+	atomRO["TYR"]= "OH"; atomR["TYR"]= "CZ";
+	atomRO["VAL"]="CG2"; atomR["VAL"]= "CB";
 	atomLO ["PYR"] = "B";
 	atomL  ["PYR"] = "C";
 	atomLO2["PYR"] = "P";
@@ -272,7 +272,7 @@ void* doit(void* /*x = NULL*/) {
 	pose.add_constraint(new AngleConstraint( AtomID(2,3), AtomID(3,3), AtomID(1,4 ), new HarmonicFunc(2.094395,0.03) ));
 	pose.add_constraint(new AngleConstraint( AtomID(2,4), AtomID(3,4), AtomID(1,11), new HarmonicFunc(2.094395,0.03) ));
 
-	for(Size i = 1; i <= 16; i++) {
+	for ( Size i = 1; i <= 16; i++ ) {
 		// std::cerr << "ATOM " << i << " " << pose.residue(3).atom_name(i) << std::endl;
 		add_apc(pose,AtomID(i,3),AtomID(i, 4),3.0,1.0);
 		add_apc(pose,AtomID(i,4),AtomID(i,11),3.0,1.0);
@@ -292,15 +292,15 @@ void* doit(void* /*x = NULL*/) {
 
 	std::string tag = string_of(uniform());
 
-	if (option[ basic::options::OptionKeys::parser::view ]()) {
+	if ( option[ basic::options::OptionKeys::parser::view ]() ) {
 		protocols::viewer::add_conformation_viewer(pose.conformation(),"smhybrid",1200,1200);
 	}
 
 	Pose min = pose;
-	for(Size i = 1; i < 9999; ++i) {
-		for(Size k = 1; k < 9; ++k) {
-			for(Size j = 1; j <= pose.fold_tree().num_jump(); ++j) {
-				if( !( pose.fold_tree().downstream_jump_residue(j)==3 || pose.fold_tree().downstream_jump_residue(j)==4 ) ) continue;
+	for ( Size i = 1; i < 9999; ++i ) {
+		for ( Size k = 1; k < 9; ++k ) {
+			for ( Size j = 1; j <= pose.fold_tree().num_jump(); ++j ) {
+				if ( !( pose.fold_tree().downstream_jump_residue(j)==3 || pose.fold_tree().downstream_jump_residue(j)==4 ) ) continue;
 				core::kinematics::Jump jmp(pose.jump(j));
 				jmp.set_rotation(numeric::rotation_matrix_degrees(numeric::xyzVector<Real>(1,0,0),gaussian())*jmp.get_rotation());
 				jmp.set_rotation(numeric::rotation_matrix_degrees(numeric::xyzVector<Real>(0,1,0),gaussian())*jmp.get_rotation());
@@ -312,7 +312,7 @@ void* doit(void* /*x = NULL*/) {
 			}
 			design(pose,sf);
 			minimize(pose,sf);
-			if( (*sf)(min) > (*sf)(pose) ) min = pose;
+			if ( (*sf)(min) > (*sf)(pose) ) min = pose;
 		}
 		// pose = min;
 	}
@@ -332,13 +332,13 @@ main( int argc, char * argv [] )
 
 	try {
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	if (option[ basic::options::OptionKeys::parser::view ]()) {
-		protocols::viewer::viewer_main( &doit );
-	} else {
-		while(1) doit(NULL);
-	}
+		if ( option[ basic::options::OptionKeys::parser::view ]() ) {
+			protocols::viewer::viewer_main( &doit );
+		} else {
+			while ( 1 ) doit(NULL);
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

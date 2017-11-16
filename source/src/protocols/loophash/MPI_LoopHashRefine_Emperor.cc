@@ -49,7 +49,7 @@ namespace loophash {
 
 using namespace protocols::wum;
 
-static THREAD_LOCAL basic::Tracer TR( "MPI.LHR.Emperor" );
+static basic::Tracer TR( "MPI.LHR.Emperor" );
 
 
 void

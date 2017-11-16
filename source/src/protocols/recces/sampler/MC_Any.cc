@@ -22,7 +22,7 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.MC_Any" );
+static basic::Tracer TR( "protocols.recces.sampler.MC_Any" );
 
 namespace protocols {
 namespace recces {

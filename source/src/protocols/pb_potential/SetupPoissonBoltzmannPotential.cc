@@ -55,7 +55,7 @@ typedef SetupPoissonBoltzmannPotential SetupPB;
 typedef SetupPoissonBoltzmannPotentialCreator SetupPBCreator;
 typedef core::Size Size;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.pb_potential.SetupPoissonBoltzmannPotential" );
+static basic::Tracer TR( "protocols.pb_potential.SetupPoissonBoltzmannPotential" );
 
 const std::string SetupPoissonBoltzmannPotential::DEFAULT_APBS_PATH = "apbs";
 

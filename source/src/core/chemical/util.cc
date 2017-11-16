@@ -44,7 +44,7 @@
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.util" );
+static basic::Tracer TR( "core.chemical.util" );
 
 // Return a constant access pointer to the ResidueTypeSet specified by the command-line options.
 core::chemical::ResidueTypeSetCAP

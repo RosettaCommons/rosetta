@@ -111,9 +111,9 @@ namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
 
-static THREAD_LOCAL basic::Tracer tw( "demo.phil.motif_scan", basic::t_warning );
-//static THREAD_LOCAL basic::Tracer td( "demo.phil.motif_scan", basic::t_debug );
-static THREAD_LOCAL basic::Tracer tt( "demo.phil.motif_scan", basic::t_trace );
+static basic::Tracer tw( "demo.phil.motif_scan", basic::t_warning );
+//static basic::Tracer td( "demo.phil.motif_scan", basic::t_debug );
+static basic::Tracer tt( "demo.phil.motif_scan", basic::t_trace );
 
 
 ///////////////////////////////////////////////////////////////////////////////

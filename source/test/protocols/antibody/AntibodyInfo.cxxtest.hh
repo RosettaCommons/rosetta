@@ -42,7 +42,7 @@
 using namespace protocols::antibody;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.AntibodyInfoTest");
+static basic::Tracer TR("protocols.antibody.AntibodyInfoTest");
 class AntibodyInfoTests : public CxxTest::TestSuite {
 	core::pose::Pose ab_pose_aho; //Full PDB
 	core::pose::Pose ab_pose_chothia;

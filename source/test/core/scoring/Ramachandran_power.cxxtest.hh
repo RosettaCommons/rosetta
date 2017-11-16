@@ -34,7 +34,7 @@ using core::pose::Pose;
 using core::chemical::AA;
 using core::scoring::Ramachandran;
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.Ramachandran_power.cxxtest");
+static basic::Tracer TR("core.scoring.Ramachandran_power.cxxtest");
 
 class RamachandranPowerTest : public CxxTest::TestSuite {
 

@@ -80,7 +80,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "antibody.AntibodyInfo" );
+static basic::Tracer TR( "antibody.AntibodyInfo" );
 
 namespace protocols {
 namespace antibody {

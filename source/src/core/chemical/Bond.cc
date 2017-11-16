@@ -35,7 +35,7 @@
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.Bond" );
+static basic::Tracer TR( "core.chemical.Bond" );
 
 BondName convert_to_BondName( std::string const & id ) {
 	int id_int( utility::string2int( id ) );

@@ -24,7 +24,7 @@ namespace constel {
 using core::Real;
 using core::Size;
 
-static THREAD_LOCAL basic::Tracer TR( "devel.constel.NeighTeller" );
+static basic::Tracer TR( "devel.constel.NeighTeller" );
 
 
 /// @brief NeighTeller's constructor

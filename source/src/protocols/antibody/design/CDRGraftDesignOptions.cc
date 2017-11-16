@@ -32,7 +32,7 @@
 #include <utility/io/izstream.hh>
 #include <boost/algorithm/string.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.design.CDRGraftDesignOptions");
+static basic::Tracer TR("protocols.antibody.design.CDRGraftDesignOptions");
 
 
 namespace protocols {

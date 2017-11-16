@@ -51,7 +51,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.OptimizeProteinEmbeddingMover" );
+static basic::Tracer TR( "protocols.membrane.OptimizeProteinEmbeddingMover" );
 
 namespace protocols {
 namespace membrane {

@@ -54,7 +54,7 @@ using namespace protocols::moves;
 using namespace core::chemical;
 using namespace core::kinematics;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotDisjointedFoldTreeMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotDisjointedFoldTreeMover" );
 
 // XRW TEMP std::string HotspotDisjointedFoldTreeMoverCreator::keyname() const
 // XRW TEMP {

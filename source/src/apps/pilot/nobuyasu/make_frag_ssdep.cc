@@ -36,7 +36,7 @@
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "pick_fragments" );
+static basic::Tracer TR( "pick_fragments" );
 
 typedef core::Size Size;
 typedef std::string String;
@@ -72,12 +72,12 @@ void ThisApplication::register_options() {
 
 
 FrameList pick_fragments(
-			   String const & complete_ss,
-			   String const & complete_aa,
-			   utility::vector1< String > const & complete_abego,
-			   Interval const & interval,
-			   Size const frag_length,
-			   Size const n_frags )
+	String const & complete_ss,
+	String const & complete_aa,
+	utility::vector1< String > const & complete_abego,
+	Interval const & interval,
+	Size const frag_length,
+	Size const n_frags )
 {
 	using core::fragment::Frame;
 	using core::fragment::FrameOP;
@@ -110,7 +110,7 @@ FrameList pick_fragments(
 			runtime_assert( complete_ss.length() == complete_abego.size() );
 			Size pos( 1 );
 			abego_sub.resize( frag_length );
-			for( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
+			for ( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
 				if ( ii > complete_abego.size() ) {
 					abego_sub[ pos ] = "X";
 				} else {
@@ -136,55 +136,55 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	ThisApplication::register_options();
-  devel::init(argc, argv);
+		ThisApplication::register_options();
+		devel::init(argc, argv);
 
-	Size frag_size = option[ size ];
-	Size n_frags = option[ nfrags ];
-
-
-	if( option[ blueprint ].user() && option[ in::file::s ].user() ){
-		TR.Fatal << "You need to choose either options of -blueprint or -s " << std::endl;
-		utility_exit_with_message("Either -blueprint or -s needed.");
-	}
+		Size frag_size = option[ size ];
+		Size n_frags = option[ nfrags ];
 
 
-	Size naa( 0 );
-	String ss( "" );
-    utility::vector1< String >abego;
-
-	if( option[ blueprint ].user() ){
-		// read secondary structure from blueprint
-		protocols::jd2::parser::BluePrintOP blue = new protocols::jd2::parser::BluePrint( option[ blueprint ] );
-		naa = blue->size();
-		ss = blue->secstruct();
-		if( option[ use_abego ].user() ) {
-			abego = blue->abego();
+		if ( option[ blueprint ].user() && option[ in::file::s ].user() ) {
+			TR.Fatal << "You need to choose either options of -blueprint or -s " << std::endl;
+			utility_exit_with_message("Either -blueprint or -s needed.");
 		}
-	}else if( option[ in::file::s ].user() ){
-		core::pose::Pose pose;
-		core::import_pose::pose_from_file( pose, option[ in::file::s ].value().at( 1 ) , core::import_pose::PDB_file);
-		protocols::moves::DsspMover dsm;
-		dsm.apply( pose );
-		naa = pose.size();
-		ss = pose.secstruct();
-	}else{
-		TR.Fatal << "You need to choose either options of -blueprint or -s " << std::endl;
-		utility_exit_with_message("Either -blueprint or -s needed.");
-	}
 
-	// define the region to pick frag
-	Interval ival( 1, naa );
 
-	// pick fragments
-	FragSetOP fragset = new ConstantLengthFragSet( frag_size );
-	fragset->add( pick_fragments( ss, "", abego, ival, frag_size, n_frags ) );
+		Size naa( 0 );
+		String ss( "" );
+		utility::vector1< String >abego;
 
-	// output fragments
-	FragmentIO().write_data( option[ output ], *fragset );
+		if ( option[ blueprint ].user() ) {
+			// read secondary structure from blueprint
+			protocols::jd2::parser::BluePrintOP blue = new protocols::jd2::parser::BluePrint( option[ blueprint ] );
+			naa = blue->size();
+			ss = blue->secstruct();
+			if ( option[ use_abego ].user() ) {
+				abego = blue->abego();
+			}
+		} else if ( option[ in::file::s ].user() ) {
+			core::pose::Pose pose;
+			core::import_pose::pose_from_file( pose, option[ in::file::s ].value().at( 1 ) , core::import_pose::PDB_file);
+			protocols::moves::DsspMover dsm;
+			dsm.apply( pose );
+			naa = pose.size();
+			ss = pose.secstruct();
+		} else {
+			TR.Fatal << "You need to choose either options of -blueprint or -s " << std::endl;
+			utility_exit_with_message("Either -blueprint or -s needed.");
+		}
+
+		// define the region to pick frag
+		Interval ival( 1, naa );
+
+		// pick fragments
+		FragSetOP fragset = new ConstantLengthFragSet( frag_size );
+		fragset->add( pick_fragments( ss, "", abego, ival, frag_size, n_frags ) );
+
+		// output fragments
+		FragmentIO().write_data( option[ output ], *fragset );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

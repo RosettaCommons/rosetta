@@ -27,7 +27,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.sampler.rna.util" );
+static basic::Tracer TR( "protocols.stepwise.sampler.rna.util" );
 
 using namespace core;
 using namespace protocols::stepwise::modeler::rna;

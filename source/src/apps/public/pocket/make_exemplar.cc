@@ -99,7 +99,7 @@ using namespace protocols::moves;
 
 OPT_KEY( String, central_relax_pdb_num )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.make_exemplar.main", basic::t_debug );
+static basic::Tracer TR( "apps.public.make_exemplar.main", basic::t_debug );
 
 //This Mover creates an exemplar
 class ExemplarMover : public moves::Mover {

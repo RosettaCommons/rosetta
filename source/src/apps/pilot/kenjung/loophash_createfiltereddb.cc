@@ -39,12 +39,11 @@
 #include <mpi.h>
 #endif
 
-using basic::T;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
 using namespace protocols::loophash;
-static THREAD_LOCAL basic::Tracer TR( "main" );
+static basic::Tracer TR( "main" );
 
 
 // MPI headers

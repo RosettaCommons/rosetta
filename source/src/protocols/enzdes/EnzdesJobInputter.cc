@@ -45,7 +45,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.EnzdesJobInputter" );
+static basic::Tracer TR( "protocols.enzdes.EnzdesJobInputter" );
 
 namespace protocols {
 namespace enzdes {

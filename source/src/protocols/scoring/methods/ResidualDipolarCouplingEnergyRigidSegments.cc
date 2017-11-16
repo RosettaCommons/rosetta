@@ -51,7 +51,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //Auto using namespaces end
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCouplingRigidSegments" );
+static basic::Tracer tr( "core.scoring.ResidualDipolarCouplingRigidSegments" );
 
 namespace protocols {
 namespace scoring {

@@ -43,7 +43,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.DeclareBond" );
+static basic::Tracer TR( "protocols.cyclic_peptide.DeclareBond" );
 
 namespace protocols {
 namespace cyclic_peptide {

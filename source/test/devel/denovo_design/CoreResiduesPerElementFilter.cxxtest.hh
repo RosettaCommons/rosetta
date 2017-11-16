@@ -42,7 +42,7 @@
 // C++ headers
 #include <protocols/denovo_design/test_utils.hh>
 
-static THREAD_LOCAL basic::Tracer TR("devel.denovo_design.CoreResiduesPerElementFilter.cxxtest");
+static basic::Tracer TR("devel.denovo_design.CoreResiduesPerElementFilter.cxxtest");
 
 // --------------- Test Class --------------- //
 class CoreResiduesPerElementFilterTests : public CxxTest::TestSuite {

@@ -45,8 +45,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR( "khSandbox" );
+static basic::Tracer TR( "khSandbox" );
 
 
 //using namespace basic::options;
@@ -65,9 +64,9 @@ typedef numeric::xyzVector< core::Real > Vector;
 class khSandbox : public protocols::moves::Mover {
 public:
 	khSandbox() {}
-	
+
 	virtual ~khSandbox(){};
-	
+
 	virtual
 	void
 	apply(core::pose::Pose & pose)
@@ -75,24 +74,24 @@ public:
 		TR << "Apply function engage." << std::endl;
 		utility::file::FileName filename(pose.pdb_info()->name());
 		std::string pdbname_base = filename.base();
-		
+
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		scorefxn->score(pose);
-		
+
 		core::kinematics::AtomTree const & at = pose.atom_tree();
 		core::kinematics::tree::AtomCOP rt = at.root();
 
 		bool firstResidue = true;
-		for (core::Size i = 1; i < pose.size(); i++) {
+		for ( core::Size i = 1; i < pose.size(); i++ ) {
 			core::conformation::Residue const & rsd = pose.residue(i);
-			if (!firstResidue) TR << std::endl;
+			if ( !firstResidue ) TR << std::endl;
 			firstResidue = false;
 			TR << "Residue " << i << ": \"" << rsd.name3() << "\"" << std::endl;
-			for (core::Size j = 1; j < rsd.natoms(); j++) {
+			for ( core::Size j = 1; j < rsd.natoms(); j++ ) {
 				TR << "\tAtom " << j << ": \"" << rsd.atom_name(j) << "\"" << std::endl;
 				//TR << "bonded_neighbors: " << rsd.bonded_neighbor(j) << std::endl;
 				TR << "\t\tbonded_neighbors: \"" << rsd.atom_name(rsd.bonded_neighbor(j)[1]);
-				for (Size k = 2; k <= rsd.bonded_neighbor(j).size(); k ++) {
+				for ( Size k = 2; k <= rsd.bonded_neighbor(j).size(); k ++ ) {
 					TR << "\", \"" << rsd.atom_name(k);
 				}
 				TR << "\"" << std::endl;
@@ -100,15 +99,14 @@ public:
 					"\"" << std::endl;
 				TR << "\t\tatom_base of atom_base: \"" <<
 					rsd.atom_name(rsd.atom_base(rsd.atom_base(j))) << "\"" << std::endl;
-				if (rsd.abase2(j)) {
+				if ( rsd.abase2(j) ) {
 					TR << "\t\tabase2: \"" << rsd.atom_name(rsd.abase2(j)) << "\"" << std::endl;
-				}
-				else { TR << "\t\tabase2: No abase2 for this atom" << std::endl; }
+				} else { TR << "\t\tabase2: No abase2 for this atom" << std::endl; }
 			}
 
 			//for ( core::chemical::AtomIndices::const_iterator H_pos
-			//		= restype->Hpos_polar().begin();
-			//		H_pos != restype->Hpos_polar().end(); H_pos++) {
+			//  = restype->Hpos_polar().begin();
+			//  H_pos != restype->Hpos_polar().end(); H_pos++) {
 
 			//}
 			if ( rsd.type().accpt_pos().begin() != rsd.type().accpt_pos().end() ) {
@@ -124,18 +122,18 @@ public:
 		}
 
 		//rt->show();
-		
+
 		return;
 	}
 
 	virtual
 	std::string
 	get_name() const { return "apps.pilot.kevin.khSandbox"; }
-	
+
 private:
-	
+
 	// basic::MetricValue< id::AtomID_Map< Real > > atom_sasa_;
-	
+
 };
 
 typedef utility::pointer::owning_ptr< khSandbox > khSandboxOP;
@@ -145,17 +143,17 @@ int main(int argc, char* argv[])
 	try {
 		using basic::options::option;
 		//option.add(sasa_cutoff, "SASA cutoff to be considered buried").def(0.01);
-		
-//		std::time_t t = std::time(NULL);
+
+		//  std::time_t t = std::time(NULL);
 		devel::init(argc, argv);
 
 		protocols::jd2::JobDistributor::get_instance()->go(new khSandbox);
-		
+
 		TR << "************************d**o**n**e**************************************" << std::endl;
-		
+
 	} catch (utility::excn::EXCN_Base const & e) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
-	
+
 	return 0;
 }

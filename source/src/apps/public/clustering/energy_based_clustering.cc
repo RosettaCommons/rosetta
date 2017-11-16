@@ -71,7 +71,7 @@
 // C++ headers:
 #include <stdio.h>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.clustering.energy_based_clustering" );
+static basic::Tracer TR( "apps.public.clustering.energy_based_clustering" );
 
 /// @brief Minimial main() function for energy_based_clustering application.  Most of the heavy lifting is done by
 /// the protocols::energy_based_clustering::EnergyBasedClusteringProtocol class.
@@ -79,13 +79,13 @@ int main( int argc, char * argv [] ) {
 	using namespace protocols::energy_based_clustering;
 	try {
 
+		EnergyBasedClusteringProtocol::register_options();
+		devel::init(argc, argv);
+
 		TR << "Starting energy_based_clustering application." << std::endl;
 		TR << "This application was first called \"bettercluster\", and was created on 6 May 2013 by Vikram K. Mulligan (vmullig@uw.edu)." << std::endl;
 		TR << "It was upgraded to a public application on 18 July 2017." << std::endl;
 		TR << "\n************************************************************************************\nIF YOU USE THIS APPLICATION, PLEASE CITE:\nHosseinzadeh P., Bhardwaj G., Mulligan V., et al.  (2017).  Manuscript under review.\n************************************************************************************" << std::endl;
-
-		EnergyBasedClusteringProtocol::register_options();
-		devel::init(argc, argv);
 
 		EnergyBasedClusteringOptions options(true);
 		EnergyBasedClusteringProtocol cluster_protocol( options );

@@ -65,10 +65,9 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 
 
 using namespace core;
-using basic::T;
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.movers.RNA_Relaxer" );
+static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_Relaxer" );
 
 namespace protocols {
 namespace rna {

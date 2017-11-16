@@ -39,7 +39,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.filters.AtomicDistanceFilter" );
+static basic::Tracer TR( "protocols.filters.AtomicDistanceFilter" );
 
 /// @brief default ctor
 AtomicDistanceFilter::AtomicDistanceFilter() :

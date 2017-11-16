@@ -83,7 +83,6 @@
 using namespace core;
 using namespace protocols;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::vector1;
@@ -107,9 +106,10 @@ public:
 		// parse positions
 		std::set<core::Size> user_pos;
 		std::string residues = option[cartrefine::residues]();
-		if (residues.length()==0) {
-			for (int i=1; i<=pose.size(); ++i)
+		if ( residues.length()==0 ) {
+			for ( int i=1; i<=pose.size(); ++i ) {
 				user_pos.insert( i );
+			}
 		} else {
 			user_pos = core::pose::get_resnum_list( residues , pose );
 		}

@@ -98,8 +98,8 @@
 namespace protocols {
 namespace seeded_abinitio {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.movers.SegmentHybridizer" );
-static THREAD_LOCAL basic::Tracer TR_ccd( "protocols.seeded_abinitio.movers.SegmentHybridizer_ccd" );
+static basic::Tracer TR( "protocols.seeded_abinitio.movers.SegmentHybridizer" );
+static basic::Tracer TR_ccd( "protocols.seeded_abinitio.movers.SegmentHybridizer_ccd" );
 
 SegmentHybridizer::SegmentHybridizer() :
 	Mover( SegmentHybridizer::mover_name() ),

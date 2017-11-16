@@ -51,7 +51,7 @@ using core::Size;
 
 using namespace core::pose;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting");
+static basic::Tracer TR("protocols.antibody.grafting");
 
 
 
@@ -123,7 +123,7 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 		core::pose::PoseOP &pose;
 		AntibodyChainNumbering numbering;
 		string trimmed_sequence;
-		utility::CSI_Sequence color;
+		utility::CSI::CSI_Enum color;
 		utility::vector1< core::Size > conserved_fr_residues; // chothia numbering is assumed (and true for members of the database)
 	} J[] {
 		{'H', frh, an.heavy, trimmed_heavy_fr.fr1 + A.h1_sequence() + trimmed_heavy_fr.fr2 + A.h2_sequence() + trimmed_heavy_fr.fr3 + A.h3_sequence() + trimmed_heavy_fr.fr4, TR.Blue, conserved_frh_residues},

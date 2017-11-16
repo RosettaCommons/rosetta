@@ -37,7 +37,7 @@
 
 #include <unordered_set>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.align.StepWisePoseAligner" );
+static basic::Tracer TR( "protocols.stepwise.modeler.align.StepWisePoseAligner" );
 using ObjexxFCL::format::F;
 using utility::tools::make_vector1;
 using namespace core;

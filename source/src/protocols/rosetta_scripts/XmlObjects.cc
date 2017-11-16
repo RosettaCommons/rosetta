@@ -55,7 +55,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR("protocols.rosetta_scripts.XmlObjects");
+static basic::Tracer TR("protocols.rosetta_scripts.XmlObjects");
 
 namespace protocols {
 namespace rosetta_scripts {

@@ -43,7 +43,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.components.StructureDataFactory" );
+static basic::Tracer TR( "protocols.denovo_design.components.StructureDataFactory" );
 
 namespace protocols {
 namespace denovo_design {

@@ -36,7 +36,7 @@
 // C++ headers
 #include <utility/assert.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.PrimarySequenceNeighborhoodSelector" );
+static basic::Tracer TR( "core.select.residue_selector.PrimarySequenceNeighborhoodSelector" );
 
 namespace core {
 namespace select {

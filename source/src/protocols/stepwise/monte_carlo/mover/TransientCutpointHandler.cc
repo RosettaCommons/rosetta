@@ -33,7 +33,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::chemical;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.TransientCutpointHandler" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.TransientCutpointHandler" );
 
 namespace protocols {
 namespace stepwise {

@@ -56,7 +56,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rhiju.homolog_finder_farna" );
+static basic::Tracer TR( "apps.pilot.rhiju.homolog_finder_farna" );
 
 utility::vector1< std::pair< Size, std::string > >
 split_segments_longer_than_6mers(

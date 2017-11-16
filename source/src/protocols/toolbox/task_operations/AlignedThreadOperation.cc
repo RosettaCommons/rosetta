@@ -35,7 +35,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.AlignedThreadOperation" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.AlignedThreadOperation" );
 
 namespace protocols {
 namespace toolbox {

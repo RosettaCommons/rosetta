@@ -46,7 +46,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DOFHistogramRecorder" );
+static basic::Tracer TR( "protocols.simple_moves.DOFHistogramRecorder" );
 
 DOFHistogramRecorder::DOFHistogramRecorder() :
 	num_bins_(10)

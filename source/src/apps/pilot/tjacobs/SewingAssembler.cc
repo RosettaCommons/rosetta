@@ -37,7 +37,7 @@
 #include <set>
 #include <iterator>
 
-static THREAD_LOCAL basic::Tracer TR("SewAssembler");
+static basic::Tracer TR("SewAssembler");
 
 namespace SewAssembler {
 basic::options::FileOptionKey const model_file( "model_file" );

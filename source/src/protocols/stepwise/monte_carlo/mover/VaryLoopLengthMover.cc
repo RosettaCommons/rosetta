@@ -23,7 +23,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.VaryLoopLengthMover" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.VaryLoopLengthMover" );
 
 using namespace core;
 

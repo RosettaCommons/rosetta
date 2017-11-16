@@ -75,7 +75,7 @@ namespace environment {
 
 std::string const GENERATE_STATIONARY_ATTACHMENT_POINT = "[NOT_SET]";
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.rigid.CoMTrackerCM", basic::t_info );
+static basic::Tracer tr( "protocols.rigid.CoMTrackerCM", basic::t_info );
 
 using namespace core::environment;
 using namespace protocols::environment;

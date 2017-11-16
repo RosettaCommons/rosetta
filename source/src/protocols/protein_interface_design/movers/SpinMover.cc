@@ -41,7 +41,7 @@ namespace movers {
 
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SpinMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.SpinMover" );
 
 // XRW TEMP std::string SpinMoverCreator::keyname() const
 // XRW TEMP {

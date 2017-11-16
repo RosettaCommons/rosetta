@@ -46,7 +46,7 @@
 //C++ Headers
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.SSShapeComplementarityFilter" );
+static basic::Tracer TR( "protocols.denovo_design.SSShapeComplementarityFilter" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

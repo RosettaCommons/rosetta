@@ -17,7 +17,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kale.examples" );
+static basic::Tracer TR( "apps.pilot.kale.examples" );
 
 using namespace core;
 
@@ -32,13 +32,13 @@ int main(int argc, char **argv) {
 	import_pose::pose_from_file(source_pose, "structures/marked_loop.8.pdb", core::import_pose::PDB_file);
 
 	pose::remove_variant_type_from_pose_residue(
-			source_pose, "LOWER_TERMINUS", 1);
+		source_pose, "LOWER_TERMINUS", 1);
 	pose::remove_variant_type_from_pose_residue(
-			source_pose, "UPPER_TERMINUS", source_pose.size());
+		source_pose, "UPPER_TERMINUS", source_pose.size());
 
 	residues = source_pose.size();
 
-	for (Size i = 0; i < residues; i++) {
+	for ( Size i = 0; i < residues; i++ ) {
 		source_index = 1 + (i - offset) % residues;
 		target_index = 1 + i;
 

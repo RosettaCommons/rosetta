@@ -54,7 +54,7 @@
 //Auto Headers
 
 
-static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.WrapFilterAsEvaluatorCreator" );
+static basic::Tracer tr( "devel.replica_docking.WrapFilterAsEvaluatorCreator" );
 
 namespace devel {
 namespace replica_docking {

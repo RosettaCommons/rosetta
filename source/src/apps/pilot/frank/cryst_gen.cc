@@ -81,7 +81,7 @@ using namespace basic::options::OptionKeys;
 #define DEG2RAD 0.0174532925199433
 #define RAD2DEG 57.295779513082323
 
-static THREAD_LOCAL basic::Tracer TR("cryst.gen");
+static basic::Tracer TR("cryst.gen");
 
 ////////////////////////////////////////////////
 // helper functions

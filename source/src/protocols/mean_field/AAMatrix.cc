@@ -44,7 +44,7 @@ namespace mean_field {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.mean_field.AAMatrix" );
+static basic::Tracer TR( "protocols.mean_field.AAMatrix" );
 
 // Public methods //////////////////////////////////////////////////////////////
 // Standard methods ////////////////////////////////////////////////////////////

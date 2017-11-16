@@ -22,7 +22,7 @@
 #include <numeric/random/random_xyz.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.free_peptide_movers.TranslationFreePeptideMover" );
+static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.free_peptide_movers.TranslationFreePeptideMover" );
 
 
 namespace protocols {

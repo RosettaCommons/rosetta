@@ -74,7 +74,7 @@ namespace idealize {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.idealize.IdealizeMover" );
+static basic::Tracer TR( "protocols.idealize.IdealizeMover" );
 
 
 

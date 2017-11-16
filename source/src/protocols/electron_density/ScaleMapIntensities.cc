@@ -47,7 +47,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.ScaleMapIntensities" );
+static basic::Tracer TR( "protocols.electron_density.ScaleMapIntensities" );
 
 namespace protocols {
 namespace electron_density {

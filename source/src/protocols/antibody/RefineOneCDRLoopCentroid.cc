@@ -39,11 +39,10 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/MinMover.hh>//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.RefineOneCDRLoopCentroid" );
+static basic::Tracer TR( "protocols.antibody.RefineOneCDRLoopCentroid" );
 
 using namespace core;
 namespace protocols {

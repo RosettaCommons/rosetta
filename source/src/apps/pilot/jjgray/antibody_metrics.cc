@@ -35,7 +35,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody_metrics" );
+static basic::Tracer TR( "protocols.antibody_metrics" );
 
 
 //namespaces

@@ -63,11 +63,10 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockMCMProtocol", basic::t_info );
+static basic::Tracer TR( "protocols.docking.DockMCMProtocol", basic::t_info );
 
 //     originally from dock_structure.cc Jeff Gray April 2001
 

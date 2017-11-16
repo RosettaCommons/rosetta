@@ -52,7 +52,7 @@
 #include <protocols/viewer/viewers.hh>
 #endif
 
-static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.filters.FoldabilityFilter" );
+static basic::Tracer TR( "devel.denovo_design.filters.FoldabilityFilter" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

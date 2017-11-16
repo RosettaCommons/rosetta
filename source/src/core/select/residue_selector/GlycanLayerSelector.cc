@@ -44,7 +44,7 @@
 #endif // SERIALIZATION
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.GlycanLayerSelector" );
+static basic::Tracer TR( "core.select.residue_selector.GlycanLayerSelector" );
 
 namespace core {
 namespace select {

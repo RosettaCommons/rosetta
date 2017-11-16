@@ -35,7 +35,7 @@ using core::Real;
 using std::string;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.AngleToVector" );
+static basic::Tracer TR( "protocols.simple_filters.AngleToVector" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP AngleToVectorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AngleToVector ); }

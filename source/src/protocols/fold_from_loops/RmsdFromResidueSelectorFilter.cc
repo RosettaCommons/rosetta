@@ -62,7 +62,7 @@
 namespace protocols {
 namespace fold_from_loops {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fold_from_loops.RmsdFromResidueSelectorFilter" );
+static basic::Tracer TR( "protocols.fold_from_loops.RmsdFromResidueSelectorFilter" );
 
 RmsdFromResidueSelectorFilter::RmsdFromResidueSelectorFilter() :
 	protocols::filters::Filter( class_name() ),

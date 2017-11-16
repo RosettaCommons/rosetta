@@ -31,7 +31,7 @@
 
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.topology.StrandPairing" );
+static basic::Tracer TR( "protocols.topology.StrandPairing" );
 
 typedef std::string String;
 typedef utility::vector1< core::Size > VecSize;

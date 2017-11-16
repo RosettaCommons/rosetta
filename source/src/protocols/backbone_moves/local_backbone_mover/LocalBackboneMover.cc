@@ -42,7 +42,7 @@
 #include <string>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.LocalBackboneMover" );
+static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.LocalBackboneMover" );
 
 namespace protocols {
 namespace backbone_moves {

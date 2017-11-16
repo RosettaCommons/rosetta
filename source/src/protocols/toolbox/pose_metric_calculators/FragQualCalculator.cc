@@ -49,7 +49,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.FragQualCalculator" );
+static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.FragQualCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

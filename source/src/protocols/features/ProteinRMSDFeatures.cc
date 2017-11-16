@@ -85,7 +85,7 @@ using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
 using cppdb::statement;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.features.ProteinRMSDFeatures" );
+static basic::Tracer tr( "protocols.features.ProteinRMSDFeatures" );
 
 // XRW TEMP string
 // XRW TEMP ProteinRMSDFeatures::type_name() const { return "ProteinRMSDFeatures"; }

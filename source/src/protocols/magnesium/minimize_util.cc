@@ -24,7 +24,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.magnesium.minimize_util" );
+static basic::Tracer TR( "protocols.magnesium.minimize_util" );
 
 using namespace core;
 using utility::vector1;

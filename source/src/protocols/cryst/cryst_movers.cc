@@ -90,14 +90,13 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace cryst {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cryst.cryst_movers" );
+static basic::Tracer TR( "protocols.cryst.cryst_movers" );
 
 using namespace protocols;
 using namespace core;

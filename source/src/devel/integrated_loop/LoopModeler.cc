@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: LoopModeler
+///   Contains currently: LoopModeler
 ///
 ///
 /// @author Vatsan Raman
@@ -48,7 +48,6 @@
 //Auto Headers
 #include <core/pose/util.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -57,7 +56,7 @@ using namespace core;
 namespace protocols {
 namespace moves {
 
-static THREAD_LOCAL basic::Tracer TR( "devel.IntegratedLoop.LoopModeler" );
+static basic::Tracer TR( "devel.IntegratedLoop.LoopModeler" );
 
 
 //v typedef utility::vector1< protocols::Loop > Loops;
@@ -72,9 +71,9 @@ void LoopMover::set_default()
 {
 	nmoves_ = 1;
 	mc_temperature_ = 2.0;
-	//	movemap_ = new core::kinematics::MoveMap();
-	//	movemap_->set_bb( false );
-	//	movemap_->set_chi( false );
+	// movemap_ = new core::kinematics::MoveMap();
+	// movemap_->set_bb( false );
+	// movemap_->set_chi( false );
 
 }
 //////////////////////////////////////////////////////////////////////////
@@ -106,13 +105,13 @@ void LoopMover::set_movemap(
 {
 
 	using namespace core::id;
-	//	movemap_ = new core::kinematics::MoveMap();
+	// movemap_ = new core::kinematics::MoveMap();
 	movemap_->set_bb( false );
 	movemap_->set_chi( false );
 	movemap_->set_jump( false );
 
 	for ( LoopsConsIt it = LoopsToPerturb.begin(), it_end = LoopsToPerturb.end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		for ( Size i = it->loop_begin(); i <= it->loop_end(); ++i ) {
 			movemap_->set_bb(i, true);
 			movemap_->set(TorsionID(i,BB,3), false); // omega is fixed
@@ -158,7 +157,7 @@ void LoopMover::set_one_loop_fold_tree(
 	Size loop_end( ThisLoop.loop_end() );
 	Size cutpoint( ThisLoop.cutpoint() );
 	f.clear();
-	if( loop_begin == 1 || loop_end == nres ) {
+	if ( loop_begin == 1 || loop_end == nres ) {
 		f.add_edge( 1, nres, Edge::PEPTIDE ); //simple fold tree
 	} else {
 		f.add_edge( 1, loop_begin - 1, Edge::PEPTIDE ); //one jump fold tree
@@ -191,8 +190,7 @@ void LoopMover::set_loops_fold_tree(
 	Size jump_num = 0;
 
 
-	for ( LoopsConsIt it = LoopsToPerturb.begin(), it_end = LoopsToPerturb.end(), it_next; it != it_end; ++it )
-		{
+	for ( LoopsConsIt it = LoopsToPerturb.begin(), it_end = LoopsToPerturb.end(), it_next; it != it_end; ++it ) {
 		it_next = it;
 		it_next++;
 		Size const jump_start =
@@ -202,11 +200,11 @@ void LoopMover::set_loops_fold_tree(
 		Size const jump_cut   = it->cutpoint();
 		Size const jump_next_start =
 			( it_next == it_end ) ? total_residue : it_next->loop_begin()-1;
-		if(  it->loop_begin() == 1 ){
+		if (  it->loop_begin() == 1 ) {
 			f.add_edge( jump_start, jump_stop, Edge::PEPTIDE );
 			f.add_edge( jump_stop, jump_next_start, Edge::PEPTIDE );
 			continue;
-		}else if( it->loop_end() == total_residue ){
+		} else if ( it->loop_end() == total_residue ) {
 			f.add_edge( jump_start, jump_stop, Edge::PEPTIDE );
 			continue;
 		}
@@ -215,19 +213,19 @@ void LoopMover::set_loops_fold_tree(
 		f.add_edge( jump_start, jump_cut,  Edge::PEPTIDE );
 		f.add_edge( jump_cut+1, jump_stop, Edge::PEPTIDE );
 		f.add_edge( jump_stop, jump_next_start, Edge::PEPTIDE );
-		}
+	}
 
 	Size const first_start =
 		( tmp_loops.begin()->loop_begin() == 1 ) ? tmp_loops.begin()->loop_begin() : tmp_loops.begin()->loop_begin() - 1;
-	//	if ( first_start != 1 )
+	// if ( first_start != 1 )
 	f.add_edge( 1, first_start, Edge::PEPTIDE );
 
 	// reorder
 	Size root;
-	if( tmp_loops.begin()->loop_begin() == 1 &&
-			tmp_loops.begin()->loop_end() != total_residue )
+	if ( tmp_loops.begin()->loop_begin() == 1 &&
+			tmp_loops.begin()->loop_end() != total_residue ) {
 		root = tmp_loops.begin()->loop_end()+1;
-	else root = 1;
+	} else root = 1;
 	f.reorder(root);
 
 	TR << "fold tree " << f << "\n";
@@ -270,7 +268,7 @@ void LoopRefiner::apply_mod( core::pose::Pose & pose )
 
 	TR << "Inside LoopRefiner apply " << "\n";
 	for ( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		TR << "Loop test " << it->loop_begin() << "\n";
 	}
 
@@ -290,21 +288,21 @@ void LoopRefiner::apply_mod( core::pose::Pose & pose )
 	Real const tolerance( 0.001 );
 	bool const nblist( true );
 
-	//	small_move_rot_trial_mover();
-	//	shear_move_rot_trial_mover();
+	// small_move_rot_trial_mover();
+	// shear_move_rot_trial_mover();
 	LoopManager LM( pose, LoopList_ );
 	Loops tmp = LM.LoopsToPerturb();
 
 
-	for( LoopsIt it = tmp.begin(), it_end = tmp.end();
-			 it != it_end; ++it ) {
+	for ( LoopsIt it = tmp.begin(), it_end = tmp.end();
+			it != it_end; ++it ) {
 		TR << "LoopRefiner apply " << it->loop_begin() << " " << it->loop_end() << " " << it->cutpoint() << " " << it->skip_rate() << "\n";
 		set_one_loop_fold_tree( pose, *it );
-		//v		set_movemap( *it );
+		//v  set_movemap( *it );
 		min_mover_ = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type, tolerance, nblist );
 		protocols::moves::SequenceMoverOP BBPerturb( new protocols::moves::SequenceMover() );
-		//		BBPerturb->add_mover( SmallMovesRotTrial );
-		//		BBPerturb->add_mover( ShearMovesRotTrial );
+		//  BBPerturb->add_mover( SmallMovesRotTrial );
+		//  BBPerturb->add_mover( ShearMovesRotTrial );
 		BBPerturb->add_mover( min_mover_ );
 
 		protocols::moves::TrialMoverOP BBPerturbMC( new protocols::moves::TrialMover( BBPerturb, mc_ ) );
@@ -343,28 +341,29 @@ void LoopRefiner::apply( core::pose::Pose & pose )
 	set_movemap( LoopList_, movemap_ );//all loops minimized
 	min_mover_ = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type, tolerance, nblist );
 
-	if( !mc_created )
+	if ( !mc_created ) {
 		set_default_mc( pose );
+	}
 
 	Loops LoopsToPerturb = AllLoopsLM.LoopsToPerturb();
 	set_loops_fold_tree( pose, LoopsToPerturb );
 
-	//	LoopManager LoopsToPerturbLM( pose, LoopsToPerturb );
-	for( LoopsIt it = LoopsToPerturb.begin(), it_end = LoopsToPerturb.end();
-			 it != it_end; ++it ) {
+	// LoopManager LoopsToPerturbLM( pose, LoopsToPerturb );
+	for ( LoopsIt it = LoopsToPerturb.begin(), it_end = LoopsToPerturb.end();
+			it != it_end; ++it ) {
 
 		std::cout << "Loop_begin, loop_end and cutpoint " << it->loop_begin() << " " << it->loop_end() << " " << it->cutpoint() << std::endl;
 
 		core::kinematics::MoveMapOP movemap_one_loop( new core::kinematics::MoveMap() );
 		set_movemap( *it, movemap_one_loop );
 
-		if ( it->cutpoint() == pose.size()) {
+		if ( it->cutpoint() == pose.size() ) {
 			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, it->cutpoint() - 1 );
 			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, it->cutpoint() );
-	} else {
+		} else {
 			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, it->cutpoint() );
 			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, it->cutpoint() + 1 );
-	}
+		}
 
 		protocols::moves::SequenceMoverOP BBPerturb( new protocols::moves::SequenceMover() );
 		protocols::moves::CcdCloseMoverOP ccd_close_mover( new protocols::moves::CcdCloseMover( pose, *movemap_one_loop, *it ) );
@@ -375,21 +374,21 @@ void LoopRefiner::apply( core::pose::Pose & pose )
 
 		protocols::moves::TrialMoverOP BBPerturbMC( new protocols::moves::TrialMover( BBPerturb, mc_ ) );
 		devel::RBSegment::SimAnnealMoverOP BBPerturbCycle( new devel::RBSegment::SimAnnealMover( BBPerturbMC, mc_, init_temp, final_temp, cycles ) );
-		//		BBPerturbMC->apply( pose );
- 	 	BBPerturbCycle->apply( pose );
-		//		BBPerturb->apply( pose );
+		//  BBPerturbMC->apply( pose );
+		BBPerturbCycle->apply( pose );
+		//  BBPerturb->apply( pose );
 
 		if ( it->cutpoint() == pose.size() ) {
 			core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_LOWER, it->cutpoint() - 1 );
 			core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_UPPER, it->cutpoint() );
-	} else {
+		} else {
 			core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_LOWER, it->cutpoint() );
 			core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_UPPER, it->cutpoint() + 1 );
-	}
+		}
 
 	}
 
-	//	utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 
 }
 //////////////////////////////////////////////////////////////////////////
@@ -409,7 +408,7 @@ protocols::moves::SequenceMoverOP LoopRefiner::small_move_rot_trial_mover(
 
 	moves::SequenceMoverOP SmallMovesRotTrial( new moves::SequenceMover() );
 	SmallMovesRotTrial->add_mover( small_mover );
-	//v	SmallMovesRotTrial->add_mover( RotTrial );
+	//v SmallMovesRotTrial->add_mover( RotTrial );
 
 	return SmallMovesRotTrial;
 }
@@ -430,7 +429,7 @@ protocols::moves::SequenceMoverOP LoopRefiner::shear_move_rot_trial_mover(
 
 	protocols::moves::SequenceMoverOP ShearMovesRotTrial( new moves::SequenceMover() );
 	ShearMovesRotTrial->add_mover( shear_mover );
-	//v	ShearMovesRotTrial->add_mover( RotTrial );
+	//v ShearMovesRotTrial->add_mover( RotTrial );
 
 	return ShearMovesRotTrial;
 

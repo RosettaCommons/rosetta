@@ -35,7 +35,7 @@
 #include <basic/datacache/DataMap.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.parser.FragSetLoader" );
+static basic::Tracer TR( "protocols.jd2.parser.FragSetLoader" );
 
 namespace protocols {
 namespace parser {

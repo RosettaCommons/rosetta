@@ -44,7 +44,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.SaltBridgeCalculator" );
+static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.SaltBridgeCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

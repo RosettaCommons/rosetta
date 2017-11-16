@@ -51,7 +51,7 @@
 #include <iostream>
 #include <boost/bind/bind.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.environment.EnvironmentJump.cxxtest");
+static basic::Tracer TR("protocols.environment.EnvironmentJump.cxxtest");
 
 // --------------- Test Class --------------- //
 

@@ -38,7 +38,7 @@
 namespace devel {
 namespace buns {
 
-static THREAD_LOCAL basic::Tracer TR( "devel.buns.BuriedUnsatHbondFilter2" );
+static basic::Tracer TR( "devel.buns.BuriedUnsatHbondFilter2" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP BuriedUnsatHbondFilter2Creator::create_filter() const { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2 ); }

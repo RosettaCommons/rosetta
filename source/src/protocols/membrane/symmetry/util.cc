@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.symmetry.util" );
+static basic::Tracer TR( "protocols.membrane.symmetry.util" );
 
 namespace protocols {
 namespace membrane {

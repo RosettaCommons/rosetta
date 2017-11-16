@@ -67,10 +67,9 @@ OPT_1GRP_KEY(Boolean, ddg, cartesian)
 OPT_1GRP_KEY(Boolean, ddg, fd_mode)
 
 //Auto Headers
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR("apps.pilot.wendao.ddg");
+static basic::Tracer TR("apps.pilot.wendao.ddg");
 
 using namespace core;
 using namespace pose;

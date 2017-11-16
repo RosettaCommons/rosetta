@@ -97,7 +97,7 @@
 // #include <boost/serialization/hash_collections_save_imp.hpp>
 // #include <boost/serialization/hash_collections_load_imp.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("motif_hash_util");
+static basic::Tracer TR("motif_hash_util");
 
 typedef numeric::xyzVector<core::Real> Vec;
 typedef numeric::xyzMatrix<core::Real> Mat;

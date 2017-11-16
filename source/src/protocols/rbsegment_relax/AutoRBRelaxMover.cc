@@ -66,14 +66,13 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace rbsegment_relax {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.rbsegment_relax.RBSegment.AutoRBRelaxMover" );
+static basic::Tracer tr( "protocols.rbsegment_relax.RBSegment.AutoRBRelaxMover" );
 
 ////////////////
 // stupid mover

@@ -35,7 +35,7 @@
 #include <basic/database/open.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.H3CterInsert" );
+static basic::Tracer TR( "protocols.antibody.H3CterInsert" );
 using namespace core;
 
 

@@ -24,7 +24,7 @@
 #include <numeric/random/random.hh>
 # include <cmath>
 using namespace core;
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.MC_OneTorsion" );
+static basic::Tracer TR( "protocols.recces.sampler.MC_OneTorsion" );
 
 namespace protocols {
 namespace recces {

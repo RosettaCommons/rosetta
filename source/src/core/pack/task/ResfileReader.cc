@@ -37,10 +37,8 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 //STL headers
 #include <string>
 //#include <iostream> //need this for debugging
@@ -66,7 +64,7 @@ namespace task {
 /// @details Auto-generated virtual destructor
 ResfileCommand::~ResfileCommand() {}
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.task.ResfileReader" );
+static basic::Tracer TR( "core.pack.task.ResfileReader" );
 
 using std::string;
 using std::endl;

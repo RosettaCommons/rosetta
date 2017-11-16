@@ -39,7 +39,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("LocalBackboneMoverTests");
+static basic::Tracer TR("LocalBackboneMoverTests");
 using namespace protocols::backbone_moves::local_backbone_mover;
 
 

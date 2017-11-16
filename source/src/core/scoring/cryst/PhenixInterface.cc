@@ -73,7 +73,7 @@ namespace core {
 namespace scoring {
 namespace cryst {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.cryst.PhenixInterface" );
+static basic::Tracer TR( "core.scoring.cryst.PhenixInterface" );
 
 ////////////////////////////////
 

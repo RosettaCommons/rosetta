@@ -55,7 +55,7 @@
 #include <numeric/random/random.fwd.hh>
 #include <numeric/NumericTraits.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCoupling" );
+static basic::Tracer tr( "core.scoring.ResidualDipolarCoupling" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -534,7 +534,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 			m_inv_gen(T_[ex], 5, T_[ex]);
 			//   std::cout << "performing SVD decomposition" << std::endl;
 		} catch (utility::excn::EXCN_BadInput &excn) {
-			if ( tr.Debug ) {
+			if ( tr.Debug.visible() ) {
 				pose.dump_pdb("failed_jacobi.pdb");
 			}
 			// changed from throw excn--you do not want to copy the exception you catch

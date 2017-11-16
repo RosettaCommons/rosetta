@@ -86,7 +86,7 @@ OPT_KEY( String, comparison_relax_pdb_num )
 OPT_KEY( String, template_pdb_name )
 OPT_KEY( String, contact_list )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
+static basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
 
 //set to store pdb info keys
 std::set <std::string> interface;
@@ -149,11 +149,9 @@ int main( int argc, char * argv [] ) {
 		NEW_OPT( template_pdb_name, "template pdb", "template.pdb" );
 		NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
 
-		TR << "Calling init" << std::endl;
 		//initializes Rosetta functions
 		devel::init(argc, argv);
 
-		TR << "done" << std::endl;
 		//allows output when running the program
 		//sets input residue numbers to resid and resid_c
 		std::string const resid_c = option[comparison_relax_pdb_num];

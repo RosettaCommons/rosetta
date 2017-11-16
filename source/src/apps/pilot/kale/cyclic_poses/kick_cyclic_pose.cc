@@ -32,13 +32,13 @@ using namespace protocols::loops::loop_closure;
 
 // Global Variables {{{1
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kale" );
+static basic::Tracer TR( "apps.pilot.kale" );
 
 // Utility Functions {{{1
 
 void describe_move(
-		pose::Pose& model, 
-		scoring::ScoreFunctionOP score_function) {
+	pose::Pose& model,
+	scoring::ScoreFunctionOP score_function) {
 
 	using namespace std;
 	int residues = model.size();
@@ -48,17 +48,17 @@ void describe_move(
 	TR << endl << "score  " << setw(10) << score_function->score(model);
 
 	TR << endl << "phi    ";
-	for (int i = 1; i <= model.size(); ++i) {
+	for ( int i = 1; i <= model.size(); ++i ) {
 		TR << setw(10) << model.phi(i) << " ";
 	}
 
 	TR << endl << "psi    ";
-	for (int i = 1; i <= model.size(); ++i) {
+	for ( int i = 1; i <= model.size(); ++i ) {
 		TR << setw(10) << model.psi(i) << " ";
 	}
 
 	TR << endl << "omega  ";
-	for (int i = 1; i <= model.size(); ++i) {
+	for ( int i = 1; i <= model.size(); ++i ) {
 		TR << setw(10) << model.omega(i) << " ";
 	}
 
@@ -69,39 +69,39 @@ void describe_move(
 
 int main(int argc, char* argv []) {
 
-		devel::init(argc, argv);
+	devel::init(argc, argv);
 
-		// Define the variables used in this function.
+	// Define the variables used in this function.
 
-		//Size first_index = 12, last_index = 2, cut_index = 14;
-		Size first_index = 6, last_index = 2, cut_index = 4;
-		std::string input_path = "structures/ideal_loop.pdb";
-		std::string output_path = "structures/kicked_loop.pdb";
+	//Size first_index = 12, last_index = 2, cut_index = 14;
+	Size first_index = 6, last_index = 2, cut_index = 4;
+	std::string input_path = "structures/ideal_loop.pdb";
+	std::string output_path = "structures/kicked_loop.pdb";
 
-		pose::Pose model;
-		scoring::ScoreFunctionOP score_function;
-		kinematic_closure::KinematicMoverOP mover;
-		kinematic_closure::TorsionSamplingKinematicPerturberOP perturber;
+	pose::Pose model;
+	scoring::ScoreFunctionOP score_function;
+	kinematic_closure::KinematicMoverOP mover;
+	kinematic_closure::TorsionSamplingKinematicPerturberOP perturber;
 
-		// Initialize the variables used in this function.
+	// Initialize the variables used in this function.
 
-		score_function = scoring::get_score_function();
-		import_pose::pose_from_file(model, input_path, core::import_pose::PDB_file);
+	score_function = scoring::get_score_function();
+	import_pose::pose_from_file(model, input_path, core::import_pose::PDB_file);
 
-		mover = new kinematic_closure::KinematicMover();
-		perturber = new
-			kinematic_closure::TorsionSamplingKinematicPerturber(mover.get());
+	mover = new kinematic_closure::KinematicMover();
+	perturber = new
+		kinematic_closure::TorsionSamplingKinematicPerturber(mover.get());
 
-		mover->set_pivots(first_index, cut_index, last_index);
-		mover->set_perturber(perturber);
+	mover->set_pivots(first_index, cut_index, last_index);
+	mover->set_perturber(perturber);
 
-		// Attempt to make a kinematic closure move.
+	// Attempt to make a kinematic closure move.
 
-		mover->apply(model);
+	mover->apply(model);
 
-		// Write the resulting pose to a file.
+	// Write the resulting pose to a file.
 
-		model.dump_pdb(output_path);
+	model.dump_pdb(output_path);
 }
 
 // }}}1

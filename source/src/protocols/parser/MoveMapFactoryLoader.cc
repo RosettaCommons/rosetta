@@ -33,7 +33,7 @@
 namespace protocols {
 namespace parser {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.parser.MoveMapFactoryLoader" );
+static basic::Tracer TR( "protocols.jd2.parser.MoveMapFactoryLoader" );
 
 MoveMapFactoryLoader::MoveMapFactoryLoader() {}
 MoveMapFactoryLoader::~MoveMapFactoryLoader() {}

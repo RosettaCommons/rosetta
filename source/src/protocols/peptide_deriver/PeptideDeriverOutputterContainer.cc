@@ -21,7 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverOutputterContainer" );
+static basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverOutputterContainer" );
 
 
 namespace protocols {

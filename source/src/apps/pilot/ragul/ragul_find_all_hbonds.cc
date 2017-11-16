@@ -64,7 +64,7 @@ using namespace basic::options;
 using namespace core::scoring;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.hbonds.main" );
+static basic::Tracer TR( "apps.pilot.hbonds.main" );
 
 
 int main( int argc, char * argv [] )

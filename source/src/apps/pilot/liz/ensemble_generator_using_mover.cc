@@ -88,7 +88,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <time.h>
-using basic::T;
 using basic::Warning;
 using basic::Error;
 
@@ -103,61 +102,61 @@ using basic::Error;
 int
 main( int argc, char* argv [] )
 {
-    try {
-	using namespace core;
-	using namespace core::pose;
-	using namespace utility;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::scoring;
-	using namespace core::scoring::constraints;
-	using namespace protocols::moves;
-	// options, random initialization. MAKE SURE THIS COMES BEFORE OPTIONS
-	devel::init( argc, argv );
-	pose::Pose pose;
+	try {
+		using namespace core;
+		using namespace core::pose;
+		using namespace utility;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+		using namespace protocols::moves;
+		// options, random initialization. MAKE SURE THIS COMES BEFORE OPTIONS
+		devel::init( argc, argv );
+		pose::Pose pose;
 
 
-	vector1<file::FileName> files;
-	if(basic::options::option[in::file::s].user()){
-		std::cout << "using -s option" << std::endl;
-		files=option[in::file::s]();
-	}else if( option[in::file::l].user()){
-		std::cout << "using -l option " << std::endl;
+		vector1<file::FileName> files;
+		if ( basic::options::option[in::file::s].user() ) {
+			std::cout << "using -s option" << std::endl;
+			files=option[in::file::s]();
+		} else if ( option[in::file::l].user() ) {
+			std::cout << "using -l option " << std::endl;
 
-		utility::vector1<file::FileName> list = basic::options::option[ in::file::l ]();
-		for(unsigned int h=1;h<=list.size();h++){
-			utility::io::izstream pdbs(list[h]);
-			std::string fname;
-			while(pdbs >> fname){
-				files.push_back(fname);
+			utility::vector1<file::FileName> list = basic::options::option[ in::file::l ]();
+			for ( unsigned int h=1; h<=list.size(); h++ ) {
+				utility::io::izstream pdbs(list[h]);
+				std::string fname;
+				while ( pdbs >> fname ) {
+					files.push_back(fname);
+				}
 			}
 		}
-	}
-	for(unsigned int f=1; f<=files.size();f++){
-		core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
-		int num_struct = 10;
-		ShakeStructureMover ssm; //don't initialize with a scorefunction,
-		//scorefunction with rama,omega,fa_dun,p_aa_pp terms will be created for you
-		ssm.set_sc_min(true); //sc min after perturbing backbone
-		//ssm.set_mc_temperature(5);
-		ssm.set_ensemble_diversity(1.0);
-		ssm.set_rmsd_target_tolerance(0.1);
-		std::ostringstream curr;
+		for ( unsigned int f=1; f<=files.size(); f++ ) {
+			core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
+			int num_struct = 10;
+			ShakeStructureMover ssm; //don't initialize with a scorefunction,
+			//scorefunction with rama,omega,fa_dun,p_aa_pp terms will be created for you
+			ssm.set_sc_min(true); //sc min after perturbing backbone
+			//ssm.set_mc_temperature(5);
+			ssm.set_ensemble_diversity(1.0);
+			ssm.set_rmsd_target_tolerance(0.1);
+			std::ostringstream curr;
 
-		while(num_struct > 0){
-		  std::cout << "structure num. " << num_struct << std::endl;
-		  pose::Pose init(pose);
-		  ssm.apply(init);
-		  //dump init
-		  num_struct--;
-			curr << num_struct;
-			init.dump_pdb("test_"+curr.str()+".pdb");
+			while ( num_struct > 0 ) {
+				std::cout << "structure num. " << num_struct << std::endl;
+				pose::Pose init(pose);
+				ssm.apply(init);
+				//dump init
+				num_struct--;
+				curr << num_struct;
+				init.dump_pdb("test_"+curr.str()+".pdb");
+			}
+
 		}
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	return 0;
 }

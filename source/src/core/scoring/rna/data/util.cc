@@ -17,7 +17,7 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.data.util" );
+static basic::Tracer TR( "core.scoring.rna.data.util" );
 
 /////////////////////////////////////////////////////////////////////////////
 // This is super-silly -- should replace with a class with

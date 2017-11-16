@@ -49,7 +49,7 @@
 #endif
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.PoolEvaluatorCreator" );
+static basic::Tracer tr( "protocols.evalution.PoolEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

@@ -34,7 +34,7 @@
 // Boost headers
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.DistanceConstraintGenerator" );
+static basic::Tracer TR( "protocols.constraint_generator.DistanceConstraintGenerator" );
 
 namespace protocols {
 namespace constraint_generator {

@@ -38,7 +38,7 @@ using namespace std;
 
 using core::pose::Pose;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MembraneTopology" );
+static basic::Tracer TR( "protocols.simple_moves.MembraneTopology" );
 
 // XRW TEMP std::string
 // XRW TEMP MembraneTopologyCreator::keyname() const

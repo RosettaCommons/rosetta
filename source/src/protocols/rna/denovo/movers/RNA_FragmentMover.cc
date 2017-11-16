@@ -52,10 +52,9 @@
 
 using namespace core;
 using namespace protocols::rna::denovo::fragments;
-using basic::T;
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.movers.RNA_FragmentMover" );
+static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_FragmentMover" );
 
 namespace protocols {
 namespace rna {

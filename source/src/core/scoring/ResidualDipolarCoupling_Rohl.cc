@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCoupling_Rohl" );
+static basic::Tracer tr( "core.scoring.ResidualDipolarCoupling_Rohl" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

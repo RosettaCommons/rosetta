@@ -68,7 +68,7 @@
 #include <vector>
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.topo_broker.TMHTopologySampler" );
+static basic::Tracer tr( "protocols.topo_broker.TMHTopologySampler" );
 
 namespace protocols {
 namespace topology_broker {

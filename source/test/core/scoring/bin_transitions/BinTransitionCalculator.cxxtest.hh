@@ -34,7 +34,7 @@
 
 // --------------- Test Class --------------- //
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.bin_transitions.BinTransitionCalculator.cxxtest");
+static basic::Tracer TR("core.scoring.bin_transitions.BinTransitionCalculator.cxxtest");
 
 class BinTransitionCalculatorTests : public CxxTest::TestSuite {
 

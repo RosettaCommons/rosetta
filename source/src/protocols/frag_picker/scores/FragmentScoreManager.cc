@@ -75,7 +75,7 @@
 #include <protocols/frag_picker/CommonFragmentComparators.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.frag_picker.FragmentScoreManager" );
+static basic::Tracer tr( "protocols.frag_picker.FragmentScoreManager" );
 
 namespace protocols {
 namespace frag_picker {

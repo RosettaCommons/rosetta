@@ -45,7 +45,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.StoreCompoundTaskMover" );
+static basic::Tracer TR( "protocols.toolbox.task_operations.StoreCompoundTaskMover" );
 
 namespace protocols {
 namespace toolbox {

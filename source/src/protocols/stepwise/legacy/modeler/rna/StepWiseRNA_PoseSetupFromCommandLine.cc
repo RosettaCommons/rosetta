@@ -151,7 +151,7 @@ using utility::vector1;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSetupFromCommandLine" );
+static basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSetupFromCommandLine" );
 
 ///////////////////////////////////////////////////////////////////////////
 //

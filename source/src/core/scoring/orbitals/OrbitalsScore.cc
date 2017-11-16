@@ -69,7 +69,7 @@ OrbitalsScoreCreator::score_types_for_method() const
 	return sts;
 }
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.orbitals_hpol" );
+static basic::Tracer TR( "core.scoring.orbitals_hpol" );
 
 //Because we don't really use the energy method options anyways
 

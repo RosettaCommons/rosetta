@@ -40,7 +40,7 @@
 
 // C++ headers
 #include <test/protocols/denovo_design/test_utils.hh>
-static THREAD_LOCAL basic::Tracer TR("devel.denovo_design.AlignResiduesMoverTests.cxxtest");
+static basic::Tracer TR("devel.denovo_design.AlignResiduesMoverTests.cxxtest");
 
 using namespace protocols::denovo_design::components;
 using namespace protocols::denovo_design::movers;

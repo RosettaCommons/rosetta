@@ -41,8 +41,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kevin.khSandbox2" );
+static basic::Tracer TR( "apps.pilot.kevin.khSandbox2" );
 
 
 using namespace core;
@@ -75,15 +74,15 @@ typedef utility::pointer::owning_ptr< khSandbox2 > khSandbox2OP;
 int main( int argc, char* argv[] )
 {
 	try {
-//	using basic::options::option;
-//	option.add( use_varsoldist_sasa_calc, "var sol d sasa calculator" ).def(true);
+		// using basic::options::option;
+		// option.add( use_varsoldist_sasa_calc, "var sol d sasa calculator" ).def(true);
 
-	devel::init(argc, argv);
-	protocols::jd2::JobDistributor::get_instance()->go(new khSandbox2);
+		devel::init(argc, argv);
+		protocols::jd2::JobDistributor::get_instance()->go(new khSandbox2);
 
-	TR << "Recommended option:   -sasa_calculator_probe_radius 1.2" << std::endl;
+		TR << "Recommended option:   -sasa_calculator_probe_radius 1.2" << std::endl;
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
 	} catch (utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

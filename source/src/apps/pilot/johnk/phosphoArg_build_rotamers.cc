@@ -61,7 +61,7 @@ OPT_KEY( Real, match_distance_cutoff )
 OPT_KEY( Real, phosphate_force_constant )
 OPT_KEY( Boolean, do_minimization )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phosphoArg_build_rotamers.main" );
+static basic::Tracer TR( "apps.pilot.phosphoArg_build_rotamers.main" );
 
 
 int
@@ -94,11 +94,11 @@ main( int argc, char * argv [] )
 	std::string const input_pdb_name( basic::options::start_file() );
 	core::import_pose::pose_from_file( input_pose, input_pdb_name , core::import_pose::PDB_file);
 
-	//	if ( input_pose.residue( input_pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-	//		input_pose.append_residue_by_jump
-	//			( *conformation::ResidueFactory::create_residue( input_pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-	//				input_pose.size()/2 );
-	//	}
+	// if ( input_pose.residue( input_pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
+	//  input_pose.append_residue_by_jump
+	//   ( *conformation::ResidueFactory::create_residue( input_pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+	//    input_pose.size()/2 );
+	// }
 
 	Size const totres = input_pose.size();
 	pose::Pose pose = input_pose;
@@ -114,9 +114,9 @@ main( int argc, char * argv [] )
 	int const pY_pdb_number = option[ phosphotyr_num ];
 
 	Size pR_resnum = 0;
- 	for ( Size resnum = 1; resnum <= totres; ++resnum ) {
+	for ( Size resnum = 1; resnum <= totres; ++resnum ) {
 		if ( ( pose.pdb_info()->number(resnum) == pY_pdb_number ) &&
-			( pose.pdb_info()->chain(resnum) == phosphotyr_chain_char ) ) {
+				( pose.pdb_info()->chain(resnum) == phosphotyr_chain_char ) ) {
 			if ( pR_resnum != 0 ) {
 				std::cerr << "ERROR!! Found more than one possible phosphoTyr" << std::endl;
 				exit(1);
@@ -150,7 +150,7 @@ main( int argc, char * argv [] )
 	polyA_allow_repacked.at(pR_resnum) = false;
 	polyA_task->restrict_to_residues( polyA_allow_repacked );
 
- 	for ( Size resnum = 1; resnum <= totres; ++resnum ) {
+	for ( Size resnum = 1; resnum <= totres; ++resnum ) {
 		if ( resnum == pR_resnum ) continue;
 		chemical::AA const aa( pose.residue(resnum).aa());
 		if ( ( oneletter_code_from_aa(aa) == 'G' ) || ( oneletter_code_from_aa(aa) == 'P' ) ) {
@@ -194,7 +194,7 @@ main( int argc, char * argv [] )
 	rotsets->set_task( arg_task );
 	utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, arg_task );
 	rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );
-	//	rotsets->dump_pdb( pose, basic::options::start_file()+".all_arg_rotamers.pdb" );
+	// rotsets->dump_pdb( pose, basic::options::start_file()+".all_arg_rotamers.pdb" );
 
 	// pull out the RotamerSet for the "interesting" position
 	pack::rotamer_set::RotamerSetOP pArg_rotset = rotsets->rotamer_set_for_residue( pR_resnum );
@@ -205,8 +205,8 @@ main( int argc, char * argv [] )
 	std::ofstream out_stream( out_rotamer_fname.c_str() );
 
 	Size model(0), atom_counter(0);
- 	for ( Size r = 1; r <= pArg_rotset->num_rotamers(); ++r ) {
-		//		conformation::ResidueOP rotamer = pArg_rotset->nonconst_rotamer(r); // jk if needed....
+	for ( Size r = 1; r <= pArg_rotset->num_rotamers(); ++r ) {
+		//  conformation::ResidueOP rotamer = pArg_rotset->nonconst_rotamer(r); // jk if needed....
 		conformation::ResidueCOP rotamer = pArg_rotset->rotamer(r);
 
 		if ( ! rotamer->has( "P" ) ) continue;
@@ -216,7 +216,7 @@ main( int argc, char * argv [] )
 		++model;
 		out_stream << "MODEL     " << model << "\n";
 		// JK DEBUG
-		//		io::pdb::dump_pdb_residue( *rotamer, atom_counter, out_stream );
+		//  io::pdb::dump_pdb_residue( *rotamer, atom_counter, out_stream );
 		out_stream << "ENDMDL\n";
 
 		pose::Pose min_pose = pose;
@@ -244,7 +244,7 @@ main( int argc, char * argv [] )
 			// apply constraint to pose - P and N atoms only (for now)
 			id::AtomID P_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("P") , pR_resnum );
 			id::AtomID fixed_atom_id = id::AtomID( min_pose.residue(1).atom_index("CA") , 1 );
-			//			id::AtomID fixed_atom_id = id::AtomID( 1 , min_pose.size() );
+			//   id::AtomID fixed_atom_id = id::AtomID( 1 , min_pose.size() );
 
 			core::scoring::constraints::FuncOP func( new scoring::constraints::HarmonicFunc( 0., 1./force_constant ) );
 			min_pose.add_constraint( new core::scoring::constraints::CoordinateConstraint( P_atom_id, fixed_atom_id, pTyr_P_xyz, func ) );
@@ -271,25 +271,25 @@ main( int argc, char * argv [] )
 
 			/*
 			{ // scope constraint on O1P of pTyr
-				// figure out which pArg oxygen is closest to O1P of pTyr
-				id::AtomID O_atom_id;
-				core::Real const dist1 = distance(min_pose.residue(pR_resnum).atom( "O1P" ).xyz(),pTyr_O1P.xyz() );
-				core::Real const dist2 = distance(min_pose.residue(pR_resnum).atom( "O2P" ).xyz(),pTyr_O1P.xyz() );
-				core::Real const dist3 = distance(min_pose.residue(pR_resnum).atom( "O3P" ).xyz(),pTyr_O1P.xyz() );
-				if ( dist3 < dist1 ) {
-					if ( dist2 < dist3 ) {
-						O_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("O2P") , pR_resnum );
-					} else {
-						O_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("O3P") , pR_resnum );
-					}
-				} else {
-					if ( dist2 < dist1 ) {
-						O_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("O2P") , pR_resnum );
-					} else {
-						O_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("O1P") , pR_resnum );
-					}
-				}
-				min_pose.add_constraint( new core::scoring::constraints::CoordinateConstraint( O_atom_id, fixed_atom_id, pTyr_O1P.xyz(), func ) );
+			// figure out which pArg oxygen is closest to O1P of pTyr
+			id::AtomID O_atom_id;
+			core::Real const dist1 = distance(min_pose.residue(pR_resnum).atom( "O1P" ).xyz(),pTyr_O1P.xyz() );
+			core::Real const dist2 = distance(min_pose.residue(pR_resnum).atom( "O2P" ).xyz(),pTyr_O1P.xyz() );
+			core::Real const dist3 = distance(min_pose.residue(pR_resnum).atom( "O3P" ).xyz(),pTyr_O1P.xyz() );
+			if ( dist3 < dist1 ) {
+			if ( dist2 < dist3 ) {
+			O_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("O2P") , pR_resnum );
+			} else {
+			O_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("O3P") , pR_resnum );
+			}
+			} else {
+			if ( dist2 < dist1 ) {
+			O_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("O2P") , pR_resnum );
+			} else {
+			O_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("O1P") , pR_resnum );
+			}
+			}
+			min_pose.add_constraint( new core::scoring::constraints::CoordinateConstraint( O_atom_id, fixed_atom_id, pTyr_O1P.xyz(), func ) );
 			} // scope constraint on O1P of pTyr
 			*/
 
@@ -310,7 +310,7 @@ main( int argc, char * argv [] )
 			min_pose.dump_scored_pdb( basic::options::start_file()+".int1min"+utility::to_string(model)+".pdb", *scorefxn );
 
 			TR << "Running second minimization for pArg rotamer " << model << "...." << std::endl;
-			//			min_pose.remove_constraints();
+			//   min_pose.remove_constraints();
 			kinematics::MoveMap mm_all;
 			mm_all.set_chi( true );
 			mm_all.set_bb( false );

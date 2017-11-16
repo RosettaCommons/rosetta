@@ -32,7 +32,7 @@
 
 // numeric headers
 
-static THREAD_LOCAL basic::Tracer TR( "core.import_pose.PoseFromPDBLoader" );
+static basic::Tracer TR( "core.import_pose.PoseFromPDBLoader" );
 
 namespace core {
 namespace import_pose {

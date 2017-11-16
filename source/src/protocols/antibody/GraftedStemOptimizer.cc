@@ -36,7 +36,7 @@
 #include <protocols/moves/PyMOLMover.hh>
 
 
-static THREAD_LOCAL basic::Tracer TRG( "protocols.antibody.GraftedStemOptimizer" );
+static basic::Tracer TRG( "protocols.antibody.GraftedStemOptimizer" );
 
 namespace protocols {
 namespace antibody {

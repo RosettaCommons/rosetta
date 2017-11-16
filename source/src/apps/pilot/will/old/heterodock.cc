@@ -75,7 +75,7 @@ using utility::vector1;
 using std::endl;
 using core::import_pose::pose_from_file;
 
-static THREAD_LOCAL basic::Tracer TR( "heterodock" );
+static basic::Tracer TR( "heterodock" );
 static core::io::silent::SilentFileData sfd;
 
 OPT_1GRP_KEY( FileVector, heterodock, dockpairs     )
@@ -112,18 +112,18 @@ void register_options() {
 #include <omp.h>
 #endif
 int num_threads() {
-	#ifdef USE_OPENMP
-		return omp_get_max_threads();
-	#else
-		return 1;
-	#endif
+#ifdef USE_OPENMP
+	return omp_get_max_threads();
+#else
+	return 1;
+#endif
 }
 int thread_num() {
-	#ifdef USE_OPENMP
-		return omp_get_thread_num();
-	#else
-		return 0;
-	#endif
+#ifdef USE_OPENMP
+	return omp_get_thread_num();
+#else
+	return 0;
+#endif
 }
 
 
@@ -137,8 +137,8 @@ make_olig(
 ){
 	olig = pose1;
 	olig.append_residue_by_jump(pose2.residue(1),1,"","",true);
-	for(Size i = 2; i <= pose2.size(); ++i){
-		if(olig.residue(i).is_lower_terminus()||olig.residue(i).is_ligand()){
+	for ( Size i = 2; i <= pose2.size(); ++i ) {
+		if ( olig.residue(i).is_lower_terminus()||olig.residue(i).is_ligand() ) {
 			olig.append_residue_by_jump(pose2.residue(i),1);
 		} else {
 			olig.append_residue_by_bond(pose2.residue(i));
@@ -162,11 +162,11 @@ bool cmprmsd(Hit i,Hit j) { return i.rmsd   < j.rmsd; }
 
 Real myxdis(Xform const & x1, Xform const & x2){
 	return sqrt(
-					x1.R.col_x().distance_squared(x2.R.col_x())*900.0 +
-					x1.R.col_y().distance_squared(x2.R.col_y())*900.0 +
-	                x1.R.col_z().distance_squared(x2.R.col_z())*900.0 +
-	                x1.t        .distance_squared(x2.t        )
-				);
+		x1.R.col_x().distance_squared(x2.R.col_x())*900.0 +
+		x1.R.col_y().distance_squared(x2.R.col_y())*900.0 +
+		x1.R.col_z().distance_squared(x2.R.col_z())*900.0 +
+		x1.t        .distance_squared(x2.t        )
+	);
 }
 // dock pose against rotated version of itself
 // rotate all different ways by looping over rotation axes on unit sphere point
@@ -207,33 +207,33 @@ dock(
 	Xform const x2; // null -- keep pose2 fixed
 
 	// loop over axes on sphere points & rotaton amounts 1-180
-	#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 	#pragma omp parallel for schedule(dynamic,1)
-	#endif
-	for(int iori = 1; iori <= (int)normals.size(); ++iori){
+#endif
+	for ( int iori = 1; iori <= (int)normals.size(); ++iori ) {
 
-		for(int iang = 1; iang <= Nang; ++iang) {
+		for ( int iang = 1; iang <= Nang; ++iang ) {
 
 			Real ang = uniform()*3.14159;
-			while( (ang-sin(2.0*ang)/2.0)/3.14159/2.0 < uniform() )	ang = uniform()*3.14159;
+			while ( (ang-sin(2.0*ang)/2.0)/3.14159/2.0 < uniform() ) ang = uniform()*3.14159;
 
 			Xform const xori( rotation_matrix_degrees(normals[iori],ang), Vec(0,0,0) );
 
 			// Xform const xori;
 
 			// Real angerr = xori.R.col_x().distance_squared(xnative.R.col_x())*900.0 +xori.R.col_y().distance_squared(xnative.R.col_y())*900.0 + xori.R.col_z().distance_squared(xnative.R.col_z())*900.0;
-			// if(	angerr > 0.1 ){
-			// 	// cout << angerr << endl;;
-   //              continue;
-	  //       }
+			// if( angerr > 0.1 ){
+			//  // cout << angerr << endl;;
+			//              continue;
+			//       }
 
-			for(int islide = 1; islide <= (int)normals.size(); ++islide){
+			for ( int islide = 1; islide <= (int)normals.size(); ++islide ) {
 
 				Size progress = ((iori-1)*Nang+iang)*normals.size() + islide;
-				if(progress%outinterval==0) {
-					#ifdef USE_OPENMP
+				if ( progress%outinterval==0 ) {
+#ifdef USE_OPENMP
 					#pragma omp critical
-					#endif
+#endif
 					TR << progress/1000 << "K of " << totsamp/1000 << "K " << hits.size() << std::endl;
 				}
 
@@ -246,20 +246,20 @@ dock(
 
 				// for(int ibackoff = 1; ibackoff <= 10; ++ibackoff){
 
-					Hit h(ang,ang,islide,sicscore);
-					h.x1 = x1;
-					// h.x1.t -= ((Real)ibackoff-1)/5.0*slide_dir;
-					h.x2 = x2;
-					h.rmsd = myxdis(h.x1,xnative); // LEI this is a terrible hack, not a real rmsd...
+				Hit h(ang,ang,islide,sicscore);
+				h.x1 = x1;
+				// h.x1.t -= ((Real)ibackoff-1)/5.0*slide_dir;
+				h.x2 = x2;
+				h.rmsd = myxdis(h.x1,xnative); // LEI this is a terrible hack, not a real rmsd...
 
-					if(sicscore >= option[heterodock::score_thresh]()){
-						#ifdef USE_OPENMP
-						#pragma omp critical
-						#endif
-						{
-							hits.push_back(h);
-						}
+				if ( sicscore >= option[heterodock::score_thresh]() ) {
+#ifdef USE_OPENMP
+					#pragma omp critical
+#endif
+					{
+						hits.push_back(h);
 					}
+				}
 				// }
 
 			}
@@ -268,7 +268,7 @@ dock(
 
 	Size nstruct = basic::options::option[basic::options::OptionKeys::out::nstruct]();
 	std::string outdir = "./";
-	if(basic::options::option[basic::options::OptionKeys::out::file::o].user()){
+	if ( basic::options::option[basic::options::OptionKeys::out::file::o].user() ) {
 		outdir = basic::options::option[basic::options::OptionKeys::out::file::o]()+"/";
 	}
 
@@ -278,7 +278,7 @@ dock(
 	// std::sort(hits.begin(),hits.end(),cmpscore);
 	std::sort(hits.begin(),hits.end(),cmprmsd);
 	Size nout=0,i=0;
-	while( nout < nstruct && ++i <= hits.size() ){
+	while ( nout < nstruct && ++i <= hits.size() ) {
 		Hit & h(hits[i]);
 
 		// // for debugging
@@ -286,27 +286,27 @@ dock(
 
 		// redundency check
 		bool toosimilar = false;
-		for(vector1<Hit>::const_iterator j = dumpedit.begin(); j != dumpedit.end(); ++j){
+		for ( vector1<Hit>::const_iterator j = dumpedit.begin(); j != dumpedit.end(); ++j ) {
 			Xform xrel = h.x1 * ~(j->x1);
 			Real ang=0.0;
 			numeric::rotation_axis(xrel.R,ang);
 			ang = numeric::conversions::degrees(ang);
 			Real dis = xrel.t.length();
-			if( ang < option[heterodock::redundancy_angle_cut]() || dis < option[heterodock::redundancy_dist_cut]() ){
+			if ( ang < option[heterodock::redundancy_angle_cut]() || dis < option[heterodock::redundancy_dist_cut]() ) {
 				toosimilar = true;
 				// debug
 				// std::cerr << dis << " " << ang << std::endl;
 				// if( 1 ){
-				// 	Pose tmp1,tmp2;
-				// 	make_dock_olig(init_pose,tmp1, h);
-				// 	make_dock_olig(init_pose,tmp2,*j);
-				// 	tmp1.dump_pdb("tosim1.pdb");
-				// 	tmp2.dump_pdb("tosim2.pdb");
-				// 	utility_exit_with_message("redundancy_cut test");
+				//  Pose tmp1,tmp2;
+				//  make_dock_olig(init_pose,tmp1, h);
+				//  make_dock_olig(init_pose,tmp2,*j);
+				//  tmp1.dump_pdb("tosim1.pdb");
+				//  tmp2.dump_pdb("tosim2.pdb");
+				//  utility_exit_with_message("redundancy_cut test");
 				// }
 			}
 		}
-		if(toosimilar) continue;
+		if ( toosimilar ) continue;
 		dumpedit.push_back(h);
 
 		// cout << xnative << endl;
@@ -345,9 +345,10 @@ read_sphere(
 	TR << "angular sampling resolution: requested: " << ang << " actual: " << 180.0/sqrt(2*(Real)nss) << std::endl;
 	normals.resize(nss);
 	izstream is;
-	if(!basic::database::open(is,"sampling/spheres/sphere_"+str(nss)+".dat"))
+	if ( !basic::database::open(is,"sampling/spheres/sphere_"+str(nss)+".dat") ) {
 		utility_exit_with_message("can't open sphere data: sampling/spheres/sphere_"+str(nss)+".dat");
-	for(int i = 1; i <= nss; ++i) {
+	}
+	for ( int i = 1; i <= nss; ++i ) {
 		core::Real x,y,z;
 		is >> x >> y >> z;
 		normals[i] = Vec(x,y,z);
@@ -361,17 +362,17 @@ get_tasks_from_command_line(
 ){
 	using namespace basic::options;
 	using namespace OptionKeys;
-	if(option[heterodock::dockpairs].user()){
+	if ( option[heterodock::dockpairs].user() ) {
 		vector1<string> files = option[heterodock::dockpairs]();
-		if(files.size()%2==1) utility_exit_with_message("heterodock::dockpairs should be even number!");
-		for(Size ifn = 1; ifn <= files.size(); ifn+=2){
+		if ( files.size()%2==1 ) utility_exit_with_message("heterodock::dockpairs should be even number!");
+		for ( Size ifn = 1; ifn <= files.size(); ifn+=2 ) {
 			tasks.push_back(std::make_pair(files[ifn],files[ifn+1]));
 		}
 	}
-	if(option[heterodock::allbyall     ].user()) cerr << "all-by-all not implemented yet";
-	if(option[heterodock::somebyothers1].user()) cerr << "somebyothers1 not implemented yet";
-	if(option[heterodock::somebyothers2].user()) cerr << "somebyothers2 not implemented yet";
-	if(tasks.size()==0) utility_exit_with_message("no heterodock tasks!");
+	if ( option[heterodock::allbyall     ].user() ) cerr << "all-by-all not implemented yet";
+	if ( option[heterodock::somebyothers1].user() ) cerr << "somebyothers1 not implemented yet";
+	if ( option[heterodock::somebyothers2].user() ) cerr << "somebyothers2 not implemented yet";
+	if ( tasks.size()==0 ) utility_exit_with_message("no heterodock tasks!");
 }
 
 Pose get_centered_pose(string fname, Vec & cen){
@@ -393,15 +394,15 @@ int main(int argc, char *argv[]) {
 
 	vector1<std::pair<string,string> > tasks; get_tasks_from_command_line(tasks);
 
-	for(vector1<std::pair<string,string> >::const_iterator i = tasks.begin(); i != tasks.end(); ++i){
+	for ( vector1<std::pair<string,string> >::const_iterator i = tasks.begin(); i != tasks.end(); ++i ) {
 		string fn1 = i->first;
 		string fn2 = i->second;
 		string tag = utility::file_basename(fn1);
-		if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
-		if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);
+		if ( tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
+		if ( tag.substr(tag.size()-4)==".pdb" ) tag = tag.substr(0,tag.size()-4);
 		tag += "_"+utility::file_basename(fn2);
-		if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
-		if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);
+		if ( tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
+		if ( tag.substr(tag.size()-4)==".pdb" ) tag = tag.substr(0,tag.size()-4);
 
 		TR << "searching " << tag << std::endl;
 
@@ -415,8 +416,8 @@ int main(int argc, char *argv[]) {
 		// olig.dump_pdb("native.pdb");
 		// utility_exit_with_message("arst");
 
-		if( todock1.size() > (Size)option[heterodock::max_res]() ) continue;
-		if( todock2.size() > (Size)option[heterodock::max_res]() ) continue;
+		if ( todock1.size() > (Size)option[heterodock::max_res]() ) continue;
+		if ( todock2.size() > (Size)option[heterodock::max_res]() ) continue;
 
 		dock(todock1,todock2,tag,normals,xnative);
 	}

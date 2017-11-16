@@ -106,7 +106,7 @@ namespace io {
 namespace pose_from_sfr {
 
 // Tracer instance for this file
-static THREAD_LOCAL basic::Tracer TR( "core.io.pose_from_sfr.PoseFromSFRBuilder" );
+static basic::Tracer TR( "core.io.pose_from_sfr.PoseFromSFRBuilder" );
 
 using namespace ObjexxFCL;
 

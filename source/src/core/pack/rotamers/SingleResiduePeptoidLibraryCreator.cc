@@ -40,7 +40,7 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.rotamers.SingleResiduePeptoidLibraryCreator");
+static basic::Tracer TR("core.pack.rotamers.SingleResiduePeptoidLibraryCreator");
 
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
 SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & restype) const {

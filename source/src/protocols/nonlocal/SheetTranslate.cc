@@ -40,7 +40,7 @@
 namespace protocols {
 namespace nonlocal {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.nonlocal.SheetTranslate" );
+static basic::Tracer TR( "protocols.nonlocal.SheetTranslate" );
 
 SheetTranslate::SheetTranslate() {
 	initialize(protocols::loops::Loop(), 0.0);

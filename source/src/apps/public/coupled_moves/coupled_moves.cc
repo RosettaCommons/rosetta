@@ -29,7 +29,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/coupled_moves.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.coupled_moves" );
+static basic::Tracer TR( "apps.coupled_moves" );
 
 void *
 my_main( void* );

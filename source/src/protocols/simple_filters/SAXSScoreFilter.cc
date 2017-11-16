@@ -55,7 +55,7 @@
 
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filters.SAXSScoreFilter" );
+static basic::Tracer tr( "protocols.simple_filters.SAXSScoreFilter" );
 
 namespace protocols {
 namespace simple_filters {

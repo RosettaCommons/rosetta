@@ -23,14 +23,14 @@
 
 #include <unistd.h>
 
-static THREAD_LOCAL basic::Tracer TR( "ColorDemo" );
+static basic::Tracer TR( "ColorDemo" );
 
 using namespace utility;
 
-static THREAD_LOCAL basic::Tracer     Blue("blue",       CSI_Blue());
-static THREAD_LOCAL basic::Tracer    Green("green",      CSI_Green());
-static THREAD_LOCAL basic::Tracer      Red("red",        CSI_Red());
-static THREAD_LOCAL basic::Tracer VeryBlue("very.blue",  CSI_Blue()+CSI_Bold(), CSI_Blue());
+static basic::Tracer     Blue("blue",       CSI_Blue());
+static basic::Tracer    Green("green",      CSI_Green());
+static basic::Tracer      Red("red",        CSI_Red());
+static basic::Tracer VeryBlue("very.blue",  CSI_Blue()+CSI_Bold(), CSI_Blue());
 
 
 int main( int argc, char * argv [] )
@@ -51,8 +51,8 @@ int main( int argc, char * argv [] )
 			Tracer::bgBlack, Tracer::bgRed, Tracer::bgGreen, Tracer::bgYellow, Tracer::bgBlue, Tracer::bgMagenta, Tracer::bgCyan, Tracer::bgWhite,
 			Tracer::Bold, Tracer::Underline);
 
-		for(unsigned int i=0; i<all_codes.size(); ++i) {
-			for(unsigned int j=0; j<all_codes.size(); ++j) TR << all_codes[i] << all_codes[j] << " X " << TR.Reset;
+		for ( unsigned int i=0; i<all_codes.size(); ++i ) {
+			for ( unsigned int j=0; j<all_codes.size(); ++j ) TR << all_codes[i] << all_codes[j] << " X " << TR.Reset;
 			TR << std::endl;
 		}
 
@@ -79,10 +79,10 @@ int main( int argc, char * argv [] )
 
 		//assert( "Plain Assert Example" == empty_string );
 		//try {
-		//	debug_assert( "Debug Assert Example" == empty_string );
+		// debug_assert( "Debug Assert Example" == empty_string );
 		//} catch ( utility::excn::EXCN_Base const & e ) {}
 		//try {
-		//	runtime_assert( "Runtime Assert Example" == empty_string );
+		// runtime_assert( "Runtime Assert Example" == empty_string );
 		//} catch ( utility::excn::EXCN_Base const & e ) {}
 
 		utility_exit_with_message("\nExample of utility_exit_with_message...");

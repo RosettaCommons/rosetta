@@ -34,7 +34,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.precomputed.PrecomputedLibraryMover" );
+static basic::Tracer TR( "protocols.stepwise.modeler.precomputed.PrecomputedLibraryMover" );
 using namespace core::io::silent;
 using namespace core::pose::full_model_info;
 

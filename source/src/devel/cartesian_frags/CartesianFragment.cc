@@ -40,7 +40,7 @@ using utility::vector1;
 using std::string;
 
 /// tracer object:
-static THREAD_LOCAL basic::Tracer tt( "devel.cartesian_frags.CartesianFragment", basic::t_trace );
+static basic::Tracer tt( "devel.cartesian_frags.CartesianFragment", basic::t_trace );
 
 
 /// @details  Private helper routine for adding an atom, updates required data. Returns atom-index of new atom.

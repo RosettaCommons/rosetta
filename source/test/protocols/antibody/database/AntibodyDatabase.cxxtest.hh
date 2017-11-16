@@ -48,7 +48,7 @@ using namespace protocols::antibody::design;
 using namespace protocols::antibody::clusters;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.AntibodyDatabase");
+static basic::Tracer TR("protocols.antibody.AntibodyDatabase");
 
 class AntibodyDatabase: public CxxTest::TestSuite {
 	core::pose::Pose pose;

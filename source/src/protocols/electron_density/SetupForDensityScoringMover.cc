@@ -53,7 +53,6 @@
 #include <utility/options/keys/OptionKeyList.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -61,7 +60,7 @@ using basic::Warning;
 namespace protocols {
 namespace electron_density {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.util" );
+static basic::Tracer TR( "protocols.electron_density.util" );
 
 using namespace protocols;
 using namespace core;

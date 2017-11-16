@@ -46,7 +46,7 @@
 // C++ Headers
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.pose_reporters.BasicPosePropertyReporters" );
+static basic::Tracer TR( "protocols.pose_reporters.BasicPosePropertyReporters" );
 
 namespace protocols {
 namespace pose_reporters {

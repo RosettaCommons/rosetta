@@ -66,7 +66,7 @@
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "coiled_coil" );
+static basic::Tracer TR( "coiled_coil" );
 
 using core::Size;
 using core::Real;
@@ -78,7 +78,7 @@ using core::scoring::ScoreFunctionOP;
 
 Vec helix_axis(core::pose::Pose const & pose) {
 	Vec axis(0,0,0);
-	for(Size i = 1; i <= pose.size()-4; ++i) {
+	for ( Size i = 1; i <= pose.size()-4; ++i ) {
 		axis += ( pose.residue_type(i+4).xyz(1) - pose.residue(i).xyz(3) );
 	}
 	axis.normalize();
@@ -86,11 +86,11 @@ Vec helix_axis(core::pose::Pose const & pose) {
 }
 
 inline Vec center_of_mass( core::pose::Pose const & pose, Size nres = 0 ) {
-	if( 0 == nres ) nres = pose.size();
+	if ( 0 == nres ) nres = pose.size();
 	Vec com(0,0,0);
 	Size count = 0;
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			com += pose.xyz(core::id::AtomID(ia,ir));
 			count++;
 		}
@@ -99,8 +99,8 @@ inline Vec center_of_mass( core::pose::Pose const & pose, Size nres = 0 ) {
 }
 
 inline void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, pose.xyz(aid) + trans );
 		}
@@ -108,8 +108,8 @@ inline void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
 }
 
 inline void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
 		}
@@ -263,13 +263,13 @@ make_symm_data(
 	std::string s = "";
 	s += "symmetry_name c12345\nsubunits "+string_of(n)+"\nnumber_of_interfaces "+string_of(n-1)+"\n";
 	s += "E = 1.0*VRT1";
-	for(Size i = 2; i<=n; i++) s+= " + 1*(VRT1:VRT"+string_of(i)+")";
+	for ( Size i = 2; i<=n; i++ ) s+= " + 1*(VRT1:VRT"+string_of(i)+")";
 	s += "\nanchor_residue " + string_of(anchor) + "\n";
 	s += "virtual_transforms_start consecutive\nstart -1,0,0 0,1,0 0,0,0\n";
 	s += "rot Rz_angle " + string_of(rot) + "\n";
 	s += "trans 0,0," + string_of(trans);
 	s += "\nvirtual_transforms_stop\n";
-	for(Size i = 2; i<=n; i++) s+= "connect_virtual J"+string_of(i)+" VRT"+string_of(i-1)+" VRT"+string_of(i)+"\n";
+	for ( Size i = 2; i<=n; i++ ) s+= "connect_virtual J"+string_of(i)+" VRT"+string_of(i-1)+" VRT"+string_of(i)+"\n";
 	s += "set_dof BASEJUMP x angle_x angle_y angle_z\n";
 	s += "set_dof J2 z angle_z\n";
 	// TR << "================= symm dat ==================" << std::endl;
@@ -277,7 +277,7 @@ make_symm_data(
 	// TR << "================= symm dat ==================" << std::endl;
 	std::istringstream iss(s);
 	core::conformation::symmetry::SymmData symdat( pose.size(), pose.num_jump() );
-//	symdat.read_symmetry_data_from_stream(iss);
+	// symdat.read_symmetry_data_from_stream(iss);
 	return symdat;
 }
 
@@ -300,8 +300,8 @@ struct CCParam {
 		x = 6.0 + 2.0*gaussian();
 		rh = 360.0*uniform();
 		rhx = 7.0*gaussian()+20.0*32.0/(Real)nres;
-		if(uniform()<0.5) rot *= -1.0;
-		if(uniform()<0.5) rhx *= -1.0;
+		if ( uniform()<0.5 ) rot *= -1.0;
+		if ( uniform()<0.5 ) rhx *= -1.0;
 		rhy =  6.0*gaussian();
 		trans = 7.0 + 4*uniform();
 		nsub = 9;
@@ -310,7 +310,7 @@ struct CCParam {
 	Real rot, trans, x, rh, rhx, rhy;
 	void show() {
 		TR << "nres "  << nres << " ";
-		TR << "nsub "	 << nsub << " ";
+		TR << "nsub "  << nsub << " ";
 		TR << "rot "   << rot << " ";
 		TR << "trans " << trans << " ";
 		TR << "x "     << x << " ";
@@ -320,7 +320,7 @@ struct CCParam {
 	}
 	std::string str() {
 		return string_of(nres)+" "+string_of(nsub)+" "+string_of(rot)+" "+string_of(trans)+" "+string_of(x)+" "
-		         +string_of(rh)+" "+string_of(rhx)+" "+string_of(rhy);
+			+string_of(rh)+" "+string_of(rhx)+" "+string_of(rhy);
 	}
 	utility::vector1<Size> vcb_pos;
 };
@@ -333,8 +333,8 @@ core::pose::Pose make_coiled_coil(CCParam & p) {
 	using namespace conformation::symmetry;
 
 	std::string seq = "";
-	for(Size i = 1; i <= p.nres; ++i) seq += "A";
-	for(Size i = 1; i <= p.vcb_pos.size(); ++i) seq[p.vcb_pos[i]-1] = 'C';
+	for ( Size i = 1; i <= p.nres; ++i ) seq += "A";
+	for ( Size i = 1; i <= p.vcb_pos.size(); ++i ) seq[p.vcb_pos[i]-1] = 'C';
 	Pose helix = make_helix(seq);
 	rot_pose(  helix,Vec(0,0,1), p.rh );
 	rot_pose(  helix,Vec(1,0,0), p.rhx);
@@ -342,11 +342,11 @@ core::pose::Pose make_coiled_coil(CCParam & p) {
 	trans_pose(helix,Vec(p.x,0,0));
 
 	Real mnz=99999,mxz=-99999;
-	for(Size ir = 1; ir <= helix.size(); ++ir) {
-		for(Size ia = 1; ia <= helix.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= helix.size(); ++ir ) {
+		for ( Size ia = 1; ia <= helix.residue_type(ir).natoms(); ++ia ) {
 			Real z = helix.xyz(core::id::AtomID(ia,ir)).z();
-			if(z<mnz) mnz = z;
-			if(z>mxz) mxz = z;
+			if ( z<mnz ) mnz = z;
+			if ( z>mxz ) mxz = z;
 		}
 	}
 	p.nsub = std::ceil(( mxz-mnz+10 ) / p.trans) + 1;
@@ -378,20 +378,20 @@ core::kinematics::MoveMapOP make_move_map( core::pose::Pose & pose ) {
 	for ( it = it_begin; it != it_end; ++it ) {
 		int jump_nbr ( (*it).first );
 		SymDof dof( (*it).second );
-		if(dof.allow_dof(X_DOF      )) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,1)),true);
-		if(dof.allow_dof(Y_DOF      )) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,2)),true);
-		if(dof.allow_dof(Z_DOF      )) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,3)),true);
-		if(dof.allow_dof(X_ANGLE_DOF)) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,4)),true);
-		if(dof.allow_dof(Y_ANGLE_DOF)) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,5)),true);
-		if(dof.allow_dof(Z_ANGLE_DOF)) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,6)),true);
+		if ( dof.allow_dof(X_DOF      ) ) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,1)),true);
+		if ( dof.allow_dof(Y_DOF      ) ) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,2)),true);
+		if ( dof.allow_dof(Z_DOF      ) ) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,3)),true);
+		if ( dof.allow_dof(X_ANGLE_DOF) ) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,4)),true);
+		if ( dof.allow_dof(Y_ANGLE_DOF) ) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,5)),true);
+		if ( dof.allow_dof(Z_ANGLE_DOF) ) movemap->set(pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,6)),true);
 	}
 
 	// if jump is between independent, non-virtual residues, move it
-	for(Size i = 1; i <= pose.num_jump(); ++i) {
-   	Size res1 = pose.fold_tree().upstream_jump_residue( i );
-   	Size res2 = pose.fold_tree().downstream_jump_residue( i );
+	for ( Size i = 1; i <= pose.num_jump(); ++i ) {
+		Size res1 = pose.fold_tree().upstream_jump_residue( i );
+		Size res2 = pose.fold_tree().downstream_jump_residue( i );
 		if ( symm_info.fa_is_independent(res1) && !symm_info.is_virtual(res1) &&
-		     symm_info.fa_is_independent(res2) && !symm_info.is_virtual(res2)  ) {
+				symm_info.fa_is_independent(res2) && !symm_info.is_virtual(res2)  ) {
 			movemap->set_jump(i,true);
 		}
 	}
@@ -402,8 +402,8 @@ core::kinematics::MoveMapOP make_move_map( core::pose::Pose & pose ) {
 Real rg2d(core::pose::Pose & pose) {
 	Real rg = 0;
 	Size count = 0;
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= numeric::min(pose.residue_type(ir).natoms(),(Size)5); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= numeric::min(pose.residue_type(ir).natoms(),(Size)5); ++ia ) {
 			Vec v = pose.xyz(core::id::AtomID(ia,ir));
 			rg += sqrt(sqrt(sqrt(v.x()*v.x()+v.y()*v.y())));
 			count++;
@@ -467,10 +467,10 @@ void repack(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	task->restrict_to_repacking();
 	task->or_include_current(true);
 	// for(Size i = 1; i <= task->size(); ++i) {
-	// 	// if(cc.residue(i).name3().substr(0,2)=="CY") {
-	// 		// task->nonconst_residue_task(i).or_ex1(true);
-	// 		// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
-	// 	}
+	//  // if(cc.residue(i).name3().substr(0,2)=="CY") {
+	//   // task->nonconst_residue_task(i).or_ex1(true);
+	//   // task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
+	//  }
 	// }
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
@@ -481,13 +481,13 @@ void design_target(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	PackerTaskOP task = TaskFactory::create_packer_task(cc);
 	utility::vector1< bool > aas(20,false);
 	utility::vector1<Size> aalist = basic::options::option[basic::options::OptionKeys::in::target_residues]();
-	for(Size i = 1; i <= aalist.size(); ++i) {
+	for ( Size i = 1; i <= aalist.size(); ++i ) {
 		aas[aalist[i]] = true;
 	}
 	utility::vector1< bool > cys(20,false);
 	cys[core::chemical::aa_cys] = true;
-	for(Size i = 1; i <= task->size(); ++i) {
-		if(cc.residue(i).name3().substr(0,2)=="CY") {
+	for ( Size i = 1; i <= task->size(); ++i ) {
+		if ( cc.residue(i).name3().substr(0,2)=="CY" ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
 			// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
@@ -504,8 +504,8 @@ void design_all(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	using namespace core::pack::task;
 	PackerTaskOP task = TaskFactory::create_packer_task(cc);
 	task->or_include_current(true);
-	for(Size i = 1; i <= task->size(); ++i) {
-		if(cc.residue(i).name3().substr(0,2)=="CY") {
+	for ( Size i = 1; i <= task->size(); ++i ) {
+		if ( cc.residue(i).name3().substr(0,2)=="CY" ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
 			// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
@@ -523,8 +523,8 @@ void design_FILV(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	aas[core::chemical::aa_ile] = true;
 	aas[core::chemical::aa_leu] = true;
 	aas[core::chemical::aa_val] = true;
-	for(Size i = 1; i <= task->size(); ++i) {
-		if(cc.residue(i).name3().substr(0,2)=="CY") {
+	for ( Size i = 1; i <= task->size(); ++i ) {
+		if ( cc.residue(i).name3().substr(0,2)=="CY" ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
 			// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
@@ -546,8 +546,8 @@ void design_AFILV(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	aas[core::chemical::aa_ile] = true;
 	aas[core::chemical::aa_leu] = true;
 	aas[core::chemical::aa_val] = true;
-	for(Size i = 1; i <= task->size(); ++i) {
-		if(cc.residue(i).name3().substr(0,2)=="CY") {
+	for ( Size i = 1; i <= task->size(); ++i ) {
+		if ( cc.residue(i).name3().substr(0,2)=="CY" ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
 			// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
@@ -566,8 +566,8 @@ void design_AL(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	utility::vector1< bool > aas(20,false);
 	aas[core::chemical::aa_ala] = true;
 	aas[core::chemical::aa_leu] = true;
-	for(Size i = 1; i <= task->size(); ++i) {
-		if(cc.residue(i).name3().substr(0,2)=="CY") {
+	for ( Size i = 1; i <= task->size(); ++i ) {
+		if ( cc.residue(i).name3().substr(0,2)=="CY" ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
 			// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
@@ -590,8 +590,8 @@ void design_FILVEK(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	aas[core::chemical::aa_val] = true;
 	aas[core::chemical::aa_lys] = true;
 	aas[core::chemical::aa_glu] = true;
-	for(Size i = 1; i <= task->size(); ++i) {
-		if(cc.residue(i).name3().substr(0,2)=="CY") {
+	for ( Size i = 1; i <= task->size(); ++i ) {
+		if ( cc.residue(i).name3().substr(0,2)=="CY" ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
 			// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
@@ -615,8 +615,8 @@ void design_AFILVEK(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	aas[core::chemical::aa_val] = true;
 	aas[core::chemical::aa_lys] = true;
 	aas[core::chemical::aa_glu] = true;
-	for(Size i = 1; i <= task->size(); ++i) {
-		if(cc.residue(i).name3().substr(0,2)=="CY") {
+	for ( Size i = 1; i <= task->size(); ++i ) {
+		if ( cc.residue(i).name3().substr(0,2)=="CY" ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
 			// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
@@ -638,14 +638,14 @@ void minimize(core::pose::Pose & cc, ScoreFunctionOP sf) {
 
 Size natoms(core::pose::Pose & cc, Size nres) {
 	Size count = 0;
-	for(Size ir = 1; ir <= nres; ++ir) count += cc.residue_type(ir).nheavyatoms();
+	for ( Size ir = 1; ir <= nres; ++ir ) count += cc.residue_type(ir).nheavyatoms();
 	return count;
 }
 
 Real zcyl_score(core::pose::Pose & cc, Size nres, Real trans) {
 	Real score = 0;
-	for(Size ir = 1; ir <= nres; ++ir) {
-		for(Size ia = 1; ia <= cc.residue_type(ir).nheavyatoms(); ++ia) {
+	for ( Size ir = 1; ir <= nres; ++ir ) {
+		for ( Size ia = 1; ia <= cc.residue_type(ir).nheavyatoms(); ++ia ) {
 			Vec v = cc.xyz(core::id::AtomID(ia,ir));
 			v.z(0);
 			score += exp(-v.length()*v.length()/16.0);
@@ -693,7 +693,7 @@ void add_lig_cst( core::pose::Pose & pose, Size r1, Size r2, Size r3, Size r4, S
 void add_fa_cst(core::pose::Pose & cc, CCParam & p) {
 	using core::id::AtomID;
 	cc.remove_constraints();
-	for(Size j = 1; j <= p.nres; ++j) addcc(cc,AtomID(2,j),AtomID(1,cc.size()+1-p.nsub),2.0);
+	for ( Size j = 1; j <= p.nres; ++j ) addcc(cc,AtomID(2,j),AtomID(1,cc.size()+1-p.nsub),2.0);
 
 	//std::cerr << p.vcb_pos.size() << std::endl;
 	Size c1 = p.vcb_pos[1]; assert("CY"==cc.residue(c1).name3().substr(0,2));
@@ -762,29 +762,29 @@ void make_sf(SFOP& sfc, SFOP& sfd, SFOP& sf1, SFOP& sf2, SFOP& sf3, SFOP& sf4, S
 	// sf5->set_weight(hbond_sr_bb,2.0*orig_srbb);
 
 
-//  	Real dun_orig = sf5->get_weight(fa_dun);
-//  	sfd->set_weight(fa_dun,0.1*dun_orig);
-//  	sf1->set_weight(fa_dun,0.2*dun_orig);
-//  	sf2->set_weight(fa_dun,0.3*dun_orig);
-//  	sf3->set_weight(fa_dun,0.4*dun_orig);
-//  	sf4->set_weight(fa_dun,0.5*dun_orig);
-//  	sf5->set_weight(fa_dun,0.6*dun_orig);
+	//   Real dun_orig = sf5->get_weight(fa_dun);
+	//   sfd->set_weight(fa_dun,0.1*dun_orig);
+	//   sf1->set_weight(fa_dun,0.2*dun_orig);
+	//   sf2->set_weight(fa_dun,0.3*dun_orig);
+	//   sf3->set_weight(fa_dun,0.4*dun_orig);
+	//   sf4->set_weight(fa_dun,0.5*dun_orig);
+	//   sf5->set_weight(fa_dun,0.6*dun_orig);
 
-//  	Real atr_orig = sf5->get_weight(fa_atr);
-//  	sfd->set_weight(fa_atr,1.2*atr_orig);
-//  	sf1->set_weight(fa_atr,1.2*atr_orig);
-//  	sf2->set_weight(fa_atr,1.2*atr_orig);
-//  	sf3->set_weight(fa_atr,1.2*atr_orig);
-//  	sf4->set_weight(fa_atr,1.2*atr_orig);
-//  	sf5->set_weight(fa_atr,1.2*atr_orig);
+	//   Real atr_orig = sf5->get_weight(fa_atr);
+	//   sfd->set_weight(fa_atr,1.2*atr_orig);
+	//   sf1->set_weight(fa_atr,1.2*atr_orig);
+	//   sf2->set_weight(fa_atr,1.2*atr_orig);
+	//   sf3->set_weight(fa_atr,1.2*atr_orig);
+	//   sf4->set_weight(fa_atr,1.2*atr_orig);
+	//   sf5->set_weight(fa_atr,1.2*atr_orig);
 
-//  	Real sol_orig = sf5->get_weight(fa_sol);
-//  	sfd->set_weight(fa_sol,0.7*sol_orig);
-//  	sf1->set_weight(fa_sol,0.7*sol_orig);
-//  	sf2->set_weight(fa_sol,0.7*sol_orig);
-//  	sf3->set_weight(fa_sol,0.7*sol_orig);
-//  	sf4->set_weight(fa_sol,0.7*sol_orig);
-//  	sf5->set_weight(fa_sol,0.7*sol_orig);
+	//   Real sol_orig = sf5->get_weight(fa_sol);
+	//   sfd->set_weight(fa_sol,0.7*sol_orig);
+	//   sf1->set_weight(fa_sol,0.7*sol_orig);
+	//   sf2->set_weight(fa_sol,0.7*sol_orig);
+	//   sf3->set_weight(fa_sol,0.7*sol_orig);
+	//   sf4->set_weight(fa_sol,0.7*sol_orig);
+	//   sf5->set_weight(fa_sol,0.7*sol_orig);
 
 	sfd->set_weight(fa_rep,1.00);
 	sf1->set_weight(fa_rep,0.01);
@@ -821,7 +821,7 @@ align_zns(
 	sf->set_weight(core::scoring::angle_constraint    ,1.0);
 	sf->set_weight(core::scoring::dihedral_constraint ,1.0);
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
-	mm->set_chi(false); mm->set_bb(false);	mm->set_jump(false);
+	mm->set_chi(false); mm->set_bb(false); mm->set_jump(false);
 	mm->set_jump(4,true);
 	// mm->set(core::id::RB1,false);   mm->set(core::id::RB2,false);   mm->set(core::id::RB3,false);
 	protocols::simple_moves::MinMover mnm( mm, sf, "lbfgs_armijo_nonmonotone", 1e-4, true );
@@ -839,7 +839,7 @@ align_zns(
 	tp.append_residue_by_jump(*zns,1);
 
 	// for(Size i=1; i<= tp.fold_tree().num_jump(); ++i)
-		// std::cerr << tp.fold_tree().jump_edge(i) << std::endl;
+	// std::cerr << tp.fold_tree().jump_edge(i) << std::endl;
 
 	add_lig_cst(tp,1,2,3,4,5,0.3);
 	mnm.apply(tp);
@@ -851,12 +851,12 @@ align_zns(
 
 	// std::cerr << "DBG " << (*sf)(tp) << " " << (*sf)(tmp) << std::endl;
 	bool minus = true;
-	if( (*sf)(tp) > (*sf)(tmp) ) {
+	if ( (*sf)(tp) > (*sf)(tmp) ) {
 		minus = false;
 		tp = tmp;
 	}
 	Vec com(0,0,0);
-	for(Size i = 1; i <= tp.residue_type(5).nheavyatoms(); ++i) com += tp.xyz(AtomID(i,5));
+	for ( Size i = 1; i <= tp.residue_type(5).nheavyatoms(); ++i ) com += tp.xyz(AtomID(i,5));
 	com.z(0);
 	using numeric::min;
 	using numeric::max;
@@ -867,8 +867,8 @@ align_zns(
 	Real tailbonus = + 50*( max(0.0,4.0-nt) + max(0.0,4.0-ct) );
 	// std::cerr << "tailbonus " << tailbonus << std::endl;
 	// if( nt <=4 ||  ct <= 4 )
-	// 	std::cerr << "ntct " << nt << " " << ct << " " << score << " " << tailbonus << " " << std::endl;
-	if(minus) return -max(1.0,score+tailbonus);
+	//  std::cerr << "ntct " << nt << " " << ct << " " << score << " " << tailbonus << " " << std::endl;
+	if ( minus ) return -max(1.0,score+tailbonus);
 	return            max(1.0,score+tailbonus);
 }
 
@@ -882,79 +882,86 @@ place_zns(
 	utility::vector1< utility::vector1<Size> > idxs;
 	Real bestscore=9e9;
 	using core::id::AtomID;
-	for(Size i =   (p.nres*p.nsub/2)+1; i <= (p.nres*(p.nsub/2+1))-4     ; ++i ) {
-	Size j = i+4;/*for(Size j = i+1; j <= p.nres*p.nsub; ++j )*/ {
-		// if( i%p.nres == j%p.nres ) continue;
-		// if( THRESH < cc.xyz(AtomID(5,i)).distance_squared(cc.xyz(AtomID(5,j))) ) continue;
-		// if( NEAR   > cc.xyz(AtomID(5,i)).distance_squared(cc.xyz(AtomID(5,j))) ) continue;
-	for(Size k = 1; k <= p.nres*p.nsub; ++k ) {
-		if( i%p.nres == k%p.nres ) continue; if( j%p.nres == k%p.nres ) continue;
-		Real const dik = cc.xyz(AtomID(5,i)).distance_squared(cc.xyz(AtomID(5,k)));
-		Real const djk = cc.xyz(AtomID(5,j)).distance_squared(cc.xyz(AtomID(5,k)));
-		if( 81.0 < dik ) continue;	if( 81.0 < djk ) continue;
-	for(Size l = k+1; l <= p.nres*p.nsub; ++l ) {
-		if( i%p.nres == l%p.nres ) continue; if( j%p.nres == l%p.nres ) continue; if( k%p.nres == l%p.nres ) continue;
-		Real const dil = cc.xyz(AtomID(5,i)).distance_squared(cc.xyz(AtomID(5,l)));
-		Real const djl = cc.xyz(AtomID(5,j)).distance_squared(cc.xyz(AtomID(5,l)));
-		if( 81.0 < dil ) continue;	if( 81.0 < djl ) continue;
-		Real const dimn = numeric::min(dik,dil), dimx = numeric::max(dik,dil);
-		Real const djmn = numeric::min(djk,djl), djmx = numeric::max(djk,djl);
-		if( 49.0 < dimn )	continue; if( 81.0 < dimx ) continue;
-		if( 56.3 < djmn ) continue; if( 72.3 < djmx ) continue;
+	for ( Size i =   (p.nres*p.nsub/2)+1; i <= (p.nres*(p.nsub/2+1))-4     ; ++i ) {
+		Size j = i+4;/*for(Size j = i+1; j <= p.nres*p.nsub; ++j )*/ {
+			// if( i%p.nres == j%p.nres ) continue;
+			// if( THRESH < cc.xyz(AtomID(5,i)).distance_squared(cc.xyz(AtomID(5,j))) ) continue;
+			// if( NEAR   > cc.xyz(AtomID(5,i)).distance_squared(cc.xyz(AtomID(5,j))) ) continue;
+			for ( Size k = 1; k <= p.nres*p.nsub; ++k ) {
+				if ( i%p.nres == k%p.nres ) continue;
+				if ( j%p.nres == k%p.nres ) continue;
+				Real const dik = cc.xyz(AtomID(5,i)).distance_squared(cc.xyz(AtomID(5,k)));
+				Real const djk = cc.xyz(AtomID(5,j)).distance_squared(cc.xyz(AtomID(5,k)));
+				if ( 81.0 < dik ) continue;
+				if ( 81.0 < djk ) continue;
+				for ( Size l = k+1; l <= p.nres*p.nsub; ++l ) {
+					if ( i%p.nres == l%p.nres ) continue;
+					if ( j%p.nres == l%p.nres ) continue;
+					if ( k%p.nres == l%p.nres ) continue;
+					Real const dil = cc.xyz(AtomID(5,i)).distance_squared(cc.xyz(AtomID(5,l)));
+					Real const djl = cc.xyz(AtomID(5,j)).distance_squared(cc.xyz(AtomID(5,l)));
+					if ( 81.0 < dil ) continue;
+					if ( 81.0 < djl ) continue;
+					Real const dimn = numeric::min(dik,dil), dimx = numeric::max(dik,dil);
+					Real const djmn = numeric::min(djk,djl), djmx = numeric::max(djk,djl);
+					if ( 49.0 < dimn ) continue;
+					if ( 81.0 < dimx ) continue;
+					if ( 56.3 < djmn ) continue;
+					if ( 72.3 < djmx ) continue;
 
-		// check for space for ZHC
-		Vec const a = cc.xyz(AtomID(5,i));
-		Vec const b = cc.xyz(AtomID(5,j));
-		Vec const c = cc.xyz(AtomID(5,k));
-		Vec const d = cc.xyz(AtomID(5,l));
-		Vec const aa = cc.xyz(AtomID(2,i));
-		Vec const ba = cc.xyz(AtomID(2,j));
-		Vec const ca = cc.xyz(AtomID(2,k));
-		Vec const da = cc.xyz(AtomID(2,l));
-		Vec com = (a+b+c+d)/4.0;
+					// check for space for ZHC
+					Vec const a = cc.xyz(AtomID(5,i));
+					Vec const b = cc.xyz(AtomID(5,j));
+					Vec const c = cc.xyz(AtomID(5,k));
+					Vec const d = cc.xyz(AtomID(5,l));
+					Vec const aa = cc.xyz(AtomID(2,i));
+					Vec const ba = cc.xyz(AtomID(2,j));
+					Vec const ca = cc.xyz(AtomID(2,k));
+					Vec const da = cc.xyz(AtomID(2,l));
+					Vec com = (a+b+c+d)/4.0;
 
-		// check CA-CB pointing roughly right way
-		if( (com-a).dot(a-aa) < 0.0 ) continue;
-		if( (com-b).dot(b-ba) < 0.0 ) continue;
-		if( (com-c).dot(c-ca) < 0.0 ) continue;
-		if( (com-d).dot(d-da) < 0.0 ) continue;
+					// check CA-CB pointing roughly right way
+					if ( (com-a).dot(a-aa) < 0.0 ) continue;
+					if ( (com-b).dot(b-ba) < 0.0 ) continue;
+					if ( (com-c).dot(c-ca) < 0.0 ) continue;
+					if ( (com-d).dot(d-da) < 0.0 ) continue;
 
-		// std::cout << "checking zns spot " << i << " " << j << " " << k << " " << l;
+					// std::cout << "checking zns spot " << i << " " << j << " " << k << " " << l;
 
-		bool collision = false;
-		for(Size ir = 1; ir <= p.nres*p.nsub; ++ir) {
-			for(Size ia = 1; ia <= cc.residue_type(ir).nheavyatoms(); ++ia) {
-				if( com.distance_squared(cc.xyz(AtomID(ia,ir))) < 4.0 ) {
-					collision = true;
-				}
-			}
-		}
-		if( collision ) {
-			// std::cerr << " collision" << std::endl;
-			continue;
-		}
+					bool collision = false;
+					for ( Size ir = 1; ir <= p.nres*p.nsub; ++ir ) {
+						for ( Size ia = 1; ia <= cc.residue_type(ir).nheavyatoms(); ++ia ) {
+							if ( com.distance_squared(cc.xyz(AtomID(ia,ir))) < 4.0 ) {
+								collision = true;
+							}
+						}
+					}
+					if ( collision ) {
+						// std::cerr << " collision" << std::endl;
+						continue;
+					}
 
-		core::pose::Pose tmp;
-		Real znsscore = fabs(align_zns(cc,p,tmp,i,j,k,l));
-		// std::cout << "align_zns score " << znsscore << std::endl;
-		// std::cerr << "znsscore " << znsscore << " "
-		//           << i+floor((i-1)/(p.nres)) << " "
-		//           << j+floor((j-1)/(p.nres)) << " "
-		//           << k+floor((k-1)/(p.nres)) << " "
-		//           << l+floor((l-1)/(p.nres)) << std::endl;
-		if(znsscore < bestscore) bestscore = znsscore;
-		if(znsscore < cstthresh) {
-			utility::vector1<Size> idx;
-			idx.push_back(i);
-			idx.push_back(j);
-			idx.push_back(k);
-			idx.push_back(l);
-			idxs.push_back(idx);
-		}
-		// std::cerr << " " << bestm << " " << bestatpos << std::endl;
-	} // l
-	} // k
-	} // j
+					core::pose::Pose tmp;
+					Real znsscore = fabs(align_zns(cc,p,tmp,i,j,k,l));
+					// std::cout << "align_zns score " << znsscore << std::endl;
+					// std::cerr << "znsscore " << znsscore << " "
+					//           << i+floor((i-1)/(p.nres)) << " "
+					//           << j+floor((j-1)/(p.nres)) << " "
+					//           << k+floor((k-1)/(p.nres)) << " "
+					//           << l+floor((l-1)/(p.nres)) << std::endl;
+					if ( znsscore < bestscore ) bestscore = znsscore;
+					if ( znsscore < cstthresh ) {
+						utility::vector1<Size> idx;
+						idx.push_back(i);
+						idx.push_back(j);
+						idx.push_back(k);
+						idx.push_back(l);
+						idxs.push_back(idx);
+					}
+					// std::cerr << " " << bestm << " " << bestatpos << std::endl;
+				} // l
+			} // k
+		} // j
 	} // i
 	/*if(idxs.size()==0) */TR << "place ZHC score " << bestscore << std::endl;
 	return idxs;
@@ -976,8 +983,8 @@ add_symm_zns(
 	Size bestii = 0;
 	utility::vector1<utility::vector1<Size> > idxs( place_zns(cc,p,cstthresh) );
 	utility::vector1<Size> cpos(4);
-	if( 0 == idxs.size() ) return false;
-	for( Size ii = 1; ii <= idxs.size(); ++ii ) {
+	if ( 0 == idxs.size() ) return false;
+	for ( Size ii = 1; ii <= idxs.size(); ++ii ) {
 		core::pose::Pose tmppose = cc;
 		utility::vector1<Size> t = idxs[ii];
 		Size c1=t[1],c2=t[2],c3=t[3],c4=t[4];
@@ -998,7 +1005,7 @@ add_symm_zns(
 		core::pose::Pose pose;
 		core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,true);
 		pose.copy_segment(p.nres,tmppose,1,1);
-		for(Size i = 1; i <= zns->nheavyatoms(); ++i ) {
+		for ( Size i = 1; i <= zns->nheavyatoms(); ++i ) {
 			zns->set_xyz(i,tp.xyz(AtomID(i,5)));
 		}
 		using numeric::min;
@@ -1007,7 +1014,7 @@ add_symm_zns(
 		core::pose::symmetry::make_symmetric_pose( pose, sd );
 
 		// for(Size i = 1; i <= pose.num_jump(); ++i){
-		// 	TR << "fold tree jump " << pose.fold_tree().jump_edge(i) << std::endl;
+		//  TR << "fold tree jump " << pose.fold_tree().jump_edge(i) << std::endl;
 		// }
 
 		// if jump is between independent, non-virtual residues, move it
@@ -1015,12 +1022,12 @@ add_symm_zns(
 		SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 		SymmetryInfo & symm_info( symm_conf.Symmetry_Info() );
 		std::map< Size, SymDof > dofs ( symm_info.get_dofs() );
-		for(Size i = 1; i <= pose.num_jump(); ++i) {
-	   	Size res1 = pose.fold_tree().upstream_jump_residue( i );
-	   	Size res2 = pose.fold_tree().downstream_jump_residue( i );
+		for ( Size i = 1; i <= pose.num_jump(); ++i ) {
+			Size res1 = pose.fold_tree().upstream_jump_residue( i );
+			Size res2 = pose.fold_tree().downstream_jump_residue( i );
 			// TR << "checking jump " << i << " " << res1 << " " << res2 << std::endl;
 			if ( symm_info.fa_is_independent(res1) && !symm_info.is_virtual(res1) &&
-			     symm_info.fa_is_independent(res2) && !symm_info.is_virtual(res2)  ) {
+					symm_info.fa_is_independent(res2) && !symm_info.is_virtual(res2)  ) {
 				SymDof d;
 				// TR << "adding SymDOF for jump " << i << std::endl;
 				d.read("x y z angle_x angle_y angle_z");
@@ -1036,7 +1043,7 @@ add_symm_zns(
 		c2 = c2+floor((c2-1)/(p.nres)); assert("CY"==tmppose.residue(c2).name3().substr(0,2));
 		c3 = c3+floor((c3-1)/(p.nres)); assert("CY"==tmppose.residue(c3).name3().substr(0,2));
 		c4 = c4+floor((c4-1)/(p.nres)); assert("CY"==tmppose.residue(c4).name3().substr(0,2));
-		if( minus < 0 ) { Size tmp = c3; c3 = c4; c4 = tmp; }
+		if ( minus < 0 ) { Size tmp = c3; c3 = c4; c4 = tmp; }
 		cpos[1] = c1; cpos[2] = c2; cpos[3] = c3; cpos[4] = c4;
 
 		add_lig_cst(tmppose,c1,c2,c3,c4,p.nres+1,0.1);
@@ -1046,7 +1053,7 @@ add_symm_zns(
 		// sf->show(tmppose);
 		// tmppose.dump_pdb("tmppose.pdb");
 		// std::cerr << "zns censcore " << score/p.nres << " " << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
-		if(score < bestscore) {
+		if ( score < bestscore ) {
 			bestscore = score;
 			bestpose  = tmppose;
 			bestii    = ii;
@@ -1064,11 +1071,11 @@ void read_frags() {
 	utility::io::izstream in( basic::database::full_name("sampling/ss_fragfiles/HHH.fragfile") );
 	Size n;
 	utility::vector1< utility::pointer::owning_ptr<core::fragment::BBTorsionSRFD> > fds;
-	while( in >> n ) {
-	 	std::string pdb;
+	while ( in >> n ) {
+		std::string pdb;
 
 		std::cerr << n << std::endl;
-		for( Size i = 1; i <= n; ++i ) {
+		for ( Size i = 1; i <= n; ++i ) {
 			fds.push_back( new core::fragment::BBTorsionSRFD );
 			in >> pdb >> *fds.back();
 			std::cerr << pdb << " " << *fds.back() << std::endl;
@@ -1093,13 +1100,13 @@ void do_centroid_stuff(core::pose::Pose & cenpose, ScoreFunctionOP sfc ) {
 	// TrialMoverOP trials( new TrialMover( fragins, mc ) );
 	//
 	// for(Size i = 1; i <= 5; ++i) {
-	// 	trials->keep_stats_type( all_stats );
-	// 	for ( Size ii = 1; ii <= 100; ++ii ) {
-	// 		trials->apply(cenpose);
-	// 		mc->show_state();
-	// 	}
-	// 	mc->recover_low(cenpose);
-	// 	std::cout << "frag accept rate " << trials->acceptance_rate() << std::endl;
+	//  trials->keep_stats_type( all_stats );
+	//  for ( Size ii = 1; ii <= 100; ++ii ) {
+	//   trials->apply(cenpose);
+	//   mc->show_state();
+	//  }
+	//  mc->recover_low(cenpose);
+	//  std::cout << "frag accept rate " << trials->acceptance_rate() << std::endl;
 	// }
 	cendock->apply(cenpose);
 
@@ -1113,159 +1120,159 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace core;
-	using namespace scoring;
-	using namespace protocols;
-	using namespace moves;
-	using namespace simple_moves::symmetry;
-	using namespace core::pack::task;
-	using namespace ObjexxFCL::format;
-	using namespace id;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace core;
+		using namespace scoring;
+		using namespace protocols;
+		using namespace moves;
+		using namespace simple_moves::symmetry;
+		using namespace core::pack::task;
+		using namespace ObjexxFCL::format;
+		using namespace id;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	std::ostringstream sslog;
+		std::ostringstream sslog;
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	// read_frags(); std::exit(0);
+		// read_frags(); std::exit(0);
 
-	ScoreFunctionOP sfc,sfd,sf1,sf2,sf3,sf4,sf5;
-	make_sf(sfc,sfd,sf1,sf2,sf3,sf4,sf5);
+		ScoreFunctionOP sfc,sfd,sf1,sf2,sf3,sf4,sf5;
+		make_sf(sfc,sfd,sf1,sf2,sf3,sf4,sf5);
 
-	Size NPACK=3,iter = 0;
-	Real zcyl,censcore,censcore2,cstscore,znsscore;
-	while(true) {
-		iter++;
-		//for( Size iter = 1; iter <= NSTRUCT; iter++ ) {
-		core::pose::Pose cc,init,cenpose;
-		std::string tag = string_of(numeric::random::uniform());
-		CCParam p;
-		cenpose = make_coiled_coil(p) ;
+		Size NPACK=3,iter = 0;
+		Real zcyl,censcore,censcore2,cstscore,znsscore;
+		while ( true ) {
+			iter++;
+			//for( Size iter = 1; iter <= NSTRUCT; iter++ ) {
+			core::pose::Pose cc,init,cenpose;
+			std::string tag = string_of(numeric::random::uniform());
+			CCParam p;
+			cenpose = make_coiled_coil(p) ;
 
-		zcyl = zcyl_score(cenpose,p.nres,p.trans); if( zcyl     <  1.7 ) { continue; }
-		censcore = (*sfc)(cenpose)/p.nres;         if( censcore >= 1.0 ) {
-			// TR << "censcore 1 fail " << censcore << std::endl;
-			continue;
+			zcyl = zcyl_score(cenpose,p.nres,p.trans); if ( zcyl     <  1.7 ) { continue; }
+			censcore = (*sfc)(cenpose)/p.nres;         if ( censcore >= 1.0 ) {
+				// TR << "censcore 1 fail " << censcore << std::endl;
+				continue;
+			}
+			if ( !add_symm_zns(cenpose,p,sfc,250.0) ) { continue; }
+
+			// cenpose.dump_pdb("cen0.pdb");
+			do_centroid_stuff(cenpose,sfc);
+			// cenpose.dump_pdb("cen1.pdb");
+			// std::exit(0);
+
+			censcore2 = (*sfc)(cenpose);
+			cstscore = sfc->get_weight( atom_pair_constraint) * cenpose.energies().total_energies()[ atom_pair_constraint]+
+				sfc->get_weight(     angle_constraint) * cenpose.energies().total_energies()[     angle_constraint]+
+				sfc->get_weight(coordinate_constraint) * cenpose.energies().total_energies()[coordinate_constraint]+
+				sfc->get_weight(  dihedral_constraint) * cenpose.energies().total_energies()[  dihedral_constraint];
+			censcore2 = (censcore2-cstscore)/(p.nres+1);
+			znsscore = cenpose.energies().residue_total_energy(p.nres+1);
+			// TR << "cstscore " << cstscore << std::endl;
+			//std::cerr << "CENSCORE AFTER MIN ZHC " << censcore << " " << censcore2 << " " << cstscore << std::endl;
+			if ( censcore2 >= 3.0 ) {
+				TR << "ZHC censcore fail " << censcore2 << std::endl;
+				continue;
+			}
+
+			TR << LJ(35,"cenp_cen_"+tag+".pdb.gz") << " " << F(10,5,censcore) << " " << F(10,5,censcore2) << " " << F(10,5,cstscore) << " " << F(10,5,znsscore) << " " << p.nres << " " << p.trans << " " << p.rot << std::endl;
+			TR << p.str() << std::endl;
+
+			cc = cenpose;
+			cenpose = cc;
+
+			cc.remove_constraints();
+			protocols::toolbox::switch_to_residue_type_set( cc, core::chemical::FA_STANDARD );
+			// cc.dump_pdb("fa0.pdb");
+			// std::cerr << "fa0 " << (*sf2)(cc) << std::endl;
+			add_fa_cst(cc,p);
+			repack(cc,sf2);
+			// std::cerr << "rpk " << (*sf2)(cc) << std::endl;
+			// cc.dump_pdb("fa_rpk.pdb");
+			minimize(cc,sf2);
+			//  cc.dump_pdb("fa_min.pdb");
+			// sf2->show(cc);
+			// if( (*sf2)(cc) > 100 ) continue;
+			init = cc;
+			// continue;
+			// std::exit(-1);
+
+			core::pose::Pose best = cc;
+			for ( Size k = 1; k <= NPACK; ++k ) {
+				// design_AL(cc,sfd); minimize(cc,sfd); //sfd->show(cc);
+				// design_AL(cc,sf1); minimize(cc,sf1); //sf1->show(cc);
+				// design_AL(cc,sf2); minimize(cc,sf2); //sf2->show(cc);
+				design_AL(cc,sf3); minimize(cc,sf3); //sf3->show(cc);
+				design_AL(cc,sf4); minimize(cc,sf4); //sf4->show(cc);
+				design_AL(cc,sf5); minimize(cc,sf5); //sf5->show(cc);
+				TR << "design_AL/min12345    " << I(2,k) << " " << F(10,3,(*sf5)(cc)/p.nres) << " " << cc.sequence().substr(0,p.nres) << std::endl;
+				if ( (*sf5)(best) >= (*sf5)(cc) ) best = cc;
+			}
+			cc = best;
+			for ( Size k = 1; k <= NPACK; ++k ) {
+				// design_FILV(cc,sfd); minimize(cc,sfd);
+				// design_FILV(cc,sf1); minimize(cc,sf1);
+				// design_FILV(cc,sf2); minimize(cc,sf2);
+				design_FILV(cc,sf3); minimize(cc,sf3);
+				design_FILV(cc,sf4); minimize(cc,sf4);
+				design_FILV(cc,sf5); minimize(cc,sf5);
+				TR << "deisgnFILV/min12345   " << I(2,k) << " " << F(10,3,(*sf5)(cc)/p.nres) << " " << cc.sequence().substr(0,p.nres) << std::endl;
+				if ( (*sf5)(best) >= (*sf5)(cc) ) best = cc;
+			}
+			cc = best;
+			for ( Size k = 1; k <= NPACK; ++k ) {
+				// design_AFILV(cc,sfd); minimize(cc,sfd);
+				// design_AFILV(cc,sf1); minimize(cc,sf1);
+				// design_AFILV(cc,sf2); minimize(cc,sf2);
+				design_AFILV(cc,sf3); minimize(cc,sf3);
+				design_AFILV(cc,sf4); minimize(cc,sf4);
+				design_AFILV(cc,sf5); minimize(cc,sf5);
+				TR << "deisgnAFILV/min12345   " << I(2,k) << " " << F(10,3,(*sf5)(cc)/p.nres) << " " << cc.sequence().substr(0,p.nres) << std::endl;
+				if ( (*sf5)(best) >= (*sf5)(cc) ) best = cc;
+			}
+			cc = best;
+			for ( Size k = 1; k <= NPACK; ++k ) {
+				// design_AFILVEK(cc,sfd); minimize(cc,sfd);
+				// design_AFILVEK(cc,sf1); minimize(cc,sf1);
+				// design_AFILVEK(cc,sf2); minimize(cc,sf2);
+				design_AFILVEK(cc,sf3); minimize(cc,sf3);
+				design_AFILVEK(cc,sf4); minimize(cc,sf4);
+				design_AFILVEK(cc,sf5); minimize(cc,sf5);
+				TR << "deisgnAFILVEK/min12345   " << I(2,k) << " " << F(10,3,(*sf5)(cc)/p.nres) << " " << cc.sequence().substr(0,p.nres) << std::endl;
+				if ( (*sf5)(best) >= (*sf5)(cc) ) best = cc;
+			}
+			cc = best;
+
+			Real score = (*sf5)(cc);
+			Real ap  = sf5->get_weight(atom_pair_constraint)  * cc.energies().total_energies()[atom_pair_constraint ];
+			Real ang = sf5->get_weight(angle_constraint)      * cc.energies().total_energies()[angle_constraint];
+			Real dhc = sf5->get_weight(dihedral_constraint)   * cc.energies().total_energies()[dihedral_constraint];
+			Real coc = sf5->get_weight(coordinate_constraint) * cc.energies().total_energies()[coordinate_constraint];
+			score = score - ap - ang - coc - dhc;
+			//  sf5->show(cc);
+
+			sslog << LJ(25,("cc"+tag+".pdb").c_str()) << " fa: " << F(10,5,score) << " " << F(10,5,ap) << " " << F(10,5,ang) << " " << F(10,5,score/p.nres) << " " << F(10,5,score/natoms(cc,p.nres))
+				<< " zcyl " << F(8,5,zcyl_score(cc,p.nres,p.trans))
+				<< " srms " << F(8,5,CA_rmsd(cc,cenpose)) << " " << I(7,iter) << " "
+				<< cc.sequence().substr(0,p.nres) << " \t\t";
+			sslog << p.str() << std::endl;
+
+			if ( basic::options::option[in::file::silent_energy_cut]() > score/p.nres ) {
+				cenpose.dump_pdb(std::string(option[OptionKeys::out::file::o]())+"/cc"+tag+"_cen.pdb.gz");
+				cc     .dump_pdb(std::string(option[OptionKeys::out::file::o]())+"/cc"+tag+"_fa.pdb.gz");
+				std::cout << sslog.str();
+				std::cout.flush();
+				sslog.clear();
+				sslog.str("");
+			}
+
 		}
-		if( !add_symm_zns(cenpose,p,sfc,250.0) ) { continue; }
 
-				// cenpose.dump_pdb("cen0.pdb");
-		do_centroid_stuff(cenpose,sfc);
-				// cenpose.dump_pdb("cen1.pdb");
-		// std::exit(0);
-
-		censcore2 = (*sfc)(cenpose);
-		cstscore = sfc->get_weight( atom_pair_constraint) * cenpose.energies().total_energies()[ atom_pair_constraint]+
-                 sfc->get_weight(     angle_constraint) * cenpose.energies().total_energies()[     angle_constraint]+
-                 sfc->get_weight(coordinate_constraint) * cenpose.energies().total_energies()[coordinate_constraint]+
-		           sfc->get_weight(  dihedral_constraint) * cenpose.energies().total_energies()[  dihedral_constraint];
-		censcore2 = (censcore2-cstscore)/(p.nres+1);
-		znsscore = cenpose.energies().residue_total_energy(p.nres+1);
-		// TR << "cstscore " << cstscore << std::endl;
-		//std::cerr << "CENSCORE AFTER MIN ZHC " << censcore << " " << censcore2 << " " << cstscore << std::endl;
-		if( censcore2 >= 3.0 ) {
-			TR << "ZHC censcore fail " << censcore2 << std::endl;
-			continue;
-		}
-
-		TR << LJ(35,"cenp_cen_"+tag+".pdb.gz") << " " << F(10,5,censcore) << " " << F(10,5,censcore2) << " " << F(10,5,cstscore) << " " << F(10,5,znsscore) << " " << p.nres << " " << p.trans << " " << p.rot << std::endl;
-		TR << p.str() << std::endl;
-
-		cc = cenpose;
-		cenpose = cc;
-
-		cc.remove_constraints();
-		protocols::toolbox::switch_to_residue_type_set( cc, core::chemical::FA_STANDARD );
-		// cc.dump_pdb("fa0.pdb");
-		// std::cerr << "fa0 " << (*sf2)(cc) << std::endl;
-		add_fa_cst(cc,p);
-		repack(cc,sf2);
-		// std::cerr << "rpk " << (*sf2)(cc) << std::endl;
-		// cc.dump_pdb("fa_rpk.pdb");
-		minimize(cc,sf2);
-		//		cc.dump_pdb("fa_min.pdb");
-		// sf2->show(cc);
-		// if( (*sf2)(cc) > 100 ) continue;
-		init = cc;
-		// continue;
-		// std::exit(-1);
-
-		core::pose::Pose best = cc;
-		for(Size k = 1; k <= NPACK; ++k) {
-			// design_AL(cc,sfd); minimize(cc,sfd); //sfd->show(cc);
-			// design_AL(cc,sf1); minimize(cc,sf1); //sf1->show(cc);
-			// design_AL(cc,sf2); minimize(cc,sf2); //sf2->show(cc);
-			design_AL(cc,sf3); minimize(cc,sf3); //sf3->show(cc);
-			design_AL(cc,sf4); minimize(cc,sf4); //sf4->show(cc);
-			design_AL(cc,sf5); minimize(cc,sf5); //sf5->show(cc);
-			TR << "design_AL/min12345    " << I(2,k) << " " << F(10,3,(*sf5)(cc)/p.nres) << " " << cc.sequence().substr(0,p.nres) << std::endl;
-			if( (*sf5)(best) >= (*sf5)(cc) ) best = cc;
-		}
-		cc = best;
-		for(Size k = 1; k <= NPACK; ++k) {
-			// design_FILV(cc,sfd); minimize(cc,sfd);
-			// design_FILV(cc,sf1); minimize(cc,sf1);
-			// design_FILV(cc,sf2); minimize(cc,sf2);
-			design_FILV(cc,sf3); minimize(cc,sf3);
-			design_FILV(cc,sf4); minimize(cc,sf4);
-			design_FILV(cc,sf5); minimize(cc,sf5);
-			TR << "deisgnFILV/min12345   " << I(2,k) << " " << F(10,3,(*sf5)(cc)/p.nres) << " " << cc.sequence().substr(0,p.nres) << std::endl;
-			if( (*sf5)(best) >= (*sf5)(cc) ) best = cc;
-		}
-		cc = best;
-		for(Size k = 1; k <= NPACK; ++k) {
-			// design_AFILV(cc,sfd); minimize(cc,sfd);
-			// design_AFILV(cc,sf1); minimize(cc,sf1);
-			// design_AFILV(cc,sf2); minimize(cc,sf2);
-			design_AFILV(cc,sf3); minimize(cc,sf3);
-			design_AFILV(cc,sf4); minimize(cc,sf4);
-			design_AFILV(cc,sf5); minimize(cc,sf5);
-			TR << "deisgnAFILV/min12345   " << I(2,k) << " " << F(10,3,(*sf5)(cc)/p.nres) << " " << cc.sequence().substr(0,p.nres) << std::endl;
-			if( (*sf5)(best) >= (*sf5)(cc) ) best = cc;
-		}
-		cc = best;
-		for(Size k = 1; k <= NPACK; ++k) {
-			// design_AFILVEK(cc,sfd); minimize(cc,sfd);
-			// design_AFILVEK(cc,sf1); minimize(cc,sf1);
-			// design_AFILVEK(cc,sf2); minimize(cc,sf2);
-			design_AFILVEK(cc,sf3); minimize(cc,sf3);
-			design_AFILVEK(cc,sf4); minimize(cc,sf4);
-			design_AFILVEK(cc,sf5); minimize(cc,sf5);
-			TR << "deisgnAFILVEK/min12345   " << I(2,k) << " " << F(10,3,(*sf5)(cc)/p.nres) << " " << cc.sequence().substr(0,p.nres) << std::endl;
-			if( (*sf5)(best) >= (*sf5)(cc) ) best = cc;
-		}
-		cc = best;
-
-		Real score = (*sf5)(cc);
-		Real ap  = sf5->get_weight(atom_pair_constraint)  * cc.energies().total_energies()[atom_pair_constraint ];
-		Real ang = sf5->get_weight(angle_constraint)      * cc.energies().total_energies()[angle_constraint];
-		Real dhc = sf5->get_weight(dihedral_constraint)   * cc.energies().total_energies()[dihedral_constraint];
-		Real coc = sf5->get_weight(coordinate_constraint) * cc.energies().total_energies()[coordinate_constraint];
-		score = score - ap - ang - coc - dhc;
-		//		sf5->show(cc);
-
-		sslog << LJ(25,("cc"+tag+".pdb").c_str()) << " fa: " << F(10,5,score) << " " << F(10,5,ap) << " " << F(10,5,ang) << " " << F(10,5,score/p.nres) << " " << F(10,5,score/natoms(cc,p.nres))
-		          << " zcyl " << F(8,5,zcyl_score(cc,p.nres,p.trans))
-		          << " srms " << F(8,5,CA_rmsd(cc,cenpose)) << " " << I(7,iter) << " "
-					 << cc.sequence().substr(0,p.nres) << " 		";
-		sslog << p.str() << std::endl;
-
-		if( basic::options::option[in::file::silent_energy_cut]() > score/p.nres ) {
-			cenpose.dump_pdb(std::string(option[OptionKeys::out::file::o]())+"/cc"+tag+"_cen.pdb.gz");
-			cc     .dump_pdb(std::string(option[OptionKeys::out::file::o]())+"/cc"+tag+"_fa.pdb.gz");
-			std::cout << sslog.str();
-			std::cout.flush();
-			sslog.clear();
-			sslog.str("");
-		}
-
-	}
-
-	std::cout << sslog.str();
-	std::cout.flush();
-	sslog.clear();
-	sslog.str("");
+		std::cout << sslog.str();
+		std::cout.flush();
+		sslog.clear();
+		sslog.str("");
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

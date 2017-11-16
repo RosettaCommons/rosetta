@@ -44,7 +44,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.CatPiCalculator" );
+static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.CatPiCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

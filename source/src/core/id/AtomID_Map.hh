@@ -42,7 +42,7 @@
 #include <map>
 #endif
 
-//static THREAD_LOCAL basic::Tracer TR( "core.id.AtomID_Map" );
+//static basic::Tracer TR( "core.id.AtomID_Map" );
 
 namespace core {
 namespace id {

@@ -71,10 +71,9 @@ using namespace core;
 using namespace basic::options;
 using namespace scoring;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ScoreMover" );
+static basic::Tracer TR( "protocols.simple_moves.ScoreMover" );
 
 // XRW TEMP std::string
 // XRW TEMP ScoreMoverCreator::keyname() const

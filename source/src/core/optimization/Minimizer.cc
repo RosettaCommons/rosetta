@@ -43,7 +43,7 @@ namespace optimization {
 
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer TR( "core.optimization.Minimizer" );
+static basic::Tracer TR( "core.optimization.Minimizer" );
 
 // set the function and the options
 Minimizer::Minimizer(

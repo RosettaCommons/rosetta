@@ -37,7 +37,7 @@
 // C++ headers
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.membrane.membrane_symdocking" );
+static basic::Tracer TR( "apps.pilot.membrane.membrane_symdocking" );
 
 /// @brief Main method
 int

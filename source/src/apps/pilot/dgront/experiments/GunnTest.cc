@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 /*
- *
- *  Created on: Apr 21, 2009
- *      Author: dgront
- */
+*
+*  Created on: Apr 21, 2009
+*      Author: dgront
+*/
 
 #include <core/types.hh>
 #include <devel/init.hh>
@@ -38,83 +38,83 @@
 #include <core/import_pose/import_pose.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "GunnTest" );
+static basic::Tracer tr( "GunnTest" );
 
 void register_options() {
 
-  OPT( in::file::native );
-  OPT( in::file::s );
+	OPT( in::file::native );
+	OPT( in::file::s );
 }
 
 
 class GunnTest : public protocols::moves::Mover {
 public:
 
-    GunnTest() {
+	GunnTest() {
 
-        using namespace core;
-        using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	frag_size_ = 9;
-	native = new core::pose::Pose;
-	core::import_pose::pose_from_file(*native, option[ in::file::native ](), core::import_pose::PDB_file);
+		frag_size_ = 9;
+		native = new core::pose::Pose;
+		core::import_pose::pose_from_file(*native, option[ in::file::native ](), core::import_pose::PDB_file);
 
-	for(Size i=1;i<=native->size()-frag_size_+1;i++) {
-	    data_p.push_back( new protocols::abinitio::GunnTuple );
-	    data_n.push_back( new protocols::abinitio::GunnTuple );
+		for ( Size i=1; i<=native->size()-frag_size_+1; i++ ) {
+			data_p.push_back( new protocols::abinitio::GunnTuple );
+			data_n.push_back( new protocols::abinitio::GunnTuple );
+		}
+		computeGunnTuples(*native,frag_size_,data_n);
 	}
-	computeGunnTuples(*native,frag_size_,data_n);
-    }
 
-    virtual ~GunnTest() {}
+	virtual ~GunnTest() {}
 
-    virtual void apply( core::pose::Pose & pose ) {
+	virtual void apply( core::pose::Pose & pose ) {
 
-	computeGunnTuples(pose,frag_size_,data_p);
-	for(Size i=1;i<=data_p.size();i++) {
-	    protocols::abinitio::GunnTuple & t = *data_p[i];
-	    std::cout<<t.q1<<" ";
-	    std::cout<<t.q2<<" ";
-	    std::cout<<t.q3<<" ";
-	    std::cout<<t.q4<<" ";
-	    std::cout<<t.q5<<" ";
-	    std::cout<<t.q6<<" ";
-	    std::cout<<gun.score_tuple(*data_n[i],t)<<std::endl;
+		computeGunnTuples(pose,frag_size_,data_p);
+		for ( Size i=1; i<=data_p.size(); i++ ) {
+			protocols::abinitio::GunnTuple & t = *data_p[i];
+			std::cout<<t.q1<<" ";
+			std::cout<<t.q2<<" ";
+			std::cout<<t.q3<<" ";
+			std::cout<<t.q4<<" ";
+			std::cout<<t.q5<<" ";
+			std::cout<<t.q6<<" ";
+			std::cout<<gun.score_tuple(*data_n[i],t)<<std::endl;
+		}
 	}
-    }
 
-    void computeGunnTuples(core::pose::Pose & pose,Size frag_size,utility::vector1<protocols::abinitio::GunnTupleOP> result) {
+	void computeGunnTuples(core::pose::Pose & pose,Size frag_size,utility::vector1<protocols::abinitio::GunnTupleOP> result) {
 
-	for(Size i=1;i<=pose.size()-frag_size + 1;i++) {
-	    protocols::abinitio::GunnTuple & t = *result[i];
-	    gun.compute_gunn( pose, i, i+frag_size_-1, t);
+		for ( Size i=1; i<=pose.size()-frag_size + 1; i++ ) {
+			protocols::abinitio::GunnTuple & t = *result[i];
+			gun.compute_gunn( pose, i, i+frag_size_-1, t);
+		}
 	}
-    }
 
-    Size frag_size_;
-    utility::vector1<protocols::abinitio::GunnTupleOP> data_n;
-    utility::vector1<protocols::abinitio::GunnTupleOP> data_p;
-    core::pose::PoseOP native;
-    protocols::abinitio::GunnCost gun;
+	Size frag_size_;
+	utility::vector1<protocols::abinitio::GunnTupleOP> data_n;
+	utility::vector1<protocols::abinitio::GunnTupleOP> data_p;
+	core::pose::PoseOP native;
+	protocols::abinitio::GunnCost gun;
 };
 
 
 int main(int argc, char * argv[]) {
-try {
-    using namespace protocols;
-    using namespace protocols::jobdist;
-    using namespace protocols::moves;
+	try {
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
 
-  register_options();
-  devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-    GunnTest test;
-    not_universal_main( test );
-} catch ( utility::excn::EXCN_Base const & e ) {
-                          std::cout << "caught exception " << e.msg() << std::endl;
+		GunnTest test;
+		not_universal_main( test );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                              }
+	}
 
-  return 0;
+	return 0;
 }

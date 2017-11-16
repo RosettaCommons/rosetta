@@ -39,7 +39,7 @@
 
 //// C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MonteCarloReset" );
+static basic::Tracer TR( "protocols.simple_moves.MonteCarloReset" );
 
 using namespace core;
 using namespace protocols::moves;

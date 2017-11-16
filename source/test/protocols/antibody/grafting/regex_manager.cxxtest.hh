@@ -19,7 +19,7 @@
 #include <test/core/init_util.hh>
 #include <cxxtest/TestSuite.h>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting.regex_manager.cxxtest");
+static basic::Tracer TR("protocols.antibody.grafting.regex_manager.cxxtest");
 
 using std::string;
 

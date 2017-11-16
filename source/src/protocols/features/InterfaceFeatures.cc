@@ -46,7 +46,7 @@
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/InterfaceFeaturesCreator.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.InterfaceFeatures" );
+static basic::Tracer TR( "protocols.InterfaceFeatures" );
 
 namespace protocols {
 namespace features {

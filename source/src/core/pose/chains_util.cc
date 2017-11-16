@@ -56,7 +56,7 @@
 namespace core {
 namespace pose {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.util" );
+static basic::Tracer TR( "core.pose.util" );
 
 void jumps_from_pose(core::pose::Pose const & pose, Jumps & jumps) {
 	for ( Size i = 1; i <= pose.num_jump(); ++i ) {

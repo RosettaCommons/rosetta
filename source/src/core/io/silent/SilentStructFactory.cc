@@ -38,7 +38,7 @@ namespace core {
 namespace io {
 namespace silent {
 
-static THREAD_LOCAL basic::Tracer tr( "core.io.silent" );
+static basic::Tracer tr( "core.io.silent" );
 
 /// @details Private constructor insures correctness of singleton.
 SilentStructFactory::SilentStructFactory() {}

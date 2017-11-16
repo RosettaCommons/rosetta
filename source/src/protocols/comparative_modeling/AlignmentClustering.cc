@@ -65,7 +65,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //Auto using namespaces end
 
 
-static THREAD_LOCAL basic::Tracer tr( "AlignmentClustering" );
+static basic::Tracer tr( "AlignmentClustering" );
 
 namespace protocols {
 namespace comparative_modeling {

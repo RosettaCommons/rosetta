@@ -59,7 +59,7 @@ namespace pcs2 {
 
 using namespace core::optimization;
 
-static THREAD_LOCAL basic::Tracer TR_TensorsOptimizerSvd( "protocols.scoring.methods.pcs.TensorsOptimizerSvd" );
+static basic::Tracer TR_TensorsOptimizerSvd( "protocols.scoring.methods.pcs.TensorsOptimizerSvd" );
 
 /*
 TensorsOptimizerSvd::TensorsOptimizerSvd():

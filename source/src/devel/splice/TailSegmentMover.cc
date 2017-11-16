@@ -68,11 +68,10 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "devel.splice.TailSegmentMover" );
+static basic::Tracer TR( "devel.splice.TailSegmentMover" );
 
 namespace devel {
 namespace splice {

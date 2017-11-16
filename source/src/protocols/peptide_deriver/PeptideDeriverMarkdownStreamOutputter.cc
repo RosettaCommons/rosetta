@@ -33,7 +33,7 @@
 // C++ headers
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverMarkdownStreamOutputter" );
+static basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverMarkdownStreamOutputter" );
 
 
 namespace protocols {

@@ -31,7 +31,7 @@
 
 // ObjexxFCL Headers
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.environment.DofPassport", basic::t_info );
+static basic::Tracer tr( "protocols.environment.DofPassport", basic::t_info );
 
 namespace core {
 namespace environment {

@@ -61,15 +61,14 @@
 #include <core/import_pose/import_pose.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 //replaces cout
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.AlanineScanner" );
+static basic::Tracer TR( "apps.pilot.smlewis.AlanineScanner" );
 
 //local options
-namespace local{
+namespace local {
 basic::options::IntegerOptionKey const chain1("local::chain1");
 basic::options::IntegerOptionKey const chain2("local::chain2");
 }//local
@@ -79,7 +78,7 @@ void register_metrics() {
 	core::Size const chain1(basic::options::option[ local::chain1 ].value());
 	core::Size const chain2(basic::options::option[ local::chain2 ].value());
 	TR << "pick what chains your interface is between with -chain1 and -chain2, currently using "
-		 << chain1 << " and " << chain2 << std::endl;
+		<< chain1 << " and " << chain2 << std::endl;
 	TR << "you are likely to get bizarre behaviors if these chains aren't in the poses!" << std::endl;
 
 	core::pose::metrics::PoseMetricCalculatorOP int_calculator =
@@ -118,14 +117,14 @@ main( int argc, char* argv[] )
 	protocols::loops::Loops loops;
 	loops.read_loop_file( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value() );
 	utility::vector1< core::Size > loopspos;
-	for( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ){
-		for( core::Size here(it->start()), stop(it->stop()); here <= stop; ++here){
+	for ( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
+		for ( core::Size here(it->start()), stop(it->stop()); here <= stop; ++here ) {
 			loopspos.push_back(here);
 		}
 	}
 	TR << "loops: ";
 	core::Size const loopsposn(loopspos.size());
-	for( core::Size i(1); i <= loopsposn; ++i){
+	for ( core::Size i(1); i <= loopsposn; ++i ) {
 		TR << loopspos[i] << " ";
 	}
 	TR << std::endl;
@@ -139,7 +138,7 @@ main( int argc, char* argv[] )
 	utility::vector1< utility::vector1< core::Energy > > diff_mut_energies(pdbs.size(), (utility::vector1< core::Energy>(loopsposn, 0)));
 	utility::vector1< utility::vector1< core::Energy > > diff_interface_mut_energies(pdbs.size(), (utility::vector1< core::Energy>(loopsposn, 0)));
 
-	/*	TR << "pdb start energies size " << pdb_start_energies.size() << std::endl;;
+	/* TR << "pdb start energies size " << pdb_start_energies.size() << std::endl;;
 	TR << "mut energies size " << mut_energies.size() << std::endl;
 	TR << "mut energies 1 size " << mut_energies[1].size() << std::endl;
 	TR << "mut energies 10 size " << mut_energies[10].size() << std::endl;*/
@@ -150,7 +149,7 @@ main( int argc, char* argv[] )
 	core::chemical::ResidueTypeSetCAP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 	core::chemical::ResidueType const & ALA(typeset->name_map("ALA"));
 
-	for( core::Size pdb_n(1); pdb_n <= numpdbs; ++pdb_n){
+	for ( core::Size pdb_n(1); pdb_n <= numpdbs; ++pdb_n ) {
 		std::string const & pdb = pdbs[pdb_n];
 		T(pdb) << "start " << pdb << " number " << pdb_n << " of " << numpdbs << std::endl;
 		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
@@ -170,9 +169,9 @@ main( int argc, char* argv[] )
 		interface_start_energies[pdb_n] = interface_start_score;
 
 		T(pdb) << "distance between residues 99 and 12 (proxy for two binding modes): "
-					 << pose.residue(12).atom("CA").xyz().distance(pose.residue(99).atom("CA").xyz()) << std::endl;
+			<< pose.residue(12).atom("CA").xyz().distance(pose.residue(99).atom("CA").xyz()) << std::endl;
 
-		for( core::Size i(1); i <= loopsposn; ++i){
+		for ( core::Size i(1); i <= loopsposn; ++i ) {
 			std::string TR(pdb + " " + ObjexxFCL::right_string_of(loopspos[i],2,'0'));
 			T(TR) << "mutating position " << loopspos[i] << std::endl;
 			core::pose::replace_pose_residue_copying_existing_coordinates(pose, loopspos[i], ALA);

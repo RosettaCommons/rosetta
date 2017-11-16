@@ -31,7 +31,7 @@
 // Utility, etc Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("SmallMoverTests");
+static basic::Tracer TR("SmallMoverTests");
 
 #define ERROR_MARGIN 0.00001
 

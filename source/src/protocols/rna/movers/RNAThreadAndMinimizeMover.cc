@@ -74,7 +74,7 @@
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.movers.RNAThreadAndMinimizeMover" );
+static basic::Tracer TR( "protocols.rna.movers.RNAThreadAndMinimizeMover" );
 
 namespace protocols {
 namespace rna {

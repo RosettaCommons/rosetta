@@ -60,10 +60,9 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 using utility::file::FileName;
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yiliu.DC" );
+static basic::Tracer TR( "apps.pilot.yiliu.DC" );
 
 ///////////////////////////////////////////////////////////////////////////////
 // YAML helper function

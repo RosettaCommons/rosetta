@@ -61,7 +61,7 @@
 #include <iostream>
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.VdWTinkerPotential" );
+static basic::Tracer TR( "core.scoring.VdWTinkerPotential" );
 
 typedef numeric::xyzVector< core::Real > Vector;
 typedef numeric::xyzMatrix< core::Real > Matrix;

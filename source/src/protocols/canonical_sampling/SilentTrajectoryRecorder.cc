@@ -55,7 +55,7 @@
 // Forward declarations
 OPT_1GRP_KEY( Integer, trajectory, score_stride )
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.SilentTrajectoryRecorder" );
+static basic::Tracer tr( "protocols.canonical_sampling.SilentTrajectoryRecorder" );
 
 bool protocols::canonical_sampling::SilentTrajectoryRecorder::options_registered_( false );
 

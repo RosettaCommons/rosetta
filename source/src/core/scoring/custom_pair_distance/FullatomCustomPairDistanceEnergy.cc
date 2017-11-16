@@ -63,7 +63,7 @@ namespace core {
 namespace scoring {
 namespace custom_pair_distance {
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.custom_pair_distance.FullatomCustomPairDistanceEnergy" );
+static basic::Tracer tr( "core.scoring.custom_pair_distance.FullatomCustomPairDistanceEnergy" );
 
 /// @details This must return a fresh instance of the FullatomCustomPairDistanceEnergy class,
 /// never an instance already in use

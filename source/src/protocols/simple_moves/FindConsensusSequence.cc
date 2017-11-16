@@ -43,7 +43,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.simple_moves.FindConsensusSequence");
+static basic::Tracer TR("protocols.simple_moves.FindConsensusSequence");
 
 // XRW TEMP std::string
 // XRW TEMP FindConsensusSequenceCreator::keyname() const

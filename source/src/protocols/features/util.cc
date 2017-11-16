@@ -83,7 +83,7 @@ Size static_protocol_id_ = 0;
 bool protocol_table_initialized_ = false;
 map<string, Size> static_batch_id_map_;
 
-static THREAD_LOCAL Tracer TR("protocols.features.util");
+static Tracer TR("protocols.features.util");
 // End static data
 
 /// @brief write the given protocol and batch ids to the database. The protocol and batches

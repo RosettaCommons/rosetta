@@ -34,7 +34,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.constraints.FileConstraintGenerator" );
+static basic::Tracer TR( "protocols.denovo_design.constraints.FileConstraintGenerator" );
 
 namespace protocols {
 namespace denovo_design {

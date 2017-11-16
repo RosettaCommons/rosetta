@@ -96,9 +96,7 @@
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-using basic::T;
-
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.Conformation" );
+static basic::Tracer TR( "core.conformation.Conformation" );
 
 namespace core {
 namespace conformation {
@@ -315,7 +313,7 @@ Conformation::debug_residue_torsions( bool verbose ) const
 
 	update_residue_coordinates();
 	update_residue_torsions();
-	basic::Tracer my_tracer( "core.conformation", basic::t_warning );
+	basic::TracerImpl my_tracer( "core.conformation", basic::t_warning );
 
 	if ( verbose ) {
 		int width = 14;

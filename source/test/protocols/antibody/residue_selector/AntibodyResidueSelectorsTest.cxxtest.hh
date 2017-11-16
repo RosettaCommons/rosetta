@@ -51,7 +51,7 @@
 
 // Project Headers
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.residue_selector.AntibodyResidueSelectorsTest");
+static basic::Tracer TR("protocols.antibody.residue_selector.AntibodyResidueSelectorsTest");
 
 using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;

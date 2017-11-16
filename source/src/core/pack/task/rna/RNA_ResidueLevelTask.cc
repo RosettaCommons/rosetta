@@ -17,7 +17,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.task.rna.RNA_ResidueLevelTask" );
+static basic::Tracer TR( "core.pack.task.rna.RNA_ResidueLevelTask" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

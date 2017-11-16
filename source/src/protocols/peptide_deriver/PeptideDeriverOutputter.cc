@@ -15,7 +15,7 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverOutputter" );
+static basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverOutputter" );
 
 
 namespace protocols {

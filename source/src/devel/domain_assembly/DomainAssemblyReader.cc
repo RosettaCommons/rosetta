@@ -19,7 +19,6 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

@@ -67,8 +67,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 ///////////////////////////////////////////////////
-static THREAD_LOCAL basic::Tracer TR( "protocols.evolution.EvolutionaryDynamicsMover" );
-static THREAD_LOCAL basic::Tracer TR_energies( "protocols.evolution.EvolutionaryDynamicsMover.individual_energies" );
+static basic::Tracer TR( "protocols.evolution.EvolutionaryDynamicsMover" );
+static basic::Tracer TR_energies( "protocols.evolution.EvolutionaryDynamicsMover.individual_energies" );
 
 using namespace core;
 using namespace protocols::moves;

@@ -47,7 +47,7 @@
 // C++ headers
 #include <iostream>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.translate_membrane_pose" );
+static basic::Tracer TR( "apps.pilot.ralford.translate_membrane_pose" );
 
 using namespace protocols::moves;
 

@@ -51,7 +51,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.dssp" );
+static basic::Tracer tr( "core.scoring.dssp" );
 
 using namespace core;
 using namespace basic;

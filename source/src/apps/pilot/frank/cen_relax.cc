@@ -50,7 +50,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "cen_relax" );
+static basic::Tracer TR( "cen_relax" );
 
 OPT_1GRP_KEY(Boolean, min, debug)
 
@@ -97,7 +97,7 @@ public:
 		core::Real max_vdw = scorefxn1->get_weight( core::scoring::vdw );
 		int ncyc = option[ relax::default_repeats ]();
 
-		for (int i=1; i<=ncyc; ++i) {
+		for ( int i=1; i<=ncyc; ++i ) {
 			scorefxn1->set_weight( core::scoring::vdw, ((Real)i)/(ncyc) * max_vdw );
 			(*scorefxn1)(pose);
 			minimizer.run( pose, mm, *scorefxn1, minoptions );
@@ -119,8 +119,8 @@ my_main( void* ) {
 	using namespace basic::options::OptionKeys;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	if (option[ symmetry::symmetry_definition ].user()) seq->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover() );
-	if (option[ constraints::cst_file ].user()) seq->add_mover( new protocols::simple_moves::ConstraintSetMover(  ) );
+	if ( option[ symmetry::symmetry_definition ].user() ) seq->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover() );
+	if ( option[ constraints::cst_file ].user() ) seq->add_mover( new protocols::simple_moves::ConstraintSetMover(  ) );
 	seq->add_mover( new protocols::simple_moves::MissingDensityToJumpMover );
 	seq->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid") );
 	seq->add_mover( new CenRelaxMover() );
@@ -139,16 +139,16 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
-    try {
-    NEW_OPT(min::debug, "debug derivs?", false);
+	try {
+		NEW_OPT(min::debug, "debug derivs?", false);
 
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
-    }
+	}
+	return 0;
+}

@@ -41,7 +41,7 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.match.downstream.DownstreamAlgorithm" );
+static basic::Tracer TR( "protocols.match.downstream.DownstreamAlgorithm" );
 
 DownstreamAlgorithm::DownstreamAlgorithm( Size geom_cst_id ) : geom_cst_id_( geom_cst_id ) {}
 DownstreamAlgorithm::DownstreamAlgorithm( DownstreamAlgorithm const & other ) :

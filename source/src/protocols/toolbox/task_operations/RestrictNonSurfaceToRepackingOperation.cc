@@ -38,7 +38,7 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictNonSurfaceToRepackingOperation" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictNonSurfaceToRepackingOperation" );
 
 namespace protocols {
 namespace toolbox {

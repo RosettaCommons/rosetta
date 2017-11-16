@@ -61,7 +61,7 @@ basic::options::StringOptionKey corr( "msd:corr" );
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR("msd_pilot.main");
+static basic::Tracer TR("msd_pilot.main");
 
 std::string
 get_out_number(core::Size in) {

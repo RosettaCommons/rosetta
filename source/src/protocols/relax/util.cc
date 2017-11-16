@@ -61,11 +61,10 @@
 #include <protocols/boinc/boinc.hh>
 #endif
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.relax" );
+static basic::Tracer TR( "protocols.relax" );
 
 using namespace core;
 ////////////////////////////////////////////////////////////////////////////////////////////////////

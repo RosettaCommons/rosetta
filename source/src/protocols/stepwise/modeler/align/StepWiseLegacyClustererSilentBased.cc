@@ -52,7 +52,7 @@ using namespace core::pose;
 
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.align.StepWiseLegacyClustererSilentBased" );
+static basic::Tracer TR( "protocols.stepwise.modeler.align.StepWiseLegacyClustererSilentBased" );
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 

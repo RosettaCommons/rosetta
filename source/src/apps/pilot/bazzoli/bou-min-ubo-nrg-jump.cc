@@ -44,7 +44,7 @@ using basic::options::option;
 
 OPT_KEY( Boolean, min_first )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.bou-min-ubo-nrg-jump" );
+static basic::Tracer TR( "apps.pilot.bou-min-ubo-nrg-jump" );
 
 
 ////////////////////////////////////////////////////////////////////////////////

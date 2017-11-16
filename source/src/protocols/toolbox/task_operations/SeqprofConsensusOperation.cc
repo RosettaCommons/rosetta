@@ -57,7 +57,7 @@
 // C++ headers
 #include <string>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.task_operations.SeqprofConsensusOperation" );
+static basic::Tracer tr( "protocols.toolbox.task_operations.SeqprofConsensusOperation" );
 
 namespace protocols {
 namespace toolbox {

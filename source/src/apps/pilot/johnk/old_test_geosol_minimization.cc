@@ -66,49 +66,49 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::optimization;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.johnk_test_geosol_minimization.main" );
+static basic::Tracer TR( "apps.pilot.johnk_test_geosol_minimization.main" );
 
 /// General testing code
 int
 main( int argc, char * argv [] )
 {
-    try {
-	devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-	TR << "jk testing derivatives for geometric solvation" << std::endl;
+		TR << "jk testing derivatives for geometric solvation" << std::endl;
 
-	// scoring function
-	scoring::ScoreFunctionOP scorefxn( get_score_function() );
+		// scoring function
+		scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
-	//	scorefxn->reset();
-	//	scorefxn->set_weight( core::scoring::fa_sol, 0.65 );
-	scorefxn->set_weight( core::scoring::occ_sol_pw, 0.65 );
+		// scorefxn->reset();
+		// scorefxn->set_weight( core::scoring::fa_sol, 0.65 );
+		scorefxn->set_weight( core::scoring::occ_sol_pw, 0.65 );
 
-	// Build a peptide with multiple aa's, to use as a template for measuring bond lengths and angles...
-	pose::Pose pose;
-	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_file( pose, input_pdb_name , core::import_pose::PDB_file);
+		// Build a peptide with multiple aa's, to use as a template for measuring bond lengths and angles...
+		pose::Pose pose;
+		std::string const input_pdb_name ( basic::options::start_file() );
+		core::import_pose::pose_from_file( pose, input_pdb_name , core::import_pose::PDB_file);
 
-	// setting degrees of freedom which can move during minimization - everything
-	kinematics::MoveMap mm_all;
-	mm_all.set_chi( true );
-	mm_all.set_bb( true );
-	mm_all.set_jump( true );
+		// setting degrees of freedom which can move during minimization - everything
+		kinematics::MoveMap mm_all;
+		mm_all.set_chi( true );
+		mm_all.set_bb( true );
+		mm_all.set_jump( true );
 
-	// minimize protein with deriv check on
-	TR << "Starting minimization...." << std::endl;
-	AtomTreeMinimizer minimizer;
-	MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.0001, true, true, false );
+		// minimize protein with deriv check on
+		TR << "Starting minimization...." << std::endl;
+		AtomTreeMinimizer minimizer;
+		MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.0001, true, true, false );
 
-	minimizer.run( pose, mm_all, *scorefxn, min_options );
-	(*scorefxn)(pose);
+		minimizer.run( pose, mm_all, *scorefxn, min_options );
+		(*scorefxn)(pose);
 
-	TR << "jk finished testing derivatives" << std::endl;
+		TR << "jk finished testing derivatives" << std::endl;
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
-    }
-    return 0;
+	}
+	return 0;
 }
 

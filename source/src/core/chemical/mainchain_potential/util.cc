@@ -35,7 +35,7 @@ namespace core {
 namespace chemical {
 namespace mainchain_potential {
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.mainchain_potential.util");
+static basic::Tracer TR("core.chemical.mainchain_potential.util");
 
 /// @brief Read a Shapovalov/Ramachandran-style mainchain torsion file, parse it for mainchain
 /// potentials corresponding to a vector of ResidueType names, and return a map of (name->MainchainScoreTableCOP).

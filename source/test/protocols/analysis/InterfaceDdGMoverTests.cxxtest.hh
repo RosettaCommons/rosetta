@@ -33,7 +33,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("InterfaceDdGMoverTests");
+static basic::Tracer TR("InterfaceDdGMoverTests");
 
 class InterfaceDdGMoverTests : public CxxTest::TestSuite {
 

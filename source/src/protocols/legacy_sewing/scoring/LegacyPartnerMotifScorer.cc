@@ -37,7 +37,7 @@ namespace protocols {
 namespace legacy_sewing  {
 namespace scoring {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.legacy_sewing.scoring.LegacyPartnerMotifScorer");
+static basic::Tracer TR("protocols.legacy_sewing.scoring.LegacyPartnerMotifScorer");
 
 LegacyPartnerMotifScorer::LegacyPartnerMotifScorer():
 	LegacyMotifScorer()

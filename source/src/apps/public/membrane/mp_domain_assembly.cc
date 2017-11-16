@@ -104,7 +104,7 @@ using namespace protocols::simple_moves;
 using namespace core::chemical;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.mp_domain_assembly" );
+static basic::Tracer TR( "apps.public.mp_domain_assembly" );
 
 class MPDomainAssembly : public Mover {
 

@@ -20,7 +20,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.VDW_RepScreenInfo" );
+static basic::Tracer TR( "core.pose.rna.VDW_RepScreenInfo" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

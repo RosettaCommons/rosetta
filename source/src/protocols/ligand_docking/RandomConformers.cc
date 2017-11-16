@@ -39,7 +39,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -49,7 +48,7 @@ namespace ligand_docking {
 ///////////////////////////////////////////////////////////////////////
 /// @brief
 
-static THREAD_LOCAL basic::Tracer random_conformer_tracer( "protocols.ligand_docking.ligand_options.RandomConformers", basic::t_debug );
+static basic::Tracer random_conformer_tracer( "protocols.ligand_docking.ligand_options.RandomConformers", basic::t_debug );
 
 // XRW TEMP std::string
 // XRW TEMP RandomConformersCreator::keyname() const

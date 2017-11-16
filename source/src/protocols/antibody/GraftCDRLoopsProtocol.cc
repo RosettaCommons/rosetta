@@ -54,11 +54,10 @@
 using namespace ObjexxFCL::format;
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.GraftCDRLoopsProtocol" );
+static basic::Tracer TR( "protocols.antibody.GraftCDRLoopsProtocol" );
 using namespace core;
 
 namespace protocols {

@@ -22,7 +22,7 @@
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.aa_composition.util" );
+static basic::Tracer TR( "protocols.aa_composition.util" );
 
 namespace protocols {
 namespace aa_composition {

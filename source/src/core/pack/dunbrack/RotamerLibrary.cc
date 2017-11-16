@@ -66,11 +66,8 @@
 #endif
 #include <sys/stat.h>
 
-using basic::T;
-
 using basic::Error;
 using basic::Warning;
-
 
 /*
 rearrange the dunbrack arrays:
@@ -92,7 +89,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack.RotamerLibrary" );
+static basic::Tracer TR( "core.pack.dunbrack.RotamerLibrary" );
 
 using namespace core::pack::rotamers;
 

@@ -10,137 +10,42 @@
 /// @file   src/basic/Tracer.hh
 /// @brief  Tracer IO system
 /// @author Sergey Lyskov
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
 #ifndef INCLUDED_basic_Tracer_hh
 #define INCLUDED_basic_Tracer_hh
 
-#include <cassert>                                // for assert
-#include <memory>                                 // for allocator, shared_ptr
-#include <sstream>                                // for string, basic_strin...
-#include <vector>                                 // for vector
-#include <utility/pointer/ReferenceCount.hh>      // for ReferenceCount
-#include <utility/vector1.hh>                     // for vector1
+#include <basic/Tracer.fwd.hh>
+#include <basic/TracerImpl.hh> // Non-fwd is intentional, for inlining efficiency.
 
-#include <utility/SingletonBase.hh>
+#include <unordered_map>
+
 #include <utility/CSI_Sequence.hh>
-#include <utility/thread/backwards_thread_local.hh> // for THREAD_LOCAL
-
 
 namespace basic {
 
-/// @brief
-/// Priority levels for T() and Tracer object, modeled on the log4j project and its offspring.
-/// Priorities in Tracer are still ints so users can pass other arbitrary integer values (for now).
-enum TracerPriority {
-	t_fatal   = 0,   //< The FATAL level designates very severe error events that will presumably lead the application to abort.
-	t_error   = 100, //< The ERROR level designates error events that might still allow the application to continue running.
-	t_warning = 200, //< The WARN level designates potentially harmful situations.
-	t_info    = 300, //< The INFO level designates informational messages that highlight the progress of the application at coarse-grained level.
-	t_debug   = 400, //< The DEBUG level designates fine-grained informational events that are most useful to debug an application.
-	t_trace   = 500  //< The TRACE level designates finer-grained informational events than the DEBUG level.
-};
+/// @brief Predefined Error-level tracer, for use in headers
+Tracer & Error();
 
-
-/// @brief Base class for Tracer, TracerProxy and UTracer objects.
-template <class CharT, class Traits = std::char_traits<CharT> >
-class basic_otstream : public std::basic_ostream<CharT, Traits>, public utility::pointer::ReferenceCount
-{
-protected: /// Inner class declaration
-
-	/// @brief Wrapper class for std::stringbuf
-	template <class _CharT, class _Traits = std::char_traits<_CharT> >
-	class basic_tstringbuf : public std::basic_stringbuf<_CharT, _Traits> {
-	public:
-		basic_tstringbuf(basic_otstream *ot) : otsream_(ot) {}
-		virtual ~basic_tstringbuf() {}
-
-	protected:
-		virtual int sync() {
-			otsream_->t_flush( this->str() ); //std::basic_stringbuf<CharT, Traits>::str() );
-			//std::basic_stringbuf<CharT, Traits>::str("");
-			this->str("");
-			return 0;
-		}
-	private:
-		basic_otstream *otsream_;
-	};
-
-
-public:
-	basic_otstream() : std::basic_ostream<CharT, Traits> ( new basic_tstringbuf<CharT, Traits> (this) ) {}
-	virtual ~basic_otstream() { delete this->rdbuf(); }
-
-
-	/// @brief Return true if inner string buffer is empty.
-	bool is_flushed() const {
-		basic_tstringbuf<char> * buf = dynamic_cast< basic_tstringbuf<char> * >( this->rdbuf() );
-		return buf->str().size() == 0;
-	}
-
-protected:
-
-	/// @brief notification that flush function was called and inner buffer should be outputed.
-	/// This is the mechanims by which the std::basic_stringbuf base class communicates with the
-	/// Tracer and TracerProxy objects.
-	virtual void t_flush(std::string const &) { assert("basic_otstream::t_flush"); };
-
-private:
-	basic_otstream(basic_otstream const & );
-
-
-	/// Data members
-	/// @brief inner string buffer
-	//std::basic_stringbuf<CharT, Traits> * tstringbuf_;
-};
-
-
-typedef basic_otstream<char> otstream;
-
-typedef utility::pointer::shared_ptr< otstream > otstreamOP;
-
-
-/// @brief data structure to store all system level options for Tracer system.
-struct TracerOptions
-{
-	/// @brief system priority level
-	int level = 300;
-
-	/// @brief should channel name be printed during the IO?
-	bool print_channel_name = true;
-
-	/// @brief should a timestamp be added to the channel name?
-	bool timestamp = false;
-
-	/// @brief list of muted channels
-	utility::vector1<std::string> muted;
-
-	/// @brief list of unmuted channels
-	utility::vector1<std::string> unmuted;
-
-	/// @brief list of muted channels
-	utility::vector1<std::string> levels;
-};
+/// @brief Predefined Warning tracer, for use in headers.
+Tracer & Warning();
 
 
 /// @brief Class for handling user debug/warnings/errors.
 ///  Use instance of this class instead of 'std::cout' for all your regular io.
 ///  Channel argument must be related to the location of the source file. For example if you create
 ///  Tracer object in src/basic/scoring/myfile.cc,
-///    then channel must be something like 'src.basic.scoring.myfile'
-class Tracer :  public otstream
+///  then channel must be something like 'basic.scoring.myfile'
+///
+/// Intended usage is as a global-scope static object.
+/// If you need a heap/stack allocated object, use the TracerImpl class directly.
+//
+/// @details The funky indirection to TracerImpl here is so that the heavy-weight TracerImpl object
+/// is only constructed on first use, and isn't static or thread_local
+class Tracer
 {
-	/// @brief init Tracer object with given parameters. This is a helper function to be called from various constructors
-	void init(
-		std::string const & channel,
-		utility::CSI_Sequence const & channel_color,
-		utility::CSI_Sequence const & channel_name_color,
-		TracerPriority priority,
-		bool muted_by_default
-	);
-
 public:
-	friend class TracerManager;
 
 	/// @brief Create Tracer object with given channel and priority
 	Tracer(
@@ -152,266 +57,174 @@ public:
 	/// @brief Create Tracer object with channel color, channel name color and given channel and priority
 	/// @details
 	///  Ex:
-	///  static THREAD_LOCAL basic::Tracer     Blue("blue",       CSI_Blue());
+	///  static basic::Tracer     Blue("blue",       utility::CSI::Blue);
 	///
 	Tracer(
 		std::string const & channel,
-		utility::CSI_Sequence const & channel_color,
-		utility::CSI_Sequence const & channel_name_color = utility::CSI_Nothing(),
+		utility::CSI::CSI_Enum const & channel_color,
+		utility::CSI::CSI_Enum const & channel_name_color = utility::CSI::Nothing,
 		TracerPriority priority = t_info,
 		bool muted_by_default = false
 	);
 
-
-
 	virtual ~Tracer();
 
-	/// @brief re-init using data from another tracer object.
-	void init( Tracer const & tr );
+	Tracer( Tracer const & ) = delete;
+	Tracer & operator=( Tracer const & ) = delete;
+
+	/// @brief output operator
+	/// We return a TracerImpl instead of ourself to make subsequent access faster.
+	template< typename T >
+	TracerImpl & operator <<( T const & entry ) {
+		TracerImpl & TR( tracer_impl() );
+		TR << entry;
+		return TR;
+	}
+
+	// Due to funky definition, have to special case std::endl and other stream manipulators
+	TracerImpl & operator <<( std::ostream& (*entry)(std::ostream&) ) {
+		TracerImpl & TR( tracer_impl() );
+		TR << entry;
+		return TR;
+	}
+
+	/// @brief Allow Tracer object to be passed to something expecting a std::ostream
+	operator std::ostream&() { return dynamic_cast<std::ostream&>( tracer_impl() ); }
+
+	///// @brief Allow Tracer object to be passed to something expecting a TracerImpl object
+	//operator TracerImpl&() { return tracer_impl(); }
+
+	void flush() {
+		tracer_impl().flush();
+	}
 
 	/// @brief flush tracer buffer and flush buffers of all
 	///        sub-channels ie: Fatal, Error, Warning, Info, Debug, Trace
-	void flush_all_channels();
+	void flush_all_channels() {
+		tracer_impl().flush_all_channels();
+	}
 
-	typedef std::ostream * OstreamPointer;
+	// want this to be inline-able
+	bool visible() {
+		return tracer_impl().visible();
+	}
 
-	/// @brief set ios hook for final tracer stream (deafult is std::cout).
-	static OstreamPointer &final_stream();
-	static void set_new_final_stream( std::ostream *new_final_stream );
-	static void set_default_final_stream();
+	bool visible( int priority ) {
+		return tracer_impl().visible(priority);
+	}
 
+	std::string const & channel() {
+		return tracer_impl().channel();
+	}
 
-	/// @brief set ios hook for all tracer io operation.
-	/// @param monitoring_channels_list is space separated list of channels.
-	//static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list);
-	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw=true);
+	TracerImpl & operator () (int priority) {
+		return (tracer_impl())(priority); // Call operator() on the TracerImpl class
+	}
 
-	static std::string const & get_all_channels_string();  // PyRosetta helper function
+	//// The IOS manipulators
 
-	/// @brief Is this tracer currently visible?.
-	bool visible() const { return visible_; }
+	std::streamsize width() { return tracer_impl().width(); }
+	std::streamsize width (std::streamsize wide) { return tracer_impl().width(wide); }
 
-	/// @brief is this tracer visible, if it used the given priority value?
-	bool visible( int priority ) const;
+	std::streamsize precision() { return tracer_impl().precision(); }
+	std::streamsize precision (std::streamsize prec) { return tracer_impl().precision(prec); }
 
-	/// @brief get/set tracer priority level.
-	int priority() const { return priority_; }
-	Tracer & operator () (int priority);
-	void priority(int priority);
+	std::ios_base::fmtflags flags() { return tracer_impl().flags(); }
+	std::ios_base::fmtflags flags (std::ios_base::fmtflags fmtfl) { return tracer_impl().flags(fmtfl); }
 
-	std::string const & channel() const { return channel_; }
-
-	///@brief Get the channel color.
-	utility::CSI_Sequence const &channel_color() { return channel_color_; }
-
-	///@brief Set the channel color.
-	///
-	///@details
-	/// This can be done in a stream like this:
-	///  TR << TR.bgWhite << TR.Black << "Example" << TR.Reset << std::endl;
-	void channel_color(utility::CSI_Sequence const &color) { channel_color_ = color; }
-
-	utility::CSI_Sequence const &channel_name_color() { return channel_name_color_; }
-	void channel_name_color(utility::CSI_Sequence const &color) { channel_name_color_ = color; }
-
-	/// @brief get/set tracer options - global options for Tracer IO.
-	static TracerOptions & tracer_options() { return tracer_options_; }
-
-	/// @brief global super mute flag that allow to mute all io no matter what.
-	static bool super_mute() { return super_mute_(); }
-	static void super_mute(bool f) { super_mute_() = f; }
-
-	static void flush_all_tracers();
-
-	/// @brief This function should be invoked after the options system has been
-	/// initialized, so that the visibility for all tracers that have so far been
-	/// constructed and have been waiting for the options system to be initialized
-	/// can now have their visibility calculated.  After this function completes,
-	/// all newly-constructed Tracers will calculate their visibility in their
-	/// constructors.  Visibility is no longer be calculated on a just-in-time
-	/// basis and stored in mutable data members.
-	static void calculate_tracer_visibilities();
-
-	/// @brief set/get globale string-prefix for all Tracer output strings
-	static void output_prefix(std::string const &);
-	static std::string output_prefix();
-
-public: /// Inner Classes
-	/// @brief Small inner class acting as a proxy to an object that hold it.
-	class TracerProxy : public otstream // std::ostringstream //
+	//// The priority proxy objects
+	class TracerProxy
 	{
 	public:
-		TracerProxy( Tracer & tracer, int priority, std::string const & channel );
+		TracerProxy( Tracer & tracer, TracerPriority priority ):
+			tracer_( tracer ),
+			priority_( priority )
+		{}
 
-		virtual ~TracerProxy();
+		TracerProxy( TracerProxy const & ) = delete;
+		TracerProxy & operator=( TracerProxy const & ) = delete;
 
-		/// @brief determine the visibility of the proxy
-		void calculate_visibility();
-		/// @brief Adding this function to get around unused class data member warnings; you should
-		/// never have to worry about whether the visibility for a TracerProxy has been calculated.
-		bool visibility_calculated() const { return visibility_calculated_; }
-		bool visible() const { return visible_; }
+		/// @brief output operator
+		/// We return a TracerProxyImpl instead of ourself to make subsequent access faster.
+		template< typename T >
+		TracerImpl::TracerProxyImpl & operator <<( T const & entry ) {
+			TracerImpl::TracerProxyImpl & TR( tracer_proxy_impl() );
+			TR << entry;
+			return TR;
+		}
 
-	protected:
+		// Due to funky definition, have to special case std::endl and other stream manipulators
+		// Have to special case std::endl, due to it's funky definition.
+		TracerImpl::TracerProxyImpl & operator <<( std::ostream& (*entry)(std::ostream&) ) {
+			TracerImpl::TracerProxyImpl & TR( tracer_proxy_impl() );
+			TR << entry;
+			return TR;
+		}
 
-		virtual void t_flush( std::string const & );
+		/// @brief Allow Tracer object to be passed to something expecting a std::ostream
+		operator std::ostream&() { return dynamic_cast<std::ostream&>( tracer_proxy_impl() ); }
+
+		///// @brief Allow Tracer object to be passed to something expecting a TracerImpl object
+		//operator TracerImpl::TracerProxyImpl&() { return tracer_proxy_impl(); }
+
+		void flush() {
+			tracer_proxy_impl().flush();
+		}
+
+		bool visible() {
+			return tracer_proxy_impl().visible();
+		}
+
+	private:
+
+		TracerImpl::TracerProxyImpl & tracer_proxy_impl() {
+			return tracer_.tracer_impl().get_proxy_by_priority( priority_ );
+		}
 
 	private:
 		Tracer & tracer_;
-		int priority_;
-
-		/// @brief We need to copy channel name here so we can generate appropriate 'warning' message
-		/// in destructor, where tracer_ object is no longer valid.
-		std::string channel_;
-
-		/// @brief is channel visible?
-		bool visible_;
-
-		/// @brief is channel visibility already calculated?
-		bool visibility_calculated_;
+		TracerPriority priority_;
 	};
+
+public:
 
 	/// @brief channels with predefined priority levels.
 	TracerProxy Fatal, Error, Warning, Info, Debug, Trace;
 
-	/// @details Static objects holding various ASCII CSI codes (see utility/CSI_Sequence.hh)
-	static utility::CSI_Sequence Reset, Bold, Underline,
+	/// @details These are just convenience references to the enum entries
+	static utility::CSI::CSI_Enum Reset, Bold, Underline,
 		Black,   Red,   Green,   Yellow,   Blue,   Magenta,   Cyan,   White,
 		bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite;
 
+	/// TODO: See if we can kill any usage of this, except for the esoteric
+	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw=true) {
+		TracerImpl::set_ios_hook(tr, monitoring_channels_list, raw);
+	}
+
+	static std::string const & get_all_channels_string() {
+		return TracerImpl::get_all_channels_string();
+	}
+
 protected:
-	/// @brief overload member function.
-	virtual void t_flush(std::string const &);
 
-private: /// Functions
-	/// @brief copy constructor.
-	Tracer( Tracer const & tr );
+	/// @brief The function which handles the construct-on-first use
+	// Not virtual for speed in the usual (non-creation) case.
+	TracerImpl & tracer_impl();
 
+	virtual // virtual for MemTracer
+	std::unique_ptr< TracerImpl > create_impl();
 
-	/// @brief return true if channel is inside vector, some logic apply.
-	static
-	bool
-	in( utility::vector1<std::string> const &, std::string const & channel, bool strict );
+private:
 
-	/// @brief calculate channel priority with hierarchy in mind.
-	static
-	bool
-	calculate_tracer_level(
-		utility::vector1<std::string> const & v,
-		std::string const & ch,
-		bool strict,
-		int &res
-	);
-
-	/// @brief Tracers must register themselves with the static array of all tracers so
-	/// that they can be flushed en masse if need be.  This function is thread safe.
-	static
-	void
-	register_tracer( Tracer * tracer );
-
-	template <class out_stream>
-	void prepend_channel_name( out_stream & sout, std::string const &str );
-
-	/// @brief calcualte visibility of the current object depending of the channel name and priority.
-	void calculate_visibility();
-
-	/// @brief Adding this function to get around unused class data member warnings; you should
-	/// never have to worry about whether the visibility for a Tracer has been calculated.
-	bool visibility_calculated() const { return visibility_calculated_; }
-
-	static void calculate_visibility(
-		std::string const & channel,
-		int    priority,
-		bool & visible,
-		bool & muted,
-		int  & mute_level_,
-		bool   muted_by_default
-	);
-
-	/// @brief Output a message in a manner that is safe if the Tracers/output are poorly initialized.
-	static void safe_output(std::string const &);
-
-private: /// Data members
-
-	/// @brief channel name
+	// Data needed to initialize the TracerImpl
+	// Keep a copy around for construct-on-first-use.
 	std::string channel_;
-
-	/// @brief default colors for tracer output and tracer channel-name string (ie color of string such as: 'core.pose:')
-	utility::CSI_Sequence channel_color_, channel_name_color_;
-
-	/// @brief channel output priority level
-	int priority_;
-
-	/// @brief channel muted priority level (above which level is channel muted), calculated using user suppied -level and -levels options
-	int mute_level_;
-
-	/// @brief is channel visible?
-	bool visible_;
-
-	/// @brief is channel muted ?
-	bool muted_;
-
-	/// @brief is channel muted by default?
+	utility::CSI::CSI_Enum channel_color_;
+	utility::CSI::CSI_Enum channel_name_color_;
+	TracerPriority priority_;
 	bool muted_by_default_;
 
-	/// @brief is channel visibility already calculated?
-	bool visibility_calculated_;
-
-	/// static data members
-	/// @brief link to Tracer like object where all output for selecting channels should go.
-	static otstreamOP & ios_hook();
-
-	/// @brief should the ios_hook_ the raw output?
-	static bool & ios_hook_raw_();
-
-	/// @brief list of channels for which outout should be redirected.
-	static utility::vector1< std::string > & monitoring_list_();
-
-	/// @brief global option collection for Tracer IO.
-	static TracerOptions tracer_options_;
-
-	static bool initial_tracers_visibility_calculated_;
-
-	/// @brief global super mute flag that allow to mute all io no matter what.
-	static bool & super_mute_();
-
-	/// @which Mpi rank is this process
-	static int mpi_rank_;
-
-	/// @brief global prefix for all tracer output
-	static std::string output_prefix_;
-
-	/// @brief T is special function for assign tracer property on the static object.
-	friend Tracer & T(std::string const &, TracerPriority);
 };
-
-/// @brief Simple singleton class to hold the all_tracers_ array, which
-/// otherwise suffers from funky double-construction problems when declared
-/// as a static data member of Tracer.
-class TracerManager : public utility::SingletonBase< TracerManager > {
-public:
-	friend class utility::SingletonBase< TracerManager >;
-
-	std::vector< Tracer * > & all_tracers();
-
-	~TracerManager();
-private:
-	TracerManager();
-	TracerManager( TracerManager const & ) = delete;
-	TracerManager& operator=( TracerManager const & ) = delete;
-
-private:
-	std::vector< Tracer * > all_tracers_;
-};
-
-/// @brief T is special function for assign tracer property on the static object.
-Tracer & T(std::string const & channel, TracerPriority priority=t_info);
-
-/// @brief Predefined Error tracer.
-inline Tracer & Error(TracerPriority priority=t_error) { return T("Error", priority); }
-
-/// @brief Predefined Warning tracer.
-inline Tracer & Warning(TracerPriority priority=t_warning) { return T("Warning", priority); }
 
 
 /// Special PyRosetta friendly Tracer like buffer. Use it to capture Tracer output with set_ios_hook
@@ -434,35 +247,9 @@ private:
 	std::string buf_;
 };
 
-} // namespace basic
-
-
-
-#ifdef NDEBUG  // faster version of Tracer IO for Release version
-
-
-#include <utility/stream_util.hh>
-
-namespace basic {
-
-template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
-Tracer & operator <<( Tracer & TR, T const & entry ) {
-	std::ostream &t(TR);
-	if( TR.visible() ) { t << entry; }
-	return TR;
-}
-
-template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
-Tracer::TracerProxy & operator <<( Tracer::TracerProxy & TR, T const & entry ) {
-	std::ostream &t(TR);
-	if( TR.visible() ) { t << entry; }
-	return TR;
-}
 
 } // namespace basic
 
-
-#endif // NDEBUG
 
 
 #endif // INCLUDED_basic_tracer_hh

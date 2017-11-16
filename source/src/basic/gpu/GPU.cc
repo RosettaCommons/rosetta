@@ -33,7 +33,7 @@
 
 #define UPPER_MULTIPLE(n,d) (((n)%(d)) ? (((n)/(d)+1)*(d)) : (n))
 
-static THREAD_LOCAL basic::Tracer TR( "basic.gpu" );
+static basic::Tracer TR( "basic.gpu" );
 
 using namespace std;
 

@@ -52,7 +52,6 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

@@ -45,7 +45,7 @@
 // option key includes
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCouplingRigidSegments" );
+static basic::Tracer tr( "core.scoring.ResidualDipolarCouplingRigidSegments" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

@@ -54,7 +54,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR("rosetta_scripts_jd3");
+static basic::Tracer TR("rosetta_scripts_jd3");
 
 
 using namespace protocols::rosetta_scripts;

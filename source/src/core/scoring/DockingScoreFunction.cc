@@ -34,7 +34,7 @@
 //#include <utility/options/OptionCollection.fwd.hh>
 //#include <utility/options/keys/OptionKeyList.fwd.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.DockingScoreFunction" );
+static basic::Tracer tr( "core.scoring.DockingScoreFunction" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

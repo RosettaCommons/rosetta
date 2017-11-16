@@ -77,7 +77,7 @@
 //#include <basic/Tracer.hh>
 //#include <utility/vector1.hh>
 
-//static THREAD_LOCAL basic::Tracer TR("MyRosetta");
+//static basic::Tracer TR("MyRosetta");
 
 
 //using utility::vector1;
@@ -116,7 +116,7 @@ main (int argc, char * argv[])
 //#include <basic/Tracer.hh>
 //#include <utility/vector1.hh>
 //
-//static THREAD_LOCAL basic::Tracer TR("MyRosetta");
+//static basic::Tracer TR("MyRosetta");
 //
 //
 //using utility::vector1;

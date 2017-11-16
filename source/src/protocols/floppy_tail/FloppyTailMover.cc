@@ -92,11 +92,10 @@
 #include <ctime>
 #endif
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.floppy_tail.FloppyTail");
+static basic::Tracer TR("protocols.floppy_tail.FloppyTail");
 
 namespace protocols {
 namespace floppy_tail {

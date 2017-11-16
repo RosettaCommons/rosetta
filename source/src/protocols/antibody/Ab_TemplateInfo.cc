@@ -23,7 +23,7 @@
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "antibody.Ab_TemplateInfo" );
+static basic::Tracer TR( "antibody.Ab_TemplateInfo" );
 
 namespace protocols {
 namespace antibody {

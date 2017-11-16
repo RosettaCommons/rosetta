@@ -54,9 +54,8 @@
 
 
 using namespace core;
-using basic::T;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.coarse.CoarseRNA_Fragments" );
+static basic::Tracer TR( "protocols.rna.denovo.coarse.CoarseRNA_Fragments" );
 
 
 namespace protocols {

@@ -29,7 +29,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pmut_scan_parallel" );
+static basic::Tracer TR( "apps.pmut_scan_parallel" );
 
 //Note that namespacing these has no effect on their behavior - they have to be called un-namespaced!
 // application specific options

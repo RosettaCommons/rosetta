@@ -43,7 +43,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer TR( "protocols.filters.Filter" );
+static basic::Tracer TR( "protocols.filters.Filter" );
 
 namespace protocols {
 namespace filters {

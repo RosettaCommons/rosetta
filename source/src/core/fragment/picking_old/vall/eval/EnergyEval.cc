@@ -35,7 +35,7 @@ namespace eval {
 
 // static initialization
 
-static THREAD_LOCAL basic::Tracer TR( "core.fragment.picking_old.vall.eval.EnergyEval" );
+static basic::Tracer TR( "core.fragment.picking_old.vall.eval.EnergyEval" );
 
 
 /// @brief default constructor

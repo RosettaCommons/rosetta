@@ -53,7 +53,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
-//using basic::T;
 //using core::util::Error;
 //using core::util::Warning;
 
@@ -70,42 +69,42 @@ int
 main( int argc, char * argv [] )
 {
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  // init option system
-  devel::init(argc, argv);
+	// init option system
+	devel::init(argc, argv);
 
-  // Make a sequence move to hold our pack rotamers mover and relax mover
-  protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
+	// Make a sequence move to hold our pack rotamers mover and relax mover
+	protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
 
-  //create a task factory: this will create a new PackerTask for each input pose
-  core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
-  main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
-  if ( option[ packing::resfile ].user() ) {
-    main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
-  }
+	//create a task factory: this will create a new PackerTask for each input pose
+	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
+	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	if ( option[ packing::resfile ].user() ) {
+		main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
+	}
 
-  //create a ScoreFunction from commandline options
-  core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
-  
-  //create the PackRotamersMover which will do the packing
-  protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
-  pack_mover->task_factory( main_task_factory );
-  pack_mover->score_function( score_fxn );
+	//create a ScoreFunction from commandline options
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
-  // add the pack rotamers mover to the sequnce mover
-  seqmov->add_mover( pack_mover );
+	//create the PackRotamersMover which will do the packing
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	pack_mover->task_factory( main_task_factory );
+	pack_mover->score_function( score_fxn );
 
-  // create the relax mover
-  protocols::moves::MoverOP relax_mover = protocols::relax::generate_relax_from_cmd();
+	// add the pack rotamers mover to the sequnce mover
+	seqmov->add_mover( pack_mover );
 
-  // add the relax move to the sequence mover
-  seqmov->add_mover( relax_mover );
+	// create the relax mover
+	protocols::moves::MoverOP relax_mover = protocols::relax::generate_relax_from_cmd();
 
-  // get and instance of the job distruibutor and pass it the sequence mover
-  protocols::jd2::JobDistributor::get_instance()->go(seqmov);
+	// add the relax move to the sequence mover
+	seqmov->add_mover( relax_mover );
 
-  // Done
-  return 0;
+	// get and instance of the job distruibutor and pass it the sequence mover
+	protocols::jd2::JobDistributor::get_instance()->go(seqmov);
+
+	// Done
+	return 0;
 }

@@ -32,7 +32,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer ligand_area_tracer( "protocols.ligand_docking.ligand_options.LigandArea", basic::t_debug );
+static basic::Tracer ligand_area_tracer( "protocols.ligand_docking.ligand_options.LigandArea", basic::t_debug );
 
 LigandArea::LigandArea():
 	ReferenceCount(),

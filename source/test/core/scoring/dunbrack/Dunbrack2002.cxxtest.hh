@@ -63,7 +63,6 @@
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

@@ -32,7 +32,7 @@
 // C++ headers
 #include <utility/assert.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.residue_selectors.TaskSelector" );
+static basic::Tracer TR( "protocols.residue_selectors.TaskSelector" );
 
 namespace protocols {
 namespace residue_selectors {

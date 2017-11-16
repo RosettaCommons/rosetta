@@ -65,7 +65,7 @@ using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL;
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer trTmScore(
+static basic::Tracer trTmScore(
 	"protocols.frag_picker.scores.FragmentChunkCrms");
 
 FragmentChunkCrms::~FragmentChunkCrms() {}

@@ -33,9 +33,9 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.TrialMover" );
+static basic::Tracer TR( "protocols.moves.TrialMover" );
 
-//static THREAD_LOCAL basic::Tracer trDebug("protocols.moves.TrialMover", basic::t_debug );
+//static basic::Tracer trDebug("protocols.moves.TrialMover", basic::t_debug );
 //MY_TRACERS("protocols.moves.TrialMover")
 
 
@@ -48,7 +48,6 @@ namespace moves {
 MoverStatistics::~MoverStatistics() = default;
 
 typedef core::Real Real;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

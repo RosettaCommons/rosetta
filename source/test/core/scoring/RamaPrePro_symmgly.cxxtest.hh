@@ -37,7 +37,7 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("RamaPreProTests_symmgly");
+static basic::Tracer TR("RamaPreProTests_symmgly");
 
 
 class RamaPreProTests_symmgly : public CxxTest::TestSuite {

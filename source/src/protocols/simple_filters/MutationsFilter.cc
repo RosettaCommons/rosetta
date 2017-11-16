@@ -37,7 +37,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.MutationsFilter" );
+static basic::Tracer TR( "protocols.simple_filters.MutationsFilter" );
 
 /// @brief default ctor
 MutationsFilter::MutationsFilter() :

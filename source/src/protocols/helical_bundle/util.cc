@@ -54,14 +54,13 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace helical_bundle {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.util");
+static basic::Tracer TR("protocols.helical_bundle.util");
 
 using namespace utility::tag;
 

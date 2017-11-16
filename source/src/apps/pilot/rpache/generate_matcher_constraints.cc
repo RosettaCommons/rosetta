@@ -75,7 +75,7 @@ OPT_1GRP_KEY( Boolean, measure, Y_aroC )
 OPT_1GRP_KEY( Integer, measure, upstream_res )
 OPT_1GRP_KEY( Integer, measure, downstream_res )
 
-static THREAD_LOCAL basic::Tracer TR( "generate_matcher_constraints" );
+static basic::Tracer TR( "generate_matcher_constraints" );
 
 int main( int argc, char * argv [] )
 {

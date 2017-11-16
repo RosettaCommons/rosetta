@@ -76,14 +76,14 @@
 // Utility headers
 
 
-static THREAD_LOCAL basic::Tracer TM( "TMemory" );
+static basic::Tracer TM( "TMemory" );
 
-static THREAD_LOCAL basic::Tracer TR_( "global" );
+static basic::Tracer TR_( "global" );
 
 
 void TracerDiskSpaceTest(void)
 {
-	for(int i=0; i<500000; ++i) {
+	for ( int i=0; i<500000; ++i ) {
 		TM << "Writing line: " << i << " _______________________________________________________________________________________"<< std::endl;
 	}
 
@@ -106,7 +106,6 @@ typedef utility::pointer::owning_ptr< OutputMover > OutputMoverOP;
 typedef utility::pointer::owning_ptr< OutputMover const > OutputMoverCOP;
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -139,16 +138,15 @@ int main( int argc, char * argv [] )
 			using namespace basic::options::OptionKeys;
 
 
-			if( option[ out::levels ].active() ) T("Levels:") << option[ out::levels ]() <<  std::endl;
+			if ( option[ out::levels ].active() ) T("Levels:") << option[ out::levels ]() <<  std::endl;
 
 			//option[ out::levels ]( utility::tools::make_vector(std::string("some.namespace:info"), std::string("some.other.namespace:debug")) );
 
 			option[ out::levels ]("some.namespace:info");
 			option[ out::levels ]("some.other.namespace:debug");
 
-			if( option[ out::levels ].active() ) T("Levels now:") << option[ out::levels ]() <<  std::endl;
+			if ( option[ out::levels ].active() ) T("Levels now:") << option[ out::levels ]() <<  std::endl;
 
-			using basic::T;
 			{
 				core::pose::Pose pose;
 				core::import_pose::pose_from_file(pose, "test_in.pdb", core::import_pose::PDB_file);

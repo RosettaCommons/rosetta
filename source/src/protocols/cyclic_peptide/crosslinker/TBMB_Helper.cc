@@ -42,7 +42,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.TBMB_Helper" );
+static basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.TBMB_Helper" );
 
 namespace protocols {
 namespace cyclic_peptide {

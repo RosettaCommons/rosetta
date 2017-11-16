@@ -87,7 +87,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core;
@@ -110,15 +109,15 @@ OPT_1GRP_KEY(String, edrr, prefix)
 bool output_cmp( std::string line1, std::string line2 )
 {
 	Real key1, key2;
-/*
+	/*
 	std::istringstream l1(line1);
 	std::istringstream l2(line2);
 
 	// sort column = 3 for dens_diff
 	for ( int col = 1; col <= 3; ++col ) {
-		l1 >> key1;
-		l2 >> key2;
-	}	*/
+	l1 >> key1;
+	l2 >> key2;
+	} */
 
 	key1 = atof(line1.substr(18, 14).c_str());
 	key2 = atof(line2.substr(18, 14).c_str());
@@ -137,50 +136,49 @@ private:
 public:
 	ElecDensMinPackMinReporter(){}
 
-	void find_flips( core::pose::Pose & first_pass, core::pose::Pose & second_pass, std::string output_id, int nres ) 		// use nres to ignore extra residues in symmetric pose
+	void find_flips( core::pose::Pose & first_pass, core::pose::Pose & second_pass, std::string output_id, int nres )   // use nres to ignore extra residues in symmetric pose
 	{
 		using namespace std;
 		using namespace basic::options;
 
-		float dens_diff_cutoff = option[ OptionKeys::edrr::dens_diff_cutoff ];			// above: high second pass - low first pass = positive
-		float auto_rmsd_cutoff = option[ OptionKeys::edrr::auto_rmsd_cutoff ];			// above
-		float chi_diff_cutoff = option[ OptionKeys::edrr::chi_diff_cutoff ];			// above
+		float dens_diff_cutoff = option[ OptionKeys::edrr::dens_diff_cutoff ];   // above: high second pass - low first pass = positive
+		float auto_rmsd_cutoff = option[ OptionKeys::edrr::auto_rmsd_cutoff ];   // above
+		float chi_diff_cutoff = option[ OptionKeys::edrr::chi_diff_cutoff ];   // above
 
 		float dens_diff;
-		float auto_rmsd;		//other rms as well?
+		float auto_rmsd;  //other rms as well?
 		float chi1_diff;
 		float chi2_diff;
 		float chi3_diff;
 		float chi4_diff;
 
-		for (int ii = 1; ii <= nres; ++ii)
-		{
+		for ( int ii = 1; ii <= nres; ++ii ) {
 			stringstream output_line;
 			dens_diff = second_pass.energies().residue_total_energies(ii)[ core::scoring::elec_dens_fast ] - first_pass.energies().residue_total_energies(ii)[ core::scoring::elec_dens_fast ];
-			auto_rmsd = core::scoring::automorphic_rmsd( first_pass.residue( ii ), second_pass.residue( ii ), false );		//dont superimpose - fixed bb is sufficient
+			auto_rmsd = core::scoring::automorphic_rmsd( first_pass.residue( ii ), second_pass.residue( ii ), false );  //dont superimpose - fixed bb is sufficient
 
 			switch(first_pass.residue(ii).nchi())
-			{
-				case 4:	chi4_diff = second_pass.residue(ii).chi()[4] - first_pass.residue(ii).chi()[4];
-				case 3:	chi3_diff = second_pass.residue(ii).chi()[3] - first_pass.residue(ii).chi()[3];
-				case 2:	chi2_diff = second_pass.residue(ii).chi()[2] - first_pass.residue(ii).chi()[2];
-				case 1:	chi1_diff = second_pass.residue(ii).chi()[1] - first_pass.residue(ii).chi()[1];
-				case 0:	break;
-				default:	cout << "wtf? this shouldn't happen..." << endl;
-			}
+					{
+					case 4 : chi4_diff = second_pass.residue(ii).chi()[4] - first_pass.residue(ii).chi()[4];
+					case 3 : chi3_diff = second_pass.residue(ii).chi()[3] - first_pass.residue(ii).chi()[3];
+					case 2 : chi2_diff = second_pass.residue(ii).chi()[2] - first_pass.residue(ii).chi()[2];
+					case 1 : chi1_diff = second_pass.residue(ii).chi()[1] - first_pass.residue(ii).chi()[1];
+					case 0 : break;
+					default : cout << "wtf? this shouldn't happen..." << endl;
+					}
 
 			if ( ! option[ OptionKeys::edrr::print_all ]() ) {
-				if ( dens_diff < dens_diff_cutoff )	continue;
-				if ( auto_rmsd < auto_rmsd_cutoff )	continue;
-//			if ( chi1_diff[ res ] < chi_diff_cutoff && chi2_diff[ res ] < chi_diff_cutoff && chi3_diff[ res ] < chi_diff_cutoff && chi4_diff[ res ] < chi_diff_cutoff )	continue;
+				if ( dens_diff < dens_diff_cutoff ) continue;
+				if ( auto_rmsd < auto_rmsd_cutoff ) continue;
+				//   if ( chi1_diff[ res ] < chi_diff_cutoff && chi2_diff[ res ] < chi_diff_cutoff && chi3_diff[ res ] < chi_diff_cutoff && chi4_diff[ res ] < chi_diff_cutoff ) continue;
 			}
 
 			// print intersections
 			// save to string and add string to list for later sorting
 			output_line << fixed << setprecision(2) << setw(4) << output_id << setw(8) << first_pass.residue( ii ).name3() << setw(6) << ii << setw(14) <<
-								setw(14) << dens_diff << setw(14) << auto_rmsd <<
-								setw(14) << chi1_diff << setw(14) << chi2_diff <<
-								setw(14) << chi3_diff << setw(14) << chi4_diff;// << endl;
+				setw(14) << dens_diff << setw(14) << auto_rmsd <<
+				setw(14) << chi1_diff << setw(14) << chi2_diff <<
+				setw(14) << chi3_diff << setw(14) << chi4_diff;// << endl;
 			output.push_back( output_line.str() );
 		}
 	}
@@ -193,24 +191,25 @@ public:
 		int myrank;
 		MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 		if (myrank == 0)
-			cout << "master" << endl;
-			int num_nodes;
-			MPI_Comm_size(MPI_COMM_WORLD, &num_nodes);
-			MPI_Gather( NULL, NULL, NULL, output, 1, MPI_STRING, 0, MPI_COMM_WORLD );
-			MPI_Barrier(MPI_COMM_WORLD);
+		cout << "master" << endl;
+		int num_nodes;
+		MPI_Comm_size(MPI_COMM_WORLD, &num_nodes);
+		MPI_Gather( NULL, NULL, NULL, output, 1, MPI_STRING, 0, MPI_COMM_WORLD );
+		MPI_Barrier(MPI_COMM_WORLD);
 		else
-			cout << "slave" << endl;
-			//send lists here
-		#endif*/
+		cout << "slave" << endl;
+		//send lists here
+#endif*/
 
-	  std::sort( output.begin(), output.end(), output_cmp ); 		// output_cmp defined outside of class
+		std::sort( output.begin(), output.end(), output_cmp );   // output_cmp defined outside of class
 
 		out << setw(4) << "id" << setw(8) << "type" << setw(6) << "res" << setw(14) << "dens_diff" << setw(14) << "auto_rmsd" << setw(14) <<
-        "chi1_diff" << setw(14) << "chi2_diff" << setw(14) << "chi3_diff" << setw(14) << "chi4_diff" << endl;
-    out << "-----------------------------------------------------------------------------------------------------" << endl;
+			"chi1_diff" << setw(14) << "chi2_diff" << setw(14) << "chi3_diff" << setw(14) << "chi4_diff" << endl;
+		out << "-----------------------------------------------------------------------------------------------------" << endl;
 
-		for ( vector1<string>::iterator ii = output.begin(); ii != output.end(); ++ii )
+		for ( vector1<string>::iterator ii = output.begin(); ii != output.end(); ++ii ) {
 			out << *(ii) << endl;
+		}
 
 	}
 
@@ -218,7 +217,7 @@ public:
 
 // global reporter for jd2 access
 namespace globals {
-	ElecDensMinPackMinReporter reporter;
+ElecDensMinPackMinReporter reporter;
 }
 
 class ElecDensMinPackMinMover : public protocols::moves::Mover {
@@ -241,7 +240,7 @@ public:
 		mm->set( core::id::THETA, option[ OptionKeys::relax::minimize_bond_angles ]() );
 		mm->set( core::id::D, option[ OptionKeys::relax::minimize_bond_lengths ]() );
 
-		int nres = pose.size();	//only consider the residues in the original pose, not symmetric copies
+		int nres = pose.size(); //only consider the residues in the original pose, not symmetric copies
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
@@ -258,7 +257,7 @@ public:
 		//   + (potentially) dock map into density
 		if ( option[ edensity::mapfile ].user() ) {
 			protocols::electron_density::SetupForDensityScoringMoverOP edens
-											 ( new protocols::electron_density::SetupForDensityScoringMover );
+				( new protocols::electron_density::SetupForDensityScoringMover );
 			edens->apply( pose );
 		}
 
@@ -272,11 +271,11 @@ public:
 		task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
 		task_factory->push_back( new core::pack::task::operation::IncludeCurrent );
 		core::pack::task::PackerTaskOP packer_task( task_factory->create_task_and_apply_taskoperations( pose ) );
-		protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn, packer_task );					//extend this to handle asymmetry, etc
+		protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn, packer_task );     //extend this to handle asymmetry, etc
 
 		// setup the sequence mover
 		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-    seqmov->add_mover( new protocols::simple_moves::MissingDensityToJumpMover );
+		seqmov->add_mover( new protocols::simple_moves::MissingDensityToJumpMover );
 		seqmov->add_mover( minimizer );
 		seqmov->add_mover( packer );
 		seqmov->add_mover( minimizer );
@@ -296,13 +295,13 @@ public:
 		//scorefxn->set_weight( core::scoring::elec_dens_fast, 100 );
 		minimizer->score_function()->show(std::cout);
 		(*scorefxn)(test_pose_hi);
-    scorefxn->show(std::cout, test_pose_hi);
+		scorefxn->show(std::cout, test_pose_hi);
 		//minimizer->score_function( scorefxn );
 		minimizer->apply( test_pose_hi );
 		//scoring::ScoreFunction scorefxn_hi = *(minimizer->score_function());
 		//scorefxn_hi.show(std::cout, test_pose_hi);
 		(*scorefxn)(test_pose_hi);
-    scorefxn->show(std::cout, test_pose_hi);
+		scorefxn->show(std::cout, test_pose_hi);
 		test_pose_hi.dump_pdb("test_pose_hi.pdb");
 		std::cout << minimizer;
 		std::cout << "dumped test_pose_hi.pdb" << std::endl;
@@ -323,9 +322,9 @@ public:
 		Pose second_pass = first_pass;
 		scorefxn->set_weight( core::scoring::elec_dens_fast, 30 );
 		gmc->apply( second_pass );
-			/*Pose recov_low;
-			gmc->recover_low( recov_low );
-			std::cout << "last pose vs recover_low all atom rms " << core::scoring::all_atom_rmsd( second_pass, recov_low ) << std::endl;*/
+		/*Pose recov_low;
+		gmc->recover_low( recov_low );
+		std::cout << "last pose vs recover_low all atom rms " << core::scoring::all_atom_rmsd( second_pass, recov_low ) << std::endl;*/
 
 
 		// output results
@@ -347,15 +346,15 @@ public:
 		globals::reporter.find_flips( first_pass, second_pass, cur_output_name, nres );
 
 		/*(if ( option[ OptionKeys::edrr::print_scores ]() )
-    {
-						(*scorefxn)(pose);
-						scorefxn->show(cout, pose);
+		{
+		(*scorefxn)(pose);
+		scorefxn->show(cout, pose);
 
-						(*scorefxn)(first_pass);
-						scorefxn->show(cout, first_pass);
+		(*scorefxn)(first_pass);
+		scorefxn->show(cout, first_pass);
 
-						(*scorefxn)(second_pass);
-						scorefxn->show(cout, second_pass);
+		(*scorefxn)(second_pass);
+		scorefxn->show(cout, second_pass);
 		}*/
 
 
@@ -388,23 +387,23 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	NEW_OPT(edrr::dump, "dump high.pdb and low.pdb", false);
-	NEW_OPT(edrr::dump_asymm, "dump asymm high.pdb and low.pdb", false);
-	NEW_OPT(edrr::debug, "debug - trials=1", false);
-	NEW_OPT(edrr::print_all, "ignore cutoffs", false);
-	NEW_OPT(edrr::dens_diff_cutoff, "electron density score difference cutoff to qualify as rotamer flip", 1);
-	NEW_OPT(edrr::auto_rmsd_cutoff, "automorphic rmsd cutoff to qualify as rotamer flip", 0.2);
-	NEW_OPT(edrr::chi_diff_cutoff, "chi difference cutoff to qualify as a rotamer flip", 5);
-	NEW_OPT(edrr::gmc_trials, "how many times to repeat repacking", 10);
-	NEW_OPT(edrr::prefix, "prefix to use before .flips.txt in output name", "rotamer");
+		NEW_OPT(edrr::dump, "dump high.pdb and low.pdb", false);
+		NEW_OPT(edrr::dump_asymm, "dump asymm high.pdb and low.pdb", false);
+		NEW_OPT(edrr::debug, "debug - trials=1", false);
+		NEW_OPT(edrr::print_all, "ignore cutoffs", false);
+		NEW_OPT(edrr::dens_diff_cutoff, "electron density score difference cutoff to qualify as rotamer flip", 1);
+		NEW_OPT(edrr::auto_rmsd_cutoff, "automorphic rmsd cutoff to qualify as rotamer flip", 0.2);
+		NEW_OPT(edrr::chi_diff_cutoff, "chi difference cutoff to qualify as a rotamer flip", 5);
+		NEW_OPT(edrr::gmc_trials, "how many times to repeat repacking", 10);
+		NEW_OPT(edrr::prefix, "prefix to use before .flips.txt in output name", "rotamer");
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	std::string outfile = basic::options::option[ basic::options::OptionKeys::edrr::prefix ]() + ".flips.txt";
-	std::ofstream out( outfile.c_str() );
-	globals::reporter.print_flips( out );
+		std::string outfile = basic::options::option[ basic::options::OptionKeys::edrr::prefix ]() + ".flips.txt";
+		std::ofstream out( outfile.c_str() );
+		globals::reporter.print_flips( out );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

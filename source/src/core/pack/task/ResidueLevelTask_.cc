@@ -80,7 +80,7 @@ namespace core {
 namespace pack {
 namespace task {
 
-static THREAD_LOCAL basic::Tracer T( "core.pack.task", basic::t_info );
+static basic::Tracer T( "core.pack.task", basic::t_info );
 
 /// @details ResidueLevelTask constructor has following defaults:
 ///all ex set to false with zero sample level

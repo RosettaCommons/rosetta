@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 /*
- * DumpConstraints.cc
- *
- *  Created on: Apr 21, 2009
- *      Author: dgront
- */
+* DumpConstraints.cc
+*
+*  Created on: Apr 21, 2009
+*      Author: dgront
+*/
 
 #include <devel/init.hh>
 
@@ -43,46 +43,46 @@
 #include <core/import_pose/import_pose.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "DisulfideTest" );
+static basic::Tracer tr( "DisulfideTest" );
 
 void register_options() {
 
-  OPT( in::file::native );
+	OPT( in::file::native );
 }
 
 int main(int argc, char * argv[]) {
-  try {
-  using namespace core;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace core::scoring::constraints;
+	try {
+		using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::scoring::constraints;
 
-  register_options();
-  devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-  pose::Pose init_pose;
-  core::import_pose::pose_from_file(init_pose, option[in::file::native](), core::import_pose::PDB_file);
+		pose::Pose init_pose;
+		core::import_pose::pose_from_file(init_pose, option[in::file::native](), core::import_pose::PDB_file);
 
-  std::cerr<<init_pose.sequence()<<"\n";
+		std::cerr<<init_pose.sequence()<<"\n";
 
-  ConstraintSetOP cstset;
-  if (option[constraints::cst_file].user()) {
-    cstset = ConstraintIO::get_instance()->read_constraints(core::scoring::constraints::get_cst_file_option(), new ConstraintSet,
-        init_pose);
-  }
-  // read in constraints
-  //  std::string cstfile = option[basic::options::OptionKeys::constraints::cst_file]()[1];
-  //  cstset = ConstraintIO::get_instance()->read_constraints(cstfile, new ConstraintSet, init_pose);
+		ConstraintSetOP cstset;
+		if ( option[constraints::cst_file].user() ) {
+			cstset = ConstraintIO::get_instance()->read_constraints(core::scoring::constraints::get_cst_file_option(), new ConstraintSet,
+				init_pose);
+		}
+		// read in constraints
+		//  std::string cstfile = option[basic::options::OptionKeys::constraints::cst_file]()[1];
+		//  cstset = ConstraintIO::get_instance()->read_constraints(cstfile, new ConstraintSet, init_pose);
 
-  utility::vector1<ConstraintCOP> csts = cstset->get_all_constraints();
+		utility::vector1<ConstraintCOP> csts = cstset->get_all_constraints();
 
-  for (utility::vector1<ConstraintCOP>::iterator it = csts.begin(), end = csts.end(); it != end; ++it) {
-    (*it)->show_def(std::cout, init_pose);
-  }
-  } catch ( utility::excn::EXCN_Base const & e ) {
-                            std::cout << "caught exception " << e.msg() << std::endl;
+		for ( utility::vector1<ConstraintCOP>::iterator it = csts.begin(), end = csts.end(); it != end; ++it ) {
+			(*it)->show_def(std::cout, init_pose);
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                }
-  return 0;
+	}
+	return 0;
 
 }

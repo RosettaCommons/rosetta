@@ -38,8 +38,6 @@
 //#include <basic/Tracer.hh>
 
 //using basic::T;
-//using basic::Error;
-//using basic::Warning;
 
 //static basic::Tracer TR("core.scoring.ScoreFunction.cxxtest");
 

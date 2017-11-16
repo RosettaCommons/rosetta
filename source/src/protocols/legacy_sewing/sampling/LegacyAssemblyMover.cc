@@ -77,7 +77,7 @@
 namespace protocols {
 namespace legacy_sewing  {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.legacy_sewing.LegacyAssemblyMover" );
+static basic::Tracer TR( "protocols.legacy_sewing.LegacyAssemblyMover" );
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Mover  Functions   ////////////////////////////////////

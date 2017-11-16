@@ -36,7 +36,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <numeric/xyz.io.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "read_tensor" );
+static basic::Tracer TR( "read_tensor" );
 
 using namespace basic::options::OptionKeys;
 using namespace basic::options;
@@ -53,25 +53,25 @@ OPT_KEY( String, tensor_file )
 /////////////////////////////////////////////////////////////////////////////////
 void
 check_tensor( numeric::MathNTensor< double, 6 > const & T,
-							utility::vector1< numeric::Size > const & checkbins );
+	utility::vector1< numeric::Size > const & checkbins );
 
 void
 check_multilinear_interpolation( numeric::MathNTensor< double, 6 > const & T,
-														utility::fixedsizearray1< numeric::Real, 6 > const & minval,
-														utility::fixedsizearray1< numeric::Real, 6 > const & binwidth,
-														utility::fixedsizearray1< numeric::Real, 6 > const & xs );
+	utility::fixedsizearray1< numeric::Real, 6 > const & minval,
+	utility::fixedsizearray1< numeric::Real, 6 > const & binwidth,
+	utility::fixedsizearray1< numeric::Real, 6 > const & xs );
 
 void
 check_spline( numeric::MathNTensor< double, 6 > const & T,
-							utility::fixedsizearray1< numeric::Real, 6 > const & minval,
-							utility::fixedsizearray1< numeric::Real, 6 > const & binwidth,
-							utility::fixedsizearray1< numeric::Real, 6 > const & xs );
+	utility::fixedsizearray1< numeric::Real, 6 > const & minval,
+	utility::fixedsizearray1< numeric::Real, 6 > const & binwidth,
+	utility::fixedsizearray1< numeric::Real, 6 > const & xs );
 
 /////////////////////////////////
 void
 check_6D_potential( numeric::MathNTensor< double, 6 > const & T,
-										utility::json_spirit::mObject const & json,
-										utility::fixedsizearray1< numeric::Real, 6 > const & xs )
+	utility::json_spirit::mObject const & json,
+	utility::fixedsizearray1< numeric::Real, 6 > const & xs )
 {
 	using core::Vector;
 	using namespace numeric;
@@ -148,7 +148,7 @@ read_tensor_test()
 ////////////////////////////////
 void
 check_tensor( numeric::MathNTensor< double, 6 > const & T,
-							utility::vector1< numeric::Size > const & checkbins )
+	utility::vector1< numeric::Size > const & checkbins )
 {
 	using numeric::Size;
 	using utility::tools::make_vector1;
@@ -156,17 +156,17 @@ check_tensor( numeric::MathNTensor< double, 6 > const & T,
 	TR << std::endl;
 
 	TR << T( make_vector1( checkbins[1]-1, checkbins[2]-1, checkbins[3]-1,
-												 checkbins[4]-1, checkbins[5]-1, checkbins[6]-1 ) ) << std::endl;
+		checkbins[4]-1, checkbins[5]-1, checkbins[6]-1 ) ) << std::endl;
 	TR << T(checkbins[1]-1, checkbins[2]-1, checkbins[3]-1,
-					checkbins[4]-1, checkbins[5]-1, checkbins[6]-1  ) << std::endl;
+		checkbins[4]-1, checkbins[5]-1, checkbins[6]-1  ) << std::endl;
 
 }
 
 void
 check_multilinear_interpolation( numeric::MathNTensor< double, 6 > const & T,
-																 utility::fixedsizearray1< numeric::Real, 6 > const & minval,
-																 utility::fixedsizearray1< numeric::Real, 6 > const & binwidth,
-																 utility::fixedsizearray1< numeric::Real, 6 > const & xs )
+	utility::fixedsizearray1< numeric::Real, 6 > const & minval,
+	utility::fixedsizearray1< numeric::Real, 6 > const & binwidth,
+	utility::fixedsizearray1< numeric::Real, 6 > const & xs )
 {
 	utility::fixedsizearray1< numeric::Real, 6 > xs_perturb, analytical_deriv, numerical_deriv;
 
@@ -201,28 +201,28 @@ check_multilinear_interpolation( numeric::MathNTensor< double, 6 > const & T,
 // come out to ~1 Gb even after gzipping, I think.
 void
 check_spline( numeric::MathNTensor< double, 6 > const & T,
-							utility::fixedsizearray1< numeric::Real, 6 > const & minval,
-							utility::fixedsizearray1< numeric::Real, 6 > const & binwidth,
-							utility::fixedsizearray1< numeric::Real, 6 > const & xs )
+	utility::fixedsizearray1< numeric::Real, 6 > const & minval,
+	utility::fixedsizearray1< numeric::Real, 6 > const & binwidth,
+	utility::fixedsizearray1< numeric::Real, 6 > const & xs )
 {
-		using namespace utility::json_spirit;
-		using namespace utility::tools;
+	using namespace utility::json_spirit;
+	using namespace utility::tools;
 
-		// adapted from core/scoring/MainchainScoreTable
-		utility::fixedsizearray1< BorderFlag, 6 > borderflags; //Periodic boundaries.
-		utility::fixedsizearray1< bool, 6 > lincont; //Meaningless argument for a polycubic spline with periodic boundary conditions.
-		utility::fixedsizearray1< std::pair< numeric::Real, numeric::Real >, 6 > unused( std::pair<numeric::Real,numeric::Real>(0.0, 0.0) ); //Another meaningless argument for a polycubic spline with periodic boundary conditions.
-		for ( numeric::Size i=1; i<=6; ++i ) {
-			borderflags[i]   = e_Periodic;
-			lincont[i]       = false;
-		}
-		PolycubicSplineOP<6> spline( new PolycubicSpline<6> );
-		TR << "Training spline... " << std::endl;
-		spline->train( borderflags, minval, binwidth, T, lincont, unused );
+	// adapted from core/scoring/MainchainScoreTable
+	utility::fixedsizearray1< BorderFlag, 6 > borderflags; //Periodic boundaries.
+	utility::fixedsizearray1< bool, 6 > lincont; //Meaningless argument for a polycubic spline with periodic boundary conditions.
+	utility::fixedsizearray1< std::pair< numeric::Real, numeric::Real >, 6 > unused( std::pair<numeric::Real,numeric::Real>(0.0, 0.0) ); //Another meaningless argument for a polycubic spline with periodic boundary conditions.
+	for ( numeric::Size i=1; i<=6; ++i ) {
+		borderflags[i]   = e_Periodic;
+		lincont[i]       = false;
+	}
+	PolycubicSplineOP<6> spline( new PolycubicSpline<6> );
+	TR << "Training spline... " << std::endl;
+	spline->train( borderflags, minval, binwidth, T, lincont, unused );
 
-		TR << "Evaluate spline at ";
-		for ( numeric::Size n = 1; n <= 6; n++ ) TR << " " << xs[ n ];
-		TR << ": " << spline->F( xs ) << std::endl;
+	TR << "Evaluate spline at ";
+	for ( numeric::Size n = 1; n <= 6; n++ ) TR << " " << xs[ n ];
+	TR << ": " << spline->F( xs ) << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////

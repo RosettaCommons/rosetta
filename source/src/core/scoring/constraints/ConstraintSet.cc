@@ -78,7 +78,7 @@ SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::ResidueConstraints );
 
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ConstraintSet" );
+static basic::Tracer tr( "core.scoring.ConstraintSet" );
 
 ConstraintSet::ConstraintSet()
 :

@@ -58,7 +58,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNP_LowResEnergy" );
+static basic::Tracer TR( "core.scoring.rna.RNP_LowResEnergy" );
 using namespace core::chemical;
 using namespace core::chemical::rna;
 using namespace basic::options;

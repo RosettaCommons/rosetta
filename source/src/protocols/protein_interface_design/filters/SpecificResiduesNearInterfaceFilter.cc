@@ -51,7 +51,7 @@ using core::pack::task::TaskFactoryOP;
 using core::pack::task::PackerTaskCOP;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.SpecificResiduesNearInterfaceFilter" );
+static basic::Tracer TR( "protocols.protein_interface_design.filters.SpecificResiduesNearInterfaceFilter" );
 
 ////////////  Creator ////////////////////////
 // XRW TEMP FilterOP

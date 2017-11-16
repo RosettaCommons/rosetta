@@ -76,7 +76,7 @@ using namespace ObjexxFCL::format;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static THREAD_LOCAL basic::Tracer TR( "protocols.dna.PDBOutput", t_info );
+static basic::Tracer TR( "protocols.dna.PDBOutput", t_info );
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 PDBOutput::PDBOutput()

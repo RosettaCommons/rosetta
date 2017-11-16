@@ -65,7 +65,7 @@ OPT_KEY( Real, phosphate_force_constant )
 */
 OPT_KEY( Boolean, do_minimization )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phosphoArg_minimize.main" );
+static basic::Tracer TR( "apps.pilot.phosphoArg_minimize.main" );
 
 
 int
@@ -142,7 +142,7 @@ main( int argc, char * argv [] )
 
 	(*scorefxn)(pose);
 	core::Real const unbound_score = pose.energies().total_energies()[ total_score ];
-	//	pose.dump_scored_pdb( basic::options::start_file()+".unbound.pdb", *scorefxn );
+	// pose.dump_scored_pdb( basic::options::start_file()+".unbound.pdb", *scorefxn );
 
 	TR << "Completed, bound - free score diff is " << bound_score - unbound_score << std::endl;
 

@@ -132,7 +132,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::cryst;
 
-static THREAD_LOCAL basic::Tracer TR("cryst.design");
+static basic::Tracer TR("cryst.design");
 
 OPT_1GRP_KEY(String, crystdock, mode)
 OPT_1GRP_KEY(String, crystdock, spacegroup)

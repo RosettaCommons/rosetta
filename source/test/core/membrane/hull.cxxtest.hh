@@ -33,7 +33,7 @@
 #include <string>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR("core.membrane.hull.cxxtest");
+static basic::Tracer TR("core.membrane.hull.cxxtest");
 
 using namespace core::membrane;
 

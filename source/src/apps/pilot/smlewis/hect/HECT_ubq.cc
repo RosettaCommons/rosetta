@@ -23,7 +23,7 @@
 #include <core/pose/util.hh>
 
 
-//static THREAD_LOCAL basic::Tracer TR("apps.pilot.smlewis.HECT");
+//static basic::Tracer TR("apps.pilot.smlewis.HECT");
 
 
 /// @brief HECT mover

@@ -61,7 +61,7 @@
 #include <iostream>
 #include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mp_lipid_acc" );
+static basic::Tracer TR( "apps.pilot.jkleman.mp_lipid_acc" );
 
 using namespace core;
 using namespace core::pose;

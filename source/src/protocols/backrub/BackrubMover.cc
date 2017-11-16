@@ -75,7 +75,7 @@
 using namespace core;
 using namespace core::pose;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backrub.BackrubMover" );
+static basic::Tracer TR( "protocols.backrub.BackrubMover" );
 
 namespace protocols {
 namespace backrub {

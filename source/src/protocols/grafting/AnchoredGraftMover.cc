@@ -67,7 +67,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.grafting.AnchoredGraftMover" );
+static basic::Tracer TR( "protocols.grafting.AnchoredGraftMover" );
 namespace protocols {
 namespace grafting {
 

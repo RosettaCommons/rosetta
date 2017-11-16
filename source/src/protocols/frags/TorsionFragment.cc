@@ -56,7 +56,7 @@ using namespace core::conformation;
 using std::endl;
 using std::string;
 using utility::vector1;
-static THREAD_LOCAL basic::Tracer TR( "protocols.frags.TorsionFragment" );
+static basic::Tracer TR( "protocols.frags.TorsionFragment" );
 
 typedef utility::vector1< core::Size > Sizes;
 

@@ -45,7 +45,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DumpPdb" );
+static basic::Tracer TR( "protocols.simple_moves.DumpPdb" );
 
 // XRW TEMP std::string
 // XRW TEMP DumpPdbCreator::keyname() const

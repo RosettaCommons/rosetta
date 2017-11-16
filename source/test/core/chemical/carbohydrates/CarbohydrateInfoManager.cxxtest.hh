@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfoManager.cxxtest");
+static basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfoManager.cxxtest");
 
 class CarbohydrateInfoManagerTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////

@@ -48,7 +48,7 @@
 #include <core/scoring/SecondaryStructurePotential.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.potentials.sspot.SSPairPotential", basic::t_info );
+static basic::Tracer TR( "protocols.fldsgn.potentials.sspot.SSPairPotential", basic::t_info );
 
 namespace protocols {
 namespace fldsgn {

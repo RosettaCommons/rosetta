@@ -29,7 +29,7 @@
 #include <protocols/boinc/boinc.hh>
 #endif
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.BiasedMonteCarlo" );
+static basic::Tracer tr( "protocols.canonical_sampling.BiasedMonteCarlo" );
 
 namespace protocols {
 namespace canonical_sampling {

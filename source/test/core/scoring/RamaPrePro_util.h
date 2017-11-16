@@ -42,7 +42,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <sstream>
 
-static THREAD_LOCAL basic::Tracer TR_util("RamaPrePro_util");
+static basic::Tracer TR_util("RamaPrePro_util");
 
 inline
 void do_ramaprepro_test(

@@ -62,14 +62,13 @@
 
 
 
-using basic::T;
 using namespace protocols::docking;
 using namespace protocols::moves;
 using namespace core;
 using namespace pack::task;
 using namespace protocols::membrane;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingPrepackProtocol" );
+static basic::Tracer TR( "protocols.docking.DockingPrepackProtocol" );
 
 namespace protocols {
 namespace docking {

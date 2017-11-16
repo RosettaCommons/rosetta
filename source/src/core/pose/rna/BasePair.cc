@@ -17,7 +17,7 @@
 #include <core/pose/rna/leontis_westhof_util.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.BasePair" );
+static basic::Tracer TR( "core.pose.rna.BasePair" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

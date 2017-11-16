@@ -20,7 +20,7 @@
 #include <utility/graph/unordered_object_pool.hpp>
 #include <boost/pool/pool.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.hbonds.graph.AtomLevelHBondGraph" );
+static basic::Tracer TR( "core.scoring.hbonds.graph.AtomLevelHBondGraph" );
 
 namespace core {
 namespace scoring {

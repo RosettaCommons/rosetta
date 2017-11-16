@@ -46,7 +46,7 @@
 namespace protocols {
 namespace md {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.md");
+static basic::Tracer TR("protocols.md");
 
 MDBase::MDBase() :
 	uniform_coord_constrained_( false )

@@ -47,7 +47,7 @@
 #endif
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.constraints_additional.ConstraintEvaluatorCreator" );
+static basic::Tracer tr( "protocols.constraints_additional.ConstraintEvaluatorCreator" );
 
 namespace protocols {
 namespace constraints_additional {

@@ -11,7 +11,7 @@
 ///
 /// @brief   MP Framework: Read Membrane Pose and Dump Result to PDB
 /// @details ast Modified: 3/26/14
-///			 
+///
 ///
 /// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 
@@ -24,7 +24,7 @@
 
 // Package Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh> 
+#include <core/pose/Pose.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -40,22 +40,22 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.membrane.read_mp_pose" );
+static basic::Tracer TR( "apps.pilot.membrane.read_mp_pose" );
 
 void*
 my_main( void* )
 {
 	using namespace protocols::membrane;
 	using namespace protocols::jd2;
-	
+
 	// Setup MP Unit Testing Mover
 	CreateMembranePoseMoverOP mp = new CreateMembranePoseMover();
 	JobDistributor::get_instance()->go(mp);
-	
+
 	// Score a Membrane Pose and
 	core::pose::PoseOP pose = mp->get_membrane_pose();
 	pose->dump_pdb("membrane_pose.pdb");
-	
+
 	return NULL;
 }
 
@@ -64,13 +64,13 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		
+
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
-	
+
 }
 

@@ -44,7 +44,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.ncbb.SecStructMinimizeMultiFunc");
+static basic::Tracer TR("protocols.ncbb.SecStructMinimizeMultiFunc");
 
 namespace protocols {
 namespace ncbb {

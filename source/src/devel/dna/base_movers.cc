@@ -50,10 +50,10 @@ using namespace core;
 using namespace devel::cartesian_frags;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer tt( "devel.dna.base_movers", basic::t_trace );
-static THREAD_LOCAL basic::Tracer td( "devel.dna.base_movers", basic::t_debug );
-static THREAD_LOCAL basic::Tracer ti( "devel.dna.base_movers", basic::t_info );
-static THREAD_LOCAL basic::Tracer tw( "devel.dna.base_movers", basic::t_warning );
+static basic::Tracer tt( "devel.dna.base_movers", basic::t_trace );
+static basic::Tracer td( "devel.dna.base_movers", basic::t_debug );
+static basic::Tracer ti( "devel.dna.base_movers", basic::t_info );
+static basic::Tracer tw( "devel.dna.base_movers", basic::t_warning );
 
 
 /// @details  Setup a pointgraph for later use in dma calcs

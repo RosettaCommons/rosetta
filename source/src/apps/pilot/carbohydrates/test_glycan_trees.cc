@@ -45,7 +45,7 @@
 #include <basic/Tracer.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR("glycan_info");
+static basic::Tracer TR("glycan_info");
 
 
 int

@@ -34,7 +34,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("LoopGraphTest");
+static basic::Tracer TR("LoopGraphTest");
 
 
 class LoopGraphTest : public CxxTest::TestSuite {

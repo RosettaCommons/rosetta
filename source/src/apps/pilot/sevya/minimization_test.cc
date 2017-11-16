@@ -78,7 +78,7 @@ basic::options::FileVectorOptionKey multiple_constraints(" msd:multiple_constrai
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR("msd_pilot.main");
+static basic::Tracer TR("msd_pilot.main");
 
 std::string
 get_out_number(core::Size in) {

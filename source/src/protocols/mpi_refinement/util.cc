@@ -67,7 +67,7 @@
 #include <utility/string_util.hh>
 #include <boost/algorithm/string.hpp>
 
-static THREAD_LOCAL basic::Tracer TR("MPI.LHR.util");
+static basic::Tracer TR("MPI.LHR.util");
 
 namespace protocols {
 namespace mpi_refinement {

@@ -59,7 +59,7 @@ using namespace core;
 
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.InterfaceRecapitulationMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.InterfaceRecapitulationMover" );
 
 
 namespace protocols {

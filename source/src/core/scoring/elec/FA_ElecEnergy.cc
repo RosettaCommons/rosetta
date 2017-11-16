@@ -93,7 +93,7 @@
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.elec.FA_ElecEnergy" );
+static basic::Tracer TR( "core.scoring.elec.FA_ElecEnergy" );
 
 /////////////////////////////////////////////////////////////////////////////////////////
 ///

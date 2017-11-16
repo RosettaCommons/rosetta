@@ -35,7 +35,7 @@ namespace interaction_graph {
 
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.flexpack.interaction_graph" );
+static basic::Tracer TR( "protocols.flexpack.interaction_graph" );
 
 FlexbbNode::FlexbbNode(
 	FlexbbInteractionGraph * owner,

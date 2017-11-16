@@ -29,7 +29,7 @@
 namespace protocols {
 namespace mpi_refinement {
 
-static THREAD_LOCAL basic::Tracer TR("MPI.LHR.C");
+static basic::Tracer TR("MPI.LHR.C");
 
 Clusterer::Clusterer()
 {

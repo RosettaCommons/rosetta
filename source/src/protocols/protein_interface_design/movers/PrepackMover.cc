@@ -59,7 +59,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PrepackMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.PrepackMover" );
 
 // XRW TEMP std::string
 // XRW TEMP PrepackMoverCreator::keyname() const

@@ -34,7 +34,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SaneMinMover" );
+static basic::Tracer TR( "protocols.simple_moves.SaneMinMover" );
 
 // XRW TEMP std::string
 // XRW TEMP SaneMinMoverCreator::keyname() const {

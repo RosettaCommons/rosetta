@@ -33,7 +33,6 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

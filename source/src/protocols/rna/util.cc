@@ -38,7 +38,7 @@ using namespace core::chemical::rna;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.util" );
+static basic::Tracer TR( "protocols.rna.util" );
 
 namespace protocols {
 namespace rna {

@@ -32,7 +32,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide.NMethylationTests_betanov16");
+static basic::Tracer TR("protocols.cyclic_peptide.NMethylationTests_betanov16");
 
 class NMethylationTests_betanov16 : public CxxTest::TestSuite {
 

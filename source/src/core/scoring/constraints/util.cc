@@ -49,7 +49,7 @@ namespace scoring {
 namespace constraints {
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.constraints.util" );
+static basic::Tracer tr( "core.scoring.constraints.util" );
 
 /// @brief Returns the weighted value of a normal distribution evaluated
 ///  with the given mean, sd, and x values. Returns zero if the weight is

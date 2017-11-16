@@ -86,7 +86,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
+static basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
 
 namespace core {
 namespace scoring {

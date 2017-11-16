@@ -56,7 +56,7 @@ namespace core {
 namespace pose {
 namespace reference_pose {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.reference_pose.ReferencePoseSet" );
+static basic::Tracer TR( "core.pose.reference_pose.ReferencePoseSet" );
 
 /// @brief Constructor.
 ///

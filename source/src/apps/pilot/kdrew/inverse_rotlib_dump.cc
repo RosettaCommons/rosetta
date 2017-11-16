@@ -82,27 +82,27 @@ using namespace protocols;
 
 
 // tracer - used to replace cout
-static THREAD_LOCAL basic::Tracer TR( "Inverse Rotamer Library Dumper" );
+static basic::Tracer TR( "Inverse Rotamer Library Dumper" );
 
 namespace inverse_rotlib_dump {
 
-	StringOptionKey const primary_hs( "inverse_rotlib_dump::primary_hs" );
-	FileVectorOptionKey const ancillary_hs("inverse_rotlib_dump::ancillary_hs" );
+StringOptionKey const primary_hs( "inverse_rotlib_dump::primary_hs" );
+FileVectorOptionKey const ancillary_hs("inverse_rotlib_dump::ancillary_hs" );
 
 }
 
 class InverseRotlibDumpMover : public moves::Mover {
 
-	public:
+public:
 
-		//default ctor
-		InverseRotlibDumpMover(): Mover("InverseRotlibDumpMover"){}
-		//default dtor
-		virtual ~InverseRotlibDumpMover(){}
+	//default ctor
+	InverseRotlibDumpMover(): Mover("InverseRotlibDumpMover"){}
+	//default dtor
+	virtual ~InverseRotlibDumpMover(){}
 
-		//methods
-		virtual void apply( core::pose::Pose& pose );
-		virtual std::string get_name() const { return "InverseRotlibDumpMover"; }
+	//methods
+	virtual void apply( core::pose::Pose& pose );
+	virtual std::string get_name() const { return "InverseRotlibDumpMover"; }
 
 };
 
@@ -114,7 +114,7 @@ int
 main( int argc, char* argv[] )
 {
 
-    try {
+	try {
 		option.add( inverse_rotlib_dump::primary_hs, "The path to primary hotspot stub pdb" ).def( "" );
 		option.add( inverse_rotlib_dump::ancillary_hs, "The path to additional hotspot stub pdbs" ).def( "" );
 
@@ -126,11 +126,11 @@ main( int argc, char* argv[] )
 		//call job distributor
 		protocols::jd2::JobDistributor::get_instance()->go( IRD_mover );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 
 }//main
 
@@ -155,19 +155,19 @@ InverseRotlibDumpMover::apply(core::pose::Pose& pose)
 
 	std::string filename("primary.pdb");
 	std::vector< core::conformation::ResidueCOP >::const_iterator rot_iterator = primary_rots.begin();
-        core::Size atomcounter(0), modelcount(1);
-        std::ofstream file_out( filename.c_str() );
-	while( rot_iterator != primary_rots.end()){
-        	file_out << "MODEL   "+utility::to_string(modelcount++)+"\n";
-                core::io::pdb::dump_pdb_residue( **(rot_iterator), atomcounter, file_out );
-               	++rot_iterator;
+	core::Size atomcounter(0), modelcount(1);
+	std::ofstream file_out( filename.c_str() );
+	while ( rot_iterator != primary_rots.end() ) {
+		file_out << "MODEL   "+utility::to_string(modelcount++)+"\n";
+		core::io::pdb::dump_pdb_residue( **(rot_iterator), atomcounter, file_out );
+		++rot_iterator;
 		file_out << "ENDMDL \n";
-        } // while( !all_res_iterators_at_end )
+	} // while( !all_res_iterators_at_end )
 	file_out.close();
 
 	//std::vector<protocols::hotspot_hashing::HotspotStubSetOP> ancillary_stubs;
 	utility::vector1<std::string> ancillary_locations =  option[ inverse_rotlib_dump::ancillary_hs ]();
-	for (core::Size iii = 1; iii <= ancillary_locations.size(); iii++) {
+	for ( core::Size iii = 1; iii <= ancillary_locations.size(); iii++ ) {
 
 		core::pose::Pose secondary_hs_pose;
 		core::import_pose::pose_from_file(secondary_hs_pose, ancillary_locations[iii], core::import_pose::PDB_file);
@@ -181,14 +181,14 @@ InverseRotlibDumpMover::apply(core::pose::Pose& pose)
 
 		std::string filename("secondary_" + utility::to_string(iii) + ".pdb");
 		std::vector< core::conformation::ResidueCOP >::const_iterator rot_iterator = secondary_rots.begin();
-	        core::Size atomcounter(0), modelcount(1);
-	        std::ofstream file_out( filename.c_str() );
-		while( rot_iterator != secondary_rots.end()){
-        		file_out << "MODEL   "+utility::to_string(modelcount++)+"\n";
-	                core::io::pdb::dump_pdb_residue( **(rot_iterator), atomcounter, file_out );
-	               	++rot_iterator;
+		core::Size atomcounter(0), modelcount(1);
+		std::ofstream file_out( filename.c_str() );
+		while ( rot_iterator != secondary_rots.end() ) {
+			file_out << "MODEL   "+utility::to_string(modelcount++)+"\n";
+			core::io::pdb::dump_pdb_residue( **(rot_iterator), atomcounter, file_out );
+			++rot_iterator;
 			file_out << "ENDMDL \n";
-	        } // while( !all_res_iterators_at_end )
+		} // while( !all_res_iterators_at_end )
 		file_out.close();
 	}
 }

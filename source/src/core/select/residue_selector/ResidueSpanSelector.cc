@@ -42,7 +42,7 @@
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR("core.select.residue_selector.ResidueSpanSelector");
+static basic::Tracer TR("core.select.residue_selector.ResidueSpanSelector");
 
 namespace core {
 namespace select {

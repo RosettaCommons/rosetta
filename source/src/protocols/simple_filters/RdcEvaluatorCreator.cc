@@ -56,7 +56,7 @@
 #endif
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.RdcEvaluatorCreator" );
+static basic::Tracer tr( "protocols.evalution.RdcEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

@@ -34,7 +34,7 @@
 namespace protocols {
 namespace jobdist {
 
-static THREAD_LOCAL basic::Tracer jobs_tracer( "protocol.jobdist.jobs.hh" );
+static basic::Tracer jobs_tracer( "protocol.jobdist.jobs.hh" );
 
 /// @details Deliberately discards any path information in the input tag
 /// as well as any file name extension (since input tags are usually file names).

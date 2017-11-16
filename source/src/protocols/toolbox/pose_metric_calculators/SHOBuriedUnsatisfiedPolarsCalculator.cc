@@ -55,7 +55,7 @@ using core::id::AtomID;
 using core::scoring::geometric_solvation::create_ExactSHOEnergy_from_cmdline;
 
 
-static THREAD_LOCAL basic::Tracer TR("protocols.toolbox.pose_metric_calculators.SHOBuriedUnsatisfiedPolarsCalculator");
+static basic::Tracer TR("protocols.toolbox.pose_metric_calculators.SHOBuriedUnsatisfiedPolarsCalculator");
 
 
 /// @brief constructs the calculator for a target atom in residues of a target

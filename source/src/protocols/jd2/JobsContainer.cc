@@ -40,7 +40,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.JobsContainer" );
+static basic::Tracer TR( "protocols.jd2.JobsContainer" );
 
 namespace protocols {
 namespace jd2 {

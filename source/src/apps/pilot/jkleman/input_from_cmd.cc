@@ -10,7 +10,7 @@
 /// @file    mp_parameters.cc
 /// @brief   Checking options for MPframework
 /// @details Checking options from database and user input for MPframework
-///			     Last Modified: 3/24/14
+///        Last Modified: 3/24/14
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // App headers
@@ -45,7 +45,7 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.input_from_cmd" );
+static basic::Tracer TR( "apps.pilot.jkleman.input_from_cmd" );
 
 using namespace core;
 
@@ -54,13 +54,13 @@ std::string basename;
 
 ///////////////////////////////////////////////////////////////
 void create_MPpose(){
-	
+
 	using namespace protocols::membrane;
-	
+
 	MembraneProteinFactoryOP mpf = new MembraneProteinFactory( false, true );
 	core::pose::PoseOP membrane_pose = mpf->create_membrane_pose();
 	membrane_pose->dump_pdb("output_pose.pdb");
-	
+
 }
 
 
@@ -69,15 +69,15 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		
+
 		devel::init(argc, argv);
-		
+
 		// create MP pose
 		create_MPpose();
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
-	
+
 }
 

@@ -36,7 +36,7 @@
 #include <numeric/random/random_xyz.hh>
 #include <numeric/xyzVector.io.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PertMinMover" );
+static basic::Tracer TR( "protocols.simple_moves.PertMinMover" );
 
 
 namespace protocols {

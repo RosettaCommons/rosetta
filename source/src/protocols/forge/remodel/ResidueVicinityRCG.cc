@@ -38,7 +38,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.forge.remodel.ResidueVicinityRCG" );
+static basic::Tracer tr( "protocols.forge.remodel.ResidueVicinityRCG" );
 
 namespace protocols {
 namespace forge {

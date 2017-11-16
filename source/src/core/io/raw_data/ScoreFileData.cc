@@ -41,12 +41,10 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.io.raw_data.ScoreFileData" );
+static basic::Tracer TR( "core.io.raw_data.ScoreFileData" );
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 namespace core {
 namespace io {
 namespace raw_data {

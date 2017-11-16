@@ -58,11 +58,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.analysis.LoopAnalyzerMover" );
+static basic::Tracer TR( "protocols.analysis.LoopAnalyzerMover" );
 
 namespace protocols {
 namespace analysis {

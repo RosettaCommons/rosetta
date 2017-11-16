@@ -126,7 +126,7 @@
 // C++ headers
 #include <cstdio>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication" );
+static basic::Tracer TR( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication" );
 
 /// @brief Register the set of options that this application uses (for the help menu).
 ///

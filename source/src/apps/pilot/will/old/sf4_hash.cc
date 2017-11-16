@@ -110,7 +110,7 @@
 
 using core::kinematics::Stub;
 
-static THREAD_LOCAL basic::Tracer TR( "sf4_hash" );
+static basic::Tracer TR( "sf4_hash" );
 
 struct MyRT {
 	Vec trans;
@@ -151,7 +151,7 @@ struct MyRT {
 std::string SAN1("CB"),SAN2("CA"),SAN3("N");
 
 void alncys(core::pose::Pose & pose, Real c1, Real c2, Real c3) {
- 	pose.set_chi(1,1,c1);
+	pose.set_chi(1,1,c1);
 	pose.set_chi(2,1,c2);
 	trans_pose(pose,Vec(2.225,2.225,2.225)-pose.residue(1).xyz("SG") );
 	alignaxis (pose,Vec(2.225,2.225,2.225),pose.residue(1).xyz("SG")-pose.residue(1).xyz("HG"),pose.residue(1).xyz("SG"));
@@ -165,14 +165,14 @@ void get_cys_rts(utility::vector1<utility::vector1<core::Real> > & CHI, utility:
 
 	Vec F1( 0.961, 0.961, 0.961), F2 (0.961,-0.961,-0.961), F3(-0.961,-0.961, 0.961), F4(-0.961, 0.961,-0.961);
 	Vec S1(-1.279,-1.279,-1.279), S2(-1.279, 1.279, 1.279), S3( 1.279, 1.279,-1.279), S4( 1.279,-1.279, 1.279);
-	cout<<"HETATM"<<I(5,1)<<' '<<" S1 "<<' ' <<	"SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,S1.x())<<F(8,3,S1.y())<<F(8,3,S1.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"           S\n";
-	cout<<"HETATM"<<I(5,2)<<' '<<" S2 "<<' ' <<	"SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,S2.x())<<F(8,3,S2.y())<<F(8,3,S2.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"           S\n";
-	cout<<"HETATM"<<I(5,3)<<' '<<" S3 "<<' ' <<	"SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,S3.x())<<F(8,3,S3.y())<<F(8,3,S3.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"           S\n";
-	cout<<"HETATM"<<I(5,4)<<' '<<" S4 "<<' ' <<	"SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,S4.x())<<F(8,3,S4.y())<<F(8,3,S4.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"           S\n";
-	cout<<"HETATM"<<I(5,5)<<' '<<" F1 "<<' ' <<	"SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,F1.x())<<F(8,3,F1.y())<<F(8,3,F1.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"          FE\n";
-	cout<<"HETATM"<<I(5,6)<<' '<<" F2 "<<' ' <<	"SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,F2.x())<<F(8,3,F2.y())<<F(8,3,F2.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"          FE\n";
-	cout<<"HETATM"<<I(5,7)<<' '<<" F3 "<<' ' <<	"SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,F3.x())<<F(8,3,F3.y())<<F(8,3,F3.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"          FE\n";
-	cout<<"HETATM"<<I(5,8)<<' '<<" F4 "<<' ' <<	"SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,F4.x())<<F(8,3,F4.y())<<F(8,3,F4.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"          FE\n";
+	cout<<"HETATM"<<I(5,1)<<' '<<" S1 "<<' ' << "SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,S1.x())<<F(8,3,S1.y())<<F(8,3,S1.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"           S\n";
+	cout<<"HETATM"<<I(5,2)<<' '<<" S2 "<<' ' << "SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,S2.x())<<F(8,3,S2.y())<<F(8,3,S2.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"           S\n";
+	cout<<"HETATM"<<I(5,3)<<' '<<" S3 "<<' ' << "SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,S3.x())<<F(8,3,S3.y())<<F(8,3,S3.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"           S\n";
+	cout<<"HETATM"<<I(5,4)<<' '<<" S4 "<<' ' << "SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,S4.x())<<F(8,3,S4.y())<<F(8,3,S4.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"           S\n";
+	cout<<"HETATM"<<I(5,5)<<' '<<" F1 "<<' ' << "SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,F1.x())<<F(8,3,F1.y())<<F(8,3,F1.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"          FE\n";
+	cout<<"HETATM"<<I(5,6)<<' '<<" F2 "<<' ' << "SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,F2.x())<<F(8,3,F2.y())<<F(8,3,F2.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"          FE\n";
+	cout<<"HETATM"<<I(5,7)<<' '<<" F3 "<<' ' << "SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,F3.x())<<F(8,3,F3.y())<<F(8,3,F3.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"          FE\n";
+	cout<<"HETATM"<<I(5,8)<<' '<<" F4 "<<' ' << "SF4"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,F4.x())<<F(8,3,F4.y())<<F(8,3,F4.z())<<F(6,2,1.0)<<F(6,2,1.0)<<"          FE\n";
 
 	vector1<Real> CHI1(3); CHI1[1] =  -60.0; CHI1[2] = 60.0; CHI1[3] = 180.0;
 	vector1<Real> CHI2(3); CHI2[1] = -110.0; CHI2[2] =  3.0; CHI2[3] =  65.0;
@@ -188,35 +188,35 @@ void get_cys_rts(utility::vector1<utility::vector1<core::Real> > & CHI, utility:
 	// cys1.dump_pdb("test.pdb");
 
 	CHI.clear();
-	for(Size ich = 1; ich <= 27; ich++) {
+	for ( Size ich = 1; ich <= 27; ich++ ) {
 		Real ichi1 = CHI1[((ich-1)/1)%3+1];
 		Real ichi2 = CHI2[((ich-1)/3)%3+1];
 		Real ichi3 = CHI3[((ich-1)/9)%3+1];
 		alncys(cys1,ichi1,ichi2,ichi3);
 		bool clash = false;
-		for(Size i = 1; i <= 3; ++i) {
-			if(cys1.residue(1).xyz(i).distance_squared(S1) < 9.0 ) clash = true;
-			if(cys1.residue(1).xyz(i).distance_squared(S2) < 9.0 ) clash = true;
-			if(cys1.residue(1).xyz(i).distance_squared(S3) < 9.0 ) clash = true;
-			if(cys1.residue(1).xyz(i).distance_squared(S4) < 9.0 ) clash = true;
-			if(cys1.residue(1).xyz(i).distance_squared(F1) < 9.0 ) clash = true;
-			if(cys1.residue(1).xyz(i).distance_squared(F2) < 9.0 ) clash = true;
-			if(cys1.residue(1).xyz(i).distance_squared(F3) < 9.0 ) clash = true;
-			if(cys1.residue(1).xyz(i).distance_squared(F4) < 9.0 ) clash = true;
+		for ( Size i = 1; i <= 3; ++i ) {
+			if ( cys1.residue(1).xyz(i).distance_squared(S1) < 9.0 ) clash = true;
+			if ( cys1.residue(1).xyz(i).distance_squared(S2) < 9.0 ) clash = true;
+			if ( cys1.residue(1).xyz(i).distance_squared(S3) < 9.0 ) clash = true;
+			if ( cys1.residue(1).xyz(i).distance_squared(S4) < 9.0 ) clash = true;
+			if ( cys1.residue(1).xyz(i).distance_squared(F1) < 9.0 ) clash = true;
+			if ( cys1.residue(1).xyz(i).distance_squared(F2) < 9.0 ) clash = true;
+			if ( cys1.residue(1).xyz(i).distance_squared(F3) < 9.0 ) clash = true;
+			if ( cys1.residue(1).xyz(i).distance_squared(F4) < 9.0 ) clash = true;
 		}
-		if(clash) continue;
+		if ( clash ) continue;
 		vector1<Real> chi; chi.push_back(ichi1); chi.push_back(ichi2); chi.push_back(ichi3);
 		CHI.push_back(chi);
-		//		cys1.dump_pdb("startcys_"+string_of(CHI.size())+".pdb");
+		//  cys1.dump_pdb("startcys_"+string_of(CHI.size())+".pdb");
 		TR << "rot " << CHI.size() << " " << ichi1 << " " << ichi2 << " " << ichi3 << std::endl;
 	}
 
 
 	RTs.resize(CHI.size());
 	STs.resize(CHI.size());
-	for(Size i = 1; i <= CHI.size(); i++) RTs[i].resize(CHI.size());
+	for ( Size i = 1; i <= CHI.size(); i++ ) RTs[i].resize(CHI.size());
 
-	for(Size ich = 1; ich <= CHI.size(); ich++) {
+	for ( Size ich = 1; ich <= CHI.size(); ich++ ) {
 		Real ichi1 = CHI[ich][1];
 		Real ichi2 = CHI[ich][2];
 		Real ichi3 = CHI[ich][3];
@@ -232,7 +232,7 @@ void get_cys_rts(utility::vector1<utility::vector1<core::Real> > & CHI, utility:
 		}
 		Stub stub1(cys1.residue(1).xyz(SAN1),cys1.residue(1).xyz(SAN2),cys1.residue(1).xyz(SAN3));
 		STs[ich] = stub1;
-		for(Size jch = 1; jch <= CHI.size(); jch++) {
+		for ( Size jch = 1; jch <= CHI.size(); jch++ ) {
 			Real jchi1 = CHI[jch][1];
 			Real jchi2 = CHI[jch][2];
 			Real jchi3 = CHI[jch][3];
@@ -244,13 +244,13 @@ void get_cys_rts(utility::vector1<utility::vector1<core::Real> > & CHI, utility:
 				alignaxis (cys2,Vec(2.225,-2.225,-2.225),cys2.residue(1).xyz("SG")-cys2.residue(1).xyz("HG"),cys2.residue(1).xyz("SG"));
 				Real ang = dihedral_degrees(Vec(1,1,1),Vec(0,0,0),cys2.residue(1).xyz("SG"),cys2.residue(1).xyz("CB"));
 				rot_pose(cys2, Vec(1,-1,-1), jchi3-ang );
-				//			cys2.dump_pdb("cys2_"+string_of(jch)+".pdb");
+				//   cys2.dump_pdb("cys2_"+string_of(jch)+".pdb");
 			}
 			Stub stub2(cys2.residue(1).xyz(SAN1),cys2.residue(1).xyz(SAN2),cys2.residue(1).xyz(SAN3));
 			core::kinematics::RT rt;
 			rt.from_stubs(stub1,stub2);
 			RTs[ich][jch].from_rot(rt.get_translation(),rt.get_rotation());
-		// rt.get_rotation(), RTs[ich][jch].angle );
+			// rt.get_rotation(), RTs[ich][jch].angle );
 			// TR << "axisang " << RTs[ich][jch].angle << " " << RTs[ich][jch].axis << std::endl;
 		}
 	}
@@ -274,9 +274,9 @@ void run_sf4h() {
 	vector1<vector1<MyRT> > RTs;
 	get_cys_rts(CHI,STs,RTs);
 	Vec lb(9e9,9e9,9e9),ub(-9e9,-9e9,-9e9);
-	for(Size i = 1; i <= RTs.size(); i++) {
-		for(Size j = 1; j <= RTs.size(); j++) {
-			Vec t = RTs[i][j].trans; lb.min(t);	ub.max(t);
+	for ( Size i = 1; i <= RTs.size(); i++ ) {
+		for ( Size j = 1; j <= RTs.size(); j++ ) {
+			Vec t = RTs[i][j].trans; lb.min(t); ub.max(t);
 		}
 	}
 	TR << "min " << lb << std::endl;
@@ -285,38 +285,38 @@ void run_sf4h() {
 	core::conformation::ResidueOP cys = core::conformation::ResidueFactory::create_residue(fa_residue_set->name_map("CYS"));
 
 	vector1<string> infiles = option[in::file::s]();
-	for(Size ifile = 1; ifile <= infiles.size(); ++ifile) {
+	for ( Size ifile = 1; ifile <= infiles.size(); ++ifile ) {
 		string infile = utility::file_basename(infiles[ifile]);
 		TR << "scaning pdb " << infiles[ifile] << std::endl;
 		Pose pose;
 		core::import_pose::pose_from_file(pose,*fa_residue_set,infiles[ifile], core::import_pose::PDB_file);
 		Size gap = 0;
-		for(Size ir = 1; ir <= pose.size()-2; ++ir) {
-			if(pose.residue(ir).name3()=="GLY" || pose.residue(ir).name3()=="PRO") continue;
+		for ( Size ir = 1; ir <= pose.size()-2; ++ir ) {
+			if ( pose.residue(ir).name3()=="GLY" || pose.residue(ir).name3()=="PRO" ) continue;
 			Stub stub1(pose.residue(ir).xyz(SAN1),pose.residue(ir).xyz(SAN2),pose.residue(ir).xyz(SAN3));
-			for(Size jr = ir+2; jr <= ir+15; ++jr) {
-				if(jr > pose.size()) break;
-				if(pose.residue(jr).name3()=="GLY" || pose.residue(jr).name3()=="PRO") continue;
-				if( pose.residue(jr-1).xyz("C").distance_squared(pose.residue(jr).xyz("N")) > 4.0 ) {
+			for ( Size jr = ir+2; jr <= ir+15; ++jr ) {
+				if ( jr > pose.size() ) break;
+				if ( pose.residue(jr).name3()=="GLY" || pose.residue(jr).name3()=="PRO" ) continue;
+				if ( pose.residue(jr-1).xyz("C").distance_squared(pose.residue(jr).xyz("N")) > 4.0 ) {
 					gap = jr-1;
 				}
-				if( ir <= gap && jr > gap ) continue;
+				if ( ir <= gap && jr > gap ) continue;
 				Stub stub2(pose.residue(jr).xyz(SAN1),pose.residue(jr).xyz(SAN2),pose.residue(jr).xyz(SAN3));
 				core::kinematics::RT rt;
 				rt.from_stubs(stub1,stub2);
 				Vec t = rt.get_translation();
-				//				if( t.x()+0.5 < lb.x() || ub.x() < t.x()-0.5 || t.y()+0.5 < lb.y() || ub.y() < t.y()-0.5 || t.z()+0.5 < lb.z() || ub.z() < t.z()-0.5 ) continue;
+				//    if( t.x()+0.5 < lb.x() || ub.x() < t.x()-0.5 || t.y()+0.5 < lb.y() || ub.y() < t.y()-0.5 || t.z()+0.5 < lb.z() || ub.z() < t.z()-0.5 ) continue;
 				MyRT mrt(rt.get_translation(),rt.get_rotation());
-				for(Size ich = 1; ich <= RTs.size(); ich++) {
-					for(Size jch = 1; jch <= RTs.size(); jch++) {
-						if(RTs[ich][jch].trans.distance_squared(mrt.trans) > 0.5) continue;
+				for ( Size ich = 1; ich <= RTs.size(); ich++ ) {
+					for ( Size jch = 1; jch <= RTs.size(); jch++ ) {
+						if ( RTs[ich][jch].trans.distance_squared(mrt.trans) > 0.5 ) continue;
 						// if(RTs[ich][jch].distance_squared(mrt) > 0.0301537) continue;
 
 						Vec axis1 = Vec(RTs[ich][jch].x,RTs[ich][jch].y,RTs[ich][jch].z).normalized();
 						Vec axis2 = Vec(          mrt.x,          mrt.y,          mrt.z).normalized();
 
-						if(axis1.dot(axis2) < 0.95) continue;
-						if(fabs(RTs[ich][jch].w-mrt.w) > 0.2) continue;
+						if ( axis1.dot(axis2) < 0.95 ) continue;
+						if ( fabs(RTs[ich][jch].w-mrt.w) > 0.2 ) continue;
 						TR << "HIT " << infile << " " << ir << " " << jr << " " << ich << " " << jch << std::endl;
 						TR << "trans 1" << mrt.trans << std::endl;
 						TR << "trans 2" << RTs[ich][jch].trans << std::endl;
@@ -325,7 +325,7 @@ void run_sf4h() {
 						TR << "ANG " << RTs[ich][jch].w << " " << mrt.w << std::endl;
 						Pose sub;
 						sub.append_residue_by_jump(pose.residue(ir),1);
-						for(Size kr = ir+1; kr <= jr; ++kr) sub.append_residue_by_bond(pose.residue(kr));
+						for ( Size kr = ir+1; kr <= jr; ++kr ) sub.append_residue_by_bond(pose.residue(kr));
 						sub.replace_residue(1,*cys,true);
 						cys->set_chi(1,CHI[jch][1]);
 						cys->set_chi(2,CHI[jch][2]);
@@ -354,8 +354,8 @@ int main (int argc, char *argv[]) {
 
 	try {
 
-	devel::init(argc,argv);
-	run_sf4h();
+		devel::init(argc,argv);
+		run_sf4h();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

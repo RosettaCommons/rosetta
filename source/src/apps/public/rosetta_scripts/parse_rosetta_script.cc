@@ -42,7 +42,7 @@
 #include <basic/Tracer.hh>
 
 // Tracer
-static THREAD_LOCAL basic::Tracer TR( "apps.public.rosetta_scripts.parse_rosetta_script" );
+static basic::Tracer TR( "apps.public.rosetta_scripts.parse_rosetta_script" );
 
 /// @details Validate an input XML script against the internally-generated XSD and then construct
 /// all of the Movers/Filters/etc. that are defined within that script. Exits with a 0 exit status

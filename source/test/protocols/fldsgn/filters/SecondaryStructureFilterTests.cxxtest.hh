@@ -28,7 +28,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("SecondaryStructureFilterTests");
+static basic::Tracer TR("SecondaryStructureFilterTests");
 
 namespace ss_test {
 class SecondaryStructureFilterProt : public protocols::fldsgn::filters::SecondaryStructureFilter {

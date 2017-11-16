@@ -99,10 +99,9 @@ public:
 
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
 
-		if (option[ OptionKeys::in::file::movemap ].user()) {
+		if ( option[ OptionKeys::in::file::movemap ].user() ) {
 			movemap->init_from_file(option[ OptionKeys::in::file::movemap ]() );
-		}
-		else{
+		} else {
 			movemap->set_jump( option[ OptionKeys::relax::jump_move ]() );
 			movemap->set_bb( option[ OptionKeys::relax::bb_move ]() );
 			movemap->set_chi( option[ OptionKeys::relax::chi_move ]() );
@@ -122,7 +121,7 @@ public:
 };
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.InterfaceFeaturesTests.cxxtest" );
+static basic::Tracer TR( "protocols.features.InterfaceFeaturesTests.cxxtest" );
 
 using namespace protocols::features;
 
@@ -171,7 +170,7 @@ public:
 		utility::vector1<std::string> interfaces;
 		reporter_->make_interface_combos(multimer_, interfaces);
 		TR << "Interfaces: "<< interfaces.size() << std::endl;
-		for (core::Size i = 1; i<=interfaces.size(); ++i){
+		for ( core::Size i = 1; i<=interfaces.size(); ++i ) {
 			TR<<"Interface: " << interfaces[i]<<std::endl;
 		}
 	}

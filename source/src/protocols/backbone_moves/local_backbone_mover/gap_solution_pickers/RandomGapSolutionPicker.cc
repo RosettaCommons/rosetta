@@ -17,7 +17,7 @@
 // STD
 #include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.gap_solution_pickers.RandomGapSolutionPicker" );
+static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.gap_solution_pickers.RandomGapSolutionPicker" );
 
 
 namespace protocols {

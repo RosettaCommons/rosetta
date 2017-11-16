@@ -33,7 +33,7 @@
 #include <basic/Tracer.hh>
 #include <numeric/xyzVector.hh>
 
-static THREAD_LOCAL basic::Tracer TR("SymmetricCycpepAlignTests");
+static basic::Tracer TR("SymmetricCycpepAlignTests");
 
 
 class SymmetricCycpepAlignTests : public CxxTest::TestSuite {

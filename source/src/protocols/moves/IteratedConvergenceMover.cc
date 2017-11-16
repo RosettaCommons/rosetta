@@ -36,7 +36,7 @@
 namespace protocols {
 namespace moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.IteratedConvergenceMover" );
+static basic::Tracer TR( "protocols.moves.IteratedConvergenceMover" );
 
 IteratedConvergenceMover::IteratedConvergenceMover() :
 	Mover("IteratedConvergenceMover"),

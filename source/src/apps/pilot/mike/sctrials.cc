@@ -47,7 +47,6 @@
 
 using namespace ObjexxFCL;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -58,7 +57,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "sctrials" );
+static basic::Tracer TR( "sctrials" );
 
 class ScTrials : public moves::Mover {
 
@@ -111,19 +110,19 @@ ScTrials::apply( Pose & pose ) {
 	core::Real total_free_energy = 0;
 	core::Real total_enthalpy    = 0;
 	core::Real total_minus_T_times_entropy = 0;
-//	RotamerLibraryScratchSpaceOP = new core::pack::dunbrack::RotamerLibraryScratchSpace();
+	// RotamerLibraryScratchSpaceOP = new core::pack::dunbrack::RotamerLibraryScratchSpace();
 
 	TR << protocols::jd2::JobDistributor::get_instance()->current_output_name();
-	for( core::Size ir=1; ir <= pose.size(); ++ ir ){
+	for ( core::Size ir=1; ir <= pose.size(); ++ ir ) {
 		EnergyMap emap = pose.energies().onebody_energies(ir);
 
 		core::pack::dunbrack::RotamerLibrary const & rotamer_library_ = * core::pack::dunbrack::RotamerLibrary::get_instance();
 		core::pack::rotamers::SingleResidueRotamerLibraryCAP residue_rotamer_library(
-    	rotamer_library_.get_rsd_library(pose.residue( ir ).type())
+			rotamer_library_.get_rsd_library(pose.residue( ir ).type())
 		);
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCAP dun_rotlib(
-		          dynamic_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const * >
-							          ( residue_rotamer_library.get() ));
+			dynamic_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const * >
+			( residue_rotamer_library.get() ));
 
 		if ( dun_rotlib == 0 ) continue;
 
@@ -137,14 +136,14 @@ ScTrials::apply( Pose & pose ) {
 
 		std::vector< core::Real > energies;
 
-		for( core::Size j = 1; j <= sample_data.size(); j++ ){
+		for ( core::Size j = 1; j <= sample_data.size(); j++ ) {
 			pose = start_pose;
 
 			core::Size  nchis = sample_data[j].nchi();
 			core::pack::dunbrack::Real4 chis = sample_data[j].chi_mean();
 
 			// make a random chi angle change
-			for( core::Size ichi=1; ichi <= pose.residue( ir ).nchi(); ichi ++ ){
+			for ( core::Size ichi=1; ichi <= pose.residue( ir ).nchi(); ichi ++ ) {
 				pose.set_chi( ichi, ir, chis[ichi] );
 			}
 
@@ -158,19 +157,19 @@ ScTrials::apply( Pose & pose ) {
 		}
 
 		core::Real lowest_energy = *( energies.begin() );
-		for( std::vector< core::Real >::const_iterator it = energies.begin();
-					it != energies.end();
-					++ it ){
+		for ( std::vector< core::Real >::const_iterator it = energies.begin();
+				it != energies.end();
+				++ it ) {
 
-				if( *it < lowest_energy ) lowest_energy = *it;
+			if ( *it < lowest_energy ) lowest_energy = *it;
 		}
 
 		core::Real exp_sum = 0;
 		core::Real avene = 0;
 		core::Real kT = 1.0;
-	 	for( std::vector< core::Real >::const_iterator it = energies.begin();
-				 it != energies.end();
-				 ++ it ){
+		for ( std::vector< core::Real >::const_iterator it = energies.begin();
+				it != energies.end();
+				++ it ) {
 
 			core::Real ediff = *it - lowest_energy;
 			TR << ir << "  Emin: " << lowest_energy << "  " <<  " Ediff: " << ediff << "  " << exp( -ediff / kT ) << std::endl;
@@ -183,17 +182,17 @@ ScTrials::apply( Pose & pose ) {
 		core::Real minus_T_times_entropy = free_energy - avene;
 
 		TR << "ExpSum: "
-		   << " ir : " << ir << " "
-			 << " sz : " << sample_data.size() << " "
-			 << " exp: " << exp_sum << " "
-			 << " fe : " << free_energy << "  "
-			 << " ent: " << enthalpy    << "  "
-			 << " -TS: " << minus_T_times_entropy << "  "
-			 << "   " << std::endl;
+			<< " ir : " << ir << " "
+			<< " sz : " << sample_data.size() << " "
+			<< " exp: " << exp_sum << " "
+			<< " fe : " << free_energy << "  "
+			<< " ent: " << enthalpy    << "  "
+			<< " -TS: " << minus_T_times_entropy << "  "
+			<< "   " << std::endl;
 
 		total_free_energy            += free_energy;
-  	total_enthalpy               += enthalpy;
-  	total_minus_T_times_entropy  += minus_T_times_entropy;
+		total_enthalpy               += enthalpy;
+		total_minus_T_times_entropy  += minus_T_times_entropy;
 	}
 
 	pose = start_pose;
@@ -217,18 +216,18 @@ ScTrials::get_name() const {
 int
 main( int argc, char * argv [] )
 {
-    try {
-    	using namespace protocols::jobdist;
-    	using namespace protocols::moves;
-    	using namespace scoring;
+	try {
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace scoring;
 
-    	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-    	MoverOP protocol = new ScTrials();
-    	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+		MoverOP protocol = new ScTrials();
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

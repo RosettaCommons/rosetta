@@ -32,7 +32,7 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("LongestContinuousPolarSegmentFilterTests");
+static basic::Tracer TR("LongestContinuousPolarSegmentFilterTests");
 
 
 class LongestContinuousPolarSegmentFilterTests : public CxxTest::TestSuite {

@@ -45,7 +45,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.relax.AtomCoordinateCstMover" );
+static basic::Tracer TR( "protocols.relax.AtomCoordinateCstMover" );
 
 namespace protocols {
 namespace relax {

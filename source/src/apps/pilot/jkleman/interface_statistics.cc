@@ -64,7 +64,7 @@
 #include <protocols/membrane/util.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.interface_statistics" );
+static basic::Tracer TR( "apps.pilot.jkleman.interface_statistics" );
 
 using namespace core;
 using namespace core::pose;

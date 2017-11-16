@@ -68,7 +68,7 @@ using namespace protocols::stepwise::modeler;
 //
 //////////////////////////////////////////////////////////////////////////
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddMover" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddMover" );
 
 namespace protocols {
 namespace stepwise {

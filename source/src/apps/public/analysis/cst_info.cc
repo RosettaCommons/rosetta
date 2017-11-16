@@ -39,7 +39,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 
-static THREAD_LOCAL basic::Tracer TR("cst_info");
+static basic::Tracer TR("cst_info");
 
 void register_options() {
 	using namespace basic::options;

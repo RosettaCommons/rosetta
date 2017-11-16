@@ -42,7 +42,7 @@
 #include <utility/options/BooleanVectorOption.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.NcontactsCalculator" );
+static basic::Tracer tr( "protocols.fldsgn.NcontactsCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

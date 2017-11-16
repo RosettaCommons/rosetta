@@ -69,16 +69,16 @@ using core::kinematics::Stub;
 using core::conformation::Residue;
 using core::Real;
 
-static THREAD_LOCAL basic::Tracer TR( "rblinker2_overlay_bound" );
+static basic::Tracer TR( "rblinker2_overlay_bound" );
 
 
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
-// 	for(Size ir = 1; ir <= pose.size(); ++ir) {
-// 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
-// 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
-// 			pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
-// 		}
-// 	}
+//  for(Size ir = 1; ir <= pose.size(); ++ir) {
+//   for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+//    core::id::AtomID const aid(core::id::AtomID(ia,ir));
+//    pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
+//   }
+//  }
 // }
 //
 //
@@ -87,22 +87,22 @@ static THREAD_LOCAL basic::Tracer TR( "rblinker2_overlay_bound" );
 // // hyd   101  156  334  338
 // // psI  1492 1536 1489 1495
 // inline Real hyd_petf_sf4_dis(Pose const & hyd, Stub const & shyd, Pose const & petf, Stub const & spetf ) {
-// 	Vec sf4A = ( hyd.xyz(AtomID(5, 101))+ hyd.xyz(AtomID(5, 156))+ hyd.xyz(AtomID(5, 334))+ hyd.xyz(AtomID(5, 338)))/4.0;
-// 	Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
-// 	return shyd.local2global(sf4A).distance(spetf.local2global(sf4B));
+//  Vec sf4A = ( hyd.xyz(AtomID(5, 101))+ hyd.xyz(AtomID(5, 156))+ hyd.xyz(AtomID(5, 334))+ hyd.xyz(AtomID(5, 338)))/4.0;
+//  Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
+//  return shyd.local2global(sf4A).distance(spetf.local2global(sf4B));
 // }
 // inline Real psI_petf_sf4_dis(Pose const & psI, Pose const & petf, Stub const & spetf ) {
-// 	Vec sf4A = ( psI.xyz(AtomID(5,1492))+ psI.xyz(AtomID(5,1536))+ psI.xyz(AtomID(5,1489))+ psI.xyz(AtomID(5,1495)))/4.0;
-// 	Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
-// 	return sf4A.distance(spetf.local2global(sf4B));
+//  Vec sf4A = ( psI.xyz(AtomID(5,1492))+ psI.xyz(AtomID(5,1536))+ psI.xyz(AtomID(5,1489))+ psI.xyz(AtomID(5,1495)))/4.0;
+//  Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
+//  return sf4A.distance(spetf.local2global(sf4B));
 // }
 //
 // // get stup that aligns r1 to r2
 // Stub getxform(Residue const & r1, Residue const & r2) {
-// 	Stub s;
-// 	s.M = alignVectorSets(r1.xyz(1)-r1.xyz(2),r1.xyz(3)-r1.xyz(2),r2.xyz(1)-r2.xyz(2),r2.xyz(3)-r2.xyz(2));
-// 	s.v = r2.xyz(2)-s.M*r1.xyz(2);
-// 	return s;
+//  Stub s;
+//  s.M = alignVectorSets(r1.xyz(1)-r1.xyz(2),r1.xyz(3)-r1.xyz(2),r2.xyz(1)-r2.xyz(2),r2.xyz(3)-r2.xyz(2));
+//  s.v = r2.xyz(2)-s.M*r1.xyz(2);
+//  return s;
 // }
 
 
@@ -115,7 +115,7 @@ public:
 	void magnitude(Real mag) { mag_ = mag; }
 	void apply(core::pose::Pose & pose) {
 		Size i = start_-1 + (Size)std::ceil(uniform()*(stop_-start_+1));
-		if(uniform()<0.5) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
+		if ( uniform()<0.5 ) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
 		else              pose.set_psi(i,pose.psi(i)+gaussian()*mag_);
 	}
 	std::string get_name() const { return "SimpleBBMover"; }
@@ -124,9 +124,9 @@ typedef utility::pointer::owning_ptr<SimpleBBMover> SimpleBBMoverOP;
 
 std::string printbits(unsigned long nn) {
 	std::string s = "";
-	for(Size i = 0; i < 8*sizeof(nn); ++i) {
-		if(i%8==0) s += " ";
-		if(nn & 1UL << (8*sizeof(nn)-1-i)) s += "1";
+	for ( Size i = 0; i < 8*sizeof(nn); ++i ) {
+		if ( i%8==0 ) s += " ";
+		if ( nn & 1UL << (8*sizeof(nn)-1-i) ) s += "1";
 		else                               s += "0";
 	}
 	return s;
@@ -134,12 +134,12 @@ std::string printbits(unsigned long nn) {
 
 std::string bin2string(unsigned long bin, Size nres) {
 	std::string s = "";
-	for(Size i = 0; i < nres; ++i) {
-		for(Size j = 0; j < 2; ++j) {
+	for ( Size i = 0; i < nres; ++i ) {
+		for ( Size j = 0; j < 2; ++j ) {
 			int tmp = ( bin >> 8*i+2*j ) % 4;
 			s += ObjexxFCL::lead_zero_string_of(tmp,1);
 		}
-		if(i+1 < nres) s += "-";
+		if ( i+1 < nres ) s += "-";
 	}
 	return s;
 }
@@ -147,7 +147,7 @@ std::string bin2string(unsigned long bin, Size nres) {
 unsigned long pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	unsigned long bin = 0;
-	for(int i = 0; i < min( 16, (int)pose.size() ); ++i) {
+	for ( int i = 0; i < min( 16, (int)pose.size() ); ++i ) {
 		Real phid = pose.phi(i+1);
 		Real psid = pose.psi(i+1);
 		// TR << phid << " " << psid << std::endl;
@@ -163,23 +163,23 @@ unsigned long pose2bin(core::pose::Pose const & pose) {
 
 Size get_aln_resi(core::pose::Pose const & pose, core::Size const aln_chain, char const aln_termi) {
 	Size resi = 0, nnt = 0, nct = 0;
-	for(Size i = 1; i <= pose.size(); ++i) {
-		if(pose.residue(i).is_lower_terminus()) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue(i).is_lower_terminus() ) {
 			nnt++;
-			if(aln_termi=='N' && nnt==aln_chain) {
+			if ( aln_termi=='N' && nnt==aln_chain ) {
 				resi = i;
 				break;
 			}
 		}
-		if(pose.residue(i).is_upper_terminus()) {
+		if ( pose.residue(i).is_upper_terminus() ) {
 			nct++;
-			if(aln_termi=='C' && nnt==aln_chain) {
+			if ( aln_termi=='C' && nnt==aln_chain ) {
 				resi = i;
 				break;
 			}
 		}
 	}
-	if( 0 == resi ) utility_exit_with_message("ImplicitClashData: could not find aln resi in input pose chain: "+ObjexxFCL::string_of(aln_chain)+" term: "+aln_termi);
+	if ( 0 == resi ) utility_exit_with_message("ImplicitClashData: could not find aln resi in input pose chain: "+ObjexxFCL::string_of(aln_chain)+" term: "+aln_termi);
 	return resi;
 }
 
@@ -187,13 +187,13 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	Pose lnk;
 	string ggs = "GGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGS";
 	make_pose_from_sequence( lnk , "A"+ggs.substr(0,len)+"A" , *resset , true);
-	for(Size i = 1; i <= lnk.size(); ++i) {
+	for ( Size i = 1; i <= lnk.size(); ++i ) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
 	}
 	FoldTree ft = lnk.fold_tree();
-	if(ft.num_jump() != 0) utility_exit_with_message("why is there a jump in the fold tree alreaduy?!?!?!");
+	if ( ft.num_jump() != 0 ) utility_exit_with_message("why is there a jump in the fold tree alreaduy?!?!?!");
 	ObjexxFCL::FArray2D_int jump_point(2,1);
 	ObjexxFCL::FArray1D_int cuts(1);
 	cuts(1) = lnk.size()/2;
@@ -208,13 +208,13 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	xform_pose(lnk, getxform(lnk.residue(     1         ),alnpose.residue(1)) );
 	xform_pose(lnk, getxform(lnk.residue(lnk.size()),alnpose.residue(2)), cuts(1)+1 ); // only after cutpoint
 
-	if( oldlnk.size() != 0 && oldlnk.size()+1 == lnk.size()) {
+	if ( oldlnk.size() != 0 && oldlnk.size()+1 == lnk.size() ) {
 		Size c = oldlnk.fold_tree().cutpoint(1);
-		for(Size i = 1; i <= c; ++i) {
+		for ( Size i = 1; i <= c; ++i ) {
 			lnk.set_phi(i, oldlnk.phi(i) );
 			lnk.set_psi(i, oldlnk.psi(i) );
 		}
-		for(Size i = 0; i < oldlnk.size()-c; ++i) {
+		for ( Size i = 0; i < oldlnk.size()-c; ++i ) {
 			lnk.set_phi(lnk.size()-i, oldlnk.phi(oldlnk.size()-i) );
 			lnk.set_psi(lnk.size()-i, oldlnk.psi(oldlnk.size()-i) );
 		}
@@ -229,7 +229,7 @@ void get_aln(Pose const & lnk, Pose const & psi, Pose const & hyd, Size & psialn
 	hydalnhyd = 0;
 	psialnlnk = 0;
 	psialnpsi = 0;
-	if(!basic::options::option[basic::options::OptionKeys::score::fastclash::implicit_clash_config].user()) {
+	if ( !basic::options::option[basic::options::OptionKeys::score::fastclash::implicit_clash_config].user() ) {
 		utility_exit_with_message("-score:fastclash:implicit_clash_config <file> is requited for ImplicitClashEnergy");
 	}
 	utility::io::izstream in( basic::options::option[basic::options::OptionKeys::score::fastclash::implicit_clash_config]() );
@@ -238,19 +238,19 @@ void get_aln(Pose const & lnk, Pose const & psi, Pose const & hyd, Size & psialn
 	std::string a1,a2,a3,a4;
 	Real dis;
 	std::string fn;
-	while( in >> c1 >> t1 >> c2 >> t2 >> dis >> fn >> a1 >> r1 >> a2 >> r2 >> a3 >> r3 >> a4 >> r4 ) {
-		if(t1==t2) utility_exit_with_message("ImplicitClashEnergy: cannot attach N to N or C to C");
-		if( fn == "input/hyda1_0001_strip_0001.pdb" ) {
+	while ( in >> c1 >> t1 >> c2 >> t2 >> dis >> fn >> a1 >> r1 >> a2 >> r2 >> a3 >> r3 >> a4 >> r4 ) {
+		if ( t1==t2 ) utility_exit_with_message("ImplicitClashEnergy: cannot attach N to N or C to C");
+		if ( fn == "input/hyda1_0001_strip_0001.pdb" ) {
 			hydalnlnk = get_aln_resi(lnk,c1,t1);
 			hydalnhyd = get_aln_resi(hyd,c2,t2);
 		}
-		if( fn == "input/psI_0001_strip_0001.pdb" ) {
+		if ( fn == "input/psI_0001_strip_0001.pdb" ) {
 			psialnlnk = get_aln_resi(lnk,c1,t1);
 			psialnpsi = get_aln_resi(psi,c2,t2);
 		}
 	}
 
-	if( 0==hydalnlnk ||	0==hydalnhyd ||	0==psialnlnk ||	0==psialnpsi ) {
+	if ( 0==hydalnlnk || 0==hydalnhyd || 0==psialnlnk || 0==psialnpsi ) {
 		utility_exit_with_message("couldn't find hyda/psi in fastclash input file");
 	}
 }
@@ -280,30 +280,30 @@ bool bound_petf_clash(
 	core::kinematics::Stub xhyd = getxform(hyd.residue(hydalnhyd),lnk.residue(hydalnlnk));
 
 	// check lnk against both petf
-	for(Size ir = 1; ir <= lnk.size(); ++ir) {
-		for(Size ia = 1; ia <= lnk.residue(ir).nheavyatoms(); ++ia) {
-			if( !psi_ifc.clash_check( xpsi.global2local( lnk.residue(ir).xyz(ia) ) ) ) {
+	for ( Size ir = 1; ir <= lnk.size(); ++ir ) {
+		for ( Size ia = 1; ia <= lnk.residue(ir).nheavyatoms(); ++ia ) {
+			if ( !psi_ifc.clash_check( xpsi.global2local( lnk.residue(ir).xyz(ia) ) ) ) {
 				psipetflnkclash = true;
 			}
-			if( !hyd_ifc.clash_check( xhyd.global2local( lnk.residue(ir).xyz(ia) ) ) ) {
+			if ( !hyd_ifc.clash_check( xhyd.global2local( lnk.residue(ir).xyz(ia) ) ) ) {
 				hydpetflnkclash = true;
 			}
 		}
 	}
 
 	// check hyd (lnk aln) against petf (bound to psi),
-	for(Size ir = 1; ir <= hyd.size(); ++ir) {
-		for(Size ia = 1; ia <= 5; ++ia) {
-			if( !psi_ifc.clash_check( xpsi.global2local( xhyd.local2global( hyd.residue(ir).xyz(ia) ) ) ) ) {
+	for ( Size ir = 1; ir <= hyd.size(); ++ir ) {
+		for ( Size ia = 1; ia <= 5; ++ia ) {
+			if ( !psi_ifc.clash_check( xpsi.global2local( xhyd.local2global( hyd.residue(ir).xyz(ia) ) ) ) ) {
 				psipetfhydclash = true;
 			}
 		}
 	}
 
 	// check psi (lnk aln) against petf (bound to hyd),
-	for(Size ir = 1; ir <= psi.size(); ++ir) {
-		for(Size ia = 1; ia <= 5; ++ia) {
-			if( !hyd_ifc.clash_check( xhyd.global2local( xpsi.local2global( psi.residue(ir).xyz(ia) ) ) ) ) {
+	for ( Size ir = 1; ir <= psi.size(); ++ir ) {
+		for ( Size ia = 1; ia <= 5; ++ia ) {
+			if ( !hyd_ifc.clash_check( xhyd.global2local( xpsi.local2global( psi.residue(ir).xyz(ia) ) ) ) ) {
 				hydpetfpsiclash = true;
 			}
 		}
@@ -342,7 +342,7 @@ void* doit(void*) {
 	TR << "linker2 size " << linklen2 << " seq2: " << seq2 << std::endl;
 
 	make_pose_from_sequence(lnk,seq1,*cenresset,true);
-	for(Size i = 1; i <= lnk.size(); ++i) {
+	for ( Size i = 1; i <= lnk.size(); ++i ) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
@@ -386,18 +386,18 @@ void* doit(void*) {
 
 	protocols::moves::MoverOP bbmove;
 	string const bb_samp_method = option[ rblinker::bb_samp_method ]();
-	/**/ if( "simplegaussian1"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 1.0); TR << "bb_samp_method bbg1"    << std::endl; }
-	else if( "simplegaussian5"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 5.0); TR << "bb_samp_method bbg5"    << std::endl; }
-	else if( "simplegaussian10" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),10.0); TR << "bb_samp_method bbg10"   << std::endl; }
-	else if( "simplegaussian20" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),20.0); TR << "bb_samp_method bbg20"   << std::endl; }
-	else if( "simplegaussian30" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),30.0); TR << "bb_samp_method bbg30"   << std::endl; }
-	else if( "simplegaussian60" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),60.0); TR << "bb_samp_method bbg60"   << std::endl; }
-	else if( "uniform"          == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 9e6); TR << "bb_samp_method uniform" << std::endl; }
-	else if( "bbg8t3a"          == bb_samp_method ) { bbmove = new protocols::simple_moves::BBG8T3AMover();      TR << "bb_samp_method bbg8t3a" << std::endl; }
-	else if( "jump"             == bb_samp_method ) {
+	/**/ if ( "simplegaussian1"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 1.0); TR << "bb_samp_method bbg1"    << std::endl; }
+	else if ( "simplegaussian5"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 5.0); TR << "bb_samp_method bbg5"    << std::endl; }
+	else if ( "simplegaussian10" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),10.0); TR << "bb_samp_method bbg10"   << std::endl; }
+	else if ( "simplegaussian20" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),20.0); TR << "bb_samp_method bbg20"   << std::endl; }
+	else if ( "simplegaussian30" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),30.0); TR << "bb_samp_method bbg30"   << std::endl; }
+	else if ( "simplegaussian60" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),60.0); TR << "bb_samp_method bbg60"   << std::endl; }
+	else if ( "uniform"          == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 9e6); TR << "bb_samp_method uniform" << std::endl; }
+	else if ( "bbg8t3a"          == bb_samp_method ) { bbmove = new protocols::simple_moves::BBG8T3AMover();      TR << "bb_samp_method bbg8t3a" << std::endl; }
+	else if ( "jump"             == bb_samp_method ) {
 		TR << "bb_samp_method jump" << std::endl;
 		FoldTree ft = lnk.fold_tree();
-		if(ft.num_jump() == 0) {
+		if ( ft.num_jump() == 0 ) {
 			ObjexxFCL::FArray2D_int jump_point(2,1);
 			ObjexxFCL::FArray1D_int cuts(1);
 			cuts(1) = 1;
@@ -407,19 +407,18 @@ void* doit(void*) {
 			lnk.fold_tree(ft);
 		}
 		bbmove = new rigid::RigidBodyPerturbMover(1, 10.0, 1.0);
-	}
-	else utility_exit_with_message("unknown option value for -rblinker:bb_samp_methd");
+	} else utility_exit_with_message("unknown option value for -rblinker:bb_samp_methd");
 
 	TR << "try to find starting config without clash...." << std::endl;
 	MoverOP bigbbmove = new SimpleBBMover(1,lnk.size(),9e6);
-	if( "jump" == bb_samp_method ) bigbbmove = bbmove;
-	for(int precount = 1; precount < option[rblinker::nclashtrials](); precount++ ) {
+	if ( "jump" == bb_samp_method ) bigbbmove = bbmove;
+	for ( int precount = 1; precount < option[rblinker::nclashtrials](); precount++ ) {
 		bigbbmove->apply(lnk);
-		if(option[rblinker::debug]()) lnk.dump_pdb("test_"+ObjexxFCL::lead_zero_string_of(precount,7)+"_0.pdb");
-		if( sf->score(lnk) < 9e5) break;
-		if(option[rblinker::debug]()) lnk.dump_pdb("test_"+ObjexxFCL::lead_zero_string_of(precount,7)+"_1.pdb");
+		if ( option[rblinker::debug]() ) lnk.dump_pdb("test_"+ObjexxFCL::lead_zero_string_of(precount,7)+"_0.pdb");
+		if ( sf->score(lnk) < 9e5 ) break;
+		if ( option[rblinker::debug]() ) lnk.dump_pdb("test_"+ObjexxFCL::lead_zero_string_of(precount,7)+"_1.pdb");
 	}
-	if(lnk.energies().total_energies()[core::scoring::fastclash] > 9e5) utility_exit_with_message("failed to find starting pos w/o clash! nclashtrial "+string_of(option[rblinker::nclashtrials]()));
+	if ( lnk.energies().total_energies()[core::scoring::fastclash] > 9e5 ) utility_exit_with_message("failed to find starting pos w/o clash! nclashtrial "+string_of(option[rblinker::nclashtrials]()));
 	TR << "found starting config without clash...." << std::endl;
 
 	utility::vector1<Size> hist(100,0);
@@ -427,58 +426,58 @@ void* doit(void*) {
 	std::set<unsigned long> coverage;
 	Size accepts=0, totsamp=0, totclash=0;
 	Size tothydpetflnkclash=0,totpsipetflnkclash=0,tothydpetfpsiclash=0,totpsipetfhydclash=0;
-	for(int ITER = 1; ITER <= option[rblinker::ntrials](); ITER++) {
+	for ( int ITER = 1; ITER <= option[rblinker::ntrials](); ITER++ ) {
 		// TR << "ITER " << ITER << std::endl;
 
 		MonteCarloOP mc1 = new MonteCarlo( lnk, *sf, 2.0 );
 		mc1->set_autotemp( true, 2.0 ); mc1->set_temperature( 2.0 );
 		TrialMover trial(bbmove,mc1);
 
-		for(int j = 1; j <= option[rblinker::nsubtrials](); j++) {
+		for ( int j = 1; j <= option[rblinker::nsubtrials](); j++ ) {
 			trial.apply(lnk);
 			coverage.insert( pose2bin(lnk) );
 			Real d = lnk.energies().total_energies()[core::scoring::implicitdock];
 			bool hydpetflnkclash,psipetflnkclash,hydpetfpsiclash,psipetfhydclash;
 			bool clash = bound_petf_clash(lnk,psi,hyd,psialnlnk,psialnpsi,hydalnlnk,hydalnhyd,psi_petf_ifc,hyd_petf_ifc,hydpetflnkclash,psipetflnkclash,hydpetfpsiclash,psipetfhydclash);
-			if(clash) histc[numeric::max(numeric::min(100,int(d)),1)]++;
+			if ( clash ) histc[numeric::max(numeric::min(100,int(d)),1)]++;
 			else      hist [numeric::max(numeric::min(100,int(d)),1)]++;
 			totsamp++;
-			if(clash) totclash++;
-			if(hydpetflnkclash) tothydpetflnkclash++;
-			if(psipetflnkclash) totpsipetflnkclash++;
-			if(hydpetfpsiclash) tothydpetfpsiclash++;
-			if(psipetfhydclash) totpsipetfhydclash++;
+			if ( clash ) totclash++;
+			if ( hydpetflnkclash ) tothydpetflnkclash++;
+			if ( psipetflnkclash ) totpsipetflnkclash++;
+			if ( hydpetfpsiclash ) tothydpetfpsiclash++;
+			if ( psipetfhydclash ) totpsipetfhydclash++;
 
 		}
 		accepts += trial.num_accepts();
 
-		if(lnk.energies().total_energies()[core::scoring::fastclash] > 9e5) utility_exit_with_message("has clash!!!! exiting!");
+		if ( lnk.energies().total_energies()[core::scoring::fastclash] > 9e5 ) utility_exit_with_message("has clash!!!! exiting!");
 
 		TR << "PETFCLASH: " << ITER*10000 << " accepts: " << accepts << " coverage: " << coverage.size() << " bclash frac " << Real(totclash)/Real(totsamp) << " "
-		   << Real(tothydpetflnkclash)/Real(totclash) << " " << Real(totpsipetflnkclash)/Real(totclash) << " " << Real(tothydpetfpsiclash)/Real(totclash) << " " << Real(totpsipetfhydclash)/Real(totclash) << std::endl;
+			<< Real(tothydpetflnkclash)/Real(totclash) << " " << Real(totpsipetflnkclash)/Real(totclash) << " " << Real(tothydpetfpsiclash)/Real(totclash) << " " << Real(totpsipetfhydclash)/Real(totclash) << std::endl;
 		TR << "ITER: " << ITER*10000 << " accepts: " << accepts << " coverage: " << coverage.size() << " bclash frac " << Real(totclash)/Real(totsamp) << " HIST ";
-		for(Size i = 1; i <= hist .size(); ++i) TR << hist [i] << " ";
-		for(Size i = 1; i <= histc.size(); ++i) TR << histc[i] << " ";
+		for ( Size i = 1; i <= hist .size(); ++i ) TR << hist [i] << " ";
+		for ( Size i = 1; i <= histc.size(); ++i ) TR << histc[i] << " ";
 		TR << "HISTEND" << std::endl;
 
-		if(false) {
+		if ( false ) {
 			std::string  fn = option[out::file::o]()+"/"+"rblinker2_out_"+ObjexxFCL::lead_zero_string_of(ITER,9)+"_nclsh.pdb";
 			bool tmpa,tmpb,tmpc,tmpd;
 			bool clash = bound_petf_clash(lnk,psi,hyd,psialnlnk,psialnpsi,hydalnlnk,hydalnhyd,psi_petf_ifc,hyd_petf_ifc,tmpa,tmpb,tmpc,tmpd);
-			if(clash) {
+			if ( clash ) {
 				fn = option[out::file::o]()+"/"+"rblinker2_out_"+ObjexxFCL::lead_zero_string_of(ITER,9)+"_clash.pdb";
 			}
 			protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures(fn,lnk);
 			core::kinematics::Stub xpsi = getxform(psi.residue(psialnpsi),lnk.residue(psialnlnk));
 			core::kinematics::Stub xhyd = getxform(hyd.residue(hydalnhyd),lnk.residue(hydalnlnk));
 			ozstream out(fn+"_petf.pdb");
-			for(Size i = 1; i <= psi_petf_poses.size(); ++i) {
+			for ( Size i = 1; i <= psi_petf_poses.size(); ++i ) {
 				Pose tmp = psi_petf_poses[i];
 				xform_pose(tmp,xpsi);
 				xform_pose_rev(tmp,xpsi);
 				tmp.dump_pdb(out);
 			}
-			for(Size i = 1; i <= hyd_petf_poses.size(); ++i) {
+			for ( Size i = 1; i <= hyd_petf_poses.size(); ++i ) {
 				Pose tmp = hyd_petf_poses[i];
 				xform_pose(tmp,xhyd);
 				xform_pose_rev(tmp,xpsi);
@@ -489,25 +488,25 @@ void* doit(void*) {
 
 		// output in LNK coord frame
 		// {
-		// 	Pose tmp = psi;
-		// 	xform_pose(tmp,xpsi);
-		// 	tmp.dump_pdb("psi.pdb");
+		//  Pose tmp = psi;
+		//  xform_pose(tmp,xpsi);
+		//  tmp.dump_pdb("psi.pdb");
 		// }
 		// for(Size i = 1; i <= psi_petf_poses.size(); ++i) {
-		// 	Pose tmp = psi_petf_poses[i];
-		// 	xform_pose(tmp,xpsi);
-		// 	tmp.dump_pdb("petf_psi_"+ObjexxFCL::lead_zero_string_of(i,4)+".pdb");
+		//  Pose tmp = psi_petf_poses[i];
+		//  xform_pose(tmp,xpsi);
+		//  tmp.dump_pdb("petf_psi_"+ObjexxFCL::lead_zero_string_of(i,4)+".pdb");
 		// }
 		// lnk.dump_pdb("lnk.pdb");
 		// {
-		// 	Pose tmp = hyd;
-		// 	xform_pose(tmp,xhyd);
-		// 	tmp.dump_pdb("hyda.pdb");
+		//  Pose tmp = hyd;
+		//  xform_pose(tmp,xhyd);
+		//  tmp.dump_pdb("hyda.pdb");
 		// }
 		// for(Size i = 1; i <= hyd_petf_poses.size(); ++i) {
-		// 	Pose tmp = hyd_petf_poses[i];
-		// 	xform_pose(tmp,xhyd);
-		// 	tmp.dump_pdb("petf_hyd_"+ObjexxFCL::lead_zero_string_of(i,4)+".pdb");
+		//  Pose tmp = hyd_petf_poses[i];
+		//  xform_pose(tmp,xhyd);
+		//  tmp.dump_pdb("petf_hyd_"+ObjexxFCL::lead_zero_string_of(i,4)+".pdb");
 		// }
 		// utility_exit_with_message("DEBUG PETF/PSI ALIGN");
 	}
@@ -520,14 +519,14 @@ int main( int argc, char * argv [] ) {
 
 	try {
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	void* (*func)(void*) = &doit;
-	if (option[ basic::options::OptionKeys::parser::view ]()) {
-		protocols::viewer::viewer_main( func );
-	} else {
-		func(NULL);
-	}
+		void* (*func)(void*) = &doit;
+		if ( option[ basic::options::OptionKeys::parser::view ]() ) {
+			protocols::viewer::viewer_main( func );
+		} else {
+			func(NULL);
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

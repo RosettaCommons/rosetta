@@ -17,10 +17,9 @@
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.RBOutMover" );
+static basic::Tracer TR( "protocols.simple_moves.RBOutMover" );
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>

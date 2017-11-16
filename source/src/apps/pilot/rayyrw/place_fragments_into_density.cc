@@ -79,8 +79,8 @@
 #include <apps/pilot/rayyrw/util.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR("place_fragment_into_density");
-static THREAD_LOCAL basic::Tracer func("density_grid_search_func");
+static basic::Tracer TR("place_fragment_into_density");
+static basic::Tracer func("density_grid_search_func");
 
 // options declaration
 class ThisApplication  {

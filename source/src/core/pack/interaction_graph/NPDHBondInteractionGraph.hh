@@ -68,7 +68,7 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.npd_hbond_ig" );
+static basic::Tracer TR( "core.pack.npd_hbond_ig" );
 
 template < typename V, typename E, typename G > class NPDHBondNode;
 template < typename V, typename E, typename G > class NPDHBondBackgroundNode;

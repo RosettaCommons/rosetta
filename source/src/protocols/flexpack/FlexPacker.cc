@@ -47,7 +47,7 @@
 namespace protocols {
 namespace flexpack {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.flexpack.FlexPacker" );
+static basic::Tracer tr( "protocols.flexpack.FlexPacker" );
 
 typedef core::PackerEnergy PackerEnergy;
 

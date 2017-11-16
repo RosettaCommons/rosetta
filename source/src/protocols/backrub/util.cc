@@ -36,7 +36,7 @@
 #include <core/kinematics/Jump.hh>
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.backrub.util");
+static basic::Tracer TR("protocols.backrub.util");
 
 namespace protocols {
 namespace backrub {

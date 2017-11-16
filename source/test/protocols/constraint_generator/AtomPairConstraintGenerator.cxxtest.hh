@@ -48,7 +48,7 @@
 using namespace core::scoring::constraints;
 using namespace protocols::constraint_generator;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.AtomPairConstraintGenerator.cxxtest.hh" );
+static basic::Tracer TR( "protocols.constraint_generator.AtomPairConstraintGenerator.cxxtest.hh" );
 
 class AtomPairConstraintGeneratorTests : public CxxTest::TestSuite {
 

@@ -17,7 +17,7 @@
 //   +-Monte Carlo Mover---------------------------------------+
 //   | +-Random Mover--------------------------------------+ | |
 //   | | +-Docking Mover-----------------------------------+ | |
-//   | | | small rigid body movements between the peptide	 | | |
+//   | | | small rigid body movements between the peptide  | | |
 //   | | | and protein for conformational diversity        | | |
 //   | | +-------------------------------------------------+ | |
 //   | | +-Termini Modeling--------------------------------+ | |
@@ -38,8 +38,8 @@
 // Design Minimization Phase
 //   +-Monte Carlo Mover---------------------------------------+
 //   | +-Pack Rotamers Mover---------------------------------+ |
-//   | | repack and design rotamers to explore sequence 	   | |
-//   | | space  	                                           | |
+//   | | repack and design rotamers to explore sequence     | |
+//   | | space                                              | |
 //   | +-----------------------------------------------------+ |
 //   | +-Minimization Mover----------------------------------+ |
 //   | | energy minimize the current conformation before     | |
@@ -136,13 +136,12 @@ using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::id;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
 // tracer
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.doug" );
+static basic::Tracer TR( "apps.pilot.doug" );
 
 // application specific options
 namespace dddm {
@@ -201,11 +200,11 @@ int
 main( int argc, char* argv[] )
 {
 	/*********************************************************************************************************************
-	  ____                                         ____  _       	  __  __
-	 / ___|___  _ __ ___  _	__ ___ 	 ___  _	__		/ ___||	|_ _   _ / _|/ _|
-	| |   /	_ \| '_	` _ \| '_ ` _ \	/ _ \| '_ \		\___ \|	__| | |	| |_| |_
-	| |__| (_) | | | | | | | | | | | (_) | | | |	 ___) |	|_| |_|	|  _|  _|
-	 \____\___/|_| |_| |_|_| |_| |_|\___/|_| |_|	|____/ \__|\__,_|_| |_|
+	____                                         ____  _          __  __
+	/ ___|___  _ __ ___  _ __ ___   ___  _ __  / ___|| |_ _   _ / _|/ _|
+	| |   / _ \| '_ ` _ \| '_ ` _ \ / _ \| '_ \  \___ \| __| | | | |_| |_
+	| |__| (_) | | | | | | | | | | | (_) | | | |  ___) | |_| |_| |  _|  _|
+	\____\___/|_| |_| |_|_| |_| |_|\___/|_| |_| |____/ \__|\__,_|_| |_|
 
 	**********************************************************************************************************************/
 	using namespace basic::options;
@@ -264,16 +263,16 @@ main( int argc, char* argv[] )
 
 void
 DougsDockDesignMinimizeMagicMover::apply(
-   core::pose::Pose & pose
+	core::pose::Pose & pose
 )
 {
 
 	// create score function
 	TR << "Creating ScoreFunction..." << std::endl;
 	core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::MM_STD_WTS ) );
-	score_fxn->set_weight(	core::scoring::atom_pair_constraint, 1 );
-	score_fxn->set_weight(	core::scoring::angle_constraint, 1 );
-	score_fxn->set_weight(	core::scoring::dihedral_constraint, 1 );
+	score_fxn->set_weight( core::scoring::atom_pair_constraint, 1 );
+	score_fxn->set_weight( core::scoring::angle_constraint, 1 );
+	score_fxn->set_weight( core::scoring::dihedral_constraint, 1 );
 
 	// get a fold tree hopfully suitable for docking and loop modeling
 	TR << "Creating Foldtree" << std::endl;
@@ -288,11 +287,11 @@ DougsDockDesignMinimizeMagicMover::apply(
 	pmm->keep_history( true );
 
 	/*********************************************************************************************************************
-	 ____  	       	_      	       _       	   _   _                ____  _
-	|  _ \ ___ _ __| |_ _  	_ _ __|	|__   __ _| |_(_) ___  _ __		 |  _ \| |__   __ _ ___  ___
-	| |_) /	_ \ '__| __| | | | '__|	'_ \ / _` | __|	|/ _ \|	'_ \	 | |_) |	_ \ / _` / __|/ _ \
-	|  __/ 	__/ |  | |_| |_| | |  |	|_) | (_| | |_|	| (_) |	| | |	 |  __/| | | | (_| \__ \  __/
-	|_|   \___|_|  	\__|\__,_|_|  |_.__/ \__,_|\__|_|\___/|_| |_|	 |_|   |_| |_|\__,_|___/\___|
+	____           _              _           _   _                ____  _
+	|  _ \ ___ _ __| |_ _   _ _ __| |__   __ _| |_(_) ___  _ __   |  _ \| |__   __ _ ___  ___
+	| |_) / _ \ '__| __| | | | '__| '_ \ / _` | __| |/ _ \| '_ \  | |_) | _ \ / _` / __|/ _ \
+	|  __/  __/ |  | |_| |_| | |  | |_) | (_| | |_| | (_) | | | |  |  __/| | | | (_| \__ \  __/
+	|_|   \___|_|   \__|\__,_|_|  |_.__/ \__,_|\__|_|\___/|_| |_|  |_|   |_| |_|\__,_|___/\___|
 
 	**********************************************************************************************************************/
 
@@ -300,11 +299,11 @@ DougsDockDesignMinimizeMagicMover::apply(
 	moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, option[ dddm::pert_mc_temp ].value() ) );
 
 	/*********************************************************
-	  ___	       	 _   _ 	       	   ___ 	    _
-	 |   \ ___  __| |_(_)_ _  __ _  / __|	___| |_	_  _ _ __
-	 | |)	/ _ \/ _| / / |	' \/ _`	| \__ \/ -_)  _| || | '_ \
-	 |___/\___/\__|_\_\_|_||_\__,	| |___/\___|\__|\_,_| .__/
-	     	       	       	   |___/       	       	    |_|
+	___          _   _             ___      _
+	|   \ ___  __| |_(_)_ _  __ _  / __| ___| |_ _  _ _ __
+	| |) / _ \/ _| / / | ' \/ _` | \__ \/ -_)  _| || | '_ \
+	|___/\___/\__|_\_\_|_||_\__, | |___/\___|\__|\_,_| .__/
+	|___/                    |_|
 	**********************************************************/
 
 	// create a rigid body mover to move the peptide around in the pocket
@@ -312,11 +311,11 @@ DougsDockDesignMinimizeMagicMover::apply(
 	rigid::RigidBodyPerturbMoverOP pert_dock_rbpm( new rigid::RigidBodyPerturbMover(1, option[ dddm::pert_dock_rot_mag].value(),  option[ dddm::pert_dock_trans_mag].value()) );
 
 	/*********************************************************
-	  ___	       	 _   _ 	  _    	  ___  	   _
-	 | _ \___ _ __| |_(_)__| |___	 / __| ___| |_ _  _ _ __
-	 |  _/ -_) '_	\  _| /	_` / -_) \__ \/	-_)  _|	|| | '_	\
-	 |_| \___| .__/\__|_\__,_\___| |___/\___|\__|\_,_| .__/
-	     	   |_| 	       	       	       	       	   |_|
+	___          _   _    _       ___      _
+	| _ \___ _ __| |_(_)__| |___  / __| ___| |_ _  _ _ __
+	|  _/ -_) '_ \  _| / _` / -_) \__ \/ -_)  _| || | '_ \
+	|_| \___| .__/\__|_\__,_\___| |___/\___|\__|\_,_| .__/
+	|_|                                     |_|
 	**********************************************************/
 	TR << "Setting up peptide movers..." << std::endl;
 
@@ -351,11 +350,11 @@ DougsDockDesignMinimizeMagicMover::apply(
 
 
 	/******************************************************************************
-	  ___	    _  	       	       	  _____	   _   	  _    	 ___   	  _
-	 | _ \___| |_	__ _ _ __  ___ _ |_   _| _(_)__	_| |___	/ __| ___| |_ _	 _ _ __
-	 |   / _ \  _/ _` | '	 \/ -_)	'_|| ||	'_| / _` | (_-<	\__ \/ -_)  _| || | '_ \
-	 |_|_\___/\__\__,_|_|_|_\___|_|  |_||_| |_\__,_|_/__/	|___/\___|\__|\_,_| .__/
-	     	       	       	       	       	       	       	       	       	  |_|
+	___     _                     _____    _      _      ___      _
+	| _ \___| |_ __ _ _ __  ___ _ |_   _| _(_)__ _| |___ / __| ___| |_ _  _ _ __
+	|   / _ \  _/ _` | '  \/ -_) '_|| || '_| / _` | (_-< \__ \/ -_)  _| || | '_ \
+	|_|_\___/\__\__,_|_|_|_\___|_|  |_||_| |_\__,_|_/__/ |___/\___|\__|\_,_| .__/
+	|_|
 	*******************************************************************************/
 	TR << "Setting up RT movers..." << std::endl;
 
@@ -376,11 +375,11 @@ DougsDockDesignMinimizeMagicMover::apply(
 	protocols::simple_moves::RotamerTrialsMoverOP pert_rt(new protocols::simple_moves::EnergyCutRotamerTrialsMover( score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	/*********************************************************
-	   ___       	       	       	    ___	     _
-	  / __|___ _ __  _ __	 ___ _ _   / __| ___| |_ _  _ _	__
-	 | (__/ _ \ '	 \| '  \/ _ \ '	\  \__ \/ -_)  _| || | '_ \
-	  \___\___/_|_|_|_|_|_\___/_||_| |___/\___|\__|\_,_| .__/
-	     	       	       	       	       	       	     |_|
+	___                            ___      _
+	/ __|___ _ __  _ __  ___ _ _   / __| ___| |_ _  _ _ __
+	| (__/ _ \ '  \| '  \/ _ \ ' \  \__ \/ -_)  _| || | '_ \
+	\___\___/_|_|_|_|_|_\___/_||_| |___/\___|\__|\_,_| .__/
+	|_|
 	**********************************************************/
 
 	// create a random mover to hold the docking, termini, and peptide pertubation movers
@@ -400,19 +399,19 @@ DougsDockDesignMinimizeMagicMover::apply(
 	moves::TrialMoverOP pert_trial( new moves::TrialMover( pert_sequence, pert_mc ) );
 
 	/*********************************************************************************************************************
-	 ____  	       	 _		             __  __ _	         ____  _
-	|  _ \ 	___  ___(_) __ _ _ __	    |  \/	 (_)_ __    |  _ \| |__	  __ _ ___  ___
-	| | | |/ _ \/ __| |/ _`	| '_ \	  | |\/| | | '_	\   | |_) | '_ \ / _` /	__|/ _ \
-	| |_| |	 __/\__	\ | (_|	| | | |	  | |  | | | | | |  |  __/| | |	| (_| \__ \  __/
-	|____/ \___||___/_|\__,	|_| |_|	  |_|  |_|_|_| |_|  |_|	  |_| |_|\__,_|___/\___|
-	       	       	   |___/
+	____            _               __  __ _          ____  _
+	|  _ \  ___  ___(_) __ _ _ __     |  \/  (_)_ __    |  _ \| |__   __ _ ___  ___
+	| | | |/ _ \/ __| |/ _` | '_ \   | |\/| | | '_ \   | |_) | '_ \ / _` / __|/ _ \
+	| |_| |  __/\__ \ | (_| | | | |   | |  | | | | | |  |  __/| | | | (_| \__ \  __/
+	|____/ \___||___/_|\__, |_| |_|   |_|  |_|_|_| |_|  |_|   |_| |_|\__,_|___/\___|
+	|___/
 	**********************************************************************************************************************/
 	/*********************************************************
-	  ___	       	_      	      ___      _
-	 |   \ ___ __(_)__ _ _ _   / __| ___|	|_ _  _	_ __
-	 | |)	/ -_|_-< / _` |	' \  \__ \/ -_)	 _| || | '_ \
-	 |___/\___/__/_\__, |_||_| |___/\___|\__|\_,_| .__/
-	     	       	 |___/ 	       	       	       |_|
+	___         _             ___      _
+	|   \ ___ __(_)__ _ _ _   / __| ___| |_ _  _ _ __
+	| |) / -_|_-< / _` | ' \  \__ \/ -_)  _| || | '_ \
+	|___/\___/__/_\__, |_||_| |___/\___|\__|\_,_| .__/
+	|___/                         |_|
 	**********************************************************/
 	TR << "Setting up design movers..." << std::endl;
 
@@ -434,11 +433,11 @@ DougsDockDesignMinimizeMagicMover::apply(
 
 
 	/*********************************************************
-	  __ 	__ _   	  _    	  _    	     ___      _
-	 |  \/  (_)_ _ (_)_ __ (_)______  / __| ___| |_ _  _ _ __
-	 | |\/| | | '	\| | ' 	\| |_ /	-_) \__	\/ -_) 	_| || |	'_ \
-	 |_| 	|_|_|_||_|_|_|_|_|_/__\___| |___/\___|\__|\_,_|	.__/
-	     	       	       	       	       	       	      |_|
+	__  __ _      _       _          ___      _
+	|  \/  (_)_ _ (_)_ __ (_)______  / __| ___| |_ _  _ _ __
+	| |\/| | | ' \| | '  \| |_ / -_) \__ \/ -_)  _| || | '_ \
+	|_|  |_|_|_||_|_|_|_|_|_/__\___| |___/\___|\__|\_,_| .__/
+	|_|
 	**********************************************************/
 	TR << "Setting up minimization movers..." << std::endl;
 
@@ -449,12 +448,12 @@ DougsDockDesignMinimizeMagicMover::apply(
 	desn_mm->set_jump( 1, true );
 
 	// make all the residues on the peptide we are moving minimizable
-	for( Size i = pep1_start; i <= pep1_end; ++i ) {
+	for ( Size i = pep1_start; i <= pep1_end; ++i ) {
 		desn_mm->set_bb( i, true );
 	}
 
 	// create minimization mover
-	protocols::simple_moves::MinMoverOP desn_min( new protocols::simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	protocols::simple_moves::MinMoverOP desn_min( new protocols::simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
@@ -462,11 +461,11 @@ DougsDockDesignMinimizeMagicMover::apply(
 	protocols::simple_moves::TaskAwareMinMoverOP desn_ta_min = new protocols::simple_moves::TaskAwareMinMover( desn_min, desn_tf );
 
 	/*********************************************************
-	   ___       	       	       	    ___	     _
-	  / __|___ _ __  _ __	 ___ _ _   / __| ___| |_ _  _ _	__
-	 | (__/ _ \ '	 \| '  \/ _ \ '	\  \__ \/ -_)  _| || | '_ \
-	  \___\___/_|_|_|_|_|_\___/_||_| |___/\___|\__|\_,_| .__/
-	     	       	       	       	       	       	     |_|
+	___                            ___      _
+	/ __|___ _ __  _ __  ___ _ _   / __| ___| |_ _  _ _ __
+	| (__/ _ \ '  \| '  \/ _ \ ' \  \__ \/ -_)  _| || | '_ \
+	\___\___/_|_|_|_|_|_\___/_||_| |___/\___|\__|\_,_| .__/
+	|_|
 	**********************************************************/
 
 	// create a sequence mover to hold pack rotamers and minimization movers
@@ -475,12 +474,12 @@ DougsDockDesignMinimizeMagicMover::apply(
 	desn_sequence->add_mover( desn_ta_min );
 
 	/*********************************************************************************************************************
-	 __  __	      _	       	_
-	|  \/  | __ _(_)_ __   | |    ___   ___	 _ __
+	__  __       _         _
+	|  \/  | __ _(_)_ __   | |    ___   ___  _ __
 	| |\/| |/ _` | | '_ \  | |   / _ \ / _ \| '_ \
-	| |  | | (_| | | | | | | |__| (_) | (_)	| |_) |
+	| |  | | (_| | | | | | | |__| (_) | (_) | |_) |
 	|_|  |_|\__,_|_|_| |_| |_____\___/ \___/| .__/
-	       	       	       	       	       	|_|
+	|_|
 	**********************************************************************************************************************/
 	TR << "Starting main loop..." << std::endl;
 
@@ -494,7 +493,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 
 		// pert loop
 		pert_mc->reset(pose);
-		for( Size j = 1; j <= Size( option[ dddm::pert_num ].value() ); ++j )	{
+		for ( Size j = 1; j <= Size( option[ dddm::pert_num ].value() ); ++j ) {
 			pert_trial->apply( pose );
 			job_me->add_string_real_pair( "ENERGY_PERT", (*score_fxn)(pose) );
 		}
@@ -519,8 +518,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 
 			// final min (okay to use ta min here)
 			desn_ta_min->apply( pose );
-		}
-		else {
+		} else {
 			// design
 			desn_sequence->apply( pose );
 			job_me->add_string_real_pair( "ENERGY_DESN", (*score_fxn)(pose) );
@@ -531,7 +529,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 
 	TR << "Checking pose energy..." << std::endl;
 
-		// create  MetricValues
+	// create  MetricValues
 	basic::MetricValue< core::Real > mv_sasa_complex;
 	basic::MetricValue< core::Real > mv_sasa_seperated;
 	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_complex;
@@ -551,9 +549,8 @@ DougsDockDesignMinimizeMagicMover::apply(
 		TR << "Energy, " << energy_complex << " greater than cutoff, setting status to FAIL_RETRY..." << std::endl;
 		set_last_move_status(protocols::moves::FAIL_RETRY);
 		return;
-	}
-	// if pose is less than cutoff do a large final design and run filters
-	else {
+	} else {
+		// if pose is less than cutoff do a large final design and run filters
 
 		TR << "Energy less than cutoff, doing final design and running filters..." << std::endl;
 
@@ -631,7 +628,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 // this function setup the fold tree properly for docking
 void
 DougsDockDesignMinimizeMagicMover::setup_pert_foldtree(
-  core::pose::Pose & pose
+	core::pose::Pose & pose
 )
 {
 	using namespace kinematics;
@@ -643,11 +640,11 @@ DougsDockDesignMinimizeMagicMover::setup_pert_foldtree(
 	f.clear();
 
 	/*********************************************************
-	  ___	       	 _     	  _
-	 |   \ ___  __| |__  _ | |_  _ _ __  _ __ ___
-	 | |)	/ _ \/ _| / / |	|| | ||	| '  \|	'_ (_-<
-	 |___/\___/\__|_\_\  \__/ \_,_|_|_|_|	.__/__/
-	     	       	       	       	      |_|
+	___          _        _
+	|   \ ___  __| |__  _ | |_  _ _ __  _ __ ___
+	| |) / _ \/ _| / / | || | || | '  \| '_ (_-<
+	|___/\___/\__|_\_\  \__/ \_,_|_|_|_| .__/__/
+	|_|
 	**********************************************************/
 
 	// get the start and end for both chains
@@ -686,12 +683,12 @@ void
 DougsDockDesignMinimizeMagicMover::setup_filter_stats()
 {
 	/*********************************************************************************************************************
-  _____	_ _ _  	       	      __  ____ 	_      	 _           ____	      _
- |  ___(_) | |_	___ _ __     / / / ___|| |_ __ _| |_ ___	  / ___|  ___| |_ _   _	_ __
- | |_  | | | __/ _ \ '__|   / /	 \___ \| __/ _`	| __/ __|	  \___ \ / _ \ __| | | | '_ \
- |  _| | | | ||	 __/ | 	   / / 	  ___) | || (_|	| |_\__	\	   ___)	|  __/ |_| |_| | |_) |
- |_|   |_|_|\__\___|_| 	  /_/  	 |____/	\__\__,_|\__|___/	  |____/ \___|\__|\__,_| .__/
-																													       	       	       |_|
+	_____ _ _ _                 __  ____  _        _           ____       _
+	|  ___(_) | |_ ___ _ __     / / / ___|| |_ __ _| |_ ___   / ___|  ___| |_ _   _ _ __
+	| |_  | | | __/ _ \ '__|   / /  \___ \| __/ _` | __/ __|   \___ \ / _ \ __| | | | '_ \
+	|  _| | | | ||  __/ |     / /    ___) | || (_| | |_\__ \    ___) |  __/ |_| |_| | |_) |
+	|_|   |_|_|\__\___|_|    /_/    |____/ \__\__,_|\__|___/   |____/ \___|\__|\__,_| .__/
+	|_|
 	*********************************************************************************************************************/
 
 	// create and register sasa calculator

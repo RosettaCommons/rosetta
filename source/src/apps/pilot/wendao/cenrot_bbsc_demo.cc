@@ -106,7 +106,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 //////////////////////////////////////////////////////////////////
-static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.cenrot" );
+static basic::Tracer TR( "pilot.wendao.cenrot" );
 
 void relax_cenrot_pose(core::pose::PoseOP &native_pose,
 	core::pose::Pose & p, std::string const &tag);
@@ -132,15 +132,14 @@ int main( int argc, char * argv [] ) {
 
 	//load native pdb
 	PoseOP native_pose;
-	if (option[in::file::native].user()) {
+	if ( option[in::file::native].user() ) {
 		native_pose = new Pose();
 		core::import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
-	if (option[ in::file::s ].user()) {
+	if ( option[ in::file::s ].user() ) {
 		Size npdbs = option[ in::file::s ]().size();
-		for (Size npdb=1; npdb<=npdbs; npdb++)
-		{
+		for ( Size npdb=1; npdb<=npdbs; npdb++ ) {
 			PoseOP pose = new Pose();
 			Pose &p(*pose);
 			pose_from_file( p, *rsd_set, option[ in::file::s ]()[npdb] , core::import_pose::PDB_file);
@@ -199,7 +198,7 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 	moves::RepeatMoverOP run( new moves::RepeatMover(trial, option[relax_step_per_cycle]) );
 
 	//this is not real relax
-	for (Size i=1; i<=option[relax_cycle_number]; i++) {
+	for ( Size i=1; i<=option[relax_cycle_number]; i++ ) {
 		run->apply(p);
 
 		score_bb_fxn->show(TR,p);

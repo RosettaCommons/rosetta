@@ -32,7 +32,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.pose.annotated_sequence.cxxtest");
+static basic::Tracer TR("core.pose.annotated_sequence.cxxtest");
 
 class AnnotatedSequenceTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////

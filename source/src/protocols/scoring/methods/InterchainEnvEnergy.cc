@@ -33,15 +33,13 @@
 // Basic headers
 #include <basic/Tracer.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 namespace protocols {
 namespace scoring {
 namespace methods {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.scoring.methods.InterchainEnvEnergy" );
+static basic::Tracer TR( "protocols.scoring.methods.InterchainEnvEnergy" );
 
 /// @details This must return a fresh instance of the InterchainEnvEnergy class,
 /// never an instance already in use

@@ -41,7 +41,7 @@
 
 using namespace core::select::residue_selector;
 
-static THREAD_LOCAL basic::Tracer TR( "test.core.select.BondedResidueSelectorTests" );
+static basic::Tracer TR( "test.core.select.BondedResidueSelectorTests" );
 
 class BondedSelectorTests : public CxxTest::TestSuite {
 

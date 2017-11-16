@@ -30,7 +30,7 @@
 #include <basic/Tracer.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.carbohydrates.util.cxxtest" );
+static basic::Tracer TR( "core.scoring.carbohydrates.util.cxxtest" );
 
 
 class CarbohydrateScoringUtilityFunctionTests : public CxxTest::TestSuite {

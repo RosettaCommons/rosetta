@@ -68,7 +68,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.BackboneTorsionPerturbation" );
+static basic::Tracer TR( "protocols.hybridization.BackboneTorsionPerturbation" );
 
 namespace protocols {
 namespace hybridization {

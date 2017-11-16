@@ -36,7 +36,7 @@
 
 using namespace core::select::residue_selector;
 
-static THREAD_LOCAL basic::Tracer TR("BinSelectorTests");
+static basic::Tracer TR("BinSelectorTests");
 
 class BinSelectorTests : public CxxTest::TestSuite {
 

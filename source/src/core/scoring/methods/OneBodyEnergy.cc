@@ -29,7 +29,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.OneBodyEnergy" );
+static basic::Tracer TR( "core.scoring.methods.OneBodyEnergy" );
 
 OneBodyEnergy::OneBodyEnergy(
 	EnergyMethodCreatorOP creator

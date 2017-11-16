@@ -44,10 +44,10 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.membrane.visualize_membrane" );
+static basic::Tracer TR( "apps.pilot.membrane.visualize_membrane" );
 
 void create_MPpose(){
- 
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::membrane;
@@ -56,15 +56,15 @@ void create_MPpose(){
 	// and once the framework can deal with missing files (spanfile and embedding stuff)
 	option[ OptionKeys::in::membrane ]( true );
 	option[ OptionKeys::in::file::membrane_input ]( "input_spanfiles.txt" );
-	if ( ! option[ out::membrane_pdb_thickness ].user()){
-			option[ OptionKeys::out::membrane_pdb_thickness ]( 30 );
+	if ( ! option[ out::membrane_pdb_thickness ].user() ) {
+		option[ OptionKeys::out::membrane_pdb_thickness ]( 30 );
 	}
-	
+
 	// create MP
 	MembraneProteinFactoryOP mpf = new MembraneProteinFactory( false, true );
 	core::pose::PoseOP membrane_pose = mpf->create_membrane_pose();
 	membrane_pose->dump_pdb("membrane_pose.pdb");
-    
+
 }
 
 
@@ -73,14 +73,14 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-        
+
 		devel::init(argc, argv);
-        
+
 		// create MP pose
 		create_MPpose();
-        
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
-    
+
 }

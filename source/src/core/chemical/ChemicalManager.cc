@@ -76,7 +76,7 @@
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.ChemicalManager" );
+static basic::Tracer TR( "core.chemical.ChemicalManager" );
 
 /// @brief private constructor to guarantee the singleton
 ChemicalManager::ChemicalManager(){}

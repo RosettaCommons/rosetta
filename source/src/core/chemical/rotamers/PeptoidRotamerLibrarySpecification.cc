@@ -36,7 +36,7 @@ namespace core {
 namespace chemical {
 namespace rotamers {
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.rotamers.PeptoidRotamerLibrarySpecification");
+static basic::Tracer TR("core.chemical.rotamers.PeptoidRotamerLibrarySpecification");
 
 // Creator Functions
 

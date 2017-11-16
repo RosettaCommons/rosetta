@@ -48,7 +48,7 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.InterlockAroma" );
+static basic::Tracer TR( "protocols.flxbb.InterlockAroma" );
 
 namespace protocols {
 namespace flxbb {

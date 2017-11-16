@@ -43,7 +43,7 @@
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.carbohydrates.GlycanTreeMinMover" );
+static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeMinMover" );
 
 namespace protocols {
 namespace carbohydrates {

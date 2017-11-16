@@ -27,7 +27,7 @@
 // C++ header
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.rings.ring_conformer_io.cxxtest");
+static basic::Tracer TR("core.chemical.rings.ring_conformer_io.cxxtest");
 
 class RingConformerIOTests : public CxxTest::TestSuite {
 public:

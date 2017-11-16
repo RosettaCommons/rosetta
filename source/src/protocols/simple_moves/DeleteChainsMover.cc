@@ -30,7 +30,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DeleteChainsMover" );
+static basic::Tracer TR( "protocols.simple_moves.DeleteChainsMover" );
 
 namespace protocols {
 namespace simple_moves {

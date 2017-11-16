@@ -44,7 +44,7 @@ namespace silent {
 
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer tr( "core.io.silent.ScoreFileSilentStruct" );
+static basic::Tracer tr( "core.io.silent.ScoreFileSilentStruct" );
 
 ScoreFileSilentStruct::ScoreFileSilentStruct( SilentFileOptions const & opts ) :
 	SilentStruct( opts )

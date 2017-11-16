@@ -23,7 +23,7 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.ConstraintsManager" );
+static basic::Tracer TR( "protocols.constraint_generator.ConstraintsManager" );
 
 namespace protocols {
 namespace constraint_generator {

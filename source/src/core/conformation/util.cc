@@ -66,7 +66,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.util" );
+static basic::Tracer TR( "core.conformation.util" );
 
 
 namespace core {

@@ -60,7 +60,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr("protocols.filters.SSElementBisectddGFilter");
+static basic::Tracer tr("protocols.filters.SSElementBisectddGFilter");
 
 namespace protocols {
 namespace simple_filters {

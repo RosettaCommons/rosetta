@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.EnzdesLoopsFile" );
+static basic::Tracer tr( "protocols.enzdes.EnzdesLoopsFile" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

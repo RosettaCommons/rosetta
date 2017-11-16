@@ -39,7 +39,7 @@
 // Project Headers
 
 
-static THREAD_LOCAL basic::Tracer TR( "devel.replica_docking.LrmsdFilter" );
+static basic::Tracer TR( "devel.replica_docking.LrmsdFilter" );
 
 namespace devel {
 namespace replica_docking {

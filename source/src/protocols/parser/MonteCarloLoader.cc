@@ -32,7 +32,7 @@
 namespace protocols {
 namespace parser {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.parser.MonteCarloLoader" );
+static basic::Tracer TR( "protocols.jd2.parser.MonteCarloLoader" );
 
 MonteCarloLoader::MonteCarloLoader() {}
 MonteCarloLoader::~MonteCarloLoader() {}

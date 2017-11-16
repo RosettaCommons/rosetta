@@ -81,7 +81,6 @@
 #include <core/kinematics/FoldTree.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -89,7 +88,7 @@ using basic::Warning;
 
 namespace protocols {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.looprelax_protocols" );
+static basic::Tracer TR( "protocols.looprelax_protocols" );
 
 using namespace core;
 

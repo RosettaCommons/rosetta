@@ -52,7 +52,6 @@
 #include <utility/tag/Tag.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -60,8 +59,8 @@ namespace protocols {
 namespace topology_broker {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RigidBodyMover" );
-static THREAD_LOCAL basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
+static basic::Tracer TR( "protocols.moves.RigidBodyMover" );
+static basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
 
 RigidBodyRandomTMHMover::RigidBodyRandomTMHMover(){}
 RigidBodyRandomTMHMover::~RigidBodyRandomTMHMover()= default;

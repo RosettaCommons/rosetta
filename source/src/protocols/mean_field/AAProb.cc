@@ -38,7 +38,7 @@
 #include <boost/format.hpp>
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR("protocols.mean_field.AAProb");
+static basic::Tracer TR("protocols.mean_field.AAProb");
 
 
 namespace protocols {

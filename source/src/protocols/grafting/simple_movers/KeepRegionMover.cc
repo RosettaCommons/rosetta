@@ -27,7 +27,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.grafting.simple_movers.KeepRegionMover" );
+static basic::Tracer TR( "protocols.grafting.simple_movers.KeepRegionMover" );
 
 namespace protocols {
 namespace grafting {

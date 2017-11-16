@@ -51,7 +51,7 @@ using namespace core::scoring;
 using namespace core::optimization;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.chet_trp_to_gly.main" );
+static basic::Tracer TR( "apps.pilot.chet_trp_to_gly.main" );
 
 
 OPT_KEY( Integer, rms_resnum )
@@ -105,7 +105,7 @@ main( int argc, char * argv [] )
 	rosetta_resnum = 0;
 	for ( core::Size j = 1; j <= curr_pose.size(); ++j ) {
 		if ( ( curr_pose.pdb_info()->number(j) == monitor_rmsd_pdb_number ) ) {
-					 rosetta_resnum = j;
+			rosetta_resnum = j;
 		}
 	}
 	if ( rosetta_resnum == 0 ) {

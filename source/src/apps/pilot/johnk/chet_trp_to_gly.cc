@@ -60,18 +60,18 @@ using namespace core::scoring;
 using namespace core::optimization;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.chet_trp_to_gly.main" );
+static basic::Tracer TR( "apps.pilot.chet_trp_to_gly.main" );
 
 
 void do_minimization(
-										 core::pose::Pose & pose,
-										 utility::vector1 <bool> & allow_moving,
-										 pack::task::PackerTaskCOP repack_task,
-										 scoring::ScoreFunctionCOP scorefxn,
-										 scoring::ScoreFunctionCOP repack_scorefxn
+	core::pose::Pose & pose,
+	utility::vector1 <bool> & allow_moving,
+	pack::task::PackerTaskCOP repack_task,
+	scoring::ScoreFunctionCOP scorefxn,
+	scoring::ScoreFunctionCOP repack_scorefxn
 ) {
 
-		// setting degrees of freedom which can move during minimization
+	// setting degrees of freedom which can move during minimization
 	kinematics::MoveMap mm;
 	mm.set_jump( false );
 	for ( core::Size j = 1; j <= pose.size(); ++j ) {
@@ -96,7 +96,7 @@ void do_minimization(
 
 	// Report Scores
 	(*scorefxn)(pose);
-	//	pose.dump_scored_pdb( "repacked_once.pdb", *scorefxn );
+	// pose.dump_scored_pdb( "repacked_once.pdb", *scorefxn );
 	TR << "Score after repacking once: " << pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
 
 	// iterate over minimizing and repacking
@@ -119,15 +119,15 @@ void do_minimization(
 
 
 void do_KIC(
-										 core::pose::Pose & pose,
-										 utility::vector1 <bool> & allow_moving,
-										 pack::task::PackerTaskCOP repack_task,
-										 scoring::ScoreFunctionCOP scorefxn,
-										 scoring::ScoreFunctionCOP repack_scorefxn
+	core::pose::Pose & pose,
+	utility::vector1 <bool> & allow_moving,
+	pack::task::PackerTaskCOP repack_task,
+	scoring::ScoreFunctionCOP scorefxn,
+	scoring::ScoreFunctionCOP repack_scorefxn
 ) {
 
 	(*scorefxn)(pose);
-	//	pose.dump_scored_pdb( "init_pose.pdb", *scorefxn );
+	// pose.dump_scored_pdb( "init_pose.pdb", *scorefxn );
 	TR << "Initial score: " << pose.energies().total_energies()[ total_score ] << std::endl;
 
 	// figure out loop regions from allow_moving, build a KIC mover for each
@@ -173,7 +173,7 @@ void do_KIC(
 			mc.boltzmann(pose, move_type);
 		}
 
-		//		if ( iter == num_iter ) pose = mc.lowest_score_pose(); // if it's the last iteration, keep the best we've seen
+		//  if ( iter == num_iter ) pose = mc.lowest_score_pose(); // if it's the last iteration, keep the best we've seen
 
 		(*scorefxn)(pose);
 		TR << "Current score after kinematic loop closure: " << pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
@@ -184,7 +184,7 @@ void do_KIC(
 	}
 
 	// do a minimization (using the previous code)
-	//	do_minimization( pose, allow_moving, repack_task, scorefxn, repack_scorefxn );
+	// do_minimization( pose, allow_moving, repack_task, scorefxn, repack_scorefxn );
 	TR << "Score after final minimization: " << pose.energies().total_energies()[ total_score ] << std::endl;
 
 	return;
@@ -193,15 +193,15 @@ void do_KIC(
 
 
 void do_backrub(
-										 core::pose::Pose & pose,
-										 utility::vector1 <bool> & allow_moving,
-										 pack::task::PackerTaskCOP repack_task,
-										 scoring::ScoreFunctionCOP scorefxn,
-										 scoring::ScoreFunctionCOP repack_scorefxn
+	core::pose::Pose & pose,
+	utility::vector1 <bool> & allow_moving,
+	pack::task::PackerTaskCOP repack_task,
+	scoring::ScoreFunctionCOP scorefxn,
+	scoring::ScoreFunctionCOP repack_scorefxn
 ) {
 
 	(*scorefxn)(pose);
-	//	pose.dump_scored_pdb( "init_pose.pdb", *scorefxn );
+	// pose.dump_scored_pdb( "init_pose.pdb", *scorefxn );
 	TR << "Initial score: " << pose.energies().total_energies()[ total_score ] << std::endl;
 
 	// set up BackrubMover and read from the database
@@ -303,10 +303,10 @@ main( int argc, char * argv [] )
 	// scoring function
 	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	scoring::ScoreFunctionOP repack_scorefxn( get_score_function() );
-	//	scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(SOFT_REP_WTS) );
-	//	scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(SOFT_REP_DESIGN_WTS) );
+	// scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(SOFT_REP_WTS) );
+	// scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(SOFT_REP_DESIGN_WTS) );
 
-	//	repack_scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
+	// repack_scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 
 	std::string const tmp_chain = option[ mut_chain ];
 	if ( tmp_chain.length() != 1 ) {
@@ -326,8 +326,8 @@ main( int argc, char * argv [] )
 	core::Size mut_rosetta_resnum = 0;
 	for ( core::Size j = 1; j <= wt_pose_init.size(); ++j ) {
 		if ( ( wt_pose_init.pdb_info()->chain(j) == mut_pdb_chain ) &&
-				 ( wt_pose_init.pdb_info()->number(j) == mut_pdb_number ) ) {
-					 mut_rosetta_resnum = j;
+				( wt_pose_init.pdb_info()->number(j) == mut_pdb_number ) ) {
+			mut_rosetta_resnum = j;
 		}
 	}
 	if ( mut_rosetta_resnum == 0 ) {
@@ -375,17 +375,17 @@ main( int argc, char * argv [] )
 	task_repack_wt->or_include_current( true );
 	task_repack_mut->or_include_current( true );
 	// restrict repacking to the neighbors of the mutation site
-	utility::vector1 <bool>	allow_moving( wt_pose_init.size(), false );
+	utility::vector1 <bool> allow_moving( wt_pose_init.size(), false );
 	allow_moving.at( mut_rosetta_resnum ) = true;
 	core::scoring::TwelveANeighborGraph const & graph = wt_pose_init.energies().twelveA_neighbor_graph();
 	for ( utility::graph::Graph::EdgeListConstIter
-					iter = graph.get_node( mut_rosetta_resnum )->const_edge_list_begin(),
-					iter_end = graph.get_node( mut_rosetta_resnum )->const_edge_list_end();
-				iter != iter_end; ++iter ) {
+			iter = graph.get_node( mut_rosetta_resnum )->const_edge_list_begin(),
+			iter_end = graph.get_node( mut_rosetta_resnum )->const_edge_list_end();
+			iter != iter_end; ++iter ) {
 		Size const neighbor_id( (*iter)->get_other_ind( mut_rosetta_resnum ) );
 		allow_moving.at(neighbor_id) = true;
 	}
-	for (core::Size ii = 1; ii < wt_pose_init.size(); ++ii ) {
+	for ( core::Size ii = 1; ii < wt_pose_init.size(); ++ii ) {
 		task_repack_wt->nonconst_residue_task( ii ).restrict_to_repacking();
 		task_repack_mut->nonconst_residue_task( ii ).restrict_to_repacking();
 	}
@@ -396,7 +396,7 @@ main( int argc, char * argv [] )
 
 		pose::Pose wt_pose = wt_pose_init;
 		TR << "Carrying out relax of the WT #" << ii << std::endl;
-		//		do_KIC( wt_pose, allow_moving, task_repack_wt, scorefxn, repack_scorefxn );
+		//  do_KIC( wt_pose, allow_moving, task_repack_wt, scorefxn, repack_scorefxn );
 		std::stringstream wt_fname;
 		wt_fname << "min_wt_" << ii << "_" << input_pdb_name;
 		wt_pose.dump_scored_pdb( wt_fname.str(), *scorefxn );

@@ -107,7 +107,7 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 		evaluation::PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( native_pose, "_native" ) )
 	);
 
-	static THREAD_LOCAL basic::Tracer TR( "protocols.loop_build.LoopBuildMover" );
+	static basic::Tracer TR( "protocols.loop_build.LoopBuildMover" );
 
 	TR << "Annotated sequence of pose: "
 		<< pose.annotated_sequence(true) << std::endl;

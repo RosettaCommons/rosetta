@@ -96,7 +96,7 @@
 //}}}//basic::options::OptionKeys
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.andrew.relax_jd3" );
+static basic::Tracer TR( "apps.pilot.andrew.relax_jd3" );
 
 class RelaxJobQueen : public protocols::jd3::standard::StandardJobQueen
 {

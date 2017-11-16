@@ -35,7 +35,7 @@
 // option key includes
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.environment.CutBiasClaim", basic::t_info );
+static basic::Tracer tr( "protocols.environment.CutBiasClaim", basic::t_info );
 
 namespace protocols {
 namespace environment {

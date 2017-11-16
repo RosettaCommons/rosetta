@@ -36,7 +36,7 @@
 
 
 
-static THREAD_LOCAL basic::Tracer TR("FAVirtMoverTests");
+static basic::Tracer TR("FAVirtMoverTests");
 
 
 class FAVirtMoverTests : public CxxTest::TestSuite {

@@ -63,7 +63,7 @@
 namespace protocols {
 namespace features {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.ProteinResidueConformationFeatures" );
+static basic::Tracer TR( "protocols.features.ProteinResidueConformationFeatures" );
 
 using std::string;
 using core::Size;

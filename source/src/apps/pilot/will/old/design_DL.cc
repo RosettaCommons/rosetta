@@ -53,7 +53,7 @@
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 
-static THREAD_LOCAL basic::Tracer TR( "gentetra" );
+static basic::Tracer TR( "gentetra" );
 static core::io::silent::SilentFileData sfd;
 
 
@@ -62,40 +62,40 @@ int main (int argc, char *argv[]) {
 	try {
 
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+		core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
-	for(Size ifile = 1; ifile <= basic::options::option[basic::options::OptionKeys::in::file::s]().size(); ++ifile) {
-		std::string infile = basic::options::option[basic::options::OptionKeys::in::file::s]()[ifile];
-		Pose pose;
-		core::import_pose::pose_from_file(pose,infile, core::import_pose::PDB_file);
-		infile = utility::file_basename(infile);
+		for ( Size ifile = 1; ifile <= basic::options::option[basic::options::OptionKeys::in::file::s]().size(); ++ifile ) {
+			std::string infile = basic::options::option[basic::options::OptionKeys::in::file::s]()[ifile];
+			Pose pose;
+			core::import_pose::pose_from_file(pose,infile, core::import_pose::PDB_file);
+			infile = utility::file_basename(infile);
 
-		ScoreFunctionOP sf = core::scoring::get_score_function();
+			ScoreFunctionOP sf = core::scoring::get_score_function();
 
-		using namespace core::pack::task;
-		PackerTaskOP task = TaskFactory::create_packer_task(pose);
-		vector1< bool > aas(20,false);
-		aas[core::chemical::aa_ala] = true;
-		// aas[core::chemical::aa_gly] = true;
-		// aas[core::chemical::aa_pro] = true;
+			using namespace core::pack::task;
+			PackerTaskOP task = TaskFactory::create_packer_task(pose);
+			vector1< bool > aas(20,false);
+			aas[core::chemical::aa_ala] = true;
+			// aas[core::chemical::aa_gly] = true;
+			// aas[core::chemical::aa_pro] = true;
 
-		for(Size i = 1; i <= pose.size(); ++i) {
-			if(pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="DPR") {
-				task->nonconst_residue_task(i).prevent_repacking();
-			} else {
-				task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
-				task->nonconst_residue_task(i).allow_noncanonical_aa("DAL",*rs);
-				// task->nonconst_residue_task(i).allow_noncanonical_aa("DPR",*rs);
+			for ( Size i = 1; i <= pose.size(); ++i ) {
+				if ( pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="DPR" ) {
+					task->nonconst_residue_task(i).prevent_repacking();
+				} else {
+					task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
+					task->nonconst_residue_task(i).allow_noncanonical_aa("DAL",*rs);
+					// task->nonconst_residue_task(i).allow_noncanonical_aa("DPR",*rs);
+				}
 			}
+
+			protocols::simple_moves::PackRotamersMover repack( sf, task );
+			repack.apply(pose);
+
+			pose.dump_pdb(infile+"_DL.pdb");
 		}
-
-		protocols::simple_moves::PackRotamersMover repack( sf, task );
-		repack.apply(pose);
-
-		pose.dump_pdb(infile+"_DL.pdb");
-	}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

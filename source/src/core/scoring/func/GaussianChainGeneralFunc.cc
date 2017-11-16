@@ -41,7 +41,7 @@ using numeric::constants::d::pi;
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.func.GaussianChainGeneralFunc" );
+static basic::Tracer TR( "core.scoring.func.GaussianChainGeneralFunc" );
 
 namespace core {
 namespace scoring {

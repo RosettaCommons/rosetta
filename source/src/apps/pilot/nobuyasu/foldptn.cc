@@ -58,7 +58,6 @@
 #include <cmath>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -70,7 +69,7 @@ using namespace basic::options::OptionKeys;
 typedef std::string String;
 
 
-static THREAD_LOCAL basic::Tracer TR( "foldptn" );
+static basic::Tracer TR( "foldptn" );
 
 class ThisApplication  {
 public:

@@ -38,7 +38,7 @@
 namespace core {
 namespace sequence {
 
-static THREAD_LOCAL basic::Tracer tr( "core.sequence.MatrixScoringScheme" );
+static basic::Tracer tr( "core.sequence.MatrixScoringScheme" );
 
 void MatrixScoringScheme::read_data( utility::io::izstream & input ) {
 	std::string line;

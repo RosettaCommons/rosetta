@@ -84,7 +84,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio" );
+static basic::Tracer tr( "protocols.abinitio" );
 
 using core::Real;
 using namespace core;

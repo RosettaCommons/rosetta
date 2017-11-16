@@ -23,6 +23,7 @@ sources = {
 		"pymol_chains",
 		"report",
 		"Tracer",
+		"TracerImpl",
 		"TracerToFile",
 	],
 	"basic/database": [

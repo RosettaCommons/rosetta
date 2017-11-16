@@ -36,7 +36,7 @@
 // utility headers
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "Cyclization" );
+static basic::Tracer TR( "Cyclization" );
 
 int
 main( int argc, char * argv [] )

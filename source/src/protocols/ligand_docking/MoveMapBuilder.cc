@@ -43,7 +43,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -52,7 +51,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer MoveMapBuilder_tracer( "protocols.ligand_docking.ligand_options.MoveMapBuilder", basic::t_debug );
+static basic::Tracer MoveMapBuilder_tracer( "protocols.ligand_docking.ligand_options.MoveMapBuilder", basic::t_debug );
 
 void
 set_jumps(

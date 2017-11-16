@@ -46,7 +46,7 @@ using namespace core::scoring;
 using basic::options::option;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.read_patchdock" );
+static basic::Tracer TR( "protocols.protein_interface_design.read_patchdock" );
 
 struct Transformation
 {

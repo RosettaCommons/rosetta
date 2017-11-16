@@ -41,7 +41,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.SegmentPairingTests.cxxtest" );
+static basic::Tracer TR( "protocols.denovo_design.SegmentPairingTests.cxxtest" );
 
 typedef utility::vector1< std::string > Motifs;
 

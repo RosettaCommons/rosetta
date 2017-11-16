@@ -39,7 +39,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer atom_tracer( "protocols.ligand_docking.ChainExistsFilter" );
+static basic::Tracer atom_tracer( "protocols.ligand_docking.ChainExistsFilter" );
 
 bool
 ChainExistsFilter::apply( core::pose::Pose const & pose ) const {

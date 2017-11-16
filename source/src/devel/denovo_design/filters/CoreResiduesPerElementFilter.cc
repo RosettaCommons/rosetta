@@ -45,7 +45,7 @@
 
 // C++ Headers
 
-static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.filters.CoreResiduesPerElementFilter" );
+static basic::Tracer TR( "devel.denovo_design.filters.CoreResiduesPerElementFilter" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -74,12 +74,11 @@
 //      -- rd, 2014
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace basic::options;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ConstrainToIdealMover" );
+static basic::Tracer TR( "protocols.simple_moves.ConstrainToIdealMover" );
 
 namespace protocols {
 namespace simple_moves {

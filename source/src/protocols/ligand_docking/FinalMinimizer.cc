@@ -48,7 +48,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.ligand_options.FinalMinimizer" );
+static basic::Tracer TR( "protocols.ligand_docking.ligand_options.FinalMinimizer" );
 
 // XRW TEMP std::string
 // XRW TEMP FinalMinimizerCreator::keyname() const

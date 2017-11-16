@@ -43,7 +43,7 @@
 #include <numeric/random/random.hh>
 
 static numeric::random::RandomGenerator RG(1365422);
-static THREAD_LOCAL basic::Tracer TR("GraftingTest");
+static basic::Tracer TR("GraftingTest");
 
 
 namespace myspace {

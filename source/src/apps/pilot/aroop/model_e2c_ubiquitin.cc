@@ -20,7 +20,6 @@
 #include <protocols/moves/Mover.hh>
 
 ////////////////////////////////////////////////////////
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -31,15 +30,15 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace protocols;
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
 
-	// initialize core
-	devel::init( argc, argv );
+		// initialize core
+		devel::init( argc, argv );
 
-	MoverOP e2ubdock = new ub_e2c::ubi_e2c_modeler();
-	protocols::jobdist::main_plain_mover( *e2ubdock );
+		MoverOP e2ubdock = new ub_e2c::ubi_e2c_modeler();
+		protocols::jobdist::main_plain_mover( *e2ubdock );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

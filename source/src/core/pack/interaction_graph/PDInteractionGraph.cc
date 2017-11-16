@@ -41,7 +41,7 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.interaction_graph.PDInteractionGraph");
+static basic::Tracer TR("core.pack.interaction_graph.PDInteractionGraph");
 
 //----------------------------------------------------------------------------//
 //-------- Sparse Pairwise Decomposable Interaction Graph Node Class ---------//

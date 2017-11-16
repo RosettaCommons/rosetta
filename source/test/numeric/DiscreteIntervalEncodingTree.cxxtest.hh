@@ -14,6 +14,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
+#include <test/core/init_util.hh>
 
 // Unit headers
 #include <numeric/DiscreteIntervalEncodingTree.hh>
@@ -22,7 +23,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("numeric.DiscreteIntervalEncodingTree_cxxtest");
+static basic::Tracer TR("numeric.DiscreteIntervalEncodingTree_cxxtest");
 
 typedef numeric::DiscreteIntervalEncodingTree< platform::Size > Diet;
 
@@ -36,6 +37,7 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
+		core_init(); // Needed to setup the tracer.
 	}
 
 	// Shared finalization goes here.
@@ -172,7 +174,7 @@ public:
 		Diet diet;
 		std::list< platform::Size > insert_order = {
 			2, 3, 4, 6, 7, 8, 9,
-			11, 13, 14, 15, 16, 17, 18, 19, 20,	21, 22, 24, 25, 26,
+			11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26,
 			27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
 			10, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
 			51, 52, 53, 54, 56, 57, 58, 59, 60,

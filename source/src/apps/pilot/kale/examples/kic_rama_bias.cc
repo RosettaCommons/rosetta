@@ -61,17 +61,17 @@ public:
 	string perturber_type() const { return "UniformPerturber"; }
 
 	void perturb_chain(
-			core::pose::Pose const & pose,
-			utility::vector1< core::Real> & torsions,
-			utility::vector1< core::Real> & bond_ang,
-			utility::vector1< core::Real> & bond_len);
+		core::pose::Pose const & pose,
+		utility::vector1< core::Real> & torsions,
+		utility::vector1< core::Real> & bond_ang,
+		utility::vector1< core::Real> & bond_len);
 
 	void set_pose_after_closure(
-			core::pose::Pose & pose,
-			utility::vector1< core::Real> const & torsions,
-			utility::vector1< core::Real> const & bond_ang,
-			utility::vector1< core::Real> const & bond_len,
-			bool closure_successful) const;
+		core::pose::Pose & pose,
+		utility::vector1< core::Real> const & torsions,
+		utility::vector1< core::Real> const & bond_ang,
+		utility::vector1< core::Real> const & bond_len,
+		bool closure_successful) const;
 
 	void set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {
 		vary_ca_bond_angles_ = vary_ca_bond_angles; }
@@ -83,20 +83,20 @@ private:
 
 };
 
-static THREAD_LOCAL basic::Tracer TR(
-		"protocols.loops.loop_closure.kinematic_closure.KinematicPerturber");
+static basic::Tracer TR(
+	"protocols.loops.loop_closure.kinematic_closure.KinematicPerturber");
 
 UniformPerturber::UniformPerturber() // {{{1
-	: KinematicPerturber(),
-	  vary_ca_bond_angles_(false),
-	  sample_omega_for_pre_prolines_(false),
-	  rama_(ScoringManager::get_instance()->get_Ramachandran()) {}
+: KinematicPerturber(),
+	vary_ca_bond_angles_(false),
+	sample_omega_for_pre_prolines_(false),
+	rama_(ScoringManager::get_instance()->get_Ramachandran()) {}
 
 void UniformPerturber::perturb_chain( // {{{1
-		core::pose::Pose const & pose,
-		utility::vector1<core::Real> & torsions,
-		utility::vector1<core::Real> & bond_ang,
-		utility::vector1<core::Real> & bond_len) {
+	core::pose::Pose const & pose,
+	utility::vector1<core::Real> & torsions,
+	utility::vector1<core::Real> & bond_ang,
+	utility::vector1<core::Real> & bond_len) {
 
 	core::kinematics::MoveMapCOP mm(get_movemap());
 
@@ -109,7 +109,7 @@ void UniformPerturber::perturb_chain( // {{{1
 	core::Size end_plus_one_bb_atom_count = pose.residue(endres).is_upper_terminus() ? kinmover_->count_bb_atoms_in_residue(pose, endres) : kinmover_->count_bb_atoms_in_residue(pose, endres); //Number of backbone atoms for the last residue in the segment (end_res_ + 1 or the appended end_res_ if end_res_ is a terminus)
 
 
-	if( vary_ca_bond_angles_ ){ //For now, ONLY CA bond angles of alpha-amino acids will be varied.
+	if ( vary_ca_bond_angles_ ) { //For now, ONLY CA bond angles of alpha-amino acids will be varied.
 
 		core::Size pvatom1 = start_minus_one_bb_atom_count + 2; // Second backbone atom of start_res_ (CA if alpha or beta-amino acid).
 		core::Size pvatom3 = bond_ang.size() - end_plus_one_bb_atom_count - kinmover_->count_bb_atoms_in_residue(pose, endres) + 2; // Second backbone atom of end_res_ (CA if alpha or beta-amino acid).
@@ -118,18 +118,18 @@ void UniformPerturber::perturb_chain( // {{{1
 		core::Real bangle_sd( kinmover_->BANGLE_SD() );
 
 		//Looping over all CA angles:
-		for(core::Size ir = startres, curatom = pvatom1; ir<=endres; ++ir) {
-			if( !kinmover_->is_beta_aminoacid(pose.residue(ir)) /*Add checks here as other backbones are added*/ ) bond_ang[curatom] = bangle_min + numeric::random::rg().uniform() * bangle_sd; //Shouldn't this be bangle_avg() + RG.gaussian() * bangle_sd?
+		for ( core::Size ir = startres, curatom = pvatom1; ir<=endres; ++ir ) {
+			if ( !kinmover_->is_beta_aminoacid(pose.residue(ir)) /*Add checks here as other backbones are added*/ ) bond_ang[curatom] = bangle_min + numeric::random::rg().uniform() * bangle_sd; //Shouldn't this be bangle_avg() + RG.gaussian() * bangle_sd?
 			curatom += kinmover_->count_bb_atoms_in_residue(pose, ir);
 		}
 	} //if( vary_ca_bond_angles_ )
 
 	core::Size tor_end = torsions.size() - 3;
 
-	for( core::Size i=start_minus_one_bb_atom_count + 1, cur_res = startres; i<= tor_end; cur_res++ ){
+	for ( core::Size i=start_minus_one_bb_atom_count + 1, cur_res = startres; i<= tor_end; cur_res++ ) {
 		//if(mm) TR << "current residue " << cur_res << "mm reports " << mm->get_bb(cur_res) << std::endl;
 
-		if(!mm || mm->get_bb(cur_res)){ //if movemap is null, or (if not null) if movemap says mobile
+		if ( !mm || mm->get_bb(cur_res) ) { //if movemap is null, or (if not null) if movemap says mobile
 			core::Real rama_phi, rama_psi;
 			//rama_.uniform_phipsi_from_allowed_rama(pose.aa(cur_res), rama_phi,
 			//rama_psi);
@@ -150,11 +150,11 @@ void UniformPerturber::perturb_chain( // {{{1
 		// old KIC standard: coin flip between cis and trans
 		static const core::Real OMEGA_MEAN( 179.8 );
 
-		for( core::Size i=start_minus_one_bb_atom_count + 1, cur_res = startres; i<= tor_end; cur_res++ ){
+		for ( core::Size i=start_minus_one_bb_atom_count + 1, cur_res = startres; i<= tor_end; cur_res++ ) {
 
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro || pose.aa( cur_res+1 ) == core::chemical::aa_dpr ) { //L-proline or D-proline.
 				i++; //phi
-				if(kinmover_->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
+				if ( kinmover_->is_beta_aminoacid(pose.residue(cur_res)) ) i++; //theta
 				i++; //psi
 				torsions[i++] = ( static_cast<int>( numeric::random::rg().uniform()*2 ) ? (core::chemical::is_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis).  If it's a D-amino acid, it's multiplied by -1.0 if it's a D-Pro.
 
@@ -171,9 +171,9 @@ void UniformPerturber::perturb_chain( // {{{1
 		// as a proxy, using 1/1000 for now
 		static const core::Real cis_prob_threshold = 0.001; //VKM, 26 Aug 2013: this was 0.0001, but the comment above says 1/1000.  I'm switching this to 0.001, since I think that was the intent...
 
-		for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
+		for ( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ) {
 			i++; //phi
-			if(kinmover_->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
+			if ( kinmover_->is_beta_aminoacid(pose.residue(cur_res)) ) i++; //theta
 			i++; //psi
 			core::Real trans_prob = 1;
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro || pose.aa( cur_res+1 ) == core::chemical::aa_dpr ) { //L- or D-proline
@@ -189,13 +189,13 @@ void UniformPerturber::perturb_chain( // {{{1
 }
 
 void UniformPerturber::set_pose_after_closure( // {{{1
-		core::pose::Pose & pose,
-		utility::vector1<core::Real> const & torsions,
-		utility::vector1<core::Real> const & bond_ang,
-		utility::vector1<core::Real> const & bond_len,
-		bool closure_successful ) const {
+	core::pose::Pose & pose,
+	utility::vector1<core::Real> const & torsions,
+	utility::vector1<core::Real> const & bond_ang,
+	utility::vector1<core::Real> const & bond_len,
+	bool closure_successful ) const {
 
-	//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
+	// parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful ); //This correctly handles beta-amino acids, now.
 
 	core::Size startres = kinmover_->start_res(); //The first residue in the segment
@@ -203,12 +203,12 @@ void UniformPerturber::set_pose_after_closure( // {{{1
 	//The index of the first backbone atom of the first residue in the segment (i.e. index in the torsions, bond_ang, and bon_len lists):
 	core::Size starting_atom = (pose.residue(startres).is_lower_terminus() ? kinmover_->count_bb_atoms_in_residue(pose, startres) + 1 : kinmover_->count_bb_atoms_in_residue(pose, startres-1) + 1 ) ;
 
-	if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
+	if ( !closure_successful || vary_ca_bond_angles_ ) { // if the closure wasn't successful, we may need to overwrite previously idealized angles
 		core::Real offset( 0.0 );
 
 		// C-N-CA
-		for (Size res=startres, atom=starting_atom; res<=endres; res++) {
-			if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+		for ( Size res=startres, atom=starting_atom; res<=endres; res++ ) {
+			if ( kinmover_->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_N (1, res);
@@ -216,37 +216,39 @@ void UniformPerturber::set_pose_after_closure( // {{{1
 				const core::id::AtomID atomid_C (3, res-1);
 
 				core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_C, atomid_N, atomid_CA, offset ); // DOFs canoot be set across jumps (segfault)
-				if (pose.has_dof(dof_of_interest))
+				if ( pose.has_dof(dof_of_interest) ) {
 					pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+				}
 			}
 			atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 		}
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for (Size res=startres, atom=starting_atom+1; res<=endres; res++) {
-			if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+		for ( Size res=startres, atom=starting_atom+1; res<=endres; res++ ) {
+			if ( kinmover_->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_N (1, res);
 				const core::id::AtomID atomid_CA(2, res);
 				const core::id::AtomID atomid_C (3, res);
 				pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
-							 numeric::conversions::radians(180 - bond_ang[atom]));
+					numeric::conversions::radians(180 - bond_ang[atom]));
 			}
 			atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 		}
 
 		// CA-C-N
-		for (Size res=startres, atom=starting_atom+2; res<=endres; res++) {
-			if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+		for ( Size res=startres, atom=starting_atom+2; res<=endres; res++ ) {
+			if ( kinmover_->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_N (1, res+1);
 				const core::id::AtomID atomid_CA(2, res);
 				const core::id::AtomID atomid_C (3, res);
 				core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_CA, atomid_C, atomid_N, offset );
-				if (pose.has_dof(dof_of_interest)) //In case this is a terminus
+				if ( pose.has_dof(dof_of_interest) ) { //In case this is a terminus
 					pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+				}
 			}
 			atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 		}
@@ -254,46 +256,46 @@ void UniformPerturber::set_pose_after_closure( // {{{1
 	}
 
 	// overwrite bond lengths, at least if the closure was not successful
-	if(!closure_successful) { // if sampling of bond lengths is added, activate this section
+	if ( !closure_successful ) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for (Size res=startres, atom=starting_atom; res<=endres; res++) {
-			if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+		for ( Size res=startres, atom=starting_atom; res<=endres; res++ ) {
+			if ( kinmover_->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_N (1, res);
 				const core::id::AtomID atomid_CA(2, res);
 
 				pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
-							 numeric::conversions::radians(180 - bond_len[atom]));
+					numeric::conversions::radians(180 - bond_len[atom]));
 			}
 			atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 		}
 
 		// CA-C
-		for (Size res=startres, atom=starting_atom+1; res<=endres; res++) {
-			if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+		for ( Size res=startres, atom=starting_atom+1; res<=endres; res++ ) {
+			if ( kinmover_->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_CA(2, res);
 				const core::id::AtomID atomid_C (3, res);
 
 				pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
-							 numeric::conversions::radians(180 - bond_len[atom]));
+					numeric::conversions::radians(180 - bond_len[atom]));
 			}
 			atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 		}
 
 		// C-N
-		for (Size res=startres, atom=starting_atom+2; res<=endres; res++) {
-			if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+		for ( Size res=startres, atom=starting_atom+2; res<=endres; res++ ) {
+			if ( kinmover_->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_C (3, res);
 				const core::id::AtomID atomid_N (1, res+1);
 
 				core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
-				if (pose.has_dof(dof_of_interest)) {
+				if ( pose.has_dof(dof_of_interest) ) {
 					pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
 				}
 			}
@@ -339,7 +341,7 @@ int main(int argc, char** argv) {
 	uniform_mover.set_pivots(2, 3, 5);
 	uniform_mover.set_perturber(new UniformPerturber);
 
-	for (Size i = 1; i <= iterations; i++) {
+	for ( Size i = 1; i <= iterations; i++ ) {
 		cerr << "\r[" << i << "/" << iterations << "]";
 		Real phi = 360 * uniform();
 

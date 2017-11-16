@@ -61,7 +61,7 @@
 namespace devel {
 namespace domain_insertion {
 
-static THREAD_LOCAL basic::Tracer tr( "devel.domain_insertion.FusePosesNtoCMover" );
+static basic::Tracer tr( "devel.domain_insertion.FusePosesNtoCMover" );
 
 FusePosesNtoCMover::FusePosesNtoCMover()
 :

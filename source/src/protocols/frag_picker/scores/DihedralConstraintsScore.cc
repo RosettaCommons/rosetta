@@ -43,7 +43,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static THREAD_LOCAL basic::Tracer trDihedralConstraintsScore(
+static basic::Tracer trDihedralConstraintsScore(
 	"fragment.picking.scores.DihedralConstraintsScore");
 
 DihedralConstraintsScore::DihedralConstraintsScore(core::Size priority,

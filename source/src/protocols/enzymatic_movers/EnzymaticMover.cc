@@ -35,7 +35,7 @@
 
 
 // Construct tracers.
-static THREAD_LOCAL basic::Tracer TR( "protocols.enzymatic_movers.EnzymaticMover" );
+static basic::Tracer TR( "protocols.enzymatic_movers.EnzymaticMover" );
 
 
 namespace protocols {

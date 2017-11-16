@@ -85,7 +85,7 @@ using namespace basic::options::OptionKeys;
 using namespace basic::options::OptionKeys::stepwise::monte_carlo;
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.stepwise.stepwise" );
+static basic::Tracer TR( "apps.public.stepwise.stepwise" );
 
 OPT_KEY( Boolean, use_legacy_stepwise_job_distributor )
 

@@ -71,7 +71,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.BuildDeNovoBackboneMover" );
+static basic::Tracer TR( "protocols.denovo_design.movers.BuildDeNovoBackboneMover" );
 
 namespace protocols {
 namespace denovo_design {

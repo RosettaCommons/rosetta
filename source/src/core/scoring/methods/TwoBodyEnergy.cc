@@ -35,7 +35,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.TwoBodyEnergy" );
+static basic::Tracer TR( "core.scoring.methods.TwoBodyEnergy" );
 
 TwoBodyEnergy::TwoBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 

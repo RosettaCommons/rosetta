@@ -58,7 +58,7 @@
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.DipolarCoupling" );
+static basic::Tracer tr( "core.scoring.DipolarCoupling" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

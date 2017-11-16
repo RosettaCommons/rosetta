@@ -46,7 +46,7 @@ namespace core {
 namespace scoring {
 namespace bin_transitions {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.bin_transitions.BinTransitionCalculator" );
+static basic::Tracer TR( "core.scoring.bin_transitions.BinTransitionCalculator" );
 
 /// @brief Default constructor for BinTransitionCalculator
 ///

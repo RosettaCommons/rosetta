@@ -120,7 +120,7 @@ namespace protocols {
 namespace rna {
 namespace denovo {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.RNA_DeNovoProtocol" );
+static basic::Tracer TR( "protocols.rna.denovo.RNA_DeNovoProtocol" );
 
 RNA_DeNovoProtocol::RNA_DeNovoProtocol( options::RNA_DeNovoProtocolOptionsCOP options,
 	RNA_DeNovoParametersCOP params):

@@ -32,7 +32,7 @@
 namespace protocols {
 namespace parser {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.parser.TaskOperationLoader" );
+static basic::Tracer TR( "protocols.jd2.parser.TaskOperationLoader" );
 
 TaskOperationLoader::TaskOperationLoader() {}
 TaskOperationLoader::~TaskOperationLoader() {}

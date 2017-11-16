@@ -64,7 +64,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
+static basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

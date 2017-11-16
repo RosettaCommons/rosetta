@@ -83,7 +83,7 @@ using basic::t_error;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static THREAD_LOCAL basic::Tracer TR( "protocols.dna.DnaInterfaceMultiStateDesign", t_info );
+static basic::Tracer TR( "protocols.dna.DnaInterfaceMultiStateDesign", t_info );
 
 DnaInterfaceMultiStateDesign::DnaInterfaceMultiStateDesign()
 : protocols::simple_moves::PackRotamersMover( DnaInterfaceMultiStateDesign::mover_name() ),

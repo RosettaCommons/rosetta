@@ -52,18 +52,17 @@
 
 #include <utility/excn/Exceptions.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.grant.AbInitio_MPI" );
+static basic::Tracer TR( "apps.pilot.grant.AbInitio_MPI" );
 
-namespace core{ namespace options{ namespace OptionKeys{
+namespace core { namespace options { namespace OptionKeys {
 
 }}} // core::options::OptionKeys
 
 
-    /// @brief AbInitio_MPI mover
+/// @brief AbInitio_MPI mover
 class AbInitio_MPI : public protocols::moves::Mover {
 public:
 	AbInitio_MPI() : init_for_input_yet_(false)
@@ -94,10 +93,10 @@ public:
 		fragset_9mer_->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag9 ].value() );
 
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-    movemap->set_bb( true );
+		movemap->set_bb( true );
 
 		core::scoring::ScoreFunctionOP fullfxn(
-                                           core::scoring::get_score_function()
+			core::scoring::get_score_function()
 		);
 
 		protocols::abinitio::ClassicAbinitioOP abinitio( new protocols::abinitio::ClassicAbinitio( fragset_3mer_, fragset_9mer_, movemap ));
@@ -106,29 +105,29 @@ public:
 		abrelax_ = new protocols::moves::SequenceMover();
 		abrelax_->add_mover( abinitio );
 
-		//		protocols::moves::PDBDumpMoverOP dump1 = new protocols::moves::PDBDumpMover( "after_abinitio.pdb" );
-		//		abrelax_->add_mover( dump1 );
+		//  protocols::moves::PDBDumpMoverOP dump1 = new protocols::moves::PDBDumpMover( "after_abinitio.pdb" );
+		//  abrelax_->add_mover( dump1 );
 
 		protocols::simple_moves::SwitchResidueTypeSetMoverOP switch_to_full_atom = new protocols::simple_moves::SwitchResidueTypeSetMover( "fa_standard" );
 		abrelax_->add_mover( switch_to_full_atom );
 
-		//		protocols::moves::PDBDumpMoverOP dump2 = new protocols::moves::PDBDumpMover( "after_switch.pdb" );
-		//		abrelax_->add_mover( dump2 );
+		//  protocols::moves::PDBDumpMoverOP dump2 = new protocols::moves::PDBDumpMover( "after_switch.pdb" );
+		//  abrelax_->add_mover( dump2 );
 
 
 		protocols::relax::RelaxProtocolBaseOP relax( new protocols::relax::ClassicRelax( fullfxn ));
 		abrelax_->add_mover( relax );
 
 
-  }
+	}
 
-  virtual ~AbInitio_MPI(){};
+	virtual ~AbInitio_MPI(){};
 
-  virtual
-  void
-  apply( core::pose::Pose & pose ){
+	virtual
+	void
+	apply( core::pose::Pose & pose ){
 
-		if( !init_for_input_yet_ ){ // we will only go thru this loop on the first apply of this protocol
+		if ( !init_for_input_yet_ ) { // we will only go thru this loop on the first apply of this protocol
 			init_on_new_input( pose );
 		}
 
@@ -152,13 +151,13 @@ int main( int argc, char* argv[] )
 {
 	try {
 
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
 
-	devel::init( argc, argv);
+		devel::init( argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go(new AbInitio_MPI);
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		protocols::jd2::JobDistributor::get_instance()->go(new AbInitio_MPI);
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -20,7 +20,7 @@
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cluster.energy_based_clustering.EnergyBasedClusteringOptions" );
+static basic::Tracer TR( "protocols.cluster.energy_based_clustering.EnergyBasedClusteringOptions" );
 
 
 namespace protocols {

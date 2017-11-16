@@ -29,7 +29,7 @@ namespace core {
 namespace chemical {
 namespace rotamers {
 
-static THREAD_LOCAL basic::Tracer TR("core.chemical.rotamers.RotamerLibrarySpecificationFactory");
+static basic::Tracer TR("core.chemical.rotamers.RotamerLibrarySpecificationFactory");
 
 void
 RotamerLibrarySpecificationFactory::factory_register( RotamerLibrarySpecificationCreatorOP creator )

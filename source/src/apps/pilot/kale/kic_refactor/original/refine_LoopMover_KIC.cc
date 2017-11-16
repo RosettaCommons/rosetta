@@ -93,17 +93,17 @@ namespace refine {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopMover_Refine_KIC" );
+static basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopMover_Refine_KIC" );
 
 LoopMover_Refine_KIC::LoopMover_Refine_KIC() : LoopMover()
 {
-    init( get_fa_scorefxn() );
+	init( get_fa_scorefxn() );
 }
 LoopMover_Refine_KIC::LoopMover_Refine_KIC(
 	protocols::loops::LoopsOP  loops_in
 ) : LoopMover( loops_in )
 {
-    init( get_fa_scorefxn() );
+	init( get_fa_scorefxn() );
 }
 
 LoopMover_Refine_KIC::LoopMover_Refine_KIC(
@@ -119,12 +119,12 @@ LoopMover_Refine_KIC::~LoopMover_Refine_KIC(){}
 
 //clone
 protocols::moves::MoverOP LoopMover_Refine_KIC::clone() const {
-		return new LoopMover_Refine_KIC(*this);
-	}
+	return new LoopMover_Refine_KIC(*this);
+}
 
 void LoopMover_Refine_KIC::init( core::scoring::ScoreFunctionCOP  scorefxn )
 {
-    set_scorefxn( scorefxn->clone() );
+	set_scorefxn( scorefxn->clone() );
 	protocols::moves::Mover::type("LoopMover_Refine_KIC");
 	set_default_settings();
 }
@@ -175,9 +175,9 @@ void LoopMover_Refine_KIC::apply(
 
 	// Set the native pose if provided
 	core::pose::Pose native_pose;
-	if( get_native_pose() ){
+	if ( get_native_pose() ) {
 		native_pose = *get_native_pose();
-	}else{
+	} else {
 		native_pose = pose;
 	}
 
@@ -188,7 +188,7 @@ void LoopMover_Refine_KIC::apply(
 	std::ofstream loop_outfile; // for movie
 
 	// prepare for movie output if requested
-	if (local_movie) {
+	if ( local_movie ) {
 		std::string outname_base = option[ OptionKeys::loops::output_pdb ]().name();
 		std::string outname_prefix = option[ OptionKeys::out::prefix ];
 		std::string outname = outname_prefix + outname_base + "_fullatom_movie_" +
@@ -200,18 +200,20 @@ void LoopMover_Refine_KIC::apply(
 	Size const nres( pose.size() );
 	utility::vector1< bool > is_loop( nres, false );
 
-	for( Loops::const_iterator it=loops()->begin(), it_end=loops()->end();
-		 it != it_end; ++it ) {
+	for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end();
+			it != it_end; ++it ) {
 		for ( Size i= it->start(); i<= it->stop(); ++i ) {
 			is_loop[i] = true;
 		}
 		Size const loop_cut(it->cut());
 
 		if ( loop_cut != nres ) { //c-terminal loop
-			if ( ! pose.residue(loop_cut).has_variant_type(chemical::CUTPOINT_LOWER) )
+			if ( ! pose.residue(loop_cut).has_variant_type(chemical::CUTPOINT_LOWER) ) {
 				core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, loop_cut );
-			if ( ! pose.residue(loop_cut+1).has_variant_type(chemical::CUTPOINT_UPPER) )
+			}
+			if ( ! pose.residue(loop_cut+1).has_variant_type(chemical::CUTPOINT_UPPER) ) {
 				core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, loop_cut+1 );
+			}
 		}
 	}
 
@@ -256,40 +258,40 @@ void LoopMover_Refine_KIC::apply(
 	//scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	//scorefxn->set_weight( chainbreak, 1.0 ); // confirm that chainbreak weight is set
 
-	//	scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
-	//	min_scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
+	// scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
+	// min_scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
 	loop_mover::loops_set_chainbreak_weight( scorefxn(), 1 );
 	loop_mover::loops_set_chainbreak_weight( min_scorefxn, 1 );
 	loop_mover::loops_set_chainbreak_weight( local_scorefxn, 1 ); // AS April 25, 2013 -- the local_scorefxn didn't have a chainbreak weight, restoring that
-	
+
 	//scorefxn->set_weight(core::scoring::mm_bend, 1.0);
 
 	// AS: add rama2b weight in case we're sampling with rama2b
 	if ( option[ OptionKeys::loops::kic_rama2b ]() ) {
 		min_scorefxn->set_weight( rama2b, min_scorefxn->get_weight( rama ) );
 		min_scorefxn->set_weight( rama, 0);
-		
+
 		local_scorefxn->set_weight( rama2b, local_scorefxn->get_weight( rama ) );
 		local_scorefxn->set_weight( rama, 0);
 	}
-	
-	
+
+
 	// monte carlo
 	float const init_temp( option[ OptionKeys::loops::refine_init_temp ]() );
-	float const	final_temp( option[ OptionKeys::loops::refine_final_temp ]() );
+	float const final_temp( option[ OptionKeys::loops::refine_final_temp ]() );
 	float const gamma = std::pow( (final_temp/init_temp), 1.0f/(outer_cycles*inner_cycles) );
 	float temperature = init_temp;
 	protocols::moves::MonteCarlo mc( pose, *local_scorefxn, temperature );
 
 	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which allows seamless integration of cartesian minimization
 	protocols::simple_moves::MinMoverOP min_mover;
-	
+
 	const std::string min_type = "lbfgs_armijo_nonmonotone";
-	core::Real dummy_tol( 0.001 ); 
+	core::Real dummy_tol( 0.001 );
 	bool use_nblist( true ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
-	if ( use_cartmin ) runtime_assert( min_scorefxn->get_weight( core::scoring::cart_bonded ) > 1e-3 ); 
+	if ( use_cartmin ) runtime_assert( min_scorefxn->get_weight( core::scoring::cart_bonded ) > 1e-3 );
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		min_mover = new simple_moves::symmetry::SymMinMover(); 
+		min_mover = new simple_moves::symmetry::SymMinMover();
 	} else {
 		min_mover = new protocols::simple_moves::MinMover();
 	}
@@ -300,8 +302,8 @@ void LoopMover_Refine_KIC::apply(
 	min_mover->deriv_check( deriv_check );
 	min_mover->cartesian( use_cartmin );
 
-	
-	
+
+
 	// show temps
 	tr() << "refine init temp: " << init_temp << std::endl;
 	tr() << "refine final temp: " << final_temp << std::endl;
@@ -328,17 +330,16 @@ void LoopMover_Refine_KIC::apply(
 		// Not designing -- just repack
 		repack_packer_task->restrict_to_repacking();
 		tr() << "Not designing" << std::endl;
-	}
-	else tr() << "Activating design" << std::endl;
+	} else tr() << "Activating design" << std::endl;
 
 	// setting redes loop, but no resfile specified. all non-loop positions only repack. loop positions can design.
-	if( redesign_loop_ && !option[ OptionKeys::packing::resfile ].user() ) {
+	if ( redesign_loop_ && !option[ OptionKeys::packing::resfile ].user() ) {
 		tr() << "Auto-setting loop design for residues:";
-		for( core::Size i = 1; i <= pose.size(); ++i ) {
-			if( !is_loop[i] ) repack_packer_task->nonconst_residue_task( i ).restrict_to_repacking();
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
+			if ( !is_loop[i] ) repack_packer_task->nonconst_residue_task( i ).restrict_to_repacking();
 			else tr() << " " << i;
 		}
-	tr() << std::endl;
+		tr() << std::endl;
 	}
 
 	// setup kinematic mover
@@ -346,43 +347,44 @@ void LoopMover_Refine_KIC::apply(
 	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
 
 	// AS Oct 3, 2012: create appropriate perturber here, depending on input flags
-	if (option[ OptionKeys::loops::vicinity_sampling ]()) {
+	if ( option[ OptionKeys::loops::vicinity_sampling ]() ) {
 		loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber =
-		new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( &myKinematicMover );
+			new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( &myKinematicMover );
 		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 		myKinematicMover.set_perturber( perturber );
 		perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ].user() || basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) { // torsion-restricted sampling
 		std::string torsion_bins = basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ]();
-		
+
 		// derive torsion string from native/input pose, if requested -- warning: this overwrites the externally provided one
-		if ( basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() )
-			torsion_bins = torsion_features_string( native_pose ); 
+		if ( basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) {
+			torsion_bins = torsion_features_string( native_pose );
+		}
 		//runtime_assert(torsion_bins.size() != loop_end - loop_begin + 1); // loop boundaries are not available here -- maybe the perturber should check the length?
-		
+
 		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( &myKinematicMover, torsion_bins );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() ); // to make the code cleaner this should really be a generic function, even though some classes may not use it
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() && basic::options::option[ basic::options::OptionKeys::loops::taboo_in_fa ]() ) {  // TabooSampling with rama2b (neighbor-dependent phi/psi lookup) -- note that Taboo Sampling will only be active during the first half of the full-atom stage, after that we follow the energy landscape / Monte Carlo
-		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP 
-		perturber =
-        new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( &myKinematicMover );
+		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP
+			perturber =
+			new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( &myKinematicMover );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::taboo_in_fa ] ) { // TabooSampling (std rama) -- note that Taboo Sampling will only be active during the first half of the full-atom stage, after that we follow the energy landscape / Monte Carlo
 		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( &myKinematicMover );
-		
-		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() ); 
+
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // neighbor-dependent phi/psi selection
-		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP 
-		perturber =
-        new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
+		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP
+			perturber =
+			new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
-		myKinematicMover.set_perturber( perturber );        
+		myKinematicMover.set_perturber( perturber );
 	} else { // standard KIC
 		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+			new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
 		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 		myKinematicMover.set_perturber( perturber );
 	}
@@ -398,32 +400,32 @@ void LoopMover_Refine_KIC::apply(
 	// AS: setting up weights for ramping rama[2b] and/or fa_rep
 	core::Real orig_local_fa_rep_weight = local_scorefxn->get_weight( fa_rep );
 	core::Real orig_min_fa_rep_weight = min_scorefxn->get_weight( fa_rep );
-	
+
 	core::Real orig_local_rama_weight = local_scorefxn->get_weight( rama );
 	core::Real orig_min_rama_weight = min_scorefxn->get_weight( rama );
-	
+
 	core::Real orig_local_rama2b_weight = local_scorefxn->get_weight( rama2b );
 	core::Real orig_min_rama2b_weight = min_scorefxn->get_weight( rama2b );
-	
-	if ( basic::options::option [ basic::options::OptionKeys::loops::ramp_fa_rep ]() ) { 
+
+	if ( basic::options::option [ basic::options::OptionKeys::loops::ramp_fa_rep ]() ) {
 		local_scorefxn->set_weight( fa_rep, orig_local_fa_rep_weight/(outer_cycles + 1) );
 		min_scorefxn->set_weight( fa_rep, orig_min_fa_rep_weight/(outer_cycles + 1) );
 	}
 	//AS: ramp rama -- currently only in refine mode
-	if ( basic::options::option [ basic::options::OptionKeys::loops::ramp_rama ]() ) { 
+	if ( basic::options::option [ basic::options::OptionKeys::loops::ramp_rama ]() ) {
 		local_scorefxn->set_weight( rama, orig_local_rama_weight/(outer_cycles + 1) );
 		min_scorefxn->set_weight( rama, orig_min_rama_weight/(outer_cycles + 1) );
-		
-		// ramp rama2b instead if we're using that for sampling		
-		if (option[ OptionKeys::loops::kic_rama2b ]() ) {
+
+		// ramp rama2b instead if we're using that for sampling
+		if ( option[ OptionKeys::loops::kic_rama2b ]() ) {
 			//TR << "ramp repulsive: rama2b set to " << orig_local_rama2b_weight/(outer_cycles + 1) << std::endl;
 			local_scorefxn->set_weight( rama2b, orig_local_rama2b_weight/(outer_cycles + 1) );
 			min_scorefxn->set_weight( rama2b, orig_min_rama2b_weight/(outer_cycles + 1) );
 		}
 	}
-	
 
-	
+
+
 	// perform initial repack trial
 	utility::vector1<bool> allow_sc_move_all_loops( nres, false );
 	(*local_scorefxn)(pose); // update 10A nbr graph, silly way to do this
@@ -444,17 +446,17 @@ void LoopMover_Refine_KIC::apply(
 	pose.update_residue_neighbors(); // to update 10A nbr graph
 	kinematics::MoveMap mm_all_loops; // DJM tmp
 	loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
-	if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
+	if ( flank_residue_min_ ) { add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
 	MoveMapOP mm_all_loops_OP = new kinematics::MoveMap( mm_all_loops ); // AS, required for using MinMover
 	min_mover->movemap( mm_all_loops_OP );
 	min_mover->score_function( min_scorefxn ); // AS: needs to be adapted in case we ramp any weights (or does this happen automatically through pointers?)
-	//	minimizer->run( pose, mm_all_loops, *min_scorefxn, options ); // DJM tmp
+	// minimizer->run( pose, mm_all_loops, *min_scorefxn, options ); // DJM tmp
 	min_mover->apply( pose );
 	mc.boltzmann( pose, move_type );
 	mc.show_scores();
 	if ( redesign_loop_ ) {
 		tr() << "Sequence after design step: "
-		<< pose.sequence() << std::endl;
+			<< pose.sequence() << std::endl;
 	}
 
 	// Get a vector of move_maps and allow_sc_move vectors, one for each loop. This way if we have multiple loops
@@ -464,14 +466,14 @@ void LoopMover_Refine_KIC::apply(
 	update_movemap_vectors( pose, move_maps );
 	update_allow_sc_vectors( pose, allow_sc_vectors );
 
-	if (local_movie) {
+	if ( local_movie ) {
 		// this assumes there is only one loops_.
 		Loops::const_iterator one_loop( loops()->begin() );
 		Size begin_loop=one_loop->start();
 		Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;
 		utility::vector1<Size> indices(end_loop - begin_loop + 3);
-		for (Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++) {
+		for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 			indices[j]=i;
 		}
 		pose.dump_pdb(loop_outfile, indices, "initial_repack");
@@ -482,7 +484,7 @@ void LoopMover_Refine_KIC::apply(
 	//inner_cycles = 20;
 	core::Size num_kinematic_trials = 2;
 
-	for (int i=1; i<=outer_cycles; ++i) {
+	for ( int i=1; i<=outer_cycles; ++i ) {
 		// increase CHAINBREAK weight and update monte carlo
 		//scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
 		//min_scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
@@ -490,46 +492,46 @@ void LoopMover_Refine_KIC::apply(
 		loop_mover::loops_set_chainbreak_weight( min_scorefxn, i );
 		loop_mover::loops_set_chainbreak_weight( local_scorefxn, i ); // AS April 25, 2013
 		//scorefxn->set_weight( chainbreak, float(i) );
-				
+
 		// AS: try ramping the fa_rep over the outer cycles
-		if ( option [ OptionKeys::loops::ramp_fa_rep ]() ) { 
+		if ( option [ OptionKeys::loops::ramp_fa_rep ]() ) {
 			//TR << "ramp repulsive: fa_rep set to " << orig_local_fa_rep_weight/(outer_cycles - i + 1) << std::endl;
 			local_scorefxn->set_weight( fa_rep, orig_local_fa_rep_weight/(outer_cycles - i + 1) );
 			min_scorefxn->set_weight( fa_rep, orig_min_fa_rep_weight/(outer_cycles - i + 1) );
 		}
-		
-		if ( option [ OptionKeys::loops::ramp_rama ]() ) { 
+
+		if ( option [ OptionKeys::loops::ramp_rama ]() ) {
 			//TR << "ramp repulsive: rama set to " << orig_local_rama_weight/(outer_cycles - i + 1) << std::endl;
 			local_scorefxn->set_weight( rama, orig_local_rama_weight/(outer_cycles - i + 1) );
 			min_scorefxn->set_weight( rama, orig_min_rama_weight/(outer_cycles - i + 1) );
-			
-			if (option[ OptionKeys::loops::kic_rama2b ]() ) {
+
+			if ( option[ OptionKeys::loops::kic_rama2b ]() ) {
 				//TR << "ramp repulsive: rama2b set to " << orig_local_rama2b_weight/(outer_cycles - i + 1) << std::endl;
 				local_scorefxn->set_weight( rama2b, orig_local_rama2b_weight/(outer_cycles - i + 1) );
 				min_scorefxn->set_weight( rama2b, orig_min_rama2b_weight/(outer_cycles - i + 1) );
-				
+
 			}
 		}
-		
-		
+
+
 		// more than 50% done? -> switch off Taboo Sampling (if applicable)
 		if ( i > outer_cycles/2 && option[ OptionKeys::loops::taboo_in_fa ]() ) {
 			// if rama2b is active, generate a new rama2b perturber, otherwise use a standard torsion sampling perturber
 			if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // neighbor-dependent phi/psi selection
-				loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP 
-				perturber =
-				new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
+				loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP
+					perturber =
+					new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
 				perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
-				myKinematicMover.set_perturber( perturber );        
+				myKinematicMover.set_perturber( perturber );
 			} else { // standard KIC
 				loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-				new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+					new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
 				perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 				myKinematicMover.set_perturber( perturber );
 			}
 		}
 
-		
+
 		mc.score_function( *local_scorefxn );
 		// recover low
 		if ( recover_low_ ) {
@@ -541,10 +543,12 @@ void LoopMover_Refine_KIC::apply(
 		for ( int j=1; j<=inner_cycles; ++j ) {
 			temperature *= gamma;
 			mc.set_temperature( temperature );
-			if ( verbose ) tr() << "refinement cycle (outer/inner): "
-				<< i << "/" << outer_cycles << " "
-				<< j << "/" << inner_cycles << " "
-				<< std::endl;
+			if ( verbose ) {
+				tr() << "refinement cycle (outer/inner): "
+					<< i << "/" << outer_cycles << " "
+					<< j << "/" << inner_cycles << " "
+					<< std::endl;
+			}
 
 			// choose a random loop for both rounds
 			//Loops::const_iterator it( loops_.one_random_loop() );
@@ -555,17 +559,17 @@ void LoopMover_Refine_KIC::apply(
 			// get loop endpoints
 			Size begin_loop=one_loop.begin()->start();
 			Size end_loop=one_loop.begin()->stop();
-			
+
 			myKinematicMover.set_loop_begin_and_end( begin_loop, end_loop ); // AS -- for restricted torsion bin sampling, the mover needs to know about the start of the defined loop, not just the segment that is sampled in a given move
-			
+
 			// for Taboo Sampling we need to update the sequence here every time, in case it changes (e.g. when modeling multiple loops)
 			utility::vector1< core::chemical::AA > loop_sequence;
 			loop_sequence.resize(0); // make sure it is empty
-			for (core::Size cur_res = begin_loop; cur_res <= end_loop; cur_res++) {
-				loop_sequence.push_back(pose.aa(cur_res)); 
+			for ( core::Size cur_res = begin_loop; cur_res <= end_loop; cur_res++ ) {
+				loop_sequence.push_back(pose.aa(cur_res));
 			}
 			myKinematicMover.update_sequence( loop_sequence );
-			
+
 			// get the movemap for minimization and allowed side-chains for rottrials for this loop
 			kinematics::MoveMap cur_mm = move_maps[ loop_ind ];
 			MoveMapOP cur_mm_OP = new kinematics::MoveMap( cur_mm );
@@ -575,10 +579,10 @@ void LoopMover_Refine_KIC::apply(
 			// AS Thu Oct 25 19:41:14 PDT 2012
 			// rewriting the kinematic trials so that the 1st and 2nd round are handled by a loop instead of code duplication
 			// then incorporating the possibility to repack after each loop move (and before calling mc.boltzmann)
-			
-			for (core::Size kinematic_trial = 1; kinematic_trial <= num_kinematic_trials; kinematic_trial++) {
 
-				// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot 
+			for ( core::Size kinematic_trial = 1; kinematic_trial <= num_kinematic_trials; kinematic_trial++ ) {
+
+				// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot
 				if ( option[ OptionKeys::loops::legacy_kic ]() || j % 2 == 0 ) {
 					kic_start = numeric::random::rg().random_range(begin_loop,end_loop-2);
 					// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
@@ -594,35 +598,35 @@ void LoopMover_Refine_KIC::apply(
 
 				myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
 				myKinematicMover.set_temperature(temperature);
-				
+
 				core::pose::Pose last_accepted_pose = pose; // backup in case of undetected chain breaks
 				myKinematicMover.apply( pose );
 
 				// AS April 25, 2013
 				// There seems to be a bug in KIC that makes it occasionally report open conformations but stating they are closed. We're looking into why exactly this happens -- for the moment this is a workaround that discards structures with a chainbreak score > 0, as this indicates that the chain probably isn't closed after all
-				
+
 				// note that overall scores here may be very high, due to side chain clashes (rotamer trials and/or repacking below)
-				
+
 				/* // moved to KinematicMover.cc
 				(*local_scorefxn)(pose);
 				core::Real current_chainbreak = pose.energies().total_energies()[ core::scoring::chainbreak ] * local_scorefxn->get_weight( chainbreak );
-				
+
 				//getPoseExtraScore(pose, "chainbreak", current_chainbreak);
-				
+
 				tr() << "AS_DEBUG -- chainbreak score " << current_chainbreak << std::endl;
-		
+
 				if ( current_chainbreak > option[ OptionKeys::loops::kic_chainbreak_threshold ]() ) { // todo: make this option-dependent -- AS_DEBUG
-					tr() << "AS_DEBUG -- this structure probably has a chain break, skipping it " << kic_start << "-" << kic_end << std::endl;
-					local_scorefxn->show(pose); // AS_DEBUG
-					
-					
-					pose.dump_pdb("high_chainbreak_score_" + utility::to_string(i) + "_" + utility::to_string(j) + "_" + utility::to_string(kic_start) + "_" + utility::to_string(kic_end) + ".pdb");
-					
-					pose = last_accepted_pose;				
-					
+				tr() << "AS_DEBUG -- this structure probably has a chain break, skipping it " << kic_start << "-" << kic_end << std::endl;
+				local_scorefxn->show(pose); // AS_DEBUG
+
+
+				pose.dump_pdb("high_chainbreak_score_" + utility::to_string(i) + "_" + utility::to_string(j) + "_" + utility::to_string(kic_start) + "_" + utility::to_string(kic_end) + ".pdb");
+
+				pose = last_accepted_pose;
+
 				} else
-				 */
-				
+				*/
+
 				if ( myKinematicMover.last_move_succeeded() ) {
 					// get the movemap and allowed side-chains for the current loop
 
@@ -637,24 +641,24 @@ void LoopMover_Refine_KIC::apply(
 						set_rottrials_from_kic_segment( pose, rottrials_packer_task, kic_start, kic_end ); // for rottrials
 						set_movemap_from_kic_segment( pose, cur_mm, kic_start, kic_end ); // for minimization
 					}
-				
+
 					// AS Oct 25, 2012: considering the order of magnitude that full-scale KIC modeling can introduce, it may be very valuable to repack before testing for acceptance
 					// * note that this probably is much less relevant in vicinity sampling -- Rotamer Trials may be enough
 					// * also note that this allows for design, which we're not testing at the moment in the standard loop modeling benchmark -- it should be checked whether this leads to collapsing structures / strong preference for small residues, and in the latter case, perhaps this part of the code should only repack, but not design
-					if ( !option[ OptionKeys::loops::legacy_kic ]() && (j%repack_period)==0 ) { 
+					if ( !option[ OptionKeys::loops::legacy_kic ]() && (j%repack_period)==0 ) {
 						// implementation copied from "main_repack_trial" below
-						
+
 						//tr() << " AS -- repacking after loop closure but before mc.boltzmann " << std::endl; // AS_DEBUG
-						
+
 						update_movemap_vectors( pose, move_maps );
 						update_allow_sc_vectors( pose, allow_sc_vectors );
-						
+
 						// the repack/design and subsequent minimization within this main_repack_trial block apply
 						// to all loops (and their neighbors, if requested)
 						loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
-						if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
+						if ( flank_residue_min_ ) { add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
 						select_loop_residues( pose, *loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
-						
+
 						core::pose::symmetry::make_residue_mask_symmetric( pose, allow_sc_move_all_loops );  //fpd symmetrize res mask -- does nothing if pose is not symm
 						repack_packer_task->restrict_to_residues( allow_sc_move_all_loops );
 						rottrials_packer_task->restrict_to_residues( allow_sc_move_all_loops );
@@ -667,7 +671,7 @@ void LoopMover_Refine_KIC::apply(
 							rottrials_packer_task->restrict_to_residues( allow_sc_move_all_loops );
 							if ( verbose ) tr() << "energy after design repack: " << (*local_scorefxn)(pose) << std::endl; // DJM remove
 						}
-						
+
 						// minimize after repack if requested
 						// AS: note that this may not be necessary here, as we'll minimize after the rotamer trials step anyway
 						if ( min_after_repack_ ) {
@@ -675,13 +679,13 @@ void LoopMover_Refine_KIC::apply(
 								//fpd  minimizing with the reduced movemap seems to cause occasional problems
 								//     in the symmetric case ... am looking into this
 								loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_ );
-								if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
+								if ( flank_residue_min_ ) { add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
 							}
 							min_mover->movemap( mm_all_loops_OP ); // will symmetry changes automatically be transferred through the pointer?
-							min_mover->score_function( min_scorefxn ); 
+							min_mover->score_function( min_scorefxn );
 							min_mover->apply( pose );
 						}
-						
+
 						std::string move_type;
 						if ( redesign_loop_ ) move_type = "repack+design";
 						else move_type = "repack";
@@ -689,20 +693,20 @@ void LoopMover_Refine_KIC::apply(
 						mc.show_scores();
 						if ( redesign_loop_ ) {
 							tr() << "Sequence after design step: "
-							<< pose.sequence() << std::endl;
+								<< pose.sequence() << std::endl;
 						}
 						if ( verbose ) tr() << "energy after repack: " << (*local_scorefxn)(pose) << std::endl;
-					} 
+					}
 
 					// AS: first do repacking (if applicable), then rotamer trials -- we've shown that this increases recovery of native side chain conformations
-					for (Size i = 1; i <= num_rot_trials; i++) {
+					for ( Size i = 1; i <= num_rot_trials; i++ ) {
 						pack::rotamer_trials( pose, *local_scorefxn, rottrials_packer_task );
 						pose.update_residue_neighbors(); // to update 10A nbr graph
 					}
 					//pack::pack_rotamers_loop( pose, *local_scorefxn, rottrials_packer_task, num_rot_trials ); // can we use this instead? is this really RT, or actual packing?
-					
-					
-					
+
+
+
 					// AS: for non-legacy-KIC one might consider putting this into an ELSE branch -- however, min_after_repack_ defaults to false, in which case we wouldn't have minimization here, which could strongly affect the likelihood of acceptance
 					min_mover->movemap( cur_mm_OP );
 					min_mover->score_function( min_scorefxn );
@@ -714,22 +718,22 @@ void LoopMover_Refine_KIC::apply(
 					std::string move_type = "kic_refine_r" + k_trial.str();
 					bool accepted = mc.boltzmann( pose, move_type );
 
-					if (accepted) {
+					if ( accepted ) {
 						tr() << "RMS to native after accepted kinematic round " << kinematic_trial << " move on loop "
-						   << loops()->size() + 1 - loop_ind << ": " // reverse the order so it corresponds with the loop file
-						   << loop_rmsd(pose, native_pose, *loops()) << std::endl;
+							<< loops()->size() + 1 - loop_ind << ": " // reverse the order so it corresponds with the loop file
+							<< loop_rmsd(pose, native_pose, *loops()) << std::endl;
 						//tr << "after accepted move res " << kic_start + 2 << " omega is " << pose.omega(kic_start+2) << std::endl;
-						if (local_movie) {
+						if ( local_movie ) {
 							loop_outfile << "MODEL" << std::endl;
 							utility::vector1<Size> indices(end_loop - begin_loop + 3);
-							for (Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++) {
+							for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 								indices[j]=i;
 							}
 							pose.dump_pdb(loop_outfile, indices, "refine_r" + k_trial.str());
 							loop_outfile << "ENDMDL" << std::endl;
 						}
 						//tr << "temperature: " << temperature << std::endl;
-						//tr << "chainbreak: " << pose.energies().total_energies()[ core::scoring::chainbreak ] << std::endl; 
+						//tr << "chainbreak: " << pose.energies().total_energies()[ core::scoring::chainbreak ] << std::endl;
 						if ( verbose ) tr() << "energy after accepted move: " << (*local_scorefxn)(pose) << std::endl;
 					}
 
@@ -737,22 +741,22 @@ void LoopMover_Refine_KIC::apply(
 				}
 			}
 
-		 	{ //main_repack_trial
- 				if ( ( option[ OptionKeys::loops::legacy_kic ]() && (j%repack_period)==0 ) || j==inner_cycles ) { // AS: always repack at the end of an outer cycle, to make sure the loop environment is repacked before returning from this function
+			{ //main_repack_trial
+				if ( ( option[ OptionKeys::loops::legacy_kic ]() && (j%repack_period)==0 ) || j==inner_cycles ) { // AS: always repack at the end of an outer cycle, to make sure the loop environment is repacked before returning from this function
 
 					//tr() << " AS -- repacking after loop closure and mc.boltzmann (legacy KIC behavior) " << std::endl; // AS_DEBUG
 
 					// repack trial
 					// DJM: we have found that updating the move maps and rottrials/repack sets once per repack period
 					//      gives better performance than updating them after every move, so we do so here for
-					//		subsequent cycles until the next repack period
+					//  subsequent cycles until the next repack period
 					update_movemap_vectors( pose, move_maps );
 					update_allow_sc_vectors( pose, allow_sc_vectors );
 
 					// the repack/design and subsequent minimization within this main_repack_trial block apply
 					// to all loops (and their neighbors, if requested)
 					loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
-					if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
+					if ( flank_residue_min_ ) { add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
 					select_loop_residues( pose, *loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
 
 					core::pose::symmetry::make_residue_mask_symmetric( pose, allow_sc_move_all_loops );  //fpd symmetrize res mask -- does nothing if pose is not symm
@@ -761,7 +765,7 @@ void LoopMover_Refine_KIC::apply(
 
 					pack::pack_rotamers( pose, *local_scorefxn, repack_packer_task ); // design here if resfile supplied
 					if ( verbose ) tr() << "energy after design: " << (*local_scorefxn)(pose) << std::endl; // DJM remove
-					
+
 					if ( redesign_loop_ ) { // need to make new rottrials packer task with redesigned sequence
 						rottrials_packer_task = task_factory->create_task_and_apply_taskoperations( pose );
 						rottrials_packer_task->restrict_to_repacking();
@@ -776,7 +780,7 @@ void LoopMover_Refine_KIC::apply(
 							//fpd  minimizing with the reduced movemap seems to cause occasional problems
 							//     in the symmetric case ... am looking into this
 							loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_ );
-							if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
+							if ( flank_residue_min_ ) { add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
 						}
 						min_mover->movemap( mm_all_loops_OP );
 						min_mover->score_function( min_scorefxn );
@@ -790,7 +794,7 @@ void LoopMover_Refine_KIC::apply(
 					mc.show_scores();
 					if ( redesign_loop_ ) {
 						tr() << "Sequence after design step: "
-						   << pose.sequence() << std::endl;
+							<< pose.sequence() << std::endl;
 					}
 					if ( verbose ) tr() << "energy after repack: " << (*local_scorefxn)(pose) << std::endl;
 				}
@@ -802,18 +806,17 @@ void LoopMover_Refine_KIC::apply(
 	mc.show_counters();
 	if ( recover_low_ ) {
 		pose = mc.lowest_score_pose();
-	}
-	else {
+	} else {
 		pose = mc.last_accepted_pose();
 	}
-	if (local_movie) {
+	if ( local_movie ) {
 		// this assumes there is only one loops_.
 		Loops::const_iterator one_loop( loops()->begin() );
 		Size begin_loop=one_loop->start();
 		Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;
 		utility::vector1<Size> indices(end_loop - begin_loop + 3);
-		for (Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++) {
+		for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 			indices[j]=i;
 		}
 		pose.dump_pdb(loop_outfile, indices, "final_refine");
@@ -831,12 +834,12 @@ LoopMover_Refine_KIC::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output <<   "Neighbor distance of the KIC segment:   " << neighbor_dist_ <<
-				"\nMaximum KIC segment length:             " << max_seglen_ <<
-				"\nRecover the lowest energy conformation: " << (recover_low_ ? "True" : "False") <<
-				"\nMinimize after repacking:               " << (min_after_repack_ ? "True" : "False") <<
-				"\nFix sidechains neighboring the loop:    " << (fix_natsc_ ? "True" : "False") <<
-				"\nOptimize only within the neighbor distance after every KIC move: " <<
-				(optimize_only_kic_region_sidechains_after_move_ ? "True" : "False");
+		"\nMaximum KIC segment length:             " << max_seglen_ <<
+		"\nRecover the lowest energy conformation: " << (recover_low_ ? "True" : "False") <<
+		"\nMinimize after repacking:               " << (min_after_repack_ ? "True" : "False") <<
+		"\nFix sidechains neighboring the loop:    " << (fix_natsc_ ? "True" : "False") <<
+		"\nOptimize only within the neighbor distance after every KIC move: " <<
+		(optimize_only_kic_region_sidechains_after_move_ ? "True" : "False");
 }
 
 /// detailed
@@ -848,7 +851,7 @@ LoopMover_Refine_KIC::update_movemap_vectors(
 	core::pose::Pose & pose,
 	utility::vector1<core::kinematics::MoveMap> & move_maps ) {
 
-	for( Size i = 1; i <= loops()->size(); i++ ) {
+	for ( Size i = 1; i <= loops()->size(); i++ ) {
 		protocols::loops::Loops cur_loop;
 		cur_loop.add_loop( ( *loops() )[ i ] );
 		core::kinematics::MoveMap cur_mm;
@@ -866,7 +869,7 @@ LoopMover_Refine_KIC::update_allow_sc_vectors(
 	core::pose::Pose & pose,
 	utility::vector1< utility::vector1< bool > > & allow_sc_vectors ) {
 
-	for( Size i = 1; i <= loops()->size(); i++ ) {
+	for ( Size i = 1; i <= loops()->size(); i++ ) {
 		protocols::loops::Loops cur_loop;
 		cur_loop.add_loop( ( *loops() )[ i ] );
 		utility::vector1<bool> cur_allow_sc_move( pose.size(), false );
@@ -921,17 +924,17 @@ std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_KIC const &mover )
 
 basic::Tracer & LoopMover_Refine_KIC::tr() const
 {
-    return TR;
+	return TR;
 }
 
 LoopMover_Refine_KICCreator::~LoopMover_Refine_KICCreator() {}
 
 moves::MoverOP LoopMover_Refine_KICCreator::create_mover() const {
-  return new LoopMover_Refine_KIC();
+	return new LoopMover_Refine_KIC();
 }
 
 std::string LoopMover_Refine_KICCreator::keyname() const {
-  return "LoopMover_Refine_KIC";
+	return "LoopMover_Refine_KIC";
 }
 
 } // namespace refine

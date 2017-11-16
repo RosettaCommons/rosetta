@@ -34,7 +34,7 @@
 #include <algorithm>
 #include <iterator>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.util" );
+static basic::Tracer TR( "core.select.residue_selector.util" );
 
 namespace core {
 namespace select {

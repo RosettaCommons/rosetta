@@ -30,7 +30,6 @@
 // Utility headers
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

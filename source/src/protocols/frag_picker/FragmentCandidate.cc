@@ -70,7 +70,7 @@ namespace frag_picker {
 using namespace ObjexxFCL::format;
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer trFragmentCandidate(
+static basic::Tracer trFragmentCandidate(
 	"protocols.frag_picker.FragmentCandidate");
 
 const std::string FragmentCandidate::unknown_pool_name_ = "UNKNOWN_POOL_NAME";

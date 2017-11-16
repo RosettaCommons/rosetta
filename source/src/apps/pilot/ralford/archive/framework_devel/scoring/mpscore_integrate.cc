@@ -11,7 +11,7 @@
 ///
 /// @brief   Integration Test Precursor - Score a Membrane Pose
 /// @details Score a membrane pose within the membrane protein framework
-///			 Last Modified: 3/11/14
+///    Last Modified: 3/11/14
 ///
 /// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 
@@ -39,7 +39,7 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.score_mp_pose" );
+static basic::Tracer TR( "apps.pilot.ralford.score_mp_pose" );
 
 void*
 my_main( void* )

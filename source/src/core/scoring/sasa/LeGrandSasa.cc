@@ -49,7 +49,7 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.sasa.LeGrandSasa" );
+static basic::Tracer TR( "core.scoring.sasa.LeGrandSasa" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

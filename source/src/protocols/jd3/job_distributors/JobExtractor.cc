@@ -35,7 +35,7 @@
 #include <utility/string_util.hh>
 //#include <utility/mpi_util.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.job_distributors.JobExtractor" );
+static basic::Tracer TR( "protocols.jd3.job_distributors.JobExtractor" );
 
 namespace protocols {
 namespace jd3 {

@@ -67,7 +67,7 @@
 namespace core {
 namespace util {
 
-static THREAD_LOCAL basic::Tracer TR( "core.util.metalloproteins_util" );
+static basic::Tracer TR( "core.util.metalloproteins_util" );
 
 // removed from the header file so that it cannot be called directly, only from this file ~Labonte
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

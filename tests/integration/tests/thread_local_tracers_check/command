@@ -1,24 +1,23 @@
 
 cd %(workdir)s
 
-touch nonlocal_tracers.txt
+touch threadlocal_tracers.txt
 
 cd %(bin)s/../
 
-#Find static tracers which aren't properly thread local, (and aren't commented out) and sort for run-to-run consistency
+#Find Tracers which have been tagged as THREAD_LOCAL (we don't do that anymore) and sort for run-to-run consistency
 
-grep -R --include '*.hh' --include '*.cc' 'static.*Tracer[^A-Za-z_]' src | \
-	grep -v 'static.*THREAD_LOCAL.*Tracer' | \
-	grep -v '[^A-Za-z]*//' | \
-	sort > %(workdir)s/nonlocal_tracers.txt
+grep -R --include '*.hh' --include '*.h' --include '*.cc' 'THREAD_LOCAL.*[^A-Za-z_]Tracer[^A-Za-z_]' src/ test/ | \
+	grep -v 'static THREAD_LOCAL std::unordered_map' | \
+	sort > %(workdir)s/threadlocal_tracers.txt
 
 cd %(workdir)s
 
 # Label by date so they get represented as changes in the diff.
-sed -i "s/^/[`date`] /" nonlocal_tracers.txt
+sed -i "s/^/[`date`] /" threadlocal_tracers.txt
 
-if [ -s nonlocal_tracers.txt ]; then
-   echo ">>> Inappropriate use of a non-thread-local static Tracer detected"
+if [ -s threadlocal_tracers.txt ]; then
+   echo ">>> Inappropriate use of a THREAD_LOCLA Tracer detected"
    exit -1;
 fi
 

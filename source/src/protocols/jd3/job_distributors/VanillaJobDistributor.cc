@@ -45,7 +45,7 @@ namespace protocols {
 namespace jd3 {
 namespace job_distributors {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.VanillaJobDistributor" );
+static basic::Tracer TR( "protocols.jd3.VanillaJobDistributor" );
 
 VanillaJobDistributor::VanillaJobDistributor()
 {}

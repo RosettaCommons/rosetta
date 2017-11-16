@@ -29,7 +29,7 @@ namespace vall {
 
 
 // static initialization
-static THREAD_LOCAL basic::Tracer TR( "core.fragment.picking_old.vall.VallLibrarian" );
+static basic::Tracer TR( "core.fragment.picking_old.vall.VallLibrarian" );
 
 
 /// @brief default constructor

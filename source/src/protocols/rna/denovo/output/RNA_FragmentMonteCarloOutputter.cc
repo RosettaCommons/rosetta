@@ -26,7 +26,7 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.output.RNA_FragmentMonteCarloOutputter" );
+static basic::Tracer TR( "protocols.rna.denovo.output.RNA_FragmentMonteCarloOutputter" );
 
 using namespace core;
 using utility::vector1;

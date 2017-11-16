@@ -23,7 +23,7 @@
 #include <basic/Tracer.hh>
 #include <set>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.RNA_SecStruct" );
+static basic::Tracer TR( "core.pose.rna.RNA_SecStruct" );
 
 using namespace core;
 using utility::tools::make_vector1;

@@ -34,7 +34,7 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
-//static THREAD_LOCAL basic::Tracer TR("StringUtil");
+//static basic::Tracer TR("StringUtil");
 
 class StringUtilTests : public CxxTest::TestSuite {
 public:

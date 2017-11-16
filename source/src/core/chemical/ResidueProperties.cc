@@ -30,7 +30,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.ResidueProperties" );
+static basic::Tracer TR( "core.chemical.ResidueProperties" );
 
 
 #ifdef    SERIALIZATION

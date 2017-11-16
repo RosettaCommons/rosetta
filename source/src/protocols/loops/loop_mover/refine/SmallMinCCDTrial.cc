@@ -54,7 +54,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.SmallMinCCDTrial" );
+static basic::Tracer TR( "protocols.loops.loop_mover.refine.SmallMinCCDTrial" );
 
 namespace protocols {
 namespace loops {

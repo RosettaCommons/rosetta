@@ -37,7 +37,7 @@ namespace core {
 namespace pack {
 namespace annealer {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.annealer.AnnealerFactory" );
+static basic::Tracer TR( "core.pack.annealer.AnnealerFactory" );
 
 SimAnnealerBaseOP
 AnnealerFactory::create_annealer(

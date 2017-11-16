@@ -39,7 +39,7 @@ namespace jd3 {
 namespace pose_outputters {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.pose_outputters.PoseOutputterFactory" );
+static basic::Tracer TR( "protocols.jd3.pose_outputters.PoseOutputterFactory" );
 
 PoseOutputterFactory::PoseOutputterFactory() :
 	throw_on_double_registration_( false )

@@ -25,7 +25,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.AtomID_Mapper" );
+static basic::Tracer TR( "protocols.toolbox.AtomID_Mapper" );
 
 using namespace core::id;
 using namespace core::pose;

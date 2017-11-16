@@ -46,7 +46,7 @@
 #include <complex>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.MPIWorkPartitionJobDistributor" );
+static basic::Tracer TR( "protocols.jd2.MPIWorkPartitionJobDistributor" );
 
 namespace protocols {
 namespace jd3 {
@@ -56,14 +56,14 @@ namespace job_distributors {
 ///which processor it is in MPI land (later used in job determination).  Note that all processors will have the same
 ///internal Jobs object (set by the parent class); this class merely iterates over it differently.
 MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
-  JobDistributor(),
+	JobDistributor(),
 	npes_( 1 ),
-  rank_( 0 ),
-  job_id_start_( 0 ),
-  job_id_end_( 0 ),
-  next_job_to_try_assigning_( 0 )
+	rank_( 0 ),
+	job_id_start_( 0 ),
+	job_id_end_( 0 ),
+	next_job_to_try_assigning_( 0 )
 {
-  // set npes and rank based on whether we are using MPI or not
+	// set npes and rank based on whether we are using MPI or not
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -122,22 +122,19 @@ MPIWorkPartitionJobDistributor::determine_job_ids_to_run()
 	// 0-indexed but Jobs is 1-indexed
 	/*next_job_index_ = */
 
-	if( jobs_mod_procs == 0 ) {
+	if ( jobs_mod_procs == 0 ) {
 		num_jobs = core::Size( jobs_div_procs );
-	}
-	// if the rank is less than jobs%procs, the number of jobs per processor is the ceiling of jobs/processors; take that
-	// many jobs.  +1 is because rank_ is 0-indexed but Jobs is 1-indexed
-	else if ( rank_ < jobs_mod_procs ) {
+	} else if ( rank_ < jobs_mod_procs ) {
+		// if the rank is less than jobs%procs, the number of jobs per processor is the ceiling of jobs/processors; take that
+		// many jobs.  +1 is because rank_ is 0-indexed but Jobs is 1-indexed
 		num_jobs = (core::Size) std::ceil( jobs_div_procs );
-	}
-	// if the rank is more than or equal to jobs%procs, the number of jobs per processor is the floor of jobs/processors;
-	// take that many jobs. rank * num jobs accounts for bulk of earlier jobs.  jobs_mod_procs accounts for all processors
-	// with rank < jobs_mod_procs getting an extra job because they use ceiling instead of floor in num_jobs.  +1 is
-	// because rank_ is 0-indexed but Jobs is 1-indexed
-	else if ( rank_ >= jobs_mod_procs ) {
+	} else if ( rank_ >= jobs_mod_procs ) {
+		// if the rank is more than or equal to jobs%procs, the number of jobs per processor is the floor of jobs/processors;
+		// take that many jobs. rank * num jobs accounts for bulk of earlier jobs.  jobs_mod_procs accounts for all processors
+		// with rank < jobs_mod_procs getting an extra job because they use ceiling instead of floor in num_jobs.  +1 is
+		// because rank_ is 0-indexed but Jobs is 1-indexed
 		num_jobs = job_id_start_ + (core::Size) std::floor( jobs_div_procs );
-	}
-	else {
+	} else {
 		utility_exit_with_message("ERROR: Problem determining job ids to run");
 	}
 
@@ -159,7 +156,7 @@ MPIWorkPartitionJobDistributor::go( JobQueenOP queen )
 		determine_job_ids_to_run();
 		next_job_to_try_assigning_ = job_id_start_;
 		TR << "RANK: " << rank_ << " NUM_PROCS: " << npes_ //<< " NUM_JOBS: " << jobs.size()
-		   << " START_ID: " << job_id_start_ << " END_ID: " << job_id_end_ << std::endl;
+			<< " START_ID: " << job_id_start_ << " END_ID: " << job_id_end_ << std::endl;
 
 		while ( more_jobs_in_current_round() ) {
 
@@ -199,7 +196,7 @@ MPIWorkPartitionJobDistributor::select_next_job() {
 		if ( next_job->bad() ) continue;
 
 		// determine if this job has already been run
-		if ( job_queen().has_job_completed( next_job )) {
+		if ( job_queen().has_job_completed( next_job ) ) {
 			continue;
 		}
 		// ok -- run this job
@@ -220,33 +217,33 @@ MPIWorkPartitionJobDistributor::more_jobs_in_current_round() {
 core::Size
 MPIWorkPartitionJobDistributor::get_new_job_id()
 {
-  LarvalJobs const & larval_jobs( jobs_for_current_round() );
+	LarvalJobs const & larval_jobs( jobs_for_current_round() );
 
-  while ( next_job_to_try_assigning_ <= job_id_end_ ) {
-    if ( job_queen().has_job_completed( larval_jobs[ next_job_to_try_assigning_ ] ) &&
-      !basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ) {
-      ++next_job_to_try_assigning_;
-    } else {
-      break;
-    }
-  }
+	while ( next_job_to_try_assigning_ <= job_id_end_ ) {
+		if ( job_queen().has_job_completed( larval_jobs[ next_job_to_try_assigning_ ] ) &&
+				!basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ) {
+			++next_job_to_try_assigning_;
+		} else {
+			break;
+		}
+	}
 
-  if ( next_job_to_try_assigning_ <= job_id_end_ ) {
-    core::Size job_to_assign = next_job_to_try_assigning_;
-    ++next_job_to_try_assigning_;
-    return job_to_assign;
-  }
+	if ( next_job_to_try_assigning_ <= job_id_end_ ) {
+		core::Size job_to_assign = next_job_to_try_assigning_;
+		++next_job_to_try_assigning_;
+		return job_to_assign;
+	}
 
-  // indicate that no jobs remain
-  return 0;
+	// indicate that no jobs remain
+	return 0;
 }
 
 /*void
 MPIWorkPartitionJobDistributor::mark_current_job_id_for_repetition()
 {
-	runtime_assert( current_job_id() == next_job_to_try_assigning_ - 1 );
-	--next_job_to_try_assigning_;
-	clear_current_job_output();
+runtime_assert( current_job_id() == next_job_to_try_assigning_ - 1 );
+--next_job_to_try_assigning_;
+clear_current_job_output();
 }*/
 
 /// @details this function handles the FAIL_BAD_INPUT mover status by removing other jobs with the same input from
@@ -259,21 +256,21 @@ MPIWorkPartitionJobDistributor::mark_current_job_id_for_repetition()
 void
 MPIWorkPartitionJobDistributor::remove_bad_inputs_from_job_list()
 {
-	LarvalJobs const & larval_jobs( jobs_for_current_round() );
-	std::string const & current_input_tag(current_job()->input_tag());
+LarvalJobs const & larval_jobs( jobs_for_current_round() );
+std::string const & current_input_tag(current_job()->input_tag());
 
-	TR << "job failed, reporting bad input; other jobs of same input will be canceled: "
-	   << job_outputter()->output_name( current_job() ) << std::endl;
+TR << "job failed, reporting bad input; other jobs of same input will be canceled: "
+<< job_outputter()->output_name( current_job() ) << std::endl;
 
-	// assumes JobQueen is known
-	Jobs const & jobs( get_jobs() );
+// assumes JobQueen is known
+Jobs const & jobs( get_jobs() );
 
-	while(next_job_to_try_assigning_ <= job_id_end_ && //MUST BE FIRST for c++ shortcut logical evaluation
-		jobs[next_job_to_try_assigning_]->input_tag() == current_input_tag) {
-		TR << "job canceled without trying due to previous bad input: "
-		   << job_outputter()->output_name( jobs[next_job_to_try_assigning_] ) << std::endl;
-		++next_job_to_try_assigning_;
-	}
+while(next_job_to_try_assigning_ <= job_id_end_ && //MUST BE FIRST for c++ shortcut logical evaluation
+jobs[next_job_to_try_assigning_]->input_tag() == current_input_tag) {
+TR << "job canceled without trying due to previous bad input: "
+<< job_outputter()->output_name( jobs[next_job_to_try_assigning_] ) << std::endl;
+++next_job_to_try_assigning_;
+}
 }
 */
 

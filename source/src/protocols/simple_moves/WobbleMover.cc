@@ -36,7 +36,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocol.abinitio.WobbleMover" );
+static basic::Tracer TR( "protocol.abinitio.WobbleMover" );
 
 namespace protocols {
 namespace simple_moves {

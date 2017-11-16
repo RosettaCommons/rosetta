@@ -65,7 +65,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.CyclizationMover" );
+static basic::Tracer TR( "protocols.simple_moves.CyclizationMover" );
 
 /// @brief Default constructor
 CyclizationMover::CyclizationMover( core::Size chain_to_cyclize, bool add_constraints = true, bool minimize = true, core::Size minimization_rebuild_rounds = 3 ) :

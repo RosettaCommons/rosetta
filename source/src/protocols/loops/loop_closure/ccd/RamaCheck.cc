@@ -41,7 +41,7 @@ namespace loops {
 namespace loop_closure {
 namespace ccd {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_closure.ccd.RamaCheck" );
+static basic::Tracer TR( "protocols.loops.loop_closure.ccd.RamaCheck" );
 
 // constants
 core::Real const RamaCheckBase::BAD_SCORE = 500.0;

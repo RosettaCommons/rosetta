@@ -41,7 +41,7 @@
 #include <string>
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.full_model_info.util" );
+static basic::Tracer TR( "core.pose.full_model_info.util" );
 
 ///////////////////////////////////////////////////////
 // Keep track of some base geometry that is

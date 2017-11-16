@@ -45,7 +45,6 @@
 
 using namespace ObjexxFCL;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -56,7 +55,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "minimize" );
+static basic::Tracer TR( "minimize" );
 
 class Minimize : public moves::Mover {
 

@@ -38,10 +38,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 // C++ Headers
 
 // ObjexxFCL Headers
@@ -50,7 +48,7 @@ using basic::Warning;
 namespace protocols {
 namespace moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RampingMover" );
+static basic::Tracer TR( "protocols.moves.RampingMover" );
 
 RampingFunc::~RampingFunc() = default;
 

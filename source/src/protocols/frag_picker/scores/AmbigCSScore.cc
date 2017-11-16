@@ -45,7 +45,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer trAmbigCSScore(
+static basic::Tracer trAmbigCSScore(
 	"protocols.frag_picker.scores.AmbigCSScore");
 
 

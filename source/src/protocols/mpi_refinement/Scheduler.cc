@@ -22,7 +22,7 @@
 namespace protocols {
 namespace mpi_refinement {
 
-static THREAD_LOCAL basic::Tracer TR("MPI.LHR.S");
+static basic::Tracer TR("MPI.LHR.S");
 
 Scheduler::Scheduler()
 {

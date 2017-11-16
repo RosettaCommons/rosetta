@@ -65,7 +65,7 @@ namespace idealize {
 using namespace core;
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.idealize" );
+static basic::Tracer TR( "protocols.idealize" );
 
 /// helper
 void

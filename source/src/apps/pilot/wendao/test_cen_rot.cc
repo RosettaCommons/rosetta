@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 
-// 
+//
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -84,7 +84,7 @@ using namespace core::pack::task;
 using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
-static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.cenrot" );
+static basic::Tracer TR( "pilot.wendao.cenrot" );
 
 OPT_KEY(Boolean, debug_cenrot_min)
 
@@ -92,7 +92,7 @@ int main( int argc, char * argv [] ) {
 	NEW_OPT(debug_cenrot_min, "debug cenrot min", false);
 
 	devel::init(argc, argv);
-	
+
 	ResidueTypeSetCAP rsd_set;
 	rsd_set=ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
@@ -109,7 +109,7 @@ int main( int argc, char * argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if (!option[debug_cenrot_min]()) {
+	if ( !option[debug_cenrot_min]() ) {
 		// obsolete
 		std::cout << "min_init" << std::endl;
 		protocols::simple_moves::MinMover minmover;
@@ -123,9 +123,8 @@ int main( int argc, char * argv [] ) {
 
 		std::cout << "min_apply" << std::endl;
 		minmover.apply(p);
-		
-	}
-	else {
+
+	} else {
 		core::kinematics::MoveMap mm;
 		mm.set_bb( true );
 		//only for sidechain

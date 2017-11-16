@@ -45,11 +45,10 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.RotamerTrialsMover" );
+static basic::Tracer TR( "protocols.simple_moves.RotamerTrialsMover" );
 
 namespace protocols {
 namespace simple_moves {

@@ -59,7 +59,7 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintIO" );
+static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintIO" );
 
 #ifdef    SERIALIZATION
 // Project serialization headers

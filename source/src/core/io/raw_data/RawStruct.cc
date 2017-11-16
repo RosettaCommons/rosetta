@@ -29,6 +29,8 @@ namespace core {
 namespace io {
 namespace raw_data {
 
+static basic::Tracer TR( "core.io.silent.RawStruct" );
+
 using namespace ObjexxFCL::format;
 
 static int precision (3);
@@ -132,8 +134,7 @@ RawStruct::print_conformation( std::ostream& out ) const {
 }
 
 Real RawStruct::get_debug_rmsd() {
-	basic::T("core.io.silent.RawStruct").Warning
-		<< "calling get_debug_rmsd() method of RawStruct!";
+	TR.Warning << "calling get_debug_rmsd() method of RawStruct!" << std::endl;
 	return 0;
 }
 

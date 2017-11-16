@@ -94,7 +94,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core;
@@ -112,7 +111,7 @@ OPT_1GRP_KEY(RealVector, min, ramp)
 OPT_1GRP_KEY(String, min, minimizer)
 OPT_1GRP_KEY(StringVector, min, fix_chains)
 
-static THREAD_LOCAL basic::Tracer TR( "min_test" );
+static basic::Tracer TR( "min_test" );
 
 bool rama_list_pred( const std::pair < core::Size, core::Real > &left, const std::pair < core::Size, core::Real > &right ) {
 	return left.second > right.second;

@@ -74,7 +74,6 @@
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -86,7 +85,7 @@ basic::options::BooleanOptionKey optimize("peptide_deriver:optimize");
 basic::options::StringOptionKey dump_peptide_pdb("peptide_deriver:dump_peptide_pdb");
 }
 
-static THREAD_LOCAL basic::Tracer TR( "PeptideDeriver" );
+static basic::Tracer TR( "PeptideDeriver" );
 
 using namespace core;
 using namespace basic::options;

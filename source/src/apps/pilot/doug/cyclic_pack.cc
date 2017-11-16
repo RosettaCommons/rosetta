@@ -52,7 +52,7 @@
 #include <sstream>
 
 // tracer
-static THREAD_LOCAL basic::Tracer TR( "PeptoidDihedralGrabber" );
+static basic::Tracer TR( "PeptoidDihedralGrabber" );
 
 // local options
 basic::options::BooleanOptionKey const cyclic( "cyclic" );
@@ -60,25 +60,25 @@ basic::options::BooleanOptionKey const cyclic( "cyclic" );
 // super simple class to grab and print stuff
 class PeptoidDihedralGrabber : public protocols::moves::Mover {
 public:
-// ctor
-PeptoidDihedralGrabber( bool cyclic );
+	// ctor
+	PeptoidDihedralGrabber( bool cyclic );
 
-//dtor
-virtual ~PeptoidDihedralGrabber(){}
+	//dtor
+	virtual ~PeptoidDihedralGrabber(){}
 
-// mover interface
-virtual void apply( core::pose::Pose & pose );
-virtual std::string get_name() const { return "PeptoidDihedralGrabber"; }
-virtual protocols::moves::MoverOP clone() const { return new PeptoidDihedralGrabber( *this ); }
-virtual protocols::moves::MoverOP fresh_instance() const { return clone(); }
+	// mover interface
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "PeptoidDihedralGrabber"; }
+	virtual protocols::moves::MoverOP clone() const { return new PeptoidDihedralGrabber( *this ); }
+	virtual protocols::moves::MoverOP fresh_instance() const { return clone(); }
 
 private:
-bool cyclic_;
+	bool cyclic_;
 
 };
 
 PeptoidDihedralGrabber::PeptoidDihedralGrabber( bool cyclic ) :
-  cyclic_( cyclic )
+	cyclic_( cyclic )
 {}
 
 void
@@ -89,7 +89,7 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 	using namespace conformation;
 	using namespace chemical;
 
-	for( Size i(1); i <= pose.size(); ++i ) {
+	for ( Size i(1); i <= pose.size(); ++i ) {
 		// print name
 		TR << "aa: " << pose.residue( i ).type().name3() << ", ";
 
@@ -101,16 +101,16 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 			} else {
 				TR << "omg: " << 0.0 << ", phi: " << pose.phi( i ) << ", psi: " << pose.psi( i ) << ", ";
 			}
-		// last residue
+			// last residue
 		} else if ( i == pose.size() ) {
 			TR << "omg: " << pose.omega( i - 1 ) << ", phi: " << pose.phi( i - 1 ) << ", psi: " << pose.psi( i - 1 ) << ", ";
-		// everything else
+			// everything else
 		} else {
 			TR << "omg: " << pose.omega( i - 1 ) << ", phi: " << pose.phi( i - 1 ) << ", psi: " << pose.psi( i - 1 ) << ", ";
 		}
 
 		// print sidechain info
-		for( Size j(1); j <= pose.residue( i ).type().nchi(); ++j ) {
+		for ( Size j(1); j <= pose.residue( i ).type().nchi(); ++j ) {
 			std::stringstream chi_string;
 			chi_string << "x" << j << ": ";
 			TR << chi_string.str() << pose.residue( i ).chi( j );
@@ -125,21 +125,21 @@ typedef utility::pointer::owning_ptr< PeptoidDihedralGrabber > PeptoidDihedralGr
 int
 main( int argc, char * argv [] )
 {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys::cyclization;
-  using namespace protocols::simple_moves;
-  using namespace protocols::moves;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::cyclization;
+	using namespace protocols::simple_moves;
+	using namespace protocols::moves;
 
-  // add local options
- 	option.add( cyclic, "cyclic" ).def("True");
+	// add local options
+	option.add( cyclic, "cyclic" ).def("True");
 
-  // init
-  devel::init( argc, argv );
+	// init
+	devel::init( argc, argv );
 
 	// setup sequence mover
 	SequenceMoverOP sm( new SequenceMover() );
 
-  // setup the cyclization mover(s) ( just add patches and constraints don't minimize )
+	// setup the cyclization mover(s) ( just add patches and constraints don't minimize )
 	if ( option[chains_to_cyclize].user() ) {
 		core::Size num_cyclic_chains( option[chains_to_cyclize].value().size() );
 		for ( core::Size i(1); i <= num_cyclic_chains; ++i ) {
@@ -169,12 +169,12 @@ main( int argc, char * argv [] )
 	sm->add_mover( pm );
 	sm->add_mover( pdg );
 
-  // go go go
-  protocols::jd2::JobDistributor::get_instance()->go( sm );
+	// go go go
+	protocols::jd2::JobDistributor::get_instance()->go( sm );
 
-  TR << "\n+-----------------------------------------------------------------+\n"
-     <<   "|                              DONE                               |\n"
-     <<   "+-----------------------------------------------------------------+" << std::endl;
+	TR << "\n+-----------------------------------------------------------------+\n"
+		<<   "|                              DONE                               |\n"
+		<<   "+-----------------------------------------------------------------+" << std::endl;
 
-  return 0;
+	return 0;
 }

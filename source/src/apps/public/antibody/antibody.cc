@@ -76,7 +76,7 @@
 using std::string;
 using core::Size;
 
-static THREAD_LOCAL basic::Tracer TR("antibody");
+static basic::Tracer TR("antibody");
 
 // Command-line options relevant only to this application
 OPT_KEY( String,       heavy )

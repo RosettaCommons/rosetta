@@ -31,7 +31,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("StructureDataObserverTests");
+static basic::Tracer TR("StructureDataObserverTests");
 
 using namespace protocols::denovo_design::components;
 

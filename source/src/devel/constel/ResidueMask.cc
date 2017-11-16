@@ -16,7 +16,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer TR( "devel.constel.ResidueMask");
+static basic::Tracer TR( "devel.constel.ResidueMask");
 
 namespace devel {
 namespace constel {

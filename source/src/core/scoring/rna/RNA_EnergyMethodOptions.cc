@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNA_EnergyMethodOptions" );
+static basic::Tracer TR( "core.scoring.rna.RNA_EnergyMethodOptions" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

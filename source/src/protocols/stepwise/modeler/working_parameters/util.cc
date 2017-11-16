@@ -39,7 +39,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.working_parameters.util" );
+static basic::Tracer TR( "protocols.stepwise.modeler.working_parameters.util" );
 
 using namespace core;
 using utility::tools::make_vector1;

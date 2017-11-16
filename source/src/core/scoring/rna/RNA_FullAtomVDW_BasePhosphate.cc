@@ -45,7 +45,7 @@
 #include <ObjexxFCL/format.hh>
 // C++
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNA_FullAtomVDW_BasePhosphateEnergy", basic::t_info );
+static basic::Tracer TR( "core.scoring.rna.RNA_FullAtomVDW_BasePhosphateEnergy", basic::t_info );
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //

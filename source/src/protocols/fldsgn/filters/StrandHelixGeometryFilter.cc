@@ -37,7 +37,7 @@
 
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.StrandHelixGeometryFilter" );
+static basic::Tracer TR( "protocols.fldsgn.filters.StrandHelixGeometryFilter" );
 
 namespace protocols {
 namespace fldsgn {

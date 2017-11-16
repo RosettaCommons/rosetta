@@ -60,7 +60,7 @@
 #endif // SERIALIZATION
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.hbonds.NPDHBondSet" );
+static basic::Tracer TR( "core.scoring.hbonds.NPDHBondSet" );
 
 
 namespace core {

@@ -80,7 +80,7 @@ namespace core {
 namespace io {
 namespace silent {
 
-static THREAD_LOCAL basic::Tracer tr( "core.io.silent.SilentStruct" );
+static basic::Tracer tr( "core.io.silent.SilentStruct" );
 
 
 template <>

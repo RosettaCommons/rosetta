@@ -55,7 +55,7 @@ namespace protocols {
 namespace ligand_docking {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.Transform" );
+static basic::Tracer TR( "protocols.ligand_docking.Transform" );
 
 Transform::Transform():
 	Mover("Transform")

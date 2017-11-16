@@ -40,7 +40,7 @@
 
 //C++ Headers
 
-static THREAD_LOCAL basic::Tracer TR("protocols.denovo_design.components.Segment");
+static basic::Tracer TR("protocols.denovo_design.components.Segment");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

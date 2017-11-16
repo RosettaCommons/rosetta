@@ -35,7 +35,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
-static THREAD_LOCAL basic::Tracer tr( "protocols.evaluation.Score" );
+static basic::Tracer tr( "protocols.evaluation.Score" );
 
 
 // option key includes

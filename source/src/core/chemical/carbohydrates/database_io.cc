@@ -32,7 +32,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.carbohydrates.database_io" );
+static basic::Tracer TR( "core.chemical.carbohydrates.database_io" );
 
 
 namespace core {

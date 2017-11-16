@@ -36,11 +36,10 @@
 
 #include <core/chemical/VariantType.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.RefineOneCDRLoop" );
+static basic::Tracer TR( "protocols.antibody.RefineOneCDRLoop" );
 
 using namespace core;
 namespace protocols {

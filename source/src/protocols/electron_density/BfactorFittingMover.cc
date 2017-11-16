@@ -51,7 +51,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.BfactorFittingMover" );
+static basic::Tracer TR( "protocols.electron_density.BfactorFittingMover" );
 
 namespace protocols {
 namespace electron_density {

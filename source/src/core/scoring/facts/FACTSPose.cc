@@ -45,7 +45,7 @@
 #include <stdio.h>
 //#include <time>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.FACTSPoseInfo" );
+static basic::Tracer TR( "core.scoring.FACTSPoseInfo" );
 
 using namespace std;
 

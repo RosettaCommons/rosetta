@@ -30,7 +30,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.record_def_io" );
+static basic::Tracer TR( "core.io.pdb.record_def_io" );
 
 
 namespace core {

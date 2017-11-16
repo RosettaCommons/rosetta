@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling" );
+static basic::Tracer tr( "protocols.comparative_modeling" );
 
 using core::scoring::constraints::ConstraintSet;
 using core::scoring::constraints::ConstraintSetOP;

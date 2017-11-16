@@ -44,7 +44,7 @@ namespace scoring {
 namespace methods {
 
 using core::Size;
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.methods.LinearBranch", basic::t_info );
+static basic::Tracer tr( "core.scoring.methods.LinearBranch", basic::t_info );
 
 LinearBranchEnergy::LinearBranchEnergy()
 : parent(methods::EnergyMethodCreatorOP( new LinearBranchEnergyCreator )) {

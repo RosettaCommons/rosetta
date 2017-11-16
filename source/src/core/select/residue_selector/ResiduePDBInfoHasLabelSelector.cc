@@ -30,7 +30,7 @@
 // C++ headers
 #include <utility/assert.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.ResiduePDBInfoHasLabelSelector" );
+static basic::Tracer TR( "core.select.residue_selector.ResiduePDBInfoHasLabelSelector" );
 
 namespace core {
 namespace select {

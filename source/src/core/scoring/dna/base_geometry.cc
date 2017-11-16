@@ -43,6 +43,8 @@ namespace core {
 namespace scoring {
 namespace dna {
 
+static basic::Tracer TR("core.scoring.dna.base_geometry");
+
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
@@ -449,7 +451,7 @@ get_base_stub(
 	bool flipped( false );
 	z_axis = get_z_axis( rsd, y_axis, strand, flipped );
 	if ( flipped ) {
-		basic::T( "core.scoring.dna.base_geometry", basic::t_warning ) << "base flip in get_base_stub!!!" << '\n';
+		TR.Warning << "base flip in get_base_stub!!!" << '\n';
 	}
 	debug_assert( std::fabs( dot(y_axis, z_axis) ) < 1e-3 );
 
@@ -478,7 +480,7 @@ get_base_pair_stub(
 	Vector const z2_axis( get_z_axis( rsd2, y_axis, 2 ) );
 	Vector z_axis;
 	if ( z1_axis.dot( z2_axis ) < 0.0 ) {
-		basic::T( "core.scoring.dna.base_geometry", basic::t_warning ) << "wacky base flip in get_base_pair_stub!!!" << '\n';
+		TR.Warning << "wacky base flip in get_base_pair_stub!!!" << '\n';
 		z_axis = z1_axis;
 	} else {
 		z_axis = ( z1_axis + z2_axis ).normalized();
@@ -676,7 +678,7 @@ get_stub_stub_params(
 #ifndef NDEBUG
 		//base_flipped = true;
 #endif
-		basic::T("core.scoring.base_geometry") << "get_stub_stub_params: base flip!!!\n";
+		TR << "get_stub_stub_params: base flip!!!\n";
 		for ( Size i = 1; i <= 6; ++i ) {
 			params[i] = -9999;
 		}
@@ -1110,7 +1112,7 @@ get_base_step_params(
 
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
 		// BASE FLIP !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		basic::T("core.scoring.base_geometry") << "base_pair_params: base flip!!!\n";
+		TR << "base_pair_params: base flip!!!\n";
 		//std::cout << "new_base_step_params: base flip!" << std::endl;
 		//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}

@@ -67,14 +67,13 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace indel {
 
-static THREAD_LOCAL basic::Tracer TR("IndelOptimizationMover");
+static basic::Tracer TR("IndelOptimizationMover");
 
 void
 IndelOptimizationMover::apply(

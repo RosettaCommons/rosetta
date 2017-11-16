@@ -51,7 +51,7 @@
 
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.carbohydrates.GlycanTreeSet" );
+static basic::Tracer TR( "core.conformation.carbohydrates.GlycanTreeSet" );
 
 namespace core {
 namespace conformation {

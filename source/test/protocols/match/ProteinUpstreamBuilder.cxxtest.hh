@@ -65,7 +65,7 @@ trpcage_res2phe_kinemage();
 utility::vector1< std::string >
 trpcage_res2phe_kinemages();
 
-static THREAD_LOCAL basic::Tracer TR("protocols.match.ProteinSCSampler.cxxtest");
+static basic::Tracer TR("protocols.match.ProteinSCSampler.cxxtest");
 
 class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 

@@ -45,7 +45,7 @@
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.SnugDockProtocol" );
+static basic::Tracer TR( "protocols.antibody.SnugDockProtocol" );
 using namespace core;
 
 namespace protocols {

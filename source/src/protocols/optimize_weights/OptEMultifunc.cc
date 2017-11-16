@@ -62,10 +62,9 @@ namespace protocols {
 namespace optimize_weights {
 
 using namespace ObjexxFCL::format;
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.optimize_weights.OptEMultifunc" );
+static basic::Tracer TR( "protocols.optimize_weights.OptEMultifunc" );
 
 using namespace numeric::expression_parser;
 //#undef NDEBUG

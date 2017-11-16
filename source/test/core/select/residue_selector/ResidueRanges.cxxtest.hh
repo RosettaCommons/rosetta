@@ -35,7 +35,7 @@
 // C++ headers
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.ResidueRanges.cxxtest.hh" );
+static basic::Tracer TR( "core.select.residue_selector.ResidueRanges.cxxtest.hh" );
 
 class ResidueRangesTests : public CxxTest::TestSuite {
 

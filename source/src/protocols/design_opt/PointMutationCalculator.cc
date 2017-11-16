@@ -60,7 +60,7 @@
 namespace protocols {
 namespace design_opt {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.design_opt.PointMutationCalculator" );
+static basic::Tracer TR( "protocols.design_opt.PointMutationCalculator" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;

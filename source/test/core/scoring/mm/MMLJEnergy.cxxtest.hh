@@ -46,7 +46,6 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -86,35 +85,35 @@ public:
 
 };
 /*
- To be added back in once e.g. setup_for_minimizing_for_residue is enabled for
- this energy method in master!
- 
- void eval_intra_residue_energy_w_minimization_data_analytic_version()
-	{
- using namespace core::pose;
- using namespace core::scoring;
- using namespace core::scoring::etable;
- using namespace core::scoring::methods;
- 
- Pose pose = create_trpcage_ideal_pose();
- 
- EnergyMap emap;
- ScoreFunction sfxn;
- MMLJEnergy mmljenergy;
- 
- sfxn.set_weight( mm_lj_intra_atr, 0.5 ); // enable intra-residue energy evaluation; skipped if all intra-residue weights are 0
- sfxn.set_weight( mm_lj_intra_rep, 0.25 ); // enable intra-residue energy evaluation; skipped if all intra-residue weights are 0
- //mmljenergy.eval_intrares_energy( pose.residue( 4 ), pose, sfxn, emap );
- 
- optimization::MinimizerMap minmap;
- EnergyMap emap2;
- ResSingleMinimizationData min_data;
- mmljenergy.setup_for_minimizing_for_residue( pose.residue( 4 ), pose, sfxn,  minmap, min_data );
- mmljenergy.eval_intrares_energy_ext( pose.residue( 4 ), min_data, pose, sfxn, emap2 );
- 
- TS_ASSERT_DELTA( emap[ fa_intra_atr ], emap2[ fa_intra_atr ], 1e-12 );
- TS_ASSERT_DELTA( emap[ fa_intra_rep ], emap2[ fa_intra_rep ], 1e-12 );
- TS_ASSERT_DELTA( emap[ fa_intra_sol ], emap2[ fa_intra_sol ], 1e-12 );
- 
-	}*/
+To be added back in once e.g. setup_for_minimizing_for_residue is enabled for
+this energy method in master!
+
+void eval_intra_residue_energy_w_minimization_data_analytic_version()
+{
+using namespace core::pose;
+using namespace core::scoring;
+using namespace core::scoring::etable;
+using namespace core::scoring::methods;
+
+Pose pose = create_trpcage_ideal_pose();
+
+EnergyMap emap;
+ScoreFunction sfxn;
+MMLJEnergy mmljenergy;
+
+sfxn.set_weight( mm_lj_intra_atr, 0.5 ); // enable intra-residue energy evaluation; skipped if all intra-residue weights are 0
+sfxn.set_weight( mm_lj_intra_rep, 0.25 ); // enable intra-residue energy evaluation; skipped if all intra-residue weights are 0
+//mmljenergy.eval_intrares_energy( pose.residue( 4 ), pose, sfxn, emap );
+
+optimization::MinimizerMap minmap;
+EnergyMap emap2;
+ResSingleMinimizationData min_data;
+mmljenergy.setup_for_minimizing_for_residue( pose.residue( 4 ), pose, sfxn,  minmap, min_data );
+mmljenergy.eval_intrares_energy_ext( pose.residue( 4 ), min_data, pose, sfxn, emap2 );
+
+TS_ASSERT_DELTA( emap[ fa_intra_atr ], emap2[ fa_intra_atr ], 1e-12 );
+TS_ASSERT_DELTA( emap[ fa_intra_rep ], emap2[ fa_intra_rep ], 1e-12 );
+TS_ASSERT_DELTA( emap[ fa_intra_sol ], emap2[ fa_intra_sol ], 1e-12 );
+
+}*/
 

@@ -78,7 +78,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 
 class ThisApplication  {
@@ -141,32 +141,32 @@ void ThisApplication::register_options() {
 int main( int argc, char** argv ) {
 	try {
 
-	ThisApplication::register_options();
-	devel::init( argc, argv );
-	Pose native;
-	std::string const native_pdb ( option[ in::file::native ]() );
-	core::import_pose::pose_from_file( native, native_pdb , core::import_pose::PDB_file);
-	core::util::switch_to_residue_type_set( native, chemical::CENTROID );
+		ThisApplication::register_options();
+		devel::init( argc, argv );
+		Pose native;
+		std::string const native_pdb ( option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native, native_pdb , core::import_pose::PDB_file);
+		core::util::switch_to_residue_type_set( native, chemical::CENTROID );
 
-	Pose test_pose(native);
-    utility::io::ozstream out( option[ out::qual ] );
-    FragSetOP orig_frags;
-    orig_frags = FragmentIO().read_data( option[ f ]() );
-    Size max_pdb( 0 );
-    typedef boost::tuple<Real, std::string, Size, std::string, std::string, char, Size> FragRMSDAndSequence;
-    for ( FrameIterator frame = orig_frags->begin(), eframe=orig_frags->end(); frame != eframe; ++frame ) {
-        assert( frame->length() == 9);
-        out << "\nstart: " << LJ(5,frame->start())  << "end: " << LJ(5,frame->end())<< std::endl;
-				out << RJ(16,"rmsd") << RJ(5,"sequence") <<RJ(15,"secstruct") <<RJ(15,"pdb") <<RJ(8,"chain")<< RJ(6,"start")<< std::endl;
-        std::set<FragRMSDAndSequence> data;
-        for ( Size i=1; i<=frame->nr_frags(); i++ ) {
-            frame->apply( i, test_pose );
-            data.insert(boost::make_tuple(scoring::CA_rmsd( native, test_pose, frame->start(), frame->end()),frame->fragment_ptr(i)->sequence(),i,frame->fragment_ptr(i)->secstruct(), frame->fragment_ptr(i)->pdbid(),frame->fragment_ptr(i)->chain(), frame->fragment_ptr(i)->pdbpos()  ));
-        }
-				for(std::set<FragRMSDAndSequence>::iterator fd = data.begin(); fd!=data.end(); fd++){
-						out << RJ(16,boost::get<0>(*fd)) << RJ(5,boost::get<2>(*fd)) <<RJ(15,boost::get<1>(*fd)) <<RJ(15,boost::get<3>(*fd)) <<RJ(8,boost::get<4>(*fd))<< RJ(6,boost::get<5>(*fd))<< std::endl;
-				}
-    }
+		Pose test_pose(native);
+		utility::io::ozstream out( option[ out::qual ] );
+		FragSetOP orig_frags;
+		orig_frags = FragmentIO().read_data( option[ f ]() );
+		Size max_pdb( 0 );
+		typedef boost::tuple<Real, std::string, Size, std::string, std::string, char, Size> FragRMSDAndSequence;
+		for ( FrameIterator frame = orig_frags->begin(), eframe=orig_frags->end(); frame != eframe; ++frame ) {
+			assert( frame->length() == 9);
+			out << "\nstart: " << LJ(5,frame->start())  << "end: " << LJ(5,frame->end())<< std::endl;
+			out << RJ(16,"rmsd") << RJ(5,"sequence") <<RJ(15,"secstruct") <<RJ(15,"pdb") <<RJ(8,"chain")<< RJ(6,"start")<< std::endl;
+			std::set<FragRMSDAndSequence> data;
+			for ( Size i=1; i<=frame->nr_frags(); i++ ) {
+				frame->apply( i, test_pose );
+				data.insert(boost::make_tuple(scoring::CA_rmsd( native, test_pose, frame->start(), frame->end()),frame->fragment_ptr(i)->sequence(),i,frame->fragment_ptr(i)->secstruct(), frame->fragment_ptr(i)->pdbid(),frame->fragment_ptr(i)->chain(), frame->fragment_ptr(i)->pdbpos()  ));
+			}
+			for ( std::set<FragRMSDAndSequence>::iterator fd = data.begin(); fd!=data.end(); fd++ ) {
+				out << RJ(16,boost::get<0>(*fd)) << RJ(5,boost::get<2>(*fd)) <<RJ(15,boost::get<1>(*fd)) <<RJ(15,boost::get<3>(*fd)) <<RJ(8,boost::get<4>(*fd))<< RJ(6,boost::get<5>(*fd))<< std::endl;
+			}
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

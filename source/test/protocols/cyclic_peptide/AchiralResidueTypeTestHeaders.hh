@@ -44,7 +44,7 @@ namespace test {
 namespace protocols {
 namespace cyclic_peptide {
 
-//static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide.AchiralResidueTypeTestHeaders");
+//static basic::Tracer TR("protocols.cyclic_peptide.AchiralResidueTypeTestHeaders");
 
 class AchiralResidueTypeTestHelper {
 

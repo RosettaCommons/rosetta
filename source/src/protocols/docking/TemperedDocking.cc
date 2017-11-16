@@ -91,7 +91,7 @@ void protocols::docking::TemperedDocking::register_options() {
 	OPT( rigid::rotation );
 }
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.docking.TemperedDocking" );
+static basic::Tracer tr( "protocols.docking.TemperedDocking" );
 
 using namespace core;
 

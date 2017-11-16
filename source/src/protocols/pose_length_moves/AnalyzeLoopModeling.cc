@@ -55,7 +55,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.pose_length_moves.AnalyzeLoopModeling" );
+static basic::Tracer TR( "protocols.pose_length_moves.AnalyzeLoopModeling" );
 
 namespace protocols {
 namespace pose_length_moves {

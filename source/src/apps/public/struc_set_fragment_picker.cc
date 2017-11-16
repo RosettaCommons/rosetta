@@ -50,7 +50,7 @@
 #include <core/fragment/FragID_Iterator.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 
-THREAD_LOCAL basic::Tracer tr( "struc_set_fragment_picker" );
+static basic::Tracer tr( "struc_set_fragment_picker" );
 
 using namespace core;
 using namespace protocols;

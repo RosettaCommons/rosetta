@@ -52,7 +52,7 @@
 // C++ Headers
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.MembraneInfo" );
+static basic::Tracer TR( "core.conformation.membrane.MembraneInfo" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

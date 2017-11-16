@@ -94,8 +94,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR( "apps.public.design.supercharge" );
+static basic::Tracer TR( "apps.public.design.supercharge" );
 
 using namespace core;
 typedef core::pose::Pose Pose;

@@ -61,10 +61,11 @@ using namespace basic::options;
 namespace protocols {
 namespace canonical_sampling {
 
+static basic::Tracer tr( "src.apps.pilot.liz.test_canonical_mover" );
+
 int
 canonical_sampling_main(){
 
-	basic::Tracer tr( "src.apps.pilot.liz.test_canonical_mover" );
 
 	using namespace protocols::moves;
 	using namespace basic;

@@ -67,7 +67,7 @@ void protocols::noesy_assign::PeakFileFormat::register_options() {
 }
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.io" );
+static basic::Tracer tr( "protocols.noesy_assign.io" );
 
 namespace protocols {
 namespace noesy_assign {

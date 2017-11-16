@@ -65,7 +65,7 @@ using core::chemical::chr_chains;
 namespace core {
 namespace pose {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.PDBInfo" );
+static basic::Tracer TR( "core.pose.PDBInfo" );
 
 core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() {}
 

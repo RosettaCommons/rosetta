@@ -47,7 +47,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ForceDisulfidesMover" );
+static basic::Tracer TR( "protocols.simple_moves.ForceDisulfidesMover" );
 
 ForceDisulfidesMover::ForceDisulfidesMover() :
 	protocols::moves::Mover("ForceDisulfidesMover"),

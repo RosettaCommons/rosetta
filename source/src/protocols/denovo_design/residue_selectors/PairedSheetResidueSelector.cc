@@ -39,7 +39,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.residue_selectors.PairedSheetResidueSelector" );
+static basic::Tracer TR( "protocols.denovo_design.residue_selectors.PairedSheetResidueSelector" );
 
 namespace protocols {
 namespace denovo_design {

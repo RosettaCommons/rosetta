@@ -69,7 +69,7 @@ using ObjexxFCL::format::F;
 namespace protocols {
 namespace rotamer_recovery {
 
-static THREAD_LOCAL Tracer TR("protocol.rotamer_recovery.RRReporterHuman");
+static Tracer TR("protocol.rotamer_recovery.RRReporterHuman");
 
 
 PerNativeRRReporterHuman::PerNativeRRReporterHuman() :

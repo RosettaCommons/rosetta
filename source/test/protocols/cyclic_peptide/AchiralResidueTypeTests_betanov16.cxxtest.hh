@@ -28,7 +28,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("AchiralResidueTypeTests_betanov16");
+static basic::Tracer TR("AchiralResidueTypeTests_betanov16");
 
 
 class AchiralResidueTypeTests_betanov16 : public CxxTest::TestSuite {

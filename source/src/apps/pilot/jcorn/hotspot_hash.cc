@@ -64,7 +64,6 @@
 
 #include <utility/file/file_sys_util.hh> // file_exists
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 #include <sstream>
@@ -90,7 +89,7 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.jcorn.hotspot_hash" );
+static basic::Tracer TR( "pilot_apps.jcorn.hotspot_hash" );
 
 // routine to benchmark score existing contacts as if they were found by hashing
 void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionOP scorefxn )

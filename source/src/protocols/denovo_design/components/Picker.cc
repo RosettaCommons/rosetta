@@ -41,7 +41,7 @@
 
 //C++ Headers
 
-static THREAD_LOCAL basic::Tracer TR("protocols.denovo_design.components.Picker");
+static basic::Tracer TR("protocols.denovo_design.components.Picker");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

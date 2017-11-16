@@ -42,17 +42,14 @@
 // Boost Headers
 #include <boost/bind.hpp>
 
-using basic::T;
-
 using basic::Error;
 using basic::Warning;
-
 namespace core {
 namespace pack {
 namespace dunbrack {
 namespace cenrot {
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.dunbrack.cenrot.CenrotLibrary");
+static basic::Tracer TR("core.pack.dunbrack.cenrot.CenrotLibrary");
 
 CenrotLibrary::CenrotLibrary():
 	cenrot_libraries_( chemical::num_canonical_aas, 0 )

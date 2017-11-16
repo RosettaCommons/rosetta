@@ -31,7 +31,7 @@
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer trFilteredAbrelax("FilteredAbrelax");
+static basic::Tracer trFilteredAbrelax("FilteredAbrelax");
 
 
 int main( int argc, char * argv [] ) {

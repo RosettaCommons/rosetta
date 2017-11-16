@@ -85,12 +85,11 @@
 
 // C++ headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 
-static THREAD_LOCAL basic::Tracer TR( "BuildFloppyTail" );
+static basic::Tracer TR( "BuildFloppyTail" );
 
 using namespace core;
 using namespace core::options;

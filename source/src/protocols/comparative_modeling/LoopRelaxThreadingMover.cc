@@ -55,6 +55,8 @@
 namespace protocols {
 namespace comparative_modeling {
 
+static basic::Tracer tr( "protocols.threading" );
+
 void LoopRelaxThreadingMover::setup() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -76,7 +78,6 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	replonly.apply( pose );
 
 	using core::Size;
-	basic::Tracer tr( "protocols.threading" );
 	// looprelax
 	protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( protocols::jd2::JobDistributor::get_instance()->current_job()->inner_job() );
 	if ( !job ) {

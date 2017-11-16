@@ -23,7 +23,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.public.membrane.mp_mutate_relax" );
+static basic::Tracer TR( "apps.public.membrane.mp_mutate_relax" );
 
 //////////////////////////////////////////////////////////////////////
 

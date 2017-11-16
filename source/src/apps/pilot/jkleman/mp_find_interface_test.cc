@@ -88,7 +88,7 @@
 #include <iostream>
 #include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mp_find_interface_test" );
+static basic::Tracer TR( "apps.pilot.jkleman.mp_find_interface_test" );
 
 using namespace core;
 using namespace core::scoring;

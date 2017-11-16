@@ -36,7 +36,7 @@
 namespace protocols {
 namespace filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.filters.CalculatorFilter" );
+static basic::Tracer TR( "protocols.filters.CalculatorFilter" );
 
 /// @brief default ctor
 CalculatorFilter::CalculatorFilter() :

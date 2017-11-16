@@ -73,7 +73,7 @@ using std::string;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.LoopHashDiversifier" );
+static basic::Tracer TR( "protocols.loophash.LoopHashDiversifier" );
 
 ///****Creator Methods****///
 // XRW TEMP std::string

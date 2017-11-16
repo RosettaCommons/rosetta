@@ -55,7 +55,7 @@
 using namespace core;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.EnzRepackMinimize" );
+static basic::Tracer TR( "protocols.enzdes.EnzRepackMinimize" );
 
 
 namespace protocols {

@@ -144,8 +144,8 @@ namespace scoring {
 namespace methods {
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.CartesianBondedEnergy" );
-static THREAD_LOCAL basic::Tracer GEOMETRIES( "core.scoring.CartesianBondedEnergy.GEOMETRIES" );
+static basic::Tracer TR( "core.scoring.CartesianBondedEnergy" );
+static basic::Tracer GEOMETRIES( "core.scoring.CartesianBondedEnergy.GEOMETRIES" );
 
 // default spring constants
 //  --> only if not specified in config files

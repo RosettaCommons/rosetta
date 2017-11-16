@@ -24,9 +24,7 @@
 
 // C++ Headers
 
-using basic::T;
-using basic::Tracer;
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density.xray_scattering" );
+static basic::Tracer TR( "core.scoring.electron_density.xray_scattering" );
 
 
 namespace core {

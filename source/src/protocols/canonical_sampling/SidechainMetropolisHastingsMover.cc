@@ -59,11 +59,10 @@
 
 // C++ Headers
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.SidechainSidechainMetropolisHastingsMover" );
+static basic::Tracer tr( "protocols.canonical_sampling.SidechainSidechainMetropolisHastingsMover" );
 
 namespace protocols {
 namespace canonical_sampling {

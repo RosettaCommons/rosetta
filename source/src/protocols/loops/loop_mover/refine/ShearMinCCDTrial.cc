@@ -48,7 +48,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.ShearMinCCDTrial" );
+static basic::Tracer TR( "protocols.loops.loop_mover.refine.ShearMinCCDTrial" );
 using namespace core;
 
 namespace protocols {

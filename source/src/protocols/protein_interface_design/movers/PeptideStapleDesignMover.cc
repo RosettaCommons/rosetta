@@ -40,7 +40,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PeptideStapleDesignMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.PeptideStapleDesignMover" );
 
 PeptideStapleDesignMover::PeptideStapleDesignMover() :
 	protocols::moves::Mover( PeptideStapleDesignMover::mover_name() )

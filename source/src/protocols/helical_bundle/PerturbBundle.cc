@@ -48,14 +48,13 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace helical_bundle {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.PerturbBundle");
+static basic::Tracer TR("protocols.helical_bundle.PerturbBundle");
 
 // XRW TEMP std::string
 // XRW TEMP PerturbBundleCreator::keyname() const

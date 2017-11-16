@@ -162,7 +162,7 @@ namespace forge {
 namespace remodel {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
+static basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
 
 // parser
 // XRW TEMP std::string

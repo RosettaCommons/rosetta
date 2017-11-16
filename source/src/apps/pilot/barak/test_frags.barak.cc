@@ -60,7 +60,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -71,67 +70,66 @@ main( int argc, char * argv [] )
 {
 	try {
 
-  using namespace core;
-  using namespace protocols::frags;
+		using namespace core;
+		using namespace protocols::frags;
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  // test reading of file
-  VallData vall( "/vol/klee/ravehb/tmp/flexpeps/frags/aa2fm8C03_05.200_v1_3" );
-  std::cout << "Part 1: " << std::endl;
- {
-    SingleResidueTorsionFragmentLibrary lib;
-    vall.get_frags(
-      500/*nstruct*/, "LLL"/*target seq*/, "---" /*target_ss*/,
-      1.0/*seq_weight*/, 0.0/*ss_weight*/,
-      true/*XGly*/, true/*XPro*/, true/*XCys*/,
-      lib );
-  }
-
-
-  // test matching to protein of 3-mers
-  std::cout << "Part 2: " << std::endl;
-  {
-    pose::Pose pose;
-    core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
-    std::string const sequence( pose.sequence() );
-
-    TorsionFragmentLibrary lib;
-    Size const nres( pose.size() );
-    Size const frag_size(3);
-    lib.resize( nres - frag_size + 1 );
-    for ( Size i=1; i<= nres-frag_size+1; ++i )
-      {
-	std::string const frag_seq( sequence.substr(i-1,3) );
-	vall.get_frags( 200, frag_seq, "---", 1.0, 0.0, false, false, true, lib[i] );
-      }
-  }
+		// test reading of file
+		VallData vall( "/vol/klee/ravehb/tmp/flexpeps/frags/aa2fm8C03_05.200_v1_3" );
+		std::cout << "Part 1: " << std::endl;
+		{
+			SingleResidueTorsionFragmentLibrary lib;
+			vall.get_frags(
+				500/*nstruct*/, "LLL"/*target seq*/, "---" /*target_ss*/,
+				1.0/*seq_weight*/, 0.0/*ss_weight*/,
+				true/*XGly*/, true/*XPro*/, true/*XCys*/,
+				lib );
+		}
 
 
-  { // try building an ideal peptide:
-    using namespace pose;
-    using namespace chemical;
-    using namespace conformation;
+		// test matching to protein of 3-mers
+		std::cout << "Part 2: " << std::endl;
+		{
+			pose::Pose pose;
+			core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
+			std::string const sequence( pose.sequence() );
 
-    Pose pose;
-    // read centroid residue set
-    chemical::ResidueTypeSetCAP rsd_set( chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
-    for ( Size i=1; i<= 20; ++i ) {
-      ResidueTypeCOPs const & rsd_list( rsd_set->aa_map( static_cast<AA>(i) ) /*BAD*/ );
-      for ( ResidueTypeCOPs::const_iterator iter=rsd_list.begin(), iter_end= rsd_list.end(); iter!= iter_end; ++iter ) {
-	ResidueType const & rsd_type( **iter );
-	if ( ( rsd_type.is_lower_terminus() == ( i == 1 ) ) &&
-	  ( rsd_type.is_upper_terminus() == ( i == 20 ) ) ) {
-	  ResidueOP new_rsd( ResidueFactory::create_residue( rsd_type ) );
-	  pose.append_residue_by_bond( *new_rsd, true );
-	}
-      }
-    }
-    for ( Size i=1; i<= 20; ++i ) {
-      pose.set_omega(i,180.0);
-    }
-    io::pdb::dump_pdb( pose, "test_ideal.pdb" );
-  }
+			TorsionFragmentLibrary lib;
+			Size const nres( pose.size() );
+			Size const frag_size(3);
+			lib.resize( nres - frag_size + 1 );
+			for ( Size i=1; i<= nres-frag_size+1; ++i ) {
+				std::string const frag_seq( sequence.substr(i-1,3) );
+				vall.get_frags( 200, frag_seq, "---", 1.0, 0.0, false, false, true, lib[i] );
+			}
+		}
+
+
+		{ // try building an ideal peptide:
+			using namespace pose;
+			using namespace chemical;
+			using namespace conformation;
+
+			Pose pose;
+			// read centroid residue set
+			chemical::ResidueTypeSetCAP rsd_set( chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
+			for ( Size i=1; i<= 20; ++i ) {
+				ResidueTypeCOPs const & rsd_list( rsd_set->aa_map( static_cast<AA>(i) ) /*BAD*/ );
+				for ( ResidueTypeCOPs::const_iterator iter=rsd_list.begin(), iter_end= rsd_list.end(); iter!= iter_end; ++iter ) {
+					ResidueType const & rsd_type( **iter );
+					if ( ( rsd_type.is_lower_terminus() == ( i == 1 ) ) &&
+							( rsd_type.is_upper_terminus() == ( i == 20 ) ) ) {
+						ResidueOP new_rsd( ResidueFactory::create_residue( rsd_type ) );
+						pose.append_residue_by_bond( *new_rsd, true );
+					}
+				}
+			}
+			for ( Size i=1; i<= 20; ++i ) {
+				pose.set_omega(i,180.0);
+			}
+			io::pdb::dump_pdb( pose, "test_ideal.pdb" );
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -106,7 +106,6 @@ using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::id;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
@@ -114,7 +113,7 @@ using utility::file::FileName;
 //kdrew: this app adds hbs patches to the given pdb strucure
 
 // tracer - used to replace cout
-static THREAD_LOCAL basic::Tracer TR("A3BHBS_Creator");
+static basic::Tracer TR("A3BHBS_Creator");
 
 void
 setup_pert_foldtree(

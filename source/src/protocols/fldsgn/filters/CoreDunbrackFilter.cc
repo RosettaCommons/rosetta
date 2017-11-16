@@ -48,7 +48,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.CoreDunbrackFilter" );
+static basic::Tracer tr( "protocols.fldsgn.filters.CoreDunbrackFilter" );
 
 namespace protocols {
 namespace fldsgn {

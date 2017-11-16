@@ -30,11 +30,10 @@
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb" );
+static basic::Tracer TR( "protocols.flxbb" );
 
 // option key includes
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -44,8 +43,8 @@ void*
 my_main( void *)
 {
 
-  protocols::flxbb::FlxbbDesign_main();
-  return 0 ;
+	protocols::flxbb::FlxbbDesign_main();
+	return 0 ;
 
 }
 
@@ -54,49 +53,49 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // setup
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // end of setup
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /*
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	core::scoring::ScoreFunctionOP scorefxn_design = scorefxn;
-	core::scoring::ScoreFunctionOP scorefxn_relax = scorefxn;
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+		core::scoring::ScoreFunctionOP scorefxn_design = scorefxn;
+		core::scoring::ScoreFunctionOP scorefxn_relax = scorefxn;
 
-  if( option[ in::file::fullatom ]() ) {
+		if( option[ in::file::fullatom ]() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn_relax );
-  } else{
+		} else{
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *scorefxn_relax );
-  }
+		}
 
-  protocols::moves::MoverOP protocol;
-  protocol = new protocols::flxbb::FlxbbDesign( scorefxn_design, scorefxn_relax );
-  */
+		protocols::moves::MoverOP protocol;
+		protocol = new protocols::flxbb::FlxbbDesign( scorefxn_design, scorefxn_relax );
+		*/
 
-  bool const view( option[ OptionKeys::flxbb::view ] );
+		bool const view( option[ OptionKeys::flxbb::view ] );
 
-  if( view ){
-    std::cout << "Start viewer mode " << std::endl;
-    protocols::viewer::viewer_main( my_main );
+		if ( view ) {
+			std::cout << "Start viewer mode " << std::endl;
+			protocols::viewer::viewer_main( my_main );
 
-  }else{
+		} else {
 
-    protocols::flxbb::FlxbbDesign_main();
-  }
+			protocols::flxbb::FlxbbDesign_main();
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-  return 1;
+	return 1;
 }
 
 

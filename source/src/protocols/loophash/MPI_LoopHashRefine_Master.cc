@@ -70,7 +70,7 @@ namespace loophash {
 
 using namespace protocols::wum;
 
-static THREAD_LOCAL basic::Tracer TR( "MPI.LHR.Master" );
+static basic::Tracer TR( "MPI.LHR.Master" );
 
 
 void

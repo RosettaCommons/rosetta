@@ -58,7 +58,7 @@ using namespace scoring;
 
 using basic::Warning;
 using basic::t_warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PackRotamersMover" );
+static basic::Tracer TR( "protocols.simple_moves.PackRotamersMover" );
 
 // PackRotamersMover
 
@@ -280,7 +280,7 @@ void PackRotamersMover::setup( Pose & pose )
 	pose.update_residue_neighbors();
 	// guarantee of valid ScoreFunction and PackerTask postponed until now
 	if ( scorefxn_ == nullptr ) {
-		Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
+		TR.Warning << "undefined ScoreFunction -- creating a default one" << std::endl;
 		scorefxn_ = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 
@@ -288,7 +288,7 @@ void PackRotamersMover::setup( Pose & pose )
 	if ( task_factory_ != nullptr ) {
 		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
 	} else if ( task_ == nullptr ) {
-		Warning() << "undefined PackerTask -- creating a default one" << std::endl;
+		TR.Warning << "undefined PackerTask -- creating a default one" << std::endl;
 		task_ = TaskFactory::create_packer_task( pose );
 	} else runtime_assert( task_is_valid( pose ) );
 	// in case PackerTask was not generated locally, verify compatibility with pose

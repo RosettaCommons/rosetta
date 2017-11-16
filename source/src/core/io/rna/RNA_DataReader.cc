@@ -84,7 +84,7 @@ namespace rna {
 /// @details Auto-generated virtual destructor
 RNA_DataReader::~RNA_DataReader() {}
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.RNA_DataReader" );
+static basic::Tracer TR( "protocols.rna.RNA_DataReader" );
 
 using namespace core;
 

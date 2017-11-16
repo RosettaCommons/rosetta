@@ -71,9 +71,8 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 
 
 using namespace core;
-using basic::T;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.movers.RNA_LoopCloser" );
+static basic::Tracer TR( "protocols.rna.movers.RNA_LoopCloser" );
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 

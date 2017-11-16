@@ -37,11 +37,9 @@ namespace ObjexxFCL {
 } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-static THREAD_LOCAL basic::Tracer TR( "core.optimization.LineMinimizer" );
+static basic::Tracer TR( "core.optimization.LineMinimizer" );
 
 namespace core {
 namespace optimization {
@@ -57,7 +55,7 @@ func_1d::dump( Real displacement ) {
 	return _func.dump( _starting_point, _eval_point );
 }
 
-static THREAD_LOCAL basic::Tracer TR( "core.optimization.LineMinimizer" );
+static basic::Tracer TR( "core.optimization.LineMinimizer" );
 
 
 // Functor'ed up version of accurate line minimization

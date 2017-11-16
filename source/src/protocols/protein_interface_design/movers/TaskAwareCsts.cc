@@ -42,7 +42,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.TaskAwareCsts" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.TaskAwareCsts" );
 // XRW TEMP std::string
 // XRW TEMP TaskAwareCstsCreator::keyname() const
 // XRW TEMP {

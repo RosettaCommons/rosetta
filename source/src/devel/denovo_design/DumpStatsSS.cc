@@ -45,7 +45,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "devel/denovo_design/movers/DumpStatsSS" );
+static basic::Tracer TR( "devel/denovo_design/movers/DumpStatsSS" );
 
 // XRW TEMP std::string
 // XRW TEMP DumpStatsSSCreator::keyname() const

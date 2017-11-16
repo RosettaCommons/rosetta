@@ -51,7 +51,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-static THREAD_LOCAL basic::Tracer TR("apps.public.comparative_modeling.thread_local");
+static basic::Tracer TR("apps.public.comparative_modeling.thread_local");
 
 utility::vector1< int > calculate_burial(
 	core::pose::Pose & mypose,

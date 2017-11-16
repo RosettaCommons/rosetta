@@ -27,7 +27,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.base_pairs.RNA_BasePairHandler" );
+static basic::Tracer TR( "protocols.rna.denovo.base_pairs.RNA_BasePairHandler" );
 
 using namespace core;
 using namespace core::pose::rna;

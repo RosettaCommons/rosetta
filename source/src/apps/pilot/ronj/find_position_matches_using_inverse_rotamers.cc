@@ -48,7 +48,7 @@
 #include <cstdio>
 //#include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ronj.find_position_matches_using_inverse_rotamers" );
+static basic::Tracer TR( "apps.pilot.ronj.find_position_matches_using_inverse_rotamers" );
 
 //#define FILE_DEBUG 1
 

@@ -71,7 +71,7 @@ using namespace basic::options::OptionKeys;
 
 //OPT_KEY( String, mutfile )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kkappel.check_RNP_coarse" );
+static basic::Tracer TR( "apps.pilot.kkappel.check_RNP_coarse" );
 
 void check_structures() {
 

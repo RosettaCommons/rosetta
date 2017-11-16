@@ -70,7 +70,7 @@
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.protein.util" );
+static basic::Tracer TR( "protocols.sampler.protein.util" );
 
 using namespace core::pose;
 

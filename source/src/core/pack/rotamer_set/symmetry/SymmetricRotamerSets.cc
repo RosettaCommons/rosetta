@@ -79,8 +79,6 @@ SymmetricRotamerSets::compute_energies(
 	using namespace interaction_graph;
 	using namespace scoring;
 
-	//basic::Tracer tt("core.pack.rotamer_set", basic::t_trace );
-
 	ig->initialize( *this );
 	compute_one_body_energies( pose, scfxn, packer_neighbor_graph, ig );
 

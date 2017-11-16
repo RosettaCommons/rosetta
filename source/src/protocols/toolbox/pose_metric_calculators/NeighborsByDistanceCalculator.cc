@@ -39,7 +39,7 @@
 //C++ headers
 //#include <set>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator" );
+static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

@@ -19,7 +19,7 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "utility.sql_database.ForeignKey" );
+static basic::Tracer TR( "utility.sql_database.ForeignKey" );
 
 
 // Utility Headers

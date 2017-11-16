@@ -60,7 +60,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer transform_tracer("protocols.ligand_docking.TransformEnsemble", basic::t_debug);
+static basic::Tracer transform_tracer("protocols.ligand_docking.TransformEnsemble", basic::t_debug);
 
 TransformEnsemble::TransformEnsemble():
 	Mover("TransformEnsemble")

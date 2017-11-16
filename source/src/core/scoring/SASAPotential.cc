@@ -63,7 +63,7 @@
 #include <iostream>
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.SASAPotential" );
+static basic::Tracer TR( "core.scoring.SASAPotential" );
 
 typedef numeric::xyzVector< core::Real > Vector;
 typedef numeric::xyzMatrix< core::Real > Matrix;

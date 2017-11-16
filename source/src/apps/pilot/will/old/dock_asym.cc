@@ -89,7 +89,7 @@ using Xform;
 using core::conformation::ResidueOP;
 
 
-static THREAD_LOCAL basic::Tracer TR( "dock_asym" );
+static basic::Tracer TR( "dock_asym" );
 static core::io::silent::SilentFileData sfd;
 
 #include <apps/pilot/will/sicfast.ihh>
@@ -103,7 +103,7 @@ bool cmp(Hit i,Hit j) { return i.cbc > j.cbc; }
 
 void dump_points_pdb(vector1<Vec> & p, string fn) {
 	std::ofstream o(fn.c_str());
-	for(Size i = 1; i <= p.size(); ++i) {
+	for ( Size i = 1; i <= p.size(); ++i ) {
 		string rn = "VIZ";
 		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x())<<F(8,3,p[i].y())<<F(8,3,p[i].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 	}
@@ -111,18 +111,18 @@ void dump_points_pdb(vector1<Vec> & p, string fn) {
 }
 
 void dock(Pose const & init1,
-          Pose const & init2,
-					Pose const & native,
-          string fn1,
-          string fn2,
-          vector1<Vec> const & ssamp
+	Pose const & init2,
+	Pose const & native,
+	string fn1,
+	string fn2,
+	vector1<Vec> const & ssamp
 ) {
 	using namespace basic::options;
 
 	Real cbcth = basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]();
 
 	vector1<Real> asamp;
-	for(Real i = -5.0; i <= 180/option[OptionKeys::cxdock::ang_samp]()+5.0; ++i  ) {
+	for ( Real i = -5.0; i <= 180/option[OptionKeys::cxdock::ang_samp]()+5.0; ++i  ) {
 		asamp.push_back( i*option[OptionKeys::cxdock::ang_samp]() ); // just 0-179
 	}
 
@@ -165,49 +165,49 @@ void dock(Pose const & init1,
 
 	// set up n-ca-c-o-cb ord arrays
 	vector1<Vec> bbi1tmp,cbi1tmp;
-	for(int ir = 1; ir <= init1.size(); ++ir) {
-		if(!init1.residue(ir).is_protein()) continue;
-		for(int ia = 1; ia <= 5; ++ia) bbi1tmp.push_back(init1.xyz(AtomID( min(ia, (init1.residue(ir).has("CB"))?5:4 ) ,ir)));
-		if(std::find(cstres_A.begin(),cstres_A.end(),ir)!=cstres_A.end()) if(init1.residue(ir).has("CB")) cbi1tmp.push_back(init1.xyz(AtomID(5,ir)));
+	for ( int ir = 1; ir <= init1.size(); ++ir ) {
+		if ( !init1.residue(ir).is_protein() ) continue;
+		for ( int ia = 1; ia <= 5; ++ia ) bbi1tmp.push_back(init1.xyz(AtomID( min(ia, (init1.residue(ir).has("CB"))?5:4 ) ,ir)));
+		if ( std::find(cstres_A.begin(),cstres_A.end(),ir)!=cstres_A.end() ) if ( init1.residue(ir).has("CB") ) cbi1tmp.push_back(init1.xyz(AtomID(5,ir)));
 	} vector1<Vec> const bbi1(bbi1tmp), cbi1(cbi1tmp);
 
 	vector1<Vec> bbi2tmp,cbi2tmp;
-	for(int ir = 1; ir <= init2.size(); ++ir) {
-		if(!init2.residue(ir).is_protein()) continue;
-		for(int ia = 1; ia <= 5; ++ia) bbi2tmp.push_back(init2.xyz(AtomID( min(ia, (init2.residue(ir).has("CB"))?5:4 ) ,ir)));
-		if(std::find(cstres_B.begin(),cstres_B.end(),ir)!=cstres_B.end()) if(init2.residue(ir).has("CB")) cbi2tmp.push_back(init2.xyz(AtomID(5,ir)));
+	for ( int ir = 1; ir <= init2.size(); ++ir ) {
+		if ( !init2.residue(ir).is_protein() ) continue;
+		for ( int ia = 1; ia <= 5; ++ia ) bbi2tmp.push_back(init2.xyz(AtomID( min(ia, (init2.residue(ir).has("CB"))?5:4 ) ,ir)));
+		if ( std::find(cstres_B.begin(),cstres_B.end(),ir)!=cstres_B.end() ) if ( init2.residue(ir).has("CB") ) cbi2tmp.push_back(init2.xyz(AtomID(5,ir)));
 	} vector1<Vec> const bbi2(bbi2tmp), cbi2(cbi2tmp);
 
 #ifdef USE_OPENMP
-#pragma omp parallel for schedule(dynamic,1)
+	#pragma omp parallel for schedule(dynamic,1)
 #endif
-	for(int islide = 1; islide <= ssamp.size(); ++islide) {
+	for ( int islide = 1; islide <= ssamp.size(); ++islide ) {
 #ifdef USE_OPENMP
-#pragma omp critical
+		#pragma omp critical
 #endif
-		if(islide%1==0) TR << islide << " of " << ssamp.size() << endl;
+		if ( islide%1==0 ) TR << islide << " of " << ssamp.size() << endl;
 
 		// set init1 with silde axis along Z
 		Mat const Rslide( rotation_matrix_degrees(
-	  	Vec(0,0,1).cross(ssamp[islide]).normalized(), // axis
-	  	-acos(numeric::max(-1.0,numeric::min(1.0,Vec(0,0,1).dot(ssamp[islide]))))*180.0/numeric::constants::d::pi )); // angle
-		vector1<Vec> bb1(bbi1);	for(vector1<Vec>::iterator i = bb1.begin(); i != bb1.end(); ++i) *i = Rslide*(*i);
-		vector1<Vec> cb1(cbi1); for(vector1<Vec>::iterator i = cb1.begin(); i != cb1.end(); ++i) *i = Rslide*(*i);
+			Vec(0,0,1).cross(ssamp[islide]).normalized(), // axis
+			-acos(numeric::max(-1.0,numeric::min(1.0,Vec(0,0,1).dot(ssamp[islide]))))*180.0/numeric::constants::d::pi )); // angle
+		vector1<Vec> bb1(bbi1); for ( vector1<Vec>::iterator i = bb1.begin(); i != bb1.end(); ++i ) *i = Rslide*(*i);
+		vector1<Vec> cb1(cbi1); for ( vector1<Vec>::iterator i = cb1.begin(); i != cb1.end(); ++i ) *i = Rslide*(*i);
 
 		// loop over all rotations of init2
-		for(int isrot = 1; isrot <= ssamp.size(); ++isrot) {
-			for(int irot = 1; irot <= asamp.size(); ++irot) {
+		for ( int isrot = 1; isrot <= ssamp.size(); ++isrot ) {
+			for ( int irot = 1; irot <= asamp.size(); ++irot ) {
 				Mat const Rrot = rotation_matrix_degrees(ssamp[isrot],asamp[irot]);
-				vector1<Vec> bb2(bbi2);	for(vector1<Vec>::iterator i = bb2.begin(); i != bb2.end(); ++i) *i = Rrot*(*i);
-				vector1<Vec> cb2(cbi2); for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rrot*(*i);
+				vector1<Vec> bb2(bbi2); for ( vector1<Vec>::iterator i = bb2.begin(); i != bb2.end(); ++i ) *i = Rrot*(*i);
+				vector1<Vec> cb2(cbi2); for ( vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i ) *i = Rrot*(*i);
 
 				Real cbc;
 				Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
 
-				if( cbc > option[OptionKeys::cxdock::num_contacts]() ) {
+				if ( cbc > option[OptionKeys::cxdock::num_contacts]() ) {
 					string tag = str(uniform());
 #ifdef USE_OPENMP
-#pragma omp critical
+					#pragma omp critical
 #endif
 					{
 						Pose p(init1),q(init2);
@@ -218,7 +218,7 @@ void dock(Pose const & init1,
 						q.dump_pdb("hit"+tag+"B.pdb");
 
 						p.append_residue_by_jump(q.residue(1),1);
-						for(Size i=2; i <= q.size(); ++i) p.append_residue_by_bond(q.residue(i));
+						for ( Size i=2; i <= q.size(); ++i ) p.append_residue_by_bond(q.residue(i));
 						// p.dump_pdb("test.pdb");
 						// native.dump_pdb("nat.pdb");
 						// utility_exit_with_message("oraistne");
@@ -238,46 +238,46 @@ int main(int argc, char *argv[]) {
 
 	try {
 
-	register_options();
-	devel::init(argc,argv);
-	using namespace basic::options::OptionKeys;
+		register_options();
+		devel::init(argc,argv);
+		using namespace basic::options::OptionKeys;
 
 
-	Size const NSS = basic::options::option[basic::options::OptionKeys::cxdock::sphere]();
-	vector1<Vec> ssamp(NSS);
-	{
-		izstream is;
-		basic::database::open(is,"sampling/spheres/sphere_"+str(NSS)+".dat");
-		for(int i = 1; i <= NSS; ++i) {
-			Real x,y,z;
-			is >> x >> y >> z;
-			ssamp[i] = Vec(x,y,z);
-		}
-		is.close();
-	}
-
-	Pose native;
-	core::import_pose::pose_from_file(native,"input/native.pdb", core::import_pose::PDB_file);
-
-
-	for(Size ifn = 1; ifn <= option[in::file::s]().size(); ifn+=2) {
-		string fn1 = option[in::file::s]()[ifn+0];
-		string fn2 = option[in::file::s]()[ifn+1];
-		Pose pnat1,pnat2;
-		TR << "searching " << fn1 << " vs " << fn2 << std::endl;
+		Size const NSS = basic::options::option[basic::options::OptionKeys::cxdock::sphere]();
+		vector1<Vec> ssamp(NSS);
 		{
-			core::import_pose::pose_from_file(pnat1,fn1, core::import_pose::PDB_file);
-			trans_pose(pnat1,-center_of_geom(pnat1,1,pnat1.size()));
-			core::scoring::dssp::Dssp dssp(pnat1);
-			dssp.insert_ss_into_pose(pnat1);
-		}{
-			core::import_pose::pose_from_file(pnat2,fn2, core::import_pose::PDB_file);
-			trans_pose(pnat2,-center_of_geom(pnat2,1,pnat2.size()));
-			core::scoring::dssp::Dssp dssp(pnat2);
-			dssp.insert_ss_into_pose(pnat2);
+			izstream is;
+			basic::database::open(is,"sampling/spheres/sphere_"+str(NSS)+".dat");
+			for ( int i = 1; i <= NSS; ++i ) {
+				Real x,y,z;
+				is >> x >> y >> z;
+				ssamp[i] = Vec(x,y,z);
+			}
+			is.close();
 		}
-		dock(pnat1,pnat2,native,fn1,fn2,ssamp);
-	}
+
+		Pose native;
+		core::import_pose::pose_from_file(native,"input/native.pdb", core::import_pose::PDB_file);
+
+
+		for ( Size ifn = 1; ifn <= option[in::file::s]().size(); ifn+=2 ) {
+			string fn1 = option[in::file::s]()[ifn+0];
+			string fn2 = option[in::file::s]()[ifn+1];
+			Pose pnat1,pnat2;
+			TR << "searching " << fn1 << " vs " << fn2 << std::endl;
+			{
+				core::import_pose::pose_from_file(pnat1,fn1, core::import_pose::PDB_file);
+				trans_pose(pnat1,-center_of_geom(pnat1,1,pnat1.size()));
+				core::scoring::dssp::Dssp dssp(pnat1);
+				dssp.insert_ss_into_pose(pnat1);
+			}{
+				core::import_pose::pose_from_file(pnat2,fn2, core::import_pose::PDB_file);
+				trans_pose(pnat2,-center_of_geom(pnat2,1,pnat2.size()));
+				core::scoring::dssp::Dssp dssp(pnat2);
+				dssp.insert_ss_into_pose(pnat2);
+			}
+			dock(pnat1,pnat2,native,fn1,fn2,ssamp);
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

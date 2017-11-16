@@ -70,7 +70,7 @@ namespace core {
 namespace io {
 
 // Tracer instance for this file
-static THREAD_LOCAL basic::Tracer TR( "core.io.util" );
+static basic::Tracer TR( "core.io.util" );
 
 
 using namespace ObjexxFCL::format; // AUTO USING NS

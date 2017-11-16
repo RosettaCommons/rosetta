@@ -38,7 +38,7 @@
 // Utility, etc Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("HBNetEnergyTests");
+static basic::Tracer TR("HBNetEnergyTests");
 
 class HBNetEnergyTests : public CxxTest::TestSuite {
 	//Define Variables

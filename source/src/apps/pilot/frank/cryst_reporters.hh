@@ -56,7 +56,7 @@ using namespace core::pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TS("cryst.reporters");
+static basic::Tracer TS("cryst.reporters");
 
 typedef utility::vector1< core::Size > Sizes;
 typedef numeric::xyzMatrix< core::Real > Matrix;

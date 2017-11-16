@@ -38,7 +38,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.filters.AtomicContactFilter" );
+static basic::Tracer TR( "protocols.filters.AtomicContactFilter" );
 
 /// @brief default ctor
 AtomicContactFilter::AtomicContactFilter() :

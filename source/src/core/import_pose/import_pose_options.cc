@@ -39,7 +39,7 @@
 namespace core {
 namespace import_pose {
 
-static THREAD_LOCAL basic::Tracer tr( "core.import_pose.import_pose_options" );
+static basic::Tracer tr( "core.import_pose.import_pose_options" );
 
 
 ///// ImportPoseOptionsCreator /////

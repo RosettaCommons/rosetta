@@ -67,7 +67,7 @@
 //#include <vector>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
+static basic::Tracer tr( "protocols.jumping" );
 
 namespace protocols {
 namespace jumping {

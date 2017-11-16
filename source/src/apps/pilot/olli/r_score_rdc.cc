@@ -57,7 +57,7 @@
 #include <ObjexxFCL/format.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;

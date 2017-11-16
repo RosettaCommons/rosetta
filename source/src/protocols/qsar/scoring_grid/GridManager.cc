@@ -55,7 +55,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.qsar.scoring_grid.GridManager" );
+static basic::Tracer TR( "protocols.qsar.scoring_grid.GridManager" );
 
 GridManager::GridManager() = default;
 

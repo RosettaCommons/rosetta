@@ -52,7 +52,7 @@ using namespace core;
 using namespace std;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.FavorSequenceProfile" );
+static basic::Tracer TR( "protocols.simple_moves.FavorSequenceProfile" );
 
 // XRW TEMP std::string FavorSequenceProfileCreator::keyname() const
 // XRW TEMP {

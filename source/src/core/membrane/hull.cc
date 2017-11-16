@@ -33,7 +33,7 @@
 #include <cstdlib>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR( "core.membrane.hull" );
+static basic::Tracer TR( "core.membrane.hull" );
 
 
 namespace core {

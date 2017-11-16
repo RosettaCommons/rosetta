@@ -44,33 +44,32 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using core::pose::Pose;
 
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_app.barak.overlay_sidechains" );
+static basic::Tracer TR( "pilot_app.barak.overlay_sidechains" );
 
 bool verify_identical(Pose& pose1, Pose& pose2)
 {
-  if(pose1.size() != pose2.size()) {
-    return false;
-  }
-  for(core::Size resi=1; resi < pose1.size(); resi++) {
-    bool p1_protein = pose1.residue(resi).is_protein();
-    bool p2_protein = pose2.residue(resi).is_protein();
-    if(p1_protein != p2_protein) {
-      return false;
-    }
-    if(!p1_protein){ // chis are relevant only for protein residues
-      continue;
-    }
-    if(pose1.residue_type(resi).nchi() != pose2.residue_type(resi).nchi()) {
-      return false;
-    }
-  }
-  return true;
+	if ( pose1.size() != pose2.size() ) {
+		return false;
+	}
+	for ( core::Size resi=1; resi < pose1.size(); resi++ ) {
+		bool p1_protein = pose1.residue(resi).is_protein();
+		bool p2_protein = pose2.residue(resi).is_protein();
+		if ( p1_protein != p2_protein ) {
+			return false;
+		}
+		if ( !p1_protein ) { // chis are relevant only for protein residues
+			continue;
+		}
+		if ( pose1.residue_type(resi).nchi() != pose2.residue_type(resi).nchi() ) {
+			return false;
+		}
+	}
+	return true;
 }
 
 
@@ -80,52 +79,51 @@ main( int argc, char * argv [] )
 {
 	try {
 
-  using namespace core;
-  using namespace basic::options;
-  using namespace std;
+		using namespace core;
+		using namespace basic::options;
+		using namespace std;
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  pose::Pose pose;
+		pose::Pose pose;
 
-  // read params and poses
-  core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
-  if ( !option[ OptionKeys::in::file::native ].user() ) {
-    TR << "specify reference native file (-native option)" << std::endl;
-    exit(-1);
-  }
-  string native_fname = option[ OptionKeys::in::file::native ];
-  pose::Pose ref_pose;
-  core::import_pose::pose_from_file( ref_pose, native_fname, core::import_pose::PDB_file);
-  if ( !option[ OptionKeys::out::file::o ].user() ) {
-    TR << "specify output file (-o option)" << std::endl;
-    exit(-1);
-  }
-  string output_fname = option[ OptionKeys::out::file::o ];
+		// read params and poses
+		core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
+		if ( !option[ OptionKeys::in::file::native ].user() ) {
+			TR << "specify reference native file (-native option)" << std::endl;
+			exit(-1);
+		}
+		string native_fname = option[ OptionKeys::in::file::native ];
+		pose::Pose ref_pose;
+		core::import_pose::pose_from_file( ref_pose, native_fname, core::import_pose::PDB_file);
+		if ( !option[ OptionKeys::out::file::o ].user() ) {
+			TR << "specify output file (-o option)" << std::endl;
+			exit(-1);
+		}
+		string output_fname = option[ OptionKeys::out::file::o ];
 
-  // verify same number of chi angles in pose and ref_pose
-  if(!verify_identical(pose, ref_pose)){
-    TR << "mismatching # of residues" << std::endl;
-    exit(-1);
-  }
+		// verify same number of chi angles in pose and ref_pose
+		if ( !verify_identical(pose, ref_pose) ) {
+			TR << "mismatching # of residues" << std::endl;
+			exit(-1);
+		}
 
-  // overlay chi values
-  TR << "Impose native chi angles of [" << native_fname << "] to start structure:" << endl;
-  for(core::Size resi=1; resi < pose.size(); resi++)
-    {
-      if(!pose.residue(resi).is_protein()){
-	continue;
-      }
-      for(core::Size j_chi=1 ; j_chi <= pose.residue_type(resi).nchi();
-	  j_chi++) {
-	Real ref_chi = ref_pose.chi(j_chi,resi);
-	pose.set_chi(j_chi, resi, ref_chi);
-      }
-    }
+		// overlay chi values
+		TR << "Impose native chi angles of [" << native_fname << "] to start structure:" << endl;
+		for ( core::Size resi=1; resi < pose.size(); resi++ ) {
+			if ( !pose.residue(resi).is_protein() ) {
+				continue;
+			}
+			for ( core::Size j_chi=1 ; j_chi <= pose.residue_type(resi).nchi();
+					j_chi++ ) {
+				Real ref_chi = ref_pose.chi(j_chi,resi);
+				pose.set_chi(j_chi, resi, ref_chi);
+			}
+		}
 
-  // output overlayed pose
-  TR << "Output to [" << output_fname << "]" << endl;
-  core::io::pdb::traced_dump_pdb(TR, pose, output_fname);
+		// output overlayed pose
+		TR << "Output to [" << output_fname << "]" << endl;
+		core::io::pdb::traced_dump_pdb(TR, pose, output_fname);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -22,7 +22,7 @@
 #include <core/kinematics/Stub.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.VDW_BinScreener" );
+static basic::Tracer TR( "protocols.stepwise.screener.VDW_BinScreener" );
 
 using namespace core;
 

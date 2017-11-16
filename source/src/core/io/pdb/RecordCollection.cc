@@ -32,7 +32,7 @@
 #include <string>
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.RecordCollection" );
+static basic::Tracer TR( "core.io.pdb.RecordCollection" );
 
 namespace core {
 namespace io {

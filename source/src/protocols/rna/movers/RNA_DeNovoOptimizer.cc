@@ -24,7 +24,7 @@
 #include <basic/Tracer.hh>
 #include <utility>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.movers.RNA_DeNovoOptimizer" );
+static basic::Tracer TR( "protocols.rna.movers.RNA_DeNovoOptimizer" );
 
 using namespace core;
 using namespace protocols::rna::denovo;

@@ -98,7 +98,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -116,102 +115,102 @@ using utility::vector1;
 int
 main( int argc, char * argv [] )
 {
-    try {
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	try {
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	// is this also done inside devel::init?
-	numeric::random::RandomGenerator::initializeRandomGenerators(
-		 111111, numeric::random::_RND_TestRun_, "ran3");
+		// is this also done inside devel::init?
+		numeric::random::RandomGenerator::initializeRandomGenerators(
+			111111, numeric::random::_RND_TestRun_, "ran3");
 
-	using namespace protocols::moves;
-	using namespace scoring;
+		using namespace protocols::moves;
+		using namespace scoring;
 
-	pose::PoseOP pose ( new pose::Pose );
-	std::cerr << "READING start.pdb" << std::endl;
-	core::import_pose::pose_from_file( *pose, "start.pdb" , core::import_pose::PDB_file); // default is standard fullatom residue_set
+		pose::PoseOP pose ( new pose::Pose );
+		std::cerr << "READING start.pdb" << std::endl;
+		core::import_pose::pose_from_file( *pose, "start.pdb" , core::import_pose::PDB_file); // default is standard fullatom residue_set
 
-	kinematics::MoveMap mm;
-	// setup moving dofs
-	//for ( int i=30; i<= 35; ++i ) {
+		kinematics::MoveMap mm;
+		// setup moving dofs
+		//for ( int i=30; i<= 35; ++i ) {
 		mm.set_bb (  true );
 		mm.set_chi(  true );
-	//}
+		//}
 
-	using namespace optimization;
-	using pose::Pose;
-	using id::AtomID;
-	using id::DOF_ID;
-	using id::PHI;
-	using id::THETA;
-	using id::D;
+		using namespace optimization;
+		using pose::Pose;
+		using id::AtomID;
+		using id::DOF_ID;
+		using id::PHI;
+		using id::THETA;
+		using id::D;
 
-	scoring::ScoreFunction scorefxn;
-	scorefxn.set_weight( scoring::envsmooth, 1.0 );
-	//scorefxn.set_weight( scoring::fa_elec , 1.0 );
-	//scorefxn.set_weight( scoring::fa_rep , 1.0 );
+		scoring::ScoreFunction scorefxn;
+		scorefxn.set_weight( scoring::envsmooth, 1.0 );
+		//scorefxn.set_weight( scoring::fa_elec , 1.0 );
+		//scorefxn.set_weight( scoring::fa_rep , 1.0 );
 
-	(scorefxn)(*pose);
-	scorefxn.show(std::cout, *pose);
+		(scorefxn)(*pose);
+		scorefxn.show(std::cout, *pose);
 
-	// setup the options
-	MinimizerOptions options( "linmin", 10.0, true ,
-													true , false );
-	AtomTreeMinimizer minimizer;
-	std::cout << "MINTEST: p_aa_pp" << "\n";
-	std::cout << "start score: " << scorefxn( *pose ) << "\n";
-	minimizer.run( *pose, mm, scorefxn, options );
-	pose->dump_pdb( "min_intrares.pdb" );
-	std::cout << "end score: " << scorefxn( *pose ) << "\n";
+		// setup the options
+		MinimizerOptions options( "linmin", 10.0, true ,
+			true , false );
+		AtomTreeMinimizer minimizer;
+		std::cout << "MINTEST: p_aa_pp" << "\n";
+		std::cout << "start score: " << scorefxn( *pose ) << "\n";
+		minimizer.run( *pose, mm, scorefxn, options );
+		pose->dump_pdb( "min_intrares.pdb" );
+		std::cout << "end score: " << scorefxn( *pose ) << "\n";
 
-//	core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
-//
-////	// aiming for standard packer weights
-//	scorefxn->set_weight( envsmooth, 0.80 );
-//
-//	(*scorefxn)(*pose);
-//	scorefxn->show(std::cout, *pose);
-//
-////	using namespace optimization;
-////	core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
-////	scorefxn->set_weight( fa_atr, 0.80 );
-////	scorefxn->set_weight( fa_rep, 0.44 );
-////	scorefxn->set_weight( fa_sol, 0.65 );
-////	scorefxn->set_weight( fa_pair, 0.49 );
-////	scorefxn->set_weight( fa_dun, 0.56 );
-////	scorefxn->set_weight( rama, 0.2 );
-////	scorefxn->set_weight( omega, 0.5 );
-////	scorefxn->set_weight( hbond_lr_bb, 1.17 );
-////	scorefxn->set_weight( hbond_sr_bb, 1.17 );
-////	scorefxn->set_weight( hbond_bb_sc, 1.17 );
-////	scorefxn->set_weight( hbond_sc   , 1.10 );
-//
-//	// setup the options
-//	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000001, true ,
-//													true , false );
-//
-//
-//	kinematics::MoveMap mm;
-//	mm.set_bb (  true );
-//	mm.set_chi(  true );
-//	AtomTreeMinimizer minimizer;
-//	std::cout << "MINTEST: p_aa_pp" << "\n";
-//	std::cout << "start score: " << (*scorefxn)( *pose ) << "\n";
-//	int starttime = time(NULL);
-//	int startclock = clock();
-//	minimizer.run( *pose, mm, *scorefxn, options );
-//	int endtime = time(NULL);
-//	int endclock = clock();
-//	std::cout << "Time: " << (endtime - starttime) << "   " << (endclock - startclock) << std::endl;
-//
-//	(*scorefxn)(*pose);
-//	scorefxn->show(std::cout, *pose);
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+		// core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
+		//
+		//// // aiming for standard packer weights
+		// scorefxn->set_weight( envsmooth, 0.80 );
+		//
+		// (*scorefxn)(*pose);
+		// scorefxn->show(std::cout, *pose);
+		//
+		//// using namespace optimization;
+		//// core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );
+		//// scorefxn->set_weight( fa_atr, 0.80 );
+		//// scorefxn->set_weight( fa_rep, 0.44 );
+		//// scorefxn->set_weight( fa_sol, 0.65 );
+		//// scorefxn->set_weight( fa_pair, 0.49 );
+		//// scorefxn->set_weight( fa_dun, 0.56 );
+		//// scorefxn->set_weight( rama, 0.2 );
+		//// scorefxn->set_weight( omega, 0.5 );
+		//// scorefxn->set_weight( hbond_lr_bb, 1.17 );
+		//// scorefxn->set_weight( hbond_sr_bb, 1.17 );
+		//// scorefxn->set_weight( hbond_bb_sc, 1.17 );
+		//// scorefxn->set_weight( hbond_sc   , 1.10 );
+		//
+		// // setup the options
+		// MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000001, true ,
+		//             true , false );
+		//
+		//
+		// kinematics::MoveMap mm;
+		// mm.set_bb (  true );
+		// mm.set_chi(  true );
+		// AtomTreeMinimizer minimizer;
+		// std::cout << "MINTEST: p_aa_pp" << "\n";
+		// std::cout << "start score: " << (*scorefxn)( *pose ) << "\n";
+		// int starttime = time(NULL);
+		// int startclock = clock();
+		// minimizer.run( *pose, mm, *scorefxn, options );
+		// int endtime = time(NULL);
+		// int endclock = clock();
+		// std::cout << "Time: " << (endtime - starttime) << "   " << (endclock - startclock) << std::endl;
+		//
+		// (*scorefxn)(*pose);
+		// scorefxn->show(std::cout, *pose);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

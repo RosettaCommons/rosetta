@@ -39,7 +39,7 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.transform_into_membrane" );
+static basic::Tracer TR( "apps.pilot.jkleman.transform_into_membrane" );
 
 int
 main( int argc, char * argv [] ) {

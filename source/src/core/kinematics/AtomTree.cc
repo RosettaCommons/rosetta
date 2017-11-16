@@ -61,7 +61,7 @@
 namespace core {
 namespace kinematics {
 
-static THREAD_LOCAL basic::Tracer TR( "core.kinematics.AtomTree" );
+static basic::Tracer TR( "core.kinematics.AtomTree" );
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details this will claim the tree as our own. new_root has information about its children,

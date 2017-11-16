@@ -50,7 +50,7 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.sasa" );
+static basic::Tracer TR( "core.scoring.sasa" );
 
 using namespace ObjexxFCL::format;
 

@@ -75,7 +75,7 @@
 
 using namespace core;
 using namespace protocols::seeded_abinitio;
-static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.GrowPeptides" );
+static basic::Tracer TR( "protocols.seeded_abinitio.GrowPeptides" );
 
 
 namespace protocols {

@@ -28,7 +28,7 @@
 #include <basic/Tracer.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.util.cxxtest.hh" );
+static basic::Tracer TR( "core.chemical.util.cxxtest.hh" );
 
 class ChemistryNamespaceUtilityFunctionTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////

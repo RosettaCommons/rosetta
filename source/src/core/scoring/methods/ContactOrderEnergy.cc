@@ -35,7 +35,7 @@
 
 //// C++ headers
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.methods.ContactOrderEnergy" );
+static basic::Tracer tr( "core.scoring.methods.ContactOrderEnergy" );
 
 namespace core {
 namespace scoring {

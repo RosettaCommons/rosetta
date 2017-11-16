@@ -38,11 +38,10 @@
 
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.TailsScoreMover" );
+static basic::Tracer TR( "protocols.simple_moves.TailsScoreMover" );
 using namespace core;
 using namespace std;
 
@@ -382,7 +381,7 @@ TailsScoreMover::apply( pose::Pose & pose )
 
 	int tail_mode_name = basic::options::option[ basic::options::OptionKeys::krassk::tail_mode_name ](); // What algorithm to use for tail prediction
 	if ( tail_mode_name < 1 || tail_mode_name > 3 ) {
-		Error() << "No such tail algorithm supported. " << std::endl;
+		TR.Error << "No such tail algorithm supported. " << std::endl;
 	}
 
 	string tail_output_file_name = basic::options::option[ basic::options::OptionKeys::krassk::tail_output_file_name ](); // Name of the tail output file
@@ -390,7 +389,7 @@ TailsScoreMover::apply( pose::Pose & pose )
 
 	std::ofstream  tail_output_file(tt, std::ios::app );
 	if ( !tail_output_file.good() ) {
-		Error() << "Unable to open tail output file for writing. " << std::endl;
+		TR.Error << "Unable to open tail output file for writing. " << std::endl;
 	}
 
 	double free_energy = 0;

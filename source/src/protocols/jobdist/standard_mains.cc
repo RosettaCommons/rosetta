@@ -84,7 +84,7 @@ namespace jobdist {
 
 typedef utility::pointer::shared_ptr< BaseJobDistributor > BaseJobDistributorOP;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jobdist.main" );
+static basic::Tracer TR( "protocols.jobdist.main" );
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 

@@ -35,7 +35,7 @@ namespace movers {
 using namespace std;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTransform" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTransform" );
 
 // XRW TEMP std::string
 // XRW TEMP PatchdockTransformCreator::keyname() const

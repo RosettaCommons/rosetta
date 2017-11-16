@@ -55,7 +55,7 @@
 namespace protocols {
 namespace features {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.SmotifFeatures" );
+static basic::Tracer TR( "protocols.features.SmotifFeatures" );
 
 
 SmotifFeatures::SmotifFeatures()

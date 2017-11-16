@@ -84,7 +84,7 @@ namespace rotamer_set {
 
 using namespace core::conformation;
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.rotamer_set.rna_rotamer_building_functions", basic::t_info );
+static basic::Tracer TR( "core.pack.rotamer_set.rna_rotamer_building_functions", basic::t_info );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RNA-specific methods, pulled out of rna_rotamer_building_functions.

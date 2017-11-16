@@ -29,7 +29,7 @@
 namespace basic {
 namespace mpi {
 
-static THREAD_LOCAL basic::Tracer TR( "basic.mpi.MessageListenerFactory" );
+static basic::Tracer TR( "basic.mpi.MessageListenerFactory" );
 
 MessageListenerFactory::MessageListenerFactory()
 {

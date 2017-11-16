@@ -43,7 +43,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ResidueCountFilter" );
+static basic::Tracer TR( "protocols.simple_filters.ResidueCountFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP ResidueCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueCountFilter ); }

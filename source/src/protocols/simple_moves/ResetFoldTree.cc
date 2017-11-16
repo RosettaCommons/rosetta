@@ -27,12 +27,11 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ResetFoldTree" );
+static basic::Tracer TR( "protocols.simple_moves.ResetFoldTree" );
 
 namespace protocols {
 namespace simple_moves {
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

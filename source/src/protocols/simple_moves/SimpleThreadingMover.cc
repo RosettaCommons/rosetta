@@ -36,7 +36,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR("SimpleThreadingMover");
+static basic::Tracer TR("SimpleThreadingMover");
 
 namespace protocols {
 namespace simple_moves {

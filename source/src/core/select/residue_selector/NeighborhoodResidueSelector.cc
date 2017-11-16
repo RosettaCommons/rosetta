@@ -55,7 +55,7 @@
 #endif // SERIALIZATION
 
 
-static THREAD_LOCAL basic::Tracer TR("core.select.residue_selector.NeighborhoodResidueSelector");
+static basic::Tracer TR("core.select.residue_selector.NeighborhoodResidueSelector");
 
 namespace core {
 namespace select {

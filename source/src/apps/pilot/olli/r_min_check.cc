@@ -56,7 +56,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;
@@ -71,11 +71,11 @@ using namespace ObjexxFCL::format;
 OPT_1GRP_KEY( Boolean, score_app, linmin )
 
 void register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  //  Templates::register_options();
-  OPT( in::file::s );
-  NEW_OPT( score_app::linmin, "Do a quick round of linmin before reporting the score", false );
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	//  Templates::register_options();
+	OPT( in::file::s );
+	NEW_OPT( score_app::linmin, "Do a quick round of linmin before reporting the score", false );
 }
 
 // Forward
@@ -87,45 +87,45 @@ typedef  utility::pointer::owning_ptr< MinToolMover const >  MinToolMoverCOP;
 
 class MinToolMover : public moves::Mover {
 public:
-  virtual std::string get_name() const {return "mintool mover";}
-  MinToolMover() {};
-  virtual void apply( core::pose::Pose& );
+	virtual std::string get_name() const {return "mintool mover";}
+	MinToolMover() {};
+	virtual void apply( core::pose::Pose& );
 private:
-  Size nstruct_;
+	Size nstruct_;
 };
 
 void MinToolMover::apply( core::pose::Pose &pose ) {
 
-  scoring::ScoreFunction score;
-  std::string fname( jd2::current_output_name() );
+	scoring::ScoreFunction score;
+	std::string fname( jd2::current_output_name() );
 
-  core::scoring::constraints::add_constraints_from_cmdline( pose, score);
-  score.show( tr.Info, pose );
-  tr.Info << fname << " " << score( pose ) << std::endl;
-  ++nstruct_;
+	core::scoring::constraints::add_constraints_from_cmdline( pose, score);
+	score.show( tr.Info, pose );
+	tr.Info << fname << " " << score( pose ) << std::endl;
+	++nstruct_;
 
-  core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-  movemap->set_bb( true ); movemap->set_chi( true );
-  protocols::simple_moves::MinMoverOP minmover =
-    new protocols::simple_moves::MinMover(
-        movemap, score.clone(), "linmin", 1e-4,
-	false /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/
-    );
-  minmover->apply( pose );
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	movemap->set_bb( true ); movemap->set_chi( true );
+	protocols::simple_moves::MinMoverOP minmover =
+		new protocols::simple_moves::MinMover(
+		movemap, score.clone(), "linmin", 1e-4,
+		false /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/
+	);
+	minmover->apply( pose );
 
-  tr.Info << fname << " " << score( pose ) << std::endl;
+	tr.Info << fname << " " << score( pose ) << std::endl;
 
 }
 
 
 void run() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  MinToolMoverOP cst_tool =  new MinToolMover;
-  protocols::jd2::JobDistributor::get_instance()->go( cst_tool, new jd2::NoOutputJobOutputter );
+	MinToolMoverOP cst_tool =  new MinToolMover;
+	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, new jd2::NoOutputJobOutputter );
 
-  return;
+	return;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,19 +135,19 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-  register_options();
-  devel::init( argc, argv );
+		register_options();
+		devel::init( argc, argv );
 
-  //	try{
-  run();
-  //	} catch ( utility::excn::EXCN_Base& anExcn ) {
-  //		anExcn.show( std::cerr );
-  //	}
+		// try{
+		run();
+		// } catch ( utility::excn::EXCN_Base& anExcn ) {
+		//  anExcn.show( std::cerr );
+		// }
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-  return 0;
+	return 0;
 }
 
 

@@ -23,19 +23,18 @@
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 
-using basic::T;
 
 int main( int argc, char* argv[] )
 {
 	try {
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go(new protocols::moves::NullMover);
+		protocols::jd2::JobDistributor::get_instance()->go(new protocols::moves::NullMover);
 
-	T("jd2memtest") << "************************d**o**n**e**************************************" << std::endl;
+		T("jd2memtest") << "************************d**o**n**e**************************************" << std::endl;
 
- 	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

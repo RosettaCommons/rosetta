@@ -35,7 +35,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("StepWiseMonteCarloTest");
+static basic::Tracer TR("StepWiseMonteCarloTest");
 
 
 class StepWiseMonteCarloTest : public CxxTest::TestSuite {

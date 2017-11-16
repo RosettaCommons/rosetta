@@ -32,7 +32,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.recces.sampler.util" );
+static basic::Tracer TR( "protocols.recces.sampler.util" );
 
 using namespace core;
 using namespace core::pose;

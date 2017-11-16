@@ -35,7 +35,7 @@ using namespace ObjexxFCL::format;
 namespace protocols {
 namespace optimize_weights {
 
-static THREAD_LOCAL basic::Tracer TR( "DDGBindOptEData" );
+static basic::Tracer TR( "DDGBindOptEData" );
 
 typedef core::chemical::AA AA;
 

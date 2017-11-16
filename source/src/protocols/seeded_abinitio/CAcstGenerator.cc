@@ -47,7 +47,7 @@ using namespace core;
 using namespace scoring::constraints;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
+static basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
 
 // XRW TEMP std::string
 // XRW TEMP CAcstGeneratorCreator::keyname() const

@@ -45,7 +45,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.membrane.membrane_relax" );
+static basic::Tracer TR( "apps.pilot.membrane.membrane_relax" );
 
 using namespace protocols::moves;
 

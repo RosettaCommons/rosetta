@@ -35,7 +35,7 @@ namespace protocols {
 namespace frag_picker {
 namespace quota {
 
-static THREAD_LOCAL basic::Tracer trQuotaSelector(
+static basic::Tracer trQuotaSelector(
 	"protocols.frag_picker.quota.QuotaSelector");
 
 QuotaSelector::QuotaSelector(core::Size frags_per_pos,core::Size pos_in_query,QuotaCollectorOP collector) :

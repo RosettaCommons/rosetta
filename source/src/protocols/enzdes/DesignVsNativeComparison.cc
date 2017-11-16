@@ -39,7 +39,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.DesignVsNativeComparison" );
+static basic::Tracer tr( "protocols.enzdes.DesignVsNativeComparison" );
 
 namespace protocols {
 namespace enzdes {

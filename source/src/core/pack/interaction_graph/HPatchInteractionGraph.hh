@@ -79,12 +79,12 @@ struct
 };
 
 /// Tracer instance for this file
-static THREAD_LOCAL basic::Tracer TR_NODE( "core.pack.hpatchig.node" );
-static THREAD_LOCAL basic::Tracer TR_EDGE( "core.pack.hpatchig.edge" );
-static THREAD_LOCAL basic::Tracer TR_BGNODE( "core.pack.hpatchig.bgnode" );
-static THREAD_LOCAL basic::Tracer TR_BGEDGE( "core.pack.hpatchig.bgedge" );
-static THREAD_LOCAL basic::Tracer TR_HIG( "core.pack.hpatchig.ig" );
-static THREAD_LOCAL basic::Tracer TR_STATS( "core.pack.hpatchig.stats" );
+static basic::Tracer TR_NODE( "core.pack.hpatchig.node" );
+static basic::Tracer TR_EDGE( "core.pack.hpatchig.edge" );
+static basic::Tracer TR_BGNODE( "core.pack.hpatchig.bgnode" );
+static basic::Tracer TR_BGEDGE( "core.pack.hpatchig.bgedge" );
+static basic::Tracer TR_HIG( "core.pack.hpatchig.ig" );
+static basic::Tracer TR_STATS( "core.pack.hpatchig.stats" );
 
 
 template < typename V, typename E, typename G > class HPatchNode;

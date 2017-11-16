@@ -92,7 +92,7 @@
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 //Auto Headers
 
-static THREAD_LOCAL basic::Tracer TR( "matdes::mutalyze" );
+static basic::Tracer TR( "matdes::mutalyze" );
 
 using std::string;
 using ObjexxFCL::string_of;
@@ -124,12 +124,12 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> revert_pos, utili
 
 	// Set which residues can be designed
 	utility::vector1<bool> allowed_aas(20, false);
-	for (Size i = 1; i <= pose.size(); i++) {
-		if (find(revert_pos.begin(), revert_pos.end(), i) == revert_pos.end()) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		if ( find(revert_pos.begin(), revert_pos.end(), i) == revert_pos.end() ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		}
 	}
-	for (Size ipos = 1; ipos <= revert_pos.size(); ipos++) {
+	for ( Size ipos = 1; ipos <= revert_pos.size(); ipos++ ) {
 		string aa_name = revert_ids[ipos];
 		allowed_aas[aa_from_name(aa_name)] = true;
 		task->nonconst_residue_task(revert_pos[ipos]).restrict_absent_canonical_aas(allowed_aas);
@@ -137,7 +137,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> revert_pos, utili
 		allowed_aas[aa_from_name(aa_name)] = false;
 	}
 
-  // Actually perform design
+	// Actually perform design
 	make_symmetric_PackerTask_by_truncation(pose, task);
 	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
@@ -147,134 +147,134 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> revert_pos, utili
 void
 design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utility::vector1<Size> & mutalyze_pos) {
 
-  using namespace core;
-  using namespace pack;
-  using namespace task;
-  using namespace conformation;
-  using namespace conformation::symmetry;
-  using namespace scoring;
-  using namespace chemical;
+	using namespace core;
+	using namespace pack;
+	using namespace task;
+	using namespace conformation;
+	using namespace conformation::symmetry;
+	using namespace scoring;
+	using namespace chemical;
 
-  // Get the symmetry info and make the packer task
-  SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-  PackerTaskOP task(TaskFactory::create_packer_task(pose));
+	// Get the symmetry info and make the packer task
+	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+	PackerTaskOP task(TaskFactory::create_packer_task(pose));
 
 	// Modify the packer task according to the resfile
 	core::pack::task::parse_resfile(pose,*task, resfile);
 
 	// Get from the packer task the mutalyze positions
 	Size nres_monomer = sym_info->num_independent_residues();
-	for(Size i=1; i<=nres_monomer; ++i) {
-		if(! task->residue_task(i).has_behavior("AUTO")) {
+	for ( Size i=1; i<=nres_monomer; ++i ) {
+		if ( ! task->residue_task(i).has_behavior("AUTO") ) {
 			mutalyze_pos.push_back(i);
 			task->nonconst_residue_task(i).initialize_from_command_line();
 		}
 	}
 
-  make_symmetric_PackerTask_by_truncation(pose, task);
+	make_symmetric_PackerTask_by_truncation(pose, task);
 	// Get rid of Nobu's rotamers of death
 	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
 	limit_rots->apply(pose, *task);
-  // Actually perform design
-  protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
-  packer->apply(pose);
+	// Actually perform design
+	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+	packer->apply(pose);
 
 }
 
 void
 repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 
-  using namespace core;
-  using namespace pack;
-  using namespace task;
-  using namespace conformation;
-  using namespace conformation::symmetry;
-  using namespace scoring;
-  using namespace chemical;
+	using namespace core;
+	using namespace pack;
+	using namespace task;
+	using namespace conformation;
+	using namespace conformation::symmetry;
+	using namespace scoring;
+	using namespace chemical;
 
-  // Get the symmetry info and make the packer task
-  SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-  PackerTaskOP task( TaskFactory::create_packer_task( pose ));
+	// Get the symmetry info and make the packer task
+	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
-  // Set which residues can be repacked
-  for (Size i=1; i<=pose.size(); i++) {
-    if (!sym_info->bb_is_independent(i)) {
-      task->nonconst_residue_task(i).prevent_repacking();
-    } else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
-      task->nonconst_residue_task(i).prevent_repacking();
-    } else {
+	// Set which residues can be repacked
+	for ( Size i=1; i<=pose.size(); i++ ) {
+		if ( !sym_info->bb_is_independent(i) ) {
+			task->nonconst_residue_task(i).prevent_repacking();
+		} else if ( find(design_pos.begin(), design_pos.end(), i) == design_pos.end() ) {
+			task->nonconst_residue_task(i).prevent_repacking();
+		} else {
 			vector1<bool> allowed_aas(20, false);
-      allowed_aas[pose.residue(i).aa()] = true;
-      task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
+			allowed_aas[pose.residue(i).aa()] = true;
+			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
 			task->nonconst_residue_task(i).initialize_from_command_line();
-    }
-  }
+		}
+	}
 
-  // Actually repack.
-  make_symmetric_PackerTask_by_truncation(pose, task);
+	// Actually repack.
+	make_symmetric_PackerTask_by_truncation(pose, task);
 	// Get rid of Nobu's rotamers of death
 	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
 	limit_rots->apply(pose, *task);
-  protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
-  packer->apply(pose);
+	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+	packer->apply(pose);
 
 }
 
 void
 minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool move_bb, bool move_sc, bool move_rb) {
 
-  // Initialize a MoveMap
+	// Initialize a MoveMap
 	// fpd 2-phase minimization
 	// 1 - minimize SC only
 	// 2 - minimize SC + RB (iff RB move enabled)
-  core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-   movemap->set_jump(false);
-   movemap->set_bb(false);
-   movemap->set_chi(false);
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	movemap->set_jump(false);
+	movemap->set_bb(false);
+	movemap->set_chi(false);
 
-   // Set allowable move types at interface positions
-   // Currently, only sc moves allowed
-   for (utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++) {
-     movemap->set_bb (*i, move_bb);
-     movemap->set_chi(*i, move_sc);
-   }
+	// Set allowable move types at interface positions
+	// Currently, only sc moves allowed
+	for ( utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++ ) {
+		movemap->set_bb (*i, move_bb);
+		movemap->set_chi(*i, move_sc);
+	}
 
-   // Make MoveMap symmetric, apply it to minimize the pose
-   core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-   protocols::simple_moves::symmetry::SymMinMover m1( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
-   m1.apply(pose);
+	// Make MoveMap symmetric, apply it to minimize the pose
+	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
+	protocols::simple_moves::symmetry::SymMinMover m1( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	m1.apply(pose);
 
-	if (move_rb) {
+	if ( move_rb ) {
 		movemap->set_jump(true);
 		core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
- 	  protocols::simple_moves::symmetry::SymMinMover m2( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+		protocols::simple_moves::symmetry::SymMinMover m2( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 		m2.apply(pose);
 	}
 }
 
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius) {
-  using core::id::AtomID;
-  utility::vector1<Real> rsd_sasa(pose.size(),0.0);
-  core::id::AtomID_Map<Real> atom_sasa;
-  core::id::AtomID_Map<bool> atom_mask;
-  core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
-  core::pose::initialize_atomid_map(atom_mask,pose,false);
-  for(Size i = 1; i <= pose.size(); i++) {
-    for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
-      atom_mask[AtomID(j,i)] = true;
-    }
-  }
-  core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
-  utility::vector1<Real> sc_sasa(pose.size(),0.0);
-  for(Size i = 1; i <= pose.size(); i++) {
-    // Use CA as the side chain for Glys
-    if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];
-    for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
-      sc_sasa[i] += atom_sasa[AtomID(j,i)];
-    }
-  }
-  return sc_sasa;
+	using core::id::AtomID;
+	utility::vector1<Real> rsd_sasa(pose.size(),0.0);
+	core::id::AtomID_Map<Real> atom_sasa;
+	core::id::AtomID_Map<bool> atom_mask;
+	core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
+	core::pose::initialize_atomid_map(atom_mask,pose,false);
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		for ( Size j = 1; j <= pose.residue(i).nheavyatoms(); j++ ) {
+			atom_mask[AtomID(j,i)] = true;
+		}
+	}
+	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
+	utility::vector1<Real> sc_sasa(pose.size(),0.0);
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		// Use CA as the side chain for Glys
+		if ( pose.residue(i).name3()=="GLY" ) sc_sasa[i] += atom_sasa[AtomID(2,i)];
+		for ( Size j = 5; j <= pose.residue(i).nheavyatoms(); j++ ) {
+			sc_sasa[i] += atom_sasa[AtomID(j,i)];
+		}
+	}
+	return sc_sasa;
 }
 
 // Pose needs to be scored before this will work.
@@ -290,26 +290,26 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 	// Figure out which chains touch chain A, and add the residues from those chains
 	// into the sc surface objects
 	Size nres_monomer = symm_info->num_independent_residues();
-	for (Size i=1; i<=nres_monomer; ++i) {
+	for ( Size i=1; i<=nres_monomer; ++i ) {
 		scc.AddResidue(0, pose.residue(i));
 	}
-	for (Size i=1; i<=symm_info->subunits(); ++i) {
-		if (std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
+	for ( Size i=1; i<=symm_info->subunits(); ++i ) {
+		if ( std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end() ) continue;
 		bool contact = false;
 		Size start = (i-1)*nres_monomer;
-		for (Size ir=1; ir<=nres_monomer; ir++) {
-			if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
+		for ( Size ir=1; ir<=nres_monomer; ir++ ) {
+			if ( pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0 ) {
 				contact = true;
 				break;
 			}
 		}
-		if (contact) {
-			for (Size ir=1; ir<=nres_monomer; ir++) {
+		if ( contact ) {
+			for ( Size ir=1; ir<=nres_monomer; ir++ ) {
 				scc.AddResidue(1, pose.residue(ir+start));
 			}
 		}
 	}
-	if (scc.Calc()) {
+	if ( scc.Calc() ) {
 		sc = scc.GetResults().sc;
 		int_area = scc.GetResults().surface[2].trimmedArea;
 	}
@@ -318,48 +318,48 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 void
 newer_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) {
 
-  using namespace core;
+	using namespace core;
 
-  core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-  core::scoring::sc::ShapeComplementarityCalculator scc;
-  scc.Init();
+	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+	core::scoring::sc::ShapeComplementarityCalculator scc;
+	scc.Init();
 
-  // Figure out which chains touch chain A, and add the residues from those chains
-  // into the sc surface objects
-  Size nres_monomer = symm_info->num_independent_residues();
-  for (Size i=1; i<=nres_monomer; ++i) {
-    scc.AddResidue(0, pose.residue(i));
+	// Figure out which chains touch chain A, and add the residues from those chains
+	// into the sc surface objects
+	Size nres_monomer = symm_info->num_independent_residues();
+	for ( Size i=1; i<=nres_monomer; ++i ) {
+		scc.AddResidue(0, pose.residue(i));
 		TR << "scChainA: " << i << pose.residue(i).name3() << std::endl;
-  }
-  for (Size i=2; i<=symm_info->subunits(); ++i) {
-    Size start = (i-1)*nres_monomer;
-    bool contact = false;
-    if (std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) {
-			for (Size ir=1; ir<=nres_monomer; ir++) {
+	}
+	for ( Size i=2; i<=symm_info->subunits(); ++i ) {
+		Size start = (i-1)*nres_monomer;
+		bool contact = false;
+		if ( std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end() ) {
+			for ( Size ir=1; ir<=nres_monomer; ir++ ) {
 				scc.AddResidue(0, pose.residue(ir+start));
 				TR << "scChainA: " << ir+start << pose.residue(ir+start).name3() << std::endl;
 			}
 		} else {
-/*
-	    for (Size ir=1; ir<=nres_monomer; ir++) {
-	      if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
-	        contact = true;
-	        break;
-	      }
-	    }
-	    if (contact) {
-*/
-	      for (Size ir=1; ir<=nres_monomer; ir++) {
-	        scc.AddResidue(1, pose.residue(ir+start));
-					TR << "scChainB: " << ir+start << pose.residue(ir+start).name3() << std::endl;
-	      }
-//	    }
-	  }
+			/*
+			for (Size ir=1; ir<=nres_monomer; ir++) {
+			if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
+			contact = true;
+			break;
+			}
+			}
+			if (contact) {
+			*/
+			for ( Size ir=1; ir<=nres_monomer; ir++ ) {
+				scc.AddResidue(1, pose.residue(ir+start));
+				TR << "scChainB: " << ir+start << pose.residue(ir+start).name3() << std::endl;
+			}
+			//     }
+		}
 	}
-  if (scc.Calc()) {
-    sc = scc.GetResults().sc;
-    int_area = scc.GetResults().surface[2].trimmedArea;
-  } else {
+	if ( scc.Calc() ) {
+		sc = scc.GetResults().sc;
+		int_area = scc.GetResults().surface[2].trimmedArea;
+	} else {
 		TR << "ERROR: sc failed!" << std::endl;
 	}
 }
@@ -369,31 +369,31 @@ Pose
 get_neighbor_subs (Pose const &pose, vector1<Size> intra_subs)
 {
 
-  // Figure out which chains touch chain A, and return those chains
+	// Figure out which chains touch chain A, and return those chains
 	Pose sub_pose;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-  Size nres_monomer = symm_info->num_independent_residues();
+	Size nres_monomer = symm_info->num_independent_residues();
 	sub_pose.append_residue_by_jump(pose.residue(1),1);
-  for (Size i=2; i<=nres_monomer; ++i) {
+	for ( Size i=2; i<=nres_monomer; ++i ) {
 		sub_pose.append_residue_by_bond(pose.residue(i));
-  }
-  for (Size i=1; i<=symm_info->subunits(); ++i) {
-    if (std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
-    bool contact = false;
-    Size start = (i-1)*nres_monomer;
-    for (Size ir=1; ir<=nres_monomer; ir++) {
-      if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
-        contact = true;
-        break;
-      }
-    }
-    if (contact) {
+	}
+	for ( Size i=1; i<=symm_info->subunits(); ++i ) {
+		if ( std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end() ) continue;
+		bool contact = false;
+		Size start = (i-1)*nres_monomer;
+		for ( Size ir=1; ir<=nres_monomer; ir++ ) {
+			if ( pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0 ) {
+				contact = true;
+				break;
+			}
+		}
+		if ( contact ) {
 			sub_pose.append_residue_by_jump(pose.residue(start+1),sub_pose.size());
-      for (Size ir=2; ir<=nres_monomer; ir++) {
+			for ( Size ir=2; ir<=nres_monomer; ir++ ) {
 				sub_pose.append_residue_by_bond(pose.residue(ir+start));
-      }
-    }
-  }
+			}
+		}
+	}
 
 	return sub_pose;
 
@@ -407,23 +407,23 @@ get_atom_packing_score (Pose const &pose, vector1<Size> intra_subs, Real cutoff=
 	core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-  Size nres_monomer = symm_info->num_independent_residues();
+	Size nres_monomer = symm_info->num_independent_residues();
 	Size count = 0; Real if_score = 0;
 
 	Real cutoff2 = cutoff*cutoff;
-	for (Size ir=1; ir<=nres_monomer; ir++) {
-   	for (Size ia = 1; ia<=sub_pose.residue(ir).nheavyatoms(); ia++) {
+	for ( Size ir=1; ir<=nres_monomer; ir++ ) {
+		for ( Size ia = 1; ia<=sub_pose.residue(ir).nheavyatoms(); ia++ ) {
 			bool contact = false;
-			for (Size jr=nres_monomer+1; jr<=sub_pose.size(); jr++) {
-				for (Size ja = 1; ja<=sub_pose.residue(jr).nheavyatoms(); ja++) {
-					if (sub_pose.residue(ir).xyz(ia).distance_squared(sub_pose.residue(jr).xyz(ja)) <= cutoff2)  {
+			for ( Size jr=nres_monomer+1; jr<=sub_pose.size(); jr++ ) {
+				for ( Size ja = 1; ja<=sub_pose.residue(jr).nheavyatoms(); ja++ ) {
+					if ( sub_pose.residue(ir).xyz(ia).distance_squared(sub_pose.residue(jr).xyz(ja)) <= cutoff2 )  {
 						contact = true;
 						break; // ja
 					}
 				} // ja
-				if (contact == true) break;
+				if ( contact == true ) break;
 			} // jr
-			if (contact == true) {
+			if ( contact == true ) {
 				count++;
 				if_score += hr.atom_scores[AtomID(ia, ir)];
 			}
@@ -439,18 +439,18 @@ average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Size intra_subs, R
 {
 
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-  Size nres_monomer = sym_info->num_independent_residues();
-  Size count_neighbors( 0 );
+	Size nres_monomer = sym_info->num_independent_residues();
+	Size count_neighbors( 0 );
 
-	for (Size i = 1; i <= mutalyze_pos.size(); ++i) {
+	for ( Size i = 1; i <= mutalyze_pos.size(); ++i ) {
 		Size ires = mutalyze_pos[i];
 		core::conformation::Residue const resi( pose.conformation().residue( ires ) );
-  	Size resi_neighbors( 0 );
-    for(Size jres = 1; jres <= (nres_monomer*intra_subs); ++jres) {
-// for Nik's stuff    for(Size jres = (nres_monomer*intra_subs)+1; jres <= (nres_monomer*(intra_subs+1)); ++jres) {
+		Size resi_neighbors( 0 );
+		for ( Size jres = 1; jres <= (nres_monomer*intra_subs); ++jres ) {
+			// for Nik's stuff    for(Size jres = (nres_monomer*intra_subs)+1; jres <= (nres_monomer*(intra_subs+1)); ++jres) {
 			core::conformation::Residue const resj( pose.residue( jres ) );
 			Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
-			if( distance <= distance_threshold ){
+			if ( distance <= distance_threshold ) {
 				++count_neighbors;
 				++resi_neighbors;
 			}
@@ -465,23 +465,23 @@ average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Size intra_subs, R
 Real
 get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer) {
 
-  core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
-  basic::MetricValue< id::AtomID_Map<bool> > bound_Amap;
-  unsat_calc_bound->get("atom_bur_unsat", bound_Amap, bound);
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+	basic::MetricValue< id::AtomID_Map<bool> > bound_Amap;
+	unsat_calc_bound->get("atom_bur_unsat", bound_Amap, bound);
 
-  core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
-  basic::MetricValue< id::AtomID_Map<bool> > unbound_Amap;
-  unsat_calc_unbound->get("atom_bur_unsat", unbound_Amap, unbound);
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+	basic::MetricValue< id::AtomID_Map<bool> > unbound_Amap;
+	unsat_calc_unbound->get("atom_bur_unsat", unbound_Amap, unbound);
 
 	id::AtomID_Map<bool> bound_am = bound_Amap.value();
 	id::AtomID_Map<bool> unbound_am = unbound_Amap.value();
 	Size buried_unsat_polars = 0;
-	for (Size ir=1; ir<=nres_monomer; ir++) {
+	for ( Size ir=1; ir<=nres_monomer; ir++ ) {
 		Size flag = 0;
-		for (Size ia=1; ia<=bound.residue(ir).nheavyatoms(); ia++) {
-			if (bound_am[id::AtomID(ia,ir)] != unbound_am[id::AtomID(ia,ir)]) {
+		for ( Size ia=1; ia<=bound.residue(ir).nheavyatoms(); ia++ ) {
+			if ( bound_am[id::AtomID(ia,ir)] != unbound_am[id::AtomID(ia,ir)] ) {
 				buried_unsat_polars++;
-				if (flag == 0) {
+				if ( flag == 0 ) {
 					TR << "buried unsat polar(s): " << bound.residue(ir).name3() << ir << "\t" << bound.residue(ir).atom_name(ia);
 					flag = 1;
 				} else {
@@ -489,7 +489,7 @@ get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer) {
 				}
 			}
 		}
-		if (flag) TR << std::endl;
+		if ( flag ) TR << std::endl;
 	}
 
 	return buried_unsat_polars;
@@ -514,7 +514,7 @@ void
 
 	// Iterate through files
 	utility::vector1<std::string> files = option[in::file::s]();
-	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
+	for ( Size ifile = 1; ifile <= files.size(); ++ifile ) {
 		std::string file = files[ifile];
 
 		// Read in pose
@@ -527,60 +527,60 @@ void
 		core::pose::symmetry::make_symmetric_pose(pose);
 		SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 		std::map<Size,SymDof> dofs = sym_info->get_dofs();
-	 	int sym_jump = 0;
-	 	for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
-	   	Size jump_num = i->first;
-	   	if (sym_jump == 0) {
-		 		sym_jump = jump_num;
-	   	} else {
+		int sym_jump = 0;
+		for ( std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++ ) {
+			Size jump_num = i->first;
+			if ( sym_jump == 0 ) {
+				sym_jump = jump_num;
+			} else {
 				TR << "Warning! Multiple symmetric DOFs found; not applying transformations in -matdes::radial_disp and -matdes::angle" << std::endl;
 				sym_jump = -1;
 				runtime_assert( option[matdes::num_subs_building_block]() == 1 );  //fpd  can't create unbound pose if this > 1 and multiple jumps
-	   		//utility_exit_with_message("Can only handle one subunit!");
-	   	}
-	 	}
-	 	if (sym_jump == 0) {
-	   	utility_exit_with_message("No jump defined!");
-	 	}
+				//utility_exit_with_message("Can only handle one subunit!");
+			}
+		}
+		if ( sym_jump == 0 ) {
+			utility_exit_with_message("No jump defined!");
+		}
 
-    // Define which subs are part of the oligomeric building block.
-    Sizes intra_subs;
-    if (!option[matdes::num_subs_building_block].user()) {
-      utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_building_block");
-    } else {
-      for(int intrasub=1; intrasub<=option[matdes::num_subs_building_block](); intrasub++) {
-        intra_subs.push_back(intrasub);
-      }
-    }
+		// Define which subs are part of the oligomeric building block.
+		Sizes intra_subs;
+		if ( !option[matdes::num_subs_building_block].user() ) {
+			utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_building_block");
+		} else {
+			for ( int intrasub=1; intrasub<=option[matdes::num_subs_building_block](); intrasub++ ) {
+				intra_subs.push_back(intrasub);
+			}
+		}
 
-    // Get the total number of subunits
+		// Get the total number of subunits
 		Size total_subs = 1;
-    if (!option[matdes::num_subs_total].user()) {
-      //utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_total");
+		if ( !option[matdes::num_subs_total].user() ) {
+			//utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_total");
 			total_subs = sym_info->subunits();
 			TR << "Warning! -matdes::num_subs_total not specified.  Setting = " << total_subs << std::endl;
-    } else {
+		} else {
 			total_subs = option[matdes::num_subs_total]();
-    }
+		}
 
 		// Make a scorefunction
 		ScoreFunctionOP scorefxn = get_score_function();
 
-    // Move the pose to the correct docked configuration before designing
-    utility::vector1<Real> radial_disps = option[matdes::radial_disp]();
-    utility::vector1<Real> angles = option[matdes::angle]();
+		// Move the pose to the correct docked configuration before designing
+		utility::vector1<Real> radial_disps = option[matdes::radial_disp]();
+		utility::vector1<Real> angles = option[matdes::angle]();
 		runtime_assert (radial_disps.size() == angles.size() );
 
-    Mat init_rot;
-		if (sym_jump != -1) {
+		Mat init_rot;
+		if ( sym_jump != -1 ) {
 			init_rot = pose.jump(sym_jump).get_rotation();
 		}
-    for (Size iconfig=1; iconfig<=radial_disps.size(); iconfig++) {
+		for ( Size iconfig=1; iconfig<=radial_disps.size(); iconfig++ ) {
 			core::kinematics::Jump j;
 			//fpd if we have multiple symm DOFs or we have radial_disp==angle==0 then use input conformation
-			if (sym_jump != -1 && !(radial_disps[iconfig]==0 && angles[iconfig]==0)) {
-	      j = pose.jump(sym_jump);
-	      j.set_translation(Vec(radial_disps[iconfig],0,0));
+			if ( sym_jump != -1 && !(radial_disps[iconfig]==0 && angles[iconfig]==0) ) {
+				j = pose.jump(sym_jump);
+				j.set_translation(Vec(radial_disps[iconfig],0,0));
 				j.set_rotation(Mat(numeric::x_rotation_matrix_degrees(angles[iconfig]) * init_rot));
 				pose.set_jump(sym_jump,j); // COMMENT OUT FOR WILLS PENTAMERS
 			}
@@ -590,9 +590,9 @@ void
 			utility::vector1<utility::file::FileName> resfile = option[basic::options::OptionKeys::packing::resfile]();
 			design_using_resfile(pose, scorefxn, resfile[1], mutalyze_pos);
 			utility::vector1<std::string> mutalyze_ids;
-		  for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
+			for ( Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos ) {
 				mutalyze_ids.push_back(pose.residue(mutalyze_pos[ipos]).name3());
-		  }
+			}
 
 			// Repack and minimize using scorefxn
 			// repack(pose, scorefxn, mutalyze_pos);
@@ -603,8 +603,8 @@ void
 			scorefxn->score(pose);
 
 			// Write the pdb file of the design
-      std::ostringstream r_string;
-      r_string << std::fixed << std::setprecision(1) << radial_disps[iconfig];
+			std::ostringstream r_string;
+			r_string << std::fixed << std::setprecision(1) << radial_disps[iconfig];
 			std::string fn = option[matdes::prefix]() + option[matdes::pdbID]() + "_" +r_string.str()+ "_" + string_of(angles[iconfig]) + "_" + option[matdes::tag] + ".mutalyze.pdb";
 			utility::io::ozstream out( option[out::file::o]() + "/" + fn );
 			pose.dump_pdb(out);
@@ -614,34 +614,34 @@ void
 			// Calculate the AverageDegree of the designed positions
 			Real avg_deg = average_degree(pose, mutalyze_pos, intra_subs.size());
 
-	    // Calculate the change in SASA upon complex formation
-	    Real bound_sasa = core::scoring::calc_total_sasa(pose, 1.4);
-  	  Pose unbound_pose;
-			if (intra_subs.size() == 1) {
+			// Calculate the change in SASA upon complex formation
+			Real bound_sasa = core::scoring::calc_total_sasa(pose, 1.4);
+			Pose unbound_pose;
+			if ( intra_subs.size() == 1 ) {
 				core::pose::symmetry::extract_asymmetric_unit(pose, unbound_pose);
 				ScoreFunctionOP scorefxnasymm( core::scoring::symmetry::asymmetrize_scorefunction(scorefxn) );
 				(*scorefxnasymm)(unbound_pose);
 			} else {
 				//fpd if there is ever a way to extract a symmetric subpose (e.g. trimer from tetrahedron)
 				//fpd  it can be done here for some speedup
-	    	j.set_translation(Vec(1000,0,0));
-	  	  unbound_pose = pose;
-		    unbound_pose.set_jump(sym_jump,j);
+				j.set_translation(Vec(1000,0,0));
+				unbound_pose = pose;
+				unbound_pose.set_jump(sym_jump,j);
 			}
 
-	    Real unbound_sasa = core::scoring::calc_total_sasa(unbound_pose, 1.4);
+			Real unbound_sasa = core::scoring::calc_total_sasa(unbound_pose, 1.4);
 			Real buried_sasa = (unbound_sasa-bound_sasa)/total_subs;
 
 			// Calculate the number of hbonding groups buried by the interface, also prints them to TR
 			Size nres_monomer = sym_info->num_independent_residues();
 			Real buried_unsat_polars = get_unsat_polars(pose, unbound_pose, nres_monomer);
 
-	    // Calculate the Boltzmann probability for the rotamer at each designed position
-			if (option[matdes::mutalyze::calc_rot_boltz]() == 1) {
-				if (intra_subs.size() == 1) {
+			// Calculate the Boltzmann probability for the rotamer at each designed position
+			if ( option[matdes::mutalyze::calc_rot_boltz]() == 1 ) {
+				if ( intra_subs.size() == 1 ) {
 					ScoreFunctionOP scorefxnasymm(  core::scoring::symmetry::asymmetrize_scorefunction(scorefxn) );
 					(*scorefxnasymm)(unbound_pose);
-					for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
+					for ( Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos ) {
 						protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
 						rbc.scorefxn(scorefxnasymm);
 						Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
@@ -649,7 +649,7 @@ void
 					}
 				} else {
 					// intra_subs > 1
-					for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
+					for ( Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos ) {
 						protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
 						rbc.scorefxn(scorefxn);
 						Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
@@ -658,40 +658,40 @@ void
 				}
 			}
 
-	    // Calculate the surface area and surface complementarity for the interface
-	    Real int_area = 0; Real sc = 0;
-	    newer_sc(pose, intra_subs, int_area, sc);
+			// Calculate the surface area and surface complementarity for the interface
+			Real int_area = 0; Real sc = 0;
+			newer_sc(pose, intra_subs, int_area, sc);
 
-	    // Get the packing score
-	    Real packing = get_atom_packing_score(pose, intra_subs, 9.0);
+			// Get the packing score
+			Real packing = get_atom_packing_score(pose, intra_subs, 9.0);
 
 			// Calculate per-residue energies for interface residues
 			Real interface_energy = 0;
 			core::scoring::EnergyMap em;
 			Real avg_interface_energy = 0;
 			Size mutations = 0;
-	    for (Size index=1; index<=mutalyze_pos.size(); index++) {
+			for ( Size index=1; index<=mutalyze_pos.size(); index++ ) {
 				interface_energy += pose.energies().residue_total_energy(mutalyze_pos[index]);
 				em += pose.energies().residue_total_energies(mutalyze_pos[index]);
 				// Also, while we're looping, count the number of mutations from the input protein
-				if (pose.residue(mutalyze_pos[index]).name3() != original_pose.residue(mutalyze_pos[index]).name3()) {
+				if ( pose.residue(mutalyze_pos[index]).name3() != original_pose.residue(mutalyze_pos[index]).name3() ) {
 					mutations++;
 				}
-	    }
+			}
 			avg_interface_energy = interface_energy / mutalyze_pos.size();
 			// Multiply those energies by the weights
 			em *= scorefxn->weights();
 
 			// Calculate the ddG of the monomer in the assembled and unassembled states
-	   	protocols::simple_moves::ddG ddG_mover2 = protocols::simple_moves::ddG(scorefxn, 1, true);
+			protocols::simple_moves::ddG ddG_mover2 = protocols::simple_moves::ddG(scorefxn, 1, true);
 			Real avg_ddG = 0;
-			for (core::Size i=0; i<3; i++) {
-		    ddG_mover2.calculate(pose);
+			for ( core::Size i=0; i<3; i++ ) {
+				ddG_mover2.calculate(pose);
 				avg_ddG += ddG_mover2.sum_ddG();
 			}
 			Real pose_ddG = avg_ddG / 3;
-	    TR << files[ifile] << " mutalyzed_ddG = " << pose_ddG << std::endl;
-	    ddG_mover2.report_ddG(TR);
+			TR << files[ifile] << " mutalyzed_ddG = " << pose_ddG << std::endl;
+			ddG_mover2.report_ddG(TR);
 
 			// Create a scorefile struct, add custom metrics to it
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
@@ -715,15 +715,15 @@ void
 
 			// Loop through the design positions and mutate each non-Gly/Pro residue to alanine, then
 			// calculate the ddG to get a measure of the contribution of each residue to the interface
-			if (option[matdes::mutalyze::ala_scan]() == 1) {
+			if ( option[matdes::mutalyze::ala_scan]() == 1 ) {
 				Sizes pos;
 				utility::vector1<std::string> id;
-				for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
+				for ( Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos ) {
 					Pose pose_for_ala_scan = pose;
 					pos.clear();
 					id.clear();
 					pos.push_back(mutalyze_pos[ipos]);
-					if ((mutalyze_ids[ipos] == "GLY") || (mutalyze_ids[ipos] == "PRO")) {
+					if ( (mutalyze_ids[ipos] == "GLY") || (mutalyze_ids[ipos] == "PRO") ) {
 						id.push_back(string_of(mutalyze_ids[ipos]));
 					} else {
 						id.push_back("ALA");
@@ -734,11 +734,11 @@ void
 
 					// Calculate the ddG of the monomer in the assembled and unassembled states
 					protocols::simple_moves::ddG ddG_mover3 = protocols::simple_moves::ddG(scorefxn, 1, true);
-		      avg_ddG = 0;
-		      for (core::Size i=0; i<3; i++) {
-		        ddG_mover3.calculate(pose_for_ala_scan);
-		        avg_ddG += ddG_mover3.sum_ddG();
-		      }
+					avg_ddG = 0;
+					for ( core::Size i=0; i<3; i++ ) {
+						ddG_mover3.calculate(pose_for_ala_scan);
+						avg_ddG += ddG_mover3.sum_ddG();
+					}
 					avg_ddG /= 3;
 					TR << files[ifile] << " ala_scan_ddG for mutation " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << avg_ddG << std::endl;
 					ddG_mover3.report_ddG(TR);
@@ -747,39 +747,39 @@ void
 
 			// Loop through each designed position, revert to the native residue, and decide if the reversion is
 			// well-tolerated. If so, revert that residue.
-			if (option[matdes::mutalyze::revert_scan]() == 1) {
-        Sizes pos;
-        utility::vector1<std::string> id;
-        for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
-          Pose pose_for_revert_scan = pose;
-          pos.clear();
-          id.clear();
-          pos.push_back(mutalyze_pos[ipos]);
-          if ((mutalyze_ids[ipos] == "GLY") || (mutalyze_ids[ipos] == "PRO")) {
-            id.push_back(string_of(mutalyze_ids[ipos]));
-          } else {
-            id.push_back(original_pose.residue(mutalyze_pos[ipos]).name3());
-          }
+			if ( option[matdes::mutalyze::revert_scan]() == 1 ) {
+				Sizes pos;
+				utility::vector1<std::string> id;
+				for ( Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos ) {
+					Pose pose_for_revert_scan = pose;
+					pos.clear();
+					id.clear();
+					pos.push_back(mutalyze_pos[ipos]);
+					if ( (mutalyze_ids[ipos] == "GLY") || (mutalyze_ids[ipos] == "PRO") ) {
+						id.push_back(string_of(mutalyze_ids[ipos]));
+					} else {
+						id.push_back(original_pose.residue(mutalyze_pos[ipos]).name3());
+					}
 
-          // Design
-          design(pose_for_revert_scan, scorefxn, pos, id);
+					// Design
+					design(pose_for_revert_scan, scorefxn, pos, id);
 
-          // Calculate the ddG of the monomer in the assembled and unassembled states
-          protocols::simple_moves::ddG ddG_mover4 = protocols::simple_moves::ddG(scorefxn, 1, true);
+					// Calculate the ddG of the monomer in the assembled and unassembled states
+					protocols::simple_moves::ddG ddG_mover4 = protocols::simple_moves::ddG(scorefxn, 1, true);
 					avg_ddG = 0;
-          for (core::Size i=0; i<3; i++) {
-            ddG_mover4.calculate(pose_for_revert_scan);
-            avg_ddG += ddG_mover4.sum_ddG();
-          }
+					for ( core::Size i=0; i<3; i++ ) {
+						ddG_mover4.calculate(pose_for_revert_scan);
+						avg_ddG += ddG_mover4.sum_ddG();
+					}
 					avg_ddG /= 3;
-					if ((pose_ddG-avg_ddG) >= -0.5) {
-	          TR << files[ifile] << " rev_scan_ddG for reversion " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << avg_ddG << std::endl;
-	          ddG_mover4.report_ddG(TR);
+					if ( (pose_ddG-avg_ddG) >= -0.5 ) {
+						TR << files[ifile] << " rev_scan_ddG for reversion " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << avg_ddG << std::endl;
+						ddG_mover4.report_ddG(TR);
 					} else {
 						TR << files[ifile] << " rev_scan_ddG for reversion " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << 999999 << std::endl;
 					}
-        }
-      }
+				}
+			}
 
 		} // for iconfig in radial_disps
 
@@ -793,11 +793,11 @@ int
 main (int argc, char *argv[])
 {
 	try{
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	void* (*func)(void*) = &dostuff;
+		void* (*func)(void*) = &dostuff;
 
-	func(NULL);
+		func(NULL);
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

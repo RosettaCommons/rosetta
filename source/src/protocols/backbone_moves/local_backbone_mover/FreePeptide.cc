@@ -24,7 +24,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.FreePeptide" );
+static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.FreePeptide" );
 
 
 namespace protocols {

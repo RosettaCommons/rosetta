@@ -57,11 +57,10 @@
 #include <protocols/rbsegment_relax/RBSegment.hh>
 #include <basic/options/option.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TRb( "rbsegmove_main" );
+static basic::Tracer TRb( "rbsegmove_main" );
 
 namespace protocols {
 // namespace rbsegment_relax {

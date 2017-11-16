@@ -72,7 +72,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 // Tracer instance for this file
-static THREAD_LOCAL basic::Tracer TR( "core.io.pose_from_sfr.chirality_resolution" );
+static basic::Tracer TR( "core.io.pose_from_sfr.chirality_resolution" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // useful utility scripts for fixing up residue and atom names.

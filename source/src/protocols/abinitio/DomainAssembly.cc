@@ -57,7 +57,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DomainAssembly" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.DomainAssembly" );
 
 // XRW TEMP std::string
 // XRW TEMP DomainAssemblyCreator::keyname() const

@@ -56,7 +56,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.NamedDihedralConstraint" );
+static basic::Tracer TR( "core.scoring.constraints.NamedDihedralConstraint" );
 
 NamedDihedralConstraint::NamedDihedralConstraint(
 	id::NamedAtomID const & a1,

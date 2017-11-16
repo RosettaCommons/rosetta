@@ -60,7 +60,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.constraints_additional.MaxSeqSepConstraintSet", basic::t_info );
+static basic::Tracer tr( "protocols.constraints_additional.MaxSeqSepConstraintSet", basic::t_info );
 
 using core::scoring::constraints::ConstraintSet;
 using core::scoring::constraints::ConstraintSetOP;

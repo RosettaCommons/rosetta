@@ -51,7 +51,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SaveAndRetrieveSidechains" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.SaveAndRetrieveSidechains" );
 
 // XRW TEMP std::string
 // XRW TEMP SaveAndRetrieveSidechainsCreator::keyname() const

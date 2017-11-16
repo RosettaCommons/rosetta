@@ -28,7 +28,7 @@
 #include <core/pose/extra_pose_info_util.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.filters.Filter" );
+static basic::Tracer TR( "protocols.filters.Filter" );
 
 namespace protocols {
 namespace filters {

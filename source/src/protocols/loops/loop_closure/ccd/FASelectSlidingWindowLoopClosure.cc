@@ -81,7 +81,7 @@ namespace ccd {
 using namespace core;
 using namespace pose;
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.loops.loop_closure.ccd.FASelectSlidingWindowLoopClosure" );
+static basic::Tracer tr( "protocols.loops.loop_closure.ccd.FASelectSlidingWindowLoopClosure" );
 
 const Real REALLY_BAD_SCORE ( 1000000000.0 );
 

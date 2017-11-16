@@ -85,11 +85,10 @@ namespace simple_moves {
 using core::conformation::symmetry::SymmetricConformation;
 using core::conformation::symmetry::SymmetryInfoCOP;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.ddG" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.ddG" );
 
 // XRW TEMP moves::MoverOP ddGCreator::create_mover() const
 // XRW TEMP {

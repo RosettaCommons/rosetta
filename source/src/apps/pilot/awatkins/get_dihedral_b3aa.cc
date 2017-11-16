@@ -76,9 +76,9 @@
 #include <map>
 
 // tracer
-static THREAD_LOCAL basic::Tracer TR( "B3AADihedralGrabber" );
-static THREAD_LOCAL basic::Tracer TR_EX( "ExperimentalRotamers" );
-static THREAD_LOCAL basic::Tracer TR_IR( "InterpolatedRotamers" );
+static basic::Tracer TR( "B3AADihedralGrabber" );
+static basic::Tracer TR_EX( "ExperimentalRotamers" );
+static basic::Tracer TR_IR( "InterpolatedRotamers" );
 
 // a few utility functions
 core::Real

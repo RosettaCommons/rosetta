@@ -73,7 +73,7 @@
 
 using numeric::conversions::radians;
 
-static THREAD_LOCAL basic::Tracer TR( "dubois" );
+static basic::Tracer TR( "dubois" );
 
 using core::Size;
 using core::Real;
@@ -111,7 +111,7 @@ void minimize(core::pose::Pose & pose, ScoreFunctionOP sf) {
 class SeqBBTorSRFD : public core::fragment::BBTorsionSRFD {
 public:
 	bool apply( core::pose::Pose& pose, Size seqpos ) const {
-		if( seqpos >= 3 && 0.001 > pose.energies().residue_total_energies_unsafe(seqpos)[core::scoring::sym_lig] ) {
+		if ( seqpos >= 3 && 0.001 > pose.energies().residue_total_energies_unsafe(seqpos)[core::scoring::sym_lig] ) {
 			pose.conformation().replace_centroid(seqpos,sequence_);
 		}
 		return BBTorsionSRFD::apply( pose, seqpos );
@@ -121,13 +121,13 @@ public:
 void read_fragdata( utility::vector1< core::fragment::FragDataOP > & fds, utility::io::izstream & in, bool design ) {
 	using namespace core::fragment;
 	Size n,count=0;
-	while( in >> n ) {
-	 	std::string pdb;
+	while ( in >> n ) {
+		std::string pdb;
 		char buf[999];
 		FragDataOP fd = new FragData;
-		for( Size i = 1; i <= n; ++i ) {
+		for ( Size i = 1; i <= n; ++i ) {
 			utility::pointer::owning_ptr<SingleResidueFragData> srfd;
-			if(design) srfd = new SeqBBTorSRFD;
+			if ( design ) srfd = new SeqBBTorSRFD;
 			else       srfd = new BBTorsionSRFD;
 			in >> pdb;
 			in.getline(buf,999);
@@ -180,11 +180,11 @@ core::fragment::FragSetOP make_frag_set(Size start, std::string ss, std::map<std
 	using namespace core::fragment;
 	FragSetOP frags = new ConstantLengthFragSet();
 	Size const stop = ss.size() + start - 3;
-	for( Size i = start; i <= stop; ++i ) {
+	for ( Size i = start; i <= stop; ++i ) {
 		FrameOP frame = new Frame(i,3);
 		utility::vector1<FragDataOP>::iterator beg = fds[ss.substr(i-start,3)].begin();
 		utility::vector1<FragDataOP>::iterator end = fds[ss.substr(i-start,3)].end();
-		for( utility::vector1<FragDataOP>::iterator fi = beg; fi != end; ++fi ) {
+		for ( utility::vector1<FragDataOP>::iterator fi = beg; fi != end; ++fi ) {
 			frame->add_fragment(*fi);
 		}
 		frags->add(frame);
@@ -198,11 +198,12 @@ void test( core::pose::Pose & pose ) {
 
 
 	std::cerr << "FT after symm" << std::endl;
-	for( Size i = 1; i <= pose.num_jump(); ++i )
+	for ( Size i = 1; i <= pose.num_jump(); ++i ) {
 		std::cerr << pose.fold_tree().jump_edge(i) << std::endl;
+	}
 
 	pose.dump_pdb("debug_sym0.pdb");
-	for( Size i = 1; i <= 10; ++i ) {
+	for ( Size i = 1; i <= 10; ++i ) {
 		// pose.set_chi( 1, 1, pose.chi(1,1)+20.0*uniform() );
 		pose.set_chi( 2, 1, pose.chi(2,1)+20.0*uniform() );
 		// pose.set_phi(    2, pose.phi(  2)+20.0+uniform() );
@@ -234,21 +235,21 @@ core::pose::Pose make_pose(std::string seq) {
 	core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_NTERM",2);
 	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::PHI  ),0);
 	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),PI);
-	for( Size i = 3; i <= nres; ++i ){
+	for ( Size i = 3; i <= nres; ++i ) {
 		std::string name3 = name_from_aa(aa_from_oneletter_code(seq[i-1]));
 		pose.append_residue_by_bond(*ResidueFactory::create_residue(residue_set->name_map(name3)),true);
 	}
 	core::pose::symmetry::make_symmetric_pose( pose );
 	switch_to_cen(pose);
 	kinematics::FoldTree ft = pose.fold_tree();
-	for( Size i = 1; i <= 4; ++i ) {
+	for ( Size i = 1; i <= 4; ++i ) {
 		ft.jump_edge(i).start_atom() = "VN";
 		ft.jump_edge(i).stop_atom() = "N";
 	}
 	pose.fold_tree(ft);
 	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::PHI  ),0);
 	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),PI);
-	for( Size i = 2; i <= seq.size(); i++ ) {
+	for ( Size i = 2; i <= seq.size(); i++ ) {
 		pose.set_phi  (i,-60.16731);
 		pose.set_psi  (i,-45.19451);
 		pose.set_omega(i,180.00000);
@@ -278,8 +279,8 @@ void design(core::pose::Pose & pose, ScoreFunctionOP sf) {
 	task->or_include_current(true);
 	task->nonconst_residue_task(1).prevent_repacking();
 	task->nonconst_residue_task(2).prevent_repacking();
-	for(Size i = 3; i <= task->size(); ++i) {
-		if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY" ) {
+	for ( Size i = 3; i <= task->size(); ++i ) {
+		if ( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY" ) {
 			task->restrict_to_repacking();
 		} else {
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
@@ -291,7 +292,7 @@ void design(core::pose::Pose & pose, ScoreFunctionOP sf) {
 
 }
 
-class	LigChiMover : public protocols::moves::Mover {
+class LigChiMover : public protocols::moves::Mover {
 	void apply( core::pose::Pose & pose ) {
 		Real a =  10.0*numeric::random::gaussian();
 		Real b =  10.0*numeric::random::gaussian();
@@ -356,26 +357,26 @@ cen_fold(core::pose::Pose & pose, Size NCYCLES, core::fragment::FragSetOP frags,
 	// pose.dump_pdb("stage2.pdb");
 
 	// for( Size i = 1; i <= 5; ++i ) {
-	// 	TR << "stage 3 " << i << std::endl;
-	// 	mc = new MonteCarlo( pose, *sf2, 2.0 );
-	// 	RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
-	// 	mc->reset( pose );
-	// 	// design(pose,sf2);
-	// 	mc = new MonteCarlo( pose, *sf5, 2.0 );
-	// 	RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
-	// 	mc->reset( pose );
-	// 	// design(pose,sf5);
+	//  TR << "stage 3 " << i << std::endl;
+	//  mc = new MonteCarlo( pose, *sf2, 2.0 );
+	//  RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
+	//  mc->reset( pose );
+	//  // design(pose,sf2);
+	//  mc = new MonteCarlo( pose, *sf5, 2.0 );
+	//  RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
+	//  mc->reset( pose );
+	//  // design(pose,sf5);
 	// }
 	// // pose.dump_pdb("stage3.pdb");
 
-	for( Size i = 1; i <= 5; ++i ) {
+	for ( Size i = 1; i <= 5; ++i ) {
 		TR << "stage 3" << i << std::endl;
 		mc = new MonteCarlo( pose, *sf3, 2.0 );
 		RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
 		mc->reset( pose );
 	}
 
-	for( Size i = 1; i <= 5; ++i ) {
+	for ( Size i = 1; i <= 5; ++i ) {
 		TR << "stage 4" << i << std::endl;
 		mc = new MonteCarlo( pose, *sf3, 2.0 );
 		RepeatMover( new TrialMover( random_mover, mc ), NCYCLES ).apply( pose );
@@ -417,23 +418,23 @@ fa_refine_and_design(core::pose::Pose & pose, Size NCYCLE) {
 	sf3 = new symmetry::SymmetricScoreFunction(*sf3);
 	sf4 = new symmetry::SymmetricScoreFunction(*sf4);
 	core::pose::Pose best = pose;
-	for(Size i = 1; i <= NCYCLE; ++i ) {
-		for(Size k = 1; k <= 4; ++k) {
+	for ( Size i = 1; i <= NCYCLE; ++i ) {
+		for ( Size k = 1; k <= 4; ++k ) {
 			repack(pose,sf1); minimize(pose,sf1);
 			repack(pose,sf2); minimize(pose,sf2);
 			repack(pose,sf3); minimize(pose,sf3);
 			repack(pose,sf4); minimize(pose,sf4);
 			TR << "repack/min1234    " << I(2,k) << " " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,nres_mono) << std::endl;
-			if( (*sf4)(best) >= (*sf4)(pose) ) best = pose;
+			if ( (*sf4)(best) >= (*sf4)(pose) ) best = pose;
 		}
 		pose = best;
 		// for(Size k = 1; k <= 1; ++k) {
-		// 	// design(pose,sf1); minimize(pose,sf1);
-		// 	//design(pose,sf2); minimize(pose,sf2);
-		// 	design(pose,sf3); minimize(pose,sf3);
-		// 	design(pose,sf4); minimize(pose,sf4);
-		// 	TR << "deisgn/min1234   " << I(2,k) << " " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,nres_mono) << std::endl;
-		// 	if( (*sf4)(best) >= (*sf4)(pose) ) best = pose;
+		//  // design(pose,sf1); minimize(pose,sf1);
+		//  //design(pose,sf2); minimize(pose,sf2);
+		//  design(pose,sf3); minimize(pose,sf3);
+		//  design(pose,sf4); minimize(pose,sf4);
+		//  TR << "deisgn/min1234   " << I(2,k) << " " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,nres_mono) << std::endl;
+		//  if( (*sf4)(best) >= (*sf4)(pose) ) best = pose;
 		// }
 		// pose = best;
 	}
@@ -445,13 +446,13 @@ void report( std::string tag, core::pose::Pose & pose, core::pose::Pose & cenpos
 	Size nres_mono = (pose.size()-4)/4;
 	Real ref_rep  =  2260.948; // pre-calculated
 	// for( Size i = 0; i < 4; ++i ) {
-	// 	Size nres_mono = (pose.size()-4)/4;
-	// 	ref_rep += pose.energies().residue_total_energies(i*nres_mono+1)[scoring::fa_rep];
-	//    	ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
+	//  Size nres_mono = (pose.size()-4)/4;
+	//  ref_rep += pose.energies().residue_total_energies(i*nres_mono+1)[scoring::fa_rep];
+	//     ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
 	// }
 	Real sym_lig      = pose.energies().total_energies()[ scoring::sym_lig      ];
 	Real fa_atr       = pose.energies().total_energies()[ scoring::fa_atr       ];
- 	Real fa_rep       = pose.energies().total_energies()[ scoring::fa_rep       ] - ref_rep;
+	Real fa_rep       = pose.energies().total_energies()[ scoring::fa_rep       ] - ref_rep;
 	Real fa_sol       = pose.energies().total_energies()[ scoring::fa_sol       ];
 	Real fa_intra_rep = pose.energies().total_energies()[ scoring::fa_intra_rep ];
 	Real pro_close    = pose.energies().total_energies()[ scoring::pro_close    ];
@@ -463,30 +464,30 @@ void report( std::string tag, core::pose::Pose & pose, core::pose::Pose & cenpos
 	Real fa_dun       = pose.energies().total_energies()[ scoring::fa_dun       ];
 	Real p_aa_pp      = pose.energies().total_energies()[ scoring::p_aa_pp      ];
 	Real ref          = pose.energies().total_energies()[ scoring::ref          ];
-   ref_rep *= sf_fa->get_weight(scoring::fa_rep);
+	ref_rep *= sf_fa->get_weight(scoring::fa_rep);
 	Real score = (*sf_fa)(pose) - ref_rep;
 	oss << LJ(20,tag)          << " "
-	    << F(8,3,score/nres_mono)<< " "
-		 << I(3,nres_mono)      << " "
-	    << F(8,3,score)        << " "
-	    << F(8,3,censcore)     << " "
-		 << F(8,3,sym_lig     ) << " "
-       << F(8,3,fa_atr      ) << " "
-       << F(8,3,fa_rep      ) << " "
-       << F(8,3,fa_sol      ) << " "
-       << F(8,3,fa_intra_rep) << " "
-       << F(8,3,pro_close   ) << " "
-       << F(8,3,fa_pair     ) << " "
-       << F(8,3,hbond_sr_bb ) << " "
-       << F(8,3,hbond_lr_bb ) << " "
-       << F(8,3,hbond_bb_sc ) << " "
-       << F(8,3,hbond_sc    ) << " "
-       << F(8,3,fa_dun      ) << " "
-       << F(8,3,p_aa_pp     ) << " "
-       << F(8,3,ref         ) << " "
-	    << pose.sequence().substr(0,nres_mono) << std::endl;
+		<< F(8,3,score/nres_mono)<< " "
+		<< I(3,nres_mono)      << " "
+		<< F(8,3,score)        << " "
+		<< F(8,3,censcore)     << " "
+		<< F(8,3,sym_lig     ) << " "
+		<< F(8,3,fa_atr      ) << " "
+		<< F(8,3,fa_rep      ) << " "
+		<< F(8,3,fa_sol      ) << " "
+		<< F(8,3,fa_intra_rep) << " "
+		<< F(8,3,pro_close   ) << " "
+		<< F(8,3,fa_pair     ) << " "
+		<< F(8,3,hbond_sr_bb ) << " "
+		<< F(8,3,hbond_lr_bb ) << " "
+		<< F(8,3,hbond_bb_sc ) << " "
+		<< F(8,3,hbond_sc    ) << " "
+		<< F(8,3,fa_dun      ) << " "
+		<< F(8,3,p_aa_pp     ) << " "
+		<< F(8,3,ref         ) << " "
+		<< pose.sequence().substr(0,nres_mono) << std::endl;
 
-	if( score/nres_mono <= basic::options::option[basic::options::OptionKeys::in::file::silent_energy_cut]() ) {
+	if ( score/nres_mono <= basic::options::option[basic::options::OptionKeys::in::file::silent_energy_cut]() ) {
 		using namespace basic::options;
 		cenpose.dump_pdb(std::string(option[OptionKeys::out::file::o]())+"/dubois"+tag+"_cen.pdb.gz");
 		pose   .dump_pdb(std::string(option[OptionKeys::out::file::o]())+"/dubois"+tag+"_fa.pdb.gz");
@@ -502,12 +503,12 @@ std::string make_rand_ss() {
 	bool twohelix = uniform() < 0.8;
 	Size len1=(uniform()*15+7), len2=(uniform()*20+7);
 	std::string SS = "L";
-	if( uniform() < 0.5 ) SS += "L";
-	for(Size i=0;i<len1;i++) SS += "H";
-	if( !twohelix ) return SS;
+	if ( uniform() < 0.5 ) SS += "L";
+	for ( Size i=0; i<len1; i++ ) SS += "H";
+	if ( !twohelix ) return SS;
 	SS += "LL";
-	if( uniform() < 0.5 ) SS += "L"; // 50/50 3 res loop
-	for(Size i=0;i<len2;i++) SS += "H";
+	if ( uniform() < 0.5 ) SS += "L"; // 50/50 3 res loop
+	for ( Size i=0; i<len2; i++ ) SS += "H";
 	return SS;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -518,59 +519,59 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace core;
-	using namespace pose;
-	using namespace protocols;
-	using namespace moves;
-	using namespace ObjexxFCL::format;
-	using numeric::random::uniform;
+		using namespace core;
+		using namespace pose;
+		using namespace protocols;
+		using namespace moves;
+		using namespace ObjexxFCL::format;
+		using numeric::random::uniform;
 
-	devel::init(argc,argv);
-	std::ostringstream oss;
-	std::map<std::string, utility::vector1<core::fragment::FragDataOP> > fds = get_frags_map( true );
+		devel::init(argc,argv);
+		std::ostringstream oss;
+		std::map<std::string, utility::vector1<core::fragment::FragDataOP> > fds = get_frags_map( true );
 
-  const Real PI = numeric::NumericTraits<Real>::pi();
+		const Real PI = numeric::NumericTraits<Real>::pi();
 
-	while(true) {
+		while ( true ) {
 
-		std::string SS = make_rand_ss();
-		Size NRES = SS.size()+1;
-		std::string SEQ = "ZGSH";
-		while( SEQ.size() < NRES ) SEQ += "V";
+			std::string SS = make_rand_ss();
+			Size NRES = SS.size()+1;
+			std::string SEQ = "ZGSH";
+			while ( SEQ.size() < NRES ) SEQ += "V";
 
 #ifdef NDEBUG
 		Size NCEN = 30*NRES, NFA = 10;
 #else
-		Size NCEN = 3*NRES, NFA = 1;
+			Size NCEN = 3*NRES, NFA = 1;
 #endif
 
-		Pose init = make_pose(SEQ);
+			Pose init = make_pose(SEQ);
 
-		std::string tag = string_of(uniform());
-		Pose pose = init;
+			std::string tag = string_of(uniform());
+			Pose pose = init;
 
-		core::fragment::FragSetOP frags = make_frag_set(2,SS,fds);
-		ScoreFunctionOP sf_cen = cen_fold(pose,NCEN,frags);
-		Real censcore = (*sf_cen)(pose);
-		Pose cenpose = pose;
+			core::fragment::FragSetOP frags = make_frag_set(2,SS,fds);
+			ScoreFunctionOP sf_cen = cen_fold(pose,NCEN,frags);
+			Real censcore = (*sf_cen)(pose);
+			Pose cenpose = pose;
 
-		switch_to_fa(pose);
-		pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::PHI  ),0);
-		pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),PI);
-		core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_NTERM",2);
+			switch_to_fa(pose);
+			pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::PHI  ),0);
+			pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),PI);
+			core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_NTERM",2);
 
-		ScoreFunctionOP sf_fa = fa_refine_and_design(pose,NFA);
+			ScoreFunctionOP sf_fa = fa_refine_and_design(pose,NFA);
 
-		//std::cerr << "ref_rep ";
-		//for( Size i = 0; i < 4; ++i ) {
-		// 	std::cerr << pose.energies().residue_total_energies(i*NRES+1)[scoring::fa_rep] << " ";
-		// 	std::cerr << pose.energies().residue_total_energies(i*NRES+2)[scoring::fa_rep] << " ";
-		//}
-		//std::cerr << std::endl;
+			//std::cerr << "ref_rep ";
+			//for( Size i = 0; i < 4; ++i ) {
+			//  std::cerr << pose.energies().residue_total_energies(i*NRES+1)[scoring::fa_rep] << " ";
+			//  std::cerr << pose.energies().residue_total_energies(i*NRES+2)[scoring::fa_rep] << " ";
+			//}
+			//std::cerr << std::endl;
 
-		report( tag, pose, cenpose, sf_fa, oss, censcore );
+			report( tag, pose, cenpose, sf_fa, oss, censcore );
 
-	}
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

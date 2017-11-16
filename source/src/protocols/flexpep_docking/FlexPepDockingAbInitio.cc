@@ -61,7 +61,7 @@
 
 using namespace protocols::flexpep_docking;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.flexPepDockingAbInitio" );
+static basic::Tracer TR( "protocols.flexPepDockingAbInitio" );
 
 
 //////////////////////////////////////////////

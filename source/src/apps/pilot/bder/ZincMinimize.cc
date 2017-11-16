@@ -58,8 +58,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR("apps.pilot.bder.ZincMinimize");
+static basic::Tracer TR("apps.pilot.bder.ZincMinimize");
 
 typedef numeric::xyzVector<Real> point;
 typedef point axis;

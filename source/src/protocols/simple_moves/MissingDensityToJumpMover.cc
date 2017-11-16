@@ -32,7 +32,6 @@
 
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -42,7 +41,7 @@ using basic::Warning;
 
 namespace protocols {
 namespace simple_moves {
-static THREAD_LOCAL basic::Tracer TR( "protocols.mover.MissingDensityToJumpMover" );
+static basic::Tracer TR( "protocols.mover.MissingDensityToJumpMover" );
 
 // Default constructor
 MissingDensityToJumpMover::MissingDensityToJumpMover(): protocols::moves::Mover( MissingDensityToJumpMover::get_name() )

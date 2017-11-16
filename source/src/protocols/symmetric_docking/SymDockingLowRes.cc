@@ -58,11 +58,10 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.symetric_docking.SymDockingLowRes" );
+static basic::Tracer TR( "protocols.symetric_docking.SymDockingLowRes" );
 
 //     originally from dock_structure.cc Jeff Gray April 2001
 //

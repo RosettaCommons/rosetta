@@ -42,7 +42,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.cluster.CDRClusterMatcher" );
+static basic::Tracer TR( "protocols.antibody.cluster.CDRClusterMatcher" );
 
 
 namespace protocols {

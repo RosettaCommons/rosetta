@@ -25,7 +25,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR("ChangeAndResetFoldTreeMover");
+static basic::Tracer TR("ChangeAndResetFoldTreeMover");
 
 namespace protocols {
 namespace simple_moves {

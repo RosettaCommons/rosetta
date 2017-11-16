@@ -82,7 +82,7 @@ using utility::vector1;
 OPT_KEY( Boolean, native_RNA_binding_res )
 OPT_KEY( IntegerVector, RNA_binding_res )
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kkappel.analyze_docked_RNA_motifs" );
+static basic::Tracer TR( "apps.pilot.kkappel.analyze_docked_RNA_motifs" );
 
 ///////////////////////////////////////////////////////////////////////////////
 void get_contacts( core::pose::Pose const & pose, std::string const & tag ) {

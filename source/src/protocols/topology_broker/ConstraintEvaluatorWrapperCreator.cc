@@ -47,7 +47,7 @@
 #endif
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.topology_broker.ConstraintEvaluatorWrapperCreator" );
+static basic::Tracer tr( "protocols.topology_broker.ConstraintEvaluatorWrapperCreator" );
 
 namespace protocols {
 namespace topology_broker {

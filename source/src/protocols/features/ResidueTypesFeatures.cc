@@ -59,7 +59,7 @@ using utility::sql_database::sessionOP;
 using utility::vector1;
 using basic::Tracer;
 
-static THREAD_LOCAL Tracer TR("protocols.features.ResidueTypesFeatures");
+static Tracer TR("protocols.features.ResidueTypesFeatures");
 
 ResidueTypesFeatures::ResidueTypesFeatures()
 {

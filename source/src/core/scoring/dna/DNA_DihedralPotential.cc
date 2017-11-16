@@ -49,7 +49,7 @@ namespace core {
 namespace scoring {
 namespace dna {
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.dna.DNA_DihedralPotential" );
+static basic::Tracer TR("core.scoring.dna.DNA_DihedralPotential" );
 using utility::vector1;
 using ObjexxFCL::format::F;
 using ObjexxFCL::format::I;

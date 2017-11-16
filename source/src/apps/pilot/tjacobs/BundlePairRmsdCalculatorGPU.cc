@@ -65,12 +65,12 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "BundlePairRmsdCalculator" );
+static basic::Tracer TR( "BundlePairRmsdCalculator" );
 
 static int BLOCK_SIZE = 512;
 
 namespace BundlePairRmsdCalculator {
-	basic::options::RealOptionKey const max_rmsd( "max_rmsd" ); // subfraction size
+basic::options::RealOptionKey const max_rmsd( "max_rmsd" ); // subfraction size
 }
 
 struct gpu_node_block_ptrs
@@ -157,24 +157,23 @@ load_coordinates_from_database(
 	/**Get coordinates**/
 	std::string select_helix_coords;
 	bool legacy_mode = basic::options::option[basic::options::OptionKeys::sewing::legacy];
-	if(legacy_mode){
+	if ( legacy_mode ) {
 		select_helix_coords =
 			"SELECT bh.helix_id, res.x, res.y, res.z\n"
 			"FROM bundle_helices bh\n"
 			"JOIN residue_atom_coords res ON\n"
-			"	bh.struct_id = res.struct_id AND\n"
-			"	res.atomno IN (1,2,3,4) AND\n"
-			"	(res.seqpos BETWEEN bh.residue_begin AND bh.residue_end)\n"
+			"\tbh.struct_id = res.struct_id AND\n"
+			"\tres.atomno IN (1,2,3,4) AND\n"
+			"\t(res.seqpos BETWEEN bh.residue_begin AND bh.residue_end)\n"
 			"ORDER BY bh.helix_id, res.seqpos, res.atomno;";
-	}
-	else{
+	} else {
 		select_helix_coords =
 			"SELECT bh.helix_id, res.x, res.y, res.z\n"
 			"FROM helices bh\n"
 			"JOIN residue_atom_coords res ON\n"
-			"	bh.struct_id = res.struct_id AND\n"
-			"	res.atomno IN (1,2,3,4) AND\n"
-			"	(res.seqpos BETWEEN bh.residue_begin AND bh.residue_end)\n"
+			"\tbh.struct_id = res.struct_id AND\n"
+			"\tres.atomno IN (1,2,3,4) AND\n"
+			"\t(res.seqpos BETWEEN bh.residue_begin AND bh.residue_end)\n"
 			"ORDER BY bh.helix_id, res.seqpos, res.atomno;";
 	}
 
@@ -182,8 +181,8 @@ load_coordinates_from_database(
 	cppdb::result coords_res=basic::database::safely_read_from_database(coords_stmt);
 	TR << "Done querying coordinates from DB" << std::endl;
 
-	while(coords_res.next())
-	{
+	while ( coords_res.next() )
+			{
 		core::Size helix_id;
 		core::Real x, y, z;
 
@@ -193,14 +192,14 @@ load_coordinates_from_database(
 	}
 
 	std::string select_bundle_helices =
-	"SELECT helix_id, bundle_id, flipped \n"
-	"FROM bundle_helices bh;";
+		"SELECT helix_id, bundle_id, flipped \n"
+		"FROM bundle_helices bh;";
 
 	cppdb::statement bundle_helices_stmt=basic::database::safely_prepare_statement(select_bundle_helices, db_session);
 	cppdb::result bundle_helices_res=basic::database::safely_read_from_database(bundle_helices_stmt);
 	TR << "Done querying for bundle_id/helix_id pairs" << std::endl;
-	while(bundle_helices_res.next())
-	{
+	while ( bundle_helices_res.next() )
+			{
 		core::Size helix_id, bundle_id, flipped;
 		bundle_helices_res >> helix_id >> bundle_id >> flipped;
 
@@ -247,9 +246,9 @@ ship_coordinates_to_gpu(
 		core::Size ii_bundle = ndat[iinode].bundle_index;
 		utility::vector1< core::Size > const & iihelices = bundle_helices.find( ii_bundle )->second;
 		//if ( iinode <= 5 ) {
-		//	for ( core::Size jj = 1; jj <= iihelices.size(); ++jj ) {
-		//		std::cout << "node " << ii << " helix " << iihelices[jj] << std::endl;
-		//	}
+		// for ( core::Size jj = 1; jj <= iihelices.size(); ++jj ) {
+		//  std::cout << "node " << ii << " helix " << iihelices[jj] << std::endl;
+		// }
 		//}
 
 		core::Size ii_n_atoms_in_rms_helices = 0;
@@ -284,12 +283,12 @@ ship_coordinates_to_gpu(
 		n_comparison_coords[ ii ] = ii_n_col_helices; // <-- pick one coordinate for each helix to clash check against all atoms in the comparison helices
 		if ( ii > 1 ) comparison_coords_offsets[ ii ] = comparison_coords_offsets[ ii-1 ] + n_comparison_coords[ ii-1 ];
 		//if ( ii <= 20 ) {
-		//	std::cout << "node " << ii << ":\n";
-		//	std::cout << " ii_n_atoms_in_rms_helices: " << ii_n_atoms_in_rms_helices << "\n";
-		//	std::cout << " ii_n_col_helices: " << ii_n_col_helices << "\n";
-		//	std::cout << " ii_n_atoms_in_col_helices: " << ii_n_atoms_in_col_helices << "\n";
-		//	std::cout << " col_coords_offsets[ ii ]: " << col_coords_offsets[ii] << "\n";
-		//	std::cout << " comparison_coords_offsets[ ii ]: " << comparison_coords_offsets[ ii ] << "\n";
+		// std::cout << "node " << ii << ":\n";
+		// std::cout << " ii_n_atoms_in_rms_helices: " << ii_n_atoms_in_rms_helices << "\n";
+		// std::cout << " ii_n_col_helices: " << ii_n_col_helices << "\n";
+		// std::cout << " ii_n_atoms_in_col_helices: " << ii_n_atoms_in_col_helices << "\n";
+		// std::cout << " col_coords_offsets[ ii ]: " << col_coords_offsets[ii] << "\n";
+		// std::cout << " comparison_coords_offsets[ ii ]: " << comparison_coords_offsets[ ii ] << "\n";
 		//}
 	}
 
@@ -312,7 +311,7 @@ ship_coordinates_to_gpu(
 				++count_rms_coords;
 				assert( count_rms_coords <= n_atoms_in_rms_helices * BLOCK_SIZE );
 				//if ( ii == 181 || ii == 196 ) {
-				//	std::cout << "coords: " << ii << " " << helix1[kk].x() << " " << helix1[kk].y() << " " << helix1[kk].z() << std::endl;
+				// std::cout << "coords: " << ii << " " << helix1[kk].x() << " " << helix1[kk].y() << " " << helix1[kk].z() << std::endl;
 				//}
 				all_rms_coords[ count_rms_coords ] = helix1[kk];
 			}
@@ -321,7 +320,7 @@ ship_coordinates_to_gpu(
 				++count_rms_coords;
 				assert( count_rms_coords <= n_atoms_in_rms_helices * BLOCK_SIZE );
 				//if ( ii == 181 || ii == 196 ) {
-				//	std::cout << "coords: " << ii << " " << helix2[kk].x() << " " << helix2[kk].y() << " " << helix2[kk].z() << std::endl;
+				// std::cout << "coords: " << ii << " " << helix2[kk].x() << " " << helix2[kk].y() << " " << helix2[kk].z() << std::endl;
 				//}
 				all_rms_coords[ count_rms_coords ] = helix2[kk];
 			}
@@ -331,16 +330,16 @@ ship_coordinates_to_gpu(
 			//if ( ii <= 20 ) { std::cout << "iihelices: " << ii << " " << jj << " " << count_rms_coords << std::endl; }
 			core::Size jjhelix_index = iihelices[jj];
 			utility::vector1< numeric::xyzVector< core::Real> > const & jjhelix = helix_coords.find( jjhelix_index )->second;
-      assert( jjhelix.size() != 0 );
-      if ( (int) jjhelix_index == ndat[iinode].helix_1_ind || (int) jjhelix_index == ndat[iinode].helix_2_ind ) {
+			assert( jjhelix.size() != 0 );
+			if ( (int) jjhelix_index == ndat[iinode].helix_1_ind || (int) jjhelix_index == ndat[iinode].helix_2_ind ) {
 				continue;
-      } else {
-				for (core::Size kk = 1; kk <= jjhelix.size(); ++kk ) {
+			} else {
+				for ( core::Size kk = 1; kk <= jjhelix.size(); ++kk ) {
 					++count_col_coords;
 					assert( count_col_coords <= count_atoms_in_col_helices );
 					all_col_coords[ count_col_coords ] = jjhelix[kk];
 					//if ( ii == 181 || ii == 196 ) {
-					//	std::cout << "clashcoords: " << ii << " " << jjhelix[kk].x() << " " << jjhelix[kk].y() << " " << jjhelix[kk].z() << std::endl;
+					// std::cout << "clashcoords: " << ii << " " << jjhelix[kk].x() << " " << jjhelix[kk].y() << " " << jjhelix[kk].z() << std::endl;
 					//}
 				}
 				assert( jjhelix.size() % 4 == 0 ); // there should be four atoms per residue and whole residues only in this structure.
@@ -351,7 +350,7 @@ ship_coordinates_to_gpu(
 				//if ( ii <= 20 ) { std::cout << " jj_comp_coord_index: " << ii << " " << jj << " " << jj_comp_coord_index << std::endl; }
 				all_comparison_coord_inds[ count_comp_coords ] = jj_comp_coord_index;
 				jj_col_helices_atom_offset += jjhelix.size();
-      }
+			}
 		}
 	}
 
@@ -370,10 +369,10 @@ ship_coordinates_to_gpu(
 	cl_mem d_col_coords_offsets = gpu.AllocateMemory( sizeof( int ) * BLOCK_SIZE, &col_coords_offsets[1], CL_MEM_READ_WRITE & CL_MEM_COPY_HOST_PTR );
 	if ( ! d_col_coords_offsets ) utility_exit_with_message( "Failed to allocate memory on the GPI for d_col_coords_offsets");
 
- 	cl_mem d_n_col_coords = gpu.AllocateMemory( sizeof( int ) * BLOCK_SIZE, &n_col_coords[1], CL_MEM_READ_WRITE & CL_MEM_COPY_HOST_PTR );
+	cl_mem d_n_col_coords = gpu.AllocateMemory( sizeof( int ) * BLOCK_SIZE, &n_col_coords[1], CL_MEM_READ_WRITE & CL_MEM_COPY_HOST_PTR );
 	if ( ! d_n_col_coords ) utility_exit_with_message( "Failed to allocate memory on the GPI for d_n_col_coords");
 
- 	cl_mem d_comparison_coord_inds = gpu.AllocateMemory( sizeof( int ) * count_n_col_helices, &all_comparison_coord_inds[1], CL_MEM_READ_WRITE & CL_MEM_COPY_HOST_PTR );
+	cl_mem d_comparison_coord_inds = gpu.AllocateMemory( sizeof( int ) * count_n_col_helices, &all_comparison_coord_inds[1], CL_MEM_READ_WRITE & CL_MEM_COPY_HOST_PTR );
 	if ( ! d_comparison_coord_inds ) utility_exit_with_message( "Failed to allocate memory on the GPI for d_comparison_coord_inds");
 
 	cl_mem d_n_comparison_coords = gpu.AllocateMemory( sizeof( int ) * BLOCK_SIZE, &n_comparison_coords[1], CL_MEM_READ_WRITE & CL_MEM_COPY_HOST_PTR );
@@ -521,39 +520,39 @@ compute_rms_and_clash_score_for_block_pair(
 	// so that they can be read back to the CPU
 	cl_kernel scan_good_rmsd_clash_pairs_kernel = gpu.BuildKernel( "scan_good_rmsd_clash_pairs" );
 
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 0, sizeof(int), & BLOCK_SIZE );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 0, BLOCK_SIZE" ); }
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 1, sizeof(int), & block1_nnodes );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 1, block1_nnodes" ); }
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 2, sizeof(int), & block2_nnodes );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 2, block2_nnodes" ); }
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 3, sizeof(float), & maximum_rmsd_tolerance );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 3, maximum_rmsd_tolerance" ); }
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 4, sizeof(float), & minimum_square_distance_tolerance );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 4, block1ptrs.d_bundle_ids" ); }
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 5, sizeof(cl_mem), & bpd.d_calculate_pair_table );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 5, d_calculate_pair_table" ); }
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 6, sizeof(cl_mem), & bpd.d_rmsd_table );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 5, d_rmsd_table" ); }
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 7, sizeof(cl_mem), & bpd.d_clash_table );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 4, d_clash_table" ); }
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 8, sizeof(cl_mem), & bpd.d_good_node_pairs );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 5, d_good_node_pairs" ); }
-  errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 9, sizeof(cl_mem), & bpd.d_n_good_node_pairs );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 5, d_n_good_node_pairs" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 0, sizeof(int), & BLOCK_SIZE );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 0, BLOCK_SIZE" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 1, sizeof(int), & block1_nnodes );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 1, block1_nnodes" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 2, sizeof(int), & block2_nnodes );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 2, block2_nnodes" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 3, sizeof(float), & maximum_rmsd_tolerance );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 3, maximum_rmsd_tolerance" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 4, sizeof(float), & minimum_square_distance_tolerance );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 4, block1ptrs.d_bundle_ids" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 5, sizeof(cl_mem), & bpd.d_calculate_pair_table );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 5, d_calculate_pair_table" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 6, sizeof(cl_mem), & bpd.d_rmsd_table );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 5, d_rmsd_table" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 7, sizeof(cl_mem), & bpd.d_clash_table );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 4, d_clash_table" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 8, sizeof(cl_mem), & bpd.d_good_node_pairs );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 5, d_good_node_pairs" ); }
+	errNum = clSetKernelArg(scan_good_rmsd_clash_pairs_kernel, 9, sizeof(cl_mem), & bpd.d_n_good_node_pairs );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to set arg 5, d_n_good_node_pairs" ); }
 
 	cl_event scanKernelEvent;
 	size_t two_fifty_six = 256;
 	errNum = clEnqueueNDRangeKernel( gpu_dev.commandQueue, scan_good_rmsd_clash_pairs_kernel,
-    1, NULL, &two_fifty_six, &two_fifty_six, 1, &calcRMSDAndClashKernelEvent, &scanKernelEvent );
+		1, NULL, &two_fifty_six, &two_fifty_six, 1, &calcRMSDAndClashKernelEvent, &scanKernelEvent );
 	//errNum = clEnqueueNDRangeKernel( gpu_dev.commandQueue, scan_good_rmsd_clash_pairs_kernel,
-  //  1, NULL, &two_fifty_six, &two_fifty_six, 2, read_events, &scanKernelEvent );
+	//  1, NULL, &two_fifty_six, &two_fifty_six, 2, read_events, &scanKernelEvent );
 	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to enqueue scan_good_rmsd_clash_pairs_kernel" ); }
 
 	// Now enqueue a read event for the single integer representing the number of good indices
-  cl_event read_n_good_pairs_event;
-  errNum = clEnqueueReadBuffer( gpu_dev.commandQueue, bpd.d_n_good_node_pairs,  CL_FALSE, 0, sizeof( int ), &bpd.n_good_node_pairs, 1, &scanKernelEvent, &read_n_good_pairs_event );
-  if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to enqueue ReadBuffer for n_good_node_pairs" ); }
+	cl_event read_n_good_pairs_event;
+	errNum = clEnqueueReadBuffer( gpu_dev.commandQueue, bpd.d_n_good_node_pairs,  CL_FALSE, 0, sizeof( int ), &bpd.n_good_node_pairs, 1, &scanKernelEvent, &read_n_good_pairs_event );
+	if ( errNum != CL_SUCCESS ) { utility_exit_with_message( "Failed to enqueue ReadBuffer for n_good_node_pairs" ); }
 
 	/// Wait until this event completes and then proceed to extract data from
 	bpd.read_n_good_node_pairs_event = read_n_good_pairs_event;
@@ -589,13 +588,13 @@ retrieve_rms_and_clash_scores_from_gpu(
 void
 compare_gpu_result_against_cpu(
 	helix_coord_map & helix_coords,
-  bundle_helices_map & bundle_helices,
+	bundle_helices_map & bundle_helices,
 	helix_flipped_map & helix_flipped,
 	utility::vector1< node_data > const & ndat,
 	core::Size block1,
 	core::Size block2,
-  float maximum_rmsd_tolerance,
-  float minimum_square_distance_tolerance,
+	float maximum_rmsd_tolerance,
+	float minimum_square_distance_tolerance,
 	calculation_data_for_one_block_pair const & bpd
 );
 
@@ -613,10 +612,10 @@ feed_rms_and_clash_scores_to_database(
 		"INSERT INTO node_comparisons(node_id_1, node_id_2, rmsd, clash_score) VALUES(?,?,?,?);";
 	cppdb::statement comparison_insert_stmt(basic::database::safely_prepare_statement(comparison_insert,db_session));
 
-  int block1_nnodes = (block1)*BLOCK_SIZE <= ndat.size() ? BLOCK_SIZE : ndat.size() - (block1-1)*BLOCK_SIZE;
-  int block2_nnodes = (block2)*BLOCK_SIZE <= ndat.size() ? BLOCK_SIZE : ndat.size() - (block2-1)*BLOCK_SIZE;
-  int block1_offset = (block1-1)*BLOCK_SIZE;
-  int block2_offset = (block2-1)*BLOCK_SIZE;
+	int block1_nnodes = (block1)*BLOCK_SIZE <= ndat.size() ? BLOCK_SIZE : ndat.size() - (block1-1)*BLOCK_SIZE;
+	int block2_nnodes = (block2)*BLOCK_SIZE <= ndat.size() ? BLOCK_SIZE : ndat.size() - (block2-1)*BLOCK_SIZE;
+	int block1_offset = (block1-1)*BLOCK_SIZE;
+	int block2_offset = (block2-1)*BLOCK_SIZE;
 
 	for ( int ii = 1; ii <= bpd.n_good_node_pairs; ++ii ) {
 		int iipair = bpd.good_node_pairs[ ii ];
@@ -642,18 +641,18 @@ feed_rms_and_clash_scores_to_database(
 
 	//db_session->begin();
 	//for ( core::Size ii = 1; ii <= (core::Size) block1_nnodes; ++ii ) {
-	//	core::Size iinode = ii + block1_offset;
-	//	for ( core::Size jj = 1; jj <= (core::Size) block2_nnodes; ++jj ) {
-	//		core::Size jjnode = jj + block2_offset;
-	//		if ( ! calculate_pair( jj, ii ) ) continue;
-	//		if ( rms(jj,ii) > 1.0 ) continue; // only save the good ones
-	//		if ( clash(jj,ii) < 4.0 ) continue; // only save non-colliding helix pairs
-	//		comparison_insert_stmt.bind(1, iinode);
-	//		comparison_insert_stmt.bind(2, jjnode);
-	//		comparison_insert_stmt.bind(3, rms(jj,ii) );
-	//		comparison_insert_stmt.bind(4, clash(jj,ii) );
-	//		basic::database::safely_write_to_database(comparison_insert_stmt);
-	//	}
+	// core::Size iinode = ii + block1_offset;
+	// for ( core::Size jj = 1; jj <= (core::Size) block2_nnodes; ++jj ) {
+	//  core::Size jjnode = jj + block2_offset;
+	//  if ( ! calculate_pair( jj, ii ) ) continue;
+	//  if ( rms(jj,ii) > 1.0 ) continue; // only save the good ones
+	//  if ( clash(jj,ii) < 4.0 ) continue; // only save non-colliding helix pairs
+	//  comparison_insert_stmt.bind(1, iinode);
+	//  comparison_insert_stmt.bind(2, jjnode);
+	//  comparison_insert_stmt.bind(3, rms(jj,ii) );
+	//  comparison_insert_stmt.bind(4, clash(jj,ii) );
+	//  basic::database::safely_write_to_database(comparison_insert_stmt);
+	// }
 	//}
 	//db_session->commit();
 
@@ -700,13 +699,12 @@ main( int argc, char * argv [] )
 	std::string count_nodes;
 
 	bool legacy_mode = basic::options::option[basic::options::OptionKeys::sewing::legacy];
-	if(legacy_mode){
+	if ( legacy_mode ) {
 		count_nodes =
 			"SELECT\n"
 			" count(*)\n"
 			"FROM helix_graph_nodes;";
-	}
-	else{
+	} else {
 		count_nodes =
 			"SELECT\n"
 			" count(*)\n"
@@ -725,19 +723,18 @@ main( int argc, char * argv [] )
 	TR << "Done counting nodes from the database.  n_nodes = " << n_nodes  << std::endl;
 
 	std::string select_all_nodes;
-	if(legacy_mode){
+	if ( legacy_mode ) {
 		select_all_nodes =
 			"SELECT\n"
-			"	node_1.node_id, node_1.bundle_id, node_1.helix_id_1, node_1.helix_id_2\n"
+			"\tnode_1.node_id, node_1.bundle_id, node_1.helix_id_1, node_1.helix_id_2\n"
 			"FROM helix_graph_nodes as node_1;\n";
-	}
-	else{
+	} else {
 		select_all_nodes =
 			"SELECT\n"
-			"	bp.id as node_id, bp.bundle_id, hp.helix_id_1, hp.helix_id_2\n"
+			"\tbp.id as node_id, bp.bundle_id, hp.helix_id_1, hp.helix_id_2\n"
 			"FROM helix_pairs hp\n"
 			"JOIN bundle_pairs bp ON\n"
-			"	hp.pair_id = bp.pair_id;";
+			"\thp.pair_id = bp.pair_id;";
 	}
 
 
@@ -783,13 +780,12 @@ main( int argc, char * argv [] )
 	int n_node_blocks_per_processor;
 	int begin_block;
 	int end_block;
-	if(num_procs > 1){
+	if ( num_procs > 1 ) {
 		n_node_blocks_per_processor = n_node_blocks/num_procs+1;
 		begin_block = utility::mpi_rank() * n_node_blocks_per_processor + 1;
 		end_block = std::max(utility::mpi_rank()+1 * n_node_blocks_per_processor, n_node_blocks);
 		TR << "MPI Process: " << utility::mpi_rank() << " working on blocks " << begin_block << " " << end_block << std::endl;
-	}
-	else{
+	} else {
 		n_node_blocks_per_processor = n_node_blocks;
 		begin_block = 1;
 		end_block = n_node_blocks;
@@ -889,8 +885,8 @@ main( int argc, char * argv [] )
 						block_pairs_data[ which_index ] );
 				}
 				//compare_gpu_result_against_cpu( helix_coords, bundle_helices, helix_flipped, nodes,
-				//	block_pairs_data[ which_index ].block1_id, block_pairs_data[ which_index ].block2_id,
-				//	maximum_tolerated_rms, minimum_acceptible_square_distance, block_pairs_data[ which_index ] );
+				// block_pairs_data[ which_index ].block1_id, block_pairs_data[ which_index ].block2_id,
+				// maximum_tolerated_rms, minimum_acceptible_square_distance, block_pairs_data[ which_index ] );
 			}
 
 			++count_block_pairs_completed;
@@ -921,8 +917,8 @@ main( int argc, char * argv [] )
 					block_pairs_data[ last_set_index ].block2_id,
 					block_pairs_data[ last_set_index ] );
 				//compare_gpu_result_against_cpu( helix_coords, bundle_helices, helix_flipped, nodes,
-				//	block_pairs_data[ last_set_index ].block1_id, block_pairs_data[ last_set_index ].block2_id,
-				//	maximum_tolerated_rms, minimum_acceptible_square_distance, block_pairs_data[ last_set_index ] );
+				// block_pairs_data[ last_set_index ].block1_id, block_pairs_data[ last_set_index ].block2_id,
+				// maximum_tolerated_rms, minimum_acceptible_square_distance, block_pairs_data[ last_set_index ] );
 			}
 		}
 		last_set_index = last_set_index % num_concurrent + 1;
@@ -938,23 +934,23 @@ main( int argc, char * argv [] )
 void
 compare_gpu_result_against_cpu(
 	helix_coord_map & helix_coords,
-  bundle_helices_map & bundle_helices,
+	bundle_helices_map & bundle_helices,
 	helix_flipped_map & helix_flipped,
 	utility::vector1< node_data > const & ndat,
 	core::Size block1,
 	core::Size block2,
-  float maximum_rmsd_tolerance,
-  float minimum_square_distance_tolerance,
+	float maximum_rmsd_tolerance,
+	float minimum_square_distance_tolerance,
 	calculation_data_for_one_block_pair const & bpd
 )
 {
 	using namespace ObjexxFCL;
 	using core::Size;
 
-  int block1_nnodes = (block1)*BLOCK_SIZE <= ndat.size() ? BLOCK_SIZE : ndat.size() - (block1-1)*BLOCK_SIZE;
-  int block2_nnodes = (block2)*BLOCK_SIZE <= ndat.size() ? BLOCK_SIZE : ndat.size() - (block2-1)*BLOCK_SIZE;
-  int block1_offset = (block1-1)*BLOCK_SIZE;
-  int block2_offset = (block2-1)*BLOCK_SIZE;
+	int block1_nnodes = (block1)*BLOCK_SIZE <= ndat.size() ? BLOCK_SIZE : ndat.size() - (block1-1)*BLOCK_SIZE;
+	int block2_nnodes = (block2)*BLOCK_SIZE <= ndat.size() ? BLOCK_SIZE : ndat.size() - (block2-1)*BLOCK_SIZE;
+	int block1_offset = (block1-1)*BLOCK_SIZE;
+	int block2_offset = (block2-1)*BLOCK_SIZE;
 
 	int n_wrong_clash(0), n_wrong_rms(0), n_correct_clash(0), n_correct_rms(0);
 
@@ -1001,8 +997,7 @@ compare_gpu_result_against_cpu(
 
 			// compute center of mass for helices 1 and 2 for use later.
 			numeric::xyzVector< numeric::Real > b1com(0.0), b2com(0.0);
-			for ( Size i = 1; i <= node_1_coords.size(); ++i )
-			{
+			for ( Size i = 1; i <= node_1_coords.size(); ++i ) {
 				b1com += node_1_coords[i];
 				b2com += node_2_coords[i];
 			}
@@ -1010,12 +1005,12 @@ compare_gpu_result_against_cpu(
 			b2com /= node_2_coords.size();
 
 			//TESTING
-//			TR << "Nodes " << node_1_node_id << " " << node_2_node_id << std::endl;
-//			TR << "Helices 1: " << node_1_helix_id_1 << " " << node_1_helix_id_2 << std::endl;
-//			TR << "Helices 2: " << node_2_helix_id_1 << " " << node_2_helix_id_2 << std::endl;
-//			TR << "helix 1 coords size : " << node_1_coords.size() << std::endl;
-//			TR << "helix 2 coords size : " << node_2_coords.size() << std::endl;
-//			core::Real test_rmsd = numeric::model_quality::calc_rms(node_1_coords,node_2_coords);
+			//   TR << "Nodes " << node_1_node_id << " " << node_2_node_id << std::endl;
+			//   TR << "Helices 1: " << node_1_helix_id_1 << " " << node_1_helix_id_2 << std::endl;
+			//   TR << "Helices 2: " << node_2_helix_id_1 << " " << node_2_helix_id_2 << std::endl;
+			//   TR << "helix 1 coords size : " << node_1_coords.size() << std::endl;
+			//   TR << "helix 2 coords size : " << node_2_coords.size() << std::endl;
+			//   core::Real test_rmsd = numeric::model_quality::calc_rms(node_1_coords,node_2_coords);
 
 			//Convert to FArrays
 			runtime_assert(node_1_coords.size() == node_2_coords.size());
@@ -1023,10 +1018,8 @@ compare_gpu_result_against_cpu(
 			//Save coords to FArrays
 			FArray2D< numeric::Real > p1_coords( 3, node_1_coords.size() );
 			FArray2D< numeric::Real > p2_coords( 3, node_2_coords.size() );
-			for ( Size i = 1; i <= node_1_coords.size(); ++i )
-			{
-				for ( Size k = 1; k <= 3; ++k )// k = X, Y and Z
-				{
+			for ( Size i = 1; i <= node_1_coords.size(); ++i ) {
+				for ( Size k = 1; k <= 3; ++k ) {// k = X, Y and Z
 					p1_coords(k,i) = node_1_coords[i](k);
 					p2_coords(k,i) = node_2_coords[i](k);
 				}
@@ -1045,18 +1038,13 @@ compare_gpu_result_against_cpu(
 			//are used to calculate a clash score.
 			utility::vector1< numeric::xyzVector<core::Real> > node_1_other_helix_coords;
 			utility::vector1< core::Size> node_1_helices = bundle_helices[node_1_bundle_id];
-			for(core::Size i=1; i<=node_1_helices.size(); ++i)
-			{
-				if( node_1_helices[i] != node_1_helix_id_1 &&
-					node_1_helices[i] != node_1_helix_id_2)
-				{
-					if(helix_flipped[node_1_helices[i]])
-					{
+			for ( core::Size i=1; i<=node_1_helices.size(); ++i ) {
+				if ( node_1_helices[i] != node_1_helix_id_1 &&
+						node_1_helices[i] != node_1_helix_id_2 ) {
+					if ( helix_flipped[node_1_helices[i]] ) {
 						node_1_other_helix_coords.insert(node_1_other_helix_coords.end(),
 							helix_coords[node_1_helices[i]].begin(), helix_coords[node_1_helices[i]].end() );
-					}
-					else
-					{
+					} else {
 						utility::vector1< numeric::xyzVector<core::Real> > temp = helix_coords[node_1_helices[i]];
 						reverse(temp.begin(), temp.end());
 						node_1_other_helix_coords.insert( node_1_other_helix_coords.end(), temp.begin(), temp.end() );
@@ -1066,18 +1054,13 @@ compare_gpu_result_against_cpu(
 
 			utility::vector1< numeric::xyzVector<core::Real> > node_2_other_helix_coords;
 			utility::vector1< core::Size> node_2_helices = bundle_helices[node_2_bundle_id];
-			for(core::Size i=1; i<=node_2_helices.size(); ++i)
-			{
-				if( node_2_helices[i] != node_2_helix_id_1 &&
-					node_2_helices[i] != node_2_helix_id_2)
-				{
-					if(helix_flipped[node_2_helices[i]])
-					{
+			for ( core::Size i=1; i<=node_2_helices.size(); ++i ) {
+				if ( node_2_helices[i] != node_2_helix_id_1 &&
+						node_2_helices[i] != node_2_helix_id_2 ) {
+					if ( helix_flipped[node_2_helices[i]] ) {
 						node_2_other_helix_coords.insert(node_2_other_helix_coords.end(),
 							helix_coords[node_2_helices[i]].begin(), helix_coords[node_2_helices[i]].end() );
-					}
-					else
-					{
+					} else {
 						utility::vector1< numeric::xyzVector<core::Real> > temp = helix_coords[node_2_helices[i]];
 						reverse(temp.begin(), temp.end());
 						node_2_other_helix_coords.insert( node_2_other_helix_coords.end(), temp.begin(), temp.end() );
@@ -1094,31 +1077,26 @@ compare_gpu_result_against_cpu(
 			//Save coords, now with third helix, to new FArrays
 			FArray2D< numeric::Real > b1_coords( 3, node_1_coords.size() );
 			FArray2D< numeric::Real > b2_coords( 3, node_2_coords.size() );
-			for ( Size i = 1; i <= node_1_coords.size(); ++i )
-			{
-				for ( Size k = 1; k <= 3; ++k )// k = X, Y and Z
-				{
+			for ( Size i = 1; i <= node_1_coords.size(); ++i ) {
+				for ( Size k = 1; k <= 3; ++k ) {// k = X, Y and Z
 					b1_coords(k,i) = node_1_coords[i](k);
 					b2_coords(k,i) = node_2_coords[i](k);
 				}
 			}
 
 			//move bundle to the origin using the center of mass for only the first two helices
-			for ( int k = 1; k <= 3; ++k )
-			{
+			for ( int k = 1; k <= 3; ++k ) {
 				numeric::Real bundle_1_offset = 0.0;
 				numeric::Real bundle_2_offset = 0.0;
 
-				for ( int j = 1; j <= (int) (node_2_coords.size()-node_1_other_helix_coords.size()); ++j )
-				{
+				for ( int j = 1; j <= (int) (node_2_coords.size()-node_1_other_helix_coords.size()); ++j ) {
 					bundle_1_offset += b1_coords(k,j);
 					bundle_2_offset += b2_coords(k,j);
 				}
 				bundle_1_offset /= (node_2_coords.size()-node_1_other_helix_coords.size());
 				bundle_2_offset /= (node_2_coords.size()-node_1_other_helix_coords.size());
 
-				for ( int j = 1; j <= (int) node_1_coords.size(); ++j )
-				{
+				for ( int j = 1; j <= (int) node_1_coords.size(); ++j ) {
 					b1_coords(k,j) -= bundle_1_offset;
 					b2_coords(k,j) -= bundle_2_offset;
 				}
@@ -1126,8 +1104,7 @@ compare_gpu_result_against_cpu(
 
 			//transform the coords of the entire bundle using rotational matrix produced by findUU for the first two helices
 			FArray2D< numeric::Real > b2_coords_transformed(3, node_2_coords.size());
-			for ( int i = 1; i <= (int) node_2_coords.size(); ++i )
-			{
+			for ( int i = 1; i <= (int) node_2_coords.size(); ++i ) {
 				b2_coords_transformed(1,i) = ( uu(1,1)*b2_coords(1,i) )+( uu(1,2)*b2_coords(2,i) ) +( uu(1,3)*b2_coords(3,i) );
 				b2_coords_transformed(2,i) = ( uu(2,1)*b2_coords(1,i) )+( uu(2,2)*b2_coords(2,i) ) +( uu(2,3)*b2_coords(3,i) );
 				b2_coords_transformed(3,i) = ( uu(3,1)*b2_coords(1,i) )+( uu(3,2)*b2_coords(2,i) ) +( uu(3,3)*b2_coords(3,i) );
@@ -1135,10 +1112,8 @@ compare_gpu_result_against_cpu(
 
 			//Calculate RMSD for the first two helices
 			numeric::Real tot = 0;
-			for ( int i = 1; i <= (int) (node_2_coords.size()-node_2_other_helix_coords.size()); ++i )
-			{
-				for ( int j = 1; j <= 3; ++j )
-				{
+			for ( int i = 1; i <= (int) (node_2_coords.size()-node_2_other_helix_coords.size()); ++i ) {
+				for ( int j = 1; j <= 3; ++j ) {
 					tot += std::pow( b1_coords(j,i) - b2_coords_transformed(j,i), 2 );
 				}
 			}
@@ -1147,11 +1122,11 @@ compare_gpu_result_against_cpu(
 			////calc rms between transformed bundle_2_helix_3 pts and bundle_1_helix_3 pts
 			//tot = 0;
 			//for(int i = helix_coords[node_1_helix_id_1].size()+helix_coords[node_1_helix_id_2].size()+1;
-			//	i <= node_2_coords.size(); ++i )
+			// i <= node_2_coords.size(); ++i )
 			//{
-			//	for ( int j = 1; j <= 3; ++j ) {
-			//		tot += std::pow( b1_coords(j,i) - b2_coords_transformed(j,i), 2 );
-			//	}
+			// for ( int j = 1; j <= 3; ++j ) {
+			//  tot += std::pow( b1_coords(j,i) - b2_coords_transformed(j,i), 2 );
+			// }
 			//}
 			//core::Real third_helix_rmsd = std::sqrt(tot/node_1_other_helix_coords.size() );
 
@@ -1214,10 +1189,10 @@ compare_gpu_result_against_cpu(
 
 			// full debug -- look at all the values calculated on the GPU
 			//if ( std::abs( cpu_bundle_pair_rmsd - bpd.rms_data_table(jj,ii) ) > 1e-2 ) {
-			//	std::cout << "pair: " << ii << " " << jj << " " << iijj_indpair << " rmsd calculated incorrectly on GPU: " << cpu_bundle_pair_rmsd << " " << bpd.rms_data_table(jj,ii) << " bundles: " << node_1_bundle_id << " " << node_2_bundle_id << std::endl;
+			// std::cout << "pair: " << ii << " " << jj << " " << iijj_indpair << " rmsd calculated incorrectly on GPU: " << cpu_bundle_pair_rmsd << " " << bpd.rms_data_table(jj,ii) << " bundles: " << node_1_bundle_id << " " << node_2_bundle_id << std::endl;
 			//}
 			//if ( std::abs( cpu_closest_contact - bpd.clash_data_table(jj,ii) ) > 1e-2 ) {
-			//	std::cout << "pair: " << ii << " " << jj << " " << iijj_indpair << " clash calculated incorrectly on GPU: " << cpu_closest_contact << " " << bpd.clash_data_table(jj,ii) << " bundles: " << node_1_bundle_id << " " << node_2_bundle_id << std::endl;
+			// std::cout << "pair: " << ii << " " << jj << " " << iijj_indpair << " clash calculated incorrectly on GPU: " << cpu_closest_contact << " " << bpd.clash_data_table(jj,ii) << " bundles: " << node_1_bundle_id << " " << node_2_bundle_id << std::endl;
 			//}
 
 
@@ -1244,10 +1219,10 @@ compare_gpu_result_against_cpu(
 					} else {
 						// the GPU did not consider this to be a good pair, so hold it against the GPU so long as the CPU calculated
 						// values are not near the threshold
-            if ( std::abs( cpu_bundle_pair_rmsd - maximum_rmsd_tolerance ) > 1e-2 && std::abs( cpu_closest_contact - minimum_square_distance_tolerance ) > 1e-2 ) {
-              ++n_wrong_rms; ++n_wrong_clash;
+						if ( std::abs( cpu_bundle_pair_rmsd - maximum_rmsd_tolerance ) > 1e-2 && std::abs( cpu_closest_contact - minimum_square_distance_tolerance ) > 1e-2 ) {
+							++n_wrong_rms; ++n_wrong_clash;
 							std::cout << "gpu did not consider this pair good: " << iijj_indpair << " " << ii << " " << jj << " rms: " << cpu_bundle_pair_rmsd << " clash: " << cpu_closest_contact << std::endl;
-            } else {
+						} else {
 							// ok, give the GPU the benefit of the doubt even though we don't know what the GPU calculated
 							++n_correct_rms; ++n_correct_clash;
 						}
@@ -1276,20 +1251,20 @@ compare_gpu_result_against_cpu(
 						// ok, it thinks the next pair is a good one, so, advance count_gpu_good_pairs, but
 						// if the GPU and CPU calculated values disagree, then hold it against the GPU
 
-            ++count_gpu_good_pairs;
-            if ( std::abs( cpu_bundle_pair_rmsd - bpd.rms_data[ count_gpu_good_pairs ] ) > 1e-2 ) {
-              ++n_wrong_rms;
+						++count_gpu_good_pairs;
+						if ( std::abs( cpu_bundle_pair_rmsd - bpd.rms_data[ count_gpu_good_pairs ] ) > 1e-2 ) {
+							++n_wrong_rms;
 							std::cout << "gpu wrongly considered this pair good: " << iijj_indpair << " " << ii << " " << jj << " rms: " << cpu_bundle_pair_rmsd << " clash: " << cpu_closest_contact << " and on the GPU: " << bpd.rms_data[ count_gpu_good_pairs ] << " " << bpd.clash_data[ count_gpu_good_pairs ] << std::endl;
-            } else {
-              ++n_correct_rms;
-            }
+						} else {
+							++n_correct_rms;
+						}
 
-            if ( std::abs( cpu_closest_contact - bpd.clash_data[ count_gpu_good_pairs ] ) > 1e-3 ) {
-              ++n_wrong_clash;
+						if ( std::abs( cpu_closest_contact - bpd.clash_data[ count_gpu_good_pairs ] ) > 1e-3 ) {
+							++n_wrong_clash;
 							std::cout << "gpu wrongly considered this pair good: " << iijj_indpair << " " << ii << " " << jj << " rms: " << cpu_bundle_pair_rmsd << " clash: " << cpu_closest_contact << " and on the GPU: " << bpd.rms_data[ count_gpu_good_pairs ] << " " << bpd.clash_data[ count_gpu_good_pairs ] << std::endl;
-            } else {
-              ++n_correct_clash;
-            }
+						} else {
+							++n_correct_clash;
+						}
 					}
 				} else {
 					// there are no remaining good pairs on the GPU, so, give the GPU credit for not calling this a good

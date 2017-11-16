@@ -58,7 +58,6 @@ using namespace scoring;
 using namespace pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::file::FileName;

@@ -20,7 +20,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.StubDistanceScreener" );
+static basic::Tracer TR( "protocols.stepwise.screener.StubDistanceScreener" );
 
 using namespace protocols::stepwise::sampler;
 using namespace protocols::stepwise::sampler::rigid_body;

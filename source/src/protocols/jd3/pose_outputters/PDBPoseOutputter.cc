@@ -46,7 +46,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.PDBPoseOutputter" );
+static basic::Tracer TR( "protocols.jd3.PDBPoseOutputter" );
 
 namespace protocols {
 namespace jd3 {

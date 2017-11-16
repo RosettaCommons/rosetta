@@ -53,7 +53,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.MPIWorkPoolJobDistributor" );
+static basic::Tracer TR( "protocols.jd2.MPIWorkPoolJobDistributor" );
 
 namespace protocols {
 namespace jd2 {

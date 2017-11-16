@@ -26,7 +26,7 @@
 // C++ header
 #include <utility>
 
-static THREAD_LOCAL basic::Tracer TR("core.io.alt_codes_io.cxxtest");
+static basic::Tracer TR("core.io.alt_codes_io.cxxtest");
 
 class AltCodesIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////

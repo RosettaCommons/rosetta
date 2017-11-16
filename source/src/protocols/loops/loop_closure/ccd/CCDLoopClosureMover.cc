@@ -53,7 +53,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_closure.ccd.CCDLoopClosureMover" );
+static basic::Tracer TR( "protocols.loops.loop_closure.ccd.CCDLoopClosureMover" );
 
 namespace protocols {
 namespace loops {

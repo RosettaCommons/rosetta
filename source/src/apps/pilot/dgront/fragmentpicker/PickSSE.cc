@@ -33,7 +33,7 @@
 #include <utility/io/mpistream.hh>
 
 
-static THREAD_LOCAL basic::Tracer trace("PickSSE");
+static basic::Tracer trace("PickSSE");
 
 using namespace core;
 using namespace core::fragment;

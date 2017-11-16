@@ -32,7 +32,7 @@
 
 #include <fstream>
 
-static THREAD_LOCAL basic::Tracer TR( "rama" );
+static basic::Tracer TR( "rama" );
 
 typedef core::Size Size;
 typedef std::string String;

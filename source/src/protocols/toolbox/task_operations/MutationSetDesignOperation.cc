@@ -22,7 +22,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.toolbox.task_operations.MutationSetDesignOperation");
+static basic::Tracer TR("protocols.toolbox.task_operations.MutationSetDesignOperation");
 
 namespace protocols {
 namespace toolbox {

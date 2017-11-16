@@ -29,7 +29,7 @@
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.magnesium.MgScanner" );
+static basic::Tracer TR( "protocols.magnesium.MgScanner" );
 
 using namespace core;
 using utility::tools::make_vector1;

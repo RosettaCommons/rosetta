@@ -49,7 +49,7 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static THREAD_LOCAL basic::Tracer TR( "sasa" );
+static basic::Tracer TR( "sasa" );
 
 class ThisApplication  {
 public:
@@ -76,7 +76,7 @@ void ThisApplication::register_options() {
 
 namespace sasa
 {
-	StringOptionKey output_name( "sasa:output_name" );
+StringOptionKey output_name( "sasa:output_name" );
 }
 
 /// local mover for testing purposes
@@ -129,13 +129,13 @@ public:
 		String aa( pose.sequence() );
 
 		output_ << me << ' ' << 1 << ' ' << aa.substr( 0, 1 ) << ' ' << ss.substr( 0, 1 ) << ' ' << "999" << std::endl;
-		for( Size i=2;i<=pose.size()-1; ++i ){
+		for ( Size i=2; i<=pose.size()-1; ++i ) {
 			output_ << me << ' ' << i << ' ' << aa.substr( i-1, 1 ) << ' ' << ss.substr( i-1, 1 ) << ' ' << rsd_sasa[ i ] << std::endl;
 		}
 		output_ << me << ' ' << pose.size() << ' ' << aa.substr( pose.size()-1, 1 ) << ' ' << "999" << std::endl;
 
 
-		for( Size i=1; i<=pose.size(); i++ ) {
+		for ( Size i=1; i<=pose.size(); i++ ) {
 			rasmol_ << "select " << i << std::endl;
 			if ( core_ > rsd_sasa[ i ] ) {
 				rasmol_ << "color blue " << std::endl;
@@ -181,20 +181,20 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	//
-	// option.add( sasa::output_name, "output name" );
-	// init
-  //devel::init(argc, argv);
+		//
+		// option.add( sasa::output_name, "output name" );
+		// init
+		//devel::init(argc, argv);
 
-	ThisApplication::register_options();
-	devel::init( argc, argv );
+		ThisApplication::register_options();
+		devel::init( argc, argv );
 
-	// mover
-	protocols::moves::MoverOP protocol;
-	protocol = new Sasa();
+		// mover
+		protocols::moves::MoverOP protocol;
+		protocol = new Sasa();
 
-	// run
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+		// run
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

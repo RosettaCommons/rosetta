@@ -44,7 +44,7 @@
 
 
 // Construct tracer.
-static THREAD_LOCAL basic::Tracer TR( "core.pose.ncbb.util" );
+static basic::Tracer TR( "core.pose.ncbb.util" );
 
 
 namespace core {

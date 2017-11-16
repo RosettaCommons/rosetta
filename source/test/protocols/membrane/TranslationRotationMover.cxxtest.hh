@@ -50,7 +50,7 @@
 using namespace core;
 using namespace utility;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.TranslationRotationMover.cxxtest");
+static basic::Tracer TR("protocols.membrane.TranslationRotationMover.cxxtest");
 
 /// @brief Test Suite for transformin a pose into membrane coordinates
 class TranslationRotationMoverTest : public CxxTest::TestSuite {

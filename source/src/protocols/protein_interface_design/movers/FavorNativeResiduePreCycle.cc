@@ -32,7 +32,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.FavorNativeResiduePreCycle" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.FavorNativeResiduePreCycle" );
 
 // XRW TEMP std::string FavorNativeResiduePreCycleCreator::keyname() const
 // XRW TEMP {

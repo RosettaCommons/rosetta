@@ -62,7 +62,7 @@ namespace hbnet_energy {
 // The square of the maximum hydrogen bond length (2.5 A).
 #define HBNETENERGY_HBOND_DIST_CUTOFF_SQ 6.25
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.hbnet_energy.HBNetEnergy");
+static basic::Tracer TR("core.scoring.hbnet_energy.HBNetEnergy");
 
 /// @brief This must return a fresh instance of the HBNetEnergy class, never an instance already in use.
 ///

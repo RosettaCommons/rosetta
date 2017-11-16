@@ -37,7 +37,7 @@ namespace splice {
 using namespace core;
 using namespace std;
 
-static THREAD_LOCAL basic::Tracer TR( "devel.splice.FoldUnitsFilter" );
+static basic::Tracer TR( "devel.splice.FoldUnitsFilter" );
 
 protocols::filters::FilterOP
 FoldUnitsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FoldUnitsFilter ); }

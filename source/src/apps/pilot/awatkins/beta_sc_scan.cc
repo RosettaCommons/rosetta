@@ -49,7 +49,7 @@ using namespace pose;
 using namespace protocols::simple_moves;
 
 // tracer - used to replace cout
-static THREAD_LOCAL basic::Tracer TR("BetaScScan");
+static basic::Tracer TR("BetaScScan");
 
 void set_up_movemap( std::string const & n3, core::pose::Pose const & pose,  kinematics::MoveMapOP mm ) {
 	// Everything can move except chi and bb torsions

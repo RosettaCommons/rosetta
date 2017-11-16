@@ -62,7 +62,7 @@
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.residue_selectors.UnsatSelector" );
+static basic::Tracer TR( "protocols.residue_selectors.UnsatSelector" );
 
 
 namespace protocols {

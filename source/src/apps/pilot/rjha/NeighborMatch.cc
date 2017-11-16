@@ -34,15 +34,14 @@
 #include <core/import_pose/import_pose.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 //replaces cout
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rjha" );
+static basic::Tracer TR( "apps.pilot.rjha" );
 
 //local options
-namespace local{
+namespace local {
 basic::options::IntegerOptionKey const nbr_residue("local::nbr_residue");
 basic::options::StringOptionKey const master("local::master");
 }//local
@@ -51,63 +50,63 @@ int
 main( int argc, char* argv[] )
 {
 	try {
-	using basic::options::option;
-	option.add( local::nbr_residue, "residue whose neighbors we care about" ).def(62);
-	option.add( local::master, "master pose (other poses matched against this" ).def("ubc12.pdb");
-	devel::init(argc, argv);
+		using basic::options::option;
+		option.add( local::nbr_residue, "residue whose neighbors we care about" ).def(62);
+		option.add( local::master, "master pose (other poses matched against this" ).def("ubc12.pdb");
+		devel::init(argc, argv);
 
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
+		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
-	//pose containing res
-	core::pose::Pose master;
-	core::import_pose::pose_from_file(master, basic::options::option[local::master].value(), core::import_pose::PDB_file);
-	core::Size const mastersize(master.size());
+		//pose containing res
+		core::pose::Pose master;
+		core::import_pose::pose_from_file(master, basic::options::option[local::master].value(), core::import_pose::PDB_file);
+		core::Size const mastersize(master.size());
 
-	//containers for other poses
-	core::pose::Pose pose; //fill it later...
-	core::pose::Pose combined;
-	utility::vector1< std::string > const pdbs( basic::options::start_files() );
+		//containers for other poses
+		core::pose::Pose pose; //fill it later...
+		core::pose::Pose combined;
+		utility::vector1< std::string > const pdbs( basic::options::start_files() );
 
-	//create calculator
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbr_calc", new protocols::toolbox::PoseMetricCalculators::NeighborsByDistanceCalculator(basic::options::option[local::nbr_residue].value()) );
+		//create calculator
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbr_calc", new protocols::toolbox::PoseMetricCalculators::NeighborsByDistanceCalculator(basic::options::option[local::nbr_residue].value()) );
 
-	//iterate over all pdbs
-	for(utility::vector1< std::string >::const_iterator pdbname(pdbs.begin()), end(pdbs.end()); pdbname != end; ++pdbname){
-		std::string const & pdb = *pdbname;
-		TR << "we are on PDB: " << pdb << std::endl;
-		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
+		//iterate over all pdbs
+		for ( utility::vector1< std::string >::const_iterator pdbname(pdbs.begin()), end(pdbs.end()); pdbname != end; ++pdbname ) {
+			std::string const & pdb = *pdbname;
+			TR << "we are on PDB: " << pdb << std::endl;
+			core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
 
-		combined = master;
-		combined.append_residue_by_jump(pose.residue(1), 1);
-		for(core::Size i=2; i<=pose.size(); ++i){
-			combined.append_residue_by_bond(pose.residue(i));
-		}
-		//patching in disulfide compatibility
-		combined.conformation().detect_disulfides();
-		combined.conformation().detect_bonds();
-		combined.conformation().detect_pseudobonds();
-		for(core::Size i=1; i<=combined.size(); ++i){
-			combined.conformation().update_polymeric_connection(i);
-		}
-
-		(*score_fxn)(combined);
-
-		//combined.dump_scored_pdb("test.pdb", *score_fxn);
-
-		//query calculator
-		typedef std::set< core::Size > SetSize;
-		basic::MetricValue< SetSize > neighbors;
-		combined.metric( "nbr_calc", "neighbors", neighbors );
-
-		//print results
-		TR << pdb << " ";
-		for( SetSize::const_iterator it(neighbors.value().begin()), end(neighbors.value().end()); it != end; ++it){
-			if( *it > mastersize ){
-				TR << (*it)-mastersize << " ";
+			combined = master;
+			combined.append_residue_by_jump(pose.residue(1), 1);
+			for ( core::Size i=2; i<=pose.size(); ++i ) {
+				combined.append_residue_by_bond(pose.residue(i));
 			}
+			//patching in disulfide compatibility
+			combined.conformation().detect_disulfides();
+			combined.conformation().detect_bonds();
+			combined.conformation().detect_pseudobonds();
+			for ( core::Size i=1; i<=combined.size(); ++i ) {
+				combined.conformation().update_polymeric_connection(i);
+			}
+
+			(*score_fxn)(combined);
+
+			//combined.dump_scored_pdb("test.pdb", *score_fxn);
+
+			//query calculator
+			typedef std::set< core::Size > SetSize;
+			basic::MetricValue< SetSize > neighbors;
+			combined.metric( "nbr_calc", "neighbors", neighbors );
+
+			//print results
+			TR << pdb << " ";
+			for ( SetSize::const_iterator it(neighbors.value().begin()), end(neighbors.value().end()); it != end; ++it ) {
+				if ( *it > mastersize ) {
+					TR << (*it)-mastersize << " ";
+				}
+			}
+			TR << std::endl;
 		}
-		TR << std::endl;
-	}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

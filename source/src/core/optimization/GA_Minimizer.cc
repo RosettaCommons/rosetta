@@ -27,7 +27,7 @@
 namespace core {
 namespace optimization {
 
-static THREAD_LOCAL basic::Tracer TR( "core.optimization.GA_Minimizer" );
+static basic::Tracer TR( "core.optimization.GA_Minimizer" );
 
 
 using core::Size;

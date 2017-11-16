@@ -43,7 +43,7 @@
 #include <core/kinematics/Jump.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.potentials.sspot.HSPairPotential", basic::t_info );
+static basic::Tracer TR( "protocols.fldsgn.potentials.sspot.HSPairPotential", basic::t_info );
 
 namespace protocols {
 namespace fldsgn {

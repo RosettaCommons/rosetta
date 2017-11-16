@@ -17,10 +17,9 @@
 #include <basic/datacache/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "devel.splice.RBInMover" );
+static basic::Tracer TR( "devel.splice.RBInMover" );
 #include <utility/tag/Tag.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>

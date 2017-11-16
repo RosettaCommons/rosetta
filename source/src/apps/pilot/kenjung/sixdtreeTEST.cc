@@ -20,61 +20,60 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::T;
 using namespace core;
 using namespace protocols::match;
 using namespace numeric::geometry;
-static THREAD_LOCAL basic::Tracer TR( "main" );
+static basic::Tracer TR( "main" );
 
 
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 
-	// initialize core
-	const int HASH_POSITION_GRID_SIZE= 75;
-	devel::init(argc, argv);
-	SixDCoordinateBinnerOP  hash_;
+		// initialize core
+		const int HASH_POSITION_GRID_SIZE= 75;
+		devel::init(argc, argv);
+		SixDCoordinateBinnerOP  hash_;
 
-	Size loop_size = 10;
-	BoundingBox< Vector > bounding_box( core::Vector( -HASH_POSITION_GRID_SIZE,
-				-HASH_POSITION_GRID_SIZE,
-				-HASH_POSITION_GRID_SIZE),
+		Size loop_size = 10;
+		BoundingBox< Vector > bounding_box( core::Vector( -HASH_POSITION_GRID_SIZE,
+			-HASH_POSITION_GRID_SIZE,
+			-HASH_POSITION_GRID_SIZE),
 			core::Vector( HASH_POSITION_GRID_SIZE,
-				HASH_POSITION_GRID_SIZE,
-				HASH_POSITION_GRID_SIZE ) );
-	protocols::match::Size3 euler_offsets;
-	euler_offsets[1] = 0;
-	euler_offsets[2] = 0;
-	euler_offsets[3] = 0;
-	protocols::match::Real6 bin_widths;
+			HASH_POSITION_GRID_SIZE,
+			HASH_POSITION_GRID_SIZE ) );
+		protocols::match::Size3 euler_offsets;
+		euler_offsets[1] = 0;
+		euler_offsets[2] = 0;
+		euler_offsets[3] = 0;
+		protocols::match::Real6 bin_widths;
 
-	core::Real space_multiplier = 1.0;
-  core::Real angle_multiplier =  15.0/6.0;
+		core::Real space_multiplier = 1.0;
+		core::Real angle_multiplier =  15.0/6.0;
 
-	bin_widths[1] = space_multiplier*loop_size;
-	bin_widths[2] = space_multiplier*loop_size;
-	bin_widths[3] = space_multiplier*loop_size;
-	bin_widths[4] = angle_multiplier*loop_size;
-	bin_widths[5] = angle_multiplier*loop_size;
-	bin_widths[6] = angle_multiplier*loop_size;
+		bin_widths[1] = space_multiplier*loop_size;
+		bin_widths[2] = space_multiplier*loop_size;
+		bin_widths[3] = space_multiplier*loop_size;
+		bin_widths[4] = angle_multiplier*loop_size;
+		bin_widths[5] = angle_multiplier*loop_size;
+		bin_widths[6] = angle_multiplier*loop_size;
 
-	hash_ = new SixDCoordinateBinner( bounding_box, euler_offsets, bin_widths );
-	hash_->tree_init(15);
-	Real6 center(0);
-	center[4]=60;
-	center[5]=60;
-	center[6]=60;
-/*std::vector < boost::uint64_t > offset_list = hash_->radial_bin_index(0,2,center);
-	for( std::vector< boost::uint64_t >::iterator itr = offset_list.begin(); itr != offset_list.end(); itr++ ) {
+		hash_ = new SixDCoordinateBinner( bounding_box, euler_offsets, bin_widths );
+		hash_->tree_init(15);
+		Real6 center(0);
+		center[4]=60;
+		center[5]=60;
+		center[6]=60;
+		/*std::vector < boost::uint64_t > offset_list = hash_->radial_bin_index(0,2,center);
+		for( std::vector< boost::uint64_t >::iterator itr = offset_list.begin(); itr != offset_list.end(); itr++ ) {
 		TR << *itr << std::endl;
+		}
+		*/
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-	*/
-    } catch ( utility::excn::EXCN_Base const & e ) {
-			std::cerr << "caught exception " << e.msg() << std::endl;
-			return -1;
-    }
-    return 0;
+	return 0;
 }
 

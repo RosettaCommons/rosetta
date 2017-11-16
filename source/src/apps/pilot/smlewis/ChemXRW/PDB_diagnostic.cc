@@ -51,7 +51,7 @@
 OPT_1GRP_KEY( Boolean, PDB_diagnostic, reading_only ) //basic::options::OptionKeys::PDB_diagnostic::reading_only
 OPT_1GRP_KEY( Boolean, PDB_diagnostic, skip_pack_and_min ) //basic::options::OptionKeys::PDB_diagnostic::skip_pack_and_min
 
-static THREAD_LOCAL basic::Tracer TR( "PDB_diagnostic" );
+static basic::Tracer TR( "PDB_diagnostic" );
 
 ///local mover for testing purposes
 class PDBDiagnosticMover : public protocols::moves::Mover {

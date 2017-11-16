@@ -35,7 +35,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.FoldTreeFromFoldGraphMover" );
+static basic::Tracer TR( "protocols.denovo_design.movers.FoldTreeFromFoldGraphMover" );
 
 namespace protocols {
 namespace denovo_design {

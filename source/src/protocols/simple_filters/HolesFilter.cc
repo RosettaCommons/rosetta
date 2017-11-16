@@ -43,7 +43,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filters.HolesFilter" );
+static basic::Tracer tr( "protocols.simple_filters.HolesFilter" );
 
 // @brief default constructor
 HolesFilter::HolesFilter():

@@ -30,7 +30,7 @@
 // Boost
 #include <boost/assign.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.CompoundArchitect" );
+static basic::Tracer TR( "protocols.denovo_design.architects.CompoundArchitect" );
 
 namespace protocols {
 namespace denovo_design {

@@ -33,7 +33,7 @@
 #include <string>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.carbohydrates.CHIEnergyFunction" );
+static basic::Tracer TR( "core.scoring.carbohydrates.CHIEnergyFunction" );
 
 
 namespace core {

@@ -74,7 +74,7 @@
 
 using numeric::conversions::radians;
 
-static THREAD_LOCAL basic::Tracer TR( "ward_design" );
+static basic::Tracer TR( "ward_design" );
 
 using core::Size;
 using core::Real;
@@ -96,22 +96,22 @@ vector1<Size> interface_residues(core::pose::Pose const & pose, vector1<Size> pr
 	core::conformation::symmetry::SymmetryInfoCOP syminfo = core::pose::symmetry::symmetry_info(pose);
 	Size nres = syminfo->num_total_residues_without_pseudo();
 
-	for(Size i = 1; i <= nres ; ++i) {
+	for ( Size i = 1; i <= nres ; ++i ) {
 		Size isub = syminfo->subunit_index(i);
-		if(std::find(primary_subs.begin(),primary_subs.end(),isub) == primary_subs.end()) continue; // skip if i not primary
+		if ( std::find(primary_subs.begin(),primary_subs.end(),isub) == primary_subs.end() ) continue; // skip if i not primary
 		bool iface_contact_i = false;
-		std::string contact_atom_i = "CB"; if( !pose.residue(i).has(contact_atom_i) ) contact_atom_i = "CA";
-		for(Size j = 1; j <= nres; ++j) {
+		std::string contact_atom_i = "CB"; if ( !pose.residue(i).has(contact_atom_i) ) contact_atom_i = "CA";
+		for ( Size j = 1; j <= nres; ++j ) {
 			Size jsub = syminfo->subunit_index(j);
-			if(std::find(primary_subs.begin(),primary_subs.end(),jsub) != primary_subs.end()) continue; // skip if j *is* primary
+			if ( std::find(primary_subs.begin(),primary_subs.end(),jsub) != primary_subs.end() ) continue; // skip if j *is* primary
 			// at this point, i is in primary subs and j is not
-			std::string contact_atom_j = "CB"; if( !pose.residue(j).has(contact_atom_j) ) contact_atom_j = "CA";
-			if( pose.residue(i).xyz(contact_atom_i).distance( pose.residue(j).xyz(contact_atom_j) ) <= INTERFACE_CONTACT_DIS ) {
+			std::string contact_atom_j = "CB"; if ( !pose.residue(j).has(contact_atom_j) ) contact_atom_j = "CA";
+			if ( pose.residue(i).xyz(contact_atom_i).distance( pose.residue(j).xyz(contact_atom_j) ) <= INTERFACE_CONTACT_DIS ) {
 				iface_contact_i = true;
 				break;
 			}
 		}
-		if(iface_contact_i) {
+		if ( iface_contact_i ) {
 			iface_res.push_back(i);
 		}
 	}
@@ -141,24 +141,24 @@ void design(Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_res ) {
 
 	sf->score(pose);
 	Real worig = sf->get_weight(core::scoring::res_type_constraint);
-	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
+	if ( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
 	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
 
 	// loop over residues
-	for(Size i = 1; i <= pose.size(); ++i) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 
 		// decide what to do with res i
 		bool design_this_res = false;
 		bool repack_this_res = false;
-		if( pose.residue(i).name3()=="GLY" ||
-		    pose.residue(i).name3()=="PRO" ||
-		    pose.residue(i).name3()=="VRT" ||
-		    pose.residue(i).name3()=="CYS" ||
-		    pose.residue(i).name3()=="CYD"
-		){
+		if ( pose.residue(i).name3()=="GLY" ||
+				pose.residue(i).name3()=="PRO" ||
+				pose.residue(i).name3()=="VRT" ||
+				pose.residue(i).name3()=="CYS" ||
+				pose.residue(i).name3()=="CYD"
+				) {
 			bool design_this_res = false;
 			bool repack_this_res = false;
-		} else if( std::find(iface_res.begin(),iface_res.end(),i) != iface_res.end() ) { // is interface res
+		} else if ( std::find(iface_res.begin(),iface_res.end(),i) != iface_res.end() ) { // is interface res
 			design_this_res = true;
 			repack_this_res = false;
 		} else {
@@ -166,14 +166,14 @@ void design(Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_res ) {
 			repack_this_res = true;
 		}
 
-		if( design_this_res ) {
+		if ( design_this_res ) {
 			bool tmp = aas[pose.residue(i).aa()];
 			aas[pose.residue(i).aa()] = true;
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 			aas[pose.residue(i).aa()] = tmp;
 			task->nonconst_residue_task(i).or_include_current(true);
 			task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();
-		} else if( repack_this_res ) {
+		} else if ( repack_this_res ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).or_include_current(true);
 			task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();
@@ -203,54 +203,54 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace core;
-	using namespace pose;
-	using namespace protocols;
-	using namespace moves;
-	using namespace ObjexxFCL::format;
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	using numeric::random::uniform;
-	using ObjexxFCL::lead_zero_string_of;
+		using namespace core;
+		using namespace pose;
+		using namespace protocols;
+		using namespace moves;
+		using namespace ObjexxFCL::format;
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		using numeric::random::uniform;
+		using ObjexxFCL::lead_zero_string_of;
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	std::string outdir = option[out::file::o]() + "/";
+		std::string outdir = option[out::file::o]() + "/";
 
-	core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
+		core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
 
-	utility::vector1<Size> primary_subs;
-	primary_subs.push_back(1);
-	primary_subs.push_back(2);
+		utility::vector1<Size> primary_subs;
+		primary_subs.push_back(1);
+		primary_subs.push_back(2);
 
-	for(Size ifile = 1; ifile <= option[in::file::s]().size(); ifile++) {
+		for ( Size ifile = 1; ifile <= option[in::file::s]().size(); ifile++ ) {
 
-		std::string  in_fname = option[in::file::s]()[ifile];
-		std::string out_fname = utility::file_basename(in_fname);
+			std::string  in_fname = option[in::file::s]()[ifile];
+			std::string out_fname = utility::file_basename(in_fname);
 
-		Pose init;
-		import_pose::pose_from_file(init,in_fname, core::import_pose::PDB_file);
+			Pose init;
+			import_pose::pose_from_file(init,in_fname, core::import_pose::PDB_file);
 
-		Pose init_sym = init;
-		core::pose::symmetry::make_symmetric_pose(init_sym);
+			Pose init_sym = init;
+			core::pose::symmetry::make_symmetric_pose(init_sym);
 
-		init_sym.dump_pdb( outdir + out_fname + "_init_sym.pdb" );
-		vector1<Size> iface_res = interface_residues(init_sym,primary_subs);
+			init_sym.dump_pdb( outdir + out_fname + "_init_sym.pdb" );
+			vector1<Size> iface_res = interface_residues(init_sym,primary_subs);
 
-		TR << "interface residues " << std::endl;
-		for(vector1<Size>::iterator i = iface_res.begin(); i != iface_res.end(); ++i) TR << *i << "+";
-		TR << std::endl;
+			TR << "interface residues " << std::endl;
+			for ( vector1<Size>::iterator i = iface_res.begin(); i != iface_res.end(); ++i ) TR << *i << "+";
+			TR << std::endl;
 
 
-		Pose pose = init_sym;
+			Pose pose = init_sym;
 
-		design(pose,sf,iface_res);
-		pose.dump_pdb( outdir + out_fname + "_design_test.pdb" );
+			design(pose,sf,iface_res);
+			pose.dump_pdb( outdir + out_fname + "_design_test.pdb" );
 
-		// minimize(pose,sf,iface_res);
-		// pose.dump_pdb( outdir + out_fname + "_minimize_test.pdb" );
+			// minimize(pose,sf,iface_res);
+			// pose.dump_pdb( outdir + out_fname + "_minimize_test.pdb" );
 
-	}
+		}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

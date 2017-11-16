@@ -41,7 +41,7 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.TorsionDOFMover" );
+static basic::Tracer TR( "protocols.simple_moves.TorsionDOFMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -123,7 +123,7 @@ void TorsionDOFMover::apply( core::pose::Pose & pose ){
 
 	if ( !(pose.atom_tree().torsion_angle_dof_id( atom1_, atom2_, atom3_, atom4_ ).valid()) ) {
 
-		Warning() << "In TorsionDOFMover, atoms not valid against pose; atoms:"
+		TR.Warning << "In TorsionDOFMover, atoms not valid against pose; atoms:"
 			<< " atom1 " << atom1_
 			<< " atom2 " << atom2_
 			<< " atom3 " << atom3_
@@ -163,7 +163,7 @@ void TorsionDOFMover::apply( core::pose::Pose & pose ){
 	}
 
 	if ( ntries > tries_ ) {
-		Error() << "TorsionDOFMover gave up after " << tries_ << " attempts, no move made" << std::endl;
+		basic::Error() << "TorsionDOFMover gave up after " << tries_ << " attempts, no move made" << std::endl;
 	}
 
 	//TR << pre_score << " " << post_score << " " <<  pose.atom_tree().torsion_angle(atom1_, atom2_, atom3_, atom4_) << std::endl;

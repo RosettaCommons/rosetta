@@ -45,7 +45,7 @@
 #include <set>
 #include <iterator>
 
-static THREAD_LOCAL basic::Tracer TR("sewing_hasher");
+static basic::Tracer TR("sewing_hasher");
 
 int
 main( int argc, char * argv [] ) {
@@ -431,7 +431,7 @@ main( int argc, char * argv [] ) {
 					hasher.remove_connection_inconsistencies(models, scores);
 				}
 				TR << "Done scoring the " << it2->first << "th model (this is not necessariliy a model_id) found (" << scores.size() << ") valid comparisons" << std::endl;
-				if ( scores.size() > 0 && TR.Debug ) {
+				if ( scores.size() > 0 && TR.Debug.visible() ) {
 					BasisPair bp = scores.begin()->first;
 					std::map< SegmentPair, core::Size > segment_matches = scores.begin()->second.segment_match_counts;
 					std::map< SegmentPair, AtomMap > segment_matches2 = scores.begin()->second.segment_matches;

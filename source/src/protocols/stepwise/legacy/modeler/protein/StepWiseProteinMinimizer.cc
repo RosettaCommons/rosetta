@@ -48,7 +48,7 @@ using namespace core;
 using core::Real;
 using ObjexxFCL::format::F;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinMinimizer" );
+static basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinMinimizer" );
 
 using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::modeler::protein;

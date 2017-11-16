@@ -32,7 +32,7 @@
 using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-static THREAD_LOCAL basic::Tracer TRA( "fold_from_loops", basic::t_info );
+static basic::Tracer TRA( "fold_from_loops", basic::t_info );
 
 
 void write_checkpoint( Size iter )
@@ -48,7 +48,7 @@ void write_checkpoint( Size iter )
 
 	if ( !out ) {
 		std::cerr << "trouble opening file " << checkpointname
-		          << " for writing... skipping checkpoint" << std::endl;
+			<< " for writing... skipping checkpoint" << std::endl;
 		utility_exit_with_message("Cannot open checkpoint file.");
 	}
 

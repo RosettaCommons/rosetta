@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 //Tracer:
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.vmullig.symmetrize_old_ramamap" );
+static basic::Tracer TR( "apps.pilot.vmullig.symmetrize_old_ramamap" );
 
 //Options (ugh -- global variables):
 OPT_KEY (String, rama_file)

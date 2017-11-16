@@ -59,7 +59,7 @@
 //Protocol headers
 #include <protocols/features/ProteinSilentReport.hh>
 
-static THREAD_LOCAL basic::Tracer TR("BundleDumper");
+static basic::Tracer TR("BundleDumper");
 
 namespace BundleDumper {
 basic::options::FileOptionKey const pair_list( "pair_list" );

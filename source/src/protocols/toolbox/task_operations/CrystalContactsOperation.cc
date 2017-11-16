@@ -36,7 +36,7 @@
 
 // C++ Headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.CrystalContactsOperation" );
+static basic::Tracer TR( "protocols.toolbox.task_operations.CrystalContactsOperation" );
 
 namespace protocols {
 namespace toolbox {

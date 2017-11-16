@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.screener.SimplePoseSelection" );
+static basic::Tracer TR( "protocols.stepwise.legacy.screener.SimplePoseSelection" );
 
 using namespace core;
 

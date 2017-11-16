@@ -34,8 +34,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.bder.LigandBurial" );
+static basic::Tracer TR( "apps.pilot.bder.LigandBurial" );
 
 typedef numeric::xyzVector<core::Real> point;
 typedef point axis;
@@ -51,10 +50,10 @@ namespace metal_interface {
 
 
 LigandBurial::LigandBurial( core::pose::Pose const & pose, std::string ligand_3_letter_code )
-	: pose_(pose), ligand_3_letter_code_(ligand_3_letter_code)
+: pose_(pose), ligand_3_letter_code_(ligand_3_letter_code)
 {
-	if(ligand_3_letter_code == "ZN") {
-	 	ligand_3_letter_code_ = " ZN";
+	if ( ligand_3_letter_code == "ZN" ) {
+		ligand_3_letter_code_ = " ZN";
 	}
 }
 
@@ -103,12 +102,12 @@ LigandBurial::register_calculators() {
 	calcname_ << calc_stem << ligand_resnum_;
 
 	TR << "Registering NeighborsByDistance Calculator " << calcname_.str() << std::endl;
-	if( !CalculatorFactory::Instance().check_calculator_exists( calcname_.str() ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( calcname_.str() ) ) {
 		CalculatorFactory::Instance().register_calculator( calcname_.str(), new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( ligand_resnum_ ) );
 	}
 
 	TR << "Registering SASA Calculator" << std::endl;
-	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc" ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc" ) ) {
 		CalculatorFactory::Instance().register_calculator( "sasa_calc", new SasaCalculatorLegacy() );
 	}
 
@@ -130,7 +129,7 @@ LigandBurial::calculate_ligand_neighbors() {
 
 
 	TR << "These are the neighbor residues: " << std::endl;
-	for(core:Size it : ligand_neighbors.value()){
+	for ( core:Size it : ligand_neighbors.value() ) {
 		TR << it << "+";
 	}
 	TR << std::endl;
@@ -154,8 +153,8 @@ LigandBurial::calculate_ligand_sasa() {
 	core::id::AtomID_Map<bool> atom_mask;
 	core::pose::initialize_atomid_map(atom_sasa,pose_,0.0);
 	core::pose::initialize_atomid_map(atom_mask,pose_,false);
-	for(Size i = 1; i <= pose_.size(); i++) {
-		for(Size j = 1; j <= pose_.residue(i).nheavyatoms(); j++) {
+	for ( Size i = 1; i <= pose_.size(); i++ ) {
+		for ( Size j = 1; j <= pose_.residue(i).nheavyatoms(); j++ ) {
 			atom_mask[AtomID(j,i)] = true;
 		}
 	}

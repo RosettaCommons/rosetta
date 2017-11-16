@@ -39,7 +39,7 @@
 //Auto Headers
 #include <core/id/types.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.NamedAngleConstraint" );
+static basic::Tracer TR( "core.scoring.constraints.NamedAngleConstraint" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

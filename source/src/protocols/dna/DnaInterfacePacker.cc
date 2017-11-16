@@ -111,8 +111,8 @@ using namespace ObjexxFCL::format;
 using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
-static THREAD_LOCAL basic::Tracer TR( "protocols.dna.DnaInterfacePacker" );
-static THREAD_LOCAL basic::Tracer TR_spec( "protocols.dna.Specificity" );
+static basic::Tracer TR( "protocols.dna.DnaInterfacePacker" );
+static basic::Tracer TR_spec( "protocols.dna.Specificity" );
 
 // for comparing ResTypeSequence, which contain ResidueTypeCOP pointers (must dereference for sorting purposes)
 

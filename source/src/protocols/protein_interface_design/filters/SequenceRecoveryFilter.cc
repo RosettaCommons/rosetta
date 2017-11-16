@@ -38,7 +38,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.SequenceRecoveryFilter" );
+static basic::Tracer TR( "protocols.protein_interface_design.filters.SequenceRecoveryFilter" );
 
 /// @brief default ctor
 SequenceRecoveryFilter::SequenceRecoveryFilter() :

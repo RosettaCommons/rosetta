@@ -29,7 +29,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.ModulatedMover" );
+static basic::Tracer tr( "devel.replica_docking.ModulatedMover" );
 
 namespace devel {
 namespace replica_docking {

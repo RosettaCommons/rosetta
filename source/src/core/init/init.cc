@@ -307,10 +307,8 @@
 #endif
 #endif
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 // Windows headers
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #include <windows.h>
@@ -374,6 +372,9 @@ typedef std::ostringstream ostringstream_t;
 
 namespace core {
 namespace init {
+
+static basic::Tracer TR("core.init");
+static basic::Tracer TR_random( "core.init.random" );
 
 /// The following global varialbles force the linker to always include
 /// the EnergyMethodCreator files to be included in staticly linked
@@ -758,8 +759,6 @@ static ResourceOptionsRegistrator< core::chemical::ResidueLoaderOptionsCreator >
 
 #endif
 
-static THREAD_LOCAL basic::Tracer TR( "core.init" );
-static THREAD_LOCAL basic::Tracer TR_random( "core.init.random" );
 
 using namespace numeric::random;
 using namespace basic::options;
@@ -818,14 +817,14 @@ init_tracers(){
 		std::stringstream outfilename;
 		outfilename << option[ out::mpi_tracer_to_file ]() << "_" << mpi_rank;
 		basic::otstreamOP redirect_tracer( new basic::TracerToFile( outfilename.str() ));
-		basic::Tracer::set_ios_hook( redirect_tracer, basic::Tracer::get_all_channels_string(), false );
-		basic::Tracer::super_mute( true );
+		basic::TracerImpl::set_ios_hook( redirect_tracer, basic::Tracer::get_all_channels_string(), false );
+		basic::TracerImpl::super_mute( true );
 		utility::CSI_Sequence::suppress_CSI_codes(); // We're redirecting output to a file - don't use CSI terminal codes
 	}
 #endif
 
 	// set Tracer options
-	basic::TracerOptions & TO( basic::Tracer::tracer_options() );
+	basic::TracerOptions TO;
 
 	if ( option[ out::mute ].active() )   TO.muted = option[ out::mute ]();
 
@@ -837,16 +836,7 @@ init_tracers(){
 
 	if ( option[ out::no_color ]() ) utility::CSI_Sequence::suppress_CSI_codes();
 
-	// Adding Tracer::flush_all_tracers to list of exit-callbacks so all tracer output got flush out when utility_exit is used.
-	utility::add_exit_callback(basic::Tracer::flush_all_tracers);
-
-	// Compute the visibility of all tracers that have been constructed up to this point but
-	// and that have not been able to compute their visibility because the options system
-	// was not yet online.  Now that the options system has been initialized, go back through
-	// and initialize the visibilities for all of those Tracers.  All tracers constructed after
-	// this point will compute their visibilities in their constructors.
-	basic::Tracer::calculate_tracer_visibilities();
-
+	basic::TracerImpl::set_tracer_options( TO );
 }
 
 
@@ -995,7 +985,7 @@ int determine_random_number_seed( RandomGeneratorSettings const & rgs )
 			real_seed += mpi_rank;
 		}
 #endif
-		T("core.init") << utility::CSI_Red() << utility::CSI_Underline() << "Constant seed mode" << utility::CSI_Reset() << ", seed=" << seed << " seed_offset=" << rgs.seed_offset()
+		TR << utility::CSI_Red() << utility::CSI_Underline() << "Constant seed mode" << utility::CSI_Reset() << ", seed=" << seed << " seed_offset=" << rgs.seed_offset()
 			<< " real_seed=" << real_seed << std::endl;
 	} else {
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
@@ -1008,7 +998,7 @@ int determine_random_number_seed( RandomGeneratorSettings const & rgs )
 		if ( ( random_device.fail() && !on_windows_platform ) || rgs.use_time_as_seed() ) {
 			if ( !rgs.use_time_as_seed() ) {
 				// notify user that opening rng device has failed
-				T("core.init") << "NOTICE: rng device failure, using time as seed" << std::endl;
+				TR << "NOTICE: rng device failure, using time as seed" << std::endl;
 			}
 			random_device.close();
 
@@ -1044,7 +1034,7 @@ int determine_random_number_seed( RandomGeneratorSettings const & rgs )
 			real_seed += mpi_rank;
 #endif
 
-			T("core.init") << "'Time' seed mode, seed=" << seed << " seed_offset=" << rgs.seed_offset()
+			TR << "'Time' seed mode, seed=" << seed << " seed_offset=" << rgs.seed_offset()
 				<< " real_seed=" << real_seed << std::endl;
 		} else {
 			// grab seeds from device
@@ -1128,7 +1118,7 @@ int determine_random_number_seed( RandomGeneratorSettings const & rgs )
 #endif
 
 			// log seeds
-			T("core.init") << "'RNG device' seed mode, using '" << random_device_name << "', seed=" << seed << " seed_offset=" << rgs.seed_offset()
+			TR << "'RNG device' seed mode, using '" << random_device_name << "', seed=" << seed << " seed_offset=" << rgs.seed_offset()
 				<< " real_seed=" << real_seed << std::endl;
 		}
 

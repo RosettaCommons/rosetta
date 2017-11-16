@@ -56,7 +56,7 @@
 using namespace protocols::moves;
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.docking.EllipsoidalRandomizationMover" );
+static basic::Tracer TR( "protocols.docking.EllipsoidalRandomizationMover" );
 
 namespace protocols {
 namespace docking {

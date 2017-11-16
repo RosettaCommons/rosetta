@@ -52,7 +52,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL::format;
 
-static THREAD_LOCAL basic::Tracer TR( "app.public.iterhybrid_selector" );
+static basic::Tracer TR( "app.public.iterhybrid_selector" );
 
 void
 get_gremlin_d_and_width( std::string const aa1,

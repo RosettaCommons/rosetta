@@ -114,7 +114,6 @@ namespace MoveContainerCxxTest {
 using namespace MoveContainerCxxTest;
 typedef utility::pointer::shared_ptr< DummyMover > DummyMoverOP;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

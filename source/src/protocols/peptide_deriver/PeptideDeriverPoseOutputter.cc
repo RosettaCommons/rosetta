@@ -33,7 +33,7 @@
 // External headers
 #include <boost/format.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverPoseOutputter" );
+static basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverPoseOutputter" );
 
 
 namespace protocols {

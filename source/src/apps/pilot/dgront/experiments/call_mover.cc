@@ -32,7 +32,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -46,40 +45,41 @@ using namespace basic::options::OptionKeys;
 
 void use_backrub(core::pose::PoseOP & pose,core::scoring::ScoreFunctionOP scorefxn) {
 
-                core::pose::Pose &p(*pose);
+	core::pose::Pose &p(*pose);
 
-                // set up BackrubMover and read from the database
-                protocols::backrub::BackrubMover backrubmover;
-                backrubmover.branchopt().read_database();
+	// set up BackrubMover and read from the database
+	protocols::backrub::BackrubMover backrubmover;
+	backrubmover.branchopt().read_database();
 
-                // Setup MC
-                core::Real const mc_kT( option[basic::options::OptionKeys::canonical_sampling::sampling::mc_kt] );
-                protocols::moves::MonteCarlo mc(p, *scorefxn, mc_kT );
-                mc.reset(p);
+	// Setup MC
+	core::Real const mc_kT( option[basic::options::OptionKeys::canonical_sampling::sampling::mc_kt] );
+	protocols::moves::MonteCarlo mc(p, *scorefxn, mc_kT );
+	mc.reset(p);
 
-		// Where will it happed?
-		utility::vector1<core::Size> pivot_residues;
-		for (core::Size i = 1; i <= option[ basic::options::OptionKeys::backrub::pivot_residues ].size(); ++i) {
-		    if (option[ OptionKeys::backrub::pivot_residues ][i] >= 1) 
+	// Where will it happed?
+	utility::vector1<core::Size> pivot_residues;
+	for ( core::Size i = 1; i <= option[ basic::options::OptionKeys::backrub::pivot_residues ].size(); ++i ) {
+		if ( option[ OptionKeys::backrub::pivot_residues ][i] >= 1 ) {
 			pivot_residues.push_back(option[ basic::options::OptionKeys::backrub::pivot_residues ][i]);
 		}
-		backrubmover.set_pivot_residues(pivot_residues);
-		
-                //clear segments and set the input pose
-                backrubmover.clear_segments();
-                backrubmover.set_input_pose( pose );
+	}
+	backrubmover.set_pivot_residues(pivot_residues);
 
-                (*scorefxn)(p);
-                Size const nstruct( option[ out::nstruct] );
-		std::string move_type = backrubmover.type();
-                for ( core::Size trial = 1; trial <= nstruct; ++trial ) {
-                        backrubmover.apply(p);
-                        mc.boltzmann(pose, move_type);
-	                std::ostringstream oss;
-                        oss << "p" << trial<<".pdb";
-                        std::cerr << (*scorefxn)(p) << "\n";
-                        p.dump_pdb(oss.str());
-                }
+	//clear segments and set the input pose
+	backrubmover.clear_segments();
+	backrubmover.set_input_pose( pose );
+
+	(*scorefxn)(p);
+	Size const nstruct( option[ out::nstruct] );
+	std::string move_type = backrubmover.type();
+	for ( core::Size trial = 1; trial <= nstruct; ++trial ) {
+		backrubmover.apply(p);
+		mc.boltzmann(pose, move_type);
+		std::ostringstream oss;
+		oss << "p" << trial<<".pdb";
+		std::cerr << (*scorefxn)(p) << "\n";
+		p.dump_pdb(oss.str());
+	}
 }
 
 int
@@ -87,21 +87,21 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::get_score_function();
+		core::scoring::ScoreFunctionOP scorefxn;
+		scorefxn = core::scoring::get_score_function();
 
-        // Load a pose from a PDB file
-        core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-        core::pose::PoseOP pose = new core::pose::Pose();
-        core::pose::Pose &p(*pose);
-        core::import_pose::pose_from_file( p, *rsd_set, option[ in::file::s ]().vector()[ 0 ] , core::import_pose::PDB_file);
+		// Load a pose from a PDB file
+		core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		core::pose::PoseOP pose = new core::pose::Pose();
+		core::pose::Pose &p(*pose);
+		core::import_pose::pose_from_file( p, *rsd_set, option[ in::file::s ]().vector()[ 0 ] , core::import_pose::PDB_file);
 
-	use_backrub(pose,scorefxn);
+		use_backrub(pose,scorefxn);
 
-	std::cout << "Done! -------------------------------\n";
+		std::cout << "Done! -------------------------------\n";
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

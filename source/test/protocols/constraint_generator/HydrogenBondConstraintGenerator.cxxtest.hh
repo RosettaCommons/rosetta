@@ -50,7 +50,7 @@ using namespace core::scoring::constraints;
 using namespace core::scoring::func;
 using namespace protocols::constraint_generator;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.HydrogenBondConstraintGenerator.cxxtest.hh" );
+static basic::Tracer TR( "protocols.constraint_generator.HydrogenBondConstraintGenerator.cxxtest.hh" );
 
 class HydrogenBondConstraintGeneratorTests : public CxxTest::TestSuite {
 

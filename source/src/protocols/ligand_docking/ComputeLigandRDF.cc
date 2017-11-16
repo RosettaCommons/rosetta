@@ -56,7 +56,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer compute_rdf_tracer( "protocols.ligand_docking.ComputeLigandRDF" );
+static basic::Tracer compute_rdf_tracer( "protocols.ligand_docking.ComputeLigandRDF" );
 
 // XRW TEMP std::string
 // XRW TEMP ComputeLigandRDFCreator::keyname() const

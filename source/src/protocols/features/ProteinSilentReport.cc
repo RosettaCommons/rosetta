@@ -58,7 +58,7 @@
 namespace protocols {
 namespace features {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.ProteinSilentReport" );
+static basic::Tracer TR( "protocols.features.ProteinSilentReport" );
 
 using utility::sql_database::sessionOP;
 using utility::vector1;

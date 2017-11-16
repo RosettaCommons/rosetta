@@ -73,7 +73,7 @@
 
 
 //General construction
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.PeptideCyclizeMover" );
+static basic::Tracer TR( "protocols.cyclic_peptide.PeptideCyclizeMover" );
 
 namespace protocols {
 namespace cyclic_peptide {

@@ -38,7 +38,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.STMStoredTask" );
+static basic::Tracer TR( "protocols.toolbox.task_operations.STMStoredTask" );
 
 // @brief default constructor
 STMStoredTask::STMStoredTask() {}

@@ -48,7 +48,6 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //Auto using namespaces end
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 

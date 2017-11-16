@@ -38,8 +38,8 @@
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops.util" );
-static THREAD_LOCAL basic::Tracer tr( "protocols.loops" );
+static basic::Tracer TR( "protocols.loops.util" );
+static basic::Tracer tr( "protocols.loops" );
 
 namespace protocols {
 namespace loops {

@@ -46,7 +46,7 @@ using namespace scoring;
 
 using basic::Warning;
 using basic::t_warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PackRotamersMoverLazy" );
+static basic::Tracer TR( "protocols.simple_moves.PackRotamersMoverLazy" );
 
 PackRotamersMoverLazy::PackRotamersMoverLazy(
 	ScoreFunctionCOP scorefxn,

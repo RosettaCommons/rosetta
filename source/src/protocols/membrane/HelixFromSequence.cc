@@ -49,7 +49,7 @@
 #include <cstdlib>
 #include <string>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.HelixFromSequence" );
+static basic::Tracer TR( "protocols.membrane.HelixFromSequence" );
 
 namespace protocols {
 namespace membrane {

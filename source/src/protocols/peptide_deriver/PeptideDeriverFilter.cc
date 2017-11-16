@@ -98,7 +98,7 @@
 namespace protocols {
 namespace peptide_deriver {
 
-static THREAD_LOCAL basic::Tracer tracer( "protocols.peptide_deriver.PeptideDeriverFilter" );
+static basic::Tracer tracer( "protocols.peptide_deriver.PeptideDeriverFilter" );
 
 
 // BEGIN DerivedPeptideEntry implementation

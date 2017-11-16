@@ -63,7 +63,7 @@ namespace scoring {
 namespace methods {
 namespace pcsTs4 {
 
-static THREAD_LOCAL basic::Tracer TR_PCS_d_i_Ts4( "protocols.scoring.methods.pcsTs4.PCS_data_input_Ts4" );
+static basic::Tracer TR_PCS_d_i_Ts4( "protocols.scoring.methods.pcsTs4.PCS_data_input_Ts4" );
 
 PCS_line_data_Ts4::PCS_line_data_Ts4(PCS_line_data_Ts4 const & other):
 	residue_num_(other.residue_num_),

@@ -18,7 +18,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.copy_dofs.ResidueAlternativeStepWiseSamplerComb" );
+static basic::Tracer TR( "protocols.sampler.copy_dofs.ResidueAlternativeStepWiseSamplerComb" );
 
 using namespace core;
 using core::conformation::Residue;

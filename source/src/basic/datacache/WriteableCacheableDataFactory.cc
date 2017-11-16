@@ -23,7 +23,7 @@
 namespace basic {
 namespace datacache {
 
-static THREAD_LOCAL basic::Tracer tr( "basic.datacache.WriteableCacheableDataFactory", t_trace );
+static basic::Tracer tr( "basic.datacache.WriteableCacheableDataFactory", t_trace );
 
 /// @brief add a WriteableCacheableData prototype, using its default type name as the map key
 void

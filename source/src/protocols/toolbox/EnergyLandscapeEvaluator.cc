@@ -22,7 +22,7 @@
 // C headers
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.EnergyLandscapeEvaluator" );
+static basic::Tracer TR( "protocols.toolbox.EnergyLandscapeEvaluator" );
 
 namespace protocols {
 namespace toolbox {

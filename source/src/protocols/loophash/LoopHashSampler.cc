@@ -45,7 +45,7 @@
 namespace protocols {
 namespace loophash {
 
-static THREAD_LOCAL basic::Tracer TR( "LocalHashSampler" );
+static basic::Tracer TR( "LocalHashSampler" );
 
 LoopHashSampler::LoopHashSampler(
 	LoopHashLibraryOP library,

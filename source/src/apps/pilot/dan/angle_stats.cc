@@ -26,7 +26,7 @@
 #include <basic/options/option.hh>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR( "anglestats" );
+static basic::Tracer TR( "anglestats" );
 
 ////////////////////////////////////////////////////////
 void *
@@ -36,8 +36,8 @@ anglestats_local( void* ) {
 
 	pose::Pose pose;
 	core::import_pose::pose_from_file( pose, option[ OptionKeys::in::file::s ]().vector().front() , core::import_pose::PDB_file);
-	for (Size i=2; i<= pose.size()-1; i++) {
-		if (std::abs(pose.omega(i)) < 150) {
+	for ( Size i=2; i<= pose.size()-1; i++ ) {
+		if ( std::abs(pose.omega(i)) < 150 ) {
 			TR << "cis ";
 		}
 		TR << "omega for residue " << i << ": " << pose.omega(i) << std::endl;
@@ -50,9 +50,9 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	// options, random initialization
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( anglestats_local );
+		// options, random initialization
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( anglestats_local );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

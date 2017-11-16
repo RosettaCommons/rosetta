@@ -43,8 +43,8 @@ void T400_Refinement()
 
 	core::pose::PoseOP pose_frag = core::import_pose::pose_from_file("src/python/bindings/test/data/test_fragments.pdb", core::import_pose::PDB_file); // pose_frag = pose_from_file("../test/data/test_fragments.pdb")
 
-	core::fragment::ConstantLengthFragSetOP fragset3mer( new core::fragment::ConstantLengthFragSet(3, "src/python/bindings/test/data/test3_fragments") ); 	// fragset3mer = ConstantLengthFragSet(3, "../test/data/test3_fragments")# "aatestA03_05.200_v1_3")
-	core::fragment::ConstantLengthFragSetOP fragset9mer( new core::fragment::ConstantLengthFragSet(9, "src/python/bindings/test/data/test9_fragments") ); 	// fragset9mer = ConstantLengthFragSet(9, "../test/data/test9_fragments")# "aatestA09_05.200_v1_3")
+	core::fragment::ConstantLengthFragSetOP fragset3mer( new core::fragment::ConstantLengthFragSet(3, "src/python/bindings/test/data/test3_fragments") );  // fragset3mer = ConstantLengthFragSet(3, "../test/data/test3_fragments")# "aatestA03_05.200_v1_3")
+	core::fragment::ConstantLengthFragSetOP fragset9mer( new core::fragment::ConstantLengthFragSet(9, "src/python/bindings/test/data/test9_fragments") );  // fragset9mer = ConstantLengthFragSet(9, "../test/data/test9_fragments")# "aatestA09_05.200_v1_3")
 
 	movemap->set_bb(1);
 	protocols::simple_moves::ClassicFragmentMoverOP mover_3mer( new protocols::simple_moves::ClassicFragmentMover(fragset3mer, movemap) );
@@ -54,7 +54,6 @@ void T400_Refinement()
 
 int main( int argc, char * argv [] )
 {
-	using basic::T;
 	using namespace core;
 
 	devel::init(argc, argv);

@@ -44,7 +44,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.CreateTorsionConstraint" );
+static basic::Tracer TR( "protocols.cyclic_peptide.CreateTorsionConstraint" );
 
 namespace protocols {
 namespace cyclic_peptide {

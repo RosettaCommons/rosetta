@@ -28,7 +28,7 @@
 // C++ headers
 #include <sstream>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.movemap.util" );
+static basic::Tracer TR( "core.select.movemap.util" );
 
 namespace core {
 namespace select {

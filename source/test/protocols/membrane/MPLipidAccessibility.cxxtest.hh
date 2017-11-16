@@ -33,7 +33,7 @@
 #include <string>
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.MPLipidAccessibility.cxxtest");
+static basic::Tracer TR("protocols.membrane.MPLipidAccessibility.cxxtest");
 
 /// @brief Unit Test suite for protocols-level membrane util class
 class MPLipidAccessibilityTest : public CxxTest::TestSuite {

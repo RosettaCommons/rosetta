@@ -87,7 +87,7 @@ using utility::vector1;
 using cppdb::statement;
 using cppdb::result;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.features.RotamerFeatures" );
+static basic::Tracer TR( "protocols.features.RotamerFeatures" );
 
 // XRW TEMP string
 // XRW TEMP RotamerFeatures::type_name() const {

@@ -43,7 +43,7 @@ namespace core {
 namespace select {
 namespace jump_selector {
 
-static THREAD_LOCAL basic::Tracer TR("core.select.jump_selector.JumpIndexSelector");
+static basic::Tracer TR("core.select.jump_selector.JumpIndexSelector");
 
 JumpIndexSelector::JumpIndexSelector() = default;
 

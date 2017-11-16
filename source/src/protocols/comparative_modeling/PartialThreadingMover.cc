@@ -48,7 +48,7 @@
 namespace protocols {
 namespace comparative_modeling {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.threading" );
+static basic::Tracer tr( "protocols.comparative_modeling.threading" );
 
 PartialThreadingMover::PartialThreadingMover(
 	core::sequence::SequenceAlignment const & align,

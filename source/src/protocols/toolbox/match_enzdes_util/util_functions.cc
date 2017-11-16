@@ -48,7 +48,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.util_functions" );
+static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.util_functions" );
 
 void
 replace_residue_keeping_all_atom_positions(

@@ -52,7 +52,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.SnugDock" );
+static basic::Tracer TR( "protocols.antibody.SnugDock" );
 using namespace core;
 
 namespace protocols {

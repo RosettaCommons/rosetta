@@ -113,10 +113,8 @@ using core::SSize;
 
 using core::chemical::chr_chains;
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
 using ObjexxFCL::strip_whitespace;
 using ObjexxFCL::stripped_whitespace;
 using ObjexxFCL::rstripped_whitespace;
@@ -126,7 +124,7 @@ using std::string;
 using std::iostream;
 
 // Tracer instance for this file
-static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.file_data" );
+static basic::Tracer TR( "core.io.pdb.file_data" );
 
 
 // StructFileRep to Pose ///////////////////////////////////////////////////////////

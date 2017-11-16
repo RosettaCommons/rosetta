@@ -50,7 +50,6 @@
 // utility headers
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -62,7 +61,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "rama_test" );
+static basic::Tracer TR( "rama_test" );
 
 class RamaTestMover : public moves::Mover {
 
@@ -111,10 +110,10 @@ RamaTestMover::apply( Pose & pose ) {
 	const core::Real limit=4.0;
 
 	TR << protocols::jd2::JobDistributor::get_instance()->current_output_name();
-	for( core::Size ir=1; ir <= pose.size(); ++ ir ){
+	for ( core::Size ir=1; ir <= pose.size(); ++ ir ) {
 		EnergyMap emap = pose.energies().onebody_energies(ir);
 
-		if( emap[ rama ] > limit )	TR << " " << ir << "(" << emap[ rama ] << ")";
+		if ( emap[ rama ] > limit ) TR << " " << ir << "(" << emap[ rama ] << ")";
 	}
 	TR <<  std::endl;
 
@@ -126,7 +125,7 @@ RamaTestMover::get_name() const {
 }
 
 //ScoreFunctionOP RamaTestMover::score_function() const {
-//	return score_function_;
+// return score_function_;
 //}
 
 
@@ -135,18 +134,18 @@ RamaTestMover::get_name() const {
 int
 main( int argc, char * argv [] )
 {
-    try {
-    	using namespace protocols::jobdist;
-    	using namespace protocols::moves;
-    	using namespace scoring;
+	try {
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace scoring;
 
-    	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-    	MoverOP protocol = new RamaTestMover();
-    	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+		MoverOP protocol = new RamaTestMover();
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

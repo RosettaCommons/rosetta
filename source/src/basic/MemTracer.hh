@@ -23,22 +23,25 @@ namespace basic {
 
 void get_usage_from_procfilesystem( std::ostream& mem_report );
 
-class MemTracer : public Tracer {
-	typedef Tracer Parent;
+class MemTracerImpl : public TracerImpl {
+	typedef TracerImpl Parent;
 
 public:
-	MemTracer( TracerPriority priority=t_info, bool muted_by_default = true )
-	: Tracer( "memory_usage", priority, muted_by_default ) {}
+	MemTracerImpl( TracerPriority priority=t_info, bool muted_by_default = true )
+	: TracerImpl( "memory_usage", priority, muted_by_default ) {}
 
 protected:
 	/// @brief overload member function.
 	virtual void t_flush(std::string const &);
 
-private:
-	static bool single_line_;
 };
 
-extern MemTracer mem_tr;
+class MemTracer: public Tracer {
+public:
+	~MemTracer() override = default;
+protected:
+	std::unique_ptr< TracerImpl > create_impl() override;
+};
 
 }  // namespace basic
 

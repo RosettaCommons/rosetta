@@ -61,7 +61,7 @@
 
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.pymol_viewer_test" );
+static basic::Tracer TR( "apps.pilot.ralford.pymol_viewer_test" );
 
 /// @brief View membrane planes based on normal/center
 class MembraneViewMover : public Mover {

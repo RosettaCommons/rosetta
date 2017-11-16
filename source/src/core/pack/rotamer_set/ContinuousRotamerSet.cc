@@ -35,7 +35,7 @@
 //Basic headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("core.pack.rotamer_set.ContinuousRotamerSet");
+static basic::Tracer TR("core.pack.rotamer_set.ContinuousRotamerSet");
 
 #define MAX_BB_DEPENDENCIES 5 //Rotamer libraries may depend on a maximum of 5 mainchain torsions
 

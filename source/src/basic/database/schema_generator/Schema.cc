@@ -34,6 +34,7 @@
 #include <utility/sql_database/types.hh>
 
 #include <string>
+#include <sstream>
 #include <stdio.h>
 #include <algorithm>
 #include <cctype>
@@ -58,7 +59,7 @@ using basic::database::table_exists;
 using utility::mpi_rank;
 using cppdb::statement;
 
-static THREAD_LOCAL basic::Tracer TR( "basic.database.schema_generator.Schema" );
+static basic::Tracer TR( "basic.database.schema_generator.Schema" );
 
 
 Schema::Schema(std::string table_name):

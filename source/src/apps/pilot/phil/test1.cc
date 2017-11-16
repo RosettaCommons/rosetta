@@ -141,7 +141,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 using core::import_pose::pose_from_file;
 using io::pdb::dump_pdb; // deprecated though
-static THREAD_LOCAL basic::Tracer tt( "demo.phil.test1", basic::t_trace );
+static basic::Tracer tt( "demo.phil.test1", basic::t_trace );
 
 ///////////////////////////////////////////////////////////////////////////////
 std::ostream &

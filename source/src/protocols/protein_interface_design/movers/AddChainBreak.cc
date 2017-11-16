@@ -44,7 +44,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.AddChainBreak" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.AddChainBreak" );
 
 // XRW TEMP std::string
 // XRW TEMP AddChainBreakCreator::keyname() const

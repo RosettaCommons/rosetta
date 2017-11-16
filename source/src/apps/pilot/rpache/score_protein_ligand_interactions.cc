@@ -49,7 +49,7 @@
 #include <math.h>
 
 
-static THREAD_LOCAL basic::Tracer TR( "pilot_apps.score_protein_ligand_interactions" );
+static basic::Tracer TR( "pilot_apps.score_protein_ligand_interactions" );
 
 //predicate for sorting by energy
 bool min_energy(const std::pair<core::Real, std::string>& x, const std::pair<core::Real, std::string>& y) {

@@ -30,7 +30,7 @@
 namespace protocols {
 namespace multistate_design {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.multistate_design.PartitionAggregateFunction" );
+static basic::Tracer TR( "protocols.multistate_design.PartitionAggregateFunction" );
 
 PartitionAggregateFunction::PartitionAggregateFunction() :
 	MultiStateAggregateFunction(),

@@ -61,7 +61,7 @@
 namespace protocols {
 namespace enzdes {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.BackboneSampler" );
+static basic::Tracer TR( "protocols.enzdes.BackboneSampler" );
 
 // XRW TEMP std::string
 // XRW TEMP BackboneSamplerCreator::keyname() const

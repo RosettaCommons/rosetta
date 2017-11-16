@@ -43,7 +43,7 @@ namespace operation {
 
 
 // static
-static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.NoRepackDisulfides" );
+static basic::Tracer TR( "core.pack.task.operation.NoRepackDisulfides" );
 
 
 /// @brief default constructor

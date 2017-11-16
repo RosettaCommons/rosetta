@@ -28,7 +28,7 @@
 #include <boost/algorithm/string.hpp>
 #include <alloca.h>
 
-static THREAD_LOCAL basic::Tracer TR( "elscripts" );
+static basic::Tracer TR( "elscripts" );
 
 #ifdef USEBOOSTMPI
 namespace mpi = boost::mpi;
@@ -39,72 +39,72 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	// command line flag preprocessing
-	// also known as c string hell
-	std::string elscriptsscript;
-	for( int i = 1; i < argc; i++ ) {
-		if( strcmp(argv[i], "-els:script") == 0 ) {
-			if( i + 1 < argc ) {
-				elscriptsscript = std::string(argv[i+1]);
-				break;
-			}
-		}
-	}
-
-	int result_argc;
-	char ** result_argv;
-
-	if( ! elscriptsscript.empty() ) {
-		lua_State * tmpstate = luaL_newstate();
-		// really shouldn't need lua libraries for loading flags, but some people might want print or something
-    luaL_openlibs(tmpstate);
-
-		// load lua script
-    int err = luaL_dofile(tmpstate, elscriptsscript.c_str());
-    if( err == 1) {
-			std::cout << "Loading lua script '" << elscriptsscript << "' failed. Error is:" << std::endl;
-			std::cout << lua_tostring(tmpstate, -1) << std::endl;
-    }
-		std::vector< char * > mod_argv;
-		int mod_argc = 0;
-		utility::lua::LuaObject flags(luabind::globals(tmpstate)["flags"]);
-		if( flags ) {
-			for (utility::lua::LuaIterator i=flags.begin(), end; i != end; ++i) {
-				std::string flag = (*i).to<std::string>();
-				std::vector<std::string> strs;
-				boost::split(strs, flag, boost::is_any_of(" "));
-				for( std::vector<std::string>::iterator itr = strs.begin(); itr != strs.end(); itr++ ) {
-					// this is where one goes to read about the dangers of alloca
-					char * cflag = (char * ) alloca( itr->size() + 1 );
-					std::copy(itr->begin(), itr->end(), cflag);
-					cflag[itr->size()] ='\0';
-					mod_argv.push_back( cflag );
-					mod_argc++;
+		// command line flag preprocessing
+		// also known as c string hell
+		std::string elscriptsscript;
+		for ( int i = 1; i < argc; i++ ) {
+			if ( strcmp(argv[i], "-els:script") == 0 ) {
+				if ( i + 1 < argc ) {
+					elscriptsscript = std::string(argv[i+1]);
+					break;
 				}
 			}
-
-			// put elscripts parsed flags BEFORE command line flags
-			// that way, command line can be used to override elscripts parsed flags
-			// I can't think of a case where you would want it the other way around
-
-			result_argc = argc + mod_argc;
-			result_argv = ( char ** ) alloca( (argc + mod_argc) * sizeof( char * ) );
-
-			result_argv[0] = argv[0];
-
-			int idx = 0;
-			for( ; idx < mod_argv.size(); idx++ ) {
-				result_argv[idx+1] = mod_argv[idx];
-			}
-
-			for( int j = 1; j < argc; j++ ) {
-				result_argv[idx+j] = argv[j];
-			}
 		}
-	} else {
-		std::cout << "Need to specify -els:script ! " << std::endl;
-		std::exit(9);
-	}
+
+		int result_argc;
+		char ** result_argv;
+
+		if ( ! elscriptsscript.empty() ) {
+			lua_State * tmpstate = luaL_newstate();
+			// really shouldn't need lua libraries for loading flags, but some people might want print or something
+			luaL_openlibs(tmpstate);
+
+			// load lua script
+			int err = luaL_dofile(tmpstate, elscriptsscript.c_str());
+			if ( err == 1 ) {
+				std::cout << "Loading lua script '" << elscriptsscript << "' failed. Error is:" << std::endl;
+				std::cout << lua_tostring(tmpstate, -1) << std::endl;
+			}
+			std::vector< char * > mod_argv;
+			int mod_argc = 0;
+			utility::lua::LuaObject flags(luabind::globals(tmpstate)["flags"]);
+			if ( flags ) {
+				for ( utility::lua::LuaIterator i=flags.begin(), end; i != end; ++i ) {
+					std::string flag = (*i).to<std::string>();
+					std::vector<std::string> strs;
+					boost::split(strs, flag, boost::is_any_of(" "));
+					for ( std::vector<std::string>::iterator itr = strs.begin(); itr != strs.end(); itr++ ) {
+						// this is where one goes to read about the dangers of alloca
+						char * cflag = (char * ) alloca( itr->size() + 1 );
+						std::copy(itr->begin(), itr->end(), cflag);
+						cflag[itr->size()] ='\0';
+						mod_argv.push_back( cflag );
+						mod_argc++;
+					}
+				}
+
+				// put elscripts parsed flags BEFORE command line flags
+				// that way, command line can be used to override elscripts parsed flags
+				// I can't think of a case where you would want it the other way around
+
+				result_argc = argc + mod_argc;
+				result_argv = ( char ** ) alloca( (argc + mod_argc) * sizeof( char * ) );
+
+				result_argv[0] = argv[0];
+
+				int idx = 0;
+				for ( ; idx < mod_argv.size(); idx++ ) {
+					result_argv[idx+1] = mod_argv[idx];
+				}
+
+				for ( int j = 1; j < argc; j++ ) {
+					result_argv[idx+j] = argv[j];
+				}
+			}
+		} else {
+			std::cout << "Need to specify -els:script ! " << std::endl;
+			std::exit(9);
+		}
 
 
 #ifdef USEBOOSTMPI
@@ -112,17 +112,17 @@ main( int argc, char * argv [] )
 	mpi::communicator world;
 #endif
 
-	devel::init(result_argc, result_argv);
+		devel::init(result_argc, result_argv);
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	bool pool = option[OptionKeys::els::pool]();
-	int num_masters =
-		(option[OptionKeys::els::num_traj]() / option[OptionKeys::els::traj_per_master]() ) +
-		(!( option[OptionKeys::els::num_traj]() % option[OptionKeys::els::traj_per_master]() == 0 )) ;
+		bool pool = option[OptionKeys::els::pool]();
+		int num_masters =
+			(option[OptionKeys::els::num_traj]() / option[OptionKeys::els::traj_per_master]() ) +
+			(!( option[OptionKeys::els::num_traj]() % option[OptionKeys::els::traj_per_master]() == 0 )) ;
 
-	using namespace protocols::elscripts;
+		using namespace protocols::elscripts;
 #ifdef USEBOOSTMPI
 
 	// rank 0 is the pool if enabled, otherwise masters start at 0
@@ -159,14 +159,14 @@ main( int argc, char * argv [] )
 
 	}
 #else
-	// single node version
-	SingleNode role;
-	role.go();
+		// single node version
+		SingleNode role;
+		role.go();
 #endif
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
-    return -1;
+		return -1;
 	}
- }
+}
 

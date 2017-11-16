@@ -42,7 +42,7 @@
 #include <basic/Tracer.hh>
 #include <sstream>
 
-static THREAD_LOCAL basic::Tracer TR("RamaPreProOligoureaTests");
+static basic::Tracer TR("RamaPreProOligoureaTests");
 
 
 class RamaPreProTests_oligourea : public CxxTest::TestSuite {

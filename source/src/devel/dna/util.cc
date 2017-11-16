@@ -65,7 +65,7 @@ using namespace ObjexxFCL::format;
 namespace devel {
 namespace dna {
 
-static THREAD_LOCAL basic::Tracer TR( "devel.dna.util" );
+static basic::Tracer TR( "devel.dna.util" );
 
 ///////////////////////////////////////////////////////////////////////////////
 void

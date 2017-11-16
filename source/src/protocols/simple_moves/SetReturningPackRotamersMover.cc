@@ -32,7 +32,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SetReturningPackRotamersMover" );
+static basic::Tracer TR( "protocols.simple_moves.SetReturningPackRotamersMover" );
 
 // Utility Headers
 

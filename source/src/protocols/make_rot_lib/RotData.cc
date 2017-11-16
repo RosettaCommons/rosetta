@@ -16,7 +16,7 @@
 namespace protocols {
 namespace make_rot_lib {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.make_rot_lib.RotData" );
+static basic::Tracer TR( "protocols.make_rot_lib.RotData" );
 
 
 bool operator==( RotData & r1, RotData & r2 ) {

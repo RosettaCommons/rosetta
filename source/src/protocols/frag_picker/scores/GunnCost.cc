@@ -41,7 +41,7 @@ namespace scores {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer trGunnCost( "core.fragment.GunnCost" );
+static basic::Tracer trGunnCost( "core.fragment.GunnCost" );
 
 void GunnCost::compute_gunn( core::pose::Pose const& pose, core::Size begin, core::Size end, GunnTuple &data) {
 

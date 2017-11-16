@@ -64,7 +64,7 @@
 #include <protocols/boinc/boinc.hh>
 #endif
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.FastDesign" );
+static basic::Tracer TR( "protocols.denovo_design.movers.FastDesign" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

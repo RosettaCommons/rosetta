@@ -35,7 +35,7 @@ namespace core {
 namespace scoring {
 namespace aa_composition_energy {
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.aa_composition_energy.AACompositionConstraint" );
+static basic::Tracer TR( "core.scoring.aa_composition_energy.AACompositionConstraint" );
 
 /// @brief Constructor
 ///

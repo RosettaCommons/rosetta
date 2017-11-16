@@ -61,7 +61,7 @@ using namespace protocols::toolbox::task_operations;
 
 using utility::vector1;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.antibody.AntibodySeqDesign");
+static basic::Tracer TR("protocols.antibody.AntibodySeqDesign");
 
 class AntibodySeqDesign: public CxxTest::TestSuite {
 

@@ -27,7 +27,7 @@
 
 #include <numeric/xyzVector.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.util" );
+static basic::Tracer TR( "core.select.util" );
 
 
 namespace core {

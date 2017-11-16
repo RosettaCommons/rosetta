@@ -68,7 +68,7 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_pose_test" );
+static basic::Tracer TR( "apps.pilot.ralford.membrane_pose_test" );
 
 /// @brief   Top Level Testing for Constructing Membrane Proteins
 /// @details Runs applications with debug tracers contianing expected data. Will eventually
@@ -77,56 +77,56 @@ static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_pose_test" );
 /// @brief Main
 int main( int argc, char* argv[] )
 {
-    
-    using namespace core::chemical;
-    using namespace core::conformation;
-    
-    using namespace basic::options;
-    using namespace core::membrane::geometry;
-    using namespace core::membrane::kinematics;
-    using namespace core::pose;
-    using namespace core::import_pose;
-    using namespace core::conformation;
-    using namespace core::membrane;
-    
-    // Initialize
-    devel::init( argc, argv );
-    
-    core::pose::PoseOP pose = new Pose();
-    pose_from_file( *pose, "test/core/membrane/io/1afo_A.pdb", core::import_pose::PDB_file);
-    
-    // Membrane Residue Factory
-    MembraneResidueFactory mrf;
-    
-    // Create and add Membrane residue with defaults
-    core::Vector center(0, 0, 0);
-    core::Vector normal(0, 0, 1);
-    core::Real depth = 30.0;
-    
-    mrf.add_membrane_residue(center, normal, depth, *pose, true);
-    mrf.add_embedding_residue(center, normal, depth, *pose, 1, true);
-    
-    TR << "Showing foldtree after pose construction" << std::endl;
-    pose->fold_tree().show(std::cout);\
-    
-    TR << "Checking what I know - is this a fold tree?" << std::endl;
-    if ( pose->fold_tree().check_fold_tree() ) {
-        TR << "YES" << std::endl;
-    }
-    
-    TR << "Going to try to construct a foldtree from this one" << std::endl;
-    std::map< int, int > chain_map1;
-    chain_map1.insert( std::pair< int, int >( 1, 42 ) );
-    
-    MembraneFoldTreeOP ft = new MembraneFoldTree( pose->fold_tree(), chain_map1, 41 );
-    
-    TR << "Showing new foldtree" << std::endl;
-    ft->show(std::cout);
-    
-    TR << "The big question, is it a fold tree??" << std::endl;
-    if ( ft->check_fold_tree() ) {
-        TR << "YES" << std::endl;
-    }
-    
-    return 0;
+
+	using namespace core::chemical;
+	using namespace core::conformation;
+
+	using namespace basic::options;
+	using namespace core::membrane::geometry;
+	using namespace core::membrane::kinematics;
+	using namespace core::pose;
+	using namespace core::import_pose;
+	using namespace core::conformation;
+	using namespace core::membrane;
+
+	// Initialize
+	devel::init( argc, argv );
+
+	core::pose::PoseOP pose = new Pose();
+	pose_from_file( *pose, "test/core/membrane/io/1afo_A.pdb", core::import_pose::PDB_file);
+
+	// Membrane Residue Factory
+	MembraneResidueFactory mrf;
+
+	// Create and add Membrane residue with defaults
+	core::Vector center(0, 0, 0);
+	core::Vector normal(0, 0, 1);
+	core::Real depth = 30.0;
+
+	mrf.add_membrane_residue(center, normal, depth, *pose, true);
+	mrf.add_embedding_residue(center, normal, depth, *pose, 1, true);
+
+	TR << "Showing foldtree after pose construction" << std::endl;
+	pose->fold_tree().show(std::cout);\
+
+		TR << "Checking what I know - is this a fold tree?" << std::endl;
+	if ( pose->fold_tree().check_fold_tree() ) {
+		TR << "YES" << std::endl;
+	}
+
+	TR << "Going to try to construct a foldtree from this one" << std::endl;
+	std::map< int, int > chain_map1;
+	chain_map1.insert( std::pair< int, int >( 1, 42 ) );
+
+	MembraneFoldTreeOP ft = new MembraneFoldTree( pose->fold_tree(), chain_map1, 41 );
+
+	TR << "Showing new foldtree" << std::endl;
+	ft->show(std::cout);
+
+	TR << "The big question, is it a fold tree??" << std::endl;
+	if ( ft->check_fold_tree() ) {
+		TR << "YES" << std::endl;
+	}
+
+	return 0;
 }

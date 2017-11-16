@@ -30,7 +30,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.denovo.options.RNA_FragmentMonteCarloOptions" );
+static basic::Tracer TR( "protocols.rna.denovo.options.RNA_FragmentMonteCarloOptions" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

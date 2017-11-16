@@ -34,10 +34,9 @@
 #include <utility/vector1.hh>
 #include <utility/numbers.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.optimize_weights.OptEData" );
+static basic::Tracer TR( "protocols.optimize_weights.OptEData" );
 
 using namespace core;
 using namespace scoring;

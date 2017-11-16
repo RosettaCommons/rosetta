@@ -70,7 +70,7 @@
 #include <apps/pilot/yfsong/util.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "pilot.yfsong.challenge" );
+static basic::Tracer TR( "pilot.yfsong.challenge" );
 
 namespace challenge {
 basic::options::FileVectorOptionKey template_structure("challenge:template_structure");

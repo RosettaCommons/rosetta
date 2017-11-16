@@ -42,7 +42,7 @@ namespace simple_moves {
 
 using namespace core;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.simple_moves.CombinePoseMover");
+static basic::Tracer TR("protocols.simple_moves.CombinePoseMover");
 
 CombinePoseMover::CombinePoseMover( core::scoring::ScoreFunctionCOP sfxn,
 	pose::Pose const &pose_ref )

@@ -54,7 +54,7 @@
 // C++ Headers
 #include <cmath>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.TemperatureController" );
+static basic::Tracer tr( "protocols.canonical_sampling.TemperatureController" );
 
 namespace protocols {
 namespace canonical_sampling {

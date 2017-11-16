@@ -44,11 +44,9 @@
 #include <utility/vector1.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
-
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.disulfides.FullatomDisulfidePotential" );
+static basic::Tracer TR( "core.scoring.disulfides.FullatomDisulfidePotential" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers

@@ -26,7 +26,7 @@
 #include <numeric/xyz.functions.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.copydofs.CopyDofs" );
+static basic::Tracer TR( "core.pose.copydofs.CopyDofs" );
 
 using namespace core;
 

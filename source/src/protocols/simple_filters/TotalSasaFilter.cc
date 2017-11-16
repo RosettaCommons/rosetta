@@ -39,7 +39,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.TotalSasaFilter" );
+static basic::Tracer TR( "protocols.simple_filters.TotalSasaFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP TotalSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TotalSasaFilter ); }

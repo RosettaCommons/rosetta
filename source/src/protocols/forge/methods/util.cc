@@ -68,7 +68,6 @@
 #include <ctype.h>
 #endif
 
-using basic::T;
 
 namespace protocols {
 namespace forge {
@@ -76,7 +75,7 @@ namespace methods {
 
 
 // static
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.methods.util" );
+static basic::Tracer TR( "protocols.forge.methods.util" );
 
 
 /// @brief perform union( root, i ) for all 'i' within the closed interval
@@ -403,8 +402,8 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 	}
 
 	if ( ! have_read_start_token ) {
-		T("core.pack.task.ResfileReader").Warning << "reached the end of resfile without finding a 'start' token." << std::endl;
-		T("core.pack.task.ResfileReader").Warning << "No residue-specific behavior specified in resfile" << std::endl;
+		TR.Warning << "reached the end of resfile without finding a 'start' token." << std::endl;
+		TR.Warning << "No residue-specific behavior specified in resfile" << std::endl;
 	}
 
 	return non_default_lines;

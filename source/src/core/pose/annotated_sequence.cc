@@ -58,7 +58,7 @@
 namespace core {
 namespace pose {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose" );
+static basic::Tracer TR( "core.pose" );
 
 using namespace core;
 using namespace core::conformation;

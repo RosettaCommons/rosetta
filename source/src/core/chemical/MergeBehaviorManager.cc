@@ -47,7 +47,7 @@
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.MergeBehaviorManager" );
+static basic::Tracer TR( "core.chemical.MergeBehaviorManager" );
 
 MergeBehaviorManager::AtomRenamingMap
 mrb_map_from_correspondence( std::string const & correspondence ) {

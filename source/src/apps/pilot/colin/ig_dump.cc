@@ -64,7 +64,7 @@
 #include <utility/vector0.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.ig_dump" );
+static basic::Tracer TR( "apps.ig_dump" );
 
 int
 main( int argc, char * argv [] )

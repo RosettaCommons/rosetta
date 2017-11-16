@@ -42,7 +42,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.membrane.AddMPLigandMover.cxxtest");
+static basic::Tracer TR("protocols.membrane.AddMPLigandMover.cxxtest");
 
 using namespace core;
 using namespace core::kinematics;

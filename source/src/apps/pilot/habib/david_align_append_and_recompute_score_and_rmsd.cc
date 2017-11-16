@@ -72,7 +72,7 @@ OPT_KEY( String, ref_decoy )
 OPT_KEY( String, input_ligand_file )
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.david_recompute_score_and_rmsd.main" );
+static basic::Tracer TR( "apps.pilot.david_recompute_score_and_rmsd.main" );
 
 //set to store pdb info keys
 std::set <std::string> interface;

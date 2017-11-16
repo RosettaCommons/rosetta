@@ -36,7 +36,7 @@ namespace protocols {
 namespace filters {
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.filters.FilterFactory" );
+static basic::Tracer TR( "protocols.filters.FilterFactory" );
 
 FilterFactory::FilterFactory()
 {}

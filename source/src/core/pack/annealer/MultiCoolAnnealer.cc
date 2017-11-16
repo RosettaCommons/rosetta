@@ -45,7 +45,7 @@ namespace core {
 namespace pack {
 namespace annealer {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.annealer.MultiCoolAnnealer" );
+static basic::Tracer TR( "core.pack.annealer.MultiCoolAnnealer" );
 
 using namespace ObjexxFCL;
 using namespace pack::interaction_graph;

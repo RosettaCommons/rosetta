@@ -31,7 +31,7 @@ namespace protocols {
 namespace frag_picker {
 namespace quota {
 
-static THREAD_LOCAL basic::Tracer trQuotaCollector(
+static basic::Tracer trQuotaCollector(
 	"protocols.frag_picker.quota.QuotaCollector");
 
 bool QuotaCollector::add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) {

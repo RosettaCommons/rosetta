@@ -46,14 +46,13 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
 namespace protocols {
 namespace cyclic_peptide {
 
-static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide.TryDisulfPermutations");
+static basic::Tracer TR("protocols.cyclic_peptide.TryDisulfPermutations");
 
 // XRW TEMP std::string
 // XRW TEMP TryDisulfPermutationsCreator::keyname() const

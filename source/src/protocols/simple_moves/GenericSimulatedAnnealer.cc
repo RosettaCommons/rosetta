@@ -41,7 +41,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.GenericSimulatedAnnealer" );
+static basic::Tracer TR( "protocols.simple_moves.GenericSimulatedAnnealer" );
 
 namespace protocols {
 namespace simple_moves {

@@ -86,7 +86,7 @@
 #include <cstdlib>
 
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mpframework_test1" );
+static basic::Tracer TR( "apps.pilot.jkleman.mpframework_test1" );
 
 using namespace core;
 using namespace core::scoring;

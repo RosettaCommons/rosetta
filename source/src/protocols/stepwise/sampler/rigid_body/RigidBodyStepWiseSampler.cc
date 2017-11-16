@@ -45,7 +45,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSampler" );
+static basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSampler" );
 
 using namespace protocols::toolbox::rigid_body;
 using namespace core;

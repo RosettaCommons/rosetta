@@ -44,7 +44,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictToInterfaceVectorOperation" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictToInterfaceVectorOperation" );
 
 namespace protocols {
 namespace toolbox {

@@ -52,7 +52,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer trRmsScore(
+static basic::Tracer trRmsScore(
 	"protocols.frag_picker.scores.FragmentCrmsdResDepth");
 
 FragmentCrmsdResDepth::~FragmentCrmsdResDepth() {}

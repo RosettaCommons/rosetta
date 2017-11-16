@@ -38,7 +38,7 @@
 #include <utility/io/mpistream.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "main" );
+static basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;
@@ -51,7 +51,7 @@ using namespace scoring;
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-  OPT( in::file::s );
+	OPT( in::file::s );
 }
 
 // Forward
@@ -98,14 +98,14 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	register_options();
-	devel::init( argc, argv );
+		register_options();
+		devel::init( argc, argv );
 
-	try{
-		run();
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		excn.show( std::cerr );
-	}
+		try{
+			run();
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			excn.show( std::cerr );
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -41,7 +41,6 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -68,7 +67,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer minimize_backbone_tracer( "protocols.ligand_docking.ligand_options.MinimizeBackbone", basic::t_debug );
+static basic::Tracer minimize_backbone_tracer( "protocols.ligand_docking.ligand_options.MinimizeBackbone", basic::t_debug );
 
 // XRW TEMP std::string
 // XRW TEMP MinimizeBackboneCreator::keyname() const

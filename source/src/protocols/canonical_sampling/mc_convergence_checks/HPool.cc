@@ -44,7 +44,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.hcluster" );
+static basic::Tracer TR( "protocols.hcluster" );
 
 namespace protocols {
 namespace canonical_sampling {

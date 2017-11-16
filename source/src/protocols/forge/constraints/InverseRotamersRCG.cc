@@ -37,7 +37,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.forge.constraints.InverseRotamersRCG" );
+static basic::Tracer tr( "protocols.forge.constraints.InverseRotamersRCG" );
 
 namespace protocols {
 namespace forge {

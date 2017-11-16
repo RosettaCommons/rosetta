@@ -70,7 +70,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer residues_in_interface_tracer( "protocols.simple_filters.ResiduesInInterfaceFilter" );
+static basic::Tracer residues_in_interface_tracer( "protocols.simple_filters.ResiduesInInterfaceFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP ResiduesInInterfaceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResiduesInInterfaceFilter ); }

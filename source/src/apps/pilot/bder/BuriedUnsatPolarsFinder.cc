@@ -38,8 +38,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-using basic::T;
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.bder.BuriedUnsatPolarsFinder" );
+static basic::Tracer TR( "apps.pilot.bder.BuriedUnsatPolarsFinder" );
 
 
 using namespace core;
@@ -48,15 +47,15 @@ using namespace core;
 /// @brief
 class BuriedUnsatPolarsFinder : public protocols::moves::Mover {
 public:
-  BuriedUnsatPolarsFinder()
-  {
-  }
-  virtual ~BuriedUnsatPolarsFinder(){};
+	BuriedUnsatPolarsFinder()
+	{
+	}
+	virtual ~BuriedUnsatPolarsFinder(){};
 
 
-  virtual
-  void
-  apply( core::pose::Pose & pose ){
+	virtual
+	void
+	apply( core::pose::Pose & pose ){
 
 		utility::file::FileName filename( pose.pdb_info()->name() );
 		std::string pdbname_base = filename.base();
@@ -70,15 +69,15 @@ public:
 		using namespace core::pose::metrics;
 
 		TR << "Registering SASA Calculator" << std::endl;
-		if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc_name" ) ){
+		if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc_name" ) ) {
 			CalculatorFactory::Instance().register_calculator( "sasa_calc_name", new pose::metrics::simple_calculators::SasaCalculatorLegacy() );
 		}
 		TR << "Registering num_Hbond Calculator" << std::endl;
-		if( !CalculatorFactory::Instance().check_calculator_exists( "num_hbonds_calc_name" ) ){
+		if ( !CalculatorFactory::Instance().check_calculator_exists( "num_hbonds_calc_name" ) ) {
 			CalculatorFactory::Instance().register_calculator( "num_hbonds_calc_name", new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
 		}
 		TR << "Registering BurUnsatPolar Calculator" << std::endl;
-		if( !CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_name" ) ){
+		if ( !CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_name" ) ) {
 			CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_name", new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "sasa_calc_name", "num_hbonds_calc_name", 0.01 /*sasa=0 is buried*/) );
 		}
 
@@ -91,11 +90,11 @@ public:
 
 		utility::vector1< core::id::AtomID > buried_unsat_atom_ids;
 
-		for( Size i = 1; i <= pose.size(); ++i){
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			conformation::Residue const & rsd = pose.residue( i );
-			for( Size at = 1; at <= rsd.nheavyatoms(); ++at){
+			for ( Size at = 1; at <= rsd.nheavyatoms(); ++at ) {
 				core::id::AtomID atid( at, i );
-				if( bur_unsat_atomid_map.value()[atid] /*bool*/) {
+				if ( bur_unsat_atomid_map.value()[atid] /*bool*/ ) {
 					buried_unsat_atom_ids.push_back( atid );
 				}
 			}
@@ -105,17 +104,16 @@ public:
 
 		TR << "PYMOL_SELECTION: select " << pymol_bunsat_selection << ",";
 
-		for(Size i(1); i <= buried_unsat_atom_ids.size(); ++i) {
+		for ( Size i(1); i <= buried_unsat_atom_ids.size(); ++i ) {
 			Size rosetta_resnum = buried_unsat_atom_ids[i].rsd();
 			std::string atom_name = pose.residue(rosetta_resnum).atom_name( buried_unsat_atom_ids[i].atomno() );
 
 			Size pdb_resnum = pose.pdb_info()->number( rosetta_resnum );
 			char chain = pose.pdb_info()->chain( rosetta_resnum );
 
-			if( i != buried_unsat_atom_ids.size() ) {
+			if ( i != buried_unsat_atom_ids.size() ) {
 				TR << " resi " << pdb_resnum << " and name " << atom_name << " in " << pdbname_base << " and chain " << chain << " +";
-			}
-			else {
+			} else {
 				TR << " resi " << pdb_resnum << " and name " << atom_name << " in " << pdbname_base << " and chain " << chain;
 			}
 
@@ -125,8 +123,8 @@ public:
 		TR << "PYMOL_SELECTION: alter " << pymol_bunsat_selection << ", vdw=0.5" << std::endl;
 
 
-    return;
-  }
+		return;
+	}
 
 
 	virtual
@@ -146,20 +144,20 @@ typedef utility::pointer::owning_ptr< BuriedUnsatPolarsFinder > BuriedUnsatPolar
 int main( int argc, char* argv[] )
 {
 	try {
-	using basic::options::option;
+		using basic::options::option;
 
-  devel::init(argc, argv);
-  protocols::jd2::JobDistributor::get_instance()->go(new BuriedUnsatPolarsFinder);
+		devel::init(argc, argv);
+		protocols::jd2::JobDistributor::get_instance()->go(new BuriedUnsatPolarsFinder);
 
-	TR << "Recommended option:   -sasa_calculator_probe_radius 1.2" << std::endl;
+		TR << "Recommended option:   -sasa_calculator_probe_radius 1.2" << std::endl;
 
-  TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
 	} catch (utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 
-  return 0;
+	return 0;
 }
 

@@ -48,7 +48,7 @@
 using namespace core::scoring::constraints;
 using namespace protocols::constraint_generator;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.CoordinateConstraintGenerator.cxxtest.hh" );
+static basic::Tracer TR( "protocols.constraint_generator.CoordinateConstraintGenerator.cxxtest.hh" );
 
 class CoordinateConstraintGeneratorTests : public CxxTest::TestSuite {
 

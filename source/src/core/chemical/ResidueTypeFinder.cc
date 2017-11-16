@@ -34,7 +34,7 @@ using namespace basic::options;
 using utility::vector1;
 using utility::tools::make_vector1;
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.ResidueTypeFinder" );
+static basic::Tracer TR( "core.chemical.ResidueTypeFinder" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //

@@ -49,7 +49,7 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.SymmGlyMinTests.cxxtest");
+static basic::Tracer TR("core.scoring.SymmGlyMinTests.cxxtest");
 
 class SymmGlyMinTests : public CxxTest::TestSuite {
 

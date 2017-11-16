@@ -55,7 +55,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.MatchConstraintFileIfo" );
+static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.MatchConstraintFileIfo" );
 
 #ifdef    SERIALIZATION
 // Project serialization headers

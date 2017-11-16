@@ -64,11 +64,10 @@
 
 //#include <math>
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ronj.hydrophobic_patch_stats_calculator" );
+static basic::Tracer TR( "apps.pilot.ronj.hydrophobic_patch_stats_calculator" );
 
 using utility::file::FileName;
 using utility::file::file_basename;
@@ -140,7 +139,7 @@ find_hppatches_nb_graph( std::vector< FileName > & pdb_file_names ) {
 	std::vector<std::pair<std::string, int> > countSEHydrophobic( 0 );
 
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		if ( !utility::file::file_exists( *pdb ) ) {
 			std::cerr << "Input pdb " << *pdb << " not found, skipping" << std::endl;
@@ -206,7 +205,7 @@ find_hppatches_nb_graph( std::vector< FileName > & pdb_file_names ) {
 			//TR << "Neighbors of residue " << pose.residue( res1_position ).name3() << " " << res1_position << " include " << std::endl;
 			// for every Edge in the neighbor graph, figure out if that residue is surface exposed *and* hydrophobic
 			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
-				eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
+					eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// save the value to simplify code ahead
 				int res2_position = (*eli)->get_other_ind( res1_position );
@@ -257,7 +256,7 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 	// so patch_size_counts[6][4]=23 means a patch of size 4 was seen 23 times in the protein using a
 	// threshold radius of 6A.
 	//std::map<int, std::vector<int > > patch_size_counts( (6, std::vector<int>(11, 0)), (7, std::vector<int>(11, 0)),
-	//				(8, std::vector<int>(11, 0)), (9, std::vector<int>(11, 0)), (10, std::vector<int>(11, 0)) );
+	//    (8, std::vector<int>(11, 0)), (9, std::vector<int>(11, 0)), (10, std::vector<int>(11, 0)) );
 	std::map<int, std::vector<int > > patch_size_counts;
 	patch_size_counts[6] = std::vector<int>(11,0);
 	patch_size_counts[7] = std::vector<int>(11,0);
@@ -275,7 +274,7 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 	std::vector<std::pair<std::string, int> > countSEHydrophobic( 0 );
 
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		if ( !utility::file::file_exists( *pdb ) ) {
 			std::cerr << "Input pdb " << *pdb << " not found, skipping" << std::endl;
@@ -347,16 +346,19 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 				for ( core::Size res2_position = 4; res2_position <= pose.size() - 3; ++res2_position ) {
 					// see note above for starting/terminating conditions
 
-					if ( res1_position == res2_position )
+					if ( res1_position == res2_position ) {
 						continue;
+					}
 
-					if ( (Size)tenA_neighbor_graph.get_node( res2_position )->num_neighbors_counting_self() > SURFACE_EXPOSED_CUTOFF )
+					if ( (Size)tenA_neighbor_graph.get_node( res2_position )->num_neighbors_counting_self() > SURFACE_EXPOSED_CUTOFF ) {
 						continue;
+					}
 
 					// if it's a polar residues, move on
 					// should we include GLY as a polar residue, or not?  we'll see how that affects the stats later
-					if ( pose.residue( res2_position ).is_polar() )
+					if ( pose.residue( res2_position ).is_polar() ) {
 						continue;
+					}
 
 					// we need to determine whether the centroid of the side chain (is that the same as the action coordinate?)
 					// of this residue has a distance less than the centroid of the res1 sidechain.  This method is a brute
@@ -367,8 +369,8 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 
 					//float distanceBetweenAtoms =  rsd1.xyz(rsd1.nbr_atom()).distance( rsd2.xyz(rsd2.nbr_atom()) );
 					//TR << "Distance between atoms " << rsd1.name3() << " " << res1_position
-					//	<< " " << rsd1.atom_name( rsd1.nbr_atom() ) << " - " << rsd2.atom_name( rsd2.nbr_atom() )
-					//	<< rsd2.name3() << " " << res2_position << ": " << distanceBetweenAtoms << std::endl;
+					// << " " << rsd1.atom_name( rsd1.nbr_atom() ) << " - " << rsd2.atom_name( rsd2.nbr_atom() )
+					// << rsd2.name3() << " " << res2_position << ": " << distanceBetweenAtoms << std::endl;
 
 					if ( rsd1.xyz( rsd1.nbr_atom() ).distance( rsd2.xyz(rsd2.nbr_atom()) ) < thresholdRadius ) {
 
@@ -413,7 +415,7 @@ calculate_percent_hydrophobic_stats( std::vector< FileName > & pdb_file_names )
 {
 
 	// create a score function using the standard packer weights
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of percent hydrophobic for a given number of surace neighbors
 	std::map<int, std::vector<float> > percent_hp_in_se_nbs_by_nb;
@@ -421,7 +423,7 @@ calculate_percent_hydrophobic_stats( std::vector< FileName > & pdb_file_names )
 
 	TR << "Processing... " << std::endl;
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		if ( !utility::file::file_exists( *pdb ) ) {
 			std::cerr << "Input pdb " << *pdb << " not found, skipping" << std::endl;
@@ -460,7 +462,7 @@ calculate_percent_hydrophobic_stats( std::vector< FileName > & pdb_file_names )
 
 			// now determine the number of *surface* neighbors
 			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
-				eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
+					eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// save the value to simplify code ahead
 				int res2_position = (*eli)->get_other_ind( res1_position );
@@ -482,8 +484,8 @@ calculate_percent_hydrophobic_stats( std::vector< FileName > & pdb_file_names )
 			} // end going through all neighbor graph edges
 
 			//TR << "Residue " << pose.residue( res1_position ).name3() << " " << res1_position
-			//	<< " is surface-exposed and has " << countNeighbors << " neighbors, " << countSurfaceNeighbors << " surface neighbors, and " <<
-			//	countHydrophobicSurfaceNeighbors << " hphobic surface neighbors. " << std::endl;
+			// << " is surface-exposed and has " << countNeighbors << " neighbors, " << countSurfaceNeighbors << " surface neighbors, and " <<
+			// countHydrophobicSurfaceNeighbors << " hphobic surface neighbors. " << std::endl;
 
 			if ( countSurfaceNeighbors == 0 ) {
 				// res1 has nb's, but no surface neighbors. must be kinda buried. don't tally it's count then.
@@ -582,7 +584,7 @@ calculate_percent_hydrophobic_distribution( std::vector< FileName > & pdb_file_n
 {
 
 	// create a score function using the standard packer weights
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of percent hydrophobic for a given number of surace neighbors
 	std::vector<float> percent_hp_in_se_nbs;
@@ -590,7 +592,7 @@ calculate_percent_hydrophobic_distribution( std::vector< FileName > & pdb_file_n
 
 	TR << "Processing... " << std::endl;
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		if ( !utility::file::file_exists( *pdb ) ) {
 			std::cerr << "Input pdb " << *pdb << " not found, skipping" << std::endl;
@@ -629,7 +631,7 @@ calculate_percent_hydrophobic_distribution( std::vector< FileName > & pdb_file_n
 
 			// now determine the number of *surface* neighbors
 			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
-				eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
+					eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// save the value to simplify code ahead
 				int res2_position = (*eli)->get_other_ind( res1_position );
@@ -651,8 +653,8 @@ calculate_percent_hydrophobic_distribution( std::vector< FileName > & pdb_file_n
 			} // end going through all neighbor graph edges
 
 			//TR << "Residue " << pose.residue( res1_position ).name3() << " " << res1_position
-			//	<< " is surface-exposed and has " << countNeighbors << " neighbors, " << countSurfaceNeighbors << " surface neighbors, and " <<
-			//	countHydrophobicSurfaceNeighbors << " hphobic surface neighbors. " << std::endl;
+			// << " is surface-exposed and has " << countNeighbors << " neighbors, " << countSurfaceNeighbors << " surface neighbors, and " <<
+			// countHydrophobicSurfaceNeighbors << " hphobic surface neighbors. " << std::endl;
 
 			if ( countSurfaceNeighbors == 0 ) {
 				// res1 has nb's, but no surface neighbors. must be kinda buried. don't tally it's count then.
@@ -740,7 +742,7 @@ calculate_hydrophobic_accessible_surface_area( std::vector< FileName > & pdb_fil
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has, broken up by res type
 	utility::vector1< utility::vector1< Real > > hp_ASA_by_aa_type_nbs_1_to_10( chemical::num_canonical_aas );
@@ -749,7 +751,7 @@ calculate_hydrophobic_accessible_surface_area( std::vector< FileName > & pdb_fil
 	utility::vector1< utility::vector1< Real > > hp_ASA_by_aa_type_nbs_17_to_20( chemical::num_canonical_aas );
 
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		TR << "Processing " << *pdb << "... " << std::endl;
 		if ( !utility::file::file_exists( *pdb ) ) {
@@ -822,7 +824,7 @@ calculate_hydrophobic_accessible_surface_area( std::vector< FileName > & pdb_fil
 			char icode = pose.pdb_info()->icode(ii);
 
 			//if ( pdb_resid != ii ) {
-			//	TR << "Converted mini res num " << ii << " to PDB res num " << pdb_resid << std::endl;
+			// TR << "Converted mini res num " << ii << " to PDB res num " << pdb_resid << std::endl;
 			//}
 
 			std::stringstream residue_key;
@@ -830,13 +832,13 @@ calculate_hydrophobic_accessible_surface_area( std::vector< FileName > & pdb_fil
 			// certain structures have extra residues with repeated numbering, so-called insertion codes
 			// deal with those cases with the following extra conditional
 			if ( icode != ' ' ) {
-				residue_key	<< icode;
+				residue_key << icode;
 			}
 
 			float hp_ASA = -123.4;
-			if ( res_to_calculated_hp_ASA.find( residue_key.str() ) != res_to_calculated_hp_ASA.end() )
+			if ( res_to_calculated_hp_ASA.find( residue_key.str() ) != res_to_calculated_hp_ASA.end() ) {
 				hp_ASA = res_to_calculated_hp_ASA.find( residue_key.str() )->second;
-			else {
+			} else {
 				// maybe the residue is a seleno-MET; look for that key and if that's not found then we give up
 				if ( pose.residue(ii).name3() == "MET" ) {
 					residue_key.str("");
@@ -872,10 +874,10 @@ calculate_hydrophobic_accessible_surface_area( std::vector< FileName > & pdb_fil
 				hp_ASA_by_aa_type_nbs_17_to_20[ pose.residue(ii).aa() ].push_back( hp_ASA );
 			}
 
-			#ifdef FILE_DEBUG
-				TR << pose.residue( ii ).name3() << " " << ii << ": nbs: " << countNeighbors << ", hp_ASA: " << hp_ASA
-					<< "; pdb: " << pose.pdb_info()->name() << std::endl;
-			#endif
+#ifdef FILE_DEBUG
+			TR << pose.residue( ii ).name3() << " " << ii << ": nbs: " << countNeighbors << ", hp_ASA: " << hp_ASA
+				<< "; pdb: " << pose.pdb_info()->name() << std::endl;
+#endif
 
 		}
 
@@ -956,7 +958,7 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has, broken up by res type and exposure amount
 	// we might need to add pseudocounts to this in case certain aa types are not seen at a given exposure level
@@ -965,7 +967,7 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 	utility::vector1< utility::vector1< utility::vector1< core::Real > > > hASA_by_type_and_nbcount( 20, utility::vector1< utility::vector1< Real > >( chemical::num_canonical_aas ) );
 
 	// iterate through all the structures - do something to them
-	for (std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		TR << "Processing " << *pdb << "... " << std::endl;
 		if ( !utility::file::file_exists( *pdb ) ) {
@@ -1018,21 +1020,21 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 			//rj iterate over all positions to find neighbors
 			for ( conformation::ResidueOPs::iterator iter = pose2.res_begin(); iter != pose2.res_end() ; ++iter) {
 
-				// get the residue to compare to the current residue rsd
-				conformation::Residue compRes(**iter);
-				if ( pose.residue(ii).seqpos() == compRes.seqpos() )
-					continue;
+			// get the residue to compare to the current residue rsd
+			conformation::Residue compRes(**iter);
+			if ( pose.residue(ii).seqpos() == compRes.seqpos() )
+			continue;
 
-				Vector compVect( compRes.nbr_atom_xyz() );
-				Vector::Value dist = currentVect.distance(compVect);
+			Vector compVect( compRes.nbr_atom_xyz() );
+			Vector::Value dist = currentVect.distance(compVect);
 
-				// get the weighted neighbor count
-				Real weight = neighborWeight( dist, lBound, uBound );
+			// get the weighted neighbor count
+			Real weight = neighborWeight( dist, lBound, uBound );
 
-				//calculate the weighted neighbor vector for this pair and sum
-				Vector weightedVector = ( (compVect-currentVect) / dist) * weight;
-				neighborCount += weight;
-				neighborVectSum += weightedVector;
+			//calculate the weighted neighbor vector for this pair and sum
+			Vector weightedVector = ( (compVect-currentVect) / dist) * weight;
+			neighborCount += weight;
+			neighborVectSum += weightedVector;
 
 			}
 
@@ -1079,7 +1081,7 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 			char icode = pose.pdb_info()->icode(ii);
 
 			//if ( pdb_resid != ii ) {
-			//	TR << "Converted mini res num " << ii << " to PDB res num " << pdb_resid << std::endl;
+			// TR << "Converted mini res num " << ii << " to PDB res num " << pdb_resid << std::endl;
 			//}
 
 			std::stringstream residue_key;
@@ -1090,10 +1092,9 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 			if ( icode != ' ' ) { residue_key << icode; }
 
 			float hASA = -12345.6;
-			if ( res_to_calculated_hASA.find( residue_key.str() ) != res_to_calculated_hASA.end() )
+			if ( res_to_calculated_hASA.find( residue_key.str() ) != res_to_calculated_hASA.end() ) {
 				hASA = res_to_calculated_hASA.find( residue_key.str() )->second;
-
-			else {
+			} else {
 				// maybe the residue is a seleno-MET; look for that key and if that's not found then we give up
 				if ( pose.residue(ii).name3() == "MET" ) {
 					residue_key.str("");
@@ -1116,9 +1117,9 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 			}
 
 			//TR << pose.residue( ii ).name3() << " " << ii << ": nbs: " << neighborCount
-			//	<< ", hASA: " << hASA
-			//	<< ", NV_value: " << NV_value << ", NV_value_index: " << NV_value_index
-			//	<< "; pdb: " << pose.pdb_info()->name() << std::endl;
+			// << ", hASA: " << hASA
+			// << ", NV_value: " << NV_value << ", NV_value_index: " << NV_value_index
+			// << "; pdb: " << pose.pdb_info()->name() << std::endl;
 
 			// store the hASA into the right vector, i.e. based on the number of neighbors this residue has
 			//hASA_by_type_and_NV_value[ NV_value_index ][ pose.residue(ii).aa() ].push_back( hASA );
@@ -1133,19 +1134,19 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 	std::ofstream hASA_file;
 
 	//for ( Size ii=1; ii <= hASA_by_type_and_NV_value.size(); ++ii ) {
-	//	for ( Size jj=1; jj <= hASA_by_type_and_NV_value[ ii ].size(); ++jj ) {
-	//		filename << "hASA_by_NV" << ii << "." << chemical::name_from_aa( (chemical::AA)jj ) << ".txt";
-	//		if ( trytry_ofstream_open( hASA_file, filename.str(), std::ios::out ) ) {
-	//			hASA_file << chemical::name_from_aa( (chemical::AA)jj ) << std::endl;
-	//			for ( Size kk=1; kk <= (hASA_by_type_and_NV_value[ ii ][ jj ]).size(); ++kk ) {
-	//				hASA_file << hASA_by_type_and_NV_value[ ii ][ jj ][ kk ] << std::endl;
-	//			}
-	//			hASA_file.close();
-	//		} else {
-	//			TR << "Could not open filename " << filename.str() << std::endl;
-	//		}
-	//		filename.str("");
-	//	}
+	// for ( Size jj=1; jj <= hASA_by_type_and_NV_value[ ii ].size(); ++jj ) {
+	//  filename << "hASA_by_NV" << ii << "." << chemical::name_from_aa( (chemical::AA)jj ) << ".txt";
+	//  if ( trytry_ofstream_open( hASA_file, filename.str(), std::ios::out ) ) {
+	//   hASA_file << chemical::name_from_aa( (chemical::AA)jj ) << std::endl;
+	//   for ( Size kk=1; kk <= (hASA_by_type_and_NV_value[ ii ][ jj ]).size(); ++kk ) {
+	//    hASA_file << hASA_by_type_and_NV_value[ ii ][ jj ][ kk ] << std::endl;
+	//   }
+	//   hASA_file.close();
+	//  } else {
+	//   TR << "Could not open filename " << filename.str() << std::endl;
+	//  }
+	//  filename.str("");
+	// }
 	//}
 
 	for ( Size ii=1; ii <= hASA_by_type_and_nbcount.size(); ++ii ) {
@@ -1173,7 +1174,7 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has, broken up by res type and exposure amount
 	// we might need to add pseudocounts to this in case certain aa types are not seen at a given exposure level
@@ -1182,7 +1183,7 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 	utility::vector1< utility::vector1< utility::vector1< core::Real > > > hASA_by_type_and_atrE( 16, utility::vector1< utility::vector1< Real > >( chemical::num_canonical_aas ) );
 
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		TR << "Processing " << *pdb << "... " << std::endl;
 		if ( !utility::file::file_exists( *pdb ) ) {
@@ -1239,8 +1240,9 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 				// get the residue to compare to the current residue rsd
 				//conformation::Residue compRes(**iter);
 				conformation::Residue const & compRes = pose2.residue( ii_res );
-				if ( pose.residue(ii).seqpos() == compRes.seqpos() )
+				if ( pose.residue(ii).seqpos() == compRes.seqpos() ) {
 					continue;
+				}
 
 				Vector compVect( compRes.nbr_atom_xyz() );
 				Vector::Value dist = currentVect.distance(compVect);
@@ -1324,10 +1326,9 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 			if ( icode != ' ' ) { residue_key << icode; }
 
 			float hASA = -12345.6;
-			if ( res_to_calculated_hASA.find( residue_key.str() ) != res_to_calculated_hASA.end() )
+			if ( res_to_calculated_hASA.find( residue_key.str() ) != res_to_calculated_hASA.end() ) {
 				hASA = res_to_calculated_hASA.find( residue_key.str() )->second;
-
-			else {
+			} else {
 				// maybe the residue is a seleno-MET; look for that key and if that's not found then we give up
 				if ( pose.residue(ii).name3() == "MET" ) {
 					residue_key.str("");
@@ -1350,10 +1351,10 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 			}
 
 			//TR << pose.residue( ii ).name3() << " " << ii << ": nbs: " << neighborCount
-			//	<< ", roundedNeighborCount: " << roundedNeighborCount << ", hASA: " << hASA
-			//	<< ", NV_value: " << NV_value << ", NV_value_index: " << NV_value_index
-			//	<< ", atrE: " << atrE << ", rounded_atrE: " << rounded_atrE << ", atrE_index: " << atrE_index
-			//	<< "; pdb: " << pose.pdb_info()->name() << std::endl;
+			// << ", roundedNeighborCount: " << roundedNeighborCount << ", hASA: " << hASA
+			// << ", NV_value: " << NV_value << ", NV_value_index: " << NV_value_index
+			// << ", atrE: " << atrE << ", rounded_atrE: " << rounded_atrE << ", atrE_index: " << atrE_index
+			// << "; pdb: " << pose.pdb_info()->name() << std::endl;
 
 			// store the hASA into the right vector, i.e. based on the fa_atr energy this residue has
 			hASA_by_type_and_atrE[ atrE_index ][ pose.residue(ii).aa() ].push_back( hASA );
@@ -1398,7 +1399,7 @@ get_residue_key( core::pose::Pose & pose, core::Size pose_resid, bool mse ) {
 	char icode = pose.pdb_info()->icode( pose_resid );
 
 	//if ( pdb_resid != pose_resid ) {
-	//	TR << "Converted mini res num " << pose_resid << " to PDB res num " << pdb_resid << std::endl;
+	// TR << "Converted mini res num " << pose_resid << " to PDB res num " << pdb_resid << std::endl;
 	//}
 
 	std::stringstream residue_key;
@@ -1413,7 +1414,7 @@ get_residue_key( core::pose::Pose & pose, core::Size pose_resid, bool mse ) {
 	// certain structures have extra residues with repeated numbering, so-called insertion codes
 	// deal with those cases with the following extra conditional
 	if ( icode != ' ' ) {
-		residue_key	<< icode;
+		residue_key << icode;
 	}
 
 	return residue_key.str();
@@ -1431,14 +1432,14 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< Real > hASA_within_10A;
 
 
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		TR << "Processing " << *pdb << "... " << std::endl;
 		if ( !utility::file::file_exists( *pdb ) ) {
@@ -1503,9 +1504,9 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 			// don't add in the hASA contribution if the residue is polar
 			if ( ! pose.residue(ii).is_polar() ) {
 
-				if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() )
+				if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() ) {
 					patchArea += res_to_calculated_hASA.find( key )->second;
-				else {
+				} else {
 					// maybe the residue is a seleno-MET; look for that key and if that's not found then we give up
 					if ( pose.residue( ii ).name3() == "MET" ) {
 						key = get_residue_key( pose, ii, true /*useMSE*/ );
@@ -1531,7 +1532,7 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 
 			//TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << patchArea << " ) include " << std::endl;
 			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
-				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
+					eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
 				// save the value to simplify code ahead
@@ -1557,9 +1558,9 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 					//TR << "Not SE" << std::endl;
 					continue;
 				} else {
-					if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() )
+					if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() ) {
 						area = res_to_calculated_hASA.find( key )->second;
-					else {
+					} else {
 						// maybe the residue is a seleno-MET; look for that key and if that's not found then we give up
 						if ( pose.residue( jj ).name3() == "MET" ) {
 							key = get_residue_key( pose, jj, true /*useMSE*/ );
@@ -1589,15 +1590,15 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 				hASA_within_10A.push_back( patchArea );
 
 				//if ( patchArea < 1.0 ) {
-				//	TR << "Residue " << pose.residue( ii ).name3() << " " << ii << " (PDB: " << pose.pdb_info()->number( ii )
-				//		<< ") has very small patchArea. residue key: " << key << ", pdb: " << pose.pdb_info()->name();
-				//	TR << ", nbs: ";
-				//	for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
-				//		eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
-				//		Size jj = (*eli)->get_other_ind(ii);
-				//		TR << pose.residue( jj ).name3() << "-" << jj << "(" << pose.pdb_info()->number( jj ) << "), ";
-				//	}
-				//	TR << std::endl;
+				// TR << "Residue " << pose.residue( ii ).name3() << " " << ii << " (PDB: " << pose.pdb_info()->number( ii )
+				//  << ") has very small patchArea. residue key: " << key << ", pdb: " << pose.pdb_info()->name();
+				// TR << ", nbs: ";
+				// for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+				//  eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
+				//  Size jj = (*eli)->get_other_ind(ii);
+				//  TR << pose.residue( jj ).name3() << "-" << jj << "(" << pose.pdb_info()->number( jj ) << "), ";
+				// }
+				// TR << std::endl;
 				//}
 			}
 
@@ -1629,14 +1630,14 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< Real > hASA_within_10A;
 
 
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		TR << "Processing " << *pdb << "... " << std::endl;
 		if ( !utility::file::file_exists( *pdb ) ) {
@@ -1699,9 +1700,9 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 			patchArea = 0.0;
 
 			// add in the hASA contribution regardless of whether the residue is polar or hydrophobic
-			if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() )
+			if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() ) {
 				patchArea += res_to_calculated_hASA.find( key )->second;
-			else {
+			} else {
 				// maybe the residue is a seleno-MET; look for that key and if that's not found then we give up
 				if ( pose.residue( ii ).name3() == "MET" ) {
 					key = get_residue_key( pose, ii, true /*useMSE*/ );
@@ -1726,7 +1727,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 
 			TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << patchArea << " ) include " << std::endl;
 			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
-				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
+					eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
 				// save the value to simplify code ahead
@@ -1748,9 +1749,9 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 					TR << "Not SE" << std::endl;
 					continue;
 				} else {
-					if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() )
+					if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() ) {
 						area = res_to_calculated_hASA.find( key )->second;
-					else {
+					} else {
 						// maybe the residue is a seleno-MET; look for that key and if that's not found then we give up
 						if ( pose.residue( jj ).name3() == "MET" ) {
 							key = get_residue_key( pose, jj, true /*useMSE*/ );
@@ -1780,15 +1781,15 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 				hASA_within_10A.push_back( patchArea );
 
 				//if ( patchArea < 1.0 ) {
-				//	TR << "Residue " << pose.residue( ii ).name3() << " " << ii << " (PDB: " << pose.pdb_info()->number( ii )
-				//		<< ") has very small patchArea. residue key: " << key << ", pdb: " << pose.pdb_info()->name();
-				//	TR << ", nbs: ";
-				//	for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
-				//		eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
-				//		Size jj = (*eli)->get_other_ind(ii);
-				//		TR << pose.residue( jj ).name3() << "-" << jj << "(" << pose.pdb_info()->number( jj ) << "), ";
-				//	}
-				//	TR << std::endl;
+				// TR << "Residue " << pose.residue( ii ).name3() << " " << ii << " (PDB: " << pose.pdb_info()->number( ii )
+				//  << ") has very small patchArea. residue key: " << key << ", pdb: " << pose.pdb_info()->name();
+				// TR << ", nbs: ";
+				// for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+				//  eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
+				//  Size jj = (*eli)->get_other_ind(ii);
+				//  TR << pose.residue( jj ).name3() << "-" << jj << "(" << pose.pdb_info()->number( jj ) << "), ";
+				// }
+				// TR << std::endl;
 				//}
 			}
 
@@ -1821,13 +1822,13 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< std::pair< Size, Real > > hASA_within_10A;
 
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		TR << "Processing " << *pdb << "... " << std::endl;
 		if ( !utility::file::file_exists( *pdb ) ) {
@@ -1865,16 +1866,18 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 
 		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
-			if ( ! pose.residue( ii ).is_protein() )
+			if ( ! pose.residue( ii ).is_protein() ) {
 				continue;
+			}
 
 			// our definition of surface residue is that the residue has fewer than 20 neighbors
 			// only calculate the hpatch data for residues with fewer than 20nbs. but do include all neighboring residues
 			// not just the surface exposed ones.
 			core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 			countNeighbors = tenA_neighbor_graph.get_node( ii )->num_neighbors_counting_self();
-			if ( countNeighbors > SURFACE_EXPOSED_CUTOFF )
+			if ( countNeighbors > SURFACE_EXPOSED_CUTOFF ) {
 				continue;
+			}
 
 			// passed the surface-exposed check...
 
@@ -1885,9 +1888,9 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 			patchArea = 0.0;
 
 			// add in the hASA contribution regardless of whether the residue is polar or hydrophobic
-			if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() )
+			if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() ) {
 				patchArea += res_to_calculated_hASA.find( key )->second;
-			else {
+			} else {
 				// maybe the residue is a seleno-MET; look for that key and if that's not found then we give up
 				if ( pose.residue( ii ).name3() == "MET" ) {
 					key = get_residue_key( pose, ii, true /*useMSE*/ );
@@ -1895,8 +1898,8 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 						patchArea += res_to_calculated_hASA.find( key )->second;
 					} else {
 						//TR << "Residue " << pose.residue( ii ).name3() << " " << ii
-						//	<< " is surface-exposed, with " << countNeighbors << " neighbors, but has no hASA info; residue key: "
-						//	<< key << ", pdb: " << pose.pdb_info()->name() << std::endl;
+						// << " is surface-exposed, with " << countNeighbors << " neighbors, but has no hASA info; residue key: "
+						// << key << ", pdb: " << pose.pdb_info()->name() << std::endl;
 						//exit(1);
 						continue;
 					}
@@ -1912,7 +1915,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 
 			//TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << patchArea << " ) include " << std::endl;
 			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
-				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
+					eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
 				// save the value to simplify code ahead
@@ -1926,9 +1929,9 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 				//TR << pose.residue(jj).name3() << " " << jj << ": ";
 
 				Real area = 0.0;
-				if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() )
+				if ( res_to_calculated_hASA.find( key ) != res_to_calculated_hASA.end() ) {
 					area = res_to_calculated_hASA.find( key )->second;
-				else {
+				} else {
 					// maybe the residue is a seleno-MET; look for that key and if that's not found then we give up
 					if ( pose.residue( jj ).name3() == "MET" ) {
 						key = get_residue_key( pose, jj, true /*useMSE*/ );
@@ -1936,8 +1939,8 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 							area = res_to_calculated_hASA.find( key )->second;
 						} else {
 							//TR << "Residue " << pose.residue( jj ).name3() << " " << jj
-							//	<< " is surface-exposed, with " << countNeighbors << " neighbors, but has no hASA info; residue key: "
-							//	<< key << ", pdb: " << pose.pdb_info()->name() << std::endl;
+							// << " is surface-exposed, with " << countNeighbors << " neighbors, but has no hASA info; residue key: "
+							// << key << ", pdb: " << pose.pdb_info()->name() << std::endl;
 							//exit(1);
 							continue;
 						}
@@ -1984,7 +1987,7 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< utility::vector1< Real > > hASA_within_10A( 20 );
@@ -2010,9 +2013,9 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 		utility::vector1< core::Real > residue_sasa( pose.size(), 0.0 );
 		utility::vector1< core::Real > residue_hsasa( pose.size(), 0.0 ); // hydrophobic SASA only
 		core::Real total_hydrophobic_sasa = core::scoring::calc_per_res_hydrophobic_sasa( pose, residue_sasa, residue_hsasa, 1.4 /* probe radius */ );
-		#ifdef FILE_DEBUG
-			TR << "total_hydrophobic_sasa: " << total_hydrophobic_sasa << std::endl;
-		#endif
+#ifdef FILE_DEBUG
+		TR << "total_hydrophobic_sasa: " << total_hydrophobic_sasa << std::endl;
+#endif
 
 		Real total_area = 0.0;
 		Real total_hydrophobic_area = 0.0;
@@ -2024,16 +2027,18 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 
 		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
-			if ( ! pose.residue( ii ).is_protein() )
+			if ( ! pose.residue( ii ).is_protein() ) {
 				continue;
+			}
 
 			// our definition of surface residue is that the residue has fewer than 20 neighbors
 			// only calculate the hpatch data for residues with fewer than 20nbs. but do include all neighboring residues
 			// not just the surface exposed ones.
 			core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 			countNeighbors = tenA_neighbor_graph.get_node( ii )->num_neighbors_counting_self();
-			if ( countNeighbors > SURFACE_EXPOSED_CUTOFF )
+			if ( countNeighbors > SURFACE_EXPOSED_CUTOFF ) {
 				continue;
+			}
 
 			// passed the surface-exposed check...
 			// reset the area size for every surface-exposed residue
@@ -2048,14 +2053,15 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 
 			//TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << residue_hsasa[ii] << " ) include " << std::endl;
 			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
-				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
+					eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
 				// save the value to simplify code ahead
 				Size jj = (*eli)->get_other_ind(ii);
 
-				if ( !(pose.residue(jj).is_protein()) )
+				if ( !(pose.residue(jj).is_protein()) ) {
 					continue;
+				}
 
 				total_area += residue_sasa[ jj ];
 				total_hydrophobic_area += residue_hsasa[ jj ];
@@ -2128,7 +2134,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< Real > hASA_within_10A;
@@ -2154,7 +2160,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 	}
 
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		TR << "Processing " << *pdb << "... " << std::endl;
 		if ( !utility::file::file_exists( *pdb ) ) {
@@ -2206,7 +2212,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 				if ( res_to_average_hASA.find( key ) != res_to_average_hASA.end() ) {
 					patchArea += res_to_average_hASA.find( key )->second;
 					//TR << pose.residue( ii ).name3() << " " << ii << ": nbs: " << countNeighbors << ", hp_ASA: " << res_to_average_hASA.find( key )->second
-					//	<< "; pdb: " << pose.pdb_info()->name() << std::endl;
+					// << "; pdb: " << pose.pdb_info()->name() << std::endl;
 				} else {
 					TR << "Residue " << pose.residue( ii ).name3() << " " << ii << ", nbs: "
 						<< countNeighbors << ", no hASA info; residue key: " << key << ", pdb: "
@@ -2220,7 +2226,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 
 			//TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " include " << std::endl;
 			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
-				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
+					eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
 				// save the value to simplify code ahead
@@ -2286,7 +2292,7 @@ void calculate_hASA_by_type_and_nbcount( std::vector< FileName > & pdb_file_name
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has, broken up by res type
 	utility::vector1< utility::vector1< Real > > hASA_by_aa_type_nbs_1_to_10( chemical::num_canonical_aas );
@@ -2296,7 +2302,7 @@ void calculate_hASA_by_type_and_nbcount( std::vector< FileName > & pdb_file_name
 	utility::vector1< utility::vector1< Real > > hASA_by_aa_type_nbs_21_to_24( chemical::num_canonical_aas );
 
 	// iterate through all the structures - do something to them
-	for(std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
+	for ( std::vector< FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb ) {
 
 		TR << "Processing " << *pdb << "... " << std::endl;
 		if ( !utility::file::file_exists( *pdb ) ) {
@@ -2316,9 +2322,9 @@ void calculate_hASA_by_type_and_nbcount( std::vector< FileName > & pdb_file_name
 		utility::vector1< core::Real > residue_sasa( pose.size(), 0.0 );
 		utility::vector1< core::Real > residue_hsasa( pose.size(), 0.0 ); // hydrophobic SASA only
 		core::Real total_hydrophobic_sasa = core::scoring::calc_per_res_hydrophobic_sasa( pose, residue_sasa, residue_hsasa, 1.4 /* probe radius */, true /* use naccess sasa radii */ );
-		#ifdef FILE_DEBUG
-			TR << "total_hydrophobic_sasa: " << total_hydrophobic_sasa << std::endl;
-		#endif
+#ifdef FILE_DEBUG
+		TR << "total_hydrophobic_sasa: " << total_hydrophobic_sasa << std::endl;
+#endif
 
 		// Now iterate over all residues (well, exclude 3 from each end) and figure out which residues are surface-exposed
 		float hASA = 0.0;
@@ -2351,9 +2357,9 @@ void calculate_hASA_by_type_and_nbcount( std::vector< FileName > & pdb_file_name
 				hASA_by_aa_type_nbs_21_to_24[ pose.residue(ii).aa() ].push_back( hASA );
 			}
 
-			#ifdef FILE_DEBUG
-				TR << pose.residue( ii ).name3() << " " << ii << ": nbs: " << countNeighbors << ", hASA: " << hASA << std::endl;
-			#endif
+#ifdef FILE_DEBUG
+			TR << pose.residue( ii ).name3() << " " << ii << ": nbs: " << countNeighbors << ", hASA: " << hASA << std::endl;
+#endif
 
 		}
 
@@ -2450,7 +2456,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< utility::vector1< Real > > hASA_within_10A( 20 );
@@ -2507,8 +2513,9 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 
 		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
-			if ( ! pose.residue( ii ).is_protein() )
+			if ( ! pose.residue( ii ).is_protein() ) {
 				continue;
+			}
 
 			// our definition of surface residue is that the residue has fewer than 16 (or 20) neighbors
 			// only calculate the hpatch data for residues with fewer than that # of nbs.
@@ -2516,8 +2523,9 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 			// before they contribute no hASA.
 			core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 			countNeighbors = tenA_neighbor_graph.get_node( ii )->num_neighbors_counting_self();
-			if ( countNeighbors > SURFACE_EXPOSED_CUTOFF )
+			if ( countNeighbors > SURFACE_EXPOSED_CUTOFF ) {
 				continue;
+			}
 
 			// passed the surface-exposed check...
 			// reset the area size for every surface-exposed residue
@@ -2527,10 +2535,10 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 			std::string key = get_map_key( pose.residue(ii).name3(), countNeighbors );
 			if ( res_to_average_hASA.find( key ) != res_to_average_hASA.end() ) {
 				patchArea += res_to_average_hASA.find( key )->second;
-				#ifdef FILE_DEBUG
-					TR << pose.residue( ii ).name3() << " " << ii << ": nbs: " << countNeighbors << ", hp_ASA: " << res_to_average_hASA.find( key )->second
-						<< "; pdb: " << pose.pdb_info()->name() << std::endl;
-				#endif
+#ifdef FILE_DEBUG
+				TR << pose.residue( ii ).name3() << " " << ii << ": nbs: " << countNeighbors << ", hp_ASA: " << res_to_average_hASA.find( key )->second
+					<< "; pdb: " << pose.pdb_info()->name() << std::endl;
+#endif
 			} else {
 				TR << "Residue " << pose.residue( ii ).name3() << " " << ii << ", nbs: " << countNeighbors << ", no hASA info; residue key: " << key << ", pdb: "
 					<< pose.pdb_info()->name() << std::endl;
@@ -2539,11 +2547,11 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 
 			// add in every neighbors hASA too
 			Size nbresidue_num_nbs = 0; // create another variable to hold variable count because we want to use the one above for array index below
-			#ifdef FILE_DEBUG
-				TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << res_to_average_hASA.find( key )->second << " ) include " << std::endl;
-			#endif
+#ifdef FILE_DEBUG
+			TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << res_to_average_hASA.find( key )->second << " ) include " << std::endl;
+#endif
 			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
-				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
+					eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
 				// save the value to simplify code ahead
@@ -2551,35 +2559,35 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 
 				if ( ! pose.residue(jj).is_protein() ) { continue; }
 
-				#ifdef FILE_DEBUG
-					TR << pose.residue(jj).name3() << " " << jj;
-				#endif
+#ifdef FILE_DEBUG
+				TR << pose.residue(jj).name3() << " " << jj;
+#endif
 
 				nbresidue_num_nbs = tenA_neighbor_graph.get_node(jj)->num_neighbors_counting_self();
 				if ( nbresidue_num_nbs > BURIED_RESIDUE_NO_HSASA_CUTOFF ) {
-					#ifdef FILE_DEBUG
-						TR << std::endl;
-					#endif
+#ifdef FILE_DEBUG
+					TR << std::endl;
+#endif
 					continue; // accomplishes the same as adding 0.00 for this residue/nb
 				} else {
 					key = get_map_key( pose.residue(jj).name3(), nbresidue_num_nbs );
 					if ( res_to_average_hASA.find( key ) != res_to_average_hASA.end() ) {
-						#ifdef FILE_DEBUG
-							TR << ": nbs: " << nbresidue_num_nbs << ", hASA: " << res_to_average_hASA.find( key )->second << "; pdb: " << pose.pdb_info()->name();
-						#endif
+#ifdef FILE_DEBUG
+						TR << ": nbs: " << nbresidue_num_nbs << ", hASA: " << res_to_average_hASA.find( key )->second << "; pdb: " << pose.pdb_info()->name();
+#endif
 						patchArea += res_to_average_hASA.find( key )->second;
 					} else {
 						TR << pose.residue(jj).name3() << " " << jj << ", nbs: " << nbresidue_num_nbs << ", no hASA info; residue key: " << key << std::endl;
 						exit(1);
 					}
 				}
-				#ifdef FILE_DEBUG
-					TR << std::endl;
-				#endif
+#ifdef FILE_DEBUG
+				TR << std::endl;
+#endif
 			}
-			#ifdef FILE_DEBUG
-				TR << "\n" << std::endl;
-			#endif
+#ifdef FILE_DEBUG
+			TR << "\n" << std::endl;
+#endif
 
 			// now that we know how much exposed hASA this residue has, save it somewhere
 			hASA_within_10A[ countNeighbors ].push_back( patchArea );
@@ -2588,9 +2596,9 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 
 	} // end for loop over multiple input pdb files
 
-	#ifdef FILE_DEBUG
-		TR << "Done looping over PDB files. Outputting patch files." << std::endl;
-	#endif
+#ifdef FILE_DEBUG
+	TR << "Done looping over PDB files. Outputting patch files." << std::endl;
+#endif
 
 	// output the data into separate files for each residue type
 	std::stringstream filename;
@@ -2620,75 +2628,76 @@ main( int argc, char* argv[] )
 
 	try {
 
-	clock_t starttime = clock();
-	//basic::prof_reset();
+		clock_t starttime = clock();
+		//basic::prof_reset();
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace core;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	//ronj concatenate -s and -l flags together to get total list of PDB files
-	//ronj  The advantage of parsing -s and -l separately is that users can specify a list and a single structure on the
-	//ronj command line.
-	std::vector< FileName > pdb_file_names;
-	if ( option[ in::file::s ].active() )
-		pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
-
-	std::vector< FileName > list_file_names;
-	if ( option[ in::file::l ].active() ) {
-		list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
-
-		//ronj for each file input with the -l switch...
-		for ( std::vector< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
-			std::string listfilename( i->name() );
-			std::ifstream data( listfilename.c_str() );
-			//ronj try to open that particular file first...
-			if ( !data.good() ) {
-				utility_exit_with_message( "Unable to open file: " + listfilename + '\n' );
-			}
-			std::string line;
-			//ronj then read all the lines in that file until there are no more
-			while( getline(data, line) ) {
-				pdb_file_names.push_back( FileName(line) );
-			}
-			data.close();
+		//ronj concatenate -s and -l flags together to get total list of PDB files
+		//ronj  The advantage of parsing -s and -l separately is that users can specify a list and a single structure on the
+		//ronj command line.
+		std::vector< FileName > pdb_file_names;
+		if ( option[ in::file::s ].active() ) {
+			pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
 		}
-	}
 
-	if ( pdb_file_names.size() == 0 ) {
-		utility_exit_with_message_status("No files given: Use either -file:s or -file:l to designate a single pdb or a list of pdbs", 1);
-	}
+		std::vector< FileName > list_file_names;
+		if ( option[ in::file::l ].active() ) {
+			list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
 
-	TR << "Constructed list of pdb files." << std::endl;
+			//ronj for each file input with the -l switch...
+			for ( std::vector< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
+				std::string listfilename( i->name() );
+				std::ifstream data( listfilename.c_str() );
+				//ronj try to open that particular file first...
+				if ( !data.good() ) {
+					utility_exit_with_message( "Unable to open file: " + listfilename + '\n' );
+				}
+				std::string line;
+				//ronj then read all the lines in that file until there are no more
+				while ( getline(data, line) ) {
+					pdb_file_names.push_back( FileName(line) );
+				}
+				data.close();
+			}
+		}
 
-	//find_hppatches_nb_graph( pdb_file_names );
-	//find_hppatches_distance( pdb_file_names );
-	//calculate_percent_hydrophobic_stats( pdb_file_names );
-	//calculate_percent_hydrophobic_distribution( pdb_file_names );
-	//calculate_hydrophobic_accessible_surface_area( pdb_file_names );
-	//calculate_total_hASA_within_distance_exact_hASA_values( pdb_file_names );
-	//calculate_total_hASA_within_distance_exact_hASA_values_allnbs( pdb_file_names );
+		if ( pdb_file_names.size() == 0 ) {
+			utility_exit_with_message_status("No files given: Use either -file:s or -file:l to designate a single pdb or a list of pdbs", 1);
+		}
 
-	//calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditionalonnumnbs( pdb_file_names );
-	//calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_conditionalonnumnbs( pdb_file_names );
+		TR << "Constructed list of pdb files." << std::endl;
 
-	//calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs( pdb_file_names );
-	//calculate_hASA_by_type_and_exposure( pdb_file_names );
-	//calculate_hASA_by_type_and_attractiveE( pdb_file_names );
+		//find_hppatches_nb_graph( pdb_file_names );
+		//find_hppatches_distance( pdb_file_names );
+		//calculate_percent_hydrophobic_stats( pdb_file_names );
+		//calculate_percent_hydrophobic_distribution( pdb_file_names );
+		//calculate_hydrophobic_accessible_surface_area( pdb_file_names );
+		//calculate_total_hASA_within_distance_exact_hASA_values( pdb_file_names );
+		//calculate_total_hASA_within_distance_exact_hASA_values_allnbs( pdb_file_names );
 
-	//calculate_hydrophobic_accessible_surface_area( pdb_file_names );
+		//calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditionalonnumnbs( pdb_file_names );
+		//calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_conditionalonnumnbs( pdb_file_names );
 
-	//calculate_hASA_by_type_and_nbcount( pdb_file_names );
-	calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs( pdb_file_names );
+		//calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs( pdb_file_names );
+		//calculate_hASA_by_type_and_exposure( pdb_file_names );
+		//calculate_hASA_by_type_and_attractiveE( pdb_file_names );
 
-	//basic::prof_show();
-	clock_t stoptime = clock();
-	TR << "Whole run took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
+		//calculate_hydrophobic_accessible_surface_area( pdb_file_names );
 
-	return 0;
+		//calculate_hASA_by_type_and_nbcount( pdb_file_names );
+		calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs( pdb_file_names );
+
+		//basic::prof_show();
+		clock_t stoptime = clock();
+		TR << "Whole run took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
+
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

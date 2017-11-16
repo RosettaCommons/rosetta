@@ -26,7 +26,7 @@
 
 // C++ headers
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.elec.util" );
+static basic::Tracer TR( "core.scoring.elec.util" );
 
 namespace core {
 namespace scoring {

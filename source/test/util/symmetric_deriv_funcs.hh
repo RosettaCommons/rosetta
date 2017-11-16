@@ -35,7 +35,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
-static THREAD_LOCAL basic::Tracer TR_derivtest("util.symmetric_deriv_funcs");
+static basic::Tracer TR_derivtest("util.symmetric_deriv_funcs");
 
 class SymmetricAtomDerivValidator
 {

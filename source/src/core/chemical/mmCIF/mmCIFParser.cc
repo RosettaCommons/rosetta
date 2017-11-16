@@ -41,7 +41,7 @@ namespace chemical {
 namespace mmCIF {
 
 //Load up the tracer for this class
-static THREAD_LOCAL basic::Tracer TR( "core.io.mmCIF.mmCIFParser" );
+static basic::Tracer TR( "core.io.mmCIF.mmCIFParser" );
 
 
 mmCIFParser::mmCIFParser() {

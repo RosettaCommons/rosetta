@@ -71,7 +71,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.MembranePotential" );
+static basic::Tracer TR( "core.scoring.MembranePotential" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

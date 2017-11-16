@@ -57,7 +57,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr("protocols.filters.SSElementMotifContactFilter");
+static basic::Tracer tr("protocols.filters.SSElementMotifContactFilter");
 
 namespace protocols {
 namespace simple_filters {

@@ -39,7 +39,7 @@
 // C++ headers
 #include <utility/assert.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.SymmetricalResidueSelector" );
+static basic::Tracer TR( "core.select.residue_selector.SymmetricalResidueSelector" );
 
 namespace core {
 namespace select {

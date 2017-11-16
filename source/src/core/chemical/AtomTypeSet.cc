@@ -54,7 +54,7 @@ using namespace basic::options;
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
+static basic::Tracer tr( "core.chemical.AtomTypeSet" );
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -413,7 +413,7 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 				for ( Size i=1; i<= default_parameter_names.size(); ++i ) {
 					Real const default_param( get_default_parameter( default_parameter_names[i], name ) );
 					// this output doesnt seem to get written out!? so I added more verbose output below (PB)
-					basic::T("core.chemical.AtomTypeSet") << "Using default parameter " << default_parameter_names[i] << " = " <<
+					tr << "Using default parameter " << default_parameter_names[i] << " = " <<
 						default_param << " in place of " << tags[i] << " for atomtype " << name << '\n';
 					params.push_back( default_param );
 				}

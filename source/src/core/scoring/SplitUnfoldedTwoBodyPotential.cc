@@ -37,7 +37,7 @@
 #include <string>
 #include <map>
 
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.SplitUnfoldedTwoBodyPotential" );
+static basic::Tracer TR( "core.scoring.SplitUnfoldedTwoBodyPotential" );
 
 namespace core {
 namespace scoring {

@@ -54,10 +54,10 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static THREAD_LOCAL basic::Tracer TR_DS( "core.pack.interaction_graph.RotamerDots.DotSphere" );
-static THREAD_LOCAL basic::Tracer TR_RD( "core.pack.interaction_graph.RotamerDots.RotamerDots" );
-static THREAD_LOCAL basic::Tracer TR_RDC( "core.pack.interaction_graph.RotamerDots.RotamerDotsCache" );
-static THREAD_LOCAL basic::Tracer TR_RDRD( "core.pack.interaction_graph.RotamerDots.RotamerDotsRadiusData" );
+static basic::Tracer TR_DS( "core.pack.interaction_graph.RotamerDots.DotSphere" );
+static basic::Tracer TR_RD( "core.pack.interaction_graph.RotamerDots.RotamerDots" );
+static basic::Tracer TR_RDC( "core.pack.interaction_graph.RotamerDots.RotamerDotsCache" );
+static basic::Tracer TR_RDRD( "core.pack.interaction_graph.RotamerDots.RotamerDotsRadiusData" );
 
 
 using namespace ObjexxFCL::format;

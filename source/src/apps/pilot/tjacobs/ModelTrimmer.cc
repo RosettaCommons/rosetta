@@ -46,7 +46,7 @@
 #include <iterator>
 
 
-static THREAD_LOCAL basic::Tracer TR("ModelTrimmer");
+static basic::Tracer TR("ModelTrimmer");
 
 //std::string
 //check_parallel(protocols::sewing::SewSegment const & seg1, protocols::sewing::SewSegment const & seg2) {

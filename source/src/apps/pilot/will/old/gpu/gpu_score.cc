@@ -46,7 +46,7 @@
 #include <utility/io/ozstream.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "gpu_score_test" );
+static basic::Tracer TR( "gpu_score_test" );
 
 
 OPT_1GRP_KEY( Integer, gpu, numthreads_per_workunit )
@@ -58,7 +58,7 @@ void register_options() {
 	NEW_OPT( gpu::numthreads_per_workunit ,"local work unit dim", 128 );
 	NEW_OPT( gpu::kernel ,"kernel file", "" );
 
-	
+
 }
 
 #include <apps/pilot/will/will_util.ihh>
@@ -80,8 +80,8 @@ typedef cl_uint8 uint8;
 
 int main(int argc, char *argv[]) {
 	register_options();
-  devel::init(argc,argv);
-  using namespace basic::options;
+	devel::init(argc,argv);
+	using namespace basic::options;
 
 
 	gpu_score_test(BB);

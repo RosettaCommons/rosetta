@@ -39,7 +39,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.PeptideStubMover" );
+static basic::Tracer TR( "protocols.cyclic_peptide.PeptideStubMover" );
 
 namespace protocols {
 namespace cyclic_peptide {

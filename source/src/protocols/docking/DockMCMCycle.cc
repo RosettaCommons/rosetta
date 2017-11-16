@@ -54,7 +54,6 @@
 #include <string>
 
 #include <basic/Tracer.hh>
-using basic::T;
 
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
 #include <utility/vector0.hh>
@@ -69,7 +68,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockMCMCycle" );
+static basic::Tracer TR( "protocols.docking.DockMCMCycle" );
 
 //     originally from dock_structure.cc Jeff Gray April 2001
 

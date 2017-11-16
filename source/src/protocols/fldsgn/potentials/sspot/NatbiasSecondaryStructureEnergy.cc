@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.potentials.sspot.NatbiasSecondaryStructureEnergy", basic::t_info );
+static basic::Tracer TR( "protocols.fldsgn.potentials.sspot.NatbiasSecondaryStructureEnergy", basic::t_info );
 
 namespace protocols {
 namespace fldsgn {

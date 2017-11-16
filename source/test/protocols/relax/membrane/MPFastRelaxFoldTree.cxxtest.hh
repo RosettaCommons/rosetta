@@ -45,7 +45,7 @@ using namespace core::conformation;
 using namespace core::conformation::membrane;
 using namespace protocols::relax::membrane;
 
-static THREAD_LOCAL basic::Tracer TR("protocols.relax.membrane.MPFastRelaxFoldTree.cxxtest");
+static basic::Tracer TR("protocols.relax.membrane.MPFastRelaxFoldTree.cxxtest");
 
 class MPFastRelaxFoldTreeTest : public CxxTest::TestSuite {
 

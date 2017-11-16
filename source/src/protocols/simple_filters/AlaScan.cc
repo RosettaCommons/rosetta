@@ -63,7 +63,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.AlaScan" );
+static basic::Tracer TR( "protocols.simple_filters.AlaScan" );
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP AlaScanFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AlaScan ); }

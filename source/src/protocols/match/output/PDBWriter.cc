@@ -55,7 +55,7 @@ namespace protocols {
 namespace match {
 namespace output {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.match.output.PDBWriter" );
+static basic::Tracer TR( "protocols.match.output.PDBWriter" );
 
 PDBWriter::PDBWriter() :
 	coordinate_cacher_(/* NULL */),

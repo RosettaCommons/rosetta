@@ -87,7 +87,7 @@ using core::scoring::electron_density::poseCoords;
 using core::scoring::electron_density::poseCoord;
 
 
-static THREAD_LOCAL basic::Tracer TR( "density_tools" );
+static basic::Tracer TR( "density_tools" );
 
 // map atom names to elements
 //   loosely based on openbabel logic

@@ -11,7 +11,7 @@
 ///
 /// @brief   MP Framework: Read Membrane Pose and Dump Result to PDB
 /// @details Last Modified: 3/26/14
-///			 
+///
 /// @author  Rebecca Alford (rfalford12@gmail.com)
 
 // App headers
@@ -21,22 +21,22 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/membrane/CreateMembranePoseMover.hh>
 
-#include <core/scoring/ScoreFunction.hh> 
-#include <core/scoring/ScoreTypes.hh> 
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreTypes.hh>
 
 // New Energy Methods
-#include <core/scoring/membrane/MPEnvEnergy.hh> 
-#include <core/scoring/membrane/MPEnergy.hh> 
-#include <core/scoring/membrane/MPPairEnergy.hh> 
-#include <core/scoring/membrane/MPNonHelixPenalty.hh> 
-#include <core/scoring/membrane/MPTerminiPenalty.hh> 
-#include <core/scoring/membrane/MPTMProjPenalty.hh> 
-#include <core/scoring/membrane/MPSpanningPenalty.hh> 
-#include <core/scoring/membrane/MPSecStructPenalty.hh> 
+#include <core/scoring/membrane/MPEnvEnergy.hh>
+#include <core/scoring/membrane/MPEnergy.hh>
+#include <core/scoring/membrane/MPPairEnergy.hh>
+#include <core/scoring/membrane/MPNonHelixPenalty.hh>
+#include <core/scoring/membrane/MPTerminiPenalty.hh>
+#include <core/scoring/membrane/MPTMProjPenalty.hh>
+#include <core/scoring/membrane/MPSpanningPenalty.hh>
+#include <core/scoring/membrane/MPSecStructPenalty.hh>
 
 // Package Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh> 
+#include <core/pose/Pose.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -52,17 +52,17 @@
 using basic::Error;
 using basic::Warning;
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.membrane.read_mp_pose" );
+static basic::Tracer TR( "apps.pilot.membrane.read_mp_pose" );
 
 void*
 my_main( void* )
 {
 	using namespace protocols::membrane;
 	using namespace protocols::jd2;
-	
 
-	// to be written... would instantiate energy methods and check results? 
-	
+
+	// to be written... would instantiate energy methods and check results?
+
 	return NULL;
 }
 
@@ -71,13 +71,13 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		
+
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
-	
+
 }
 

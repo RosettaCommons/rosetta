@@ -90,9 +90,9 @@
 #include <protocols/moves/mover_schemas.hh>
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );
-static THREAD_LOCAL basic::Tracer stats_TR( "STATS.PlaceStubMover" );
-static THREAD_LOCAL basic::Tracer TR_debug( "DEBUG.PlaceStubMover" );
+static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );
+static basic::Tracer stats_TR( "STATS.PlaceStubMover" );
+static basic::Tracer TR_debug( "DEBUG.PlaceStubMover" );
 
 
 namespace protocols {

@@ -50,7 +50,7 @@
 #undef interface
 #endif
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingProtocol.metrics" );
+static basic::Tracer TR( "protocols.docking.DockingProtocol.metrics" );
 
 using namespace core;
 

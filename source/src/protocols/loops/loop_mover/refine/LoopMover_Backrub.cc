@@ -71,7 +71,7 @@ namespace refine {
 using namespace core;
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.loops..LoopMover_Refine_Backrub" );
+static basic::Tracer TR( "protocols.loops..LoopMover_Refine_Backrub" );
 
 LoopMover_Refine_Backrub::LoopMover_Refine_Backrub() :
 	LoopMover()

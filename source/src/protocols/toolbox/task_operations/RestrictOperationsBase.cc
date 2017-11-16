@@ -29,7 +29,7 @@
 
 #include <utility/vector1.hh>
 
-//static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictOperationsBase" );
+//static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictOperationsBase" );
 
 namespace protocols {
 namespace toolbox {

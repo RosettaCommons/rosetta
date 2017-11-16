@@ -40,7 +40,7 @@
 // C++ headers
 #include <utility/assert.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.residue_selectors.NamedSegmentSelector" );
+static basic::Tracer TR( "protocols.denovo_design.residue_selectors.NamedSegmentSelector" );
 
 namespace protocols {
 namespace denovo_design {

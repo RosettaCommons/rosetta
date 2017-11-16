@@ -40,7 +40,7 @@
 
 using basic::Error;
 using basic::Warning;
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.DatabaseThread" );
+static basic::Tracer TR( "protocols.toolbox.TaskOperations.DatabaseThread" );
 
 namespace protocols {
 namespace toolbox {

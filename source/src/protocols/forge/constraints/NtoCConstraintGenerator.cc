@@ -31,7 +31,7 @@
 
 // boost headers
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.NtoCConstraintGenerator" );
+static basic::Tracer TR( "protocols.forge.constraints.NtoCConstraintGenerator" );
 
 namespace protocols {
 namespace forge {

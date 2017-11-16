@@ -102,7 +102,7 @@
 namespace core {
 namespace pose {
 
-static THREAD_LOCAL basic::Tracer TR( "core.pose.extra_pose_info_util" );
+static basic::Tracer TR( "core.pose.extra_pose_info_util" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details Crude way to guess secondary structure given a pose. This function

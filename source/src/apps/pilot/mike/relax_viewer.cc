@@ -61,7 +61,6 @@
 #include <protocols/relax/ClassicRelax.hh>
 
 
-using basic::T;
 using basic::Error;
 using basic::Warning;
 
@@ -122,7 +121,7 @@ void*
 my_main( void* )
 {
 	numeric::random::RandomGenerator::initializeRandomGenerators(
-		 111111, numeric::random::_RND_TestRun_, "ran3");
+		111111, numeric::random::_RND_TestRun_, "ran3");
 
 	relax_test();
 	return 0;
@@ -131,13 +130,13 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-    try {
-    	// options, random initialization
-    	devel::init( argc, argv );
-    	protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	try {
+		// options, random initialization
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

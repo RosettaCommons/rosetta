@@ -28,7 +28,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DeleteChainMover" );
+static basic::Tracer TR( "protocols.simple_moves.DeleteChainMover" );
 
 // XRW TEMP std::string
 // XRW TEMP DeleteChainMoverCreator::keyname() const

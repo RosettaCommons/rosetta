@@ -57,7 +57,7 @@
 // unit test utility functions
 #include <protocols/denovo_design/test_utils.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.BridgeChainsMover.cxxtest" );
+static basic::Tracer TR( "protocols.denovo_design.movers.BridgeChainsMover.cxxtest" );
 
 using namespace protocols::denovo_design::architects;
 using namespace protocols::denovo_design::connection;

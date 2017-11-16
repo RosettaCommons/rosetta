@@ -37,7 +37,7 @@
 #include <limits>
 
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.MinScoreScoreFunction" );
+static basic::Tracer tr( "core.scoring.MinScoreScoreFunction" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

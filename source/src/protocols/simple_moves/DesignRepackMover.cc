@@ -76,7 +76,7 @@ using namespace core;
 
 using namespace core::scoring;
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DesignRepackMover" );
+static basic::Tracer TR( "protocols.simple_moves.DesignRepackMover" );
 
 
 namespace protocols {

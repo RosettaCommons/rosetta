@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR( "core.pack.interaction_graph.SurfaceEnergy" );
+static basic::Tracer TR( "core.pack.interaction_graph.SurfaceEnergy" );
 
 // C++ headers
 

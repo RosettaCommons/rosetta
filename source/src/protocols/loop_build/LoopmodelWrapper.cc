@@ -36,6 +36,8 @@
 namespace protocols {
 namespace loop_build {
 
+static basic::Tracer TR("protocols.loop_build.LoopBuild");
+
 using namespace std;
 using core::Size;
 using core::Real;
@@ -90,7 +92,6 @@ void LoopmodelWrapper::apply(core::pose::Pose & pose) {
 	// that this method calls apply() at the end, while LoopBuild_main calls
 	// jd2::go().  I couldn't think of any way to avoid copying this code.
 
-	basic::Tracer TR("protocols.loop_build.LoopBuild");
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

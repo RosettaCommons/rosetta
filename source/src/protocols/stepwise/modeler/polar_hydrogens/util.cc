@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.polar_hydrogens.util" );
+static basic::Tracer TR( "protocols.stepwise.modeler.polar_hydrogens.util" );
 
 using namespace core;
 

@@ -65,7 +65,8 @@
 
 #include <protocols/moves/PyMOLMover.hh>
 
-static THREAD_LOCAL basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
+static basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
+static basic::MemTracer mem_tr;
 
 
 namespace protocols {
@@ -81,9 +82,9 @@ AbrelaxMover::AbrelaxMover() :
 	post_loop_closure_protocol_( /* NULL */ ),
 	b_return_unrelaxed_fullatom_( false )
 {
-	basic::mem_tr << "AbrelaxMover CStor start" << std::endl;
+	mem_tr << "AbrelaxMover CStor start" << std::endl;
 	set_defaults();
-	basic::mem_tr << "AbrelaxMover CStor end" << std::endl;
+	mem_tr << "AbrelaxMover CStor end" << std::endl;
 }
 
 AbrelaxMover::~AbrelaxMover() = default;
@@ -241,7 +242,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	runtime_assert( topology_broker() != nullptr );
 
 	tr.Info << "AbrelaxMover: " << get_current_tag() << std::endl;
-	basic::mem_tr << "AbrelaxMover::apply" << std::endl;
+	mem_tr << "AbrelaxMover::apply" << std::endl;
 	basic::show_time( tr,  "AbrelaxMover: start..."+jd2::current_batch()+" "+jd2::current_output_name() );
 
 	// kidnap sampling_protocols's checkpointer - this could ultimately be a singleton i guess
@@ -377,7 +378,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 
 	//   Fullatom switch
 	//
-	basic::mem_tr << "AbrelaxMover::apply fullatom switch" << std::endl;
+	mem_tr << "AbrelaxMover::apply fullatom switch" << std::endl;
 	if ( relax_protocol() || b_return_unrelaxed_fullatom_ ) {
 		tr << "AbrelaxMover: switch to fullatom" << std::endl;
 		jd2::add_string_real_pair_to_current_job( "prefa_centroid_score",  ((sampling_protocol()->current_scorefxn())( pose ) ) );
@@ -421,7 +422,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 
 	//   Relax
 	//
-	basic::mem_tr << "AbrelaxMover::apply relax" << std::endl;
+	mem_tr << "AbrelaxMover::apply relax" << std::endl;
 	if ( ( loop_success || option[ OptionKeys::abinitio::relax_failures ]() ) && relax_protocol() ) {
 		tr << "AbrelaxMover: relax " << std::endl;
 		if ( !checkpoints.recover_checkpoint( pose, get_current_tag(), "relax", true, true) ) {
@@ -457,7 +458,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	if ( sampling_protocol() ) sampling_protocol()->get_checkpoints().clear_checkpoints();
 	if ( !b_return_unrelaxed_fullatom_ ) ( *last_scorefxn)( pose );
 
-	basic::mem_tr << "AbrelaxMover::apply end" << std::endl;
+	mem_tr << "AbrelaxMover::apply end" << std::endl;
 	basic::show_time( tr,  "AbrelaxMover: finished ..."+jd2::current_batch()+" "+jd2::current_output_name() );
 }
 

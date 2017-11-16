@@ -35,7 +35,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.LigandDockingLoaders" );
+static basic::Tracer TR( "protocols.ligand_docking.LigandDockingLoaders" );
 
 InterfaceBuilderLoader::InterfaceBuilderLoader() {}
 InterfaceBuilderLoader::~InterfaceBuilderLoader() = default;
