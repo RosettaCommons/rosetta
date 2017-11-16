@@ -84,24 +84,7 @@ bool his_tyr_connectivity( core::pose::Pose const & pose, hbond_net_struct & i )
 //////////
 //Inlines:
 
-using namespace core::scoring::hbonds::graph;
-
-inline bool heavy_atoms_are_within_cutoff(
-	numeric::xyzVector< core::Real > const & atom1,
-	numeric::xyzVector< float > const & atom2
-){
-	float const cutoff = 3.25;
-	float const cutoff_squared = 3.25*3.25;
-
-	//do quick Manhatten check
-	//assuming we already checked x
-	if ( std::abs( atom1.y() - atom2.y() ) > cutoff ) return false;
-	if ( std::abs( atom1.z() - atom2.z() ) > cutoff ) return false;
-
-	return atom1.distance_squared( atom2 ) < cutoff_squared;
-}
-
-inline bool contains( utility::vector1< AtomInfo > const & atom_vec, short unsigned int const local_atom_id ){
+inline bool contains( utility::vector1< core::scoring::hbonds::graph::AtomInfo > const & atom_vec, short unsigned int const local_atom_id ){
 	for ( auto const & atom_info : atom_vec ) {
 		if ( atom_info.local_atom_id() == local_atom_id ) return true;
 		if ( atom_info.local_atom_id() > local_atom_id ) return false;//atom_vec is always sorted by local_atom_id
@@ -110,11 +93,11 @@ inline bool contains( utility::vector1< AtomInfo > const & atom_vec, short unsig
 }
 
 
-inline bool edge_satisfies_heavy_unsat_for_node( NetworkState const & current_state, AtomLevelHBondNode const * node, AtomLevelHBondEdge const * edge ){
-	utility::vector1< AtomInfo > const & atom_vec = current_state.unsatisfied_sc_atoms.at( node->moltenres() );
+inline bool edge_satisfies_heavy_unsat_for_node( NetworkState const & current_state, core::scoring::hbonds::graph::AtomLevelHBondNode const * node, core::scoring::hbonds::graph::AtomLevelHBondEdge const * edge ){
+	utility::vector1< core::scoring::hbonds::graph::AtomInfo > const & atom_vec = current_state.unsatisfied_sc_atoms.at( node->moltenres() );
 	bool const node_is_first_node_ind = ( node->get_node_index() == edge->get_first_node_ind() );
 
-	for ( HBondInfo const & hbond : edge->hbonds() ) {
+	for ( core::scoring::hbonds::graph::HBondInfo const & hbond : edge->hbonds() ) {
 		if ( node_is_first_node_ind == hbond.first_node_is_donor() ) {
 			//node is donor
 			if ( contains( atom_vec, hbond.local_atom_id_D() ) ) {

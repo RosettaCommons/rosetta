@@ -49,7 +49,7 @@
   
   <MOVERS>
     <HBNet name="hbnet_ligand" scorefxn="standardfxn" hb_threshold="-0.5" start_selector="polar_rifres_or_ligand" design_residues="STNQYW" write_cst_files="False" 
-	   write_network_pdbs="False" store_subnetworks="False" minimize="False" min_network_size="3" max_unsat="0" verbose="1"
+	   write_network_pdbs="False" store_subnetworks="False" minimize="False" min_network_size="3" max_unsat_Hpol="0" verbose="1"
 	   task_operations="fixlig,no_design_or_pack,limitAroChi" use_only_input_rot_for_start_res="True"/>
   </MOVERS>
   <APPLY_TO_POSE>
