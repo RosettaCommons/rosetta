@@ -12,6 +12,7 @@
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 /// @author Tom Linsky (tlinsky@gmail.com) [residue type option]
 /// @author Doo Nam Kim (doonam.kim@gmail.com) [enables count/filter by percentage, not by raw counted number]
+/// @author Parisa Hosseinzadeh (parisah@uw.edu) [include_property addition]
 
 //Unit Headers
 #include <protocols/simple_filters/ResidueCountFilter.hh>
@@ -27,7 +28,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-
+#include <core/chemical/ResidueProperty.hh>
+#include <core/chemical/ResidueProperties.hh>
 //Basic Headers
 #include <basic/Tracer.hh>
 //Utility Headers
@@ -131,6 +133,18 @@ ResidueCountFilter::parse_my_tag(
 			}
 		} // for all res type specified
 	}
+	if ( tag->hasOption("include_property")){
+		std::string const res_prop_str( tag->getOption< std::string >("include_property", "") );
+                utility::vector1< std::string > const res_prop_vec( utility::string_split( res_prop_str, ',' ) );
+                TR << "Residue properties specified: " << res_prop_vec << std::endl;
+		// only addint properties that are in the general map 
+		for ( core::Size i=1; i<=res_prop_vec.size(); ++i ) {
+			if (! add_residue_property_by_name(res_prop_vec[i])){
+				utility_exit_with_message( "The property you're requesting (" + res_prop_vec[i] + ") was specified to ResidueCount filter.  This property is not part of general properties. " );
+			}
+		}
+	}
+	//runtime_assert_string_msg((tag->hasOption("residue_types") || tag->hasOption("include_property")),"Error in protocols::simple_filters::ResidueCountFilter, you need to specify either residue type or property");
 	if ( tag->hasOption("task_operations") ) {
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}
@@ -218,7 +232,14 @@ ResidueCountFilter::compute(
 					break; // TL: don't want to count a residue more than once in case name() != name3() but name() and name3() are both specified as res_types -- this was a problem with CYS/CYD
 				} // if
 			} // for all res types specified
-		} else {
+		} else if ( res_props_.size() > 0 ) {
+                        for ( core::Size j=1; j<=res_props_.size(); ++j ) {
+                                if ( pose.residue_type( target_res[i] ).has_property(res_props_[j])) {
+                                        ++count;
+                                        // break; //the break is not necesary. a residue can have multiple properties 
+                                } // if
+                        } // for all res properties specified
+                } else {
 			++count; // for all packable/designable residues if task specified or all residues if no task specified
 		}
 	}
@@ -256,6 +277,21 @@ ResidueCountFilter::res_types(
 	for ( core::Size i=1; i<=res_types.size(); ++i ) {
 		res_types_.push_back( res_types[i] );
 	}
+}
+
+utility::vector1< std::string >
+ResidueCountFilter::res_props() const {
+        return res_props_;
+}
+
+void
+ResidueCountFilter::res_props(
+        utility::vector1< std::string > const & res_props
+) {
+        res_props_.clear();
+        for ( core::Size i=1; i<=res_props.size(); ++i ) {
+                res_props_.push_back( res_props[i] );
+        }
 }
 
 bool
@@ -346,6 +382,27 @@ ResidueCountFilter::add_residue_type_by_name(
 	return true;
 }
 
+/// @brief add proeprties to peroperty vector 
+/// @detail given user specified properties, adds them to the property vector to count. I still need to add a way to check the sanity
+/// @input res_type_set, the residue type set of the input structure
+/// @input res_type_input, the user specified residue type name
+/// @return false if res_type_input doesn't match any residue type names, true otherwise
+bool
+ResidueCountFilter::add_residue_property_by_name(
+        std::string const & prop_input
+) {
+        using namespace core::chemical;
+	
+	static const std::map< std::string, ResidueProperty > * const PROPERTY_MAP( ResidueProperties::generate_string_to_property_map() );
+	if ( ! ( *PROPERTY_MAP ).count( prop_input ) ) {
+        	return false;
+	} else {
+		res_props_.push_back( prop_input );
+        	return true;
+	}
+}
+
+
 std::string ResidueCountFilter::name() const {
 	return class_name();
 }
@@ -370,11 +427,14 @@ void ResidueCountFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		"total_residue) instead of counting raw number of it, also max_residue_count"
 		"/min_residue_count are assumed to be entered as percentage",
 		"false")
-		+ XMLSchemaAttribute::attribute_w_default(
+		+ XMLSchemaAttribute( //parisah: I removed the default part. It doesn't make sense given you can pass a selector
 		"residue_types", xs_string,
 		"Comma-separated list of which residue type names. (e.g. \"CYS,SER,HIS_D\" ). "
-		"Only residues with type names matching those in the list will be counted.",
-		"");
+		"Only residues with type names matching those in the list will be counted.")
+		+ XMLSchemaAttribute(
+                "include_property", xs_string,
+                "Comma-separated list of which properties. (e.g. \"D_AA,POLAR\" ). "
+                "Only residues with type names matching those in the list will be counted.");
 
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
 

@@ -112,6 +112,12 @@ public:
 	void
 	res_types( utility::vector1< std::string > const & res_type );
 
+	utility::vector1< std::string >
+        res_props() const;
+
+        void
+        res_props( utility::vector1< std::string > const & res_prop );
+
 	bool
 	enable_min_residue_count() const;
 
@@ -145,6 +151,12 @@ public:
 		std::string const & res_type_input
 	);
 
+	bool
+        add_residue_property_by_name(
+                //core::chemical::ResidueTypeSet const & res_type_set,
+                std::string const & prop_input
+        );
+
 	std::string
 	name() const override;
 
@@ -165,6 +177,7 @@ private:
 	bool enable_min_residue_count_;
 	bool count_as_percentage_;
 	utility::vector1< std::string > res_types_;
+	utility::vector1< std::string > res_props_;
 	bool packable_;
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::select::residue_selector::ResidueSelectorCOP selector_;
