@@ -72,7 +72,21 @@ def Tracer(verbose=False):
     return print_ if verbose else lambda x: None
 
 
+def to_unicode(b):
+    ''' Conver str to unicode and handle the errors. If argument is already in unicode - do nothing
+    '''
+    return b if type(b) == unicode else unicode(b, 'utf-8', errors='replace')
+
+
+def to_bytes(u):
+    ''' Conver unicode to str and handle the errors. If argument is already in str - do nothing
+    '''
+    return u if type(u) == str else u.encode('utf-8', errors='replcae')
+
+
 def execute(message, commandline, return_=False, until_successes=False, terminate_on_failure=True, add_message_and_command_line_to_output=False):
+    message, commandline = to_unicode(message), to_unicode(commandline)
+
     TR = Tracer()
     TR(message);  TR(commandline)
     while True:
@@ -81,7 +95,7 @@ def execute(message, commandline, return_=False, until_successes=False, terminat
         # Probably ASCII, but may have some Unicode characters.
         # A UTF-8 decode will probably get decent results 99% of the time
         # and the replace option will gracefully handle the rest.
-        output = output.decode(encoding="utf-8", errors="replace")
+        output = to_unicode(output)
 
         TR(output)
 
@@ -113,8 +127,8 @@ def parallel_execute(name, jobs, rosetta_dir, working_dir, cpu_count, time=16):
 
         jobs should be dict with following structure:
         {
-            ‘job-string-id-1’: command_line-1,
-            ‘job-string-id-2’: command_line-2,
+            'job-string-id-1’: command_line-1,
+            'job-string-id-2’: command_line-2,
             ...
         }
 

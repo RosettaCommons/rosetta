@@ -11,7 +11,7 @@
 ## @file   _tempate_.py
 ## @brief  scientific/_tempate_.py
 ## Tempalte Python script for implementing Scientific test. This is template for tests that does not require extra file to run.
-## For example of how to implement test which require extra files (beside access to ‘data’ checkout) please see rosetta/benchmark/tests/benchmark/tests/scientific/_template_dir_
+## For example of how to implement test which require extra files (beside access to 'data' checkout) please see rosetta/benchmark/tests/benchmark/tests/scientific/_template_dir_
 ## @author Sergey Lyskov
 
 import os, json

@@ -11,7 +11,7 @@
 ## @file   _tempate_.py
 ## @brief  scientific/_template_dir_/command.py
 ## Tempalte Python test script showing how to implement test located in separate dir
-## For example of how to implement test which does not require extra files (beside access to ‘data’ checkout) please see rosetta/benchmark/tests/benchmark/tests/scientific/_template_.py
+## For example of how to implement test which does not require extra files (beside access to 'data' checkout) please see rosetta/benchmark/tests/benchmark/tests/scientific/_template_.py
 ## @author Sergey Lyskov
 
 import os, json

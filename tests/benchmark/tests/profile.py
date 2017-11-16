@@ -37,7 +37,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     # Building Rosetta binaries
     res, output, build_command_line = build_rosetta(rosetta_dir, platform, config)
     if res: return { _StateKey_ : _S_build_failed_,  _ResultsKey_ : {},
-                     _LogKey_ : 'Building rosetta failed!\n{}\n{}\n'.format(build_command_line, output) }
+                     _LogKey_ : u'Building rosetta failed!\n{}\n{}\n'.format(build_command_line, output) }
     else:
         extension = calculate_extension(platform)
 
