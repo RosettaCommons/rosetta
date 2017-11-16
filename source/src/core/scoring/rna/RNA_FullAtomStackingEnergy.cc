@@ -242,7 +242,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
+	ScoreFunction const & sfxn,
 	EnergyMap & emap
 ) const {
 	// This is ok because this interaction is defined as only attractive.'
@@ -266,15 +266,19 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 		emap[ fa_stack_upper ]  += score1;
 	}
 
-	Real const sol_score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, sol_prefactor_, sol_stack_cutoff_, sol_dist_cutoff_);
-	Real const sol_score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, sol_prefactor_, sol_stack_cutoff_, sol_dist_cutoff_ ) ;
-	emap[ fa_stack_sol ] += sol_score1 + sol_score2;
-	emap[ fa_stack_ext ] += sol_score1 + sol_score2;
+	if ( sfxn.get_weight( fa_stack_sol ) != 0 || sfxn.get_weight( fa_stack_ext ) != 0 ) {
+		Real const sol_score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, sol_prefactor_, sol_stack_cutoff_, sol_dist_cutoff_);
+		Real const sol_score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, sol_prefactor_, sol_stack_cutoff_, sol_dist_cutoff_ ) ;
+		emap[ fa_stack_sol ] += sol_score1 + sol_score2;
+		emap[ fa_stack_ext ] += sol_score1 + sol_score2;
+	}
 
-	Real const lr_score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, lr_prefactor_, lr_stack_cutoff_, lr_dist_cutoff_);
-	Real const lr_score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, lr_prefactor_, lr_stack_cutoff_, lr_dist_cutoff_ ) ;
-	emap[ fa_stack_lr  ] += lr_score1 + lr_score2;
-	emap[ fa_stack_ext ] += lr_score1 + lr_score2;
+	if ( sfxn.get_weight( fa_stack_lr ) != 0 || sfxn.get_weight( fa_stack_ext ) != 0 ) {
+		Real const lr_score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, lr_prefactor_, lr_stack_cutoff_, lr_dist_cutoff_);
+		Real const lr_score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, lr_prefactor_, lr_stack_cutoff_, lr_dist_cutoff_ ) ;
+		emap[ fa_stack_lr  ] += lr_score1 + lr_score2;
+		emap[ fa_stack_ext ] += lr_score1 + lr_score2;
+	}
 
 	// TR << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << (score1+score2) << std::endl;
 }
@@ -375,7 +379,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
+	ScoreFunction const & sfxn,
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
@@ -391,17 +395,21 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 		weights[ fa_stack_aro ] /* aro -- legacy */,
 		prefactor_, stack_cutoff_, dist_cutoff_ );
 
-	eval_atom_derivative(
-		atom_id, pose, domain_map, F1, F2,
-		weights[ fa_stack_sol ] + weights[ fa_stack_ext ],
-		0.0, 0.0, 0.0,
-		sol_prefactor_, sol_stack_cutoff_, sol_dist_cutoff_ );
+	if ( sfxn.get_weight( fa_stack_sol ) != 0 || sfxn.get_weight( fa_stack_ext ) != 0 ) {
+		eval_atom_derivative(
+			atom_id, pose, domain_map, F1, F2,
+			weights[ fa_stack_sol ] + weights[ fa_stack_ext ],
+			0.0, 0.0, 0.0,
+			sol_prefactor_, sol_stack_cutoff_, sol_dist_cutoff_ );
+	}
 
-	eval_atom_derivative(
-		atom_id, pose, domain_map, F1, F2,
-		weights[ fa_stack_lr ] + weights[ fa_stack_ext ],
-		0.0, 0.0, 0.0,
-		lr_prefactor_, lr_stack_cutoff_, lr_dist_cutoff_ );
+	if ( sfxn.get_weight( fa_stack_lr ) != 0 || sfxn.get_weight( fa_stack_ext ) != 0 ) {
+		eval_atom_derivative(
+			atom_id, pose, domain_map, F1, F2,
+			weights[ fa_stack_lr ] + weights[ fa_stack_ext ],
+			0.0, 0.0, 0.0,
+			lr_prefactor_, lr_stack_cutoff_, lr_dist_cutoff_ );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

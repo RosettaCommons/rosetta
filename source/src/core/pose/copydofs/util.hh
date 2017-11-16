@@ -89,7 +89,8 @@ void
 copy_dofs(
 	pose::Pose & pose,
 	MiniPose const & scratch_pose,
-	std::map < id::AtomID , id::AtomID > const & atom_id_map );
+	std::map < id::AtomID , id::AtomID > const & atom_id_map,
+	core::Size const default_domain );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -130,9 +131,6 @@ void
 apply_dofs( pose::Pose & pose,
 	CopyDofsInfo const & copy_dofs_info,
 	core::Real const dof_tolerance = 1.0e-5 );
-
-std::map< id::AtomID, Size >
-blank_atom_id_domain_map( pose::Pose const & pose );
 
 } //copydofs
 } //pose

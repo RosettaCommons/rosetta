@@ -45,6 +45,13 @@
 // C++ headers
 #include <string>
 
+#ifdef    SERIALIZATION
+#include <utility/serialization/serialization.hh>
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -59,6 +66,11 @@ extern Real const MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH;
 class AtomType {
 
 public:
+
+	// Can't make this private because then the ResidueType -- which
+	// holds a vector of AtomTypes -- can't be serialized.
+	AtomType() {} // for serialization
+
 
 	/// @brief Construct a new atom type with its name and element.
 	///
@@ -332,9 +344,21 @@ private:
 	bool atom_is_repulsive_;
 
 	Hybridization hybridization_;
+
+#ifdef    SERIALIZATION
+	public:
+	friend class cereal::access;
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_AtomType )
+#endif // SERIALIZATION
 
 #endif // INCLUDED_core_chemical_AtomType_HH

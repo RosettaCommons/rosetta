@@ -103,9 +103,9 @@ public:
 
 	void
 	get_atom_atom_geometric_solvation_for_donor(
-		Size const & don_h_atm,
+		Size const don_h_atm,
 		conformation::Residue const & don_rsd,
-		Size const & occ_atm,
+		Size const occ_atm,
 		conformation::Residue const & occ_rsd,
 		pose::Pose const & pose,
 		Real & energy,
@@ -116,9 +116,9 @@ public:
 
 	void
 	get_atom_atom_geometric_solvation_for_acceptor(
-		Size const & acc_atm,
+		Size const acc_atm,
 		conformation::Residue const & acc_rsd,
-		Size const & occ_atm,
+		Size const occ_atm,
 		conformation::Residue const & occ_rsd,
 		pose::Pose const & pose,
 		Real & energy,

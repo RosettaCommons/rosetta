@@ -1978,14 +1978,14 @@ Residue::determine_nonstandard_polymer_status()
 /// AMW TODO: somehow SWA spends literally 3.7% of its time calling this function.
 /// @note A misnomer; this should really be called "is_virtual_atom()". ~Labonte
 bool
-Residue::is_virtual( Size const & atomno ) const
+Residue::is_virtual( Size const atomno ) const
 {
 	return rsd_type_.atom_type( atomno ).is_virtual();
 }
 
 /// @note A misnomer; this should really be called "is_repulsive_atom()". ~Labonte
 bool
-Residue::is_repulsive( Size const & atomno ) const
+Residue::is_repulsive( Size const atomno ) const
 {
 	return rsd_type_.atom_type( atomno ).is_repulsive();
 }

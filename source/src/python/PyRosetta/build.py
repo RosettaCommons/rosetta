@@ -630,7 +630,8 @@ def main(args):
     parser.add_argument('--trace', action="store_true", help='Binder will add trace output to to generated PyRosetta source files')
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
-    parser.add_argument('--external-link', default=None, choices=["debug", "release"], help="Optional, link externally compiled rosetta libraries from the given cmake build directory rather than rebuilding in extension modoule.")
+    parser.add_argument('--external-link', default=None, choices=["debug", "release", "mac_graphics"],
+        help="Optional, link externally compiled rosetta libraries from the given cmake build directory rather than rebuilding in extension modoule.")
 
     parser.add_argument('--python-include-dir', default=None, help='Path to python C headers. Use this if CMake fails to autodetect it')
     parser.add_argument('--python-lib', default=None, help='Path to python library. Use this if CMake fails to autodetect it')

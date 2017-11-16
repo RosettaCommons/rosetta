@@ -655,9 +655,9 @@ GeometricSolEnergyEvaluator::check_path_distance(
 //inline
 void
 GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
-	Size const & don_h_atm,
+	Size const don_h_atm,
 	conformation::Residue const & don_rsd,
-	Size const  & occ_atm,
+	Size const occ_atm,
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose,
 	Real & energy,
@@ -792,9 +792,9 @@ GeometricSolEnergyEvaluator::get_acceptor_base_atm_xyz( conformation::Residue co
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
-	Size const & acc_atm,
+	Size const acc_atm,
 	conformation::Residue const & acc_rsd,
-	Size const & occ_atm,
+	Size const occ_atm,
 	conformation::Residue const & occ_rsd,
 	pose::Pose const & pose,
 	Real & energy,
@@ -855,12 +855,8 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	Size const base_atm( acc_rsd.atom_base( acc_atm ) );
 	Vector const & acc_atm_xyz( acc_rsd.atom( acc_atm ).xyz() );
 
-	Vector base_atm_xyz  = acc_rsd.xyz( acc_rsd.atom_base(  acc_atm ) );//get_acceptor_base_atm_xyz( acc_rsd, acc_atm, hbe );
-	Vector base2_atm_xyz = acc_rsd.xyz( acc_rsd.abase2( acc_atm ) );
-
-	// Virtual atom (e.g., Andrew Leaver-Fay's NV in proline) don't count.
-	if ( occ_rsd.is_protein() && occ_rsd.is_virtual(occ_atm) ) return;
-	if ( acc_rsd.is_protein() && acc_rsd.is_virtual(acc_atm) ) return;
+	Vector const & base_atm_xyz  = acc_rsd.xyz( acc_rsd.atom_base(  acc_atm ) );//get_acceptor_base_atm_xyz( acc_rsd, acc_atm, hbe );
+	Vector const & base2_atm_xyz = acc_rsd.xyz( acc_rsd.abase2( acc_atm ) );
 
 	// the base atom isn't allowed to occlude solvent
 	// Note: In current implementation, intraresidue pairs aren't checked...

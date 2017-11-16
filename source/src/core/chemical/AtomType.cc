@@ -33,6 +33,18 @@
 // Utility headers
 #include <utility/exit.hh>
 
+#ifdef    SERIALIZATION
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -239,3 +251,54 @@ AtomType::set_all_extra_parameters(
 
 } // pose
 } // core
+
+#ifdef SERIALIZATION
+
+template< class Archive >
+void
+core::chemical::AtomType::save( Archive & arc ) const {
+	arc( CEREAL_NVP( name_ ) ); // std::string
+	arc( CEREAL_NVP( element_ ) ); // std::string
+	arc( CEREAL_NVP( lj_radius_ ) ); // Real
+	arc( CEREAL_NVP( lj_wdepth_ ) ); // Real
+	arc( CEREAL_NVP( lk_lambda_ ) ); // Real
+	arc( CEREAL_NVP( lk_volume_ ) ); // Real
+	arc( CEREAL_NVP( lk_dgfree_ ) ); // Real
+	arc( CEREAL_NVP( extra_parameters_ ) ); // utility::vector1< Real >
+	arc( CEREAL_NVP( is_acceptor_ ) ); // bool
+	arc( CEREAL_NVP( is_donor_ ) ); // bool
+	arc( CEREAL_NVP( is_polar_hydrogen_ ) ); // bool
+	arc( CEREAL_NVP( is_h2o_ ) ); // bool
+	arc( CEREAL_NVP( is_aromatic_ ) ); // bool
+	arc( CEREAL_NVP( atom_has_orbitals_ ) ); // bool
+	arc( CEREAL_NVP( atom_is_virtual_ ) ); // bool
+	arc( CEREAL_NVP( atom_is_repulsive_ ) ); // bool
+	arc( CEREAL_NVP( hybridization_ ) ); // Hybridization (enum)
+}
+
+template< class Archive >
+void
+core::chemical::AtomType::load( Archive & arc ) {
+	arc( name_ ); // std::string
+	arc( element_ ); // std::string
+	arc( lj_radius_ ); // Real
+	arc( lj_wdepth_ ); // Real
+	arc( lk_lambda_ ); // Real
+	arc( lk_volume_ ); // Real
+	arc( lk_dgfree_ ); // Real
+	arc( extra_parameters_ ); // utility::vector1< Real >
+	arc( is_acceptor_ ); // bool
+	arc( is_donor_ ); // bool
+	arc( is_polar_hydrogen_ ); // bool
+	arc( is_h2o_ ); // bool
+	arc( is_aromatic_ ); // bool
+	arc( atom_has_orbitals_ ); // bool
+	arc( atom_is_virtual_ ); // bool
+	arc( atom_is_repulsive_ ); // bool
+	arc( hybridization_ ); // Hybridization (enum)
+}
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AtomType );
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_AtomType )
+#endif // SERIALIZATION
+

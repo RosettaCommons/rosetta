@@ -48,10 +48,19 @@ CopyDofs::CopyDofs( pose::MiniPose const & template_pose,
 	atom_id_domain_map_( atom_id_domain_map )
 {}
 
+//Constructor
 CopyDofs::CopyDofs( pose::MiniPose const & template_pose,
 	std::map< id::AtomID, id::AtomID > const & atom_id_map ):
 	scratch_pose_( template_pose ),
 	atom_id_map_( atom_id_map )
+{}
+
+CopyDofs::CopyDofs( pose::MiniPose const & template_pose,
+	std::map< id::AtomID, id::AtomID > const & atom_id_map,
+	Size const default_domain ):
+	scratch_pose_( template_pose ),
+	atom_id_map_( atom_id_map ),
+	default_domain_( int( default_domain ) )
 {}
 
 //Destructor
@@ -181,7 +190,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 				std::cout << "OLD " << pose.jump( aid_pair.first ) << std::endl;
 			}
 
-			if ( check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom1->id() ) ) {
+			if ( default_domain_ == 0 || check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom1->id() ) ) {
 				copy_dofs_info_.emplace_back( std::make_pair( aid_pair.first, jump ) );
 				if ( verbose ) std::cout << "NEW " << pose.jump( aid_pair.first ) << std::endl;
 			}
@@ -198,7 +207,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 			continue;
 		}
 
-		if ( check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom1->id() ) ) {
+		if ( default_domain_ == 0 || check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom1->id() ) ) {
 
 			Real const d = ( scratch_pose_.xyz( current_atom_scratch_atom_id ) -
 				scratch_pose_.xyz( input_stub_atom1_scratch_atom_id ) ).length();
@@ -258,7 +267,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 		}
 
 		//if ( check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom2->id() ) ){
-		if ( check_domain_map( atom_id_domain_map_, upstream_atom_ids, downstream_atom_ids ) ) {
+		if ( default_domain_ == 0 || check_domain_map( atom_id_domain_map_, upstream_atom_ids, downstream_atom_ids ) ) {
 
 			Real const theta = angle_radians(
 				scratch_pose_.xyz( current_atom_scratch_atom_id ),
@@ -364,7 +373,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 		}
 
 
-		if ( check_domain_map( atom_id_domain_map_, upstream_atom_ids, downstream_atom_ids ) ) {
+		if ( default_domain_ == 0 || check_domain_map( atom_id_domain_map_, upstream_atom_ids, downstream_atom_ids ) ) {
 
 			if ( stub3_is_external_sister || stub3_is_external_granny ) {
 
@@ -384,7 +393,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 
 				if ( verbose ) std::cout << "Good JOB, CHANGED PHI THROUGH OFFSET!  " << pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;
 
-			} else if ( check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom3->id() ) ) {
+			} else if ( default_domain_ == 0 || check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom3->id() ) ) {
 
 				Real const phi = dihedral_radians(
 					scratch_pose_.xyz( current_atom_scratch_atom_id ),

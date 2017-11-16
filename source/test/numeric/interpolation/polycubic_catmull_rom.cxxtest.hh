@@ -16,7 +16,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Package Headers
-#include <utility/tools/make_vector1.hh>
+//#include <utility/tools/make_vector1.hh>
 #include <numeric/interpolation/polycubic_catmull_rom.hh>
 #include <numeric/constants.hh>
 #include <numeric/types.hh>
@@ -31,7 +31,7 @@ using numeric::constants::d::pi;
 
 class polycubic_catmull_rom_Tests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared initialization goes here.
 	void setUp() {
@@ -57,7 +57,7 @@ class polycubic_catmull_rom_Tests : public CxxTest::TestSuite {
 
 	Real
 	cubic_test_function( Real const & X, Real const & Y,
-											 Real const & Z = 0.0, Real const & W = 0.0)
+		Real const & Z = 0.0, Real const & W = 0.0)
 	{
 		return 3*X + Y + 3*X*X - X*X*X - 3*Y*Y*Y - 2*X*Y + Y*Z + W*W*W - W*X + 0.5*W;
 	}
@@ -65,13 +65,13 @@ class polycubic_catmull_rom_Tests : public CxxTest::TestSuite {
 	template< typename T, numeric::Size N >
 	void
 	test_numerical_deriv(
-										 MathNTensor< T, N > const & F,
-										 utility::fixedsizearray1< Real, N > const & x,
-										 Real const & minval,
-										 Real const & binwidth,
-										 CatmullRomSplineBoundaryType const & boundary,
-										 Real & val,
-										 utility::fixedsizearray1< T, N > & deriv_analytic )
+		MathNTensor< T, N > const & F,
+		utility::fixedsizearray1< Real, N > const & x,
+		Real const & minval,
+		Real const & binwidth,
+		CatmullRomSplineBoundaryType const & boundary,
+		Real & val,
+		utility::fixedsizearray1< T, N > & deriv_analytic )
 	{
 		utility::fixedsizearray1< Real, N > minval_array( minval );
 		utility::fixedsizearray1< Real, N > binwidth_array( binwidth );

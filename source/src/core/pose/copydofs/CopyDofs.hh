@@ -46,6 +46,10 @@ public:
 	CopyDofs( pose::MiniPose const & template_pose,
 		std::map< id::AtomID, id::AtomID > const & atom_id_map );
 
+	CopyDofs( pose::MiniPose const & template_pose,
+		std::map< id::AtomID, id::AtomID > const & atom_id_map,
+		Size const default_domain );
+
 	//destructor
 	~CopyDofs();
 
@@ -80,6 +84,7 @@ private:
 	std::map< id::AtomID, id::AtomID > const & atom_id_map_;
 	std::map< id::AtomID, Size > atom_id_domain_map_; // blank by default.
 	CopyDofsInfo  copy_dofs_info_;
+	int default_domain_ = -1; // So we can tell if it is set
 };
 
 

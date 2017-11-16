@@ -184,6 +184,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	destruction_obs_hub_.clear();
 
 	atom_types_ = residue_type.atom_types_;
+	vec_atom_types_ = residue_type.vec_atom_types_;
 	elements_ = residue_type.elements_;
 	mm_atom_types_ = residue_type.mm_atom_types_;
 	gasteiger_atom_types_ = residue_type.gasteiger_atom_types_;
@@ -488,12 +489,12 @@ ResidueType::operator=( ResidueType const & residue_type )
 
 	}
 
-	for ( Size index=1; index<= natoms(); ++index ) {
-		utility::vector1< core::Size > const orbs(graph_[ordered_atoms_[index]].bonded_orbitals());
+	for ( Size index = 1; index <= natoms(); ++index ) {
+		utility::vector1< core::Size > const orbs( graph_[ ordered_atoms_[ index ] ].bonded_orbitals() );
 		for ( core::Size orb : orbs ) {
-			orbitals_[orb].new_icoor().vertex1( old_to_new[ orbitals_[orb].new_icoor().vertex1()  ] );
-			orbitals_[orb].new_icoor().vertex2(old_to_new[ orbitals_[orb].new_icoor().vertex2()  ] );
-			orbitals_[orb].new_icoor().vertex3( old_to_new[ orbitals_[orb].new_icoor().vertex3()  ] );
+			orbitals_[ orb ].new_icoor().vertex1( old_to_new[ orbitals_[ orb ].new_icoor().vertex1()  ] );
+			orbitals_[ orb ].new_icoor().vertex2( old_to_new[ orbitals_[ orb ].new_icoor().vertex2()  ] );
+			orbitals_[ orb ].new_icoor().vertex3( old_to_new[ orbitals_[ orb ].new_icoor().vertex3()  ] );
 		}
 	}
 
@@ -826,7 +827,9 @@ ResidueType::n_virtual_atoms() const
 {
 	core::Size virtcount = 0;
 	for ( core::Size ia=1, iamax=natoms(); ia<=iamax; ++ia ) {
-		if ( is_virtual(ia) ) ++virtcount;
+		// Must call this function instead of is_virtual because we use n_virtual_atoms() in patching.
+		// If we start using this a lot in other contexts, write n_virtual_atoms_finalizedonly.
+		if ( ( *atom_types_ )[ graph_[ ordered_atoms_[ ia ] ].atom_type_index() ].is_virtual() ) ++virtcount;
 	}
 	return virtcount;
 }
@@ -3346,6 +3349,12 @@ ResidueType::update_derived_data()
 		graph_[ordered_atoms_[base]].heavyatom_has_polar_hydrogens(1);
 	}
 
+	vec_atom_types_.clear();
+	for ( Size i=1; i<= natoms(); ++i ) {
+		Atom const & atom(graph_[ ordered_atoms_[i]]); //get the atom that we are working on
+
+		vec_atom_types_.push_back( ( *atom_types_ )[ atom.atom_type_index() ] );
+	}
 
 	// now setup abase2
 	abase2_.clear();
@@ -3786,6 +3795,10 @@ ResidueType::perform_checks()
 		}
 	}
 
+	if ( vec_atom_types_.empty() ) {
+		msg << "Atom types vector is empty!" << std::endl;
+	}
+
 	if ( !checkspass ) {
 		utility_exit_with_message(msg.str());
 	}
@@ -3845,7 +3858,6 @@ ResidueType::finalize()
 	generate_atom_indices();
 
 	update_derived_data();
-
 	update_ncaa_rotamer_library_specification_if_present();
 
 	perform_checks();
@@ -4749,14 +4761,14 @@ ResidueType::show_all_atom_names( std::ostream & out ) const {
 
 /// @brief  Check if atom is virtual.
 bool
-ResidueType::is_virtual( Size const & atomno ) const
+ResidueType::is_virtual( Size const atomno ) const
 {
 	return ( atom_type( atomno ).is_virtual() );
 }
 
 /// @brief  Check if atom is repulsive.
 bool
-ResidueType::is_repulsive( Size const & atomno ) const
+ResidueType::is_repulsive( Size const atomno ) const
 {
 	return ( atom_type( atomno ).is_repulsive() );
 }
@@ -4883,7 +4895,10 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	using namespace core::chemical;
 
 	arc( CEREAL_NVP( atom_types_ ) ); // AtomTypeSetCOP
-	arc( CEREAL_NVP( elements_ ) ); // ElementSetCOP
+    // vec_atom_types_ is reset in finalize()
+    // EXEMPT vec_atom_types_
+   // arc( CEREAL_NVP( vec_atom_types_ ) ); // utility::vector1< AtomType >
+    arc( CEREAL_NVP( elements_ ) ); // ElementSetCOP
 	arc( CEREAL_NVP( mm_atom_types_ ) ); // MMAtomTypeSetCOP
 	arc( CEREAL_NVP( gasteiger_atom_types_ ) ); // gasteiger::GasteigerAtomTypeSetCOP
 	arc( CEREAL_NVP( orbital_types_ ) ); // orbitals::OrbitalTypeSetCOP
@@ -5051,6 +5066,9 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	using namespace core::chemical;
 
 	arc( atom_types_ ); // AtomTypeSetCOP
+	// vec_atom_types_ is reset in finalize()
+    // EXEMPT vec_atom_types_
+    //arc( vec_atom_types_ ); // utility::vector1< AtomType >
 	arc( elements_ ); // ElementSetCOP
 	arc( mm_atom_types_ ); // MMAtomTypeSetCOP
 	arc( gasteiger_atom_types_ ); // gasteiger::GasteigerAtomTypeSetCOP

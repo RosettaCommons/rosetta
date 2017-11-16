@@ -27,10 +27,8 @@ namespace utility {
 template < class Archive, class T >
 void save_vector( Archive & archive, utility::vector1< T > const & vect )
 {
-  archive( vect.size() );
-  for ( platform::Size ii = 1; ii <= vect.size(); ++ii ) {
-    archive( vect[ii] );
-  }
+	archive( vect.size() );
+	for ( auto const & elem : vect ) archive( elem );
 }
 
 template < class Archive, class T >
@@ -38,9 +36,7 @@ void load_vector( Archive & archive, utility::vector1< T > & vect )
 {
 	platform::Size n; archive( n );
 	vect.resize( n );
-  for ( platform::Size ii = 1; ii <= vect.size(); ++ii ) {
-    archive( vect[ii] );
-  }
+	for ( auto & elem : vect ) archive( elem );
 }
 
 /// @brief Serialization function for arbitary vector1 classes.
@@ -62,14 +58,14 @@ void load_vector( Archive & archive, utility::vector1< T > & vect )
 template < class Archive, class T >
 void save( Archive & archive, typename utility::vector1< T > const & vect )
 {
-  save_vector( archive, vect );
+	save_vector( archive, vect );
 }
 
 /// @brief Deserialization function for vector1's holding arbitrary data
 template < class Archive, class T >
 void load( Archive & archive, utility::vector1< T > & vect )
 {
-  load_vector( archive, vect );
+	load_vector( archive, vect );
 }
 
 

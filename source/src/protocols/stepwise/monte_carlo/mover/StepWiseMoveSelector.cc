@@ -402,7 +402,11 @@ StepWiseMoveSelector::get_resample_terminal_move_elements( pose::Pose const & po
 	utility::vector1< StepWiseMove > swa_moves_terminal;
 	get_terminal_move_elements( pose, swa_moves_terminal, RESAMPLE );
 	remove_from_consideration_first_multi_residue_move_element( swa_moves_terminal, true /*remove_even_if_not_singlet*/ );
-	for ( Size n = 1; n <= swa_moves_terminal.size(); n++ ) swa_moves.push_back( swa_moves_terminal[ n ] );
+	swa_moves.reserve( swa_moves.size() + swa_moves_terminal.size() );
+	std::move( std::begin( swa_moves_terminal ), std::end( swa_moves_terminal ), std::back_inserter( swa_moves ) );
+	//for ( auto const & Size n = 1; n <= swa_moves_terminal.size(); n++ ) {
+	// swa_moves.push_back( swa_moves_terminal[ n ] );
+	//}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -412,7 +416,11 @@ StepWiseMoveSelector::get_resample_internal_move_elements( pose::Pose const & po
 	utility::vector1< StepWiseMove > swa_moves_internal;
 	get_intramolecular_split_move_elements( pose, swa_moves_internal, RESAMPLE );
 	if ( options_->docking_frequency() > 0.0 ) get_docking_split_move_elements( pose, swa_moves_internal, RESAMPLE );
-	for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
+	swa_moves.reserve( swa_moves.size() + swa_moves_internal.size() );
+	std::move( std::begin( swa_moves_internal), std::end( swa_moves_internal ), std::back_inserter( swa_moves ) );
+	//for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) {
+	// swa_moves.push_back( swa_moves_internal[ n ] );
+	//}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -424,7 +432,9 @@ StepWiseMoveSelector::get_resample_internal_local_move_elements( pose::Pose cons
 	get_internal_move_elements( pose, swa_moves_internal, RESAMPLE_INTERNAL_LOCAL );
 	// don't delete a multi_residue_move_element if its the only one!
 	remove_from_consideration_first_multi_residue_move_element( swa_moves_internal, false /*remove_even_if_not_singlet*/ );
-	for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
+	swa_moves.reserve( swa_moves.size() + swa_moves_internal.size() );
+	std::move( std::begin( swa_moves_internal ), std::end( swa_moves_internal ), std::back_inserter( swa_moves ) );
+	//for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
 }
 
 

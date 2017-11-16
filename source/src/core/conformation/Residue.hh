@@ -230,11 +230,11 @@ public:
 
 	/// @brief  Check if atom is virtual.
 	bool
-	is_virtual( Size const & atomno ) const;
+	is_virtual( Size const atomno ) const;
 
 	/// @brief  Check if atom is repulsive.
 	bool
-	is_repulsive( Size const & atomno ) const;
+	is_repulsive( Size const atomno ) const;
 
 	/// @brief  Check if residue is virtual.
 	bool

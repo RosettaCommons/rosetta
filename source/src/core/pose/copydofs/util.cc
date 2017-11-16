@@ -132,10 +132,10 @@ void
 copy_dofs(
 	pose::Pose & pose,
 	MiniPose const & scratch_pose,
-	std::map < id::AtomID , id::AtomID > const & atom_id_map ){
+	std::map < id::AtomID , id::AtomID > const & atom_id_map ) {
 
-	std::map< id::AtomID, Size > atom_id_domain_map = copydofs::blank_atom_id_domain_map( pose );
-	copy_dofs( pose, scratch_pose, atom_id_map, atom_id_domain_map );
+	//std::map< id::AtomID, Size > atom_id_domain_map = copydofs::blank_atom_id_domain_map( pose );
+	copy_dofs( pose, scratch_pose, atom_id_map, 0 );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -150,6 +150,16 @@ copy_dofs(
 	copy_dofs.apply( pose );
 }
 
+void
+copy_dofs(
+	pose::Pose & pose,
+	MiniPose const & scratch_pose,
+	std::map < id::AtomID , id::AtomID > const & atom_id_map,
+	Size const default_domain )
+{
+	copydofs::CopyDofs copy_dofs( scratch_pose, atom_id_map, default_domain );
+	copy_dofs.apply( pose );
+}
 
 ///////////////////////////////////////////////////////////////////
 void
@@ -281,18 +291,6 @@ apply_dofs( pose::Pose & pose,
 	core::Real const dof_tolerance /* = 1.0e-5*/ ){
 
 	copy_dofs_info.apply_dofs( pose, dof_tolerance );
-}
-
-/////////////////////////////////////////////////////////////////////
-std::map< id::AtomID, Size >
-blank_atom_id_domain_map( pose::Pose const & pose ) {
-	std::map< id::AtomID, Size > atom_id_domain_map;
-	for ( Size i = 1; i <= pose.size(); i++ ) {
-		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
-			atom_id_domain_map[ id::AtomID( j, i ) ] = 0;
-		}
-	}
-	return atom_id_domain_map;
 }
 
 

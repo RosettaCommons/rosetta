@@ -517,13 +517,6 @@ get_hb_acc_chem_type(
 
 	// AMW TODO: these string comparisons are 3.6% of SWA runtime
 
-	if ( acc_rsd.type().name3() == "BRU" && ( aname == " O2 " || aname == " O4 " ) ) {
-		tr << "acc_rsd n_heavyatom " << acc_rsd.nheavyatoms() << std::endl;
-		tr << "acc_rsd n_backbone_heavyatom " << acc_rsd.last_backbone_atom() << std::endl;
-		tr << "acc_rsd first_sidechain_hydrogen " << acc_rsd.first_sidechain_hydrogen() << std::endl;
-		tr << "acc_rsd aatm " << aatm << std::endl;
-	}
-
 	if ( acc_rsd.atom_is_backbone(aatm) ) {
 		if ( acc_rsd.is_protein() ) {
 			if ( acc_rsd.is_upper_terminus() ) {
@@ -543,13 +536,12 @@ get_hb_acc_chem_type(
 			}
 		} else if ( acc_rsd.is_RNA() ) {
 			chemical::rna::RNA_Info const & rna_type = acc_rsd.type().RNA_info();
-			if ( aatm == rna_type.op2_atom_index() || aatm == rna_type.op1_atom_index() || aname == " O3P" ||
-					aname == "XOP2" || aname == "XOP1" ||
-					aname == "YOP2" || aname == "YOP1" ||
-					aname == "ZOP2" || aname == "ZOP1" ) {
+			// AMW optimization for minimizing string comparisons -- since it will make EACH ONE
+			// when unsatisfied: give them a few at a time (likelihood order basically) even though
+			// it makes "more cases"
+			if ( aatm == rna_type.op2_atom_index() || aatm == rna_type.op1_atom_index() ) {
 				return hbacc_PCA_RNA;
-			} else if ( aatm == rna_type.o5prime_atom_index() || aatm == rna_type.o3prime_atom_index() ||
-					aname == "YO5'" || aname == "XO3'" || aname == "YO3'" || aname == "ZO3'" ) {
+			} else if ( aatm == rna_type.o5prime_atom_index() || aatm == rna_type.o3prime_atom_index() ) {
 				return hbacc_PES_RNA;
 			} else if ( aatm == rna_type.o4prime_atom_index() ) {
 				return hbacc_RRI_RNA;
@@ -559,6 +551,13 @@ get_hb_acc_chem_type(
 				// AMW: only current trigger is O2/O4 on BRU (SP2, so...)
 				// These are actually SC atoms.
 				return hbacc_GENERIC_SP2SC;
+			} else if ( aname == " O3P" ||
+					aname == "XOP2" || aname == "XOP1" ||
+					aname == "YOP2" || aname == "YOP1" ||
+					aname == "ZOP2" || aname == "ZOP1" ) {
+				return hbacc_PCA_RNA;
+			} else if ( aname == "YO5'" || aname == "XO3'" || aname == "YO3'" || aname == "ZO3'" ) {
+				return hbacc_PES_RNA;
 			}
 		} else {
 			// generic types; for backwards compatibility; prefer functional group based chem type

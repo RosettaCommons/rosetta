@@ -1326,7 +1326,7 @@ public:
 		std::string serialized_summaries1 = ts_assert_mpi_buffer_has_string( 1, "node 1 says to node 0: here are the summaries" );
 		utility::vector1< JobSummaryOP > summaries1 = deserialized_job_summaries( serialized_summaries1 );
 		TS_ASSERT_EQUALS( summaries1.size(), 1 );
-		if ( ! summaries1.size() == 1 ) return;
+		if ( summaries1.size() != 1 ) return;
 		TS_ASSERT( summaries1[1] );
 		EnergyJobSummaryOP energy_summary1 = utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( summaries1[1] );
 		TS_ASSERT( energy_summary1 );

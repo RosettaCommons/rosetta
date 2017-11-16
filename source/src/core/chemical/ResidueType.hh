@@ -25,7 +25,7 @@
 
 // Package headers
 #include <core/chemical/AtomICoor.hh>
-#include <core/chemical/AtomType.fwd.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/Atom.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
@@ -256,7 +256,8 @@ public:
 	{
 		PyAssert((atomno > 0) && (atomno <= ordered_atoms_.size()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
 		debug_assert( (atomno > 0) && (atomno <= ordered_atoms_.size()) );
-		return ( *atom_types_ )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
+		//return ( *atom_types_ )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
+		return vec_atom_types_[ atomno ];
 	}
 
 
@@ -572,13 +573,15 @@ public:
 	bool
 	heavyatom_is_an_acceptor( Size atomno ) const {
 		debug_assert( finalized_ );
-		return graph_[ordered_atoms_[atomno]].is_acceptor();
+		//return graph_[ordered_atoms_[atomno]].is_acceptor();
+		return vec_atom_types_[ atomno ].is_acceptor();
 	}
 
 	bool
 	atom_is_polar_hydrogen( Size atomno ) const {
 		debug_assert( finalized_ );
-		return graph_[ordered_atoms_[atomno]].is_polar_hydrogen();
+		//return graph_[ordered_atoms_[atomno]].is_polar_hydrogen();
+		return vec_atom_types_[ atomno ].is_polar_hydrogen();
 	}
 
 
@@ -762,10 +765,10 @@ public:
 	}
 
 	/// @brief  Check if atom is virtual.
-	bool is_virtual( Size const & atomno ) const;
+	bool is_virtual( Size const atomno ) const;
 
 	/// @brief  Check if atom is repulsive.
-	bool is_repulsive( Size const & atomno ) const;
+	bool is_repulsive( Size const atomno ) const;
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -2389,6 +2392,7 @@ private:
 	/// their properties
 	/// Needs to be non-null by the time finalize() is called.
 	AtomTypeSetCOP atom_types_;
+	utility::vector1< AtomType > vec_atom_types_;
 
 	/// @brief The set for element objects. -- Primary, can be null.
 	ElementSetCOP elements_;

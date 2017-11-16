@@ -14,7 +14,6 @@
 #define INCLUDED_numeric_interpolation_polycubic_catmull_rom
 
 #include <utility/fixedsizearray1.hh>
-#include <utility/vector1.hh>
 #include <utility/modulo.hh>
 
 #include <numeric/MathNTensor.hh>
@@ -144,28 +143,20 @@ catmull_rom_interpolate_basic( utility::fixedsizearray1< T, 4 >  const & p,
 //        recursively go down each dimension (should save lots of time).
 //
 // @author rhiju
-template< typename T >
-inline
-T
-catmull_rom_interpolate( utility::vector1< T > const & F_patch,
-	utility::vector1< T > const & d,
-	utility::vector1< T > & deriv,
-	bool const & compute_deriv )
-{
-	T val( 0.0 ), dv_dx( 0.0 );
-	utility::fixedsizearray1< T, 4 > p( 0.0 );
-	Size const N( d.size() );
-	if ( N == 1 ) {
-		// TODO this copies code with next chunk below -- unify.
-		for ( Size n = 1; n <= 4; n++ ) p[ n ] = F_patch[ n ];
-		val = catmull_rom_interpolate_basic( p, d[ 1 ], dv_dx, compute_deriv );
-		deriv[ 1 ] = dv_dx;
-	} else {
-		utility::vector1< T > d_next( N - 1 );
+template< typename T, numeric::Size N >
+struct TempStruct {
+	inline T operator()( utility::fixedsizearray1< T, 1 << (2*N) > const & F_patch,
+		utility::fixedsizearray1< T, N > const & d,
+		utility::fixedsizearray1< T, N > & deriv,
+		bool const compute_deriv ) {
+		T val( 0.0 ), dv_dx( 0.0 );
+		utility::fixedsizearray1< T, 4 > p( 0.0 );
+
+		utility::fixedsizearray1< T, N - 1 > d_next;
 		for ( Size n = 1; n <= N - 1; n++ ) d_next[ n ] = d[ n + 1 ];
-		utility::fixedsizearray1< utility::vector1< T >, 4 > dp_dy( utility::vector1< T >( N-1, 0.0 ) );
-		Size next_patch_size( pow( 4, N-1 ) );
-		utility::vector1< T > F_subpatch( next_patch_size, 0.0 );
+		utility::fixedsizearray1< utility::fixedsizearray1< T, N - 1 >, 4 > dp_dy;
+		Size next_patch_size( 1 << (2*( N - 1 )) );
+		utility::fixedsizearray1< T, 1 << ( 2 * ( N - 1 ) ) > F_subpatch( 0.0 );
 		for ( Size i = 1; i <= 4; i++ ) {
 			// need to look at i-th sub-tensor of F_patch with 1 fewer dimension
 			//  Take advantage of the way the numbers are 'laid out' in F_patch.
@@ -173,10 +164,12 @@ catmull_rom_interpolate( utility::vector1< T > const & F_patch,
 			// Would be faster to *not* do an explicit copy but to instead provide a 'vector1' that
 			//  points to the same addresses in memory.
 			for ( Size n = 1; n <= next_patch_size; n++ ) F_subpatch[ n ] = F_patch[ n + (i-1) * next_patch_size ];
-			p[ i ] = catmull_rom_interpolate( F_subpatch, d_next, dp_dy[ i ], compute_deriv );
+			//p[ i ] = catmull_rom_interpolate( F_subpatch, d_next, dp_dy[ i ], compute_deriv );
+			TempStruct< T, N - 1 > t;
+			p[ i ] = t( F_subpatch, d_next, dp_dy[ i ], compute_deriv );
 		}
 		utility::fixedsizearray1< T, 4 > dv_dp( 0.0 );
-		utility::vector1< T > dv_dy( N-1, 0.0 );
+		utility::fixedsizearray1< T, N - 1 > dv_dy( 0.0 );
 		val = catmull_rom_interpolate_basic( p, d[ 1 ], dv_dx, dv_dp, compute_deriv );
 		if ( compute_deriv ) {
 			for ( Size n = 1; n <= N-1; n++ ) {
@@ -189,12 +182,46 @@ catmull_rom_interpolate( utility::vector1< T > const & F_patch,
 		if ( compute_deriv ) {
 			for ( Size n = 1; n <= N-1; n++ ) deriv[ n + 1 ] = dv_dy[ n ];
 		}
+		return val;
 	}
-	return val;
+};
+
+template< typename T >
+struct TempStruct< T, 1 >
+{
+	inline
+	T operator() ( utility::fixedsizearray1< T, 4 > const & F_patch,
+		utility::fixedsizearray1< T, 1 > const & d,
+		utility::fixedsizearray1< T, 1 > & deriv,
+		bool const & compute_deriv )
+	{
+		T val( 0.0 ), dv_dx( 0.0 );
+		utility::fixedsizearray1< T, 4 > p( 0.0 );
+		// TODO this copies code with next chunk below -- unify.
+		for ( Size n = 1; n <= 4; n++ ) p[ n ] = F_patch[ n ];
+		val = catmull_rom_interpolate_basic( p, d[ 1 ], dv_dx, compute_deriv );
+		deriv[ 1 ] = dv_dx;
+		return val;
+	}
+};
+
+template< typename T, numeric::Size N >
+inline
+T
+catmull_rom_interpolate( utility::fixedsizearray1< T, 1 << (2*N) > const & F_patch,
+	utility::fixedsizearray1< T, N > const & d,
+	utility::fixedsizearray1< T, N > & deriv,
+	bool const compute_deriv )
+{
+	//TempStruct< T, N > t;
+	return TempStruct< T, N >()( F_patch, d, deriv, compute_deriv );
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// F   = tensor with Ndim dimensions
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// F   = tensor with Ndim dimensions
 // idx = (x,y,..) with Ndim integer elements.
 //
 // Job of this function is to figure out value of F at
@@ -213,7 +240,7 @@ inline
 T
 get_val(
 	MathNTensor< T, N > const & F,
-	utility::fixedsizearray1< int, N > idx,
+	utility::fixedsizearray1< int, N > & idx,
 	utility::fixedsizearray1< CatmullRomSplineBoundaryType, N > const & boundary,
 	Size const which_dim )
 {
@@ -277,13 +304,14 @@ get_val(
 //   could be easily generalized to grab 2 N vals around point, e.g.
 //    if we want more accurate interpolant
 //
+//   note that we now calculate "four to the N" as 1 << N*2
 // @author rhiju
 template< typename T, numeric::Size N >
 inline
 void
 get_patch(
-	utility::vector1< T > & F_patch,
-	utility::vector1< Real > & d,
+	utility::fixedsizearray1< T, 1 << (2*N) > & F_patch,
+	utility::fixedsizearray1< Real, N > & d,
 	MathNTensor< T, N > const & F,
 	utility::fixedsizearray1< Real, N > const & minval,
 	utility::fixedsizearray1< Real, N > const & binwidth,
@@ -334,12 +362,12 @@ polycubic_interpolate_catmull_rom(
 	bool const & compute_deriv = true )
 {
 	// how far are we nudged into central cube, in each dimension 1,2,...N?
-	utility::vector1< T > d( N, 0.0 );
+	utility::fixedsizearray1< T, N > d( 0.0 );
 	// To define spline, we need a 4 x 4 x... 4 grid of points that surround x.
-	utility::vector1< T > F_patch( static_cast<Size>( pow( 4, N ) ), 0.0 );
+	utility::fixedsizearray1< T, 1 << (2*N) > F_patch( 0.0 );
 	get_patch( F_patch, d, F, minval, binwidth, xs, boundary );
 
-	utility::vector1< T >  deriv_vector( N, 0.0 );
+	utility::fixedsizearray1< T, N >  deriv_vector( 0.0 );
 	Real const val = catmull_rom_interpolate( F_patch, d, deriv_vector, compute_deriv );
 	if ( compute_deriv ) {
 		for ( Size n = 1; n <= N; n++ ) deriv[ n ] = deriv_vector[ n ]/ binwidth[ n ];
