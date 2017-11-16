@@ -91,6 +91,12 @@ RNA_SecStruct::RNA_SecStruct( std::string const & secstruct,
 	figure_out_stems();
 }
 
+//constructor
+RNA_SecStruct::RNA_SecStruct( pose::Pose const & )
+{
+	utility_exit_with_message( "To figure out a secstruct from pose, get list of base pairs from core::pose::rna::classify_base_pairs() and then the logic for creating the secstruct_ string is in https://github.com/ribokit/Biers/blob/master/Scripts/util/structure/convert_bps_to_structure.m. Bug Andy Watkins or Rhiju Das to make this happen." );
+}
+
 //Destructor
 RNA_SecStruct::~RNA_SecStruct()
 {}
@@ -379,6 +385,13 @@ RNA_SecStruct::in_same_helix( core::Size const & i, core::Size const & j ) const
 		if ( found_i && found_j ) return true;
 	}
 	return false;
+}
+
+////////////////////////////////////////////////////////////////
+void
+RNA_SecStruct::remove_singlet_base_pairs()
+{
+	utility_exit_with_message( "The logic for how to remove singlets is sketched out in core/rna/pose/util.cc::output_stems(). *Easier* could use figure_out_stems() and remove singlets. Then define secstruct_string_ through logic worked out in Biers at https://github.com/ribokit/Biers/blob/master/Scripts/util/structure/convert_bps_to_structure.m. Bug Andy Watkins or Rhiju Das to set up this function" );
 }
 
 } //secstruct

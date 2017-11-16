@@ -68,6 +68,27 @@ BasePair::derive_LW_orientation() {
 
 /////////////////////////////////////////////////////////////////////////
 void
+BasePair::set_edge2( core::chemical::rna::BaseEdge const & setting ){
+	edge2_ = setting;
+	derive_LW_orientation();
+}
+
+/////////////////////////////////////////////////////////////////////////
+void
+BasePair::set_orientation( core::chemical::rna::BaseDoubletOrientation const & setting ){
+	orientation_ = setting;
+	derive_LW_orientation();
+}
+
+/////////////////////////////////////////////////////////////////////////
+void
+BasePair::set_edge1( core::chemical::rna::BaseEdge const & setting ){
+	edge1_ = setting;
+	derive_LW_orientation();
+}
+
+/////////////////////////////////////////////////////////////////////////
+void
 BasePair::print_info( std::ostream & out ) const {
 	out << "res1 = "  << std::setw( 4 ) << res1_;
 	out << " res2 = " << std::setw( 4 ) << res2_;

@@ -18,14 +18,14 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/scoring/rna/RNA_Motif.fwd.hh>
 
+#include <core/chemical/rna/util.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-#include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/chemical/rna/util.hh>
+#include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 
 #include <boost/iterator/indirect_iterator.hpp>
 
@@ -86,6 +86,23 @@ std::map< RNA_MotifType, core::Real > const rna_motif_bonus =
 {TETRALOOP_TL_RECEPTOR, -1.0}
 };
 
+
+std::map< RNA_MotifType, std::string > const motif_color =
+{ {U_TURN, "lightblue"},
+{UA_HANDLE, "marine" },
+{T_LOOP, "tv_blue" },
+{INTERCALATED_T_LOOP, "deepblue" },
+{LOOP_E_SUBMOTIF, "salmon" },
+{BULGED_G, "red" },
+{GNRA_TETRALOOP, "ruby"},  // GNRA is already pretty favorable.
+{STRICT_WC_STACKED_PAIR, "gray20"},
+{WC_STACKED_PAIR, "gray50"},
+{A_MINOR, "gold"},
+{PLATFORM, "sand"},
+{TL_RECEPTOR, "limon"},
+{TETRALOOP_TL_RECEPTOR, "orange"}
+};
+
 inline
 std::string
 to_string( RNA_MotifType type ) {
@@ -108,6 +125,7 @@ to_string( RNA_MotifType type ) {
 	}
 	return "";
 }
+
 
 // @brief RNA_Motif has a type (e.g., U_TURN) and residues (in pose numbering).
 class RNA_Motif: public utility::pointer::ReferenceCount {
@@ -140,6 +158,9 @@ public:
 	std::ostream &
 	operator << ( std::ostream & out, RNA_Motif const & s );
 
+	friend
+	bool operator < ( RNA_Motif const & lhs, RNA_Motif const & rhs );
+
 	utility::vector1< core::Size >::const_iterator begin() const { return residues_.begin(); }
 	utility::vector1< core::Size >::const_iterator end() const { return residues_.end(); }
 
@@ -157,6 +178,12 @@ operator << ( std::ostream & out, RNA_Motif const & s ) {
 	return out;
 }
 
+///////////////////////////////////////////////////////////////////
+inline
+bool operator < ( RNA_Motif const & lhs, RNA_Motif const & rhs )
+{
+	return ( lhs[1] < rhs[1] );
+}
 
 // @brief Collection of RNA motifs. get_motifs() can get sub-list of just particular type.
 class RNA_Motifs: public utility::pointer::ReferenceCount {
@@ -255,15 +282,18 @@ output_rna_motif( pose::Pose const & pose,
 	std::cout << ObjexxFCL::right_string_of(to_string(motif.type()),20) << ": ";
 	for ( auto const & res : motif ) {
 		std::cout << ' ' << ObjexxFCL::right_string_of( pose.residue( res ).annotated_name(), 6 ) <<
-			"-" <<pose.pdb_info()->chain( res ) << ":" << ObjexxFCL::left_string_of(pose.pdb_info()->number( res ),4);
+			"-" <<pose.pdb_info()->chain( res ) << ":";
+		if ( pose.pdb_info()->segmentID( res ).size() > 0 &&
+				pose.pdb_info()->segmentID( res ) != "    " ) std::cout << pose.pdb_info()->segmentID( res ) << ":";
+		std::cout << ObjexxFCL::left_string_of(pose.pdb_info()->number( res ),4);
 	}
 	std::cout << std::endl;
 }
 
-// @brief output for RNA_Motifs
+// @brief output for RNA_Motifs (with detailed residue names, etc.)
 inline
 void
-output_rna_motifs( pose::Pose const & pose,
+output_rna_motifs_detailed( pose::Pose const & pose,
 	RNA_Motifs const & motifs )
 {
 	for ( auto const & motif : motifs.get_motifs() ) output_rna_motif( pose, motif );
@@ -331,15 +361,22 @@ get_rna_motifs( pose::Pose const & pose,
 	for ( auto const & base_pair1  : base_pairs ) {
 		if ( base_pair1.edge1() != WATSON_CRICK )  continue;
 		if ( base_pair1.edge2() != WATSON_CRICK )  continue;
+		if ( base_pair1.orientation() != ANTIPARALLEL )  continue;
 		if ( !check_watson_crick_sequence( pose, base_pair1.res1(), base_pair1.res2() ) ) continue;
 		for ( auto const & base_pair2  : base_pairs ) {
 			if ( base_pair2.res1() != base_pair1.res1() + 1 ) continue;
 			if ( base_pair1.res2() != base_pair2.res2() + 1 ) continue;
+			if ( pose.pdb_info() && pose.pdb_info()->number( base_pair2.res1() ) != pose.pdb_info()->number( base_pair1.res1() ) + 1 ) continue;
+			if ( pose.pdb_info() && pose.pdb_info()->chain(  base_pair2.res1() ) != pose.pdb_info()->chain(  base_pair1.res1() ) ) continue;
+			if ( pose.pdb_info() && pose.pdb_info()->number( base_pair1.res2() ) != pose.pdb_info()->number( base_pair2.res2() ) + 1 ) continue;
+			if ( pose.pdb_info() && pose.pdb_info()->chain(  base_pair1.res2() ) != pose.pdb_info()->chain(  base_pair2.res2() ) ) continue;
 			if ( base_pair2.edge1() != WATSON_CRICK )  continue;
 			if ( base_pair2.edge2() != WATSON_CRICK )  continue;
+			if ( base_pair2.orientation() != ANTIPARALLEL )  continue;
 			if ( !check_watson_crick_sequence( pose, base_pair2.res1(), base_pair2.res2() ) ) continue;
-			if ( !check_stack( base_pair2.res1(), base_pair1.res1(), base_stacks ) ) continue;
-			if ( !check_stack( base_pair2.res2(), base_pair1.res2(), base_stacks ) ) continue;
+			// Following ends up being too stringent:
+			//  if ( !check_stack( base_pair2.res1(), base_pair1.res1(), base_stacks ) ) continue;
+			// if ( !check_stack( base_pair2.res2(), base_pair1.res2(), base_stacks ) ) continue;
 			rna_motifs.push_back( RNA_Motif( WC_STACKED_PAIR,
 				{ base_pair1.res1(), base_pair2.res1(), base_pair2.res2(), base_pair1.res2() } ) );
 		}
@@ -851,6 +888,20 @@ get_rna_motif_score(
 	return score;
 }
 
+// @brief output for RNA_Motifs
+void
+output_rna_motifs(
+	std::ostream & out,
+	core::pose::Pose const & pose,
+	RNA_Motifs const & motifs,
+	bool const output_WC_stacked_pair = false);
+
+/// @brief sets up .pml file that will color motifs.
+void
+output_motifs_to_pymol(
+	std::ostream & out,
+	core::pose::Pose const & pose,
+	RNA_Motifs const & rna_motifs );
 
 
 } //rna

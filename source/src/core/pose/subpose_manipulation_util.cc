@@ -21,6 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/MiniPose.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 
@@ -188,15 +189,19 @@ pdbslice( core::pose::Pose & new_pose,
 	if ( pdb_info ) {
 		utility::vector1< Size > new_numbering;
 		utility::vector1< char > new_chains;
+		utility::vector1< std::string > new_segids;
 		for ( Size n = 1; n <= slice_res.size(); n++ ) {
 			new_numbering.push_back( pdb_info->number( slice_res[ n ] ) );
 			new_chains.push_back( pdb_info->chain( slice_res[ n ] ) );
+			new_segids.push_back( pdb_info->segmentID( slice_res[ n ] ) );
 		}
 		PDBInfoOP new_pdb_info( new PDBInfo( new_pose, true /*init*/ ) );
 		new_pdb_info->set_numbering( new_numbering );
 		new_pdb_info->set_chains( new_chains );
+		new_pdb_info->set_segment_ids( new_segids );
 		new_pose.pdb_info( new_pdb_info );
 	}
+	tag_into_pose( new_pose, tag_from_pose( pose ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

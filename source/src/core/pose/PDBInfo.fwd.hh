@@ -28,6 +28,8 @@ class PDBInfo;
 typedef utility::pointer::shared_ptr< PDBInfo > PDBInfoOP;
 typedef utility::pointer::shared_ptr< PDBInfo const > PDBInfoCOP;
 
+typedef  std::pair< char, std::string > ChainSegID;
+
 } // namespace pose
 } // namespace core
 

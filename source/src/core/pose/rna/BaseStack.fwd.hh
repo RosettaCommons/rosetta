@@ -17,6 +17,7 @@
 #define INCLUDED_core_pose_rna_BaseStack_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace pose {
@@ -25,6 +26,7 @@ namespace rna {
 class BaseStack;
 typedef utility::pointer::shared_ptr< BaseStack > BaseStackOP;
 typedef utility::pointer::shared_ptr< BaseStack const > BaseStackCOP;
+typedef utility::vector1 < BaseStack > RNA_BaseStackList;
 
 } //rna
 } //pose

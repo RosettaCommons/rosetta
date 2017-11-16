@@ -87,7 +87,6 @@ public:
 
 typedef std::pair< Real, BaseStack > EnergyBaseStack;
 typedef std::list < EnergyBaseStack > EnergyBaseStackList;
-typedef utility::vector1 < BaseStack > RNA_BaseStackList;
 
 } //rna
 } //pose

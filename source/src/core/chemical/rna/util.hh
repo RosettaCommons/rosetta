@@ -81,6 +81,9 @@ get_orientation_from_char( char const o );
 LW_BaseDoubletOrientation
 get_LW_orientation_from_char( char const o );
 
+char
+get_LW_orientation_from_num( Size const num );
+
 ///////////////////////////////////////////////////////////////////////////////
 std::string const first_base_atom( chemical::ResidueType const & rsd );
 Size first_base_atom_index( chemical::ResidueType const & rsd );

@@ -361,13 +361,16 @@ convert_na_to_1234( core::chemical::AA const foo ) {
 		return 3;
 	} else if ( foo == core::chemical::na_ura ) {
 		return 4;
-	} else {
-		utility_exit_with_message( "No idea how we got here." );
 	}
+	return 0;
 }
 
 Size get_bin( conformation::Residue const & res_i ) {
-	return ( res_i.type().na_analogue() == chemical::aa_unp ) ? chemical::rna::convert_acgu_to_1234( res_i.name1() ) : convert_na_to_1234( res_i.type().na_analogue() );
+	Size bin = ( res_i.type().na_analogue() == chemical::aa_unp ) ? chemical::rna::convert_acgu_to_1234( res_i.name1() ) : convert_na_to_1234( res_i.type().na_analogue() );
+	if ( bin == 0 ) {
+		utility_exit_with_message( "Problem deciding closest na analogue for " + res_i.name() );
+	}
+	return bin;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

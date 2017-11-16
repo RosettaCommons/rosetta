@@ -17,6 +17,7 @@
 #define INCLUDED_core_pose_rna_BasePair_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace pose {
@@ -25,6 +26,7 @@ namespace rna {
 class BasePair;
 typedef utility::pointer::shared_ptr< BasePair > BasePairOP;
 typedef utility::pointer::shared_ptr< BasePair const > BasePairCOP;
+typedef utility::vector1< BasePair > RNA_BasePairList; // used in protocols::farna
 
 } //rna
 } //pose

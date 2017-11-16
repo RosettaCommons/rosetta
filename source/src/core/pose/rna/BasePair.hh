@@ -64,14 +64,15 @@ public:
 	void set_res2( core::Size const & setting ){ res2_ = setting; }
 	core::Size res2() const { return res2_; }
 
-	void set_edge1( core::chemical::rna::BaseEdge const & setting ){ edge1_ = setting; }
+	void set_edge1( core::chemical::rna::BaseEdge const & setting );
 	core::chemical::rna::BaseEdge edge1() const { return edge1_; }
 
-	void set_edge2( core::chemical::rna::BaseEdge const & setting ){ edge2_ = setting; }
+	void set_edge2( core::chemical::rna::BaseEdge const & setting );
 	core::chemical::rna::BaseEdge edge2() const { return edge2_; }
 
-	void set_orientation( core::chemical::rna::BaseDoubletOrientation const & setting ){ orientation_ = setting; }
+	void set_orientation( core::chemical::rna::BaseDoubletOrientation const & setting );
 	core::chemical::rna::BaseDoubletOrientation orientation() const { return orientation_; }
+	core::chemical::rna::LW_BaseDoubletOrientation LW_orientation() const { return LW_orientation_; }
 
 private:
 
@@ -100,8 +101,6 @@ public:
 
 typedef std::pair< Real, BasePair > EnergyBasePair;
 typedef std::list < EnergyBasePair > EnergyBasePairList;
-
-typedef utility::vector1< BasePair > RNA_BasePairList; // used in protocols::farna
 
 } //rna
 } //pose

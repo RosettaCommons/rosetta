@@ -24,9 +24,12 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/rna/VDW_Grid.hh>
 #include <core/pose/rna/BasePair.fwd.hh>
+#include <core/pose/rna/BaseStack.fwd.hh>
 #include <core/pose/rna/StubStubType.fwd.hh>
+#include <core/scoring/rna/RNA_Motif.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -252,6 +255,38 @@ get_stub_stub( core::conformation::Residue const & rsd1,
 	core::kinematics::Stub & stub1,
 	core::kinematics::Stub & stub2,
 	StubStubType const & stub_stub_type );
+
+/// @brief Output base pairs detected for RNA, including noncanonicals. Must previously score pose with RNA_LORES.
+void
+output_base_pairs( std::ostream & out, core::pose::rna::RNA_BasePairList const & base_pair_list, core::pose::Pose const & pose  );
+
+/// @brief Output base stacks detected for RNA. Must previously score pose with RNA_LORES.
+void
+output_base_stacks( std::ostream & out, core::pose::rna::RNA_BaseStackList const & base_stack_list, core::pose::Pose const & pose  );
+
+/// @brief Output stems (>=2 base-pair helices) detected for RNA, including noncanonicals. Must previously score pose with RNA_LORES.
+void
+output_stems( std::ostream & out, core::scoring::rna::RNA_Motifs const & rna_motifs, core::pose::Pose const & pose );
+
+/// @brief Figure out chains that have RNA in them. Can supply chains from command-line to focus on particular RNA chains.
+utility::vector1< std::pair< char, std::string > >
+figure_out_rna_chains( pose::Pose const & pose, utility::vector1< std::string > const & chains = utility::vector1< std::string >() );
+
+/// @brief Pull out RNA from pose, in chains specified by chain_segids.
+pose::Pose
+extract_rna_chains( pose::Pose const & full_pose, utility::vector1< pose::ChainSegID > const & chain_segids );
+
+/// @brief Output contacts of RNA chains (specified in chain_segids) to any non-RNA chains ("ligands").
+void
+output_ligands( std::ostream & out, pose::Pose const & pose,  utility::vector1< pose::ChainSegID > const & chain_segids );
+
+/// @brief Output residue-residue interactions that are not base pairs or base stacks;
+void
+output_other_contacts( std::ostream & out, pose::Pose const & pose );
+
+/// @brief get rid of Upper and Lower from RNA; useful for cleaner output of annotated_sequence.
+void
+remove_upper_lower_variants_from_RNA( pose::Pose & pose );
 
 } //ns rna
 } //ns pose

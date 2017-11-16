@@ -160,6 +160,18 @@ get_full_LW_orientation_from_num( Size const num ){
 	return "ERROR";
 }
 
+/////////////////////////////////////////////////////////////////////////////
+char
+get_LW_orientation_from_num( Size const num ){
+	if ( num == 0 ) return 'X';
+	if ( num == 1 ) return 'C';
+	if ( num == 2 ) return 'T';
+
+	std::cout << "Invalid LW_orientation num = " << num << std::endl;
+	utility_exit_with_message( "Invalid LW_orientation num!" );
+	return 'X';
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 std::string const first_base_atom( chemical::ResidueType const & rsd ) {
 	// if (rsd.name1() == 'a' || rsd.name1() == 'g' )  return " N9 ";

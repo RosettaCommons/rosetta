@@ -17,34 +17,38 @@
 #include <core/types.hh>
 
 // Package headers
+#include <core/chemical/AA.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/VariantType.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/AtomPointer.fwd.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/chemical/rna/RNA_Info.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/CircularSplineFunc.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/pose/rna/BasePair.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <core/pose/annotated_sequence.hh>
+#include <core/scoring/TenANeighborGraph.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/func/CircularSplineFunc.hh>
 #include <core/scoring/methods/chainbreak_util.hh>
-#include <core/chemical/AA.hh>
+#include <core/scoring/rna/RNA_Motif.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
 
 // Project headers
 #include <numeric/constants.hh>
@@ -59,6 +63,8 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <utility/string_util.hh>
+
 static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.RNA_Util" );
 
 // Utility headers
@@ -66,6 +72,8 @@ static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.RNA_Util" );
 // C++
 
 using namespace core::chemical::rna;
+using namespace core::scoring::rna;
+using utility::strip;
 static const RNA_FittedTorsionInfo torsion_info;
 
 namespace core {
@@ -1552,6 +1560,361 @@ get_stub_stub( conformation::Residue const & rsd1,
 	default :
 		utility_exit_with_message( "Unrecognized stub_stub_type" );
 	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+void
+output_base_pairs( std::ostream & out, core::pose::rna::RNA_BasePairList const & base_pair_list, pose::Pose const & pose  )
+{
+	using namespace core::pose::rna;
+	using namespace core::chemical::rna;
+	RNA_BasePairList base_pair_list_sort = base_pair_list;
+	std::sort( base_pair_list_sort.end(), base_pair_list_sort.end() );
+	for ( auto const & base_pair : base_pair_list_sort ) {
+		out <<
+			pose.pdb_info()->tag( base_pair.res1() ) << " " <<
+			pose.pdb_info()->tag( base_pair.res2() ) << " " <<
+			get_edge_from_num( base_pair.edge1() ) << " " <<
+			get_edge_from_num( base_pair.edge2() ) << " " <<
+			get_LW_orientation_from_num( base_pair.LW_orientation() ) << " " <<
+			std::endl;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+void
+output_base_stacks( std::ostream & out, core::pose::rna::RNA_BaseStackList const & base_stack_list, pose::Pose const & pose  )
+{
+	using namespace core::pose::rna;
+	using namespace core::chemical::rna;
+	RNA_BaseStackList base_stack_list_sort = base_stack_list;
+	std::sort( base_stack_list_sort.end(), base_stack_list_sort.end() );
+	for ( auto const & base_stack : base_stack_list_sort ) {
+		out <<
+			pose.pdb_info()->tag( base_stack.res1() ) << " " <<
+			pose.pdb_info()->tag( base_stack.res2() ) << " " <<
+			get_side_from_num( base_stack.which_side() ) << " " <<
+			get_orientation_from_num( base_stack.orientation() ) << " " <<
+			std::endl;
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// @details
+// used by rna_motif app.
+//
+// Really should deprecate this in favor of figure_out_stems() function in RNA_SecStruct()!
+//  I had forgotten about that when I wrote this function in late 2017, oops. -- rhiju.
+//
+/////////////////////////////////////////////////////////////////////////////////////////////
+void
+output_stems( std::ostream & out, RNA_Motifs const & rna_motifs, pose::Pose const & pose )
+{
+	using utility::vector1;
+
+	// Order so that stacked pairs will be contiguous.
+	// Otherwise risking that a stack seeded at one end will be 'different' from
+	// stack at seeded at other end, even if they're part of one long stack.
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Should actually separate out the function that gets STACKED PAIRS from pose  -- don't need to run all of RNA_Motif...
+	// Could also figure out stacked_pairs just from an ordered list of WC base pairs...
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	vector1< RNA_Motif > stacked_pairs = rna_motifs.get_motifs( WC_STACKED_PAIR );
+	std::sort( stacked_pairs.begin(), stacked_pairs.end() );
+
+	// group stacked_pairs into long stems
+	vector1< Size > in_stem( pose.size(), 0 );
+	vector1< std::set< Size > > stem_residues;
+	for ( auto const & stacked_pair : stacked_pairs ) {
+		Size stem = 0;
+		if ( stacked_pair[1] > stacked_pair[3] ) continue; // would be better to force uniqueness above. anyway.
+		for ( auto const & m : stacked_pair.residues() ) {
+			if ( in_stem[ m ] > 0 ) {
+				if ( stem > 0 ) assert( stem == in_stem[ m ] );
+				else stem = in_stem[ m ];
+			}
+		}
+		if ( stem == 0 ) {
+			// no residue in this stacked pair is shared with prior stem. So make a new stem.
+			stem_residues.push_back( std::set< Size >() );
+			stem = stem_residues.size();
+		}
+		for ( auto const & m : stacked_pair.residues() ) {
+			in_stem[ m ] = stem;
+			stem_residues[ stem ].insert( m );
+		}
+	}
+
+	// Each long stem should have two strands, recognizable as two consecutive chunks of residues.
+	vector1< vector1< vector1< Size > > > strand_sets;
+	for ( auto const & stem_reslist : stem_residues ) {
+		vector1< vector1< Size > > strand_set;
+		vector1< Size > strand;
+		Size prev_m = 0;
+		for ( auto const m : stem_reslist ) {
+			if ( strand.size() > 0 && ( m != prev_m + 1 ||
+					pose.pdb_info()->chain(m) != pose.pdb_info()->chain(prev_m ) ||
+					pose.pdb_info()->segmentID(m) != pose.pdb_info()->segmentID(prev_m ) ||
+					pose.pdb_info()->number(m) != pose.pdb_info()->number(prev_m)+1  ||
+					pose.fold_tree().is_cutpoint( prev_m ) ) ) {
+				strand_set.push_back( strand );
+				strand.clear();
+			}
+			strand.push_back( m );
+			prev_m = m;
+		}
+		strand_set.push_back( strand );
+		if ( strand_set.size() != 2 ) {
+			std::cout << "Problem with strand_set: " << strand_set << std::endl;
+			utility_exit_with_message( "strand_set.size() != 2" );
+		}
+		strand_sets.push_back( strand_set );
+	}
+
+	// output stacks -- could be used for secondary structure determination.
+	for ( auto const & strand_set : strand_sets ) {
+		vector1< std::string > tags;
+		for ( auto const & strand : strand_set ) {
+			vector1< int > res;
+			vector1< char > chain;
+			vector1< std::string > segid;
+			for ( auto const & m : strand ) {
+				res.push_back( pose.pdb_info()->number( m ) );
+				chain.push_back( pose.pdb_info()->chain( m ) );
+				segid.push_back( pose.pdb_info()->segmentID( m ) );
+			}
+			tags.push_back( make_tag_with_dashes( res, chain, segid ) );
+		}
+		out << tags[1] << " " << tags[2] << std::endl;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< std::pair< char, std::string > >
+figure_out_rna_chains(
+	pose::Pose const & pose,
+	utility::vector1< std::string > const & chains /* = utility::vector1< std::string >*/
+)
+{
+	utility::vector1< std::pair< char, std::string > > all_rna_chain_segids;
+	for ( Size n = 1; n <= pose.size(); n++ ) {
+		if ( pose.residue_type( n ).is_RNA() ) {
+			ChainSegID chain_segid( std::make_pair( pose.pdb_info()->chain( n ), strip( pose.pdb_info()->segmentID( n ) ) ) );
+			if ( !all_rna_chain_segids.has_value( chain_segid ) ) all_rna_chain_segids.push_back( chain_segid );
+		}
+	}
+
+	if ( chains.size() == 0 ) return all_rna_chain_segids;
+
+	utility::vector1< ChainSegID > chain_segids;
+	for ( auto const & chain_string : chains ) {
+		char const chain( chain_string[ 0 ] );
+		std::string segid;
+		if ( chain_string.size() > 1 ) {
+			if ( chain_string[1] == ':' ) segid = chain_string.substr( 2 );
+			else segid = chain_string.substr(1);
+		}
+		ChainSegID chain_segid( chain, segid );
+		if ( ! all_rna_chain_segids.has_value( chain_segid ) ) {
+			std::cout << "all_rna_chain_segids: " << all_rna_chain_segids << std::endl;
+			utility_exit_with_message( "Did not find desired chain "+std::string(1,chain)+" segid "+segid+" in all_rna_chain_segids above." );
+		}
+		chain_segids.push_back( std::make_pair( chain, segid ) );
+	}
+
+	return chain_segids;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+pose::Pose
+extract_rna_chains( pose::Pose const & full_pose, utility::vector1< ChainSegID > const & chain_segids )
+{
+	using namespace core::pose::rna;
+	utility::vector1< Size > slice_res;
+	for ( Size n = 1; n <= full_pose.size(); n++ ) {
+		ChainSegID chain_segid( std::make_pair( full_pose.pdb_info()->chain( n ), strip( full_pose.pdb_info()->segmentID( n ) ) ) );
+		if ( chain_segids.has_value( chain_segid ) ) {
+			if ( !full_pose.residue_type( n ).is_RNA() ) continue;
+			slice_res.push_back( n );
+		}
+	}
+	pose::Pose pose;
+	pdbslice( pose, full_pose, slice_res );
+	remove_upper_lower_variants_from_RNA( pose );
+	figure_out_reasonable_rna_fold_tree( pose, true /*put cutpoints at chainbreaks*/  );
+	return pose;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+update_map( std::map< ChainSegID, std::set< core::Size > > & ligand_map,
+	std::map< ChainSegID, std::string > & ligand_tag,
+	Size const & i /* partner of ligand in RNA chain*/,
+	ChainSegID const & chain_segid_j /*ligand*/,
+	core::conformation::Residue const & rsd_j /*ligand*/)
+{
+	ligand_map[ chain_segid_j ].insert( i );
+
+	if ( rsd_j.type().is_polymer() ) {
+		if ( rsd_j.type().is_RNA() ) {
+			ligand_tag[ chain_segid_j ] = "RNA";
+		} else if ( rsd_j.type().is_protein() ) {
+			ligand_tag[ chain_segid_j ] = "protein";
+		} else if ( rsd_j.type().is_DNA() ) {
+			ligand_tag[ chain_segid_j ] = "DNA";
+		} else {
+			ligand_tag[ chain_segid_j ] = "other";
+		}
+	} else {
+		ligand_tag[ chain_segid_j ] = rsd_j.name();
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @details TODO: We should recognize non-RNA bits that are supplied in the PDB with the same chains as the RNA polymers.
+///            Happens, e.g., in the glycine riboswitch 3P49 where the glycines are in chain A along with the RNA.
+void
+output_ligands( std::ostream & out, pose::Pose const & pose,  utility::vector1< ChainSegID > const & chain_segids )
+{
+	using namespace core::scoring;
+	using namespace core::conformation;
+	using namespace utility::graph;
+
+	TenANeighborGraph const & tenA(pose.energies().tenA_neighbor_graph());
+
+	std::map< ChainSegID, std::set< core::Size > > ligand_map;
+	std::map< ChainSegID, std::string > ligand_tag;
+
+
+	// For each neighboring residue to the donor
+	for ( EdgeListConstIterator ni = tenA.const_edge_list_begin(),
+			ni_end = tenA.const_edge_list_end();
+			ni != ni_end; ++ni ) {
+		Size const & i = (*ni)->get_first_node_ind();
+		Size const & j = (*ni)->get_second_node_ind();
+		ChainSegID const & chain_segid_i = std::make_pair( pose.pdb_info()->chain( i ), strip(pose.pdb_info()->segmentID( i ) ) );
+		ChainSegID const & chain_segid_j = std::make_pair( pose.pdb_info()->chain( j ), strip(pose.pdb_info()->segmentID( j ) ) );
+
+		// will be covered by RNA base pair/motif check -- so not considered a 'ligand' interaction.
+		if ( chain_segids.has_value( chain_segid_i ) && chain_segids.has_value( chain_segid_j ) ) continue;
+
+		static Distance const CONTACT_DIST_CUTOFF( 4.0 );
+
+		// now look for a direct contact between these residues
+		// might be faster to look up atom-level neighbor graph
+		Residue const & rsd_i( pose.residue( i ) );
+		Residue const & rsd_j( pose.residue( j ) );
+		bool found_contact( false );
+		for ( Size m = 1; m <= rsd_i.nheavyatoms(); m++ ) {
+			for ( Size n = 1; n <= rsd_j.nheavyatoms(); n++ ) {
+				if ( ( rsd_i.xyz( m ) - rsd_j.xyz( n ) ).length() <  CONTACT_DIST_CUTOFF ) {
+					found_contact = true;
+					break;
+				}
+			}
+		}
+		if ( !found_contact ) continue;
+
+		if ( chain_segids.has_value( chain_segid_i ) && !chain_segids.has_value( chain_segid_j ) ) {
+			update_map( ligand_map, ligand_tag, i, chain_segid_j, rsd_j );
+		} else if ( !chain_segids.has_value( chain_segid_i ) && chain_segids.has_value( chain_segid_j ) ) {
+			update_map( ligand_map, ligand_tag, j, chain_segid_i, rsd_i );
+		} else {
+			//TR << chain_segid_i << " " << chain_segid_j << std::endl;
+		}
+
+	}
+
+	for ( auto const & it : ligand_map ) {
+		ChainSegID ligand_chain_segid( it.first );
+		out << ligand_chain_segid.first;
+		if ( ligand_chain_segid.second.size() > 0 ) out << ":" << ligand_chain_segid.second;
+		out << "     ";
+
+		out << ObjexxFCL::right_string_of( ligand_tag[ ligand_chain_segid ], 7);
+		out << "     ";
+
+		utility::vector1< int > resnum;
+		utility::vector1< char > chain;
+		utility::vector1< std::string > segid;
+		for ( auto const & pos: it.second ) {
+			resnum.push_back( pose.pdb_info()->number( pos ) );
+			chain.push_back( pose.pdb_info()->chain( pos ) );
+			segid.push_back( pose.pdb_info()->segmentID( pos ) );
+		}
+		out << make_tag_with_dashes( resnum, chain, segid ) << std::endl;
+	}
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+output_other_contacts( std::ostream & out, pose::Pose const & pose )
+{
+	using namespace core::scoring;
+	using namespace core::conformation;
+	using namespace utility::graph;
+	TenANeighborGraph const & tenA( pose.energies().tenA_neighbor_graph() );
+
+	static Distance const CONTACT_DIST_CUTOFF( 3.0 );
+
+	std::map< Size, std::map< Size, bool > > base_base_interacting;
+	for ( auto const & base_pair : rna_scoring_info_from_pose( pose ).rna_filtered_base_base_info().base_pair_list() ) {
+		base_base_interacting[ base_pair.res1() ][ base_pair.res2() ] = true;
+		base_base_interacting[ base_pair.res2() ][ base_pair.res1() ] = true;
+	}
+	for ( auto const & base_stack : rna_scoring_info_from_pose( pose ).rna_filtered_base_base_info().base_stack_list() ) {
+		base_base_interacting[ base_stack.res1() ][ base_stack.res2() ] = true;
+		base_base_interacting[ base_stack.res2() ][ base_stack.res1() ] = true;
+	}
+
+
+	// For each neighboring residue to the donor
+	for ( EdgeListConstIterator ni = tenA.const_edge_list_begin(),
+			ni_end = tenA.const_edge_list_end();
+			ni != ni_end; ++ni ) {
+		Size const & i = (*ni)->get_first_node_ind();
+		Size const & j = (*ni)->get_second_node_ind();
+		if ( abs( int(i) - int(j) ) <= 1 ) continue;
+		if ( base_base_interacting[i][j] ) continue;
+
+		// now look for a direct contact between these residues
+		// might be faster to look up atom-level neighbor graph
+		Residue const & rsd_i( pose.residue( i ) );
+		Residue const & rsd_j( pose.residue( j ) );
+		bool found_contact( false );
+		Size m( 0 ), n( 0 );
+		for ( m = 1; m <= rsd_i.nheavyatoms(); m++ ) {
+			for ( n = 1; n <= rsd_j.nheavyatoms(); n++ ) {
+				if ( ( rsd_i.xyz( m ) - rsd_j.xyz( n ) ).length() <  CONTACT_DIST_CUTOFF ) {
+					out << pose.pdb_info()->tag( i ) << " " << pose.pdb_info()->tag( j ) <<  " " << rsd_i.atom_name(m) << " " << rsd_j.atom_name(n) << std::endl;
+					found_contact = true;
+					break;
+				}
+			}
+			if ( found_contact ) break;
+		}
+		if ( !found_contact ) continue;
+
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+// @details remove Rosetta variants (preparing for output of FASTA)
+void
+remove_upper_lower_variants_from_RNA( pose::Pose & pose )
+{
+	using namespace core::chemical;
+	for ( Size n = 1; n <= pose.size(); n++ ) {
+		if ( pose.residue_type( n ).is_RNA() ) {
+			remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, n );
+			remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, n );
+		}
+	}
+
 }
 
 } //ns rna

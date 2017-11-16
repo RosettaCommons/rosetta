@@ -424,6 +424,23 @@ PDBInfo::tighten_memory()
 	}
 }
 
+/// @detailed tag of <chain>[:<segid]:<number>[<icode>] that is useful for output, like make_tag_with_dashes() in string_util.hh
+///   Kind of like pose2pdb but can carry more information, and no spaces.
+///   TODO: where to put icode?
+std::string
+PDBInfo::tag( Size const res ) const
+{
+	std::string tag(1,chain(res));
+	tag += ":";
+
+	if ( segmentID( res ) != "    " ) tag += utility::strip(segmentID( res ) ) + ":";
+
+	tag += ObjexxFCL::string_of( number(res) );
+
+	if ( icode(res) != ' ' ) tag + std::string(1,icode(res));
+
+	return tag;
+}
 
 /// @brief translates the pose number to pdb numbering string
 /// for use in PyRosetta.

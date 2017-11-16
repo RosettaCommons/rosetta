@@ -761,6 +761,7 @@ sources = {
 		"RNA_JR_SuiteEnergy",
 		"RNA_LJ_BaseEnergy",
 		"RNA_LowResolutionPotential",
+	        "RNA_Motif",
 		"RNA_PairwiseLowResolutionEnergy",
 		"RNA_ScoringInfo",
 		"RNA_SugarCloseEnergy",

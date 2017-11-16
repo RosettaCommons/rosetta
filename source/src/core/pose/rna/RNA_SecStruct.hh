@@ -18,6 +18,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/pose/rna/RNA_SecStruct.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <map>
@@ -34,6 +35,9 @@ public:
 	RNA_SecStruct( std::string const & secstruct,
 		std::string const & secstruct_file = "",
 		std::string const & sequence = "" );
+
+	//constructor
+	RNA_SecStruct( pose::Pose const & pose );
 
 	RNA_SecStruct(){} // everything empty.
 
@@ -63,6 +67,9 @@ public:
 
 	// @brief in same helix -- not necessarily paired though. great for checking helix boundaries.
 	bool in_same_helix( core::Size const & i, core::Size const & j ) const;
+
+	void
+	remove_singlet_base_pairs();
 
 private:
 

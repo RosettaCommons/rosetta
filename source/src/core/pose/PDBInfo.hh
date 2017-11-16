@@ -639,12 +639,24 @@ public: // single residue accessors
 		return residue_rec_[ res ].iCode;
 	}
 
+	/// @brief Returns the segment ID code of residue  <res>
+	///
+	/// example(s):
+	///     pose.pdb_info().icode(3)
 	inline
 	std::string const &
 	segmentID( Size const res ) const
 	{
 		return residue_rec_[ res ].segmentID;
 	}
+
+
+	/// @brief Returns a tag for residue  <res> like C:1235 (or C:QA:1235 if segment ID is present)
+	///
+	/// example(s):
+	///     pose.pdb_info().icode(3)
+	std::string
+	tag( Size const res ) const;
 
 	/// @brief Returns the pose numbering of the pdb residue with chain letter <chain>,
 	/// pdb residue  <res>, and insertion code  <icode>

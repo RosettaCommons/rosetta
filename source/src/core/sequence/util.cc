@@ -37,6 +37,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/rms_util.hh>
 
@@ -899,6 +900,34 @@ parse_out_non_standard_residues( std::string & sequence ) {
 		if ( pos > 0 ) non_standard_residues[ k ] = fullname_list[ pos ];
 	}
 	return non_standard_residues;
+}
+
+// @brief output annotated_sequence (as well as numbering/chain info) to FASTA-like file.
+void
+output_fasta_file( std::string const & fasta_filename, core::pose::Pose const & pose  )
+{
+	// Write out a fasta file
+	std::ofstream fastafile( fasta_filename.c_str() );
+	if ( !fastafile.is_open() ) {
+		utility_exit_with_message( "Error: could not open " + fasta_filename + " for writing." );
+	}
+
+	utility::vector1< int > res_vector;
+	utility::vector1< char > chain_vector;
+	utility::vector1< std::string > segid_vector;
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		res_vector.push_back(   pose.pdb_info()->number( i ) );
+		chain_vector.push_back( pose.pdb_info()->chain( i ) );
+		segid_vector.push_back( pose.pdb_info()->segmentID( i ) );
+	}
+	fastafile << "> " << tag_from_pose( pose ) << " " << make_tag_with_dashes( res_vector, chain_vector, segid_vector ) << std::endl;
+
+	fastafile << pose.annotated_sequence() << std::endl;
+
+	if ( fastafile.bad() ) {
+		utility_exit_with_message( "Encountered an error writing to " + fasta_filename );
+	}
+	fastafile.close();
 }
 
 } // sequence
