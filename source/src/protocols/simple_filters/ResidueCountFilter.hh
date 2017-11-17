@@ -64,6 +64,11 @@ public:
 		core::pose::Pose const & pose
 	) const override;
 
+	/// @details The logic here ensures that any residue that is selected by type OR by properties is counted once and only once.
+	/// So, for example, if I say, "count THR and beta-branched and polar", each threonine residue is still only counted once.
+	/// @author Original author unknown.
+	/// @author Updated by Parisa Hosseinzadeh (parisah@uw.edu) to add property counting.
+	/// @author Logic updated by Vikram K. Mulligan (vmullig@uw.edu) to avoid double-counting if names and multiple properties are specified.
 	core::Real
 	compute(
 		core::pose::Pose const & pose
@@ -151,6 +156,12 @@ public:
 		std::string const & res_type_input
 	);
 
+	/// @brief add proeprties to peroperty vector
+	/// @detail given user specified properties, adds them to the property vector to count. I still need to add a way to check the sanity
+	/// @input res_type_set, the residue type set of the input structure
+	/// @input res_type_input, the user specified residue type name
+	/// @return false if res_type_input doesn't match any residue type names, true otherwise
+	/// @author Parisa Hosseinzadeh (parisah@uw.edu), Baker laboratory.
 	bool
 	add_residue_property_by_name(
 		//core::chemical::ResidueTypeSet const & res_type_set,

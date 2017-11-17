@@ -196,6 +196,11 @@ ResidueCountFilter::report_sm(
 	return compute( pose );
 }
 
+/// @details The logic here ensures that any residue that is selected by type OR by properties is counted once and only once.
+/// So, for example, if I say, "count THR and beta-branched and polar", each threonine residue is still only counted once.
+/// @author Original author unknown.
+/// @author Updated by Parisa Hosseinzadeh (parisah@uw.edu) to add property counting.
+/// @author Logic updated by Vikram K. Mulligan (vmullig@uw.edu) to avoid double-counting if names and multiple properties are specified.
 core::Real
 ResidueCountFilter::compute(
 	core::pose::Pose const & pose
@@ -225,21 +230,27 @@ ResidueCountFilter::compute(
 
 	core::Size count( 0 );
 	for ( core::Size i=1; i<=target_res.size(); ++i ) {
-		if ( res_types_.size() > 0 ) {
+		bool counted(false);
+		if ( !res_types_.empty() ) {
 			for ( core::Size j=1; j<=res_types_.size(); ++j ) {
 				if ( pose.residue( target_res[i] ).name3() == res_types_[j] || pose.residue( target_res[i] ).name() == res_types_[j] ) {
 					++count;
+					counted = true;
 					break; // TL: don't want to count a residue more than once in case name() != name3() but name() and name3() are both specified as res_types -- this was a problem with CYS/CYD
 				} // if
 			} // for all res types specified
-		} else if ( res_props_.size() > 0 ) {
+		}
+		if ( !counted && !res_props_.empty() ) { //Check properites if and only if we haven't already counted this residue's type.
 			for ( core::Size j=1; j<=res_props_.size(); ++j ) {
 				if ( pose.residue_type( target_res[i] ).has_property(res_props_[j]) ) {
 					++count;
-					// break; //the break is not necesary. a residue can have multiple properties
+					break; // VKM: This break is necessary, to prevent double-counting if multiple properties are selected.
+					// For example, if I say that I want beta-branched residues and polar residues, I don't want THR counted
+					// twice when ASN or VAL are each counted once.
 				} // if
 			} // for all res properties specified
-		} else {
+		}
+		if ( res_types_.empty() && res_props_.empty() ) {
 			++count; // for all packable/designable residues if task specified or all residues if no task specified
 		}
 	}
@@ -387,19 +398,19 @@ ResidueCountFilter::add_residue_type_by_name(
 /// @input res_type_set, the residue type set of the input structure
 /// @input res_type_input, the user specified residue type name
 /// @return false if res_type_input doesn't match any residue type names, true otherwise
+/// @author Parisa Hosseinzadeh (parisah@uw.edu), Baker laboratory.
 bool
 ResidueCountFilter::add_residue_property_by_name(
 	std::string const & prop_input
 ) {
 	using namespace core::chemical;
 
-	static const std::map< std::string, ResidueProperty > * const PROPERTY_MAP( ResidueProperties::generate_string_to_property_map() );
-	if ( ! ( *PROPERTY_MAP ).count( prop_input ) ) {
+	std::map< std::string, ResidueProperty > const * const property_map_ptr( ResidueProperties::generate_string_to_property_map() );
+	if ( !( property_map_ptr->count( prop_input ) ) ) {
 		return false;
-	} else {
-		res_props_.push_back( prop_input );
-		return true;
 	}
+	res_props_.push_back( prop_input );
+	return true;
 }
 
 

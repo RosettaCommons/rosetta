@@ -22,7 +22,7 @@
 // Platform Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-
+#include <core/pose/annotated_sequence.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -105,5 +105,37 @@ public:
 		TS_ASSERT_EQUALS( str_stream.str(), "Residue Count: 2\n");
 
 		TS_ASSERT_EQUALS(rcf.report_sm(pose), 2.0);
+	}
+
+	/// @brief Test that the filter doesn't double-count when using residue types and residue properties.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void test_residue_count_with_types_and_properties() {
+		using namespace protocols::simple_filters;
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence(pose, "ADTTDV", "fa_standard");
+
+		ResidueCountFilter rcf;
+		rcf.add_residue_type_by_name( *(pose.residue_type_set_for_pose()), "ASP");
+		rcf.add_residue_property_by_name( "CHARGED" );
+		rcf.add_residue_property_by_name( "POLAR" );
+
+		core::Real const eval1( rcf.compute( pose ) );
+
+		pose.clear();
+		core::pose::make_pose_from_sequence(pose, "AVLWY", "fa_standard");
+		core::Real const eval2( rcf.compute( pose ) );
+
+		pose.clear();
+		core::pose::make_pose_from_sequence(pose, "TNQSST", "fa_standard");
+		core::Real const eval3( rcf.compute( pose ) );
+
+		pose.clear();
+		core::pose::make_pose_from_sequence(pose, "D", "fa_standard");
+		core::Real const eval4( rcf.compute( pose ) );
+
+		TS_ASSERT_DELTA( eval1, 4.0, 1e-6);
+		TS_ASSERT_DELTA( eval2, 0.0, 1e-6);
+		TS_ASSERT_DELTA( eval3, 6.0, 1e-6);
+		TS_ASSERT_DELTA( eval4, 1.0, 1e-6);
 	}
 };
