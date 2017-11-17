@@ -97,7 +97,7 @@ EnvironmentCAP ProtectedConformation::environment() const {
 	if ( environment_exists_ ) {
 		return env_;
 	} else {
-		throw utility::excn::EXCN_NullPointer( "ProtectedEnvironment asked for Environment pointer after environment has already been destroyed/gone out of scope." );
+		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  "ProtectedEnvironment asked for Environment pointer after environment has already been destroyed/gone out of scope." );
 	}
 }
 
@@ -400,7 +400,7 @@ ProtectedConformation::replace_residue_sandbox(
 		ss << "Residue replacement of residue " << residue( seqpos ).name3() << seqpos << " ("
 			<< residue( seqpos ).natoms() << " atoms) failed because the input residue ("
 			<< new_rsd->name3() << ", " << new_rsd->natoms() << " atoms) had a different identity than the current residue.";
-		throw EXCN_Env_Security_Exception( ss.str(), get_mover_name( unlocks_ ), environment() );
+		throw CREATE_EXCEPTION(EXCN_Env_Security_Exception, ss.str(), get_mover_name( unlocks_ ), environment() );
 	} else if ( new_rsd->natoms() != this->residue( seqpos ).natoms() ) {
 
 		new_rsd = match_variants( seqpos, *new_rsd );
@@ -418,7 +418,7 @@ ProtectedConformation::replace_residue_sandbox(
 				<< in_rsd.type() << std::endl;
 			if ( tr.Debug.visible() ) { tr.Debug << ss.str() << std::endl; }
 
-			throw EXCN_Env_Security_Exception( ss.str(), get_mover_name( unlocks_ ), environment() );
+			throw CREATE_EXCEPTION(EXCN_Env_Security_Exception, ss.str(), get_mover_name( unlocks_ ), environment() );
 		}
 	}
 
@@ -439,7 +439,7 @@ ProtectedConformation::replace_residue_sandbox(
 				<< new_rsd->name3() << " (" << new_rsd->natoms() << " failed"
 				<< ": dofs were created or destroyed during replacement (old size: " << old_dofs.size()
 				<< "; new size: " << new_dofs.size() << ")" << std::endl;
-			throw EXCN_Env_Security_Exception( ss.str(), get_mover_name( unlocks_ ), environment() );
+			throw CREATE_EXCEPTION(EXCN_Env_Security_Exception, ss.str(), get_mover_name( unlocks_ ), environment() );
 		}
 
 		for ( auto it = old_dofs.begin();
@@ -636,7 +636,7 @@ ProtectedConformation::fail_verification(
 	std::string const& mod_type
 ) const {
 	core::environment::DofPassportCOP pass = unlocks_.empty() ? nullptr : unlocks_.top();
-	throw EXCN_Env_Security_Exception( id, pass, mod_type, *this, get_mover_name( unlocks_ ), environment() );
+	throw CREATE_EXCEPTION(EXCN_Env_Security_Exception, id, pass, mod_type, *this, get_mover_name( unlocks_ ), environment() );
 }
 
 // ALWAYS-FAILING SECURITY OVERLOADS

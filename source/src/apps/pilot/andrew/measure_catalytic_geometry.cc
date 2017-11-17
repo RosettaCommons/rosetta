@@ -173,7 +173,7 @@ int main( int argc, char * argv [] )
 		std::cout << "ANG U1D2 " << numeric::constants::d::radians_to_degrees * numeric::angle_radians( vu1, vd1, vd2 ) << std::endl;
 		std::cout << "DIS U1D1 " <<  vu1.distance( vd1 ) << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

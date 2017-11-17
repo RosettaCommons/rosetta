@@ -157,11 +157,11 @@ ScreeningFeatures::parse_my_tag(
 {
 
 	if ( !basic::options::option[basic::options::OptionKeys::in::file::screening_job_file].user() ) {
-		throw utility::excn::EXCN_BadInput("The ScreeningFeatures reporter is only usable with the ScreeningJobInputter. specify input using -in:file:screening_job_inputter");
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "The ScreeningFeatures reporter is only usable with the ScreeningJobInputter. specify input using -in:file:screening_job_inputter");
 	}
 
 	if ( !tag->hasOption("chain") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures requires the 'chain' tag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScreeningFeatures requires the 'chain' tag");
 	}
 
 	chain_ = tag->getOption<std::string>("chain");
@@ -169,11 +169,11 @@ ScreeningFeatures::parse_my_tag(
 	core::Size descriptor_count = 0;
 	for ( utility::tag::TagCOP const & sub_tag : tag->getTags() ) {
 		if ( sub_tag->getName() != "descriptor" ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures only supports subtags with the name 'descriptor");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScreeningFeatures only supports subtags with the name 'descriptor");
 		}
 
 		if ( !sub_tag->hasOption("type") ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures descriptor subtags require a 'type' option");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScreeningFeatures descriptor subtags require a 'type' option");
 		}
 
 		std::string descriptor_type(sub_tag->getOption<std::string>("type"));
@@ -181,7 +181,7 @@ ScreeningFeatures::parse_my_tag(
 		descriptor_count++;
 	}
 	if ( descriptor_count == 0 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures requires at least one 'descriptor' subtag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScreeningFeatures requires at least one 'descriptor' subtag");
 	}
 
 }

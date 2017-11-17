@@ -84,7 +84,7 @@ std::string name_for_common_type( XMLSchemaCommonType common_type )
 	case xsct_task_operation_comma_separated_list : return "task_operation_comma_separated_list";
 	case xsct_pose_cached_task_operation : return "pose_cached_task_operation";
 	case xsct_none :
-		throw utility::excn::EXCN_Msg_Exception( "Error in requesting name for xsct_none;" );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Error in requesting name for xsct_none;" );
 		break;
 	}
 	return "Error in requesting name for common type";
@@ -178,10 +178,10 @@ XMLSchemaAttribute::XMLSchemaAttribute(
 	description_( description )
 {
 	if ( string_contains_gt_or_lt( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for attribute \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for attribute \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
 	}
 	if ( string_contains_ampersand( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for attribute \"" + name + "\" may not contain '&'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for attribute \"" + name + "\" may not contain '&'. Offending string: " + description );
 	}
 }
 
@@ -251,10 +251,10 @@ XMLSchemaAttribute & XMLSchemaAttribute::default_value( std::string const & sett
 XMLSchemaAttribute & XMLSchemaAttribute::description( std::string const & setting ) {
 	description_ = setting;
 	if ( string_contains_gt_or_lt( description_ ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for attribute \"" + name_ + "\" may not contain either '<' or '>'. Offending string: " + description_ );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for attribute \"" + name_ + "\" may not contain either '<' or '>'. Offending string: " + description_ );
 	}
 	if ( string_contains_ampersand( description_ ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for attribute \"" + name_ + "\" may not contain '&'. Offending string: " + description_ );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for attribute \"" + name_ + "\" may not contain '&'. Offending string: " + description_ );
 	}
 
 	return *this;
@@ -753,21 +753,21 @@ XMLSchemaModelGroup::validate_content() const
 		if ( model_group ) {
 			if ( model_group->type_ == xsmgt_all ) {
 				if ( type_ != xsmgt_all && type_ != xsmgt_group ) {
-					throw utility::excn::EXCN_Msg_Exception( "In XML Schema, xs:all model groups may not be nested beneath anything besides an xs:all" );
+					throw CREATE_EXCEPTION(utility::excn::Exception, "In XML Schema, xs:all model groups may not be nested beneath anything besides an xs:all" );
 				}
 				found_all = true;
 			} else if ( model_group->is_group_holding_all() ) {
-				throw utility::excn::EXCN_Msg_Exception( "In XML Schema, xs:groups holding an xs:all group may only be nested directly beneath a complexType" );
+				throw CREATE_EXCEPTION(utility::excn::Exception, "In XML Schema, xs:groups holding an xs:all group may only be nested directly beneath a complexType" );
 			} else {
 				if ( type_ == xsmgt_all ) {
-					throw utility::excn::EXCN_Msg_Exception( "In XML Schema, only xs:all model groups may be nested beneath an xs:all group" );
+					throw CREATE_EXCEPTION(utility::excn::Exception, "In XML Schema, only xs:all model groups may be nested beneath an xs:all group" );
 				}
 			}
 		} // else -- we're looking at an XMLSchemaElement, and it's always ok to hold an XMLSchemaElement.
 	}
 	if ( found_all && type_ == xsmgt_group ) {
 		if ( particles_.size() > 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "In XML Schema, an xs:all may be the only child of an xs:group if it is a child at all" );
+			throw CREATE_EXCEPTION(utility::excn::Exception, "In XML Schema, an xs:all may be the only child of an xs:group if it is a child at all" );
 		}
 	}
 }
@@ -807,10 +807,10 @@ XMLSchemaComplexType & XMLSchemaComplexType::name( std::string const & setting )
 XMLSchemaComplexType & XMLSchemaComplexType::description( std::string const & setting ) {
 	desc_ = setting;
 	if ( string_contains_gt_or_lt( desc_ ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for complexType \"" + name_ + "\" may not contain either '<' or '>'. Offending string: " + setting );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for complexType \"" + name_ + "\" may not contain either '<' or '>'. Offending string: " + setting );
 	}
 	if ( string_contains_ampersand( desc_ ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for complexType \"" + name_ + "\" may not contain '&'. Offending string: " + setting );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for complexType \"" + name_ + "\" may not contain '&'. Offending string: " + setting );
 	}
 
 	return *this;
@@ -946,7 +946,7 @@ void XMLSchemaDefinition::add_top_level_element( XMLSchemaTopLevelElement const 
 		elements_in_order_.push_back( element.element_name() );
 	} else if ( top_level_elements_[ element.element_name() ] != definition ) {
 
-		throw utility::excn::EXCN_Msg_Exception( "Name collision in creation of XML Schema definition: top level element with name \"" +
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Name collision in creation of XML Schema definition: top level element with name \"" +
 			element.element_name() + "\" already has been defined.\nOld definition:\n" + top_level_elements_[ element.element_name() ] +
 			"New definition:\n" + definition );
 	}
@@ -990,10 +990,10 @@ void XMLSchemaDefinition::validate_new_top_level_element( std::string const & el
 	std::istringstream def_stream( definition );
 	utility::tag::TagCOP element_tag = utility::tag::Tag::create( def_stream );
 	if ( ! element_tag->hasOption( "name" ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "top level tag \"" + element_name + "\" does not have a name attribute (a.k.a. option)." );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "top level tag \"" + element_name + "\" does not have a name attribute (a.k.a. option)." );
 	}
 	if ( element_tag->getOption< std::string >( "name" ) != element_name ) {
-		throw utility::excn::EXCN_Msg_Exception( "top level tag with presumed name \"" + element_name + "\" has an actual name of \""
+		throw CREATE_EXCEPTION(utility::excn::Exception, "top level tag with presumed name \"" + element_name + "\" has an actual name of \""
 			+ element_tag->getOption< std::string >( "name" ) + "\"" );
 	}
 }
@@ -1041,10 +1041,10 @@ XMLSchemaSimpleSubelementList::add_simple_subelement(
 )
 {
 	if ( string_contains_gt_or_lt( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
 	}
 	if ( string_contains_ampersand( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
 	}
 
 	ElementSummary summary = element_summary_as_simple_subelement( name, attributes, description );
@@ -1062,10 +1062,10 @@ XMLSchemaSimpleSubelementList::add_simple_subelement(
 )
 {
 	if ( string_contains_gt_or_lt( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
 	}
 	if ( string_contains_ampersand( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
 	}
 
 	ElementSummary summary = element_summary_as_simple_subelement( name, attributes, description, min_occurs, max_occurs );
@@ -1189,10 +1189,10 @@ XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(
 )
 {
 	if ( string_contains_gt_or_lt( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
 	}
 	if ( string_contains_ampersand( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
 	}
 
 
@@ -1218,10 +1218,10 @@ XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(
 )
 {
 	if ( string_contains_gt_or_lt( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
 	}
 	if ( string_contains_ampersand( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
 	}
 
 
@@ -1479,10 +1479,10 @@ void XMLSchemaComplexTypeGeneratorImpl::element_name( std::string const & elemen
 
 void XMLSchemaComplexTypeGeneratorImpl::description( std::string const & desc ) {
 	if ( string_contains_gt_or_lt( desc ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for complexType for element \"" + element_name_ + "\" may not contain either '<' or '>'. Offending string: " + desc );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for complexType for element \"" + element_name_ + "\" may not contain either '<' or '>'. Offending string: " + desc );
 	}
 	if ( string_contains_ampersand( desc ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for complexType for element \"" + element_name_ + "\" may not contain '&'. Offending string: " + desc );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for complexType for element \"" + element_name_ + "\" may not contain '&'. Offending string: " + desc );
 	}
 
 
@@ -1547,7 +1547,7 @@ XMLSchemaComplexTypeGeneratorImpl::set_subelements_single_appearance_required( X
 
 		for ( auto const & element : elements ) {
 			if ( element.element_type == XMLSchemaSimpleSubelementList::ElementSummary::ct_group ) {
-				throw utility::excn::EXCN_Msg_Exception( "set_subelement_single_appearance_required cannot be used with"
+				throw CREATE_EXCEPTION(utility::excn::Exception, "set_subelement_single_appearance_required cannot be used with"
 					" more than one element if any of the subelements are \"group\" references\n" );
 			}
 		}
@@ -1566,7 +1566,7 @@ XMLSchemaComplexTypeGeneratorImpl::set_subelements_single_appearance_optional( X
 
 		for ( auto const & element : elements ) {
 			if ( element.element_type == XMLSchemaSimpleSubelementList::ElementSummary::ct_group ) {
-				throw utility::excn::EXCN_Msg_Exception( "set_subelement_single_appearance_optional cannot be used with"
+				throw CREATE_EXCEPTION(utility::excn::Exception, "set_subelement_single_appearance_optional cannot be used with"
 					" more than one element if any of the subelements are \"group\" references\n" );
 			}
 		}
@@ -1604,7 +1604,7 @@ XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_optional(
 {
 	subelement_behavior_ = se_ordered_sets;
 	if ( subelements.element_list().size() != 1 ) {
-		throw utility::excn::EXCN_Msg_Exception(
+		throw CREATE_EXCEPTION(utility::excn::Exception,
 			"When calling XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_optional, "
 			" the input subelement list should contain only a single subelement." );
 	}
@@ -1618,7 +1618,7 @@ XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_required(
 {
 	subelement_behavior_ = se_ordered_sets;
 	if ( subelements.element_list().size() != 1 ) {
-		throw utility::excn::EXCN_Msg_Exception(
+		throw CREATE_EXCEPTION(utility::excn::Exception,
 			"When calling XMLSchemaComplexTypeGeneratorImpl::add_ordered_subelement_set_as_required, "
 			" the input subelement list should contain only a single subelement." );
 	}
@@ -1659,7 +1659,7 @@ XMLSchemaComplexTypeGeneratorImpl::write_complex_type_to_schema( XMLSchemaDefini
 	if ( description_ == "(not yet set)" ) {
 		std::ostringstream oss;
 		oss << "You have not provided a description for " << element_name_ << "; all complexTypes must have descriptions, even if they are the empty string" << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 	} else {
 		complex_type.description( description_ );
 	}
@@ -1731,7 +1731,7 @@ void XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_repeatable( XMLSchema
 
 		for ( auto const & element : elements ) {
 			if ( element.min_or_max_occurs_set ) {
-				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " was initilized with "
+				throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " was initilized with "
 					"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
 					"set_sublements_repeatable function, which will override the min/max occurence settings." );
 			}
@@ -1757,7 +1757,7 @@ XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_choice_req(
 	model_group->type( xsmgt_choice );
 	for ( auto const & element : elements ) {
 		if ( element.min_or_max_occurs_set ) {
-			throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " was initilized with "
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " was initilized with "
 				"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
 				"set_sublements_pick_one function, which will override the min/max occurence settings." );
 		}
@@ -1779,7 +1779,7 @@ XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_choice_opt(
 	model_group->type( xsmgt_choice );
 	for ( auto const & element : elements ) {
 		if ( element.min_or_max_occurs_set ) {
-			throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " was initilized with "
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " was initilized with "
 				"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
 				"set_sublements_pick_one_optional function, which will override the min/max occurence settings." );
 		}
@@ -1832,13 +1832,13 @@ void XMLSchemaComplexTypeGeneratorImpl::prepare_subelement_single_instance_optio
 			// Error checking. You are allowed to specify a min_occurs of 1 to say that a particular element is required
 			// among a list of otherwise optional elements.
 			if ( element.max_occurs != 1 && element.max_occurs != xsminmax_unspecified ) {
-				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " was initilized with "
+				throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " was initilized with "
 					"max_occurs set to " + utility::to_string( element.max_occurs )  + ", but then handed to the "
 					"XMLSchemaComplexTypeGenerator through the set_sublements_single_instance_optional function, "
 					"which only allows a max occurence setting of 1." );
 			}
 			if ( element.min_occurs > 1 || element.min_occurs == xsminmax_unbounded ) {
-				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " was initilized with "
+				throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " was initilized with "
 					"min_occurs set to " + utility::to_string( element.max_occurs )  + ", but then handed to the "
 					"XMLSchemaComplexTypeGenerator through the set_sublements_single_instance_optional function, "
 					"which only allows at most a single occurrence." );
@@ -1888,12 +1888,12 @@ XMLSchemaComplexTypeGeneratorImpl::prepare_sequence_of_subelement_sets(
 				XMLSchemaModelGroupOP choice( new XMLSchemaModelGroup( xsmgt_choice ));
 				for ( auto const & element : elements ) {
 					if ( element.min_or_max_occurs_set ) {
-						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " was initilized with "
+						throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " was initilized with "
 							"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
 							"add_ordered_sublement_set_as_repeatable function, which will override the min/max occurence settings." );
 					}
 					if ( all_element_names.count( element.element_name ) != 0 ) {
-						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " appears more than"
+						throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " appears more than"
 							" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
 							" was added through the add_ordered_sublement_set_as_repeatable function" );
 					}
@@ -1911,12 +1911,12 @@ XMLSchemaComplexTypeGeneratorImpl::prepare_sequence_of_subelement_sets(
 			debug_assert( elements.size() == 1 ); // this was already checked for in add_ordered_sublement_set_as_optional
 			XMLSchemaSimpleSubelementList::ElementSummary elem1 = *elements.begin();
 			if ( elem1.min_or_max_occurs_set ) {
-				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " was initilized with "
+				throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + elem1.element_name + " was initilized with "
 					"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
 					"add_ordered_sublement_set_as_optional function, which will override the min/max occurence settings." );
 			}
 			if ( all_element_names.count( elem1.element_name ) != 0 ) {
-				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " appears more than"
+				throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + elem1.element_name + " appears more than"
 					" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
 					" was added through the add_ordered_sublement_set_as_optional function" );
 			}
@@ -1932,12 +1932,12 @@ XMLSchemaComplexTypeGeneratorImpl::prepare_sequence_of_subelement_sets(
 			debug_assert( elements.size() == 1 ); // this was already checked for in add_ordered_sublement_set_as_required
 			XMLSchemaSimpleSubelementList::ElementSummary elem1 = *elements.begin();
 			if ( elem1.min_or_max_occurs_set ) {
-				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " was initilized with "
+				throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + elem1.element_name + " was initilized with "
 					"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
 					"add_ordered_sublement_set_as_required function, which will override the min/max occurence settings." );
 			}
 			if ( all_element_names.count( elem1.element_name ) != 0 ) {
-				throw utility::excn::EXCN_Msg_Exception( "Subelement named " + elem1.element_name + " appears more than"
+				throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + elem1.element_name + " appears more than"
 					" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
 					" was added through the add_ordered_sublement_set_as_required function" );
 			}
@@ -1956,12 +1956,12 @@ XMLSchemaComplexTypeGeneratorImpl::prepare_sequence_of_subelement_sets(
 				XMLSchemaModelGroupOP choice( new XMLSchemaModelGroup( xsmgt_choice ));
 				for ( auto const & element : elements ) {
 					if ( element.min_or_max_occurs_set ) {
-						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " was initilized with "
+						throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " was initilized with "
 							"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
 							"add_ordered_sublement_set_as_pick_one_or_none function, which will override the min/max occurence settings." );
 					}
 					if ( all_element_names.count( element.element_name ) != 0 ) {
-						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " appears more than"
+						throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " appears more than"
 							" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
 							" was added through the add_ordered_sublement_set_as_pick_one_or_none function" );
 					}
@@ -1982,12 +1982,12 @@ XMLSchemaComplexTypeGeneratorImpl::prepare_sequence_of_subelement_sets(
 				XMLSchemaModelGroupOP choice( new XMLSchemaModelGroup( xsmgt_choice ));
 				for ( auto const & element : elements ) {
 					if ( element.min_or_max_occurs_set ) {
-						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " was initilized with "
+						throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " was initilized with "
 							"either min_occurs or max_occurs set, but then handed to the XMLSchemaComplexTypeGenerator through the "
 							"add_ordered_sublement_set_as_pick_one function, which will override the min/max occurence settings." );
 					}
 					if ( all_element_names.count( element.element_name ) != 0 ) {
-						throw utility::excn::EXCN_Msg_Exception( "Subelement named " + element.element_name + " appears more than"
+						throw CREATE_EXCEPTION(utility::excn::Exception, "Subelement named " + element.element_name + " appears more than"
 							" once in subelement lists for complex type for an element named \"" + element_name_ + "\" which"
 							" was added through the add_ordered_sublement_set_as_pick_one function" );
 					}
@@ -2281,10 +2281,10 @@ XMLSchemaRepeatableCTNode::set_element_w_attributes(
 )
 {
 	if ( string_contains_gt_or_lt( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for CTNode \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for CTNode \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
 	}
 	if ( string_contains_ampersand( description ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Desciption for CTNode \"" + name + "\" may not contain '&'. Offending string: " + description );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for CTNode \"" + name + "\" may not contain '&'. Offending string: " + description );
 	}
 
 	element_ = XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(

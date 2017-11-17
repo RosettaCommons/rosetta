@@ -153,7 +153,7 @@ public:
 		if ( retrieve( frag_id, val ) ) {
 			return val;
 		} else {
-			throw utility::excn::EXCN_RangeError( "no "+tag_+ "entry found for fragment: ");
+			throw CREATE_EXCEPTION(utility::excn::RangeError,  "no "+tag_+ "entry found for fragment: ");
 		}
 	}
 
@@ -162,7 +162,7 @@ public:
 		if ( retrieve( frag_id, val ) ) {
 			return val;
 		} else {
-			throw utility::excn::EXCN_RangeError( "no "+tag_+ "entry found for fragment: ");
+			throw CREATE_EXCEPTION(utility::excn::RangeError,  "no "+tag_+ "entry found for fragment: ");
 		}
 	}
 
@@ -171,7 +171,7 @@ public:
 		if ( retrieve( frame, frag_num, val ) ) {
 			return val;
 		} else {
-			throw utility::excn::EXCN_RangeError( "no "+tag_+ "entry found for fragment");
+			throw CREATE_EXCEPTION(utility::excn::RangeError,  "no "+tag_+ "entry found for fragment");
 		}
 	}
 

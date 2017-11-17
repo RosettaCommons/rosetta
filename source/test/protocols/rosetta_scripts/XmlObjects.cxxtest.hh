@@ -82,7 +82,7 @@ public:
 		TR << "Getting ScoreFunction" << std::endl;
 		try {
 			core::scoring::ScoreFunctionOP scorefxn = objs->get_score_function("scorefxn");
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -92,7 +92,7 @@ public:
 			protocols::filters::FilterOP filter = objs->get_filter("true");
 			protocols::simple_filters::PoseCommentOP casted = std::dynamic_pointer_cast< protocols::simple_filters::PoseComment >( filter );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -102,7 +102,7 @@ public:
 			protocols::moves::MoverOP mover = objs->get_mover("min_mover");
 			protocols::simple_moves::MinMoverOP casted = std::dynamic_pointer_cast< protocols::simple_moves::MinMover >( mover );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -112,7 +112,7 @@ public:
 			core::pack::task::operation::TaskOperationOP taskop = objs->get_task_operation("prevent_repacking");
 			core::pack::task::operation::PreventRepackingOP casted = std::dynamic_pointer_cast< core::pack::task::operation::PreventRepacking >( taskop );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -122,7 +122,7 @@ public:
 			core::select::residue_selector::ResidueSelectorOP selector = objs->get_residue_selector("true_sel");
 			core::select::residue_selector::TrueResidueSelectorOP casted = std::dynamic_pointer_cast< core::select::residue_selector::TrueResidueSelector >( selector );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -141,14 +141,14 @@ public:
 		try {
 			core::scoring::ScoreFunctionOP scorefxn = XmlObjects::static_get_score_function(
 				"<ScoreFunction name=\"scorefxn\"/>\n");
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
 		try {
 			core::scoring::ScoreFunctionOP scorefxn = XmlObjects::static_get_score_function(
 				"<ScoreFunction />\n");
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -159,7 +159,7 @@ public:
 				"<PoseComment name=\"true\" />\n");
 			protocols::simple_filters::PoseCommentOP casted = std::dynamic_pointer_cast< protocols::simple_filters::PoseComment >( filter );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -168,7 +168,7 @@ public:
 				"<PoseComment />\n");
 			protocols::simple_filters::PoseCommentOP casted = std::dynamic_pointer_cast< protocols::simple_filters::PoseComment >( filter );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -179,7 +179,7 @@ public:
 				"<MinMover name=\"min_mover\" bb=\"true\" chi=\"true\"/>\n");
 			protocols::simple_moves::MinMoverOP casted = std::dynamic_pointer_cast< protocols::simple_moves::MinMover >( mover );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -188,7 +188,7 @@ public:
 				"<MinMover bb=\"true\" chi=\"true\"/>\n");
 			protocols::simple_moves::MinMoverOP casted = std::dynamic_pointer_cast< protocols::simple_moves::MinMover >( mover );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -199,7 +199,7 @@ public:
 				"<PreventRepacking name=\"prevent_repacking\" />\n");
 			core::pack::task::operation::PreventRepackingOP casted = std::dynamic_pointer_cast< core::pack::task::operation::PreventRepacking >( taskop );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -208,7 +208,7 @@ public:
 				"<PreventRepacking />\n");
 			core::pack::task::operation::PreventRepackingOP casted = std::dynamic_pointer_cast< core::pack::task::operation::PreventRepacking >( taskop );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -219,7 +219,7 @@ public:
 				"<True name=\"true_sel\" />\n");
 			core::select::residue_selector::TrueResidueSelectorOP casted = std::dynamic_pointer_cast< core::select::residue_selector::TrueResidueSelector >( selector );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -228,7 +228,7 @@ public:
 				"<True />\n");
 			core::select::residue_selector::TrueResidueSelectorOP casted = std::dynamic_pointer_cast< core::select::residue_selector::TrueResidueSelector >( selector );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -247,7 +247,7 @@ public:
 			core::select::residue_selector::ResidueSelectorOP selector = objs->get_residue_selector( "posPhi" );
 			core::select::residue_selector::PhiSelectorOP casted = std::dynamic_pointer_cast< core::select::residue_selector::PhiSelector >( selector );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -267,7 +267,7 @@ public:
 			core::select::residue_selector::ResidueSelectorOP selector = objs->get_residue_selector( "posPhi" );
 			core::select::residue_selector::PhiSelectorOP casted = std::dynamic_pointer_cast< core::select::residue_selector::PhiSelector >( selector );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -289,7 +289,7 @@ public:
 			protocols::moves::MoverOP mover = objs->get_mover( "ParsedProtocol" );
 			protocols::rosetta_scripts::ParsedProtocolOP casted = std::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol >( mover );
 			(void)casted;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}

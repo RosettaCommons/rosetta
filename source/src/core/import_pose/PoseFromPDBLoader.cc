@@ -49,7 +49,7 @@ PoseFromPDBLoader::create_resource(
 {
 	ImportPoseOptions const * pose_opts_ptr = dynamic_cast< ImportPoseOptions const * > ( &options );
 	if ( ! pose_opts_ptr ) {
-		throw utility::excn::EXCN_Msg_Exception( "PoseFromPDBLoader expected to be given a ImportPoseOptions object, " \
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "PoseFromPDBLoader expected to be given a ImportPoseOptions object, " \
 			"but was given a non-ImportPoseOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
 	pose::PoseOP pose( new pose::Pose() );

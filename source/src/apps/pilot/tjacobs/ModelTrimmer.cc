@@ -374,7 +374,7 @@ main( int argc, char * argv [] ) {
 		}//while(it != it_end) {
 		write_model_file(comments.str(), models, new_model_filename);
 	} //try
-catch ( utility::excn::EXCN_Base& excn ) {
+catch (utility::excn::Exception& excn ) {
 	std::cerr << "Exception : " << std::endl;
 	excn.show( std::cerr );
 	return -1;

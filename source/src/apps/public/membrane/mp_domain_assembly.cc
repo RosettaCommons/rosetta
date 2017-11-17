@@ -76,7 +76,7 @@
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <protocols/jd2/util.hh>
@@ -814,33 +814,33 @@ void MPDomainAssembly::init_from_cmd() {
 		full_seq_ = core::sequence::read_fasta_file( option[ OptionKeys::in::file::fasta ]()[1] )[1]->sequence();
 		TR << "Read in fasta file " << option[OptionKeys::in::file::fasta]()[1] << std::endl;
 	} else {
-		throw utility::excn::EXCN_Msg_Exception("Please provide fasta file with -in:file:fasta!");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Please provide fasta file with -in:file:fasta!");
 	}
 
 	// read in PDB list
 	if ( option[mp::assembly::poses].user() ) {
 		infiles_ = basic::options::option[mp::assembly::poses]();
 	} else {
-		throw utility::excn::EXCN_Msg_Exception("Please provide a list of PDB files with -in:file:l!");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Please provide a list of PDB files with -in:file:l!");
 	}
 
 	// figure out which of the poses_ is the TM span
 	if ( option[OptionKeys::mp::assembly::TM_pose_number].user() ) {
 		tmpdb_ = option[OptionKeys::mp::assembly::TM_pose_number]();
 	} else {
-		throw utility::excn::EXCN_Msg_Exception("Which number of the PDBs in the file list is located in the membrane?");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Which number of the PDBs in the file list is located in the membrane?");
 	}
 
 	// read in fragments
 	if ( option[OptionKeys::in::file::frag3].user() ) {
 		frag3_fn_ = option[OptionKeys::in::file::frag3]();
 	} else {
-		throw utility::excn::EXCN_Msg_Exception("Please provide fragments with -in:file:frag3!");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Please provide fragments with -in:file:frag3!");
 	}
 	if ( option[OptionKeys::in::file::frag9].user() ) {
 		frag9_fn_ = option[OptionKeys::in::file::frag9]();
 	} else {
-		throw utility::excn::EXCN_Msg_Exception("Please provide fragments with -in:file:frag9!");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Please provide fragments with -in:file:frag9!");
 	}
 
 } // init from commandline
@@ -986,7 +986,7 @@ main( int argc, char * argv [] )
 		return 0;
 
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

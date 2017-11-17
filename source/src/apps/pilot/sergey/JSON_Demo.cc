@@ -85,7 +85,7 @@ int main( int argc, char * argv [] )
 
 	std::cout << utility::json_spirit::write(loop, utility::json_spirit::pretty_print) << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

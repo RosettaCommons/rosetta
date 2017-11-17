@@ -120,7 +120,7 @@ LoopsExplicitDefiner::parse_my_tag(
 ) {
 
 	if ( !tag->hasOption("name") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption(
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, 
 			"Unable to create unnamed LoopsDefiner (type: Loops)" );
 	}
 	string const loops_name(tag->getOption<string>("name"));
@@ -137,7 +137,7 @@ LoopsExplicitDefiner::parse_my_tag(
 				<< "Please include only tags with name 'loop' "
 				<< "as subtags of a 'Loops' tag" << endl
 				<< "Tag with name '" << loop_tag->getName() << "' is invalid" << endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 		}
 
 		SerializedLoop loop = parse_loop_tag(loop_tag, loops_name);

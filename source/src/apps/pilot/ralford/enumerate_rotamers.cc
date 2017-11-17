@@ -44,7 +44,7 @@ main( int argc, char * argv [] )
 		DumpSingleResidueRotamersOP dump_rotamers( new DumpSingleResidueRotamers() );
 		protocols::jd2::JobDistributor::get_instance()->go( dump_rotamers );
 		return 0;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "Caught Exception " << e.msg() << std::endl;
 		return -1;
 	}

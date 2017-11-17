@@ -144,7 +144,7 @@ public:
 		try {
 			// internally, the RTS uses a ResidueTypeFinder in this method.
 			rts_->get_all_types_with_variants_aa( aa_phe, ala->variant_types() );
-		} catch ( utility::excn::EXCN_Base & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Caught exception " << e.msg() << std::endl;
 		}
 		finished_ = true;

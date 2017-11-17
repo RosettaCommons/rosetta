@@ -129,7 +129,7 @@ RepeatPropagationMover::RepeatPropagationMover() :
 
 void RepeatPropagationMover::apply(core::pose::Pose & pose) {
 	if ( pose.size()== last_res_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("can not handle situation where last_res is being repeated (yet...)");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "can not handle situation where last_res is being repeated (yet...)");
 	}
 	if ( orig_pdb_length_!=9999 ) {
 		detect_last_repeat_residue(pose);
@@ -714,7 +714,7 @@ void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 )
 {
 	if ( !tag->hasOption("first_template_res") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("repeat mover requires the first residue be entered with first_res tag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "repeat mover requires the first residue be entered with first_res tag");
 	}
 	first_res_ = tag->getOption<Size>("first_template_res");
 	last_res_ = tag->getOption<Size>("last_template_res",9999);
@@ -723,10 +723,10 @@ void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 	orig_number_repeats_ = atoi(detect_repeat_length_change_split[1].c_str());
 	orig_pdb_length_ = atoi(detect_repeat_length_change_split[2].c_str());
 	if ( !tag->hasOption("last_template_res") && orig_pdb_length_==9999 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("repeat mover requires the last residue to be entered with last_res tag or auto detected");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "repeat mover requires the last residue to be entered with last_res tag or auto detected");
 	}
 	if ( !tag->hasOption("numb_repeats") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("repeat mover requires the number of repeats be entered with numb_repeats tag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "repeat mover requires the number of repeats be entered with numb_repeats tag");
 	}
 	numb_repeats_ = tag->getOption<Size>("numb_repeats");
 	deal_with_ideal_loop_closure_scar_ = false;
@@ -743,7 +743,7 @@ void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 	cTerm_cap_size_=0;
 	if ( maintain_cap_ ) {
 		if ( (!tag->hasOption("nTerm_cap_size"))||(!tag->hasOption("cTerm_cap_size")) ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("repeat mover requires cTerm_cap and nTerm_cap defined if trying to maintain cap sequence or structure");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "repeat mover requires cTerm_cap and nTerm_cap defined if trying to maintain cap sequence or structure");
 		}
 		nTerm_cap_size_ = tag->getOption<Size>("nTerm_cap_size");
 		cTerm_cap_size_ = tag->getOption<Size>("cTerm_cap_size");

@@ -35,7 +35,7 @@ DatabaseSessionLoader::create_resource(
 	std::istream & /*istream*/
 ) const {
 	if ( ! dynamic_cast< DatabaseSessionOptions const * > ( &options ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "DatabaseSessionLoader expected to be given a DatabaseSessionOptions object, " \
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "DatabaseSessionLoader expected to be given a DatabaseSessionOptions object, " \
 			"but was given a non-DatabaseSessionOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
 	DatabaseSessionOptions const & database_options = static_cast< DatabaseSessionOptions const & > ( options );

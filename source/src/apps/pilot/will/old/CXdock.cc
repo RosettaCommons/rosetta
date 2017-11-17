@@ -791,7 +791,7 @@ int main(int argc, char *argv[]) {
 			dock(pnat,fn,ssamp,olig,nfold,native_ca);
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

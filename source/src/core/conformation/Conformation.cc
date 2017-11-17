@@ -1055,12 +1055,12 @@ Conformation::append_residue_by_bond(
 			std::stringstream err;
 			err << "Can't create a polymer bond after residue " << anchor_pos
 				<< " due to incompatible type: " << anchor_rsd.type().name();
-			throw utility::excn::EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 		} else if ( !new_rsd.is_polymer() ) {
 			std::stringstream err;
 			err << "Can't create a polymer bond to new residue " << seqpos
 				<< " due to incompatible type: " << new_rsd.type().name();
-			throw utility::excn::EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 		}
 	} else {
 		// if using a non-polymer connection, confirm that anchor_pos & anchor_residue_connection_index are set

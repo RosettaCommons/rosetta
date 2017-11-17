@@ -58,12 +58,12 @@ public:
 		basic::datacache::DataMap dm;
 
 		TaskSelectorOP rs( new TaskSelector );
-		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::EXCN_RosettaScriptsOption );
+		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::RosettaScriptsOptionError );
 
 		std::stringstream ssgood;
 		ssgood << "<Task name=\"good_tos\" task_operations=\"test_op,test_op2\" packable=\"1\" />";
 		tag->read( ssgood );
-		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::EXCN_RosettaScriptsOption );
+		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::RosettaScriptsOptionError );
 
 		protocols::toolbox::task_operations::DesignAroundOperationOP des_around( new protocols::toolbox::task_operations::DesignAroundOperation );
 		des_around->include_residue( 2 );

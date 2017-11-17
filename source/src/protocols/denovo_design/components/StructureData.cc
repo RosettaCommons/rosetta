@@ -158,7 +158,7 @@ StructureData::parse_tag( utility::tag::TagCOP tag )
 			<< ") does not match length computed from Segment lengths ("
 			<< pose_length_ << ")" << std::endl;
 		msg << *this << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
 	core::Size const elem_length_check = tag->getOption< core::Size >( "length", 0 );
@@ -168,7 +168,7 @@ StructureData::parse_tag( utility::tag::TagCOP tag )
 			<< ") does not match length computed from Segment lengths ("
 			<< length_ << ")" << std::endl;
 		msg << *this << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 }
 
@@ -222,7 +222,7 @@ StructureData::parse_subtag( utility::tag::TagCOP tag )
 		add_pairing( *newpairing );
 	} else {
 		tag->write( TR.Error );
-		throw utility::excn::EXCN_RosettaScriptsOption( "Unknown tag in permutation: " + tag->getName() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Unknown tag in permutation: " + tag->getName() );
 	}
 }
 
@@ -511,7 +511,7 @@ StructureData::substitute_variables( std::istream & input ) const
 		while ( next_sub != std::string::npos ) {
 			core::Size second_sub = line.find("%%", next_sub+1);
 			if ( second_sub == std::string::npos ) {
-				throw utility::excn::EXCN_BadInput( "Malformed line in constraint file : " + line );
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  "Malformed line in constraint file : " + line );
 			}
 			debug_assert( second_sub - next_sub >= 5 );
 			std::string const variable = line.substr( next_sub+2, second_sub-next_sub-2 );
@@ -934,7 +934,7 @@ StructureData::pose_residue( std::string const & segment_name, core::Size const 
 		std::stringstream err;
 		err << "Can't resolve the segment name " << segment_name
 			<< "into a valid segment in the permutation. Valid segments are: " << segments_ << std::endl;
-		throw utility::excn::EXCN_BadInput( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  err.str() );
 	}
 	return r->second.segment_to_pose(local_res);
 }
@@ -1016,7 +1016,7 @@ StructureData::add_segment(
 	SegmentMap::iterator s = segments_.find( id_val );
 	if ( s == segments_.end() ) {
 		if ( !segments_.insert( std::make_pair( id_val, resis ) ).second ) {
-			throw utility::excn::EXCN_Msg_Exception( "failed to insert segment " + id_val );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "failed to insert segment " + id_val );
 		}
 		segment_order_.insert( insert_pos, id_val );
 		debug_assert( segments_.size() == segment_order_.size() );
@@ -1092,7 +1092,7 @@ StructureData::set_alias(
 		ss << "Segment named " << segment_name
 			<< " does not exist in the permutation as an alias or residue segment. Perm="
 			<< *this << std::endl;
-		throw utility::excn::EXCN_BadInput( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
 	changed();
 }
@@ -1597,13 +1597,13 @@ StructureData::check_pose( core::pose::Pose const & pose ) const
 		msg << id() << ": pose length does not match StructureData.  Pose length = "
 			<< total_residue << " SD length = " << pose_length() << std::endl;
 		msg << *this << std::endl;
-		throw EXCN_PoseInconsistent( msg.str() );
+		throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 	}
 	if ( total_residue != ss().size()  ) {
 		std::stringstream msg;
 		msg << id() << ": pose length does not match StructureData secstruct length. Pose length = "
 			<< total_residue << " SS length = " << ss().size() << " SD: " << *this << std::endl;
-		throw EXCN_PoseInconsistent( msg.str() );
+		throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 	}
 }
 
@@ -1633,7 +1633,7 @@ StructureData::segment_nonconst( std::string const & id_val )
 		std::stringstream err;
 		err << id() << ": Segment not found in residue lists! ";
 		err << "Search term is: " << id_val << "; Segment map is: " << segments_ << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 	return it->second;
 }
@@ -1650,7 +1650,7 @@ StructureData::segment( std::string const & id_val ) const
 		std::stringstream err;
 		err << id() << ": Segment not found in residue lists! ";
 		err << "Search term is: " << id_val << "; Segment map is: " << segments_ << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 	return it->second;
 }
@@ -1753,7 +1753,7 @@ StructureData::get_data_int( std::string const & data_name ) const
 		for ( it = data_int_.begin(); it != data_int_.end(); ++it ) {
 			err << it->first << " : " << it->second << std::endl;
 		}
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 	return it->second;
 }
@@ -1776,7 +1776,7 @@ StructureData::get_data_real( std::string const & data_name ) const
 		for ( it = data_real_.begin(); it != data_real_.end(); ++it ) {
 			err << it->first << " : " << it->second << std::endl;
 		}
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 	return it->second;
 }
@@ -1799,7 +1799,7 @@ StructureData::get_data_str( std::string const & data_name ) const
 		for ( it = data_str_.begin(); it != data_str_.end(); ++it ) {
 			err << it->first << " : " << it->second << std::endl;
 		}
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 	return it->second;
 }
@@ -1876,7 +1876,7 @@ StructureData::segment_name( core::Size const res ) const
 	}
 	std::stringstream err;
 	err << " Residue " << res << " was not found in the residues map!" << std::endl;
-	throw utility::excn::EXCN_Msg_Exception( err.str() );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 }
 
 /// @brief updates numbering based on the saved order of Segment objects
@@ -1908,7 +1908,7 @@ StructureData::update_numbering()
 		err << id() << ": StructureData pose size doesn't match secondary structure string size.  this is probably an internal bug that needs to be fixed." << std::endl;
 		err << *this << std::endl;
 		err << "new ss= " << new_ss << std::endl;
-		throw utility::excn::EXCN_BadInput( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  err.str() );
 	}
 	debug_assert( new_ss.size() == pose_length_ );
 	ss_ = new_ss;
@@ -2043,7 +2043,7 @@ StructureData::check_residues() const
 		if ( r->second.upper() > pose_length() ) {
 			msg << r->second << " has a upper terminal residue ("
 				<< r->second.upper() << ") that is large than the pose length." << std::endl;
-			throw EXCN_PoseInconsistent( msg.str() );
+			throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 		}
 
 		for ( core::Size i=r->second.lower(); i<=r->second.upper(); ++i ) {
@@ -2051,21 +2051,21 @@ StructureData::check_residues() const
 				accounted_for[i] = true;
 			} else {
 				msg << r->second << " overlaps with something else at position " << i << std::endl << *this << std::endl;
-				throw EXCN_PoseInconsistent( msg.str() );
+				throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 			}
 		}
 		if ( r->second.lower_segment() != "" ) {
 			SegmentMap::const_iterator r2 = segments_.find( r->second.lower_segment() );
 			if ( r2 == segments_.end() ) {
 				msg << "Lower segment of " << r->second << " does not exist. SD=" << *this << std::endl;
-				throw EXCN_PoseInconsistent( msg.str() );
+				throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 			}
 		}
 		if ( r->second.upper_segment() != "" ) {
 			SegmentMap::const_iterator r2 = segments_.find( r->second.upper_segment() );
 			if ( r2 == segments_.end() ) {
 				msg << "Upper segment of " << r->second << " does not exist. SD=" << *this << std::endl;
-				throw EXCN_PoseInconsistent( msg.str() );
+				throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 			}
 		}
 
@@ -2073,7 +2073,7 @@ StructureData::check_residues() const
 	for ( core::Size i=1; i<=pose_length(); ++i ) {
 		if ( !accounted_for[i] ) {
 			msg << " Residue " << i << " is not accounted for by the permutation. " << *this << std::endl;
-			throw EXCN_PoseInconsistent( msg.str() );
+			throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 		}
 	}
 }
@@ -2087,7 +2087,7 @@ StructureData::check_improper_termini( core::pose::Pose const & pose ) const
 			if ( pose.residue(i).is_terminus() ) {
 				std::stringstream msg;
 				msg << " Residue " << i << " has a terminal variant but is inside segment " << r->second << "." << std::endl;
-				throw EXCN_PoseInconsistent( msg.str() );
+				throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 			}
 		}
 	}
@@ -2169,7 +2169,7 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 				<< segment( *s ).cutpoint() << ", but no cutpoint was found in the Pose. Pose cutpoints: "
 				<< cutpoints << std::endl;
 			msg << *this << std::endl;
-			throw EXCN_PoseInconsistent( msg.str() );
+			throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 		}
 
 		// 2. Lower termini count as chain beginnings
@@ -2185,7 +2185,7 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 					<< segment( *s ).lower() << ", but that residue is a chain beginning in the pose. Pose chain beginnings: "
 					<< chain_beginnings << std::endl;
 				msg << *this << std::endl;
-				throw EXCN_PoseInconsistent( msg.str() );
+				throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 			}
 		}
 
@@ -2202,7 +2202,7 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 					<< segment( *s ).upper() << ", but that residue is a chain ending in the pose. Pose chain endings: "
 					<< chain_endings << " current ending: " << *cur_ending << std::endl;
 				msg << *this << std::endl;
-				throw EXCN_PoseInconsistent( msg.str() );
+				throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 			}
 		}
 	}
@@ -2217,7 +2217,7 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 			<< *cur_cutpoint << ", but no cutpoint was set in the StructureData.  Pose cutpoints: "
 			<< cutpoints << std::endl;
 		msg << *this << std::endl;
-		throw EXCN_PoseInconsistent( msg.str() );
+		throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 	}
 
 	if ( cur_beginning != chain_beginnings.end() ) {
@@ -2226,7 +2226,7 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 			<< *cur_beginning << ", but that residue is not a chain beginning in the StructureData. Pose chain beginnings: "
 			<< chain_beginnings << std::endl;
 		msg << *this << std::endl;
-		throw EXCN_PoseInconsistent( msg.str() );
+		throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 	}
 
 	if ( cur_ending != chain_endings.end() ) {
@@ -2235,7 +2235,7 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 			<< *cur_ending << ", but that residue is not a chain ending in the StructureData. Pose chain endings: "
 			<< chain_endings << std::endl;
 		msg << *this << std::endl;
-		throw EXCN_PoseInconsistent( msg.str() );
+		throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 	}
 
 	TR.Debug << "Done checking chain endings " << std::endl;
@@ -2250,7 +2250,7 @@ StructureData::check_movable_groups() const
 		if ( *g <= 0 ) {
 			std::stringstream msg;
 			msg << " StructureData has a movable group <= 0 : " << *this << std::endl;
-			throw EXCN_PoseInconsistent( msg.str() );
+			throw CREATE_EXCEPTION(EXCN_PoseInconsistent, msg.str() );
 		}
 	}
 }
@@ -2290,7 +2290,7 @@ StructureData::set_movable_group( std::string const & segid, core::Size const mg
 		std::stringstream err;
 		err << "Error in StructureData::set_movable_group( " << segid << ", " << mg << "):"
 			<< "segment not found! perm=" << *this << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception, err.str() );
 	}
 	s->second.set_movable_group( mg );
 	changed();

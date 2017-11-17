@@ -434,7 +434,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	}
 
 	if ( !tag->hasTag("PROTOCOLS") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("parser::protocol file must specify PROTOCOLS section");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "parser::protocol file must specify PROTOCOLS section");
 	}
 
 	// Round 1: Import previously defined filters and movers
@@ -499,7 +499,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 				TR << "Defined and applied mover of type " << mover_type << std::endl;
 				bool const name_exists( movers.find( mover_type ) != movers.end() );
 				if ( name_exists ) {
-					throw utility::excn::EXCN_RosettaScriptsOption("Can't apply_to_pose the same mover twice for " + mover_type);
+					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't apply_to_pose the same mover twice for " + mover_type);
 				}
 
 				modified_pose = true;
@@ -574,7 +574,7 @@ RosettaScriptsParser::read_in_and_recursively_replace_includes(
 	//Check whether we've already encountered this filename
 	for ( std::string const & seen_fn : filenames_encountered ) {
 		if ( seen_fn == filename ) {
-			throw utility::excn::EXCN_BadInput( "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): Circular inclusion pattern detected when reading \"" + filename + "\"." );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): Circular inclusion pattern detected when reading \"" + filename + "\"." );
 		}
 	}
 	if ( filenames_encountered.size() != 0 && TR.visible() ) TR << "Including RosettaScripts XML file " << filename << "." << std::endl;
@@ -653,7 +653,7 @@ RosettaScriptsParser::parse_protocol_tag( Pose & pose, utility::tag::TagCOP prot
 	ParsedProtocolOP mover = generate_mover_for_protocol(pose, modified_pose, protocol_tag, options);
 
 	if ( modified_pose ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");
 	}
 
 	return mover;
@@ -671,13 +671,13 @@ RosettaScriptsParser::instantiate_filter(
 ) {
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed Filter of type " + type);
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't define unnamed Filter of type " + type);
 	}
 
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 	bool const name_exists( filters.find( user_defined_name ) != filters.end() );
 	if ( name_exists ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Filter of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Filter of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 	}
 
 	protocols::filters::FilterOP new_filter( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data, filters, movers, pose ) );
@@ -697,13 +697,13 @@ RosettaScriptsParser::instantiate_mover(
 ) {
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed Mover of type " + type);
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't define unnamed Mover of type " + type);
 	}
 
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 	bool const name_exists( movers.find( user_defined_name ) != movers.end() );
 	if ( name_exists ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Mover of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 	}
 
 	MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, filters, movers, pose ) );
@@ -726,12 +726,12 @@ RosettaScriptsParser::instantiate_taskoperation(
 
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed TaskOperation of type " + type);
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't define unnamed TaskOperation of type " + type);
 	}
 
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 	if ( data.has( "task_operations", user_defined_name ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation with name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation with name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 	}
 
 	TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, data, tag_ptr ) );
@@ -848,7 +848,7 @@ RosettaScriptsParser::import_tags(
 						TagCAP parent = my_tag->getParent();
 						if ( utility::pointer::equal(parent, mover_tag) ) {
 							// Current mover_tag is our parent, i.e. same ROSETTASCRIPTS tag
-							throw utility::excn::EXCN_RosettaScriptsOption("Cannot import mover " + mover_name + " into itself; recursion detected");
+							throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot import mover " + mover_name + " into itself; recursion detected");
 						}
 						instantiate_mover(mover_tag, data, filters, movers, pose);
 						import_tag_names.erase(key);
@@ -871,7 +871,7 @@ RosettaScriptsParser::import_tags(
 	for ( ImportTagName import_tag : import_tag_names ) {
 		std::string msg("Failed to import " + import_tag.second + " from " + import_tag.first);
 		TR << msg << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption(msg);
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, msg);
 	}
 }
 
@@ -1023,10 +1023,10 @@ RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fna
 		std::string schema;
 		try {
 			schema = xsd_for_rosetta_scripts();
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch ( utility::excn::Exception const & e ) {
 			oss << "An error was encountered while the string of the schema was being generated; this is before the schema is analyzed for whether it is correct or not.\n";
 			oss << e.msg() << "\n";
-			throw utility::excn::EXCN_Msg_Exception( oss.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 		}
 
 		if ( basic::options::option[ basic::options::OptionKeys::parser::output_schema ].user() ) {
@@ -1040,15 +1040,15 @@ RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fna
 			TR << "Initializing schema validator..." << std::endl;
 			schema_valid_output = validator_->set_schema( schema );
 			TR << "...done" << std::endl;
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch ( utility::excn::Exception const & e ) {
 			oss << e.msg() << "\n";
-			throw utility::excn::EXCN_Msg_Exception( oss.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 		}
 		if ( ! schema_valid_output.valid() ) {
 			oss << "If there is an error message immediately above stating that the schema failed to validate, and errors below that look like 'real XML' with lots of <xs:something> tags and NOT like your XML input, then you have a global schema validation error not an XML input validation error.  Read the error message below and fix your schema in the C++ code. \n\n";
 			oss << "Errors: " << schema_valid_output.error_messages() << "\n";
 			oss << "Warnings: " << schema_valid_output.warning_messages() << "\n";
-			throw utility::excn::EXCN_Msg_Exception( oss.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 		}
 	}
 
@@ -1068,9 +1068,9 @@ RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fna
 	XMLValidationOutput validator_output;
 	try {
 		validator_output = validator_->validate_xml_against_schema( xml_file );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		oss << e.msg() << "\n";
-		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 	}
 
 	if ( ! validator_output.valid() ) {
@@ -1079,7 +1079,7 @@ RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fna
 		oss << "------------------------------------------------------------\n";
 		oss << "Warning messages were:\n" << validator_output.warning_messages();
 		oss << "------------------------------------------------------------\n";
-		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::parser::validate_and_exit ] ) {

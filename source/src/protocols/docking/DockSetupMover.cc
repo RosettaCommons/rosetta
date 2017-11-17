@@ -174,7 +174,7 @@ DockSetupMover::parse_my_tag(
 	moves::MoverOP mover = rosetta_scripts::parse_mover( tag->getOption< std::string >( "rb_mover", "null" ), movers );
 	rb_mover_ = utility::pointer::dynamic_pointer_cast< rigid::RigidBodyPerturbNoCenterMover > ( mover );
 	//  if ( !rb_mover_ ) {
-	//   throw utility::excn::EXCN_RosettaScriptsOption( "DockSetupMover requires an rb_mover argument" );
+	//   throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "DockSetupMover requires an rb_mover argument" );
 	//  }
 	movable_jumps_.clear();
 	if ( tag->hasOption( "moveable_jump" ) ) {

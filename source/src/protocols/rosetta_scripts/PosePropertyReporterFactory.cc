@@ -45,10 +45,10 @@ PosePropertyReporterFactory::factory_register( PosePropertyReporterCreatorOP cre
 	runtime_assert( creator != nullptr );
 	std::string const pose_selector_type( creator->keyname() );
 	if ( pose_selector_type == "UNDEFINED NAME" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived PosePropertyReporter with undefined type name.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't map derived PosePropertyReporter with undefined type name.");
 	}
 	if ( reporter_creator_map_.find( pose_selector_type ) != reporter_creator_map_.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("PosePropertyReporterFactory::factory_register already has a pose selector creator with name \"" + pose_selector_type + "\".  Conflicting pose selector names" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "PosePropertyReporterFactory::factory_register already has a pose selector creator with name \"" + pose_selector_type + "\".  Conflicting pose selector names" );
 	}
 	reporter_creator_map_[ pose_selector_type ] = creator;
 }
@@ -61,7 +61,7 @@ PosePropertyReporterFactory::newPosePropertyReporter( std::string const & pose_s
 	PosePropertyReporterMap::const_iterator iter( reporter_creator_map_.find( pose_selector_type ) );
 	if ( iter != reporter_creator_map_.end() ) {
 		if ( ! iter->second ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Error: PosePropertyReporterCreatorOP prototype for " + pose_selector_type + " is NULL!" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: PosePropertyReporterCreatorOP prototype for " + pose_selector_type + " is NULL!" );
 		}
 		return iter->second->create_reporter();
 	} else {
@@ -70,7 +70,7 @@ PosePropertyReporterFactory::newPosePropertyReporter( std::string const & pose_s
 			TR<<it->first<<", ";
 		}
 		TR<<std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( pose_selector_type + " is not known to the PosePropertyReporterFactory. Was it registered via a PosePropertyReporterRegistrator in one of the init.cc files?" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  pose_selector_type + " is not known to the PosePropertyReporterFactory. Was it registered via a PosePropertyReporterRegistrator in one of the init.cc files?" );
 		return nullptr;
 	}
 }
@@ -100,8 +100,8 @@ PosePropertyReporterFactory::define_pose_reporter_group( utility::tag::XMLSchema
 			pose_reporter_group_name(),
 			& complex_type_name_for_pose_reporter,
 			xsd );
-	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for PosePropertyReporter from PosePropertyReporterFactory; offending class"
+	} catch( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for PosePropertyReporter from PosePropertyReporterFactory; offending class"
 			" must call protocols::rosetta_scripts::complex_type_name_for_pose_reporter when defining"
 			" its XML Schema\n" + e.msg() );
 	}

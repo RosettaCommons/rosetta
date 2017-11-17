@@ -66,7 +66,7 @@ void ScoringGridLoader::load_data(
 	}
 
 	if ( !gridset_tags.empty() && !default_gridset_tags.empty() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Cannot use 'GridSet' tags simultaneously with bare non-GridSet tags!");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot use 'GridSet' tags simultaneously with bare non-GridSet tags!");
 	}
 
 	if ( gridset_tags.empty() ) {

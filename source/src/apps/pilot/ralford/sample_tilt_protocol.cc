@@ -257,7 +257,7 @@ main( int argc, char * argv [] )
 		SampleTiltProtocolOP sample_tilt( new SampleTiltProtocol );
 		protocols::jd2::JobDistributor::get_instance()->go(sample_tilt);
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "Caught Exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -122,8 +122,8 @@ DeNovoArchitectFactory::define_architect_group( utility::tag::XMLSchemaDefinitio
 			architect_group_name(),
 			& DeNovoArchitectFactory::complex_type_name_for_architect,
 			xsd );
-	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for Architects from DeNovoArchitectFactory; offending class"
+	} catch( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for Architects from DeNovoArchitectFactory; offending class"
 			" must call protocols::denovo_design::architects::complex_type_name_for_architect when defining"
 			" its XML Schema\n" + e.msg() );
 	}

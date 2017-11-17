@@ -87,7 +87,7 @@ SymmetricConformation::operator=( Conformation const & src )
 		SymmetricConformation::operator=( *sym_conf );
 	} else {
 		//Conformation::operator=( src );
-		throw utility::excn::EXCN_Msg_Exception( "SymmetricConformation::operator= was handed a non-SymmetricConformation" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "SymmetricConformation::operator= was handed a non-SymmetricConformation" );
 	}
 
 	return *this;
@@ -104,7 +104,7 @@ SymmetricConformation::detached_copy( Conformation const & src ) {
 		Tsymm_ = sym_conf->Tsymm_;
 
 	} else {
-		throw utility::excn::EXCN_Msg_Exception( "SymmetricConformation detached_copy was handed a non-SymmetricConformation" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "SymmetricConformation detached_copy was handed a non-SymmetricConformation" );
 	}
 }
 

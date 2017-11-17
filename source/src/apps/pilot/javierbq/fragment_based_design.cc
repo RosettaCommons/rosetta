@@ -160,7 +160,7 @@ int main( int argc, char** argv ) {
 		// run
 		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

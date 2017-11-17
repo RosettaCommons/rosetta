@@ -267,7 +267,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			LAM_bad1.apply(double_pose);
 			TS_ASSERT( false ); //should have thrown
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string const expected_error_message = "Loops::Error, loop crosses chain boundary";
 			std::size_t const found = e.msg().find(expected_error_message); //look for the substring
 			TS_ASSERT_DIFFERS( found, std::string::npos ); //assert we did not fail to find
@@ -276,7 +276,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			LAM_bad2.apply(double_pose);
 			TS_ASSERT( false ); //should have thrown
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string const expected_error_message = "LoopRebuild::ERROR Loop definition out of boundary \n";
 			std::size_t const found = e.msg().find(expected_error_message); //look for the substring
 			TS_ASSERT_DIFFERS( found, std::string::npos ); //assert we did not fail to find

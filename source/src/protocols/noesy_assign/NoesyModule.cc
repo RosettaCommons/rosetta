@@ -180,7 +180,7 @@ void NoesyModule::read_input_files() {
 			}
 		} else {
 			tr.Error << "cannot read " << input_file << std::endl;
-			throw utility::excn::EXCN_FileNotFound( option[ OptionKeys::noesy::in::resonances ]() );
+			throw CREATE_EXCEPTION(utility::excn::FileNotFound,  option[ OptionKeys::noesy::in::resonances ]() );
 		}
 	}
 
@@ -195,7 +195,7 @@ void NoesyModule::read_input_files() {
 			utility::io::izstream input_file( file );
 			if ( input_file.good() ) {
 				if ( main_resonances->size() < 1 ) {
-					throw utility::excn::EXCN_BadInput( "attempt to read Peak-Files with option -noesy:in:peaks without a global resonance file: -noesy:in:resonances" );
+					throw CREATE_EXCEPTION(utility::excn::BadInput,  "attempt to read Peak-Files with option -noesy:in:peaks without a global resonance file: -noesy:in:resonances" );
 				}
 				PeakFileFormat_xeasy format;
 				format.set_filename( option[ OptionKeys::noesy::in::peaks ]()[ ifile ].base() );
@@ -212,7 +212,7 @@ void NoesyModule::read_input_files() {
 	if ( option[ OptionKeys::noesy::in::peak_resonance_pairs ].user() ) { //scope
 		Size n_pair_files(  option[ OptionKeys::noesy::in::peak_resonance_pairs ]().size() );
 		if ( n_pair_files % 2 != 0 ) {
-			throw utility::excn::EXCN_BadInput( "odd number of entries in option -noesy:in:peak_resonance_pairs, always provide pairs of files  <*.peaks> <*.prot>" );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "odd number of entries in option -noesy:in:peak_resonance_pairs, always provide pairs of files  <*.peaks> <*.prot>" );
 		}
 		for ( core::Size ifile = 1; ifile <= n_pair_files; ifile += 2 ) {
 			ResonanceListOP resonances( new ResonanceList( sequence() ) );
@@ -225,7 +225,7 @@ void NoesyModule::read_input_files() {
 				}
 			} else {
 				tr.Error << "cannot read " << res_input_file << std::endl;
-				throw utility::excn::EXCN_FileNotFound( option[ OptionKeys::noesy::in::resonances ]() );
+				throw CREATE_EXCEPTION(utility::excn::FileNotFound,  option[ OptionKeys::noesy::in::resonances ]() );
 			}
 			std::string file( option[ OptionKeys::noesy::in::peak_resonance_pairs ]()[ ifile ] );
 			utility::io::izstream input_file( file );

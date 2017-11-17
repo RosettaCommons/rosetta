@@ -123,7 +123,7 @@ void UniformRigidBodyCM::apply( core::pose::Pose& pose ){
 	if ( mover_ && passport()->has_jump_access( mover_->jump_number() ) ) {
 		mover_->apply( pose );
 	} else if ( !mover_ ) {
-		throw utility::excn::EXCN_NullPointer( "UniformRigidBodyCM found during apply. Did you forget to register this mover with the Environment?" );
+		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  "UniformRigidBodyCM found during apply. Did you forget to register this mover with the Environment?" );
 	} else {
 		tr.Warning << "UniformRigidBodyCM is skipping it's turn to apply a RigidBody move because it doesn't have "
 			<< " access to the requested dof, jump " << mover_->jump_number()

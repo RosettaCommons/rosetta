@@ -63,14 +63,14 @@ SetResidueAliasMover::parse_my_tag(
 		std::stringstream msg;
 		msg << mover_name() << "::apply(): Residue number must be specified to add an alias via the \"residue\" option. If a residue number is "
 			<< "specified along with a segment_name, the residue number will be local within the segment." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
 	if ( alias_name_.empty() ) {
 		std::stringstream msg;
 		msg << mover_name() << "::apply(): Alias name is not specified -- you must specify the \"alias_name\" option in order "
 			<< "to set an alias." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 }
 

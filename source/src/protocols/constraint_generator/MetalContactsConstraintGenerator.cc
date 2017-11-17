@@ -897,7 +897,7 @@ MetalContactsConstraintGenerator::get_contact_resnums( core::pose::Pose const & 
 			if ( num > pose.total_residue() || num == 0 ) {
 				std::stringstream err_msg;
 				err_msg << "Residue " << num << " not found in pose!\n";
-				throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 			}
 		}
 	}

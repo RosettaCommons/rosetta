@@ -235,7 +235,7 @@ RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 		reference_pose( temp_pose );
 		TR<<"Using pdb "<<reference_pdb<<" as reference."<<std::endl;
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Native PDB not specified." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Native PDB not specified." );
 	}
 
 	invert_ = tag->getOption< bool >( "invert", invert_ );

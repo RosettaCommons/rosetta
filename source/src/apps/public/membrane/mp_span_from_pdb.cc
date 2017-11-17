@@ -39,7 +39,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <basic/Tracer.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 
@@ -80,7 +80,7 @@ Pose read_pose() {
 
 	// cry if PDB not given
 	if ( ! option[OptionKeys::in::file::s].user() ) {
-		throw new utility::excn::EXCN_Msg_Exception("Please provide PDB file!");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Please provide PDB file!");
 	}
 
 	// read in pose
@@ -205,7 +205,7 @@ main( int argc, char * argv [] )
 		spanfile_from_pdb();
 
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

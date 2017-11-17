@@ -140,7 +140,7 @@ main( int argc, char * argv[] )
 		NEW_OPT(seq_tol::surface, "calculate the the surface score", false);
 		devel::init( argc, argv );
 		protocols::viewer::viewer_main( sequence_tolerance_mf_main );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 	return 0;

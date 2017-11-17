@@ -415,7 +415,7 @@ IterativeBase::IterativeBase(std::string name_in )
 	// maximum of sampled structures per stage
 	max_nstruct_list_ = option[ iterative::max_nstruct ]();
 	if ( max_nstruct_list_.size() != ( FINISHED-1 ) ) {
-		throw EXCN_Archive("wrong number "+string_of( max_nstruct_list_.size() )
+		throw CREATE_EXCEPTION(EXCN_Archive, "wrong number "+string_of( max_nstruct_list_.size() )
 			+" of values for max_nstruct -- needs exactly "+string_of( FINISHED - 1 )+" values.");
 	}
 	max_nstruct_list_.push_back( 0 ); //for FINISH_STAGE
@@ -423,7 +423,7 @@ IterativeBase::IterativeBase(std::string name_in )
 	// min cluster radius for diversification
 	min_diversity_list_ = option[ iterative::min_diversity ]();
 	if ( min_diversity_list_.size() != ( FINISHED-1 ) ) {
-		throw EXCN_Archive("wrong number "+string_of( min_diversity_list_.size() )
+		throw CREATE_EXCEPTION(EXCN_Archive, "wrong number "+string_of( min_diversity_list_.size() )
 			+" of values for min_diversity -- needs exactly "+string_of( FINISHED - 1 )+" values.");
 	}
 	min_diversity_list_.push_back( 0 ); //for FINISH_STAGE
@@ -431,7 +431,7 @@ IterativeBase::IterativeBase(std::string name_in )
 	// accept ratio to end stage
 	target_accept_ratio_ = option[ iterative::accept_ratio ]();
 	if ( target_accept_ratio_.size() != ( FINISHED-1 ) ) {
-		throw EXCN_Archive("wrong number "+string_of( target_accept_ratio_.size() )
+		throw CREATE_EXCEPTION(EXCN_Archive, "wrong number "+string_of( target_accept_ratio_.size() )
 			+" of values for accept_ratio -- needs exactly "+string_of( FINISHED - 1 )+" values.");
 	}
 	target_accept_ratio_.push_back( 1 ); //for FINISH_STAGE
@@ -459,7 +459,7 @@ IterativeBase::IterativeBase(std::string name_in )
 		if ( reference_pose_ ) {
 			target_sequence_ = reference_pose_->sequence();
 		} else {
-			throw EXCN_Archive("need either fasta-sequence (-in:file:fasta) or native structure ( -in:file:native )");
+			throw CREATE_EXCEPTION(EXCN_Archive, "need either fasta-sequence (-in:file:fasta) or native structure ( -in:file:native )");
 		}
 	}
 
@@ -1051,8 +1051,7 @@ void IterativeBase::gen_enumerate_pairings( jd2::archive::Batch& batch ) {
 	if ( option[ iterative::enumerate::broker ].user() ) {
 		utility::io::izstream enum_broker( option[ iterative::enumerate::broker ]() );
 		if ( !enum_broker.good() ) {
-			throw ( utility::excn::EXCN_FileNotFound
-				( "-iterative::enumerate::broker: File "
+			throw ( CREATE_EXCEPTION(utility::excn::FileNotFound, "-iterative::enumerate::broker: File "
 				+std::string( option[ iterative::enumerate::broker ]())+" not found! ") );
 		}
 		std::string line;
@@ -2153,12 +2152,12 @@ IterativeBase::test_broker_settings( jd2::archive::Batch const& batch ) {
 		utility::vector1< std::string > files( option[ OptionKeys::broker::setup ]() );
 		std::copy( files.begin(), files.end(), std::ostream_iterator<std::string>( tr.Debug, " "));
 		tr.Debug << std::endl;
-	} catch ( utility::excn::EXCN_Exception &excn ) {  // clean up options and rethrow
+	} catch ( utility::excn::Exception &excn ) {  // clean up options and rethrow
 		utility_exit_with_message( "[ERROR] problems with broker setup in "+batch.all_broker_files()+" aborting... ");
 		tr.Error << "problems with broker setup in " << batch.all_broker_files() << " aborting... " << std::endl;
 		// excn.show( tr.Error );
 		option = vanilla_options;
-		throw ( EXCN_Archive( batch.all_broker_files() + " contains errors: " + excn.msg() ) );
+		throw ( CREATE_EXCEPTION(EXCN_Archive,  batch.all_broker_files() + " contains errors: " + excn.msg() ) );
 	}
 	option = vanilla_options;
 }

@@ -91,7 +91,7 @@ main( int argc, char * argv [] )
 		core::pose::add_variant_type_to_pose_residue( pose , chemical::PHOSPHORYLATION, pose_res );
 		core::io::pdb::dump_pdb(pose, output_fname);
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

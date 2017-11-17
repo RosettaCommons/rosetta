@@ -299,10 +299,10 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 			TR << "Failed to parse protocol? This should not happen. Not applying protocol to pose." << std::endl;
 			return false;
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		std::ostringstream oss;
 		oss << "MultiplePoseMover could not create the inner parsed protocol; error message generated from parser.parse_protocol_tag:\n" << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 	}
 
 	mover->apply(pose);
@@ -397,9 +397,9 @@ void MultiplePoseMover::parse_my_tag(
 
 		// TODO: Should we complain here is there are tags specified that we don't understand?
 
-	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch( utility::excn::Exception const & e ) {
 		std::string my_name( tag->getOption<std::string>("name") );
-		throw utility::excn::EXCN_Msg_Exception("Exception in MultiplePoseMover with name \"" + my_name + "\": " + e.msg());
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Exception in MultiplePoseMover with name \"" + my_name + "\": " + e.msg());
 	}
 
 // Obtain flags from selector

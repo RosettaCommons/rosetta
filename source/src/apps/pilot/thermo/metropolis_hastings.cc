@@ -69,7 +69,7 @@ try {
 	metropolis_hastings_mover->add_sidechain_mover(option[ mh::sc_weight ], option[ mh::sc_prob_uniform ], option[ mh::sc_prob_withinrot ], preserve_cbeta);
 	metropolis_hastings_mover->add_sidechain_mc_mover(option[ mh::sc_mc_weight ], option[ mh::sc_prob_uniform ], option[ mh::sc_prob_withinrot ], preserve_cbeta, option[ mh::sc_mc_ntrials ]);
 	protocols::jd2::JobDistributor::get_instance()->go(metropolis_hastings_mover);
-} catch ( utility::excn::EXCN_Base const & e ) {
+} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl; }
 		return -1;
 }

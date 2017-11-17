@@ -113,9 +113,10 @@ public:
 		try {
 			corr.n_residues_for_entity( 3 );
 			TS_ASSERT( false ); // should never reach here.
-		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
+		} catch (utility::excn::Exception & excn ) {
 			//std::cout << excn.msg() << std::endl;
-			TS_ASSERT( excn.msg() == "EntityCorrespondence::n_residues_for_entity attempted to access information for entity 3 (only 2 entities exist)" );
+			std::string expected_err_msg = "EntityCorrespondence::n_residues_for_entity attempted to access information for entity 3 (only 2 entities exist)";
+			TS_ASSERT( excn.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -125,9 +126,10 @@ public:
 		try {
 			corr.entity_for_residue( 21 );
 			TS_ASSERT( false ); // should never reach here.
-		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
+		} catch (utility::excn::Exception & excn ) {
 			//std::cout << excn.msg() << std::endl;
-			TS_ASSERT( excn.msg() == "EntityCorrespondence::entity_for_residue attempted to access information for residue 21 (only 20 residues exist)" );
+			std::string expected_err_msg = "EntityCorrespondence::entity_for_residue attempted to access information for residue 21 (only 20 residues exist)";
+			TS_ASSERT( excn.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -144,7 +146,7 @@ public:
 
 		try {
 			corr.initialize_from_correspondence_file( corr_stream );
-		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
+		} catch (utility::excn::Exception & excn ) {
 			std::cout << excn.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -193,7 +195,7 @@ public:
 
 		try {
 			corr.initialize_from_correspondence_file( corr_stream );
-		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
+		} catch (utility::excn::Exception & excn ) {
 			std::cout << excn.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -243,9 +245,10 @@ public:
 		try {
 			corr.initialize_from_correspondence_file( corr_stream );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
+		} catch (utility::excn::Exception & excn ) {
 			//std::cout << excn.msg() << std::endl;
-			TS_ASSERT( excn.msg() == "Failed to read entity id on line 1 of the EntityCorrespondence file:\none 10" );
+			std::string expected_err_msg = "Failed to read entity id on line 1 of the EntityCorrespondence file:\none 10";
+			TS_ASSERT( excn.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -263,10 +266,10 @@ public:
 		try {
 			corr.initialize_from_correspondence_file( corr_stream );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
+		} catch (utility::excn::Exception & excn ) {
 			//std::cout << excn.msg() << std::endl;
-			//TS_ASSERT( excn.msg() == "Failed to read residue id on line 1 of the EntityCorrespondence file:\n1 ten" );
-			TS_ASSERT( excn.msg() == "Failed to read PDB residue id on line 1 of the EntityCorrespondence file:\n1 ten A\nCharacter1 of 'ten' is not a digit");
+			std::string expected_err_msg = "Failed to read PDB residue id on line 1 of the EntityCorrespondence file:\n1 ten A\nCharacter1 of 'ten' is not a digit";
+			TS_ASSERT( excn.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -280,13 +283,13 @@ public:
 		std::string corr_file( "3 10 A\n1 11 A\n2 12 A\n" );
 		std::istringstream corr_stream( corr_file );
 
-
 		try {
 			corr.initialize_from_correspondence_file( corr_stream );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
+		} catch (utility::excn::Exception & excn ) {
 			//std::cout << excn.msg() << std::endl;
-			TS_ASSERT( excn.msg() == "Entity ID read on line 1 of the EntityCorrespondence file exceeds the number of entities: 3 vs 2" );
+			std::string expected_err_msg = "Entity ID read on line 1 of the EntityCorrespondence file exceeds the number of entities: 3 vs 2";
+			TS_ASSERT( excn.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -304,14 +307,13 @@ public:
 		try {
 			corr.initialize_from_correspondence_file( corr_stream );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
+		} catch (utility::excn::Exception & excn ) {
 			//std::cout << excn.msg() << std::endl;
 			//TS_ASSERT( excn.msg() == "Residue ID read on line 1 of the EntityCorrespondence file exceeds the number of residues: 21 vs 20" );
-			TS_ASSERT( excn.msg() == "Residue ID read on line 1 of the EntityCorrespondence file is not present in the pose: 21 ch: A vs pose.size()= 20");
+			std::string expected_err_msg = "Residue ID read on line 1 of the EntityCorrespondence file is not present in the pose: 21 ch: A vs pose.size()= 20";
+			TS_ASSERT( excn.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
 
 };
-
-

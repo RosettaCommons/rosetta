@@ -15,7 +15,7 @@
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LoopHashMap.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 //Scoring
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
 				tr.Info << "radius_size:  " << radius_size << "\tloop_size:  " << loop_size << "\tnumber of hits:  " << hashmap.radial_count(radius_size,loop_transform) << std::endl;
 			}
 		}
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 		return -1;

@@ -480,7 +480,7 @@ LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, p
 	}
 
 	if ( !auto_loops && ( loop_start_.empty() || loop_end_.empty() ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("LoopRemodel must have either auto_loops set, or both loop_start and loop_end designations");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "LoopRemodel must have either auto_loops set, or both loop_start and loop_end designations");
 	}
 
 	TR << "LoopRemodel mover: auto_loops="<<auto_loops<<" loop_start="<<loop_start_<<" loop_end="<<loop_end_<<" design="<<design()<<

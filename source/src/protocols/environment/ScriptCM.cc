@@ -119,7 +119,7 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
 			if ( mover_map.find( client_name ) != mover_map.end() ) {
 				set_client( mover_map.find( client_name )->second );
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption( "Undefined mover '"+client_name+"'." );
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Undefined mover '"+client_name+"'." );
 			}
 		} else if ( claims::EnvClaim::is_claim( subtag->getName() ) ) {
 			tr.Debug << " Interpreting tag with name " << subtag->getName() << " as new claim." << std::endl;
@@ -141,7 +141,7 @@ void ScriptCM::set_client( moves::MoverOP mover_in ) {
 	moves::MoveMapMoverOP mover_ptr = utility::pointer::dynamic_pointer_cast< moves::MoveMapMover > ( mover_in );
 
 	if ( !mover_ptr ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "The "+mover_in->type()+" named '"+mover_in->get_name()+
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "The "+mover_in->type()+" named '"+mover_in->get_name()+
 			"' doesn't implement MoveMapMover and can't be used by the ScriptCM." );
 	}
 

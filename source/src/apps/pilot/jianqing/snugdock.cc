@@ -38,7 +38,7 @@ main( int argc, char * argv [] )
 		SnugDockProtocolOP snugdock( new SnugDockProtocol );
 		JobDistributor::get_instance()->go( snugdock );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

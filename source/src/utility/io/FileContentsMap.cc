@@ -136,10 +136,10 @@ FileContentsMap::get_file_contents( std::string const & filename )
 
 	if ( refuse_unexpected_files_ ) {
 		if ( rl_iter == read_limit_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Unexpected file-read requested: " + filename );
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Unexpected file-read requested: " + filename );
 		}
 		if ( rc_iter == read_counts_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "read_counts_ map does not contain an entry for file: " + filename );
+			throw CREATE_EXCEPTION(utility::excn::Exception, "read_counts_ map does not contain an entry for file: " + filename );
 		}
 	} else {
 		if ( rl_iter == read_limit_.end() ) {
@@ -166,7 +166,7 @@ FileContentsMap::get_file_contents( std::string const & filename )
 
 		if ( rl_iter->second != 0 && rl_iter->second == rc_iter->second ) {
 			if ( fc_iter == file_contents_.end() ) {
-				throw utility::excn::EXCN_Msg_Exception( "file-contents map does not contain an entry for file that has been read before: " + filename );
+				throw CREATE_EXCEPTION(utility::excn::Exception, "file-contents map does not contain an entry for file that has been read before: " + filename );
 			}
 			std::string fc = fc_iter->second;
 			if ( delete_contents_at_nread_limit_ ) file_contents_.erase( fc_iter );

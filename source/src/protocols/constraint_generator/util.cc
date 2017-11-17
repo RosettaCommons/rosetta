@@ -128,7 +128,7 @@ parse_constraint_generators( utility::tag::TagCOP tag, basic::datacache::DataMap
 			std::stringstream msg;
 			msg << "RemoveConstraints: Could not find a constraint generator named " << generator_str <<
 				" in the datamap.  Make sure it is defined in an AddConstraints mover before RemoveConstraints is defined." << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		cgs.push_back( new_cg );
 	}

@@ -128,7 +128,7 @@ ConstDataMap::get( std::string const & type, std::string const & name ) const {
 	if ( !has( type, name ) ) {
 		std::stringstream error_message;
 		error_message << "ERROR: Could not find "<<type<<" and name "<<name<<" in Datamap\n";
-		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
 	NamedConstObjectMap const & dm( data_map_.find( type )->second );
@@ -137,7 +137,7 @@ ConstDataMap::get( std::string const & type, std::string const & name ) const {
 	if ( ! data_ptr ) {
 		std::stringstream error_message;
 		error_message << "Dynamic_cast failed for type " << type << " and name "<<name<<'\n';
-		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 	return *data_ptr;
 }
@@ -156,7 +156,7 @@ ConstDataMap::get_ptr( std::string const & type, std::string const & name ) cons
 	if ( !has( type, name ) ) {
 		std::stringstream error_message;
 		error_message << "ERROR: Could not find "<<type<<" and name "<<name<<" in Datamap\n";
-		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
 	NamedConstObjectMap const & dm( data_map_.find( type )->second );
@@ -165,7 +165,7 @@ ConstDataMap::get_ptr( std::string const & type, std::string const & name ) cons
 	if ( ! data_ptr ) {
 		std::stringstream error_message;
 		error_message << "Dynamic_cast failed for type " << type << " and name "<<name<<'\n';
-		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
 	return data_ptr;

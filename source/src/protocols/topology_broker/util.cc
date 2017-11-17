@@ -186,12 +186,12 @@ void add_claims_from_stream( TopologyBroker& broker, std::istream& is ,  CmdLine
 			}
 
 			if ( !frags_large || !frags_small ) {
-				throw utility::excn::EXCN_BadInput("ABINITIO_FRAGS macro used in topology broker setup without both 'LARGE' and 'SMALL' tags specifying 9-mer and 3-mer frags.");
+				throw CREATE_EXCEPTION(utility::excn::BadInput, "ABINITIO_FRAGS macro used in topology broker setup without both 'LARGE' and 'SMALL' tags specifying 9-mer and 3-mer frags.");
 			}
 
 			fragment_list.add_back( FragmentContainer(frags_large, frags_small, frags_label) );
 		} else {
-			throw utility::excn::EXCN_BadInput(" unrecognized tag " + tag );
+			throw CREATE_EXCEPTION(utility::excn::BadInput, " unrecognized tag " + tag );
 		}
 	} //while is tag
 
@@ -202,13 +202,13 @@ void add_claims_from_file( TopologyBroker& broker, std::string const& file , Cmd
 	utility::io::izstream is;
 	if ( file != "NO_SETUP_FILE" ) {
 		is.open( file );
-		if ( !is.good() ) throw EXCN_FileNotFound( file );
+		if ( !is.good() ) throw CREATE_EXCEPTION(FileNotFound,  file );
 	}
 
 	try {
 		add_claims_from_stream( broker, is , cmdline_data, fragment_list );
-	} catch ( EXCN_BadInput &excn ) {
-		throw EXCN_BadInput( excn.msg() + " occurred when reading file "+file ); //of course I loose the speciality of the EXCEPTION
+	} catch ( BadInput &excn ) {
+		throw CREATE_EXCEPTION(BadInput,  excn.msg() + " occurred when reading file "+file ); //of course I loose the speciality of the EXCEPTION
 	}
 //that might be just eof check for is.fail() ??? don't check...not my problem ?
 }
@@ -247,7 +247,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 	}
 	if ( input_fragments.size() == 0 ) {
 		if ( do_I_need_frags ) {
-			throw utility::excn::EXCN_BadInput( "expected LARGE and SMALL fragment sets in ABINITIO_FRAGS section or via command line ");
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "expected LARGE and SMALL fragment sets in ABINITIO_FRAGS section or via command line ");
 		} else {
 			return;
 		}
@@ -305,7 +305,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 			broker.add( TopologyClaimerOP( new SequenceClaimer ( sequence, "DEFAULT", core::chemical::CENTROID ) ) );
 
 		} else {
-			throw utility::excn::EXCN_BadInput("Error: can't read sequence! Use -in::file::fasta sequence.fasta or -in::file::native native.pdb!");
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "Error: can't read sequence! Use -in::file::fasta sequence.fasta or -in::file::native native.pdb!");
 		}
 
 		//broker.add( new SequenceClaimer ( sequence, core::chemical::CENTROID ) );

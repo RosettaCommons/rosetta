@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
   for (Size i = 1; i <= ramas.size(); ++i) {
     std::cout << "rama " << i << " " << ramas[i] << std::endl;
   }
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
                                   }

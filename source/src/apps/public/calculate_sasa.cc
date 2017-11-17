@@ -116,7 +116,7 @@ main( int argc, char * argv [] )
 		devel::init( argc, argv );
 
 		calculate_sasa();
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

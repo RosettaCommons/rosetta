@@ -41,7 +41,7 @@ ResourceLocatorFactory::create_resource_locator(
 {
 	auto iter = creator_map_.find( locator_type );
 	if ( iter == creator_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "No ResourceLocatorCreator resposible for the ResourceLocator named " + locator_type + " was found in the ResourceLocatorFactory.  Was it correctly registered?" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "No ResourceLocatorCreator resposible for the ResourceLocator named " + locator_type + " was found in the ResourceLocatorFactory.  Was it correctly registered?" );
 	}
 	ResourceLocatorOP locator = iter->second->create_resource_locator();
 	locator->locator_tag( locator_tag );
@@ -59,7 +59,7 @@ ResourceLocatorFactory::factory_register( ResourceLocatorCreatorOP creator )
 	if ( iter != creator_map_.end() ) {
 		std::string errmsg( "Double registration of a ResourceLocatorCreator in the ResourceLocatorFactory, named " + locator_type + ". Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?" );
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( errmsg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  errmsg );
 		} else {
 			utility_exit_with_message( errmsg );
 		}

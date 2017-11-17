@@ -102,7 +102,7 @@ InteractionScoreFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	jump( tag->getOption< core::Size >( "jump", 1 ));
 
 	if ( !pose.is_fullatom() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to calculate the interaction score on low-res pose since in I_sc=bound-A-B, A&B are constant.\n It is totally a waste of time" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ERROR: it doesn't make sense to calculate the interaction score on low-res pose since in I_sc=bound-A-B, A&B are constant.\n It is totally a waste of time" );
 	}
 
 	TR<<"InterfaceScoreFilter with lower threshold of "<<lower_threshold_<<" and jump "<<jump()<<'\n';

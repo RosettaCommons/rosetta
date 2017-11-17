@@ -292,7 +292,7 @@ public:
 		debug_assert( ! dun02_ );
 		//debug_assert( -180.0 <= chi && chi <= 180.0 );
 		if ( !(-180.0 <= chi && chi <= 180.0 ) ) {
-			throw utility::excn::EXCN_RangeError(
+			throw CREATE_EXCEPTION(utility::excn::RangeError, 
 				"chi angle must be between -180 and 180: "+utility::to_string(chi));
 		}
 

@@ -160,7 +160,7 @@ public:
 			message << "HierarchicalDataMap has no attribute with type '" << type << "'";
 			if ( ! name.empty() ) { message << "' and name '" << name << "'"; }
 			message << "." << std::endl;
-			throw utility::excn::EXCN_Msg_Exception(message.str());
+			throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
 		}
 		return value;
 	}

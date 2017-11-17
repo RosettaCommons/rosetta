@@ -43,9 +43,9 @@ namespace protocols {
 namespace jd2 {
 namespace archive {
 
-class EXCN_Archive : public utility::excn::EXCN_Msg_Exception {
+class EXCN_Archive : public utility::excn::Exception {
 public:
-	EXCN_Archive( std::string const& msg ) : EXCN_Msg_Exception( msg ) {};
+	EXCN_Archive(char const *file, int line, std::string const& msg ) : Exception(file, line, msg ) {};
 };
 
 extern void report_batch_inconsistency( Batch& new_batch, std::string const &tag );

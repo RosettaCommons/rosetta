@@ -191,8 +191,8 @@ void TaskOperationFactory::define_task_op_xml_schema( utility::tag::XMLSchemaDef
 			task_operation_xml_schema_group_name(),
 			& complex_type_name_for_task_op,
 			xsd );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for TaskOperations from TaskOperationFactory\n" + e.msg() );
+	} catch ( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for TaskOperations from TaskOperationFactory\n" + e.msg() );
 	}
 
 }

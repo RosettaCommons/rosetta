@@ -366,7 +366,7 @@ HBondDatabase::initialize_HBPoly1D()
 				xmin, xmax, min_val, max_val, root1, root2,
 				degree,
 				coefficients_) );
-		} catch ( utility::excn::EXCN_Msg_Exception& excn ) {
+		} catch ( utility::excn::Exception& excn ) {
 			std::stringstream msg;
 			msg
 				<< "ERROR: Unable to construct the polynomial '" << polynomial_name << "' "
@@ -376,7 +376,7 @@ HBondDatabase::initialize_HBPoly1D()
 				<< std::endl
 				<< "because of the following errors:" << std::endl
 				<< excn.msg() << std::endl;
-			throw( utility::excn::EXCN_Msg_Exception( msg.str() ) );
+			throw( CREATE_EXCEPTION(utility::excn::Exception, msg.str() ) );
 		}
 
 		if ( HBPoly1D_lookup_.size() + 1 != id ) {

@@ -105,7 +105,7 @@ int main( int argc, char* argv[] )
 		// Show Pose energies
 		membrane_pose->energies().show(std::cout);
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 

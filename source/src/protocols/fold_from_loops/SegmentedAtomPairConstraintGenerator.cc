@@ -78,16 +78,16 @@ SegmentedAtomPairConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic
 	if ( use_native ) {
 		set_reference_pose( constraint_generator::get_native_pose() );
 		if ( ! reference_pose_ ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "'native' option for SegmentedAtomPairConstraintGenerator specified, but no native pose is availible." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "'native' option for SegmentedAtomPairConstraintGenerator specified, but no native pose is availible." );
 		}
 	}
 
 	core::select::residue_selector::ResidueSelectorCOP selector = core::select::residue_selector::parse_residue_selector( tag, data );
 	if ( selector ) set_residue_selector( *selector );
 
-	if ( !tag->hasTag( "Inner" ) ) throw utility::excn::EXCN_RosettaScriptsOption( "A Inner constraint condition is mandatory!" );
+	if ( !tag->hasTag( "Inner" ) ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "A Inner constraint condition is mandatory!" );
 	utility::tag::TagCOP const& innertag = tag->getTag( "Inner" );
-	if ( !tag->hasTag( "Outer" ) ) throw utility::excn::EXCN_RosettaScriptsOption( "A Outer constraint condition is mandatory!" );
+	if ( !tag->hasTag( "Outer" ) ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "A Outer constraint condition is mandatory!" );
 	utility::tag::TagCOP const& outertag = tag->getTag( "Outer" );
 
 	set_inner_sd( innertag->getOption< core::Real >( "sd", inner_.sd ) );
@@ -105,7 +105,7 @@ SegmentedAtomPairConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic
 	set_outer_unweighted_function( outertag->getOption< bool >( "unweighted", outer_.unweighted ) );
 
 	if ( !selector_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "SegmentedAtomPairConstraintGenerator requires a residue selector, but one is not set.\n" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "SegmentedAtomPairConstraintGenerator requires a residue selector, but one is not set.\n" );
 	}
 }
 

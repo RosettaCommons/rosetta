@@ -49,7 +49,7 @@ ResourceManagerFactory::factory_register( ResourceManagerCreatorOP creator )
 	std::string manager_type = creator->manager_type();
 	std::map< std::string, ResourceManagerCreatorOP >::const_iterator iter = creators_map_.find( manager_type );
 	if ( iter != creators_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Double registration of a ResourceManagerCreator in the ResourceManagerFactory, named " + manager_type + ". Are there two registrators for this ResourceManager, or have you chosen a previously assigned name to a new ResourceManager?" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Double registration of a ResourceManagerCreator in the ResourceManagerFactory, named " + manager_type + ". Are there two registrators for this ResourceManager, or have you chosen a previously assigned name to a new ResourceManager?" );
 	}
 	creators_map_[ manager_type ] = creator;
 }

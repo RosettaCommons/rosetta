@@ -77,8 +77,8 @@ public:
 			"    <SymmData tag=1xu1FH_D.symm file=1xu1FH_D.symm/>\n"
 			"  </Resources>\n"
 			"  <Jobs>\n"
-			"    <Option nstruct=10/>\n"
-			"    <Job name=1xu1>\n"
+			//"    <Option nstruct=10/>\n"
+			"    <Job name=1xu1 nstruct=10>\n"
 			"      <Data desc=startstruct pdb=1xu1FH_D.pdb/>\n"
 			"    </Job>\n"
 			"    <Job name=1xu1>\n"
@@ -95,13 +95,13 @@ public:
 			"    <SymmData tag=1xu1FH_D.symm file=1xu1FH_D.symm/>\n"
 			"  </Resources>\n"
 			"  <Jobs>\n"
-			"    <Job name=1xu1>\n"
+			"    <Job name=1xu1 nstruct=10>\n"
 			"      <Data desc=startstruct pdb=1xu1FH_D.pdb/>\n"
 			"    </Job>\n"
 			"    <Job name=1xu1>\n"
 			"      <Data desc=symmdata resource_tag=1xu1FH_D.symm/>\n"
 			"    </Job>\n"
-			"    <Option nstruct=10/>\n"
+			//"    <Option nstruct=10/>\n"
 			"  </Jobs>\n"
 			"</JD2ResourceManagerJobInputter>\n";
 	}
@@ -143,7 +143,7 @@ public:
 		try {
 			a_inputter.fill_jobs_from_stream( a_jobstream, a_jobvector );
 			lazy_resource_manager->clear();
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "The following resource manager XML definitions file produced an exception:" << std::endl;
 			std::cerr << "XML a:" << std::endl << a << std::endl;
 			std::cerr << "Raised exception:" << std::endl << e.msg() << std::endl;
@@ -158,7 +158,7 @@ public:
 		try {
 			b_inputter.fill_jobs_from_stream( b_jobstream, b_jobvector );
 			lazy_resource_manager->clear();
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "The following resource manager XML definitions file produced an exception:" << std::endl;
 			std::cerr << "XML b:" << std::endl << b << std::endl;
 			std::cerr << "Raised exception:" << std::endl << e.msg() << std::endl;
@@ -225,7 +225,7 @@ public:
 		try {
 			b_inputter.fill_jobs_from_stream( b_jobstream, b_jobvector );
 			TS_ASSERT(false);
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			TS_ASSERT(true);
 		}
 	}

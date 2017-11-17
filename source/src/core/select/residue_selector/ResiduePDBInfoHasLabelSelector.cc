@@ -94,7 +94,7 @@ ResiduePDBInfoHasLabelSelector::parse_my_tag(
 	if ( label_.empty() ) {
 		std::stringstream err_msg;
 		err_msg << "ResiduePDBInfoHasLabel selector requires 'property' to be specified. From ResiduePDBInfoHasLabelSelector::parse_my_tag." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( err_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  err_msg.str() );
 	}
 }
 

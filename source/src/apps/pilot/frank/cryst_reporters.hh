@@ -409,7 +409,7 @@ get_sc( protocols::cryst::MakeLatticeMover &setup, core::pose::Pose & pose, core
 			bool result = false;
 			try {
 				result = scc_i.Calc();
-			} catch ( utility::excn::EXCN_Base const & e ) {
+			} catch (utility::excn::Exception const & e ) {
 				result = false;
 			}
 

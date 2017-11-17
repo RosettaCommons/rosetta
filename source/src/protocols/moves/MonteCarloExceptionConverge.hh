@@ -41,9 +41,9 @@
 namespace protocols {
 namespace moves {
 
-class EXCN_Converged : public utility::excn::EXCN_Msg_Exception {
+class EXCN_Converged : public utility::excn::Exception {
 public:
-	EXCN_Converged() : EXCN_Msg_Exception( "exit protocol because structure is converged" ) {};
+	EXCN_Converged(char const *file, int line, std::string const & m) : Exception(file, line, m + "\nexit protocol because structure is converged" ) {};
 };
 
 class MonteCarloExceptionConverge : public utility::pointer::ReferenceCount {

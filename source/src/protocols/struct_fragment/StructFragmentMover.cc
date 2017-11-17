@@ -98,7 +98,7 @@ StructFragmentMover::evaluate_job() {
 			if ( steal_small_frags_ && steal_large_frags_ ) { // We can steal if we want to steal all.
 				return 2; // STATUS 2: Only Steal Fragments.
 			} else {
-				throw( utility::excn::EXCN_Msg_Exception( "With the provided data Fragments cannot be created, not readed." ) );
+				throw( CREATE_EXCEPTION(utility::excn::Exception, "With the provided data Fragments cannot be created, not readed." ) );
 			}
 		}
 	}
@@ -145,7 +145,7 @@ void StructFragmentMover::apply( cp::Pose & pose ) {
 		TR.Trace << TR.Green << "small fragments pointer address " << smallF_ << " size: " << smallF_->size() << TR.Reset << std::endl;
 		TR.Trace << TR.Green << "large fragments pointer address " << largeF_ << " size: " << largeF_->size() << TR.Reset << std::endl;
 	} else {
-		utility::excn::EXCN_Msg_Exception("Pose was empty.");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Pose was empty.");
 	}
 } // end apply method
 
@@ -167,7 +167,7 @@ utility::vector1< cf::FragSetOP > StructFragmentMover::get_fragments( cp::Pose c
 
 	TR.Debug << "Calculating new fragments." << std::endl;
 	if ( not ( steal_small_frags_ && steal_large_frags_ ) && vall_file_.empty() ) {
-		throw( utility::excn::EXCN_BadInput( "with no frag_file and no steal, a vall file must be provided." ) );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput,  "with no frag_file and no steal, a vall file must be provided." ) );
 	}
 	if ( not vall_file_.empty() && utility::file::file_exists( vall_file_ ) ) {
 		pfp::FragmentPickerOP pickIt = make_fragment_picker( pose, vall_file_ );
@@ -180,7 +180,7 @@ utility::vector1< cf::FragSetOP > StructFragmentMover::get_fragments( cp::Pose c
 		mfrag = get_fragset( pickIt, first_res, small_frag_size_ );
 		Mfrag = get_fragset( pickIt, first_res, large_frag_size_ );
 	} else {
-		throw( utility::excn::EXCN_BadInput( "The provided vall file could not be found!" ) );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput,  "The provided vall file could not be found!" ) );
 	}
 
 	// if ( steal_small_frags_ || steal_large_frags_ ) {
@@ -265,7 +265,7 @@ pfp::FragmentPickerOP StructFragmentMover::make_fragment_picker( cp::Pose pose, 
 		if ( utility::file::file_exists( sequence_profile_ ) ) {
 			q_prof->read_from_file( sequence_profile_ );
 		} else {
-			throw( utility::excn::EXCN_Msg_Exception( "The provided sequence profile file could not be found!" ) );
+			throw( CREATE_EXCEPTION(utility::excn::Exception, "The provided sequence profile file could not be found!" ) );
 		}
 	} else {
 		q_prof->generate_from_sequence( core::sequence::Sequence( sequence, "sequence" ) );
@@ -296,7 +296,7 @@ pfp::FragmentPickerOP StructFragmentMover::make_fragment_picker( cp::Pose pose, 
 		if ( utility::file::file_exists( frag_weight_file_ ) ) {
 			fscore->create_scores( frag_weight_file_, structPicker_ );
 		} else {
-			throw( utility::excn::EXCN_BadInput( "The provided weight file could not be found!" ) );
+			throw ( CREATE_EXCEPTION(utility::excn::BadInput,  "The provided weight file could not be found!" ) );
 		}
 	}
 
@@ -379,7 +379,7 @@ cf::FragSetOP StructFragmentMover::read_frag_file( std::string frag_file) {
 		TR.Debug << "Fragments (" << frag_length << ") read from " << frag_file <<std::endl;
 		return frags;
 	} else {
-		throw( utility::excn::EXCN_BadInput( "The provided fragment file could not be found!" ) );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput,  "The provided fragment file could not be found!" ) );
 	}
 }
 
@@ -433,11 +433,11 @@ StructFragmentMover::parse_my_tag(
 
 	// Link1: small_frag_file & large_frag_file need to be either both specified or none.
 	if ( ( small_frag_file_.empty() && not large_frag_file_.empty() ) || ( not small_frag_file_.empty() && large_frag_file_.empty() ) ) {
-		throw( utility::excn::EXCN_RosettaScriptsOption( "Please make sure to either provide the small and large fragment files or none of them!" ) );
+		throw ( CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Please make sure to either provide the small and large fragment files or none of them!" ) );
 	}
 	// Link2: vall_file is only optional if small_frag_file & large_frag_file are specified, is mandatory otherwise
 	if ( small_frag_file_.empty() && vall_file_.empty() ) {
-		throw( utility::excn::EXCN_RosettaScriptsOption( "To create fragments a vall file needs to be provided: vall_file option" ) );
+		throw ( CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "To create fragments a vall file needs to be provided: vall_file option" ) );
 	}
 
 	// -- Optional Attributes -- //

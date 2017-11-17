@@ -164,9 +164,9 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 		selector_name = tag->getOption< std::string >( "selector" );
 		try {
 			selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_name );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from OperateOnResidueSubset::parse_tag\n" + e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_message );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 		}
 	}
 
@@ -177,7 +177,7 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 		if ( rltof && rltof->has_type( type ) ) {
 			if ( rltop ) {
 				std::string error_message = "Error from OperateOnResidueSubset::parse_tag: multiple residue-level task operations given; only one allowed\n";
-				throw utility::excn::EXCN_Msg_Exception( error_message );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 			}
 			rltop = rltof->newRLTO( type );
 			rltop->parse_tag( subtag );
@@ -188,7 +188,7 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 		if ( res_selector_factory && res_selector_factory->has_type( type ) ) {
 			if ( selector ) {
 				std::string error_message = "Error from OperateOnResidueSubset::parse_tag: multiple residue selectors given; only one allowed\n";
-				throw utility::excn::EXCN_Msg_Exception( error_message );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 			}
 			selector = res_selector_factory->new_residue_selector( subtag->getName(), subtag, datamap );
 			TR(t_debug) << "using ResidueSelector of type " << type << std::endl;
@@ -200,13 +200,13 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 	if ( ! rltop ) {
 		std::string error_message = "Error from OperateOnResidueSubset::parse_tag.  No residue-level task operation provided\n";
 		error_message += "The residue level task operation must be provided as a subtag of the OperateOnResidueSubset tag\n";
-		throw utility::excn::EXCN_Msg_Exception( error_message );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 	}
 	if ( ! selector ) {
 		std::string error_message = "Error from OperateOnResidueSubset::parse_tag.  No residue selector provided\n";
 		error_message += "The residue selector may be provided either as a subtag of the OperateOnResidueSubset tag\n";
 		error_message += "or through the 'selector' option.\n";
-		throw utility::excn::EXCN_Msg_Exception( error_message );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 	}
 
 	op_ = rltop;

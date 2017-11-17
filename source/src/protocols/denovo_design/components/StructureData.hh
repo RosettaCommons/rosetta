@@ -727,16 +727,9 @@ public:
 
 };
 
-class EXCN_PoseInconsistent : public utility::excn::EXCN_Base {
+class EXCN_PoseInconsistent : public utility::excn::Exception {
 public:
-	EXCN_PoseInconsistent( std::string const & your_msg ):
-		utility::excn::EXCN_Base(), msg_( your_msg ) {}
-
-	virtual void
-	show( std::ostream & os ) const { os << msg_; }
-	std::string msg_;
-private:
-	EXCN_PoseInconsistent();
+	using utility::excn::Exception::Exception;
 };
 
 } // components

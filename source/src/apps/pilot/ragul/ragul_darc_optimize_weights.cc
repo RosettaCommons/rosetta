@@ -547,7 +547,7 @@ int main( int argc, char * argv [] ) {
 		RMSDfile <<pf.rmsd(original_pose, minimized_ligand_pose)<<"\n";
 		RMSDfile.close();
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
         return -1;
     }

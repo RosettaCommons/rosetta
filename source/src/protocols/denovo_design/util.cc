@@ -295,11 +295,11 @@ get_residue_selector( basic::datacache::DataMap const & data, std::string const 
 	core::select::residue_selector::ResidueSelectorCOP selector;
 	try {
 		selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", name );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		std::stringstream error_msg;
 		error_msg << "Failed to find ResidueSelector named '" << name << "' from the Datamap.\n";
 		error_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 	}
 	debug_assert( selector );
 	return selector;
@@ -538,7 +538,7 @@ parse_length_string( std::string const & len_str )
 				retval.push_back( i );
 			}
 		} else {
-			throw utility::excn::EXCN_Msg_Exception( "Invalid length input: " + len_str );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Invalid length input: " + len_str );
 		}
 	}
 	return retval;
@@ -573,7 +573,7 @@ parse_strand_pair( std::string const & strand_pair_str )
 	if ( strandvec.size() != 2 ) {
 		std::stringstream err;
 		err << "The given strand pair (" << strand_pair_str << ") has more or less than 2 values. It must have exactly two.  Edge strands can be represented by blanks (e.g. \"\",sheet.s2 )." << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 	return std::make_pair( strandvec[ 1 ], strandvec[ 2 ] );
 }

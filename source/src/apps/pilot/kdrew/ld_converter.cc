@@ -164,7 +164,7 @@ main( int argc, char* argv[] )
 		//call job distributor
 		protocols::jd2::JobDistributor::get_instance()->go( LDC_mover );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

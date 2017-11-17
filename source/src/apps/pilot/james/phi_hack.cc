@@ -107,7 +107,7 @@ main( int argc, char* argv [] ) {
 	ss->fill_struct( fold_pose, tag );
 	sfd.write_silent_struct( *ss, option[ out::file::silent ]() );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

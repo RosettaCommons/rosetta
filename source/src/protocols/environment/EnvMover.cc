@@ -147,7 +147,7 @@ moves::MoverOP find_mover( utility::tag::TagCOP tag,
 		mover_name = tag->getOption< std::string >( "mover" );
 	} else {
 		std::string err = "An environment was provided a subtag without the appropriate options. Either 'name' or 'mover' must be specified.";
-		throw utility::excn::EXCN_RosettaScriptsOption( err );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  err );
 	}
 	moves::Movers_map::const_iterator mv_it = movers.find( mover_name );
 
@@ -156,7 +156,7 @@ moves::MoverOP find_mover( utility::tag::TagCOP tag,
 		return mv_it->second;
 	} else {
 		std::string err = "The mover " + mover_name + " could not be found. Check your spelling in the xml script.";
-		throw utility::excn::EXCN_RosettaScriptsOption( err );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  err );
 	}
 
 }
@@ -181,10 +181,10 @@ void EnvMover::parse_subtag( utility::tag::TagCOP tag,
 		} else {
 			std::ostringstream err;
 			err << "The Environment cannot be used with the tag '" << *tag << "'.";
-			throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  err.str() );
 		}
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "In Environment '" + get_name() + "': " + e.msg() );
+	} catch ( utility::excn::Exception & e ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "In Environment '" + get_name() + "': " + e.msg() );
 	}
 }
 
@@ -192,7 +192,7 @@ void EnvMover::add_apply_mover( protocols::moves::MoverOP mover_in ) {
 	if ( !mover_in ) {
 		std::ostringstream ss;
 		ss << "Mover '" << this->get_name() << "' recieved a null pointer in " << __FUNCTION__ << ".";
-		throw utility::excn::EXCN_NullPointer( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  ss.str() );
 	}
 	movers_->add_mover( mover_in );
 }
@@ -201,7 +201,7 @@ void EnvMover::add_registered_mover( protocols::moves::MoverOP mover_in ) {
 	if ( !mover_in ) {
 		std::ostringstream ss;
 		ss << "Mover '" << this->get_name() << "' recieved a null pointer in " << __FUNCTION__ << ".";
-		throw utility::excn::EXCN_NullPointer( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  ss.str() );
 	}
 	reg_only_movers_.insert( mover_in );
 }

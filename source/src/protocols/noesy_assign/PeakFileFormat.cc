@@ -257,7 +257,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 			std::string name;
 			line_stream >> index;
 			if ( !line_stream.good() ) {
-				throw utility::excn::EXCN_BadInput(" problem reading peak file, column index and atom-name expected after key-word #INAME ");
+				throw CREATE_EXCEPTION(utility::excn::BadInput, " problem reading peak file, column index and atom-name expected after key-word #INAME ");
 			}
 			line_stream >> name;
 			if ( name == "HN" || name =="HC" || name =="H1" || name =="1H" ) HN_column_labels = true;
@@ -328,7 +328,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 		option[ noesy_weights::tolerances ][ TOL_H_DIRECT ]
 	);
 	if ( dim < 2 ) {
-		throw utility::excn::EXCN_BadInput(" problem reading peak file, no or incomplete header ");
+		throw CREATE_EXCEPTION(utility::excn::BadInput, " problem reading peak file, no or incomplete header ");
 	}
 
 	//  info2_ = new CrossPeakInfo( "N", 0.03, 0.5 );
@@ -339,7 +339,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 	}
 	for ( Size i = 1; i<=dim; i++ ) {
 		if ( HN_column_labels && cyana_string != "none" ) {
-			if ( simnoesy ) throw utility::excn::EXCN_BadInput("cannot use HN for protons when SimNOESY ( i.e., NC for label atom name");
+			if ( simnoesy ) throw CREATE_EXCEPTION(utility::excn::BadInput, "cannot use HN for protons when SimNOESY ( i.e., NC for label atom name");
 			atom_names[ i ]=cyana_string[ i-1 ];
 		}
 		if ( atom_names[ i ] == "h"
@@ -388,7 +388,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 	}
 
 	if ( !info2_  || !info1_ ) {
-		throw utility::excn::EXCN_BadInput(" problem reading peak file, no or errorenous header ");
+		throw CREATE_EXCEPTION(utility::excn::BadInput, " problem reading peak file, no or errorenous header ");
 	}
 
 	tr.Debug << " cross-peak infos: " << *info1_ << " and " << *info2_ << std::endl;
@@ -467,7 +467,7 @@ void PeakFileFormat::read_resonances( std::istream& is, CrossPeak &cp ) const {
 		bool is_label( col2islabel_[ icol ] );
 		is >> val;
 		if ( !is.good() ) {
-			throw EXCN_FileFormat( "expected resonance value" );
+			throw CREATE_EXCEPTION(EXCN_FileFormat,  "expected resonance value" );
 		}
 		if ( !is_label ) cp.proton( iproton ).set_freq( val );
 		else {
@@ -525,7 +525,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 				if ( first ) return;
 				std::ostringstream errstr;
 				errstr << cp;
-				throw EXCN_FileFormat( "expected assignment value for " + errstr.str() );
+				throw CREATE_EXCEPTION(EXCN_FileFormat,  "expected assignment value for " + errstr.str() );
 			}
 		}
 		rest = false;
@@ -566,7 +566,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 				std::ostringstream errstr;
 				errstr << cp;
 				delete [] vals;
-				throw EXCN_FileFormat( "expected assignment value for " + errstr.str() );
+				throw CREATE_EXCEPTION(EXCN_FileFormat,  "expected assignment value for " + errstr.str() );
 			} else {
 				if ( first ) tr.Trace << " read assignments: ";
 			}
@@ -607,13 +607,13 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 		} else weight += 1.0;
 		if ( !line_stream.good() ) break;
 		//   if ( tag != "#QU" ) {
-		//       throw EXCN_FileFormat( "expected #QU " );
+		//       throw CREATE_EXCEPTION(EXCN_FileFormat,  "expected #QU " );
 		//     }
 		//     core::Real qu, sup;
 		//     line_stream >> qu;
 		//     line_stream >> tag;
 		//     if ( line_stream.good() && tag != "#SUP" ) {
-		//       throw EXCN_FileFormat( "expected #SUP" );
+		//       throw CREATE_EXCEPTION(EXCN_FileFormat,  "expected #SUP" );
 		//     }
 		//   line_stream >> sup;
 	}

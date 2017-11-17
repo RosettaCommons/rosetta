@@ -114,7 +114,7 @@ int main(int argc, char * argv[]) {
 			pickIt->get_score_manager()->describe_fragments(frags_rescored,
 				std::cerr);
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

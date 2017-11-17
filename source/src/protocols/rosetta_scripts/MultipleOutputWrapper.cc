@@ -227,12 +227,12 @@ void MultipleOutputWrapper::parse_my_tag(
 		}
 
 		if ( !mover_tag_ && !rosetta_scripts_tag_ ) {
-			throw utility::excn::EXCN_Msg_Exception("No mover or ROSETTASCRIPTS tag found.");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "No mover or ROSETTASCRIPTS tag found.");
 		}
 
-	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch( utility::excn::Exception const & e ) {
 		std::string my_name( tag->getOption<std::string>("name") );
-		throw utility::excn::EXCN_Msg_Exception("Exception in MultipleOutputWrapper with name \"" + my_name + "\": " + e.msg());
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Exception in MultipleOutputWrapper with name \"" + my_name + "\": " + e.msg());
 	}
 }
 

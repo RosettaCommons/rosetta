@@ -329,8 +329,6 @@ CCDLoopClosureMover::movemap( kinematics::MoveMapCOP new_movemap )
 Angle
 CCDLoopClosureMover::max_per_move_torsion_delta_per_residue( char secstruct ) const
 {
-	using utility::excn::EXCN_KeyError;
-
 	if ( ! sec_struc_char_to_enum_map().count(  secstruct ) ) {
 		std::stringstream msg;
 		msg << "CCDLoopClosureMover::max_per_move_delta_per_residue( char secstruct ): secstruct must be 'H', 'E', or 'L'. '";
@@ -338,7 +336,7 @@ CCDLoopClosureMover::max_per_move_torsion_delta_per_residue( char secstruct ) co
 
 		// Can python catch exceptions thrown from C++? If not, we had better keep this PyAssert!
 		PyAssert( ( secstruct == 'H' ) || ( secstruct == 'E' ) || ( secstruct == 'L' ), msg.str() );
-		throw EXCN_KeyError( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::KeyError, msg.str() );
 	}
 
 	return max_per_move_torsion_delta_per_residue( sec_struc_char_to_enum_map().find( secstruct )->second );
@@ -349,8 +347,6 @@ CCDLoopClosureMover::max_per_move_torsion_delta_per_residue( char secstruct ) co
 Angle
 CCDLoopClosureMover::max_total_torsion_delta_per_residue( char secstruct ) const
 {
-	using utility::excn::EXCN_KeyError;
-
 	if ( ! sec_struc_char_to_enum_map().count(  secstruct ) ) {
 		std::stringstream msg;
 		msg << "CCDLoopClosureMover::max_total_delta_per_residue( char secstruct ): secstruct must be 'H', 'E', or 'L'. '";
@@ -358,7 +354,7 @@ CCDLoopClosureMover::max_total_torsion_delta_per_residue( char secstruct ) const
 
 		// Can python catch exceptions thrown from C++? If not, we had better keep this PyAssert!
 		PyAssert( ( secstruct == 'H' ) || ( secstruct == 'E' ) || ( secstruct == 'L' ), msg.str() );
-		throw EXCN_KeyError( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::KeyError, msg.str() );
 	}
 	return max_total_torsion_delta_per_residue( sec_struc_char_to_enum_map().find( secstruct )->second );
 }
@@ -502,7 +498,7 @@ CCDLoopClosureMover::get_anchors( conformation::Residue const & residue ) const
 #ifdef PYROSETTA
 		  PyAssert( false, msg );
 #endif
-		throw utility::excn::EXCN_BadInput( msg );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg );
 	}
 
 	return anchors;
@@ -520,7 +516,7 @@ CCDLoopClosureMover::index_pair_in_range(
 	while ( atom < 1 ) {
 		atom += n_mainchain_atoms;
 		if ( pos == 0 ) {
-			throw utility::excn::EXCN_RangeError( "pos is unsigned. Cannot make it negative!" );
+			throw CREATE_EXCEPTION(utility::excn::RangeError,  "pos is unsigned. Cannot make it negative!" );
 		}
 		pos -= 1;
 	}

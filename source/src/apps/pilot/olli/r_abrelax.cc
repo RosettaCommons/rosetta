@@ -15,7 +15,7 @@
 #include <core/types.hh>
 #include <devel/init.hh>
 #include <utility/exit.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/abinitio/AbrelaxApplication.hh>
@@ -109,11 +109,11 @@ main( int argc, char * argv [] )
 			mem_tr << "devel::init" << std::endl;
 			//    protocols::abinitio::Broker_main();
 			protocols::jd2::JobDistributor::get_instance()->go( NULL );
-		} catch ( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			std::cerr << "Exception : " << std::endl;
 			excn.show( std::cerr );
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

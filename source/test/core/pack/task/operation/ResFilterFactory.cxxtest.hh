@@ -116,14 +116,13 @@ public:
 			XMLSchemaDefinition xsd;
 			ResFilterFactory::get_instance()->define_res_filter_xml_schema( xsd );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			std::string expected_message =
 				"Could not generate an XML Schema for ResFilters from ResFilterFactory; offending class"
 				" must call core::pack::task::operation::complex_type_name_for_res_filter when defining"
-				" its XML Schema\ndefine_xml_schema_group: failed to detect a complex type of name \"" +
-				complex_type_name_for_res_filter( "DummyResFilter2" ) + "\" for \"DummyResFilter2\"\n";
+				" its XML Schema"; //\ndefine_xml_schema_group: failed to detect a complex type of name \"" + complex_type_name_for_res_filter( "DummyResFilter2" ) + "\" for \"DummyResFilter2\"\n";
 
-			TS_ASSERT_EQUALS( e.msg(), expected_message );
+			TS_ASSERT( e.msg().find(expected_message) != std::string::npos );
 
 			//std::cout << e.msg() << "\n" << expected_message << std::endl;
 		}

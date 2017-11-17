@@ -317,7 +317,7 @@ main( int argc, char * argv [] )
 		= ConstraintStatsMoverOP( static_cast< ConstraintStatsMover * > ( mover() ) );
 	downcast->print_stats( output );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

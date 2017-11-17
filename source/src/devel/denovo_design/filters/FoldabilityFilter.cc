@@ -143,16 +143,16 @@ FoldabilityFilter::parse_my_tag(
 	tries_ = tag->getOption< core::Size >( "tries", tries_ );
 	if ( tag->hasOption("selector") ) {
 		if ( tag->hasOption("start_res") || tag->hasOption("end_res" ) ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "\"start_res\" and \"end_res\" cannot be used at the same time as \"selector\" in FoldabilityFilter." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "\"start_res\" and \"end_res\" cannot be used at the same time as \"selector\" in FoldabilityFilter." );
 		}
 		std::string const selectorname = tag->getOption< std::string >("selector");
 		try {
 			selector_ = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from DisulfidizeMover.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 		debug_assert( selector_ );
 		TR << "Using residue selector " << selectorname << std::endl;

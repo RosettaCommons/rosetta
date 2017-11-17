@@ -201,7 +201,7 @@ parse_task_operations( std::string const & task_list, basic::datacache::DataMap 
 			new_task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
 			TR<<t_o_key<<' ';
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 		}
 	}
 	TR<<std::endl;
@@ -243,7 +243,7 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap & dat
 			task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
 			TR<<t_o_key<<' ';
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 		}
 	}
 	TR<<std::endl;
@@ -265,7 +265,7 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 			if ( data.has( "task_operations", t_o_key ) ) {
 				task_operations.push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 	}
@@ -346,9 +346,9 @@ parse_score_function(
 	if ( ! data.has( "scorefxns", scorefxn_key ) ) {
 		if ( ! core::init::check_score_function_sanity( basic::options::option, scorefxn_key ) ) {
 			// Incompatible default score functions aren't loaded.
-			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " was requested with incompatible options.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScoreFunction " + scorefxn_key + " was requested with incompatible options.");
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap. To add a score function to the data map, define a score function in the <SCOREFXNS/>.'");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap. To add a score function to the data map, define a score function in the <SCOREFXNS/>.'");
 		}
 	}
 
@@ -749,7 +749,7 @@ protocols::filters::FilterOP
 parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & filters ){
 	auto filter_it( filters.find( filter_name ) );
 	if ( filter_it == filters.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
 	}
 	return filter_it->second;
 }
@@ -763,7 +763,7 @@ protocols::moves::MoverOP
 parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & movers ){
 	auto mover_it( movers.find( mover_name ) );
 	if ( mover_it == movers.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Mover "+mover_name+" not found" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover "+mover_name+" not found" );
 	}
 	return mover_it->second;
 }
@@ -786,9 +786,9 @@ attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist ){
 /// @brief utility function for parsing xyzVector
 numeric::xyzVector< core::Real >
 parse_xyz_vector( utility::tag::TagCOP const xyz_vector_tag ){
-	if ( ! xyz_vector_tag->hasOption("x") ) throw utility::excn::EXCN_RosettaScriptsOption("xyz_vector requires 'x' coordinates option");
-	if ( ! xyz_vector_tag->hasOption("y") ) throw utility::excn::EXCN_RosettaScriptsOption("xyz_vector requires 'y' coordinates option");
-	if ( ! xyz_vector_tag->hasOption("z") ) throw utility::excn::EXCN_RosettaScriptsOption("xyz_vector requires 'z' coordinates option");
+	if ( ! xyz_vector_tag->hasOption("x") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "xyz_vector requires 'x' coordinates option");
+	if ( ! xyz_vector_tag->hasOption("y") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "xyz_vector requires 'y' coordinates option");
+	if ( ! xyz_vector_tag->hasOption("z") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "xyz_vector requires 'z' coordinates option");
 
 	numeric::xyzVector< core::Real > xyz_v (
 		xyz_vector_tag->getOption<core::Real>("x"),
@@ -996,7 +996,7 @@ void save_schema(  std::string const & filename ) {
 	try {
 		protocols::rosetta_scripts::RosettaScriptsParser parser = protocols::rosetta_scripts::RosettaScriptsParser();
 		schema = parser.xsd_for_rosetta_scripts();
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		TR.Error << "An error was encountered while attempting to generate the XSD schema - it will not be saved.\n";
 		TR.Error << e.msg() << "\n";
 		return;

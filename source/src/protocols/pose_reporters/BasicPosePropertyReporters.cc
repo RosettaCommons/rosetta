@@ -202,7 +202,7 @@ void FilterReporter::parse_my_tag(
 		);
 
 		if ( !filter_tag ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("Cannot find filter named \"" + filter_name + "\"");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot find filter named \"" + filter_name + "\"");
 		}
 
 	} else {
@@ -221,7 +221,7 @@ void FilterReporter::parse_my_tag(
 	if ( !filter_ ) {
 		std::ostringstream s;
 		s << "Cannot create filter from script tag: " << tag;
-		throw utility::excn::EXCN_RosettaScriptsOption(s.str());
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, s.str());
 	}
 }
 
@@ -328,7 +328,7 @@ void RMSDReporter::parse_my_tag(
 		} else if ( mode == "all_atom" ) {
 			mode_ = MODE_all_atom_rmsd;
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("Unknown RMSD reporter mode: " + mode);
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Unknown RMSD reporter mode: " + mode);
 		}
 	}
 
@@ -337,7 +337,7 @@ void RMSDReporter::parse_my_tag(
 	}
 
 	if ( mode_ == MODE_NONE ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RMSD reporter mode not specified. Choose form: CA, all_atom");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RMSD reporter mode not specified. Choose form: CA, all_atom");
 	}
 }
 

@@ -340,7 +340,7 @@ void MotifGraftMover::get_matching_fragments(
 			false);
 		//If we do not have enough fragments to satisfise the restrictions then DIE with exception.
 		if ( !enough_fragments ) {
-			//throw utility::excn::EXCN_Msg_Exception("For this scaffold I couldn't find suitable fragments that match the size of your motifs.");
+			//throw CREATE_EXCEPTION(utility::excn::Exception, "For this scaffold I couldn't find suitable fragments that match the size of your motifs.");
 			TR.Warning << "For this scaffold & fragment/size combination there are not fragments that match the size of your motifs."<< std::endl;
 			continue;
 		}
@@ -354,7 +354,7 @@ void MotifGraftMover::get_matching_fragments(
 		TR.Debug << "Num of Fragments so far: " << v_m2s_data.size() << std::endl;
 		//If we do not have enough fragments to satisfise the restrictions DIE with exception.
 		if ( v_m2s_data.size() == 0 ) {
-			//throw utility::excn::EXCN_Msg_Exception("For this scaffold I couldn't find any suitable fragment combination that match your motif's geometric restrictions.");
+			//throw CREATE_EXCEPTION(utility::excn::Exception, "For this scaffold I couldn't find any suitable fragment combination that match your motif's geometric restrictions.");
 			TR.Warning << "For this scaffold & fragment combination there are not fragments combinations that match the geometric restrictions of your motifs."<< std::endl;
 			continue;
 		}
@@ -365,7 +365,7 @@ void MotifGraftMover::get_matching_fragments(
 		TR.Debug << "Num of Fragments so far: " << v_m2s_data.size() << std::endl;
 		//If we do not have enough fragments to satisfise the restrictions DIE with exception.
 		if ( v_m2s_data.size() == 0 ) {
-			//throw utility::excn::EXCN_Msg_Exception("For this scaffold I couldn't find any suitable fragment combination that pass the RMSD test.");
+			//throw CREATE_EXCEPTION(utility::excn::Exception, "For this scaffold I couldn't find any suitable fragment combination that pass the RMSD test.");
 			TR.Warning << "For this scaffold & fragment combination there are not fragments that pass the RMSD test."<< std::endl;
 			continue;
 		}
@@ -387,7 +387,7 @@ void MotifGraftMover::get_matching_fragments(
 			p_scaffold_mono_aa = MotifGraftMover::get_mono_aa_pose_copy( p_scaffold , clash_test_residue);
 			p_motif_mono_aa = MotifGraftMover::get_mono_aa_pose_copy( *p_motif_ , clash_test_residue);
 		} else {
-			throw utility::excn::EXCN_Msg_Exception("The aminoacid selected for the clash test is not valid. Valid selections are: \"GLY, ALA, VAL, NATIVE\"");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "The aminoacid selected for the clash test is not valid. Valid selections are: \"GLY, ALA, VAL, NATIVE\"");
 		}
 		//p_scaffold_mono_aa.dump_pdb( "test_x"+utility::to_string(numPermutation)+".pdb");
 		//p_motif_mono_aa.dump_pdb( "test_y"+utility::to_string(numPermutation)+".pdb");
@@ -396,7 +396,7 @@ void MotifGraftMover::get_matching_fragments(
 		MotifGraftMover::test_epigraft_and_contextStructure_clashes( p_scaffold_mono_aa, p_motif_mono_aa, *p_contextStructure_, clash_cutoff, v_m2s_data);
 		TR.Debug << "Num of Fragments so far: " << v_m2s_data.size() << std::endl;
 		if ( v_m2s_data.size() == 0 ) {
-			//throw utility::excn::EXCN_Msg_Exception("For this scaffold I couldn't find any suitable fragment combination that pass the clash_score test.");
+			//throw CREATE_EXCEPTION(utility::excn::Exception, "For this scaffold I couldn't find any suitable fragment combination that pass the clash_score test.");
 			TR.Warning << "For this scaffold & fragment combination there are not fragments that pass the clash_score test."<< std::endl;
 			continue;
 		}
@@ -410,7 +410,7 @@ void MotifGraftMover::get_matching_fragments(
 	}//END Test combinations of fragments (outer loop)
 	//return
 	if ( pq.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception("For this scaffold there are not suitable scaffold grafts within your constrains");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "For this scaffold there are not suitable scaffold grafts within your constrains");
 	} else {
 		TR.Info << "After all the iterations there are a total of: " << pq.size() << " fragments in the priority queue"<< std::endl;
 	}
@@ -903,7 +903,7 @@ void MotifGraftMover::get_motif_scaffold_superposition_and_RMSD(
 			if ( b_full_motif_bb_alignment ) {
 				TR.Debug << "Using full fragment BB alignment" << std::endl;
 				if ( ((*it_fragments).v_indexes[i].motifHigh-(*it_fragments).v_indexes[i].motifLow) != ((*it_fragments).v_indexes[i].scaffoldHigh - (*it_fragments).v_indexes[i].scaffoldLow ) ) {
-					throw utility::excn::EXCN_Msg_Exception("Something is WRONG, most likely this is a BUG. You are using full Back Bone alignment but the size of the fragments in the motif and scaffold are different, THIS alignment can't be performed. Please contact the authors of the program and cite this legend.");
+					throw CREATE_EXCEPTION(utility::excn::Exception, "Something is WRONG, most likely this is a BUG. You are using full Back Bone alignment but the size of the fragments in the motif and scaffold are different, THIS alignment can't be performed. Please contact the authors of the program and cite this legend.");
 				}
 				//ToDo: Add a check for the same size of fragments, this alignment can't happen otherwise
 				for ( core::Size j = (*it_fragments).v_indexes[i].motifLow; j<= (*it_fragments).v_indexes[i].motifHigh; ++j ) {
@@ -1573,14 +1573,14 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 			TR.Info << "Parsed combinatory size delta for fragment #"<< i << " = " << tmpPairParser.first <<"," << tmpPairParser.second << std::endl;
 			gp_vp_combinatory_fragment_size_delta_.push_back(tmpPairParser);
 			if ( tmpPairParser.first < 0 ) {
-				throw utility::excn::EXCN_RosettaScriptsOption(" The left term [ x: ] of the combinatory fragment size delta for fragment cannot be < 0");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, " The left term [ x: ] of the combinatory fragment size delta for fragment cannot be < 0");
 			} else if ( tmpPairParser.second < 0 ) {
-				throw utility::excn::EXCN_RosettaScriptsOption(" The right term [ :x ] of the combinatory fragment size delta for fragment cannot be < 0");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, " The right term [ :x ] of the combinatory fragment size delta for fragment cannot be < 0");
 			}
 		}
 		//Die if the number of delta deffinitions is different to the number of motif fragments
 		if ( gp_vp_combinatory_fragment_size_delta_.size() != gp_p_motif_->conformation().num_chains() ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("The number of deffined combinatory_fragment_size_delta pairs (:) must match the number of fragments in your motif");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The number of deffined combinatory_fragment_size_delta pairs (:) must match the number of fragments in your motif");
 		}
 	} else {
 		TR.Warning << "No combinatory_fragment_size_delta, assuming that you dont want to test several combinations of your motif's length" << std::endl;
@@ -1607,15 +1607,15 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 			tmpPairParser.second=(long int) std::atoi(tmpSplitParser2[2].c_str());
 			TR.Info << "Parsed replacement size delta for fragment #"<< i << " = " << tmpPairParser.first <<"," << tmpPairParser.second << std::endl;
 			if ( tmpPairParser.first > 0 ) {
-				throw utility::excn::EXCN_RosettaScriptsOption("The left term [ x: ] of the replacement size delta for fragment cannot be > 0");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The left term [ x: ] of the replacement size delta for fragment cannot be > 0");
 			} else if ( tmpPairParser.second < 0 ) {
-				throw utility::excn::EXCN_RosettaScriptsOption("The right term [ :x ] of the replacement size delta for fragment cannot be < 0");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The right term [ :x ] of the replacement size delta for fragment cannot be < 0");
 			}
 			gp_vp_max_fragment_replacement_size_delta_.push_back(tmpPairParser);
 		}
 		//Die if the number of delta deffinitions is different to the number of motif fragments
 		if ( gp_vp_max_fragment_replacement_size_delta_.size() != gp_p_motif_->conformation().num_chains() ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("The number of deffined max_fragment_replacement_size_delta pairs (:) must match the number of fragments in your motif");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The number of deffined max_fragment_replacement_size_delta pairs (:) must match the number of fragments in your motif");
 		}
 	} else {
 		TR.Warning << "No max_fragment_replacement_size defined, assuming that each motif fragment can replace "
@@ -1646,7 +1646,7 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 					tmpRealParser.push_back(std::atoi(tmpSplitParser2[j].c_str()));
 					TR.Info << "Parsed hotspot at position: " << tmpRealParser[j] << ", for fragment #"<< i << std::endl;
 					if ( tmpRealParser[j] < 1 ) {
-						throw utility::excn::EXCN_RosettaScriptsOption("A hotspot index cannot be 0 or a negative number." );
+						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "A hotspot index cannot be 0 or a negative number." );
 					}
 				}
 			}
@@ -1654,7 +1654,7 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 		}
 		//Die if the number of hotspot deffinitions is different to the number of motif fragments
 		if ( gp_vvr_hotspots_.size() != gp_p_motif_->conformation().num_chains() ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("If used, the hotspots have to be defined for all the fragments in your motif.\n Note: use an empty definition for any fragment without hotspots (e.g. 1:3:4,,2:4 ) ");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "If used, the hotspots have to be defined for all the fragments in your motif.\n Note: use an empty definition for any fragment without hotspots (e.g. 1:3:4,,2:4 ) ");
 		}
 		//Check that the hotspots are inside of the chain lenght
 		for ( core::Size i = 1; i <= gp_p_motif_->conformation().num_chains() ; ++i ) {
@@ -1662,7 +1662,7 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 			for ( core::Size j = 1; j <= gp_vvr_hotspots_[i].size() ; ++j ) {
 				if ( gp_vvr_hotspots_[i][j] > chainSize ) {
 					TR.Warning << "The hotspot: " << gp_vvr_hotspots_[i][j] << ", for chain: " << i << " is outside of the motif!!!" << std::endl;
-					throw utility::excn::EXCN_RosettaScriptsOption("A hotspot has to be inside of its motif" );
+					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "A hotspot has to be inside of its motif" );
 				}
 			}
 		}
@@ -1739,7 +1739,7 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 	if ( b_revert_graft_to_native_sequence && gp_b_full_motif_bb_alignment_ ) {
 		TR.Warning << "revert_graft_to_native_sequence is Active. After grafting the output will be reverted to the native sequence of the target scaffold" << std::endl;
 	} else if ( b_revert_graft_to_native_sequence && !gp_b_full_motif_bb_alignment_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("ERROR: revert_graft_to_native_sequence=true only can be used in conjuction with full_motif_bb_alignment=true" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ERROR: revert_graft_to_native_sequence=true only can be used in conjuction with full_motif_bb_alignment=true" );
 	}
 
 	//OPTIONAL: allow multiple outputs of the same graft?
@@ -1785,21 +1785,21 @@ void MotifGraftMover::parse_my_tag(
 	if ( tag->hasOption("context_structure") ) {
 		s_contextStructure = tag->getOption< std::string >( "context_structure");
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("Must specify the context_structure.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify the context_structure.");
 	}
 
 	//REQUIRED: motif structure
 	if ( tag->hasOption("motif_structure") ) {
 		s_motif = tag->getOption< std::string >( "motif_structure" );
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("Must specify the motif_structure.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify the motif_structure.");
 	}
 
 	//REQUIRED: RMSD_tolerance
 	if ( tag->hasOption("RMSD_tolerance") ) {
 		r_RMSD_tolerance = tag->getOption<core::Real>( "RMSD_tolerance" );
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("Must specify the RMSD_tolerance.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify the RMSD_tolerance.");
 	}
 
 	//OPTIONAL: NC_points_RMSD_tolerance
@@ -1814,7 +1814,7 @@ void MotifGraftMover::parse_my_tag(
 	if ( tag->hasOption("clash_score_cutoff") ) {
 		i_clash_score_cutoff = tag->getOption<core::Size>( "clash_score_cutoff" );
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("Must specify the clash_score_cutoff.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify the clash_score_cutoff.");
 	}
 
 	//OPTIONAL: combinatory_fragment_size_delta

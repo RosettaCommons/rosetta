@@ -128,10 +128,10 @@ Rotate::parse_my_tag(
 	core::pose::Pose const & pose
 )
 {
-	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'chain' tag");
-	if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'distribution' tag");
-	if ( ! tag->hasOption("degrees") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'degrees' tag");
-	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'cycles' tag");
+	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotate' mover requires 'chain' tag");
+	if ( ! tag->hasOption("distribution") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotate' mover requires 'distribution' tag");
+	if ( ! tag->hasOption("degrees") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotate' mover requires 'degrees' tag");
+	if ( ! tag->hasOption("cycles") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotate' mover requires 'cycles' tag");
 
 	// Will return a nullptr if this XML didn't define any ScoringGrids
 	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_optional_grid_set_from_tag( tag, data_map );
@@ -139,9 +139,9 @@ Rotate::parse_my_tag(
 	rotate_info_.chain = tag->getOption<std::string>("chain");
 	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(rotate_info_.chain, pose) );
 	if ( chain_ids.size() == 0 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover: chain '"+rotate_info_.chain+"' does not exist.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotate' mover: chain '"+rotate_info_.chain+"' does not exist.");
 	} else if ( chain_ids.size() > 1 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover: chain letter '"+rotate_info_.chain+"' represents more than one chain. Consider using the 'Rotates' mover (with an 's') instead.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotate' mover: chain letter '"+rotate_info_.chain+"' represents more than one chain. Consider using the 'Rotates' mover (with an 's') instead.");
 	}
 	rotate_info_.chain_id= chain_ids[1];
 	rotate_info_.jump_id= core::pose::get_jump_id_from_chain_id(rotate_info_.chain_id, pose);

@@ -142,7 +142,7 @@ int main( int argc, char * argv [] ) {
 		Size cnt = all.calculate();
 		time_end = time(NULL);
 		trAllCrmsd << "Computed " << cnt <<" crmsd values in "<<(time_end - time_start)<<" seconds"<<std::endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

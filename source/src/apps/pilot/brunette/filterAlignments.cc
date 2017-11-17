@@ -329,7 +329,7 @@ int main( int argc, char * argv [] ) {
 		std::ofstream out_aln_stream( out_filename.c_str() );
 		output_alignments(out_alns,out_aln_stream);
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

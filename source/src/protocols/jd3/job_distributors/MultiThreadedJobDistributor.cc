@@ -62,11 +62,11 @@ MultiThreadedJobDistributor::MultiThreadedJobDistributor() :
 	default_retry_limit_( 1 )
 {
 	if ( ! basic::options::option[ basic::options::OptionKeys::jd3::nthreads ].active() ) {
-		throw utility::excn::EXCN_Msg_Exception( "jd3::nthreads not specified" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "jd3::nthreads not specified" );
 	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::jd3::nthreads ]() <= 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "negative or zero value passed in for jd3::nthreads" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "negative or zero value passed in for jd3::nthreads" );
 	}
 
 	nthreads_ = basic::options::option[ basic::options::OptionKeys::jd3::nthreads ]();
@@ -159,7 +159,7 @@ MultiThreadedJobDistributor::prepare_next_job( LarvalJobOP larval_job, core::Siz
 			oss << larval_job->input_job_result_indices()[ ii ].first << ", ";
 			oss << larval_job->input_job_result_indices()[ ii ].second << ")";
 			TR.Error << oss.str() << std::endl;
-			throw utility::excn::EXCN_Msg_Exception( oss.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 		}
 		input_job_results[ ii ] = iter->second.second;
 	}
@@ -226,7 +226,7 @@ MultiThreadedJobDistributor::potentially_output_some_job_results()
 		JobResultID result_id = output_spec->result_id();
 		auto result_iter = job_results_.find( result_id );
 		if ( result_iter == job_results_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result (" +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to retrieve job result (" +
 				utility::to_string( result_id.first )  + ", " + utility::to_string( result_id.second ) +
 				") for outputting as requested by the JobQeen. Has this job already been output?" );
 		}
@@ -249,7 +249,7 @@ MultiThreadedJobDistributor::potentially_discard_some_job_results()
 	for ( JobResultID result_id : jobs_to_discard ) {
 		if ( job_results_.count( result_id ) == 0 ) {
 			// TO DO: better diagnostic message here
-			throw utility::excn::EXCN_Msg_Exception( "Failed to find job result " +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find job result " +
 				utility::to_string( result_id.first ) + ", " + utility::to_string( result_id.second ) +
 				" for discarding as requested by the JobQeen. Has this job already been" +
 				" output or discarded?" );
@@ -292,7 +292,7 @@ void JobRunner::run( int thread_index )
 
 	try {
 		job_result_ = mature_job_->run();
-	} catch ( utility::excn::EXCN_Base & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		exception_message_ = e.msg();
 		exited_w_exception_ = true;
 	} catch ( ... ) {

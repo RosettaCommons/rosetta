@@ -297,15 +297,15 @@ StoreCompoundTaskMover::parse_my_tag(
 	task_name_ = tag->getOption< std::string >( "task_name", "" );
 	true_behavior_ = tag->getOption<std::string>( "true_behavior", "" );
 	if ( !( (true_behavior_ == "prevent_repacking") || (true_behavior_ == "restrict_to_repacking") || (true_behavior_ == "") ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Error: true_behavior in tag is undefined." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: true_behavior in tag is undefined." );
 	}
 	false_behavior_ = tag->getOption<std::string>( "false_behavior", "prevent_repacking" );
 	if ( !( (false_behavior_ == "prevent_repacking") || (false_behavior_ == "restrict_to_repacking") || (false_behavior_ == "") ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Error: false_behavior in tag is undefined." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: false_behavior in tag is undefined." );
 	}
 	mode_ = tag->getOption<std::string>( "mode", "packable" );
 	if ( !( (mode_ == "packable") || (mode_ == "designable") ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Error: mode in tag is undefined." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: mode in tag is undefined." );
 	}
 	invert_ = tag->getOption<bool>( "invert", false );
 	verbose_ = tag->getOption<bool>( "verbose", false );
@@ -328,7 +328,7 @@ StoreCompoundTaskMover::parse_my_tag(
 		else if ( operation == "ANDNOT" ) factory_pair.second = ANDNOT;
 		else if ( operation == "NOT" ) factory_pair.second = NOT;
 		else {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Error: Boolean operation in tag is undefined." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: Boolean operation in tag is undefined." );
 		}
 
 		core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );

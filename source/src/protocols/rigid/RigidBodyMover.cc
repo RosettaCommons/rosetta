@@ -901,7 +901,7 @@ RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
 		core::Size tilt1_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt1_center" ), pose ) );
 		TRBM.Debug << "Tilt 1 center " << tilt1_cent << std::endl;
 		if ( tilt1_cent == 0 ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("In RigidBodyTiltMover: can't understand value passed to tilt1_center.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In RigidBodyTiltMover: can't understand value passed to tilt1_center.");
 		}
 		tilt1_center( tilt1_cent );
 	}
@@ -909,7 +909,7 @@ RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
 		core::Size tilt2_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt2_center" ), pose ) );
 		TRBM.Debug << "Tilt 2 center " << tilt2_cent << std::endl;
 		if ( tilt2_cent == 0 ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("In RigidBodyTiltMover: can't understand value passed to tilt2_center.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In RigidBodyTiltMover: can't understand value passed to tilt2_center.");
 		}
 		tilt2_center( tilt2_cent );
 	}

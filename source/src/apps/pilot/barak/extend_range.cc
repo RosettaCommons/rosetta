@@ -132,7 +132,7 @@ main( int argc, char * argv [] )
 		core::io::pdb::dump_pdb(trg_pose, output_fname);
 
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

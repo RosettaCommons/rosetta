@@ -171,7 +171,7 @@ main( int argc, char* argv[] )
 				TI << *chain1 << *chain2 << " " << interface.second << std::endl;
 			}
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

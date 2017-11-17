@@ -31,8 +31,8 @@ namespace graph {
 
 /// @brief Class to raise to do an immediate stop of a breadth first search.
 /// ONLY THROW FROM WITHIN A VISITOR PASSED TO breadth_first_visit_prune/breadth_first_search_prune
-class EXCN_Stop_BFS : public utility::excn::EXCN_Msg_Exception {
-	EXCN_Stop_BFS(): EXCN_Msg_Exception("Uncaught BFS Stop exception") {}
+class EXCN_Stop_BFS : public utility::excn::Exception {
+	using utility::excn::Exception::Exception;
 };
 
 

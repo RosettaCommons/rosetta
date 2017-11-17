@@ -179,7 +179,7 @@ int main(int argc, char * argv[]) {
 		abinitio->set_movemap(movemap);
 		// RUN
 		abrelax->fold(init_pose, prot_ptr);
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

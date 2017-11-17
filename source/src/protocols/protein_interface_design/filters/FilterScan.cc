@@ -498,7 +498,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 #endif
 #ifndef USEMPI
 	if ( triage_filter_it == filters.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Triage filter "+triage_filter_name+" not found" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Triage filter "+triage_filter_name+" not found" );
 	}
 #endif
 
@@ -513,7 +513,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 #endif
 #ifndef USEMPI
 	if ( filter_it == filters.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
 	}
 #endif
 
@@ -527,7 +527,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 #endif
 #ifndef USEMPI
 	if ( mover_it == movers.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Relax mover "+relax_mover_name+" not found" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Relax mover "+relax_mover_name+" not found" );
 	}
 #endif
 

@@ -220,21 +220,21 @@ main( int argc, char * argv [] )
 					std::size_t fpos( resid.find(':') );
 					if ( fpos != std::string::npos ) {
 						if ( fpos != resid.length() -2 || fpos == 0 ) {
-							throw(utility::excn::EXCN_BadInput(" invalid exemplar_target_pdb_num " + resid_c));
+							throw ( CREATE_EXCEPTION(utility::excn::BadInput, " invalid exemplar_target_pdb_num " + resid_c));
 						}
 						char chain = resid[resid.length() -1];
 						if ( !( (chain >='A' && chain <='Z') || (chain >='a' && chain <='z') ) ) {
-							throw(utility::excn::EXCN_BadInput(" invalid exemplar_target_pdb_num " + resid_c));
+							throw ( CREATE_EXCEPTION(utility::excn::BadInput, " invalid exemplar_target_pdb_num " + resid_c));
 						}
 						for ( int i = 0; i< (int) fpos; ++i ) {
 							if ( !(resid[i] >='0' && resid[i] <='9') ) {
-								throw(utility::excn::EXCN_BadInput(" invalid exemplar_target_pdb_num " + resid_c));
+								throw ( CREATE_EXCEPTION(utility::excn::BadInput, " invalid exemplar_target_pdb_num " + resid_c));
 							}
 						}
 					} else {
 						for ( int i = 0; i< (int) resid.length(); ++i ) {
 							if ( !(resid[i] >='0' && resid[i] <='9') ) {
-								throw(utility::excn::EXCN_BadInput(" invalid exemplar_target_pdb_num " + resid_c));
+								throw ( CREATE_EXCEPTION(utility::excn::BadInput, " invalid exemplar_target_pdb_num " + resid_c));
 							}
 						}
 					}
@@ -309,7 +309,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

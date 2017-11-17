@@ -161,7 +161,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			set5_->get_ideal_conformer_by_name( "FOO" );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
-		} catch ( utility::excn::EXCN_Base const & e) {
+		} catch (utility::excn::Exception const & e) {
 			std::string expected_error_message( "ERROR: No conformer with given name found in this set; exiting.\n" );
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected_error_message.size() ), expected_error_message );
 		}
@@ -170,7 +170,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_by_CP_parameters( params_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
-		} catch ( utility::excn::EXCN_Base const & e) {
+		} catch (utility::excn::Exception const & e) {
 			std::string expected( "ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
 				"yet a different number was provided; exiting.\n" );
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
@@ -180,7 +180,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_by_CP_parameters( params_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
-		} catch ( utility::excn::EXCN_Base const & e) {
+		} catch (utility::excn::Exception const & e) {
 			std::string expected( "ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
 				"yet a different number was provided; exiting.\n" );
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
@@ -191,7 +191,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_by_CP_parameters( params_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
-		} catch ( utility::excn::EXCN_Base const & e) {
+		} catch (utility::excn::Exception const & e) {
 			std::string expected( "ERROR: Planar ring conformations are not handled by Rosetta; "
 				"please specify a non-zero q value; exiting.\n" );
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
@@ -201,7 +201,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_by_CP_parameters( params_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
-		} catch ( utility::excn::EXCN_Base const & e) {
+		} catch (utility::excn::Exception const & e) {
 			std::string expected( "ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
 				"yet a different number was provided; exiting.\n" );
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
@@ -216,7 +216,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			set6_->get_ideal_conformer_from_nus( nus_bad );  // This should force an exit.
 			TS_ASSERT( false );  // Exception was not thrown!
-		} catch ( utility::excn::EXCN_Base const & e) {
+		} catch (utility::excn::Exception const & e) {
 			std::string expected( "ERROR: No conformer with given nu angles found in this set; exiting.\n" );
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
 		}

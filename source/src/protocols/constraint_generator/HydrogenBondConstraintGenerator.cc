@@ -94,7 +94,7 @@ HydrogenBondConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::dat
 	if ( !selector1_name.empty() ) {
 		core::select::residue_selector::ResidueSelectorCOP selector = core::select::residue_selector::get_residue_selector( selector1_name, data );
 		if ( !selector ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "'residue_selector1' residue selector was not found in the data map!\n" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "'residue_selector1' residue selector was not found in the data map!\n" );
 		}
 		set_residue_selector1( selector );
 	}
@@ -103,7 +103,7 @@ HydrogenBondConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::dat
 	if ( !selector2_name.empty() ) {
 		core::select::residue_selector::ResidueSelectorCOP selector = core::select::residue_selector::get_residue_selector( selector2_name, data );
 		if ( !selector ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "'residue_selector2' residue selector was not found in the data map!\n" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "'residue_selector2' residue selector was not found in the data map!\n" );
 		}
 		set_residue_selector2( selector );
 	}
@@ -252,11 +252,11 @@ core::scoring::constraints::ConstraintCOPs
 HydrogenBondConstraintGenerator::apply( core::pose::Pose const & pose ) const
 {
 	if ( !selector1_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "\"residue_selector1\" must be specified to HydrogenBondConstraintGenerator!" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "\"residue_selector1\" must be specified to HydrogenBondConstraintGenerator!" );
 	}
 
 	if ( !selector2_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "\"residue_selector2\" must be specified to HydrogenBondConstraintGenerator!" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "\"residue_selector2\" must be specified to HydrogenBondConstraintGenerator!" );
 	}
 
 	debug_assert( selector1_ );

@@ -26,7 +26,7 @@ ScoreNormalizationOP get_score_normalization_function(std::string norm_tag)
 	if ( norm_tag == "ChiAngleNormalization" ) return ScoreNormalizationOP( new ChiAngleNormalization );
 	if ( norm_tag == "MolecularWeightNormalization" ) return ScoreNormalizationOP( new MolecularWeightNormalization );
 
-	throw utility::excn::EXCN_RosettaScriptsOption(norm_tag+" is not a valid Score Normalization method");
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, norm_tag+" is not a valid Score Normalization method");
 	return NULL;
 }
 

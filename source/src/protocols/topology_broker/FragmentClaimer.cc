@@ -155,7 +155,7 @@ void FragmentClaimer::generate_claims( claims::DofClaims& new_claims ) {
 		std::ostringstream msg;
 		msg << " Sequence length of SequenceClaim with label " << label() << "(length: "<< seq_length
 			<< ") and sequence length of corresponding FragmentClaimer (length: " << frag_seq_length << ") do not match." << std::endl;
-		throw utility::excn::EXCN_BadInput( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 	}
 	tr.Debug << "sequence length: " << seq_length << "; fragment sequence length: " << frag_seq_length << std::endl;
 

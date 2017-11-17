@@ -120,7 +120,7 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 		error_message
 			<< "Unable to locate resfile for job distributor input tag '"
 			<< tag << "' in the database." << endl;
-		throw utility::excn::EXCN_Msg_Exception(error_message.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str());
 	}
 	string resfile;
 	res >> resfile;
@@ -132,7 +132,7 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 			<< "Failed to process resfile stored for input tag '" << tag << "'" << endl
 			<< "RESFILE:" << endl
 			<< resfile << endl;
-		throw utility::excn::EXCN_Msg_Exception(error_message.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str());
 	}
 }
 
@@ -179,9 +179,7 @@ ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & )
 		std::string resource_description = tag->getOption<string>("resource_description");
 		if ( !ResourceManager::get_instance()->has_resource_with_description(
 				resource_description) ) {
-			throw utility::excn::EXCN_Msg_Exception
-				( "You specified a resource_description of " + resource_description +
-				" for ReadResfileFromDB, but the ResourceManager doesn't have a resource with that description" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "You specified a resource_description of " + resource_description + " for ReadResfileFromDB, but the ResourceManager doesn't have a resource with that description" );
 		}
 		db_session_ = get_resource< utility::sql_database::session >( resource_description );
 	} else {

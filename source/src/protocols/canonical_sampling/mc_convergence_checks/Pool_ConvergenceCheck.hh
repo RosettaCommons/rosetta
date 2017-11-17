@@ -49,7 +49,10 @@ namespace mc_convergence_checks {
 
 
 class EXCN_Pool_Converged : public moves::EXCN_Converged
-{};
+{
+public:
+	EXCN_Pool_Converged(char const *file, int line, std::string const & m) : moves::EXCN_Converged(file, line, m) {}
+};
 
 class Pool_RMSD;
 

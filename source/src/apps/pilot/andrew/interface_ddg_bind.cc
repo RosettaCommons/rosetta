@@ -485,7 +485,7 @@ InterfaceDDGBindJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs )
 		utility::io::izstream ddg_jobs( jobfname );
 		if ( ! ddg_jobs.good() ) {
 			// could not open jobs file
-			throw utility::excn::EXCN_Msg_Exception( "Could not open interface ddg jobs file: '" + jobfname );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not open interface ddg jobs file: '" + jobfname );
 		}
 
 		typedef std::pair< std::string, std::string > PDBAndSeqposPair;
@@ -504,34 +504,34 @@ InterfaceDDGBindJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs )
 				sstream >> pdb;
 				if ( ! sstream.good() ) {
 					// throw an exception
-					throw utility::excn::EXCN_Msg_Exception( "Problem reading '" + jobfname + "' on line " +
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Problem reading '" + jobfname + "' on line " +
 						utility::to_string( count_line ) + ", which reads:\n" + line );
 				}
 				sstream >> chain;
 				if ( ! sstream.good() ) {
 					// throw an exception
-					throw utility::excn::EXCN_Msg_Exception( "Problem reading '" + jobfname + "' on line " +
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Problem reading '" + jobfname + "' on line " +
 						utility::to_string( count_line ) + ", which reads:\n" + line );
 				}
 				if ( chain.size() != 1 ) {
-					throw utility::excn::EXCN_Msg_Exception( "Expected to read a chain identifier (or an underscore) "
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a chain identifier (or an underscore) "
 						"after reading the pdb name in file '" + jobfname + "' on line " +
 						utility::to_string( count_line ) + ", which reads:\n" + line );
 				}
 				sstream >> resstring;
 				if ( ! sstream.good() ) {
 					// throw an exception
-					throw utility::excn::EXCN_Msg_Exception( "Problem reading '" + jobfname + "' on line " +
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Problem reading '" + jobfname + "' on line " +
 						utility::to_string( count_line ) + ", which reads:\n" + line );
 				}
 				sstream >> newaa;
 				if ( ! sstream.good() ) {
 					// throw an exception
-					throw utility::excn::EXCN_Msg_Exception( "Problem reading '" + jobfname + "' on line " +
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Problem reading '" + jobfname + "' on line " +
 						utility::to_string( count_line ) + ", which reads:\n" + line );
 				}
 				if ( ! core::chemical::oneletter_code_specifies_aa( newaa ) ) {
-					throw utility::excn::EXCN_Msg_Exception( "Could not interpret the input character '" +
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not interpret the input character '" +
 						utility::to_string( newaa ) + "' as an amino acid 1-letter code.\n" + "Problem encountered on line " +
 						utility::to_string( count_line ) + " of file " + jobfname + " which reads " + line );
 				}
@@ -546,8 +546,8 @@ InterfaceDDGBindJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs )
 				int resid; char insertion_code;
 				try {
 					core::pose::parse_PDBnum_icode( resstring, jobfname, count_line, resid, insertion_code );
-				} catch ( utility::excn::EXCN_Msg_Exception e ) {
-					throw utility::excn::EXCN_Msg_Exception( "Could not interpret the string '" + resstring + "' as a residue identifier\n" + e.msg() );
+				} catch (utility::excn::Exception e ) {
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not interpret the string '" + resstring + "' as a residue identifier\n" + e.msg() );
 				}
 				input_mutation mutation;
 				mutation.resind = core::pose::ResidueIndexDescriptionFromFileOP(
@@ -568,7 +568,7 @@ InterfaceDDGBindJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs )
 			} else {
 				std::string existing_pdb = base_names[ iibase ];
 				if ( existing_pdb != iipdb ) {
-					throw utility::excn::EXCN_Msg_Exception( "Two different PDBs, '" + existing_pdb + "' and '" +
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Two different PDBs, '" + existing_pdb + "' and '" +
 						iipdb + " have the same base name, '" + iibase + "' and so the output structure names will collide." +
 						"\nPlease rename one of them." );
 				}
@@ -610,7 +610,7 @@ InterfaceDDGBindJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs )
 			}
 		}
 	} else {
-		utility::excn::EXCN_Msg_Exception( "InterfaceDDGJobInputter requires the interface_ddg::jobs flag" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "InterfaceDDGJobInputter requires the interface_ddg::jobs flag" );
 	}
 
 	for ( std::list< InterfaceDDGBindInnerJobOP >::const_iterator
@@ -752,7 +752,7 @@ int main( int argc, char * argv [] )
 
 		protocols::jd2::JobDistributor::get_instance()->go( iddgm, protocols::jd2::JobInputterOP( new InterfaceDDGBindJobInputter ));
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

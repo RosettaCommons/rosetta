@@ -88,7 +88,7 @@ RemodelLoopMoverPoseFolder::apply(
 	components::StructureData sd = StructureDataFactory::get_instance()->get_from_pose( pose );
 	protocols::moves::MoverOP loop_mover = create_remodel_loop_mover( pose, sd, movable, loops );
 	if ( !loop_mover ) {
-		throw EXCN_Fold( type() + "::apply(): mover to remodel loops could not be constructed. Fail." );
+		throw CREATE_EXCEPTION(EXCN_Fold, type() + "::apply(): mover to remodel loops could not be constructed. Fail." );
 	}
 
 	// run remodel loop mover
@@ -97,7 +97,7 @@ RemodelLoopMoverPoseFolder::apply(
 
 	// check status
 	if ( loop_mover->get_last_move_status() != protocols::moves::MS_SUCCESS ) {
-		throw EXCN_Fold( type() + "::apply(): RemodelLoopMover failed" );
+		throw CREATE_EXCEPTION(EXCN_Fold, type() + "::apply(): RemodelLoopMover failed" );
 	}
 
 	// save modified SD

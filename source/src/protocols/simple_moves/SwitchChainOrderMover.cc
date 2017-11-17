@@ -163,7 +163,7 @@ SwitchChainOrderMover::parse_my_tag(
 	core::pose::Pose const & pose )
 {
 	if ( tag->hasOption("chain_order") && (tag->hasOption("chain_name") || tag->hasOption("chain_num")) )  {
-		throw utility::excn::EXCN_RosettaScriptsOption("You can specify a chain_order string or the comma separated chain names or numbers, but not both");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "You can specify a chain_order string or the comma separated chain names or numbers, but not both");
 	}
 
 	if ( tag->hasOption("chain_order") ) {

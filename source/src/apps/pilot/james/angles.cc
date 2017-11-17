@@ -159,7 +159,7 @@ int main( int argc, char* argv [] ) {
 			} // for ( unsigned int i = 1; i <= mypose->size(); ++i )
 		} // for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

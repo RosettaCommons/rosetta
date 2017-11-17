@@ -41,7 +41,7 @@ main( int argc, char * argv [] )
 		QuickRelaxPartnersSeparatelyOP qr( new QuickRelaxPartnersSeparately() );
 		JobDistributor::get_instance()->go(qr);
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

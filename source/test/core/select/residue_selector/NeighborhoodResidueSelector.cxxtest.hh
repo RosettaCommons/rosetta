@@ -190,7 +190,7 @@ public:
 		try {
 			neighbor_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			TS_ASSERT(true == true); //We should always get here.
 		}
 	}
@@ -226,7 +226,7 @@ public:
 			subset = neighbor_rs->apply( trpcage );
 			TS_ASSERT( check_calculation( trpcage, subset, focus_set, 5.0 ) );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Exception! " << e.msg();
 			TS_ASSERT( false );
 		}

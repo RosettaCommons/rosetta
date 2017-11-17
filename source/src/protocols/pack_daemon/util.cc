@@ -52,11 +52,11 @@ create_entity_resfile_contents(
 	using namespace core::pack::task;
 
 	if ( (resfile >> num_entities ).fail() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Error reading the number of entities from entity resfile " + resfile_name );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Error reading the number of entities from entity resfile " + resfile_name );
 	}
 
 	if ( num_entities == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "The number of entities in the input entity resfile must be greater than zero; error in " + resfile_name );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "The number of entities in the input entity resfile must be greater than zero; error in " + resfile_name );
 	}
 
 	Pose ala_pose;

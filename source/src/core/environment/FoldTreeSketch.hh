@@ -40,13 +40,13 @@
 namespace core {
 namespace environment {
 
-class EXCN_FTSketchGraph : public utility::excn::EXCN_Msg_Exception {
-	typedef utility::excn::EXCN_Msg_Exception Parent;
+class EXCN_FTSketchGraph : public utility::excn::Exception {
+	typedef utility::excn::Exception Parent;
 
 public:
-	EXCN_FTSketchGraph( Size by, Size on, std::string const& action, std::string const& reason );
+	EXCN_FTSketchGraph(char const *file, int line, Size by, Size on, std::string const& action, std::string const& reason );
 
-	EXCN_FTSketchGraph( std::string const& message );
+	EXCN_FTSketchGraph(char const *file, int line, std::string const& message );
 };
 
 class FoldTreeSketch : public utility::pointer::ReferenceCount {

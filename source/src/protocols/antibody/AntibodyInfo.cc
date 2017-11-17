@@ -325,7 +325,7 @@ AntibodyInfo::get_landmark_resnum(
 				utility::to_string(pdb_resnum) + " " + chain + " "+insertion_code + "\n";
 
 			if ( fail_on_missing_resnum ) {
-				throw utility::excn::EXCN_BadInput(msg +
+				throw CREATE_EXCEPTION(utility::excn::BadInput, msg +
 					"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+
 					"This could also mean missing density in pdb.  Loop modeling applications can be used to fill missing residues\n");
 			} else {
@@ -365,7 +365,7 @@ AntibodyInfo::get_landmark_resnum(
 
 
 				if ( fail_on_missing_resnum )  {
-					throw utility::excn::EXCN_BadInput(msg +
+					throw CREATE_EXCEPTION(utility::excn::BadInput, msg +
 						"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+
 						"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
 				} else {
@@ -429,14 +429,14 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 
 	switch (pose.conformation().num_chains() ) {
 	case 0 :
-		throw excn::EXCN_Msg_Exception("the number of chains in the input pose is '0' !!");
+		throw CREATE_EXCEPTION(excn::Exception, "the number of chains in the input pose is '0' !!");
 	case 1 :
 		//if pose has only "1" chain, it is a nanobody
 		if ( H_found ) {
 			is_camelid_ = true;
 			has_antigen_=false;
 		} else {
-			throw excn::EXCN_Msg_Exception("  A): the input pose has only 1 chain, if it is a nanobody, the chain ID is supposed to be 'H' !!");
+			throw CREATE_EXCEPTION(excn::Exception, "  A): the input pose has only 1 chain, if it is a nanobody, the chain ID is supposed to be 'H' !!");
 		}
 		break;
 	case 2 :
@@ -450,7 +450,7 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 			is_camelid_ = true;
 			has_antigen_ = true;
 		} else {
-			throw excn::EXCN_Msg_Exception("  B): the input pose has two chains, 1). if it is nanobody, the chain should be 'H'. 2). Light chain SCFv not implemented ");
+			throw CREATE_EXCEPTION(excn::Exception, "  B): the input pose has two chains, 1). if it is nanobody, the chain should be 'H'. 2). Light chain SCFv not implemented ");
 		}
 		break;
 	default :
@@ -464,7 +464,7 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 			is_camelid_ = true;
 			has_antigen_ = true;
 		} else {
-			throw excn::EXCN_Msg_Exception("  C). the input pose has more than two chains, but either 1) Light chain SCFv not implemented 2) Antibody is not renumbered ");
+			throw CREATE_EXCEPTION(excn::Exception, "  C). the input pose has more than two chains, but either 1) Light chain SCFv not implemented 2) Antibody is not renumbered ");
 		}
 		break;
 	}
@@ -527,7 +527,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 
 		//Exception Handling
 		if ( loop_start_in_pose ==0 || loop_stop_in_pose == 0 ) {
-			throw utility::excn::EXCN_BadInput(
+			throw CREATE_EXCEPTION(utility::excn::BadInput, 
 				"\nAntibody does not contain the start or end residue of cdr loop " + get_CDR_name(cdr) +
 				" start: " + utility::to_string(loop_start_in_pose) +
 				" end:   " + utility::to_string(loop_stop_in_pose) + "\n" +
@@ -536,7 +536,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 		}
 
 		if ( loop_start_in_pose > loop_stop_in_pose ) {
-			throw utility::excn::EXCN_BadInput(
+			throw CREATE_EXCEPTION(utility::excn::BadInput, 
 				"\nBad antibody input: " + get_CDR_name(cdr) +" cdr_start resnum > cdr_stop "+
 				" start: " + utility::to_string(loop_start_in_pose) +
 				" end:   " + utility::to_string(loop_stop_in_pose) + "\n" +
@@ -618,20 +618,20 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 
 
 		if (  L_begin_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 23, ' ', false)   )  {
-			throw excn::EXCN_Msg_Exception( "L chain 1st residue starting after L 23, framework definition failed!!! " );
+			throw CREATE_EXCEPTION(excn::Exception,  "L chain 1st residue starting after L 23, framework definition failed!!! " );
 		}
 		if (  L_end_pos_num     <=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 97, ' ', false)   ) {
-			throw excn::EXCN_Msg_Exception( "L chain last residue ending before L 97, framework definition failed!!! " );
+			throw CREATE_EXCEPTION(excn::Exception,  "L chain last residue ending before L 97, framework definition failed!!! " );
 		}
 	}
 
 
 	if (    H_begin_pos_num    >=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 26, ' ', false )      ) {
-		throw excn::EXCN_Msg_Exception( "H chain 1st residue starting after H 26, framework definition failed!!! " );
+		throw CREATE_EXCEPTION(excn::Exception,  "H chain 1st residue starting after H 26, framework definition failed!!! " );
 	}
 
 	if (    H_end_pos_num      <=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 103, ' ', false)      ) {
-		throw excn::EXCN_Msg_Exception( "H chain last residue ending before H 103, framework definition failed!!! " );
+		throw CREATE_EXCEPTION(excn::Exception,  "H chain last residue ending before H 103, framework definition failed!!! " );
 	}
 
 
@@ -785,7 +785,7 @@ AntibodyInfo::check_cdr_quality(const pose::Pose& pose) const {
 				msg = msg + "Please check peptide bond angles for large deviations. \n"+
 					"Use refinement techniques such as FastRelax with angle minimization to correct wonky peptide bonds ";
 			}
-			throw utility::excn::EXCN_BadInput(msg);
+			throw CREATE_EXCEPTION(utility::excn::BadInput, msg);
 
 		}
 	}
@@ -1111,7 +1111,7 @@ AntibodyInfo::get_CDR_start(CDRNameEnum const cdr_name, pose::Pose const & pose)
 	PDBLandmark landmark = *(numbering_info_.cdr_numbering[cdr_name][cdr_start]);
 	core::Size resnum = pose.pdb_info()->pdb2pose(chains_for_cdrs_[cdr_name], landmark.resnum(), landmark.insertion_code());
 	if ( resnum == 0 ) {
-		throw utility::excn::EXCN_BadInput("\n" + get_CDR_name(cdr_name)+" start resnum not found in pose: " +
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "\n" + get_CDR_name(cdr_name)+" start resnum not found in pose: " +
 			utility::to_string(landmark.resnum())+" "+chains_for_cdrs_[cdr_name]+" "+landmark.insertion_code() + "\n" +
 			"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+
 			"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
@@ -1138,7 +1138,7 @@ AntibodyInfo::get_CDR_start(CDRNameEnum const cdr_name, pose::Pose const &  pose
 		PDBLandmark landmark = *(get_cdr_definition_transform(transform)[cdr_name][cdr_start]);
 		resnum =  pose.pdb_info()->pdb2pose(chains_for_cdrs_[cdr_name], landmark.resnum(), landmark.insertion_code());
 		if ( resnum == 0 ) {
-			throw utility::excn::EXCN_BadInput("\n"+get_CDR_name(cdr_name)+" start resnum for " +
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "\n"+get_CDR_name(cdr_name)+" start resnum for " +
 				enum_manager_->cdr_definition_enum_to_string(transform) + " definition not found in pose: " +
 				utility::to_string(landmark.resnum())+" "+chains_for_cdrs_[cdr_name]+" "+landmark.insertion_code() + "\n" +
 				"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+
@@ -1166,7 +1166,7 @@ AntibodyInfo::get_CDR_end(CDRNameEnum const cdr_name, pose::Pose const & pose) c
 	core::Size resnum =  pose.pdb_info()->pdb2pose(chains_for_cdrs_[cdr_name], landmark.resnum(), landmark.insertion_code());
 
 	if ( resnum == 0 ) {
-		throw utility::excn::EXCN_BadInput("\n"+get_CDR_name(cdr_name)+" end resnum not found in pose: " +
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "\n"+get_CDR_name(cdr_name)+" end resnum not found in pose: " +
 			utility::to_string(landmark.resnum())+" "+chains_for_cdrs_[cdr_name]+" "+landmark.insertion_code() + "\n" +
 			"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n" +
 			"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
@@ -1193,7 +1193,7 @@ AntibodyInfo::get_CDR_end(CDRNameEnum const cdr_name, pose::Pose const & pose, C
 		PDBLandmark landmark = *(get_cdr_definition_transform(transform)[cdr_name][cdr_end]);
 		resnum =  pose.pdb_info()->pdb2pose(chains_for_cdrs_[cdr_name], landmark.resnum(), landmark.insertion_code());
 		if ( resnum == 0 ) {
-			throw utility::excn::EXCN_BadInput("\n"+get_CDR_name(cdr_name)+" end resnum not found in pose: " +
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "\n"+get_CDR_name(cdr_name)+" end resnum not found in pose: " +
 				enum_manager_->cdr_definition_enum_to_string(transform) + " definition not found in pose: " +
 				utility::to_string(landmark.resnum())+" "+chains_for_cdrs_[cdr_name]+" "+landmark.insertion_code() + "\n" +
 				"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n" +
@@ -1400,7 +1400,7 @@ AntibodyInfo::setup_CDR_cluster(const pose::Pose& pose, CDRNameEnum cdr, bool at
 		// here!
 		std::stringstream err;
 		err << "CDRs not found for: " << pose.pdb_info()->name();
-		throw utility::excn::EXCN_Msg_Exception(err.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err.str());
 		// old code results in NULL pointer when CDRs are not found by regex?
 		//cdr_cluster_set_->set_cluster_data(cdr, NULL);
 	}
@@ -1618,12 +1618,12 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 	//TODO JAB - requiring PDB ordered LHA is not desired
 	for ( Size i = 1; i <= nres; ++i ) {
 		if ( pdb_info->chain(1) != 'L' ) {
-			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+			throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 			//break;
 		}
 		if ( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1)) ) {
 			if ( pdb_info->chain(i+1) != second_chain ) {
-				throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+				throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 				//  break;
 			}
 		}
@@ -1695,12 +1695,12 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 	//TODO JAB - requiring PDB ordered LHA is not desired
 	for ( Size i = 1; i <= nres; ++i ) {
 		if ( pdb_info->chain(1) != 'L' ) {
-			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+			throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 			//break;
 		}
 		if ( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1)) ) {
 			if ( pdb_info->chain(i+1) != second_chain ) {
-				throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+				throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 				// break;
 			}
 		}
@@ -1764,12 +1764,12 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 	//TODO JAB - requiring PDB ordered LHA is not desired
 	for ( Size i = 1; i <= nres; ++i ) {
 		if ( pdb_info->chain(1) != 'L' ) {
-			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+			throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 			//break;
 		}
 		if ( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1)) ) {
 			if ( pdb_info->chain(i+1) != second_chain ) {
-				throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+				throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 				// break;
 			}
 		}

@@ -147,7 +147,7 @@ SetupMetalsMover::parse_my_tag(
 	//Tag should be able to take either a named selector or resnum string for metal or contact
 	if ( tag->hasOption("metal_residue_selector" ) ) {
 		if ( tag->hasOption("metal_resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "SetupMetalsMover takes EITHER a residue selector or resnum list, not both!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "SetupMetalsMover takes EITHER a residue selector or resnum list, not both!\n" );
 		}
 		metal_selector_ = core::select::residue_selector::parse_residue_selector( tag, data, "metal_residue_selector" );
 	} else if ( tag->hasOption( "metal_resnums" ) ) {
@@ -157,7 +157,7 @@ SetupMetalsMover::parse_my_tag(
 
 	if ( tag->hasOption("contact_residue_selector" ) ) {
 		if ( tag->hasOption("contact_resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "SetupMetalsMover takes EITHER a residue selector or resnum list, not both!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "SetupMetalsMover takes EITHER a residue selector or resnum list, not both!\n" );
 		}
 		contact_selector_ = core::select::residue_selector::parse_residue_selector( tag, data, "contact_residue_selector" );
 	} else if ( tag->hasOption( "contact_resnums" ) ) {

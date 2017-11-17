@@ -329,7 +329,7 @@ HelixPairing::parse_tag( utility::tag::Tag const & tag )
 		std::stringstream msg;
 		msg << "You must specify at least two segments to HelixPairing.  Specified segments = "
 			<< segments() << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 	parallel_ = tag.getOption< bool >( "parallel" );
 }

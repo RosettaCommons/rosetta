@@ -117,18 +117,18 @@ void PeakAssignmentResidueMap::remove( PeakAssignment const& assignment ) {
 		}
 	}
 	if ( !success ) {
-		throw EXCN_AssignmentNotFound( assignment, "remove: PeakAssignment not found -- no entry with exact assignment" );
+		throw CREATE_EXCEPTION(EXCN_AssignmentNotFound,  assignment, "remove: PeakAssignment not found -- no entry with exact assignment" );
 	}
 }
 
 PeakAssignmentResidueMap::PeakAssignments const& PeakAssignmentResidueMap::assignments( core::Size res1, core::Size res2 ) const {
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_NETWORK_FIND_RAW_ASSIGN );
 	if ( residues_.size() < res1 || res1 <= 0 ) {
-		throw EXCN_AssignmentNotFound( BOGUS_ASSIGNMENT, "PeakAssignment not found -- no entry with res1 " + ObjexxFCL::string_of( res1 ) );
+		throw CREATE_EXCEPTION(EXCN_AssignmentNotFound,  BOGUS_ASSIGNMENT, "PeakAssignment not found -- no entry with res1 " + ObjexxFCL::string_of( res1 ) );
 	}
 	auto res2_entry( residues_[ res1 ].find( res2 ) );
 	if ( res2_entry ==  residues_[ res1 ].end() ) {
-		throw EXCN_AssignmentNotFound( BOGUS_ASSIGNMENT, "PeakAssignment not found -- no entry with res2 " + ObjexxFCL::string_of( res2 ) );
+		throw CREATE_EXCEPTION(EXCN_AssignmentNotFound,  BOGUS_ASSIGNMENT, "PeakAssignment not found -- no entry with res2 " + ObjexxFCL::string_of( res2 ) );
 	}
 	return res2_entry->second;
 }
@@ -136,11 +136,11 @@ PeakAssignmentResidueMap::PeakAssignments const& PeakAssignmentResidueMap::assig
 PeakAssignmentResidueMap::PeakAssignments& PeakAssignmentResidueMap::assignments( core::Size res1, core::Size res2 ) {
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_NETWORK_FIND_RAW_ASSIGN );
 	if ( residues_.size() < res1 || res1 <= 0 ) {
-		throw EXCN_AssignmentNotFound( BOGUS_ASSIGNMENT, "PeakAssignment not found -- no entry with res1 " + ObjexxFCL::string_of( res1 ) );
+		throw CREATE_EXCEPTION(EXCN_AssignmentNotFound,  BOGUS_ASSIGNMENT, "PeakAssignment not found -- no entry with res1 " + ObjexxFCL::string_of( res1 ) );
 	}
 	auto res2_entry( residues_[ res1 ].find( res2 ) );
 	if ( res2_entry ==  residues_[ res1 ].end() ) {
-		throw EXCN_AssignmentNotFound( BOGUS_ASSIGNMENT, "PeakAssignment not found -- no entry with res2 " + ObjexxFCL::string_of( res2 ) );
+		throw CREATE_EXCEPTION(EXCN_AssignmentNotFound,  BOGUS_ASSIGNMENT, "PeakAssignment not found -- no entry with res2 " + ObjexxFCL::string_of( res2 ) );
 	}
 	return res2_entry->second;
 }
@@ -322,7 +322,7 @@ void PeakAssignmentResidueMap::fill_covalent_gammas( Size alpha_resid, std::map<
 	//    if ( new_resid == alpha_resid || new_resid == alpha_resid - 1 || new_resid == alpha_resid + 1 ) {
 	//     collector[ ind ] = false;
 	//    }
-	//   } catch ( EXCN_UnknownResonance&  ) {
+	//   } catch (EXCN_UnknownResonance&  ) {
 	//    continue;
 	//   }
 	//  }
@@ -476,7 +476,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 					ResonanceList::Resonances const& retrieved( first_assignment.resonances().resonances_at_residue( neighbor_residue ) );
 					//     tr.Debug << resi << " " << resj << " resonance k @ " << *sit << std::endl;
 					copy( retrieved.begin(), retrieved.end(), back_inserter( resK ) );
-				} catch ( EXCN_UnknownResonance const & excn ) {
+				} catch (EXCN_UnknownResonance const & excn ) {
 				}
 			}
 			//   for ( ResonanceList::Resonances::const_iterator itK = resK.begin(); itK != resK.end(); ++itK ) {

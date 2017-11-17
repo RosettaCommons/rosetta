@@ -278,7 +278,7 @@ public:
 		env->register_mover( rigid_chunk );
 
 		core::pose::Pose ppose;
-		TS_ASSERT_THROWS( ppose = env->start( pose ), utility::excn::EXCN_BadInput );
+		TS_ASSERT_THROWS( ppose = env->start( pose ), utility::excn::BadInput );
 
 		simple_moves::SwitchResidueTypeSetMover( "centroid" ).apply( pose );
 		TS_ASSERT_THROWS_NOTHING( ppose = env->start( pose ) );

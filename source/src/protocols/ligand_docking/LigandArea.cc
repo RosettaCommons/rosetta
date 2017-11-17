@@ -52,10 +52,10 @@ LigandArea::~LigandArea() = default;
 void LigandArea::parse_my_tag(
 	utility::tag::TagCOP tag
 ){
-	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'LigandArea' requires 'chain' tag");
+	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'LigandArea' requires 'chain' tag");
 	chain_= tag->getOption<char>("chain");
 
-	if ( ! tag->hasOption("cutoff") ) throw utility::excn::EXCN_RosettaScriptsOption("'LigandArea' requires 'cutoff' tag");
+	if ( ! tag->hasOption("cutoff") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'LigandArea' requires 'cutoff' tag");
 	cutoff_= tag->getOption<core::Real>("cutoff");
 
 	if ( tag->hasOption("Calpha_restraints") ) {

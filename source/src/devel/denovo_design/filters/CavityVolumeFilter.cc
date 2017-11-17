@@ -122,11 +122,11 @@ CavityVolumeFilter::parse_my_tag(
 		std::string const & selectorname = tag->getOption< std::string >( "selector" );
 		try {
 			selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from CavityVolumeFilter::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 	}
 
@@ -136,7 +136,7 @@ CavityVolumeFilter::parse_my_tag(
 		if ( selector_ ) {
 			std::stringstream error_msg;
 			error_msg << "Residue selector can either be specified via name or subtag, but not both in CavityVolumeFilter." << std::endl;
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 		selector_ = core::select::residue_selector::ResidueSelectorFactory::get_instance()->new_residue_selector(
 			(*itag)->getName(),

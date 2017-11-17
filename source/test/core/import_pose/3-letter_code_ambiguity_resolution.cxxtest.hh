@@ -107,7 +107,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 			TS_ASSERT_EQUALS( pose.residue( 2 ).name(), "flavin_dihydride" );
 			TS_ASSERT( pose.residue( 1 ).natoms() != pose.residue( 2 ).natoms() );
 #ifdef MULTI_THREADED
-		} catch(utility::excn::EXCN_Base& excn) {
+		} catch (utility::excn::Exception& excn) {
 			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
 			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
 		}
@@ -245,7 +245,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 			TS_ASSERT_EQUALS( poseA.fold_tree().to_string(), poseB.fold_tree().to_string() );
 
 #ifdef MULTI_THREADED
-		} catch(utility::excn::EXCN_Base& excn) {
+		} catch (utility::excn::Exception& excn) {
 			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
 			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
 		}

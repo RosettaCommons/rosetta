@@ -177,7 +177,7 @@ void ResidueGridScoresFeatures::parse_my_tag(
 	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_grid_set_from_tag(tag, datamap);
 
 	if ( !tag->hasOption("chain") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("The ResidueGridScoresFeatures reporter requires a Chain tag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The ResidueGridScoresFeatures reporter requires a Chain tag");
 
 	}
 

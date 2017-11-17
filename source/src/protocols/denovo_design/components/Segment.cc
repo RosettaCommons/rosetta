@@ -259,17 +259,17 @@ Segment::parse_tag( utility::tag::TagCOP tag )
 	if ( !tag->hasOption( "start" ) ) {
 		TR << "start must be specified as an option to ResidueRange xml tag!!" << *tag << std::endl;
 		debug_assert( tag->hasOption( "start" ) );
-		throw utility::excn::EXCN_RosettaScriptsOption( "start must be specified as an option to ResidueRange xml tag!!" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "start must be specified as an option to ResidueRange xml tag!!" );
 	}
 	if ( !tag->hasOption( "ss" ) ) {
 		TR << "ss must be specified as an option to ResidueRange xml tag!!" << *tag << std::endl;
 		debug_assert( tag->hasOption( "ss" ) );
-		throw utility::excn::EXCN_RosettaScriptsOption( "ss must be specified as an option to ResidueRange xml tag!!" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ss must be specified as an option to ResidueRange xml tag!!" );
 	}
 	if ( !tag->hasOption( "abego" ) ) {
 		TR << "abego must be specified as an option to ResidueRange xml tag!!" << *tag << std::endl;
 		debug_assert( tag->hasOption( "abego" ) );
-		throw utility::excn::EXCN_RosettaScriptsOption( "abego must be specified as an option to ResidueRange xml tag!!" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "abego must be specified as an option to ResidueRange xml tag!!" );
 	}
 
 	// sort out termini first
@@ -289,7 +289,7 @@ Segment::parse_tag( utility::tag::TagCOP tag )
 			<< abego_.size() << ") vs secondary structure length ("
 			<< length() << ") when parsing " << *tag << std::endl;
 		msg << "The abego length must match the secondary strcuture length." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
 	set_safe( tag->getOption< core::Size >( "safe", saferes_ ) );
@@ -298,7 +298,7 @@ Segment::parse_tag( utility::tag::TagCOP tag )
 		msg << "Segment::parse_tag(): Safe res (" << saferes_
 			<< ") is larger than the length of the element (" << elem_length()
 			<< ") encountered while parsing " << *tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
 	set_cutpoint( tag->getOption< core::Size >( "cutpoint", cutpoint_ ) );
@@ -307,7 +307,7 @@ Segment::parse_tag( utility::tag::TagCOP tag )
 		msg << "Segment::parse_tag(): Cutpoint res (" << saferes_
 			<< ") is larger than the length of the element (" << elem_length()
 			<< ") encountered while parsing " << *tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
 	set_lower_segment( tag->getOption< std::string >( "lower_segment", "" ) );

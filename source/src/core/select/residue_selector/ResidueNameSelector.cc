@@ -94,7 +94,7 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 		if ( ! pose.residue_type_set_for_pose()->has_name( n ) ) {
 			std::stringstream err;
 			err << "ResidueNameSelector: " << n << " is not a valid residue type name.";
-			throw utility::excn::EXCN_BadInput( err.str() );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  err.str() );
 		}
 		res_set.insert( n );
 	}
@@ -109,7 +109,7 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 		if ( ! pose.residue_type_set_for_pose()->has_name3( n ) ) {
 			std::stringstream err;
 			err << "ResidueNameSelector: " << n << " is not a valid residue type name.";
-			throw utility::excn::EXCN_BadInput( err.str() );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  err.str() );
 		}
 		res_name3_set.insert( n );
 	}
@@ -141,7 +141,7 @@ ResidueNameSelector::parse_my_tag(
 	if ( res_name_str_.empty() && res_name3_str_.empty() ) {
 		std::stringstream err_msg;
 		err_msg << "ResidueName selector requires either 'residue_names' or 'residue_name3' to be specified. From ResidueNameSelector::parse_my_tag." << std::endl;
-		throw utility::excn::EXCN_BadInput( err_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  err_msg.str() );
 	}
 }
 

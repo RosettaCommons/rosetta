@@ -34,13 +34,13 @@
 namespace core {
 namespace kinematics {
 
-class EXCN_InvalidFoldTree : public utility::excn::EXCN_Msg_Exception {
-	typedef utility::excn::EXCN_Msg_Exception Parent;
+class EXCN_InvalidFoldTree : public utility::excn::Exception {
+	typedef utility::excn::Exception Parent;
 public:
-	EXCN_InvalidFoldTree( std::string const& msg, FoldTree f )
-	: EXCN_Msg_Exception( msg ), bad_tree_( f ) {};
+	EXCN_InvalidFoldTree(char const *file, int line, std::string const& msg, FoldTree f )
+		: Exception(file, line, msg ), bad_tree_( f ) {};
 
-	using utility::excn::EXCN_Msg_Exception::show;
+	using utility::excn::Exception::show;
 
 	virtual void show( std::ostream& os ) {
 		os << msg() << "\nInvalid FoldTree: "<< bad_tree() << std::endl;

@@ -97,7 +97,7 @@ MirrorSymmetricConformation::operator=( Conformation const & src )
 	if ( mirr_sym_conf ) {
 		MirrorSymmetricConformation::operator=( *mirr_sym_conf );
 	} else {
-		throw utility::excn::EXCN_Msg_Exception( "MirrorSymmetricConformation::operator= was handed a non-MirrorSymmetricConformation" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "MirrorSymmetricConformation::operator= was handed a non-MirrorSymmetricConformation" );
 	}
 
 	return *this;
@@ -112,7 +112,7 @@ MirrorSymmetricConformation::detached_copy( Conformation const & src ) {
 		res_is_mirrored_ = mirr_sym_conf->res_is_mirrored_;
 		jump_is_mirrored_ = mirr_sym_conf->jump_is_mirrored_;
 	} else {
-		throw utility::excn::EXCN_Msg_Exception( "MirrorSymmetricConformation detached_copy was handed a non-MirrorSymmetricConformation" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "MirrorSymmetricConformation detached_copy was handed a non-MirrorSymmetricConformation" );
 	}
 }
 

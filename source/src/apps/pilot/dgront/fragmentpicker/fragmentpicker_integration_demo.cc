@@ -136,7 +136,7 @@ int main(int argc, char * argv[]) {
 		//----------- WE SET UP BOUNDED COLLECTOR, WE RUN BOUNDED PROTOCOL
 		//----------- TO RUN QUOTA PROTOCOL, ONE HAS TO SET UP QUOTA SELECTOR AND QUOTA COLLECTOR
 		my_picker->bounded_protocol();
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

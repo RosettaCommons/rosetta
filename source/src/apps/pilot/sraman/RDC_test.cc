@@ -101,7 +101,7 @@ main( int argc, char * argv [] )
 	//v	devel::residual_dipolar_coupling::eval_dipolar( extended_pose, All_RDC_lines );
 
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

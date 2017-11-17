@@ -86,7 +86,7 @@ int main( int argc, char * argv [] ) {
 				output << I(4,ii)<<"  " <<abego_vector[ii] << "    " << input_poseOP->secstruct(ii) << "   " << F(8,1,input_poseOP->phi(ii)) << F(8,1,input_poseOP->psi(ii)) << F(8,1,input_poseOP->omega(ii)) << std::endl;
 			}
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

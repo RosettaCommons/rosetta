@@ -103,7 +103,7 @@ PDBPoseInputter::pose_input_sources_from_tag(
 		std::string list_fname( tag->getOption< std::string >( "listfile" ) );
 		utility::io::izstream list_stream( list_fname.c_str() );
 		if ( ! list_stream.good() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Unable to open list file \"" + list_fname + "\"" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to open list file \"" + list_fname + "\"" );
 		}
 		std::string line;
 		while ( getline( list_stream, line ) ) {
@@ -118,7 +118,7 @@ PDBPoseInputter::pose_input_sources_from_tag(
 		}
 
 	} else {
-		throw utility::excn::EXCN_Msg_Exception( "Did not find either a \"filename\" or a \"listfile\" option in the PDB input tag" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Did not find either a \"filename\" or a \"listfile\" option in the PDB input tag" );
 	}
 	return input_sources;
 }

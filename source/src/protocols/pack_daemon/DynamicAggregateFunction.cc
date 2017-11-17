@@ -590,11 +590,11 @@ DynamicAggregateFunction::~DynamicAggregateFunction() = default;
 void
 DynamicAggregateFunction::set_num_entity_elements( Size setting ) {
 	if ( setting == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "DynamicAggregateFunction::set_num_entity_elements may not be"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "DynamicAggregateFunction::set_num_entity_elements may not be"
 			"passed a number of entity elements == 0" );
 	}
 	if ( num_entity_elements_ != 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "DynamicAggregateFunction::set_num_entity_elements may only"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "DynamicAggregateFunction::set_num_entity_elements may only"
 			"be called once" );
 	}
 
@@ -740,7 +740,7 @@ DynamicAggregateFunction::variable_expression( ArithmeticASTValue const & var_no
 		return entity_funcs_iter->second.second;
 	}
 
-	throw utility::excn::EXCN_Msg_Exception( "Unexpected variable expression encountered while "
+	throw CREATE_EXCEPTION(utility::excn::Exception,  "Unexpected variable expression encountered while "
 		"forming an expression from an ExpressionAST (after scanning/parsing completed!): " + var_node.variable_name() );
 
 	return nullptr;
@@ -775,66 +775,66 @@ DynamicAggregateFunction::function_expression(
 		return ExpressionCOP( ExpressionOP( new VMinBy( vector_expressions[1], vector_expressions[2] ) ) );
 	} else if ( fname == "exp" ) {
 		if ( args.size() != 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "exp expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "exp expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new ExpExpression( args[ 1 ] ) ) );
 	} else if ( fname == "ln" ) {
 		if ( args.size() != 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "ln expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "ln expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new LnExpression( args[ 1 ] ) ) );
 	} else if ( fname == "pow" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "pow expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "pow expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new PowExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "ite" ) {
 		if ( args.size() != 3 ) {
-			throw utility::excn::EXCN_Msg_Exception( "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] ) ) );
 	} else if ( fname == "abs" ) {
 		if ( args.size() != 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new AbsoluteValueExpression( args[ 1 ] ) ) );
 	} else if ( fname == "gt" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new GT_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "lt" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new LT_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "gte" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new GTE_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "lte" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new LTE_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "and" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new AndExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "or" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new OrExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "not" ) {
 		if ( args.size() != 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new NotExpression( args[ 1 ] ) ) );
 	}
-	throw utility::excn::EXCN_Msg_Exception( "Unrecognized function requested of DynamicAggregateFunction: " + fname );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  "Unrecognized function requested of DynamicAggregateFunction: " + fname );
 	return nullptr;
 }
 
@@ -929,12 +929,12 @@ void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream 
 		} else if ( command == "FITNESS" ) {
 			process_FITNESS_line( line, count_line, input_line, fitness_expression_ast );
 		} else {
-			throw utility::excn::EXCN_Msg_Exception( "Unable to recognize command '" + command + "' while reading DynamicAggregateFunction file" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to recognize command '" + command + "' while reading DynamicAggregateFunction file" );
 		}
 	}
 
 	if ( ! fitness_expression_ast ) {
-		throw utility::excn::EXCN_Msg_Exception( "Unable to find FITNESS command in the file describing the DynamicAggretateFunction.\n"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find FITNESS command in the file describing the DynamicAggretateFunction.\n"
 			"The FITNESS command must exist  " );
 	}
 
@@ -1033,16 +1033,16 @@ DynamicAggregateFunction::process_STATE_line(
 {
 	std::string state_name, structure_file, correspondence_file, secondary_resfile;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read state name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read state name in the DynamicAggregateFunction"
 			" input file after reading STATE on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> state_name;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read state variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read state variable name in the DynamicAggregateFunction"
 			" input file after reading STATE name on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( state_name.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read state variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read state variable name in the DynamicAggregateFunction"
 			" input file after reading STATE on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
@@ -1050,25 +1050,25 @@ DynamicAggregateFunction::process_STATE_line(
 
 	input_line >> structure_file;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read pdb file name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read pdb file name in the DynamicAggregateFunction"
 			" input file after reading STATE pdb file on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( structure_file.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read pdb file name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read pdb file name in the DynamicAggregateFunction"
 			" input file after reading STATE name on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> correspondence_file;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read secondary resfile name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read secondary resfile name in the DynamicAggregateFunction"
 			" input file after reading STATE correspondence file on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( correspondence_file.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read correspondence file name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read correspondence file name in the DynamicAggregateFunction"
 			" input file after reading STATE pdb file on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> secondary_resfile;
 	if ( secondary_resfile.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read secondary resfile name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read secondary resfile name in the DynamicAggregateFunction"
 			" input file after reading STATE correspondence file on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
@@ -1108,16 +1108,16 @@ DynamicAggregateFunction::process_STATE_VECTOR_line(
 {
 	std::string state_vector_variable_name, state_vector_filename;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read state-vector variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read state-vector variable name in the DynamicAggregateFunction"
 			" input file after reading STATE_VECTOR on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> state_vector_variable_name;
 	if ( state_vector_variable_name.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read state-vector variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read state-vector variable name in the DynamicAggregateFunction"
 			" input file after reading STATE_VECTOR on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read state-vector file name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read state-vector file name in the DynamicAggregateFunction"
 			" input file after reading STATE_VECTOR variable name on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
@@ -1125,7 +1125,7 @@ DynamicAggregateFunction::process_STATE_VECTOR_line(
 
 	input_line >> state_vector_filename;
 	if ( state_vector_filename.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read state-vector file name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read state-vector file name in the DynamicAggregateFunction"
 			" input file after reading STATE_VECTOR variable name on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
@@ -1147,18 +1147,18 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 )
 {
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read variable name in the DynamicAggregateFunction"
 			" input file after reading POSE_ENERGY on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	// 1. read the new variable name that's being declared on this line
 	std::string varname;
 	input_line >> varname;
 	if ( varname.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read variable name in the DynamicAggregateFunction"
 			" input file after reading POSE_ENERGY on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read a PDB name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a PDB name in the DynamicAggregateFunction"
 			" input file after reading the variable name '" + varname + "' on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	verify_variable_name_or_throw( varname, "POSE_ENERGY", line, line_number );
@@ -1171,8 +1171,8 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 	std::string pdb_string;
 	try {
 		pdb_string = file_contents_->get_file_contents( pdb_name );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb file named '"
+	} catch ( utility::excn::Exception & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to open pdb file named '"
 			+ pdb_name + "' given in the POSE_ENERGY command on line " + utility::to_string( line_number)
 			+ "of the DynamicAggregateFunction fitness file" );
 	}
@@ -1181,7 +1181,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 	core::import_pose::pose_from_pdbstring( pose, pdb_string, pdb_name );
 
 	if ( pose.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Input pose given in file '"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Input pose given in file '"
 			+ pdb_name + "' has zero residues.  Encountered while processing the '" + varname + "' variable in the DynamicAggregateFunction"
 			" input file on line " + utility::to_string( line_number ) + "\n" + line );
 	}
@@ -1203,18 +1203,18 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 )
 {
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read variable name in the DynamicAggregateFunction"
 			" input file after reading POSE_ENERGY_VECTOR on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	// 1. read the new variable name that's being declared on this line
 	std::string varname;
 	input_line >> varname;
 	if ( varname.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read variable name in the DynamicAggregateFunction"
 			" input file after reading POSE_ENERGY_VECTOR on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read the name of a list file in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read the name of a list file in the DynamicAggregateFunction"
 			" input file after reading the variable name '" + varname + "' on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	verify_variable_name_or_throw( varname, "POSE_ENERGY_VECTOR", line, line_number );
@@ -1226,8 +1226,8 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 	try {
 		std::string fc = file_contents_->get_file_contents( fname );
 		pdbvec_file.str( fc );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb list file named '"
+	} catch ( utility::excn::Exception & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to open pdb list file named '"
 			+ fname + "' given in the POSE_ENERGY_VECTOR command on line " + utility::to_string( line_number)
 			+ "of the DynamicAggregateFunction fitness file" );
 	}
@@ -1259,8 +1259,8 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		std::string pdb_string;
 		try {
 			pdb_string = file_contents_->get_file_contents( *iter );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb file named '"
+		} catch ( utility::excn::Exception & e ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to open pdb file named '"
 				+ *iter + "' given in the POSE_ENERGY_VECTOR command on line " + utility::to_string( line_number)
 				+ "of the DynamicAggregateFunction fitness file" );
 		}
@@ -1268,7 +1268,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		core::import_pose::pose_from_pdbstring( pose, pdb_string, *iter );
 
 		if ( pose.size() == 0 ) {
-			throw utility::excn::EXCN_Msg_Exception( "Input pose given in file '"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Input pose given in file '"
 				+ *iter + "' has zero residues.  Encountered while processing the '" + varname + "' variable in the DynamicAggregateFunction"
 				" input file on line " + utility::to_string( line_number ) + "\n" + line );
 		}
@@ -1295,18 +1295,18 @@ DynamicAggregateFunction::process_NPD_PROPERTY_line(
 )
 {
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read variable name in the DynamicAggregateFunction"
 			" input file after reading NPD_PROPERTY on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	// 1. read the new variable name that's being declared on this line
 	std::string varname;
 	input_line >> varname;
 	if ( varname.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read variable name in the DynamicAggregateFunction"
 			" input file after reading NPD_PROPERTY on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read an existing state- or state-vector "
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an existing state- or state-vector "
 			" variable name in the DynamicAggregateFunction"
 			" input file after reading NPD_PROPERTY on line " + utility::to_string( line_number ) + "\n" + line );
 	}
@@ -1316,7 +1316,7 @@ DynamicAggregateFunction::process_NPD_PROPERTY_line(
 	std::string original_varname;
 	input_line >> original_varname;
 	if ( original_varname.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read an existing state- or state-vector"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an existing state- or state-vector"
 			" variable in the DynamicAggregateFunction"
 			" input file after reading the new variable name on line " + utility::to_string( line_number ) + "\n" + line );
 	}
@@ -1330,13 +1330,13 @@ DynamicAggregateFunction::process_NPD_PROPERTY_line(
 		/// Error condition: the user has given a variable name that does not correspond to
 		/// either a state or a state vector.
 		if ( variable_names_dec_line_.find( original_varname ) != variable_names_dec_line_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read the name for the existing state or state vector"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read the name for the existing state or state vector"
 				" in the DynamicAggregateFunction input file, but instead was given the name of a non-state variable, "
 				+ original_varname + " that had previously been declared on line " +
 				utility::to_string( variable_names_dec_line_[ original_varname ] ) +
 				".\n Error while processing line " + utility::to_string( line_number ) + "\n" + line );
 		} else {
-			throw utility::excn::EXCN_Msg_Exception( "Read the name '" + original_varname + "' but "
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Read the name '" + original_varname + "' but "
 				" expected to read the variable name for the existing state- or state-vector"
 				" variable in the DynamicAggregateFunction"
 				" input file after reading the new variable name on line " + utility::to_string( line_number ) + "\n" + line );
@@ -1346,14 +1346,14 @@ DynamicAggregateFunction::process_NPD_PROPERTY_line(
 	// 3. Read the NPD property that will be calculated
 	std::string npd_property;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read a non-pairwise decomposable property"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a non-pairwise decomposable property"
 			" name after reading the existing state- or state-vector"
 			" variable name in the DynamicAggregateFunction"
 			" input file on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> npd_property;
 	if ( npd_property.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read a non-pairwise decomposable property"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a non-pairwise decomposable property"
 			" name after reading the existing state- or state-vector"
 			" variable name in the DynamicAggregateFunction"
 			" input file on line " + utility::to_string( line_number ) + "\n" + line );
@@ -1379,24 +1379,24 @@ DynamicAggregateFunction::process_VECTOR_VARIABLE_line(
 {
 	std::string vector_variable_name, equals_sign, scalar_variable_name;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read vector variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read vector variable name in the DynamicAggregateFunction"
 			" input file after reading VECTOR_VARIABLE on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> vector_variable_name;
 	if ( vector_variable_name.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read vector variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read vector variable name in the DynamicAggregateFunction"
 			" input file after reading VECTOR_VARIABLE on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
 	verify_variable_name_or_throw( vector_variable_name, "VECTOR_VARIABLE", line, line_number );
 
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read equals sign in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read equals sign in the DynamicAggregateFunction"
 			" input file after reading " + vector_variable_name + " varname in the VECTOR_VARIABLE command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> equals_sign;
 	if ( equals_sign != "=" ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read equals sign in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read equals sign in the DynamicAggregateFunction"
 			" input file after reading " + vector_variable_name + " varname, but found '" + equals_sign + "' instead in the VECTOR_VARIABLE command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
@@ -1406,12 +1406,12 @@ DynamicAggregateFunction::process_VECTOR_VARIABLE_line(
 		if ( !input_line ) continue;
 		if ( scalar_variable_names_dec_line_.find( scalar_variable_name ) == scalar_variable_names_dec_line_.end() ) {
 			if ( vector_variable_names_dec_line_.find( scalar_variable_name ) != vector_variable_names_dec_line_.end() ) {
-				throw utility::excn::EXCN_Msg_Exception( "Variable '" + scalar_variable_name + "' is a vector variable and"
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Variable '" + scalar_variable_name + "' is a vector variable and"
 					" cannot be listed in the scalar-variable list in a VECTOR_VARIABLE command.\n"
 					"Error processing VECTOR_VARIABLE command on line " + utility::to_string( line_number ) + "\n" + line );
 
 			} else {
-				throw utility::excn::EXCN_Msg_Exception( "Unknown variable '" + scalar_variable_name + "' requested"
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Unknown variable '" + scalar_variable_name + "' requested"
 					" in the VECTOR_VARIABLE command on line " + utility::to_string( line_number ) + "\n" + line );
 			}
 		} else {
@@ -1445,12 +1445,12 @@ DynamicAggregateFunction::process_SCALAR_EXPRESSION_line(
 {
 	std::string vname, equals_sign;//, restofline;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read variable name in the DynamicAggregateFunction"
 			" input file after reading SCALAR_EXPRESSION command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> vname;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read equals sign in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read equals sign in the DynamicAggregateFunction"
 			" input file after reading SCALAR_EXPRESSION variable name on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
@@ -1458,12 +1458,12 @@ DynamicAggregateFunction::process_SCALAR_EXPRESSION_line(
 
 	input_line >> equals_sign;
 	if ( equals_sign != "=" ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read equals sign in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read equals sign in the DynamicAggregateFunction"
 			" input file after reading SCALAR_EXPRESSION variable name on line " + utility::to_string( line_number )
 			+ "\n" + line + "\nbut encountered " + equals_sign + " instead." );
 	}
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read an expression in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an expression in the DynamicAggregateFunction"
 			" input file after reading SCALAR_EXPRESSION equals sign on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
@@ -1500,24 +1500,24 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 	ArithmeticScanner local_scanner( *scanner_ );
 
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read FOR in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read FOR in the DynamicAggregateFunction"
 			" input file after reading VECTOR_EXPRESSION command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> for_string;
 	if ( for_string != "FOR" ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read FOR in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read FOR in the DynamicAggregateFunction"
 			" input file after reading VECTOR_EXPRESSION command, but read '" + for_string + "' on line "
 			+ utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read local variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read local variable name in the DynamicAggregateFunction"
 			" input file after reading FOR on a VECTOR_EXPRESSION command on line "
 			+ utility::to_string( line_number ) + "\n" + line );
 	}
 	bool colon_found = false;
 	while ( ! colon_found ) {
 		if ( ! input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read local variable name in the DynamicAggregateFunction input file"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read local variable name in the DynamicAggregateFunction input file"
 				" while processing multiple local variables on a VECTOR_EXPRESSION command on line "
 				+ utility::to_string( line_number ) + "\n" + line );
 		}
@@ -1526,30 +1526,30 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 		verify_variable_name_or_throw( local_var, "VECTOR_EXPRESSION", line, line_number );
 
 		if ( localvar_map.find( local_var ) != localvar_map.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Local variable, '" + local_var + "' in VECTOR_EXPRESSION command appears multiple times on line "
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Local variable, '" + local_var + "' in VECTOR_EXPRESSION command appears multiple times on line "
 				+ utility::to_string( line_number ) + "\n" + line );
 		}
 
 		if ( ! input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read 'IN' in the DynamicAggregateFunction input file"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read 'IN' in the DynamicAggregateFunction input file"
 				" following the declaration of local variable '" + local_var + "' on a VECTOR_EXPRESSION command on line "
 				+ utility::to_string( line_number ) + "\n" + line );
 		}
 		input_line >> in_string;
 		if ( in_string != "IN" ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read 'IN' in the DynamicAggregateFunction input file"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read 'IN' in the DynamicAggregateFunction input file"
 				" following the declaration of local variable '" + local_var + "', but read '" + in_string + "' in the VECTOR_EXPRESSION command on line "
 				+ utility::to_string( line_number ) + "\n" + line );
 		}
 		if ( ! input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read a vector-variable name in the DynamicAggregateFunction input file"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a vector-variable name in the DynamicAggregateFunction input file"
 				" following '" + local_var + " IN' in the VECTOR_EXPRESSION command on line "
 				+ utility::to_string( line_number ) + "\n" + line );
 		}
 		input_line >> existing_vector_varname;
 
 		if ( vector_variable_names_dec_line_.find( existing_vector_varname ) == vector_variable_names_dec_line_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "The vector-variable name '" + existing_vector_varname
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "The vector-variable name '" + existing_vector_varname
 				+ "'  given for local-variable '" + local_var + "' does not belong to an already-declared vector variable"
 				+ ".  Error in the VECTOR_EXPRESSION command on line "
 				+ utility::to_string( line_number ) + "\n" + line );
@@ -1557,7 +1557,7 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 		localvar_map[ local_var ] = existing_vector_varname;
 		local_scanner.add_variable( local_var );
 		if ( ! input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read a colon or a comma following"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a colon or a comma following"
 				" the declaration of local variable " + local_var + " in the VECTOR_EXPRESSION command on line "
 				+ utility::to_string( line_number ) + "\n" + line );
 		}
@@ -1568,7 +1568,7 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 		if ( comma_or_colon_string == ":" ) {
 			break;
 		}
-		throw  utility::excn::EXCN_Msg_Exception( "Expected to read a colon or a comma following"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a colon or a comma following"
 			" the declaration of local variable " + local_var + ", but found '" + comma_or_colon_string + "' instead."
 			"\nError in the VECTOR_EXPRESSION command on line "
 			+ utility::to_string( line_number ) + "\n" + line );
@@ -1577,7 +1577,7 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 	/// rest of the expression describing how to compute that vector variable.
 
 	if ( ! input_line ) {
-		throw  utility::excn::EXCN_Msg_Exception( "Expected to read a variable name"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a variable name"
 			" following the colon in the VECTOR_EXPRESSION command on line "
 			+ utility::to_string( line_number ) + "\n" + line );
 	}
@@ -1586,20 +1586,20 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 	/// Now check, do we have a valid variable name?
 	verify_variable_name_or_throw( vector_varname, "VECTOR_EXPRESSION", line, line_number );
 	if ( localvar_map.find( vector_varname ) != localvar_map.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Vector variable, '" + vector_varname + "' in VECTOR_EXPRESSION command appears first as a local variable\n.Line "
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Vector variable, '" + vector_varname + "' in VECTOR_EXPRESSION command appears first as a local variable\n.Line "
 			+ utility::to_string( line_number ) + "\n" + line );
 	}
 
 
 	if ( ! input_line ) {
-		throw  utility::excn::EXCN_Msg_Exception( "Expected to read an equals sign after reading variable-vector name '"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an equals sign after reading variable-vector name '"
 			+ vector_varname + "' in the VECTOR_EXPRESSION command on line "
 			+ utility::to_string( line_number ) + "\n" + line );
 	}
 
 	input_line >> equals_sign;
 	if ( equals_sign != "=" ) {
-		throw  utility::excn::EXCN_Msg_Exception( "Expected to read an equals sign after reading variable-vector name '"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an equals sign after reading variable-vector name '"
 			+ vector_varname + "' in the VECTOR_EXPRESSION command on line "
 			+ utility::to_string( line_number ) + " but found '" + equals_sign + "' instead\n" + line );
 	}
@@ -1625,16 +1625,16 @@ DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 {
 	std::string entityfunc_name, entityfunc_file;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read state name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read state name in the DynamicAggregateFunction"
 			" input file after reading ENTITY_FUNCTION command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	input_line >> entityfunc_name;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to EnitytFunc file name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to EnitytFunc file name in the DynamicAggregateFunction"
 			" input file after reading ENTITY_FUNCTION command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( entityfunc_name.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read EntityFunc variable name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read EntityFunc variable name in the DynamicAggregateFunction"
 			" input file after reading ENTITY_FUNCTION command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
@@ -1642,18 +1642,18 @@ DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 
 	input_line >> entityfunc_file;
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read correspondence file name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read correspondence file name in the DynamicAggregateFunction"
 			" input file after reading ENTITY_FUNCTION pdb file on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( entityfunc_file.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read pdb file name in the DynamicAggregateFunction"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read pdb file name in the DynamicAggregateFunction"
 			" input file after reading ENTITY_FUNCTION variable named " + entityfunc_name +
 			" on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
 	/// Double check that the number of entity elements has been set
 	if ( num_entity_elements_ == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "DynamicAggregateFunction::set_num_entity_elements must be called before EntityFuncs may be created" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "DynamicAggregateFunction::set_num_entity_elements must be called before EntityFuncs may be created" );
 	}
 
 
@@ -1663,8 +1663,8 @@ DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 
 	try {
 		entfunc_contents = file_contents_->get_file_contents( entityfunc_file );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Failed to open the entity function file file named '"
+	} catch ( utility::excn::Exception & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to open the entity function file file named '"
 			+ entityfunc_file + "' given in the ENTITY_FUNCTION command on line " + utility::to_string( line_number)
 			+ "of the DynamicAggregateFunction fitness file" );
 	}
@@ -1695,7 +1695,7 @@ DynamicAggregateFunction::process_FITNESS_line(
 )
 {
 	if ( fitness_expression_ast ) {
-		throw utility::excn::EXCN_Msg_Exception( "FITNESS command appears multiple"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "FITNESS command appears multiple"
 			" times in the DynamicAggregateFunction file.\nSecond occurrance found while reading\n"
 			+ line + "\nLine # " + utility::to_string( line_number )  );
 	}
@@ -1751,8 +1751,8 @@ DynamicAggregateFunction::read_state_vector_file(
 	try {
 		std::string fc = file_contents_->get_file_contents( fname );
 		strucvec_file.str( fc );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Failed to open state vector file named '" + fname + "' which was listed on line " + utility::to_string( variable_names_dec_line_[ vec_varname ] ) );
+	} catch ( utility::excn::Exception & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to open state vector file named '" + fname + "' which was listed on line " + utility::to_string( variable_names_dec_line_[ vec_varname ] ) );
 	}
 	Size svline_num( 0 );
 	utility::vector1< StructureFileNames > state_triples;
@@ -1767,17 +1767,17 @@ DynamicAggregateFunction::read_state_vector_file(
 
 		std::string structure_file, correspondence_file, secondary_resfile;
 		if ( ! input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read pdb file name as the first argument on line "
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read pdb file name as the first argument on line "
 				+ utility::to_string( svline_num ) + " of the state-vector file" + fname + "\n" + line );
 		}
 		input_line >> structure_file;
 		if ( ! input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read correspondence file name as the second argument on line "
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read correspondence file name as the second argument on line "
 				+ utility::to_string( svline_num ) + " of the state-vector file" + fname + "\n" + line );
 		}
 		input_line >> correspondence_file;
 		if ( ! input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read secondary resfile name as the third argument on line "
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read secondary resfile name as the third argument on line "
 				+ utility::to_string( svline_num ) + " of the state-vector file" + fname + "\n" + line );
 		}
 		input_line >> secondary_resfile;
@@ -1792,7 +1792,7 @@ DynamicAggregateFunction::read_state_vector_file(
 		++n_vector_states;
 	}
 	if ( state_triples.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Failed to find any states in state-vector file " + fname );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find any states in state-vector file " + fname );
 	}
 	state_vector_data_file_names_[ vec_varname ] = state_triples;
 
@@ -1946,7 +1946,7 @@ DynamicAggregateFunction::create_scalar_and_vector_expression_variable_expressio
 				scalvar_iter != scalvar_iter_end; ++scalvar_iter ) {
 			std::map< std::string, VariableExpressionCOP >::const_iterator scvar = scalar_expression_map_.find( *scalvar_iter );
 			if ( scvar == scalar_expression_map_.end() ) {
-				throw utility::excn::EXCN_Msg_Exception( "Internal error: could not locate requested scalar variable '"
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Internal error: could not locate requested scalar variable '"
 					+ *scalvar_iter + "' when constructing the VECTOR_VARIABLE '" + vector_variable.first );
 			}
 			variables.push_back( scvar->second );
@@ -1986,7 +1986,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 			TR << "Creating scalar expression for " << iter->second << std::endl;
 			auto ast_iter = scalar_expression_asts.find( iter->second );
 			if ( ast_iter == scalar_expression_asts.end() ) {
-				throw utility::excn::EXCN_Msg_Exception( "Internal error.  Unable to find scalar expression named '" + iter->second + "' in the scalar_expression_asts map" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Internal error.  Unable to find scalar expression named '" + iter->second + "' in the scalar_expression_asts map" );
 			}
 			TR << "Creating expression from AST:\n" << printer.ast_string( *(ast_iter->second) ) << std::endl;
 
@@ -2000,7 +2000,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 			auto
 				ast_iter = vector_expression_asts.find( iter->second );
 			if ( ast_iter == vector_expression_asts.end() ) {
-				throw utility::excn::EXCN_Msg_Exception( "Internal error.  Unable to find vector expression named '" + iter->second + "' in the vector_expression_asts map" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Internal error.  Unable to find vector expression named '" + iter->second + "' in the vector_expression_asts map" );
 			}
 
 			std::pair< std::map< std::string, std::string >, ArithmeticASTExpressionOP > const & itvecexp_data =
@@ -2012,7 +2012,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 			for ( auto const & vec_iter : itvecexp_data.first ) {
 				//std::cout << "VectorExpression map: " << vec_iter->first << " " << vec_iter->second  << std::endl;
 				if ( vector_expression_map_.find( vec_iter.second ) == vector_expression_map_.end() ) {
-					throw utility::excn::EXCN_Msg_Exception( "Variable " + vec_iter.second + " absent from the IterativeVectorExpression name map" );
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Variable " + vec_iter.second + " absent from the IterativeVectorExpression name map" );
 				}
 				vector_varnames[ vec_iter.first ] = vector_expression_map_[ vec_iter.second ];
 			}
@@ -2048,7 +2048,7 @@ DynamicAggregateFunction::verify_vector_arguments(
 ) const
 {
 	if ( args.size() != expected_nargs ) {
-		throw utility::excn::EXCN_Msg_Exception( "vector function expression " + fname + " construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "vector function expression " + fname + " construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 	}
 	utility::vector1< VectorExpressionCOP > vector_expressions( expected_nargs );
 	for ( Size ii = 1; ii <= expected_nargs; ++ii ) {
@@ -2056,10 +2056,10 @@ DynamicAggregateFunction::verify_vector_arguments(
 		if ( ! vec_ptr ) {
 			VariableExpressionCOP var_ptr = utility::pointer::dynamic_pointer_cast< VariableExpression const > ( args[ ii ] );
 			if ( var_ptr ) {
-				throw utility::excn::EXCN_Msg_Exception( "vector function expression " + fname + " can only be constructed from a vector expression.\n"
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "vector function expression " + fname + " can only be constructed from a vector expression.\n"
 					"Variable " + var_ptr->name() + " is not a vector variable." );
 			} else {
-				throw utility::excn::EXCN_Msg_Exception( "vector function expression " + fname + " can only be constructed from a vector expression." );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "vector function expression " + fname + " can only be constructed from a vector expression." );
 			}
 		}
 		vector_expressions[ ii ] = vec_ptr;
@@ -2076,23 +2076,23 @@ DynamicAggregateFunction::verify_variable_name_or_throw(
 )
 {
 	if ( variable_names_dec_line_.find( vname ) != variable_names_dec_line_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Variable name " + vname + " appears multiple"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Variable name " + vname + " appears multiple"
 			" times in the DynamicAggregateFunction file.\nSecond occurrance found while reading a " +
 			command_name + " command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
 	if ( function_names_.find( vname ) != function_names_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Declaration of variable '" + vname + "' in " + command_name + " command conflicts with a function name.  Line "
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Declaration of variable '" + vname + "' in " + command_name + " command conflicts with a function name.  Line "
 			+ utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( entity_funcs_.find( vname ) != entity_funcs_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Declaration of variable '" + vname + "' in " + command_name + " command conflicts"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Declaration of variable '" + vname + "' in " + command_name + " command conflicts"
 			" with a previously declared EntityFunc variable.\nPrevious declaration was on line "
 			+ utility::to_string( entity_funcs_dec_line_[ vname ] ) + ".\nLine "
 			+ utility::to_string( line_number ) + "\n" + line );
 
 	}
 	if ( illegal_variable_names_.find( vname ) != illegal_variable_names_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Illegal name for variable, '" + vname + "' in the " +
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal name for variable, '" + vname + "' in the " +
 			command_name + " command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
@@ -2206,7 +2206,7 @@ void DynamicAggregateFunctionDriver::initialize_from_input_file(
 {
 	try {
 		read_all_variables_from_input_file( input );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		send_error_message_to_remote_daemon_sets();
 		TR << "Initialization from input file failed with exception: " << e.msg() << std::endl;
 		TR << "Remote daemon sets are spinning down" << std::endl;
@@ -2284,7 +2284,7 @@ DynamicAggregateFunctionDriver::distribute_jobs_to_remote_daemons(
 
 	try {
 		assign_jobs_to_local_daemon_set( job_assignments[ 0 ], daemon_set );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		error_message += "Error from node 0\n";
 		error_message += e.msg();
 		TR << e.msg() << std::endl;
@@ -2384,7 +2384,7 @@ bool DynamicAggregateFunctionDriver::verify_remote_daemon_set_initialization_suc
 	if ( message == success_message ) return true;
 	if ( message == error_message ) return false;
 
-	throw utility::excn::EXCN_Msg_Exception( "Expected either a success_message or an error_message "
+	throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected either a success_message or an error_message "
 		"after initializing remote daemon sets from process " +
 		utility::to_string( proc_id ) + " but received " + utility::to_string( message ) );
 	return false;
@@ -2415,7 +2415,7 @@ DynamicAggregateFunctionDriver::initialize_daemon_with_all_states(
 
 	try {
 		assign_jobs_to_local_daemon_set( joblist, daemon_set );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		TR << "Error from daemon-set initialization \n";
 		TR <<  e.msg();
 		TR << std::endl;
@@ -2474,7 +2474,7 @@ void EntityFunc::set_num_entity_elements( Size num_ees )
 void EntityFunc::initialize_from_input_file( std::istream & input )
 {
 	if ( num_entity_elements_ == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "EntityFunc::initialize_from_input_file cannot be called without EntityFunc::set_num_entity_elements having first been called."  );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "EntityFunc::initialize_from_input_file cannot be called without EntityFunc::set_num_entity_elements having first been called."  );
 	}
 
 	initialize_scanner_and_function_names();
@@ -2501,12 +2501,12 @@ void EntityFunc::initialize_from_input_file( std::istream & input )
 		} else if ( command == "SCORE" ) {
 			process_SCORE_line( line, count_line, input_line, score_expression_ast );
 		} else {
-			throw utility::excn::EXCN_Msg_Exception( "Unable to recognize command '" + command + "' while reading EntityFunc file" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to recognize command '" + command + "' while reading EntityFunc file" );
 		}
 	}
 
 	if ( ! score_expression_ast ) {
-		throw utility::excn::EXCN_Msg_Exception( "SCORE command was not found in EntityFunc file." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "SCORE command was not found in EntityFunc file." );
 	}
 	turn_expression_ASTs_into_expressions( expression_asts, score_expression_ast );
 
@@ -2540,7 +2540,7 @@ EntityFunc::variable_expression( ArithmeticASTValue const & var_node ) const
 		return var_iter->second;
 	}
 
-	throw utility::excn::EXCN_Msg_Exception( "Unable to find variable with name " + var_node.variable_name() + " in"
+	throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find variable with name " + var_node.variable_name() + " in"
 		" EntityFunc while trying to build expression trees for the expressions already tokenized and parsed.\n"
 		"Cannot continue.  Contact Andrew Leaver-Fay (aleaverfay@gmail.com)" );
 	return nullptr;
@@ -2559,72 +2559,72 @@ EntityFunc::function_expression(
 		return ExpressionCOP( ExpressionOP( new MinExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "exp" ) {
 		if ( args.size() != 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "exp expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "exp expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new ExpExpression( args[ 1 ] ) ) );
 	} else if ( fname == "ln" ) {
 		if ( args.size() != 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "ln expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "ln expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new LnExpression( args[ 1 ] ) ) );
 	} else if ( fname == "pow" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "pow expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "pow expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new PowExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "ite" ) {
 		if ( args.size() != 3 ) {
-			throw utility::excn::EXCN_Msg_Exception( "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] ) ) );
 	} else if ( fname == "abs" ) {
 		if ( args.size() != 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new AbsoluteValueExpression( args[ 1 ] ) ) );
 	} else if ( fname == "gt" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new GT_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "lt" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new LT_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "gte" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new GTE_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "lte" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new LTE_Expression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "eq" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "eq expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "eq expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new EqualsExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "and" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new AndExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "or" ) {
 		if ( args.size() != 2 ) {
-			throw utility::excn::EXCN_Msg_Exception( "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new OrExpression( args[ 1 ], args[ 2 ] ) ) );
 	} else if ( fname == "not" ) {
 		if ( args.size() != 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
 		return ExpressionCOP( ExpressionOP( new NotExpression( args[ 1 ] ) ) );
 	}
 
-	throw utility::excn::EXCN_Msg_Exception( "Unable to find function with name " + fname + " in"
+	throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find function with name " + fname + " in"
 		" EntityFunc while trying to build expression trees for the expressions already tokenized and parsed.\n"
 		"Cannot continue.  Contact Andrew Leaver-Fay (aleaverfay@gmail.com)" );
 	return nullptr;
@@ -2695,17 +2695,17 @@ EntityFunc::process_AA_SET_line(
 )
 {
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read amino acid set name in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read amino acid set name in the EntityFunc"
 			" input file after reading AA_SET on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	std::string aa_setname;
 	input_line >> aa_setname;
 	if ( aa_setname.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read amino acid set name in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read amino acid set name in the EntityFunc"
 			" input file after reading AA_SET on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( aa_sets_name_map_.find( aa_setname ) != aa_sets_name_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Amino-acid-set name '" + aa_setname + "' appears multiple"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Amino-acid-set name '" + aa_setname + "' appears multiple"
 			" times in the EntityFunc file.\nFirst occurrance was found on line " +
 			utility::to_string( aa_sets_dec_line_[ aa_setname ] ) +
 			".  Second occurrance found while reading"
@@ -2714,26 +2714,26 @@ EntityFunc::process_AA_SET_line(
 
 	if ( subexpression_name_map_.find( aa_setname ) != subexpression_name_map_.end() ) {
 		if ( subexpression_name_dec_line_[ aa_setname ] != 0 ) {
-			throw utility::excn::EXCN_Msg_Exception( "Illegal amino-acid-set name '" + aa_setname + "' which was previously"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal amino-acid-set name '" + aa_setname + "' which was previously"
 				" declared in the EntityFunc file as a sub-expression.\nFirst occurrance was found on line " +
 				utility::to_string( subexpression_name_dec_line_[ aa_setname ] ) +
 				".  Second occurrance found while reading"
 				" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		} else {
-			throw utility::excn::EXCN_Msg_Exception( "Illegal amino-acid-set name '" + aa_setname + "' which is reserved"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal amino-acid-set name '" + aa_setname + "' which is reserved"
 				" as a name for an entity-element variable.\nError found while reading"
 				" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		}
 	}
 
 	if ( function_names_.find( aa_setname ) != function_names_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Illegal amino-acid-set name '" + aa_setname + "' which is reserved"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal amino-acid-set name '" + aa_setname + "' which is reserved"
 			" as a name for an funcion.\nError encountered while reading"
 			" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
 
 	if ( illegal_variable_names_.find( aa_setname ) != illegal_variable_names_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Illegal amino-acid-set name '" + aa_setname + "' which is a reserved"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal amino-acid-set name '" + aa_setname + "' which is a reserved"
 			" word for this input file format.\nError encountered while reading"
 			" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
@@ -2742,14 +2742,14 @@ EntityFunc::process_AA_SET_line(
 	char equals_sign( ' ' );
 	while ( equals_sign == ' ' || equals_sign == '\t' ) {
 		if ( !input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read an equals sign after reading amino-acid-set name'"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an equals sign after reading amino-acid-set name'"
 				+ aa_setname + "' but found an end-of-line.\nError encountered while reading"
 				" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		}
 		input_line.get( equals_sign );
 	}
 	if ( equals_sign != '=' ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read an equals sign after reading amino-acid-set name'"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an equals sign after reading amino-acid-set name'"
 			+ aa_setname + "' but found '" + equals_sign + "'\nError encountered while reading"
 			" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
@@ -2758,14 +2758,14 @@ EntityFunc::process_AA_SET_line(
 	char lcurly = ' ';
 	while ( lcurly == ' ' || lcurly == '\t' ) {
 		if ( !input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read a left curly bracket ('{') after reading"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a left curly bracket ('{') after reading"
 				" an equals sign, but found an end-of-line.\nError encountered while reading"
 				" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		}
 		input_line.get( lcurly );
 	}
 	if ( lcurly != '{' ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read a left curly bracket ('{') after reading"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a left curly bracket ('{') after reading"
 			" an equals sign, but found '"  + utility::to_string( lcurly ) + "'\nError encountered while reading"
 			" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
@@ -2776,7 +2776,7 @@ EntityFunc::process_AA_SET_line(
 	while ( next_aa != '}' ) {
 		while ( next_aa == ' ' || next_aa == '\t' ) {
 			if ( !input_line ) {
-				throw utility::excn::EXCN_Msg_Exception( "Expected to read a right curly bracket ('}') or a 1-letter"
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a right curly bracket ('}') or a 1-letter"
 					"  amino acid code, but found an end-of-line.\nError encountered while reading"
 					" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 			}
@@ -2788,7 +2788,7 @@ EntityFunc::process_AA_SET_line(
 		} else {
 			/// maybe later, if we want to include ncaa's then they're parsing will happen right here.
 			/// but for now, no go.
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read a 1-letter"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a 1-letter"
 				"  amino acid code or a right curly brace, but found '" + utility::to_string( next_aa ) + "'.\n"
 				"Error encountered while reading AA_SET command\n" + line + "\n"
 				"Line # " + utility::to_string( line_number )  );
@@ -2796,7 +2796,7 @@ EntityFunc::process_AA_SET_line(
 		next_aa = ' ';
 		while ( next_aa == ' ' || next_aa == '\t' ) {
 			if ( !input_line ) {
-				throw utility::excn::EXCN_Msg_Exception( "Expected to read a right curly bracket ('}') or a 1-letter"
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a right curly bracket ('}') or a 1-letter"
 					"  amino acid code, but found an end-of-line.\nError encountered while reading"
 					" AA_SET command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 			}
@@ -2807,7 +2807,7 @@ EntityFunc::process_AA_SET_line(
 			next_aa = ' ';
 			continue;
 		}
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read comma"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read comma"
 			"  or a right curly brace, but found '" + utility::to_string( next_aa ) + "'.\n"
 			"Error encountered while reading AA_SET command\n" + line + "\n"
 			"Line # " + utility::to_string( line_number )  );
@@ -2828,17 +2828,17 @@ EntityFunc::process_SET_CONDITION_line(
 )
 {
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read a set-condition name in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a set-condition name in the EntityFunc"
 			" input file after reading SET_CONDITION on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	std::string condition_name;
 	input_line >> condition_name;
 	if ( condition_name.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read a set-condition name in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a set-condition name in the EntityFunc"
 			" input file after reading SET_CONDITION on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( aa_sets_name_map_.find( condition_name ) != aa_sets_name_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Set-condition name '" + condition_name + "' appears multiple"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Set-condition name '" + condition_name + "' appears multiple"
 			" times in the EntityFunc file.\nFirst occurrance was found on line " +
 			utility::to_string( aa_sets_dec_line_[ condition_name ] ) +
 			".  Second occurrance found while reading"
@@ -2847,26 +2847,26 @@ EntityFunc::process_SET_CONDITION_line(
 
 	if ( subexpression_name_map_.find( condition_name ) != subexpression_name_map_.end() ) {
 		if ( subexpression_name_dec_line_[ condition_name ] != 0 ) {
-			throw utility::excn::EXCN_Msg_Exception( "Illegal set-condition name '" + condition_name + "' which was previously"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal set-condition name '" + condition_name + "' which was previously"
 				" declared in the EntityFunc file as a sub-expression.\nFirst occurrance was found on line " +
 				utility::to_string( subexpression_name_dec_line_[ condition_name ] ) +
 				".  Second occurrance found while reading"
 				" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		} else {
-			throw utility::excn::EXCN_Msg_Exception( "Illegal set-condition name '" + condition_name + "' which is reserved"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal set-condition name '" + condition_name + "' which is reserved"
 				" as a name for an entity-element variable.\nError found while reading"
 				" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		}
 	}
 
 	if ( function_names_.find( condition_name ) != function_names_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Illegal set-condition name '" + condition_name + "' which is reserved"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal set-condition name '" + condition_name + "' which is reserved"
 			" as a name for an funcion.\nError encountered while reading"
 			" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
 
 	if ( illegal_variable_names_.find( condition_name ) != illegal_variable_names_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Illegal set-condition name '" + condition_name + "' which is a reserved"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal set-condition name '" + condition_name + "' which is a reserved"
 			" word for this input file format.\nError encountered while reading"
 			" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
@@ -2875,28 +2875,28 @@ EntityFunc::process_SET_CONDITION_line(
 	char equals_sign( ' ' );
 	while ( equals_sign == ' ' || equals_sign == '\t' ) {
 		if ( !input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read an equals sign after reading the set-condition name'"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an equals sign after reading the set-condition name'"
 				+ condition_name + "' but found an end-of-line.\nError encountered while reading"
 				" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		}
 		input_line >> equals_sign;
 	}
 	if ( equals_sign != '=' ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read an equals sign after reading amino-acid-set name'"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an equals sign after reading amino-acid-set name'"
 			+ condition_name + "' but found '" + utility::to_string( equals_sign ) + "'\nError encountered while reading"
 			" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
 
 	/// now read the name of the entity-element that we're going to be examining.
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read the entity-element name in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read the entity-element name in the EntityFunc"
 			" input file after reading the set condition name, \"" + condition_name + ",\" but found an end-of-line.\n"
 			"Error encountered while reading SET_CONDITION command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	std::string eename;
 	input_line >> eename;
 	if ( subexpression_name_dec_line_.find( eename ) == subexpression_name_dec_line_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read an entity-element name in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an entity-element name in the EntityFunc"
 			" input file after reading an equals sign, while processing the set-condition named \"" + condition_name + ",\" but"
 			" found \"" + eename +"\" which is not a valid entity element name.\n"
 			"There are " + utility::to_string( num_entity_elements_ ) + " defined for this EntityFunc.\n"
@@ -2904,14 +2904,14 @@ EntityFunc::process_SET_CONDITION_line(
 			"Error encountered while reading SET_CONDITION command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( subexpression_name_dec_line_[ eename ] != 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read an entity-element name in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an entity-element name in the EntityFunc"
 			" input file after reading an equals sign, while processing the set-condition named \"" + condition_name + ",\" but"
 			" found the named subexpression \"" + eename +"\" instead.\n"
 			"Error encountered while reading SET_CONDITION command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read the string \"in\" in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read the string \"in\" in the EntityFunc"
 			" input file after reading the set condition name, \"" + condition_name + ",\" but found an end-of-line.\n"
 			"Error encountered while reading SET_CONDITION command on line " + utility::to_string( line_number ) + "\n" + line );
 	}
@@ -2920,7 +2920,7 @@ EntityFunc::process_SET_CONDITION_line(
 	std::string in_string;
 	input_line >> in_string;
 	if ( in_string != "in" ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read the string \"in\" in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read the string \"in\" in the EntityFunc"
 			" input file after reading the set condition name, \"" + condition_name + ",\" but found \"" +
 			in_string + "\" instead.\n"
 			"Error encountered while reading SET_CONDITION command on line " + utility::to_string( line_number ) + "\n" + line );
@@ -2929,7 +2929,7 @@ EntityFunc::process_SET_CONDITION_line(
 	char next_char = ' ';
 	while ( input_line.peek() == ' ' || input_line.peek()  == '\t' ) {
 		if ( !input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read a left curly bracket ('}') or an"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a left curly bracket ('}') or an"
 				"  amino acid set name, but found an end-of-line.\nError encountered while reading"
 				" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		}
@@ -2946,7 +2946,7 @@ EntityFunc::process_SET_CONDITION_line(
 		while ( next_aa != '}' ) {
 			while ( next_aa == ' ' || next_aa == '\t' ) {
 				if ( !input_line ) {
-					throw utility::excn::EXCN_Msg_Exception( "Expected to read a right curly bracket ('}') or a 1-letter"
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a right curly bracket ('}') or a 1-letter"
 						"  amino acid code, but found an end-of-line.\nError encountered while reading"
 						" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 				}
@@ -2958,7 +2958,7 @@ EntityFunc::process_SET_CONDITION_line(
 			} else {
 				/// maybe later, if we want to include ncaa's then they're parsing will happen right here.
 				/// but for now, no go.
-				throw utility::excn::EXCN_Msg_Exception( "Expected to read a 1-letter"
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a 1-letter"
 					"  amino acid code or a right curly brace, but found '" + utility::to_string( next_aa ) + "'.\n"
 					"Error encountered while reading SET_CONDITION command\n" + line + "\n"
 					"Line # " + utility::to_string( line_number )  );
@@ -2966,7 +2966,7 @@ EntityFunc::process_SET_CONDITION_line(
 			next_aa = ' ';
 			while ( next_aa == ' ' || next_aa == '\t' ) {
 				if ( !input_line ) {
-					throw utility::excn::EXCN_Msg_Exception( "Expected to read a right curly bracket ('}') or a 1-letter"
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a right curly bracket ('}') or a 1-letter"
 						"  amino acid code, but found an end-of-line.\nError encountered while reading"
 						" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 				}
@@ -2978,7 +2978,7 @@ EntityFunc::process_SET_CONDITION_line(
 				continue;
 			}
 
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read comma"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read comma"
 				"  or a right curly brace, but found '" + utility::to_string( next_aa ) + "'.\n"
 				"Error encountered while reading SET_CONDITION command\n" + line + "\n"
 				"Line # " + utility::to_string( line_number )  );
@@ -2988,7 +2988,7 @@ EntityFunc::process_SET_CONDITION_line(
 		std::string aa_setname;
 		input_line >> aa_setname;
 		if ( aa_sets_name_map_.find( aa_setname ) == aa_sets_name_map_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Amino-acid-set name '" + aa_setname +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Amino-acid-set name '" + aa_setname +
 				"' has not previously been declared.\nError encountered while reading"
 				" SET_CONDITION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		}
@@ -3018,17 +3018,17 @@ EntityFunc::process_SUB_EXPRESSION_line(
 )
 {
 	if ( ! input_line ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read a sub-expression name in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a sub-expression name in the EntityFunc"
 			" input file after reading SUB_EXPRESSION on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	std::string subexpression_name;
 	input_line >> subexpression_name;
 	if ( subexpression_name.size() == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read a sub-expression name in the EntityFunc"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read a sub-expression name in the EntityFunc"
 			" input file after reading SUB_EXPRESSION on line " + utility::to_string( line_number ) + "\n" + line );
 	}
 	if ( aa_sets_name_map_.find( subexpression_name ) != aa_sets_name_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Sub-expression name '" + subexpression_name + "' appears multiple"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Sub-expression name '" + subexpression_name + "' appears multiple"
 			" times in the EntityFunc file.\nFirst occurrance was found on line " +
 			utility::to_string( aa_sets_dec_line_[ subexpression_name ] ) +
 			".  Second occurrance found while reading"
@@ -3037,26 +3037,26 @@ EntityFunc::process_SUB_EXPRESSION_line(
 
 	if ( subexpression_name_map_.find( subexpression_name ) != subexpression_name_map_.end() ) {
 		if ( subexpression_name_dec_line_[ subexpression_name ] != 0 ) {
-			throw utility::excn::EXCN_Msg_Exception( "Illegal sub-expression name '" + subexpression_name + "' which was previously"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal sub-expression name '" + subexpression_name + "' which was previously"
 				" declared in the EntityFunc file as a sub-expression.\nFirst occurrance was found on line " +
 				utility::to_string( subexpression_name_dec_line_[ subexpression_name ] ) +
 				".  Second occurrance found while reading"
 				" SUB_EXPRESSION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		} else {
-			throw utility::excn::EXCN_Msg_Exception( "Illegal sub-expression name '" + subexpression_name + "' which is reserved"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal sub-expression name '" + subexpression_name + "' which is reserved"
 				" as a name for an entity-element variable.\nError found while reading"
 				" SUB_EXPRESSION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		}
 	}
 
 	if ( function_names_.find( subexpression_name ) != function_names_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Illegal sub-expression name '" + subexpression_name + "' which is reserved"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal sub-expression name '" + subexpression_name + "' which is reserved"
 			" as a name for an funcion.\nError encountered while reading"
 			" SUB_EXPRESSION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
 
 	if ( illegal_variable_names_.find( subexpression_name ) != illegal_variable_names_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Illegal sub-expression name '" + subexpression_name + "' which is a reserved"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Illegal sub-expression name '" + subexpression_name + "' which is a reserved"
 			" word for this input file format.\nError encountered while reading"
 			" SUB_EXPRESSION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
@@ -3065,14 +3065,14 @@ EntityFunc::process_SUB_EXPRESSION_line(
 	char equals_sign( ' ' );
 	while ( equals_sign == ' ' || equals_sign == '\t' ) {
 		if ( !input_line ) {
-			throw utility::excn::EXCN_Msg_Exception( "Expected to read an equals sign after reading the sub-expression name '"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an equals sign after reading the sub-expression name '"
 				+ subexpression_name + "' but found an end-of-line.\nError encountered while reading"
 				" SUB_EXPRESSION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 		}
 		input_line >> equals_sign;
 	}
 	if ( equals_sign != '=' ) {
-		throw utility::excn::EXCN_Msg_Exception( "Expected to read an equals sign after reading the sub-expression name '"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected to read an equals sign after reading the sub-expression name '"
 			+ subexpression_name + "' but found '" + utility::to_string( equals_sign ) + "'\nError encountered while reading"
 			" SUB_EXPRESSION command\n" + line + "\nLine # " + utility::to_string( line_number )  );
 	}
@@ -3106,7 +3106,7 @@ EntityFunc::process_SCORE_line(
 )
 {
 	if ( score_expression_ast ) {
-		throw utility::excn::EXCN_Msg_Exception( "Encountered a second SCORE line"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Encountered a second SCORE line"
 			"while processing the EntityFunc file\n"
 			+ line + "\nLine # " + utility::to_string( line_number )  );
 	}

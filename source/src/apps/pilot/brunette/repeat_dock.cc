@@ -376,7 +376,7 @@ void generate_combined_model(core::pose::Pose pose, core::pose::Pose native_pose
 			core::pose::PoseOP tmp_chain_pose = native_pose.split_by_chain(chain_id);
 			append_pose_to_pose(chainA_full,*tmp_chain_pose);
 		}
-catch(utility::excn::EXCN_Base const & e ){
+catch(utility::excn::utility::excn::Exception const & e ){
 	//not a worry. I expect many chains to not exist.
 }
 	}
@@ -557,7 +557,7 @@ core::pose::Pose superimpose_A_to_all(Dock & dock,core::pose::Pose native_pose){
 			core::pose::PoseOP tmp_chain_pose = native_pose.split_by_chain(chain_id);
 			superimpose_pose(chainA,*tmp_chain_pose,atom_map);
 			append_pose_to_pose(finalPose,chainA);
-		} catch ( utility::excn::EXCN_Base const & e ) {
+		} catch ( utility::excn::Exception const & e ) {
 			//not a worry. I expect many chains to not exist.
 		}
 	}
@@ -660,10 +660,9 @@ int main( int argc, char * argv [] ) {
 			}
 			//generate_combined_model(current_pose, native_pose,docks[1]);
 		}
-	}catch ( utility::excn::EXCN_Base const & e ) {
+	}catch ( utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 	return 0;
 }
-

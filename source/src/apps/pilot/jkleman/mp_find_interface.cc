@@ -42,7 +42,7 @@ main( int argc, char * argv [] )
 		MPFindInterfaceMoverOP mfi( new MPFindInterfaceMover() );
 		JobDistributor::get_instance()->go(mfi);
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

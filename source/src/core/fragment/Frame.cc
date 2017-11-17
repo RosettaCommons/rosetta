@@ -380,7 +380,7 @@ void Frame::shift_by( int offset ) {
 	if ( start_ + offset < 1 ) {
 		std::ostringstream msg;
 		msg << "offset " << offset << " would shift Frame " << *this << " to negative or zero starting position " << std::endl;
-		throw utility::excn::EXCN_RangeError( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  msg.str() );
 	}
 	start_ += offset;
 	end_ += offset;

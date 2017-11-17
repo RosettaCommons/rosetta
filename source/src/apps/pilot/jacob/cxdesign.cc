@@ -470,7 +470,7 @@ int main(int argc, char *argv[]) {
 			cxdock_design(pnat,fn,ssamp,iss,irt,ic,cbc);
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

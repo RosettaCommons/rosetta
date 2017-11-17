@@ -70,7 +70,7 @@ AddConstraints::parse_my_tag(
 				TR << "Added constraint generator " << new_cg->id() << "." << std::endl;
 				//No need to add generator to data map
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption("ConstraintGenerator " + gen + " not found in basic::datacache::DataMap.");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ConstraintGenerator " + gen + " not found in basic::datacache::DataMap.");
 			}
 		}
 	}

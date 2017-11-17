@@ -279,7 +279,7 @@ AtomCoordinateCstMover::parse_my_tag(
 			refpose_ = ref_pose;
 		}
 		if ( ! refpose_ ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("Use native for AtomCoordinateCstMover specified, but not native pose is availible.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Use native for AtomCoordinateCstMover specified, but not native pose is availible.");
 		}
 	}
 }

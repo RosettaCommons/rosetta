@@ -1923,7 +1923,7 @@ int main( int argc, char * argv [] ) {
 		}*/
 
 		printf("\n*****JOB COMPLETED*****\n"); fflush(stdout);
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 		return -1;

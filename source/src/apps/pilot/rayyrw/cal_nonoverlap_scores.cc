@@ -191,7 +191,7 @@ int main( int argc, char* argv[] )
 		outfn << "#fragA " << "fragB " << "offset " << "gap_size " << "counts " << "closab_score " << "clash_score " << "total_rmsd " << std::endl;
 		outfn << outlines.str();
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

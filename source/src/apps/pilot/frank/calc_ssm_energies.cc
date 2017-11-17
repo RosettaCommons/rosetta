@@ -525,7 +525,7 @@ int main( int argc, char * argv [] )
 		// main loop
 		protocols::jd2::JobDistributor::get_instance()->go( seq );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

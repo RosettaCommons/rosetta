@@ -44,7 +44,7 @@ std::string AutoCutDataCreator::keyname() const{
 AutoCutData::AutoCutData( std::istream &in ) :
 	Parent()
 {
-	utility::excn::EXCN_BadInput e( "AutoCutData tried to read an improperly formatted SilentFile remark." );
+	auto e = CREATE_EXCEPTION(utility::excn::BadInput, "AutoCutData tried to read an improperly formatted SilentFile remark." );
 
 	std::string token;
 

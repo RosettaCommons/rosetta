@@ -112,7 +112,7 @@ void EnvLabelSelector::parse_my_tag(
 	utility::tag::TagCOP,
 	basic::datacache::DataMap & )
 {
-	throw utility::excn::EXCN_RosettaScriptsOption( "Not to be used in RosettaScripts. For legacy compatibility only." );
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Not to be used in RosettaScripts. For legacy compatibility only." );
 }
 
 void EnvLabelSelector::set_local_positions( LocalPositions const& positions_in ){

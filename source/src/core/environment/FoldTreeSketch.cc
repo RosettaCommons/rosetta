@@ -41,17 +41,19 @@ static basic::Tracer tr( "core.environment.FoldTreeSketch", basic::t_info );
 namespace core {
 namespace environment {
 
-EXCN_FTSketchGraph::EXCN_FTSketchGraph( Size by,
+EXCN_FTSketchGraph::EXCN_FTSketchGraph(
+	char const *file, int line,
+	Size by,
 	Size on,
 	std::string const& action,
 	std::string const& reason ):
-	Parent( "Error in FoldTreeSketch: Unsuccessful "+
+	Parent(file, line, "Error in FoldTreeSketch: Unsuccessful "+
 	action+" by Node (seqid) "+utility::to_string(by)+
 	" on Node (seqid)"+utility::to_string(on)+"."+reason )
 {}
 
-EXCN_FTSketchGraph::EXCN_FTSketchGraph( std::string const& message ):
-	Parent( "Error in FoldTreeSketch: "+message )
+EXCN_FTSketchGraph::EXCN_FTSketchGraph(char const *file, int line, std::string const& message )
+	: Parent(file, line, "Error in FoldTreeSketch: "+message )
 {}
 
 FoldTreeSketch::FoldTreeSketch():
@@ -123,7 +125,7 @@ void FoldTreeSketch::insert_cut( Size const seqid ) {
 	range_check( seqid+1 );
 
 	if ( has_cut( seqid ) ) {
-		throw EXCN_FTSketchGraph( "Rejected cut insertion at "
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "Rejected cut insertion at "
 			+ utility::to_string( seqid )
 			+ " because no edge to cut exists." );
 	}
@@ -136,11 +138,11 @@ void FoldTreeSketch::insert_jump( Size const p1, Size const p2 ) {
 	range_check( p1 );
 	range_check( p2 );
 	if ( p1 == p2 ) {
-		throw EXCN_FTSketchGraph( "Jumps cannot connect a node to itself." );
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "Jumps cannot connect a node to itself." );
 	}
 
 	if ( has_jump( p1, p2 ) ) {
-		throw EXCN_FTSketchGraph( "Rejected jump insertion at "
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "Rejected jump insertion at "
 			+ utility::to_string( p1 ) + ", "
 			+ utility::to_string( p2 )
 			+ " because the jump already exists." );
@@ -152,7 +154,7 @@ void FoldTreeSketch::insert_jump( Size const p1, Size const p2 ) {
 
 void FoldTreeSketch::append_peptide( Size length ){
 	if ( length < 1 ) {
-		throw utility::excn::EXCN_RangeError( "New FoldTreeSketch polymer stretches must be length >= 1. Obviously." );
+		throw CREATE_EXCEPTION(utility::excn::RangeError, "New FoldTreeSketch polymer stretches must be length >= 1. Obviously." );
 	}
 
 	Size old_size = nodes_.size();
@@ -193,7 +195,7 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 		}
 		tr.Debug << std::endl;
 
-		throw EXCN_FTSketchGraph( "Number of jumps ("+utility::to_string( jumps.size() )+
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "Number of jumps ("+utility::to_string( jumps.size() )+
 			") and number of cuts ("+utility::to_string(cuts.size())+
 			") must be equal for rendering." );
 	}
@@ -217,7 +219,7 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 	bool success = ft.tree_from_jumps_and_cuts( nodes_.size(), jumps.size(),
 		jump_array, cut_array);
 	if ( !success ) {
-		throw EXCN_FTSketchGraph( "FoldTree generation was not successful." );
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "FoldTree generation was not successful." );
 	}
 }
 
@@ -241,7 +243,7 @@ int FoldTreeSketch::num_cuts() const {
 
 void FoldTreeSketch::range_check( Size const seqpos ) const {
 	if ( seqpos > nres() || seqpos < 1 ) {
-		throw EXCN_FTSketchGraph( "Sequence position "+utility::to_string(seqpos)+
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "Sequence position "+utility::to_string(seqpos)+
 			" is not a valid sequence position (nres="+
 			utility::to_string( nres() )+")");
 	}
@@ -281,7 +283,7 @@ utility::vector1< Size > const FoldTreeSketch::cycle( core::Size const start_res
 
 core::Size FoldTreeSketch::insert_cut( utility::vector1< Real > bias ){
 	if ( bias.size() != this->nres() ) {
-		throw EXCN_FTSketchGraph( "Cut bias array does not match FoldTreeSize." );
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "Cut bias array does not match FoldTreeSize." );
 	}
 
 	Size const ALLOWED_FAILURES = 10;
@@ -291,7 +293,7 @@ core::Size FoldTreeSketch::insert_cut( utility::vector1< Real > bias ){
 
 		if ( sum <= 0.0 ) {
 			tr.Error << bias << std::endl;
-			throw EXCN_FTSketchGraph( "Cut bias array sum was zero. Check your inputs. It may not be possible to auto-decyclize the FT with these cut bias choices." );
+			throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "Cut bias array sum was zero. Check your inputs. It may not be possible to auto-decyclize the FT with these cut bias choices." );
 		}
 
 
@@ -316,7 +318,7 @@ core::Size FoldTreeSketch::insert_cut( utility::vector1< Real > bias ){
 	std::ostringstream ss;
 	ss << "Random cut insertion failed for all of " << ALLOWED_FAILURES
 		<< " attempts. Check your bias array for bad values. Cut bias array: " << bias;
-	throw EXCN_FTSketchGraph( ss.str() );
+	throw CREATE_EXCEPTION(EXCN_FTSketchGraph, ss.str() );
 }
 
 std::set< core::Size > FoldTreeSketch::remove_cycles() {
@@ -325,12 +327,12 @@ std::set< core::Size > FoldTreeSketch::remove_cycles() {
 
 std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > const& bias ){
 	if ( bias.size() != this->nres() ) {
-		throw EXCN_FTSketchGraph( "Cut bias array does not match FoldTreeSize." );
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "Cut bias array does not match FoldTreeSize." );
 	}
 
 	utility::vector1< Size > cycle = this->cycle();
 	if ( cycle.size() != 0 && !cuttable( cycle ) ) {
-		throw EXCN_FTSketchGraph( "All-jump cycles are not automatically resolvable: "+
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "All-jump cycles are not automatically resolvable: "+
 			utility::to_string( cycle )+"." );
 	}
 
@@ -347,7 +349,7 @@ std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > c
 			sum += bias[ resid_it ];
 		}
 		if ( sum == 0 ) {
-			throw EXCN_FTSketchGraph( "All-zero cut biased cycles cannot be automatically resolved. Cycle: "
+			throw CREATE_EXCEPTION(EXCN_FTSketchGraph, "All-zero cut biased cycles cannot be automatically resolved. Cycle: "
 				+utility::to_string( cycle )+", Biases: "+utility::to_string( bias )+"." );
 		}
 
@@ -414,7 +416,7 @@ void FoldTreeSketch::Node::add_peptide_neighbor( NodeOP n ){
 	if ( ( this->seqid() - n->seqid() ) == 1 ) {
 		if ( !pep_prev_.expired() &&
 				!utility::pointer::equal(pep_prev_, this) ) {
-			throw EXCN_FTSketchGraph( this->seqid(), n->seqid(), "add_pep_neighbor",
+			throw CREATE_EXCEPTION(EXCN_FTSketchGraph, this->seqid(), n->seqid(), "add_pep_neighbor",
 				"Node already has a previous peptide member." );
 		}
 		pep_prev_ = n;
@@ -423,14 +425,14 @@ void FoldTreeSketch::Node::add_peptide_neighbor( NodeOP n ){
 	} else if ( ( (int) this->seqid() - (int) n->seqid() ) == -1 ) {
 		if ( !pep_next_.expired() &&
 				!utility::pointer::equal(pep_next_, this) ) {
-			throw EXCN_FTSketchGraph( this->seqid(), n->seqid(), "add_pep_neighbor",
+			throw CREATE_EXCEPTION(EXCN_FTSketchGraph, this->seqid(), n->seqid(), "add_pep_neighbor",
 				"Node already has a next peptide member." );
 		}
 		pep_next_ = n;
 		debug_assert( n->pep_prev_.expired() || n->pep_prev_.lock().get() == this );
 		n->pep_prev_ = this_weak_ptr_;
 	} else {
-		throw EXCN_FTSketchGraph( this->seqid(), n->seqid(), "add_pep_neighbor",
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, this->seqid(), n->seqid(), "add_pep_neighbor",
 			"Peptide connections exist only between sequence-adacjent nodes." );
 	}
 }
@@ -491,7 +493,7 @@ void FoldTreeSketch::Node::rm_peptide_neighbor( NodeAP _n ){
 		pep_prev->pep_next_.reset();
 		pep_next_.reset();
 	} else {
-		throw EXCN_FTSketchGraph( this->seqid(), n->seqid(), "rm_peptide_neighbor",
+		throw CREATE_EXCEPTION(EXCN_FTSketchGraph, this->seqid(), n->seqid(), "rm_peptide_neighbor",
 			"Neighbor does not exist to be removed." );
 	}
 }

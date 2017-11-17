@@ -151,7 +151,7 @@ public:
 	std::cerr << "Expected: " << expected_message << "\n";
 	std::cerr << "Actual: " << msg << "\n";
 	}
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 	std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
 	TS_ASSERT( false );
 	}
@@ -165,7 +165,7 @@ public:
 	std::string msg;
 	try {
 	msg = utility::receive_string_from_node( source );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 	std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
 	TS_ASSERT( false );
 	}
@@ -186,7 +186,7 @@ public:
 	std::cerr << "Expected: " << expected_message << "\n";
 	std::cerr << "Actual: " << msg << "\n";
 	}
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 	std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
 	TS_ASSERT( false );
 	}
@@ -200,7 +200,7 @@ public:
 	double msg( 0 );
 	try {
 	msg = utility::receive_double_from_node( source );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 	std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
 	TS_ASSERT( false );
 	}
@@ -220,7 +220,7 @@ public:
 		mmtr.set_max_capacity( 1 );
 		try {
 			mmtr.initial_handshake();
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -247,7 +247,7 @@ public:
 			mmtr.initial_handshake();
 			mmtr.main_optimization_loop();
 
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}

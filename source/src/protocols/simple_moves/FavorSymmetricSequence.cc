@@ -89,14 +89,14 @@ void FavorSymmetricSequence::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
-	if ( ! tag->hasOption("penalty") ) throw utility::excn::EXCN_RosettaScriptsOption("'FavorSymmetricSequence' mover requires penalty tag");
-	if ( ! tag->hasOption("symmetric_units") ) throw utility::excn::EXCN_RosettaScriptsOption("'FavorSymmetricSequence' mover requires symmetric_units tag");
+	if ( ! tag->hasOption("penalty") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'FavorSymmetricSequence' mover requires penalty tag");
+	if ( ! tag->hasOption("symmetric_units") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'FavorSymmetricSequence' mover requires symmetric_units tag");
 
 	penalty_ = tag->getOption<core::Real>("penalty");
 	symmetric_units_ = tag->getOption<core::Size>("symmetric_units");
 
 	if ( symmetric_units_ < 2 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'FavorSymmetricSequence' symmetric_units tag should specify at least 2 symmetric units");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'FavorSymmetricSequence' symmetric_units tag should specify at least 2 symmetric units");
 	}
 
 	for ( std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ) {

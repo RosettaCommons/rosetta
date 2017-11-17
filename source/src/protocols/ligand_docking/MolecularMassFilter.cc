@@ -63,7 +63,7 @@ void
 MolecularMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	if ( ! (tag->hasOption("chain") && tag->hasOption("mass_limit") ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("MolecularMass filter needs a 'chain' and an 'mass_limit' option");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "MolecularMass filter needs a 'chain' and an 'mass_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 	mass_limit_ = tag->getOption<core::Size>("mass_limit");

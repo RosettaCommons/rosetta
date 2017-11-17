@@ -25,7 +25,6 @@
 #include <protocols/moves/VectorPoseMover.hh>
 //#include <protocols/simple_moves/MSDMover.hh>
 #include <protocols/filters/Filter.hh>
-#include <utility/excn/EXCN_Base.hh>
 //option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>

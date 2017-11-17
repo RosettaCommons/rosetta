@@ -33,7 +33,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <iostream>
 #include <fstream>
@@ -114,7 +114,7 @@ main( int argc, char * argv [] )
 
 		return 0;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

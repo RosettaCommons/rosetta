@@ -61,7 +61,7 @@ open(
 		db_stream.clear();
 	}
 	if ( db_file.length() == 0 ) {
-		throw EXCN_Msg_Exception("Unable to open database file ''");
+		throw CREATE_EXCEPTION(Exception, "Unable to open database file ''");
 		return false;
 	}
 
@@ -74,7 +74,7 @@ open(
 		std::stringstream err_msg;
 		err_msg
 			<< "Database file open failed for: \"" << db_file << "\"" << std::endl;
-		throw EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(Exception, err_msg.str());
 
 #ifdef __native_client__
 		throw( "ERROR: Database file open failed for: " + db_file );

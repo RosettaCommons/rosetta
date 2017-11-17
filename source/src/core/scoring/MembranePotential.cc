@@ -368,7 +368,7 @@ MembranePotential::evaluate_env(
 	Real fcen6  ( cenlist_from_pose( pose ).fcen6( rsd.seqpos() ) );
 	Real fcen10 ( cenlist_from_pose( pose ).fcen10( rsd.seqpos() ) );
 
-	// in rare cases, the density is over 15 within 6
+	// in rare cases, the density is over 15 within 6
 	if ( fcen6 > 15 ) fcen6 = 15 ;
 	if ( fcen10 > 40 ) fcen10 = 40;
 

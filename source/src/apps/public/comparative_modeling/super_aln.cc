@@ -126,7 +126,7 @@ main( int argc, char * argv [] ) {
 		}
 		pose1.dump_pdb( output_name );
 		std::cout << "wrote pdb with name " << output_name << std::endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

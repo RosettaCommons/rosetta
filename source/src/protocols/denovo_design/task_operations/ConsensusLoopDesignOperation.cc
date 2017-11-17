@@ -130,7 +130,7 @@ ConsensusLoopDesignOperation::parse_tag(
 		if ( secstruct_.empty() ) {
 			std::stringstream msg;
 			msg << "ConsensusLoopDesign: Error getting secondary structure from blueprint file" << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 	}
 
@@ -681,7 +681,7 @@ ConsensusLoopDatabase::read_db()
 
 	// database format is: <Before SS> <After SS> <Loop Abego> <Allowed AAs1> <Allowed AAs2> ... <Allowed AAsN>
 	if ( !infile.good() ) {
-		throw utility::excn::EXCN_Msg_Exception( "ConsensusLoopDesign: Could not open database file " + db_file + "\n" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "ConsensusLoopDesign: Could not open database file " + db_file + "\n" );
 	}
 
 	while ( infile.good() ) {

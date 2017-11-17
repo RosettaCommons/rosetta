@@ -436,7 +436,7 @@ BetaSheetArchitect::modify_and_add_permutation( components::StructureData const 
 			if ( (*s)->size() != total_size ) {
 				std::stringstream msg;
 				msg << "Sheet from DB with length " << (*s)->size() << " and lengths=" << retrieve_lengths( perm ) << " does not match SD: " << perm << std::endl;
-				throw utility::excn::EXCN_BadInput( msg.str() );
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 			}
 
 			// add template pose for all strands
@@ -625,7 +625,7 @@ BetaSheetArchitect::check_permutation( components::StructureData const & perm_no
 			msg << "Returning false: strand " << strand->id() << ": segment "
 				<< segment.pose_to_segment( resid ) << ": pose "
 				<< resid << std::endl;
-			throw EXCN_PreFilterFailed( msg.str() );
+			throw CREATE_EXCEPTION(EXCN_PreFilterFailed, msg.str() );
 		}
 	}
 
@@ -637,7 +637,7 @@ BetaSheetArchitect::check_permutation( components::StructureData const & perm_no
 		std::stringstream msg;
 		msg << "No sheets were found in the database for lengths=" << lengths_t << " orientations="
 			<< orientations_t << " shifts=" << shifts_t << std::endl;
-		throw EXCN_PreFilterFailed( msg.str() );
+		throw CREATE_EXCEPTION(EXCN_PreFilterFailed, msg.str() );
 	}
 	TR.Debug << "Passing check_permutation" << std::endl;
 }

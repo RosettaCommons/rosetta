@@ -202,7 +202,7 @@ WaterFeatures::parse_my_tag(
 		// << "The " << type_name() << " reporter requires a 'targets' tag:" << endl
 		// << endl
 		// << "    <feature name=" << type_name() <<" targets=comma_separated_resName:atmName_list />" << endl;
-		//throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
+		//throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, error_msg.str());
 		std::string water_names_list = tag->getOption< std::string >("targets");
 		utility::vector0< std::string > const water_names( utility::string_split( water_names_list, ',' ) );
 		for ( auto const & water_name : water_names ) {

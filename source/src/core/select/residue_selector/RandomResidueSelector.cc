@@ -153,11 +153,11 @@ RandomResidueSelector::parse_my_tag(
 		ResidueSelectorCOP selector;
 		try {
 			selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' in the DataMap.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 		debug_assert( selector );
 		TR << "Using residue selector " << selectorname << std::endl;

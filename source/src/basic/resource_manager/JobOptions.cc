@@ -50,7 +50,7 @@ using utility::options::RealOptionKey;
 using utility::options::RealVectorOptionKey;
 using utility::options::StringOptionKey;
 using utility::options::StringVectorOptionKey;
-using utility::excn::EXCN_Msg_Exception;
+using utility::excn::Exception;
 using utility::file::FileName;
 using utility::file::PathName;
 using utility::vector1;
@@ -191,7 +191,7 @@ get_option_from_map( std::map< T, S > const & option_map, T const & key, char co
 {
 	auto iter = option_map.find( key );
 	if ( iter == option_map.end() ) {
-		throw EXCN_Msg_Exception( std::string( option_class_name ) + "'" + key.identifier() + "' not found in JobOptions");
+		throw CREATE_EXCEPTION(Exception,  std::string( option_class_name ) + "'" + key.identifier() + "' not found in JobOptions");
 	}
 	return iter->second;
 }

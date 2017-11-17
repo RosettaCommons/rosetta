@@ -29,9 +29,9 @@ except:
     t = sys.exc_info()[0]
     e = sys.exc_info()[1]
     print('Exceptions type: {}, message: {}'.format(t, e) )
-    assert str(e) == 'parser::protocol file must specify PROTOCOLS section'
+    assert 'parser::protocol file must specify PROTOCOLS section' in str(e)
 
 try:
     parser.generate_mover_for_protocol(pose, False, tag, options)
 except RuntimeError as e:
-    assert str(e) == 'parser::protocol file must specify PROTOCOLS section'
+    assert 'parser::protocol file must specify PROTOCOLS section' in str(e)

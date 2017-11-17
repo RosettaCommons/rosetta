@@ -99,7 +99,7 @@ int main( int argc, char * argv [] ) {
 
 		PrintFeatures f;
 		not_universal_main( f );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

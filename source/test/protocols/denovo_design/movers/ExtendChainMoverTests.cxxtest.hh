@@ -91,13 +91,13 @@ public:
 		std::stringstream xml;
 		xml << "<ExtendChain name=extend motif=\"2LG-6EB-1LX\" />";
 		utility::tag::TagOP tag = utility::tag::Tag::create( xml );
-		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, filters, movers, input_pose ), utility::excn::EXCN_RosettaScriptsOption );
+		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, filters, movers, input_pose ), utility::excn::RosettaScriptsOptionError );
 
 		std::stringstream xml2;
 		xml2 << "<ExtendChain name=extend motif=\"2LG-6EB-1LX\" segment=\"pose.1\" chain=\"2\" />";
 		tag = utility::tag::Tag::create( xml2 );
 		extend = ExtendChainMover();
-		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, filters, movers, input_pose ), utility::excn::EXCN_RosettaScriptsOption );
+		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, filters, movers, input_pose ), utility::excn::RosettaScriptsOptionError );
 
 		std::stringstream xml3;
 		xml3 << "<ExtendChain name=extend motif=\"2LG-6EB-1LX\" segment=\"pose.2\" />";
@@ -116,14 +116,14 @@ public:
 		xml5 << "<ExtendChain name=extend segment=\"pose.2\" />";
 		tag = utility::tag::Tag::create( xml5 );
 		extend = ExtendChainMover();
-		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, filters, movers, input_pose ), utility::excn::EXCN_RosettaScriptsOption );
+		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, filters, movers, input_pose ), utility::excn::RosettaScriptsOptionError );
 
 		// must have motif specified, not length!
 		std::stringstream xml6;
 		xml6 << "<ExtendChain name=extend length=10 segment1=\"pose.2\" />";
 		tag = utility::tag::Tag::create( xml6 );
 		extend = ExtendChainMover();
-		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, filters, movers, input_pose ), utility::excn::EXCN_RosettaScriptsOption );
+		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, filters, movers, input_pose ), utility::excn::RosettaScriptsOptionError );
 	}
 
 	void test_append() {

@@ -29,7 +29,7 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR( "core.scoring.carbohydrates.CHIEnergyFunction.cxxtest" );
 
@@ -178,7 +178,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 #ifdef MULTI_THREADED
 		try {
 			core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction( true, .1 );
-		} catch( utility::excn::EXCN_Base& excn )  {
+		} catch (utility::excn::Exception& excn )  {
 			TR << excn.msg() << std::endl;
 			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction with setup_for_sampling is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jared Adolf-Bryfogle (jadolfbr@gmail.com) to complain about this." );
 			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );

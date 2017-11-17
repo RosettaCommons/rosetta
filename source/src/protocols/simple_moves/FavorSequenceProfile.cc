@@ -192,13 +192,13 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	if ( tag->hasOption("pdbname") ) ++num_struct;
 
 	if ( ! num_struct &&  ! tag->hasOption("pssm") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Must set one of 'pssm', 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must set one of 'pssm', 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if ( num_struct && tag->hasOption("pssm") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Cannot set both 'pssm' and one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot set both 'pssm' and one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if ( num_struct > 1 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Can only set one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can only set one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if ( tag->hasOption("matrix") && tag->hasOption("pssm")  ) {
 		TR.Warning << "In option matrix not used with pssm specification." << std::endl;

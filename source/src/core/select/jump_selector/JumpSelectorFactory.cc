@@ -39,7 +39,7 @@ JumpSelectorFactory::factory_register( JumpSelectorCreatorOP creator )
 	if ( creator_map_.find( creator->keyname() ) != creator_map_.end() ) {
 		std::string err_msg = "Factory Name Conflict: Two or more JumpSelectorCreators registered with the name " + creator->keyname();
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( err_msg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 		} else {
 			utility_exit_with_message(  err_msg );
 		}
@@ -62,7 +62,7 @@ JumpSelectorFactory::provide_xml_schema(
 ) const {
 	if ( ! has_type( selector_name ) ) {
 		std::string err_msg =  "No JumpSelectorCreator with the name '" + selector_name + "' has been registered with the JumpSelectorFactory";
-		throw utility::excn::EXCN_Msg_Exception( err_msg );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 	}
 	std::map< std::string, JumpSelectorCreatorOP >::const_iterator iter = creator_map_.find( selector_name );
 	iter->second->provide_xml_schema( xsd );
@@ -76,7 +76,7 @@ JumpSelectorOP JumpSelectorFactory::new_jump_selector(
 {
 	if ( ! has_type( selector_name ) ) {
 		std::string err_msg =  "No JumpSelectorCreator with the name '" + selector_name + "' has been registered with the JumpSelectorFactory";
-		throw utility::excn::EXCN_Msg_Exception( err_msg );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 	}
 	std::map< std::string, JumpSelectorCreatorOP >::const_iterator iter = creator_map_.find( selector_name );
 	JumpSelectorOP new_selector = iter->second->create_jump_selector();
@@ -98,8 +98,8 @@ void JumpSelectorFactory::define_jump_selector_xml_schema( utility::tag::XMLSche
 			jump_selector_xml_schema_group_name(),
 			& complex_type_name_for_jump_selector,
 			xsd );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for JumpSelectors from JumpSelectorFactory; offending class"
+	} catch ( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for JumpSelectors from JumpSelectorFactory; offending class"
 			" must call core::select::jump_selector::complex_type_name_for_jump_selector when defining"
 			" its XML Schema\n" + e.msg() );
 	}

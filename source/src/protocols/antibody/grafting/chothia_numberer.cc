@@ -36,7 +36,7 @@ _AE_unexpected_region_length_ unexpected_region_length_error(string const& regio
 {
 	std::stringstream s;
 	s << "ERROR: Unxpected length of " << region << " [length=" << length << "] " << msg;
-	return _AE_unexpected_region_length_( s.str() );
+	return CREATE_EXCEPTION(_AE_unexpected_region_length_, s.str() );
 }
 
 
@@ -44,7 +44,7 @@ _AE_unexpected_region_length_ numbering_region_lengths_error(string const& regio
 {
 	std::stringstream s;
 	s << "ERROR: Length of numbering array for region " << region << " does not match does not match length of same region in AntibodyChain/AntibodyFramework! [" << length1 << "!=" << length2 <<"]";
-	return _AE_unexpected_region_length_( s.str() );
+	return CREATE_EXCEPTION(_AE_unexpected_region_length_, s.str() );
 }
 
 
@@ -149,7 +149,7 @@ AntibodyChainNumbering::NumberingVector number_region(string const& name, uint l
 
 	std::stringstream s;
 	s << "ERROR: Unxpected length of " << name << " [length=" << length << "], length expected to be: " << possible_lengths << '!';
-	throw _AE_unexpected_region_length_( s.str() );
+	throw CREATE_EXCEPTION(_AE_unexpected_region_length_,  s.str() );
 }
 
 
@@ -291,7 +291,7 @@ AntibodyChainNumbering Chothia_Numberer::number_light_chain(AntibodySequence con
 				//"0,0A,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23",  // Note: this is different from Python implementaion (it was adjusteed L1 on the fly, deleting the first residue)
 		});
 	} else {
-		throw _AE_unexpected_region_length_("ERROR: Current code could not assign Chothia numbering of FR_L1 in the query sequence!");
+		throw CREATE_EXCEPTION(_AE_unexpected_region_length_, "ERROR: Current code could not assign Chothia numbering of FR_L1 in the query sequence!");
 	}
 
 	n.fr2 = number_region("light-fr2", f.fr2.size(), {"35,36,37,38,39,40,41,42,43,44,45,46,47,48,49"});

@@ -108,7 +108,7 @@ main( int argc, char * argv [] )
 			trmain << lua_tostring(lstate_, -1) << std::endl;
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

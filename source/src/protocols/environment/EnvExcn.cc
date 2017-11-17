@@ -51,6 +51,7 @@ std::string dof_id_to_string( core::id::DOF_ID const& id, ProtectedConformation 
 
 
 EXCN_Env_Security_Exception::EXCN_Env_Security_Exception(
+	char const *file, int line,
 	core::id::DOF_ID const &  dof,
 	core::environment::DofPassportCOP pass,
 	std::string const& mod_type,
@@ -58,7 +59,7 @@ EXCN_Env_Security_Exception::EXCN_Env_Security_Exception(
 	std::string const& mover_name,
 	EnvironmentCAP env
 ):
-	Parent( env ),
+	Parent(file, line, env ),
 	id_( dof ),
 	pass_( pass )
 {
@@ -86,10 +87,11 @@ EXCN_Env_Security_Exception::EXCN_Env_Security_Exception(
 }
 
 EXCN_Env_Security_Exception::EXCN_Env_Security_Exception(
+	char const *file, int line,
 	std::string const& message,
 	std::string const& mover_name,
 	EnvironmentCAP env ) :
-	Parent( env )
+	Parent(file, line, env )
 {
 	std::ostringstream msg;
 	msg << message << std::endl << "Failure due to a call by mover '" << mover_name << "'";

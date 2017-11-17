@@ -198,7 +198,7 @@ make_motif_task(
 			<< "Failed to process resfile" << endl
 			<< "RESFILE:" << endl
 			<< resfile << endl;
-		throw utility::excn::EXCN_Msg_Exception(error_message.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str());
 	}
 	return task;
 
@@ -436,7 +436,7 @@ int main(int argc, char *argv[]) {
 		register_options();
 		devel::init(argc,argv);
 		scheme_score();
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }

@@ -150,7 +150,7 @@ main( int argc, char* argv[] ) {
 
 		query_pose.dump_pdb( "pose_with_ligand.pdb" );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -136,7 +136,7 @@ int main( int argc, char * argv [] ) {
 			rmsd = sqrt(dist_sum/pose1_rsd.nheavyatoms());
 			std::cout<<"RMSD:"<<"\t"<<inp_ligand<<"\t"<<ref_ligand<<"\t"<<rmsd<<std::endl;
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

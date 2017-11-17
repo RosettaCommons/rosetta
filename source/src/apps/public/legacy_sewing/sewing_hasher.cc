@@ -452,7 +452,7 @@ main( int argc, char * argv [] ) {
 			} //for ( ; it1 != it_end; ++it1 ) {
 #endif
 		}// if ( ( option[legacy_sewing::mode].value() == "hash" ) )
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch ( utility::excn::Exception& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 		return -1;

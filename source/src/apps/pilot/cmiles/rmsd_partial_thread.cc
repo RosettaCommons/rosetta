@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
   Real rmsd = core::scoring::CA_rmsd(*reference, *partial_thread, residues);
   Real gdtmm = core::scoring::CA_gdtmm(*reference, *partial_thread, residues);
   cout << "rmsd: " << rmsd << ", gdtmm: " << gdtmm << endl;
-  } catch ( utility::excn::EXCN_Base const & e ) {
+  } catch (utility::excn::Exception const & e ) {
                             std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
                                 }

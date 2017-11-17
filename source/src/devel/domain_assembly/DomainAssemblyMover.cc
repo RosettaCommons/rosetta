@@ -297,7 +297,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 void DomainAssemblyMover::run_abinitio_centroid_stage( core::pose::Pose & pose ) {
 
 	if ( !fragsets_set() ) {
-		throw utility::excn::EXCN_Msg_Exception( "No FragmentSet specified - exiting!\n" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "No FragmentSet specified - exiting!\n" );
 	}
 
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
@@ -642,7 +642,7 @@ void DomainAssemblyMover::initialize_target_pose() {
 			*(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )),
 			basic::options::option[ basic::options::OptionKeys::in::file::native ](), false, core::import_pose::PDB_file );
 	} else {
-		throw utility::excn::EXCN_Msg_Exception( "No native pose specified! Use -in::file::native\n" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "No native pose specified! Use -in::file::native\n" );
 	}
 }
 
@@ -653,7 +653,7 @@ void DomainAssemblyMover::initialize_pose_map_from_commandline() {
 	if ( !data ) {
 		std::stringstream err_msg;
 		err_msg << " cannot open map file: " << filename << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 	}
 
 	std::string line;
@@ -664,7 +664,7 @@ void DomainAssemblyMover::initialize_pose_map_from_commandline() {
 		if ( line_stream.fail() ) {
 			std::stringstream err_msg;
 			err_msg << " cannot parse line in map file: " << line << std::endl;
-			throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 		}
 		target_pose_map_.insert( std::make_pair( pose_number, native_pose_number ) );
 	}
@@ -680,7 +680,7 @@ void DomainAssemblyMover::initialize_buried_from_commandline() {
 	if ( !data ) {
 		std::stringstream err_msg;
 		err_msg << " cannot open buried residue definition file: " << filename << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 	}
 
 	std::stringstream buried_string;
@@ -726,7 +726,7 @@ DomainAssemblyMover::initialize_fragments_from_commandline()
 void DomainAssemblyMover::recover_sidechains( core::pose::Pose & pose ) const
 {
 	if ( starting_pose_.empty() ) {
-		throw utility::excn::EXCN_Msg_Exception( "No starting pose specified! Use -da_start_pdb\n" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "No starting pose specified! Use -da_start_pdb\n" );
 	}
 	protocols::simple_moves::ReturnSidechainMover return_sidechains( starting_pose_ );
 	return_sidechains.apply( pose );

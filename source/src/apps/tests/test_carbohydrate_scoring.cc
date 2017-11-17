@@ -359,7 +359,7 @@ main( int argc, char *argv[] )
 
 		cout << "(The minimized angles should be close to 75/NA.)" << endl;
 
-	} catch ( excn::EXCN_Base const & e ) {
+	} catch (excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return -1;
 	}

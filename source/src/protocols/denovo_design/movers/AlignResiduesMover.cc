@@ -74,7 +74,7 @@ parse_residue_selectors( std::string const & selector_name_str, basic::datacache
 	for ( utility::vector1< std::string >::const_iterator sname=selector_names.begin(); sname!=selector_names.end(); ++sname ) {
 		core::select::residue_selector::ResidueSelectorCOP s = protocols::rosetta_scripts::get_residue_selector( *sname, data );
 		if ( !s ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "target_selector named " + *sname + " could not be found in the RosettaScripts XML" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "target_selector named " + *sname + " could not be found in the RosettaScripts XML" );
 		}
 		selectors.push_back( s->clone() );
 	}
@@ -99,7 +99,7 @@ AlignResiduesMover::parse_my_tag(
 	target_selectors_ = parse_residue_selectors( target_selector_names, data );
 
 	if ( template_selectors_.size() != target_selectors_.size() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Number of template ids must match number of target ids." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Number of template ids must match number of target ids." );
 	}
 }
 

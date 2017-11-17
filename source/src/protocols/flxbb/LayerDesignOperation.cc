@@ -587,13 +587,13 @@ LayerDesignOperation::layer_residues(
 {
 	auto it = layer_residues_.find( layer_name );
 	if ( it == layer_residues_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Layer " + layer_name + " was not found when trying to determine valid residue types." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Layer " + layer_name + " was not found when trying to determine valid residue types." );
 	}
 	debug_assert( it != layer_residues_.end() );
 
 	auto it2 = it->second.find( ss_name );
 	if ( it2 == it->second.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "SS type " + ss_name + " in layer " + layer_name + " was not found when trying to determine valid residue types." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "SS type " + ss_name + " in layer " + layer_name + " was not found when trying to determine valid residue types." );
 	}
 	debug_assert( it2 != it->second.end() );
 
@@ -608,13 +608,13 @@ LayerDesignOperation::layer_nc_residues(
 {
 	auto it = layer_nc_residues_.find( layer_name );
 	if ( it == layer_nc_residues_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Layer " + layer_name + " was not found when trying to determine valid residue types." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Layer " + layer_name + " was not found when trying to determine valid residue types." );
 	}
 	debug_assert( it != layer_nc_residues_.end() );
 
 	auto it2 = it->second.find( ss_name );
 	if ( it2 == it->second.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "SS type " + ss_name + " in layer " + layer_name + " was not found when trying to determine valid ncaa residue types." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "SS type " + ss_name + " in layer " + layer_name + " was not found when trying to determine valid ncaa residue types." );
 	}
 	debug_assert( it2 != it->second.end() );
 
@@ -629,7 +629,7 @@ LayerDesignOperation::copy_layer_residues(
 {
 	LayerResidues::const_iterator src = layer_residues_.find( src_layer );
 	if ( src == layer_residues_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "LayerDesign: Layer named " + src_layer + " does not exist when trying to copy residue information to layer " + dest_layer );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "LayerDesign: Layer named " + src_layer + " does not exist when trying to copy residue information to layer " + dest_layer );
 	}
 
 	auto lr = layer_residues_.find( dest_layer );
@@ -1284,7 +1284,7 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 				TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation( task_op_type, datamap, task_tag );
 				task_ops.push_back( task );
 			} else {
-				utility::excn::EXCN_Msg_Exception( "Illegal subtag \"" + task_op_type + "\" of CombinedTasks subtag of CombinedTasks. Expected \"all\", \"Helix\", \"Strand\", \"Loop\" or a valid TaskOperation name" );
+				throw CREATE_EXCEPTION(utility::excn::Exception, "Illegal subtag \"" + task_op_type + "\" of CombinedTasks subtag of CombinedTasks. Expected \"all\", \"Helix\", \"Strand\", \"Loop\" or a valid TaskOperation name" );
 			}
 		}
 		CombinedTaskOperationOP comb( new CombinedTaskOperation( task_ops ) );
@@ -1311,7 +1311,7 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 					TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation( task_op_type, datamap, task_layer_subtag );
 					add_layer( task_name, task, DESIGN, DESIGNABLE );
 				} else {
-					throw utility::excn::EXCN_Msg_Exception( "Invalid TaskOperation name \"" + task_op_type + "\" in TaskLayer subtag of LayerDesign" );
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Invalid TaskOperation name \"" + task_op_type + "\" in TaskLayer subtag of LayerDesign" );
 				}
 			} else {
 				parse_layer_secstruct_tag( task_layer_subtag, datamap, task_name );
@@ -1470,7 +1470,7 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 			set_layer_residues( layer_name, secstruct, std::string( temp_def_res_set.begin(), temp_def_res_set.end() ) );
 		} else {
 			if ( secstruct != "all" ) {
-				throw utility::excn::EXCN_Msg_Exception("LayerDesignOperation: Trying to exclude aas from a secstruct that doesn't exist. Layer = " + layer_name + " secstruct = " + secstruct );
+				throw CREATE_EXCEPTION(utility::excn::Exception, "LayerDesignOperation: Trying to exclude aas from a secstruct that doesn't exist. Layer = " + layer_name + " secstruct = " + secstruct );
 			}
 		}
 

@@ -401,7 +401,7 @@ private:
 				return ( fract_location * property_penalties_[index][i] + (1.0-fract_location) * property_penalties_[index][i-1] ); //Linearly interpolate and return a penalty
 			}
 		}
-		throw utility::excn::EXCN_Msg_Exception( "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::interpolate_property_penalties(): No pair of penalties for interpolation could be found!  This shouldn't happen, so consult the developer." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::interpolate_property_penalties(): No pair of penalties for interpolation could be found!  This shouldn't happen, so consult the developer." );
 		return 0.0; //To make compiler happy, though this line will never be reached.
 	}
 

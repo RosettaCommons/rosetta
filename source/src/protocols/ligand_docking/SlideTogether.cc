@@ -93,8 +93,8 @@ SlideTogether::parse_my_tag(
 	core::pose::Pose const & pose
 )
 {
-	if ( tag->getName() != "SlideTogether" ) throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
-	if ( ! tag->hasOption("chains") ) throw utility::excn::EXCN_RosettaScriptsOption("'SlideTogether' mover requires chains tag");
+	if ( tag->getName() != "SlideTogether" ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
+	if ( ! tag->hasOption("chains") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'SlideTogether' mover requires chains tag");
 
 	std::string const chains_str = tag->getOption<std::string>("chains");
 	utility::vector1<std::string> chain_strs= utility::string_split(chains_str, ',');

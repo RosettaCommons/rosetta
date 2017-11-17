@@ -596,7 +596,7 @@ main( int argc, char * argv [] )
 
 		TR << "jk finished computing desired geometric solvation potential" << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

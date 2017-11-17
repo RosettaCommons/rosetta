@@ -111,7 +111,7 @@ void Pool_RMSD::fill_pool( std::string const& silent_file ) {
 	io::silent::SilentFileData sfd( opts );
 	try {
 		sfd.read_file( silent_file );
-	} catch( utility::excn::EXCN_BadInput const& excn ) {
+	} catch( utility::excn::BadInput const& excn ) {
 		excn.show( tr.Warning );
 		tr.Warning << "Pool_RMSD did not find any structures, will output n/a 10000 for converged_tag and converged_rmsd" << std::endl;
 		return;
@@ -274,7 +274,7 @@ bool Pool_ConvergenceCheck::operator() ( core::pose::Pose const & fit_pose, move
 	//store in Job-Object:
 	protocols::jd2::add_string_string_pair_to_current_job( "pool_converged_tag", best_decoy );
 	protocols::jd2::add_string_real_pair_to_current_job( "pool_converged_rmsd", best_rmsd );
-	if ( best_rmsd <= threshold_ ) throw EXCN_Pool_Converged();
+	if ( best_rmsd <= threshold_ ) throw CREATE_EXCEPTION(EXCN_Pool_Converged, "");
 	return best_rmsd >= threshold_;
 }
 

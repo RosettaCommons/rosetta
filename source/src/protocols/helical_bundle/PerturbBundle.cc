@@ -239,7 +239,7 @@ PerturbBundle::parse_my_tag(
 ) {
 
 	if ( tag->getName() != "PerturbBundle" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible -- the tag name does not match the mover name.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible -- the tag name does not match the mover name.");
 	}
 
 	if ( TR.visible() ) TR << "Parsing options for PerturbBundle (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;

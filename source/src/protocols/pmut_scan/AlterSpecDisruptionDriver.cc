@@ -76,7 +76,7 @@ core::Energy AlterSpecDisruptionDriver::score(core::pose::Pose & pose) {
 	//It would be good if there were a way to test an invariant here - primarily that we have an interface of two chains!
 	//runtime_assert(pose.num_chains() >= 2);
 	if ( !(pose.conformation().num_chains() >= 2) ) {
-		throw utility::excn::EXCN_Msg_Exception("AlterSpecDisruptionDriver requires two chains to calculate an interface to disrupt.");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "AlterSpecDisruptionDriver requires two chains to calculate an interface to disrupt.");
 	}
 
 	//no clear way to get IAM to use the same TaskFactory

@@ -58,7 +58,7 @@ using namespace protocols::loop_modeler;
 using namespace protocols::rosetta_scripts;
 using core::import_pose::pose_from_file;
 
-using utility::excn::EXCN_Msg_Exception;
+using utility::excn::Exception;
 
 // Brainstorming {{{1
 // Look at the TaskOperationRegistrator class to see how to register KIC
@@ -464,7 +464,7 @@ public:
 		// Case 3: Illegal value.
 
 		tag = "<LoopModeler> <Centroid temp_cycles=x/> </LoopModeler>";
-		TS_ASSERT_THROWS(parse_tag<LoopModeler>(tag), EXCN_Msg_Exception);
+		TS_ASSERT_THROWS(parse_tag<LoopModeler>(tag), Exception);
 	}
 
 	void test_custom_movers() { // {{{1
@@ -510,7 +510,7 @@ public:
 		// Can only use LoopMover subclasses within LoopModeler, not regular
 		// Movers.
 
-		TS_ASSERT_THROWS(parse_tag<LoopModeler>(tag), EXCN_Msg_Exception);
+		TS_ASSERT_THROWS(parse_tag<LoopModeler>(tag), Exception);
 	}
 
 	void test_custom_centroid_movers() { // {{{1

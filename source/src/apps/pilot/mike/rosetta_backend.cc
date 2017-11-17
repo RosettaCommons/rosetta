@@ -107,7 +107,7 @@ public:
 		utility::json_spirit::mArray::const_iterator it = parsed_json_task_array.begin();
 
 		if ( parsed_json_task_array.begin()->type() != utility::json_spirit::obj_type ) {
-			throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for tasklist member:'");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "JSON error: expected an object for tasklist member:'");
 		};
 		const utility::json_spirit::mObject &parsed_json = parsed_json_task_array.begin()->get_obj();
 
@@ -117,7 +117,7 @@ public:
 			payload = get_string( parsed_json, "payload" );
 			taskname_ = get_string( parsed_json, "name" );
 		}
-catch( utility::excn::EXCN_Msg_Exception &excn ){
+catch (utility::excn::Exception &excn ){
 	TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
 }
 
@@ -127,7 +127,7 @@ catch( utility::excn::EXCN_Msg_Exception &excn ){
 		try{
 			parsed_payload  = utility::json_spirit::read_mObject( payload );
 		}
-catch( utility::excn::EXCN_Msg_Exception &excn ){
+catch (utility::excn::Exception &excn ){
 	std::cout << "Error extracting payload" << std::endl;
 	TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
 	return false;
@@ -144,7 +144,7 @@ catch( utility::excn::EXCN_Msg_Exception &excn ){
 		try{
 			job_data_string = get_string( parsed_payload, "job_data" );
 		}
-catch( utility::excn::EXCN_Msg_Exception &excn ){
+catch (utility::excn::Exception &excn ){
 	std::cout << "Error extracting job_data from RPC request" << std::endl;
 	TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
 	return false;
@@ -157,7 +157,7 @@ catch( utility::excn::EXCN_Msg_Exception &excn ){
 			rpc_ = new protocols::rpc::JSON_RPC( job_data_string, false, basic_init_ );
 			// intrpret the actual RPC contents.
 		}
-catch ( utility::excn::EXCN_Base& excn ) {
+catch (utility::excn::Exception& excn ) {
 	return_results_to_server( true );
 	return false;
 }
@@ -236,7 +236,7 @@ catch ( utility::excn::EXCN_Base& excn ) {
 		try{
 			rpc_->run();
 		}
-catch ( utility::excn::EXCN_Base& excn ) {
+catch (utility::excn::Exception& excn ) {
 	return_results_to_server( true );
 	return false;
 }
@@ -326,7 +326,7 @@ main( int argc, char * argv [] )
 		RosettaBackend backend( server, &basic_init );
 
 		backend.run();
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "Caught exception " << e.msg() << std::endl;
 		return -1;
 	}

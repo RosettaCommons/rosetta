@@ -98,14 +98,14 @@ void WriteLigandMolFile::parse_my_tag(
 )
 {
 	if ( !tag->hasOption("chain") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'WriteLigandMolFile' requires the option 'chain'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'WriteLigandMolFile' requires the option 'chain'");
 	}
 
 	if ( !tag->hasOption("directory") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'WriteLigandMolFile' requires the option 'directory'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'WriteLigandMolFile' requires the option 'directory'");
 	}
 	if ( !tag->hasOption("prefix") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'WriteLigandMolFile' requires the option 'prefix'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'WriteLigandMolFile' requires the option 'prefix'");
 	}
 
 	std::string hash_status = tag->getOption<std::string>("hash_file_names","false");

@@ -119,7 +119,7 @@ void ScoreTermValueBasedSelector::parse_my_tag(utility::tag::TagCOP tag, basic::
 		}
 		TR << "Using '" << score_type << "' for defining selection.\n";
 	} else {
-		throw utility::excn::EXCN_Msg_Exception( "Missing score_type name! A predeclared filter should be specified as an option." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Missing score_type name! A predeclared filter should be specified as an option." );
 	}
 
 	if ( tag->hasOption( "selector" ) ) {
@@ -130,7 +130,7 @@ void ScoreTermValueBasedSelector::parse_my_tag(utility::tag::TagCOP tag, basic::
 		//Check for embedded ResidueSelector as focus.
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
 		if ( tags.size() > 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "ScoreTermValueBased Residue Selector can take only a single sub residue selector tag!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "ScoreTermValueBased Residue Selector can take only a single sub residue selector tag!\n" );
 		}
 		input_residues_selector_ = core::select::residue_selector::get_embedded_residue_selector( tag, datamap );
 		TR << "Will operate on the subset of residues resulting from "
@@ -148,14 +148,14 @@ void ScoreTermValueBasedSelector::parse_my_tag(utility::tag::TagCOP tag, basic::
 		TR << "Setting lower threshold to " << lower_threshold_
 			<< ". Residues scoring equal to or above this threshold will be selected." << std::endl;
 	} else {
-		throw utility::excn::EXCN_Msg_Exception( "Missing lower threshold value! ScoreTermValueBasedSelector requires a lower threshold to be specified." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Missing lower threshold value! ScoreTermValueBasedSelector requires a lower threshold to be specified." );
 	}
 	if ( tag->hasOption( "upper_threshold" ) ) {
 		upper_threshold_ = tag->getOption< core::Real >( "upper_threshold" );
 		TR << "Setting upper threshold to " << upper_threshold_
 			<< ". Residues scoring equal to or below this threshold will be selected." << std::endl;
 	} else {
-		throw utility::excn::EXCN_Msg_Exception( "Missing upper thershold value! ScoreTermValueBasedSelector requires a upper threshold to be specified." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Missing upper thershold value! ScoreTermValueBasedSelector requires a upper threshold to be specified." );
 	}
 }
 

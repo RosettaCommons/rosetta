@@ -673,7 +673,7 @@ StructureDataWithPose::consolidate_movable_groups(
 	core::kinematics::FoldTree ft = fg.fold_tree( root_segments );
 	if ( ft.nres() != pose.size() ) {
 		TR.Error << "FT nres " << ft.nres() << " != pose nres " << pose.size() << " FT: " << ft << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( "Bad nres" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Bad nres" );
 	}
 	if ( pose.is_centroid() ) {
 		TR << "Pose is centroid" << std::endl;
@@ -1140,7 +1140,7 @@ StructureDataWithPose::delete_residues_in_pose(
 		ss << id() << ": deleting residue from " << start << " to " << end
 			<< ", pose length = " << pose_->size() << std::endl;
 		ss << "Bad start and end given to delete_residues_in_pose()" << std::endl;
-		throw utility::excn::EXCN_BadInput( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
 	pose_->conformation().delete_residue_range_slow( start, end );
 	pose_->conformation().unblock_signals();

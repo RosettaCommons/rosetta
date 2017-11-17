@@ -1620,7 +1620,7 @@ void check_vector( core::Vector const vector ) {
 			vector.y() < -1000 || vector.y() > 1000 ||
 			vector.z() < -1000 || vector.z() > 1000 ) {
 
-		throw new core::conformation::membrane::EXCN_Illegal_Arguments("Unreasonable range for center or normal! Check your input vectors!");
+		throw CREATE_EXCEPTION(core::conformation::membrane::EXCN_Illegal_Arguments, "Unreasonable range for center or normal! Check your input vectors!");
 	}
 }// check_vector
 

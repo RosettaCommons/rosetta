@@ -49,7 +49,7 @@ main( int argc, char * argv [] ) {
 	ConstantLengthFragSetOP frags = new ConstantLengthFragSet;
 	std::string filename = "frags.9mers";
 	frags->read_fragment_file( filename );
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
                                   }

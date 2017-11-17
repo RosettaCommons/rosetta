@@ -45,7 +45,7 @@ get_resource(
 		err_msg
 			<< "The '" << resource_description << "' "
 			<< "cannot be cast to the given type.";
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 	return resource;
 }

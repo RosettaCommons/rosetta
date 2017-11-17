@@ -426,7 +426,7 @@ DockingInitialPerturbation::parse_my_tag(
 		TR << "RigidBodyInfo not found in basic::datacache::DataMap" << std::endl;
 		rigid_body_info_ = protocols::docking::RigidBodyInfoOP( new protocols::docking::RigidBodyInfo );
 		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
-		//  throw utility::excn::EXCN_RosettaScriptsOption( "RigidBodyInfo not found in basic::datacache::DataMap, DockingInitialPerturbation can not be done, so exit here!" );
+		//  throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "RigidBodyInfo not found in basic::datacache::DataMap, DockingInitialPerturbation can not be done, so exit here!" );
 	} else {
 		rigid_body_info_ = data_map.get_ptr< protocols::docking::RigidBodyInfo >( "RigidBodyInfo", "docking_setup" );
 		TR.Debug << "get RigidBodyInfo pointer from basic::datacache::DataMap" << std::endl;

@@ -151,13 +151,13 @@ int ShapeComplementarityCalculator::Calc()
 		run_.results.valid = 0;
 
 		if ( run_.atoms.empty() ) {
-			throw ShapeComplementarityCalculatorException("No atoms defined");
+			throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "No atoms defined");
 		}
 		if ( !run_.results.surface[0].nAtoms ) {
-			throw ShapeComplementarityCalculatorException("No atoms defined for molecule 1");
+			throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "No atoms defined for molecule 1");
 		}
 		if ( !run_.results.surface[1].nAtoms ) {
-			throw ShapeComplementarityCalculatorException("No atoms defined for molecule 2");
+			throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "No atoms defined for molecule 2");
 		}
 
 		// Determine and assign the attention numbers for each atom
@@ -166,7 +166,7 @@ int ShapeComplementarityCalculator::Calc()
 		GenerateMolecularSurfaces();
 
 		if ( !run_.dots[0].size() || !run_.dots[1].size() ) {
-			throw ShapeComplementarityCalculatorException("No molecular dots generated!");
+			throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "No molecular dots generated!");
 		}
 
 		// Cut away the periphery of each surface
@@ -176,7 +176,7 @@ int ShapeComplementarityCalculator::Calc()
 		for ( int i = 0; i < 2; ++i ) {
 			run_.results.surface[i].trimmedArea = TrimPeripheralBand(run_.dots[i], trimmed_dots[i]);
 			if ( !trimmed_dots[i].size() ) {
-				throw utility::excn::EXCN_Msg_Exception("No molecular dots for surface " + utility::to_string( i ));
+				throw CREATE_EXCEPTION(utility::excn::Exception, "No molecular dots for surface " + utility::to_string( i ));
 			}
 			run_.results.surface[i].nTrimmedDots = trimmed_dots[i].size();
 			run_.results.surface[i].nAllDots = run_.dots[i].size();
@@ -540,7 +540,7 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::gpuTrimP
 	hDotColl = new char[UPPER_MULTIPLE(n, threads)];
 
 	if(!hAccDotCoords || !hBurDotCoords || !hDotColl) {
-		throw ShapeComplementarityCalculatorException("Out of host memory!");
+		throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "Out of host memory!");
 	}
 
 	// Make GPU copy of (x, y, z) buried and accessible coordinates
@@ -580,7 +580,7 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::gpuTrimP
 		GPU_OUT, UPPER_MULTIPLE(nBur, threads) * sizeof(*hDotColl), hDotColl,
 		GPU_FLOAT, r2,
 		NULL)) {
-		throw ShapeComplementarityCalculatorException("Failed to launch GPU kernel TrimPeripheralBand!");
+		throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "Failed to launch GPU kernel TrimPeripheralBand!");
 	}
 
 	// Make a new list of dots that have no collisions
@@ -669,7 +669,7 @@ int ShapeComplementarityCalculator::gpuFindClosestNeighbors(
 		GPU_INT, nTheirDots,
 		GPU_OUT, UPPER_MULTIPLE(nNeighbors, threads) * sizeof(*hNeighbors), hNeighbors,
 		NULL)) {
-		throw ShapeComplementarityCalculatorException("Failed to launch GPU kernel FindClosestNeighbor!");
+		throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "Failed to launch GPU kernel FindClosestNeighbor!");
 	}
 
 	for(int i = 0; i < nNeighbors; ++i)

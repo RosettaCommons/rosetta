@@ -126,7 +126,7 @@ bool AsymFoldandDockClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "CHAIN_BREAK_ASSYM_FND"  || tag == "chain_break_assym_fnd" ) {
 		is >> chain_break_res_;
 	} else  {
-		throw utility::excn::EXCN_BadInput( " Unknown tag, only LOOP, CHAIN_BREAK_ASSYM_FND definition is allowed at this stage");
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  " Unknown tag, only LOOP, CHAIN_BREAK_ASSYM_FND definition is allowed at this stage");
 	}
 	return true;
 }
@@ -139,9 +139,9 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	using namespace loops;
 	using namespace kinematics;
 
-	if ( moving_res_.size() == 0 ) throw utility::excn::EXCN_BadInput( " missing definition of moving residues, add a LOOP definition ");
-	if ( moving_res_.size() > 1 ) throw utility::excn::EXCN_BadInput( " Only one movable region possible at this stage ");
-	if ( chain_break_res_ == 0 ) throw utility::excn::EXCN_BadInput( " No chainbreak defined... ");
+	if ( moving_res_.size() == 0 ) throw CREATE_EXCEPTION(utility::excn::BadInput,  " missing definition of moving residues, add a LOOP definition ");
+	if ( moving_res_.size() > 1 ) throw CREATE_EXCEPTION(utility::excn::BadInput,  " Only one movable region possible at this stage ");
+	if ( chain_break_res_ == 0 ) throw CREATE_EXCEPTION(utility::excn::BadInput,  " No chainbreak defined... ");
 
 	/*
 	Size moving_end( 1 );

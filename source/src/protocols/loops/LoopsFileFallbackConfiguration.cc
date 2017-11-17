@@ -102,7 +102,7 @@ LoopsFileFallbackConfiguration::get_loops_filename_from_options() const
 	// the next line uses value_or to avoid a call to std::exit in the options class.  I can test things that throw exceptions.  Just sayin'.
 	utility::vector1< std::string > loops_files = basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value_or( utility::vector1< std::string >() );
 	if ( ! loops_files.size() ) {
-		throw utility::excn::EXCN_Msg_Exception("The fallback LoopsFile resource option has no loops files associated with it! Was the option omitted from the command line?");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "The fallback LoopsFile resource option has no loops files associated with it! Was the option omitted from the command line?");
 	}
 	core::Size const which_loops_file( loops_files.size() == 1 ? 1 : core::Size( numeric::random::rg().random_range(1,( loops_files.size() ))));
 	return loops_files[ which_loops_file ];

@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Utility Headers
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/vector0.hh>
@@ -59,7 +59,7 @@ using protocols::rotamer_recovery::RotamerRecoveryFactory;
 using protocols::rotamer_recovery::RotamerRecoveryMover;
 using protocols::rotamer_recovery::RotamerRecoveryMoverOP;
 using protocols::jd2::JobDistributor;
-using utility::excn::EXCN_Base;
+using utility::excn::Exception;
 
 static Tracer TR("apps.benchmark.scientific.rotamer_recovery");
 
@@ -136,7 +136,7 @@ main( int argc, char * argv [] )
 				rotamer_recovery_mover->show( fout );
 				fout.close();
 			}
-		} catch (EXCN_Base & excn ) {
+		} catch (Exception & excn ) {
 			TR.Error << "Exception: " << endl;
 			excn.show( TR.Error );
 
@@ -144,7 +144,7 @@ main( int argc, char * argv [] )
 			excn.show( TR ); //so its also seen in a >LOG file
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -58,7 +58,7 @@ LoopMoverOP loop_mover_from_tag(
 		stringstream message;
 		message << "<" << tag->getName() << "> is not a loop mover, so ";
 		message << "cannot be used in the <LoopModeler> protocol." << endl;
-		throw utility::excn::EXCN_Msg_Exception(message.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
 	}
 
 	return loop_mover;

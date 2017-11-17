@@ -41,7 +41,7 @@ struct Widget : public utility::pointer::ReferenceCount {
 using namespace std;
 using basic::datacache::HierarchicalDataMap;
 using basic::datacache::HierarchicalDataMapOP;
-using utility::excn::EXCN_Msg_Exception;
+using utility::excn::Exception;
 
 class HierarchicalDataMapTests : public CxxTest::TestSuite {
 
@@ -76,7 +76,7 @@ public:
 
 	void test_failed_lookups() {
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS(child->get<WidgetOP>("widget", "1"), EXCN_Msg_Exception);
+		TS_ASSERT_THROWS(child->get<WidgetOP>("widget", "1"), Exception);
 		TS_ASSERT_EQUALS(child->get<WidgetOP>("widget", "1", widgets[2]), widgets[2]);
 		TS_ASSERT_EQUALS(child->get_or_null<WidgetOP>("widget", "1"), WidgetOP());
 	}

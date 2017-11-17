@@ -89,10 +89,10 @@ void AndJumpSelector::parse_my_tag(
 		std::string selectors_str;
 		try {
 			selectors_str = tag->getOption< std::string >( "selectors" );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access option 'selectors' from AndJumpSelector::parse_my_tag.\n";
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 		utility::vector1< std::string > selector_names = utility::string_split( selectors_str, ',' );
 
@@ -100,11 +100,11 @@ void AndJumpSelector::parse_my_tag(
 			try {
 				JumpSelectorCOP selector = datamap.get_ptr< JumpSelector const >( "JumpSelector", selector_name );
 				local_selectors.push_back( selector );
-			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			} catch ( utility::excn::Exception & e ) {
 				std::stringstream error_msg;
 				error_msg << "Failed to find JumpSelector named '" << selector_name << "' from the Datamap from AndJumpSelector::parse_my_tag.\n";
 				error_msg << e.msg();
-				throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 			}
 		}
 	} // hasOption selectors
@@ -122,7 +122,7 @@ void AndJumpSelector::parse_my_tag(
 	if ( local_selectors.empty() ) { //size() == 0 ) {
 		std::stringstream error_msg;
 		error_msg << "No JumpSelectors given to the AndJumpSelector; AndJumpSelector requires at least one JumpSelector as input\n";
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 	}
 
 	for ( auto const & local_selector : local_selectors ) {

@@ -115,7 +115,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 		utility::json_spirit::read(data,job_json_data);
 		job_object_data = job_json_data.get_obj();
 	} catch(std::runtime_error &) {
-		throw utility::excn::EXCN_BadInput(
+		throw CREATE_EXCEPTION(utility::excn::BadInput, 
 			"screening file " + file_name + "is incorrectly formatted. "
 			"it must be a dict with two keys: 'params' containing a list of needed params, and "
 			"'jobs' which must be a list of dicts. each dict should contain keys 'group_name', 'proteins' and 'ligands'");
@@ -126,7 +126,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 	try {
 		param_group_data = job_object_data["params"].get_array();
 	} catch(std::runtime_error &) {
-		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'params' section");
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "the screening file " + file_name + " does not contain a 'params' section");
 	}
 
 // Annotate params files for later insertion into the Pose.
@@ -141,7 +141,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 	try {
 		job_group_data = job_object_data["jobs"].get_array();
 	} catch(std::runtime_error & ) {
-		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'jobs' section");
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "the screening file " + file_name + " does not contain a 'jobs' section");
 	}
 	for ( auto & i : job_group_data ) {
 		utility::json_spirit::mObject group_map(i.get_obj());
@@ -154,7 +154,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 		try {
 			group_name = group_map["group_name"].get_str();
 		} catch(std::runtime_error &) {
-			throw utility::excn::EXCN_BadInput("a group in screening file " + file_name + " does not contain the element 'group_name' or is misformatted");
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "a group in screening file " + file_name + " does not contain the element 'group_name' or is misformatted");
 		}
 
 		utility::json_spirit::mArray startfrom_data;
@@ -167,13 +167,13 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 		try {
 			protein_path_data = group_map["proteins"].get_array();
 		} catch(std::runtime_error &) {
-			throw utility::excn::EXCN_BadInput("the group " + group_name +" in screening file " + file_name + " does not contain the element 'proteins' or is misformatted");
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "the group " + group_name +" in screening file " + file_name + " does not contain the element 'proteins' or is misformatted");
 		}
 
 		try {
 			ligand_path_data = group_map["ligands"].get_array();
 		} catch(std::runtime_error &) {
-			throw utility::excn::EXCN_BadInput("the group " + group_name +" in screening file " + file_name + " does not contain the element 'ligands' or is misformatted");
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "the group " + group_name +" in screening file " + file_name + " does not contain the element 'ligands' or is misformatted");
 		}
 
 // If we specify a native structure, store it

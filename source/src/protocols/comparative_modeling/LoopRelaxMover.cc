@@ -585,7 +585,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						(remodel() == "perturb_kic_with_fragments");
 
 					if ( kic_with_fragments && frag_libs().empty() ) {
-						throw utility::excn::EXCN_BadInput(": No fragment libraries loaded.");
+						throw CREATE_EXCEPTION(utility::excn::BadInput, ": No fragment libraries loaded.");
 					}
 
 					Size sfxn_cycles = option[ OptionKeys::loops::perturb_outer_cycles ]();
@@ -1169,7 +1169,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					(refine() == "refine_kic_with_fragments");
 
 				if ( kic_with_fragments && frag_libs().empty() ) {
-					throw utility::excn::EXCN_BadInput(": No fragment libraries loaded.");
+					throw CREATE_EXCEPTION(utility::excn::BadInput, ": No fragment libraries loaded.");
 				}
 
 				Size sfxn_cycles = option[ OptionKeys::loops::refine_outer_cycles ]();

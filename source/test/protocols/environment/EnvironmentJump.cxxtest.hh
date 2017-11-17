@@ -144,7 +144,7 @@ public:
 			TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose, boost::bind( set_jump_, &protected_pose, 1, new_jump ) ),
 				EXCN_Env_Security_Exception );
 			TS_ASSERT_THROWS( unreg_mover->apply( protected_pose, boost::bind( set_jump_, &protected_pose, 1, new_jump ) ),
-				utility::excn::EXCN_NullPointer );
+				utility::excn::NullPointerError );
 			TS_ASSERT_EQUALS( protected_pose.jump( 1 ).get_translation(), init_jump.get_translation() );
 			TS_ASSERT_EQUALS( protected_pose.jump( 1 ).get_rotation(), init_jump.get_rotation() );
 
@@ -188,7 +188,7 @@ public:
 		Environment & env = *env_op;
 
 		env.register_mover( allowed_mover );
-		TS_ASSERT_THROWS( core::pose::Pose ppose = env.start( pose ), utility::excn::EXCN_BadInput );
+		TS_ASSERT_THROWS( core::pose::Pose ppose = env.start( pose ), utility::excn::BadInput );
 
 		env.auto_cut( true );
 		core::pose::Pose ppose;
@@ -235,7 +235,7 @@ public:
 		core::pose::Pose ppose;
 
 		//Verify unbrokerable
-		TS_ASSERT_THROWS( ppose = env.start( pose ) , utility::excn::EXCN_BadInput );
+		TS_ASSERT_THROWS( ppose = env.start( pose ) , utility::excn::BadInput );
 
 		//Verify allowing cut inheritance allows brokering.
 		env.inherit_cuts( true );

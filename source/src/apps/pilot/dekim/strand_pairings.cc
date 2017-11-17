@@ -136,7 +136,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 
 		JobDistributor::get_instance()->go( mymover );
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 		std::cout << "Exception: " << std::endl;

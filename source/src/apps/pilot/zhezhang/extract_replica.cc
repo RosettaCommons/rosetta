@@ -71,7 +71,7 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer tr( "main" );
@@ -163,7 +163,7 @@ main( int argc, char * argv [] )
 
 		core::io::silent::SilentStructOP st = extract_replica( "for_test.out" , "P_0002" , 1);
 		st->print_scores( std::cout );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

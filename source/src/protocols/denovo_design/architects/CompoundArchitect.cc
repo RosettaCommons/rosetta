@@ -162,7 +162,7 @@ CompoundArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMa
 			msg << type() << "::parse_tag(): The provided subtag name (" << (*t)->getName()
 				<< ") is not valid. Valid subtag names for " << type() << " are: "
 				<< "Architects, Connections, Pairing." << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 	}
 }
@@ -268,7 +268,7 @@ CompoundArchitect::parse_connection_tag( utility::tag::TagCOP tag, basic::dataca
 	} else {
 		std::stringstream msg;
 		msg << "Bad connection architect type in tag: " << *tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 	architect->parse_my_tag( tag, data );
 	if ( ! architect->id().empty() ) connection::store_connection_architect( architect, data );

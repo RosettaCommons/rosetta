@@ -206,9 +206,9 @@ HolesFilter::parse_my_tag(
 		core::select::residue_selector::ResidueSelectorCOP selector;
 		try {
 			selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddCompositionConstraintMover::parse_tag()\n" + e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_message );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 		}
 		runtime_assert( selector );
 		residue_selector_ = selector->clone();

@@ -28,7 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -238,15 +238,9 @@ typedef utility::pointer::shared_ptr< AreConnectablePredicate const > AreConnect
 SegmentNames
 parse_segment_names( std::string const & segment_name_str );
 
-class EXCN_ConnectionSetupFailed : public utility::excn::EXCN_Base {
+class EXCN_ConnectionSetupFailed : public utility::excn::Exception {
 public:
-	EXCN_ConnectionSetupFailed( std::string const & msg ):
-		utility::excn::EXCN_Base(),
-		message_( msg ) {}
-	std::string const & message() const { return message_; }
-	virtual void show( std::ostream & os ) const { os << message_; }
-private:
-	std::string const message_;
+	using utility::excn::Exception::Exception;
 };
 
 
@@ -255,4 +249,3 @@ private:
 } //protocols
 
 #endif //INCLUDED_protocols_denovo_design_connection_ConnectionArchitect_hh
-

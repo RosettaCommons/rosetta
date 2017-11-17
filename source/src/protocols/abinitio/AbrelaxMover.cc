@@ -347,7 +347,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 					sampling_protocol()->get_checkpoints(),
 					get_current_tag(),
 					topology_broker()->final_fold_tree());
-			} catch ( loops::EXCN_Loop_not_closed& excn ) {
+			} catch (loops::EXCN_Loop_not_closed& excn ) {
 				set_current_tag( "C_"+get_current_tag().substr(std::min(2,(int)get_current_tag().size())) );
 				set_last_move_status( moves::FAIL_DO_NOT_RETRY );
 				loop_success = false;

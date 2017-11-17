@@ -116,7 +116,7 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.fwd.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>

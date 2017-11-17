@@ -313,7 +313,7 @@ main( int argc, char *argv[] )
 		mnmvr.apply( best_pose );
 		best_pose.dump_pdb( "final_final_opt.pdb" );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

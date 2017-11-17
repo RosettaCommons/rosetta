@@ -72,7 +72,7 @@ SplitAndMixPoseMover::set_order( std::string order )
 			if ( utility::string2int( res ) != -1 ) {
 				order_.push_back( utility::string2Size( res ) );
 			} else {
-				throw utility::excn::EXCN_Msg_Exception( "Value " + res + " cannot be cast to integer." );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Value " + res + " cannot be cast to integer." );
 			}
 		}
 	}
@@ -107,15 +107,15 @@ SplitAndMixPoseMover::apply( core::pose::Pose & pose )
 
 			if ( order_.size() == 0 ) set_order( pose_list.size() );
 			if ( utility::max( order_ ) > pose_list.size() ) {
-				throw utility::excn::EXCN_Msg_Exception( "A subpose is requested identified with a number higher than the number of subposes available" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "A subpose is requested identified with a number higher than the number of subposes available" );
 			}
 			if ( order_.size() > pose_list.size() ) { //  We could use less than all, never more.
-				throw utility::excn::EXCN_Msg_Exception( "Requested ordes defines a number of parts different that those provided" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Requested ordes defines a number of parts different that those provided" );
 			}
 			core::pose::PoseOP tmppose = merge_poses( pose_list );
 			transfer_conformation( pose, *tmppose );
 		} else {
-			throw utility::excn::EXCN_Msg_Exception( "Selector does not match with any residue of the provided pose" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Selector does not match with any residue of the provided pose" );
 		}
 	}
 	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose ) ) );

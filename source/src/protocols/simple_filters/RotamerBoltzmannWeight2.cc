@@ -89,7 +89,7 @@ RotamerBoltzmannWeight2::parse_my_tag(
 			std::stringstream msg;
 			msg << "RotamerBoltzmannWeight2::parse_my_tag(): invalid probability_type specified: " << probability_type << std::endl;
 			msg << "Valid score types are: BOLTZMANN_SUM, PNEAR" << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 	}
 
@@ -105,7 +105,7 @@ RotamerBoltzmannWeight2::parse_my_tag(
 			std::stringstream msg;
 			msg << "RotamerBoltzmannWeight2::parse_my_tag(): invalid score_type specified: " << score_type << std::endl;
 			msg << "Valid score types are: MEAN_PROBABILITY, MAX_PROBABILITY, MODIFIED_DDG" << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 	}
 

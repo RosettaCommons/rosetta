@@ -390,7 +390,7 @@ void JobDigraphUpdater::add_node()
 void JobDigraphUpdater::add_edge_to_new_node( core::Size tail_node, core::Size head_node )
 {
 	if ( head_node <= orig_num_nodes_ ) {
-		throw utility::excn::EXCN_Msg_Exception( "Error: JobQueen has tried to add an edge that lands on a node that hasn't been freshly added to the JobDigraph" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Error: JobQueen has tried to add an edge that lands on a node that hasn't been freshly added to the JobDigraph" );
 	}
 	job_digraph_->add_edge( tail_node, head_node );
 }

@@ -108,7 +108,7 @@ void SequenceClaimer::read_fasta_file( std::string file ) {
 	using namespace core::sequence;
 	utility::vector1< SequenceOP > sequences = core::sequence::read_fasta_file( file );
 	if ( sequences.size() > 1 ) {
-		throw EXCN_Input( "SequenceClaimer found multiple sequences in fasta file '"+file+
+		throw CREATE_EXCEPTION(EXCN_Input,  "SequenceClaimer found multiple sequences in fasta file '"+file+
 			"'\nTo resolve this, split fasta file into multiple files, and claim using multiple SequenceClaimers.");
 	}
 	input_sequence_ = sequences[1]->sequence();
@@ -130,7 +130,7 @@ bool SequenceClaimer::read_tag( std::string tag, std::istream& is ) {
 		//END_DEF
 
 		if ( input_sequence_ != "" ) {
-			throw EXCN_Input( "SequenceClaimer found multiple definitions for its sequence. Ambiguity cannot be resolved.");
+			throw CREATE_EXCEPTION(EXCN_Input,  "SequenceClaimer found multiple definitions for its sequence. Ambiguity cannot be resolved.");
 		}
 		while ( is >> tag && tag != "END_DEF" ) {
 			if ( tag[0]=='#' ) {
@@ -140,7 +140,7 @@ bool SequenceClaimer::read_tag( std::string tag, std::istream& is ) {
 			input_sequence_ += tag;
 		}
 		if ( tag != "END_DEF" ) {
-			throw EXCN_Input( "END_DEF expected after DEF while reading sequence" );
+			throw CREATE_EXCEPTION(EXCN_Input,  "END_DEF expected after DEF while reading sequence" );
 		}
 	} else if ( tag == "CMD_FLAG" ) {
 		using namespace basic::options;
@@ -148,7 +148,7 @@ bool SequenceClaimer::read_tag( std::string tag, std::istream& is ) {
 		if ( option[ in::file::fasta ].user() ) {
 			read_fasta_file( option[ in::file::fasta ]()[1] );
 		} else {
-			throw EXCN_Input( "SequenceClaimer found tag CMD_FLAG but option '-in:file:fasta' is not set on cmd-line" );
+			throw CREATE_EXCEPTION(EXCN_Input,  "SequenceClaimer found tag CMD_FLAG but option '-in:file:fasta' is not set on cmd-line" );
 		}
 	} else return Parent::read_tag( tag, is );
 	return true;
@@ -156,10 +156,10 @@ bool SequenceClaimer::read_tag( std::string tag, std::istream& is ) {
 
 void SequenceClaimer::init_after_reading() {
 	if ( input_sequence_.size() == 0 ) {
-		throw EXCN_Input( "No sequence found when reading " +type() );
+		throw CREATE_EXCEPTION(EXCN_Input,  "No sequence found when reading " +type() );
 	}
 	if ( label() == "NO_LABEL" ) {
-		throw EXCN_Input( "SequenceClaimer left unlabeled: use the LABEL command to specify a label for each SequenceClaimer" );
+		throw CREATE_EXCEPTION(EXCN_Input,  "SequenceClaimer left unlabeled: use the LABEL command to specify a label for each SequenceClaimer" );
 	}
 }
 

@@ -154,7 +154,7 @@ MeanField::converge ()
 		std::stringstream error_message;
 		error_message
 			<< "Unable to converge after " << counter << " rounds of convergence." << std::endl;
-		throw utility::excn::EXCN_Msg_Exception(error_message.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str());
 
 	}
 

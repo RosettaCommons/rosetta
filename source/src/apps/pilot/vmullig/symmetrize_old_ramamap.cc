@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
 #include <utility/exit.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <numeric/angle.functions.hh>
@@ -152,7 +152,7 @@ main( int argc, char * argv [] )
 		get_options(input_filename, output_filename);
 		symmetrize_map(input_filename, output_filename);
 
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 		return -1;

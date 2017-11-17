@@ -25,7 +25,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <core/pack/util.hh>
@@ -133,7 +133,7 @@ main( int argc, char * argv [] )
 		simple_rotamer_recovery();
 
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

@@ -375,8 +375,8 @@ void LoopMover_Refine_KIC::apply(
 			if ( ! user_torbin_string.empty() ) {
 				torsion_bins = core::conformation::map_string_to_torsion_bin_string( user_torbin_string );
 			}
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			throw utility::excn::EXCN_Msg_Exception( "Error in converting the string given in the option loops::restrict_kic_sampling_to_torsion_string\n"
+		} catch ( utility::excn::Exception & e ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Error in converting the string given in the option loops::restrict_kic_sampling_to_torsion_string\n"
 				"into a valid torsion set of torsion bins.  Check your inputs\n" + e.msg() );
 		}
 

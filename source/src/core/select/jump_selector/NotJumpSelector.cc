@@ -76,33 +76,33 @@ void NotJumpSelector::parse_my_tag(
 	if ( tag->hasOption( "selector" ) ) { // fetch selector from datamap
 
 		if ( tag->size() > 1 ) { // has subtags
-			throw utility::excn::EXCN_Msg_Exception( "NotJumpSelector can negate ONE JumpSelector! Either specify 'selector' option or provide subtags but not BOTH\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "NotJumpSelector can negate ONE JumpSelector! Either specify 'selector' option or provide subtags but not BOTH\n" );
 		}
 		// grab the JumpSelector to be negated from the selector option
 		// and then grab each of the indicated jump selectors from the datamap.
 		std::string selector_str;
 		try {
 			selector_str = tag->getOption< std::string >( "selector" );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access required option 'selector' from NotJumpSelector::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 
 		try {
 			JumpSelectorCOP selector = datamap.get_ptr< JumpSelector const >( "JumpSelector", selector_str );
 			set_jump_selector(selector);
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find JumpSelector named '" << selector_str << "' from the Datamap from NotJumpSelector::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 	} else if ( tag->size() > 1 ) { // attempt reading subtag
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
 		if ( tags.size() > 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "NotJumpSelector takes exactly ONE JumpSelector! Multiple selectors were specified.\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "NotJumpSelector takes exactly ONE JumpSelector! Multiple selectors were specified.\n" );
 		}
 		JumpSelectorCOP rs = JumpSelectorFactory::get_instance()->new_jump_selector(
 			tags.front()->getName(),
@@ -115,7 +115,7 @@ void NotJumpSelector::parse_my_tag(
 	if ( !selector_ ) {
 		std::stringstream error_msg;
 		error_msg << "No JumpSelector given to the NotJumpSelector; NotJumpSelector requires a JumpSelector as input\n";
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 	}
 }
 

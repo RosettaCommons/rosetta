@@ -93,7 +93,7 @@ RangeFilter::parse_my_tag(
 	std::string const filter_name( tag->getOption< std::string >( "filter") );
 	auto filter_it( filters.find( filter_name ) );
 	if ( filter_it == filters.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
 	}
 	filter_ =  filter_it->second;
 

@@ -38,7 +38,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <set>
@@ -338,13 +338,10 @@ public:
 	get_name() const override;
 };
 
-class EXCN_FilterFailed : public utility::excn::EXCN_Base {
+class EXCN_FilterFailed : public utility::excn::Exception {
 public:
-	EXCN_FilterFailed( std::string const & filter, core::Size const filter_num ):
-		utility::excn::EXCN_Base(), filter_( filter ), filter_num_( filter_num ) {};
-
-	virtual void
-	show( std::ostream & ) const {}
+	EXCN_FilterFailed(char const *file, int line, std::string const & filter, core::Size const filter_num )
+		: utility::excn::Exception(file, line, ""), filter_( filter ), filter_num_( filter_num ) {};
 
 	std::string const &
 	filter_name() const { return filter_; }
@@ -357,17 +354,9 @@ private:
 	core::Size filter_num_;
 };
 
-class EXCN_NothingToFold : public utility::excn::EXCN_Base {
+class EXCN_NothingToFold : public utility::excn::Exception {
 public:
-	EXCN_NothingToFold( std::string const & msg ):
-		utility::excn::EXCN_Base(), msg_( msg ) {}
-
-	virtual void
-	show( std::ostream & os ) const { os << msg_ << std::endl; }
-
-private:
-	std::string msg_;
-	EXCN_NothingToFold() {};
+	using utility::excn::Exception::Exception;
 };
 
 /// @brief goes through loops and adds overlapping residues
@@ -385,4 +374,3 @@ add_overlap_to_loops(
 } //movers
 
 #endif //protocols/denovo_design/movers_BuildDeNovoBackboneMover_hh
-

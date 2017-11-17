@@ -77,7 +77,7 @@ main( int argc, char * argv [] )
 		loop_hash_library->create_db();
 		loop_hash_library->save_db();
 		TR << "Finished creating loophash library" << std::endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

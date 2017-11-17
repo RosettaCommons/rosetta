@@ -111,7 +111,7 @@ main( int argc, char *argv[] )
 
 		std::cout << "Output pose packed with RotamerTrialsMover." << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return FAILURE;
 	}

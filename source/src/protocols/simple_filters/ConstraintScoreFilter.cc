@@ -62,7 +62,7 @@ ConstraintScoreFilter::parse_my_tag(
 		std::stringstream msg;
 		msg << "ConstraintScoreFilter requires the constraint_generators' option. No constraint generators are current set."
 			<< std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 }
 

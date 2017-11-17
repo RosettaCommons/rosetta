@@ -44,7 +44,7 @@
 #include <utility/exit.hh>
 
 //Auto Headers
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <numeric/random/random.hh>
 
 static basic::Tracer tr( "main" );
@@ -148,10 +148,10 @@ main( int argc, char * argv [] )
 
 		try{
 			run();
-		} catch ( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			excn.show( std::cerr );
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

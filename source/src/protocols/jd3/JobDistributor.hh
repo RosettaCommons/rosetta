@@ -30,7 +30,6 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.fwd.hh>
 
 namespace protocols {
 namespace jd3 {

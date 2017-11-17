@@ -236,7 +236,7 @@ void run_parallel_docking() {
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		core::import_pose::pose_from_file( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 	} else {
-		throw( utility::excn::EXCN_BadInput("native expected for this app") );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput, "native expected for this app") );
 	}
 
 

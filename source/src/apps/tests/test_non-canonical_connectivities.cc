@@ -53,7 +53,7 @@ main( int argc, char *argv[] )
 		cout << "11: " << lactam.residue( 11 ).name() << endl;
 
 		lactam.dump_pdb( OUTPATH + "lactam.pdb" );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		cerr << "caught exception " << e.msg() << endl;
 		return -1;
 	}

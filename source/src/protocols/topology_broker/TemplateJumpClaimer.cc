@@ -105,7 +105,7 @@ bool TemplateJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "file" ) {
 		std::string file;
 		is >> file;
-		if ( jump_def() ) EXCN_Input( "Define either template config-file or topology_file for " + type() );
+		if ( jump_def() ) throw CREATE_EXCEPTION(EXCN_Input,  "Define either template config-file or topology_file for " + type() );
 		read_config_file( file );
 	} else if ( tag == "PAIRING_FILE" ) {
 		// get pairings file
@@ -133,7 +133,7 @@ bool TemplateJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "topol_file" || tag == "TOPOL_FILE" ) {
 		std::string file;
 		is >> file;
-		if ( jump_def() ) EXCN_Input( "Define either template config-file or topology_file for " + type() );
+		if ( jump_def() ) throw CREATE_EXCEPTION(EXCN_Input,  "Define either template config-file or topology_file for " + type() );
 		read_topol_file( file );
 	} else return FragmentJumpClaimer::read_tag( tag, is );
 	return true;
@@ -144,8 +144,8 @@ void TemplateJumpClaimer::init_after_reading() {
 		read_config_file( basic::options::option[ basic::options::OptionKeys::templates::config ]() );
 	}
 	if ( pairings_.size() ) {
-		if ( !ss_def_ ) EXCN_Input( "If you use PAIRING_FILE you also have to specify SS_INFO " );
-		if ( !sheets_.size() ) EXCN_Input( "If you use PAIRING_FILE you also have to specify SHEET or RANDOM_SHEET " );
+		if ( !ss_def_ ) throw CREATE_EXCEPTION(EXCN_Input,  "If you use PAIRING_FILE you also have to specify SS_INFO " );
+		if ( !sheets_.size() ) throw CREATE_EXCEPTION(EXCN_Input,  "If you use PAIRING_FILE you also have to specify SHEET or RANDOM_SHEET " );
 		if ( bRandomSheet_ ) set_jump_def( jumping::BaseJumpSetupOP( new jumping::RandomSheetBuilder( ss_def_, pairings_, sheets_ ) ) );
 		else set_jump_def( jumping::BaseJumpSetupOP( new jumping::SheetBuilder( ss_def_, pairings_, sheets_ ) ) );
 	}

@@ -90,7 +90,7 @@ ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 		if ( res == 0 || res > subset.size() ) {
 			std::stringstream err_msg;
 			err_msg << "Residue " << res << " not found in pose!\n";
-			throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 		}
 		subset[ res ] = true;
 	}
@@ -104,11 +104,11 @@ ResidueIndexSelector::parse_my_tag(
 {
 	try {
 		set_index( tag->getOption< std::string >( "resnums" ) );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		std::stringstream err_msg;
 		err_msg << "Failed to access required option 'resnums' from ResidueIndexSelector::parse_my_tag.\n";
 		err_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 	}
 }
 

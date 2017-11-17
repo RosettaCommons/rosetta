@@ -132,7 +132,7 @@ LoopHashLibrary::gethash( core::Size size )
 {
 	if ( hash_.count( size ) == 1 ) return hash_[ size ];
 	// and if that's not true something is wrong
-	throw EXCN_Invalid_Hashmap( size );
+	throw CREATE_EXCEPTION(EXCN_Invalid_Hashmap, size );
 
 	// We should never get here -this is just to satisfy the compiler.
 	return hash_[ 0 ];
@@ -165,11 +165,11 @@ LoopHashLibrary::delete_db()
 	long starttime = time(nullptr);
 	TR.Info << "Deleting database files " << assigned_string_ << std::endl;
 	std::string dbstring = db_path_ + "backbone" + assigned_string_ + ".db";
-	if ( remove( dbstring.c_str() ) != 0 ) throw EXCN_DB_IO_Failed( dbstring , "delete" );
+	if ( remove( dbstring.c_str() ) != 0 ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  dbstring , "delete" );
 	TR.Info << "bbdb deletion successful" << std::endl;
 	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
 		std::string dbstring = db_path_ + "loopdb." + utility::to_string( *it ) + assigned_string_ + ".db" ;
-		if ( remove( dbstring.c_str() ) != 0 ) throw EXCN_DB_IO_Failed( dbstring, "delete" );
+		if ( remove( dbstring.c_str() ) != 0 ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  dbstring, "delete" );
 		TR.Info << "loopdb size " << utility::to_string( *it ) << " deletion successful" << std::endl;
 	}
 	long endtime = time(nullptr);
@@ -230,10 +230,10 @@ LoopHashLibrary::merge(
 	// Can later add a removal step, where proteins who aren't referenced can be removed
 	core::Size index_offset;
 	if ( extra_ != second_lib->get_extra() ) {
-		throw EXCN_bbdb_Merge_Failed( extra_, second_lib->get_extra() );
+		throw CREATE_EXCEPTION(EXCN_bbdb_Merge_Failed, extra_, second_lib->get_extra() );
 	}
 	if ( ! merge_bbdb( second_lib->backbone_database(), index_offset ) ) {
-		throw EXCN_bbdb_Merge_Failed( "bbdb merge failed for unknown reasons" );
+		throw CREATE_EXCEPTION(EXCN_bbdb_Merge_Failed, "bbdb merge failed for unknown reasons" );
 	}
 
 	TR.Debug << "BBDB concated" << std::endl;

@@ -118,11 +118,11 @@ Translate::parse_my_tag(
 	core::pose::Pose const & pose
 )
 {
-	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires chain tag");
-	if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires distribution tag");
-	if ( ! tag->hasOption("angstroms") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires angstroms tag");
-	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires cycles tag");
-	//if ( ! tag->hasOption("force") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires force tag"); optional. default is don't force, meaning ligand stays put if it can't find somewhere to go.
+	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover requires chain tag");
+	if ( ! tag->hasOption("distribution") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover requires distribution tag");
+	if ( ! tag->hasOption("angstroms") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover requires angstroms tag");
+	if ( ! tag->hasOption("cycles") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover requires cycles tag");
+	//if ( ! tag->hasOption("force") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover requires force tag"); optional. default is don't force, meaning ligand stays put if it can't find somewhere to go.
 
 	// Will return a nullptr if this XML didn't define any ScoringGrids
 	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_optional_grid_set_from_tag( tag, data_map );
@@ -130,9 +130,9 @@ Translate::parse_my_tag(
 	std::string chain = tag->getOption<std::string>("chain");
 	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(chain, pose) );
 	if ( chain_ids.size() == 0 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover: chain '"+chain+"' does not exist.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover: chain '"+chain+"' does not exist.");
 	} else if ( chain_ids.size() > 1 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover: chain letter '"+chain+"' represents more than one chain. Consider the 'Translates' mover (with an 's') instead.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover: chain letter '"+chain+"' represents more than one chain. Consider the 'Translates' mover (with an 's') instead.");
 	}
 	translate_info_.chain_id = chain_ids[1];
 	translate_info_.jump_id = core::pose::get_jump_id_from_chain_id(translate_info_.chain_id, pose);
@@ -145,7 +145,7 @@ Translate::parse_my_tag(
 		if ( tag->getOption<std::string>("force") == "true" ) {
 			translate_info_.force= true;
 		} else if ( tag->getOption<std::string>("force") != "false" ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("'force' option is true or false");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'force' option is true or false");
 		}
 	}
 

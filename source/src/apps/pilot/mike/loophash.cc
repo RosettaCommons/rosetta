@@ -82,7 +82,7 @@
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer TR( "main" );
@@ -571,14 +571,14 @@ main( int argc, char * argv [] )
 		try{
 			//protocols::jd2::JobDistributor::get_instance()->go( loop_hash_library );
 			protocols::jd2::JobDistributor::get_instance()->go( lh_sampler );
-		} catch ( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			std::cerr << "Exception: " << std::endl;
 			excn.show( std::cerr );
 			std::cout << "Exception: " << std::endl;
 			excn.show( TR.Info ); //so its also seen in a >LOG file
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

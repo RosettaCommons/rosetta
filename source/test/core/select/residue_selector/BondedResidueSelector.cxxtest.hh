@@ -60,13 +60,13 @@ public:
 
 		BondedResidueSelectorOP rs( new BondedResidueSelector );
 		TR << "Resnums and selector" << std::endl;
-		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::EXCN_Msg_Exception );
+		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::Exception );
 
 		std::stringstream ss_two_selectors;
 		ss_two_selectors << "<Bonded name=\"bonded\" residue_selector=\"dummy\"><Index name=\"index\" resnums=\"2,3\" /></Bonded>";
 		tag->read( ss_two_selectors );
 		TR << "Two selectors";
-		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::EXCN_Msg_Exception );
+		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::Exception );
 
 		std::stringstream ssgood_resnums;
 		ssgood_resnums << "<Bonded name=\"bonded\" resnums=\"2,3\" />";

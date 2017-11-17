@@ -88,7 +88,7 @@ FileConstraintGenerator::parse_tag(
 {
 	set_cstfile( tag->getOption< std::string >( "filename", filename_ ) );
 	if ( filename_.empty() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "FileConstraintGenerator requires the 'filename' option to be set." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "FileConstraintGenerator requires the 'filename' option to be set." );
 	}
 }
 
@@ -105,7 +105,7 @@ FileConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	TR.Debug << "Opening " << filename_ << std::endl;
 	utility::io::izstream infile( filename_ );
 	if ( !infile.good() ) {
-		throw utility::excn::EXCN_BadInput( "Could not open " + filename_ + " for reading." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Could not open " + filename_ + " for reading." );
 	}
 
 	// Get stream of cst definitions

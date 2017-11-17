@@ -48,10 +48,10 @@ int main( int argc, char * argv [] ) {
 		try {
 			protocols::abinitio::AbrelaxMover runMe;
 			not_universal_main( runMe );
-		} catch ( utility::excn::EXCN_Base &excn ) {
+		} catch (utility::excn::Exception &excn ) {
 			std::cerr<< excn.msg() <<std::endl;
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

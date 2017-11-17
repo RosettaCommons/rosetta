@@ -36,7 +36,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <utility/exit.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/PDBInfo.hh>
@@ -1648,7 +1648,7 @@ SimpleCycpepPredictApplication_MPI::slave_carry_out_njobs(
 
 		predict_app->run();
 		slave_job_count_ += njobs_from_above;
-	} catch ( utility::excn::EXCN_Base &excn ) {
+	} catch ( utility::excn::Exception &excn ) {
 		TR.Error << "Exception in SimpleCycpepPredictApplication caught:" << std::endl;
 		excn.show( TR.Error );
 		TR.Error << "\nRecovering from error and continuing to next job." << std::endl;
@@ -1730,7 +1730,7 @@ SimpleCycpepPredictApplication_MPI::slave_carry_out_njobs_in_thread(
 				std::lock_guard< std::mutex > lock( joblist_mutex_ ); //Lock the mutex to access slave_job_count_.
 				slave_job_count_ += 1;
 			} //Unlock here
-		} catch ( utility::excn::EXCN_Base &excn ) {
+		} catch ( utility::excn::Exception &excn ) {
 			TR.Error << "Exception in SimpleCycpepPredictApplication caught:" << std::endl;
 			excn.show( TR.Error );
 			TR.Error << "\nRecovering from error and continuing to next job." << std::endl;

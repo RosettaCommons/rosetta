@@ -70,7 +70,7 @@ main( int argc, char * argv [] )
 		ssm->set_mc_temperature(  3 );
 		MoverOP mover = ssm;
 		protocols::jd2::JobDistributor::get_instance()->go( mover );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

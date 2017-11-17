@@ -426,7 +426,8 @@ def writePreamble( output ):
         output.write( "#include <cxxtest/%s.h>\n" % gui )
     output.write( "\n" )
     output.write( "//catch unhandled exceptions in unit tests\n" )
-    output.write( "#include <utility/excn/EXCN_Base.hh>\n" )
+    output.write( "#include <utility/excn/Exceptions.hh>\n" )
+    output.write( "#include <cassert>\n" )
     wrotePreamble = 1
 
 def writeMain( output ):
@@ -459,7 +460,7 @@ def writeMain( output ):
             output.write( ' CxxTest::initialize();\n' )
         output.write( ' try{\n' )
         output.write( '  return CxxTest::%s().run();\n' % runner )
-	output.write( ' } catch( utility::excn::EXCN_Base& excn ) {\n' )
+	output.write( ' } catch( utility::excn::Exception& excn ) {\n' )
 	output.write( '  std::cerr\n' )
 	output.write( '   << "ERROR: Unhandled Exception caught by cxxtest: "\n' )
 	output.write( '   << excn << std::endl;\n' )

@@ -293,7 +293,7 @@ AmbiguousNMRConstraint::add_individual_constraint( ConstraintCOP cst_in )
 		cst_in_casted = utility::pointer::dynamic_pointer_cast< AtomPairConstraint const >( cst_in );
 	}
 	if ( !cst_in_casted ) {
-		throw utility::excn::EXCN_BadInput( "failed attempt to add " + cst_in->type() + " to AmbiguousNMRConstraint. Can only add AmbiguousNMRDistanceConstraint and AtomPairConstraint");
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "failed attempt to add " + cst_in->type() + " to AmbiguousNMRConstraint. Can only add AmbiguousNMRDistanceConstraint and AtomPairConstraint");
 	}
 	//is it unique ? -- otherwise reject constraint
 	for ( ConstraintCOPs::const_iterator it=member_constraints().begin(); it != member_constraints().end(); ++it ) {

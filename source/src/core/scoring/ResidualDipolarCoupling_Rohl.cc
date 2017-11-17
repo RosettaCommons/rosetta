@@ -96,7 +96,7 @@ void ResidualDipolarCoupling_Rohl::read_RDC_file()
 		line_stream >> res1 >> atom1 >> res2 >> atom2 >> Jdipolar;
 		if ( line_stream.fail() ) {
 			tr.Error << "couldn't read line " << line << " in rdc-file " << filename << "\n";
-			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-file "+filename));
+			throw CREATE_EXCEPTION(utility::excn::BadInput, " invalid line "+line+" in rdc-file "+filename);
 		}
 
 		Real weight( 1.0 );
@@ -126,7 +126,7 @@ void ResidualDipolarCoupling_Rohl::read_RDC_file()
 		line_stream >> res1 >> weight;
 		if ( line_stream.fail() ) {
 			tr.Error << "reading rdc-weight-file " << filename << std::endl;
-			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-weight-file "+filename));
+			throw CREATE_EXCEPTION(utility::excn::BadInput, " invalid line "+line+" in rdc-weight-file "+filename);
 		}
 		for ( auto & All_RDC_line : All_RDC_lines ) {
 			if ( All_RDC_line.res() == res1 ) All_RDC_line.weight( weight );

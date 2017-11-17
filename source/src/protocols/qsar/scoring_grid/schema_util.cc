@@ -29,11 +29,11 @@ parse_grid_set_from_tag( utility::tag::TagCOP tag, basic::datacache::DataMap con
 
 	std::string grid_set_name( tag->getOption<std::string>( option_name, "default" ) );
 	if ( ! data.has( "scoring_grids", grid_set_name ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Cannot find the ScoringGrids GridSet " + grid_set_name );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot find the ScoringGrids GridSet " + grid_set_name );
 	}
 	GridSetCOP grid_set = data.get_ptr< qsar::scoring_grid::GridSet const >( "scoring_grids", grid_set_name );
 	if ( grid_set == nullptr ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Problem getting GridSet " + grid_set_name + " - the stored GridSet is malformed!");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Problem getting GridSet " + grid_set_name + " - the stored GridSet is malformed!");
 	}
 	return grid_set;
 }
@@ -52,7 +52,7 @@ parse_optional_grid_set_from_tag( utility::tag::TagCOP tag, basic::datacache::Da
 	if ( ! data.has( "scoring_grids", grid_set_name ) ) {
 		if ( tag->hasOption( option_name ) ) {
 			// If it's been explcitly called for, then it's an error
-			throw utility::excn::EXCN_RosettaScriptsOption("Cannot find the ScoringGrids GridSet " + grid_set_name );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot find the ScoringGrids GridSet " + grid_set_name );
 		} else {
 			// If it's just missing, it's not an error
 			return nullptr;
@@ -60,7 +60,7 @@ parse_optional_grid_set_from_tag( utility::tag::TagCOP tag, basic::datacache::Da
 	}
 	GridSetCOP grid_set = data.get_ptr< qsar::scoring_grid::GridSet const >( "scoring_grids", grid_set_name );
 	if ( grid_set == nullptr ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Problem getting GridSet " + grid_set_name + " - the stored GridSet is malformed!");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Problem getting GridSet " + grid_set_name + " - the stored GridSet is malformed!");
 	}
 	return grid_set;
 }

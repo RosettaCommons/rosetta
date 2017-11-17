@@ -105,7 +105,7 @@ main( int argc, char * argv [] )
 		HemaggTrimerOP hemagg_trimer = new HemaggTrimer;
 		protocols::jd2::JobDistributor::get_instance()->go( hemagg_trimer );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

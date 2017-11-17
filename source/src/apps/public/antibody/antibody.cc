@@ -371,7 +371,7 @@ int antibody_main()
 			return 1;
 		}
 	}
-	catch(Grafting_Base_Exception e) {
+	catch (Grafting_Base_Exception e) {
 		std::cout << e << std::endl;
 	}
 
@@ -408,7 +408,7 @@ int main(int argc, char * argv [])
 
 		return antibody_main();
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return 1;
 	}

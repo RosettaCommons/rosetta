@@ -286,7 +286,7 @@ JobGenealogist::get_parent_for_job( Size job_id ) const
 	Sizes const & parents = get_parents_for_job( job_id );
 
 	if ( parents.size() != 1 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Tried to call get_parent_for_job (which requires that the job have only a single parent) for a job that"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Tried to call get_parent_for_job (which requires that the job have only a single parent) for a job that"
 			" has " + utility::to_string( parents.size() ) + " parents." );
 	}
 

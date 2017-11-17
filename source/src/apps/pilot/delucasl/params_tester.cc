@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 		core::chemical::ResidueTypeSetCAP residue_types =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
-	}catch ( utility::excn::EXCN_Base const & e ) {
+	}catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

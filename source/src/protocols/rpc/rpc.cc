@@ -146,7 +146,7 @@ void JSON_RPC::unpack( const std::string &msg ){
 		parsed_json_ = read_mObject( msg );
 
 		if ( !has_value(parsed_json_, "command") ) {
-			throw utility::excn::EXCN_Msg_Exception("RPC calls must provide command field");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "RPC calls must provide command field");
 		}
 		command_ = get_string(parsed_json_, "command");
 		std::cout << "Rosetta command: " << command_ << std::endl;
@@ -158,7 +158,7 @@ void JSON_RPC::unpack( const std::string &msg ){
 		}
 
 		if ( !has_value(parsed_json_, "pdbdata") ) {
-			throw utility::excn::EXCN_Msg_Exception("RPC calls must provide pdbdata field");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "RPC calls must provide pdbdata field");
 		}
 		pdbdata_string_ = get_string(parsed_json_, "pdbdata");
 
@@ -186,23 +186,23 @@ void JSON_RPC::unpack( const std::string &msg ){
 			load_new_set_of_virtual_files(  get_mArray(parsed_json_, "user_files") );
 		}
 	}
-catch( utility::excn::EXCN_Msg_Exception &excn ){
+catch( utility::excn::Exception &excn ){
 	output_capture_stop();  // Make sure we're catching the following message
 	throw;
 }
 catch( std::string &s ){
 	// convert Exception into a rosetta exception
 	output_capture_stop();
-	throw utility::excn::EXCN_Msg_Exception( tracer() + s );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  tracer() + s );
 }
 catch( utility::json_spirit::Error_position &ep ){
 	// convert Exception into a rosetta exception
 	output_capture_stop();
-	throw utility::excn::EXCN_Msg_Exception( tracer() + ep.reason_ + " Line: " + ObjexxFCL::string_of( ep.line_ ) + " Col: " + ObjexxFCL::string_of( ep.column_ ) );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  tracer() + ep.reason_ + " Line: " + ObjexxFCL::string_of( ep.line_ ) + " Col: " + ObjexxFCL::string_of( ep.column_ ) );
 }
 catch( ... ){
 	output_capture_stop();
-	throw utility::excn::EXCN_Msg_Exception( tracer() + "Unknown Exception happened during unpacking of JSON data" );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  tracer() + "Unknown Exception happened during unpacking of JSON data" );
 }
 }
 
@@ -232,7 +232,7 @@ void JSON_RPC::run(){
 		// this covers a huge variety of possible operations and move movers are plugged into this system by now.
 		if ( command_ == "xmlscript" ) {
 			if ( xmlscript_ == "" ) {
-				throw utility::excn::EXCN_Msg_Exception("RPC error: XML script is empty! " );
+				throw CREATE_EXCEPTION(utility::excn::Exception, "RPC error: XML script is empty! " );
 
 			}
 			utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
@@ -253,7 +253,7 @@ void JSON_RPC::run(){
 
 				std::cout << it->type() << std::endl;
 				if ( it->type() != obj_type ) {
-					throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for poseop array member'");
+					throw CREATE_EXCEPTION(utility::excn::Exception, "JSON error: expected an object for poseop array member'");
 				};
 
 				const mObject &poseop_params = it->get_obj();
@@ -315,7 +315,7 @@ void JSON_RPC::run(){
 		//          lh_protocol->manual_call( outputpose_ );
 		//        }
 	}
-catch( utility::excn::EXCN_Msg_Exception &excn ){
+catch( utility::excn::Exception &excn ){
 	std::cerr << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
 	TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
 	endtime_ = time(nullptr);
@@ -326,18 +326,18 @@ catch( std::string &s ){
 	// convert Exception into a rosetta exception
 	endtime_ = time(nullptr);
 	output_capture_stop();
-	throw utility::excn::EXCN_Msg_Exception( tracer() + s );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  tracer() + s );
 }
 catch( utility::json_spirit::Error_position &ep ){
 	// convert Exception into a rosetta exception
 	endtime_ = time(nullptr);
 	output_capture_stop();
-	throw utility::excn::EXCN_Msg_Exception( tracer() + ep.reason_ + " Line: " + ObjexxFCL::string_of( ep.line_ ) + " Col: " + ObjexxFCL::string_of( ep.column_ ) );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  tracer() + ep.reason_ + " Line: " + ObjexxFCL::string_of( ep.line_ ) + " Col: " + ObjexxFCL::string_of( ep.column_ ) );
 }
 catch( ... ){
 	endtime_ = time(nullptr);
 	output_capture_stop();
-	throw utility::excn::EXCN_Msg_Exception( tracer() + "Unknown Exception happened during execution of json RPC call " );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  tracer() + "Unknown Exception happened during execution of json RPC call " );
 }
 
 	endtime_ = time(nullptr);
@@ -366,7 +366,7 @@ void JSON_RPC::load_new_set_of_user_flags( const mObject &json_user_flags ){
 	std::vector < std::string > user_flags;
 	for ( auto const & json_user_flag : json_user_flags ) {
 		if ( json_user_flag.second.type() != obj_type ) {
-			throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_flag member:'" + json_user_flag.first );
+			throw CREATE_EXCEPTION(utility::excn::Exception, "JSON error: expected an object for user_flag member:'" + json_user_flag.first );
 		};
 		const mObject &flag = json_user_flag.second.get_obj();
 		if ( has_value( flag, "value" ) ) {
@@ -391,11 +391,11 @@ void JSON_RPC::load_new_set_of_virtual_files( const mArray &json_user_files , bo
 		std::cout << json_user_file.type() << std::endl;
 		std::cerr << __FILE__ << __LINE__ << std::endl;
 		if ( json_user_file.type() != obj_type ) {
-			throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_file member:'");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "JSON error: expected an object for user_file member:'");
 		};
 		const mObject &flag = json_user_file.get_obj();
 		if ( !has_value( flag, "filename" ) ) {
-			throw utility::excn::EXCN_Msg_Exception("JSON error: Syntax error in user_files field: 'filename' missing ");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "JSON error: Syntax error in user_files field: 'filename' missing ");
 		}
 		if ( !has_value( flag, "contents" ) ) {
 			TR.Error << "Filename " << get_string( flag, "filename" ) << " is missing content field - assuming empty file " << std::endl;

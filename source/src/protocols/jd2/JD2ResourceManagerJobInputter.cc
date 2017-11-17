@@ -68,7 +68,7 @@
 namespace protocols {
 namespace jd2 {
 
-using utility::excn::EXCN_Msg_Exception;
+using utility::excn::Exception;
 using basic::resource_manager::ResourceOP;
 using basic::resource_manager::ResourceManager;
 using basic::resource_manager::ResourceTag;
@@ -139,13 +139,13 @@ JD2ResourceManagerJobInputter::pose_from_job(
 			tr << "Loading startstruct " << jd2_resource_manager->find_resource_tag_by_job_tag( "startstruct", input_tag ) << " for job " <<
 				input_tag <<std::endl;
 			resource = jd2_resource_manager->get_resource_by_job_tag("startstruct", input_tag);
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch ( utility::excn::Exception const & e ) {
 			std::ostringstream err;
 			err << e.msg() << std::endl;
 			err << "Failed to access 'startstruct' resource from the JD2ResourceManager for job '";
 			err << input_tag << "' with nstruct index " << job->nstruct_index();
 			err << "\n" << "Exception caught and re-thrown from JD2ResourceManagerJobInputter::pose_from_job\n";
-			throw utility::excn::EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 		}
 
 		PoseOP resource_pose( utility::pointer::dynamic_pointer_cast< core::pose::Pose > ( resource ) );
@@ -165,7 +165,7 @@ JD2ResourceManagerJobInputter::pose_from_job(
 			} else {
 				err << " This starting structure for this job is critically absent\n";
 			}
-			throw EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(Exception,  err.str() );
 		}
 
 		/// Save a copy of the resource_pose into the inner job.
@@ -290,7 +290,7 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 		} else {
 			std::ostringstream err;
 			err << "Error parsing jobs tags in JD2ResourceManagerJobInputter: unrecognized tag '" << tagname << "'";
-			EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(Exception, err.str() );
 		}
 	}
 
@@ -348,7 +348,7 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 			err << "startstruct is given multiple times, then we cannot ensure that job names are unique.  Please\n";
 			err << "give each job with a shared startstrct a different name.\n";
 			err << "Offeding startstruct: '" << input_tag << "\n";
-			throw EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(Exception,  err.str() );
 		}
 
 		jobname = input_tag;
@@ -380,7 +380,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 			<< "ordered by <job_name>:" << endl
 			<< "\t(<job_name>, 'Resource', <desc>, <resource_tag>)" << endl
 			<< "\t(<job_name>, 'Option', <option_key>, <option_value>)" << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 	cppdb::statement select_stmt(safely_prepare_statement(sql_command, db_session));
@@ -410,7 +410,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 			<< "Instead, the query returned " << res.cols() << ":" << endl
 			<< "SQL query:" << endl
 			<< sql_command << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 	Size row_number(0);
@@ -457,7 +457,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 				<< "Options:" << endl
 				<< job_options << endl;
 
-			throw EXCN_Msg_Exception(err_msg.str());
+			throw CREATE_EXCEPTION(Exception, err_msg.str());
 		}
 
 		if ( previous_job_name.empty() ) {
@@ -519,7 +519,7 @@ JD2ResourceManagerJobInputter::record_job(
 				err_msg
 					<< "Conflicting specification for nstruct for job with name '" << job_name << "'" << std::endl
 					<< "Previous nstruct=" << n_jobs << ", new nstruct=" << requested_nstruct << std::endl;
-				throw EXCN_Msg_Exception( err_msg.str() );
+				throw CREATE_EXCEPTION(Exception,  err_msg.str() );
 			}
 		}
 	}
@@ -555,7 +555,7 @@ JD2ResourceManagerJobInputter::parse_options_name_and_value(
 		std::stringstream err_msg;
 		err_msg
 			<< "Error: Option key '" << optname << "' not found. Please remember to use only one colon when giving options." << endl;
-		throw EXCN_Msg_Exception( err_msg.str() );
+		throw CREATE_EXCEPTION(Exception,  err_msg.str() );
 	}
 
 	if ( basic::options::OptionKeys::has( full_key ) ) {
@@ -609,7 +609,7 @@ JD2ResourceManagerJobInputter::parse_options_name_and_value(
 		std::ostringstream err;
 		err << "Error: option '" << optname << "' corresponding to the full key '" << full_key << "' does not match any existing option in Rosetta.\n";
 		err << "Thrown from JD2ResourceManagerJobInputter::parse_job_tag\n";
-		throw EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(Exception,  err.str() );
 	}
 }
 
@@ -627,7 +627,7 @@ JD2ResourceManagerJobInputter::read_BooleanOption_subtag_for_job(
 	} catch ( boost::bad_lexical_cast const& ) {
 		std::ostringstream err;
 		err << "Error converting value '" << val << "' given for option '" << optname << "' to a boolean from within JD2ResourceManagerJobInputter::parse_job_tag\n Boolean options must be given either a '1' or a '0'";
-		throw EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(Exception,  err.str() );
 	}
 	job_options->add_option( boolopt, boolval );
 
@@ -660,7 +660,7 @@ JD2ResourceManagerJobInputter::read_IntegerOption_subtag_for_job(
 		std::ostringstream err;
 		err << "Error converting value '" << val << "' given for option '"
 			<< optname << "' to an integer from within JD2ResourceManagerJobInputter::parse_job_tag\n";
-		throw EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(Exception,  err.str() );
 	}
 	job_options->add_option( intopt, intval );
 
@@ -692,7 +692,7 @@ JD2ResourceManagerJobInputter::read_RealOption_subtag_for_job(
 	} catch ( boost::bad_lexical_cast const& ) {
 		std::ostringstream err;
 		err << "Error converting value '" << val << "' given for option '" << optname << "' to a floating point number from within JD2ResourceManagerJobInputter::parse_job_tag\n";
-		throw EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(Exception,  err.str() );
 	}
 	job_options->add_option( realopt, realval );
 }
@@ -730,7 +730,7 @@ JD2ResourceManagerJobInputter::read_BooleanVectorOption_subtag_for_job(
 				<< optname << "' to a boolean\nfrom within JD2ResourceManagerJobInputter::parse_job_tag\n"
 				<< "Original value string: '" << val << "'\n"
 				<< "Boolean options must be given either a '1' or a '0'\n";
-			throw EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(Exception,  err.str() );
 		}
 		boolvect[ ii ] = boolval;
 	}
@@ -769,7 +769,7 @@ JD2ResourceManagerJobInputter::read_IntegerVectorOption_subtag_for_job(
 				<< ", given for the comma-separated vector option '"
 				<< optname << "' to an integer\nfrom within JD2ResourceManagerJobInputter::parse_job_tag\n"
 				<< "Original value string: '" << val << "'\n";
-			throw EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(Exception,  err.str() );
 		}
 		intvect[ ii ] = intval;
 	}
@@ -807,7 +807,7 @@ JD2ResourceManagerJobInputter::read_RealVectorOption_subtag_for_job(
 			err << "Error converting value '" << vals[ii] << "', option # " << ii << ", given for the comma-separated vector option '"
 				<< optname << "' to a boolean\nfrom within JD2ResourceManagerJobInputter::parse_job_tag\n"
 				<< "Original value string: '" << val << "'\n";
-			throw EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(Exception,  err.str() );
 		}
 		realvect[ ii ] = realval;
 	}
@@ -838,7 +838,7 @@ JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
 	if ( !options_tag->hasOption("resource_tag") ) {
 		err << "you must specify the resource_tag option when using a ResidueType tag";
 		err <<std::endl;
-		throw EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(Exception,  err.str() );
 	}
 	for ( auto const & opt_iter : options_tag->getOptions() ) {
 		if ( opt_iter.first == "resource_tag" ) {
@@ -934,7 +934,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 			err << "\t(" << opt_iter.first << ", " << opt_iter.second << ")\n";
 		}
 		err << "Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
-		throw EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(Exception,  err.str() );
 	}
 
 	if ( local_startstruct_found && pdb_found ) {
@@ -976,7 +976,7 @@ JD2ResourceManagerJobInputter::check_each_job_has_startstruct(
 			std::stringstream errmsg;
 			errmsg
 				<< "Error: Job '" << job->input_tag() << "' given without a 'startstruct'";
-			throw EXCN_Msg_Exception( errmsg.str() );
+			throw CREATE_EXCEPTION(Exception,  errmsg.str() );
 		}
 	}
 }
@@ -990,4 +990,3 @@ JD2ResourceManagerJobInputter::input_source() const
 
 } // namespace jd2
 } // namespace protocols
-

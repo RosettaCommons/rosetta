@@ -154,7 +154,7 @@ void PackDaemon::setup()
 
 	ig_ = utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::FixedBBInteractionGraph > ( ig );
 	if ( ! ig_ )  {
-		throw utility::excn::EXCN_Msg_Exception( "Interaction graph returned by pack_rotamers_setup is not a"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Interaction graph returned by pack_rotamers_setup is not a"
 			" fixed-backbone two-body interaction graph.  Cannot continue" );
 	}
 
@@ -308,7 +308,7 @@ PackDaemon::select_rotamer_subset( Entity const & entity ) const
 				++ii_rotamers_appended;
 			}
 			if ( ii_rotamers_appended == 0 ) {
-				throw utility::excn::EXCN_Msg_Exception( "Failed to find any rotamers for residue "
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find any rotamers for residue "
 					+ utility::to_string( ii_resid ) + "." );
 			}
 		} else {
@@ -328,7 +328,7 @@ PackDaemon::select_rotamer_subset( Entity const & entity ) const
 			}
 
 			if ( ii_rotamers_appended == 0 ) {
-				throw utility::excn::EXCN_Msg_Exception( "Failed to find any rotamers for residue "
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find any rotamers for residue "
 					+ utility::to_string( ii_resid ) + " corresponding to entity "
 					+ utility::to_string( ii_entity_id ) + " when looking for "
 					+ utility::to_string( entity_aa ) + " rotamers." );
@@ -674,7 +674,7 @@ DaemonSet::add_pack_daemon(
 	}
 	if ( error_message != "" ) {
 		//std::cerr << error_message << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( error_message );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 	}
 
 	// Create the new daemon
@@ -716,7 +716,7 @@ DaemonSet::add_npd_property_calculator_for_state(
 				msg += "   " + npditer->first + "\n";
 			}
 		}
-		throw utility::excn::EXCN_Msg_Exception( msg );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  msg );
 	}
 
 	Size which_daemon = 0;
@@ -727,7 +727,7 @@ DaemonSet::add_npd_property_calculator_for_state(
 		}
 	}
 	if ( which_daemon == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Internal error: could not locate requested daemon " +
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Internal error: could not locate requested daemon " +
 			utility::to_string( daemon_index ) + " while trying to add NPD Property Calculator for that daemon." );
 	}
 
@@ -949,7 +949,7 @@ void DaemonSet::process_add_daemon_message()
 			}
 
 		}
-	} catch ( utility::excn::EXCN_Base & excn )  {
+	} catch ( utility::excn::Exception & excn )  {
 		// send the error message to node 0 and exit gracefully.
 		std::string message( excn.msg() );
 		utility::send_integer_to_node( 0, error_message );

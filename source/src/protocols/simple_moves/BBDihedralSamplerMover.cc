@@ -277,7 +277,7 @@ BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 		sampler->set_torsion_to_pose( pose, resnum );
 		set_last_move_status(protocols::moves::MS_SUCCESS);
 
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch ( utility::excn::Exception& excn ) {
 		TR.Error<< "Could not set torsion for resnum "<< resnum << std::endl;
 		set_last_move_status(protocols::moves::MS_FAIL);
 

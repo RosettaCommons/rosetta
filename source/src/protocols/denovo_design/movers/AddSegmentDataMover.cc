@@ -63,15 +63,15 @@ AddSegmentDataMover::parse_my_tag(
 	if ( segment_name_.empty() ) {
 		std::stringstream msg;
 		msg << "Name of new segment must be specified to AddSegment" << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 	if ( secstruct_.empty() || abego_.empty() ) {
 		std::stringstream msg;
 		msg << "SS and ABEGO must be specified to AddSegment" << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 	if ( secstruct_.size() != abego_.size() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "AddSegment: ss and abego must be the same length!" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "AddSegment: ss and abego must be the same length!" );
 	}
 }
 
@@ -126,16 +126,16 @@ AddSegmentDataMover::create_segment( components::StructureData & perm ) const
 	if ( segment_name_.empty() ) {
 		std::stringstream msg;
 		msg << "Name of new segment must be specified to AddSegment" << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 	if ( secstruct_.empty() || abego_.empty() ) {
 		std::stringstream msg;
 		msg << "SS and ABEGO must be specified to AddSegment" << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
 	if ( secstruct_.size() != abego_.size() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "AddSegment: ss and abego must be the same length!" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "AddSegment: ss and abego must be the same length!" );
 	}
 
 	bool const nterm_inc = secstruct_.size() < 2;

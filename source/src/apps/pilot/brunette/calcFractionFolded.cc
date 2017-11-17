@@ -146,7 +146,7 @@ int main( int argc, char * argv [] ) {
 			Real pctBelowThresh = ctBelowThreshold/(Real)rmsd_by_position[ii].size();
 			output << I(4,ii) << F(8,2,avgRmsd) << F(8,2,pctBelowThresh) << std::endl;
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

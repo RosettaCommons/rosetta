@@ -258,7 +258,7 @@ main( int argc, char * argv [] )
 		}
 
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		utility_exit_with_message("caught exception " + e.msg());
 	}
 }

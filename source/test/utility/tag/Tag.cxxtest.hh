@@ -37,7 +37,7 @@ public:
 		try {
 			utility::tag::TagCOP tags(utility::tag::Tag::create(in));
 			TS_ASSERT(false);
-		} catch ( utility::excn::EXCN_BadInput e ){
+		} catch (utility::excn::BadInput e ){
 			std::stringstream expected_error;
 			if(col==0){
 				expected_error
@@ -51,12 +51,12 @@ public:
 					<< "Tag::read - parse error - file:istream line:1 column:" << col << " -" << std::string(col, ' ') << "^" << std::endl
 					<< std::endl;
 			}
-			if( e.msg() != expected_error.str() ) {
+			if( e.msg().find( expected_error.str() ) == std::string::npos ) {
 				std::cout << "expected error: '" << expected_error.str() << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
 
-			TS_ASSERT( e.msg() == expected_error.str() );
+			TS_ASSERT( e.msg().find( expected_error.str() ) != std::string::npos );
 		}
 	}
 

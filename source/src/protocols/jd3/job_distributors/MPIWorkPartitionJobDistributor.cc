@@ -176,7 +176,7 @@ MPIWorkPartitionJobDistributor::go( JobQueenOP queen )
 			JobResultOP result;
 			try {
 				result = mature_job->run();
-			} catch ( utility::excn::EXCN_Base const & exception ) {
+			} catch ( utility::excn::Exception const & exception ) {
 				process_exception_from_job( larval_job, exception );
 			}
 			process_job_result( larval_job, result );

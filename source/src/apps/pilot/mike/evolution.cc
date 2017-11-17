@@ -532,7 +532,7 @@ main( int argc, char * argv [] )
 
 	outfile.close();
 	std::cout << "Normal termination." << std::endl;
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
         return -1;
     }

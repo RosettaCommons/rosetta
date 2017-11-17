@@ -123,7 +123,7 @@ bool DensityScoringClaimer::accept_declined_claim( claims::DofClaim const& was_d
 
 void DensityScoringClaimer::init_after_reading() {
 	if ( anchor_residue_ == 0 || anchor_chain_ == "" ) {
-		throw EXCN_Input( "need to specify both anchor residue (tag = anchor_residue) and anchor chain (tag = anchor_chain) for DensityScoring" );
+		throw CREATE_EXCEPTION(EXCN_Input,  "need to specify both anchor residue (tag = anchor_residue) and anchor chain (tag = anchor_chain) for DensityScoring" );
 	}
 
 	/*set_label( ObjexxFCL::string_of( anchor_residue_ ) + anchor_chain_ );

@@ -467,11 +467,11 @@ init_hbond_sp2_correction( utility::options::OptionCollection & options ) {
 		}
 
 		if ( options[corrections::correct] ) {
-			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:correct flag.");
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "The -corrections::hbond_sp2_correction is incompatible with the -corrections:correct flag.");
 		}
 
 		if ( options[ corrections::facts_default ] ) {
-			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:facts_default flag.");
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "The -corrections::hbond_sp2_correction is incompatible with the -corrections:facts_default flag.");
 		}
 	}
 }
@@ -2259,7 +2259,7 @@ check_score_function_sanity(
 				<< "(And do not use the -restore_talaris_behavior flag.)" << std::endl
 				<< "**********************************************" << std::endl;
 			if ( throw_exception ) {
-				throw utility::excn::EXCN_BadInput("Missing -restore_pre_talaris_2013_behavior flag.");
+				throw CREATE_EXCEPTION(utility::excn::BadInput, "Missing -restore_pre_talaris_2013_behavior flag.");
 			} else {
 				return false;
 			}
@@ -2279,7 +2279,7 @@ check_score_function_sanity(
 				<< "(And do not use the -restore_pre_talaris_2013_behavior flag.)" << std::endl
 				<< "**********************************************" << std::endl;
 			if ( throw_exception ) {
-				throw utility::excn::EXCN_BadInput("Missing -restore_talaris_behavior flag.");
+				throw CREATE_EXCEPTION(utility::excn::BadInput, "Missing -restore_talaris_behavior flag.");
 			} else {
 				return false;
 			}
@@ -2298,7 +2298,7 @@ check_score_function_sanity(
 				<< "flags on the command line." << std::endl
 				<< "**********************************************" << std::endl;
 			if ( throw_exception ) {
-				throw utility::excn::EXCN_BadInput("Using -restore_talaris_behavior or -restore_pre_talaris_2013_behavior with REF-era scorefunctions.");
+				throw CREATE_EXCEPTION(utility::excn::BadInput, "Using -restore_talaris_behavior or -restore_pre_talaris_2013_behavior with REF-era scorefunctions.");
 			} else {
 				return false;
 			}

@@ -1363,7 +1363,7 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size &, core::pose::Pose con
 		core::scoring::sc::RESULTS const results = sc_calc.GetResults();
 		data_.sc_value = results.sc;
 	}
-catch (utility::excn::EXCN_Base& excn){
+catch (utility::excn::Exception& excn){
 	TR << "SC calculation failed.  Setting to 0" << std::endl;
 	data_.sc_value = 0;
 }
@@ -1467,11 +1467,11 @@ InterfaceAnalyzerMover::parse_my_tag(
 
 
 	if ( tag->hasOption( "jump" ) && tag->hasOption( "fixedchains" ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Jump and fixedchains are mutually exclusive. Use either jump or fixedchains" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Jump and fixedchains are mutually exclusive. Use either jump or fixedchains" );
 	}
 
 	if ( ( tag->hasOption( "jump" ) || tag->hasOption( "fixedchains" ) ) && tag->hasOption( "ligandchain" ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "if you specify Jump or fixedchains you cannot also specify ligandchain" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "if you specify Jump or fixedchains you cannot also specify ligandchain" );
 	}
 
 	if ( tag->hasOption( "fixedchains" ) ) {

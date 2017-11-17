@@ -579,10 +579,11 @@ public:
 			xsd.add_top_level_element( rs_int );
 			//xsd.add_top_level_element( "RosettaScripts", "<xs:element name=\"RosettaScripts\" type=\"xs:integer\"/>\n" );
 			TS_ASSERT( false ); // we should not have reached this point
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Name collision in creation of XML Schema definition: top level element with name \"RosettaScripts\" already has been defined.\n"
+		} catch (utility::excn::Exception const & e ) {
+			std::string expected_err_msg = "Name collision in creation of XML Schema definition: top level element with name \"RosettaScripts\" already has been defined.\n"
 				"Old definition:\n<xs:element name=\"RosettaScripts\" type=\"xs:string\"/>\nNew definition:\n"
-				"<xs:element name=\"RosettaScripts\" type=\"xs:integer\"/>\n");
+				"<xs:element name=\"RosettaScripts\" type=\"xs:integer\"/>\n";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -604,8 +605,9 @@ public:
 
 		try {
 			xsd.add_top_level_element( imp );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "top level tag with presumed name \"imposter\" has an actual name of \"RosettaScripts\"" );
+		} catch (utility::excn::Exception const & e ) {
+			std::string expected_err_msg = "top level tag with presumed name \"imposter\" has an actual name of \"RosettaScripts\"";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -626,8 +628,9 @@ public:
 		} imp;
 		try {
 			xsd.add_top_level_element( imp );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "top level tag \"RosettaScripts\" does not have a name attribute (a.k.a. option)." );
+		} catch (utility::excn::Exception const & e ) {
+			std::string expected_err_msg = "top level tag \"RosettaScripts\" does not have a name attribute (a.k.a. option).";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -739,7 +742,7 @@ public:
 			// now for the duplicated element
 			xsd.add_top_level_element( res_select_ct2 );
 			TS_ASSERT( false ); // this should not be reached
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			std::string expected_message = "Name collision in creation of XML Schema definition: top level element with "
 				"name \"ResidueSelectorType\" already has been defined.\n"
 				"Old definition:\n"
@@ -750,7 +753,7 @@ public:
 				"<xs:complexType name=\"ResidueSelectorType\" mixed=\"true\">\n"
 				" <xs:group ref=\"TResidueSelector\"/>\n"
 				"</xs:complexType>\n";
-			TS_ASSERT_EQUALS( e.msg(), expected_message );
+			TS_ASSERT( e.msg().find(expected_message) != std::string::npos );
 			// std::cout << std::endl << std::endl;
 			// std::cout << e.msg() << std::endl << std::endl;
 			// std::cout << expected_message << std::endl << std::endl;

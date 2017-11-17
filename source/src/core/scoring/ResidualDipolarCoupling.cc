@@ -163,7 +163,7 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 	std::string line;
 	utility::io::izstream infile(filename.c_str());
 	if ( !infile.good() ) {
-		throw( utility::excn::EXCN_FileNotFound( filename ) );
+		throw CREATE_EXCEPTION(utility::excn::FileNotFound,  filename ) ;
 	}
 	// std::cout << "Reading RDC file " << filename << std::endl;
 	tr.Info << "Reading RDC file " << filename << std::endl;
@@ -180,12 +180,12 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 
 		if ( line_stream.fail() ) {
 			tr.Error << "couldn't read line " << line << " in rdc-file " << filename << std::endl;
-			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-file "+filename));
+			throw CREATE_EXCEPTION(utility::excn::BadInput, " invalid line "+line+" in rdc-file "+filename);
 		}
 
 		if ( res1 < 1 || res2 < 1 ) {
 			tr.Error << "negative residue number in line " << line << " in rdc-file " << filename << std::endl;
-			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc_file " + filename ) );
+			throw CREATE_EXCEPTION(utility::excn::BadInput, " invalid line "+line+" in rdc_file " + filename );
 		}
 
 		Real weight(1.0);
@@ -201,7 +201,7 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 	}
 	if ( All_RDC_lines_.size() == lines_previously_read ) {
 		tr.Error << "file empty ? " << std::endl;
-		throw( utility::excn::EXCN_BadInput(" no valid RDCs found in file " + filename + "\n" ));
+		throw CREATE_EXCEPTION(utility::excn::BadInput, " no valid RDCs found in file " + filename + "\n" );
 	}
 	//lines_previously_read = All_RDC_lines_.size(); //unused
 }
@@ -234,8 +234,7 @@ void ResidualDipolarCoupling::read_RDC_file() {
 			if ( line_stream.fail() ) {
 				tr.Error << "reading rdc-weight-file " << filename
 					<< std::endl;
-				throw(utility::excn::EXCN_BadInput(" invalid line " + line
-					+ " in rdc-weight-file " + filename));
+				throw CREATE_EXCEPTION(utility::excn::BadInput, " invalid line " + line + " in rdc-weight-file " + filename);
 			}
 			for ( auto & All_RDC_line : All_RDC_lines_ ) {
 				if ( All_RDC_line.res1() == res1 ) {
@@ -331,7 +330,7 @@ std::string element_string(std::string atom) {
 	if ( atom == "N" ) {
 		return "N";
 	}
-	throw(utility::excn::EXCN_BadInput("unknown atom for RDC: " + atom));
+	throw CREATE_EXCEPTION(utility::excn::BadInput, "unknown atom for RDC: " + atom);
 	return ""; //to make compile happy.
 }
 
@@ -357,8 +356,7 @@ RDC::RDC_TYPE RDC::get_RDC_data_type(std::string const & atom1,
 	} else if ( (elem1 == "N" && elem2 == "CA") || (elem1 == "CA" && elem2 == "N") ) {
 		RDC_type = RDC_TYPE_NCA;
 	} else {
-		throw(utility::excn::EXCN_BadInput(
-			"unknown combination of atoms for RDC " + atom1 + " " + atom2));
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "unknown combination of atoms for RDC " + atom1 + " " + atom2);
 	}
 	return RDC_type;
 }
@@ -533,7 +531,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		try {
 			m_inv_gen(T_[ex], 5, T_[ex]);
 			//   std::cout << "performing SVD decomposition" << std::endl;
-		} catch (utility::excn::EXCN_BadInput &excn) {
+		} catch (utility::excn::BadInput &excn) {
 			if ( tr.Debug.visible() ) {
 				pose.dump_pdb("failed_jacobi.pdb");
 			}
@@ -584,7 +582,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 	//Always diagonalize the matrix to find out the alignment
 	try {
 		compute_tensor_stats();
-	} catch (utility::excn::EXCN_BadInput &excn) {
+	} catch (utility::excn::BadInput &excn) {
 		if ( tr.Debug.visible() ) {
 			pose.dump_pdb("failed_jacobi.pdb");
 		}
@@ -1263,7 +1261,7 @@ ResidualDipolarCoupling::do_correct_NH(
 		invr = 1.0 / sqrt(r2);
 	} else {
 		tr.Error << "unreognized type or residue sequence separation does not allow using correct_NH" << std::endl;
-		throw( utility::excn::EXCN_BadInput("unreognized type or residue sequence separation does not allow using correct_NH "));
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "unreognized type or residue sequence separation does not allow using correct_NH ");
 	}
 }
 
@@ -1524,7 +1522,7 @@ void jacobi( ResidualDipolarCoupling::Tensor5 & a, ResidualDipolarCoupling::rvec
 		}
 	}
 	//probably different type of Exception is better suited
-	throw( utility::excn::EXCN_BadInput(" too many iterations in Jacobi when compute RDC tensor") );
+	throw CREATE_EXCEPTION(utility::excn::BadInput, " too many iterations in Jacobi when compute RDC tensor");
 }
 
 void jacobi3(
@@ -1610,7 +1608,7 @@ void jacobi3(
 		}
 	}
 	//probably different type of Exception is better suited
-	throw( utility::excn::EXCN_BadInput(" too many iterations in Jacobi when compute RDC tensor") );
+	throw CREATE_EXCEPTION(utility::excn::BadInput, " too many iterations in Jacobi when compute RDC tensor");
 }
 
 } //namespace Scoring

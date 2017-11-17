@@ -78,7 +78,7 @@ ResidueTypeConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::data
 	if ( use_native ) {
 		set_reference_pose( get_native_pose() );
 		if ( ! ref_pose_ ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "'native' option for ResidueTypeConstraintGenerator specified, but no native pose is availible." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "'native' option for ResidueTypeConstraintGenerator specified, but no native pose is availible." );
 		}
 		//Any other source of reference poses?
 	}

@@ -284,7 +284,7 @@ my_main( void *)
     {
         protocols::jd2::JobDistributor::get_instance()->go( seq );
     }
-    catch ( utility::excn::EXCN_Base &excn )
+    catch (utility::excn::Exception &excn )
     {
         std::cerr << "Exception: " << std::endl;
         excn.show( std::cerr );
@@ -306,7 +306,7 @@ main( int argc, char *argv [] )
 
         stat_output();
     }
-    catch ( utility::excn::EXCN_Base const &e )
+    catch (utility::excn::Exception const &e )
     {
         std::cout << "caught exception " << e.msg() << std::endl;
     }

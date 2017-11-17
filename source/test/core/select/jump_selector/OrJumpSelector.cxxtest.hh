@@ -98,7 +98,7 @@ public:
 		JumpSelectorOP and_js( new OrJumpSelector );
 		try {
 			and_js->parse_my_tag( tag, dm );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -126,9 +126,9 @@ public:
 		try {
 			and_js->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected = "No JumpSelectors given to the OrJumpSelector; OrJumpSelector requires at least one JumpSelector as input\n";
-			TS_ASSERT_EQUALS( e.msg(), expected );
+			TS_ASSERT( e.msg().find(expected) != std::string::npos );
 		}
 
 	}
@@ -146,9 +146,9 @@ public:
 		try {
 			and_js->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected = "Failed to find JumpSelector named 'odd' from the Datamap from OrJumpSelector::parse_my_tag.\nERROR: Could not find JumpSelector and name odd in Datamap\n";
-			TS_ASSERT_EQUALS( e.msg(), expected );
+		} catch (utility::excn::Exception e ) {
+			std::string expected = "Failed to find JumpSelector named 'odd' from the Datamap from OrJumpSelector::parse_my_tag."; //\nERROR: Could not find JumpSelector and name odd in Datamap\n
+			TS_ASSERT( e.msg().find(expected) != std::string::npos );
 		}
 	}
 
@@ -162,7 +162,7 @@ public:
 		JumpSelectorOP and_js( new OrJumpSelector );
 		try {
 			and_js->parse_my_tag( tag, dm );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			TS_ASSERT( false );
 		}
 
@@ -185,7 +185,7 @@ public:
 		JumpSelectorOP and_js( new OrJumpSelector );
 		try {
 			and_js->parse_my_tag( tag, dm );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			TS_ASSERT( false );
 		}
 
@@ -209,9 +209,9 @@ public:
 		try {
 			and_js->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // parsing should fail here
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string err_msg =  "No JumpSelectorCreator with the name 'Bogus' has been registered with the JumpSelectorFactory";
-			TS_ASSERT( e.msg() == err_msg );
+			TS_ASSERT( e.msg().find(err_msg) != std::string::npos );
 		}
 	}
 

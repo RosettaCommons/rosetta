@@ -311,14 +311,14 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 		mover_name = tag_ptr->getOption<string>( "mover_name" );
 		auto find_mover( movers.find( mover_name ) );
 		if ( find_mover == movers.end() ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("Mover " + mover_name + " not found in map");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + mover_name + " not found in map");
 		}
 		mover_to_add = find_mover->second;
 	} else if ( tag_ptr->hasOption( "mover" ) ) {
 		mover_name = tag_ptr->getOption<string>( "mover" );
 		auto find_mover( movers.find( mover_name ) );
 		if ( find_mover == movers.end() ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("Mover " + mover_name + " not found in map");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + mover_name + " not found in map");
 		}
 		mover_to_add = find_mover->second;
 	} else if ( tag_ptr->getName() != "Add" ) {
@@ -366,7 +366,7 @@ ParsedProtocol::parse_my_tag(
 
 	mode_=tag->getOption<string>("mode", "sequence");
 	if ( mode_ != "sequence" && mode_ != "random_order" && mode_ != "single_random" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Error: mode must be sequence, random_order, or single_random");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error: mode must be sequence, random_order, or single_random");
 	}
 
 	utility::vector0< TagCOP > const & dd_tags( tag->getTags() );
@@ -395,7 +395,7 @@ ParsedProtocol::parse_my_tag(
 		if ( filter_defined ) {
 			auto find_filter( filters.find( filter_name ));
 			if ( find_filter == filters.end() ) {
-				throw utility::excn::EXCN_RosettaScriptsOption("Filter " + filter_name + " not found in map");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Filter " + filter_name + " not found in map");
 			}
 			filter_to_add = find_filter->second;
 		} else {

@@ -35,7 +35,7 @@ Try:
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Options
 #include <basic/options/option.hh>
@@ -286,7 +286,7 @@ int main(int argc, char* argv[])
 		pose.dump_pdb(output_final);
 
 		tr << "Finished TMH sampling.  Outputting " << output_final << std::endl;
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 		return -1;

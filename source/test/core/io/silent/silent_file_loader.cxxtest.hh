@@ -69,7 +69,7 @@ public:
 		try {
 			sfo.set_silent_struct_type("BLA");
 			TS_ASSERT( false );
-		} catch (utility::excn::EXCN_BadInput & e){
+		} catch (utility::excn::BadInput & e){
 			TR << e.msg();
 		}
 

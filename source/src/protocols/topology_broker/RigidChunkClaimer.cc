@@ -509,7 +509,7 @@ void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 			}
 		}
 	}
-	if ( missing_density ) throw utility::excn::EXCN_BadInput( " missing density in backbone of rigid-chunk... check your LOOP definition");
+	if ( missing_density ) throw CREATE_EXCEPTION(utility::excn::BadInput,  " missing density in backbone of rigid-chunk... check your LOOP definition");
 	//centroid_input_pose_.fold_tree( pose.fold_tree() );
 	runtime_assert( !pose.is_fullatom()  );
 	runtime_assert( !centroid_input_pose_.is_fullatom() );

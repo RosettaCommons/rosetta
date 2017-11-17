@@ -133,7 +133,7 @@ int main( int argc, char * argv [] ) {
         out << I(4,ii) << " " << "A" << " " << label <<" " << F(7,3,pct[ii][2]) << F(7,3,pct[ii][1])  << F(7,3,pct[ii][3]) << std::endl;
     }
     out.close();
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

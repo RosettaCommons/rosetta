@@ -99,7 +99,7 @@ void TemplateFragmentClaimer::init_after_reading() {
 		read_config_file( config_file_ );
 	}
 	if ( !templates_ ) {
-		throw EXCN_Input( "TemplateFragmentClaimer not initialized properly, use CMD_FLAG and -templates:config or FILE configfile" );
+		throw CREATE_EXCEPTION(EXCN_Input,  "TemplateFragmentClaimer not initialized properly, use CMD_FLAG and -templates:config or FILE configfile" );
 	}
 }
 

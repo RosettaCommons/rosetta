@@ -58,7 +58,7 @@ SequenceNumberResolver::offset( std::string const& label ) const {
 		tr.Warning << "Attempting to resolve a sequence number with an empty claim label - assuming zero offset." << std::endl;
 		return 0;
 	} else {
-		throw utility::excn::EXCN_BadInput( "SequenceNumberResolver asked to resolve SequenceClaim label '"
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "SequenceNumberResolver asked to resolve SequenceClaim label '"
 			+ label + "', which does not match any SequenceClaim labels." );
 	}
 }
@@ -70,7 +70,7 @@ void SequenceNumberResolver::register_label_offset( std::string const& label, co
 	std::pair<std::map< std::string, core::Size >::iterator,bool> ret;
 	ret = offset_map_.insert( std::pair < std::string, core::Size >( label,offset ) );
 	if ( ret.second == false ) {
-		throw utility::excn::EXCN_BadInput( "Multiple sequence claims with label " + label );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Multiple sequence claims with label " + label );
 	}
 
 	//Store entry as well in reversed map (key=offset, value=label)
@@ -79,7 +79,7 @@ void SequenceNumberResolver::register_label_offset( std::string const& label, co
 	if ( ret_rev.second == false ) {
 		std::ostringstream msg;
 		msg << "Multiple sequence claims with offset " << offset;
-		throw utility::excn::EXCN_BadInput( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 	}
 }
 
@@ -121,7 +121,7 @@ std::map<core::Size, std::string>::const_iterator SequenceNumberResolver::search
 	else {
 		std::ostringstream msg;
 		msg << "Iterator of SequenceNumberResolver is out of range for pose number " << pose_number;
-		throw utility::excn::EXCN_RangeError( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  msg.str() );
 	}
 	return itlow;
 }

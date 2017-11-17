@@ -205,7 +205,7 @@ main( int argc, char* argv [] )
 		prof_show();
 	} // for two_letter_codes
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

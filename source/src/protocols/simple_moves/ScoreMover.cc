@@ -208,7 +208,7 @@ void ScoreMover::parse_my_tag(
 		if ( datamap.has( "scorefxns", scorefxn_key ) ) {
 			score_function_ = datamap.get_ptr<ScoreFunction>( "scorefxns", scorefxn_key );
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 		}
 	}
 

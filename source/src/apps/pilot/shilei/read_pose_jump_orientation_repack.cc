@@ -144,7 +144,7 @@ void run() {
 		core::import_pose::pose_from_file( pose, pdbname.c_str() , core::import_pose::PDB_file);
 		ref_pose=pose;
 	} else {
-		throw( utility::excn::EXCN_BadInput("expected -s for this app") );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput, "expected -s for this app") );
 	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
@@ -154,7 +154,7 @@ void run() {
 	utility::vector1< core::Real > saved_transformations_;
 	if ( !basic::options::option[ basic::options::OptionKeys::read_pose_jump_orientation_repack::jump_orientation].user() ||
 			basic::options::option[ basic::options::OptionKeys::read_pose_jump_orientation_repack::jump_orientation].size()!=12 ) {
-		throw( utility::excn::EXCN_BadInput("expected jump_orientation be provided as a vector of 12") );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput, "expected jump_orientation be provided as a vector of 12") );
 	} else {
 		for ( core::Size i=1; i <= 12; i++ ) {
 			saved_transformations_.push_back(basic::options::option[ basic::options::OptionKeys::read_pose_jump_orientation_repack::jump_orientation][i]);
@@ -297,7 +297,7 @@ int main( int argc, char * argv [] ) {
 
 		run();
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

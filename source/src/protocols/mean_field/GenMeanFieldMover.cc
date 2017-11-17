@@ -293,7 +293,7 @@ GenMeanFieldMover::read_input_pdbs()
 			std::stringstream error_message;
 			error_message
 				<< "bb_list specified but no files found." << std::endl;
-			throw excn::EXCN_Msg_Exception( error_message.str() );
+			throw CREATE_EXCEPTION(excn::Exception,  error_message.str() );
 		}
 
 	} else if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].active() ) {
@@ -324,7 +324,7 @@ GenMeanFieldMover::prepare_task_poses( pose::Pose const & pose )
 		std::stringstream error_message;
 		error_message
 			<< "Task does not pack anything." << std::endl;
-		throw excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(excn::Exception,  error_message.str() );
 	}
 
 

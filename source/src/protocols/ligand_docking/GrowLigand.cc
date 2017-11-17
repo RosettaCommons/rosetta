@@ -135,7 +135,7 @@ GrowLigand::parse_my_tag(
 	if ( tag->hasOption("chain") ) {
 		chain_ = tag->getOption<std::string>("chain");
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("HeavyAtom filter needs a 'chain' option");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "HeavyAtom filter needs a 'chain' option");
 	}
 }
 

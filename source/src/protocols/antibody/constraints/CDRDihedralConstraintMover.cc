@@ -255,7 +255,7 @@ CDRDihedralConstraintMover::apply(core::pose::Pose& pose) {
 		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose));
 	}
 
-	if ( ! cdr_is_set_ ) throw utility::excn::EXCN_Msg_Exception("CDR not set for CDRDihedralConstraintMover!");
+	if ( ! cdr_is_set_ ) throw CREATE_EXCEPTION(utility::excn::Exception, "CDR not set for CDRDihedralConstraintMover!");
 
 	if ( use_cluster_csts_ && (cdr_ != h3 || use_cluster_for_H3_) && (cdr_ != l4 || cdr_ != h4) )  {
 
@@ -302,7 +302,7 @@ CDRDihedralConstraintMover::add_harmonic_cluster_constraint(core::pose::Pose & p
 	using namespace core::scoring::constraints;
 
 	if ( ab_info_->get_current_AntibodyNumberingScheme() != "AHO_Scheme" ) {
-		throw utility::excn::EXCN_Msg_Exception("CDRDihedralConstraintMover with cluster-based constraints "
+		throw CREATE_EXCEPTION(utility::excn::Exception, "CDRDihedralConstraintMover with cluster-based constraints "
 			"only works with antibodies using the AHO_Scheme for numbering\n"
 			"Please use a properly renumbered antibody or set the option set_use_cluster_csts(false) in the class");
 	}
@@ -316,14 +316,13 @@ CDRDihedralConstraintMover::add_harmonic_cluster_constraint(core::pose::Pose & p
 		pose.add_constraints(cst->get_all_constraints());
 		return true;
 	}
-catch(utility::excn::EXCN_Exception &excn){
-	TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
-	std::cerr << "Exception : " << std::endl;
-	excn.show( std::cerr );
-	excn.show( TR );
-	return false;
-}
-
+	catch(utility::excn::Exception &excn) {
+		TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
+		std::cerr << "Exception : " << std::endl;
+		excn.show( std::cerr );
+		excn.show( TR );
+		return false;
+	}
 }
 
 core::Size
@@ -338,7 +337,7 @@ CDRDihedralConstraintMover::get_number_of_struct_used_for_csts(CDRClusterEnum co
 	std::string fname = basic::database::full_name( specific_path );
 
 	if ( !utility::file::file_exists(fname) ) {
-		throw utility::excn::EXCN_Msg_Exception(" "+fname+" does not exist.  Cannot load load dihedral cst mean_sd data");
+		throw CREATE_EXCEPTION(utility::excn::Exception, " "+fname+" does not exist.  Cannot load load dihedral cst mean_sd data");
 	}
 
 	std::string line;

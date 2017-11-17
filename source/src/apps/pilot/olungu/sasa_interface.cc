@@ -68,7 +68,7 @@ main( int argc, char* argv[] ){
 		std::cout << "Total charge " << total_charge << std::endl;
 		ParatopeMetric< core::SSize>p_charge = paratope_charge( pose, abinfo );
 		std::cout << "peritope charge " << p_charge.paratope << std::endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

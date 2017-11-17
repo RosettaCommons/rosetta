@@ -60,7 +60,7 @@ public:
 		ResidueSelectorOP name_rs( new ResiduePDBInfoHasLabelSelector );
 		try {
 			name_rs->parse_my_tag( tag, dm );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -93,7 +93,7 @@ public:
 		try {
 			name_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			// should fail with a message
 			TS_ASSERT( e.msg() != "" );
 		}

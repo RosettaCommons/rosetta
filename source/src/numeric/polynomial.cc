@@ -38,6 +38,8 @@
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
+#include <sstream>
+
 namespace numeric {
 
 using std::string;
@@ -83,19 +85,19 @@ Polynomial_1d::check_invariants() const
 	if ( xmin_ > xmax_ ) {
 		std::stringstream msg;
 		msg << "Polnomial_1d is badly formed because (xmin: '" << xmin_ << "') > (xmax: '" << xmax_ << "')";
-		throw utility::excn::EXCN_Msg_Exception(msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception, msg.str() );
 	}
 
 	if ( coefficients_.size() == 0 ) {
 		std::stringstream msg;
 		msg << "Polnomial_1d is badly formed because no coefficients were provided";
-		throw utility::excn::EXCN_Msg_Exception(msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception, msg.str() );
 	}
 
 	if ( coefficients_.size() != degree_ ) {
 		std::stringstream msg;
 		msg << "Polnomial_1d is badly formed because the degree was given to be '" << degree_ << "' while '" << coefficients_.size() << "' coefficients were provided, while they should be equal.";
-		throw utility::excn::EXCN_Msg_Exception(msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception, msg.str() );
 	}
 
 

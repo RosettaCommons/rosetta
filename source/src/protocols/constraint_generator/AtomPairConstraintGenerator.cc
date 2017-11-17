@@ -83,7 +83,7 @@ AtomPairConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datacac
 	if ( use_native ) {
 		set_reference_pose( get_native_pose() );
 		if ( ! reference_pose_ ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "'native' option for AtomPairConstraintGenerator specified, but no native pose is availible." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "'native' option for AtomPairConstraintGenerator specified, but no native pose is availible." );
 		}
 	}
 
@@ -102,7 +102,7 @@ AtomPairConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datacac
 	set_unweighted_function( tag->getOption< bool >( "unweighted", unweighted_ ) );
 
 	if ( !selector_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "AtomPairConstraintGenerator requires a residue selector, but one is not set.\n" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "AtomPairConstraintGenerator requires a residue selector, but one is not set.\n" );
 	}
 }
 

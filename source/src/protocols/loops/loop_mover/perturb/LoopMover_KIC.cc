@@ -317,8 +317,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		try {
 			std::string user_torbin_string = basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ]();
 			torsion_bins = core::conformation::map_string_to_torsion_bin_string( user_torbin_string );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			throw utility::excn::EXCN_Msg_Exception( "Error in converting the string given in the option loops::restrict_kic_sampling_to_torsion_string\n"
+		} catch ( utility::excn::Exception & e ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Error in converting the string given in the option loops::restrict_kic_sampling_to_torsion_string\n"
 				"into a valid torsion set of torsion bins.  Check your inputs\n" + e.msg() );
 		}
 
@@ -335,7 +335,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		// to the torsion bins in the perturber would also be implemented
 		// runtime_assert(torsion_bins.size() == loop_end - loop_begin + 1);
 		if ( torsion_bins.size() != ( loop_end - loop_begin + 1 ) ) {
-			throw utility::excn::EXCN_Msg_Exception( "Error taking the torsion bins in the construction of the"
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Error taking the torsion bins in the construction of the"
 				"TorsionRestrictedKinematicPerturber;\ntorsion_bins.size() = " + utility::to_string( torsion_bins.size() )
 				+ " vs. the loop length " + utility::to_string( loop_end - loop_begin + 1 ) + "\n" );
 		}

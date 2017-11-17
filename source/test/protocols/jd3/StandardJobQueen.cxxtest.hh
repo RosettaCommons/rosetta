@@ -357,7 +357,7 @@ public:
 		DummyJobQueen djq;
 		try {
 			djq.determine_preliminary_job_list_from_xml_file( jobdef_file );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -398,7 +398,7 @@ public:
 		DummyJobQueen djq;
 		try {
 			djq.determine_preliminary_job_list_from_xml_file( jobdef_file );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -521,7 +521,7 @@ public:
 		DummyJobQueen djq;
 		try {
 			djq.determine_preliminary_job_list_from_xml_file( jobdef_file );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}

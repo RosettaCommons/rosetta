@@ -57,9 +57,9 @@ public:
 			FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( "LoopsFile" );
 			std::string loopfilename = fallback->get_locator_id("LoopsFile" );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "The fallback LoopsFile resource option has no loops files associated with it! Was the option omitted from the command line?";
-			TS_ASSERT( expected_error_message == e.msg() );
+			TS_ASSERT( e.msg().find(expected_error_message) != std::string::npos );
 		}
 
 		basic::options::option[ basic::options::OptionKeys::loops::loop_file ].def( loop_filename );

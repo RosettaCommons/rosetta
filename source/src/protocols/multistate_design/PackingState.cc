@@ -73,7 +73,7 @@ PackingState::create_packer_data(
 
 	ig_p_ = utility::pointer::dynamic_pointer_cast<core::pack::interaction_graph::InteractionGraphBase>( ig );
 	if ( ! ig_p_ ) {
-		throw utility::excn::EXCN_Msg_Exception( "Interaction graph returned by pack_rotamers_setup is not a two-body interaction graph." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Interaction graph returned by pack_rotamers_setup is not a two-body interaction graph." );
 	}
 }
 

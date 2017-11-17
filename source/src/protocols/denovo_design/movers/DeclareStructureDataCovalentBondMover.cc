@@ -64,15 +64,15 @@ void
 DeclareStructureDataCovalentBondMover::apply( core::pose::Pose & pose )
 {
 	if ( atom1_.find(',') == std::string::npos ) {
-		throw utility::excn::EXCN_BadInput( "Atom1 description " + atom1_ + " is malformed. It should be of the form segment#residue,atom." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Atom1 description " + atom1_ + " is malformed. It should be of the form segment#residue,atom." );
 	}
 	if ( atom2_.find(',') == std::string::npos ) {
-		throw utility::excn::EXCN_BadInput( "Atom2 description " + atom2_ + " is malformed. It should be of the form segment#residue,atom." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Atom2 description " + atom2_ + " is malformed. It should be of the form segment#residue,atom." );
 	}
 
 	utility::vector1< std::string > res_plus_atom1 = utility::string_split( atom1_, ',' );
 	if ( res_plus_atom1.size() != 2 ) {
-		throw utility::excn::EXCN_BadInput( "Atom1 description " + atom1_ + " is malformed. It should be of the form segment#residue,atom." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Atom1 description " + atom1_ + " is malformed. It should be of the form segment#residue,atom." );
 	}
 
 	utility::vector1< std::string > res1_strs = utility::string_split( res_plus_atom1[1], '.' );
@@ -80,7 +80,7 @@ DeclareStructureDataCovalentBondMover::apply( core::pose::Pose & pose )
 		res1_strs.push_back( "0" );
 	}
 	if ( res1_strs.size() != 2 ) {
-		throw utility::excn::EXCN_BadInput( "Atom1 description " + atom1_ + " is malformed. It should be of the form segment#residue,atom." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Atom1 description " + atom1_ + " is malformed. It should be of the form segment#residue,atom." );
 	}
 
 	std::string const seg1 = res1_strs[1];
@@ -89,14 +89,14 @@ DeclareStructureDataCovalentBondMover::apply( core::pose::Pose & pose )
 
 	utility::vector1< std::string > res_plus_atom2 = utility::string_split( atom2_, ',' );
 	if ( res_plus_atom2.size() != 2 ) {
-		throw utility::excn::EXCN_BadInput( "Atom2 description " + atom2_ + " is malformed. It should be of the form segment#residue,atom." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Atom2 description " + atom2_ + " is malformed. It should be of the form segment#residue,atom." );
 	}
 	utility::vector1< std::string > res2_strs = utility::string_split( res_plus_atom2[1], '.' );
 	if ( res2_strs.size() == 1 ) {
 		res2_strs.push_back( "0" );
 	}
 	if ( res2_strs.size() != 2 ) {
-		throw utility::excn::EXCN_BadInput( "Atom2 description " + atom2_ + " is malformed. It should be of the form segment#residue,atom." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Atom2 description " + atom2_ + " is malformed. It should be of the form segment#residue,atom." );
 	}
 
 	std::string const seg2 = res2_strs[1];
@@ -152,10 +152,10 @@ DeclareStructureDataCovalentBondMover::parse_my_tag(
 	atom1_ = tag->getOption< std::string >( "atom1", atom1_ );
 	atom2_ = tag->getOption< std::string >( "atom2", atom2_ );
 	if ( ! atom1_.size() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Atom1 option must be specified to DeclareCovalentBond." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Atom1 option must be specified to DeclareCovalentBond." );
 	}
 	if ( ! atom2_.size() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Atom2 option must be specified to DeclareCovalentBond." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Atom2 option must be specified to DeclareCovalentBond." );
 	}
 }
 

@@ -313,7 +313,7 @@ int main(int argc, char * argv[]) {
     std::cout << ssEn->rebuildAndDetectDisulfideBond(init_pose, id1, -72.029, id2, -69.2231) << std::endl;
     //    tabulate(init_pose, id1, id2);
   }
-  } catch ( utility::excn::EXCN_Base const & e ) {
+  } catch (utility::excn::Exception const & e ) {
                             std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
                                 }

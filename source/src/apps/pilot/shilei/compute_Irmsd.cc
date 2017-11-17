@@ -114,7 +114,7 @@ public:
 			core::import_pose::pose_from_file( *native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 			set_native_pose( native_pose );
 		} else {
-			throw( utility::excn::EXCN_BadInput("native expected for this app") );
+			throw ( CREATE_EXCEPTION(utility::excn::BadInput, "native expected for this app") );
 			set_native_pose(NULL);
 		}
 
@@ -207,7 +207,7 @@ my_main( void* ) {
 
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go( seq );
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 	}
@@ -225,7 +225,7 @@ main( int argc, char * argv [] ) {
 		devel::init( argc, argv );
 
 		protocols::viewer::viewer_main( my_main );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

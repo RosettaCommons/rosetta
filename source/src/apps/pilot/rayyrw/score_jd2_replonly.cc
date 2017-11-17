@@ -158,7 +158,7 @@ main( int argc, char * argv [] )
 			try{
 				add_cmdline_claims(*top_bro_OP, false /*do_I_need_fragments */);
 			}
-catch ( utility::excn::EXCN_Exception &excn )  {
+catch (utility::excn::Exception &excn )  {
 	excn.show( TR.Error );
 	utility_exit();
 }
@@ -191,13 +191,13 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 
 		try{
 			JobDistributor::get_instance()->go( container );
-		} catch ( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			std::cerr << "Exception: " << std::endl;
 			excn.show( std::cerr );
 			std::cout << "Exception: " << std::endl;
 			excn.show( std::cout ); //so its also seen in a >LOG file
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

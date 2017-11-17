@@ -426,7 +426,7 @@ int main(int argc, char *argv[]) {
 	MPI_Finalize();
 #endif
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << endl;
 		return -1;
 	}

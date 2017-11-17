@@ -163,7 +163,7 @@ void FragmentJumpClaimer::init_jumps() {
 	}
 
 	if ( !current_jumps_.is_valid() ) {
-		throw utility::excn::EXCN_BadInput("not able to build valid fold-tree from a "+jump_def_->type_name()+" in 10 attempts in FragmentJumpClaimer");
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "not able to build valid fold-tree from a "+jump_def_->type_name()+" in 10 attempts in FragmentJumpClaimer");
 	}
 	tr.Debug << "current_jumps " << current_jumps_ << std::endl;
 

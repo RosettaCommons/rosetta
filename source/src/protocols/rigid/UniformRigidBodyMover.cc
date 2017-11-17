@@ -86,7 +86,7 @@ void UniformRigidBodyMover::apply( core::pose::Pose& pose ){
 		ss << "The target jump number of " << this->get_name()
 			<< " was " << NO_JUMP << ", which probably means this value wasn't set properly.  "
 			<< "If you're using RosettaScripts, try using the 'target_jump' option." << std::endl;
-		throw utility::excn::EXCN_BadInput( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
 
 	core::kinematics::Jump flexible_jump = pose.jump( target_jump_ );

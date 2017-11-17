@@ -98,7 +98,7 @@ FileStream::FileStream(
 				TR << "\t" << *p << filename << ".gz" << endl;
 			}
 		}
-		throw utility::excn::EXCN_FileNotFound(filename);
+		throw CREATE_EXCEPTION(utility::excn::FileNotFound, filename);
 	}
 }
 
@@ -111,7 +111,7 @@ FileStream::open(
 ) {
 	stream_.open(filename, open_mode);
 	if ( !stream_ ) {
-		throw utility::excn::EXCN_FileNotFound(filename);
+		throw CREATE_EXCEPTION(utility::excn::FileNotFound, filename);
 	}
 
 }

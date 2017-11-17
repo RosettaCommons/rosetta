@@ -207,14 +207,14 @@ main( int argc, char * argv [] )
 			test_mover->set_fail_no_retry_ = true;
 			try {
 				protocols::jd2::JobDistributor::get_instance()->go(test_mover);
-			} catch( utility::excn::EXCN_JD2Failure const & e ) {
+			} catch (utility::excn::JD2Failure const & e ) {
 				TR << "successfully caught JD2 exception after fail_no_retry" << std::endl;
 			}
 		} else if ( set_fail_bad_input ) {
 			test_mover->set_fail_bad_input_ = true;
 			try {
 				protocols::jd2::JobDistributor::get_instance()->go(test_mover);
-			} catch( utility::excn::EXCN_JD2Failure const & e ) {
+			} catch (utility::excn::JD2Failure const & e ) {
 				TR << "successfully caught JD2 exception after fail_bad_input" << std::endl;
 			}
 		} else {
@@ -222,7 +222,7 @@ main( int argc, char * argv [] )
 			TR << "*********************successful completion**************************" << std::endl;
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

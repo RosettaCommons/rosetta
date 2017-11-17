@@ -33,7 +33,7 @@ main( int argc, char * argv [] ) {
 		core::scoring::electron_density::ElectronDensity edens( models, mapreso, gridspacing );
 		std::string outfile = option[OptionKeys::edensity::mapfile]();
 		edens.writeMRC(outfile);
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

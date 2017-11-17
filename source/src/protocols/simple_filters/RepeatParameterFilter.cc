@@ -88,7 +88,7 @@ bool RepeatParameterFilter::apply( core::pose::Pose const & pose ) const {
 			}
 		}
 	}
-	throw utility::excn::EXCN_RosettaScriptsOption("Execution should not have gotten here!");
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Execution should not have gotten here!");
 	return(true);
 }
 
@@ -115,7 +115,7 @@ core::Real RepeatParameterFilter::report_sm(const core::pose::Pose & pose ) cons
 	if ( param_type_=="omega" ) {
 		return(omega);
 	}
-	throw utility::excn::EXCN_RosettaScriptsOption("Execution should not have gotten here. ");
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Execution should not have gotten here. ");
 	return(true);
 }
 
@@ -259,16 +259,16 @@ void RepeatParameterFilter::calculate_helical_parameters_helper( core::pose::Pos
 
 void RepeatParameterFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ){
 	if ( !tag->hasOption("numb_repeats") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RepeatPrarameter filter requires the number of repeats be entered with numb_repeats tag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RepeatPrarameter filter requires the number of repeats be entered with numb_repeats tag");
 	}
 	numb_repeats_ = tag->getOption<Size>("numb_repeats");
 	startAtRepeat_ = tag->getOption<Size>("start_at_repeat",1);
 	if ( startAtRepeat_+1>numb_repeats_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("start_at_repeat must be atleast 1 smaller then the number of repeats ");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "start_at_repeat must be atleast 1 smaller then the number of repeats ");
 	}
 	param_type_ = tag->getOption<std::string>("param_type");
 	if ( !(param_type_=="radius" || param_type_=="rise" || param_type_=="omega" || param_type_=="handedness") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RepeatPrarameter filter requires one of 4 param_type = radius,rise,omega or handedness");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RepeatPrarameter filter requires one of 4 param_type = radius,rise,omega or handedness");
 	}
 	if ( param_type_=="radius" || param_type_=="rise" || param_type_=="omega" ) {
 		min_=-9999;

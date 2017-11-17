@@ -251,7 +251,7 @@ void JumpClaim::validate() const {
 	if ( pos1() == pos2() ) {
 		std::ostringstream ss;
 		ss << this << " tried to build a jump to *and* from " << pos1();
-		throw utility::excn::EXCN_RangeError( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  ss.str() );
 	}
 }
 

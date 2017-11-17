@@ -536,7 +536,7 @@ ConstraintIO::read_individual_constraint_new(
 	if ( cst_op ) {
 		//  try {
 		cst_op->read_def( data, pose, func_factory );
-		// } catch ( utility::excn::EXCN_Exception &excn  ) {
+		// } catch (utility::excn::Exception &excn  ) {
 		//    tr.Error << "reading of " + tag + " failed.\n" << excn << std::endl;
 		//    cst_op = NULL;
 		//}

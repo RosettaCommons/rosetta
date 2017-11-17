@@ -108,7 +108,7 @@ public:
 
 protected:
 	simple_moves::FragmentMover const & mover() const {
-		if ( !mover_ ) throw( utility::excn::EXCN_NullPointer( "mover_ is NULL in FragmentClaimer::mover()" ) );
+		if ( !mover_ ) throw( CREATE_EXCEPTION(utility::excn::NullPointerError,  "mover_ is NULL in FragmentClaimer::mover()" ) );
 		return *mover_;
 	}
 

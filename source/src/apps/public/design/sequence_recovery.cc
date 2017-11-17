@@ -491,7 +491,7 @@ int main( int argc, char* argv[] ) {
 			TR << "Measuring sequence recovery" << std::endl;
 			measure_sequence_recovery( native_poses, redesign_poses );
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

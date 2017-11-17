@@ -81,7 +81,7 @@ IgnoreSubsetConstraintSet::operator = ( ConstraintSet const & rhs )
 	if ( this != & rhs ) {
 		IgnoreSubsetConstraintSet const * iscs_rhs = dynamic_cast< IgnoreSubsetConstraintSet const * > ( & rhs );
 		if ( ! iscs_rhs ) {
-			throw utility::excn::EXCN_Msg_Exception( "IgnoreSubsetConstraintSet handed a non IgnoreSubsetConstraintSet in operator =" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "IgnoreSubsetConstraintSet handed a non IgnoreSubsetConstraintSet in operator =" );
 		}
 		ConstraintSet::operator = ( rhs );
 		ignore_list_ = iscs_rhs->ignore_list_;
@@ -97,7 +97,7 @@ IgnoreSubsetConstraintSet::clone() const {
 void IgnoreSubsetConstraintSet::detached_copy( ConstraintSet const & src ) {
 	IgnoreSubsetConstraintSet const * iscs_src = dynamic_cast< IgnoreSubsetConstraintSet const * > ( & src );
 	if ( ! iscs_src ) {
-		throw utility::excn::EXCN_Msg_Exception( "IgnoreSubsetConstraintSet handed a non IgnoreSubsetConstraintSet in detatched_copy" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "IgnoreSubsetConstraintSet handed a non IgnoreSubsetConstraintSet in detatched_copy" );
 	}
 	deep_copy( src );
 	ignore_list_ = iscs_src->ignore_list_;

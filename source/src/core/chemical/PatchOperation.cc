@@ -922,7 +922,7 @@ ChangeAncestory::apply( ResidueType & rsd ) const
 		pa = which_ancestor_ == anc_parent           ? ICoorAtomID( ancestor_name_, rsd ) : aticoor.stub_atom1();
 		gp = which_ancestor_ == anc_grandparent      ? ICoorAtomID( ancestor_name_, rsd ) : aticoor.stub_atom2();
 		gg = which_ancestor_ == anc_greatgrandparent ? ICoorAtomID( ancestor_name_, rsd ) : aticoor.stub_atom3();
-	} catch ( utility::excn::EXCN_Base const & excn ) {
+	} catch ( utility::excn::Exception const & excn ) {
 		std::ostringstream oss;
 		oss << "Failed to apply the ChangeAncestory patch (" << atom_ << ", ";
 		switch ( which_ancestor_ ) {
@@ -2815,7 +2815,7 @@ patch_operation_from_patch_file_line(
 		} else {
 			std::ostringstream oss;
 			oss << "While reading the SET_ANCESTOR patch operation line, did not find PARENT, GRANDPARENT, or GREATGRANDPARENT as the third string on that line\n";
-			throw utility::excn::EXCN_Msg_Exception( oss.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 		}
 		return PatchOperationOP( new ChangeAncestory( atom_name, anc, anc_atom_name ));
 	} else if ( tag == "RESET_BOND_LENGTH" ) {

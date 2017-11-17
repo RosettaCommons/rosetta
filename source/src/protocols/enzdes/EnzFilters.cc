@@ -736,7 +736,7 @@ RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	}
 	// 21-05-2013 PG
 	if ( !calc_dE_ && target_res_ != nullptr && cstid_list_.empty() && !rms_all_rpked_  ) {
-		throw utility::excn::EXCN_RosettaScriptsOption(" NO RESIDUES HAVE BEEN SPECIFIED FOR THE RMSD CALCULATION");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, " NO RESIDUES HAVE BEEN SPECIFIED FOR THE RMSD CALCULATION");
 	}
 	TR<<" Defined RepackWithoutLigandFilter "<< std::endl;
 }
@@ -848,7 +848,7 @@ void
 EnzdesScorefileFilter::parse_my_tag( utility::tag::TagCOP tag , basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	if ( tag->hasOption("requirements") ) reqfile_name_ =  tag->getOption<std::string>( "requirements","" );
-	else throw utility::excn::EXCN_RosettaScriptsOption("For EnzdesScorefileFilter, a requirements file needs to be specified in the tag.");
+	else throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "For EnzdesScorefileFilter, a requirements file needs to be specified in the tag.");
 
 	this->initialize_value_evaluators_from_file( reqfile_name_ );
 }
@@ -1328,7 +1328,7 @@ ResidueConformerFilter::apply( core::pose::Pose const & pose ) const
 	if ( desired_conformer_ == 0 ) {
 		TR << "ResidueConformerFilter did not have a desired conformer set. Apply gets passed by default, conformer in pose is " << current_conformer << std::endl;
 		return true;
-		//throw utility::excn::EXCN_RosettaScriptsOption("For ResidueConformerFilter, desired conformer needs to be set if it is used in actual filtering.");
+		//throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "For ResidueConformerFilter, desired conformer needs to be set if it is used in actual filtering.");
 	}
 	if ( current_conformer == desired_conformer_ ) return true;
 	else return false;
@@ -1356,7 +1356,7 @@ ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP tag , basic::datacache
 	if ( tag->hasOption("restype") ) {
 		std::string resname =  tag->getOption<std::string>( "restype","" );
 		restype_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_mapOP( resname );
-	} else throw utility::excn::EXCN_RosettaScriptsOption("For ResidueConformerFilter, the desired residue type needs to be specified.");
+	} else throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "For ResidueConformerFilter, the desired residue type needs to be specified.");
 
 	if ( tag->hasOption("relevant_atoms") ) {
 		utility::vector1< std::string > const atom_vec( utility::string_split( tag->getOption< std::string >("relevant_atoms", "" ), ',' ) );
@@ -1404,7 +1404,7 @@ ResidueConformerFilter::get_current_conformer( core::pose::Pose const & pose ) c
 			if ( pose.residue( i ).name3() == restype_->name3() ) possible_seqpos.push_back( i );
 		}
 		if ( possible_seqpos.size() == 0 ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("In ResidueConformerFilter, no residue of the desired type was found in the pose.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In ResidueConformerFilter, no residue of the desired type was found in the pose.");
 		}
 		if ( possible_seqpos.size() > 1 ) {
 			std::cerr <<"In ResidueConformerFilter, more than one possible seqpos to check has been found. Taking only the first one (" << possible_seqpos[1] <<"), but this is probably not what you wanted." << std::endl;

@@ -285,7 +285,7 @@ int main( int argc, char* argv[] )
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
 
-	} catch (utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 

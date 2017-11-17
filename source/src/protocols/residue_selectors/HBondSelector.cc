@@ -138,37 +138,37 @@ HBondSelector::parse_my_tag(
 {
 	if ( tag->hasOption("residue_selector") ) {
 		if ( tag->hasOption("resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "HBondResidueSelector takes EITHER 'selector' OR 'resnum' options, not both!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "HBondResidueSelector takes EITHER 'selector' OR 'resnum' options, not both!\n" );
 		}
 		if ( tag->size() > 1 ) { // 1 if no subtags exist
-			throw utility::excn::EXCN_Msg_Exception( "HBondResidueSelector can only have one ResidueSelector loaded!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "HBondResidueSelector can only have one ResidueSelector loaded!\n" );
 		}
 		// grab the ResidueSelector from the selector option
 		std::string selector_str;
 		try {
 			selector_str = tag->getOption< std::string >( "residue_selector" );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access option 'selector' from HBondResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 		try {
 			core::select::residue_selector::ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
 			set_input_set_selector( selector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from HBondResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 	} else if ( tag->size() > 1 ) { // get input selector from tag
 		if ( tag->hasOption("resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "HBondResidueSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "HBondResidueSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n" );
 		}
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
 		if ( tags.size() > 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "HBondResidueSelector takes at most one ResidueSelector to determine the input_set!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "HBondResidueSelector takes at most one ResidueSelector to determine the input_set!\n" );
 		}
 		core::select::residue_selector::ResidueSelectorCOP rs = core::select::residue_selector::ResidueSelectorFactory::get_instance()->new_residue_selector(
 			tags.front()->getName(),
@@ -179,11 +179,11 @@ HBondSelector::parse_my_tag(
 	} else if ( tag->hasOption( "resnums" ) ) { // do not get input_set from ResidueSelectors but load resnums string instead
 		try {
 			set_input_set_str ( tag->getOption< std::string >( "resnums" ) );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream err_msg;
 			err_msg << "Failed to access option 'resnums' from HBondResidueSelector::parse_my_tag.\n";
 			err_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 		}
 	}
 	//Set other options
@@ -311,7 +311,7 @@ HBondSelector::compute_input_set( core::pose::Pose const & pose, std::set< core:
 			if ( res == 0 || res > pose.total_residue() ) {
 				std::stringstream err_msg;
 				err_msg << "Residue " << res << " not found in pose!\n";
-				throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 			}
 		}
 	}

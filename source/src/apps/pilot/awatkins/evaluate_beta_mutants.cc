@@ -360,7 +360,7 @@ main( int argc, char* argv[] )
 		TR << "meta trifluoromethyl phe ile beta-53-17 for mdm2: " << b53_17_score << std::endl;
 		TR << "para fluoro phe meta para dichloro phe beta-53-18 for mdm2: " << b53_18_score << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

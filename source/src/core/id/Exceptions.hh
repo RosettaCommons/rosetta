@@ -23,9 +23,10 @@
 namespace core {
 namespace id {
 
-class EXCN_AtomNotFound: public utility::excn::EXCN_Msg_Exception {
+class EXCN_AtomNotFound: public utility::excn::Exception {
 public:
-	EXCN_AtomNotFound( NamedAtomID const& );
+	EXCN_AtomNotFound(char const *file, int line,  NamedAtomID const& );
+
 	NamedAtomID const& atom() { return id_; }
 private:
 	NamedAtomID id_;

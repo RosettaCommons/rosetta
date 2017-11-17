@@ -213,7 +213,7 @@ AbscriptMover::AbscriptMover():
 
 	if ( option[ OptionKeys::fold_cst::seq_sep_stages ].user() ) {
 		if ( option[ OptionKeys::fold_cst::seq_sep_stages ]().size() != 3 ) {
-			throw utility::excn::EXCN_BadInput("Option seq_sep_stages requires exactly 3 values.");
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "Option seq_sep_stages requires exactly 3 values.");
 		}
 		seqsep_stage1 = option[ OptionKeys::fold_cst::seq_sep_stages ]()[ 1 ]; //default 15
 		seqsep_stage3 = option[ OptionKeys::fold_cst::seq_sep_stages ]()[ 2 ]; //default 15
@@ -255,7 +255,7 @@ void AbscriptMover::apply( core::pose::Pose& pose ){
 	using namespace basic::options;
 
 	if ( ! pose.is_centroid() ) {
-		throw utility::excn::EXCN_BadInput( "AbscriptMover recieved a non-centroid pose. Only centroid poses are accepted because of the score functions used in this algorithm." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "AbscriptMover recieved a non-centroid pose. Only centroid poses are accepted because of the score functions used in this algorithm." );
 	}
 	StageTracker tracker( mc_ );
 
@@ -331,7 +331,7 @@ AbscriptMover::parse_my_tag(
 
 		if ( datamap.has( "scorefxns", scorefxn_name ) ) {
 			//This error condition would be pretty easy to remove by just changing the way
-			throw utility::excn::EXCN_BadInput( "Automatic score function " + scorefxn_name +
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "Automatic score function " + scorefxn_name +
 				" was already registered." );
 		}
 
@@ -345,7 +345,7 @@ AbscriptMover::parse_my_tag(
 	if ( tag->hasOption( "cycles" ) ) {
 		cycles_prefactor = tag->getOption< core::Real >( "cycles", 1.0 );
 		if ( option[ OptionKeys::abinitio::increase_cycles ].user() ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("Flag increase_cycles and AbscriptMover 'cycles' option are incompatible.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Flag increase_cycles and AbscriptMover 'cycles' option are incompatible.");
 		}
 	} else if ( option[ OptionKeys::abinitio::increase_cycles ].user() ) {
 		cycles_prefactor = option[ OptionKeys::abinitio::increase_cycles ];
@@ -365,7 +365,7 @@ AbscriptMover::parse_my_tag(
 	utility::vector1< StageID > skipped_stages;
 	if ( tag->hasOption("skip_stages") ) {
 		if ( option[ OptionKeys::abinitio::skip_stages ].user() ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("Flag abinitio::skip_stages and AbscriptMover 'skip_stages' option are incompatible.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Flag abinitio::skip_stages and AbscriptMover 'skip_stages' option are incompatible.");
 		} else {
 			utility::vector1< std::string > const skipped_str( utility::string_split( tag->getOption< std::string >( "skip_stages" ), ',' ) );
 			for ( utility::vector1< std::string >::const_iterator stage_it = skipped_str.begin();
@@ -377,13 +377,13 @@ AbscriptMover::parse_my_tag(
 					try {
 						stage_int = utility::string2int( *stage_it );
 					} catch (...) {
-						throw utility::excn::EXCN_RosettaScriptsOption( "Stage '"+*stage_it+"' is not recognized." );
+						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Stage '"+*stage_it+"' is not recognized." );
 					}
 					if ( stage_int > 0 && stage_int <= 4 ) {
 						skipped_stages.push_back( StageID( stage_int ) );
 					} else {
 						tr.Error << "Skipped stage " << stage_int << " must be between 1 and 4." << std::endl;
-						utility::excn::EXCN_RosettaScriptsOption( "Stage number "+*stage_it+" is invalid." );
+						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Stage number "+*stage_it+" is invalid." );
 					}
 				}
 			}
@@ -392,7 +392,7 @@ AbscriptMover::parse_my_tag(
 		for ( IntegerVectorOption::const_iterator it = option[ OptionKeys::abinitio::skip_stages ]().begin();
 				it != option[ OptionKeys::abinitio::skip_stages ]().end(); ++it ) {
 			if ( *it < 1 || *it > 4 ) {
-				throw utility::excn::EXCN_BadInput( "The option abinitio::skip_stages specified value "+
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  "The option abinitio::skip_stages specified value "+
 					utility::to_string( *it )+", which is not a valid stage." );
 			}
 			skipped_stages.push_back( StageID(*it) );
@@ -430,7 +430,7 @@ AbscriptMover::parse_my_tag(
 					std::string name = movertag->getOption<std::string>( "name", "null" );
 					if ( movers.find( name ) == movers.end() ) {
 						tr.Error << "Mover not found for XML tag:\n" << movertag << std::endl;
-						throw utility::excn::EXCN_RosettaScriptsOption("Mover '"+name+"' not found.");
+						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover '"+name+"' not found.");
 					}
 
 					if ( movertag->getName() == "Mover" ) {
@@ -439,7 +439,7 @@ AbscriptMover::parse_my_tag(
 					} else if ( movertag->getName() == "Preparer" ) {
 						register_preparer( movers.find( name )->second, stages );
 					} else {
-						throw utility::excn::EXCN_RosettaScriptsOption( "Stage subtag "+movertag->getName()+
+						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Stage subtag "+movertag->getName()+
 							" is not valid. Only 'Mover' and 'Preparer' are accepted." );
 					}
 				}
@@ -457,7 +457,7 @@ AbscriptMover::parse_my_tag(
 				stagetag->getOption< bool >( "initialize", true ));
 		} else {
 			tr.Error << "AbscriptMover recieved illegal tag ('Stage' and 'Fragments' are acceptable): '" << stagetag << "'" << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("Illegal AbscriptMover subtag.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Illegal AbscriptMover subtag.");
 		}
 	}
 
@@ -537,7 +537,7 @@ void AbscriptMover::add_frags(
 
 void verify_stage_ID( std::map< std::string, StageID > const& id_map, std::string const& id ){
 	if ( id_map.find( id ) == id_map.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Stage id '" + id + "' is not recognized." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Stage id '" + id + "' is not recognized." );
 	}
 }
 
@@ -562,7 +562,7 @@ StageIDs AbscriptMover::parse_stage_id( std::string const& id_str ) const {
 				ids.push_back( id );
 			}
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("Stage ID range syntax error for '" + *range + "'" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Stage ID range syntax error for '" + *range + "'" );
 		}
 	}
 
@@ -577,7 +577,7 @@ void AbscriptMover::register_submover( protocols::moves::MoverOP mover_in,
 		tr.Error << "The mover " << mover_in->get_name()
 			<< " cannot be attached to the Abscript mover because it is not a ClientMover "
 			<< std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("Abscript mover takes only ClientMovers.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Abscript mover takes only ClientMovers.");
 	}
 
 	for ( StageIDs::const_iterator id = ids.begin(); id != ids.end(); ++id ) {
@@ -623,7 +623,7 @@ void AbscriptMover::register_preparer( protocols::moves::MoverOP mover, StageIDs
 	StagePreparerOP preparer = utility::pointer::dynamic_pointer_cast< protocols::abinitio::abscript::StagePreparer > ( mover );
 	if ( !preparer ) {
 		tr.Error << "The mover '" << mover->get_name() << "' is not a preparer." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("Non-preparer mover added as preparer to Abscript.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Non-preparer mover added as preparer to Abscript.");
 	}
 
 	for ( StageIDs::const_iterator id = ids.begin(); id != ids.end(); ++id ) {

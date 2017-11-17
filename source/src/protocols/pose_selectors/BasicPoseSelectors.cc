@@ -268,7 +268,7 @@ void TopNByProperty::parse_my_tag(
 		} else if ( order == "desc" || order == "descending" ) {
 			order_ = -1;
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("Unknown order: " + order);
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Unknown order: " + order);
 		}
 	}
 
@@ -402,7 +402,7 @@ void Filter::parse_my_tag(
 		);
 
 		if ( !filter_tag ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("Cannot find filter named \"" + filter_name + "\"");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot find filter named \"" + filter_name + "\"");
 		}
 
 	} else {
@@ -424,7 +424,7 @@ void Filter::parse_my_tag(
 	if ( !filter_ ) {
 		std::ostringstream s;
 		s << "Cannot create filter from script tag: " << tag;
-		throw utility::excn::EXCN_RosettaScriptsOption(s.str());
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, s.str());
 	}
 
 	if ( filters.find(filter_name) != filters.end() ) {

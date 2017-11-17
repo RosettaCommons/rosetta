@@ -1314,7 +1314,7 @@ void init(int argc, char * argv [])
 
 	}
 // Catch any Rosetta exceptions
-catch( utility::excn::EXCN_Msg_Exception &e){
+catch( utility::excn::Exception &e){
 	// print the error message to standard error
 	e.show( std::cerr );
 	// and rethrow to make sure we quit (or give caller opportunity to clean up or catch)

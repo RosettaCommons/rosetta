@@ -227,11 +227,11 @@ RotamerRecoveryMover::parse_my_tag(
 
 	if ( rotamer_recovery_ ) {
 		TR.Warning << "Attempting to redefine rotamer_recovery_ object from Parser Script" << endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 	}
 
 	if ( tag->hasOption("protocol") && (tag->hasOption("mover") || tag->hasOption("mover_name")) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Please either the 'protocol' field or the 'mover' field but not both.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Please either the 'protocol' field or the 'mover' field but not both.");
 	}
 
 	RotamerRecoveryFactory * factory(RotamerRecoveryFactory::get_instance());

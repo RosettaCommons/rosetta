@@ -191,7 +191,7 @@ NamedSegmentSelector::resid_set() const
 	for ( utility::vector1< std::string >::const_iterator b=residue_blocks.begin(); b!=residue_blocks.end(); ++b ) {
 		utility::vector1< std::string > const ranges = utility::string_split( *b, ':' );
 		if ( ( ! ranges.size() ) || ( ranges.size() > 2 ) ) {
-			throw utility::excn::EXCN_Msg_Exception( "Bad residue range specified to NamedSegmentSelector: " + *b );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Bad residue range specified to NamedSegmentSelector: " + *b );
 		}
 		SignedResid start = boost::lexical_cast< SignedResid >( ranges[ 1 ] );
 		SignedResid stop = start;
@@ -223,7 +223,7 @@ NamedSegmentSelector::parse_my_tag(
 	if ( segment_.empty() ) {
 		std::stringstream error_message;
 		error_message << "TomponentSelector::parse_my_tag Missing required option 'segment' in the input Tag" << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
 	error_on_missing_segment_ = tag->getOption< bool >( "error_on_missing_segment", error_on_missing_segment_ );

@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 			protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignProtocol ));
 		}
 
-	} catch( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		basic::Error()
 			<< "ERROR: Exception caught by antibody_design application:"
 			<< excn << std::endl;

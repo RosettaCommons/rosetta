@@ -71,7 +71,7 @@ main( int argc, char* argv[] ){
 
 		std::pair<core::Real,core::Real> q = kink_dihedral(pose, ab_info);
 		TR << "q: " << q.first << " " << q.second << std::endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
@@ -98,7 +98,7 @@ main( int argc, char* argv[] ){
 // TR<<*ab_m_h3<<std::endl;
 // JobDistributor::get_instance()->go(ab_m_h3);
 //
-//  } catch ( utility::excn::EXCN_Base const & e ) {
+//  } catch (utility::excn::Exception const & e ) {
 //   std::cout << "caught exception " << e.msg() << std::endl;
 // }
 //}

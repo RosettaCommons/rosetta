@@ -92,7 +92,7 @@ int main( int argc, char * argv [] ) {
 			predict_ss(ss_pred,fasta,id);
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

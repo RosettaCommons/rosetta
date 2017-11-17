@@ -211,7 +211,7 @@ SecStructMinimizeMover::parse_my_tag(
 
 	try {
 		score_fxn_ = protocols::rosetta_scripts::parse_score_function( tag, "score_fxn", data )->clone();
-	} catch ( utility::excn::EXCN_RosettaScriptsOption const & e ) {
+	} catch (utility::excn::RosettaScriptsOptionError const & e ) {
 		TR << "kill me " << e.msg() << std::endl;
 	}
 }

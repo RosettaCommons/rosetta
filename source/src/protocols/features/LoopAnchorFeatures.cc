@@ -209,7 +209,7 @@ LoopAnchorFeatures::parse_my_tag(
 		error_msg
 			<< "The max_loop_length, '" << max_loop_length_ << "',"
 			<< " must be longer than the min_loop_length, '" << min_loop_length_ << "'." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, error_msg.str());
 	}
 }
 

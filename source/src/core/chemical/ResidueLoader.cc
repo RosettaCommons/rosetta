@@ -44,7 +44,7 @@ ResidueLoader::create_resource(
 ) const
 {
 	if ( ! dynamic_cast< ResidueLoaderOptions const * > ( &options ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "ResidueLoader expected to be given a ResidueLoaderOptions object, " \
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "ResidueLoader expected to be given a ResidueLoaderOptions object, " \
 			"but was given a non-ResidueLoaderOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
 

@@ -84,7 +84,7 @@ CoordinateConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datac
 	if ( use_native ) {
 		set_reference_pose( get_native_pose() );
 		if ( ! refpose_ ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "'native' option for CoordinateConstraintGenerator specified, but no native pose is availible." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "'native' option for CoordinateConstraintGenerator specified, but no native pose is availible." );
 		}
 	}
 
@@ -101,7 +101,7 @@ CoordinateConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datac
 	if ( selector ) set_residue_selector( selector );
 
 	if ( !selector_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "CoordinateConstraintGenerator::parse_tag(): Error obtaining ResidueSelector from tag\n" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "CoordinateConstraintGenerator::parse_tag(): Error obtaining ResidueSelector from tag\n" );
 	}
 }
 

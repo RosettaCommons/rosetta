@@ -41,7 +41,7 @@ T get_something_from_database(
 		result >> value;
 		return value;
 	} else {
-		throw utility::excn::EXCN_Msg_Exception("No result found");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "No result found");
 	}
 }
 
@@ -106,7 +106,7 @@ core::Size get_score_type_id_from_score_term(
 	statement.bind(2,score_term);
 	try{
 		return get_something_from_database(statement, core::Size());
-	}catch(utility::excn::EXCN_Msg_Exception &){
+	}catch (utility::excn::Exception &){
 		throw;
 		//utility_exit_with_message("No score_term "+score_term+" with protocol_id "+utility::to_string(protocol_id));
 	}
@@ -356,7 +356,7 @@ get_struct_id_with_nth_lowest_score_from_job_data(
 
 	try{
 		return get_something_from_database(statement, StructureID());
-	}catch(utility::excn::EXCN_Msg_Exception){
+	}catch (utility::excn::Exception){
 		std::stringstream message;
 		message << "No nth lowest " << score_term << " with input_tag " << input_tag << ", where n=" <<utility::to_string(cutoff_index);
 
@@ -379,7 +379,7 @@ get_struct_id_with_nth_lowest_score_from_score_data(
 
 	try{
 		return get_something_from_database(statement, StructureID());
-	}catch(utility::excn::EXCN_Msg_Exception){
+	}catch (utility::excn::Exception){
 		utility_exit_with_message("No nth lowest score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
 	}
 
@@ -415,7 +415,7 @@ StructureID get_struct_id_with_highest_score_from_job_data(
 
 	try{
 		return get_something_from_database(statement, StructureID());
-	}catch(utility::excn::EXCN_Msg_Exception){
+	}catch (utility::excn::Exception){
 		utility_exit_with_message("No "+score_term+" with input_tag "+input_tag);
 	}
 
@@ -433,7 +433,7 @@ StructureID get_struct_id_with_highest_score_from_score_data(
 
 	try{
 		return get_something_from_database(statement, StructureID());
-	}catch(utility::excn::EXCN_Msg_Exception){
+	}catch (utility::excn::Exception){
 		utility_exit_with_message("No score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag);
 	}
 
@@ -463,7 +463,7 @@ get_score_for_struct_id_and_score_term_from_job_data(
 
 	try{
 		return get_something_from_database(statement, core::Real());
-	}catch(utility::excn::EXCN_Msg_Exception){
+	}catch (utility::excn::Exception){
 		std::stringstream message;
 		message << "No " << score_term << " with struct_id " << struct_id;
 
@@ -496,7 +496,7 @@ get_score_for_struct_id_and_score_term_from_score_data(
 
 	try{
 		return get_something_from_database(statement, core::Real());
-	}catch(utility::excn::EXCN_Msg_Exception){
+	}catch (utility::excn::Exception){
 		std::stringstream message;
 		message << "No score_type_id:" << score_type_id << ", with struct_id " << struct_id;
 		utility_exit_with_message(message.str());

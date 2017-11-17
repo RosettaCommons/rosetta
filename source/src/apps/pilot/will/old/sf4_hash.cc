@@ -357,7 +357,7 @@ int main (int argc, char *argv[]) {
 		devel::init(argc,argv);
 		run_sf4h();
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

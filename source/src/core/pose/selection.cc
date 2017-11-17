@@ -340,7 +340,7 @@ get_resnum_string( utility::tag::TagCOP tag_ptr, std::string const & prefix/*=""
 	} else if ( tag_ptr->hasOption( prefix + "res_num" ) ) {
 		return tag_ptr->getOption<std::string>( prefix + "res_num" );
 	}
-	throw utility::excn::EXCN_RosettaScriptsOption("Either " + prefix + "pdb_num or " + prefix + "res_num must be specified.");
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Either " + prefix + "pdb_num or " + prefix + "res_num must be specified.");
 }
 
 std::string
@@ -362,7 +362,7 @@ get_resnum_selector(utility::tag::TagCOP tag_ptr, std::string const& tag) {
 		return core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( tag_ptr->getOption< std::string >( tag ) ) );
 	} else {
 		TR.Fatal <<"No "<<tag<<" option was found in tag "<<tag_ptr<<std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("Error when parsing a residue number list from "+tag+" attribute.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error when parsing a residue number list from "+tag+" attribute.");
 	}
 }
 

@@ -27,7 +27,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 namespace protocols {
 namespace constraint_generator {
@@ -88,12 +88,13 @@ private:
 
 };
 
-class EXCN_RemoveCstsFailed : public utility::excn::EXCN_Base {
+class EXCN_RemoveCstsFailed : public utility::excn::Exception {
 public:
-	EXCN_RemoveCstsFailed():
-		utility::excn::EXCN_Base()
-	{}
-	void show( std::ostream & os ) const override { os << "Remodel constraints somehow got lost along the way" << std::endl; }
+	EXCN_RemoveCstsFailed(char const *file, int line, std::string const &m):
+		utility::excn::Exception(file, line, "Remodel constraints somehow got lost along the way\n")
+	{
+		add_msg(m);
+	}
 };
 
 } //protocols

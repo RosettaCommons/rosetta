@@ -25,7 +25,7 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/FeaturesReporterFactory.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <core/types.hh>
 
@@ -71,7 +71,7 @@ main( int argc, char* argv [] ) {
 		sessionOP db_session(get_db_session());
 		write_schema_to_db(db_session);
 
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 		return -1;

@@ -204,7 +204,7 @@ HighResEnsemble::parse_my_tag(
 		std::string movemap_builder_name= tag->getOption<std::string>("final_move");
 		final_movemap_builder_= datamap.get_ptr< protocols::ligand_docking::MoveMapBuilder >( "movemap_builders", movemap_builder_name);
 	} else if ( tag->hasOption("final_score") || tag->hasOption("final_move") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("FinalMinimzer Step requires final_score and final_map tag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "FinalMinimzer Step requires final_score and final_map tag");
 	}
 
 	bool use_rosetta;

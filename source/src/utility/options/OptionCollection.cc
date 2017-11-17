@@ -47,7 +47,7 @@ void std_exit_wrapper( const int error_code ){
 	if ( error_code == EXIT_SUCCESS ) {
 		std::exit( error_code );
 	}
-	throw utility::excn::EXCN_Msg_Exception( "std::exit() was called" );
+	throw CREATE_EXCEPTION(utility::excn::Exception, "std::exit() was called" );
 }
 
 
@@ -229,11 +229,11 @@ OptionCollection::load(
 				load_options_from_file(ObjexxFCL::trim(file_string), cid);
 
 			} else if ( ! free_args ) { // Warn about free argument
-				throw( excn::EXCN_Msg_Exception( "ERROR: Unused \"free\" argument specified: " + arg_string ));
+				throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Unused \"free\" argument specified: " + arg_string ));
 			}
 		}
-	} catch ( excn::EXCN_Msg_Exception &excn ) {
-		throw( excn::EXCN_Msg_Exception( "ERROR: " + excn.msg() ));
+	} catch ( excn::Exception &excn ) {
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: " + excn.msg() ));
 	}
 
 // Check for problems in the option values
@@ -391,7 +391,7 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 				}
 				if ( ( ( indent_type == SPACE_INDENT ) && ( has( indent, TAB ) ) ) ||
 						( ( indent_type == TAB_INDENT ) && ( has( indent, SPACE ) ) ) ) {
-					throw( excn::EXCN_Msg_Exception( "Option file has mixed space and tab indent characters: "+file_string ) );
+					throw( CREATE_EXCEPTION(excn::Exception,  "Option file has mixed space and tab indent characters: "+file_string ) );
 					//     std::cerr << "ERROR: Option file has mixed space and tab indent characters: "
 					//      << file_string << std::endl;
 					//     std_exit_wrapper( EXIT_FAILURE );
@@ -416,14 +416,14 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 			// Parse argument to get file specification string
 			size_type const fb( line.find_first_not_of( "@\"" ) );
 			if ( fb == string::npos ) { // -...-
-				throw( excn::EXCN_Msg_Exception( "ERROR: Unsupported option file specification: " + line ));
+				throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Unsupported option file specification: " + line ));
 			}
 			size_type const fe( line.find_last_not_of( "\" " ) );
 			string file_string( fb <= fe ? line.substr( fb, fe - fb + 1 ) : string() );
 
 			load_options_from_file(ObjexxFCL::trim(file_string), cid);
 		} else if ( (stream ) && len_trim_whitespace(line) > 0 && stripped_whitespace(line)[0] != '#' ) {
-			throw(excn::EXCN_Msg_Exception("Comments in an option file must begin with '#', options must begin with '-' the line:\n"
+			throw(CREATE_EXCEPTION(excn::Exception,  "Comments in an option file must begin with '#', options must begin with '-' the line:\n"
 				+stripped_whitespace(line)+"\n is incorrectly formatted"));
 		}
 	}
@@ -433,8 +433,8 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 void OptionCollection::load_options_from_file(std::string const & file_string, std::string const & cid){
 	try {
 		load_options_from_file_exception( file_string, cid );
-	} catch ( excn::EXCN_Msg_Exception& excn ) {
-		throw( excn::EXCN_Msg_Exception("ERROR: " + excn.msg() ) );
+	} catch ( excn::Exception& excn ) {
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: " + excn.msg() ) );
 	}
 }
 
@@ -443,7 +443,7 @@ void OptionCollection::load_options_from_file_exception(std::string const & file
 
 	utility::io::izstream stream( file_string.c_str() );
 	if ( ! stream ) {
-		throw( excn::EXCN_Msg_Exception( "Option file open failed for: '"+file_string+"'" ) );
+		throw( CREATE_EXCEPTION(excn::Exception,  "Option file open failed for: '"+file_string+"'" ) );
 	}
 	load_options_from_stream( stream, file_string, cid );
 }
@@ -462,17 +462,17 @@ void OptionCollection::load_option_from_file(
 
 	// Now next argument *should* be a file name
 	if ( arg_strings.size() < 1 ) {
-		throw( excn::EXCN_Msg_Exception("ERROR: No file name supplied for option: "+ arg_string));
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: No file name supplied for option: "+ arg_string));
 	}
 
 	// Open the option file
 	string const file_name( arg_strings.front() ); // Lead argument string
-	throw( excn::EXCN_Msg_Exception("load_option from file:"+file_name));
+	throw( CREATE_EXCEPTION(excn::Exception,  "load_option from file:"+file_name));
 
 	arg_strings.pop_front(); // Remove lead argument
 	utility::io::izstream stream( file_name.c_str() );
 	if ( ! stream ) {
-		throw( excn::EXCN_Msg_Exception("ERROR: Option file open failed for: "+file_name));
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Option file open failed for: "+file_name));
 	}
 	string res;
 	while ( stream ) {
@@ -489,8 +489,8 @@ void OptionCollection::load_option_from_file(
 	// std::cout << "F:arg_strings[] =" << *it << "\n";
 	try{
 		load_option_cl( arg_string, f_args, cid );
-	} catch ( excn::EXCN_Msg_Exception &excn ) {
-		throw( excn::EXCN_Msg_Exception( "ERROR: " + excn.msg() ));
+	} catch ( excn::Exception &excn ) {
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: " + excn.msg() ));
 	}
 
 }
@@ -957,7 +957,7 @@ OptionCollection::load_option_cl(
 		top = true;
 	}
 	if ( kb == string::npos ) { // -...-
-		throw ( excn::EXCN_Msg_Exception( "Unsupported option specified: " + arg_string ) );
+		throw ( CREATE_EXCEPTION(excn::Exception,  "Unsupported option specified: " + arg_string ) );
 		//std::cerr << "ERROR: Unsupported option specified: " << arg_string << std::endl;
 		//std_exit_wrapper( EXIT_FAILURE );
 	}
@@ -1014,7 +1014,7 @@ OptionCollection::load_option_file(
 		top = true;
 	}
 	if ( kb == string::npos ) { // -...-
-		throw( excn::EXCN_Msg_Exception( "Unsupported option specified: "+arg_string ) );
+		throw( CREATE_EXCEPTION(excn::Exception,  "Unsupported option specified: "+arg_string ) );
 	}
 	size_type const ke( arg_string.find_first_of( "= \t" ) );
 	bool const ends( ke != string::npos );
@@ -1047,7 +1047,7 @@ OptionCollection::set_option_value_cl(
 	runtime_assert( OptionKeys::has( key_id ) ); // Precondition
 	OptionKey const & key( OptionKeys::key( key_id ) );
 	if ( ! has( key ) ) {
-		throw( excn::EXCN_Msg_Exception( "No option exists for the valid option key -" + key.id() ) );
+		throw( CREATE_EXCEPTION(excn::Exception,  "No option exists for the valid option key -" + key.id() ) );
 	}
 	Option & opt( option( key ) );
 	if ( key.scalar() ) { // Scalar option key
@@ -1063,10 +1063,10 @@ OptionCollection::set_option_value_cl(
 		if ( arg_strings.empty() ) { // No values
 			VectorOption & vopt( option< VectorOption >( key ) );
 			if ( ( vopt.n() > 0 ) || ( vopt.n_lower() > 0 ) ) {
-				throw ( excn::EXCN_Msg_Exception( "No values specified for multi-valued option -"+ key.id() ) );
+				throw ( CREATE_EXCEPTION(excn::Exception,  "No values specified for multi-valued option -"+ key.id() ) );
 			}
 		} else if ( ! opt.is_cl_value( arg_strings.front() ) ) { // No values of correct type
-			throw ( excn::EXCN_Msg_Exception( "No values of the appropriate type specified for multi-valued option -"+key.id() ) );
+			throw ( CREATE_EXCEPTION(excn::Exception,  "No values of the appropriate type specified for multi-valued option -"+key.id() ) );
 		} else { // Take value(s)
 			// This takes the first value even if the vector is full to trigger an error
 			opt.cl_value( arg_strings.front() ); // Use the first argument
@@ -1095,11 +1095,11 @@ OptionCollection::set_option_value_file(
 	runtime_assert( OptionKeys::has( key_id ) ); // Precondition
 	OptionKey const & key( OptionKeys::key( key_id ) );
 	if ( ! has( key ) ) {
-		throw( excn::EXCN_Msg_Exception(" No option exists for the valid option key - " + key.id() ) );
+		throw( CREATE_EXCEPTION(excn::Exception,  " No option exists for the valid option key - " + key.id() ) );
 	}
 	if ( key.scalar() ) { // Scalar option key
 		if ( val_strings.size() > 1 ) { // Multiple values for a scalar option
-			throw( excn::EXCN_Msg_Exception(" Multiple values specified for option -" + key.id() ) );
+			throw( CREATE_EXCEPTION(excn::Exception,  " Multiple values specified for option -" + key.id() ) );
 		}
 		option( key ).cl_value( val_strings.empty() ? string() : *val_strings.begin() );
 	} else { // Vector option key
@@ -1107,7 +1107,7 @@ OptionCollection::set_option_value_file(
 		if ( val_strings.empty() ) { // No values for a vector option
 			VectorOption & vopt( option< VectorOption >( key ) );
 			if ( ( vopt.n() > 0 ) || ( vopt.n_lower() > 0 ) ) {
-				throw( excn::EXCN_Msg_Exception( "ERROR: Multiple values specified for multi-valued option -"
+				throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Multiple values specified for multi-valued option -"
 					+ key.id() + " requiring one or more values" ) );
 			}
 		}
@@ -1125,13 +1125,13 @@ OptionCollection::check_key( OptionKey const & key )
 	using ObjexxFCL::is_double;
 
 	if ( is_double( suffix( key.id() ) ) ) {
-		throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + key.id() ));
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Options with numeric identifiers are not allowed: -" + key.id() ));
 	}
 	if ( is_double( suffix( key.identifier() ) ) ) {
-		throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + key.id() ));
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Options with numeric identifiers are not allowed: -" + key.id() ));
 	}
 	if ( is_double( suffix( key.code() ) ) ) {
-		throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + key.id() ));
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Options with numeric identifiers are not allowed: -" + key.id() ));
 	}
 	//not called during option parsing --- keep hard exit
 }
@@ -1144,13 +1144,13 @@ OptionCollection::check_key( Option const & option )
 	using ObjexxFCL::is_double;
 
 	if ( is_double( suffix( option.id() ) ) ) {
-		throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + option.id() ));
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Options with numeric identifiers are not allowed: -" + option.id() ));
 	}
 	if ( is_double( suffix( option.identifier() ) ) ) {
-		throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + option.id() ));
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Options with numeric identifiers are not allowed: -" + option.id() ));
 	}
 	if ( is_double( suffix( option.code() ) ) ) {
-		throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + option.id() ));
+		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Options with numeric identifiers are not allowed: -" + option.id() ));
 	}
 }
 
@@ -1221,7 +1221,7 @@ OptionCollection::find_key_cl(
 			if ( OptionKeys::has( tid ) ) { // Valid option identifier
 				if ( ! kid.empty() ) { // Already found a match
 					if ( tid != kid ) { // Different id match
-						throw( excn::EXCN_Msg_Exception( "WARNING: Specified option -" + key_string + " resolved to option -" + kid + " not option -" + tid + " in command line context -" + cid ) );
+						throw( CREATE_EXCEPTION(excn::Exception,  "WARNING: Specified option -" + key_string + " resolved to option -" + kid + " not option -" + tid + " in command line context -" + cid ) );
 					}
 				} else { // Assign the matched id
 					kid = tid;
@@ -1278,7 +1278,7 @@ OptionCollection::find_key_cl(
 				too_many_choices_error += ("\t -" + possible_matche) += "\n";
 			}
 			too_many_choices_error += "Either specify namespace from command line; or in code, use add_relevant() to register option.\n";
-			throw ( excn::EXCN_Msg_Exception( too_many_choices_error ) );
+			throw ( CREATE_EXCEPTION(excn::Exception,  too_many_choices_error ) );
 		}
 	}
 
@@ -1311,7 +1311,7 @@ OptionCollection::find_key_cl(
 				not_found_error += "\t -" + possible_fixe + "\n";
 			}
 		}
-		throw ( excn::EXCN_Msg_Exception( not_found_error ) );
+		throw ( CREATE_EXCEPTION(excn::Exception,  not_found_error ) );
 	}
 
 	return kid;
@@ -1343,7 +1343,7 @@ OptionCollection::find_key_file(
 
 	// Check if key matched
 	if ( kid.empty() ) { // No such option
-		throw( excn::EXCN_Msg_Exception( "Option matching -" + key_string
+		throw( CREATE_EXCEPTION(excn::Exception,  "Option matching -" + key_string
 			+ " not found in indented @file context -" + cid ) );
 	}
 

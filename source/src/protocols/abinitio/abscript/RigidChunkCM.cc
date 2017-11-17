@@ -170,7 +170,7 @@ loops::Loops read_rigid_core( std::string const& file){
 
 	if ( !infile.good() ) {
 		tr.Error << "Error opening RBSeg file '" << file << "'" << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "[ERROR] Error opening RBSeg file '" + file + "'" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "[ERROR] Error opening RBSeg file '" + file + "'" );
 	}
 
 	return loops::Loops( reader.read_pose_numbered_loops_file( infile, file, false ) );
@@ -205,7 +205,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 				std::ostringstream ss;
 				ss << "In mover '" << xml_name_ << "', the 'apply_to_template' tag contained the mover '"
 					<< *movername << "', which could not be found." << std::endl;
-				throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 			}
 		}
 	}
@@ -217,7 +217,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 				std::ostringstream ss;
 				ss << "In " << this->get_name() << " the option '" << APPLY_TO_TEMPLATE
 					<< "' is not combinable with input templates." << std::endl;
-				throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 			}
 			template_ = NULL;
 		} else {
@@ -233,13 +233,13 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 				} else {
 					std::ostringstream ss;
 					ss << "RigidChunkCM named '" << this->get_name() << " couldn't apply one of its input movers because it doesn't exist.";
-					throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 				}
 			}
 			template_ = p;
 		}
 	} else {
-		throw utility::excn::EXCN_BadInput( "RigidChunkCM requires a template pdb with coordinates for rigid regions.");
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "RigidChunkCM requires a template pdb with coordinates for rigid regions.");
 	}
 
 	// Determine which region of the template file we want to take.
@@ -323,12 +323,12 @@ void RigidChunkCM::configure(
 			std::ostringstream ss;
 			ss << this->get_name() << " reports that its input loops file (aka rigid core file) contained no residues."
 				<< " Check your input." << std::endl;
-			throw utility::excn::EXCN_BadInput( ss.str() );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 		} else if ( sim_selection.index( true ) == 0 ) {
 			std::ostringstream ss;
 			ss << this->get_name() << " reports that its selector (used on the simulation to determine where to insert residues)"
 				<< " returned an empty selection. Check your input." << std::endl;
-			throw utility::excn::EXCN_BadInput( ss.str() );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 		}
 	}
 
@@ -393,7 +393,7 @@ void RigidChunkCM::configure(
 						<< " combination because template residue " << templ().residue(cys_partner).name3()
 						<< cys_partner << " is disulfide bonded with " << templ().residue( i ).name3() << i
 						<< ". RigidChunkClaimer must include both or neither." << std::endl;
-					throw utility::excn::EXCN_BadInput( ss.str() );
+					throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 				}
 			}
 		}
@@ -409,7 +409,7 @@ void RigidChunkCM::configure(
 						<< " selection because input pose residue " << in_p.residue(cys_partner).name3()
 						<< cys_partner << " is disulfide bonded with " << in_p.residue( i ).name3() << i
 						<< ". RigidChunkClaimer's rigid chunk must include both or neither." << std::endl;
-					throw utility::excn::EXCN_BadInput( ss.str() );
+					throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 				}
 			}
 		}
@@ -424,7 +424,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 	utility::vector1< bool > selection( in_p.size(), false );
 	try {
 		selection = sim_selector()->apply( in_p );
-	} catch( utility::excn::EXCN_Msg_Exception& e ){
+	} catch( utility::excn::Exception& e ){
 		std::ostringstream ss;
 		ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".  ";
 		ss << "Pose was length " << in_p.size() << ": " << in_p.sequence();
@@ -659,7 +659,7 @@ void RigidChunkCM::initialize( Pose& pose ){
 	DofUnlock activation( pose.conformation(), passport() );
 
 	//  if ( missing_density( pose, rigid_core(), region_offset_ ) ) {
-	//    throw utility::excn::EXCN_BadInput( " missing density in backbone of rigid-chunk. Check your LOOP definitions.");
+	//    throw CREATE_EXCEPTION(utility::excn::BadInput,  " missing density in backbone of rigid-chunk. Check your LOOP definitions.");
 	//  }
 
 	core::pose::Pose reference( pose );
@@ -709,7 +709,7 @@ void RigidChunkCM::initialize( Pose& pose ){
 						<< "Template: " << utility::to_string( templ().residue( templ_pos ).type().properties().get_list_of_variants() ) << std::endl;
 				}
 
-				throw utility::excn::EXCN_BadInput( ss.str() );
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 			}
 		}
 	}
@@ -805,7 +805,7 @@ loops::Loops RigidChunkCM::select_parts( loops::Loops const& rigid_core, core::S
 
 	if ( rigid_core.size() < 1 ) {
 		tr.Error << "Given rigid core had size < 1. Check your loop definitions." << std::endl;
-		throw utility::excn::EXCN_BadInput( "Given rigid core had size < 1. Check your loop definitions." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Given rigid core had size < 1. Check your loop definitions." );
 	}
 
 	for ( Size attempts = 1; attempts <= 50 && current_rigid_core.size() != 0; ++attempts ) {

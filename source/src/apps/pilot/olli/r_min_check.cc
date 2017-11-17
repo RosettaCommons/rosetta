@@ -51,7 +51,7 @@
 #include <utility/exit.hh>
 
 //Auto Headers
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -140,10 +140,10 @@ main( int argc, char * argv [] )
 
 		// try{
 		run();
-		// } catch ( utility::excn::EXCN_Base& anExcn ) {
+		// } catch (utility::excn::Exception& anExcn ) {
 		//  anExcn.show( std::cerr );
 		// }
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -53,7 +53,7 @@ LoopHashLibraryLoader::create_resource(
 	std::istream &
 ) const {
 	if ( ! dynamic_cast< LoopHashLibraryOptions const * > ( &options ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "LoopHashLibraryLoader expected to be given a LoopHashLibraryOptions object, " \
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "LoopHashLibraryLoader expected to be given a LoopHashLibraryOptions object, " \
 			"but was given a non-LoopHashLibraryOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
 	LoopHashLibraryOptions const & lh_opts = static_cast< LoopHashLibraryOptions const & > ( options );

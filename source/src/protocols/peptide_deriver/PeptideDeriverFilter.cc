@@ -285,7 +285,7 @@ PeptideDeriverFilter::parse_report_format_string(
 	if ( value == "basic" ) {
 		return PRF_BASIC;
 	}
-	throw utility::excn::EXCN_KeyError( "PeptideDeriverFilter::parse_report_format_string(std::string const value): value must be either 'markdown' or 'basic'." );
+	throw CREATE_EXCEPTION(utility::excn::KeyError,  "PeptideDeriverFilter::parse_report_format_string(std::string const value): value must be either 'markdown' or 'basic'." );
 }
 
 /// Verifies the pose has at least two chains. Minimizes the pose and detects
@@ -298,7 +298,7 @@ PeptideDeriverFilter::prepare_pose(
 	core::pose::Pose & pose) const {
 	// check number of chains
 	if ( pose.conformation().num_chains() < 2 ) {
-		throw utility::excn::EXCN_Msg_Exception(
+		throw CREATE_EXCEPTION(utility::excn::Exception, 
 			"Input PDB contains less than 2 chains.");
 	}
 

@@ -350,7 +350,7 @@ my_main( void* ) {
 
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go( seq );
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 	}

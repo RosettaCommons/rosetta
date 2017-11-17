@@ -223,7 +223,7 @@ main( int argc, char * argv [] )
 		devel::init( argc, argv );
 		run();
 
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 		return -1;

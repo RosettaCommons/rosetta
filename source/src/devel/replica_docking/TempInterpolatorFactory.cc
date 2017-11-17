@@ -46,7 +46,7 @@ TempInterpolatorBaseOP
 TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagCOP tag, core::Size n_levels )
 {
 	if ( !tag->hasOption( "curve" ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Error: interpolation curve type required !" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error: interpolation curve type required !" );
 	}
 	std::string curve = tag->getOption< std::string >( "curve" );
 	if ( curve == "const" ) {
@@ -57,7 +57,7 @@ TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagCOP tag, core::S
 			core::Real end = tag->getOption< core::Real >( "end" );
 			return TempInterpolatorBaseOP( new TempInterpolator( n_levels, start, end, curve ) );
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Error: start and end value must be given for linear and expotential interpolation !" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: start and end value must be given for linear and expotential interpolation !" );
 		}
 	}
 }

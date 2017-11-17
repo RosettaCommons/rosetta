@@ -55,6 +55,10 @@
 #include <basic/options/option_macros.hh>
 #include <basic/prof.hh>
 
+#include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
+
 // C++ headers
 #include <string>
 #include <sstream>
@@ -62,9 +66,6 @@
 
 //Debug headers
 #include <fstream> //testing
-#include <utility/io/izstream.hh>
-
-#include <utility/io/ozstream.hh>
 
 #if (defined WIN32) //&& (!defined WIN_PYROSETTA)
 #include <windows.h>
@@ -180,20 +181,20 @@ void Batch::read_info_file() {
 	core::Size this_id = id(); //to detec errors
 	std::string this_batch = batch(); //for error report
 	utility::io::izstream in( dir() + "BATCH_INFO" );
-	if ( !in.good() ) throw( EXCN_Archive( "cannot find " + dir() + "BATCH_INFO" ) );
+	if ( !in.good() ) throw CREATE_EXCEPTION(EXCN_Archive, "cannot find " + dir() + "BATCH_INFO" );
 	in >> *this;
 	if ( this_id != id() ) {
-		throw( EXCN_Archive("Inconsistency detected when reading BATCH_INFO for "+ this_batch+" ID in BATCH_INFO is " + batch() ) );
+		throw CREATE_EXCEPTION(EXCN_Archive, "Inconsistency detected when reading BATCH_INFO for "+ this_batch+" ID in BATCH_INFO is " + batch() );
 	}
 }
 
 //instead of goto statements:   I think goto would be clearer... but there are coding guidlines to adhere...
 void report_tag_error( Batch& batch, std::string const& expected_tag, std::string const& tag ) {
-	throw( EXCN_Archive( "Error reading batch information for batch: "+batch.batch()+" expected_tag: "+expected_tag+ " found " + tag) );
+	throw CREATE_EXCEPTION(EXCN_Archive, "Error reading batch information for batch: "+batch.batch()+" expected_tag: "+expected_tag+ " found " + tag);
 }
 
 void report_value_error( Batch& batch, std::string const& tag ) {
-	throw( EXCN_Archive( "Error reading batch information for batch: "+batch.batch()+" wrong value for tag: "+tag ) );
+	throw CREATE_EXCEPTION(EXCN_Archive, "Error reading batch information for batch: "+batch.batch()+" wrong value for tag: "+tag );
 }
 
 std::istream& operator >> (std::istream& in, Batch &batch ) {
@@ -312,7 +313,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 		}
 		save_archive();
 		read_existing_batches();
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch ( utility::excn::Exception& excn ) {
 		send_stop_to_jobdistributor();
 		throw;
 	}
@@ -438,7 +439,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 			default :
 				utility_exit_with_message( "unknown msg in ArchiveManager " + ObjexxFCL::string_of( msg_tag ) );
 			} //switch
-		} catch ( utility::excn::EXCN_Base &excn ) {
+		} catch ( utility::excn::Exception &excn ) {
 			basic::show_time( tr,  "Exception in main msg-loop !" );
 			tr.Error << excn.msg() << std::endl;
 			tr.Error << "spinning down" << std::endl;
@@ -513,7 +514,7 @@ void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
 		std::cerr << "last_skipped tag: " << unread_tag << " first tag to read: " << tags_to_read[1] << " last tag to read: " << tags_to_read.back() << std::endl;
 		try {
 			sfd.read_file( batch.silent_out(), tags_to_read );
-		} catch ( utility::excn::EXCN_Base& excn ) { //or should we be more specific ?
+		} catch ( utility::excn::Exception& excn ) { //or should we be more specific ?
 			if ( final ) throw; //rethrow if it is the final version of the file...
 			tr.Error << "ignored ERROR: " << excn.msg() << std::endl;
 			tr.Error << "this is not the final version of " << batch.silent_out() << "\n... maybe some data is still held in a cache of the filesystem..."
@@ -617,7 +618,7 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 		PROF_STOP( basic::SAVE_ARCHIVE );
 	} else { // no good decoys found
 		tr.Debug << " no good decoys to read " << std::endl;
-		throw EXCN_Archive( "all decoys returned with FAIL_BAD_INPUT" );
+		throw CREATE_EXCEPTION(EXCN_Archive, "all decoys returned with FAIL_BAD_INPUT" );
 	}
 
 	if ( final ) {
@@ -734,7 +735,7 @@ ArchiveManager::read_existing_batches() {
 		try {
 			finalize_batch( new_batch, true /*reread */ );
 			tr.Debug << new_batch << std::endl;
-		} catch ( EXCN_Archive& excn ) {
+		} catch (EXCN_Archive& excn ) {
 			//last started batch must have problems... ignore it
 			tr.Warning << new_batch.batch()+" is errorneous: " + excn.msg() << std::endl;
 			tr.Warning << "ignoring this batch..." << std::endl;
@@ -780,7 +781,7 @@ BaseArchiveManager::start_new_batch() {
 }
 
 void report_batch_inconsistency( Batch& new_batch, std::string const &tag ) {
-	throw( EXCN_Archive( "inconsistency detected when re-reading "+new_batch.batch()+" for " + tag) );
+	throw CREATE_EXCEPTION(EXCN_Archive, "inconsistency detected when re-reading "+new_batch.batch()+" for " + tag);
 }
 
 void
@@ -804,11 +805,11 @@ BaseArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 		try {
 			tr.Debug << "load options from file" << std::endl;
 			batch_opts.load_options_from_file_exception( new_batch.flag_file() );
-		} catch ( utility::excn::EXCN_Msg_Exception &excn ) {
+		} catch ( utility::excn::Exception &excn ) {
 			tr.Error << "problems with flags in " << new_batch.flag_file() << " aborting... " << std::endl;
 			// excn.show( tr.Error );
 			batches_.pop_back();
-			throw ( EXCN_Archive( new_batch.flag_file() + " contains errors: " + excn.msg() ) );
+			throw CREATE_EXCEPTION(EXCN_Archive, new_batch.flag_file() + " contains errors: " + excn.msg() );
 		}
 		if ( !reread )  {
 			//access all archive controlled options... so they are not in the "user_flags" anymore

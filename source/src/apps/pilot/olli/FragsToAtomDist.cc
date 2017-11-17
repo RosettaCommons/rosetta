@@ -22,7 +22,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer tr( "main" );
 
@@ -57,7 +57,7 @@ int main( int argc, char * argv [])
 		protocols::noesy_assign::FragsToAtomDist Atomdist1;
 		Atomdist1.generate_from_frag_file( option[ fragments ](), full_sequence, option[ cycles ](), option[ freq ]() );
 		Atomdist1.write_hist_to_file( option[ OptionKeys::distances ]() );
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		excn.show( std::cerr );
 		std::exit( 1 );
 	}

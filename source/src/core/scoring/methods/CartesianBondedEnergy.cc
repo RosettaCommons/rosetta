@@ -2347,7 +2347,7 @@ CartesianBondedEnergy::eval_singleres_energy(
 	eval_singleres_length_energies(  rsd, resparams, phi, psi, pose, emap );
 	try {
 		eval_singleres_ring_energies( rsd, pose, emap );//removed resparams
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		pose.dump_pdb("badstructure.pdb");
 		std::cout << "caught exception " << e.msg() << std::endl;
 		exit(0);

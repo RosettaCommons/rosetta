@@ -109,7 +109,7 @@ RemodelConstraintGenerator::remove_remodel_constraints_from_pose(
 	//TR << this->get_name() << " is about to try to remove " << remodel_csts.size() << " constraints." << std::endl;
 
 	if ( ! pose.remove_constraints( remodel_csts, true ) ) {
-		throw EXCN_RemoveCstsFailed();
+		throw CREATE_EXCEPTION(EXCN_RemoveCstsFailed, "");
 	}
 }
 

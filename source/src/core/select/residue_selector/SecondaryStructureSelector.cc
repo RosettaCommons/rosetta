@@ -81,7 +81,7 @@ SecondaryStructureSelector::SecondaryStructureSelector( std::string const & sele
 	selected_ss_()
 {
 	if ( !check_ss( selected ) ) {
-		throw utility::excn::EXCN_BadInput( "SecondaryStructureSelector: invalid ss to select: " + selected + " -- only H, E and L are allowed.\n" );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "SecondaryStructureSelector: invalid ss to select: " + selected + " -- only H, E and L are allowed.\n" );
 	}
 	set_selected_ss( selected );
 }
@@ -129,7 +129,7 @@ SecondaryStructureSelector::apply( core::pose::Pose const & pose ) const
 	if ( selected_ss_.empty() ) {
 		std::stringstream err;
 		err << "SecondaryStructureSelector: no secondary structure types are selected -- you must specify one or more secondary structure types for selection." << std::endl;
-		throw utility::excn::EXCN_BadInput( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  err.str() );
 	}
 
 	// first check pose secstruct, otherwise use dssp
@@ -137,7 +137,7 @@ SecondaryStructureSelector::apply( core::pose::Pose const & pose ) const
 	if ( !check_ss( ss ) ) {
 		std::stringstream err;
 		err << "SecondaryStructureSelector: the secondary structure string " << ss << " is invalid." << std::endl;
-		throw utility::excn::EXCN_BadInput( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  err.str() );
 	}
 
 	fix_secstruct_definition( ss );
@@ -172,7 +172,7 @@ void SecondaryStructureSelector::parse_my_tag(
 	std::stringstream msg;
 	msg << "SecondaryStructureSelector::parse_my_tag(): You cannot specify a blueprint and a pose secondary structure to the same selector."
 	<< std::endl;
-	throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  err.str() );
 	}
 	std::string const bp_name = tag->getOption< std::string >( "blueprint" );
 	protocols::parser::BluePrint bp( bp_name );
@@ -184,14 +184,14 @@ void SecondaryStructureSelector::parse_my_tag(
 		std::stringstream err;
 		err << "SecondaryStructureSelector: the ss option is required to specify which secondary structure elements are being selected." << std::endl;
 		err << "Usage: ss=\"([HEL])*\" (e.g. ss=\"L\" for loops only, ss=\"HE\" for helices and strands)" << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  err.str() );
 	}
 	std::string const selected = tag->getOption< std::string >( "ss" );
 
 	if ( !check_ss( selected ) ) {
 		std::stringstream err;
 		err << "SecondaryStructureSelector: an invalid character was specified in the ss option -- only H, E and L are allowed: " << selected << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  err.str() );
 	}
 
 	set_selected_ss( selected );

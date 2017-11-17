@@ -114,16 +114,16 @@ void AddJobPairData::parse_my_tag(
 	Pose const & )
 {
 	if ( !tag->hasOption("value_type") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'AddJobPairData' mover requires option 'value_type'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'AddJobPairData' mover requires option 'value_type'");
 	}
 	if ( !tag->hasOption("key") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'AddJobPairData' mover requires option 'key'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'AddJobPairData' mover requires option 'key'");
 	}
 	if ( !tag->hasOption("value") && !tag->hasOption("value_from_ligand_chain") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'AddJobPairData' mover requires option 'value' or 'value_from_ligand_chain'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'AddJobPairData' mover requires option 'value' or 'value_from_ligand_chain'");
 	}
 	if ( tag->hasOption("value") && tag->hasOption("value_from_ligand_chain") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'AddJobPairData' mover requires option 'value' or 'value_from_ligand_chain' but not both");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'AddJobPairData' mover requires option 'value' or 'value_from_ligand_chain' but not both");
 	}
 
 	ligand_chain_ = tag->getOption<std::string>("value_from_ligand_chain","");
@@ -136,7 +136,7 @@ void AddJobPairData::parse_my_tag(
 		value_type_ = real_value;
 	} else {
 		TR.Fatal << "Value type of '" << value_type_string << "' not supported in AddJobPairData." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("'AddJobPairData' option 'value_type' can only be 'string' or 'real'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'AddJobPairData' option 'value_type' can only be 'string' or 'real'");
 	}
 
 	string_key_ = tag->getOption<std::string>("key");
@@ -148,7 +148,7 @@ void AddJobPairData::parse_my_tag(
 		} else {
 			// If this happens all the error checking code above is wrong
 			TR.Fatal << "Can't handle value type of '" << value_type_ << "'" << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("'AddJobPairData' option 'value_type' can only be 'string' or 'real'");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'AddJobPairData' option 'value_type' can only be 'string' or 'real'");
 		}
 	}
 }

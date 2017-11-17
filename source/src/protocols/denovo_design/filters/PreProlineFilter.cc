@@ -244,7 +244,7 @@ parse_matrix(
 		if ( !instream.good() ) {
 			std::stringstream err;
 			err << "Error parsing matrix stream before y =" << i << std::endl;
-			throw utility::excn::EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 		}
 		for ( core::Size ii = 1; ii <= npoints_x; ++ii ) {
 			// matrix is 0-indexed
@@ -254,7 +254,7 @@ parse_matrix(
 	if ( !instream.good() ) {
 		std::stringstream err;
 		err << "Error parsing matrix stream in preproline filter!" << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 	return matrix;
 }
@@ -268,7 +268,7 @@ PreProlineFilter::setup_spline()
 	if ( ! basic::database::open( infile, dbfile ) ) {
 		std::stringstream err;
 		err << "Pre-proline filter could not open database file " << dbfile << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 
 	core::Size npoints_phi, npoints_psi;

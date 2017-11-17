@@ -181,12 +181,12 @@ NeighborhoodResidueSelector::parse_my_tag(
 		//Check for embedded ResidueSelector as focus.
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
 		if ( tags.size() > 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes at most one ResidueSelector to determine the focus!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "NeighborhoodResidueSelector takes at most one ResidueSelector to determine the focus!\n" );
 		}
 		ResidueSelectorCOP rs = get_embedded_residue_selector( tag, datamap );
 		set_focus_selector( rs );
 	} else {
-		throw utility::excn::EXCN_Msg_Exception("You must provide either resnums or selector tag, or an embedded selector to give the focus residues.");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "You must provide either resnums or selector tag, or an embedded selector to give the focus residues.");
 	}
 
 	set_distance( tag->getOption< Real >( "distance", distance_ ) );
@@ -228,7 +228,7 @@ NeighborhoodResidueSelector::get_focus(
 	}
 
 	if ( ! focus_set ) {
-		throw utility::excn::EXCN_Msg_Exception("Focus not set for NeighborhoodResidueSelector.  A focus must be set!");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Focus not set for NeighborhoodResidueSelector.  A focus must be set!");
 	}
 
 

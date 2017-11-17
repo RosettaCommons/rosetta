@@ -107,7 +107,7 @@ int main( int argc, char * argv [] )
 		core::util::switch_to_residue_type_set( pose, out_rsd_set);
 		pose.dump_pdb(out);
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -98,13 +98,13 @@ void TopologyClaimer::read_mover_weight( std::istream& is ) {
 	} else if ( type == "AllStage" ) { //always on
 		set_mover_weight( weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( weight ) ) );
 	} else {
-		throw EXCN_Input( "weight can only by one of LargeStage, SmallStage or AllStage " );
+		throw CREATE_EXCEPTION(EXCN_Input,  "weight can only by one of LargeStage, SmallStage or AllStage " );
 	}
 }
 
 void TopologyClaimer::unknown_tag( std::string tag, std::istream& is ) const {
 	std::string line; getline(is, line);
-	throw EXCN_Input ("ERROR reading broker-setup. unknown tag: " + tag + " in line:\n " + tag + line + "\n");
+	throw CREATE_EXCEPTION(EXCN_Input, "ERROR reading broker-setup. unknown tag: " + tag + " in line:\n " + tag + line + "\n");
 }
 
 void TopologyClaimer::read( std::istream& is ) {

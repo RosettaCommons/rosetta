@@ -335,7 +335,7 @@ int main ( int argc, char* argv[] )
 		pert_mc->recover_low( pose );
 		pose.dump_pdb( "new.pdb" );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

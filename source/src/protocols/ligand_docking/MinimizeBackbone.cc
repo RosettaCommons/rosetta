@@ -126,9 +126,9 @@ MinimizeBackbone::parse_my_tag(
 	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "MinimizeBackbone" ) throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
+	if ( tag->getName() != "MinimizeBackbone" ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 
-	if ( ! tag->hasOption("interface") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'interface' tag (comma separated chains to dock)");
+	if ( ! tag->hasOption("interface") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'HighResDocker' requires 'interface' tag (comma separated chains to dock)");
 
 	std::string interface_name= tag->getOption<std::string>("interface");
 	interface_builder_= datamap.get_ptr<protocols::ligand_docking::InterfaceBuilder>( "interface_builders", interface_name);

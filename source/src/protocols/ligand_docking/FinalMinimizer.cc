@@ -114,15 +114,15 @@ FinalMinimizer::parse_my_tag(
 	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "FinalMinimizer" ) throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
+	if ( tag->getName() != "FinalMinimizer" ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 
 	/// Score Function ///
-	if ( ! tag->hasOption("scorefxn") ) throw utility::excn::EXCN_RosettaScriptsOption("'FinalMinimizer' requires 'scorefxn' tag");
+	if ( ! tag->hasOption("scorefxn") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'FinalMinimizer' requires 'scorefxn' tag");
 	std::string scorefxn_name= tag->getOption<std::string>("scorefxn");
 	score_fxn_= datamap.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_name);
 
 	/// MoveMapBuilder///
-	if ( ! tag->hasOption("movemap_builder") ) throw utility::excn::EXCN_RosettaScriptsOption("'FinalMinimizer' requires 'movemap_builder' tag");
+	if ( ! tag->hasOption("movemap_builder") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'FinalMinimizer' requires 'movemap_builder' tag");
 	std::string movemap_builder_name= tag->getOption<std::string>("movemap_builder");
 	movemap_builder_= datamap.get_ptr<protocols::ligand_docking::MoveMapBuilder>( "movemap_builders", movemap_builder_name);
 

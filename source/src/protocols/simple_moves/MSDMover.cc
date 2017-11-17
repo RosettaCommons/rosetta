@@ -126,11 +126,11 @@ void
 MSDMover::setup_mover ( core::pose::Pose & pose ) {
 	// Set up movers, resfiles, packer tasks, throw exceptions, etc.
 	if ( poses_.size() == 0 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Error: no poses initialized. If you run MSDMover from RosettaScripts you need to pass the -run:msd_job_dist flag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error: no poses initialized. If you run MSDMover from RosettaScripts you need to pass the -run:msd_job_dist flag");
 	}
 
 	if ( !design_mover_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Error: MSD Mover must have design mover");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error: MSD Mover must have design mover");
 	}
 
 	// Find index of your apply pose in the pose vector
@@ -138,7 +138,7 @@ MSDMover::setup_mover ( core::pose::Pose & pose ) {
 	core::Real ref_pose_index;
 	bool return_value = core::pose::getPoseExtraScore(  pose, "msd_job_dist_index", ref_pose_index );
 	if ( !return_value ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Error: poses are not indexed correctly. If you run MSDMover from RosettaScripts you need to pass the -run:msd_job_dist flag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error: poses are not indexed correctly. If you run MSDMover from RosettaScripts you need to pass the -run:msd_job_dist flag");
 	}
 	for ( core::Size i = 1; i <= poses_.size(); ++i ) {
 		core::Real current_pose_index;
@@ -151,7 +151,7 @@ MSDMover::setup_mover ( core::pose::Pose & pose ) {
 	}
 
 	if ( current_pose_ == 0 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Error: pose not found in vector. Strange...");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error: pose not found in vector. Strange...");
 	}
 	update_packer_task();
 	parse_resfiles();
@@ -172,23 +172,23 @@ void MSDMover::parse_my_tag(
 		auto  find_mover = movers.find( design_mover_key );
 
 		if ( find_mover == movers.end() && design_mover_key != "" ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("Mover " + design_mover_key + " not found in data map");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + design_mover_key + " not found in data map");
 		}
 
 		design_mover_ =find_mover->second;
 
 	} else { // throw exception if there's no design mover specified
-		throw utility::excn::EXCN_RosettaScriptsOption("Error: MSD Mover must have design mover");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error: MSD Mover must have design mover");
 	}
 
 	if ( tag->hasOption( "resfiles" ) ) {
 		resfiles_ = utility::string_split( tag->getOption<std::string>( "resfiles" ), ',' );
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Error: must provide resfile in MSD Mover tag" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: must provide resfile in MSD Mover tag" );
 	}
 
 	if ( resfiles_.size() > 1 && design_mover_->get_name() != "PackRotamersMover" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Error: multiple resfiles only supported for PackRotamersMover" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: multiple resfiles only supported for PackRotamersMover" );
 	}
 
 

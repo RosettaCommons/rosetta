@@ -30,7 +30,7 @@ using std::map;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using utility::excn::EXCN_Msg_Exception;
+using utility::excn::Exception;
 using utility::vector1;
 
 BetaTurnDetection::BetaTurnDetection() :
@@ -217,7 +217,7 @@ void BetaTurnDetection::validate_ramachandran_hash( std::string & rama_hash ) co
 			string single_residue_rama_hash( 1, toupper( * it ) );
 
 			if ( ! get_valid_ramachandran_hashes().contains( single_residue_rama_hash ) ) {
-				throw EXCN_Msg_Exception( "The Ramachandran hash '" + rama_hash + "' contains '" + string( 1, * it ) + ",' which is not valid. " +
+				throw CREATE_EXCEPTION(Exception,  "The Ramachandran hash '" + rama_hash + "' contains '" + string( 1, * it ) + ",' which is not valid. " +
 					"Valid Ramachandran hashes are 'A', 'B', 'L' and 'E' for trans peptide bonds, and 'a', 'b', 'l' and 'e' for cis peptide bonds."
 				);
 			}
@@ -225,7 +225,7 @@ void BetaTurnDetection::validate_ramachandran_hash( std::string & rama_hash ) co
 		}
 
 		if ( ! get_conformation_to_turn_type_map().count(  cis_trans_hash ) ) {
-			throw EXCN_Msg_Exception( "The Ramachandran hash '" + rama_hash +
+			throw CREATE_EXCEPTION(Exception,  "The Ramachandran hash '" + rama_hash +
 				"' is not recognized as a valid beta-turn type.  " +
 				"The attempt to create a generic hash based on the omega dihedral angle resulted in '" +
 				cis_trans_hash + ",' which is also not recognized as a valid beta-turn type."

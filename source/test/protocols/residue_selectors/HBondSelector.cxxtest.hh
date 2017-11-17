@@ -87,7 +87,7 @@ public:
 		std::stringstream ss_two_selectors;
 		ss_two_selectors << "<HBond name=\"hbond\" scorefxn=\"dummy\" residue_selector=\"dummy\"><Index name=\"index\" resnums=\"2,3\" /></HBond>";
 		tag->read( ss_two_selectors );
-		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::EXCN_Msg_Exception );
+		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::Exception );
 
 		std::stringstream ssgood_resnums;
 		ssgood_resnums << "<HBond name=\"hbond\" scorefxn=\"dummy\" resnums=\"2,3\" />";

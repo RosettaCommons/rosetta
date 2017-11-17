@@ -603,7 +603,7 @@ InitializeFromOptionCollection::parse_tag( TagCOP tag, DataMap & datamap )
 	//runtime_assert( datamap.has( "options"));
 	std::string which_options = tag->getOption< std::string >( "option_collection", "job_options" );
 	if ( ! datamap.has( "options", which_options ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "Failed to find options named \"" + which_options + "\" in the InitializeFromOptionCollection task operation" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find options named \"" + which_options + "\" in the InitializeFromOptionCollection task operation" );
 	}
 	options_ = datamap.get_ptr< utility::options::OptionCollection const >( "options", which_options );
 }
@@ -1084,9 +1084,9 @@ ReadResfile::parse_tag( TagCOP tag , DataMap &datamap )
 		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
 		try {
 			set_residue_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name ) );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ReadResfile::parse_tag()\n" + e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_message );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 		}
 		debug_assert(residue_selector_);
 	}

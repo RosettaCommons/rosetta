@@ -64,7 +64,7 @@ int find_chain(Pose const &pose, char pdb_chain_letter, string const &template_n
 	}
 
 	if( chain >= 0 ) return chain;
-	else throw _AE_grafting_failed_( string("Could not find chain: ") + pdb_chain_letter + " in template " + template_name );
+	else throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could not find chain: ") + pdb_chain_letter + " in template " + template_name );
 }
 
 
@@ -206,7 +206,7 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 /// @brief graft cdr-loops using best scs-results and write results into specified output_prefix
 core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet const &scs, string const & prefix, string const & suffix, string const & database, bool optimal_graft /* false */, bool optimize_cdrs /* false */)
 {
-	if ( !(scs.h1 and scs.h2 and scs.h3 and scs.l1 and scs.l2 and scs.l2 and scs.l3 and scs.frh and scs.frl and scs.orientation) ) throw _AE_grafting_failed_("SimpleGrafter::graft: not all nessesary SCS results is specified!");
+	if ( !(scs.h1 and scs.h2 and scs.h3 and scs.l1 and scs.l2 and scs.l2 and scs.l3 and scs.frh and scs.frl and scs.orientation) ) throw CREATE_EXCEPTION(_AE_grafting_failed_, "SimpleGrafter::graft: not all nessesary SCS results is specified!");
 
 	PoseOP result = construct_antibody(A, scs, prefix, suffix, database);
 
@@ -241,7 +241,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		string pdb_name = database + "/antibody_database/pdb" + g.pdb + "_chothia.pdb"; //These are FULL antibody structures...
 		core::pose::PoseOP cdr = core::import_pose::pose_from_file(pdb_name, core::import_pose::PDB_file);
 
-		if( !g.cdr_numbering.size() ) throw _AE_grafting_failed_( string("Empty template:") + g.pdb +" supplied as cdr for region:" + g.name );
+		if( !g.cdr_numbering.size() ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Empty template:") + g.pdb +" supplied as cdr for region:" + g.name );
 
 		PDB_N pdb_n_cdr_first( g.cdr_numbering.front() );
 		PDB_N pdb_n_cdr_last(  g.cdr_numbering.back()  );
@@ -249,8 +249,8 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		Size pose_n_cdr_first = cdr->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_first.n, pdb_n_cdr_first.icode);
 		Size pose_n_cdr_last  = cdr->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_last .n, pdb_n_cdr_last .icode);
 
-		if( !pose_n_cdr_first ) throw _AE_grafting_failed_( string("Could not find residue:") + g.cdr_numbering.front() + " in template:" + g.pdb + " region:"+ g.name);
-		if( !pose_n_cdr_last )  throw _AE_grafting_failed_( string("Could not find residue:") + g.cdr_numbering.back() + " in template:" + g.pdb  + " region:"+ g.name);
+		if( !pose_n_cdr_first ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could not find residue:") + g.cdr_numbering.front() + " in template:" + g.pdb + " region:"+ g.name);
+		if( !pose_n_cdr_last )  throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could not find residue:") + g.cdr_numbering.back() + " in template:" + g.pdb  + " region:"+ g.name);
 
 		if (optimal_graft){
 
@@ -287,7 +287,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 			pose_n_cdr_first -= overlap;
 			pose_n_cdr_last += overlap;
 
-			if( pose_n_cdr_first < 1  or  pose_n_cdr_last > cdr->total_residue() ) throw _AE_grafting_failed_( string("There is not enough overlap residue at:")+ g.pdb + " in template:" + g.pdb + " region:" + g.name);
+			if( pose_n_cdr_first < 1  or  pose_n_cdr_last > cdr->total_residue() ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("There is not enough overlap residue at:")+ g.pdb + " in template:" + g.pdb + " region:" + g.name);
 
 			//TR << "Deleting residues: " << pose_n_cdr_last+1 << ":" << cdr->total_residue() << " from cdr template... [template size: " << cdr->total_residue() << "]" << std::endl;
 			if( cdr->total_residue() > pose_n_cdr_last ) cdr->delete_residue_range_slow(pose_n_cdr_last+1, cdr->total_residue());
@@ -299,14 +299,14 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 			Size result_pose_cdr_first = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_first.n, pdb_n_cdr_first.icode);
 			Size result_pose_cdr_last  = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_last .n, pdb_n_cdr_last .icode);
 
-			if( !result_pose_cdr_first ) throw _AE_grafting_failed_( string("Could not find residue:") + g.cdr_numbering.front() + " in superimposed pdb. Region:" + g.name);
-			if( !result_pose_cdr_last )  throw _AE_grafting_failed_( string("Could not find residue:") + g.cdr_numbering.back() +  " in superimposed pdb. Region:" + g.name);
+			if( !result_pose_cdr_first ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could not find residue:") + g.cdr_numbering.front() + " in superimposed pdb. Region:" + g.name);
+			if( !result_pose_cdr_last )  throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could not find residue:") + g.cdr_numbering.back() +  " in superimposed pdb. Region:" + g.name);
 
 			result_pose_cdr_first -= overlap;
 
 			result_pose_cdr_last += overlap;
 
-			if( result_pose_cdr_first < 1  or result_pose_cdr_last > result->total_residue() ) throw _AE_grafting_failed_( string("There is not enough overlap residue in superimposed template! region:") + g.name);
+			if( result_pose_cdr_first < 1  or result_pose_cdr_last > result->total_residue() ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("There is not enough overlap residue in superimposed template! region:") + g.name);
 
 			TR << "Grafting..." << std::endl;
 
@@ -354,7 +354,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	for (auto &h : H) {
 		// check for matching lengths of cdr and cdr sequence
 		// everything should be kosher since we're using the chothia definition throughout (AFAIK)
-		if ( h.cdr_seq.size() != h.cdr_end - h.cdr_start + 1 ) throw _AE_grafting_failed_( string("Could revert sequence to query after grafting cdr ") + h.cdr_name + ". Length mismatch between CDR in grafted model (" + utility::to_string(h.cdr_end - h.cdr_start + 1) +  ") and query sequence (" + utility::to_string(h.cdr_seq.size()) + ").");
+		if ( h.cdr_seq.size() != h.cdr_end - h.cdr_start + 1 ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could revert sequence to query after grafting cdr ") + h.cdr_name + ". Length mismatch between CDR in grafted model (" + utility::to_string(h.cdr_end - h.cdr_start + 1) +  ") and query sequence (" + utility::to_string(h.cdr_seq.size()) + ").");
 
 
 		for(Size i = h.cdr_start; i < h.cdr_end + 1; ++i) {

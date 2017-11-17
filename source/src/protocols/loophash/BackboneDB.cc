@@ -304,12 +304,12 @@ BackboneDB::get_backbone_segment(
 void BackboneDB::write_db( std::string filename )
 {
 	std::ofstream file( filename.c_str() );
-	if ( !file ) throw EXCN_DB_IO_Failed( filename, "write" );
+	if ( !file ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  filename, "write" );
 	if ( data_.size() == 0 ) {
 		file.close();
 		return;
 	}
-	if ( ! extra_ ) throw EXCN_No_Extra_Data_To_Write();
+	if ( ! extra_ ) throw CREATE_EXCEPTION(EXCN_No_Extra_Data_To_Write, "");
 	for ( auto & i : data_ ) {
 		file << "pdb " << extra_data_[ i.extra_key ].pdb_id << std::endl;
 		file << "seq " << extra_data_[ i.extra_key ].sequence << std::endl;
@@ -332,7 +332,7 @@ BackboneDB::read_legacydb( std::string filename )
 {
 	// use basic C input - C++ are too memory hungry to deal with these potentially v large files
 	FILE *file = fopen( filename.c_str(), "r" );
-	if ( file == nullptr ) throw EXCN_DB_IO_Failed( filename, "read" );
+	if ( file == nullptr ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  filename, "read" );
 
 	data_.clear();
 	BBData new_protein;
@@ -359,7 +359,7 @@ BackboneDB::read_db( std::string filename, bool load_extra,
 	std::map< core::Size, bool > & homolog_index )
 {
 	std::ifstream file( filename.c_str() );
-	if ( !file ) throw EXCN_DB_IO_Failed( filename, "read" );
+	if ( !file ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  filename, "read" );
 
 	if ( option[ lh::exclude_homo ]() ) {
 		TR << "Reading in homolog file" << std::endl;
@@ -400,7 +400,7 @@ BackboneDB::read_db( std::string filename, bool load_extra,
 		if ( line_counter / 4 >= int(end) && int(end) != 0 ) continue;
 
 		command = line.substr(0,3);
-		if ( command == "" ) throw EXCN_Wrong_DB_Format( filename );
+		if ( command == "" ) throw CREATE_EXCEPTION(EXCN_Wrong_DB_Format,  filename );
 		// Even if we're not loading extra, still process pdb line
 		// So we can use the pdb to filter homologs
 		if ( command == "pdb" ) {
@@ -451,7 +451,7 @@ BackboneDB::read_db( std::string filename, bool load_extra,
 void BackboneDB::read_homologs()
 {
 	std::ifstream file( option[ lh::homo_file ]().c_str() );
-	if ( !file ) throw EXCN_DB_IO_Failed( option[ lh::homo_file ](), "read" );
+	if ( !file ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  option[ lh::homo_file ](), "read" );
 	std::string line;
 	while ( getline( file, line) ) {
 		utility::vector1< std::string > tokens ( utility::split( line ) );
@@ -476,5 +476,3 @@ void BackboneDB::read_homologs()
 
 } // namespace loops
 } // namespace protocols
-
-

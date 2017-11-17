@@ -516,7 +516,7 @@ LegacyAssemblyMover::parse_requirements(
 			TR.Error << "Only allowed sub-tags of LegacyAssemblyMover are GlobalRequirements" << std::endl;
 			TR.Error << "and IntraSegmentRequirements. Please see the LEGACY_SEWING protocol documentation" << std::endl;
 			TR.Error << "Tag with name '" << requirement_tag->getName() << "' is invalid" << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 		}
 	}
 }

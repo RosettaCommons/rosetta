@@ -110,22 +110,22 @@ void LoopRefineInnerCycle::setup_objects( Pose const & /* pose */ )
 	TR << "Setting up data for " + get_name() + "." << std::endl;
 
 	/// Perform some sanity checks to ensure the data integrity before moving forward
-	using utility::excn::EXCN_Msg_Exception;
+	using utility::excn::Exception;
 
 	if ( !scorefxn_ ) {
-		throw EXCN_Msg_Exception( "No ScoreFunction available in " + get_name() + "." );
+		throw CREATE_EXCEPTION(Exception,  "No ScoreFunction available in " + get_name() + "." );
 	}
 
 	if ( !tf_ ) {
-		throw EXCN_Msg_Exception( "No TaskFactory available in " + get_name() + "." );
+		throw CREATE_EXCEPTION(Exception,  "No TaskFactory available in " + get_name() + "." );
 	}
 
 	if ( !mc_ ) {
-		throw EXCN_Msg_Exception( "No MonteCarlo instance available in " + get_name() + "." );
+		throw CREATE_EXCEPTION(Exception,  "No MonteCarlo instance available in " + get_name() + "." );
 	}
 
 	if ( loop_mover_that_owns_me_.expired() ) {
-		throw EXCN_Msg_Exception( "No parent LoopMover available in " + get_name() + ". This is needed to provide information on the progress of the simulation." );
+		throw CREATE_EXCEPTION(Exception,  "No parent LoopMover available in " + get_name() + ". This is needed to provide information on the progress of the simulation." );
 	}
 }
 

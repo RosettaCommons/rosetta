@@ -74,7 +74,7 @@ VanillaJobDistributor::go( JobQueenOP queen ) {
 		std::pair< SizeList, bool > job_total_order_pair = topological_sort( *job_dag_ );
 		if ( ! job_total_order_pair.second ) {
 			job_queen_->flush();
-			throw utility::excn::EXCN_Msg_Exception( "JobQueen produced a non-DAG job graph." );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "JobQueen produced a non-DAG job graph." );
 		}
 		SizeList job_total_order = job_total_order_pair.first;
 		for ( Size const job_node : job_total_order ) {
@@ -144,7 +144,7 @@ VanillaJobDistributor::construct_job_result_input_list( LarvalJobCOP larval_job 
 	for ( auto const result_id : larval_job->input_job_result_indices() ) {
 		auto result_iter = job_results_.find( result_id );
 		if ( result_iter == job_results_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result (" +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to retrieve job result (" +
 				utility::to_string( result_id.first ) + ", " + utility::to_string( result_id.second ) +
 				") requested by LarvalJob " + larval_job->job_tag() );
 		}
@@ -163,7 +163,7 @@ VanillaJobDistributor::run_mature_job(
 	// Run the job!
 	try {
 		job_output = mature_job->run();
-	} catch ( utility::excn::EXCN_Base & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		// An exception thrown by this job.  Inform the JobQueen that it's a badie.
 		TR.Error << "Job " << larval_job->job_index() << " named " << larval_job->job_tag() << " threw an exception:\n" <<
 			e.msg() << std::endl;
@@ -187,7 +187,7 @@ VanillaJobDistributor::potentially_output_some_job_results()
 		JobResultID result_id = output_spec->result_id();
 		auto result_iter = job_results_.find( result_id );
 		if ( result_iter == job_results_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result (" +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to retrieve job result (" +
 				utility::to_string( result_id.first )  + ", " + utility::to_string( result_id.second ) +
 				") for outputting as requested by the JobQeen. Has this job already been output?" );
 		}
@@ -210,7 +210,7 @@ VanillaJobDistributor::potentially_discard_some_job_results()
 		auto result_iter = job_results_.find( result_id );
 
 		if ( result_iter == job_results_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result (" +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to retrieve job result (" +
 				utility::to_string( result_id.first ) + ", " + utility::to_string( result_id.second ) +
 				+ ") for discardting as requested by the JobQeen. Has this job already been output?" );
 		}

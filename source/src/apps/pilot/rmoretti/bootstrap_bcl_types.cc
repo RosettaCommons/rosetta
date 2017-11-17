@@ -24,7 +24,7 @@
 
 #include <utility/vector1.hh>
 #include <numeric/util.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <fstream>
 
@@ -7133,7 +7133,7 @@ try {
 	std::cout << ">>> read " << acount << " atom types versus " << atoms.size() << " total " << std::endl << std::endl;
 	// read back in.
 
-} catch ( utility::excn::EXCN_Base const & e ) {
+} catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

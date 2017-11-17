@@ -38,12 +38,16 @@ namespace protocols {
 namespace canonical_sampling {
 namespace mc_convergence_checks {
 
-class EXCN_Heat_Converged : public moves::EXCN_Converged {};
+class EXCN_Heat_Converged : public moves::EXCN_Converged
+{
+public:
+	using moves::EXCN_Converged::EXCN_Converged;
+};
 
 class Heat_ConvergenceCheck : public moves::MonteCarloExceptionConverge {
 	virtual bool operator() ( const core::pose::Pose&, moves::MonteCarlo const& mc, bool /*reject*/ ) {
 		if ( mc.last_accept() >= mc.heat_after_cycles() - mc.check_frequency() ) {
-			throw canonical_sampling::mc_convergence_checks::EXCN_Heat_Converged();
+			throw CREATE_EXCEPTION(canonical_sampling::mc_convergence_checks::EXCN_Heat_Converged, "");
 		}
 		return true;
 	}

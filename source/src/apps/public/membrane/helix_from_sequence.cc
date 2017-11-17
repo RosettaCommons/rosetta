@@ -76,7 +76,7 @@ std::string read_fasta() {
 		sequence = core::sequence::read_fasta_file( option[ OptionKeys::in::file::fasta ]()[1] )[1]->sequence();
 		TR << "Read in fasta file" << option[OptionKeys::in::file::fasta]()[1] << std::endl;
 	} else {
-		throw new utility::excn::EXCN_Msg_Exception("Please provide fasta file!");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Please provide fasta file!");
 	}
 
 	return sequence;
@@ -251,7 +251,7 @@ main( int argc, char * argv [] )
 		//  helix_from_sequence();
 
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

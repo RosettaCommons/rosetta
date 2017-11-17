@@ -36,7 +36,7 @@
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 // Tracer
@@ -67,7 +67,7 @@ main( int argc, char * argv [] )
 		TR << "Successfully validated the " << option[ parser::protocol ].value() << " script" << std::endl;
 		std::exit(0);
 
-	} catch( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		basic::Error()
 			<< "ERROR: Exception caught by validate_rosetta_script application:"
 			<< excn << std::endl;

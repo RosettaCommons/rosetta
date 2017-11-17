@@ -107,7 +107,7 @@ ResidueProperties::has_property( std::string const & property ) const
 	// should we use NO_PROPERTY return value instead of exception catching? Would aid in gdb/lldb debugging to not use exceptions for this. See has_variant_type. -- rhiju
 	try {
 		return general_property_status_[ get_property_from_string( property ) ];
-	} catch ( EXCN_Msg_Exception const & e ) {
+	} catch ( Exception const & e ) {
 		TR.Warning << e.msg() << endl;
 	}
 	return false;
@@ -122,7 +122,7 @@ ResidueProperties::set_property( std::string const & property, bool const settin
 	// should we use NO_PROPERTY return value instead of exception catching? Would aid in gdb/lldb debugging to not use exceptions for this. See set_variant_type. -- rhiju
 	try {
 		general_property_status_[ get_property_from_string( property ) ] = setting;
-	} catch ( EXCN_Msg_Exception const & e ) {
+	} catch ( Exception const & e ) {
 		utility_exit_with_message( e.msg() );
 	}
 }

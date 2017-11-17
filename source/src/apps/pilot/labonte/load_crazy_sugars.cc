@@ -45,7 +45,7 @@ main( int argc, char *argv[] )
 		pose_from_file( crazy_sugar, PATH + "fix5-trimerized_chainA_w_LINKs.pdb" , core::import_pose::PDB_file);
 		cout << crazy_sugar << endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return -1;
 	}

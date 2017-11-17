@@ -95,7 +95,7 @@ ModulatedMover::parse_my_tag(
 	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "tempering", "null" ), movers );
 	tempering_ = utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::HamiltonianExchange > ( mover );
 	if ( !tempering_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover requires an tempering argument" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ModulatedMover requires an tempering argument" );
 	}
 	//  n_temp_levels_ = tempering_->n_temp_levels();
 	//if ( tag->hasOption( "type" ) ) {
@@ -107,12 +107,12 @@ ModulatedMover::parse_my_tag(
 	// Save its tag
 	utility::vector1< TagCOP > subtags = tag->getTags();
 	if ( subtags.size() == 0 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover requires at least a single subtag: the Mover that it is going to modulate. Have you used the rewrite_rosetta_script.py utility that lives in tools/xsd_xrw/ since the XSD XRW?" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ModulatedMover requires at least a single subtag: the Mover that it is going to modulate. Have you used the rewrite_rosetta_script.py utility that lives in tools/xsd_xrw/ since the XSD XRW?" );
 	}
 	utility::tag::TagCOP initial_mover_tag = subtags[0];
 	mover_name_ = subtags[ 0 ]->getName();
 	if ( protocols::moves::MoverFactory::get_instance()->mover_creator_map().count( "mover_name_" ) == 0 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover's first subtag must be the ThermodynamicMover that will be modulated. Have you used the rewrite_rosetta_script.py utility that lives in tools/xsd_xrw/ since the XSD XRW?" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ModulatedMover's first subtag must be the ThermodynamicMover that will be modulated. Have you used the rewrite_rosetta_script.py utility that lives in tools/xsd_xrw/ since the XSD XRW?" );
 	}
 
 	// have to go through all the options in the mover tag, to avoid Tag::die_for_unaccessed_options()
@@ -176,11 +176,11 @@ ModulatedMover::parse_my_tag(
 		using namespace protocols::canonical_sampling;
 		MoverOP new_mover( MoverFactory::get_instance()->newMover( mover_tag, data_map, filters, movers, pose ) );
 		if ( !new_mover ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Failed to instantiate a Mover with name \"" + mover_name_ + "\" from the ModulatedMover" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Failed to instantiate a Mover with name \"" + mover_name_ + "\" from the ModulatedMover" );
 		}
 		ThermodynamicMoverOP th_mover( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::ThermodynamicMover > ( new_mover ) );
 		if ( !th_mover ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "The \""+mover_name_+"\" requested in the ModulatedMover does not inherit from ThermodynamicMover" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "The \""+mover_name_+"\" requested in the ModulatedMover does not inherit from ThermodynamicMover" );
 		}
 		movers_.push_back( th_mover ); //
 	} // end of for ( temp_level )
@@ -207,7 +207,7 @@ ModulatedMover::generate_mover_tag(
 			tag->setOption< core::Real >( it.first, (it.second->get_value(grid_coord[1]) )*interps_2_.find(key)->second->get_value( grid_coord[2]));
 			tr.Debug << "level " << temp_level << " modulated " << it.first << " is " << tag->getOption< core::Real >( it.first ) << std::endl;
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption( "key value is not provided for the 2nd dim" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "key value is not provided for the 2nd dim" );
 		}
 	}
 	tr.Debug << "tag generated for temp_level " << temp_level << std::endl;

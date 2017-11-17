@@ -58,7 +58,7 @@
 //utility & numeric
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.functions.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -552,7 +552,7 @@ main( int argc, char * argv [] )
 
 		std::cout << "Done! -------------------------------\n";
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

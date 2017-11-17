@@ -73,7 +73,7 @@ std::string RDFEtableFunction::class_name(){
 void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap & data_map)
 {
 	if ( !tag->hasOption("scorefxn") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'RDFEtableFunction' requires 'scorefxn' tag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'RDFEtableFunction' requires 'scorefxn' tag");
 	}
 
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
@@ -157,7 +157,7 @@ void RDFElecFunction::parse_my_tag(
 	basic::datacache::DataMap & data_map)
 {
 	if ( !tag->hasOption("scorefxn") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'RDFEtableFunction' requires 'scorefxn' tag");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'RDFEtableFunction' requires 'scorefxn' tag");
 	}
 
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
@@ -238,7 +238,7 @@ void RDFChargeFunction::parse_my_tag(
 		function_sign_ = SameSign;
 		function_name_ = "charge_unsigned";
 	} else {
-		utility::excn::EXCN_RosettaScriptsOption("RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor");
 	}
 	this->add_function_name(function_name_);
 }
@@ -344,7 +344,7 @@ void RDFHbondFunction::parse_my_tag(
 		function_sign_ = SameSign;
 		function_name_ = "hbond_unsigned";
 	} else {
-		utility::excn::EXCN_RosettaScriptsOption("RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor");
 	}
 	this->add_function_name(function_name_);
 }
@@ -455,7 +455,7 @@ void RDFBinaryHbondFunction::parse_my_tag(utility::tag::TagCOP tag,basic::dataca
 		function_sign_ = SameSign;
 		function_name_ = "hbond_matching_pair";
 	} else {
-		utility::excn::EXCN_RosettaScriptsOption("RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor or matching pair");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor or matching pair");
 	}
 	this->add_function_name(function_name_);
 }

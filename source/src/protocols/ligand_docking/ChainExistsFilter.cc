@@ -56,7 +56,7 @@ ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 {
 
 	if ( ! tag->hasOption("chain") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("ChainExists filter needs a 'chain' option");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ChainExists filter needs a 'chain' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 }

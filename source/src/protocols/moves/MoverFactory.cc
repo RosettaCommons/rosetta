@@ -64,13 +64,13 @@ MoverFactory::factory_register( MoverCreatorOP creator )
 	runtime_assert( creator != nullptr );
 	std::string const mover_type( creator->keyname() );
 	if ( mover_type == "UNDEFINED NAME" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived Mover with undefined type name.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't map derived Mover with undefined type name.");
 	}
 	if ( forbidden_names_.find( mover_type ) != forbidden_names_.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Name "+mover_type+" is not an allowed mover name, probably because it has historical meaning.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Name "+mover_type+" is not an allowed mover name, probably because it has historical meaning.");
 	}
 	if ( mover_creator_map_.find( mover_type ) != mover_creator_map_.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("MoverFactory::factory_register already has a mover creator with name \"" + mover_type + "\".  Conflicting Mover names" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "MoverFactory::factory_register already has a mover creator with name \"" + mover_type + "\".  Conflicting Mover names" );
 	}
 	mover_creator_map_[ mover_type ] = creator;
 }
@@ -115,7 +115,7 @@ MoverFactory::newMover( std::string const & mover_type )
 	MoverMap::const_iterator iter( mover_creator_map_.find( mover_type ) );
 	if ( iter != mover_creator_map_.end() ) {
 		if ( ! iter->second ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Error: MoverCreatorOP prototype for " + mover_type + " is NULL!" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: MoverCreatorOP prototype for " + mover_type + " is NULL!" );
 		}
 		// use of cloning method would be faithful to pre-initialized prototypes
 		//return iter->second->clone();
@@ -127,7 +127,7 @@ MoverFactory::newMover( std::string const & mover_type )
 			TR << mover_it->first << ", ";
 		}
 		TR << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( mover_type + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  mover_type + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
 		return nullptr;
 	}
 }
@@ -157,8 +157,8 @@ void MoverFactory::define_mover_xml_schema( utility::tag::XMLSchemaDefinition & 
 			mover_xml_schema_group_name(),
 			& complex_type_name_for_mover,
 			xsd );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for Movers from MoverFactory; offending class"
+	} catch ( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for Movers from MoverFactory; offending class"
 			" must call protocols::moves::complex_type_name_for_mover when defining"
 			" its XML Schema\n" + e.msg() );
 	}

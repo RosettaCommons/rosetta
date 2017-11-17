@@ -39,7 +39,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer TR("test.scoring.fiber_diffraction.FiberDiffractionEnergy");
@@ -67,7 +67,7 @@ public:
 		try{
 			do_test_FiberDiffractionEnergy();
 			do_test_FiberDiffractionEnergyDens();
-		} catch( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			TR << "ERROR: Exception caught by FiberDiffractionEnergy:"
 				<< excn << std::endl;
 		}

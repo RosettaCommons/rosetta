@@ -76,13 +76,13 @@ void define_xml_schema_group(
 
 		try {
 			iter->second->provide_xml_schema( xsd );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			throw utility::excn::EXCN_Msg_Exception( "define_xml_schema_group: failed to define an xml schema for \"" + iter->first + "\"; message was:\n" + e.msg() );
+		} catch ( utility::excn::Exception & e ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "define_xml_schema_group: failed to define an xml schema for \"" + iter->first + "\"; message was:\n" + e.msg() );
 		}
 
 		if ( ! xsd.has_top_level_element( complex_type_name_for_widget_func( iter->first ) ) ) {
 			//std::cerr << "schema:\n" << xsd.full_definition() << std::endl;
-			throw utility::excn::EXCN_Msg_Exception( "define_xml_schema_group: failed to detect a complex type of name \"" +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "define_xml_schema_group: failed to detect a complex type of name \"" +
 				complex_type_name_for_widget_func( iter->first ) + "\" for \"" +
 				iter->first + "\"\n" );
 		}

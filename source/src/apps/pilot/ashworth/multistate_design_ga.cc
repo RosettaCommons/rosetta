@@ -376,7 +376,7 @@ main( int argc, char * argv[] )
 		using namespace basic::options::OptionKeys;
 		devel::init( argc, argv );
 		protocols::viewer::viewer_main( ga_main );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

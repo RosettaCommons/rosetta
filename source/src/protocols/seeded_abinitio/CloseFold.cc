@@ -447,7 +447,7 @@ CloseFold::parse_my_tag(
 	}
 
 	if ( !tag->hasOption("fragments") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("need to supply fragments...currently still not accessing the general fragment pool" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "need to supply fragments...currently still not accessing the general fragment pool" );
 	}
 
 	//adding the LoopOP to the data map

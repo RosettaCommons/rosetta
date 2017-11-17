@@ -187,11 +187,11 @@ get_jump_selector( std::string const & selector_name, basic::datacache::DataMap 
 	core::select::jump_selector::JumpSelectorCOP selector;
 	try {
 		selector = data.get_ptr< core::select::jump_selector::JumpSelector const >( "JumpSelector", selector_name );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		std::stringstream error_msg;
 		error_msg << "Failed to find JumpSelector named '" << selector_name << "' in the DataMap.\n";
 		error_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 	}
 	debug_assert( selector );
 	TR << "Found jump selector " << selector_name << std::endl;

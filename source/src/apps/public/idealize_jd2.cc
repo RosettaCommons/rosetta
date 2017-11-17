@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 OPT_KEY( Real, atom_pair_constraint_weight )
 OPT_KEY( Real, coordinate_constraint_weight )
@@ -87,12 +87,12 @@ int main( int argc, char * argv [] ) {
 		// start the job
 		try {
 			JobDistributor::get_instance()->go( mover );
-		} catch ( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			std::cerr << "Exception: " << std::endl;
 			excn.show( std::cerr );
 		}
 	}
-catch (utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

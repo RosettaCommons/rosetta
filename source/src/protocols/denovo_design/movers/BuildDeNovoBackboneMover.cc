@@ -140,7 +140,7 @@ BuildDeNovoBackboneMover::parse_my_tag(
 			msg << get_name() << "::parse_my_tag(): Invalid subtag found:" << *subtag << std::endl;
 			msg << "Valid subtags are \"PreFoldMovers\", \"PostFoldMovers\", a DeNovo architect, and a Pose Folder."
 				<< std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 	}
 	TR << "Finished parsing tag: " << prefold_movers_.size() << " prefold movers found." << std::endl;
@@ -318,7 +318,7 @@ BuildDeNovoBackboneMover::build_in_phases(
 			e.show( TR );
 			TR.flush();
 			TR.Warning << "not folding anything!" << std::endl;
-		} catch ( EXCN_FilterFailed const & e ) {
+		} catch (EXCN_FilterFailed const & e ) {
 			e.show( TR );
 			TR.flush();
 		}
@@ -328,7 +328,7 @@ BuildDeNovoBackboneMover::build_in_phases(
 	std::stringstream msg;
 	msg << mover_name() << "build_in_phases():  Failed to fold anything passing filters after "
 		<< max_iter << " attempts." << std::endl;
-	throw components::EXCN_Fold( msg.str() );
+	throw CREATE_EXCEPTION(components::EXCN_Fold, msg.str() );
 	return core::pose::PoseOP();
 }
 
@@ -338,7 +338,7 @@ BuildDeNovoBackboneMover::check_pose( core::pose::Pose const & pose ) const
 {
 	core::Size filter_num = 1;
 	for ( FilterCOPs::const_iterator f=filters_.begin(); f!=filters_.end(); ++f, ++filter_num ) {
-		if ( !(*f)->apply( pose ) ) throw EXCN_FilterFailed( (*f)->get_type(), filter_num );
+		if ( !(*f)->apply( pose ) ) throw CREATE_EXCEPTION(EXCN_FilterFailed, (*f)->get_type(), filter_num );
 	}
 }
 
@@ -418,14 +418,14 @@ BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, protocols::mov
 			std::stringstream msg;
 			msg << type() << ": Invalid xml tag name (" << (*subtag)->getName() << ") found in tag " << *tag << std::endl;
 			msg << "Valid tags are: \"Add\"." << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		std::string const mover_name = (*subtag)->getOption< std::string >( "mover" );
 		protocols::moves::Movers_map::const_iterator find_mover = moversmap.find( mover_name );
 		if ( find_mover == moversmap.end() ) {
 			std::stringstream msg;
 			msg << type() << "::parse_movers(): ERROR !! mover not found in map: \n" << **subtag << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		movers.push_back( find_mover->second->clone() );
 		TR.Debug << "found mover " << mover_name << std::endl;
@@ -442,14 +442,14 @@ BuildDeNovoBackboneMover::parse_filters( utility::tag::TagCOP tag, protocols::fi
 			std::stringstream msg;
 			msg << type() << ": Invalid xml tag name (" << (*subtag)->getName() << ") found in tag " << *tag << std::endl;
 			msg << "Valid tags are: \"Add\"." << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		std::string const filter_name = (*subtag)->getOption< std::string >( "filter" );
 		protocols::filters::Filters_map::const_iterator find_filter = filter_map.find( filter_name );
 		if ( find_filter == filter_map.end() ) {
 			std::stringstream msg;
 			msg << type() << "::parse_filters(): ERROR !! filter not found in map: \n" << **subtag << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		filters_.push_back( find_filter->second->clone() );
 		TR.Debug << "found filter " << filter_name << std::endl;
@@ -579,7 +579,7 @@ BuildDeNovoBackboneMover::create_loops(
 		std::stringstream msg;
 		msg << type() << "::create_loops(): Loops object could not be created! Movable segments="
 			<< movable_segments << " SD=" << sd << std::endl;
-		throw EXCN_NothingToFold( msg.str() );
+		throw CREATE_EXCEPTION(EXCN_NothingToFold, msg.str() );
 	}
 
 	// add requested connection overlap
@@ -1272,4 +1272,3 @@ add_overlap_to_loops(
 } //protocols
 } //denovo_design
 } //movers
-

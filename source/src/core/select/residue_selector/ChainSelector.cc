@@ -82,7 +82,7 @@ ChainSelector::apply(
 			if ( iichain_string.size() != 1 ) {
 				std::stringstream error_message;
 				error_message << "ChainSelector was given a string identifier '" << iichain_string << "' that cannot be parsed as an unsigned integer and is also longer than a single character\n";
-				throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 			}
 			select_chain_by_pdb_chain_char( pose, subset, iichain_string[0] );
 		}
@@ -100,11 +100,11 @@ void ChainSelector::parse_my_tag(
 	std::string chain_string;
 	try {
 		chain_string = tag->getOption< std::string >( "chains" );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		std::stringstream error_message;
 		error_message << "ChainSelector::parse_my_tag was not able to find the required option 'chains' in the input Tag\n";
 		error_message << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 	chain_strings_ = utility::string_split( chain_string, ',' );
 }
@@ -170,7 +170,7 @@ void ChainSelector::select_chain_by_pdb_chain_char(
 	if ( !pose.pdb_info() ) {
 		std::ostringstream err;
 		err << get_name() << "Selector recieved a pose without a valid PDBInfo--chains cannot be selected.";
-		throw utility::excn::EXCN_NullPointer( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  err.str() );
 	}
 
 	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {

@@ -140,7 +140,7 @@ void DipolarCoupling::read_DC_file( std::string const& filename ) {
 	utility::io::izstream infile(filename.c_str());
 
 	if ( !infile.good() ) {
-		throw( utility::excn::EXCN_FileNotFound( filename ) );
+		throw CREATE_EXCEPTION(utility::excn::FileNotFound,  filename );
 	}
 
 	tr.Info << "Reading DC file " << filename << std::endl;
@@ -155,7 +155,7 @@ void DipolarCoupling::read_DC_file( std::string const& filename ) {
 
 		if ( line_stream.fail() ) {
 			tr.Error << "couldn't read line " << line << " in dc-file " << filename << std::endl;
-			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in dc-file "+filename));
+			throw CREATE_EXCEPTION(utility::excn::BadInput, " invalid line "+line+" in dc-file "+filename);
 		} else {
 			All_DC_lines_.push_back(DC(res1,atom1,res2,atom2,DCval,DCerr,weight));
 		}
@@ -185,7 +185,7 @@ std::string element_string_dc(std::string atom) {
 	if ( atom == "N" ) {
 		return "N";
 	}
-	throw(utility::excn::EXCN_BadInput("unknown atom for DC: " + atom));
+	throw CREATE_EXCEPTION(utility::excn::BadInput, "unknown atom for DC: " + atom);
 	return ""; //to make compile happy.
 }
 //////////////////////////////////////////////////////
@@ -205,8 +205,7 @@ DC::DC_TYPE DC::get_DC_data_type(std::string const & atom1, std::string const & 
 	} else if ( (elem1 == "C" && elem2 == "C") ) {
 		DC_type = DC_TYPE_CC;
 	} else {
-		throw(utility::excn::EXCN_BadInput(
-			"unknown combination of atoms for DC " + atom1 + " " + atom2));
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "unknown combination of atoms for DC " + atom1 + " " + atom2);
 	}
 	return DC_type;
 }
@@ -333,7 +332,7 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 				dc.f2ij_[2] = All_DC_line.weight()*2*devDC*dv_zB;
 			}
 		} else {
-			throw(utility::excn::EXCN_BadInput( "DC value not in resonable range"));
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "DC value not in resonable range");
 		}
 
 		//Add weight to energy
@@ -411,5 +410,3 @@ CEREAL_REGISTER_TYPE( core::scoring::DipolarCoupling )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_DipolarCoupling )
 #endif // SERIALIZATION
-
-

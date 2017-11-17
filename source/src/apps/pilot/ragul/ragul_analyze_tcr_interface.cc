@@ -249,7 +249,7 @@ int main( int argc, char * argv [] ){
 
 		std::cout << "Interface_Scores:\t"<< tag <<"\t"<< input_pdb_name <<"\t" << bound_energy <<"\t"<< Interface_Energy <<"\t"<< Total_BSA <<"\t"<< Interface_HB <<"\t"<< Total_packstats <<"\t"<< Interface_unsat <<"\t"<<Interface_pipi<<"\t"<<Interface_catpi<<"\t"<<Interface_sb<< std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

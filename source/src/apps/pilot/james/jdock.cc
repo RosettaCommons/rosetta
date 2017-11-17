@@ -199,7 +199,7 @@ main( int argc, char * argv [] ) {
 		std::string const fn_out( "post_min_final.pdb" );
 		pose.dump_pdb(fn_out);
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

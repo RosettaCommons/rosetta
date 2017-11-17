@@ -130,7 +130,7 @@ SidechainMoverBase::parse_my_tag(
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				new_task_factory->push_back( data.get_ptr< pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 	} else {

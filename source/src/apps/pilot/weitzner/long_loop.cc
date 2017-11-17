@@ -90,7 +90,7 @@ main( int argc, char * argv [] ) {
 		pose->dump_pdb("src/apps/pilot/weitzner/1bzq_closed.pdb");
 
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

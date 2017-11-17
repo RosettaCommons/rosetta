@@ -322,9 +322,9 @@ public:
 			// This should fail because PDB shouldn't be an acceptible input type
 			djq2.determine_preliminary_job_list_from_xml_file( jobdef_file );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-			std::string gold = "Job definition file failed to validate against the schema for this application\nUse the option -jd3::job_definition_schema <output filename> to output the schema to a file.\nError messages were: From line 4:\nError: Element \'PDB\': This element is not expected. Expected is ( Dummy ).\n\n1: <JobDefinitionFile>\n2:  <Job nstruct=\"5\">\n3:   <Input>\n4:    <PDB filename=\"1ubq.pdb\"/>\n5:   </Input>\n6:  </Job>\n7: </JobDefinitionFile>\n8: \n\nWarning messages were: \n";
-			TS_ASSERT_EQUALS( e.msg(), gold );
+		} catch (utility::excn::Exception const & e ) {
+			std::string expected_err_msg = "Job definition file failed to validate against the schema for this application\nUse the option -jd3::job_definition_schema <output filename> to output the schema to a file.\nError messages were: From line 4:\nError: Element \'PDB\': This element is not expected. Expected is ( Dummy ).\n\n1: <JobDefinitionFile>\n2:  <Job nstruct=\"5\">\n3:   <Input>\n4:    <PDB filename=\"1ubq.pdb\"/>\n5:   </Input>\n6:  </Job>\n7: </JobDefinitionFile>\n8: \n\nWarning messages were: \n";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 

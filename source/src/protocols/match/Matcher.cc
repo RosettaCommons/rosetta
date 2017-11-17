@@ -505,7 +505,7 @@ void Matcher::set_hash_euler_bin_width( Real width )
 	//std::fill( euler_bin_widths_.begin(), euler_bin_widths_.end(), width );
 	core::Size ndiv = static_cast< Size > ( 180 / width );
 	if ( std::abs( ndiv * width - 180.0 ) > 1e-6 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Please use a eulerian bin width that evenly divides 180, e.g. 10, 9, or 4.5" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Please use a eulerian bin width that evenly divides 180, e.g. 10, 9, or 4.5" );
 	}
 	euler_bin_widths_ = width;
 }
@@ -530,7 +530,7 @@ void Matcher::set_hash_euler_bin_widths( Vector widths )
 		}
 	}
 	if ( any_error ) {
-		throw utility::excn::EXCN_Msg_Exception( err_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_message.str() );
 	}
 	euler_bin_widths_ = widths;
 }

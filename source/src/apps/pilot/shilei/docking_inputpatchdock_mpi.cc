@@ -325,14 +325,14 @@ void run_parallel_docking() {
 		core::import_pose::pose_from_file( pose, pdbname.c_str() , core::import_pose::PDB_file);
 		original_pose=pose;
 	} else {
-		throw( utility::excn::EXCN_BadInput("expected -s for this app") );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput, "expected -s for this app") );
 	}
 
 	//read in the native pose
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		core::import_pose::pose_from_file( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 	} else {
-		throw( utility::excn::EXCN_BadInput("native expected for this app") );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput, "native expected for this app") );
 	}
 
 	core::Size  total_atoms(0);
@@ -349,7 +349,7 @@ void run_parallel_docking() {
 
 	//check if patchdock_file exist
 	if ( !basic::options::option[basic::options::OptionKeys::docking_parallel::patchdock_file_prefix].user() ) {
-		throw( utility::excn::EXCN_BadInput("patchdock should be given for this app") );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput, "patchdock should be given for this app") );
 	}
 	std::string filename=basic::options::option[basic::options::OptionKeys::docking_parallel::patchdock_file_prefix]+utility::to_string(my_rank%10);
 	read_patchdock_entry(saved_transformations_,filename);

@@ -308,7 +308,7 @@ main( int argc, char * argv [] )
 		protocol = new CountContact( dist, sep );
 
 		universal_main( *protocol );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

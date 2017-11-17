@@ -105,7 +105,7 @@ TotalSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 
 	if ( polar_ && hydrophobic_ ) {
 		TR.Error << "Polar and hydrophobic both flags specified in TotalSasa filter: " << tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "Polar and hydrophobic flags specified in TotalSasa filter." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Polar and hydrophobic flags specified in TotalSasa filter." );
 	}
 
 	TR.Debug << "Parsed TotalSasa Filter: <TotalSasa" <<

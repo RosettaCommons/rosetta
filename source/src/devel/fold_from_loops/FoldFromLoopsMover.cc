@@ -209,7 +209,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 			Real loop_tag = 1;
 			try{
 				protocols::jumping::close_chainbreaks( closure_protocol, input_pose, sliding_checkpoint ,"sliding", f );
-			} catch ( protocols::loops::EXCN_Loop_not_closed& excn ) {
+			} catch (protocols::loops::EXCN_Loop_not_closed& excn ) {
 				loop_tag = 0;
 				set_last_move_status ( FAIL_RETRY ); // if the loops fail set fail_retry
 

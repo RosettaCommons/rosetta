@@ -100,7 +100,7 @@ main( int argc, char * argv [] )
 		{
 			loop_hash_library->save_db();
 		}
-		catch ( utility::excn::EXCN_Base& excn )
+		catch (utility::excn::Exception& excn )
 		{
 			excn.show( TR );
 			TR << "Exception occured!" << std::endl;
@@ -149,7 +149,7 @@ main( int argc, char * argv [] )
 					}
 					// Future: Extra step that strips out backbone sequences that aren't used
 					// Would be a pain because all the indexes would be shifted
-				} catch ( utility::excn::EXCN_Base& excn ) {
+				} catch (utility::excn::Exception& excn ) {
 						excn.show( TR );
 						MPI_Abort( MPI_COMM_WORLD, 1 );
 				}
@@ -163,7 +163,7 @@ main( int argc, char * argv [] )
 			loop_hash_library->sort();
 			try {
 					loop_hash_library->save_db();
-			} catch ( utility::excn::EXCN_Base& excn ) {
+			} catch (utility::excn::Exception& excn ) {
 					excn.show( TR );
 					MPI_Abort( MPI_COMM_WORLD, 1 );
 			}
@@ -181,7 +181,7 @@ main( int argc, char * argv [] )
 		TR << "Total time: " << (endtime - starttime) / 60 << " min" << std::endl;
 	}
 #endif
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

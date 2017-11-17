@@ -358,7 +358,7 @@ void MoveMapFactory::parse_my_tag(
 		if ( subtag->getName() == "Backbone" ) {
 			auto selector = residue_selector::parse_residue_selector( subtag, datacache );
 			if ( ! selector ) {
-				throw utility::excn::EXCN_Msg_Exception( "Failed to find the (required) residue_selector for a Backbone sub-element of the MoveMapFactory" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find the (required) residue_selector for a Backbone sub-element of the MoveMapFactory" );
 			}
 			if ( subtag->hasOption( "bb_tor_index" ) ) {
 				Size index = subtag->getOption< Size >( "bb_tor_index" );
@@ -373,25 +373,25 @@ void MoveMapFactory::parse_my_tag(
 		} else if ( subtag->getName() == "Chi" ) {
 			auto selector = residue_selector::parse_residue_selector( subtag, datacache );
 			if ( ! selector ) {
-				throw utility::excn::EXCN_Msg_Exception( "Failed to find the (required) residue_selector for a Chi sub-element of the MoveMapFactory" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find the (required) residue_selector for a Chi sub-element of the MoveMapFactory" );
 			}
 			add_chi_action( enable, selector );
 		} else if ( subtag->getName() == "Nu" ) {
 			auto selector = residue_selector::parse_residue_selector( subtag, datacache );
 			if ( ! selector ) {
-				throw utility::excn::EXCN_Msg_Exception( "Failed to find the (required) residue_selector for a Nu sub-element of the MoveMapFactory" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find the (required) residue_selector for a Nu sub-element of the MoveMapFactory" );
 			}
 			add_nu_action( enable, selector );
 		} else if ( subtag->getName() == "Branches" ) {
 			auto selector = residue_selector::parse_residue_selector( subtag, datacache );
 			if ( ! selector ) {
-				throw utility::excn::EXCN_Msg_Exception( "Failed to find the (required) residue_selector for a Branches sub-element of the MoveMapFactory" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find the (required) residue_selector for a Branches sub-element of the MoveMapFactory" );
 			}
 			add_branches_action( enable, selector );
 		} else if ( subtag->getName() == "Jumps" ) {
 			auto selector = jump_selector::parse_jump_selector( subtag, datacache );
 			if ( ! selector ) {
-				throw utility::excn::EXCN_Msg_Exception( "Failed to find the (required) jump_selector for a Jumps sub-element of the MoveMapFactory" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find the (required) jump_selector for a Jumps sub-element of the MoveMapFactory" );
 			}
 			add_jump_action( enable, selector );
 		}

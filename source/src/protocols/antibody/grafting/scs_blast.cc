@@ -237,7 +237,7 @@ SCS_ResultVector parse_blastp_output(string const & file_name, string const & qu
 		} else if ( fields.find("subject-acc.ver") != fields.end() ) {
 			subject_header = "subject-acc.ver";
 		} else {
-			throw _AE_scs_failed_("Could not identify BLAST field (either subject id or subject acc.ver).");
+			throw CREATE_EXCEPTION(_AE_scs_failed_, "Could not identify BLAST field (either subject id or subject acc.ver).");
 		}
 
 		r->pdb = fields[subject_header].substr(3,4);  // pdb2adf_chothia.pdb → 2adf

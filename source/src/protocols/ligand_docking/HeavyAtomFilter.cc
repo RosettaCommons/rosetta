@@ -62,7 +62,7 @@ void
 HeavyAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	if ( ! (tag->hasOption("chain") && tag->hasOption("heavy_atom_limit") ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("HeavyAtom filter needs a 'chain' and a 'heavy_atom_limit' option");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "HeavyAtom filter needs a 'chain' and a 'heavy_atom_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 	heavy_atom_limit_ = tag->getOption<core::Size>("heavy_atom_limit");

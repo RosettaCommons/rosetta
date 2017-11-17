@@ -90,7 +90,7 @@ public:
 		JumpSelectorOP not_js( new NotJumpSelector );
 		try {
 			not_js->parse_my_tag( tag, dm );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -116,9 +116,9 @@ public:
 		try {
 			not_js->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected = "No JumpSelector given to the NotJumpSelector; NotJumpSelector requires a JumpSelector as input\n";
-			TS_ASSERT_EQUALS( e.msg(), expected );
+			TS_ASSERT( e.msg().find(expected) != std::string::npos );
 		}
 	}
 
@@ -135,9 +135,9 @@ public:
 		try {
 			not_js->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected = "Failed to find JumpSelector named 'odd' from the Datamap from NotJumpSelector::parse_my_tag.\nERROR: Could not find JumpSelector and name odd in Datamap\n";
-			TS_ASSERT_EQUALS( e.msg(), expected );
+		} catch (utility::excn::Exception e ) {
+			std::string expected = "Failed to find JumpSelector named 'odd' from the Datamap from NotJumpSelector::parse_my_tag."; // \nERROR: Could not find JumpSelector and name odd in Datamap\n
+			TS_ASSERT( e.msg().find(expected) != std::string::npos );
 		}
 	}
 

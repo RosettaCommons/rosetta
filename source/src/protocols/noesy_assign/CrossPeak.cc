@@ -531,7 +531,7 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real sum( 0.0 );
 	Size ct( 0 );
-	// if ( volume_ <= 0.0 ) throw utility::excn::EXCN_BadInput("Peak intensity negative or zero for "+ObjexxFCL::string_of( peak_id_ ) );
+	// if ( volume_ <= 0.0 ) throw CREATE_EXCEPTION(utility::excn::BadInput, "Peak intensity negative or zero for "+ObjexxFCL::string_of( peak_id_ ) );
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
 		CALIBRATION_ATOM_TYPE type1, type2;
 		type1 = (*it)->calibration_atom_type( 1 );
@@ -610,7 +610,7 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 	proton( iproton ).add_assignment( (*rit)->label() );
 	//we have found a proton that can be attached to our label
 	}
-	} catch ( EXCN_UnknownAtomname& exception ) {
+	} catch (EXCN_UnknownAtomname& exception ) {
 	continue;
 	}
 	} // if rit is proton
@@ -632,7 +632,7 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 	proton( iproton ).add_assignment( it->first );
 	label( iproton ).add_assignment( label_reso.label() );
 	}
-	} catch ( EXCN_UnknownResonance& exception ) {
+	} catch (EXCN_UnknownResonance& exception ) {
 	if ( !unknown_resonances_.count( exception.atom() ) ) {
 	unknown_resonances_.insert( exception.atom() );
 	exception.show( tr.Warning );
@@ -640,7 +640,7 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 	//    if ( tr.Debug.visible() ) exception.show( tr.Debug );
 	}
 	continue; //if no label is known we don't assign this proton
-	} catch ( EXCN_UnknownAtomname& exception ) { //this happens if we try to assign a proton that can't have a label: i.e., a H in a HCH spectrum
+	} catch (EXCN_UnknownAtomname& exception ) { //this happens if we try to assign a proton that can't have a label: i.e., a H in a HCH spectrum
 	if ( tr_labels.Trace.visible() ) {
 	tr_labels.Trace << "cannot find label atom for resid: " + it->second->atom().atom() + " " + ObjexxFCL::string_of( resid ) + " --- ignore proton assignment" << std::endl;
 	}

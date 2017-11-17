@@ -56,7 +56,7 @@ ConstraintGeneratorFactory::new_constraint_generator(
 {
 	if ( ! has_type( constraint_generator_name ) ) {
 		std::string err_msg =  "No ConstraintGeneratorCreator with the name '" + constraint_generator_name + "' has been registered with the ConstraintGeneratorFactory";
-		throw utility::excn::EXCN_Msg_Exception( err_msg );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 	}
 	auto iter = creator_map_.find( constraint_generator_name );
 	ConstraintGeneratorOP new_constraint_generator = iter->second->create_constraint_generator();
@@ -74,8 +74,8 @@ ConstraintGeneratorFactory::define_constraint_generator_xml_schema_group( utilit
 			constraint_generator_xml_schema_group_name(),
 			& complex_type_name_for_constraint_generator,
 			xsd );
-	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for Constraints from ConstraintFactory; offending class"
+	} catch( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for Constraints from ConstraintFactory; offending class"
 			" must call protocols::constraint_generator::complex_type_name_for_constraint when defining"
 			" its XML Schema\n" + e.msg() );
 	}

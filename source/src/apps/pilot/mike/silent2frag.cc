@@ -134,7 +134,7 @@ main( int argc, char * argv [] )
 		capture3mers->write( prefix + "aa3mer.1_3" );
 		capture9mers->write( prefix + "aa9mer.1_3" );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

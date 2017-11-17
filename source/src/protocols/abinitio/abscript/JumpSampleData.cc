@@ -48,13 +48,11 @@ std::string JumpSampleDataCreator::keyname() const{
 JumpSampleData::JumpSampleData( std::istream &in ) :
 	Parent()
 {
-	utility::excn::EXCN_BadInput e( "JumpSampleData tried to read an improperly formatted SilentFile remark." );
-
 	std::string token;
 
 	in >> token;
 	if ( token != "MOVERKEY" ) {
-		throw e;
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "JumpSampleData tried to read an improperly formatted SilentFile remark." );
 	}
 
 	in >> moverkey_;

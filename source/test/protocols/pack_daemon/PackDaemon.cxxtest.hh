@@ -240,9 +240,10 @@ public:
 		try {
 			ds.compute_energy_for_assignment( bad_ent );
 			TS_ASSERT( false ); /// This should not be reached.
-		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
+		} catch (utility::excn::Exception & excn ) {
 			//std::cout << excn.msg() << std::endl;
-			TS_ASSERT( excn.msg() == "Failed to find any rotamers for residue 6 corresponding to entity 2 when looking for ARG rotamers." );
+			std::string expected_err_msg = "Failed to find any rotamers for residue 6 corresponding to entity 2 when looking for ARG rotamers.";
+			TS_ASSERT( excn.msg().find(expected_err_msg) != std::string::npos );
 		}
 
 	}
@@ -542,5 +543,3 @@ public:
 
 
 };
-
-

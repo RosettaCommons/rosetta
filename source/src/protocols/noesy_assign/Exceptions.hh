@@ -17,9 +17,6 @@
 #define INCLUDED_protocols_noesy_assign_Exceptions_hh
 
 
-// Unit Headers
-//#include <devel/topology_broker/Exceptions.fwd.hh>
-
 // Utility Headers
 #include <core/id/NamedAtomID.hh>
 #include <utility/excn/Exceptions.hh>
@@ -31,48 +28,37 @@
 namespace protocols {
 namespace noesy_assign {
 
-class EXCN_NoesyAssign : public virtual utility::excn::EXCN_Msg_Exception {
-	typedef EXCN_Msg_Exception Parent;
-protected:
-	EXCN_NoesyAssign() : EXCN_Msg_Exception( "" ){};
+class EXCN_NoesyAssign : public utility::excn::Exception {
 public:
-	void show( std::ostream& os ) const override {
-		os << "\n[NOE Exception]: ";
-		Parent::show( os );
-	}
+	EXCN_NoesyAssign(char const *file, int line, std::string const& msg) : utility::excn::Exception(file, line, "\n[NOE Exception]: " + msg) {}
 };
 
 class EXCN_UnknownAtomname : public EXCN_NoesyAssign {
 public:
-	EXCN_UnknownAtomname( std::string const& msg )
-	: utility::excn::EXCN_Msg_Exception( msg ) {};
+	using EXCN_NoesyAssign::EXCN_NoesyAssign;
 };
 
 
 class EXCN_UnknownResonance : public EXCN_NoesyAssign {
 public:
-	EXCN_UnknownResonance( core::id::NamedAtomID atom, std::string const& msg )
-	: utility::excn::EXCN_Msg_Exception( msg ), atom_( atom ) {};
+	EXCN_UnknownResonance(char const *file, int line, core::id::NamedAtomID atom, std::string const& msg ) : EXCN_NoesyAssign(file, line, msg), atom_( atom ) {
+		utility::excn::Exception::add_msg("Resonance for atom " + atom_.to_string() +" not found!");
+	}
 
 	core::id::NamedAtomID const& atom() { return atom_; }
-	void show( std::ostream& os ) const override {
-		utility::excn::EXCN_Msg_Exception::show( os );
-		os << "Resonance for atom " << atom_ << " not found ";
-	}
 private:
 	core::id::NamedAtomID atom_;
 };
 
 class EXCN_AssignmentNotFound : public EXCN_NoesyAssign {
 public:
-	EXCN_AssignmentNotFound( PeakAssignment const& assignment, std::string const& msg )
-	: utility::excn::EXCN_Msg_Exception( msg ), assignment_( assignment ) {};
+	EXCN_AssignmentNotFound(char const *file, int line, PeakAssignment const& assignment, std::string const& msg ) : EXCN_NoesyAssign(file, line, msg), assignment_(assignment) {};
 	PeakAssignment assignment_;
 };
 
 class EXCN_FileFormat : public EXCN_NoesyAssign {
 public:
-	EXCN_FileFormat( std::string msg ) : utility::excn::EXCN_Msg_Exception( msg ) {};
+	using EXCN_NoesyAssign::EXCN_NoesyAssign;
 };
 
 } //namespace

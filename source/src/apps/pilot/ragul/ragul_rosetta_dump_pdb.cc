@@ -79,7 +79,7 @@ int main( int argc, char * argv [] )
 		std::string out_pdb_name = "rosetta_" + input_pdb_name;
 		pose_init.dump_pdb(out_pdb_name);
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

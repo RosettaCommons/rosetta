@@ -17,7 +17,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.functions.hh>
 #include <utility/vector1.hh>
 // core headers
@@ -679,7 +679,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new ExposedStrandMover ) );
 
 		std::cout << "Done! -------------------------------"<< std::endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

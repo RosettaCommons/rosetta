@@ -139,7 +139,7 @@ XmlObjects::create_from_string(
 	try {
 		parsed_protocol = parser.generate_mover_and_apply_to_pose_xml_string(
 			pose, options, modified_pose, prepared_text, objs );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl;
 		TR << "Error creating parsed protocol." << std::endl;
 		throw e;
@@ -193,7 +193,7 @@ XmlObjects::create_from_file(
 	try {
 		parsed_protocol = parser.generate_mover_and_apply_to_pose(
 			pose, options, modified_pose, filename, objs );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl;
 		TR << "Error creating parsed protocol." << std::endl;
 		throw e;
@@ -299,7 +299,7 @@ XmlObjects::static_get_score_function(
 	std::string name;
 	try {
 		name = get_or_set_tag_name( xml_text );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl; // This line should be removed once PyRosetta correctly outputs the exception
 		TR << "Error parsing tag. Remember to specify only one ScoreFunction!" << std::endl;
 		throw e;
@@ -353,7 +353,7 @@ XmlObjects::static_get_residue_selector(
 	std::string name;
 	try {
 		name = get_or_set_tag_name( xml_text );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl; // This line should be removed once PyRosetta correctly outputs the exception
 		TR << "Error parsing tag. Remember to specify only one ResidueSelector!" << std::endl;
 		throw e;
@@ -407,7 +407,7 @@ XmlObjects::static_get_filter(
 	std::string name;
 	try {
 		name = get_or_set_tag_name( xml_text );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl; // This line should be removed once PyRosetta correctly outputs the exception
 		TR << "Error parsing tag. Remember to specify only one Filter!" << std::endl;
 		throw e;
@@ -461,7 +461,7 @@ XmlObjects::static_get_mover(
 	std::string name;
 	try {
 		name = get_or_set_tag_name( xml_text );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl; // This line should be removed once PyRosetta correctly outputs the exception
 		TR << "Error parsing tag. Remember to specify only one Mover!" << std::endl;
 		throw e;
@@ -515,7 +515,7 @@ XmlObjects::static_get_task_operation(
 	std::string name;
 	try {
 		name = get_or_set_tag_name( xml_text );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl; // This line should be removed once PyRosetta correctly outputs the exception
 		TR << "Error parsing tag. Remember to specify only one TaskOperation!" << std::endl;
 		throw e;

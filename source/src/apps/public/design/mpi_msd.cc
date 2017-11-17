@@ -457,7 +457,7 @@ int main( int argc, char ** argv )
 			utility::io::izstream daf_file( daf_filename );
 			try {
 				daf->initialize_from_input_file( ds, daf_file );
-			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			} catch (utility::excn::Exception & e ) {
 				std::cerr << "Caught exception" << std::endl;
 				std::cerr << e.msg() << std::endl;
 				exit(1);
@@ -603,7 +603,7 @@ int main( int argc, char ** argv )
 	MPI_Finalize();
 #endif
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

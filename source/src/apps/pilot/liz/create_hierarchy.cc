@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     //std::cout << std::endl;
     hlevel->add_new( *ss, best_decoy, addr, true, new_level );
   }
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
         return -1;
     }

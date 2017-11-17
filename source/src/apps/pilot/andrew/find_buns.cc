@@ -208,7 +208,7 @@ int main( int argc, char * argv [] )
 			std::string outname = inputname.base();
 			write_buns_and_dots_kinemage( outname + "_buried_unsats.kin", outname, pose, rotamer_dots, buns );
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

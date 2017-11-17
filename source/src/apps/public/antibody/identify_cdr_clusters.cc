@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 		std::cout<< "     North B, Lehmann A, Dunbrack RL. A new clustering of antibody CDR loop conformations. J Mol Biol 2011; 406:228-256." << std::endl <<std::endl;
 
 
-	} catch(utility::excn::EXCN_Base & excn){
+	} catch (utility::excn::Exception & excn){
 		std::cout << "Exception"<<std::endl;
 		excn.show(std::cerr);
 		return -1;

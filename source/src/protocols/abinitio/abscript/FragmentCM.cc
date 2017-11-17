@@ -170,7 +170,7 @@ void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
 		std::ostringstream ss;
 		ss << "The fragment type " << frag_type << " is not valid. The options "
 			<< " are 'classic' and 'smooth'.";
-		throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 	}
 
 	initialize( tag->getOption< bool >( "initialize", true ) );
@@ -196,7 +196,7 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
 		utility::vector1< bool > torsion_mask;
 		try {
 			torsion_mask = selector()->apply( pose );
-		} catch( utility::excn::EXCN_Msg_Exception& e ){
+		} catch( utility::excn::Exception& e ){
 			std::ostringstream ss;
 			ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".";
 			e.add_msg(ss.str());
@@ -207,7 +207,7 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
 		if ( shift == -1 ) { // verify that torsion_mask isn't all-false.
 			std::ostringstream ss;
 			ss << "Selector used address fragment insertions of '" << this->get_name() << "' was empty.";
-			throw utility::excn::EXCN_BadInput( ss.str() );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 		}
 
 		mover()->set_fragments( mover()->fragments()->clone_shifted( shift ) );

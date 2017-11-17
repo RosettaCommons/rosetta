@@ -27,7 +27,7 @@
 #include <core/chemical/MMAtomType.hh>
 
 // Utility header
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 // C++ header
@@ -64,12 +64,14 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 public:  // Tests /////////////////////////////////////////////////////////////
 
-	void exception_message_matches( utility::excn::EXCN_Base const & e, std::string const & expected_output )
+	void exception_message_matches( utility::excn::Exception const & e, std::string const & expected_output )
 	{
-		std::string msg = e.msg();
-		std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
-		TS_ASSERT_EQUALS( msg_lines.size(), 3 );
-		TS_ASSERT_EQUALS( msg_lines[1], expected_output );
+		//std::string msg = e.msg();
+		//std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
+	    //TS_ASSERT_EQUALS( msg_lines.size(), 3 );
+		//TS_ASSERT_EQUALS( msg_lines[1], expected_output );
+		//std::cout << "_____________" << e.msg() << std::endl;
+		TS_ASSERT( e.msg().find(expected_output) != std::string::npos );
 	}
 
 	// Confirm that property-related methods function properly.
@@ -84,10 +86,9 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		set_throw_on_next_assertion_failure();
 		try {
 			test_properties_->set_property( "FAT", true );
-		} catch ( EXCN_Base const & e )  {
+		} catch (Exception const & e )  {
 			exception_message_matches( e,
-				"ERROR: Rosetta does not recognize the property: FAT; "
-				"has it been added to general_properties.list?" );
+				"Rosetta does not recognize the property: FAT; has it been added to general_properties.list?" );
 		}
 
 		TS_ASSERT( test_properties_->has_property( LIPID ) );
@@ -116,9 +117,9 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		set_throw_on_next_assertion_failure();
 		try {
 			test_properties_->set_variant_type( "BIZARRO", true );
-		} catch ( EXCN_Base const & e )  {
+		} catch (Exception const & e )  {
 			exception_message_matches( e,
-				"ERROR: Rosetta does not recognize the variant: BIZARRO; "
+				"Rosetta does not recognize the variant: BIZARRO; "
 				"has it been added to variant_types.list?" );
 		}
 
@@ -131,9 +132,9 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		set_throw_on_next_assertion_failure();
 		try {
 			test_properties_->set_variant_type( "GNARLY", false );
-		} catch ( EXCN_Base const & e )  {
+		} catch (Exception const & e )  {
 			exception_message_matches( e,
-				"ERROR: Rosetta does not recognize the custom variant GNARLY in test_residue" );
+				"Rosetta does not recognize the custom variant GNARLY in test_residue" );
 		}
 
 		TS_ASSERT( test_properties_->is_variant_type( SC_FRAGMENT ) );

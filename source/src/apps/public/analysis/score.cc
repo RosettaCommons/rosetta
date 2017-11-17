@@ -135,7 +135,7 @@ main( int argc, char * argv [] )
 			try {
 				add_cmdline_claims(*top_bro_OP, false /* do_I_need_fragments */);
 			}
-catch ( utility::excn::EXCN_Exception &excn )  {
+catch ( utility::excn::Exception &excn )  {
 	excn.show( TR.Error );
 	utility_exit();
 }
@@ -246,10 +246,9 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 		// operate this mover and output pdbs/scorefile
 		protocols::jobdist::universal_main( *mover );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 	return 0;
 }
-

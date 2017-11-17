@@ -3040,7 +3040,7 @@ main( int argc, char * argv [] )
 
 		simple_loop_modeling_test();
 		exit(0);
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

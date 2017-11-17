@@ -336,7 +336,7 @@ CompoundPerturber::parse_my_tag( utility::tag::Tag const & tag, basic::datacache
 		std::stringstream msg;
 		msg << class_name() << "::parse_my_tag(): Invalid mode specified ("
 			<< mode << ") -- valid modes are [ AND, OR ]" << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
 	perturbers_.clear();

@@ -601,7 +601,7 @@ void LoopHashMap::read_legacydb(std::string filename )
 {
 	// use basic C input - C++ are too memory hungry to deal with these potentially v large files
 	FILE *file = fopen( filename.c_str(), "r" );
-	if ( file == nullptr ) throw EXCN_DB_IO_Failed( filename, "read" );
+	if ( file == nullptr ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  filename, "read" );
 
 	loopdb_.clear();
 	while ( !feof( file ) ) {
@@ -621,7 +621,7 @@ void LoopHashMap::read_legacydb(std::string filename )
 
 void LoopHashMap::write_db( std::string filename ){
 	std::ofstream file( filename.c_str() );
-	if ( !file ) throw EXCN_DB_IO_Failed( filename, "write" );
+	if ( !file ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  filename, "write" );
 	for ( auto & i : loopdb_ ) {
 		file << i.index << " " << i.offset << " " << i.key << std::endl;
 	}
@@ -634,14 +634,14 @@ LoopHashMap::read_db(
 	std::map< core::Size, bool > & homolog_index
 ){
 	std::ifstream file( filename.c_str() );
-	if ( !file ) throw EXCN_DB_IO_Failed( filename, "read" );
+	if ( !file ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  filename, "read" );
 	std::string line;
 	LeapIndex leap_index;
 	while ( getline( file, line ) ) {
 		std::vector<std::string> output;
 		std::string t; std::istringstream sline(line);
 		while ( sline >> t ) { output.push_back(t); }
-		if ( output.size() != 3 ) throw EXCN_Wrong_DB_Format( filename );
+		if ( output.size() != 3 ) throw CREATE_EXCEPTION(EXCN_Wrong_DB_Format,  filename );
 		leap_index.index = boost::lexical_cast< core::Size > ( output[0] );
 		if ( leap_index.index < loopdb_range.first ) continue;
 		if ( leap_index.index >= loopdb_range.second && loopdb_range.second != 0 ) continue;

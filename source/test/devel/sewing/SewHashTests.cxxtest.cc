@@ -20,7 +20,7 @@
 #include <cxxtest/RealDescriptions.h>
 
 //catch unhandled exceptions in unit tests
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include "SewHashTests.cxxtest.hh"
 
 static SewHashTests suite_SewHashTests;

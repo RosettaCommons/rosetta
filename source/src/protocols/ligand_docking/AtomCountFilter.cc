@@ -60,7 +60,7 @@ void
 AtomCountFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	if ( ! (tag->hasOption("chain") && tag->hasOption("atom_limit") ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("AtomCount filter needs a 'chain' and an 'atom_limit' option");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "AtomCount filter needs a 'chain' and an 'atom_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 	atom_limit_ = tag->getOption<core::Size>("atom_limit");

@@ -226,7 +226,7 @@ void rotamer_prediction_benchmark( std::string pdb_filename, ScoreFunctionOP sco
 			<< static_cast<Real>(100)*static_cast<Real>(prot_chi1_correct)/static_cast<Real>(prot_total_chi1) << "%\n";
 	RES << "Chi12: " << prot_chi1_chi2_correct << "/" << prot_total_chi2 << " = " << std::setprecision(3) << std::fixed
 			<< static_cast<Real>(100)*static_cast<Real>(prot_chi1_chi2_correct)/static_cast<Real>(prot_total_chi2) << "%\n";
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

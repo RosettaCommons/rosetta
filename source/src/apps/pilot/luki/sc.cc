@@ -143,7 +143,7 @@ main( int argc, char * argv [] )
 			std::cout << count << " structures processed." << std::endl;
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -242,7 +242,7 @@ void SurfaceDockingProtocol::initialize_surface_energies(core::pose::Pose & pose
 void SurfaceDockingProtocol::set_surface_parameters ( core::pose::Pose &)
 {
 	if ( ! basic::resource_manager::ResourceManager::get_instance()->has_resource_with_description("surface_vectors") ) {
-		throw utility::excn::EXCN_Msg_Exception(" Either a resource definition file or the command line option "\
+		throw CREATE_EXCEPTION(utility::excn::Exception, " Either a resource definition file or the command line option "\
 			"-in:file:surface_vectors must be specified for surface docking");
 	}
 

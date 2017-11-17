@@ -197,7 +197,7 @@ main( int argc, char* argv [] ) {
 		} // while ( input.has_another_pose() )
 		return 0;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

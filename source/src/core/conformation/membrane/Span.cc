@@ -172,7 +172,7 @@ bool Span::is_valid() const {
 void Span::not_valid() const {
 
 	if ( ! is_valid() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Span is invalid!" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Span is invalid!" );
 	}
 
 } // not valid

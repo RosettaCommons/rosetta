@@ -58,7 +58,7 @@ HBEvalType string_to_hb_eval_type(std::string const& hbe_str) {
 
 	std::stringstream msg;
 	msg << "Cannot convert " << hbe_str << " into an HBEvalType" << std::endl;
-	throw( utility::excn::EXCN_Msg_Exception( msg.str()  ));
+	throw( CREATE_EXCEPTION(utility::excn::Exception, msg.str()  ));
 }
 
 

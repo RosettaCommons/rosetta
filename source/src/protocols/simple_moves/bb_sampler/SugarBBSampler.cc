@@ -113,7 +113,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 			//Throw here.  We expect an angle, better to use exception then throw a bogus angle.
 			//Catch this to keep going.
 			TR << msg << std::endl;
-			throw utility::excn::EXCN_Msg_Exception( msg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  msg );
 		}
 		CHIDihedralSamplingData const & sampling_data = sugar_bb.get_sampling_data( linkage_type );
 
@@ -141,7 +141,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		if ( preference_type == PREFERENCE_NA ) {
 			std::string msg = "No data for preference type.  This is either not a carbohydrate residue, or it is the first residue in the pose and not attached to anything!";
 			TR << msg << std::endl;
-			throw utility::excn::EXCN_Msg_Exception( msg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  msg );
 		}
 		OmegaPreferenceSamplingData const & sampling_data = omega_pref.get_sampling_data( preference_type );
 

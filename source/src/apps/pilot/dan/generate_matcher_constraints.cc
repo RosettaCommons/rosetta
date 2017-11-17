@@ -328,7 +328,7 @@ int main( int argc, char * argv [] )
 		TR << "torsion_A " << numeric::constants::d::radians_to_degrees * numeric::dihedral_radians( vu1, vd1, vd2, vd3 ) << std::endl;
 		TR << "torsion_AB " << numeric::constants::d::radians_to_degrees * numeric::dihedral_radians( vu2, vu1, vd1, vd2 ) << std::endl;
 		TR << "torsion_B " << numeric::constants::d::radians_to_degrees * numeric::dihedral_radians( vu3, vu2, vu1, vd1 ) << std::endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

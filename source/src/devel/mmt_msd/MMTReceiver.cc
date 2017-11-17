@@ -243,7 +243,7 @@ bool MMTReceiver::recreate_previously_generated_result_pose()
 
 	try {
 		job->update_pose( *sd.pose );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 		utility::send_integer_to_node( 0, error );
 		std::string emessage = "Could not recover previously generated pose. Node " + utility::to_string( utility::mpi_rank() ) + "\n";
 		utility::send_string_to_node( 0, emessage + e.msg() );
@@ -416,14 +416,14 @@ MMTReceiver::restrict_task_for_job(
 		utility::vector1< bool > aas_present( core::chemical::num_canonical_aas, false );
 		char iiaachar = seqstring[ ii_entity-1 ];
 		if ( ! core::chemical::oneletter_code_specifies_aa( iiaachar ) ) {
-			throw utility::excn::EXCN_Msg_Exception( "Bad aa received in seqstring " + utility::to_string( ii_entity ) + " " + seqstring );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Bad aa received in seqstring " + utility::to_string( ii_entity ) + " " + seqstring );
 		}
 		core::chemical::AA iiaa = core::chemical::aa_from_oneletter_code( iiaachar );
 		aas_present[ iiaa ] = true;
 		task->nonconst_residue_task( ii ).restrict_absent_canonical_aas( aas_present );
 		if ( ! task->residue_task(ii).being_packed() ) {
 			// sanity check; residue ii should be repacked if it's listed in the correspondence file
-			throw utility::excn::EXCN_Msg_Exception( "Completely disabled a residue listed in the correspondence file.  Something has gone very wrong" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Completely disabled a residue listed in the correspondence file.  Something has gone very wrong" );
 		}
 	}
 

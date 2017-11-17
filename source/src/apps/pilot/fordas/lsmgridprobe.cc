@@ -240,7 +240,7 @@ int main( int argc, char * argv [] )
 
 	MinimizingPatternSearch search(output_basename.name(), targetPose, residue, pattern, scorefxn, option[ constrain_grid ] );
 	search.execute();
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
                                   }

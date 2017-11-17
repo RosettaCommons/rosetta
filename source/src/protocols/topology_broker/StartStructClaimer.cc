@@ -130,8 +130,8 @@ void StartStructClaimer::initialize_dofs(
 
 	try{
 		mover();
-	} catch( utility::excn::EXCN_NullPointer & excn ) {
-		throw( EXCN_Input( "StartStructureClaimer needs JobInputter or FILE <pdb-file> entry in broker-setup"));
+	} catch( utility::excn::NullPointerError & excn ) {
+		throw ( CREATE_EXCEPTION(EXCN_Input,  "StartStructureClaimer needs JobInputter or FILE <pdb-file> entry in broker-setup"));
 	}
 
 	FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );

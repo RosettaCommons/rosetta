@@ -79,7 +79,7 @@ int main(int argc, char * argv[]) {
 		for ( utility::vector1<ConstraintCOP>::iterator it = csts.begin(), end = csts.end(); it != end; ++it ) {
 			(*it)->show_def(std::cout, init_pose);
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

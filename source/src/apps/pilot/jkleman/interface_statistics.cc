@@ -1417,7 +1417,7 @@ main( int argc, char * argv [] )
 		MPInterfaceStatisticsOP mpis( new MPInterfaceStatistics() );
 		JobDistributor::get_instance()->go(mpis);
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

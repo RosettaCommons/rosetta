@@ -447,7 +447,7 @@ int main( int argc, char * argv [] ) {
 
 		// viewer_main() just calls graphics_main with the parameter NULL and returns 0
 		protocols::viewer::viewer_main( graphics_main );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

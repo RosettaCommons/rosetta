@@ -745,9 +745,9 @@ parse_database_connection(
 	if ( tag->hasOption("database_resource") ) {
 		std::string database_resource = tag->getOption<string>("database_resource");
 		if ( ! ResourceManager::get_instance()->has_resource_with_description( database_resource ) ) {
-			throw utility::excn::EXCN_Msg_Exception
-				( "You specified a database_resource of '" + database_resource +
-				"', but the ResourceManager doesn't have a resource with that description." );
+			throw CREATE_EXCEPTION(utility::excn::Exception,
+								   "You specified a database_resource of '" + database_resource +
+								   "', but the ResourceManager doesn't have a resource with that description." );
 		}
 		return get_resource< utility::sql_database::session >( database_resource );
 	}
@@ -757,9 +757,9 @@ parse_database_connection(
 			"database_resource_tag");
 		if ( ! ResourceManager::get_instance()->has_resource(
 				database_resource_tag ) ) {
-			throw utility::excn::EXCN_Msg_Exception
-				( "You specified a database_resource_tag of '" + database_resource_tag +
-				"', but the ResourceManager doesn't have a resource with that tag." );
+			throw CREATE_EXCEPTION(utility::excn::Exception,
+								   "You specified a database_resource_tag of '" + database_resource_tag +
+								   "', but the ResourceManager doesn't have a resource with that tag." );
 		}
 		utility::sql_database::sessionOP db_session(utility::pointer::dynamic_pointer_cast< utility::sql_database::session > (
 			ResourceManager::get_instance()->find_resource(database_resource_tag)));
@@ -767,7 +767,7 @@ parse_database_connection(
 			stringstream err_msg;
 			err_msg
 				<< "You specified a database_resource_tag of '" + database_resource_tag + "', while the ResourceManager does have a resource with that tag, it couldn't cast into a database session.";
-			throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+			throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 		}
 		return db_session;
 	}

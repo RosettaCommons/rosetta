@@ -38,7 +38,7 @@ ResourceLoaderFactory::create_resource_loader(
 {
 	auto iter = creator_map_.find( loader_type );
 	if ( iter == creator_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "No ResourceLoaderCreator resposible for the ResourceLoader named " + loader_type + " was found in the ResourceLoaderFactory.  Was it correctly registered?" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "No ResourceLoaderCreator resposible for the ResourceLoader named " + loader_type + " was found in the ResourceLoaderFactory.  Was it correctly registered?" );
 	}
 	return iter->second->create_resource_loader();
 }
@@ -70,7 +70,7 @@ ResourceLoaderFactory::factory_register( ResourceLoaderCreatorOP creator )
 	if ( iter != creator_map_.end() ) {
 		std::string errmsg("Double registration of a ResourceLoaderCreator in the ResourceLoaderFactory, named " + loader_type + ". Are there two registrators for this ResourceLoader object, or have you chosen a previously assigned name to a new resource option?" );
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( errmsg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  errmsg );
 		} else {
 			utility_exit_with_message( errmsg );
 		}

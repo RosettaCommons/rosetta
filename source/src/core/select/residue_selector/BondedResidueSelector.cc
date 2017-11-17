@@ -104,40 +104,40 @@ BondedResidueSelector::parse_my_tag(
 {
 	if ( tag->hasOption("residue_selector") ) {
 		if ( tag->hasOption("resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "BondedResidueSelector takes EITHER 'selector' OR 'resnum' options, not both!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "BondedResidueSelector takes EITHER 'selector' OR 'resnum' options, not both!\n" );
 		}
 		if ( tag->size() > 1 ) { // 1 if no subtags exist
-			throw utility::excn::EXCN_Msg_Exception( "BondedResidueSelector can only have one ResidueSelector loaded!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "BondedResidueSelector can only have one ResidueSelector loaded!\n" );
 		}
 		// grab the ResidueSelector from the selector option
 		// and then grab each of the indicated residue selectors from the datamap.
 		std::string selector_str;
 		try {
 			selector_str = tag->getOption< std::string >( "residue_selector" );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access option 'selector' from BondedResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 
 		try {
 			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
 			set_input_set_selector( selector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from BondedResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 	} else if ( tag->size() > 1 ) { // get focus selector from tag
 		if ( tag->hasOption("resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "BondedResidueSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "BondedResidueSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n" );
 		}
 
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
 		if ( tags.size() > 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "BondedResidueSelector takes at most one ResidueSelector to determine the input_set!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "BondedResidueSelector takes at most one ResidueSelector to determine the input_set!\n" );
 		}
 		ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
 			tags.front()->getName(),
@@ -149,11 +149,11 @@ BondedResidueSelector::parse_my_tag(
 	} else { // do not get input_set from ResidueSelectors but load resnums string instead
 		try {
 			set_input_set ( tag->getOption< std::string >( "resnums" ) );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream err_msg;
 			err_msg << "Failed to access option 'resnums' from BondedResidueSelector::parse_my_tag.\n";
 			err_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 		}
 	}
 
@@ -183,7 +183,7 @@ BondedResidueSelector::get_input_set(
 			if ( *it == 0 || *it > subset.size() ) {
 				std::stringstream err_msg;
 				err_msg << "Residue " << *it << " not found in pose!\n";
-				throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 			}
 			subset[ *it ] = true; // may want to use a tmp subset so we don't wind up with a half-set subset
 		}

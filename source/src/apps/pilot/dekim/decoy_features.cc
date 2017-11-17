@@ -238,7 +238,7 @@ main( int argc, char * argv [] )
 
 		try {
 			protocols::jd2::JobDistributor::get_instance()->go(jd_mover);
-		} catch ( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			std::cerr << "Exception: " << std::endl;
 			excn.show( std::cerr );
 			std::cout << "Exception: " << std::endl;
@@ -290,7 +290,7 @@ main( int argc, char * argv [] )
 
 		TR << "*********************successful completion**************************" << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

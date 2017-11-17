@@ -40,7 +40,7 @@ public:
 	LengthChecker( core::Size l ): l_( l ) {}
 	void operator() ( core::Size i ) {
 		if ( i > l_ || i < 1 ) {
-			throw utility::excn::EXCN_RangeError( "Residue "+utility::to_string( i )+
+			throw CREATE_EXCEPTION(utility::excn::RangeError,  "Residue "+utility::to_string( i )+
 				" is out of the range of the SequenceAnnotation object." );
 		}
 	}
@@ -79,7 +79,7 @@ void SequenceAnnotation::_add_seq_label( std::string const& label, vector1_size 
 			std::ostringstream ss;
 			ss << "The sequence label " << label << " already exists in the SequenceAnnotation object." << std::endl
 				<< " Existing: " << resolve_seq( label ) << std::endl << "Conflicting: " << members;
-			throw utility::excn::EXCN_KeyError( ss.str() );
+			throw CREATE_EXCEPTION(utility::excn::KeyError,  ss.str() );
 		} else {
 			//bail because nothing needs to be done--this exact label/member combination is already in there.
 			return;
@@ -97,7 +97,7 @@ void SequenceAnnotation::_add_seq_label( std::string const& label, vector1_size 
 void SequenceAnnotation::add_jump_label( std::string const& label, core::Size i ) {
 	if ( jump_label_to_number_.find(label) != jump_label_to_number_.end() &&
 			jump_label_to_number_[ label ] != i ) {
-		throw utility::excn::EXCN_KeyError( "The jump key '"+label+"' already exists in the SequenceAnnotation object." );
+		throw CREATE_EXCEPTION(utility::excn::KeyError,  "The jump key '"+label+"' already exists in the SequenceAnnotation object." );
 	}
 
 	//jump_number_to_label_[ i ] = label;
@@ -106,7 +106,7 @@ void SequenceAnnotation::add_jump_label( std::string const& label, core::Size i 
 
 void SequenceAnnotation::rm_seq_label( std::string const& label ){
 	if ( label_to_pose_numbers_.find( label ) == label_to_pose_numbers_.end() ) {
-		throw utility::excn::EXCN_KeyError("The sequence key '"+label+"' does not exists in the SequenceAnnotation object" );
+		throw CREATE_EXCEPTION(utility::excn::KeyError, "The sequence key '"+label+"' does not exists in the SequenceAnnotation object" );
 	}
 	vector1_size& pose_numbers = label_to_pose_numbers_.find( label )->second;
 
@@ -120,7 +120,7 @@ void SequenceAnnotation::rm_seq_label( std::string const& label ){
 
 void SequenceAnnotation::append_seq( std::string const& label ) {
 	if ( label_to_pose_numbers_.find( label ) != label_to_pose_numbers_.end() ) {
-		throw utility::excn::EXCN_KeyError("The sequence key '"+label+"' already exists in the SequenceAnnotation object" );
+		throw CREATE_EXCEPTION(utility::excn::KeyError, "The sequence key '"+label+"' already exists in the SequenceAnnotation object" );
 	}
 	// TODO: Allow more than one residue to be appended as part of a label
 	length_ += 1;
@@ -134,13 +134,13 @@ core::Size SequenceAnnotation::resolve_seq( LocalPosition const& local ) const {
 	if ( it == label_to_pose_numbers_.end() ) {
 		std::ostringstream msg;
 		msg << "SequenceAnnotation could not find local position " << local << "." << std::endl;
-		throw utility::excn::EXCN_RangeError( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  msg.str() );
 	} if ( local.position() < 1 ||
 			local.position() > it->second.size() ) {
 		std::ostringstream msg;
 		msg << "SequenceAnnotation cannot resolve the local position " << local
 			<< " because it is out of range." << std::endl;
-		throw utility::excn::EXCN_RangeError( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  msg.str() );
 	}
 
 	return it->second.at( local.position() );
@@ -154,7 +154,7 @@ core::Size SequenceAnnotation::resolve_jump( std::string const& label ) const {
 		std::ostringstream msg;
 		msg << "SequenceAnnotation could not find jump with label "
 			<< label << "." << std::endl;
-		throw utility::excn::EXCN_RangeError( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  msg.str() );
 	}
 
 	return l->second;
@@ -166,7 +166,7 @@ bool SequenceAnnotation::has_seq_label( std::string const& label ) const {
 
 utility::vector1< core::Size > const& SequenceAnnotation::resolve_seq( std::string const& label ) const {
 	if ( label_to_pose_numbers_.find( label ) == label_to_pose_numbers_.end() ) {
-		throw utility::excn::EXCN_KeyError( "The jump key '"+label+
+		throw CREATE_EXCEPTION(utility::excn::KeyError,  "The jump key '"+label+
 			"' already exists in the SequenceAnnotation object." );
 	}
 	return label_to_pose_numbers_.find( label )->second;

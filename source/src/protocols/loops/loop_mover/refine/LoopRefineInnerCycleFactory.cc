@@ -121,8 +121,8 @@ LoopRefineInnerCycleOP LoopRefineInnerCycleFactory::make_inner_cycle_from_string
 	LoopRefineInnerCycleOP inner_cycle = utility::pointer::dynamic_pointer_cast< protocols::loops::loop_mover::refine::LoopRefineInnerCycle > ( ( moves::MoverFactory::get_instance()->newMover( name ) ) );
 
 	if ( ! inner_cycle ) {
-		using utility::excn::EXCN_Msg_Exception;
-		throw EXCN_Msg_Exception( "Attempting to create Mover '" + name + \
+		using utility::excn::Exception;
+		throw CREATE_EXCEPTION(Exception,  "Attempting to create Mover '" + name + \
 			"' that cannot be casted to a LoopRefineInnerCycle.  Check your spelling and/or confirm this mover has been " +\
 			"registered to the MoverFactory." );
 	}

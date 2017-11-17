@@ -87,8 +87,8 @@ namespace utility {
 /// @brief Exit with file + line + message + optional status
 void
 exit(
-	std::string const & file,
-	int const line,
+	char const * file,
+	int line,
 	std::string const & message,
 	int const status = 1
 ) NORETURN;
@@ -97,7 +97,7 @@ exit(
 int
 cond_exit(
 	bool condition,
-	std::string const & file,
+	char const * file,
 	int const line,
 	std::string const & message,
 	int const status = 1
@@ -108,7 +108,7 @@ cond_exit(
 inline
 void
 exit(
-	std::string const & file,
+	char const * file,
 	int const line,
 	int const status = 1
 ) NORETURN;
@@ -118,7 +118,7 @@ exit(
 inline
 void
 exit(
-	std::string const & file,
+	char const * file,
 	int const line,
 	int const status
 )
@@ -134,7 +134,7 @@ inline
 void
 exit(
 	int const status,
-	std::string const & file,
+	char const * file,
 	int const line
 )
 {

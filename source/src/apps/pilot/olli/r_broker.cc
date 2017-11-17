@@ -24,7 +24,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <utility/exit.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
@@ -53,7 +53,7 @@ void run() {
 void* rBroker_main_local( void* ) {
 	try{
 		run();
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 	}
@@ -65,7 +65,7 @@ int main( int argc, char * argv [] ) {
 		register_options_broker();
 		devel::init( argc, argv ); //d
 		protocols::viewer::viewer_main( rBroker_main_local );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

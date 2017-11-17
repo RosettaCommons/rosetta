@@ -295,18 +295,18 @@ public: // test functions
 		// test whether span start > end
 		try {
 			SpanningTopology topo3( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_order.span", pdb2pose_map, 80 ) );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "SpanningTopology invalid: check your span file!";
-			TS_ASSERT( expected_error_message == e.msg() );
+			TS_ASSERT( e.msg().find(expected_error_message) != std::string::npos );
 		}
 		TR << "...topo3 done." << std::endl;
 
 		// test increasing order of spans in topology
 		try {
 			SpanningTopology topo4( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_spanorder.span", pdb2pose_map, 80 ) );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "SpanningTopology invalid: check your span file!";
-			TS_ASSERT( expected_error_message == e.msg() );
+			TS_ASSERT( e.msg().find(expected_error_message) != std::string::npos );
 		}
 		TR << "...topo4 done." << std::endl;
 	}

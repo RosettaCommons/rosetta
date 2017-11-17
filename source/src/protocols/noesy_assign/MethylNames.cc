@@ -123,7 +123,7 @@ std::string MethylNames::aa_name() const {
 std::string const& MethylNames::rosetta2nmr( std::string const& proton ) const {
 	auto it = rosetta2nmr_.find( proton );
 	if ( it == rosetta2nmr_.end() ) {
-		throw EXCN_UnknownAtomname("proton_name " + proton + " not recognized for aminoacid " + aa_name() );
+		throw CREATE_EXCEPTION(EXCN_UnknownAtomname, "proton_name " + proton + " not recognized for aminoacid " + aa_name() );
 	}
 	return it->second;
 }
@@ -131,7 +131,7 @@ std::string const& MethylNames::rosetta2nmr( std::string const& proton ) const {
 MethylNames::AtomList const& MethylNames::nmr2rosetta( std::string const& proton ) const {
 	auto it =  nmr2rosetta_.find( proton );
 	if ( it == nmr2rosetta_.end() ) {
-		throw EXCN_UnknownAtomname("proton_name " + proton + " not recognized for aminoacid " + aa_name() );
+		throw CREATE_EXCEPTION(EXCN_UnknownAtomname, "proton_name " + proton + " not recognized for aminoacid " + aa_name() );
 	}
 	return it->second;
 }
@@ -139,7 +139,7 @@ MethylNames::AtomList const& MethylNames::nmr2rosetta( std::string const& proton
 MethylNames::AtomList const& MethylNames::rosetta2methyl( std::string const& proton ) const {
 	auto it =  rosetta2methyl_.find( proton );
 	if ( it == rosetta2methyl_.end() ) {
-		throw EXCN_UnknownAtomname("proton_name " + proton + " not recognized for aminoacid " + aa_name() );
+		throw CREATE_EXCEPTION(EXCN_UnknownAtomname, "proton_name " + proton + " not recognized for aminoacid " + aa_name() );
 	}
 	return it->second;
 }
@@ -149,7 +149,7 @@ core::Size MethylNames::proton_index( std::string const& proton ) const {
 	for ( auto it = begin(); it != end(); ++it, ++ct ) {
 		if ( it->first == proton ) return ct;
 	}
-	throw EXCN_UnknownAtomname("proton_name " + proton + " not recognized for aminoacid " + aa_name() );
+	throw CREATE_EXCEPTION(EXCN_UnknownAtomname, "proton_name " + proton + " not recognized for aminoacid " + aa_name() );
 	return 0;
 }
 

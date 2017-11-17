@@ -35,7 +35,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 
@@ -190,15 +190,15 @@ private:
 };
 
 /// @brief Super-simple exception to be thrown when we can't initialize the SC calculator
-class EXCN_InitFailed : public utility::excn::EXCN_Base {
+class EXCN_InitFailed : public utility::excn::Exception {
 public:
-	void show( std::ostream & ) const override {}
+	using utility::excn::Exception::Exception;
 };
 
 /// @brief Super-simple exception to be thrown when the SC calculator fails to compute
-class EXCN_CalcFailed : public utility::excn::EXCN_Base {
+class EXCN_CalcFailed : public utility::excn::Exception {
 public:
-	void show( std::ostream & ) const override {}
+	using utility::excn::Exception::Exception;
 };
 
 } // filters

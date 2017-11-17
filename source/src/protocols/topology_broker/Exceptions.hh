@@ -28,51 +28,37 @@
 namespace protocols {
 namespace topology_broker {
 
-class EXCN_TopologyBroker : public virtual utility::excn::EXCN_Msg_Exception {
-	typedef EXCN_Msg_Exception Parent;
-protected:
-	EXCN_TopologyBroker() : EXCN_Msg_Exception( "" ){};
-	void show( std::ostream& os ) const override {
-		os << "\n[TopologyBroker Exception]: ";
-		Parent::show( os );
-	}
+class EXCN_TopologyBroker : public utility::excn::Exception {
+public:
+	EXCN_TopologyBroker(char const *file, int line, std::string const & m) : utility::excn::Exception(file, line, "\n[TopologyBroker Exception]: " + m) {}
 };
 
-class EXCN_Input : public EXCN_TopologyBroker, public utility::excn::EXCN_BadInput {
-	typedef EXCN_TopologyBroker Parent;
+class EXCN_Input :  public utility::excn::BadInput {
 public:
-	EXCN_Input( std::string const& msg ) : utility::excn::EXCN_Msg_Exception( msg ) {};
-	void show( std::ostream& os ) const override {
-		os << "*************** Error in Broker Setup: *************** \n";
-		Parent::show( os );
-		os << "\n\n********** Check your (inconsistent) input *************** \n";
+	EXCN_Input(char const *file, int line, std::string const& msg ) : utility::excn::BadInput(file, line, "") {
+		add_msg("*************** Error in Broker Setup: *************** \n");
+		add_msg(msg);
+		add_msg("\n\n********** Check your (inconsistent) input *************** \n");
 	}
 };
 
 // this is more like a range error --- asking for something which isn't there
 class EXCN_Unknown : public EXCN_TopologyBroker {
 public:
-	EXCN_Unknown( std::string const& msg ) : utility::excn::EXCN_Msg_Exception( msg ) {};
+	using EXCN_TopologyBroker::EXCN_TopologyBroker;
 };
 
 class EXCN_FailedBroking : public EXCN_TopologyBroker {
-	typedef EXCN_TopologyBroker Parent;
 public:
-	EXCN_FailedBroking( std::string const& msg ) : utility::excn::EXCN_Msg_Exception( msg ) {};
-	void show( std::ostream& os ) const override {
-		Parent::show( os );
-		os << "Failed to mediate between different Claimers. " << std::endl;
+	EXCN_FailedBroking(char const *file, int line, std::string const& msg) : EXCN_TopologyBroker(file, line, msg) {
+		add_msg("\nFailed to mediate between different Claimers...");
 	}
 };
 
 class EXCN_FilterFailed : public EXCN_TopologyBroker {
-	typedef EXCN_TopologyBroker Parent;
 public:
-	EXCN_FilterFailed( std::string const& msg ) : utility::excn::EXCN_Msg_Exception( msg ) {};
-
-	void show( std::ostream& os ) const override {
-		Parent::show( os );
-		os << "[FILTER] failed... " << std::endl;
+	EXCN_FilterFailed(char const *file, int line, std::string const& msg) : EXCN_TopologyBroker(file, line, msg) {
+		add_msg("\n[FILTER] failed... ");
 	}
 
 };

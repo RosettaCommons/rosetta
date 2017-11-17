@@ -178,7 +178,7 @@ FastDesign::parse_my_tag(
 			std::stringstream msg;
 			msg << "FastDesign: Could not find a constraint generator named " << *cg << " in the data map.  Ensure it has been defined in an AddConstraints mover before being referenced by FastDesign."
 				<< std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		cgs_.push_back( new_cg->clone() );
 	}

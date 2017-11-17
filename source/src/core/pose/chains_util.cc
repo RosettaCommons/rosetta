@@ -460,9 +460,9 @@ core::Size
 get_chain_id_from_chain(char const & chain, core::pose::Pose const & pose){
 	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
 	if ( chain_ids.size() == 0 ) {
-		throw utility::excn::EXCN_RangeError(" chain_id "+utility::to_string(chain)+" does not exist");
+		throw CREATE_EXCEPTION(utility::excn::RangeError, " chain_id "+utility::to_string(chain)+" does not exist");
 	} else if ( chain_ids.size() > 1 ) {
-		throw utility::excn::EXCN_RangeError("chain_id "+utility::to_string(chain)+" represents more than one chain!");
+		throw CREATE_EXCEPTION(utility::excn::RangeError, "chain_id "+utility::to_string(chain)+" represents more than one chain!");
 	}
 	return chain_ids[1];
 }

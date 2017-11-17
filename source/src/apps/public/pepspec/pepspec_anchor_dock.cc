@@ -1258,7 +1258,7 @@ int main( int argc, char * argv [] )
 
 		run_pep_prep();
 		TR.flush();
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

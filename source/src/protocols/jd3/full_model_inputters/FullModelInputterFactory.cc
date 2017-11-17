@@ -56,7 +56,7 @@ FullModelInputterFactory::factory_register( FullModelInputterCreatorOP creator )
 		std::string err_msg = "FullModelInputterFactory::factory_register already has a full_model_inputter creator with name \""
 			+ full_model_inputter_type + "\".  Conflicting FullModelInputter names";
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( err_msg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 		} else {
 			utility_exit_with_message( err_msg );
 		}
@@ -73,7 +73,7 @@ FullModelInputterFactory::new_full_model_inputter( std::string const & full_mode
 	FullModelInputterMap::const_iterator iter( full_model_inputter_creator_map_.find( full_model_inputter_type ) );
 	if ( iter != full_model_inputter_creator_map_.end() ) {
 		if ( ! iter->second ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Error: FullModelInputterCreatorOP prototype for " + full_model_inputter_type + " is NULL!" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: FullModelInputterCreatorOP prototype for " + full_model_inputter_type + " is NULL!" );
 		}
 		return iter->second->create_inputter();
 	} else {
@@ -82,7 +82,7 @@ FullModelInputterFactory::new_full_model_inputter( std::string const & full_mode
 			TR << full_model_inputter_elem.first << ", ";
 		}
 		TR << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( full_model_inputter_type + " is not known to the FullModelInputterFactory."
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  full_model_inputter_type + " is not known to the FullModelInputterFactory."
 			" Was it registered via a FullModelInputterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
 		return FullModelInputterOP();
 	}

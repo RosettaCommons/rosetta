@@ -203,7 +203,7 @@ int main( int argc, char * argv [] ){
 
 		std::cout << "Scores:"<<bound_protein<<"\t"<<  Total_pose_exposed_SASA <<"\t"<< interface_hydrophobic_sasa <<"\t"<< interface_polar_sasa <<std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -102,7 +102,7 @@ CoordConstraintClaimer::~CoordConstraintClaimer() = default;
 
 void CoordConstraintClaimer::new_decoy() {
 	if ( !constraints_ && !bUseXYZ_in_cstfile_ ) {
-		if ( !cst_pose_ ) throw EXCN_Input( "CoordConstraintClaimer::new_decoy(): in broker setup provide PDB_FILE or say USE_XYZ_FROM_CSTFILE");
+		if ( !cst_pose_ ) throw CREATE_EXCEPTION(EXCN_Input,  "CoordConstraintClaimer::new_decoy(): in broker setup provide PDB_FILE or say USE_XYZ_FROM_CSTFILE");
 		generate_constraints( *cst_pose_ );
 	}
 }
@@ -126,7 +126,7 @@ void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 		tr.Info << label() << " got a returned message: " << msg << std::endl;
 
 		if ( msg.received() ) new_root=msg.good_fix_pos_;
-		else throw EXCN_Input( "no fixed region (looked for "+root_from_label_+") found to use as reference for CoordinateConstraints");
+		else throw CREATE_EXCEPTION(EXCN_Input,  "no fixed region (looked for "+root_from_label_+") found to use as reference for CoordinateConstraints");
 
 		if ( !constraints_ && bUseXYZ_in_cstfile_ ) {
 			//in this case we haven't been able to read the constraints file yet, since this is the first time a valid pose exists...
@@ -168,7 +168,7 @@ void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 
 		/// we should have a cst_pose_ now
 		if ( !cst_pose_ ) {
-			throw EXCN_Input( "CoordConstraintClaimer::add_constraints(): "
+			throw CREATE_EXCEPTION(EXCN_Input,  "CoordConstraintClaimer::add_constraints(): "
 				"in broker setup either provide PDB_FILE or set CST_FROM_INPUT_POSE");
 		}
 
@@ -437,7 +437,7 @@ void CoordConstraintClaimer::init_after_reading() {
 			read_constraints_from_file( *cst_pose_ );
 		} else {
 			if ( !cst_func_ ) {
-				throw EXCN_Input( "POTENTIAL not specified for " + type() );
+				throw CREATE_EXCEPTION(EXCN_Input,  "POTENTIAL not specified for " + type() );
 			}
 			generate_constraints( *cst_pose_ );
 		}

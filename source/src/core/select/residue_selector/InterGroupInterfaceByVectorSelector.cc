@@ -144,7 +144,7 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 			grp1resstring = tag->getOption< std::string >( "grp1_residues" );
 		} else {
 			std::string error_message = "InterGroupInterfaceByVectorSelector::parse_my_tag requires either grp1_selector or grp1_residues to be specified\n";
-			throw utility::excn::EXCN_Msg_Exception( error_message );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 		}
 
 		if ( tag->hasOption( "grp2_selector" ) ) {
@@ -153,25 +153,25 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 			grp2resstring = tag->getOption< std::string >( "grp2_residues" );
 		} else {
 			std::string error_message = "InterGroupInterfaceByVectorSelector::parse_my_tag requires either grp2_selector or grp2_residues to be specified\n";
-			throw utility::excn::EXCN_Msg_Exception( error_message );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 		}
 
 		ResidueSelectorCOP grp1_sel_op, grp2_sel_op;
 		if ( ! grp1_selector_name.empty() ) {
 			try {
 				grp1_sel_op = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", grp1_selector_name );
-			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			} catch ( utility::excn::Exception & e ) {
 				std::string error_message = "Failed to find ResidueSelector named '" + grp1_selector_name + "' from the Datamap from InterGroupInterfaceByVectorSelector::parse_my_tag\n" + e.msg();
-				throw utility::excn::EXCN_Msg_Exception( error_message );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 			}
 		}
 
 		if ( ! grp2_selector_name.empty() ) {
 			try {
 				grp2_sel_op = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", grp2_selector_name );
-			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			} catch ( utility::excn::Exception & e ) {
 				std::string error_message = "Failed to find ResidueSelector named '" + grp2_selector_name + "' from the Datamap from InterGroupInterfaceByVectorSelector::parse_my_tag\n" + e.msg();
-				throw utility::excn::EXCN_Msg_Exception( error_message );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 			}
 		}
 
@@ -181,7 +181,7 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 		if ( grp2_sel_op ) { group2_selector( grp2_sel_op ); }
 		else { group2_resstring( grp2resstring ); }
 	} else { // weird number of subtags
-		throw utility::excn::EXCN_Msg_Exception( "InterGroupInterfaceByVectorSelector takes either two or zero subtags to specify residue groups!\n" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "InterGroupInterfaceByVectorSelector takes either two or zero subtags to specify residue groups!\n" );
 	}
 }
 

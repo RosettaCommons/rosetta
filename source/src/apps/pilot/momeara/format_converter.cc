@@ -25,7 +25,7 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 
 
@@ -185,7 +185,7 @@ main( int argc, char* argv [] ) {
 
 		// start the job
 		protocols::jd2::JobDistributor::get_instance()->go( mover );
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 		return -1;

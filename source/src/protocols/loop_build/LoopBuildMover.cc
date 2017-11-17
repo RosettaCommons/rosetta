@@ -218,7 +218,7 @@ void LoopBuildMover::setup_loop_definition()
 	using namespace basic::resource_manager;
 	// load loopfile
 	if ( ! ResourceManager::get_instance()->has_resource_with_description( "LoopsFile" ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "No loop file specified." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "No loop file specified." );
 	}
 	protocols::loops::LoopsFileDataOP loops_from_file = get_resource< protocols::loops::LoopsFileData >( "LoopsFile" );
 	loop_relax_mover_.loops_file_data( *loops_from_file );

@@ -105,8 +105,8 @@ void ConstraintPreparer::prepare( core::pose::Pose& pose, core::Real ){
 	try{
 		// it's not great that this is re-loaded each time, but it's safe and doesn't get called that often.
 		constraints_ = ConstraintIO::get_instance()->read_constraints( cst_file(), ConstraintSetOP( new ConstraintSet ), pose );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		throw utility::excn::EXCN_BadInput( get_name() + " encountered problem loading constraint file '"
+	} catch ( utility::excn::Exception & e ) {
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  get_name() + " encountered problem loading constraint file '"
 			+ cst_file() + "' : " + e.msg() );
 	}
 
@@ -151,14 +151,14 @@ void ConstraintPreparer::parse_my_tag( utility::tag::TagCOP tag,
 			tr.Error << "Command line option constraints::skip_redundant conflicts "
 				<< "with RosettaScripts initialization of ConstraintPreparer "
 				<< tag->getOption< std::string >( "name", "null" ) << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( "ConstraintPreparer " + this->get_name() +
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ConstraintPreparer " + this->get_name() +
 				"skip_redundant conflict" );
 		} else if ( option[ constraints::skip_redundant_width ].user() &&
 				(Size) option[ constraints::skip_redundant_width ] != skip_redundant_width() ) {
 			tr.Error << "Command line option constraints::skip_redundant_width conflicts "
 				<< "with RosettaScripts initialization of ConstraintPreparer "
 				<< tag->getOption< std::string >( "name", "null" ) << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( "ConstraintPreparer " + this->get_name() +
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ConstraintPreparer " + this->get_name() +
 				"skip_redundant_width conflict" );
 		}
 	} else {
@@ -175,7 +175,7 @@ void ConstraintPreparer::parse_my_tag( utility::tag::TagCOP tag,
 	} else {
 		tr.Error << "ConstraintPreparers require a constraint file.  "
 			<< "Use the 'cst_file' tag in the mover definition. " << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("ConstraintPreparer has no constraint file.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ConstraintPreparer has no constraint file.");
 	}
 
 	combine_ratio( tag->getOption< core::Size >( "combine_ratio", 1 ) );

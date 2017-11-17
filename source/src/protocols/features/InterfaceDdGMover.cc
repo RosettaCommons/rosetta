@@ -76,19 +76,19 @@ InterfaceDdGMover::parse_my_tag(
 	// First, check for errors and throw exception
 
 	if ( ( tag->hasOption("chain_num") || tag->hasOption("chain_name") ) && tag->hasOption("jump") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("you can specify either chains or jump in the ddG mover, but not both");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "you can specify either chains or jump in the ddG mover, but not both");
 	}
 
 	if ( tag->hasOption("chain_num") && tag->hasOption("chain_name") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("you can specify chains either by number or by name, but not both");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "you can specify chains either by number or by name, but not both");
 	}
 
 	if ( core::pose::symmetry::is_symmetric( pose ) && ( tag->hasOption("chain_num") || tag->hasOption("chain_name") || tag->hasOption("jump") ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "you can't specify chains or jumps when using a symmetric pose" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "you can't specify chains or jumps when using a symmetric pose" );
 	}
 
 	if ( tag->hasOption("mut_ref_savepose_mover") && tag->hasOption("wt_ref_savepose_mover") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "you can only specify either the mutant reference pose (SavePoseMover) or the wildtype reference pose (SavePoseMover) in this tag. The undefined pose will be set as the pose given to this mover in the apply function." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "you can only specify either the mutant reference pose (SavePoseMover) or the wildtype reference pose (SavePoseMover) in this tag. The undefined pose will be set as the pose given to this mover in the apply function." );
 	}
 
 	chain_ids_.clear(); // Useful if parse_my_tag is called multiple times in unit tests
@@ -222,7 +222,7 @@ InterfaceDdGMover::unbind (
 		}
 	} else {
 		// We have no information about chains or jumps to move, so let's not try and unbind
-		throw utility::excn::EXCN_BadInput( "InterfaceDdGMover needs to have chains (numbers or names) or jumps defined to move" );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "InterfaceDdGMover needs to have chains (numbers or names) or jumps defined to move" );
 	}
 
 }
@@ -359,7 +359,7 @@ InterfaceDdGMover::get_chain_ids() const {
 void
 InterfaceDdGMover::add_chain_id( core::Size chain_id, core::pose::Pose const & pose ) {
 	if ( ! core::pose::has_chain( chain_id, pose ) ) {
-		throw utility::excn::EXCN_BadInput(
+		throw CREATE_EXCEPTION(utility::excn::BadInput, 
 			"InterfaceDdGMover cannot add chain_id " + utility::to_string( chain_id ) + " to pose; out of range"
 		);
 	}
@@ -372,7 +372,7 @@ InterfaceDdGMover::add_chain_id( core::Size chain_id, core::pose::Pose const & p
 void
 InterfaceDdGMover::add_chain_name( std::string chain_name, core::pose::Pose const & pose ) {
 	if ( ! core::pose::has_chain( chain_name, pose ) ) {
-		throw utility::excn::EXCN_BadInput(
+		throw CREATE_EXCEPTION(utility::excn::BadInput, 
 			"InterfaceDdGMover cannot add chain_name " + chain_name + " to pose; out of range"
 		);
 	}
@@ -386,7 +386,7 @@ void
 InterfaceDdGMover::add_jump_id( core::Size jump, core::pose::Pose const & pose )
 {
 	if ( jump > pose.num_jump() || jump < 1 ) {
-		throw utility::excn::EXCN_BadInput(
+		throw CREATE_EXCEPTION(utility::excn::BadInput, 
 			"InterfaceDdGMover cannot add jump " + utility::to_string( jump ) + " to pose; out of range"
 		);
 	}

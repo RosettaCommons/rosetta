@@ -192,7 +192,7 @@ public:
 			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains()[1], 'B');
 			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains()[2], 'C');
 		}
-catch ( utility::excn::EXCN_Msg_Exception e ) {
+catch (utility::excn::Exception e ) {
 	std::cerr << "Raised exception: " << e.msg() << std::endl;
 	TS_ASSERT( false );
 }
@@ -222,7 +222,7 @@ catch ( utility::excn::EXCN_Msg_Exception e ) {
 	void test_report_format_parsing() {
 		TS_ASSERT_EQUALS(protocols::peptide_deriver::PeptideDeriverFilter::parse_report_format_string("basic"), protocols::peptide_deriver::PRF_BASIC);
 		TS_ASSERT_EQUALS(protocols::peptide_deriver::PeptideDeriverFilter::parse_report_format_string("markdown"), protocols::peptide_deriver::PRF_MARKDOWN);
-		TS_ASSERT_THROWS(protocols::peptide_deriver::PeptideDeriverFilter::parse_report_format_string(""), utility::excn::EXCN_KeyError);
+		TS_ASSERT_THROWS(protocols::peptide_deriver::PeptideDeriverFilter::parse_report_format_string(""), utility::excn::KeyError);
 	}
 
 	void assert_peptiderive_filter_equal( protocols::peptide_deriver::PeptideDeriverFilter const & lhs,

@@ -132,7 +132,7 @@ void DecoySetEvaluation::prepare_push_back( core::Size nres ) {
 
 	if ( n_decoys_ >= n_decoys_max_ ) {
 		// we could also just resize... but I want the user to know.. because he should keep track which decoy is which...
-		throw utility::excn::EXCN_RangeError( "you can't add any more decoys to DecoySetEvaluation ");
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  "you can't add any more decoys to DecoySetEvaluation ");
 	}
 	++n_decoys_;
 }

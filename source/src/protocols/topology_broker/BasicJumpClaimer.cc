@@ -48,7 +48,7 @@ void BasicJumpClaimer::generate_claims( claims::DofClaims& claims ){
 			<< broker().sequence_number_resolver().find_global_pose_number( start_label_ ) << ", "
 			<< broker().sequence_number_resolver().find_global_pose_number( start_label_ , start_chain_claim.length() )
 			<< "]." << std::endl;
-		throw utility::excn::EXCN_BadInput( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 	} else if ( ! ( ( end_position_ > 0 ) && ( end_position_ <= end_chain_claim.length() ) ) ) {
 		std::ostringstream msg;
 		msg << "Jump end position " << end_position_ << " in label '" << end_label_
@@ -56,7 +56,7 @@ void BasicJumpClaimer::generate_claims( claims::DofClaims& claims ){
 			<< broker().sequence_number_resolver().find_global_pose_number( end_label_ ) << ", "
 			<< broker().sequence_number_resolver().find_global_pose_number( end_label_ , end_chain_claim.length() )
 			<< "]." << std::endl;
-		throw utility::excn::EXCN_BadInput( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 	}
 
 	//Add new jump claim
@@ -72,7 +72,7 @@ void BasicJumpClaimer::generate_claims( claims::DofClaims& claims ){
 		msg << "BasicJumpClaimer with JumpClaim between '" << start_label_ << "' (position "
 			<< start_position_ << ") and " << end_label_ << " (position " << end_position_
 			<< " did not set both (or neither) jump atoms." << std::endl;
-		throw utility::excn::EXCN_BadInput( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 	}
 }
 

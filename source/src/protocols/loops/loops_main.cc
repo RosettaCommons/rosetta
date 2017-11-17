@@ -314,7 +314,7 @@ fold_tree_from_loops(
 
 		// Test for successful reordering.
 		if ( !f.reorder(root) ) {
-			throw utility::excn::EXCN_Msg_Exception("Unable to reorder the FoldTree for this loops set!");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Unable to reorder the FoldTree for this loops set!");
 		}
 	}
 

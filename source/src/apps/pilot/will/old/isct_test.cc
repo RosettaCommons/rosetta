@@ -353,7 +353,7 @@ int main (int argc, char *argv[]) {
 		}
 		TR << cnt / N << " " << Real(bt) / Real(it) << " " << Real(it) / Real(gt) << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

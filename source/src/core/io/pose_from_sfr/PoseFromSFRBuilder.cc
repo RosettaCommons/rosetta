@@ -716,7 +716,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 				TR.Trace << " is appended to chain " << rinfos_[ ii ].chainID() << std::endl;
 				try {
 					pose.append_residue_by_bond( *ii_rsd );
-				} catch (utility::excn::EXCN_Msg_Exception & e) {
+				} catch (utility::excn::Exception & e) {
 					std::stringstream message;
 					message << "Failed to add residue " << ii << " to the structure. PDB file residue name: "
 						<< PDB_resid << std::endl;
@@ -759,13 +759,13 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 					//pose.append_residue_by_bond( *ii_rsd );
 					try{
 						pose.append_residue_by_bond( *ii_rsd );
-					} catch (utility::excn::EXCN_Msg_Exception & e) {
+					} catch (utility::excn::Exception & e) {
 						std::stringstream message;
 						message << "Failed to add residue " << ii << " to the structure. PDB file residue name: "
 							<< PDB_resid << std::endl;
 						message << "ERROR: Attempted to make connection: " << rinfos_[ ii-1 ].resid() << " -> " << PDB_resid << std::endl;
 						std::string error_msg = message.str() + "ERROR: " + e.msg();
-						throw utility::excn::EXCN_Msg_Exception( error_msg );
+						throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg );
 					}
 				}
 			}

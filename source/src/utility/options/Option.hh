@@ -453,7 +453,7 @@ public: // Properties
 		bool do_check
 	) const {
 		if ( restricted_access_ && do_check ) {
-			throw utility::excn::EXCN_Msg_Exception(
+			throw CREATE_EXCEPTION(utility::excn::Exception,
 				"Attempting to access option '" + code() + "' that has restricted access. Please use 'basic::resource_manager::ResourceManager::get_instance()->get_option( " + code() + " );' instead.");
 		}
 	}

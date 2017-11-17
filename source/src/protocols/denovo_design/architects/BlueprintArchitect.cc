@@ -63,7 +63,7 @@ BlueprintArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 		std::stringstream msg;
 		msg << "BlueprintArchitect: No blueprint file specified!  "
 			<< "You must specify a blueprint file using the \"blueprint\" option" << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 	protocols::parser::BluePrint bp( bp_file );
 	set_blueprint( bp );

@@ -206,7 +206,7 @@ main( int argc, char *argv[] )
 
 		cout << "------------------------------------------------------------------------------" << endl;
 		cout << "Done!" << endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return -1;
 	}

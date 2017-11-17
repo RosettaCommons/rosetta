@@ -159,7 +159,7 @@ int main( int argc, char* argv[] )
 		protocols::jd2::JobDistributor::get_instance()->go(new AbInitio_MPI);
 		TR << "************************d**o**n**e**************************************" << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

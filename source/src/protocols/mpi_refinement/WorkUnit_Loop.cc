@@ -129,7 +129,7 @@ WorkUnit_LoopHash::init_from_cmd( const core::Size mpi_rank )
 		// load initial library from disk
 		library_->load_mergeddb();
 	}
-catch( utility::excn::EXCN_Msg_Exception & e ){
+catch( utility::excn::Exception & e ){
 	e.show( std::cout );
 	e.show( std::cerr );
 	throw;

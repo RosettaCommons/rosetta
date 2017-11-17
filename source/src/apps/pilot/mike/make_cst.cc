@@ -73,7 +73,7 @@ main( int argc, char * argv [] )
 		MoverOP mover = cec;
 		protocols::jd2::JobDistributor::get_instance()->go( mover );
 		cec->createConstraints( std::cout );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

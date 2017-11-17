@@ -30,10 +30,10 @@
 namespace protocols {
 namespace loophash {
 
-class EXCN_DB_IO_Failed: public utility::excn::EXCN_Msg_Exception {
+class EXCN_DB_IO_Failed: public utility::excn::Exception {
 public:
-	EXCN_DB_IO_Failed( std::string filename, std::string action ) :
-		utility::excn::EXCN_Msg_Exception( "Error in opening File='" + filename + "' for operation='" + action + "'" ),
+	EXCN_DB_IO_Failed(char const *file, int line, std::string filename, std::string action ) :
+		utility::excn::Exception(file, line, "Error in opening File='" + filename + "' for operation='" + action + "'" ),
 		filename_( filename ), action_( action ) {};
 
 private:
@@ -41,10 +41,10 @@ private:
 	std::string action_;
 };
 
-class EXCN_Invalid_Hashmap: public utility::excn::EXCN_Msg_Exception {
+class EXCN_Invalid_Hashmap: public utility::excn::Exception {
 public:
-	EXCN_Invalid_Hashmap( core::Size size ) :
-		utility::excn::EXCN_Msg_Exception( "Invalid hashmap of size " + utility::to_string( size ) + " requested." )
+	EXCN_Invalid_Hashmap(char const *file, int line, core::Size size ) :
+		utility::excn::Exception(file, line, "Invalid hashmap of size " + utility::to_string( size ) + " requested." )
 		// size_( size )
 	{};
 
@@ -53,29 +53,29 @@ private:
 	// core::Size size_;
 };
 
-class EXCN_No_Extra_Data_To_Write: public utility::excn::EXCN_Msg_Exception {
+class EXCN_No_Extra_Data_To_Write: public utility::excn::Exception {
 public:
-	EXCN_No_Extra_Data_To_Write():
-		utility::excn::EXCN_Msg_Exception( "Cannot write DB with extras if extra data is nonexistent." ) {};
+	EXCN_No_Extra_Data_To_Write(char const *file, int line, std::string const & m=""):
+		utility::excn::Exception(file, line, m + "\nCannot write DB with extras if extra data is nonexistent." ) {};
 };
 
-class EXCN_Wrong_DB_Format: public utility::excn::EXCN_Msg_Exception {
+class EXCN_Wrong_DB_Format: public utility::excn::Exception {
 public:
-	EXCN_Wrong_DB_Format( std::string filename ):
-		utility::excn::EXCN_Msg_Exception( filename + " does not have the correct format." ),
+	EXCN_Wrong_DB_Format(char const *file, int line, std::string filename ):
+		utility::excn::Exception(file, line, filename + " does not have the correct format." ),
 		filename_( filename ) {};
 
 private:
 	std::string filename_;
 };
 
-class EXCN_bbdb_Merge_Failed: public utility::excn::EXCN_Msg_Exception {
+class EXCN_bbdb_Merge_Failed: public utility::excn::Exception {
 public:
-	EXCN_bbdb_Merge_Failed( std::string reason ):
-		utility::excn::EXCN_Msg_Exception( reason ) {};
+	EXCN_bbdb_Merge_Failed(char const *file, int line, std::string reason ):
+		utility::excn::Exception(file, line, reason ) {};
 
-	EXCN_bbdb_Merge_Failed( bool /*masterlib_extra*/, bool /*secondlib_extra*/ ):
-		utility::excn::EXCN_Msg_Exception( "LoopHashLibrary.extra_'s not equal" )
+	EXCN_bbdb_Merge_Failed(char const *file, int line, bool /*masterlib_extra*/, bool /*secondlib_extra*/ ):
+		utility::excn::Exception(file, line, "LoopHashLibrary.extra_'s not equal" )
 		// masterlib_extra_( masterlib_extra ),
 		// secondlib_extra_( secondlib_extra )
 	{};

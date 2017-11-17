@@ -399,7 +399,7 @@ int main( int argc, char* argv[] ) {
 		devel::init(argc, argv);
 		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new HBondReporter ) );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

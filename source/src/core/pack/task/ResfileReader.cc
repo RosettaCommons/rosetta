@@ -358,7 +358,7 @@ ResfileContents::parse_resid(
 		// wait to the next token to figure that out.
 		try {
 			pose::parse_PDBnum_icode(token, fname_initialized_from_, lineno, PDBnum, icode);
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			onError( e.msg() );
 		}
 	}
@@ -385,7 +385,7 @@ ResfileContents::parse_resid(
 
 		try {
 			pose::parse_PDBnum_icode(token, fname_initialized_from_, lineno, PDBnum_end, icode_end);
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			onError( e.msg() );
 		}
 
@@ -1495,7 +1495,7 @@ void onError( std::string message ){
 	static bool interactive = basic::options::option[ basic::options::OptionKeys::run::interactive ].value();
 	TR << message << std::endl;
 	if ( interactive ) {
-		throw ResfileReaderException(message);
+		throw CREATE_EXCEPTION(ResfileReaderException, message);
 	} else {
 		utility_exit();
 	}

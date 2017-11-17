@@ -181,7 +181,7 @@ int main( int argc, char * argv [] )
 		//cen_pose.conformation().detect_disulfides();
 		pose->dump_scored_pdb(outfile, *sfxn, "");
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

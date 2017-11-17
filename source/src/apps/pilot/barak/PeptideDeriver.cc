@@ -215,7 +215,7 @@ main( int argc, char * argv [] )
 		TR << "Best pep from A at pos: "<<best_posa<<" length: "<<best_lena<<" w/ isc: "<<maxIsc<< std::endl;
 		best_pose.dump_pdb("./bestPepA.pdb");
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -68,7 +68,7 @@ using namespace abinitio;
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 class ThisApplication {
@@ -387,11 +387,11 @@ main( int argc, char * argv [] )
 			//  else if ( option[ pick_chunks ].user() ) {
 			//   app.pick_chunks();
 			// } else app.run();
-		} catch ( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			std::cerr << "Exception : " << std::endl;
 			excn.show( std::cerr );
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

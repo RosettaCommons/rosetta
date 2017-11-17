@@ -89,7 +89,7 @@ quit_no_tf()
 {
 	std::stringstream msg;
 	msg << "TaskSelector: no task factory was specified!" << std::endl;
-	throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 }
 
 core::select::residue_selector::ResidueSubset
@@ -132,7 +132,7 @@ TaskSelector::parse_my_tag(
 		if ( data.has( "task_operations", task_op_name ) ) {
 			tf->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", task_op_name ) );
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + task_op_name + " not found in basic::datacache::DataMap.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + task_op_name + " not found in basic::datacache::DataMap.");
 		}
 		TR << "Adding task operation " << task_op_name << std::endl;
 	}

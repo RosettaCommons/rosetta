@@ -496,7 +496,7 @@ StructureDataFactory::create_from_remarks( core::io::Remarks const & rem ) const
 	}
 
 	if ( lines.empty() ) {
-		throw EXCN_RemarksNotPresent( "No StructureData remark lines found" );
+		throw CREATE_EXCEPTION(EXCN_RemarksNotPresent, "No StructureData remark lines found" );
 	}
 
 	// piece together full xml tag

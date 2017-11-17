@@ -102,7 +102,7 @@ RepGrid::parse_my_tag(utility::tag::TagCOP tag) {
 	if ( tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ) {
 		// the user MUST provide all 3 if he/she is providing any of these 3 options
 		if ( !(tag->hasOption("bb") && tag->hasOption("sc") && tag->hasOption("ligand") ) ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("'RepGrid' requires bb, sc, and ligand if any one of these are used");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'RepGrid' requires bb, sc, and ligand if any one of these are used");
 		} else {
 			bb_= tag->getOption<core::Real>("bb");
 			sc_= tag->getOption<core::Real>("sc");

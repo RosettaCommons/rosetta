@@ -56,13 +56,16 @@ void ts_assert_mpi_buffer_has_string(
 ) {
 	try {
 		std::string msg = utility::receive_string_from_node( source );
-		TS_ASSERT( msg == expected_message );
-		if ( msg != expected_message ) {
+
+		bool flag = msg.find(expected_message) != std::string::npos;
+
+		TS_ASSERT(flag);
+		if ( !flag ) {
 			std::cerr << "SimulateMPI string for tag \"" << message_tag << "\" did not match expected string:\n";
 			std::cerr << "Expected: " << expected_message << "\n";
 			std::cerr << "Actual: " << msg << "\n";
 		}
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 		std::cerr << "Exception caught for tag \"" << message_tag << "\": " << e.msg() << std::endl;
 		TS_ASSERT( false );
 	}
@@ -75,7 +78,7 @@ std::string ts_assert_mpi_buffer_has_string(
 	std::string msg;
 	try {
 		msg = utility::receive_string_from_node( source );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 		std::cerr << "Exception caught for tag \"" << message_tag << "\": " << e.msg() << std::endl;
 		TS_ASSERT( false );
 	}
@@ -98,7 +101,7 @@ void ts_assert_mpi_buffer_has_integer(
 			std::cerr << "Expected: \"" << expected_message << "\"\n";
 			std::cerr << "Actual: \"" << msg << "\"\n";
 		}
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 		std::cerr << "Exception caught for tag \"" << message_tag << "\": " << e.msg() << std::endl;
 		TS_ASSERT( false );
 	}
@@ -120,7 +123,7 @@ void ts_assert_mpi_buffer_has_size(
 			std::cerr << "Expected: " << expected_message << "\n";
 			std::cerr << "Actual: " << msg << "\n";
 		}
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 		std::cerr << "Exception caught for tag \"" << message_tag << "\": " << e.msg() << std::endl;
 		TS_ASSERT( false );
 	}
@@ -133,7 +136,7 @@ double ts_assert_mpi_buffer_has_double(
 	double msg( 0 );
 	try {
 		msg = utility::receive_double_from_node( source );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 		std::cerr << "Exception caught for tag \"" << message_tag << "\": " << e.msg() << std::endl;
 		TS_ASSERT( false );
 	}
@@ -166,7 +169,7 @@ void ts_assert_mpi_buffer_has_integers(
 			}
 			std::cerr << " ]\n";
 		}
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 		std::cerr << "Exception caught for tag \"" << message_tag << "\": " << e.msg() << std::endl;
 		TS_ASSERT( false );
 	}
@@ -198,7 +201,7 @@ void ts_assert_mpi_buffer_has_sizes(
 			}
 			std::cerr << " ]\n";
 		}
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch (utility::excn::Exception & e ) {
 		std::cerr << "Exception caught for tag \"" << message_tag << "\": " << e.msg() << std::endl;
 		TS_ASSERT( false );
 	}

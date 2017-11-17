@@ -69,7 +69,7 @@ using basic::resource_manager::ResourceManager;
 using basic::resource_manager::ResourceDescription;
 using basic::resource_manager::ResourceOP;
 using basic::resource_manager::JobOptionsOP;
-using utility::excn::EXCN_Msg_Exception;
+using utility::excn::Exception;
 using basic::resource_manager::LoaderType;
 using basic::resource_manager::LocatorTag;
 using basic::resource_manager::LocatorID;
@@ -145,7 +145,7 @@ void JD2ResourceManager::read_resource_locators_tags( TagCOP tags )
 	using basic::resource_manager::ResourceLocatorOP;
 	using basic::resource_manager::LocatorTag;
 	using utility::tag::Tag;
-	typedef utility::excn::EXCN_Msg_Exception MsgException;
+	typedef utility::excn::Exception Exception;
 
 	for ( auto
 			tag_iter = tags->getTags().begin(),
@@ -157,7 +157,7 @@ void JD2ResourceManager::read_resource_locators_tags( TagCOP tags )
 		if ( ! (*tag_iter)->hasOption( "tag" ) ) {
 			std::ostringstream err;
 			err << "Unable to find a 'tag' for a ResourceLocator of type '" << locator_type << "'\n";
-			throw MsgException( err.str() );
+			throw CREATE_EXCEPTION(Exception, err.str() );
 		}
 		LocatorTag locator_tag = (*tag_iter)->getOption< LocatorTag >( "tag" );
 
@@ -168,7 +168,7 @@ void JD2ResourceManager::read_resource_locators_tags( TagCOP tags )
 			err << locator_type << "'.\n";
 			err << "Prevous ResourceLocator object with this tag was of type '";
 			err << LazyResourceManager::find_resource_locator( locator_tag )->type() << "'\n";
-			throw MsgException( err.str() );
+			throw CREATE_EXCEPTION(Exception, err.str() );
 		}
 
 		// 3. Try to create this ResourceLocator object; the factory may throw.  Catch any thrown MsgException and
@@ -176,13 +176,13 @@ void JD2ResourceManager::read_resource_locators_tags( TagCOP tags )
 		ResourceLocatorOP resource_locator;
 		try {
 			resource_locator = ResourceLocatorFactory::get_instance()->create_resource_locator( locator_type, locator_tag, *tag_iter );
-		} catch ( MsgException const & e ) {
+		} catch ( Exception const & e ) {
 			std::ostringstream err;
 			err << e.msg() << "\n";
 			err << "Exception thrown while trying to initialize a ResourceLocator of type '";
 			err << locator_type << "' with a tag of '" << locator_tag << "'\n";
 			err << "from JD2ResourceManager::read_resource_locators_tags\n";
-			throw MsgException( err.str() );
+			throw CREATE_EXCEPTION(Exception, err.str() );
 		}
 		LazyResourceManager::add_resource_locator( locator_tag, resource_locator );
 	}
@@ -268,7 +268,7 @@ JD2ResourceManager::read_resource_options_table_tag(
 			<< "is an SQL SELECT statement that returns the following column formats" << endl
 			<< "ordered by <job_name>:" << endl
 			<< "\t(<resource_options_tag>, <resource_options_type>, <resource_option_key>, resource_option_value>)" << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 	cppdb::statement select_stmt(safely_prepare_statement(sql_command, db_session));
@@ -293,7 +293,7 @@ JD2ResourceManager::read_resource_options_table_tag(
 			<< "Instead, the query returned " << res.cols() << ":" << endl
 			<< "SQL query:" << endl
 			<< sql_command << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 	Size row_number(0);
@@ -337,7 +337,7 @@ JD2ResourceManager::read_resource_option_item(
 	using basic::resource_manager::ResourceOptionsFactory;
 	using basic::resource_manager::ResourceOptionsOP;
 	using basic::resource_manager::ResourceOptionsTag;
-	typedef utility::excn::EXCN_Msg_Exception MsgException;
+	typedef utility::excn::Exception Exception;
 
 	std::string const & tagname = tag->getName();
 
@@ -345,7 +345,7 @@ JD2ResourceManager::read_resource_option_item(
 	if ( ! tag->hasOption( "tag" ) ) {
 		std::ostringstream err;
 		err << "Unable to find a 'tag' for a ResourceOption of type '" << tagname << "'\n";
-		throw MsgException( err.str() );
+		throw CREATE_EXCEPTION(Exception, err.str() );
 	}
 	ResourceOptionsTag options_tag = tag->getOption< ResourceOptionsTag >( "tag" );
 
@@ -356,7 +356,7 @@ JD2ResourceManager::read_resource_option_item(
 		err << tagname << "'.\n";
 		err << "Prevous ResourceOptions object with this tag was of type '";
 		err << LazyResourceManager::find_resource_options( options_tag )->type() << "'\n";
-		throw MsgException( err.str() );
+		throw CREATE_EXCEPTION(Exception, err.str() );
 	}
 
 	// 3. Try to create this ResourceOptions object; the factory may throw.  Catch any thrown MsgException and
@@ -364,13 +364,13 @@ JD2ResourceManager::read_resource_option_item(
 	ResourceOptionsOP resource_options;
 	try {
 		resource_options = ResourceOptionsFactory::get_instance()->create_resource_options( tagname, tag );
-	} catch ( MsgException const & e ) {
+	} catch ( Exception const & e ) {
 		std::ostringstream err;
 		err << e.msg() << "\n";
 		err << "Exception thrown while trying to initialize a ResourceOption of type '";
 		err << tagname << "' with a tag of '" << options_tag << "'\n";
 		err << "from JD2ResourceManager::read_resource_options_tags\n";
-		throw MsgException( err.str() );
+		throw CREATE_EXCEPTION(Exception, err.str() );
 	}
 	LazyResourceManager::add_resource_options( options_tag, resource_options );
 }
@@ -381,7 +381,7 @@ void
 JD2ResourceManager::check_resource_loader_type(
 	LoaderType const & loader_type
 ) {
-	typedef utility::excn::EXCN_Msg_Exception MsgException;
+	typedef utility::excn::Exception Exception;
 
 	// 1. Make sure this is an allowed resource type / loader type
 	if ( ! ResourceLoaderFactory::get_instance()->has_resource_loader( loader_type ) ) {
@@ -392,7 +392,7 @@ JD2ResourceManager::check_resource_loader_type(
 				iter = loader_types.begin(), iter_end = loader_types.end(); iter != iter_end; ++iter ) {
 			err << "  '" << *iter << std::endl;
 		}
-		throw MsgException( err.str() );
+		throw CREATE_EXCEPTION(Exception, err.str() );
 	}
 }
 
@@ -404,7 +404,7 @@ JD2ResourceManager::read_resource_tag_item(
 	LoaderType const & loader_type,
 	LocatorID const & locator_id
 ) {
-	typedef utility::excn::EXCN_Msg_Exception MsgException;
+	typedef utility::excn::Exception Exception;
 
 	// 2. Set the resource tag to be the locator id unless it has been
 	// explcitely provided.
@@ -420,7 +420,7 @@ JD2ResourceManager::read_resource_tag_item(
 		std::ostringstream err;
 		err << "Duplicated tag, '" << resource_tag << "' assigned to a Resource object with ResourceLoader type '";
 		err << loader_type << "'.\n";
-		throw MsgException( err.str() );
+		throw CREATE_EXCEPTION(Exception, err.str() );
 	}
 	return resource_tag;
 }
@@ -437,7 +437,7 @@ JD2ResourceManager::read_resource_locator_items(
 	LoaderType const & loader_type,
 	LocatorID & locator_id
 ) {
-	typedef utility::excn::EXCN_Msg_Exception MsgException;
+	typedef utility::excn::Exception Exception;
 
 	// 4. Verify that, if it's been given a locator, that the ResourceLocator has previously been declared
 	LocatorTag locator_tag;
@@ -450,7 +450,7 @@ JD2ResourceManager::read_resource_locator_items(
 				<< " with LoaderType '" << loader_type << "'"
 				<< " was given the ResourceLocator tag '" << locator_tag << "',"
 				<< " which has not previously been declared.";
-			throw MsgException( err.str() );
+			throw CREATE_EXCEPTION(Exception, err.str() );
 		}
 		if ( tag->hasOption( "file" ) && locator_tag != "FileSystemResourceLocator" ) {
 			std::ostringstream err;
@@ -461,7 +461,7 @@ JD2ResourceManager::read_resource_locator_items(
 				<< " file='" << tag->getOption< LocatorID > ("file") << "'."
 				<< " But specifying a file is only compatible with the"
 				<< " FileSystemResourceLocator." << std::endl;
-			throw MsgException(err.str());
+			throw CREATE_EXCEPTION(Exception, err.str());
 		}
 		if ( locator_tag == "NULL" ) {
 			locator_id = "";
@@ -481,7 +481,7 @@ JD2ResourceManager::read_resource_locator_items(
 				<< " file='" << tag->getOption< LocatorID >("file") << "' and"
 				<< " locatorID='" << tag->getOption< LocatorID >("locatorID") << "'"
 				<< " but it is only allowed to have one." << std::endl;
-			throw MsgException(err.str());
+			throw CREATE_EXCEPTION(Exception, err.str());
 		}
 		locator_id = tag->getOption< LocatorID >("file");
 	} else if ( tag->hasOption("locatorID") ) {
@@ -492,7 +492,7 @@ JD2ResourceManager::read_resource_locator_items(
 			<< "Resource subtag"
 			<< " with LoaderType '" << loader_type << "' was not supplied"
 			<< " with a locatorID tag, which is required." << std::endl;
-		throw MsgException( err.str() );
+		throw CREATE_EXCEPTION(Exception, err.str() );
 	}
 
 	return locator_tag;
@@ -505,7 +505,7 @@ JD2ResourceManager::read_resource_options_tag_item(
 	LoaderType const & loader_type,
 	ResourceTag const & resource_tag
 ) {
-	typedef utility::excn::EXCN_Msg_Exception MsgException;
+	typedef utility::excn::Exception Exception;
 
 	// 5. Verify that, if it's been given a resource options, that the
 	// ResourceOptions has been previously declared
@@ -516,7 +516,7 @@ JD2ResourceManager::read_resource_options_tag_item(
 			std::ostringstream err;
 			err << "Resource '" << resource_tag << "' with LoaderType '" << loader_type << "' was given the tag ";
 			err << "for a ResourceLoaderOptions, '" << resource_options_tag << "', which has not previously been declared.";
-			throw MsgException( err.str() );
+			throw CREATE_EXCEPTION(Exception, err.str() );
 		}
 	}
 	return resource_options_tag;
@@ -637,7 +637,7 @@ JD2ResourceManager::read_resource_table_tag(
 			<< "\tlocator_id" << endl
 			<< "\tloader_type" << endl
 			<< "\toptions_tag" << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 	cppdb::statement select_stmt(safely_prepare_statement(sql_command, db_session));
@@ -655,7 +655,7 @@ JD2ResourceManager::read_resource_table_tag(
 			<< "\tresource_options_tag" << endl
 			<< "Instead, the query returned " << res.cols() << ":" << endl
 			<< sql_command << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 	Size row_number(0);
@@ -682,7 +682,7 @@ JD2ResourceManager::read_resource_table_tag(
 				<< "'" << locator_tag << ", '" << locator_id << "', '" << loader_type << "', '" << resource_options_tag << "'" << endl
 				<< "SQL comand: " << endl
 				<< sql_command;
-			throw utility::excn::EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 		}
 
 		check_resource_loader_type(loader_type);
@@ -696,7 +696,7 @@ JD2ResourceManager::read_resource_table_tag(
 				<< locator_tag << "\t" << locator_id << "\t" << loader_type << "\t" << resource_options_tag << endl
 				<< "SQL comand: " << endl
 				<< sql_command;
-			throw utility::excn::EXCN_Msg_Exception( err.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 		}
 
 		ResourceConfiguration resource_configuration;
@@ -726,7 +726,7 @@ JD2ResourceManager::get_jd2_resource_manager_instance(
 		err
 			<< "Error trying to access the JD2ResourceManager "
 			<< "from the JD2ResourceManagerJobInputer";
-		EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(Exception, err.str() );
 	}
 	return jd2_resource_manager;
 }
@@ -788,7 +788,7 @@ JD2ResourceManager::get_resource(
 					fallbackname = "fallback_" + resource_description + "_" + utility::to_string( numeric::random::random_range(1,4000000) );
 				}
 				if ( has_resource_configuration( fallbackname ) ) {
-					throw utility::excn::EXCN_Msg_Exception( "Could not name the fallback resource after 10000 attempts.  Try not to name your resources"
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not name the fallback resource after 10000 attempts.  Try not to name your resources"
 						" beginning with the prefix 'fallback_'." );
 				}
 				basic::resource_manager::ResourceConfiguration fake_configuration;
@@ -817,7 +817,7 @@ JD2ResourceManager::get_resource(
 		}
 
 		errmsg << "Thrown from JD2ResourceManager::get_resource\n";
-		throw  utility::excn::EXCN_Msg_Exception( errmsg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg.str() );
 	}
 	return nullptr; // appease compiler
 }

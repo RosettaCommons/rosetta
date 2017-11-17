@@ -233,7 +233,7 @@ HybridizeProtocol::HybridizeProtocol(
 )
 {
 	if ( templates_in.size() != template_weights_in.size() ) {
-		throw utility::excn::EXCN_BadInput("Error! Input templates and weights are in different sizes!");
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "Error! Input templates and weights are in different sizes!");
 	}
 
 	stage1_probability_     = 1.;

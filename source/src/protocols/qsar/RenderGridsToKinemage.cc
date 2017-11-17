@@ -150,7 +150,7 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagCOP tag,
 	grid_set_prototype_ = scoring_grid::parse_grid_set_from_tag( tag, data );
 
 	if ( !tag->hasOption("grid_name") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage requires the'grid name' option");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RenderGridsToKinemage requires the'grid name' option");
 	}
 
 	grid_name_ = tag->getOption<std::string>("grid_name");
@@ -163,7 +163,7 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagCOP tag,
 			color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("color"));
 
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
 				"high_color and low_color for a two color gradient, or high_color, low_color and "
 				"zero_color for a three color gradient centered at zero");
 		}
@@ -180,7 +180,7 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagCOP tag,
 		low_color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("low_color"));
 		high_color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("high_color"));
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
 			"high_color and low_color for a two color gradient, or high_color, low_color and "
 			"zero_color for a three color gradient centered at zero");
 	}

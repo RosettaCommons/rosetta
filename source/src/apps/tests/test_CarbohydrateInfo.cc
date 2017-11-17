@@ -333,7 +333,7 @@ main( int argc, char *argv[] )
 
 		pose_from_file( bad_pdb, PATH + "pdb_w_bad_links.pdb", PDB_file );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return -1;
 	}

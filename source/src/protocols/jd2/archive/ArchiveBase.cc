@@ -303,7 +303,7 @@ void ArchiveBase::load_decoys( std::string const& filename, SilentStructs& decoy
 	if ( utility::file::file_exists( filename ) ) {
 		SilentFileOptions opts;
 		SilentFileData sfd( opts );
-		if ( !sfd.read_file( filename ) ) throw ( utility::excn::EXCN_BadInput( "problem reading silent file"+filename ) );
+		if ( !sfd.read_file( filename ) ) throw ( CREATE_EXCEPTION(utility::excn::BadInput, "problem reading silent file"+filename ) );
 		for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 			decoys.push_back( *it );
 		}

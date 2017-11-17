@@ -212,8 +212,8 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 	using core::scoring::ScoreFunctionOP;
 
 	if ( ! antibody_info_ ) {
-		using utility::excn::EXCN_Msg_Exception;
-		throw EXCN_Msg_Exception( "A valid AntibodyInfo instance is required to setup " + get_name() + "'s centroid loop "
+		using utility::excn::Exception;
+		throw CREATE_EXCEPTION(Exception,  "A valid AntibodyInfo instance is required to setup " + get_name() + "'s centroid loop "
 			+ "refinement movers." );
 	}
 

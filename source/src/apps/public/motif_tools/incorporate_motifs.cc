@@ -205,7 +205,7 @@ main( int argc, char * argv [] )
 		find_close_motifs();
 		TR.flush();
 		return 0;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		TR << "caught exception" << e.msg() << std::endl;
 		return -1;
 	}

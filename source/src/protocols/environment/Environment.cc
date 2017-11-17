@@ -97,7 +97,7 @@ void Environment::register_mover( moves::MoverOP mover ){
 			<< "' is not a ClientMover or a MoverContainer, and thus cannot be used inside an BrokeredEnvironment. "
 			<< "If you're sure you want to include this mover, set the option 'allow_pure_movers' to true. "
 			<< "This will cause the Environment to ignore Environment-incompatible movers during registration.";
-		throw utility::excn::EXCN_BadInput( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  err.str() );
 	}
 }
 
@@ -137,7 +137,7 @@ core::pose::Pose Environment::end( core::pose::Pose const & pose ){
 	if ( !conf ) {
 		tr.Error << "Environment::end recieved a pose that contains an unprotcted Conformation."
 			<< std::endl;
-		throw utility::excn::EXCN_BadInput( "Nonprotected pose came in to Environment::end" );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Nonprotected pose came in to Environment::end" );
 	}
 
 	core::pose::Pose new_pose = pose;
@@ -268,7 +268,7 @@ void Environment::auto_cut( bool setting ){
 		std::ostringstream ss;
 		ss << "The Environment '" << name() << "' was asked to set auto_cut to "
 			<< setting << ", but broking was already completed." << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  ss.str() );
 	}
 	bAutoCut_ = setting;
 }
@@ -278,7 +278,7 @@ void Environment::inherit_cuts( bool setting ) {
 		std::ostringstream ss;
 		ss << "The Environment '" << name() << "' was asked to set inherit_cuts to "
 			<< setting << ", but broking was already completed." << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  ss.str() );
 	}
 	bInheritCuts_ = setting;
 }
@@ -289,7 +289,7 @@ void Environment::allow_pure_movers( bool setting ) {
 		std::ostringstream ss;
 		ss << "The Environment '" << name() << "' was asked to set allow_pure_movers to "
 			<< setting << ", but broking was already completed." << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  ss.str() );
 	}
 	bAllowPureMovers_ = setting;
 }

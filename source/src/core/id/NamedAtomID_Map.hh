@@ -387,7 +387,7 @@ public: // Indexers
 	{
 		//Hack until I find out the root cause of this from file_data.cc
 		if ( i_res > res_map_.size() ) {
-			throw utility::excn::EXCN_RangeError("Residue outside res_map range");
+			throw CREATE_EXCEPTION(utility::excn::RangeError, "Residue outside res_map range");
 		}
 		if ( res_map_[ i_res ].count( atom ) == 0 ) {
 			res_map_[ i_res ][ atom ] = default_value_;

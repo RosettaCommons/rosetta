@@ -20,7 +20,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <devel/init.hh>
 #include <utility/exit.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Project headers
 #include <protocols/star/StarAbinitio.hh>
@@ -65,7 +65,7 @@ void* star_main(void*) {
 
 	try {
 		JobDistributor::get_instance()->go(mover);
-	} catch (utility::excn::EXCN_Base& e) {
+	} catch (utility::excn::Exception& e) {
 		std::cerr << "Exception: " << std::endl;
 		e.show(std::cerr);
 	}
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 	try {
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main(star_main);
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

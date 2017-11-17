@@ -462,7 +462,7 @@ init_common_options( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	if ( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_key( tag->getOption< std::string >( "scorefxn" ) );
 		if ( ! data.has( "scorefxns", scorefxn_key ) ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 		}
 		score_fxn_ = data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_key );
 	}

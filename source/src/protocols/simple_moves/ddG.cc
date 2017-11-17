@@ -225,12 +225,12 @@ void ddG::parse_my_tag(
 	}
 
 	if ( tag->hasOption("chains") && tag->hasOption("symmetry") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("you cannot specify multiple chains and use symmetry mode in the ddG mover at the same time right now. Sorry");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "you cannot specify multiple chains and use symmetry mode in the ddG mover at the same time right now. Sorry");
 	}
 
 
 	if ( ( tag->hasOption("chain_num") || tag->hasOption("chain_name") ) && tag->hasOption("jump") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("you can specify either chains or jump in the ddG mover, but not both");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "you can specify either chains or jump in the ddG mover, but not both");
 	}
 
 	if ( tag->hasOption("chain_num") ) {

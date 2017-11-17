@@ -107,7 +107,7 @@ public:
 
 	void test_uninitialized() {
 		// Tests that exception is thrown if which chain to move is not defined; via c++ interface
-		TS_ASSERT_THROWS( test_instantiation_->unbind( *test_dimer_pose_ ), utility::excn::EXCN_BadInput );
+		TS_ASSERT_THROWS( test_instantiation_->unbind( *test_dimer_pose_ ), utility::excn::BadInput );
 	}
 
 	void test_dimer_unbind_jump1() {
@@ -121,7 +121,7 @@ public:
 
 	void test_dimer_unbind_jump2() {
 		// Tests that failure is caught with out of range jump_id
-		TS_ASSERT_THROWS( test_instantiation_->add_jump_id( 2, *test_dimer_pose_ ), utility::excn::EXCN_BadInput );
+		TS_ASSERT_THROWS( test_instantiation_->add_jump_id( 2, *test_dimer_pose_ ), utility::excn::BadInput );
 	}
 
 	void test_dimer_unbind_chain1() {
@@ -140,7 +140,7 @@ public:
 
 	void test_dimer_unbind_chain3() {
 		// Tests that failure is caught with out of range chain_id
-		TS_ASSERT_THROWS( test_instantiation_->add_chain_id( 3, *test_dimer_pose_ ), utility::excn::EXCN_BadInput );
+		TS_ASSERT_THROWS( test_instantiation_->add_chain_id( 3, *test_dimer_pose_ ), utility::excn::BadInput );
 	}
 
 	void test_dimer_unbind_chainA() {
@@ -159,7 +159,7 @@ public:
 
 	void test_dimer_unbind_chainC() {
 		// Tests that failure is caught with out of range chain name
-		TS_ASSERT_THROWS( test_instantiation_->add_chain_name( "C", *test_dimer_pose_ ), utility::excn::EXCN_BadInput );
+		TS_ASSERT_THROWS( test_instantiation_->add_chain_name( "C", *test_dimer_pose_ ), utility::excn::BadInput );
 	}
 
 	void test_8mer_unbind_by_single_chain_id() {
@@ -236,7 +236,7 @@ public:
 			};
 		for ( auto tag_str : bad_tags ) {
 			TagCOP tag = tagptr_from_string(tag_str);
-			TS_ASSERT_THROWS( test_instantiation_->parse_my_tag(tag, data_, filters_, movers_, *test_dimer_pose_), utility::excn::EXCN_RosettaScriptsOption );
+			TS_ASSERT_THROWS( test_instantiation_->parse_my_tag(tag, data_, filters_, movers_, *test_dimer_pose_), utility::excn::RosettaScriptsOptionError );
 		}
 	}
 

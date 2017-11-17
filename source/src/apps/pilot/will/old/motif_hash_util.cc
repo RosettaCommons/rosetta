@@ -1174,7 +1174,7 @@ int main(int argc, char *argv[]) {
 		// utility::io::izstream ifs1("test1.txt"); ifs1 >> mh2        ; ifs1.close();
 		// utility::io::ozstream ofs2("test2.txt"); ofs2 << mh2 << endl; ofs2.close();
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 	}
 	return 0;

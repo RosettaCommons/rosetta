@@ -145,7 +145,7 @@ void LoopProtocol::parse_my_tag( // {{{1
 			stringstream message;
 			message << "getOption: key = temp_cycles stream extraction failed! ";
 			message << "Tried to parse '" << cycles << "'\n";
-			throw utility::excn::EXCN_Msg_Exception(message.str());
+			throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
 		}
 	}
 

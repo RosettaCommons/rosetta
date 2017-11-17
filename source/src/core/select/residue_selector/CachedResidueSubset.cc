@@ -61,7 +61,7 @@ CachedResidueSubset::get_subset( std::string const & name ) const
 			msg << s->first << " ";
 		}
 		msg << std::endl;
-		throw utility::excn::EXCN_BadInput( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 	}
 	return ResidueSubsetCOP( new ResidueSubset( subset->second->begin(), subset->second->end() ) );
 }

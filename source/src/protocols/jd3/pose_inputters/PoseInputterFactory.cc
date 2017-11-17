@@ -56,7 +56,7 @@ PoseInputterFactory::factory_register( PoseInputterCreatorOP creator )
 		std::string err_msg = "PoseInputterFactory::factory_register already has a pose_inputter creator with name \""
 			+ pose_inputter_type + "\".  Conflicting PoseInputter names";
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( err_msg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 		} else {
 			utility_exit_with_message( err_msg );
 		}
@@ -73,7 +73,7 @@ PoseInputterFactory::new_pose_inputter( std::string const & pose_inputter_type )
 	PoseInputterMap::const_iterator iter( pose_inputter_creator_map_.find( pose_inputter_type ) );
 	if ( iter != pose_inputter_creator_map_.end() ) {
 		if ( ! iter->second ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Error: PoseInputterCreatorOP prototype for " + pose_inputter_type + " is NULL!" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: PoseInputterCreatorOP prototype for " + pose_inputter_type + " is NULL!" );
 		}
 		return iter->second->create_inputter();
 	} else {
@@ -82,7 +82,7 @@ PoseInputterFactory::new_pose_inputter( std::string const & pose_inputter_type )
 			TR << pose_inputter_elem.first << ", ";
 		}
 		TR << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( pose_inputter_type + " is not known to the PoseInputterFactory."
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  pose_inputter_type + " is not known to the PoseInputterFactory."
 			" Was it registered via a PoseInputterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
 		return PoseInputterOP();
 	}

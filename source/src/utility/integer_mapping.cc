@@ -55,12 +55,12 @@ void subset_mapping::reserve_destination_size( platform::Size dst_size )
 void subset_mapping::set_next_correspondence( platform::Size source_id )
 {
 	if ( source_id > src_2_dst_.size() || source_id == 0 ) {
-		throw excn::EXCN_Msg_Exception( "subset_mapping::set_next_correspondence "
+		throw CREATE_EXCEPTION(excn::Exception, "subset_mapping::set_next_correspondence "
 			"recieved an out-of-bounds source id (" + to_string( source_id ) + ") "
 			"with a source-enumeration size of " + to_string( src_2_dst_.size() ) );
 	}
 	if ( src_2_dst_[ source_id ] != UNMAPPED ) {
-		throw excn::EXCN_Msg_Exception( "subset_mapping::set_next_correspondence "
+		throw CREATE_EXCEPTION(excn::Exception, "subset_mapping::set_next_correspondence "
 			"recieved an already-mapped source id (" + to_string( source_id ) + ") "
 			"which had been previously assigned to destination id " + to_string( src_2_dst_[ source_id ] ) );
 	}
@@ -79,4 +79,3 @@ platform::Size subset_mapping::d2s( platform::Size destination_id ) const { retu
 bool subset_mapping::source_id_is_mapped( platform::Size source_id ) const { return src_2_dst_[ source_id ] != UNMAPPED; }
 
 }
-

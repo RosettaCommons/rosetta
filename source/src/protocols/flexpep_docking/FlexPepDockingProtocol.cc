@@ -1772,7 +1772,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 	if ( tag->hasOption( "scorefxn_lowres") ) {
 		std::string const scorefxn_lowres_key( tag->getOption<std::string>("scorefxn_lowres" ) );
 		if ( ! data.has( "scorefxns", scorefxn_lowres_key ) ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_lowres_key + " not found in basic::datacache::DataMap.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScoreFunction " + scorefxn_lowres_key + " not found in basic::datacache::DataMap.");
 		}
 		scorefxn_lowres_ = data.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_lowres_key );
 	}

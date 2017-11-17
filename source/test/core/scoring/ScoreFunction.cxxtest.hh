@@ -152,7 +152,7 @@ public:
 		try {
 			set_throw_on_next_assertion_failure(); // just in case
 			ScoreFunction sfxn( *sfxn_option_collection );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			std::cerr << e.msg() << std::endl;
 			TS_ASSERT( false ); // we screwed the pooch
 		}

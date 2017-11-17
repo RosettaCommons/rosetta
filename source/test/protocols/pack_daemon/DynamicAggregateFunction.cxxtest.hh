@@ -132,10 +132,11 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "Expected to read secondary resfile name in the DynamicAggregateFunction input file after reading STATE correspondence file on line 1\nSTATE trpcage 1l2y.pdb 1l2y.correspondence.txt";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT(flag);
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -161,10 +162,11 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "Expected to read secondary resfile name in the DynamicAggregateFunction input file after reading STATE correspondence file on line 1\nSTATE trpcage 1l2y.pdb";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT(flag);
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -190,13 +192,14 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message =
 				"Expected to read pdb file name in the DynamicAggregateFunction input file after reading STATE pdb file on line 1\n"
 				"STATE trpcage";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT(flag);
+			if (!flag) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -222,11 +225,12 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Expected to read secondary resfile name in the DynamicAggregateFunction input file after reading STATE correspondence file on line 1\nSTATE trpcage 1l2y.pdb 1l2y.correspondence.txt";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -252,11 +256,12 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Expected to read secondary resfile name in the DynamicAggregateFunction input file after reading STATE correspondence file on line 1\nSTATE trpcage 1l2y.pdb";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -282,13 +287,14 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message =
 				"Expected to read pdb file name in the DynamicAggregateFunction input file after reading STATE pdb file on line 1\n"
 				"STATE trpcage";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -314,12 +320,13 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_STATE_command_varname_bad" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			std::string expected_error_message = "Illegal name for variable, 'max' in the STATE command on line 1\nSTATE max 1l2y.pdb 1l2y.correspondence.txt 1l2y.secondary.resfile";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -345,15 +352,16 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_STATE_command_varname_function_name" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			//std::string expected_error_message = "Declaration of variable 'pow' in STATE conflicts with a function name.  Line 1\nSTATE pow 1l2y.pdb 1l2y.correspondence.txt 1l2y.secondary.resfile";
 			std::string expected_error_message =
 				"Declaration of variable 'pow' in STATE command conflicts with a function name.  Line 1\n"
 				"STATE pow 1l2y.pdb 1l2y.correspondence.txt 1l2y.secondary.resfile";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -379,7 +387,7 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_STATE_command_varname_duplicated" << std::endl;
 			//std::cout << e.msg() << std::endl << std::endl;
 			//std::string expected_error_message = "Variable name trpcage appears multiple times in the DynamicAggregateFunction file.\nFirst occurrance was found on line 1.  Second occurrance found while reading STATE command\nSTATE trpcage 1l2y.pdb 1l2y.correspondence.txt 1l2y.secondary.resfile\nLine # 2";
@@ -388,8 +396,9 @@ public:
 				"Second occurrance found while reading a STATE command\n"
 				"STATE trpcage 1l2y.pdb 1l2y.correspondence.txt 1l2y.secondary.resfile\n"
 				"Line # 2";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -416,7 +425,7 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( true );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << e.msg();
 			TS_ASSERT( false );
 		}
@@ -441,11 +450,12 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Expected to read state-vector file name in the DynamicAggregateFunction input file after reading STATE_VECTOR variable name on line 1\nSTATE_VECTOR trpcage";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -470,11 +480,12 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Expected to read state-vector variable name in the DynamicAggregateFunction input file after reading STATE_VECTOR on line 1\nSTATE_VECTOR";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -499,11 +510,12 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Expected to read state-vector file name in the DynamicAggregateFunction input file after reading STATE_VECTOR variable name on line 1\nSTATE_VECTOR trpcage";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -528,11 +540,12 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Expected to read state-vector variable name in the DynamicAggregateFunction input file after reading STATE_VECTOR on line 1\nSTATE_VECTOR";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -557,12 +570,13 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_STATE_VECTOR_command_illegal_varname" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			std::string expected_error_message = "Illegal name for variable, 'min' in the STATE_VECTOR command on line 1\nSTATE_VECTOR min trpcage.list";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -587,14 +601,15 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_STATE_VECTOR_command_function_varname" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			std::string expected_error_message = //"Declaration of variable 'sqrt' in STATE_VECTOR conflicts with a function name.  Line 1\nSTATE_VECTOR sqrt trpcage.list";
 				"Declaration of variable 'sqrt' in STATE_VECTOR command conflicts with a function name.  Line 1\n"
 				"STATE_VECTOR sqrt trpcage.list";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -619,7 +634,7 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_STATE_VECTOR_command_duplicate_varname" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			std::string expected_error_message = //"Variable name trpcage appears multiple times in the DynamicAggregateFunction file.\nFirst occurrance was found on line 1.  Second occurrance found while reading STATE_VECTOR command\nSTATE_VECTOR trpcage trpcage.list\nLine # 2";
@@ -627,8 +642,9 @@ public:
 				"Second occurrance found while reading a STATE_VECTOR command\n"
 				"STATE_VECTOR trpcage trpcage.list\n"
 				"Line # 2";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 
@@ -674,7 +690,7 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( true );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << "Caught exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -713,7 +729,7 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( true );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << "Caught exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -763,7 +779,7 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( true );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << e.msg();
 			TS_ASSERT( false );
 		}
@@ -788,7 +804,7 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( true );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << e.msg();
 			TS_ASSERT( false );
 		}
@@ -813,7 +829,7 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( true );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << e.msg();
 			TS_ASSERT( false );
 		}
@@ -838,12 +854,13 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_VECTOR_EXPRESSION_command_two_local_variables_misplaced_comma" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			std::string expected_error_message = "The vector-variable name 'trpcage1,'  given for local-variable 'x' does not belong to an already-declared vector variable.  Error in the VECTOR_EXPRESSION command on line 3\nVECTOR_EXPRESSION FOR x IN trpcage1, y IN trpcage2 : trpcage_plus_2 = x + y + 2";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -869,11 +886,12 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Expected to read 'IN' in the DynamicAggregateFunction input file following the declaration of local variable 'x', but read 'in' in the VECTOR_EXPRESSION command on line 2\nVECTOR_EXPRESSION FOR x in trpcage : trpcage_plus_2 = x + 2";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -898,12 +916,13 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_VECTOR_EXPRESSION_command_duplicated_local_varname()" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			std::string expected_error_message = "Local variable, 'x' in VECTOR_EXPRESSION command appears multiple times on line 3\nVECTOR_EXPRESSION FOR x IN trpcage , x IN trpcage2  : trpcage_plus_2 = x + 2";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -928,7 +947,7 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( true );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cout << e.msg();
 			TS_ASSERT( false );
 		}
@@ -953,12 +972,13 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_VECTOR_VARIABLE_command_bad_varname" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			std::string expected_error_message = "Unknown variable 'trpcage3' requested in the VECTOR_VARIABLE command on line 3\nVECTOR_VARIABLE trpcage_v = trpcage1 trpcage3";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -983,12 +1003,13 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_VECTOR_VARIABLE_command_bad_vecvarname" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			std::string expected_error_message = "Illegal name for variable, 'min' in the VECTOR_VARIABLE command on line 3\nVECTOR_VARIABLE min = trpcage1 trpcage2";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -1017,14 +1038,15 @@ public:
 		try {
 			daf->initialize_from_input_file( ds, iss );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_daf_VECTOR_VARIABLE_command_func_vecvarname" << std::endl;
 			//std::cout << e.msg() << std::endl;
 			std::string expected_error_message = //"Declaration of variable 'exp' in VECTOR_VARIABLE conflicts with a function name.  Line 3\nVECTOR_VARIABLE exp = trpcage1 trpcage2";
 				"Declaration of variable 'exp' in VECTOR_VARIABLE command conflicts with a function name.  Line 3\n"
 				"VECTOR_VARIABLE exp = trpcage1 trpcage2";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -1065,14 +1087,15 @@ public:
 		std::istringstream iss( efuncfile );
 		try {
 			entfunc.initialize_from_input_file( iss );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Expected to read comma  or a right curly brace, but found 'e'.\n"
 				"Error encountered while reading AA_SET command\n"
 				"AA_SET polar = { d e,h,k,n,q,r,s,t}\n"
 				"Line # 1";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -1086,15 +1109,20 @@ public:
 		std::istringstream iss( efuncfile );
 		try {
 			entfunc.initialize_from_input_file( iss );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
-			TS_ASSERT(
-				"Expected to read an equals sign after reading amino-acid-set name'polar' but found '{'\n"
+			std::string expected_error_message =
+ 				"Expected to read an equals sign after reading amino-acid-set name'polar' but found '{'\n"
 				"Error encountered while reading AA_SET command\n"
 				"AA_SET polar { d, e,h,k,n,q,r,s,t}\n"
-				"Line # 1" == e.msg() );
-		}
+				"Line # 1";
 
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
+				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
+			}
+		}
 	}
 
 	void test_EntityFunc_AA_SET_command_missing_right_curly_brace() {
@@ -1104,15 +1132,16 @@ public:
 		std::istringstream iss( efuncfile );
 		try {
 			entfunc.initialize_from_input_file( iss );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message =
 				"Expected to read a right curly bracket ('}') or a 1-letter  amino acid code, but found an end-of-line.\n"
 				"Error encountered while reading AA_SET command\n"
 				"AA_SET polar = { d, e,h,k,n,q,r,s,t\n"
 				"Line # 1";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -1164,13 +1193,14 @@ public:
 		std::istringstream iss( efuncfile );
 		try {
 			entfunc.initialize_from_input_file( iss );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "Amino-acid-set name 'ppolar' has not previously been declared.\n"
 				"Error encountered while reading SET_CONDITION command\n"
 				"SET_CONDITION pol1 = ee_1 in ppolar\n"
 				"Line # 2";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -1186,14 +1216,15 @@ public:
 		std::istringstream iss( efuncfile );
 		try {
 			entfunc.initialize_from_input_file( iss );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Expected to read comma  or a right curly brace, but found 'e'.\n"
 				"Error encountered while reading SET_CONDITION command\n"
 				"SET_CONDITION pol1 = ee_1 in { d e,h,k,n,q,r,s,t}\n"
 				"Line # 1";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -1206,14 +1237,15 @@ public:
 		std::istringstream iss( efuncfile );
 		try {
 			entfunc.initialize_from_input_file( iss );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message = "Amino-acid-set name 'd,' has not previously been declared.\n"
 				"Error encountered while reading SET_CONDITION command\n"
 				"SET_CONDITION pol1 = ee_1 in  d, e,h,k,n,q,r,s,t}\n"
 				"Line # 1";
-			TS_ASSERT( expected_error_message == e.msg() );
-			if ( expected_error_message != e.msg() ) {
+			bool flag = e.msg().find(expected_error_message) != std::string::npos;
+			TS_ASSERT( flag );
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -1237,5 +1269,3 @@ public:
 		TS_ASSERT( score == -6.0 );
 	}
 };
-
-

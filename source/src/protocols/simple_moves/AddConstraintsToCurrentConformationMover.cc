@@ -117,7 +117,7 @@ AddConstraintsToCurrentConformationMover::generate_constraints( core::pose::Pose
 	// generate residue subset
 	if ( !selector_ ) {
 		debug_assert( selector_ );
-		throw utility::excn::EXCN_BadInput( "Selector not set in AddConstraintsToCurrentConformationMover::generate_constraints()\n" );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Selector not set in AddConstraintsToCurrentConformationMover::generate_constraints()\n" );
 	}
 	core::select::residue_selector::ResidueSubset const subset = selector_->apply( pose );
 
@@ -338,7 +338,7 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	if ( tag->hasOption( "task_operations" ) && tag->hasOption( "residue_selector" ) ) {
 		std::stringstream msg;
 		msg << "AddConstraintsToCurrentConformationMover::parse_my_tag(): 'task_operations' and 'residue_selector' cannot both be specified." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 }
 

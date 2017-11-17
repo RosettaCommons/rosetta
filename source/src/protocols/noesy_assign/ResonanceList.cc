@@ -171,7 +171,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 			} else if ( aa_name.size() == 3 ) {
 				aa = aa_from_name( aa_name );
 			} else {
-				throw utility::excn::EXCN_BadInput( "did not recognize aminoacid: " + aa_name);
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  "did not recognize aminoacid: " + aa_name);
 			}
 			if ( sequence_.size() < resn ) {
 				while ( sequence_.size() < resn-1 ) sequence_.push_back('X');
@@ -200,7 +200,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		if ( line_stream ) {
 			if ( fl_tag!="None" ) {
 				if ( fl_tag[0]!='#' && fl_tag[0]!='[' ) {
-					throw utility::excn::EXCN_BadInput( "did not recognize item " +fl_tag + " in line " + line );
+					throw CREATE_EXCEPTION(utility::excn::BadInput,  "did not recognize item " +fl_tag + " in line " + line );
 				} else { //that means fl_tag[0]=='[' || fl_tag[0]=='#'
 					std::stringstream float_info;
 					fl_tag[0]=' ';
@@ -219,7 +219,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 						float_info << fl_tag;
 					}
 					if ( !closed ) {
-						throw utility::excn::EXCN_BadInput( "expect closing ] in line " + line );
+						throw CREATE_EXCEPTION(utility::excn::BadInput,  "expect closing ] in line " + line );
 					}
 					char cstr[100];
 					while ( float_info.getline(cstr, 50, ',' ) ) {
@@ -299,7 +299,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 					if ( sequence_[ i ] == 'X' ) {
 						sequence_[ i ] = sequence_from_header[ i ];
 					} else if ( sequence_[ i ] != sequence_from_header[ i ] ) {
-						throw utility::excn::EXCN_BadInput( std::string("sequence information in header is not consistent with sequence letter ")+
+						throw CREATE_EXCEPTION(utility::excn::BadInput,  std::string("sequence information in header is not consistent with sequence letter ")+
 							"in resonance lines at residue "+ObjexxFCL::string_of( i+1 ) );
 					}
 				}
@@ -389,7 +389,7 @@ Resonance const& ResonanceList::operator[] ( core::id::NamedAtomID const& atom )
 			if ( it->atom() == atom ) return *it;
 		}
 	}
-	throw EXCN_UnknownResonance( atom, "can't find atom ");
+	throw CREATE_EXCEPTION(EXCN_UnknownResonance,  atom, "can't find atom ");
 	return *(map_.begin()->second); //to make compiler happy
 }
 
@@ -397,7 +397,7 @@ Resonance const& ResonanceList::operator[] ( core::id::NamedAtomID const& atom )
 Resonance const& ResonanceList::operator[] ( core::Size key ) const {
 	auto iter = map_.find( key );
 	if ( iter == map_.end() ) {
-		throw EXCN_UnknownResonance( id::NamedAtomID::BOGUS_NAMED_ATOM_ID(), "can't find resonance " + ObjexxFCL::string_of( key ) );
+		throw CREATE_EXCEPTION(EXCN_UnknownResonance, id::NamedAtomID::BOGUS_NAMED_ATOM_ID(), "can't find resonance " + ObjexxFCL::string_of( key ) );
 	}
 	return *(iter->second);
 }
@@ -417,7 +417,7 @@ ResonanceList::Resonances const& ResonanceList::resonances_at_residue( core::Siz
 	if ( it_res != by_resid_.end() ) {
 		return it_res->second;
 	}
-	throw EXCN_UnknownResonance( id::NamedAtomID::BOGUS_NAMED_ATOM_ID(), "can't find resonance with residue " + ObjexxFCL::string_of( resid ) );
+	throw CREATE_EXCEPTION(EXCN_UnknownResonance, id::NamedAtomID::BOGUS_NAMED_ATOM_ID(), "can't find resonance with residue " + ObjexxFCL::string_of( resid ) );
 	return by_resid_.begin()->second; //to make compile happy
 }
 
@@ -483,7 +483,7 @@ std::string label_atom_name( std::string const& proton_name, core::chemical::AA 
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "no label for proton_name " + proton_name + " on " + name_from_aa( aa ) << std::endl;
 	}
-	throw EXCN_UnknownAtomname("");
+	throw CREATE_EXCEPTION(EXCN_UnknownAtomname, "");
 	return "no_atom";
 }
 
@@ -505,14 +505,14 @@ void ResonanceList::update_bond_connections() {
 			ResonanceOP label_reso_ptr( map_[ label_reso.label() ] );
 			proton->add_connected_resonance( ResonanceAP( label_reso_ptr ) );
 			label_reso_ptr->add_connected_resonance( proton );
-		} catch ( EXCN_UnknownResonance& exception ) {
+		} catch (EXCN_UnknownResonance& exception ) {
 			if ( !unknown_resonances_.count( exception.atom() ) ) {
 				unknown_resonances_.insert( exception.atom() );
 				exception.show( tr.Warning );
 				tr.Warning << " as label for atom " << it->second->atom().atom() << " " <<  aa_from_resid( resid ) << std::endl;
 			}
 			continue;
-		} catch ( EXCN_UnknownAtomname& exception ) { //this happens if we try to assign a proton that can't have a label: i.e., a H in a HCH spectrum
+		} catch (EXCN_UnknownAtomname& exception ) { //this happens if we try to assign a proton that can't have a label: i.e., a H in a HCH spectrum
 			utility_exit_with_message( "cannot find label atom for resid: " + it->second->atom().atom() + " " + ObjexxFCL::string_of( resid ) );
 		}
 	}

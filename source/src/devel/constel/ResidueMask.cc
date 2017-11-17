@@ -41,7 +41,7 @@ ResidueMask::ResidueMask(Pose& ps, std::string const &fname) :
 	std::ifstream ifs(fname.c_str());
 	if ( !ifs ) {
 		TR << "can't open " << fname << std::endl;
-		throw utility::excn::EXCN_BadInput(fname);
+		throw CREATE_EXCEPTION(utility::excn::BadInput, fname);
 	}
 
 	int ri;

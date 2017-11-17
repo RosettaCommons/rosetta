@@ -404,9 +404,9 @@ public:
 		try {
 			ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "Unable to find resource options for the resource options tag 'options_tag_without_a_corresponding_object'.";
-			TS_ASSERT( expected_error_message == e.msg() );
+			TS_ASSERT( e.msg().find(expected_error_message) != std::string::npos );
 		}
 	}
 
@@ -438,9 +438,9 @@ public:
 		try {
 			ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "LoopsFileLoader expected to be given a LoopsFileOptions object, but was given a non-LoopsFileOptions object of type 'DummyResourceOptions', which has the name 'unnamed'.";
-			TS_ASSERT( expected_error_message == e.msg() );
+			TS_ASSERT( e.msg().find(expected_error_message) != std::string::npos );
 		}
 	}
 
@@ -459,14 +459,14 @@ public:
 		utility::tag::TagCOP resource_options_tags = utility::tag::Tag::create( resource_options_stream );
 		try {
 			jd2rm->read_resource_options_tags( resource_options_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_options( "dummyopt1" ) );
 			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt1" ).get() ));
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -485,7 +485,7 @@ public:
 		utility::tag::TagCOP resource_options_tags = utility::tag::Tag::create( resource_options_stream );
 		try {
 			jd2rm->read_resource_options_tags( resource_options_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -496,7 +496,7 @@ public:
 			TS_ASSERT( jd2rm->has_resource_options( "dummyopt2" ) );
 			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt2" ).get() ));
 			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt2" ).get() )->somevar_ == 6 );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -517,7 +517,7 @@ public:
 		try {
 			jd2rm->read_resource_options_tags( resource_options_tags );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Duplicated tag, 'dummyopt1' assigned to a ResourceOptions object with type 'DummyResourceOptions'.\n"
 				"Prevous ResourceOptions object with this tag was of type 'DummyResourceOptions'\n";
@@ -525,7 +525,7 @@ public:
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -542,13 +542,13 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_configuration( "dummyresource" ) );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -566,14 +566,14 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Resource subtag with LoaderType 'DummyResource' was not supplied with a locatorID tag, which is required.\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -590,14 +590,14 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Duplicated tag, 'dummyresource' assigned to a Resource object with ResourceLoader type 'DummyResource'.\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -621,13 +621,13 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cout << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_configuration( "dummyresource" ) );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -646,14 +646,14 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Resource 'dummyresource' with LoaderType 'DummyResource' was given the tag for a ResourceLoaderOptions, 'dummyopt1', which has not previously been declared.";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -669,14 +669,14 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Resource 'dummyresource' with LoaderType 'DummyResource' was given the tag for a ResourceLoaderOptions, 'dummyopt1', which has not previously been declared.";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -692,14 +692,14 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Resource subtag with LoaderType 'DummyResource' has both file='1ten.pdb' and locatorID='1ten.pdb' but it is only allowed to have one.\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << "'" << e.msg() << "'" << std::endl;
 				std::cout << "'" << expected_error << "'" << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -715,14 +715,14 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Resource 'dummyresource' with LoaderType 'DummyResource' has locator=\"\" and file='1ten.pdb'. But specifying a file only compatible with the FileSystemResourceLocator.";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -738,14 +738,14 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Resource subtag with LoaderType 'DummyResource' was given the ResourceLocator tag 'FileSystemResourceLocator', which has not previously been declared.";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -762,7 +762,7 @@ public:
 		utility::tag::TagCOP resource_locators_tags = utility::tag::Tag::create( resource_locators_stream );
 		try {
 			jd2rm->read_resource_locators_tags( resource_locators_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -798,13 +798,13 @@ public:
 		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			TS_ASSERT( false );
 			std::cout << "Raised exception " << e.msg() << std::endl;
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_configuration( "dummyresource" ) );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -824,7 +824,7 @@ public:
 		ResourceOP dummy;
 		try {
 			dummy = jd2rm->get_resource( "DummyResource1" );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			std::cerr  << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -850,7 +850,7 @@ public:
 		try {
 			dummy = jd2rm->get_resource( "DummyResource2" );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			std::string expected_error =
 				"JD2ResourceManager does not have a resource corresponding to the resource description 'DummyResource2'. for job 'EMPTY_JOB_use_jd2'.\n"
 				"Resources may be specified on the command line or through the JD2ResourceManagerJobInputter resource-declaration file.\n"
@@ -861,7 +861,7 @@ public:
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -880,7 +880,7 @@ public:
 		try {
 			dummy = jd2rm->get_resource( "DummyResource3" );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			std::string expected_error =
 				"JD2ResourceManager does not have a resource corresponding to the resource description 'DummyResource3'. for job 'EMPTY_JOB_use_jd2'.\n"
 				"Resources may be specified on the command line or through the JD2ResourceManagerJobInputter resource-declaration file.\n"
@@ -890,7 +890,7 @@ public:
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 

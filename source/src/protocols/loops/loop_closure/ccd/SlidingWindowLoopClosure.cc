@@ -441,7 +441,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 		}
 	} // loop_size
 	tr.Warning << "no good loop found !" << std::endl;
-	throw( loops::EXCN_Loop_not_closed() );
+	throw CREATE_EXCEPTION(loops::EXCN_Loop_not_closed, "");
 } //apply
 
 
@@ -636,7 +636,7 @@ SlidingWindowLoopClosure::set_loop( Loop const& loop_in ) {
 		ss << this->get_name() << " was given a loop to close (" << loop_
 			<< ") for which it does not have any fragments (residues: " << fragset_->min_pos() << "-"
 			<< fragset_->max_pos() << ").";
-		throw utility::excn::EXCN_Msg_Exception( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception, ss.str() );
 	}
 }
 

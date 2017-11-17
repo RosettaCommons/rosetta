@@ -154,13 +154,13 @@ RollMover::parse_my_tag(
 		if ( tag->hasOption("min_angle") ) {
 			min_angle_ = tag->getOption<core::Real>("min_angle");
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires min_angle option");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RollMover requires min_angle option");
 		}
 		/*parse max_angle*/
 		if ( tag->hasOption("max_angle") ) {
 			max_angle_ = tag->getOption<core::Real>("max_angle");
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires max_angle option");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RollMover requires max_angle option");
 		}
 
 		bool axis_option_parsed = false;
@@ -197,10 +197,10 @@ RollMover::parse_my_tag(
 		}
 
 		if ( !axis_option_parsed ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires axis option");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RollMover requires axis option");
 		}
 		if ( !translate_option_parsed ) {
-			//throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires translate option");
+			//throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RollMover requires translate option");
 			TR << "No translation given, using the pose's center of mass" << std::endl;
 			translate_ = protocols::geometry::center_of_mass(pose, start_res_, stop_res_);
 		}

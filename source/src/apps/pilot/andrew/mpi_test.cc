@@ -65,7 +65,7 @@ int main( int argc, char ** argv )
 			TR << "Node " << mpi_rank() << " recieved a single double " << receive_double_from_node( 0 ) << std::endl;
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

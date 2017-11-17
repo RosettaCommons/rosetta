@@ -29,7 +29,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -38,17 +38,9 @@ namespace denovo_design {
 namespace components {
 
 /// @brief Exception thrown by PoseFolder::apply to indicate folding was not successful
-class EXCN_Fold : public utility::excn::EXCN_Base {
+class EXCN_Fold : public utility::excn::Exception {
 public:
-	EXCN_Fold( std::string const & msg ):
-		EXCN_Base(), msg_( msg ) {}
-
-	virtual void
-	show( std::ostream & os ) const { os << msg_; }
-
-	std::string msg_;
-private:
-	EXCN_Fold();
+	using utility::excn::Exception::Exception;
 };
 
 /// @brief Given a pose with all residues, and a StructureData object,

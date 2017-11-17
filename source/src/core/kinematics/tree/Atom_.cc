@@ -487,7 +487,7 @@ Atom_::get_input_stub() const
 				input_stub_atom2()->position(),
 				input_stub_atom3()->position()
 			);
-		} catch ( utility::excn::EXCN_Msg_Exception const & ) {
+		} catch ( utility::excn::Exception const & ) {
 			TR.Error << "Issue getting stub for atom " << atom_id() << " -- possibly due to degenerate/colinear atoms:" << std::endl;
 			TR.Error << "\t " << input_stub_atom1_id() << " -- " << input_stub_atom1()->position() << std::endl;
 			TR.Error << "\t " << input_stub_atom2_id() << " -- " << input_stub_atom2()->position() << std::endl;

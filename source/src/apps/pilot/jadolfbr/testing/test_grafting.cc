@@ -235,7 +235,7 @@ int main(int argc, char* argv[]){
 		//option.add( mode, "rb_min or cart ");
 		devel::init(argc, argv);
 		protocols::jd2::JobDistributor::get_instance()->go(new myspace::GraftTester());
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cout << "Exception: " << std::endl;
 		excn.show( std::cerr );
 		return -1;

@@ -118,7 +118,7 @@ HbondsToAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Da
 	if ( tag->hasOption( "atomname" ) ) {
 		atomdesg_ = tag->getOption< std::string >( "atomname" );
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("Need to set atomname");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Need to set atomname");
 	}
 
 	TR<<"Hbonds to atom filter for resnum "<<resnum_<<" and name " << atomdesg_ <<" with "<<partners_<<" hbonding partners"<<std::endl;

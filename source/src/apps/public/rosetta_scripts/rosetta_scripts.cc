@@ -41,7 +41,7 @@
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
 
@@ -110,7 +110,7 @@ main( int argc, char * argv [] )
 #endif
 			}
 		}
-	} catch( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		basic::Error()
 			<< "Exception caught by rosetta_scripts application:"
 			<< excn << std::endl;

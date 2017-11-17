@@ -171,9 +171,9 @@ public:
 			test_string = "XX";
 			beta_turns->validate_ramachandran_hash( test_string );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "The Ramachandran hash 'XX' contains 'X,' which is not valid. Valid Ramachandran hashes are 'A', 'B', 'L' and 'E' for trans peptide bonds, and 'a', 'b', 'l' and 'e' for cis peptide bonds.";
-			TS_ASSERT( expected_error_message == e.msg() );
+			TS_ASSERT( e.msg().find(expected_error_message) != std::string::npos );
 		}
 
 	}

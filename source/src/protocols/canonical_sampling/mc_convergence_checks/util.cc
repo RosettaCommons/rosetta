@@ -44,7 +44,7 @@ void setup_convergence_checks_from_cmdline( moves::MonteCarlo& mc ) {
 			utility::sys_sleep( 1 );
 			testin.open( option[ OptionKeys::mc::known_structures ]() );
 		} while ( !testin.good() && trial-- > 0 );
-		// if ( trial == 0 ) throw EXCN_BadInput( "can't open "+option[ OptionKeys::mc::known_structures ]() );
+		// if ( trial == 0 ) throw CREATE_EXCEPTION(BadInput,  "can't open "+option[ OptionKeys::mc::known_structures ]() );
 		/* okay file is now good, or will never be... */
 		Pool_RMSD_OP pool_ptr( new Pool_RMSD(
 			option[ OptionKeys::mc::known_structures ]()

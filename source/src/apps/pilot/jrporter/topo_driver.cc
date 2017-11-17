@@ -158,7 +158,7 @@ int main( int argc, char** argv ){
 
   try {
     test_chunk( pose );
-  } catch ( utility::excn::EXCN_Msg_Exception excn ){
+  } catch (utility::excn::Exception excn ){
     std::cout << excn << std::endl;
     std::exit( 1 );
   }

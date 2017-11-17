@@ -232,7 +232,7 @@ int main(int argc, char* argv[]){
 		option.add( interface, "dock_chains interface definition, optional, ex LH_A.  Can handle any number of chains. ");
 		devel::init(argc, argv);
 		protocols::jd2::JobDistributor::get_instance()->go(new InterfaceFeaturesTests);
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cout << "Exception: " << std::endl;
 		excn.show( std::cerr );
 		return -1;

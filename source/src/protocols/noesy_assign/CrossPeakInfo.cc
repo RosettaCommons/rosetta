@@ -148,7 +148,7 @@ std::string CrossPeakInfo::label_atom_name( std::string const& proton_name, core
 	if ( tr_labels.Trace.visible() ) {
 		tr_labels.Trace << "proton_name " + proton_name + " not recognized for " + label_atom_type_ + " label on " + name_from_aa( aa ) << std::endl;
 	}
-	throw EXCN_UnknownAtomname("");
+	throw CREATE_EXCEPTION(EXCN_UnknownAtomname, "");
 	return "no_atom";
 }
 

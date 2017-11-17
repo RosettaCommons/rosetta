@@ -225,7 +225,7 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 
 
 	if ( ! best_fragment_.frame().is_valid() ) {
-		throw( loops::EXCN_Loop_not_closed() );
+		throw CREATE_EXCEPTION(loops::EXCN_Loop_not_closed, "");
 	}
 	//* apply winner and generate output, --- essentially copy from Parent class
 	best_fragment_.apply( movemap(), less_cut );

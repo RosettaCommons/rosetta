@@ -301,11 +301,11 @@ MatcherMover::parse_my_tag(
 			core::select::residue_selector::ResidueSelectorCOP selector;
 			try {
 				selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_str );
-			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			} catch ( utility::excn::Exception & e ) {
 				std::stringstream error_msg;
 				error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from MatcherMover::parse_my_tag.\n";
 				error_msg << e.msg();
-				throw utility::excn::EXCN_RosettaScriptsOption( error_msg.str() );
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  error_msg.str() );
 			}
 			debug_assert( selector );
 			selectors_.push_back( selector );
@@ -346,7 +346,7 @@ MatcherMover::parse_my_tag(
 	}
 	if ( bad_options ) {
 		msg << "." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
 

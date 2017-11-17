@@ -115,7 +115,7 @@ FlexBBMeanField::process()
 			converge();
 			rot_matrices_[ bb ] = *( MeanField::rot_matrix() );
 			energy_matrices_[ bb ] = energies_matrix();
-		} catch ( utility::excn::EXCN_Msg_Exception &excn )
+		} catch ( utility::excn::Exception &excn )
 {
 			TR.Info << "Pose did not converge, deleted." << std::endl;
 			delete_pose( bb );
@@ -127,7 +127,7 @@ FlexBBMeanField::process()
 		std::stringstream error_message;
 		error_message
 			<< "No poses reached convergence." << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
 	TR.Info << "Total number of final poses " << num_poses() << std::endl;

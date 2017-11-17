@@ -851,7 +851,7 @@ main( int argc, char ** argv )
 			(hb_conformation.run_example_hbond_sweep
 			("SER", "HG", "GLY", "O", steps));
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

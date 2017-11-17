@@ -119,7 +119,7 @@ main( int argc, char* argv [] )
 		}	// for ( unsigned int i = 1; i <= pose.size(); ++i )
 	} // 	for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		return -1;
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}

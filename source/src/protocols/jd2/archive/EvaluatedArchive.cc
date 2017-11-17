@@ -280,7 +280,7 @@ Real EvaluatedArchive::select_score( SilentStructOP evaluated_decoy ) {
 			}
 		} else { //normal score-contribution --- column should be present
 			if ( !evaluated_decoy->has_energy( name ) ) {
-				throw EXCN_Archive( "energy name "+name+" not found in returned decoys -- run with rescoring in archive to avoid this or fix your batches" );
+				throw CREATE_EXCEPTION(EXCN_Archive, "energy name "+name+" not found in returned decoys -- run with rescoring in archive to avoid this or fix your batches" );
 			} // add weighted column-value to final score
 			if ( weight > 0.01 ) {
 				sum += weight * evaluated_decoy->get_energy( name ) / variations.find( name )->second;

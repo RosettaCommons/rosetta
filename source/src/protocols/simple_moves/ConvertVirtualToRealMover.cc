@@ -80,7 +80,7 @@ ConvertVirtualToRealMover::parse_my_tag(
 		// set the selector_ private variable
 		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
 		if ( !selector_ ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "ResidueSelector passed to VirtualToFa mover could not be found." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ResidueSelector passed to VirtualToFa mover could not be found." );
 		}
 	}
 }

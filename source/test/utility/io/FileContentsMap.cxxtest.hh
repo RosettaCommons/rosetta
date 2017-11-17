@@ -82,8 +82,9 @@ public:
 		try {
 			fcm.get_file_contents( fname );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Unexpected file-read requested: " + fname );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Unexpected file-read requested: " + fname;
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 
 	}
@@ -100,7 +101,7 @@ public:
 		try {
 			std::string file_contents = fcm.get_file_contents( fname );
 			TS_ASSERT_EQUALS( file_contents, "Testing testing 123\n" );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "oops! we shouldn't have gotten an exception here\n" << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -123,7 +124,7 @@ public:
 			TS_ASSERT_EQUALS( file_contents, "Testing testing 123\n" );
 			TS_ASSERT( ! fcm.has_file_contents( fname ) );
 			TS_ASSERT( fcm.nreads_for_file( fname ) == 1 );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "oops! we shouldn't have gotten an exception here\n" << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -153,7 +154,7 @@ public:
 			TS_ASSERT_EQUALS( file_contents2, "Testing testing 123\n" );
 			TS_ASSERT( fcm.nreads_for_file( fname ) == 2 );
 			TS_ASSERT( ! fcm.has_file_contents( fname ) );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "oops! we shouldn't have gotten an exception here\n" << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -162,4 +163,3 @@ public:
 
 
 };
-

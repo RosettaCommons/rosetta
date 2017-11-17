@@ -115,7 +115,7 @@ public:
 		basic::datacache::DataMap dm;
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS( ConstraintGeneratorFactory::get_instance()->new_constraint_generator( "DummyConstraintGenerator2", 0, dm ),
-			utility::excn::EXCN_Msg_Exception );
+			utility::excn::Exception );
 	}
 
 };

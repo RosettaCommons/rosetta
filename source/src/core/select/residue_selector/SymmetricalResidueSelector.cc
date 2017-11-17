@@ -124,11 +124,11 @@ SymmetricalResidueSelector::parse_my_tag(
 		//make sure it is a valid residue selector
 		try {
 			set_selector( data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname ) );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from SymmetricalResidueSelector.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_RosettaScriptsOption( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  error_msg.str() );
 		}
 		debug_assert( selector_ );
 		TR << "Using residue selector " << selectorname << std::endl;
@@ -151,7 +151,7 @@ SymmetricalResidueSelector::parse_my_tag(
 		//if there is not a selector tag option, then:
 		std::stringstream ss;
 		ss << "SymmetricalResidueSelector requires a selector to be set either through the \"selector\" option." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 	}
 	debug_assert( selector_ );
 }

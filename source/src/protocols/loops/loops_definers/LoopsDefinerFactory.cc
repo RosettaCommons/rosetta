@@ -116,8 +116,8 @@ void LoopsDefinerFactory::define_loop_definer_xml_schema( utility::tag::XMLSchem
 			loop_definer_xml_schema_group_name(),
 			& complex_type_name_for_loop_definer,
 			xsd );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for LoopDefiner from LoopDefinerFactory; offending class"
+	} catch ( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for LoopDefiner from LoopDefinerFactory; offending class"
 			" must call protocols::loops::loop_definers::complex_type_name_for_loop_definer when defining"
 			" its XML Schema\n" + e.msg() );
 	}

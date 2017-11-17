@@ -617,9 +617,9 @@ public: // test functions
 		// check for validity
 		try {
 			check_vector( v1 );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "Unreasonable range for center or normal! Check your input vectors!";
-			TS_ASSERT( expected_error_message == e.msg() );
+			TS_ASSERT( e.msg().find(expected_error_message) != std::string::npos );
 		}
 	}
 

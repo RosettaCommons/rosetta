@@ -114,7 +114,7 @@ main ( int argc, char* argv[] ){
 		TR << "size of pose to unflatten " << p2.size() << std::endl;
 		TR << "ss:" << p2.secstruct() << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -165,7 +165,7 @@ main( int argc, char* argv [] )
 		// jobdist->dump_pose_and_map( curr_job->output_tag(curr_nstruct), pose );    // output PDB
 
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

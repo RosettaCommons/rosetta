@@ -180,7 +180,7 @@ public:
 		try {
 			a_inputter.fill_jobs_from_stream( a_jobstream, a_jobvector );
 			lazy_resource_manager->clear();
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "The following resource manager XML definitions file produced an exception:" << std::endl;
 			std::cerr << "XML a:" << std::endl << a << std::endl;
 			std::cerr << "Raised exception:" << std::endl << e.msg() << std::endl;
@@ -195,7 +195,7 @@ public:
 		try {
 			b_inputter.fill_jobs_from_stream( b_jobstream, b_jobvector );
 			lazy_resource_manager->clear();
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "The following resource manager XML definitions file produced an exception:" << std::endl;
 			std::cerr << "XML b:" << std::endl << b << std::endl;
 			std::cerr << "Raised exception:" << std::endl << e.msg() << std::endl;

@@ -437,7 +437,7 @@ AAMatrix::parse_aa_matrix_line( utility::vector1 < std::string > const & tokens,
 		std::stringstream error_message;
 		error_message
 			<< "Error parsing specificity profile (AAMatrix): expected numeric value." << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
 	utility::vector1 < AAProb > probs( core::chemical::num_canonical_aas );
@@ -451,7 +451,7 @@ AAMatrix::parse_aa_matrix_line( utility::vector1 < std::string > const & tokens,
 			std::stringstream error_message;
 			error_message
 				<< "Error parsing specificity profile (AAMatrix): expected numeric value." << std::endl;
-			throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 		}
 
 		core::chemical::AA aa = aa_names[ which_token - 1 ];

@@ -163,7 +163,7 @@ int main(int argc, char * argv[]) {
 		std::cerr << s << std::endl;
 		extended_pose.dump_pdb(s);
 	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
                              std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
     }

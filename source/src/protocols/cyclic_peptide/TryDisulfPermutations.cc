@@ -224,7 +224,7 @@ TryDisulfPermutations::parse_my_tag(
 ) {
 
 	if ( tag->getName() != "TryDisulfPermutations" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible -- the tag name does not match the mover name.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible -- the tag name does not match the mover name.");
 	}
 
 	if ( TR.visible() ) TR << "Parsing options for TryDisulfPermutations (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;
@@ -248,9 +248,9 @@ TryDisulfPermutations::parse_my_tag(
 		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
 		try {
 			set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name ) );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ReadResfile::parse_tag()\n" + e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_message );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 		}
 		if ( TR.visible() ) TR << "Added ResidueSelector \"" << selector_name << "\"." << std::endl;
 	}

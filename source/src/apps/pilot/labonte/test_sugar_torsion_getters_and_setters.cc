@@ -98,7 +98,7 @@ main( int argc, char *argv[] )
 		cout << "  Setting omega to 180. ";
 		pose.set_omega(3, 180.0);
 		cout << "Omega is now " << pose.omega(3) << endl << endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		cerr << "caught exception " << e.msg() << endl;
 		return -1;
 	}

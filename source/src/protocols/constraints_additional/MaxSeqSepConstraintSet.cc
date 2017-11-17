@@ -108,7 +108,7 @@ MaxSeqSepConstraintSet::operator = ( ConstraintSet const & rhs )
 	if ( this != &rhs ) {
 		MaxSeqSepConstraintSet const * msscs_rhs = dynamic_cast< MaxSeqSepConstraintSet const * > ( & rhs );
 		if ( ! msscs_rhs ) {
-			throw utility::excn::EXCN_Msg_Exception( "MaxSeqSepConstraintSet handed a non MaxSeqSepConstraintSet in operator =" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "MaxSeqSepConstraintSet handed a non MaxSeqSepConstraintSet in operator =" );
 		}
 		ConstraintSet::operator = ( rhs );
 
@@ -134,7 +134,7 @@ MaxSeqSepConstraintSet::clone() const {
 void MaxSeqSepConstraintSet::detached_copy( ConstraintSet const & src ) {
 	MaxSeqSepConstraintSet const * msscs_src = dynamic_cast< MaxSeqSepConstraintSet const * > ( & src );
 	if ( ! msscs_src ) {
-		throw utility::excn::EXCN_Msg_Exception( "MaxSeqSepConstraintSet handed a non MaxSeqSepConstraintSet in detatched_copy" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "MaxSeqSepConstraintSet handed a non MaxSeqSepConstraintSet in detatched_copy" );
 	}
 	deep_copy( src );
 	max_seq_sep_ = msscs_src->max_seq_sep_;

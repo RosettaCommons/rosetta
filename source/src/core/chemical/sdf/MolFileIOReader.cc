@@ -218,7 +218,7 @@ convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 		ResidueTypeOP restype;
 		try {
 			restype = convert_to_ResidueType(separated_molecules[jj], atom_types, element_types, mm_atom_types);
-		} catch( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch( utility::excn::Exception & e ) {
 			TR << ">>>>>> Skipping " << separated_molecules[jj][1]->name() << " due to Error: " << e.msg() << std::endl;
 			continue;
 		} catch (...) {

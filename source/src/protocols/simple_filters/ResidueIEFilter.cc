@@ -176,11 +176,11 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 		std::string const selector_name = tag->getOption< std::string >( "selector" );
 		try {
 			selector_ = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_name << "' from the Datamap from DisulfidizeMover.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 		debug_assert( selector_ );
 		tr << "Using residue selector " << selector_name << std::endl;
@@ -427,7 +427,7 @@ ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
 		if ( pose.conformation().num_chains() < 2 ) {
 			std::stringstream msg;
 			msg << "ResidueIEFilter: pose must contain at least two chains! The given pose has " << pose.size() << " and " << pose.conformation().num_chains() << " chains" << std::endl;
-			throw utility::excn::EXCN_BadInput( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 		}
 
 		core::pose::Pose in_pose = pose;

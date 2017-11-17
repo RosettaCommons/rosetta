@@ -233,7 +233,7 @@ public:
 			TS_ASSERT( tag3->getParent().lock() == tag2 );
 			TS_ASSERT( tag1->getParent().expired() );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -278,7 +278,7 @@ public:
 		try {
 			RosettaScriptsParser parser;
 			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -335,7 +335,7 @@ public:
 		try {
 			RosettaScriptsParser parser;
 			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -375,7 +375,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT_EQUALS( i, 5 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -414,7 +414,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT_EQUALS( i, 5 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -464,7 +464,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -520,7 +520,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 3 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -581,7 +581,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -635,7 +635,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -689,7 +689,7 @@ public:
 			TR << "i = " << i << std::endl;
 			TS_ASSERT( i == 5 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -731,14 +731,14 @@ public:
 		try {
 			RosettaScriptsParser parser;
 			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			std::string expected_error =
 				"Exception in MultiplePoseMover with name \"mpm\": Failed to import mover2 from MOVERS";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -773,14 +773,14 @@ public:
 		try {
 			RosettaScriptsParser parser;
 			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			std::string expected_error =
 				"Exception in MultiplePoseMover with name \"mpm\": Cannot import mover mpm into itself; recursion detected";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -830,14 +830,14 @@ public:
 		try {
 			RosettaScriptsParser parser;
 			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch (utility::excn::Exception const & e ) {
 			std::string expected_error =
 				"Exception in MultiplePoseMover with name \"mpm\": Failed to import filter3 from FILTERS";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
 				std::cout << expected_error << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 	}
 
@@ -921,7 +921,7 @@ public:
 
 			TS_ASSERT( i == 5 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -1015,7 +1015,7 @@ public:
 
 			TS_ASSERT( i == 50 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception:: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -1099,7 +1099,7 @@ public:
 
 			TS_ASSERT( i == 30 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception:: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -1168,7 +1168,7 @@ public:
 			TS_ASSERT( unique_poses == 1 );
 			TS_ASSERT( total_poses == 10 );
 
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception:: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}

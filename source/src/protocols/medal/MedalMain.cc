@@ -23,7 +23,7 @@
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/exit.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Project headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -75,7 +75,7 @@ void* graphics_main(protocols::moves::MoverOP mover) {
 
 	try {
 		JobDistributor::get_instance()->go(mover);
-	} catch (utility::excn::EXCN_Base& e) {
+	} catch (utility::excn::Exception& e) {
 		std::cerr << "Exception: " << std::endl;
 		e.show(std::cerr);
 	}

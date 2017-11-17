@@ -159,7 +159,7 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}
 
 	if ( repeats() > 1 && !repack() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
 	}
 
 	TR

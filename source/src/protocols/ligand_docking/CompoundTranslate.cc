@@ -101,13 +101,13 @@ CompoundTranslate::parse_my_tag(
 )
 {
 	if ( tag->getName() != "CompoundTranslate" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 	}
 	if ( ! tag->hasOption("randomize_order") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("CompoundTranslate needs a 'randomize_order' option");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "CompoundTranslate needs a 'randomize_order' option");
 	}
 	if ( ! tag->hasOption("allow_overlap") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("CompoundTranslate needs an 'allow_overlap' option");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "CompoundTranslate needs an 'allow_overlap' option");
 	}
 
 	// parsing randomize_order tag
@@ -132,10 +132,10 @@ CompoundTranslate::parse_my_tag(
 			translate->parse_my_tag( subtag, datamap, filters, movers, pose);
 			translates_.push_back(translate);
 		} else if ( name == "Translates" ) {
-			if ( ! subtag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires chain tag");
-			if ( ! subtag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires distribution tag");
-			if ( ! subtag->hasOption("angstroms") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires angstroms tag");
-			if ( ! subtag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires cycles tag");
+			if ( ! subtag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires chain tag");
+			if ( ! subtag->hasOption("distribution") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires distribution tag");
+			if ( ! subtag->hasOption("angstroms") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires angstroms tag");
+			if ( ! subtag->hasOption("cycles") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires cycles tag");
 
 			std::string const & chain = subtag->getOption<std::string>("chain");
 			utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
@@ -156,7 +156,7 @@ CompoundTranslate::parse_my_tag(
 				translates_.push_back(protocols::ligand_docking::TranslateOP( new Translate(translate_info) ));
 			}
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("CompoundTranslate only takes Translate or Translates child tags");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "CompoundTranslate only takes Translate or Translates child tags");
 		}
 	}
 }

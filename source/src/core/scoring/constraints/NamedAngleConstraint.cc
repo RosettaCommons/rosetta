@@ -184,13 +184,13 @@ NamedAngleConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFunct
 			TR.Warning << std::endl;
 		}
 		if ( !atom1().valid() ) {
-			throw core::id::EXCN_AtomNotFound( named_atom1_ );
+			throw CREATE_EXCEPTION(core::id::EXCN_AtomNotFound, named_atom1_ );
 		}
 		if ( !atom2().valid() ) {
-			throw core::id::EXCN_AtomNotFound( named_atom2_ );
+			throw CREATE_EXCEPTION(core::id::EXCN_AtomNotFound, named_atom2_ );
 		}
 		if ( !atom3().valid() ) {
-			throw core::id::EXCN_AtomNotFound( named_atom3_ );
+			throw CREATE_EXCEPTION(core::id::EXCN_AtomNotFound, named_atom3_ );
 		}
 	}
 }

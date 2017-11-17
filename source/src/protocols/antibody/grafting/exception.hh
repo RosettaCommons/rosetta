@@ -23,19 +23,17 @@ namespace antibody {
 namespace grafting {
 
 
-class Grafting_Base_Exception : public utility::excn::EXCN_Msg_Exception
+class Grafting_Base_Exception : public utility::excn::Exception
 {
 public:
-	Grafting_Base_Exception() {};
-	Grafting_Base_Exception(std::string const& msg ) : EXCN_Msg_Exception(msg) {};
+	using utility::excn::Exception::Exception;
 };
 
 
 class _AE_grafting_failed_ : public Grafting_Base_Exception
 {
 public:
-	_AE_grafting_failed_() {};
-	_AE_grafting_failed_(std::string const& msg ) : Grafting_Base_Exception(msg) {};
+	using Grafting_Base_Exception::Grafting_Base_Exception;
 };
 
 
@@ -43,24 +41,21 @@ public:
 class _AE_cdr_detection_failed_ : public Grafting_Base_Exception
 {
 public:
-	_AE_cdr_detection_failed_() {};
-	_AE_cdr_detection_failed_(std::string const& msg ) : Grafting_Base_Exception(msg) {};
+	using Grafting_Base_Exception::Grafting_Base_Exception;
 };
 
 
 class _AE_cdr_undefined_ : public Grafting_Base_Exception
 {
 public:
-	_AE_cdr_undefined_() {};
-	_AE_cdr_undefined_(std::string const& msg ) : Grafting_Base_Exception(msg) {};
+	using Grafting_Base_Exception::Grafting_Base_Exception;
 };
 
 
 class _AE_invalid_cdr_region_ : public Grafting_Base_Exception
 {
 public:
-	_AE_invalid_cdr_region_() {};
-	_AE_invalid_cdr_region_(std::string const& msg ) : Grafting_Base_Exception(msg) {};
+	using Grafting_Base_Exception::Grafting_Base_Exception;
 };
 
 
@@ -68,25 +63,20 @@ public:
 class _AE_numbering_failed_ : public Grafting_Base_Exception
 {
 public:
-	_AE_numbering_failed_() {};
-	_AE_numbering_failed_(std::string const& msg ) : Grafting_Base_Exception(msg) {};
+	using Grafting_Base_Exception::Grafting_Base_Exception;
 };
 
 
 class _AE_unexpected_region_length_ : public _AE_numbering_failed_
 {
 public:
-	_AE_unexpected_region_length_() {};
-	_AE_unexpected_region_length_(std::string const& msg ) : _AE_numbering_failed_(msg) {};
+	using _AE_numbering_failed_::_AE_numbering_failed_;
 };
-
-
 
 class _AE_scs_failed_ : public Grafting_Base_Exception
 {
 public:
-	_AE_scs_failed_() {};
-	_AE_scs_failed_(std::string const& msg ) : Grafting_Base_Exception(msg) {};
+	using Grafting_Base_Exception::Grafting_Base_Exception;
 };
 
 

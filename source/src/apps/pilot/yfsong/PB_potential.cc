@@ -218,7 +218,7 @@ main( int argc, char * argv [] )
 		PB_potential_mover.initialize();
 
 		protocols::jobdist::universal_main( PB_potential_mover );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

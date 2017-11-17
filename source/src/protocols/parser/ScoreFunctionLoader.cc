@@ -74,7 +74,7 @@ void ScoreFunctionLoader::load_data(
 			if ( ! core::init::check_score_function_sanity( basic::options::option, scorefxn_weights ) ) {
 				// The check should only really trigger on database files (explicit path will result in the heuristic not matching.)
 				TR.Error << "Incompatible weights and options detected for " << scorefxn_weights << " - either fix your options, or rename the weights file." << std::endl;
-				throw utility::excn::EXCN_RosettaScriptsOption("Weights " + scorefxn_weights + " was requested with incompatible options.");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Weights " + scorefxn_weights + " was requested with incompatible options.");
 			}
 
 			if (  scorefxn_tag->hasOption( "patch" ) ) {

@@ -154,7 +154,7 @@ main( int argc, char * argv [] )
 		std::string outfile = option[ out::file::o ]();
 		core::io::pdb::dump_pdb( pose , outfile );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

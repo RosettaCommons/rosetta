@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
 		show_cluster_assignment( elem, dat);
 		std::cout << "done with clustering! you can now use your clusters!" << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

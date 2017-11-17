@@ -356,7 +356,7 @@ int main( int argc, char * argv [] ) {
 			score_loops(*input_poseOP,*unconverged_loops,native_pose,native_alignment,template_aln,native_relaxed_pose,templatePose,cstSet_, lookBackCstSet_, output);
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

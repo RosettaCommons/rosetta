@@ -57,7 +57,7 @@ public:
 		Jobs jobvector;
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -83,7 +83,7 @@ public:
 		Jobs jobvector;
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -110,18 +110,19 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Failed to find a data description (desc) amongst the options pairs listed reading a 'Data' tag in a Job tag.\n A desc option must always be given.\n"
 				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tag.\nProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
 				"\t(pdb, 1ten.pdb)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
-			if ( e.msg() != expected_error ) {
+			bool flag = e.msg().find(expected_error) != std::string::npos;
+			if ( !flag ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT(flag);
 		}
 
 	}
@@ -146,19 +147,20 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Failed to find a resource name or a pdb name reading a 'Data' tag in a Job tag.  Either a 'resource_tag' or a 'pdb' option must be provided.\n"
 				"Problem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
 				"\t(desc, startstruct)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
-			if ( e.msg() != expected_error ) {
+			bool flag = e.msg().find(expected_error) != std::string::npos;
+			if ( !flag ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
 
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT(flag);
 		}
 	}
 
@@ -182,7 +184,7 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Error: Both a 'resource_tag' and a 'pdb' tag were found for a 'Data' tag in the Job tag.\nProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
@@ -190,12 +192,13 @@ public:
 				"\t(pdb, 1ten.pdb)\n"
 				"\t(resource_tag, 1ten_native)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
-			if ( e.msg() != expected_error ) {
+			bool flag = e.msg().find(expected_error) != std::string::npos;
+			if ( !flag ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
 
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT(flag);
 		}
 	}
 
@@ -220,19 +223,19 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tag.\nProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
 				"\t(desc, whatever)\n"
 				"\t(pdb, 1ten.pdb)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
-			if ( e.msg() != expected_error ) {
+			if ( e.msg().find(expected_error) == std::string::npos ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
 
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 
 	}
@@ -256,14 +259,14 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error = "Error: Job 'first' given without a 'startstruct'";
-			if ( e.msg() != expected_error ) {
+			if ( e.msg().find(expected_error) == std::string::npos ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
 
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 
 	}
@@ -288,7 +291,7 @@ public:
 		Jobs jobvector;
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -316,15 +319,15 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Error converting value 'four' given for option 'packing:ex1:level' to an integer from within JD2ResourceManagerJobInputter::parse_job_tag\n";
-			if ( e.msg() != expected_error ) {
+			if ( e.msg().find(expected_error) == std::string::npos ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
 
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 
 	}
@@ -348,7 +351,7 @@ public:
 		Jobs jobvector;
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -376,15 +379,15 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Error converting value '0fge.3' given for option 'out:scorecut' to a floating point number from within JD2ResourceManagerJobInputter::parse_job_tag\n";
-			if ( e.msg() != expected_error ) {
+			if ( e.msg().find(expected_error) == std::string::npos ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
 
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 
 	}
@@ -408,7 +411,7 @@ public:
 		Jobs jobvector;
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			TS_ASSERT( false );
 			std::cout << e.msg() << std::endl;
 		}
@@ -436,16 +439,16 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Error converting value 'true' given for option 'packing:ex1' to a boolean from within JD2ResourceManagerJobInputter::parse_job_tag\n"
 				" Boolean options must be given either a '1' or a '0'";
-			if ( e.msg() != expected_error ) {
+			if ( e.msg().find(expected_error) == std::string::npos ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
 
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 
 	}
@@ -471,14 +474,14 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected_error =
 				"Error: Option key 'packing::ex1' not found. Please remember to use only one colon when giving options.\n";
-			if ( e.msg() != expected_error ) {
+			if ( e.msg().find(expected_error) == std::string::npos ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
 
 	}
@@ -503,7 +506,7 @@ public:
 		Jobs jobvector;
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			TS_ASSERT( false ); // shouldn't throw an exception
 		}
 

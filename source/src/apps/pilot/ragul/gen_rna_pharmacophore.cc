@@ -120,7 +120,7 @@ int main( int argc, char * argv [] ){
 		rphr.cluster_KeyFeatures(keyFeatures_string2, tag);
 
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cerr << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

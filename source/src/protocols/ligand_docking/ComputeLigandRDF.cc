@@ -131,19 +131,19 @@ void ComputeLigandRDF::parse_my_tag
 )
 {
 	if ( ! tag->hasOption("mode") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Mover 'ComputeLigandRDF' needs option 'mode'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover 'ComputeLigandRDF' needs option 'mode'");
 	}
 
 	//right now, we assume that all things that aren't the ligand chain are the protein chain
 	if ( !tag->hasOption("ligand_chain") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Mover 'ComputeLigandRDF' needs option 'ligand_chain'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover 'ComputeLigandRDF' needs option 'ligand_chain'");
 	}
 
 	mode_ = tag->getOption<std::string>("mode");
 	ligand_chain_ = tag->getOption<std::string>("ligand_chain");
 
 	if ( mode_ != "pocket" && mode_ != "interface" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Mover 'ComputeLigandRDF' must have a mode of either 'pocket' or 'interface'");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover 'ComputeLigandRDF' must have a mode of either 'pocket' or 'interface'");
 	}
 
 	bin_count_ = tag->getOption<core::Size>("bin_count",100);
@@ -160,10 +160,10 @@ void ComputeLigandRDF::parse_my_tag
 			rdf::RDFBaseOP rdf_function(rdf::RDFFunctionFactory::get_instance()->get_rdf_function(function_tag, data_map));
 
 			rdf_functions_.push_back(rdf_function);
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		} catch ( utility::excn::Exception const & e ) {
 			compute_rdf_tracer.Error << "Please include only RDFFunction tags as subtags of ComputeLigandRDF" << std::endl;
 			compute_rdf_tracer.Error << "Tag with name '" << function_tag->getName() << "' is invalid" << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 		}
 	}
 }

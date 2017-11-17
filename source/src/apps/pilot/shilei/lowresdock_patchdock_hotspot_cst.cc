@@ -123,7 +123,7 @@ public:
 		core::import_pose::pose_from_file( pose, pdbname.c_str() , core::import_pose::PDB_file);
 		original_pose=pose;
 		} else {
-		throw( utility::excn::EXCN_BadInput("expected -s for this app") );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput, "expected -s for this app") );
 		}
 
 		//output patchdock
@@ -260,12 +260,12 @@ void* my_main( void* ) {
 			basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].size()==basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_distcb_weight].size() ) {
 		//          TR << "Will read: " << basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].size() << " hotspot files" << std::endl;
 	} else {
-		throw( utility::excn::EXCN_BadInput("expected hostspot_filename and hotspot_distcb_weight this app and their size should be equal") );
+		throw ( CREATE_EXCEPTION(utility::excn::BadInput, "expected hostspot_filename and hotspot_distcb_weight this app and their size should be equal") );
 	}
 
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go( seq );
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 	}
@@ -295,7 +295,7 @@ int main( int argc, char * argv [] )
 		// score_patchdock_hotspot();
 		protocols::viewer::viewer_main( my_main );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

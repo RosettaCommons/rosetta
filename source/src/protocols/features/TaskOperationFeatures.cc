@@ -197,7 +197,7 @@ TaskOperationFeatures::parse_my_tag(
 			<< "The " << type_name() << " reporter requires a 'task_operations' tag:" << endl
 			<< endl
 			<< "    <feature name=" << type_name() <<" task_operations=comma_separated_task_operation_names />" << endl;
-		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, error_msg.str());
 	}
 
 	// Fill task_factories_, one TaskFactoryCOP per TaskOperator
@@ -214,7 +214,7 @@ TaskOperationFeatures::parse_my_tag(
 			//   taskop_keys_factories_.insert(
 			//    std::pair<std::string const, TaskFactoryCOP>(*taskop_key, new_task_factory));
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + taskop_key + " not found in DataMap.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + taskop_key + " not found in DataMap.");
 		}
 	}
 }

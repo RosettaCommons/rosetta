@@ -224,7 +224,7 @@ SilentFileFullModelInputter::initialize_sfd_from_options_and_tag(
 	if ( tag ) {
 		std::string files = tag->getOption< std::string >( "silent_files", "" );
 		if ( files == "" ) {
-			throw utility::excn::EXCN_Msg_Exception( "The 'silent_files' attribute must be provided to the SilentFileFullModelInputer" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "The 'silent_files' attribute must be provided to the SilentFileFullModelInputer" );
 		}
 		utility::vector1< std::string > files_vector = utility::string_split( files, ',', std::string() );
 		silent_files.reserve( files_vector.size() );

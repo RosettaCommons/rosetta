@@ -34,7 +34,7 @@ FallbackConfigurationFactory::create_fallback_configuration( std::string const &
 {
 	auto iter = creators_map_.find( resource_description );
 	if ( iter == creators_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "No FallbackConfigurationCreator resposible for the FallbackConfiguration named " + resource_description + " was found in the FallbackConfigurationFactory.  Was it correctly registered?" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "No FallbackConfigurationCreator resposible for the FallbackConfiguration named " + resource_description + " was found in the FallbackConfigurationFactory.  Was it correctly registered?" );
 	}
 	return iter->second->create_fallback_configuration();
 }
@@ -48,7 +48,7 @@ FallbackConfigurationFactory::factory_register( FallbackConfigurationCreatorOP c
 		std::string errmsg( "Double registration of a FallbackConfigurationCreator in the FallbackConfigurationFactory, named " + resource_description + ". Are there two registrators for this FallbackConfigurationCreator, or have you chosen a previously assigned name to a new FallbackConfigurationCreator?" );
 
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( errmsg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  errmsg );
 		} else {
 			utility_exit_with_message( errmsg );
 		}

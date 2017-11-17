@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 		// failure to external callers using the return code
 		return (pct_good >= PCT_THRESHOLD) ? 0 : 1;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

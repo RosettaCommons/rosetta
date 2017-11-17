@@ -183,7 +183,7 @@ int main( int argc, char * argv [] ) {
 		std::cout<<"geometric_enter : "<<cen_x<<" "<<cen_y<<" "<<cen_z<<std::endl;
 		std::cout<<"width : "<<x_width<<" "<<y_width<<" "<<z_width<<std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

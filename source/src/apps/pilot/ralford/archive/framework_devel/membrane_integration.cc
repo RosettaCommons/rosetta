@@ -165,7 +165,7 @@ int main( int argc, char* argv[] )
 		test_membrane_scoring_highres( *pose ): // function I am going to write
 		test_talaris( *pose ); // function I am going to write
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -58,7 +58,7 @@ PoseOutputterFactory::factory_register( PoseOutputterCreatorOP creator )
 		std::string err_msg = "PoseOutputterFactory::factory_register already has a pose_outputter creator with name \""
 			+ pose_outputter_type + "\".  Conflicting PoseOutputter names";
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( err_msg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 		} else {
 			utility_exit_with_message( err_msg );
 		}
@@ -76,7 +76,7 @@ PoseOutputterFactory::factory_register( SecondaryPoseOutputterCreatorOP creator 
 		std::string err_msg = "PoseOutputterFactory::factory_register already has a secondary pose outputter creator with name \""
 			+ secondary_pose_outputter_type + "\".  Conflicting SecondaryPoseOutputter names";
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( err_msg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 		} else {
 			utility_exit_with_message( err_msg );
 		}
@@ -93,7 +93,7 @@ PoseOutputterFactory::new_pose_outputter( std::string const & pose_outputter_typ
 	PoseOutputterMap::const_iterator iter( pose_outputter_creator_map_.find( pose_outputter_type ) );
 	if ( iter != pose_outputter_creator_map_.end() ) {
 		if ( ! iter->second ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Error: PoseOutputterCreatorOP prototype for " + pose_outputter_type + " is NULL!" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: PoseOutputterCreatorOP prototype for " + pose_outputter_type + " is NULL!" );
 		}
 		return iter->second->create_outputter();
 	} else {
@@ -102,7 +102,7 @@ PoseOutputterFactory::new_pose_outputter( std::string const & pose_outputter_typ
 			TR << elem.first << ", ";
 		}
 		TR << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( pose_outputter_type + " is not known to the PoseOutputterFactory."
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  pose_outputter_type + " is not known to the PoseOutputterFactory."
 			" Was it registered via a PoseOutputterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
 		return PoseOutputterOP();
 	}
@@ -115,7 +115,7 @@ PoseOutputterFactory::new_secondary_outputter( std::string const & secondary_out
 	SecondaryOutputterMap::const_iterator iter( secondary_pose_outputter_creator_map_.find( secondary_outputter_type ) );
 	if ( iter != secondary_pose_outputter_creator_map_.end() ) {
 		if ( ! iter->second ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Error: SecondaryPoseOutputterCreatorOP prototype for " + secondary_outputter_type + " is NULL!" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: SecondaryPoseOutputterCreatorOP prototype for " + secondary_outputter_type + " is NULL!" );
 		}
 		return iter->second->create_outputter();
 	} else {
@@ -124,7 +124,7 @@ PoseOutputterFactory::new_secondary_outputter( std::string const & secondary_out
 			TR << elem.first << ", ";
 		}
 		TR << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( secondary_outputter_type + " is not known to the PoseOutputterFactory."
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  secondary_outputter_type + " is not known to the PoseOutputterFactory."
 			" Was it registered via a SecondaryPoseOutputterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
 		return SecondaryPoseOutputterOP();
 	}

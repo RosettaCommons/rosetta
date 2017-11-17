@@ -21,7 +21,7 @@
 #include <devel/init.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/checkpoint/Checkpoint.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -52,11 +52,11 @@ main( int argc, char * argv [] )
 		protocols::abinitio::AbrelaxApplication abrelax;
 		try{
 			abrelax.run();
-		} catch ( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			std::cerr << "Exception : " << std::endl;
 			excn.show( std::cerr );
 		}
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 		return -1;

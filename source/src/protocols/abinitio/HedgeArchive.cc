@@ -166,7 +166,7 @@ void HedgeArchive::restore_status( std::istream& is ) {
 			using namespace core::io::silent;
 			core::io::silent::SilentFileOptions opts;
 			SilentFileData sfd( opts );
-			if ( !sfd.read_file( ffilename ) ) throw ( utility::excn::EXCN_BadInput( "problem reading silent file"+ffilename ) );
+			if ( !sfd.read_file( ffilename ) ) throw ( CREATE_EXCEPTION(utility::excn::BadInput, "problem reading silent file"+ffilename ) );
 			for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 				incoming_structures_[ batch_id ].push_back( std::make_pair( select_score( *it ), *it ) );
 			}

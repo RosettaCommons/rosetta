@@ -77,7 +77,7 @@ SilentFileLoader::create_resource(
 ) const {
 
 	if ( ! dynamic_cast< SilentFileRMOptions const * >( &options ) ) {
-		throw utility::excn::EXCN_Msg_Exception(
+		throw CREATE_EXCEPTION(utility::excn::Exception, 
 			"SilentFileLoader expected to get a SilentFileRMOptions object, "
 			"but was given a ResourceOptions of type '" + options.type() + "', "
 			"which has the name '" + options.name() + "'." );
@@ -96,7 +96,7 @@ SilentFileLoader::create_resource(
 	SilentFileData container( resource_options.opts() );
 
 	if ( !(ss->init_from_lines(lines, container)) ) {
-		throw utility::excn::EXCN_BadInput( "SilentFileLoader failed to load silent file with locator_id '" + locator_id + "'." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "SilentFileLoader failed to load silent file with locator_id '" + locator_id + "'." );
 	}
 
 	PoseOP pose( new Pose() );

@@ -143,12 +143,12 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num":
 	if ( !tag->hasOption("target") && !tag->hasOption("residue_selector") ) {
 		TR.Error << "You need to define either a target residue using 'target' or a residue selector using 'residue_selector'." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 	}
 
 	if ( tag->hasOption("target") && tag->hasOption("residue_selector") ) {
 		TR.Error << "You can only degine a target residue using 'target' or a residue selector using 'residue_selector' but not both." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 	}
 
 	if ( tag->hasOption("target") ) {
@@ -159,7 +159,7 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 	//Set the identity of the new residue:
 	if ( !tag->hasOption("new_res") ) {
 		TR.Error << "no 'new_res' parameter specified." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 	}
 	set_res_name( tag->getOption<string>("new_res") );
 

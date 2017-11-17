@@ -427,7 +427,7 @@ int main( int argc, char * argv [] ) {
 			mypose2.dump_pdb(outfile);
 		}
 		printf("JOB COMPLETED.\n"); fflush(stdout);
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

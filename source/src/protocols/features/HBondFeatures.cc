@@ -625,7 +625,7 @@ HBondFeatures::parse_my_tag(
 			<< "Available hbond definition types are:" << endl
 			<< "\t'energy' => A polar-polar contact is an hbond when energy is below the definition_threshold." << endl
 			<< "  'AHdist' => A polar-polar contact is an hbond when the Acceptor-Hydrogen distance is less than the definition_threshold." << endl;
-		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, error_msg.str());
 	}
 
 	definition_threshold_ =

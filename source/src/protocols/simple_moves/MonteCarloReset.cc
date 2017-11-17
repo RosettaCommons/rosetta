@@ -86,7 +86,7 @@ MonteCarloReset::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Fi
 	std::string const mc_name( tag->getOption< std::string >( "MC_name" ) );
 	auto find_mover( movers.find( mc_name ) );
 	if ( find_mover == movers.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "MC mover not found by MonteCarloReset" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "MC mover not found by MonteCarloReset" );
 	}
 
 	set_MC( utility::pointer::dynamic_pointer_cast< protocols::simple_moves::GenericMonteCarloMover > ( find_mover->second ) );

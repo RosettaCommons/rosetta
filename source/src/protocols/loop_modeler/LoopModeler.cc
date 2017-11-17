@@ -188,7 +188,7 @@ void LoopModeler::parse_my_tag( // {{{1
 	} else {
 		stringstream message;
 		message << "Unknown <LoopModeler> config option: '" << config << "'";
-		throw utility::excn::EXCN_Msg_Exception(message.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
 	}
 
 	// Parse the 'auto_refine' option.
@@ -407,7 +407,7 @@ void LoopModeler::setup_kic_with_fragments_config() { // {{{1
 		stringstream message;
 		message << "Must specify the -loops:frag_sizes and -loops:frag_files ";
 		message << "options in order to use the FragmentPerturber." << endl;
-		throw utility::excn::EXCN_Msg_Exception(message.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
 	}
 
 	// Enable fragments during the build stage.
@@ -450,7 +450,7 @@ void LoopModeler::setup_loophash_kic_config(bool perturb_sequence, std::string s
 		std::stringstream message;
 		message << "Must specify the -lh:loopsizes and -lh:db_path ";
 		message << "options in order to use the LoopHashPerturber." << std::endl;
-		throw utility::excn::EXCN_Msg_Exception(message.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
 	}
 
 	utility::vector1<core::Size> loop_sizes = option[ OptionKeys::lh::loopsizes ].value();

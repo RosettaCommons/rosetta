@@ -32,7 +32,7 @@
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 
 //utility headers
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
@@ -147,12 +147,9 @@ private:
 }; //class RemodelConstraintGenerator
 
 
-class EXCN_RemoveCstsFailed : public utility::excn::EXCN_Base {
+class EXCN_RemoveCstsFailed : public utility::excn::Exception {
 public:
-	EXCN_RemoveCstsFailed():
-		utility::excn::EXCN_Base()
-	{}
-	virtual void show( std::ostream & os ) const { os << "Remodel constraints somehow got lost along the way" << std::endl; }
+	EXCN_RemoveCstsFailed(char const *file, int line, std::string const & m) : utility::excn::Exception(file, line, m + "\nRemodel constraints somehow got lost along the way") {}
 };
 
 /// @brief generic remodel constraint generator for use with arbitrary ConstraintGenerators

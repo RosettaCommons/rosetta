@@ -248,7 +248,7 @@ main
 		branchopt.write_undefined_coef1("branch_angle_1_undefined.txt");
 		branchopt.write_undefined_coef2("branch_angle_2_undefined.txt");
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

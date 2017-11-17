@@ -622,7 +622,7 @@ SymmMinimalistEdge::~SymmMinimalistEdge() {}
 
 core::PackerEnergy SymmMinimalistEdge::get_two_body_energy( int const , int const ) const
 {
-	throw utility::excn::EXCN_Msg_Exception( "Method unimplemented: SymmMinimalistEdge::get_two_body_energy" );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  "Method unimplemented: SymmMinimalistEdge::get_two_body_energy" );
 	return 0.0;
 }
 

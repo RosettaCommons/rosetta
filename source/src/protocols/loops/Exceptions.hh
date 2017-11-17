@@ -24,10 +24,9 @@
 namespace protocols {
 namespace loops {
 
-class EXCN_Loop_not_closed : public utility::excn::EXCN_Msg_Exception {
-	typedef EXCN_Msg_Exception Parent;
+class EXCN_Loop_not_closed : public utility::excn::Exception {
 public:
-	EXCN_Loop_not_closed( std::string msg = "") : EXCN_Msg_Exception( "failed to close loop " + msg ){};
+	EXCN_Loop_not_closed(char const *file, int line, std::string msg = "") : Exception(file, line, "failed to close loop " + msg ) {};
 };
 
 } // namespace loops

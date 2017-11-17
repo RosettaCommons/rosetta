@@ -135,10 +135,10 @@ NamedAtomPairConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFu
 			tr.Warning << std::endl;
 		}
 		if ( !atom1().valid() ) {
-			throw core::id::EXCN_AtomNotFound( named_atom1_ );
+			throw CREATE_EXCEPTION(core::id::EXCN_AtomNotFound, named_atom1_ );
 		}
 		if ( !atom2().valid() ) {
-			throw core::id::EXCN_AtomNotFound( named_atom2_ );
+			throw CREATE_EXCEPTION(core::id::EXCN_AtomNotFound, named_atom2_ );
 		}
 	}
 }
@@ -194,7 +194,7 @@ NamedAtomPairConstraint::read_def(
 
 	func::FuncOP new_func = func_factory.new_func( func_type );
 	if ( ! new_func ) {
-		throw utility::excn::EXCN_Msg_Exception( "The function type '" + func_type + "' is not valid" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "The function type '" + func_type + "' is not valid" );
 	}
 	new_func->read_data( data );
 	set_func( new_func );

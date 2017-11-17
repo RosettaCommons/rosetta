@@ -67,7 +67,7 @@ public:
 		ResidueSelectorOP not_rs( new NotResidueSelector );
 		try {
 			not_rs->parse_my_tag( tag, dm );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -93,9 +93,9 @@ public:
 		try {
 			not_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::string expected = "No ResidueSelector given to the NotResidueSelector; NotResidueSelector requires a ResidueSelector as input\n";
-			TS_ASSERT_EQUALS( e.msg(), expected );
+			TS_ASSERT( e.msg().find(expected) != std::string::npos );
 		}
 	}
 
@@ -112,9 +112,9 @@ public:
 		try {
 			not_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected = "Failed to find ResidueSelector named 'odd' from the Datamap from NotResidueSelector::parse_my_tag.\nERROR: Could not find ResidueSelector and name odd in Datamap\n";
-			TS_ASSERT_EQUALS( e.msg(), expected );
+		} catch (utility::excn::Exception e ) {
+			std::string expected = "Failed to find ResidueSelector named 'odd' from the Datamap from NotResidueSelector::parse_my_tag."; // \nERROR: Could not find ResidueSelector and name odd in Datamap\n
+			TS_ASSERT( e.msg().find(expected) != std::string::npos );
 		}
 	}
 

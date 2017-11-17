@@ -37,14 +37,14 @@ namespace environment {
 class EXCN_Env_Security_Exception : public core::environment::EXCN_Env_Exception {
 	typedef core::environment::EXCN_Env_Exception Parent;
 public:
-	EXCN_Env_Security_Exception( core::id::DOF_ID const& dof,
+	EXCN_Env_Security_Exception(char const *file, int line, core::id::DOF_ID const& dof,
 		core::environment::DofPassportCOP pass,
 		std::string const& mod_type,
 		ProtectedConformation const&,
 		std::string const& mover_name,
 		EnvironmentCAP env );
 
-	EXCN_Env_Security_Exception( std::string const& message,
+	EXCN_Env_Security_Exception(char const *file, int line, std::string const& message,
 		std::string const& mover_name,
 		EnvironmentCAP env );
 
@@ -64,10 +64,7 @@ private:
 class EXCN_Env_Passport : public core::environment::EXCN_Env_Exception {
 	typedef core::environment::EXCN_Env_Exception Parent;
 public:
-	EXCN_Env_Passport( std::string const& message,
-		std::string const& mover_name,
-		EnvironmentCAP env ) :
-		Parent( env ) {
+	EXCN_Env_Passport(char const *file, int line, std::string const& message, std::string const& mover_name, EnvironmentCAP env ) : Parent(file, line, env ) {
 		std::ostringstream msg;
 		msg << message << " Mover: '" << mover_name << "'.";
 

@@ -49,7 +49,7 @@ main( int argc, char *argv[] )
 		constraint_setter.constraint_file( PATH + "glycan_to_protein_and_glycan.cst" );
 		constraint_setter.apply( in_pose );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return -1;
 	}

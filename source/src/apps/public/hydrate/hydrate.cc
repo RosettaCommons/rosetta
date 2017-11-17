@@ -40,7 +40,7 @@ main( int argc, char * argv [] )
 		protocols::hydrate::HydrateOP hydrate_protocol( new protocols::hydrate::Hydrate );
 		protocols::jd2::JobDistributor::get_instance()->go( hydrate_protocol );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -114,7 +114,7 @@ void NonContinuousFrame::shift_by( int offset ) {
 		if ( new_pos < 1 ) {
 			std::ostringstream msg;
 			msg << "offset " << offset << " would shift at least one position of Frame " << *this << " to negative or zero" << std::endl;
-			throw utility::excn::EXCN_RangeError( msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RangeError,  msg.str() );
 		}
 		po = new_pos;
 	}

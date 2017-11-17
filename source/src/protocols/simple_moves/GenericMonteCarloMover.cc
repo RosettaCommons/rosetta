@@ -820,7 +820,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 	ParsedProtocolOP mover_pp( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol > ( mover_ ) );
 	// if the mover isn't a parsed protocol, mover_pp will be NULL and adaptive_movers basically does nothing -- we throw an error
 	if ( adaptive_movers() && !mover_pp ) {
-		throw utility::excn::EXCN_BadInput( "In GenericMonteCarlo, adaptive_movers is true, but the user-specified mover is not a ParsedProtocol.  The user-specified mover must be a ParsedProtocol in order to use adaptive_movers." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "In GenericMonteCarlo, adaptive_movers is true, but the user-specified mover is not a ParsedProtocol.  The user-specified mover must be a ParsedProtocol in order to use adaptive_movers." );
 	}
 
 	if ( adaptive_movers() ) {

@@ -493,7 +493,7 @@ main( int argc, char * argv [] )
 
 		devel::init( argc, argv );
 		densityTools();
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		TR.Trace << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

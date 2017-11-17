@@ -207,7 +207,7 @@ int main(int argc, char* argv[]) {
   assign_models(models, centroids, &assignments);
   write_output_files(models, centroids, assignments);
   write_distances(models, centroids, assignments);
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
                 std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
      }

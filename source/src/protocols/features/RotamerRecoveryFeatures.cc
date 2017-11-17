@@ -165,7 +165,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 
 	if ( tag->hasOption("mover") || tag->hasOption("mover_name") ) {
 		if ( tag->hasOption("reference_name") ) {
-			throw utility::excn::EXCN_RosettaScriptsOption(
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, 
 				"Both 'mover_name' and 'reference_name' were supplied. "
 				"Please specify at most one to indicate which protocols should "
 				"be used to run RotamerRecovery.");
@@ -177,14 +177,14 @@ RotamerRecoveryFeatures::parse_my_tag(
 		protocol_ = protocols::rotamer_recovery::RRProtocolOP( new RRProtocolMover(mover) );
 	} else if ( tag->hasOption("reference_name") ) {
 		if ( tag->hasOption("mover") ) {
-			throw utility::excn::EXCN_RosettaScriptsOption(
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, 
 				"Both 'mover' and 'reference_name' were supplied. "
 				"Please specify at most one to indicate which protocols "
 				"should be used to run RotamerRecovery.");
 		}
 
 		if ( tag->hasOption("mover_name") ) {
-			throw utility::excn::EXCN_RosettaScriptsOption(
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, 
 				"Both 'mover_name' and 'reference_name' were supplied. "
 				"Please specify at most one to indicate which protocols "
 				"should be used to run RotamerRecovery.");
@@ -193,7 +193,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 		if ( tag->hasOption("protocol") &&
 				!tag->getOption<string>("protocol").compare(
 				"RRProtocolReferenceStructure") ) {
-			throw utility::excn::EXCN_RosettaScriptsOption(
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, 
 				"Specifying 'reference_name' is only compatible with the "
 				"'RRProtocolReferenceStructure' protocol.");
 		}
@@ -206,11 +206,11 @@ RotamerRecoveryFeatures::parse_my_tag(
 		string const & protocol_name(tag->getOption<string>(
 			"protocol", "RRProtocolMinPack"));
 		if ( !protocol_name.compare("RRProtocolMover") ) {
-			throw utility::excn::EXCN_RosettaScriptsOption(
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, 
 				"Please specify 'mover_name' with the 'RRProtocolMover' "
 				"rotamer recovery protocol.");
 		} else if ( !protocol_name.compare("RRProtocolReferenceStructure") ) {
-			throw utility::excn::EXCN_RosettaScriptsOption(
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, 
 				"Please specify 'reference_name' with 'RRProtocolReferenceStructure' "
 				"rotamer recovery protocol.");
 		} else {
@@ -265,7 +265,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 				<< " Instead type specified mover '" << report_to_db_name << "'"
 				<< " is a mover of type '" << report_to_db->get_name() << "'."
 				<< std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption(errmsg.str());
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, errmsg.str());
 		}
 
 		ReportToDBOP report_to_db_ptr(

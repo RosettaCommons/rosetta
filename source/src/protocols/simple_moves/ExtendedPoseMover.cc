@@ -123,7 +123,7 @@ void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,
 		if ( sequences.size() > 1 ) {
 			std::ostringstream ss;
 			ss << "In " << tag->getOption< string >( "name" ) << ": The fasta file " << tag->getOption< string >( "fasta" ) << " contained >1 sequence; using the first one only. Use multiple ExtendedPoseMovers for multiple chains." << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 		}
 	} else if ( tag->hasOption( "sequence" ) ) {
 		sequence( tag->getOption<string>( "sequence" ) );
@@ -131,7 +131,7 @@ void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,
 		string filename = basic::options::option[ basic::options::OptionKeys::in::file::fasta ]()[1];
 		sequence( read_fasta_file( filename ).front()->sequence() );
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("Failed to specify required option `sequence` or fasta file");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Failed to specify required option `sequence` or fasta file");
 	}
 
 	// additional options
@@ -141,7 +141,7 @@ void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,
 
 	chain( tag->getOption< string >( "chain", "" ) );
 	if ( chain().length() != 1 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( chain()+" is an invalid chain code in "+tag->getOption< string >( "name" )+"." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  chain()+" is an invalid chain code in "+tag->getOption< string >( "name" )+"." );
 	}
 }
 

@@ -744,7 +744,7 @@ int main( int argc, char* argv[] )
 		basic::prof_show();
 		TR << "NOTE on interpreting results: the interface energies are somewhat broken due to there being a disulfide across the interface; the bond is still scored in the separated state, which leads to enormously bad bond-length energies.  This biases by about 6000 energy units.  Relative ranking (which is all you should do anyway) is still correct." << std::endl;
 		TR << "************************d**o**n**e**************************************" << std::endl;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

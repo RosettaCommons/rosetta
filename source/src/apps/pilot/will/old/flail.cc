@@ -572,7 +572,7 @@ int main(int argv, char **argc){
 		if( option[flail::walltime_limit]() < timedif) break;
 	}
 
-  } catch ( utility::excn::EXCN_Base const & e ) {
+  } catch (utility::excn::Exception const & e ) {
     std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
   }

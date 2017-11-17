@@ -89,11 +89,11 @@ JumpIndexSelector::parse_my_tag(
 {
 	try {
 		jump( tag->getOption< int >( "jump" ) );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		std::stringstream err_msg;
 		err_msg << "Failed to access required option 'jump' from JumpIndexSelector::parse_my_tag.\n";
 		err_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 	}
 }
 

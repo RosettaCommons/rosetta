@@ -190,7 +190,7 @@ main( int argc, char* argv [] ) {
 		modeled_pose.dump_pdb( output_name );
 	}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

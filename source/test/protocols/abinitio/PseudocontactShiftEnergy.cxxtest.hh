@@ -85,7 +85,7 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/keys/AutoKey.fwd.hh>
 #include <utility/keys/AutoKey.hh>
 #include <utility/keys/Key.fwd.hh>
@@ -214,7 +214,7 @@ public:
 		try {
 			add_cmdline_claims(*top_bro_OP_, false);
 		}
-catch ( utility::excn::EXCN_Exception &excn )  {
+catch (utility::excn::Exception &excn )  {
 	excn.show( std::cerr );
 	utility_exit();
 }

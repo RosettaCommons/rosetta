@@ -84,7 +84,7 @@ quit_no_subset()
 {
 	std::stringstream msg;
 	msg << "StoredResidueSubsetSelector: no subset name was specified!" << std::endl;
-	throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 }
 
 core::select::residue_selector::ResidueSubset

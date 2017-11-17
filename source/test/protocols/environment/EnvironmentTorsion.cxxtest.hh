@@ -111,7 +111,7 @@ public:
 		{
 			core::pose::Pose protected1;
 			TS_ASSERT_THROWS_NOTHING( protected1 = env1.start( pose ) );
-			TS_ASSERT_THROWS( tier2_mover->apply( protected1 ), utility::excn::EXCN_NullPointer );
+			TS_ASSERT_THROWS( tier2_mover->apply( protected1 ), utility::excn::NullPointerError );
 			TS_ASSERT_EQUALS( protected1.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ] );
 			{
 				core::pose::Pose protected2;
@@ -124,7 +124,7 @@ public:
 			}
 			TS_ASSERT_DELTA( protected1.phi( CLAIMED_RESID ), NEW_PHI, 0.001 );
 			TS_ASSERT_THROWS_NOTHING( tier1_mover->apply( protected1) );
-			TS_ASSERT_THROWS( tier2_mover->apply( protected1 ), utility::excn::EXCN_NullPointer );
+			TS_ASSERT_THROWS( tier2_mover->apply( protected1 ), utility::excn::NullPointerError );
 			TS_ASSERT_THROWS_NOTHING( final_pose = env1.end( protected1 ) );
 		}
 
@@ -174,7 +174,7 @@ public:
 			TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
 			// Verify that unregistered mover lacks a passport for protected_pose conformation
-			TS_ASSERT_THROWS( unreg_mover->apply( protected_pose ), utility::excn::EXCN_NullPointer );
+			TS_ASSERT_THROWS( unreg_mover->apply( protected_pose ), utility::excn::NullPointerError );
 			TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
 			// Verify that allowed_mover can change it's claimed angle
@@ -288,7 +288,7 @@ public:
 		env.register_mover( must_mover );
 
 		core::pose::Pose protected_pose;
-		TS_ASSERT_THROWS( protected_pose = env.start( pose ), utility::excn::EXCN_BadInput );
+		TS_ASSERT_THROWS( protected_pose = env.start( pose ), utility::excn::BadInput );
 
 		TR <<  "End: test_torsion_must_exclusive_incompatibility"  << std::endl;
 	}
@@ -320,7 +320,7 @@ public:
 
 			env.register_mover( must_init_mover );
 			env.register_mover( must_init_mover2 );
-			TS_ASSERT_THROWS( protected_pose = env.start( pose ), utility::excn::EXCN_BadInput );
+			TS_ASSERT_THROWS( protected_pose = env.start( pose ), utility::excn::BadInput );
 		}
 
 		{ // MUST_INIT takes precedence over CAN_INIT and does not complain.

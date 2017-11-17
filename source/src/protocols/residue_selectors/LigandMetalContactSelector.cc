@@ -118,40 +118,40 @@ LigandMetalContactSelector::parse_my_tag(
 
 	if ( tag->hasOption("residue_selector") ) {
 		if ( tag->hasOption("resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "LigandMetalContactSelector takes EITHER 'selector' OR 'resnums' options, not both!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "LigandMetalContactSelector takes EITHER 'selector' OR 'resnums' options, not both!\n" );
 		}
 		if ( tag->size() > 1 ) { // 1 if no subtags exist
-			throw utility::excn::EXCN_Msg_Exception( "LigandMetalContactSelector can only have one ResidueSelector loaded!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "LigandMetalContactSelector can only have one ResidueSelector loaded!\n" );
 		}
 		// grab the ResidueSelector from the selector option
 		// and then grab each of the indicated residue selectors from the datamap.
 		std::string selector_str = "";
 		try {
 			selector_str = tag->getOption< std::string >( "residue_selector" );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access option 'selector' from LigandMetalContactSelector::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 
 		try {
 			core::select::residue_selector::ResidueSelectorCOP selector = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_str );
 			set_input_set_selector( selector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from LigandMetalContactSelector::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 	} else if ( tag->size() > 1 ) { // get focus selector from tag
 		if ( tag->hasOption("resnums") ) {
-			throw utility::excn::EXCN_Msg_Exception( "LigandMetalContactSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "LigandMetalContactSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n" );
 		}
 
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
 		if ( tags.size() > 1 ) {
-			throw utility::excn::EXCN_Msg_Exception( "LigandMetalContactSelector takes at most one ResidueSelector to determine the input_set!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "LigandMetalContactSelector takes at most one ResidueSelector to determine the input_set!\n" );
 		}
 		core::select::residue_selector::ResidueSelectorCOP rs = core::select::residue_selector::ResidueSelectorFactory::get_instance()->new_residue_selector(
 			tags.front()->getName(),
@@ -162,11 +162,11 @@ LigandMetalContactSelector::parse_my_tag(
 	} else { // do not get input_set from ResidueSelectors but load resnums string instead
 		try {
 			set_resnum_string ( tag->getOption< std::string >( "resnums" ) );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream err_msg;
 			err_msg << "Failed to access option 'resnums' from LigandMetalContactSelector::parse_my_tag.\n";
 			err_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 		}
 	}
 
@@ -235,7 +235,7 @@ LigandMetalContactSelector::calculate_ligand_resnums(core::pose::Pose const & po
 			if ( *it == 0 || *it > local_subset.size() ) {
 				std::stringstream err_msg;
 				err_msg << "Residue " << *it <<" not found in pose!/n";
-				throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+				throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 			}
 		}
 	}

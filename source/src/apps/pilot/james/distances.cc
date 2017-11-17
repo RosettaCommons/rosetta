@@ -167,7 +167,7 @@ main( int argc, char* argv [] )
 			//output.close();
 		} //  for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

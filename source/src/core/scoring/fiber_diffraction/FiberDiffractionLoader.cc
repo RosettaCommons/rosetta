@@ -69,7 +69,7 @@ FiberDiffractionLoader::create_resource(
 ) const {
 
 	if ( ! dynamic_cast< FiberDiffractionOptions const * >( &options ) ) {
-		throw utility::excn::EXCN_Msg_Exception(
+		throw CREATE_EXCEPTION(utility::excn::Exception, 
 			"FiberDiffractionLoader expected to get a FiberDiffractionOptions object, "
 			"but was given a ResourceOptions of type '" + options.type() + "', "
 			"which has the name '" + options.name() + "'." );

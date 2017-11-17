@@ -416,7 +416,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 				tr.Debug << "  Inserted automatic cut at " << cut << std::endl;
 				result_.auto_cuts.insert( cut );
 				made_cut = true;
-			} catch( utility::excn::EXCN_Msg_Exception& e ){
+			} catch( utility::excn::Exception& e ){
 				std::ostringstream ss;
 				ss << "Automatic cut insertion failed with biases: [";
 				for ( Size k = 1; k <= cycle.size(); ++k ) {
@@ -445,14 +445,14 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 			} if ( env->auto_cut() ) {
 				ss << " Cut bias was " << bias << "." << std::endl;
 			}
-			throw utility::excn::EXCN_BadInput( ss.str() );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 		}
 		cycle = fts.cycle();
 	}
 
 	try {
 		return fts.render();
-	} catch ( utility::excn::EXCN_Msg_Exception& e ) {
+	} catch ( utility::excn::Exception& e ) {
 		std::ostringstream ss;
 		ss << "A problem was encountered rendering fold tree choices in " << __FILE__ << ":"
 			<< __LINE__ - 4 << ". Turn on debug output with '-out:levels' to investigate.";
@@ -610,7 +610,7 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
 					<< element.type << " " << element.id << ": "
 					<< prev_str.first << " from '" << prev_str.second->get_name() << "' and "
 					<< strength << " from '" << owner->get_name() << "'." << std::endl;
-				throw utility::excn::EXCN_BadInput( ss.str() );
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 			} else {
 				tr.Trace << " : not assigned" << std::endl;
 			}
@@ -694,7 +694,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 				ss << "The mover '" << claim->owner() << "' yielded a null pointer as one of its "
 					<< in_claims.size() << " claims during broking of the environment '" << (env ? env->name() : "(Unknown)")
 					<< "'." << std::endl;
-				throw utility::excn::EXCN_NullPointer( ss.str() );
+				throw CREATE_EXCEPTION(utility::excn::NullPointerError,  ss.str() );
 			}
 		}
 
@@ -736,7 +736,7 @@ void EnvClaimBroker::process_elements( ResElemVect const & elems, FoldTreeSketch
 				std::ostringstream ss;
 				ss << "[ERROR] Failed broking process due to duplicate residue claims for residue "
 					<< element.label << " that do not allow duplicate labels.";
-				throw utility::excn::EXCN_BadInput( ss.str() );
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 			}
 			ann_->append_seq( element.label );
 			fts.append_residue();
@@ -813,7 +813,7 @@ void EnvClaimBroker::process_elements( JumpElemVect const & elems,
 				brokered_jumps[ pos_pair ]->operator<<( ss );
 				ss << std::endl;
 
-				throw utility::excn::EXCN_BadInput( ss.str() );
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 			}
 
 			// if we make it through the above check, it's safe to double-label this jump with both.
@@ -853,7 +853,7 @@ void EnvClaimBroker::process_elements( CutBiasElemVect const & elems, BiasVector
 		if ( element.bias > 1 || element.bias < 0 ) {
 			std::ostringstream ss;
 			ss << "Cut biases must be between 0 and 1. Cut was (" << element.p << "," << bias << ")";
-			throw utility::excn::EXCN_RangeError( ss.str() );
+			throw CREATE_EXCEPTION(utility::excn::RangeError,  ss.str() );
 		}
 		bias[ abs_p ] *= element.bias;
 	}

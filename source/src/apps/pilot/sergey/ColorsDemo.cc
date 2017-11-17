@@ -80,15 +80,15 @@ int main( int argc, char * argv [] )
 		//assert( "Plain Assert Example" == empty_string );
 		//try {
 		// debug_assert( "Debug Assert Example" == empty_string );
-		//} catch ( utility::excn::EXCN_Base const & e ) {}
+		//} catch (utility::excn::Exception const & e ) {}
 		//try {
 		// runtime_assert( "Runtime Assert Example" == empty_string );
-		//} catch ( utility::excn::EXCN_Base const & e ) {}
+		//} catch (utility::excn::Exception const & e ) {}
 
 		utility_exit_with_message("\nExample of utility_exit_with_message...");
 		return 0;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

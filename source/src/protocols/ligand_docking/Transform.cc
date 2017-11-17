@@ -106,14 +106,14 @@ void Transform::parse_my_tag
 )
 {
 	if ( tag->getName() != "Transform" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 	}
-	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires chain tag");
-	if ( ! tag->hasOption("move_distance") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires move_distance tag");
-	if ( ! tag->hasOption("box_size") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires box_size tag");
-	if ( ! tag->hasOption("angle") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires angle tag");
-	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires cycles tag");
-	if ( !tag->hasOption("temperature") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires temperature tag");
+	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires chain tag");
+	if ( ! tag->hasOption("move_distance") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires move_distance tag");
+	if ( ! tag->hasOption("box_size") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires box_size tag");
+	if ( ! tag->hasOption("angle") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires angle tag");
+	if ( ! tag->hasOption("cycles") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires cycles tag");
+	if ( !tag->hasOption("temperature") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires temperature tag");
 
 	transform_info_.chain = tag->getOption<std::string>("chain");
 
@@ -131,12 +131,12 @@ void Transform::parse_my_tag
 
 	initial_perturb_ = tag->getOption<core::Real>("initial_perturb",0.0);
 	if ( initial_perturb_ < 0 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("The initial_perturb option to the Transform mover must be positive.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The initial_perturb option to the Transform mover must be positive.");
 	}
 	if ( tag->hasOption("initial_angle_perturb") ) {
 		initial_angle_perturb_ = tag->getOption<core::Real>("initial_angle_perturb",0.0);
 		if ( initial_angle_perturb_ < 0 ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("The initial_angle_perturb option to the Transform mover must be positive.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The initial_angle_perturb option to the Transform mover must be positive.");
 		}
 	} // else leave as default: 360 degree sampling
 

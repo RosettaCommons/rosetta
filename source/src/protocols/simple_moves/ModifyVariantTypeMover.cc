@@ -143,7 +143,7 @@ void ModifyVariantTypeMover::parse_my_tag(
 
 	if ( add_target_types_.size() == 0 && remove_target_types_.size() == 0 ) {
 		TR.Error << "Must specify add_type and/or remove_type type in ModifyVariantTypeMover." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption("Must specify add_type and/or remove_type type in ModifyVariantTypeMover.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify add_type and/or remove_type type in ModifyVariantTypeMover.");
 	}
 
 	if ( tag->hasOption( "residue_selector" ) ) {

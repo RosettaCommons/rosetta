@@ -158,7 +158,7 @@ ConnectionArchitect::apply( components::StructureData & sd, core::Real & random 
 		ss << id() << ": No valid free connection points could be found. User-specified segment1 ids: " << segment1_ids_
 			<< " and segment2 ids: " << segment2_ids_ << std::endl;
 		ss << sd << std::endl;
-		throw EXCN_ConnectionSetupFailed( ss.str() );
+		throw CREATE_EXCEPTION(EXCN_ConnectionSetupFailed, ss.str() );
 	}
 
 	MotifOP motif = choose_motif( connection_candidates, random );
@@ -169,7 +169,7 @@ ConnectionArchitect::apply( components::StructureData & sd, core::Real & random 
 		ss << id() << ": Failed to choose a motif to use for the connection. User-specified segment1 ids: " << segment1_ids_
 			<< " and segment2 ids: " << segment2_ids_ << std::endl;
 		ss << sd << std::endl;
-		throw EXCN_ConnectionSetupFailed( ss.str() );
+		throw CREATE_EXCEPTION(EXCN_ConnectionSetupFailed, ss.str() );
 	}
 }
 
@@ -407,7 +407,7 @@ ConnectionArchitect::segment_pairs( components::StructureData const & sd ) const
 		err << "Connection " << id() << ": " << " no available segment1 upper termini were found matching the user's input.";
 		err << "Input ids: " << segment1_ids_ << " User chain: " << chain1_ << " Perm: " << std::endl;
 		err << sd << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 
 	if ( local_comp2_ids.empty() ) {
@@ -415,7 +415,7 @@ ConnectionArchitect::segment_pairs( components::StructureData const & sd ) const
 		err << "Connection " << id() << ": " << " no available segment2 lower termini were found matching the user's input.";
 		err << "Input ids: " << segment2_ids_ << " User chain: " << chain2_ << " Perm: " << std::endl;
 		err << sd << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 	}
 
 	return combine_segment_names( local_comp1_ids, local_comp2_ids );

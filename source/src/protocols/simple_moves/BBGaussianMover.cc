@@ -266,7 +266,7 @@ void BBGaussianMover::setup_list(Pose const &pose)
 	if ( use_all_pivot_res_ ) {
 		if ( n_dof_angle_ != (n_pert_res_-nseg)*2 + (shrink_frag_ends_ ? 0 : 2*nseg) ) {
 			TR.Debug << "DOF=" << n_dof_angle_ << " N_RES=" << n_pert_res_ << " N_SEG=" << nseg << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption( " BBG: dof and res number mismatch" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  " BBG: dof and res number mismatch" );
 		}
 	}
 	//debug info
@@ -312,7 +312,7 @@ core::Real BBGaussianMover::cholesky_fw(Matrix &a, Size n, Vector &delta, Vector
 				if ( sum>0.0 ) {
 					p[i]=sqrt(sum);
 				} else {
-					throw utility::excn::EXCN_RosettaScriptsOption( " BBG: Cholesky decomposition failed, may be a wrong structure" );
+					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  " BBG: Cholesky decomposition failed, may be a wrong structure" );
 				}
 			} else {
 				a[j][i]=sum/p[i];
@@ -350,7 +350,7 @@ core::Real BBGaussianMover::cholesky_bw(Matrix &a, Size n, Vector &dphi, Vector 
 				if ( sum>0.0 ) {
 					p[i]=sqrt(sum);
 				} else {
-					throw utility::excn::EXCN_RosettaScriptsOption( " BBG: Cholesky decomposition failed, may be a wrong structure" );
+					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  " BBG: Cholesky decomposition failed, may be a wrong structure" );
 				}
 			} else {
 				a[j][i]=sum/p[i];
@@ -508,14 +508,14 @@ void BBGaussianMover::get_VdRdPhi(Pose const &pose)
 			if ( rsd_end.has(end_atom_list_[i].second) ) {
 				end_xyz = rsd_end.atom(end_atom_list_[i].second).xyz();
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption( " BBG: No lock atom found on res (end)" );
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  " BBG: No lock atom found on res (end)" );
 			}
 		} else {
 			conformation::Residue const & rsd_end( pose.residue( end_atom_list_[i].first ) );
 			if ( rsd_end.has(end_atom_list_[i].second) ) {
 				end_xyz = rsd_end.atom(end_atom_list_[i].second).xyz();
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption( " BBG: No lock atom found on res (lock)" );
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  " BBG: No lock atom found on res (lock)" );
 			}
 		}
 
@@ -693,11 +693,11 @@ void BBGaussianMover::parse_my_tag(
 	//check logic
 	if ( use_all_pivot_res_ ) {
 		if ( !fix_short_segment_ ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( " BBG: use_all should go with fix_tail" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  " BBG: use_all should go with fix_tail" );
 		}
 	} else {
 		if ( n_dof_angle_ != (n_pert_res_*2) ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( " BBG: dof and res number mismatch" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  " BBG: dof and res number mismatch" );
 		}
 	}
 

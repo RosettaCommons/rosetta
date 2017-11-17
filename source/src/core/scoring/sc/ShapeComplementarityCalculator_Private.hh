@@ -47,13 +47,13 @@ enum __ATTEN_ENUM__ {
 
 ////////////////////////////////////////////////////////////
 
-class ShapeComplementarityCalculatorException : public utility::excn::EXCN_Msg_Exception {
+class ShapeComplementarityCalculatorException : public utility::excn::Exception {
 
 public:
 	std::string error;
 
-	ShapeComplementarityCalculatorException(const char *err, ...) :
-		utility::excn::EXCN_Msg_Exception( std::string() )
+	ShapeComplementarityCalculatorException(char const *file, int line, const char *err, ...) :
+		utility::excn::Exception(file, line, std::string() )
 	{
 		va_list p;
 		char buf[256];

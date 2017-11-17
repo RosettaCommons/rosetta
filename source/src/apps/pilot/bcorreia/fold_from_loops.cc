@@ -1012,7 +1012,7 @@ main( int argc, char* argv [] )
 					loop_tag = 1;
 					try{
 						jumping::close_chainbreaks( closure_protocol, fold_pose, sliding_checkpoint ,"sliding", f );
-					} catch ( protocols::loops::EXCN_Loop_not_closed& excn ) {
+					} catch (protocols::loops::EXCN_Loop_not_closed& excn ) {
 						loop_tag = 0;
 					}
 
@@ -1193,7 +1193,7 @@ main( int argc, char* argv [] )
 
 		TR.flush();
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

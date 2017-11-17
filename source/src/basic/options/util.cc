@@ -190,7 +190,7 @@ add_anonymous_option(
 	} else if ( dynamic_cast< ResidueChainVectorOptionKey const * > ( &key ) ) {
 		options.add( dynamic_cast< ResidueChainVectorOptionKey const & > ( key ), "" );
 	} else {
-		throw utility::excn::EXCN_Msg_Exception( "Failed to add an anonymous option to an option collection: " + key.id() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to add an anonymous option to an option collection: " + key.id() );
 	}
 }
 

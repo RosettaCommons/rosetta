@@ -43,7 +43,7 @@
 
 
 //Auto Headers
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace features {
 
@@ -104,7 +104,7 @@ WriteDeletePair get_write_delete_pair(
 	try
 {
 		score_type_id = get_score_type_id_from_score_term(db_session,protocol_id,score_term);
-	}catch(utility::excn::EXCN_Base &)
+	}catch (utility::excn::Exception &)
 {
 		TR << "no score type term, looking in the job data map" <<std::endl;
 	}

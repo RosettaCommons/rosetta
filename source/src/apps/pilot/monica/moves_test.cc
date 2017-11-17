@@ -148,7 +148,7 @@ main( int argc, char * argv [] )
 	small_moves_test( pose );
 	pose = start_pose;
 	shear_moves_test( pose );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

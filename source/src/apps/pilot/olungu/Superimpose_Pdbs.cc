@@ -289,7 +289,7 @@ main( int argc, char* argv[] )
 			full_pose.dump_scored_pdb( fname, *scorefxn );
 			out.close();
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

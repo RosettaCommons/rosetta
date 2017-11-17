@@ -56,7 +56,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 #ifdef MULTI_THREADED
 		try {
 			core::scoring::ScoringManager::get_instance()->get_OmegaPreferencesFunction();
-		} catch( utility::excn::EXCN_Base& excn )  {
+		} catch (utility::excn::Exception& excn )  {
 			TR << excn.msg() << std::endl;
 			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate OmegaPreferencesFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
 			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
@@ -116,7 +116,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 #ifdef MULTI_THREADED
 		try {
 			core::scoring::ScoringManager::get_instance()->get_OmegaPreferencesFunction();
-		} catch( utility::excn::EXCN_Base& excn )  {
+		} catch (utility::excn::Exception& excn )  {
 			TR << excn.msg() << std::endl;
 			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate OmegaPreferencesFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
 			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );

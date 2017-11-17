@@ -572,7 +572,7 @@ SilentFileData::read_file(
 	);
 	//if ( !success && !option[ OptionKeys::in::file::silent_read_through_errors ]() ) {
 	if ( !success && !options_.read_through_errors() ) {
-		throw utility::excn::EXCN_BadInput("no success reading silent file "+filename);
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "no success reading silent file "+filename);
 	}
 	return success;
 } // read_file
@@ -650,7 +650,7 @@ SilentFileData::read_file(
 	);
 	//if ( !success && !option[ OptionKeys::in::file::silent_read_through_errors ]() ) {
 	if ( !success && !options_.read_through_errors() ) {
-		throw utility::excn::EXCN_BadInput("no success reading silent file "+filename);
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "no success reading silent file "+filename);
 	}
 	return success;
 }
@@ -666,7 +666,7 @@ SilentFileData::_read_file(
 	utility::io::izstream data( filename.c_str() );
 	if ( !data.good() ) {
 		if ( throw_exception_on_bad_structs ) {
-			throw utility::excn::EXCN_FileNotFound( filename );
+			throw CREATE_EXCEPTION(utility::excn::FileNotFound,  filename );
 		} else {
 			utility_exit_with_message(
 				"ERROR:: Unable to open silent_input file: '" +
@@ -803,7 +803,7 @@ SilentFileData::read_stream(
 				bool init_good = tmp_struct->init_from_lines( mylines, *this );
 
 				if ( !init_good && throw_exception_on_bad_structs ) {
-					throw utility::excn::EXCN_BadInput(
+					throw CREATE_EXCEPTION(utility::excn::BadInput, 
 						"failure to read decoy "+tmp_struct->decoy_tag()+
 						" from silent-file " + filename
 					);
@@ -864,7 +864,7 @@ SilentFileData::read_stream(
 			tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
 		}
 		bool init_good = tmp_struct->init_from_lines( mylines, *this );
-		if ( !init_good && throw_exception_on_bad_structs ) throw utility::excn::EXCN_BadInput( "failure to read decoy "+tmp_struct->decoy_tag()+" from silent-file " +filename);
+		if ( !init_good && throw_exception_on_bad_structs ) throw CREATE_EXCEPTION(utility::excn::BadInput,  "failure to read decoy "+tmp_struct->decoy_tag()+" from silent-file " +filename);
 
 		bool good_tag = false;
 		std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());

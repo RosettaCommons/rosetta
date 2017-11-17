@@ -93,10 +93,10 @@ PreliminaryLarvalJob::operator = ( PreliminaryLarvalJob const & rhs )
 
 
 
-utility::excn::EXCN_Msg_Exception
+utility::excn::Exception
 bad_inner_job_exception()
 {
-	return utility::excn::EXCN_Msg_Exception( "The InnerLarvalJob provided to the StandardJobQueen by the DerivedJobQueen must derive from StandardInnerLarvalJob. Cannot proceed." );
+	return CREATE_EXCEPTION(utility::excn::Exception, "The InnerLarvalJob provided to the StandardJobQueen by the DerivedJobQueen must derive from StandardInnerLarvalJob. Cannot proceed.");
 }
 
 
@@ -184,7 +184,7 @@ value_attribute_type_for_option(
 	case BOOLEAN_VECTOR_OPTION :
 		return xsct_bool_wsslist; // note: double check that options system uses utility/string_funcs.hh to cast from strings to bools.
 	default :
-		throw utility::excn::EXCN_Msg_Exception( "Unsupported option type hit in StandardJobQueen.cc's value_attribute" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Unsupported option type hit in StandardJobQueen.cc's value_attribute" );
 	}
 	return "ERROR";
 }
@@ -319,7 +319,7 @@ StandardJobQueen::job_definition_xsd() const
 	// verify that the derived class did not call anything besides the add_ordered_subelement_set_*
 	// functions.
 	if ( job_ct.subelement_behavior() != se_ordered_sets ) {
-		throw utility::excn::EXCN_Msg_Exception( "Subclass of StandardJobQueen's append_job_tag_subelements"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Subclass of StandardJobQueen's append_job_tag_subelements"
 			" method invokes a method of the XMLSchemaComplexTypeGenerator that overwrote the <Input>, <Output>, and"
 			" <Options> elements.  It should only call methods named \"add_ordered_subelement_set_*\"" );
 	}
@@ -347,7 +347,7 @@ StandardJobQueen::job_definition_xsd() const
 	// verify that the derived class did not call anything besides the add_ordered_subelement_set_*
 	// functions.
 	if ( common_block_ct_gen.subelement_behavior() != se_ordered_sets ) {
-		throw utility::excn::EXCN_Msg_Exception( "Subclass of StandardJobQueen's append_job_tag_subelements"
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Subclass of StandardJobQueen's append_job_tag_subelements"
 			" method invokes a method of the XMLSchemaComplexTypeGenerator that overwrote the <Input>, <Output>, and"
 			" <Options> elements.  It should only call methods named \"add_ordered_subelement_set_*\"" );
 	}
@@ -376,12 +376,12 @@ StandardJobQueen::job_definition_xsd() const
 
 	try {
 		utility::tag::test_if_schema_is_valid( xsd_string );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		std::ostringstream oss;
 		oss << "The XML Schema for the job definition file is invalid.  The error message is:\n" << e.msg()
 			<< "\nAnd the whole schema is:\n" << xsd_string << "\nThis executable cannot be used in its"
 			<< " current state.\n";
-		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 	}
 
 	return xsd_string;
@@ -537,7 +537,7 @@ void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, S
 
 void StandardJobQueen::note_job_completed( core::Size, JobStatus, Size )
 {
-	throw utility::excn::EXCN_Msg_Exception( "StandardJobQueen requires a LarvalJob when noting job completion" );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  "StandardJobQueen requires a LarvalJob when noting job completion" );
 }
 
 bool StandardJobQueen::larval_job_needed_for_completed_job_summary() const { return false; }
@@ -1491,7 +1491,7 @@ StandardJobQueen::load_job_definition_file(
 	XMLValidationOutput validator_output;
 	try {
 		validator_output = validate_xml_against_xsd( job_def_string, job_def_schema );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		std::ostringstream oss;
 		if ( option[ in::file::job_definition_file ].user() ) {
 			oss << "Job definition file \"" << option[ in::file::job_definition_file ] << "\" failed to validate against"
@@ -1502,7 +1502,7 @@ StandardJobQueen::load_job_definition_file(
 				" the schema for this application\nUse the option -jd3::job_definition_schema <output filename> to output"
 				" the schema to a file.\n" << e.msg() << "\n";
 		}
-		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 	}
 
 	if ( ! validator_output.valid() ) {
@@ -1518,7 +1518,7 @@ StandardJobQueen::load_job_definition_file(
 		}
 		oss << "Error messages were: " << validator_output.error_messages() << "\n";
 		oss << "Warning messages were: " << validator_output.warning_messages() << "\n";
-		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 	}
 
 
@@ -1649,7 +1649,7 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 			} else {
 				max_njobs = 0;
 				// this should never happen!
-				throw utility::excn::EXCN_Msg_Exception( "expand_job_list returned " + utility::to_string( n_made ) + " jobs when it was given a maximum number of " + utility::to_string( max_to_make ) + " to make (with max_njobs of " + utility::to_string( max_njobs ) + ")\n" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "expand_job_list returned " + utility::to_string( n_made ) + " jobs when it was given a maximum number of " + utility::to_string( max_to_make ) + " to make (with max_njobs of " + utility::to_string( max_njobs ) + ")\n" );
 			}
 
 			jobs.splice( jobs.end(), curr_jobs );
@@ -1745,7 +1745,7 @@ StandardJobQueen::note_job_result_output_or_discarded( LarvalJobCOP job, Size re
 		oss << "Tried to note that job " << job->job_index() << " result # " << result_index <<
 			" was output; this job has already had all of its results output or the" <<
 			" StandardJobQueen was unaware of its existence\n";
-		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 	}
 
 	if ( result_pos_iter->second.results_output_or_discarded.member( result_index ) ) {
@@ -1754,7 +1754,7 @@ StandardJobQueen::note_job_result_output_or_discarded( LarvalJobCOP job, Size re
 		oss << "From StandardJobQueen::note_job_result_output_or_discarded:\n";
 		oss << "Tried to note that job " << job->job_index() << " result # " << result_index <<
 			" was output; this result index for this job has already been output or discarded.\n";
-		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 	}
 
 

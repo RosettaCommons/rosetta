@@ -25,7 +25,7 @@
 
 // Project header
 #include <core/types.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 
@@ -83,7 +83,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 			set_throw_on_next_assertion_failure();
 			read_ring_sizes_and_morphemes_from_database_file(
 				"core/chemical/carbohydrates/ring_size_to_morphemes.bad_map" );
-		} catch ( utility::excn::EXCN_Base const & e) {
+		} catch (utility::excn::Exception const & e) {
 			std::string expected_message( "ERROR: read_ring_sizes_and_morphemes_from_database_file: invalid ring size; "
 				"rings cannot have less than 3 atoms!" );
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected_message.size() ), expected_message );

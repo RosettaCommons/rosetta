@@ -96,7 +96,7 @@ int main(int argc, char * argv[]) {
     for ( residual_dipolar_coupling::RDC_lines::const_iterator it = out_rdcs.begin(); it != out_rdcs.end(); ++it ) {
 	std::cout << *it;
     }
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
                                   }
@@ -215,7 +215,7 @@ void evaluate_score(core::pose::PoseOP pose, utility::vector1<
 	}
 	try {
 		m_inv_gen(T_, 5, T_);
-	} catch (utility::excn::EXCN_BadInput &excn) {
+	} catch (utility::excn::BadInput &excn) {
 		if (trace.Debug) {
 			pose->dump_pdb("failed_jacobi.pdb");
 		}
@@ -340,7 +340,7 @@ void read_RDC_file(std::string const & filename, utility::vector1<
 		if (line_stream.fail()) {
 			trace.Error << "couldn't read line " << line << " in rdc-file "
 					<< filename << "\n";
-			throw(utility::excn::EXCN_BadInput(" invalid line " + line
+			throw ( CREATE_EXCEPTION(utility::excn::BadInput, " invalid line " + line
 					+ " in rdc-file " + filename));
 		}
 
@@ -476,7 +476,7 @@ void jacobi(Real a[5][5], Real d[], Real v[5][5], int *nrot) {
 		}
 	}
 	//probably different type of Exception is better suited
-	throw(utility::excn::EXCN_BadInput(
+	throw ( CREATE_EXCEPTION(utility::excn::BadInput, 
 			" too many iterations in Jacobi when compute RDC tensor"));
 }
 

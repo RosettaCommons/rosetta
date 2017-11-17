@@ -747,7 +747,7 @@ remodel_fold_tree_to_account_for_insertion(
 	core::Size insert_after, //add insert_size to points after this in primary sequence in the tree
 	core::Size insert_size){
 	if ( input_tree.is_jump_point(insert_after) ) {
-		throw utility::excn::EXCN_Msg_Exception("FoldTree utility remodel_fold_tree_to_account_for_insertion: I do not know how to handle insertion points that are also jump points - does the jump stay where it was or move to the end of the insert?");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "FoldTree utility remodel_fold_tree_to_account_for_insertion: I do not know how to handle insertion points that are also jump points - does the jump stay where it was or move to the end of the insert?");
 	}
 	core::kinematics::FoldTree return_tree;
 	for ( auto const & it : input_tree ) {

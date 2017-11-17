@@ -101,7 +101,7 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 
 	if ( specified_jumps != "" && specified_sym_dof_names != "" ) {
 		TR.Error << "Can not specify 'jump' and 'sym_dof_names' in InterfaceSasaFilter" << tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "Can not specify 'jump' and 'sym_dof_names' in InterfaceSasaFilter" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Can not specify 'jump' and 'sym_dof_names' in InterfaceSasaFilter" );
 	} else if ( specified_jumps != "" ) {
 		// Populate jumps_ with str->int converstions of the jump list.
 		TR.Debug << "Reading jump list: " << specified_jumps << std::endl;
@@ -140,12 +140,12 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 
 	if ( polar_ && hydrophobic_ ) {
 		TR.Error << "Polar and hydrophobic flags specified in Sasa filter: " << tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "Polar and hydrophobic flags specified in Sasa filter." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Polar and hydrophobic flags specified in Sasa filter." );
 	}
 
 	if ( ( polar_ || hydrophobic_ ) && (jumps_.size() != 1 || jumps_[1] != 1) ) {
 		TR.Error << "Only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again: " << tag << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "Only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
 	}
 
 	TR.Debug << "Parsed Sasa Filter: <Sasa" <<

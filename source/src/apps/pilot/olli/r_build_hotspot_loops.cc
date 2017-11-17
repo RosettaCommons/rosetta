@@ -444,7 +444,7 @@ main( int argc, char * argv [] )
 		register_options();
 		devel::init( argc, argv );
 		LoopBuild_main();
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

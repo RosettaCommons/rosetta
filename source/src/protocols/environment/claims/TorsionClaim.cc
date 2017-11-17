@@ -185,13 +185,13 @@ void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& e
 
 void TorsionClaim::strength( ControlStrength const& c_str, ControlStrength const& i_str ){
 	if ( c_str > EXCLUSIVE || c_str < DOES_NOT_CONTROL ) {
-		throw utility::excn::EXCN_RangeError( "Sampling ControlStrengths are limited to values between DOES_NOT_CONTROL and EXCLUSIVE" );
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  "Sampling ControlStrengths are limited to values between DOES_NOT_CONTROL and EXCLUSIVE" );
 	} else {
 		c_str_ = c_str;
 	}
 
 	if ( i_str > EXCLUSIVE || i_str < DOES_NOT_CONTROL ) {
-		throw utility::excn::EXCN_RangeError( "Initialization ControlStrengths are limited to values between DOES_NOT_INITIALIZE and EXCLUSIVE" );
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  "Initialization ControlStrengths are limited to values between DOES_NOT_INITIALIZE and EXCLUSIVE" );
 	} else {
 		i_str_ = i_str;
 	}

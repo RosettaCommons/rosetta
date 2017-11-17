@@ -456,7 +456,7 @@ bool AbrelaxApplication::close_loops( pose::Pose &pose, core::scoring::ScoreFunc
 		try {
 			jumping::close_chainbreaks( closure_protocol, pose, abrelax_checkpoints_, tag, kinematics::FoldTree() );
 			if ( option[ OptionKeys::loops::debug_loop_closure ]() ) pose.dump_pdb(tag+"_post_closure.pdb");
-		} catch ( loops::EXCN_Loop_not_closed& excn ) {
+		} catch (loops::EXCN_Loop_not_closed& excn ) {
 			success = false;
 		}
 

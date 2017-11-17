@@ -30,13 +30,13 @@ void
 WriteableCacheableDataFactory::factory_register( WriteableCacheableDataCreatorOP creator )
 {
 	if ( !creator ) {
-		throw utility::excn::EXCN_NullPointer( "WriteableCacheableDataFactory recieved a null creator pointer." );
+		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  "WriteableCacheableDataFactory recieved a null creator pointer." );
 	}
 
 	std::string const& data_type = creator->keyname();
 
 	if ( data_creator_map_.find( data_type ) != data_creator_map_.end() ) {
-		throw utility::excn::EXCN_BadInput("WriteableCacheableData::factory_register already has a WriteableCachableData creator with name '"
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "WriteableCacheableData::factory_register already has a WriteableCachableData creator with name '"
 			+ data_type + "'. Conflicting WriteableCacheableData names" );
 	}
 
@@ -60,10 +60,10 @@ WriteableCacheableDataFactory::new_data_instance( std::string const & data_type,
 		}
 		tr.Error << std::endl;
 
-		throw utility::excn::EXCN_BadInput( "Unregistered WriteableCacheableData type '"
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Unregistered WriteableCacheableData type '"
 			+ data_type + "'." );
 	} else if ( ! iter->second ) {
-		throw utility::excn::EXCN_BadInput( "WriteableCacheableDataCreatorOP prototype for "
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "WriteableCacheableDataCreatorOP prototype for "
 			+ data_type + " was not registered as NULL." );
 	}
 

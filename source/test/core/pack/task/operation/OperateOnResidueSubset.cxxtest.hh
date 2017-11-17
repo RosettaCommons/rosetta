@@ -94,7 +94,7 @@ public:
 		OperateOnResidueSubset op_on_subset;
 		try {
 			op_on_subset.parse_tag( tag, dm );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -118,7 +118,7 @@ public:
 		OperateOnResidueSubset op_on_subset;
 		try {
 			op_on_subset.parse_tag( tag, dm );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}

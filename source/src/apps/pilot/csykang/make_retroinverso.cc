@@ -286,7 +286,7 @@ main( int argc, char * argv [] )
 
 		newpose->dump_pdb("output.pdb");
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -99,7 +99,7 @@ void LoopCM::parse_my_tag( TagCOP const tag,
 		std::ostringstream ss;
 		ss << "In '" << this->get_name() << "', the value '" << algorithm << "' of the option 'algorithm' is not valid. "
 			<< "Valid options are '" << KIC << "' and '" << CCD << "'." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 	}
 
 	std::string const style = tag->getOption< std::string >( "style" );
@@ -111,7 +111,7 @@ void LoopCM::parse_my_tag( TagCOP const tag,
 		std::ostringstream ss;
 		ss << "In '" << this->get_name() << "', the value '" << style << "' of the option 'style' is not valid. "
 			<< "Valid options are '" << PERTURB << "' and '" << REFINE << "'." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 	}
 
 	std::string const selector = tag->getOption< std::string >( "selector" );
@@ -121,9 +121,9 @@ void LoopCM::parse_my_tag( TagCOP const tag,
 void LoopCM::build_mover( LoopsOP loops ) {
 
 	if ( algorithm_ == UNSET ) {
-		throw utility::excn::EXCN_BadInput( "Value of algorithm was unset in '" + get_name() + "'." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Value of algorithm was unset in '" + get_name() + "'." );
 	} else if ( style_ == UNSET ) {
-		throw utility::excn::EXCN_BadInput( "Value of style was unset in '" + get_name() + "'." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Value of style was unset in '" + get_name() + "'." );
 	}
 
 	if ( algorithm_ == KIC ) {
@@ -172,7 +172,7 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
 	if ( loops->empty() ) {
 		std::ostringstream ss;
 		ss << "The mover " << get_name() << " couldn't build a loops object from the selection it was given." << std::endl;
-		throw utility::excn::EXCN_BadInput( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
 	build_mover( loops );
 

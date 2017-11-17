@@ -171,7 +171,7 @@ int main( int argc, char ** argv ) {
 			cout << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds.\n";
 		} // loop over jobs and nstructs
 		jobdist.shutdown();
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

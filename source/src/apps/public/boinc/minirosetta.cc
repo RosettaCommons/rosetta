@@ -280,7 +280,7 @@ main( int argc, char * argv [] )
 	protocols::boinc::Boinc::worker_shutdown(); // Does not return.
 	utility_exit_with_message( "reached end of minirosetta::main() after worker_shutdown(); " );
 #endif
-		} catch ( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			std::cerr << "std::cerr: Exception was thrown: " << std::endl;
 			excn.show( std::cerr );
 			std::cout << "std::cout: Exception was thrown: " << std::endl;
@@ -291,7 +291,7 @@ main( int argc, char * argv [] )
 			return 1;    // MUST return non-0 - otherwise BOINC does not abort!
 		}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

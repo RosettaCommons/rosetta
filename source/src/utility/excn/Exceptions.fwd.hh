@@ -10,6 +10,7 @@
 /// @file   utility/excn/Exceptions.fwd.hh
 /// @brief  Declarations for many of the common exception subclasses
 /// @author Oliver Lange
+/// @author Sergey Lyskov
 
 
 #ifndef INCLUDED_utility_excn_Exceptions_FWD_HH
@@ -18,16 +19,16 @@
 namespace utility {
 namespace excn {
 
-class EXCN_Exception;
-class EXCN_Msg_Exception;
-class EXCN_IO;
-class EXCN_BadInput;
-class EXCN_FileNotFound;
-class EXCN_RangeError;
-class EXCN_KeyError;
-class EXCN_NullPointer;
-class EXCN_RosettaScriptsOption;
-class EXCN_JD2Failure;
+class Exception;
+//using EXCN_Msg_Exception = EXCN_Exception;
+class IOError;
+class BadInput;
+class FileNotFound;
+class RangeError;
+class KeyError;
+class NullPointerError;
+class RosettaScriptsOptionError;
+class JD2Failure;
 
 }
 }

@@ -104,7 +104,7 @@ main( int argc, char *argv[] )
 		conjugated_pose3.dump_pdb( OUTPATH + "S-linked_Ubi_peptide.pdb" );
 		O_linked_glycan_pose.dump_pdb( OUTPATH + "O-linked_glycopeptide.pdb" );
 		O_linked_centroid_glycan_pose.dump_pdb( OUTPATH + "O-linked_centroid_glycopeptide.pdb" );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		cerr << "caught exception " << e.msg() << endl;
 		return -1;
 	}

@@ -82,7 +82,7 @@ NMerSVMEnergyFilter::~NMerSVMEnergyFilter() = default;
 void
 NMerSVMEnergyFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
-	if ( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for NMerSVMEnergyFilter.");
+	if ( ! tag->hasOption( "threshold" ) ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify 'threshold' for NMerSVMEnergyFilter.");
 	score_type_threshold_ = tag->getOption< core::Real >( "threshold" );
 
 	if ( tag->hasOption( "svm_fname" ) ) energy_method_.read_nmer_svm( tag->getOption< std::string >( "svm_fname" ) );

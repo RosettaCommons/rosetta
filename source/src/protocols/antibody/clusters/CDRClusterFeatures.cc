@@ -134,7 +134,7 @@ CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::Dat
 	}
 
 	if ( ! enum_manager->numbering_scheme_is_present(scheme) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Numbering scheme not recognized: "+ scheme);
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Numbering scheme not recognized: "+ scheme);
 	}
 
 	set_numbering_scheme( enum_manager->numbering_scheme_string_to_enum(scheme) );
@@ -142,7 +142,7 @@ CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::Dat
 	vector1< std::string > cdrsSP = utility::string_split(cdrs, ',');
 	for ( core::Size i = 1; i <= cdrsSP.size(); ++i ) {
 		if ( ! enum_manager->cdr_name_is_present(cdrsSP[i]) ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("CDR not recognized: " + cdrsSP[i]);
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "CDR not recognized: " + cdrsSP[i]);
 		} else {
 			cdrs_.push_back(enum_manager->cdr_name_string_to_enum(cdrsSP[i]));
 		}

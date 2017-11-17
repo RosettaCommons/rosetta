@@ -101,7 +101,7 @@ ScoreTypeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 
 	set_score_type( core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) ) );
 
-	if ( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for ScoreTypeFilter.");
+	if ( ! tag->hasOption( "threshold" ) ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify 'threshold' for ScoreTypeFilter.");
 	set_threshold( tag->getOption<core::Real>( "threshold" ) );
 
 	score_type_filter_tracer << "ScoreType filter for score_type " << score_type_ << " with threshold " << score_type_threshold_<< "." << std::endl;

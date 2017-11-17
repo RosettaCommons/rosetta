@@ -74,7 +74,7 @@ sequence_from_entity(
 		protocols::genetic_algorithm::EntityElementCOP iiee = entity.traits()[ ii ];
 		PosTypeCOP ii_pos_type = utility::pointer::dynamic_pointer_cast< protocols::multistate_design::PosType const > ( iiee );
 		if ( ! ii_pos_type ) {
-			throw utility::excn::EXCN_Msg_Exception( "Position " + utility::to_string( ii ) + " of entity " + entity.to_string() + " could not be dynamically casted to PosType" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Position " + utility::to_string( ii ) + " of entity " + entity.to_string() + " could not be dynamically casted to PosType" );
 		}
 		sequence.push_back( core::chemical::oneletter_code_from_aa( ii_pos_type->type() ));
 	}
@@ -290,8 +290,8 @@ MMTDriver::setup()
 		protocols::pack_daemon::create_entity_resfile_contents(
 			entity_resfile_stream, entity_resfile_fname_,
 			entity_resfile_contents_, entity_task_, num_entities_ );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "MMTDriver failed to initialize the entity resfile\n" + e.msg() );
+	} catch (utility::excn::Exception & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "MMTDriver failed to initialize the entity resfile\n" + e.msg() );
 	}
 
 	daf_ = protocols::pack_daemon::DynamicAggregateFunctionOP( new protocols::pack_daemon::DynamicAggregateFunction );
@@ -300,8 +300,8 @@ MMTDriver::setup()
 	try {
 		std::istringstream daf_stream( file_contents_->get_file_contents_ref( daf_fname_ ) );
 		daf_->read_all_variables_from_input_file( daf_stream );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "MMTDriver::setup failed to initialize DyanmicAggregateFunction\n" + e.msg() );
+	} catch (utility::excn::Exception & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "MMTDriver::setup failed to initialize DyanmicAggregateFunction\n" + e.msg() );
 	}
 
 	if ( ! ga_randomizer_ ) {
@@ -675,7 +675,7 @@ MMTDriver::retrieve_pdb_from_node(
 	if ( retrieval_status == error ) {
 		std::string emsg = utility::receive_string_from_node( node );
 		// oh no! -- spin_down_everything_but_node( node );
-		throw utility::excn::EXCN_Msg_Exception( emsg );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  emsg );
 	}
 
 	return utility::receive_string_from_node( node );

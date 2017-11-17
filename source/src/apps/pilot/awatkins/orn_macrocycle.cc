@@ -302,7 +302,7 @@ main( int argc, char* argv[] )
 		TR << "After minimization, score is " << ( *score_fxn )( pose ) << std::endl;
 		pose.dump_pdb( "out.pdb" );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

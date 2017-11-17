@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
 		AntibodyInfoOP ab_info( new AntibodyInfoOP(pose));
 
 		//protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignProtocol ));
-	}catch(utility::excn::EXCN_Base & excn){
+	}catch (utility::excn::Exception & excn){
 		std::cout << "Exception: "<<std::endl;
 		excn.show(std::cerr);
 		return -1;

@@ -135,7 +135,7 @@ SimulateMPIData::pop_next_message_for_node_of_type( platform::Size dst, simulate
 		}
 	}
 	if ( most_recent_index == 0 ) {
-		throw excn::EXCN_Msg_Exception( "SimulatedMPIData could not pop a message of type '" + msg_name( msg_type ) + "' for node " + to_string( dst ) );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "SimulatedMPIData could not pop a message of type '" + msg_name( msg_type ) + "' for node " + to_string( dst ) );
 	}
 	most_recent_message->mark_as_processed();
 	return most_recent_message;
@@ -151,12 +151,12 @@ SimulateMPIData::pop_next_message_of_type(
 	clear_processed_msgs( messages_[ dst ][ src ] );
 	SimulateMPIMessageOP msg;
 	if ( messages_[ dst ][ src ].empty() ) {
-		throw excn::EXCN_Msg_Exception( "Could not retrieve a " + msg_name( msg_type ) + " message to " + to_string( dst ) + " from " + to_string( src ) + "; message queue is empty" );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Could not retrieve a " + msg_name( msg_type ) + " message to " + to_string( dst ) + " from " + to_string( src ) + "; message queue is empty" );
 	}
 
 	msg = messages_[ dst ][ src ].front();
 	if ( msg->msg_type() != msg_type ) {
-		throw excn::EXCN_Msg_Exception( "Could not retrieve a " + msg_name( msg_type ) + " message to " + to_string( dst ) + " from " + to_string( src ) + "; next message is of type " + msg_name( msg->msg_type() ) );
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Could not retrieve a " + msg_name( msg_type ) + " message to " + to_string( dst ) + " from " + to_string( src ) + "; next message is of type " + msg_name( msg->msg_type() ) );
 	}
 
 	msg->mark_as_processed();

@@ -160,12 +160,12 @@ public:
 			XMLSchemaDefinition xsd;
 			TaskOperationFactory::get_instance()->define_task_op_xml_schema( xsd );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-			std::string expected_message =
-				"Could not generate an XML Schema for TaskOperations from TaskOperationFactory\ndefine_xml_schema_group: failed to detect a complex type of name \"" +
-				complex_type_name_for_task_op( "DummyTaskOperation2" ) + "\" for \"DummyTaskOperation2\"\n";
+		} catch (utility::excn::Exception const & e ) {
+			std::string expected_message1 = "Could not generate an XML Schema for TaskOperations from TaskOperationFactory";
+			std::string expected_message2 = "define_xml_schema_group: failed to detect a complex type of name \"" + complex_type_name_for_task_op( "DummyTaskOperation2" ) + "\" for \"DummyTaskOperation2\"";
 
-			TS_ASSERT_EQUALS( e.msg(), expected_message );
+			TS_ASSERT( e.msg().find(expected_message1) != std::string::npos );
+			TS_ASSERT( e.msg().find(expected_message2) != std::string::npos );
 
 			//std::cout << e.msg() << "\n" << expected_message << std::endl;
 		}

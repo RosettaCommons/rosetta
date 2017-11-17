@@ -68,7 +68,7 @@ RemoveConstraints::parse_my_tag(
 	if ( generators.empty() ) {
 		std::stringstream msg;
 		msg << "RemoveConstraints: You must specify 'constraint_generators' -- a comma-separated list of names of constraint generators defined in an AddConstraints mover." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 }
 
@@ -105,7 +105,7 @@ RemoveConstraints::apply( core::pose::Pose & pose )
 			if ( ! pose.remove_constraints( csts, false ) ) {
 				if ( ! pose.remove_constraints( csts, true ) ) {
 					if ( exception_on_failure_ ) {
-						throw EXCN_RemoveCstsFailed();
+						throw CREATE_EXCEPTION(EXCN_RemoveCstsFailed, "");
 					}
 				}
 			}
@@ -168,5 +168,3 @@ void RemoveConstraintsCreator::provide_xml_schema( utility::tag::XMLSchemaDefini
 
 } //protocols
 } //constraint_generator
-
-

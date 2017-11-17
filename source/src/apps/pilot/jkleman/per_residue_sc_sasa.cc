@@ -57,7 +57,7 @@ main( int argc, char * argv [] )
 
 		// cry if PDB not given
 		if ( ! option[OptionKeys::in::file::s].user() ) {
-			throw new utility::excn::EXCN_Msg_Exception("Please provide PDB file!");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Please provide PDB file!");
 		}
 
 		// read in pose
@@ -74,7 +74,7 @@ main( int argc, char * argv [] )
 		}
 	}
 
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

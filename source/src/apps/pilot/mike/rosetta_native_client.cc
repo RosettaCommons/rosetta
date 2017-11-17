@@ -286,12 +286,12 @@ void RosettaInstance::RosettaThread(){
       // Capture the CPU time spent
       root.push_back( utility::json_spirit::Pair( "cputime", (int) rpc->runtime() ) );
     }
-    catch( utility::excn::EXCN_Msg_Exception &excn ){
+    catch (utility::excn::Exception &excn ){
       root.push_back( utility::json_spirit::Pair( "error", excn.msg() ) );
     }
 
   }
-  catch( utility::excn::EXCN_Msg_Exception &excn ){
+  catch (utility::excn::Exception &excn ){
     // we're here because the constructuor of JSON_RPC failed - capture the message of the Exception
     root.push_back( utility::json_spirit::Pair( "error",  excn.msg() ) );
   }

@@ -177,7 +177,7 @@ int main( int argc, char* argv [] ) {
 			} // for ( unsigned int i = 1; i <= mypose->size(); ++i )
 		} // while input.has_another_pose()
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

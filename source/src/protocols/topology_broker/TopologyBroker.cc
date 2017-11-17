@@ -270,7 +270,7 @@ void TopologyBroker::apply_filter( core::pose::Pose const & pose,
 		std::ostringstream report;
 		if ( !claimer->passes_filter( pose, stage_id, progress, report ) ) {
 			tr.Debug.flush();
-			throw EXCN_FilterFailed( report.str() );
+			throw CREATE_EXCEPTION(EXCN_FilterFailed,  report.str() );
 		}
 		if ( report.str().size() ) {
 			tr.Debug << "CLAIMER " << claimer->type() << ":" << claimer->label() << " FILTER REPORT: \n"
@@ -375,7 +375,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 				root = sequence_number_resolver_->find_global_pose_number(root_ptr->local_position()); // root_ptr->get_position();
 				excl_root_set = root_ptr->exclusive();
 			} else {
-				throw( kinematics::EXCN_InvalidFoldTree( "Shouldn't have two exclusive roots --- ask oliver, throw an exception ?",
+				throw ( CREATE_EXCEPTION(kinematics::EXCN_InvalidFoldTree,  "Shouldn't have two exclusive roots --- ask oliver, throw an exception ?",
 					*fold_tree_ ) );
 			}
 		}
@@ -447,7 +447,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 		for ( Size i = 1; i<= sorted_jumps.size(); ++i ) {
 			msg << jumps( 1, i ) << " " << jumps( 2, i ) << std::endl;
 		}
-		throw( kinematics::EXCN_InvalidFoldTree( "TopologyBroker failed to make a fold-tree in 10 attempts\n"+msg.str(),
+		throw ( CREATE_EXCEPTION(kinematics::EXCN_InvalidFoldTree,  "TopologyBroker failed to make a fold-tree in 10 attempts\n"+msg.str(),
 			*fold_tree_ ) );
 	}
 
@@ -464,7 +464,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 				<< " JumpClaims. A trivial (but scientifically invalid) solution would be to add a "
 				<< "BasicJumpClaimer to the topology broker setup file (.tpb) to claim a jump between disconnected chains."
 				<< std::endl;
-			throw ( utility::excn::EXCN_BadInput( msg.str() ) );
+			throw ( CREATE_EXCEPTION(utility::excn::BadInput, msg.str() ) );
 		}
 	}
 
@@ -491,7 +491,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 		final_fold_tree_->random_tree_from_jump_points( nres, n_non_removed, after_loops_jumps,
 		obligate_cut_points, cut_bias_farray, root );
 	if ( !bValidFinalTree ) {
-		throw( kinematics::EXCN_InvalidFoldTree( "TopologyBroker failed to make a final_fold-tree in 1 attempts ",
+		throw ( CREATE_EXCEPTION(kinematics::EXCN_InvalidFoldTree,  "TopologyBroker failed to make a final_fold-tree in 1 attempts ",
 			*final_fold_tree_ ) );
 	}
 	for ( Size i = 1; i <= n_non_removed; ++i ) {
@@ -590,7 +590,7 @@ claims::SequenceClaim & TopologyBroker::resolve_sequence_label( std::string cons
 			found = sequence_claim;
 		}
 	}
-	if ( !found ) throw EXCN_Unknown( "requested SequenceLabel " + label + " not found " );
+	if ( !found ) throw CREATE_EXCEPTION(EXCN_Unknown,  "requested SequenceLabel " + label + " not found " );
 	return *found;
 }
 
@@ -615,7 +615,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Po
 				msg << "BBClaim at (" << pos.first << ", " << pos.second << ") claimed by " << bb_claim->owner().lock()->type()
 					<< " using label '" << bb_claim->owner().lock()->label() << "' is has an invalid label. The global sequence position"
 					<< " cannot be globally resolved." << std::endl;
-				throw EXCN_BadInput( msg.str() );
+				throw CREATE_EXCEPTION(BadInput,  msg.str() );
 			}
 
 			if ( global_position > pose.size() ) {
@@ -623,7 +623,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Po
 				msg << "BBClaim makes claim to (" << pos.first << ", " << pos.second << " == " << global_position
 					<< " global) in pose of " << pose.size() << " residues. This can result when fragments are inconsistent "
 					<< "with FASTA, or label are incorrect." << std::endl;
-				throw EXCN_BadInput( msg.str() );
+				throw CREATE_EXCEPTION(BadInput,  msg.str() );
 			}
 			if ( !bb_claims[ global_position ] || bb_claims[ global_position ]->right() < bb_claim->right() ) {
 				bb_claims[ global_position ] = bb_claim;
@@ -667,7 +667,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Po
 			runtime_assert( !bUnitializedJump );
 		}
 	}
-	if ( bad ) throw( EXCN_Input( dof_msg.str() ) );
+	if ( bad ) throw ( CREATE_EXCEPTION(EXCN_Input,  dof_msg.str() ) );
 
 	claims::DofClaims cumulated;
 	std::copy( bb_claims.begin(), bb_claims.end(), back_inserter( cumulated ) );
@@ -691,7 +691,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Po
 	if ( failures.size() ) {
 		std::ostringstream dof_msg;
 		dof_msg << "failed to initialize dofs for these claims: .... " << failures << std::endl;
-		throw EXCN_Unknown( dof_msg.str() );
+		throw CREATE_EXCEPTION(EXCN_Unknown,  dof_msg.str() );
 	}
 	runtime_assert( failures.size() == 0 ); //should have thrown exception before -- up
 
@@ -942,7 +942,7 @@ bool TopologyBroker::check_chainbreak_variants(
 	for ( core::Size to_be_closed_cut : to_be_closed_cuts_ ) {
 		tr.Debug << "consider cut between res " << to_be_closed_cut << " and " << to_be_closed_cut+1 << std::endl;
 		if ( !pose.fold_tree().is_cutpoint( to_be_closed_cut ) ) {
-			throw( kinematics::EXCN_InvalidFoldTree( "Foldtree missmatch", pose.fold_tree() ) );
+			throw ( CREATE_EXCEPTION(kinematics::EXCN_InvalidFoldTree,  "Foldtree missmatch", pose.fold_tree() ) );
 		}
 		if ( pose.residue( to_be_closed_cut ).has_variant_type( chemical::CUTPOINT_LOWER )
 				&& pose.residue( to_be_closed_cut+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {

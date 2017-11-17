@@ -26,16 +26,17 @@
 
 // C++ Headers
 #include <string>
+#include <sstream>
 
 // ObjexxFCL Headers
 
 namespace core {
 namespace environment {
 
-class EXCN_Env_Exception : public utility::excn::EXCN_Msg_Exception {
-	typedef utility::excn::EXCN_Msg_Exception Parent;
+class EXCN_Env_Exception : public utility::excn::Exception {
+	typedef utility::excn::Exception Parent;
 public:
-	EXCN_Env_Exception( EnvCoreCAP env_ap ) : Parent("") {
+	EXCN_Env_Exception(char const *file, int line, EnvCoreCAP env_ap ) : Parent(file, line, "") {
 		EnvCoreCOP env = env_ap.lock(); // avoids throwing weak_ptr exception
 		std::ostringstream elab_msg;
 
@@ -60,7 +61,7 @@ public:
 	}
 
 protected:
-	EXCN_Env_Exception() : Parent() {};
+	//EXCN_Env_Exception(char const *file, int line) : Parent(file, line, "") {};
 };
 
 } // environment

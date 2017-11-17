@@ -146,7 +146,7 @@ main( int argc, char* argv [] )
 			core::Real score = (*scorefxn)(target_pose);
 			cout << *it << '\t' << constraint_score << '\t' << score << '\n';
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

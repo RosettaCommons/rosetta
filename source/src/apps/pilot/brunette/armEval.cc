@@ -257,7 +257,7 @@ int main( int argc, char * argv [] ) {
 			utility::vector1< std::string >  abego_vector = core::sequence::get_abego(*input_poseOP,1);
 			output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance1_4) << " "<< F(8,3,distance2_5) << " "<< F(8,3,distance3_6) << " "<< F(8,3,distance1_2)  <<" " << F(8,3,distance2_3) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " " <<F(8,3,hb_srbb_score) << "  " << std::endl;
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

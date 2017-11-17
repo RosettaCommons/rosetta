@@ -216,7 +216,7 @@ bool MetalloClaimer::read_tag( std::string tag, std::istream& is ) {
 
 void MetalloClaimer::init_after_reading() {
 	if ( !anchor_residue_ ) {
-		throw EXCN_Input( "need to specify anchor residue for MetalloLigand "+ligand_ );
+		throw CREATE_EXCEPTION(EXCN_Input,  "need to specify anchor residue for MetalloLigand "+ligand_ );
 	}
 
 	if ( anchor_chain_ == "" ) {

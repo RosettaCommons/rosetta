@@ -54,9 +54,9 @@ bool CDR_Bounds::valid(string const &sequence) const
 /// @throw _AE_invalid_cdr_region_ if CDR sequence out of bound of Chain sequence
 void CDR_Bounds::validate(string const &sequence) const
 {
-	if( !defined() ) throw _AE_cdr_undefined_();
+	if( !defined() ) throw CREATE_EXCEPTION(_AE_cdr_undefined_, "");
 	else {
-		if( !valid(sequence) ) { throw _AE_invalid_cdr_region_(); }
+		if( !valid(sequence) ) { throw CREATE_EXCEPTION(_AE_invalid_cdr_region_, ""); }
 	}
 }
 
@@ -66,7 +66,7 @@ void CDR_Bounds::validate(string const &sequence) const
 void AntibodyFramework::update_sequences(std::string chain_sequence)
 {
 	for(auto i : {fr1_begin, fr2_begin, fr3_begin, fr3_begin, fr1_end, fr2_end, fr3_end, fr3_end} ) {
-		if( i > chain_sequence.size() ) throw _AE_invalid_cdr_region_();
+		if( i > chain_sequence.size() ) throw CREATE_EXCEPTION(_AE_invalid_cdr_region_, "");
 	}
 
 	fr1 = chain_sequence.substr(fr1_begin, fr1_end-fr1_begin);
@@ -82,10 +82,10 @@ void AntibodyFramework::update_sequences(std::string chain_sequence)
  */
 string cdr_sequence(string const & sequence, CDR_Bounds const &cdr)
 {
-	if( !cdr.defined() ) throw _AE_cdr_undefined_();
+	if( !cdr.defined() ) throw CREATE_EXCEPTION(_AE_cdr_undefined_, "");
 	else {
 		if( cdr.valid(sequence) ) return sequence.substr(cdr.begin, cdr.end-cdr.begin);
-		else throw _AE_invalid_cdr_region_();
+		else throw CREATE_EXCEPTION(_AE_invalid_cdr_region_, "");
 	}
 }
 

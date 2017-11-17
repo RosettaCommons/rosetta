@@ -78,7 +78,7 @@ AtrGrid::parse_my_tag(utility::tag::TagCOP tag){
 	if ( tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ) {
 		// the user MUST provide all 3 if he/she is providing any of these 3 options
 		if ( !(tag->hasOption("bb") && tag->hasOption("sc") && tag->hasOption("ligand") ) ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("'AtrGrid' requires bb, sc, and ligand if any one of these are used");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'AtrGrid' requires bb, sc, and ligand if any one of these are used");
 		}
 		bb_= tag->getOption<core::Real>("bb");
 		sc_= tag->getOption<core::Real>("sc");
@@ -88,7 +88,7 @@ AtrGrid::parse_my_tag(utility::tag::TagCOP tag){
 	if ( tag->hasOption("inner_radius") || tag->hasOption("outer_radius") ) {
 		// the user MUST provide both if he/she is providing either of these options
 		if ( !(tag->hasOption("inner_radius") && tag->hasOption("outer_radius")) ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("'AtrGrid' requires outer_radius and inner_radius if either of these options are used");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'AtrGrid' requires outer_radius and inner_radius if either of these options are used");
 		}
 		inner_radius_= tag->getOption<core::Real>("inner_radius");
 		outer_radius_= tag->getOption<core::Real>("outer_radius");

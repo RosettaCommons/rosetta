@@ -22,7 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
 #include <utility/exit.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
@@ -163,7 +163,7 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 		TR << "Starting cycpep_analysis.cc.\nPilot app created by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory, on 13 October 2016." << std::endl;
 		do_cycpep_analysis();
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		TR.Error << "Exception caught: " << std::endl;
 		excn.show( TR.Error );
 		TR.Error.flush();

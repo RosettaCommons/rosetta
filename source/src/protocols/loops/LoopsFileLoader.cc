@@ -44,7 +44,7 @@ LoopsFileLoader::create_resource(
 ) const
 {
 	if ( ! dynamic_cast< LoopsFileOptions const * > ( &options ) ) {
-		throw utility::excn::EXCN_Msg_Exception( "LoopsFileLoader expected to be given a LoopsFileOptions object, " \
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "LoopsFileLoader expected to be given a LoopsFileOptions object, " \
 			"but was given a non-LoopsFileOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
 	LoopsFileOptions const & loops_opts = static_cast< LoopsFileOptions const & > ( options );

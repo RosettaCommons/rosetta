@@ -79,7 +79,7 @@ public:
 		core::scoring::methods::EnergyMethodOptions opts;
 		try {
 			enmeth_ = core::scoring::ScoringManager::get_instance()->energy_method( score_type_, opts );
-		} catch (utility::excn::EXCN_Base& excn){
+		} catch (utility::excn::Exception& excn){
 			TR.Error
 				<< "Unable to Test scoring with score type '"
 				<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
@@ -100,7 +100,7 @@ public:
 					<< "' gives zero energy with test structure. Timing values may not be informative." << std::endl;
 			}
 			setup_successful_ = true;
-		} catch (utility::excn::EXCN_Base& excn){
+		} catch (utility::excn::Exception& excn){
 			TR.Error
 				<< "Unable to Test scoring with score type '"
 				<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
@@ -137,7 +137,7 @@ public:
 					pose_->energies().clear();
 					scorefxn.set_weight(score_type_, 0);
 				}
-			} catch (utility::excn::EXCN_Base& excn){
+			} catch (utility::excn::Exception& excn){
 				TR.Error
 					<< "Unable to Test scoring with score type '"
 					<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)

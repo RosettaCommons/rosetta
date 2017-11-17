@@ -119,7 +119,7 @@ main( int argc, char * argv [] )
 
 		JobDistributor::get_instance()->go( mymover );
 
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 		std::cout << "Exception: " << std::endl;

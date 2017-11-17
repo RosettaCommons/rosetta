@@ -35,7 +35,7 @@ main( int argc, char * argv [] )
 
 		SurfaceDockingProtocolOP dp( new SurfaceDockingProtocol() );
 		JobDistributor::get_instance()->go(dp);
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

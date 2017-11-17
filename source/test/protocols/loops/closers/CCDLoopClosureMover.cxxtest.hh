@@ -38,7 +38,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility header
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 
 // C++ header
@@ -210,7 +210,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			mover.max_per_move_torsion_delta_per_residue( 'w' );
 			TS_ASSERT( false );  // Exception was not thrown!
-		} catch ( utility::excn::EXCN_Base const & e) {
+		} catch (utility::excn::Exception const & e) {
 			// We get a PyAssert in debug mode, and a regular message exception in release mode
 			// These have different formats -- just check for contents we need
 			TR << "Error message is:\n";
@@ -225,7 +225,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			mover.max_total_torsion_delta_per_residue( '!' );
 			TS_ASSERT( false );  // Exception was not thrown!
-		} catch ( utility::excn::EXCN_Base const & e) {
+		} catch (utility::excn::Exception const & e) {
 			// We get a PyAssert in debug mode, and a regular message exception in release mode
 			// These have different formats -- just check for contents we need
 			TR << "Error message is:\n";
@@ -253,9 +253,10 @@ public:
 			set_throw_on_next_assertion_failure();
 			mover.apply( pose );
 			TS_ASSERT( false );  // Exception was not thrown!
-		} catch ( utility::excn::EXCN_BadInput const & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "CCDLoopClosureMover::get_anchors( core::conformation::Residue const & residue ): "
-				"Residue is not a cutpoint variant! You must add cutpoint variants before applying this Mover." );
+		} catch (utility::excn::BadInput const & e ) {
+			std::string expected_err_msg = "CCDLoopClosureMover::get_anchors( core::conformation::Residue const & residue ): "
+				"Residue is not a cutpoint variant! You must add cutpoint variants before applying this Mover." ;
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 		TR << "------------ The previous error message was expected -------------" << std::endl;
 

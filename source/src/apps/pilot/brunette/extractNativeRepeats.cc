@@ -721,10 +721,9 @@ int main( int argc, char * argv [] ) {
 				output_all_repeats(output_repeats,tag,handedness,radius,rise,omega,rmsd,tm,all_out);
 			}
 		}
-	}catch ( utility::excn::EXCN_Base const & e ) {
+	}catch ( utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 	return 0;
 }
-

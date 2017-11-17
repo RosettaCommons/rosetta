@@ -132,7 +132,7 @@ DeleteRegionMover::parse_my_tag(
 	}
 
 	if ( !selector_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "You must specify a start and end residue or a residue selector to DeleteRegionMover.\n" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "You must specify a start and end residue or a residue selector to DeleteRegionMover.\n" );
 	}
 
 	nter_overhang_ = tag->getOption<core::Size>( "nter_overhang", nter_overhang_ );
@@ -146,7 +146,7 @@ DeleteRegionMover::apply( core::pose::Pose& pose )
 	using core::select::residue_selector::ResidueRanges;
 
 	if ( ! selector_ ) {
-		throw utility::excn::EXCN_BadInput( "Selector not set in DeleteRegionMover!" );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Selector not set in DeleteRegionMover!" );
 	}
 
 	ResidueRanges const ranges( selector_->apply( pose ) );

@@ -70,7 +70,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
@@ -264,7 +264,7 @@ int loophash_main(){
 	loop_hash_library->load_db();
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go( lh_sampler );
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch ( utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 		std::cout << "Exception: " << std::endl;

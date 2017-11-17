@@ -90,7 +90,7 @@ void FindConsensusSequence::parse_my_tag(
 		if ( datamap.has( "scorefxns", scorefxn_key ) ) {
 			sfxn_ = datamap.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_key );
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 		}
 	}
 
@@ -172,7 +172,7 @@ FindConsensusSequence::resfile_at ( core::Size index ) {
 
 void FindConsensusSequence::apply( core::pose::Pose & /*pose*/ ) {
 	if ( poses_.size() == 0 ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("Error: no poses initialized. Did you try to run this from Rosetta Scripts? That's not supported right now");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error: no poses initialized. Did you try to run this from Rosetta Scripts? That's not supported right now");
 	}
 	using namespace core::pack::task;
 	simple_moves::PackRotamersMoverOP packer ( new simple_moves::PackRotamersMover );

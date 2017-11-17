@@ -97,7 +97,7 @@ close_chainbreaks(
 	//runtime_assert  that all cut-points in final_fold_tree are also contained the actual fold_tree
 	for ( Size ncut = 1; ncut <= (Size)final_fold_tree.num_cutpoint(); ncut++ ) {
 		if ( !open_pose.fold_tree().is_cutpoint( final_fold_tree.cutpoint( ncut ) ) ) {
-			throw( loops::EXCN_Loop_not_closed( "Foldtree mismatch." ) );
+			throw ( CREATE_EXCEPTION(loops::EXCN_Loop_not_closed,  "Foldtree mismatch." ) );
 		}
 	}
 	tr.Debug << "close chainbreaks until final fold-tree is reached\n";
@@ -145,7 +145,7 @@ close_chainbreaks(
 			}
 		}
 		if ( cuts.empty() ) { //size() == 0 ) {
-			throw( loops::EXCN_Loop_not_closed( "no moveable piece to close loop" ) );
+			throw ( CREATE_EXCEPTION(loops::EXCN_Loop_not_closed,  "no moveable piece to close loop" ) );
 		}
 
 		Size const cutpoint( cuts.back().second ); //largest is last... so take last element

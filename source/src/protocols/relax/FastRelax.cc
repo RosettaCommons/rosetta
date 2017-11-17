@@ -1444,7 +1444,7 @@ void FastRelax::batch_apply(
 
 					clock_t endtime = clock();
 					TR.Debug << "time:" << endtime - starttime << " Score: " << relax_decoy.current_score << std::endl;
-				} catch ( utility::excn::EXCN_Base& excn ) {
+				} catch ( utility::excn::Exception& excn ) {
 					std::cerr << "Ramp_repack_min exception: " << std::endl;
 					excn.show( std::cerr );
 					// just deactivate this pose
@@ -1499,7 +1499,7 @@ void FastRelax::batch_apply(
 				core::Real score = 0;
 				try {
 					score = (*local_scorefxn)( pose );
-				} catch ( utility::excn::EXCN_Base& excn ) {
+				} catch ( utility::excn::Exception& excn ) {
 					std::cerr << "Accept_to_best scoring exception: " << std::endl;
 					excn.show( std::cerr );
 					// just deactivate this pose

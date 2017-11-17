@@ -127,9 +127,9 @@ public:
 			factory->set_throw_on_double_registration();
 			factory->factory_register( ResidueSelectorCreatorOP( new DummyResidueSelectorCreator ) );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_err_msg = "Factory Name Conflict: Two or more ResidueSelectorCreators registered with the name DummyResidueSelector";
-			TS_ASSERT( expected_err_msg == e.msg() );
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 
 		}
 
@@ -143,9 +143,9 @@ public:
 			basic::datacache::DataMap dm;
 			ResidueSelectorOP selector = factory->new_residue_selector( "DummyResidueSelector2", 0, dm );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected_err_msg = "No ResidueSelectorCreator with the name 'DummyResidueSelector2' has been registered with the ResidueSelectorFactory";
-			TS_ASSERT( expected_err_msg == e.msg() );
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 

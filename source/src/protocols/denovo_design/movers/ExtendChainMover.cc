@@ -121,12 +121,12 @@ ExtendChainMover::parse_my_tag(
 	if ( tag->hasOption( "length" ) ) {
 		std::stringstream msg;
 		msg << architect().id() << ": The length option is not valid for ExtendChainMover -- please specify a motif using the \"motif\" option!";
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 	if ( !tag->hasOption( "motif" ) ) {
 		std::stringstream msg;
 		msg << architect().id() << ": You must specify a motif (e.g. 1LG-1LB-10HA) to ExtendChainMover.";
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
 	std::string const & segment_id_str = tag->getOption< std::string >( "segment", "" );
@@ -141,12 +141,12 @@ ExtendChainMover::parse_my_tag(
 		msg << architect().id() << ": You cannot set both segment and chain in ExtendChainMover. Please specify one or the other.";
 		msg << "segment1_ids = " << segment_names_ << std::endl;
 		msg << "chain1 = " << chain_ << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 	if ( segment_names_.empty() && !chain_ ) {
 		std::stringstream msg;
 		msg << architect().id() << ": You must set either segment or chain in ExtendChainMover, but you haven't specified either. Please specify either one or the other.";
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 }
 
@@ -281,7 +281,7 @@ seg2 = local_comp2_ids[ s2_idx ];
 }
 if ( user_chain1() ) {
 if ( !seg1.empty() ) {
-throw utility::excn::EXCN_BadInput( id() + ": you can only specify one segment/chain to ExtendChainMover!  You have specified more than one." );
+throw CREATE_EXCEPTION(utility::excn::BadInput,  id() + ": you can only specify one segment/chain to ExtendChainMover!  You have specified more than one." );
 }
 utility::vector1< std::string > const local_comp1_ids = find_available_upper_termini( perm );
 if ( user_chain1() > local_comp1_ids.size() ) {
@@ -289,13 +289,13 @@ std::stringstream msg;
 msg << id() << ": The user-specified chain number (" << user_chain1()
 << ") is larger than the number of upper termini in the pose (" << local_comp1_ids.size()
 << "). Perm = " << perm << std::endl;
-throw utility::excn::EXCN_BadInput( msg.str() );
+throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 }
 seg1 = local_comp1_ids[ user_chain1() ];
 }
 if ( user_chain2() ) {
 if ( !seg2.empty() ) {
-throw utility::excn::EXCN_BadInput( id() + ": you can only specify one segment/chain to ExtendChainMover!  You have specified more than one." );
+throw CREATE_EXCEPTION(utility::excn::BadInput,  id() + ": you can only specify one segment/chain to ExtendChainMover!  You have specified more than one." );
 }
 utility::vector1< std::string > const local_comp2_ids = find_available_lower_termini( perm );
 if ( user_chain2() > local_comp2_ids.size() ) {
@@ -303,7 +303,7 @@ std::stringstream msg;
 msg << id() << ": The user-specified chain2 number (" << user_chain2()
 << ") is larger than the number of lower termini in the pose (" << local_comp2_ids.size()
 << "). Perm = " << perm << std::endl;
-throw utility::excn::EXCN_BadInput( msg.str() );
+throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 }
 seg2 = local_comp2_ids[ user_chain2() ];
 }
@@ -314,7 +314,7 @@ msg << id() << ": you must specify exactly one valid segment/chain to ExtendChai
 msg << "user_chain1() = " << user_chain1() << " user_chain2() = " << user_chain2() << std::endl;
 msg << "segment1 = " << comp1_ids() << " segment2 = " << comp2_ids() << std::endl;
 msg << "Perm = " << perm << std::endl;
-throw utility::excn::EXCN_BadInput( msg.str() );
+throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 }
 
 std::string const segname = id();
@@ -386,7 +386,7 @@ perm.move_segment( loop_upper( perm ), loop_upper( perm ), upper_segment_id( per
 } else {
 std::stringstream msg;
 msg << id() << ": Lower segment id and upper segment id are both empty! Perm= " << perm << std::endl;
-throw utility::excn::EXCN_BadInput( msg.str() );
+throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 }
 
 perm.chains_from_termini();
@@ -411,7 +411,7 @@ connect_upper_loop( perm );
 std::stringstream msg;
 msg << id() << ": Neither loop_upper (" << loop_upper( perm ) << ") nor loop_lower("
 << loop_lower( perm ) << ") are the segment built by this connection. Perm=" << perm << std::endl;
-throw utility::excn::EXCN_BadInput( msg.str() );
+throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 }
 
 // check sfxn
@@ -419,7 +419,7 @@ if ( !scorefxn() ) {
 std::stringstream err;
 err << "ExtendChain: You must set a valid scorefunction to "
 << id() << " before connecting" << std::endl;
-throw utility::excn::EXCN_Msg_Exception( err.str() );
+throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
 }
 
 // create loops

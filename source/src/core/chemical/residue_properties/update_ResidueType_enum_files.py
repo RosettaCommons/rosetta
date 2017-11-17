@@ -327,7 +327,7 @@ def generate_mappings_source_file(enum_info, enum_defs):
          # quick hack -- could probably do this for PROPERTY also -- rhiju
 	lines.append('\t\treturn ( *VARIANT_MAP ).at( "NO_VARIANT" );\n')
     else:
-        lines.append('\t\tthrow EXCN_Msg_Exception( "Rosetta does not recognize '
+        lines.append('\t\tthrow CREATE_EXCEPTION(Exception, "Rosetta does not recognize '
                      'the ' + enum_info.short_name + ': " + ' +
                      enum_info.short_name + ' +\n')
         lines.append('\t\t\t\t"; has it been added to ' + enum_info.input_file +

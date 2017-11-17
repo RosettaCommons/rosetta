@@ -61,7 +61,7 @@ HBondDonorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 {
 
 	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_donor_limit") ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("HBondDonor filter needs a 'chain' and an 'hbond_donor_limit' option");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "HBondDonor filter needs a 'chain' and an 'hbond_donor_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 	hbond_donor_limit_ = tag->getOption<core::Size>("hbond_donor_limit");

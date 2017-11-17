@@ -38,7 +38,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.fwd.hh>
+#include <utility/excn/Exceptions.fwd.hh>
 
 // C++ headers
 #include <atomic>

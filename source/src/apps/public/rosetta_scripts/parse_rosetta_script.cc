@@ -38,7 +38,7 @@
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 // Tracer
@@ -63,7 +63,7 @@ main( int argc, char * argv [] )
 		rs.generate_mover_and_apply_to_pose( *PoseOP( new Pose), option[ parser::protocol ].value());
 		TR << "Successfully constructed and initialized all objects specified in the " << option[ parser::protocol ]() << " script" << std::endl;
 
-	} catch( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		basic::Error()
 			<< "ERROR: Exception caught by parse_rosetta_script application:"
 			<< excn << std::endl;

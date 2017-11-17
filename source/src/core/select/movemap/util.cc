@@ -136,11 +136,11 @@ get_movemap_factory( std::string const & factory_name, basic::datacache::DataMap
 	core::select::movemap::MoveMapFactoryOP factory;
 	try {
 		factory = data.get_ptr< core::select::movemap::MoveMapFactory >( movemap_factory_category(), factory_name );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	} catch ( utility::excn::Exception & e ) {
 		std::stringstream error_msg;
 		error_msg << "Failed to find MoveMapFactory named '" << factory_name << "' in the DataMap.\n";
 		error_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 	}
 	debug_assert( factory );
 	TR << "Found MoveMapFactory " << factory_name << std::endl;

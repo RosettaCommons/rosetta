@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
 		protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD loopmover2 (protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD(loops, scorefxn));
 		std::cout << loopmover2 << std::endl;*/
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

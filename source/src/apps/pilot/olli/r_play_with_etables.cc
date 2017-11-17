@@ -46,7 +46,7 @@
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 
@@ -133,14 +133,14 @@ int main( int argc, char * argv [] ) {
 			} else {
 				protocols::jd2::JobDistributor::get_instance()->go( mover );
 			}
-		} catch( utility::excn::EXCN_Base& excn ) {
+		} catch (utility::excn::Exception& excn ) {
 			basic::Error()
 				<< "ERROR: Exception caught by rosetta_scripts application:"
 				<< excn << std::endl;
 			assert(false); // core dump in debug mode
 			std::exit( 1 );
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

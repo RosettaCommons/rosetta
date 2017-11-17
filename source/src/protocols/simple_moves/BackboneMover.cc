@@ -203,7 +203,7 @@ BackboneMover::parse_my_tag(
 		core::select::residue_selector::ResidueSelectorCOP res_selector =
 			protocols::rosetta_scripts::parse_residue_selector( tag, data );
 		if ( !res_selector ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "ResidueSelector passed to Shear or Small backbone mover could not be found." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ResidueSelector passed to Shear or Small backbone mover could not be found." );
 		}
 		selector( res_selector );
 	}
@@ -211,7 +211,7 @@ BackboneMover::parse_my_tag(
 		core::scoring::ScoreFunctionOP sfx =
 			protocols::rosetta_scripts::parse_score_function( tag, data );
 		if ( !sfx ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "Scorefxn passed to Shear or Small backbone mover could not be found." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Scorefxn passed to Shear or Small backbone mover could not be found." );
 		}
 		scorefxn( sfx->clone() );
 	}

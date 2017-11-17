@@ -112,7 +112,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
 //CLAIMING METHODS:
 
 void ClientMover::initialize( Pose& ) {
-	throw utility::excn::EXCN_Msg_Exception( "ClientMover "+this->get_name()+
+	throw CREATE_EXCEPTION(utility::excn::Exception,  "ClientMover "+this->get_name()+
 		" claimed a dof to initialize, but did not override ClientMover::initialize" );
 }
 
@@ -120,7 +120,7 @@ void ClientMover::initialize( Pose& ) {
 //PASSPORT MANAGEMENT METHODS:
 core::environment::DofPassportCOP ClientMover::passport() const {
 	if ( passports_.empty() ) {
-		throw utility::excn::EXCN_NullPointer( "ClientMover "+this->get_name()+
+		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  "ClientMover "+this->get_name()+
 			" tried to access its passports, of which it has none.");
 	}
 	return passports_.top().second;
@@ -144,7 +144,7 @@ void ClientMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
 	if ( superenv && superenv->is_registered( utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() ) ) ) {
 		EnvironmentCOP passport_env = passports_.top().first.lock();
 		if ( passport_env && passport_env->id() == superenv->id() ) {
-			throw EXCN_Env_Passport( "ClientMover being double-assigned a passport for an environment.",
+			throw CREATE_EXCEPTION(EXCN_Env_Passport, "ClientMover being double-assigned a passport for an environment.",
 				get_name(), env_ap );
 		}
 	} else {
@@ -153,9 +153,9 @@ void ClientMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
 				std::ostringstream ss;
 				ss << "ClientMover " << this->get_name() << " already has a passport for " << env->name()
 					<< ". This probably means Environment::start got called multiple times." << std::endl;
-				throw EXCN_Env_Passport( ss.str(), get_name(), env_ap );
+				throw CREATE_EXCEPTION(EXCN_Env_Passport, ss.str(), get_name(), env_ap );
 			} else {
-				throw EXCN_Env_Passport( "ClientMover lacks a superenvironment passport for a superenvironment with which it is registered.",
+				throw CREATE_EXCEPTION(EXCN_Env_Passport, "ClientMover lacks a superenvironment passport for a superenvironment with which it is registered.",
 					get_name(), env_ap );
 			}
 		}
@@ -167,7 +167,7 @@ void ClientMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
 void ClientMover::pop_passport( Environment const& canceling_env ) {
 	// passport_cancel should never be called on an empty passport stack
 	if ( passports_.empty() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Environment '"+canceling_env.name()+" trying to pop a passport on "+this->get_name()+"'s empty pass stack." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Environment '"+canceling_env.name()+" trying to pop a passport on "+this->get_name()+"'s empty pass stack." );
 	}
 	// in fact, we should only ever cancel our own passports. (Should this be an assert?)
 	EnvironmentCOP passport_env = passports_.top().first.lock();
@@ -177,7 +177,7 @@ void ClientMover::pop_passport( Environment const& canceling_env ) {
 		// being deallocated. We'll allow the delete. Optimally, we'd want to check to see that the incoming passport
 		// is also inaccessible via owning pointer, but I don't really know how to do that...
 	} else if ( passport_env->id() != canceling_env.id() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Environment '"+canceling_env.name()+" trying to pop a passport on "+this->get_name()+" it did not issue." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Environment '"+canceling_env.name()+" trying to pop a passport on "+this->get_name()+" it did not issue." );
 
 	}
 	passports_.pop();
@@ -191,7 +191,7 @@ bool ClientMover::state_check( std::string const& method_name, bool test ) const
 		std::ostringstream ss;
 		ss << "Call to " << this->get_name() << "::" << method_name << " is illegal because it has already "
 			<< "issued its claims." << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  ss.str() );
 	}
 }
 

@@ -100,7 +100,7 @@ int main( int argc, char * argv [] ) {
 		// option 5: gap, all csts, surface exposed, seperated into cohesive contact collections.
 		//step 3: output sigmoid csts.
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

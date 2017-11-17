@@ -288,9 +288,9 @@ public:
 	run() override {
 		CompletedJobOutput output = MoverAndPoseJob::run();
 		if ( throw_ ) {
-			throw utility::excn::EXCN_Msg_Exception( "PoolMnPJob2 exception" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "PoolMnPJob2 exception" );
 		} else if ( throw_bad_inputs_ ) {
-			throw utility::excn::EXCN_BadInput( "PoolMnPJob2 bad input exception" );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "PoolMnPJob2 bad input exception" );
 		} else {
 			output.status = status_;
 		}
@@ -3204,9 +3204,10 @@ public:
 		try {
 			jd.go( jq3 );
 			TS_ASSERT( false ); // this should not be reached.
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Failed to retrieve job result (1, 1) which was requested from node 1 by node 2"
-				" but was not present there.\nJobDistributor on node 0 thinks the result should have been on node 1\n" );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Failed to retrieve job result (1, 1) which was requested from node 1 by node 2"
+				" but was not present there.\nJobDistributor on node 0 thinks the result should have been on node 1";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 
 #endif
@@ -3322,9 +3323,10 @@ public:
 		try {
 			jd.go( jq3b );
 			TS_ASSERT( false ); // this should not be reached.
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Failed to retrieve job result (1, 1) which was requested from node 1 by node 3"
-				" but was not present there.\nThis job is not listed as still running nor as having its JobResult stored on any archive node; it perhaps has been output or discarded already.\n" );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Failed to retrieve job result (1, 1) which was requested from node 1 by node 3"
+				" but was not present there.\nThis job is not listed as still running nor as having its JobResult stored on any archive node; it perhaps has been output or discarded already.";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 
 #endif
@@ -3449,9 +3451,10 @@ public:
 		try {
 			jd.go( jq3b );
 			TS_ASSERT( false ); // this should not be reached.
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Failed to retrieve job result (1, 1) which was requested from node 1 by node 3"
-				" but was not present there.\nThis job is not listed as still running nor as having its JobResult stored on any archive node; it perhaps has been output or discarded already.\n" );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Failed to retrieve job result (1, 1) which was requested from node 1 by node 3"
+				" but was not present there.\nThis job is not listed as still running nor as having its JobResult stored on any archive node; it perhaps has been output or discarded already.";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 
 #endif
@@ -3535,11 +3538,11 @@ public:
 		try {
 			jd.go( jq3b );
 			TS_ASSERT( false ); // this should not be reached.
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Failed to retrieve job result (1, 1) which was requested from node 0 by node 1"
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Failed to retrieve job result (1, 1) which was requested from node 0 by node 1"
 				" but was not present there.\nThis job is not listed"
-				" as still running nor as having its JobResult stored on any archive node; it perhaps has been output or discarded already.\n" );
-
+				" as still running nor as having its JobResult stored on any archive node; it perhaps has been output or discarded already.";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 #endif
 	}
@@ -3567,10 +3570,10 @@ public:
 		try {
 			jd.go( jq3b );
 			TS_ASSERT( false ); // this should not be reached.
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Internal Error in the MPIWorkPoolJobDistributor: "
-				"received inappropriate signal on node 0 from node 1: "
-				+ utility::to_string( mpi_work_pool_jd_spin_down ) );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Internal Error in the MPIWorkPoolJobDistributor: "
+				"received inappropriate signal on node 0 from node 1: " + utility::to_string( mpi_work_pool_jd_spin_down );
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 #endif
 	}
@@ -3709,7 +3712,7 @@ public:
 		try {
 			jd.go( jq );
 			TS_ASSERT( false ); // we should not reach here
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::ostringstream oss;
 			oss << "Failed to serialize LarvalJob 1 because it holds an unserializable object.  The following error message comes from the cereal library:\n" <<
 				"Trying to save an unregistered polymorphic type (Unserializable).\n" <<
@@ -3718,7 +3721,7 @@ public:
 				"If your type is already registered and you still see this error, you may need to use CEREAL_REGISTER_DYNAMIC_INIT.";
 
 			//std::cout << "Caught exception\n" << e.msg() << "----\n";
-			TS_ASSERT_EQUALS( e.msg(), oss.str() );
+			TS_ASSERT( e.msg().find(oss.str()) != std::string::npos );
 		}
 
 #endif
@@ -4007,10 +4010,11 @@ public:
 		try {
 			jd.go( jq );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cerr << e.msg() << std::endl;
-			TS_ASSERT_EQUALS( e.msg(), "Failed to deserialize the JobSummary array for job #1\nError message from"
-				" the cereal library:\nPoolJobSummary2 could not be deserialized\n" );
+			std::string expected_err_msg = "Failed to deserialize the JobSummary array for job #1\nError message from"
+				" the cereal library:\nPoolJobSummary2 could not be deserialized";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 
 #endif
@@ -4071,10 +4075,11 @@ public:
 		try {
 			jd.go( jq );
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cerr << e.msg() << std::endl;
-			TS_ASSERT_EQUALS( e.msg(), "Failed to deserialize LarvalJob & JobResult pair for job #1 result index #1\nError message from"
-				" the cereal library:\nUndeserializable could not be deserialized\n" );
+			std::string expected_err_msg = "Failed to deserialize LarvalJob & JobResult pair for job #1 result index #1\nError message from"
+				" the cereal library:\nUndeserializable could not be deserialized";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 
 #endif

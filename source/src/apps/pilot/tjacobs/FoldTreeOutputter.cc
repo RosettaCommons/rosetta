@@ -35,7 +35,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 //C++ headers
 #include <iostream>
@@ -127,7 +127,7 @@ main( int argc, char * argv [] )
 
   std::cout << "Done! -------------------------------\n";
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

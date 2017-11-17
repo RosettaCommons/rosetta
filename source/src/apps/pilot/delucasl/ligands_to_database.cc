@@ -63,7 +63,7 @@ int main(int argc, char*argv[])
 			residue_database_io.write_residuetype_to_database("fa_standard",*new_residue_type,db_session);
 		}
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

@@ -64,7 +64,7 @@ public:
 #endif
 			pose_from_file( pose, "protocols/carbohydrates/N-linked_14-mer_glycan.pdb" , core::import_pose::PDB_file);
 #ifdef MULTI_THREADED
-		} catch( utility::excn::EXCN_Base& excn )  {
+		} catch (utility::excn::Exception& excn )  {
 			TR << excn.msg() << std::endl;
 			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
 			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
@@ -98,7 +98,7 @@ public:
 #endif
 			pose_from_file( pose, "protocols/carbohydrates/N-linked_14-mer_glycan.pdb" , core::import_pose::PDB_file);
 #ifdef MULTI_THREADED
-		} catch( utility::excn::EXCN_Base& excn )  {
+		} catch (utility::excn::Exception& excn )  {
 			TR << excn.msg() << std::endl;
 			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
 			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
@@ -139,7 +139,7 @@ public:
 #endif
 			pose_from_file( pose, "protocols/carbohydrates/N-linked_14-mer_glycan.pdb" , core::import_pose::PDB_file);
 #ifdef MULTI_THREADED
-		} catch( utility::excn::EXCN_Base& excn )  {
+		} catch (utility::excn::Exception& excn )  {
 			TR << excn.msg() << std::endl;
 			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
 			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );

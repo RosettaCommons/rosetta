@@ -112,14 +112,14 @@ void TransformEnsemble::parse_my_tag
 )
 {
 	if ( tag->getName() != "TransformEnsemble" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 	}
-	if ( ! tag->hasOption("chains") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires chains tag");
-	if ( ! tag->hasOption("move_distance") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires move_distance tag");
-	if ( ! tag->hasOption("box_size") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires box_size tag");
-	if ( ! tag->hasOption("angle") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires angle tag");
-	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires cycles tag");
-	if ( !tag->hasOption("temperature") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires temperature tag");
+	if ( ! tag->hasOption("chains") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires chains tag");
+	if ( ! tag->hasOption("move_distance") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires move_distance tag");
+	if ( ! tag->hasOption("box_size") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires box_size tag");
+	if ( ! tag->hasOption("angle") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires angle tag");
+	if ( ! tag->hasOption("cycles") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires cycles tag");
+	if ( !tag->hasOption("temperature") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires temperature tag");
 
 	//Divides by root(3) so the center can only move a total equal to move_distance in each step
 	transform_info_.move_distance = (tag->getOption<core::Real>("move_distance")) /sqrt(3);

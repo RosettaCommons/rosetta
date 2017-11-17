@@ -491,13 +491,13 @@ MetropolisHastingsMover::parse_my_tag(
 			auto mover_iter( movers.find( mover_name ) );
 			if ( mover_iter == movers.end() ) {
 				tr.Error<< "Mover not found for XML tag:\n" << subtag << std::endl;
-				throw utility::excn::EXCN_RosettaScriptsOption("");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 			}
 			mover = mover_iter->second;
 		} else if ( subtag->getName() == "AddNew" ) { //generate new mover
 			utility::vector0< utility::tag::TagCOP > sub_subtags = subtag->getTags();
 			if ( sub_subtags.size() != 1 ) {
-				throw utility::excn::EXCN_Msg_Exception( "Expected a single subelement of the \"AddNew\" tag while parsing the MetropolisHastings mover" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Expected a single subelement of the \"AddNew\" tag while parsing the MetropolisHastings mover" );
 			}
 			tag_containing_mover = sub_subtags[0];
 			protocols::moves::MoverFactory * mover_factory(protocols::moves::MoverFactory::get_instance());
@@ -506,11 +506,11 @@ MetropolisHastingsMover::parse_my_tag(
 			// Error case
 			protocols::moves::MoverFactory * mover_factory(protocols::moves::MoverFactory::get_instance());
 			if ( mover_factory->mover_creator_map().count( subtag->getName() ) ) {
-				throw utility::excn::EXCN_Msg_Exception( "The MetropolisHastings mover no longer accepts Mover subtags as direct descendents;"
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "The MetropolisHastings mover no longer accepts Mover subtags as direct descendents;"
 					" you must use an intermediate tag named \"AddNew\" in which you may nest the new mover you wish to declare.\nError encountered"
 					" while parsing MetropolisHasings mover when the Mover \"" + subtag->getName() + "\" was encountered." );
 			} else {
-				throw utility::excn::EXCN_Msg_Exception( "The MetropolisHasings mover expects subtags named either \"Add\" or \"AddNew\"" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "The MetropolisHasings mover expects subtags named either \"Add\" or \"AddNew\"" );
 			}
 		}
 
@@ -526,7 +526,7 @@ MetropolisHastingsMover::parse_my_tag(
 			//it might also be a tempering module...
 			if ( temp_controller ) { // it is a temperature controller
 				if ( tempering_ ) {
-					throw utility::excn::EXCN_RosettaScriptsOption( "cannot define two TemperatureControllers" );
+					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "cannot define two TemperatureControllers" );
 				}
 				set_tempering( temp_controller );
 			} else {  //no just an plain old observer
@@ -534,7 +534,7 @@ MetropolisHastingsMover::parse_my_tag(
 			}
 		} else { //its something different
 			tr.Error << "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << tag_containing_mover << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 		}
 	}
 }

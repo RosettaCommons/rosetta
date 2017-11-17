@@ -29,7 +29,7 @@
 // Utility headers
 #include <basic/datacache/WriteableCacheableData.fwd.hh>
 #include <utility/SingletonBase.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <map>
@@ -198,17 +198,9 @@ clean_from_storage( std::string & st );
 void
 clean_for_storage( std::string & ss );
 
-class EXCN_RemarksNotPresent : public utility::excn::EXCN_Base {
+class EXCN_RemarksNotPresent : public utility::excn::Exception {
 public:
-	EXCN_RemarksNotPresent( std::string const & msg ):
-		utility::excn::EXCN_Base(),
-		msg_( msg ) {}
-
-	virtual void
-	show( std::ostream & os ) const { os << msg_; }
-
-private:
-	std::string msg_;
+	using utility::excn::Exception::Exception;
 };
 
 class SegmentCounts {
@@ -256,4 +248,3 @@ add_segments_for_chain(
 } //components
 
 #endif //INCLUDED_protocols_denovo_design_components_StructureDataFactory_hh
-

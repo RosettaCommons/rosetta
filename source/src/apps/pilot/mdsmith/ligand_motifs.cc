@@ -598,7 +598,7 @@ process_file_list()
 		Pose pose;
    try{
 		core::import_pose::pose_from_file( pose, pdb_name , core::import_pose::PDB_file);
-				    } catch( utility::excn::EXCN_BadInput excn ) {
+				    } catch (utility::excn::BadInput excn ) {
 											std::cout << "Got stuck in missing heavyatom loop, continuing" <<  std::endl;
 											continue; }
 
@@ -626,7 +626,7 @@ main( int argc, char * argv [] )
     	devel::init( argc, argv );
 
     	process_file_list();
-    } catch ( utility::excn::EXCN_Base const & e ) {
+    } catch (utility::excn::Exception const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
         return -1;
     }

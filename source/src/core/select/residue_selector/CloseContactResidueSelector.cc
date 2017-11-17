@@ -183,11 +183,11 @@ CloseContactResidueSelector::parse_my_tag(
 		std::string selector_name = tag->getOption< std::string >( "residue_selector" );
 		try {
 			selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_name );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_name << "' from the Datamap from AndResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 	} else {
 		// add selectors from tags
@@ -199,7 +199,7 @@ CloseContactResidueSelector::parse_my_tag(
 			} else {
 				error_msg << "You may only provide a single sub-element of the " << class_name() << " residue selector\n";
 			}
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 		selector = ResidueSelectorFactory::get_instance()->new_residue_selector(
 			subtags[0]->getName(),

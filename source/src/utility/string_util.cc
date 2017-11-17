@@ -487,7 +487,7 @@ file_contents( std::string const & file_name )
 	std::string line;
 	io::izstream textstream( file_name );
 	if ( ! textstream ) {
-		throw excn::EXCN_Msg_Exception( "Could not open file " + file_name  );
+		throw CREATE_EXCEPTION(excn::Exception, "Could not open file " + file_name  );
 	}
 	int strsize( 0 );
 	while ( getline(textstream, line) ) {

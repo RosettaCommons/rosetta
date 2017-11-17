@@ -49,8 +49,9 @@ public:
 		try {
 			std::string m2 = receive_string_from_node(2);
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_string message to 0 from 2; message queue is empty" );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Could not retrieve a smpi_string message to 0 from 2; message queue is empty";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -68,8 +69,9 @@ public:
 		try {
 			/*char m2 =*/ receive_char_from_node(2);
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_char message to 0 from 2; message queue is empty" );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Could not retrieve a smpi_char message to 0 from 2; message queue is empty";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -88,8 +90,9 @@ public:
 		try {
 			/*int m2 =*/ receive_integer_from_node(2);
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_integer message to 0 from 2; message queue is empty" );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Could not retrieve a smpi_integer message to 0 from 2; message queue is empty";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -109,8 +112,9 @@ public:
 		try {
 			vector1< int > m2 = receive_integers_from_node(2);
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_integers message to 0 from 2; message queue is empty" );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Could not retrieve a smpi_integers message to 0 from 2; message queue is empty";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 
@@ -129,8 +133,9 @@ public:
 		try {
 			/*double m2 =*/ receive_double_from_node(2);
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_double message to 0 from 2; message queue is empty" );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Could not retrieve a smpi_double message to 0 from 2; message queue is empty";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 
 	}
@@ -150,8 +155,9 @@ public:
 		try {
 			vector1< double > m2 = receive_doubles_from_node(2);
 			TS_ASSERT( false );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_doubles message to 0 from 2; message queue is empty" );
+		} catch (utility::excn::Exception & e ) {
+			std::string expected_err_msg = "Could not retrieve a smpi_doubles message to 0 from 2; message queue is empty";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
 

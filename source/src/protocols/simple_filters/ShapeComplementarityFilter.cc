@@ -121,7 +121,7 @@ ShapeComplementarityFilter::compute( Pose const & pose ) const
 	ShapeComplementarityCalculator scc;
 
 	if ( !scc.Init() ) {
-		throw EXCN_InitFailed();
+		throw CREATE_EXCEPTION(EXCN_InitFailed, "");
 	}
 
 	if ( quick_ ) {
@@ -136,24 +136,24 @@ ShapeComplementarityFilter::compute( Pose const & pose ) const
 		// selector-based
 		setup_from_selectors( pose, scc );
 		if ( !scc.Calc() ) {
-			throw EXCN_CalcFailed();
+			throw CREATE_EXCEPTION(EXCN_CalcFailed, "");
 		}
 	} else if ( !symm ) {
 		// jump-based
 		if ( !scc.Calc( pose, jump_id_ ) ) {
-			throw EXCN_CalcFailed();
+			throw CREATE_EXCEPTION(EXCN_CalcFailed, "");
 		}
 	} else if ( multicomp_ ) {
 		// MULTI COMPONENT SYMM
 		setup_multi_component_symm( pose, scc, nsubs_scalefactor );
 		if ( !scc.Calc() ) {
-			throw EXCN_CalcFailed();
+			throw CREATE_EXCEPTION(EXCN_CalcFailed, "");
 		}
 	} else {
 		// SINGLE COMPONENT SYMM
 		setup_single_component_symm( pose, scc, nsubs_scalefactor );
 		if ( !scc.Calc() ) {
-			throw EXCN_CalcFailed();
+			throw CREATE_EXCEPTION(EXCN_CalcFailed, "");
 		}
 	}
 

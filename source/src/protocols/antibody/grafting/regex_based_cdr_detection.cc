@@ -104,7 +104,7 @@ void RegEx_based_CDR_Detector::detect_heavy_chain(AntibodySequence &A)
 
 		} else {
 			std::cerr << "H1 detection: failed" << std::endl;
-			throw _AE_cdr_detection_failed_("H1 detection: failed. Pattern:"+ H1_pattern + " query:" + heavy_chain_sequence);
+			throw CREATE_EXCEPTION(_AE_cdr_detection_failed_, "H1 detection: failed. Pattern:"+ H1_pattern + " query:" + heavy_chain_sequence);
 		}
 	}
 	string heavy_second = ( heavy_chain_sequence.size() > 140 ) ? heavy_chain_sequence.substr(H1_end+33+15-1, 95+fr1_begin-1) : heavy_chain_sequence.substr(H1_end+33+15-1);
@@ -125,7 +125,7 @@ void RegEx_based_CDR_Detector::detect_heavy_chain(AntibodySequence &A)
 
 		} else {
 			std::cerr << "H3 detection: failed" << std::endl;
-			throw _AE_cdr_detection_failed_("H3 detection: failed. Pattern:"+ H3_pattern + " query:" + heavy_chain_sequence);
+			throw CREATE_EXCEPTION(_AE_cdr_detection_failed_, "H3 detection: failed. Pattern:"+ H3_pattern + " query:" + heavy_chain_sequence);
 		}
 	}
 
@@ -139,7 +139,7 @@ void RegEx_based_CDR_Detector::detect_heavy_chain(AntibodySequence &A)
 
 	} else {
 		std::cerr << "H2 detection: failed" << std::endl;
-		throw _AE_cdr_detection_failed_("H2 detection is based on the detection and position of H1 and H3!");
+		throw CREATE_EXCEPTION(_AE_cdr_detection_failed_, "H2 detection is based on the detection and position of H1 and H3!");
 	}
 }
 
@@ -181,7 +181,7 @@ void RegEx_based_CDR_Detector::detect_light_chain(AntibodySequence &A)
 
 			} else {
 				std::cerr << "L1 detected: false" << std::endl;
-				throw _AE_cdr_detection_failed_("L1 detection: failed. Pattern:" + L1_pattern + " query:" + light_chain_sequence);
+				throw CREATE_EXCEPTION(_AE_cdr_detection_failed_, "L1 detection: failed. Pattern:" + L1_pattern + " query:" + light_chain_sequence);
 			}
 		}
 
@@ -205,7 +205,7 @@ void RegEx_based_CDR_Detector::detect_light_chain(AntibodySequence &A)
 
 			} else {
 				std::cerr << "L3 detected: false" << std::endl;
-				throw _AE_cdr_detection_failed_("L3 detection: failed. Pattern:"+ L3_pattern + " query:" + light_chain_sequence);
+				throw CREATE_EXCEPTION(_AE_cdr_detection_failed_, "L3 detection: failed. Pattern:"+ L3_pattern + " query:" + light_chain_sequence);
 			}
 		}
 

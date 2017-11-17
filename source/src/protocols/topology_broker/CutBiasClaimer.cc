@@ -84,7 +84,7 @@ CutBiasClaimer::manipulate_cut_bias( utility::vector1< core::Real >& tot_cut_bia
 		std::ostringstream msg;
 		msg << " CutBiasClaimer with label '" << label() << "' tried to change cut_bias at position " << ( offset + cut_bias_.size()) <<
 			" while sequence is only " << tot_cut_bias.size() << " residues long. " << std::endl;
-		throw utility::excn::EXCN_RangeError( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RangeError,  msg.str() );
 	} else {
 		for ( core::Size i = 1; i <= cut_bias_.size(); i++ ) {
 			tot_cut_bias[ i + offset ] *= cut_bias_[ i ];

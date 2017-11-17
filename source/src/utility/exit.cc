@@ -17,7 +17,7 @@
 #endif
 // Unit headers
 #include <utility/exit.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/backtrace.hh>
 #include <utility/CSI_Sequence.hh>
 
@@ -48,6 +48,14 @@
 #endif
 
 namespace utility {
+
+
+struct UtilityExitException : excn::Exception //noboday should be allowed to throw this... that's why its privately hidden in this modul...
+{
+	UtilityExitException(char const * file, int line, std::string const& msg) : Exception(file, line, "[ ERROR ] UtilityExitException\nERROR: " + msg + "\n\n")
+	{}
+};
+
 
 
 /// Place holder for 'end-action' of utility::exit(…)
@@ -81,34 +89,11 @@ void remove_exit_callback( UtilityExitCallBack cb )
 }
 
 
-class EXCN_utility_exit : public excn::EXCN_Base { //noboday should be allowed to throw this... that's why its privately hidden in this modul...
-public:
-	EXCN_utility_exit( std::string const& msg, std::string const& file, int const line );
-	virtual void show( std::ostream& ) const;
-private:
-	std::string const msg_;
-	std::string const file_;
-	int const line_;
-};
-
-
-EXCN_utility_exit::EXCN_utility_exit( std::string const& msg, std::string const& file, int const line ) :
-	msg_( msg ),
-	file_( file ),
-	line_( line )
-{}
-
-void EXCN_utility_exit::show( std::ostream& os ) const {
-	os << "\n\n[ ERROR ] EXCN_utility_exit has been thrown from: "
-		<< file_ << " line: " << line_ << "\n";
-	if ( ! msg_.empty() ) os << "ERROR: " << msg_ << "\n\n";
-}
-
 
 /// @brief Exit with file + line + message + optional status
 void
 exit(
-	std::string const & file,
+	char const * file,
 	int const line,
 	std::string const & message,
 	int const status
@@ -134,7 +119,7 @@ exit(
 
 #ifndef BOINC
 	// why did this get placed here basically skipping the logic below?!
-	throw EXCN_utility_exit( message, file, line );
+	throw UtilityExitException(file, line,  message);
 #endif
 
 #ifdef USEMPI
@@ -182,7 +167,7 @@ exit(
 	}
 #endif // BOINC
 
-	throw EXCN_utility_exit( message, file, line );
+	throw UtilityExitException(file, line,  message);
 
 }
 
@@ -191,7 +176,7 @@ exit(
 int
 cond_exit(
 	bool condition,
-	std::string const & file,
+	char const * file,
 	int const line,
 	std::string const & message,
 	int const status

@@ -133,7 +133,7 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
 		tr.Error << "Parsing problem in FragmentJumpCM: "
 			<< " option set not compatible. Valid sets are 'topol_file' "
 			<< " or 'ss_info', 'pairing_file', and 'n_sheets'." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "FragmentJumpCM incompatible options." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "FragmentJumpCM incompatible options." );
 	}
 
 	initialize( tag->getOption< bool >( "initialize", true ) );
@@ -293,7 +293,7 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
 	jumping::JumpSample jump_sample;
 	try{
 		jump_sample = calculate_jump_sample();
-	} catch( utility::excn::EXCN_BadInput ){
+	} catch( utility::excn::BadInput ){
 		std::stringstream ss;
 		ss << "Was not able to construct a valid jump sample in 10 attempts using ss_info file "
 			<< ss_info_file << ", pairing file " << pairing_file << " and " << n_sheets
@@ -301,7 +301,7 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
 
 		tr.Error << ss.str() << std::endl;
 
-		throw utility::excn::EXCN_BadInput( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
 }
 
@@ -314,7 +314,7 @@ void FragmentJumpCM::set_topology( std::string const& topol_filename ){
 
 	utility::io::izstream is( topol_filename );
 	if ( !is.good() ) {
-		throw utility::excn::EXCN_FileNotFound(" Topology file '" + topol_filename +"' not found." );
+		throw CREATE_EXCEPTION(utility::excn::FileNotFound, " Topology file '" + topol_filename +"' not found." );
 	}
 
 	abinitio::PairingStatisticsOP ps( new abinitio::PairingStatistics );
@@ -330,8 +330,8 @@ void FragmentJumpCM::set_topology( std::string const& topol_filename ){
 	jumping::JumpSample jump_sample;
 	try{
 		jump_sample = calculate_jump_sample();
-	} catch( utility::excn::EXCN_BadInput ){
-		throw utility::excn::EXCN_BadInput( "Was not able to construct a valid jump sample in 10 attempts using topology file "
+	} catch( utility::excn::BadInput ){
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Was not able to construct a valid jump sample in 10 attempts using topology file "
 			+ topol_filename + "." );
 	}
 }
@@ -370,14 +370,14 @@ jumping::JumpSample FragmentJumpCM::calculate_jump_sample() const {
 		tr.Error << get_name() << " tried to make jumps but couldn't because no "
 			<< "(appropriate) JumpSampleData was cached in the pose and no topology information was "
 			<< "provided through parse_my_tag." << std::endl;
-		throw utility::excn::EXCN_BadInput( "FragmentJumpCM requires, but did not have, a JumpSample." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "FragmentJumpCM requires, but did not have, a JumpSample." );
 	}
 
 	core::Size attempts = 10;
 	while ( !jump_sample.is_valid() ) {
 		attempts -= 1;
 		if ( attempts <= 0 ) {
-			throw utility::excn::EXCN_BadInput( "Was not able to construct a valid jump sample in 10 attempts." );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "Was not able to construct a valid jump sample in 10 attempts." );
 		}
 
 		jump_sample = jump_def_->create_jump_sample();

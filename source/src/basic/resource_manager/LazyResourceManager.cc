@@ -285,7 +285,7 @@ LazyResourceManager::add_resource_configuration(
 ) {
 	ResourceConfigurationMap::const_iterator config( resource_configurations_.find( resource_tag ));
 	if ( config != resource_configurations_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception("Attempting to add multiple resource configurations with the resource tag '" + resource_tag + "'.");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Attempting to add multiple resource configurations with the resource tag '" + resource_tag + "'.");
 	}
 	resource_configurations_[ resource_tag ] = resource_configuration;
 }
@@ -297,7 +297,7 @@ LazyResourceManager::add_resource_locator(
 ) {
 	ResourceLocatorsMap::const_iterator locator( resource_locators_.find( locator_tag ));
 	if ( locator != resource_locators_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception("Attempting to add multiple resource locators with the locator tag '" + locator_tag + "'.");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Attempting to add multiple resource locators with the locator tag '" + locator_tag + "'.");
 	}
 	resource_locators_[ locator_tag ] = resource_locator;
 }
@@ -310,7 +310,7 @@ LazyResourceManager::add_resource_options(
 ) {
 	ResourceOptionsMap::const_iterator options( resource_options_.find( resource_options_tag ));
 	if ( options != resource_options_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception("Attempting to add multiple resource options with the resource optiosn tag '" + resource_options_tag + "'.");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Attempting to add multiple resource options with the resource optiosn tag '" + resource_options_tag + "'.");
 	}
 	resource_options_[ resource_options_tag ] = resource_options;
 }
@@ -327,7 +327,7 @@ LazyResourceManager::find_resource_configuration(
 	auto config(
 		resource_configurations_.find(resource_tag));
 	if ( config == resource_configurations_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Unable to find resource configuration for the resource tag '" + resource_tag + "'.");
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find resource configuration for the resource tag '" + resource_tag + "'.");
 	}
 	return config->second;
 }
@@ -339,7 +339,7 @@ LazyResourceManager::find_resource_locator(
 	auto resource_locator(
 		resource_locators_.find(locator_tag));
 	if ( resource_locator == resource_locators_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception("Unable to find resource locator for the locator tag '" + locator_tag + "'.");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Unable to find resource locator for the locator tag '" + locator_tag + "'.");
 	}
 	return resource_locator->second;
 }
@@ -351,7 +351,7 @@ LazyResourceManager::find_resource_options(
 	auto resource_options(
 		resource_options_.find(options_tag));
 	if ( resource_options == resource_options_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception("Unable to find resource options for the resource options tag '" + options_tag + "'.");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Unable to find resource options for the resource options tag '" + options_tag + "'.");
 	}
 	return resource_options->second;
 }

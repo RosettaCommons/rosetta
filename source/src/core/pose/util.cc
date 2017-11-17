@@ -583,7 +583,7 @@ void remove_nonprotein_residues( core::pose::Pose & pose )
 void remove_ligand_canonical_residues( core::pose::Pose & pose )
 {
 	if ( pose.size() == 1 ) { //if we have only one residue, it cannot be removed, and this is going to crash
-		throw utility::excn::EXCN_Msg_Exception("Pose utility remove_ligand_canonical_residues: I have received a pose with only one residue but cannot delete the last residue of the pose.");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Pose utility remove_ligand_canonical_residues: I have received a pose with only one residue but cannot delete the last residue of the pose.");
 	}
 
 	core::Size i(1);
@@ -701,18 +701,18 @@ named_atom_id_to_atom_id(
 				//   << rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
 				//  tr.Error << "atom names are: " << std::endl;
 				//rt.show_all_atom_names( tr.Error );
-				if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
+				if ( raise_exception ) throw CREATE_EXCEPTION(id::EXCN_AtomNotFound, named_atom_id );
 				return id::GLOBAL_BOGUS_ATOM_ID;
 			}
 		} else {
 			// tr.Error << "can't find residue " << named_atom_id.rsd()
 			//  << " in pose (pose.size() = ) "
 			//  << pose.size() << std::endl;
-			if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
+			if ( raise_exception ) throw CREATE_EXCEPTION(id::EXCN_AtomNotFound, named_atom_id );
 			return id::GLOBAL_BOGUS_ATOM_ID;
 		}
 	} else {
-		if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
+		if ( raise_exception ) throw CREATE_EXCEPTION(id::EXCN_AtomNotFound, named_atom_id );
 		return id::GLOBAL_BOGUS_ATOM_ID;
 	}
 }

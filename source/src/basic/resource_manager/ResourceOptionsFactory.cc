@@ -53,7 +53,7 @@ ResourceOptionsFactory::create_resource_options(
 			error_msg << "\t" << type.first << std::endl;
 		}
 
-		throw utility::excn::EXCN_Msg_Exception(error_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, error_msg.str());
 	}
 	ResourceOptionsOP resource_options = (*iter).second->create_options();
 	resource_options->parse_my_tag( tag );
@@ -68,7 +68,7 @@ ResourceOptionsFactory::factory_register( ResourceOptionsCreatorOP creator )
 	if ( iter != creator_map_.end() ) {
 		std::string errmsg( "Double registration of a ResourceOptionsCreator in the ResourceOptionsFactory, named " + options_type + ". Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?" );
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( errmsg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  errmsg );
 		} else {
 			utility_exit_with_message( errmsg );
 		}

@@ -115,11 +115,11 @@ PrimarySequenceNeighborhoodSelector::parse_my_tag(
 		std::string const selectorname = tag->getOption< std::string >( "selector" );
 		try {
 			set_selector( data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname ) );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from DisulfidizeMover.\n";
 			error_msg << e.msg();
-			throw utility::excn::EXCN_RosettaScriptsOption( error_msg.str() );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  error_msg.str() );
 		}
 		debug_assert( selector_ );
 		TR << "Using residue selector " << selectorname << std::endl;
@@ -135,7 +135,7 @@ PrimarySequenceNeighborhoodSelector::parse_my_tag(
 	} else {
 		std::stringstream ss;
 		ss << "PrimarySequenceNeighborhood requires a selector to be set either through the \"selector\" option or by placing a residue selector as a subtag." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 	}
 	debug_assert( selector_ );
 }

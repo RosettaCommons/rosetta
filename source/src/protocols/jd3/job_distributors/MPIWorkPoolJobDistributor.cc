@@ -164,12 +164,12 @@ MPIWorkPoolJobDistributor::go_master()
 			break;
 		case mpi_work_pool_jd_error :
 			job_queen_->flush();
-			throw utility::excn::EXCN_Msg_Exception( "Received error from node " +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Received error from node " +
 				utility::to_string( worker_node ) + ": " + utility::receive_string_from_node( worker_node ) );
 			break;
 		default :
 			// error -- we should not have gotten here
-			throw utility::excn::EXCN_Msg_Exception( "Internal Error in the MPIWorkPoolJobDistributor: received inappropriate signal "
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Internal Error in the MPIWorkPoolJobDistributor: received inappropriate signal "
 				"on node 0 from node " + utility::to_string( worker_node )
 				+ ": " + utility::to_string( message ) );
 		}
@@ -196,7 +196,7 @@ MPIWorkPoolJobDistributor::go_master()
 			break;
 		default :
 			// error -- we should not have gotten here
-			throw utility::excn::EXCN_Msg_Exception( "received inappropriate signal "
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "received inappropriate signal "
 				"on node 0 from node " + utility::to_string( worker_node )
 				+ ": " + utility::to_string( message ) + " in final spin-down loop" );
 		}
@@ -433,7 +433,7 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 	try {
 		job_summaries = deserialize_job_summaries( serialized_job_summaries_string );
 	} catch ( cereal::Exception & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Failed to deserialize the JobSummary array for job #" +
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to deserialize the JobSummary array for job #" +
 			utility::to_string( job_id ) + "\nError message from the cereal library:\n" + e.what() + "\n" );
 	}
 
@@ -831,7 +831,7 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 		// that the code cannot be used in its current state because some class stored inside
 		// the LarvalJob (or perhaps the descendent of the LarvalJob itself) does not implement
 		// the save and load serialization funcitons.
-		throw utility::excn::EXCN_Msg_Exception( "Failed to serialize LarvalJob " + utility::to_string( larval_job->job_index() )
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to serialize LarvalJob " + utility::to_string( larval_job->job_index() )
 			+ " because it holds an unserializable object.  The following error message comes from the cereal library:\n"
 			+ e.what() );
 	}
@@ -895,7 +895,7 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 		auto location_map_iter = job_result_location_map_.find( result_id );
 		if ( location_map_iter == job_result_location_map_.end() ) {
 			// TO DO: better diagnostic message here
-			throw utility::excn::EXCN_Msg_Exception( "Failed to find job result (" +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find job result (" +
 				utility::to_string( result_id.first ) + ", " + utility::to_string( result_id.second ) +
 				") for outputting as requested by the JobQeen. Has this job already been" +
 				" output or discarded?" );
@@ -923,7 +923,7 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 					oss << "Error trying to retrieve a serialized job result from disk for job result (";
 					oss << result_id.first << ", " << result_id.second << " ) which should have been in ";
 					oss << "\"" << filename_for_archive( result_id.first, result_id.second ) << "\"\n";
-					throw utility::excn::EXCN_Msg_Exception( oss.str() );
+					throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 				}
 				remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
 			} else {
@@ -932,7 +932,7 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 					std::ostringstream oss;
 					oss << "Error trying to find job result ( " << result_id.first << ", ";
 					oss << result_id.second << " ); node 0 thinks it ought to have this result.\n";
-					throw utility::excn::EXCN_Msg_Exception( oss.str() );
+					throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 				}
 				serialized_job_and_result = std::move( *job_and_result_iter->second );
 				job_results_.erase( job_and_result_iter );
@@ -942,7 +942,7 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 				try {
 					job_and_result = deserialize_larval_job_and_result( serialized_job_and_result );
 				} catch ( cereal::Exception & e ) {
-					throw utility::excn::EXCN_Msg_Exception( "Failed to deserialize LarvalJob & JobResult pair for job #" +
+					throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to deserialize LarvalJob & JobResult pair for job #" +
 						utility::to_string( result_id.first ) + " result index #" + utility::to_string( result_id.second ) +
 						"\nError message from the cereal library:\n" + e.what() + "\n" );
 				}
@@ -993,7 +993,7 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 	for ( JobResultID result_id : jobs_to_discard ) {
 		if ( job_result_location_map_.count( result_id ) == 0 ) {
 			// TO DO: better diagnostic message here
-			throw utility::excn::EXCN_Msg_Exception( "Failed to find job result " +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find job result " +
 				utility::to_string( result_id.first ) + ", " + utility::to_string( result_id.second ) +
 				" for discarding as requested by the JobQeen. Has this job already been" +
 				" output or discarded?" );
@@ -1196,7 +1196,7 @@ MPIWorkPoolJobDistributor::throw_after_failed_to_retrieve_job_result(
 			" archive node; it perhaps has been output or discarded already.\n";
 	}
 
-	throw utility::excn::EXCN_Msg_Exception( oss.str() );
+	throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 
 }
 
@@ -1259,9 +1259,9 @@ MPIWorkPoolJobDistributor::retrieve_job_and_run()
 		std::cerr << "std::IO error detected... exiting..." << std::endl; // We can not longer use Tracer's at this point
 		// Using pure exit instead of utility_exit_with_status to avoid infinite recursion
 		std::exit( basic::options::option[ basic::options::OptionKeys::out::std_IO_exit_error_code]() );
-	} catch ( utility::excn::EXCN_BadInput & excn ) {
+	} catch ( utility::excn::BadInput & excn ) {
 		worker_send_fail_on_bad_inputs_exception_message_to_master( larval_job, excn.msg() );
-	} catch ( utility::excn::EXCN_Base & excn ) {
+	} catch ( utility::excn::Exception & excn ) {
 		worker_send_fail_w_message_to_master( larval_job, excn.msg() );
 	} catch ( ... ) {
 		worker_send_fail_w_message_to_master( larval_job, "Unhandled exception!" );

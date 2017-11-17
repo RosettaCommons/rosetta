@@ -167,7 +167,7 @@ DdGFeatures::parse_my_tag(
 			<< "The " << type_name() << " reporter requires a 'ddG_scan_mover' tag:" << endl
 			<< endl
 			<< "    <feature name=" << type_name() <<" ddG_scan_mover=(name_of_previously_defined_DdgScanMover) />" << endl;
-		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, error_msg.str());
 	}
 }
 

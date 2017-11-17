@@ -76,7 +76,7 @@ FilterReportAsPoseExtraScoresMover::parse_my_tag(
 	if ( tag->hasOption( "report_as" ) ) {
 		set_report_as(tag->getOption< std::string >( "report_as" ));
 	} else {
-		throw utility::excn::EXCN_BadInput(mover_name() + " requires report_as to know what to report its value to");
+		throw CREATE_EXCEPTION(utility::excn::BadInput, mover_name() + " requires report_as to know what to report its value to");
 	}
 }
 
@@ -122,7 +122,7 @@ FilterReportAsPoseExtraScoresMover::apply( core::pose::Pose & pose)
 {
 	//ensure filter exists
 	if ( !filter_ ) {
-		throw utility::excn::EXCN_NullPointer(mover_name() + " has no Filter.");
+		throw CREATE_EXCEPTION(utility::excn::NullPointerError, mover_name() + " has no Filter.");
 	}
 
 	//extract report_sm from filter to setPoseExtraScores

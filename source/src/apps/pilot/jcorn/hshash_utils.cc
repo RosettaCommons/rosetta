@@ -292,7 +292,7 @@ main( int argc, char * argv [] )
 			} // if hashout_fname
 		} // for hashname
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

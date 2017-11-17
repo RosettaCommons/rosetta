@@ -188,7 +188,7 @@ void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP tag,
 	for ( TagCOP const curr_tag : branch_tags ) {
 		if ( curr_tag->getName() != "HotspotFiles" ) {
 			TR.Error << "No 'HotspotFiles' specified." << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 		} else {
 			utility::vector1< TagCOP > const branch_tags2( curr_tag->getTags() );
 			for ( TagCOP const curr_tag2 : branch_tags2 ) {

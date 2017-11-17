@@ -168,7 +168,7 @@ class Vector0Tests : public CxxTest::TestSuite {
 				set_throw_on_next_assertion_failure();
 				v.index_of( 7 );  // This should force an exit.
 				TS_ASSERT( false );  // Exception was not thrown!
-			} catch ( utility::excn::EXCN_Base const & e) {
+			} catch (utility::excn::Exception const & e) {
 				std::string expected( "ERROR: vectorL:index_of: element not found\n" );
 				TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ), expected.size() ), expected );
 			}

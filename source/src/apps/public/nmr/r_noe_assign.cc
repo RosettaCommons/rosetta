@@ -41,7 +41,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer tr( "main" );
@@ -364,10 +364,10 @@ main( int argc, char * argv [] )
 		protocols::noesy_assign::PeakAssignmentParameters::get_instance();
 		try{
 			run();
-		} catch ( utility::excn::EXCN_Base& anExcn ) {
+		} catch (utility::excn::Exception& anExcn ) {
 			anExcn.show( std::cerr );
 		}
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -109,7 +109,7 @@ public:
 		} catch(boost::bad_lexical_cast &) {
 			std::stringstream error_message;
 			error_message << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second << "'\n";
-			throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 		}
 		return t_default;
 	}
@@ -125,7 +125,7 @@ public:
 		if ( i == mOptions_.end() ) {
 			std::stringstream error_message;
 			error_message << "Option " << key << " not found.\n";
-			throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 		}
 		accessed_options_[key]= i->second;
 		try{
@@ -133,7 +133,7 @@ public:
 		} catch(boost::bad_lexical_cast &) {
 			std::stringstream error_message;
 			error_message << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second << "'\n";
-			throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+			throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
 		}
 		return T(); // appease compiler
 	}

@@ -20,7 +20,7 @@
 #include <basic/Tracer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 //option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -40,7 +40,7 @@ main( int argc, char * argv [] )
 		protocols::moves::MoverOP mover;
 		protocols::jd2::JobDistributor::get_instance()->go( mover );
 		return 1;
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		utility_exit_with_message("caught exception " + e.msg());
 	}
 }

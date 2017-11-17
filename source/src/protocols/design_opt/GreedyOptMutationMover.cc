@@ -828,7 +828,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
 	auto mover_it( movers.find( relax_mover_name ) );
 	if ( mover_it == movers.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Relax mover "+relax_mover_name+" not found" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Relax mover "+relax_mover_name+" not found" );
 	}
 	relax_mover( mover_it->second );
 	//load scorefxn
@@ -861,7 +861,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 				add_filter( find_filt->second->clone(), samp_type, filter_delta );
 			} //foreach ftag
 		} else { // fi Filters
-			throw utility::excn::EXCN_RosettaScriptsOption( "tag name " + btag->getName() + " unrecognized." );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "tag name " + btag->getName() + " unrecognized." );
 		}
 	}//foreach btag
 	//load single filter
@@ -870,7 +870,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 		if ( filter_name != "true_filter" || filters_.size() < 1 ) {
 			auto find_filt( filters.find( filter_name ) );
 			if ( find_filt == filters.end() ) {
-				throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
 			}
 			std::string const samp_type( tag->getOption< std::string >( "sample_type", "low" ) );
 			core::Real filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );

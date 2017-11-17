@@ -223,7 +223,7 @@ Tag::getTag( string const& name ) const
 		std::stringstream error_msg;
 		error_msg << "Tag::getTag - name=" << name << ", appears " << v.size() << " times in xml file. Only allowed once.\n";
 		error_msg << *this << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception, error_msg.str() );
 	}
 	return v[0];
 } // getTag
@@ -284,7 +284,7 @@ Tag::getOption<bool>(std::string const& key, bool const& t_default) const {
 	if ( utility::is_false_string( i->second ) ) { return false; }
 	std::stringstream error_message;
 	error_message << "getOption: key= " << key << " stream extraction for boolean value failed! Tried to parse '" << i->second << "\n";
-	throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+	throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
 	return t_default;
 }
 
@@ -297,14 +297,14 @@ Tag::getOption<bool>(std::string const& key) const {
 	if ( i == mOptions_.end() ) {
 		std::stringstream error_message;
 		error_message << "Option '" << key << "' not found in Tag named '" << this->getName() << "'.";
-		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
 	}
 	accessed_options_[key]= i->second;
 	if ( utility::is_true_string( i->second ) ) { return true; }
 	if ( utility::is_false_string( i->second ) ) { return false; }
 	std::stringstream error_message;
 	error_message << "getOption: key= " << key << " stream extraction for boolean value failed! Tried to parse '" << i->second << "\n";
-	throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+	throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
 	return false; // appease compiler
 }
 
@@ -534,7 +534,7 @@ void Tag::read(std::istream& in ) {
 			print_error(err_msg,str,error);
 		}
 
-		throw utility::excn::EXCN_BadInput( err_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput, err_msg.str() );
 	}
 
 } // read

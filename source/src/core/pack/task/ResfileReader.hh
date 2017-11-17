@@ -45,12 +45,12 @@ namespace pack {
 namespace task {
 
 
-class ResfileReaderException: public utility::excn::EXCN_Msg_Exception
+class ResfileReaderException: public utility::excn::Exception
 {
 public:
 
-	ResfileReaderException( std::string message ) :
-		utility::excn::EXCN_Msg_Exception( message )
+	ResfileReaderException(char const *file, int line, std::string message ) :
+		utility::excn::Exception(file, line, message )
 	{}
 
 	std::string get_message(){

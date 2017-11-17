@@ -167,7 +167,7 @@ InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::dat
 		if ( !design_mover_ ) {
 			design_mover2_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::PackRotamersMover > ( find_mover->second );
 			if ( !design_mover2_ ) {
-				throw utility::excn::EXCN_RosettaScriptsOption( "dynamic cast failed in tag in RecapitulateMover. Make sure that the mover is either PackRotamers or DesignRepackMover derived" );
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "dynamic cast failed in tag in RecapitulateMover. Make sure that the mover is either PackRotamers or DesignRepackMover derived" );
 			}
 		}
 		pssm_ = tag->getOption<bool>( "pssm", false );

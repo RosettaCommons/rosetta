@@ -715,7 +715,7 @@ core::Size BinTransitionData::which_bin_i( utility::vector1 < core::Real > const
 		std::ostringstream outstr;
 		outstr << "In BinTransitionData::which_bin(): The bin corresponding to the input vector " << mainchain_torsions << " could not be found!\n";
 		TR.Error << outstr.str() << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( outstr.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  outstr.str() );
 	}
 
 	return bin_index;

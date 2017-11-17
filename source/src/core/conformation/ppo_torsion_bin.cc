@@ -110,7 +110,7 @@ map_string_to_torsion_bin_string( std::string const & torstring )
 	torsion_bin_string tbs( torstring.size() );
 	for ( core::Size ii = 0; ii < torstring.size(); ++ii ) {
 		if ( ! char_valid_as_torsion_bin( torstring[ ii ] ) ) {
-			throw utility::excn::EXCN_Msg_Exception( "Invalid character '" + std::string(1,torstring[ii]) +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Invalid character '" + std::string(1,torstring[ii]) +
 				"' at position " + utility::to_string( ii+1 ) + " of the torsion string \"" +
 				torstring + "\" in trying to convert to a ppo_torsion_bin ");
 		}

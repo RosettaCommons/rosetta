@@ -92,7 +92,7 @@ int main( int argc, char * argv [] ) {
 		cluster_protocol.go();
 
 		TR << "Terminating energy_based_clustering application with exit code 0 (no errors)." << std::endl;
-	} catch ( utility::excn::EXCN_Base& excn ) {
+	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Terminating energy_based_clustering application with errors:" << std::endl;
 		excn.show( std::cerr );
 		return -1;

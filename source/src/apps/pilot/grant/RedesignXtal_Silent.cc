@@ -363,7 +363,7 @@ if( currentseqdis[1] <= nativeseqdis[1]+sig*nativeseqdis[1] and currentseqdis[6]
 
   // when we are done will everything we can do some more stuff
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -310,7 +310,7 @@ main( int argc, char* argv [] )
 
 		TR_PCS_main << "It is going to crash for unknown reason" << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

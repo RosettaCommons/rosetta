@@ -28,18 +28,13 @@ namespace conformation {
 namespace membrane {
 
 /// @brief Parent Exception - Exception Membrane
-class EXCN_Membrane : public virtual utility::excn::EXCN_Msg_Exception {
+class EXCN_Membrane : public utility::excn::Exception {
 
 public:
 
-	// Constructor
-	EXCN_Membrane() : utility::excn::EXCN_Msg_Exception( "" ) {};
-
-	// Show Exception
-	virtual void show( std::ostream & os ) const {
-		os << "\n[Membrane Exception]:";
-		EXCN_Msg_Exception::show( os );
-	}
+	EXCN_Membrane(char const *file, int line, std::string const &m) : utility::excn::Exception(file, line, "\n[Membrane Exception]: ") {
+		add_msg(m);
+	};
 
 }; // class EXCN_Membrane
 
@@ -49,33 +44,26 @@ class EXCN_Resource_Definition : public EXCN_Membrane {
 public:
 
 	// Constructor
-	EXCN_Resource_Definition( std::string const & msg ) : utility::excn::EXCN_Msg_Exception( msg ){};
+	EXCN_Resource_Definition(char const *file, int line, std::string const & m) : EXCN_Membrane(file, line, "") {
+		add_msg("========================== Resource Loader Exception ==========================\n"
+				"Please refine your Resource Definition file and try again. For instructions on how to \n"
+				"properly construct your resource definition file for the membrane code, please visit the \n"
+				"Rosetta documentation");
+		add_msg(m);
+	};
 
-	// Show Exception
-	virtual void show( std::ostream & os ) const {
-		os << "========================== Resource Loader Exception ==========================\n";
-		os << "Please refine your Resource Definition file and try again. For instructions on how to \n";
-		os << "properly construct your resource definition file for the membrane code, please visit the \n";
-		os << "Rosetta documentation";
-		EXCN_Msg_Exception::show(os);
-	}
+};
 
-}; // class EXCN_Resource_Definition
 
-/// @brief Illegal Arguments Exception
 class EXCN_Illegal_Arguments : public EXCN_Membrane {
 
 public:
 
 	// Constructor
-	EXCN_Illegal_Arguments( std::string const & msg ) : utility::excn::EXCN_Msg_Exception( msg ){};
-
-	// Show Exception
-	virtual void show( std::ostream & os ) const {
-		os << "Illegal Arguments Exception!";
-		EXCN_Msg_Exception::show(os);
-
-	}
+	EXCN_Illegal_Arguments(char const *file, int line, std::string const &m) : EXCN_Membrane(file, line, "Illegal Arguments Exception!\n")
+	{
+		add_msg(m);
+	};
 
 }; // class EXCN_Membrane_Bounds
 
@@ -85,13 +73,10 @@ class EXCN_Membrane_Bounds : public EXCN_Membrane {
 public:
 
 	// Constructor
-	EXCN_Membrane_Bounds( std::string const & msg ) : utility::excn::EXCN_Msg_Exception( msg ){};
-
-	// Show Exception
-	virtual void show( std::ostream & os ) const {
-		os << "Membrane out of Bounds Exception!";
-		EXCN_Msg_Exception::show(os);
-	}
+	EXCN_Membrane_Bounds(char const *file, int line, std::string const & m) : EXCN_Membrane(file, line, "Membrane out of Bounds Exception!")
+	{
+		add_msg(m);
+	};
 
 }; // class EXCN_Membrane_Bounds
 
@@ -101,13 +86,10 @@ class EXCN_VirtualRsd : public EXCN_Membrane {
 public:
 
 	// Constructor
-	EXCN_VirtualRsd( std::string const & msg ) : utility::excn::EXCN_Msg_Exception( msg ){};
-
-	// Show Exception
-	virtual void show( std::ostream & os ) const {
-		os << "Virtual Residue Definition Exception";
-		EXCN_Msg_Exception::show(os);
-	}
+	EXCN_VirtualRsd(char const *file, int line, std::string const & m) : EXCN_Membrane(file, line, "Virtual Residue Definition Exception")
+	{
+		add_msg(m);
+	};
 
 }; // class EXCN_VirtualRsd
 
@@ -117,13 +99,10 @@ class EXCN_NonMembrane : public EXCN_Membrane {
 public:
 
 	// Contructor
-	EXCN_NonMembrane( std::string const & msg ) : utility::excn::EXCN_Msg_Exception( msg ){};
-
-	// Show Exception
-	virtual void show( std::ostream & os ) const {
-		os << "Pose is not initialized as a membrane pose!";
-		EXCN_Msg_Exception::show(os);
-	}
+	EXCN_NonMembrane(char const *file, int line, std::string const & m) : EXCN_Membrane(file, line, "Pose is not initialized as a membrane pose!")
+	{
+		add_msg(m);
+	};
 
 }; // class EXCN_NonMembrane
 
@@ -133,13 +112,10 @@ class EXCN_MembraneFoldTree : public EXCN_Membrane {
 public:
 
 	// Constructor
-	EXCN_MembraneFoldTree( std::string const & msg ) : utility::excn::EXCN_Msg_Exception( msg ){};
-
-	// Show exception
-	virtual void show( std::ostream & os ) const {
-		os << "Membrane FoldTree Error!";
-		EXCN_Msg_Exception::show(os);
-	}
+	EXCN_MembraneFoldTree(char const *file, int line, std::string const & m) : EXCN_Membrane(file, line, "Membrane FoldTree Error!")
+	{
+		add_msg(m);
+	};
 
 }; // class EXCN_MembraneFoldTree
 
@@ -148,4 +124,3 @@ public:
 } // core
 
 #endif // INCLUDED_core_conformation_membrane_Exceptions_hh
-

@@ -120,7 +120,7 @@ core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
 	//try{
 	// motif_grafting_moverOP->apply(pose_copy);
 	//  pose_copy.dump_pdb("temp.pdb");
-	//} catch ( utility::excn::EXCN_Base& excn ) {
+	//} catch ( utility::excn::Exception& excn ) {
 	// grafting=0;
 	//}
 	//return grafting;
@@ -167,7 +167,7 @@ ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 	if ( tag->hasOption("context_pdbname") ) {
 		context_pdbname_=tag->getOption<std::string>("context_pdbname");
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("Must specify the context_pdbname, required");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify the context_pdbname, required");
 	}
 
 	clash_score_cutoff_= tag->getOption<core::Size>( "clash_score_cutoff", 100 );
@@ -183,7 +183,7 @@ ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 	} else if ( !tag->hasOption("ref_start") && !tag->hasOption("ref_end") && !tag->hasOption("pose_start") && !tag->hasOption("pose_end") ) {
 		TR<<"No residues for alignment is specified. Use TMalign"  << std::endl;
 	} else  {
-		throw utility::excn::EXCN_RosettaScriptsOption("Must specify all ref_start/ref_end (start/end residue number in the align_to_pdbname for alignment) and pose_start/pose_end, start/end residue number in the current pose for alignment");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify all ref_start/ref_end (start/end residue number in the align_to_pdbname for alignment) and pose_start/pose_end, start/end residue number in the current pose for alignment");
 	}
 
 }

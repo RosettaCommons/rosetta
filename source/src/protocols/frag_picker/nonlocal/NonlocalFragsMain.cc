@@ -28,7 +28,7 @@ a given PDB. This protocol will be used to generate a VALL database of non-local
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <utility/exit.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 //#include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
@@ -49,7 +49,6 @@ void NonlocalFrags_main() {
 	//using namespace basic::options;
 	//using namespace basic::options::OptionKeys;
 	using protocols::jd2::JobDistributor;
-	using utility::excn::EXCN_Base;
 
 	// necessary for outputting intermediate structures
 	//option[ OptionKeys::run::intermediate_structures ].value(true);
@@ -60,7 +59,7 @@ void NonlocalFrags_main() {
 
 	try {
 		JobDistributor::get_instance()->go(mover);
-	} catch (EXCN_Base& e) {
+	} catch (utility::excn::Exception& e) {
 		cerr << "Exception: " << endl;
 		e.show(cerr);
 	}

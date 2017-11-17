@@ -996,7 +996,7 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 		TR << "Cycle complete" << std::endl;
 		return true;
 	}
-catch ( utility::excn::EXCN_Base& excn ) {
+catch ( utility::excn::Exception& excn ) {
 	std::cerr << "Exception : " << std::endl;
 	excn.show( std::cerr );
 	excn.show( TR );

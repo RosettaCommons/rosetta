@@ -133,7 +133,7 @@ main( int argc, char * argv [] )
 		//TS_ASSERT_EQUALS(man9_copy->size(), 1);
 		man9_copy->dump_pdb("man9_trim_at_1.pdb");
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

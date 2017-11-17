@@ -126,8 +126,8 @@ void GridFactory::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) 
 			scoring_grid_xml_schema_group_name(),
 			& complex_type_name_for_scoring_grid,
 			xsd );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for ScoringGrids from GridFactory; offending class"
+	} catch ( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for ScoringGrids from GridFactory; offending class"
 			" must call protocols::qsar::scoring_grids::complex_type_name_for_scoring_grid when defining"
 			" its XML Schema\n" + e.msg() );
 	}

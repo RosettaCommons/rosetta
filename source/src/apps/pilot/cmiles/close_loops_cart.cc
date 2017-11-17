@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
   minimizer.run(*pose, mm, *score, options_lbfgs);
   pose->dump_pdb("ending_cart.pdb");
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

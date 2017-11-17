@@ -74,7 +74,7 @@ void MMTOffRotamerPackingJob::update_pose( core::pose::Pose & final_pose )
 	if ( ! rotsets_ ) { errormsg += "MMTOffRotamerPackingJob::update_pose() -- Could not update pose; rotamer sets not yet initialized\n"; }
 	if ( ! best_assignment_ ) { errormsg += "MMTOffRotamerPackingJob::update_pose() -- Could not update pose; no best state assignment present\n"; }
 
-	if ( errormsg != "" ) { throw utility::excn::EXCN_Msg_Exception( errormsg ); }
+	if ( errormsg != "" ) { throw CREATE_EXCEPTION(utility::excn::Exception,  errormsg ); }
 
 	if ( rotsets_->nmoltenres() != best_assignment_->nmoltenres() ) {
 		errormsg += "MMTOffRotamerPackingJob::update_pose() -- Could not update pose; nmoltenres disagreement between rotsets_ and best_assignment_\n";
@@ -82,7 +82,7 @@ void MMTOffRotamerPackingJob::update_pose( core::pose::Pose & final_pose )
 	if ( pose().size() != final_pose.size() ) {
 		errormsg += "MMTOffRotamerPackingJob::update_pose() -- Could not update pose; internal pose and final_pose have different numbers of residues\n";
 	}
-	if ( errormsg != "" ) { throw utility::excn::EXCN_Msg_Exception( errormsg ); }
+	if ( errormsg != "" ) { throw CREATE_EXCEPTION(utility::excn::Exception,  errormsg ); }
 
 	// ok, if we made it this far, we're golden.
 	core::pack::off_rotamer_pack_update_pose( final_pose, *rotsets_, atc_, *best_assignment_ );

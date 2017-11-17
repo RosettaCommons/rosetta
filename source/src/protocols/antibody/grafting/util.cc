@@ -98,7 +98,7 @@ parse_plain_text_with_columns(
 		}
 		else {
 			if( utility::startswith(line, data_prefix) ) {
-				if( !legend.size() ) throw _AE_scs_failed_("File: " + file_name + " is missing legend!");
+				if( !legend.size() ) throw CREATE_EXCEPTION(_AE_scs_failed_, "File: " + file_name + " is missing legend!");
 				else {
 					//TR.Trace << "Got line:" << line << std::endl;
 
@@ -114,7 +114,7 @@ parse_plain_text_with_columns(
 						std::map<string, string> fields;  int i=0;
 						for(auto e : parts) fields[ legend[i++] ] = e;
 						result.push_back(fields);
-					} else throw _AE_scs_failed_("Number of fileds does not match legend!\nFile: "+file_name+"\nLine: "+line);
+					} else throw CREATE_EXCEPTION(_AE_scs_failed_, "Number of fileds does not match legend!\nFile: "+file_name+"\nLine: "+line);
 				}
 			}
 		}

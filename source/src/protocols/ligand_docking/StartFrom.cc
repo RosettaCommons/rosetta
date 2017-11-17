@@ -120,9 +120,9 @@ StartFrom::parse_my_tag(
 )
 {
 	if ( tag->getName() != "StartFrom" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 	}
-	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover requires chain tag");
+	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'StartFrom' mover requires chain tag");
 
 
 	std::string const all_chains_str = tag->getOption<std::string>("chain");
@@ -134,11 +134,11 @@ StartFrom::parse_my_tag(
 		std::string name= child_tag->getName();
 		if ( name == "features" || name == "Features" ) {
 			TR << "found features tag with type '" << child_tag->getOption<std::string>("type") << "'" << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("The 'Features' sub-tag in the StartFrom mover is not currently supported.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The 'Features' sub-tag in the StartFrom mover is not currently supported.");
 		} else if ( name == "Coordinates" ) {
-			if ( ! child_tag->hasOption("x") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover Coordinates tag requires 'x' coordinates option");
-			if ( ! child_tag->hasOption("y") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover Coordinates tag requires 'y' coordinates option");
-			if ( ! child_tag->hasOption("z") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover Coordinates tag requires 'z' coordinates option");
+			if ( ! child_tag->hasOption("x") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'StartFrom' mover Coordinates tag requires 'x' coordinates option");
+			if ( ! child_tag->hasOption("y") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'StartFrom' mover Coordinates tag requires 'y' coordinates option");
+			if ( ! child_tag->hasOption("z") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'StartFrom' mover Coordinates tag requires 'z' coordinates option");
 
 			std::string pdb_tag( child_tag->getOption<std::string>("pdb_tag","default") );
 
@@ -155,18 +155,18 @@ StartFrom::parse_my_tag(
 				TR.Debug << "No need to specify 'struct_identifier' in tag - pdb_id/hash will now be taken care of automatically." << std::endl;
 			}
 
-			if ( !child_tag->hasOption("filename") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover File tag requires 'filename' coordinates option");
+			if ( !child_tag->hasOption("filename") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'StartFrom' mover File tag requires 'filename' coordinates option");
 
 			parse_startfrom_file(child_tag->getOption<std::string>("filename"));
 
 		} else if ( name == "PDB" ) {
-			if ( !child_tag->hasOption("filename") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover File tag requires 'filename' coordinates option");
+			if ( !child_tag->hasOption("filename") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'StartFrom' mover File tag requires 'filename' coordinates option");
 			std::string atom_name = child_tag->getOption<std::string>("atom_name","");
 			std::string pdb_tag( child_tag->getOption<std::string>("pdb_tag","default") );
 
 			parse_pdb_file(child_tag->getOption<std::string>("filename"), atom_name, pdb_tag);
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover doesn't understand the sub-tag '"+name+"'" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'StartFrom' mover doesn't understand the sub-tag '"+name+"'" );
 		}
 	}
 }

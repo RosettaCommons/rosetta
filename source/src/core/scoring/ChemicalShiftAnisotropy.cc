@@ -139,7 +139,7 @@ void ChemicalShiftAnisotropy::read_CSA_file( std::string const& filename ) {
 	utility::io::izstream infile(filename.c_str());
 
 	if ( !infile.good() ) {
-		throw( utility::excn::EXCN_FileNotFound( filename ) );
+		throw CREATE_EXCEPTION(utility::excn::FileNotFound,  filename );
 	}
 
 	//tr.Info << "Reading CSA file " << filename << std::endl;
@@ -154,20 +154,20 @@ void ChemicalShiftAnisotropy::read_CSA_file( std::string const& filename ) {
 
 		if ( line_stream.fail() ) {
 			tr.Error << "couldn't read line " << line << " in csa-file " << filename << std::endl;
-			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in csa-file "+filename));
+			throw CREATE_EXCEPTION(utility::excn::BadInput, " invalid line "+line+" in csa-file "+filename);
 		}
 
 		if ( atom1=="N" && sigma1<=sigma2 && sigma2<=sigma3 && res1>1 ) {
 			All_CSA_lines_.push_back(CSA(res1,atom1,sigma1,sigma2,sigma3,CSAval,CSAerr,weight));
 		} else {
 			if ( atom1!="N" ) {
-				throw( utility::excn::EXCN_BadInput( "only N15 CSA  is supported, not yet for " ));
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  "only N15 CSA  is supported, not yet for " );
 			}
 			if ( res1<=1 ) {
-				throw( utility::excn::EXCN_BadInput( "residue id needs to be greater than 1" ));
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  "residue id needs to be greater than 1" );
 			}
 			if ( sigma1>sigma2 ||  sigma1>sigma2 ||  sigma2>sigma3 ) {
-				throw( utility::excn::EXCN_BadInput( "sigma1 < sigma2 < sigma3" ));
+				throw CREATE_EXCEPTION(utility::excn::BadInput,  "sigma1 < sigma2 < sigma3" );
 			}
 		}
 
@@ -637,5 +637,3 @@ CEREAL_REGISTER_TYPE( core::scoring::ChemicalShiftAnisotropy )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_ChemicalShiftAnisotropy )
 #endif // SERIALIZATION
-
-

@@ -31,7 +31,7 @@ mValue get_value(const mObject& obj, const std::string& name )
 {
 	auto i = obj.find(name);
 	if ( i == obj.end() ) {
-		throw utility::excn::EXCN_Msg_Exception("Cannot find member '" + name + "'" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,"Cannot find member '" + name + "'" );
 	}
 	return i->second;
 }
@@ -39,21 +39,21 @@ mValue get_value(const mObject& obj, const std::string& name )
 mObject get_mObject(const mObject& obj, const std::string& name )
 {
 	mValue value = get_value( obj, name );
-	if ( value.type() != obj_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not an object" ); }
+	if ( value.type() != obj_type ) {  throw CREATE_EXCEPTION(utility::excn::Exception,"JSON error: '" + name + "' is not an object" ); }
 	return value.get_obj();
 }
 
 mArray get_mArray(const mObject& obj, const std::string& name )
 {
 	const mValue value = get_value( obj, name );
-	if ( value.type() != array_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not an Array" ); }
+	if ( value.type() != array_type ) {  throw CREATE_EXCEPTION(utility::excn::Exception,"JSON error: '" + name + "' is not an Array" ); }
 	return value.get_array();
 }
 
 mArray read_mArray(  const std::string& json_string ){
 	mValue value;
 	read_or_throw(json_string, value);
-	if ( value.type() != array_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON read error: expected an Array"); }
+	if ( value.type() != array_type ) {  throw CREATE_EXCEPTION(utility::excn::Exception,"JSON read error: expected an Array"); }
 	return value.get_array();
 }
 
@@ -61,14 +61,14 @@ mArray read_mArray(  const std::string& json_string ){
 mObject read_mObject(  const std::string& json_string ){
 	mValue value;
 	read_or_throw(json_string, value);
-	if ( value.type() != obj_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON read error: expected an Object"); }
+	if ( value.type() != obj_type ) {  throw CREATE_EXCEPTION(utility::excn::Exception,"JSON read error: expected an Object"); }
 	return value.get_obj();
 }
 
 std::string get_string(const mObject& obj, const std::string& name )
 {
 	mValue value = get_value( obj, name );
-	if ( value.type() != str_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a string" ); }
+	if ( value.type() != str_type ) {  throw CREATE_EXCEPTION(utility::excn::Exception,"JSON error: '" + name + "' is not a string" ); }
 	return value.get_str();
 }
 
@@ -86,7 +86,7 @@ double get_real(const mObject& obj, const std::string& name )
 	mValue value = get_value( obj, name );
 	if ( value.type() == real_type ) return value.get_real();
 	if ( value.type() == int_type ) return get_int( obj, name );
-	throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a number" );
+	throw CREATE_EXCEPTION(utility::excn::Exception,"JSON error: '" + name + "' is not a number" );
 	return 0.0;
 }
 
@@ -99,7 +99,7 @@ double get_real_or_zero(const mObject& obj, const std::string& name )
 int get_int(const mObject& obj, const std::string& name )
 {
 	mValue value = get_value( obj, name );
-	if ( value.type() != int_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a int" ); }
+	if ( value.type() != int_type ) {  throw CREATE_EXCEPTION(utility::excn::Exception,"JSON error: '" + name + "' is not a int" ); }
 	return value.get_int();
 }
 
@@ -111,4 +111,3 @@ int get_int_or_zero(const mObject& obj, const std::string& name )
 
 }
 }
-

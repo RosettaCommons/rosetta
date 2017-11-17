@@ -112,8 +112,8 @@ void ResLvlTaskOperationFactory::define_res_lvl_task_op_xml_schema( utility::tag
 			res_lvl_task_op_xml_schema_group_name(),
 			& complex_type_name_for_res_lvl_task_op,
 			xsd );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for ResLvlTaskOperations from ResLvlTaskOperationFactory; offending class"
+	} catch ( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for ResLvlTaskOperations from ResLvlTaskOperationFactory; offending class"
 			" must call core::pack::task::operation::complex_type_name_for_res_lvl_task_op when defining"
 			" its XML Schema\n" + e.msg() );
 	}

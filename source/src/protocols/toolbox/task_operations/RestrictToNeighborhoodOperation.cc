@@ -160,7 +160,7 @@ protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculatorCOP
 RestrictToNeighborhoodOperation::get_calculator() const {
 	using namespace core::pose::metrics;
 	if ( !CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ) {
-		throw utility::excn::EXCN_Msg_Exception("In RestrictToNeighborhoodOperation get_calculator, calculator " + calculator_name_ + " does not exist");
+		throw CREATE_EXCEPTION(utility::excn::Exception, "In RestrictToNeighborhoodOperation get_calculator, calculator " + calculator_name_ + " does not exist");
 	}
 
 	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculatorCOP;

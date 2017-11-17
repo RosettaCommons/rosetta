@@ -118,7 +118,7 @@ main( int argc, char * argv [] )
 		PackingAngleOP packing_angle = PackingAngleOP( new PackingAngle );
 		protocols::jd2::JobDistributor::get_instance()->go( packing_angle );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

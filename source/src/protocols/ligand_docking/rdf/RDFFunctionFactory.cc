@@ -125,8 +125,8 @@ RDFFunctionFactory::define_rdf_function_group( utility::tag::XMLSchemaDefinition
 			rdf_function_group_name(),
 			& rdf_function_ct_namer,
 			xsd );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for RDFFunction from RDFFunctionFactory; offending class"
+	} catch ( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for RDFFunction from RDFFunctionFactory; offending class"
 			" must call protocols::ligand_docking::rdf::rdf_function_ct_namer when defining"
 			" its XML Schema\n" + e.msg() );
 	}

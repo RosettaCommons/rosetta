@@ -29,7 +29,7 @@
 #include <core/select/residue_selector/ResidueVector.fwd.hh>
 
 // Utility headers
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -161,17 +161,9 @@ private:
 	bool updated_;
 };
 
-class EXCN_PreFilterFailed : public utility::excn::EXCN_Base {
+class EXCN_PreFilterFailed : public utility::excn::Exception {
 public:
-	EXCN_PreFilterFailed( std::string const & msg ) :
-		utility::excn::EXCN_Base(), msg_( msg )
-	{}
-
-	virtual void
-	show( std::ostream & os ) const { os << msg_ << std::endl; }
-
-private:
-	std::string const msg_;
+	using utility::excn::Exception::Exception;
 };
 
 } //protocols
@@ -179,4 +171,3 @@ private:
 } //architects
 
 #endif //INCLUDED_protocols_denovo_design_architects_BetaSheetArchitect_hh
-

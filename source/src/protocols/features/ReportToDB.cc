@@ -210,9 +210,7 @@ ReportToDB::ReportToDB(
 	features_reporters_(),
 	initialized( false )
 {
-	if ( batch_name == "" ) {
-		utility::excn::EXCN_BadInput("Failed to create ReportToDB instance because the batch name must not be ''.");
-	}
+	if ( batch_name == "" ) throw CREATE_EXCEPTION(utility::excn::BadInput, "Failed to create ReportToDB instance because the batch name must not be ''.");
 
 	initialize_reporters();
 }
@@ -246,7 +244,7 @@ ReportToDB::ReportToDB(
 	initialized( false )
 {
 	if ( batch_name == "" ) {
-		utility::excn::EXCN_BadInput("Failed to create ReportToDB instance because the batch name must not be ''.");
+		CREATE_EXCEPTION(utility::excn::BadInput, "Failed to create ReportToDB instance because the batch name must not be ''.");
 	}
 
 	initialize_reporters();
@@ -303,7 +301,7 @@ ReportToDB::set_batch_name(
 	std::string const & name
 ) {
 	if ( name == "" ) {
-		utility::excn::EXCN_BadInput("Setting the batch name for a ReporToDB instance to '' is not allowed.");
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "Setting the batch name for a ReporToDB instance to '' is not allowed.");
 	}
 
 	batch_name_ = name;
@@ -496,8 +494,7 @@ ReportToDB::parse_relevant_residues_mode_tag_item(
 	} else if ( rel_res_mode == "IMPLICIT" ) {
 		relevant_residues_mode_ = RelevantResiduesMode::Inclusive;
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption
-			( "Bad value for relevant_residues_mode: '" + rel_res_mode + "'. It must be either 'EXPLICIT' or 'IMPLICIT' (case insensitive). This indicates which features should be reported given the relevant residue specification (determined by the packable residues in the given task operation:\n\tEXCLUSIVE: All residues in a feature must be specified as 'relevant'. (DEFAULT)\n\tINCLUSIVE: At least one residue in the the feature must be specified as 'relevant' to be reported.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Bad value for relevant_residues_mode: '" + rel_res_mode + "'. It must be either 'EXPLICIT' or 'IMPLICIT' (case insensitive). This indicates which features should be reported given the relevant residue specification (determined by the packable residues in the given task operation:\n\tEXCLUSIVE: All residues in a feature must be specified as 'relevant'. (DEFAULT)\n\tINCLUSIVE: At least one residue in the the feature must be specified as 'relevant' to be reported.");
 	}
 }
 
@@ -512,19 +509,19 @@ ReportToDB::parse_my_tag(
 	Pose const & pose )
 {
 	if ( tag->hasOption("db") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("The 'db' tag has been deprecated. Please use 'database_name' instead.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The 'db' tag has been deprecated. Please use 'database_name' instead.");
 	}
 
 	if ( tag->hasOption("db_mode") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("The 'db_mode' tag has been deprecated. Please use 'database_mode' instead.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The 'db_mode' tag has been deprecated. Please use 'database_mode' instead.");
 	}
 
 	if ( tag->hasOption("separate_db_per_mpi_process") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("The 'parse_separate_db_per_mpi_process' tag has been deprecated. Please use 'database_parse_separate_db_per_mpi_process' instead.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The 'parse_separate_db_per_mpi_process' tag has been deprecated. Please use 'database_parse_separate_db_per_mpi_process' instead.");
 	}
 
 	if ( tag->hasOption("sample_source") ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("The 'sample_source' tag has been deprecated. Please use 'batch_description' instead.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The 'sample_source' tag has been deprecated. Please use 'batch_description' instead.");
 	}
 
 	// Name of output features database:
@@ -533,8 +530,7 @@ ReportToDB::parse_my_tag(
 	if ( tag->hasOption("resource_description") ) {
 		std::string resource_description = tag->getOption<string>("resource_description");
 		if ( ! basic::resource_manager::ResourceManager::get_instance()->has_resource_with_description( resource_description ) ) {
-			throw utility::excn::EXCN_Msg_Exception
-				( "You specified a resource_description of " + resource_description +
+			throw CREATE_EXCEPTION(utility::excn::Exception, "You specified a resource_description of " + resource_description +
 				" for ReportToDB, but the ResourceManager doesn't have a resource with that description" );
 		}
 		db_session_ = basic::resource_manager::get_resource< utility::sql_database::session >( resource_description );
@@ -599,11 +595,11 @@ ReportToDB::parse_my_tag(
 				feature_tag, data, filters, movers, pose));
 			features_reporter->set_relevant_residues_mode(relevant_residues_mode_);
 			add_features_reporter(features_reporter);
-		} catch( utility::excn::EXCN_Base const & e ){
+		} catch (utility::excn::Exception const & e ){
 			//TR.Error << "Please include only tags with name 'feature' as subtags of ReportToDB" << endl;
 			TR.Error << "Tag with name '" << feature_tag->getName() << "' is invalid" << endl;
 			TR.Error << " Specific error message: " << e << std::endl;
-			throw utility::excn::EXCN_RosettaScriptsOption("Invalid FeaturesReporter tag.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Invalid FeaturesReporter tag.");
 		}
 
 
@@ -646,7 +642,7 @@ ReportToDB::check_features_reporter_dependencies(
 
 			// Theoretically this could be thrown in a non-RosettaScripts context,
 			// but that would be bad coding on the C++ developer's part
-			throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, error_msg.str());
 		}
 	}
 }
@@ -819,7 +815,7 @@ ReportToDB::report_structure_features() const {
 			<< "\tbatch_id: '" << batch_id_ << "'" << endl
 			<< "Error Message:" << endl << error.what() << endl;
 		utility_exit_with_message(err_msg.str());
-	} catch (utility::excn::EXCN_Base & error){
+	} catch (utility::excn::Exception & error){
 		if ( use_transactions_ ) {
 			db_session_->rollback();
 		}

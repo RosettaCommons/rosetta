@@ -98,7 +98,7 @@ SideChainNeighborsEnergy::residue_energy(
 		} else if ( rsd_mode == core::chemical::CENTROID_t ) {
 			my_sc_coordinates = rsd.atom(rsd.atom_index("CEN")).xyz();
 		} else {
-			throw utility::excn::EXCN_BadInput( "Unknown residue type set for gly residue: " + core::chemical::string_from_type_set_mode( rsd_mode ) );
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  "Unknown residue type set for gly residue: " + core::chemical::string_from_type_set_mode( rsd_mode ) );
 		}
 		my_bb_coordinates = rsd.atom(rsd.atom_index("CA")).xyz() ;
 	} else {

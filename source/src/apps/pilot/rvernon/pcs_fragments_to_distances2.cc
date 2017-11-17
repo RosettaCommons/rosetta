@@ -375,7 +375,7 @@ main( int argc, char* argv [] )
 		infile >> outfile_location;// >> res1 >> res2 >> native_location;
 	}
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

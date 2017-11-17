@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 		MakeCanonicalHelixOP make_helix( new MakeCanonicalHelix );
 		protocols::jd2::JobDistributor::get_instance()->go(make_helix);
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "Caught Exception " << e.msg() << std::endl;
 		return -1;
 	}

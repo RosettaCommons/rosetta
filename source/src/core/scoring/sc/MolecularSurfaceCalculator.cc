@@ -192,7 +192,7 @@ int MolecularSurfaceCalculator::Calc() {
 		run_.results.valid = 0;
 
 		if ( run_.atoms.empty() ) {
-			throw ShapeComplementarityCalculatorException("No atoms defined");
+			throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "No atoms defined");
 		}
 
 		// Determine assign the attention numbers for each atom
@@ -214,7 +214,7 @@ int MolecularSurfaceCalculator::Calc() {
 void MolecularSurfaceCalculator::GenerateMolecularSurfaces()
 {
 	if ( run_.atoms.empty() ) {
-		throw ShapeComplementarityCalculatorException("No atoms defined");
+		throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "No atoms defined");
 	}
 
 	// Now compute the surface for the atoms in the interface and its neighbours
@@ -552,7 +552,7 @@ int MolecularSurfaceCalculator::FindNeighborsForAtom(Atom &atom1)
 			d2 = atom1.distance_squared(atom2);
 
 			if ( d2 <= 0.0001 ) {
-				throw ShapeComplementarityCalculatorException("Coincident atoms: %d:%s:%s @ (%.3f, %.3f, %.3f) == %d:%s:%s @ (%.3f, %.3f, %.3f)",
+				throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "Coincident atoms: %d:%s:%s @ (%.3f, %.3f, %.3f) == %d:%s:%s @ (%.3f, %.3f, %.3f)",
 					atom1.natom, atom1.residue, atom1.atom, atom1.x(), atom1.y(), atom1.z(),
 					atom2.natom, atom2.residue, atom2.atom, atom2.x(), atom2.y(), atom2.z());
 			}
@@ -798,13 +798,13 @@ int MolecularSurfaceCalculator::GenerateConvexSurface(Atom const &atom1)
 		tij = ((atom1 + *neighbor) * 0.5f) + (uij * (asymm * 0.5f));
 		_far_ = pow(eri + erj, 2) - dij*dij;
 		if ( _far_ <= 0.0 ) {
-			throw ShapeComplementarityCalculatorException("Imaginary _far_ for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
+			throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "Imaginary _far_ for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
 		}
 		_far_ = sqrt(_far_);
 
 		contain = pow(dij, 2) - pow(ri - rj, 2);
 		if ( contain <= 0.0 ) {
-			throw ShapeComplementarityCalculatorException("Imaginary contain for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
+			throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "Imaginary contain for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
 		}
 		contain = sqrt(contain);
 		rij = 0.5 * _far_ * contain / dij;
@@ -812,7 +812,7 @@ int MolecularSurfaceCalculator::GenerateConvexSurface(Atom const &atom1)
 		south = (pij - atom1) / eri;
 
 		if ( north.cross(south).dot(eqvec) <= 0.0 ) {
-			throw ShapeComplementarityCalculatorException("Non-positive frame for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
+			throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "Non-positive frame for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
 		}
 	}
 
@@ -1244,7 +1244,7 @@ MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::SubDiv(
 	}
 
 	if ( a + delta < angle ) {
-		throw ShapeComplementarityCalculatorException("Too many subdivisions");
+		throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, "Too many subdivisions");
 	}
 
 	if ( !points.empty() ) {

@@ -63,7 +63,7 @@ EnvClaimOP EnvClaim::make_claim( std::string const& name,
 	else if ( name == "XYZClaim" )     return EnvClaimOP( new XYZClaim( owner, tag, datamap ) );
 	else {
 		tr << "NOTE: The VrtResClaim is now called VirtResClaim. Please alter your scripts accordingly." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "'" + name + "' is not a known EnvClaim type." );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "'" + name + "' is not a known EnvClaim type." );
 	}
 }
 
@@ -179,7 +179,7 @@ ControlStrength EnvClaim::parse_ctrl_str( std::string const& str ) const {
 	} else if ( lower == "exclusive" ) {
 		return EXCLUSIVE;
 	} else {
-		throw utility::excn::EXCN_BadInput( "The initialization strength '" + str +
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "The initialization strength '" + str +
 			"' is not recognized." );
 	}
 }
@@ -200,7 +200,7 @@ void EnvClaim::annotate( core::pose::Pose const& pose, core::environment::Sequen
 
 		try{
 			ann->add_seq_label( label, trues );
-		} catch ( utility::excn::EXCN_KeyError& e ) {
+		} catch ( utility::excn::KeyError& e ) {
 			std::ostringstream ss;
 			ss << "While " << *this << " was annotating the pose for broking, the " << selector->get_name()
 				<< "Selector produced a conflicting residue selection.";
@@ -222,7 +222,7 @@ void EnvClaim::queue_for_annotation( std::string const& label, ResidueSelectorCO
 		if ( selector->get_name() == selector_list_[label]->get_name() ) {
 			ss << " They aren't the same ResidueSelector.";  // Make sure error is clear that selector-sameness has be checked already.
 		}
-		throw utility::excn::EXCN_BadInput( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
 }
 

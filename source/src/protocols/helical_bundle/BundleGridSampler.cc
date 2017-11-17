@@ -592,7 +592,7 @@ BundleGridSampler::parse_my_tag(
 	//TODO: ADD SUPPORT FOR Z-OFFSET.
 
 	if ( tag->getName() != "BundleGridSampler" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible -- the tag name does not match the mover name.");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible -- the tag name does not match the mover name.");
 	}
 
 	if ( TR.visible() ) TR << "Parsing options for BundleGridSampler (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;

@@ -118,20 +118,20 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 
 		std::istringstream linestream( line );
 		if ( ( linestream >> entity_id ).fail() ) {
-			throw utility::excn::EXCN_Msg_Exception(
+			throw CREATE_EXCEPTION(utility::excn::Exception, 
 				"Failed to read entity id on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file:\n" + line );
 		}
 		++count_correspondences;
 		if ( entity_id > num_entities() ) {
-			throw utility::excn::EXCN_Msg_Exception(
+			throw CREATE_EXCEPTION(utility::excn::Exception, 
 				"Entity ID read on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file exceeds the number of entities: " +
 				utility::to_string( entity_id ) + " vs " + utility::to_string( num_entities() ) );
 		}
 
 		if ( ( linestream >> PDBnum_string ).fail() ) {
-			throw utility::excn::EXCN_Msg_Exception(
+			throw CREATE_EXCEPTION(utility::excn::Exception, 
 				"Failed to read PDB id for a residue on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file:\n" + line );
 		}
@@ -146,7 +146,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 			/// The last character is the insertion code.
 			for ( Size ch = 0; ch < PDBnum_string.length()-1; ++ch ) {
 				if ( ! isdigit( PDBnum_string[ ch ] ) && ( ch != 0 || PDBnum_string[ ch ] != '-'  ) ) {
-					throw utility::excn::EXCN_Msg_Exception(
+					throw CREATE_EXCEPTION(utility::excn::Exception, 
 						"Failed to read PDB residue id on line " + utility::to_string( line_count ) +
 						" of the EntityCorrespondence file:\n" + line +"\nCharacter" +
 						utility::to_string( ch + 1 ) + " of '" + PDBnum_string + "' is not a digit");
@@ -157,7 +157,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 		} else { // no insertion code
 			for ( Size ch = 0; ch < PDBnum_string.length(); ++ch ) {
 				if ( ! isdigit( PDBnum_string[ ch ] ) && ( ch != 0 || PDBnum_string[ ch ] != '-'  ) ) {
-					throw utility::excn::EXCN_Msg_Exception(
+					throw CREATE_EXCEPTION(utility::excn::Exception, 
 						"Failed to read PDB residue id on line " + utility::to_string( line_count ) +
 						" of the EntityCorrespondence file:\n" + line +"\nCharacter" +
 						utility::to_string( ch + 1 ) + " of '" + PDBnum_string + "' is not a digit");
@@ -166,7 +166,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 			PDBnum = atoi( PDBnum_string.c_str() );
 		}
 		if ( (linestream >> chain ).fail() ) {
-			throw utility::excn::EXCN_Msg_Exception(
+			throw CREATE_EXCEPTION(utility::excn::Exception, 
 				"Failed to read a chain id for a PDB residue on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file:\n" + line );
 		}
@@ -175,7 +175,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 		/* end resfile code */
 
 		if ( residue_index == 0 ) {
-			throw utility::excn::EXCN_Msg_Exception(
+			throw CREATE_EXCEPTION(utility::excn::Exception, 
 				"Residue ID read on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file is not present in the pose: " +
 				PDBnum_string + " ch: " + chain + " vs pose.size()= " + utility::to_string( num_residues() ) );
@@ -184,7 +184,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 	}
 
 	/*if ( count_correspondences == 0 ) {
-	throw utility::excn::EXCN_Msg_Exception(
+	throw CREATE_EXCEPTION(utility::excn::Exception, 
 	"Failed to find any correspondences while reading from EntityCorrespondence file" );
 	}*/
 }
@@ -255,7 +255,7 @@ void EntityCorrespondence::bounds_check_entity(
 ) const
 {
 	if ( entity_id > num_entities() ) {
-		throw utility::excn::EXCN_Msg_Exception( "EntityCorrespondence::" + funcname + " "
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "EntityCorrespondence::" + funcname + " "
 			"attempted to access information for entity " + utility::to_string( entity_id ) +
 			" (only " + utility::to_string( num_entities() ) + " entities exist)" );
 	}
@@ -267,11 +267,11 @@ void EntityCorrespondence::bounds_check_residue(
 ) const
 {
 	if ( ! pose_ ) {
-		throw utility::excn::EXCN_Msg_Exception( "EntityCorrespondence::" + funcname + " "
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "EntityCorrespondence::" + funcname + " "
 			"invoked before pose_ pointer was set." );
 	}
 	if ( resid > num_residues() ) {
-		throw utility::excn::EXCN_Msg_Exception( "EntityCorrespondence::" + funcname + " "
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "EntityCorrespondence::" + funcname + " "
 			"attempted to access information for residue " + utility::to_string( resid ) +
 			" (only " + utility::to_string( num_residues() ) + " residues exist)" );
 	}

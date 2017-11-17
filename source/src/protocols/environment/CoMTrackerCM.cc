@@ -166,7 +166,7 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 		std::ostringstream ss;
 		ss << "The CoMTrackerCM '" << name() << "' was configured to move all the residues in the pose.  "
 			<< "This probably isn't what you meant, check your selectors and input pose." << std::endl;
-		throw utility::excn::EXCN_BadInput( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
 	debug_assert( (Size) mobile_residues_.index( false ) <= pose.size() );
 
@@ -289,7 +289,7 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 	if ( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) == mobile_residues_.end() ) {
 		std::ostringstream ss;
 		ss << "The mobile_selector for '" << this->get_name() << "' made an empty selection. This is not allowed.";
-		throw utility::excn::EXCN_BadInput( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
 	debug_assert( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) != mobile_residues_.end() );
 

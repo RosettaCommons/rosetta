@@ -108,13 +108,13 @@ InterfaceScoreCalculator::parse_my_tag(
 	core::pose::Pose const & /*pose*/
 )
 {
-	if ( ! tag->hasOption("chains") ) throw utility::excn::EXCN_RosettaScriptsOption("'InterfaceScoreCalculator' requires 'chains' tag (comma separated chains to dock)");
+	if ( ! tag->hasOption("chains") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'InterfaceScoreCalculator' requires 'chains' tag (comma separated chains to dock)");
 
 	std::string const chains_str = tag->getOption<std::string>("chains");
 	chains_= utility::string_split(chains_str, ',');
 
 	/// Score Function ///
-	if ( ! tag->hasOption("scorefxn") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'scorefxn' tag");
+	if ( ! tag->hasOption("scorefxn") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'HighResDocker' requires 'scorefxn' tag");
 	std::string scorefxn_name= tag->getOption<std::string>("scorefxn");
 	score_fxn_= datamap.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_name);
 	debug_assert(score_fxn_);
@@ -144,7 +144,7 @@ InterfaceScoreCalculator::parse_my_tag(
 		if ( grid_set_prototype_ == nullptr ) {
 			if ( tag->hasOption("compute_grid_scores") ) {
 				// Explicitly asked for grid scores, but there are none to be had.
-				utility::excn::EXCN_RosettaScriptsOption("InterfaceScoreCalculator cannot compute Grid Scores as requested, as the appropriate grid set is not present!");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "InterfaceScoreCalculator cannot compute Grid Scores as requested, as the appropriate grid set is not present!");
 			} else {
 				compute_grid_scores_ = false; // Just ignore it.
 			}

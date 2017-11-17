@@ -193,7 +193,7 @@ bool NormalizedEvaluatedArchive::determine_score_variations() const {
 				values.resize( ndecoys );
 				for ( SilentStructs::const_iterator iss = my_decoys.begin(); iss != my_decoys.end(); ++iss, ++ct ) {
 					if ( !(*iss)->has_energy( name ) ) {
-						throw EXCN_Archive( "energy name "+name+" not found in returned decoys -- run with rescoring in archive to avoid this or fix your batches" );
+						throw CREATE_EXCEPTION(EXCN_Archive, "energy name "+name+" not found in returned decoys -- run with rescoring in archive to avoid this or fix your batches" );
 					} // add weighted column-value to final score
 					values[ct]=(*iss)->get_energy( name );
 				}

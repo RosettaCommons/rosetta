@@ -61,7 +61,7 @@ int main( int argc, char * argv [] ) {
 		devel::init(argc, argv);
     FragSetOP orig_frags = FragmentIO().read_data( option[ fragment_file_in ]() );
 		FragmentIO().write_data(option[fragment_file_out](),*orig_frags);
- 	} catch ( utility::excn::EXCN_Base const & e ) {
+ 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

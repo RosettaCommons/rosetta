@@ -210,7 +210,7 @@ HelixKinkFilter::parse_my_tag(
 	if ( tag->hasOption( "blueprint" ) && tag->hasOption( "secstruct" ) ) {
 		std::stringstream msg;
 		msg << "HelixKinkFilter::parse_my_tag(): Both blueprint and secstruct cannot be specified at the same time." << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
 	if ( !blueprint.empty() ) {

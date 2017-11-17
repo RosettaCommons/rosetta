@@ -2071,7 +2071,7 @@ ScoringManager::energy_method(
 	if ( score_type == python ) return nullptr; /// python special case; this could now be changed...
 
 	if ( method_creator_map_[ score_type ] == nullptr ) {
-		throw utility::excn::EXCN_Msg_Exception( "Requested ScoreType '" + utility::to_string( score_type ) + "' does not have a registered EnergyMethodCreator." );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Requested ScoreType '" + utility::to_string( score_type ) + "' does not have a registered EnergyMethodCreator." );
 	}
 
 	return method_creator_map_[ score_type ]->create_energy_method( options );

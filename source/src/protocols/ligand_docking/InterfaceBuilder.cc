@@ -78,7 +78,7 @@ InterfaceBuilder::parse_my_tag(
 	if ( tag->hasOption("extension_window") ) {
 		extension_window_= tag->getOption<core::Size>("extension_window");
 	}
-	if ( ! tag->hasOption("ligand_areas") ) throw utility::excn::EXCN_RosettaScriptsOption("InterfaceBuilders need at least one ligand area to build around");
+	if ( ! tag->hasOption("ligand_areas") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "InterfaceBuilders need at least one ligand area to build around");
 
 	std::string ligand_areas_string= tag->getOption<std::string>("ligand_areas");
 	utility::vector1<std::string> ligand_area_strings= utility::string_split(ligand_areas_string, ',');

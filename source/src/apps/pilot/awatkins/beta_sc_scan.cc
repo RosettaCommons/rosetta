@@ -286,7 +286,7 @@ main( int argc, char* argv[] )
 		score_dir_single( "renamed", score_fxn );
 		//score_dir( "renamed", score_fxn );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

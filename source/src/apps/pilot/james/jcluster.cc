@@ -163,7 +163,7 @@ main( int argc, char* argv [] ) {
 
 		//print_debug_information( responsibilities );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

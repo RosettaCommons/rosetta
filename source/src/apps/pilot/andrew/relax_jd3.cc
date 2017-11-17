@@ -253,7 +253,7 @@ main( int argc, char * argv [] )
 		protocols::jd3::JobQueenOP queen( new RelaxJobQueen );
 		//std::cout << "Fixbb job definition file\n" << queen->job_definition_xsd() << std::endl;
 		jd->go( queen );
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -141,7 +141,7 @@ main( int argc, char* argv [] ) {
 		output.close();
 		//full_length_pose.dump_pdb( output_prefix + "_full_length.pdb" );
 	} // has_another_pose()
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+	 } catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

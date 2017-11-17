@@ -120,7 +120,7 @@ DatabaseResourceLocator::locate_resource_stream(
 			<< "because the resource tag given for the database session, "
 			<< "'" << database_session_resource_tag_ << "' "
 			<< "does not exist in the ResourceManager.";
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 	sessionOP db_session(utility::pointer::dynamic_pointer_cast< session > (
@@ -135,7 +135,7 @@ DatabaseResourceLocator::locate_resource_stream(
 			<< "because the resource given for the database session tag, "
 			<< "'" << database_session_resource_tag_ << "' "
 			<< "could is not a DatabaseResourceLocator.";
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 	statement select_stmt(safely_prepare_statement(sql_command_, db_session));
@@ -148,7 +148,7 @@ DatabaseResourceLocator::locate_resource_stream(
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
 			<< sql_command_ << endl
 			<< "with parameter '?' <- '" << locator_id << "' returned no rows." << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 
@@ -158,7 +158,7 @@ DatabaseResourceLocator::locate_resource_stream(
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
 			<< sql_command_ << endl
 			<< "with parameter '?' <- '" << locator_id << "' returned '" << res.cols() << "' columns." << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 	stringstream concatenated_result;
@@ -177,7 +177,7 @@ DatabaseResourceLocator::locate_resource_stream(
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
 			<< sql_command_ << endl
 			<< "with parameter '?' <- '" << locator_id << "' returned more than on row." << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
 
@@ -193,16 +193,16 @@ DatabaseResourceLocator::parse_my_tag(
 	if ( tag->hasOption("database_session_tag") ) {
 		database_session_resource_tag_ = tag->getOption<string>("database_session_tag");
 	} else {
-		throw utility::excn::EXCN_Msg_Exception
-			( "The DatabaseResourceLocator requires a 'database_session_tag' that corresponds with a 'DatabaseSession' resource defined in a <Resources/> block.");
+		throw CREATE_EXCEPTION(utility::excn::Exception,
+							   "The DatabaseResourceLocator requires a 'database_session_tag' that corresponds with a 'DatabaseSession' resource defined in a <Resources/> block.");
 	}
 
 	if ( tag->hasOption("sql_command") ) {
 		sql_command_ = tag->getOption<string>("sql_command");
 		basic::database::check_statement_sanity(sql_command_);
 	} else {
-		throw utility::excn::EXCN_Msg_Exception (
-			"The DatabaseResourceLocator requires a 'sql_command' tag that is an SQL SELECT statement with one parameter '?' and as a key returns a result set with a single column and and a single row containing the data.");
+		throw CREATE_EXCEPTION(utility::excn::Exception,
+							   "The DatabaseResourceLocator requires a 'sql_command' tag that is an SQL SELECT statement with one parameter '?' and as a key returns a result set with a single column and and a single row containing the data.");
 	}
 
 	column_separator_ = tag->getOption<string>("column_separator", "\n");

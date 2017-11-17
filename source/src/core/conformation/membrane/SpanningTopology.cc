@@ -372,7 +372,7 @@ SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::str
 
 	if ( !stream.good() ) {
 		TR << "Poor formatting for spanfile - cannot read" << std::endl;
-		throw new utility::excn::EXCN_Msg_Exception( "Poor formatting for spanfile - cannot read" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Poor formatting for spanfile - cannot read" );
 	}
 
 	// Read file Header "TM region prediction for"
@@ -494,7 +494,7 @@ SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::str
 	// check created object for validity
 	if ( ! is_valid() ) {
 		TR << "SpanningTopology invalid: check your span file!" << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( "SpanningTopology invalid: check your span file!" );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "SpanningTopology invalid: check your span file!" );
 		//  utility_exit_with_message( "SpanningTopology invalid: check your span file!" );
 	}
 

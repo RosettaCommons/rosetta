@@ -195,7 +195,7 @@ main( int argc, char* argv[] )
 		a3bpose.dump_pdb( "a3b_a_gp.pdb" );
 		b314pose.dump_pdb( "b314_a_gp.pdb" );
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+	} catch (utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

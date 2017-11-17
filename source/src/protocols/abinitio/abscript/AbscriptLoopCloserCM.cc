@@ -157,7 +157,7 @@ bool angle_cpy( core::pose::Pose& target, core::pose::Pose const& source, core::
 				<< t_id << "). Target angle was " << target.torsion( t_id ) << " and source angle was "
 				<< source.torsion( t_id ) << " (delta=" << angle_diff( target.torsion( t_id ), source.torsion( t_id ) )
 				<< "; tolerance is " << TOLERANCE << ")." << std::endl;
-			throw protocols::loops::EXCN_Loop_not_closed( ss.str() );
+			throw CREATE_EXCEPTION(protocols::loops::EXCN_Loop_not_closed,  ss.str() );
 		}
 	} else {
 		tr.Debug << "  ignoring modified " << angle << " @ " << t_id.torsion() << " (input=" << source.torsion( t_id ) << ", output=" << target.torsion( t_id ) << std::endl;
@@ -215,7 +215,7 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 				warn += 1;
 			}
 		}
-	} catch( utility::excn::EXCN_Msg_Exception& e ) {
+	} catch( utility::excn::Exception& e ) {
 		tr.Warning << this->get_name() << " failed to close loops without violating the ClientMover contract. Report: "
 			<< e.msg() << std::endl;
 		this->set_last_move_status( moves::FAIL_DO_NOT_RETRY );
@@ -241,7 +241,7 @@ bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
 			checkpointer,
 			get_current_tag(),
 			*final_ft_ );
-	} catch ( loops::EXCN_Loop_not_closed& excn ) {
+	} catch (loops::EXCN_Loop_not_closed& excn ) {
 		tr.Warning << this->get_name() << " failed to close a loop. Report: " << excn << std::endl;
 		set_last_move_status( moves::FAIL_DO_NOT_RETRY );
 		set_current_tag( "C_"+get_current_tag().substr(std::min(2,(int)get_current_tag().size())) );
@@ -271,7 +271,7 @@ void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
 		fragfile = tag->getOption<std::string>("fragments");
 	} else if ( !option[OptionKeys::in::file::frag3].user() ) {
 		tr.Error <<"enter frags with either fragments= or -in:file:frag3"  << std::endl;
-		throw utility::excn::EXCN_RosettaScriptsOption( "fragment file wrong type" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "fragment file wrong type" );
 	} else {
 		fragfile = option[ OptionKeys::in::file::frag3 ]();
 	}
@@ -326,7 +326,7 @@ void AbscriptLoopCloserCM::attempt_idealize( core::pose::Pose& pose ) {
 		ss << this->get_name() << " tried to start closing the fold tree by idealization ("
 			<< pose.fold_tree().num_cutpoint() - final_ft_->num_cutpoint()
 			<< " cuts are to be closed) but was not given any movable positions." << std::endl;
-		throw utility::excn::EXCN_BadInput( ss.str() );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
 
 	idealizer->set_pos_list( pos_list );

@@ -38,12 +38,12 @@ PosePropertyReporter::~PosePropertyReporter() = default;
 
 core::Real PosePropertyReporter::report_property( core::pose::Pose & ) const
 {
-	throw utility::excn::EXCN_RosettaScriptsOption("Pose property reporter " + get_name() + " cannot report property for a single pose -- not implemented" );
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Pose property reporter " + get_name() + " cannot report property for a single pose -- not implemented" );
 }
 
 core::Real PosePropertyReporter::report_property( core::pose::Pose & , core::pose::Pose & ) const
 {
-	throw utility::excn::EXCN_RosettaScriptsOption("Pose property reporter " + get_name() + " cannot compare two poses -- not implemented" );
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Pose property reporter " + get_name() + " cannot compare two poses -- not implemented" );
 }
 
 

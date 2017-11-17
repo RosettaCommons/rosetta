@@ -256,10 +256,10 @@ JobExtractor::query_job_queen_for_more_jobs_for_current_node()
 	for ( LarvalJobs::const_iterator iter = jobs_for_current_node.begin();
 			iter != jobs_for_current_node.end(); ++iter ) {
 		if ( ! *iter ) {
-			throw utility::excn::EXCN_Msg_Exception( "determine_job_list has returned a null-pointer" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "determine_job_list has returned a null-pointer" );
 		}
 		if ( job_indices_seen_.member( (*iter)->job_index() ) ) {
-			throw utility::excn::EXCN_Msg_Exception( "determine_job_list has returned two jobs with the same job index: " +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "determine_job_list has returned two jobs with the same job index: " +
 				utility::to_string( (*iter)->job_index() ) + ". The job distributor requires that all jobs are given a unique job index." );
 		}
 		job_indices_seen_.insert( (*iter)->job_index() );

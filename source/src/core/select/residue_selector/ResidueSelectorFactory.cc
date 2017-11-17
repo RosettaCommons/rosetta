@@ -39,7 +39,7 @@ ResidueSelectorFactory::factory_register( ResidueSelectorCreatorOP creator )
 	if ( creator_map_.find( creator->keyname() ) != creator_map_.end() ) {
 		std::string err_msg = "Factory Name Conflict: Two or more ResidueSelectorCreators registered with the name " + creator->keyname();
 		if ( throw_on_double_registration_ ) {
-			throw utility::excn::EXCN_Msg_Exception( err_msg );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 		} else {
 			utility_exit_with_message(  err_msg );
 		}
@@ -62,7 +62,7 @@ ResidueSelectorFactory::provide_xml_schema(
 ) const {
 	if ( ! has_type( selector_name ) ) {
 		std::string err_msg =  "No ResidueSelectorCreator with the name '" + selector_name + "' has been registered with the ResidueSelectorFactory";
-		throw utility::excn::EXCN_Msg_Exception( err_msg );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 	}
 	std::map< std::string, ResidueSelectorCreatorOP >::const_iterator iter = creator_map_.find( selector_name );
 	iter->second->provide_xml_schema( xsd );
@@ -76,7 +76,7 @@ ResidueSelectorOP ResidueSelectorFactory::new_residue_selector(
 {
 	if ( ! has_type( selector_name ) ) {
 		std::string err_msg =  "No ResidueSelectorCreator with the name '" + selector_name + "' has been registered with the ResidueSelectorFactory";
-		throw utility::excn::EXCN_Msg_Exception( err_msg );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 	}
 	std::map< std::string, ResidueSelectorCreatorOP >::const_iterator iter = creator_map_.find( selector_name );
 	ResidueSelectorOP new_selector = iter->second->create_residue_selector();
@@ -98,8 +98,8 @@ void ResidueSelectorFactory::define_residue_selector_xml_schema( utility::tag::X
 			residue_selector_xml_schema_group_name(),
 			& complex_type_name_for_residue_selector,
 			xsd );
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
-		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for ResidueSelectors from ResidueSelectorFactory; offending class"
+	} catch ( utility::excn::Exception const & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not generate an XML Schema for ResidueSelectors from ResidueSelectorFactory; offending class"
 			" must call core::select::residue_selector::complex_type_name_for_residue_selector when defining"
 			" its XML Schema\n" + e.msg() );
 	}

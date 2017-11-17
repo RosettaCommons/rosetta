@@ -158,7 +158,7 @@ void InitializeByBins::parse_my_tag( utility::tag::TagCOP tag,
 )
 {
 	if ( tag->getName() != "InitializeByBins" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 	}
 
 	//Get the bin params file:

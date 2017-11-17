@@ -76,7 +76,7 @@ ResidueIndexDescription::resolve_index(
 	if ( unassigned_ ) { return 0; }
 	if ( pose_numbered_ ) {
 		if ( pose_index_ > pose.size() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Residue index description exceeds the number of residues in the Pose: pose_index_ = " +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Residue index description exceeds the number of residues in the Pose: pose_index_ = " +
 				utility::to_string( pose_index_ ) + " vs pose.size() " + utility::to_string( pose.size() ));
 		}
 		return pose_index_;
@@ -87,9 +87,9 @@ ResidueIndexDescription::resolve_index(
 		if ( resid == 0 ) {
 			// Dealing with the inability to return a null char constant by having two error messages.  LAAAAAAME.
 			if ( insertion_code() != ' ' ) {
-				throw utility::excn::EXCN_Msg_Exception( "Unable to find PDB residue " + utility::to_string( resindex_ ) + insertion_code_ + ' ' + "on chain " + chain_ + " in input Pose" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find PDB residue " + utility::to_string( resindex_ ) + insertion_code_ + ' ' + "on chain " + chain_ + " in input Pose" );
 			}
-			throw utility::excn::EXCN_Msg_Exception( "Unable to find PDB residue " + utility::to_string( resindex_ ) + insertion_code_ + "on chain " + chain_ + " in input Pose" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find PDB residue " + utility::to_string( resindex_ ) + insertion_code_ + "on chain " + chain_ + " in input Pose" );
 		}
 		return resid;
 	}
@@ -132,7 +132,7 @@ ResidueIndexDescriptionFromFile::resolve_index(
 
 	if ( pose_numbered() ) {
 		if ( pose_index() > pose.size() ) {
-			throw utility::excn::EXCN_Msg_Exception( "Residue index description given on line " + utility::to_string( linenum_ ) +
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Residue index description given on line " + utility::to_string( linenum_ ) +
 				" of the file named " + fname_ + " exceeds the number of residues in the Pose: pose_index_ = " +
 				utility::to_string( pose_index() ) + " vs pose.size() " + utility::to_string( pose.size() ));
 		}
@@ -144,9 +144,9 @@ ResidueIndexDescriptionFromFile::resolve_index(
 		if ( resid == 0 ) {
 			// Dealing with the inability to return a null char constant by having two error messages.  LAAAAAAME.
 			if ( insertion_code() != ' ' ) {
-				throw utility::excn::EXCN_Msg_Exception( "Unable to find PDB residue " + utility::to_string( resindex() ) + insertion_code() + ' ' + "on chain " + chain() + " in input Pose" );
+				throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find PDB residue " + utility::to_string( resindex() ) + insertion_code() + ' ' + "on chain " + chain() + " in input Pose" );
 			}
-			throw utility::excn::EXCN_Msg_Exception( "Unable to find PDB residue " + utility::to_string( resindex() ) + insertion_code() + "on chain " + chain() + " in input Pose" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find PDB residue " + utility::to_string( resindex() ) + insertion_code() + "on chain " + chain() + " in input Pose" );
 		}
 		return resid;
 	}
@@ -186,7 +186,7 @@ parse_PDBnum_icode(
 			<< " of the file '" << fname << "', "
 			<< "the token '" << token << "' "
 			<< "is not a valid <PDBNUM>[<ICODE>] identifier.";
-		throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 	}
 
 }

@@ -2230,7 +2230,7 @@ SandwichFeatures::report_features(
 
 	} // try
 
-catch ( utility::excn::EXCN_Base const & e )
+catch ( utility::excn::Exception const & e )
 {
 	std::cout << "caught exception during SandwichFeatures" << e.msg() << std::endl;
 } // catch

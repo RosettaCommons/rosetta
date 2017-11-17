@@ -67,7 +67,7 @@ public:
 			TR << "===THIS SHOULD NOT TRIGGER AN EXCEPTION===" << std::endl;
 			std::string substituted_contents;
 			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/permitted1.xml", substituted_contents, files_read_in, 0 );
-		} catch( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
 			TS_ASSERT(false); //We shouldn't get here.
 		}
@@ -85,10 +85,12 @@ public:
 			TR << "===THIS SHOULD TRIGGER AN EXCEPTION===" << std::endl;
 			std::string substituted_contents;
 			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/prohibited1.xml", substituted_contents, files_read_in, 0 );
-		} catch( utility::excn::EXCN_Msg_Exception e ) {
+		} catch (utility::excn::Exception e ) {
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
 			TR << "===THE ABOVE SHOULD HAVE TRIGGERED AN EXCEPTION===" << std::endl;
-			TS_ASSERT( e.msg() == "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): Circular inclusion pattern detected when reading \"protocols/rosetta_scripts/prohibited1.xml\".");
+
+			std::string expected_err_msg = "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): Circular inclusion pattern detected when reading \"protocols/rosetta_scripts/prohibited1.xml\".";
+			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 			return;
 		}
 		TR << "Error in RosettaScriptsParserTests::test_prohibit_circular_dependencies(): an exception should have been thrown by the circular dependencies, but wasn't." << std::endl;

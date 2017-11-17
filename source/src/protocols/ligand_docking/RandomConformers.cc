@@ -108,9 +108,9 @@ RandomConformers::parse_my_tag(
 )
 {
 	if ( tag->getName() != "RandomConformers" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 	}
-	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'RandomConformers' mover requires chain tag");
+	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'RandomConformers' mover requires chain tag");
 
 	chain_ = tag->getOption<std::string>("chain");
 }

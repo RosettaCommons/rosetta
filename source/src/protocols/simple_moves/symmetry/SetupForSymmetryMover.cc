@@ -230,7 +230,7 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 		if ( ! symdef_fname_from_options_system_.empty() ) {
 			process_symmdef_file( symdef_fname_from_options_system_ );
 		} else {
-			throw utility::excn::EXCN_BadInput(
+			throw CREATE_EXCEPTION(utility::excn::BadInput, 
 				"The -symmetry:symmetry_definition command line option "
 				"was not specified.");
 		}
@@ -276,7 +276,7 @@ void SetupForSymmetryMover::parse_my_tag(
 
 	preserve_datacache_ = tag->getOption< bool >( "preserve_datacache", preserve_datacache_ );
 	if ( tag->hasOption("definition") && tag->hasOption("resource_description") ) {
-		throw utility::excn::EXCN_BadInput(
+		throw CREATE_EXCEPTION(utility::excn::BadInput, 
 			"SetupForSymmetry takes either a 'definition' OR "
 			"a 'resource_description' tag but not both.");
 	}
@@ -303,7 +303,7 @@ void SetupForSymmetryMover::parse_my_tag(
 	} else if ( ! symdef_fname_from_options_system_.empty() ) {
 		process_symmdef_file( symdef_fname_from_options_system_ );
 	} else {
-		throw utility::excn::EXCN_BadInput(
+		throw CREATE_EXCEPTION(utility::excn::BadInput, 
 			"To use SetupForSymmetryMover with rosetta scripts please supply either a 'definition' tag, a 'resource_decription' tag or specify -symmetry:symmetry_definition the command line.");
 	}
 }

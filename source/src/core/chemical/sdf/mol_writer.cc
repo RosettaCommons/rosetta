@@ -124,7 +124,7 @@ void MolWriter::output_residue(std::string const & file_name,core::conformation:
 
 	outfile.open(file_name.c_str(),std::ios::out | std::ios::binary);
 	if ( !outfile ) {
-		throw utility::excn::EXCN_FileNotFound("Cannot open file"+file_name);
+		throw CREATE_EXCEPTION(utility::excn::FileNotFound, "Cannot open file"+file_name);
 	}
 	output_residue(outfile,residue);
 	outfile.close();
@@ -136,7 +136,7 @@ void MolWriter::output_residue(std::string const & file_name, core::chemical::Re
 	utility::io::ozstream outfile;
 	outfile.open(file_name.c_str(), std::ios::out | std::ios::binary);
 	if ( !outfile ) {
-		throw utility::excn::EXCN_FileNotFound("Cannot open file"+file_name);
+		throw CREATE_EXCEPTION(utility::excn::FileNotFound, "Cannot open file"+file_name);
 	}
 	output_residue(outfile,residue_type);
 	outfile.close();

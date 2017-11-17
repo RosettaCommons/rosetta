@@ -43,7 +43,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <basic/Tracer.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
@@ -115,7 +115,7 @@ main( int argc, char * argv [] ) {
 			JobDistributor::get_instance()->go( seq );
 		}
 	}
-catch ( utility::excn::EXCN_Base const & e ) {
+catch (utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }
