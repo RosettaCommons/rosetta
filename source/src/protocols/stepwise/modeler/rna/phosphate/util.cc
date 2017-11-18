@@ -232,8 +232,9 @@ check_phosphate_contacts_donor( utility::vector1< Vector > const & op_xyz_list,
 bool
 check_phosphate_contacts_donor( pose::Pose const & pose, Size const n ){
 	utility::vector1< Vector > op_xyz_list;
-	op_xyz_list.push_back( pose.residue( n ).xyz( " OP1" ) );
-	op_xyz_list.push_back( pose.residue( n ).xyz( " OP2" ) );
+	// Only the space-trimmed version will work for CCD residues
+	op_xyz_list.push_back( pose.residue( n ).xyz( "OP1" ) );
+	op_xyz_list.push_back( pose.residue( n ).xyz( "OP2" ) );
 
 	utility::vector1< Vector > donor_atom_xyz_list;
 	utility::vector1< Vector > donor_base_atom_xyz_list;
@@ -262,8 +263,8 @@ get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
 
 	Size const & n = phosphate_move_.rsd();
 	Vector const phosphate_takeoff_xyz = (phosphate_move_.terminus() == FIVE_PRIME_PHOSPHATE) ?
-		pose.residue( n ).xyz( " C5'" ) :
-		pose.residue( n ).xyz( " O3'" );
+		pose.residue( n ).xyz( "C5'" ) :
+		pose.residue( n ).xyz( "O3'" );
 
 	for ( Size m = 1; m <= pose.size(); m++ ) {
 
@@ -304,10 +305,10 @@ setup_three_prime_phosphate_based_on_next_residue( pose::Pose & pose, Size const
 	runtime_assert( pose.residue_type( n+1 ).is_RNA() );
 	runtime_assert( pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ||
 		pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) );
-	pose.set_xyz( id::NamedAtomID( "YP  ", n ), pose.residue( n+1 ).xyz( " P  " ) );
-	pose.set_xyz( id::NamedAtomID( "YOP1", n ), pose.residue( n+1 ).xyz( " OP1" ) );
-	pose.set_xyz( id::NamedAtomID( "YOP2", n ), pose.residue( n+1 ).xyz( " OP2" ) );
-	pose.set_xyz( id::NamedAtomID( "YO5'", n ), pose.residue( n+1 ).xyz( " O5'" ) );
+	pose.set_xyz( id::NamedAtomID( "YP",   n ), pose.residue( n+1 ).xyz( "P" ) );
+	pose.set_xyz( id::NamedAtomID( "YOP1", n ), pose.residue( n+1 ).xyz( "OP1" ) );
+	pose.set_xyz( id::NamedAtomID( "YOP2", n ), pose.residue( n+1 ).xyz( "OP2" ) );
+	pose.set_xyz( id::NamedAtomID( "YO5'", n ), pose.residue( n+1 ).xyz( "O5'" ) );
 }
 
 } //phosphate

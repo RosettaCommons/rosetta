@@ -32,7 +32,11 @@ namespace polar_hydrogens {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 check_if_proton_chi_atom( pose::Pose const & pose, Size const rsd, Size const atomno ){
-	core::chemical::ResidueType rsd_type = pose.residue_type( rsd );
+	return check_if_proton_chi_atom( pose.residue_type( rsd ), atomno );
+}
+
+Size
+check_if_proton_chi_atom( chemical::ResidueType const & rsd_type, Size const atomno ) {
 	for ( Size n = 1; n <= rsd_type.n_proton_chi(); n++ ) {
 		Size chino = rsd_type.proton_chi_2_chi( n );
 		Size const & proton_chi_atom = rsd_type.chi_atoms( chino )[4];
@@ -40,6 +44,8 @@ check_if_proton_chi_atom( pose::Pose const & pose, Size const rsd, Size const at
 	}
 	return 0;
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

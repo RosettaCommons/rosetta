@@ -339,6 +339,9 @@ void PoseToStructFileRepConverter::append_residue_info_to_sfr(
 {
 	// Determine residue identifier information.
 
+	// AMW TODO: Some CCD-sourced ligands with base names of, e.g., pdb_SRY,
+	// are having hetnam records output as SRY somehow.
+
 	// Generate HETNAM data, if applicable.
 	if ( ! ( rsd.is_protein() ||
 			rsd.is_NA() ||

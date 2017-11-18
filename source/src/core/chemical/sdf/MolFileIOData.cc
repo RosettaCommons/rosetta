@@ -173,7 +173,13 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		restype_from_mio[ *aiter ] = vd;
 		Atom & restype_atom( restype->atom( vd ) );
 
-		restype_atom.name( atom.name() );
+		if ( atom.name() == "O1P" ) {
+			restype_atom.name( "OP1" );
+		} else if ( atom.name() == "O2P" ) {
+			restype_atom.name( "OP2" );
+		} else {
+			restype_atom.name( atom.name() );
+		}
 		restype_atom.element_type( elements->element( atom.element() ) );
 		restype_atom.charge( atom.partial_charge() );
 		if ( atom.partial_charge() != 0 ) {
@@ -330,18 +336,21 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 			// Taken -- hardcoded -- from RAD_n.
 			// Necessary?
-			restype->set_atom_base( "OP1", "P" );
-			restype->set_atom_base( "OP2", "P" );
+			std::string OP1_name = restype->has( "OP1" ) ? "OP1" : "O1P";
+			std::string OP2_name = restype->has( "OP2" ) ? "OP2" : "O2P";
+
+			restype->set_atom_base( OP1_name, "P" );
+			restype->set_atom_base( OP2_name, "P" );
 
 			using numeric::conversions::radians;
 			if ( restype->is_d_rna() ) {
 				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
 				restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, "O3'", "C3'", "C4'" );
-				restype->set_icoor( "OP2", radians(-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
+				restype->set_icoor( OP2_name, radians(-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
 			} else { // is L or achiral
 				restype->set_icoor( "LOWER", radians(60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
 				restype->set_icoor( "UPPER", radians(139.954848), radians(59.821530), 1.607226, "O3'", "C3'", "C4'" );
-				restype->set_icoor( "OP2", radians(114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
+				restype->set_icoor( OP2_name, radians(114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
 			}
 		}
 		restype->set_mainchain_atoms( define_mainchain_atoms( restype ) );

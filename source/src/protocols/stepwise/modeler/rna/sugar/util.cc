@@ -545,7 +545,9 @@ detect_sugar_contacts( pose::Pose const & pose, Size const moving_res,
 	Distance o2prime_contact_distance_cutoff_ ) {
 
 	bool found_contact( false );
-	Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( " O2'" );
+	// AMW: only the space-trimmed version will work for CCD residues
+	//Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( " O2'" );
+	Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( "O2'" );
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( i == moving_res ) continue;

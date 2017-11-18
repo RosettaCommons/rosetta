@@ -17,6 +17,7 @@
 #define INCLUDED_protocols_stepwise_modeler_polar_hydrogens_util_HH
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {
@@ -27,6 +28,9 @@ namespace polar_hydrogens {
 // move to core::chemical::ResidueType?
 core::Size
 check_if_proton_chi_atom( core::pose::Pose const & pose, core::Size const rsd, core::Size const atomno );
+
+core::Size
+check_if_proton_chi_atom( core::chemical::ResidueType const & rt, core::Size const atomno );
 
 void
 pack_polar_hydrogens( core::pose::Pose & pose,

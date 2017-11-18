@@ -101,11 +101,15 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	// Could be phosphorothioate
 	if ( residue_type->has( "OP2" ) ) {
 		op2_atom_index_ = residue_type->atom_index( "OP2" );
+	} else if ( residue_type->has( "O2P" ) ) { // should only be CCD derived
+		op2_atom_index_ = residue_type->atom_index( "O2P" );
 	} else {
 		op2_atom_index_ = residue_type->atom_index( "SP2" );
 	}
 	if ( residue_type->has( "OP1" ) ) {
 		op1_atom_index_ = residue_type->atom_index( "OP1" );
+	} else if ( residue_type->has( "O1P" ) ) { // should only be CCD derived
+		op2_atom_index_ = residue_type->atom_index( "O1P" );
 	} else {
 		op1_atom_index_ = residue_type->atom_index( "SP1" );
 	}

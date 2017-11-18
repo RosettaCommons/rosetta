@@ -95,20 +95,118 @@ PolarHydrogenPacker::init(){
 	hbond_database_ = HBondDatabase::get_database( hbond_options_->params_database_tag() );
 }
 
+void
+PolarHydrogenPacker::get_best_hxyz(
+	conformation::Residue const & residue,
+	utility::vector1< Vector > const & ideal_hydrogen_xyz_positions,
+	Size const abase,
+	Size const abase2,
+	Vector const & donor_xyz,
+	Real & best_score,
+	Vector & best_hydrogen_xyz
+) {
+	using namespace core::kinematics;
+
+	for ( Vector const & ideal_hydrogen_xyz : ideal_hydrogen_xyz_positions ) {
+		if ( possible_hbond_acceptors_.size() == 0 ) continue;
+
+		// might be better to create a 'pseudo' score function penalizing deviation from ideal.
+		check_hbond_score( ideal_hydrogen_xyz, donor_xyz, best_score, best_hydrogen_xyz );
+
+		Stub const ideal_hydrogen_stub( residue.xyz( abase ) /*center*/, ideal_hydrogen_xyz, residue.xyz( abase ), residue.xyz( abase2 ) );
+
+		// generate 'rotamers' around ideal H location.
+		Vector const ideal_local_xyz = ideal_hydrogen_stub.global2local( ideal_hydrogen_xyz );
+		Distance const ideal_H_length = ideal_local_xyz.x();
+		int const ndist( 5 );
+		Distance const length_deviation( 0.05 );
+		Size const ntheta( 2 );
+		Real const theta_deviation( 10.0 ); // in degrees
+		Size const nphi( 6 ); // deviation will be 360.0 / nphi
+		for ( int d = -(ndist - 1)/2; d <= ( ndist - 1 )/2; d++ ) {
+			Real const bond_length = ideal_H_length + length_deviation * Real( d );
+
+			for ( Size q = 1; q <= ntheta; q++ ) { // theta (angle)
+				Real const theta = q * numeric::conversions::radians( theta_deviation );
+
+				for ( Size f = 0; f < nphi; f++ ) { // phi (azimuthal)
+					Real const phi = f * numeric::conversions::radians( 360.0 / Real(nphi) );
+					Real const x = bond_length * cos( theta );
+					Real const y = bond_length * sin( theta )  * sin( phi );
+					Real const z = bond_length * sin( theta )  * cos( phi );
+					Vector const H_xyz = ideal_hydrogen_stub.local2global( Vector( x,y,z) );
+					//     TR << residue.name1() << residue.seqpos() << " " << residue.atom_name( j ) << " current deviation " << ( ideal_hydrogen_xyz - H_xyz ).length() << std::endl;
+
+					check_hbond_score( H_xyz, donor_xyz, best_score, best_hydrogen_xyz );
+				}
+			}
+		}
+	} // ideal H_xyz
+}
+
+utility::vector1< Vector >
+PolarHydrogenPacker::get_ideal_hxyz_positions( conformation::Residue const & residue, conformation::Residue const & ideal_res, Size const j, kinematics::Stub const & current_input_stub, kinematics::Stub const & ideal_input_stub ) {
+	utility::vector1< Vector > ideal_hydrogen_xyz_positions;
+
+	Size proton_chi_no = check_if_proton_chi_atom( residue.type(), j );
+	if ( proton_chi_no == 0 ) {
+		Vector const ideal_hydrogen_xyz = current_input_stub.local2global( ideal_input_stub.global2local( ideal_res.xyz( j ) ) );
+		ideal_hydrogen_xyz_positions.push_back( ideal_hydrogen_xyz );
+	} else {
+		if ( disallow_vary_geometry_proton_chi_ ) return ideal_hydrogen_xyz_positions;
+		// i.e., 10, 20  to model -40 -50 -60 -70 -80 etc.
+		utility::vector1< Real > samples = residue.type().proton_chi_samples( proton_chi_no );
+		utility::vector1< Real > const & extra_samples = residue.type().proton_chi_extra_samples( proton_chi_no );
+		for ( Real const sample : samples ) {
+			for ( Real const extra_sample : extra_samples ) {
+				samples.push_back( sample - extra_sample );
+				samples.push_back( sample + extra_sample );
+			}
+		}
+		for ( Real const sample : samples ) {
+			//Vector ideal_hydrogen_local = ideal_input_stub.global2local( ideal_res.xyz( j ) );
+			Vector const ideal_hydrogen_local = rotation_matrix( Vector( 1.0, 0.0, 0.0 ), sample ) * ideal_input_stub.global2local( ideal_res.xyz( j ) ); //rotation about x
+			//Vector const ideal_hydrogen_xyz = current_input_stub.local2global( ideal_hydrogen_local );
+			ideal_hydrogen_xyz_positions.push_back( current_input_stub.local2global( ideal_hydrogen_local ) );
+		}
+	}
+
+	return ideal_hydrogen_xyz_positions;
+}
+
+void
+PolarHydrogenPacker::virtualize_poor_scoring_o2prime_hydrogens( pose::Pose & pose, Size const i, Size const j, Real const best_score ) {
+	if ( !pose.residue_type( i ).is_RNA() ) return;
+	if ( pose.residue_type( i ).RNA_info().ho2prime_index() != j  ) return;
+	//     TR << "2'OH score for residue " << i << " ==> " << best_score << std::endl;
+	if ( best_score > -0.1 /* cutoff */ ) {
+		add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_O2PRIME_HYDROGEN, i  );
+	} else {
+		remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
+PolarHydrogenPacker::apply(
+#ifdef GL_GRAPHICS
+    core::pose::Pose & pose_to_visualize
+#else
+	core::pose::Pose & pose
+#endif
+) {
 
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::kinematics;
-
+#ifdef GL_GRAPHICS
 	core::pose::Pose pose = pose_to_visualize; // make a local copy -- otherwise crashing graphics builds
+#endif
 	core::Size const nres( pose.total_residue() );
 
-	for  ( core::Size i = 1; i <= nres; i++ )  {
+	for ( core::Size i = 1; i <= nres; i++ )  {
 
 		ResidueOP concrete_res_op = remove_variant_type_from_residue( pose.residue( i ), chemical::VIRTUAL_O2PRIME_HYDROGEN, pose );
 		Residue const & residue = *concrete_res_op;
@@ -133,96 +231,34 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 			Vector const current_hydrogen_xyz = residue.xyz( j );
 			Vector const donor_xyz            = residue.xyz( j1 );
 
+			Real best_score( 0.0 );
+			Vector best_hydrogen_xyz( 0.0 );
+
 			// find potential hydrogen bond acceptors.
 			get_possible_hbond_acceptors( pose, i, j1 /* donor atm*/ );
 
-			Real best_score( 0.0 );
-			Vector best_hydrogen_xyz( 0.0 );
 			check_hbond_score( current_hydrogen_xyz, donor_xyz, best_score, best_hydrogen_xyz );
 
 			Stub const ideal_input_stub( ideal_res.xyz( j1 ), ideal_res.xyz( j1 ), ideal_res.xyz( j2 ), ideal_res.xyz( j3 ) );
 
-			// move this to a different function!
-			utility::vector1< Vector > ideal_hydrogen_xyz_positions;
-			Size proton_chi_no = check_if_proton_chi_atom( pose, i, j );
-			if ( proton_chi_no == 0 ) {
-				Vector const ideal_hydrogen_xyz = current_input_stub.local2global( ideal_input_stub.global2local( ideal_res.xyz( j ) ) );
-				ideal_hydrogen_xyz_positions.push_back( ideal_hydrogen_xyz );
-			} else {
-				if ( disallow_vary_geometry_proton_chi_ ) continue;
-				// i.e., 10, 20  to model -40 -50 -60 -70 -80 etc.
-				utility::vector1< Real > samples = residue.type().proton_chi_samples( proton_chi_no );
-				utility::vector1< Real > const & extra_samples = residue.type().proton_chi_extra_samples( proton_chi_no );
-				for ( Real const sample : samples ) {
-					for ( Real const extra_sample : extra_samples ) {
-						samples.push_back( sample - extra_sample );
-						samples.push_back( sample + extra_sample );
-					}
-				}
-				for ( Real const sample : samples ) {
-					Vector ideal_hydrogen_local = ideal_input_stub.global2local( ideal_res.xyz( j ) );
-					ideal_hydrogen_local = rotation_matrix( Vector( 1.0, 0.0, 0.0 ), sample ) * ideal_hydrogen_local; //rotation about x
-					Vector const ideal_hydrogen_xyz = current_input_stub.local2global( ideal_hydrogen_local );
-					ideal_hydrogen_xyz_positions.push_back( ideal_hydrogen_xyz );
-				}
-			}
+			utility::vector1< Vector > ideal_hydrogen_xyz_positions = get_ideal_hxyz_positions( residue, ideal_res, j, current_input_stub, ideal_input_stub );
+			if ( disallow_vary_geometry_proton_chi_ && ideal_hydrogen_xyz_positions.empty() ) continue;
 
-			// move this to a different function!
-			for ( Vector const & ideal_hydrogen_xyz : ideal_hydrogen_xyz_positions ) {
-				if ( possible_hbond_acceptors_.size() == 0 ) continue;
-
-				// might be better to create a 'pseudo' score function penalizing deviation from ideal.
-				check_hbond_score( ideal_hydrogen_xyz, donor_xyz, best_score, best_hydrogen_xyz );
-
-				Stub const ideal_hydrogen_stub( residue.xyz( j1 ) /*center*/, ideal_hydrogen_xyz, residue.xyz( j1 ), residue.xyz( j2 ) );
-
-				// generate 'rotamers' around ideal H location.
-				Vector const ideal_local_xyz = ideal_hydrogen_stub.global2local( ideal_hydrogen_xyz );
-				Distance const ideal_H_length = ideal_local_xyz.x();
-				int const ndist( 5 );
-				Distance const length_deviation( 0.05 );
-				Size const ntheta( 2 );
-				Real const theta_deviation( 10.0 ); // in degrees
-				Size const nphi( 6 ); // deviation will be 360.0 / nphi
-				for ( int d = -(ndist - 1)/2; d <= ( ndist - 1 )/2; d++ ) {
-					Real const bond_length = ideal_H_length + length_deviation * Real( d );
-
-					for ( Size q = 1; q <= ntheta; q++ ) { // theta (angle)
-						Real const theta = q * numeric::conversions::radians( theta_deviation );
-
-						for ( Size f = 0; f < nphi; f++ ) { // phi (azimuthal)
-							Real const phi = f * numeric::conversions::radians( 360.0 / Real(nphi) );
-							Real const x = bond_length * cos( theta );
-							Real const y = bond_length * sin( theta )  * sin( phi );
-							Real const z = bond_length * sin( theta )  * cos( phi );
-							Vector const H_xyz = ideal_hydrogen_stub.local2global( Vector( x,y,z) );
-							//     TR << residue.name1() << residue.seqpos() << " " << residue.atom_name( j ) << " current deviation " << ( ideal_hydrogen_xyz - H_xyz ).length() << std::endl;
-
-							check_hbond_score( H_xyz, donor_xyz, best_score, best_hydrogen_xyz );
-						}
-					}
-				}
-			} // ideal H_xyz
-
+			get_best_hxyz( residue, ideal_hydrogen_xyz_positions, j1, j2, donor_xyz, best_score, best_hydrogen_xyz );
 			//    TR << residue.name1() << residue.seqpos() << " " << residue.atom_name( j ) << " current deviation " << ( best_hydrogen_xyz - current_hydrogen_xyz).length() << " NUM ACCEPTORS " << possible_hbond_acceptors_.size() << " " << best_score << std::endl;
 			// Have to supply name -- residue type may have changed...
 			pose.set_xyz( id::NamedAtomID( residue.atom_name( j ), i ), best_hydrogen_xyz );
 
 			// move this to a different function!
 			if ( allow_virtual_o2prime_hydrogens_ ) {
-				if ( !residue.is_RNA() ) continue;
-				if ( residue.type().RNA_info().ho2prime_index() != j  ) continue;
-				//     TR << "2'OH score for residue " << i << " ==> " << best_score << std::endl;
-				if ( best_score > -0.1 /* cutoff */ ) {
-					add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_O2PRIME_HYDROGEN, i  );
-				} else {
-					remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
-				}
+				virtualize_poor_scoring_o2prime_hydrogens( pose, i, j, best_score );
 			}
 		} // j
 	} // i
 
+#ifdef GL_GRAPHICS
 	pose_to_visualize = pose;
+#endif
 }
 
 

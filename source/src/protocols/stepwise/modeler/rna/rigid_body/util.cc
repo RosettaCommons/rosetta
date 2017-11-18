@@ -159,20 +159,20 @@ setup_pose_with_moving_residue_alternative_list(
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int
-DOF_bin_value( std::map< BaseBin, int, compare_base_bin > ::const_iterator const & base_bin_it, std::string const & DOF ){
+DOF_bin_value( BaseBin const & base_bin, std::string const & DOF ){
 
 	if ( DOF == "x" ) {
-		return base_bin_it->first.centroid_x;
+		return base_bin.centroid_x;
 	} else if ( DOF == "y" ) {
-		return base_bin_it->first.centroid_y;
+		return base_bin.centroid_y;
 	} else if ( DOF == "z" ) {
-		return base_bin_it->first.centroid_z;
+		return base_bin.centroid_z;
 	} else if ( DOF == "alpha" ) {
-		return base_bin_it->first.euler_alpha;
+		return base_bin.euler_alpha;
 	} else if ( DOF == "euler_z" ) {
-		return base_bin_it->first.euler_z;
+		return base_bin.euler_z;
 	} else if ( DOF == "gamma" ) {
-		return base_bin_it->first.euler_gamma;
+		return base_bin.euler_gamma;
 	} else {
 		utility_exit_with_message( "Invalid DOF = " + DOF );
 		exit( 1 ); //prevent compiler warning
@@ -201,21 +201,17 @@ void
 analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const & foldername ){
 
 	std::map< std::pair < int, int >, int, compare_int_pair > count_density_map;
-	std::map< std::pair < int, int >, int, compare_int_pair > ::iterator count_density_it, cdend;
-
-	std::map< BaseBin, int, compare_base_bin > ::const_iterator base_bin_it, end;
-
 	int total_count = 0;
 	int total_occupied_bin = 0;
 
-	for ( base_bin_it = base_bin_map.begin(), end = base_bin_map.end(); base_bin_it != end; ++base_bin_it ) {
+	for ( auto const & elem : base_bin_map ) {
 
 		total_occupied_bin++;
-		total_count = total_count + base_bin_it->second;
+		total_count = total_count + elem.second;
 
-		auto  const & DOF_pair = std::make_pair( DOF_bin_value( base_bin_it, DOF_one ), DOF_bin_value( base_bin_it, DOF_two ) );
+		auto const & DOF_pair = std::make_pair( DOF_bin_value( elem.first, DOF_one ), DOF_bin_value( elem.first, DOF_two ) );
 
-		count_density_it = count_density_map.find( DOF_pair );
+		auto count_density_it = count_density_map.find( DOF_pair );
 
 		if ( count_density_it == count_density_map.end() ) {
 			count_density_map[DOF_pair] = 1;
@@ -240,9 +236,9 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 	int DOF_two_bin_max = 0;
 	int DOF_two_bin_min = 0;
 
-	for ( count_density_it = count_density_map.begin(), cdend = count_density_map.end(); count_density_it != cdend; ++count_density_it ) {
-		int const & DOF_one_bin_value = count_density_it->first.first;
-		int const & DOF_two_bin_value = count_density_it->first.second;
+	for ( auto const & elem : count_density_map ) {
+		int const DOF_one_bin_value = elem.first.first;
+		int const DOF_two_bin_value = elem.first.second;
 
 		if ( DOF_one_bin_value > DOF_one_bin_max ) DOF_one_bin_max = DOF_one_bin_value;
 		if ( DOF_two_bin_value > DOF_two_bin_max ) DOF_two_bin_max = DOF_two_bin_value;
@@ -259,7 +255,7 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 
 			int occupied_bin_count;
 			std::pair < int, int > const & DOF_pair = std::make_pair( DOF_one_bin_value, DOF_two_bin_value );
-			count_density_it = count_density_map.find( DOF_pair );
+			auto count_density_it = count_density_map.find( DOF_pair );
 
 			if ( count_density_it == count_density_map.end() ) {
 				occupied_bin_count = 0;

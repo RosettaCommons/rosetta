@@ -20,6 +20,7 @@
 #include <protocols/stepwise/modeler/polar_hydrogens/PolarHydrogenPacker.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 
@@ -46,8 +47,7 @@ public:
 	/// @brief  Return the name of the Mover.
 	virtual std::string get_name() const { return "PolaryHydrogenPacker"; }
 
-
-	void set_allow_virtual_o2prime_hydrogens( bool const setting ){ allow_virtual_o2prime_hydrogens_ = setting; }
+	void set_allow_virtual_o2prime_hydrogens( bool const setting ) { allow_virtual_o2prime_hydrogens_ = setting; }
 
 private:
 
@@ -57,6 +57,30 @@ private:
 		core::Vector const & D_xyz,
 		core::Real & best_score,
 		core::Vector & best_hydrogen_xyz );
+
+	void
+	get_best_hxyz( core::conformation::Residue const & residue,
+		utility::vector1< core::Vector > const & ideal_hydrogen_xyz_positions,
+		Size const abase,
+		Size const abase2,
+		core::Vector const & donor_xyz,
+		core::Real & best_score,
+		core::Vector & best_hydrogen_xyz );
+
+	utility::vector1< core::Vector >
+	get_ideal_hxyz_positions(
+		core::conformation::Residue const & residue,
+		core::conformation::Residue const & ideal_res,
+		core::Size const j,
+		core::kinematics::Stub const & current_input_stub,
+		core::kinematics::Stub const & ideal_input_stub );
+
+	void
+	virtualize_poor_scoring_o2prime_hydrogens(
+		core::pose::Pose & pose,
+		core::Size const i,
+		core::Size const j,
+		core::Real const best_score );
 
 	void
 	get_possible_hbond_acceptors( core::pose::Pose const & pose, core::Size const moving_res, core::Size const atomno );

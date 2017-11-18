@@ -25,6 +25,9 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <protocols/stepwise/sampler/rigid_body/EulerAngles.fwd.hh>
 
+// What if we needed something finer or else there's just no way
+// probably don't have to do 16 A for centroid though
+// First test no increased fineness
 #define STANDARD_CENTROID_BIN_SIZE 1.0
 #define STANDARD_EULER_ANGLE_BIN_SIZE 20
 #define STANDARD_EULER_Z_BIN_SIZE 0.05
@@ -57,7 +60,7 @@ setup_pose_with_moving_residue_alternative_list(
 	bool const use_phenix_geo  );
 
 int
-DOF_bin_value( std::map< BaseBin, int, compare_base_bin > ::const_iterator const & base_bin_it, std::string const & DOF );
+DOF_bin_value( BaseBin const & base_bin, std::string const & DOF );
 
 core::Real
 DOF_bin_size( std::string const & DOF );
