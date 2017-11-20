@@ -128,7 +128,7 @@ public:
 	allow_scoring(Size const seqpos) const
 	{
 		if ( seqpos > allow_scoring_.size() ) {
-			throw CREATE_EXCEPTION(utility::excn::RangeError, 
+			throw CREATE_EXCEPTION(utility::excn::RangeError,
 				"tried to get Membrane score for residue " +
 				utility::to_string(seqpos) +
 				" but spanfile only specifies " +

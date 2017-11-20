@@ -527,7 +527,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 
 		//Exception Handling
 		if ( loop_start_in_pose ==0 || loop_stop_in_pose == 0 ) {
-			throw CREATE_EXCEPTION(utility::excn::BadInput, 
+			throw CREATE_EXCEPTION(utility::excn::BadInput,
 				"\nAntibody does not contain the start or end residue of cdr loop " + get_CDR_name(cdr) +
 				" start: " + utility::to_string(loop_start_in_pose) +
 				" end:   " + utility::to_string(loop_stop_in_pose) + "\n" +
@@ -536,7 +536,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 		}
 
 		if ( loop_start_in_pose > loop_stop_in_pose ) {
-			throw CREATE_EXCEPTION(utility::excn::BadInput, 
+			throw CREATE_EXCEPTION(utility::excn::BadInput,
 				"\nBad antibody input: " + get_CDR_name(cdr) +" cdr_start resnum > cdr_stop "+
 				" start: " + utility::to_string(loop_start_in_pose) +
 				" end:   " + utility::to_string(loop_stop_in_pose) + "\n" +

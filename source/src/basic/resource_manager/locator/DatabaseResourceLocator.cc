@@ -194,7 +194,7 @@ DatabaseResourceLocator::parse_my_tag(
 		database_session_resource_tag_ = tag->getOption<string>("database_session_tag");
 	} else {
 		throw CREATE_EXCEPTION(utility::excn::Exception,
-							   "The DatabaseResourceLocator requires a 'database_session_tag' that corresponds with a 'DatabaseSession' resource defined in a <Resources/> block.");
+			"The DatabaseResourceLocator requires a 'database_session_tag' that corresponds with a 'DatabaseSession' resource defined in a <Resources/> block.");
 	}
 
 	if ( tag->hasOption("sql_command") ) {
@@ -202,7 +202,7 @@ DatabaseResourceLocator::parse_my_tag(
 		basic::database::check_statement_sanity(sql_command_);
 	} else {
 		throw CREATE_EXCEPTION(utility::excn::Exception,
-							   "The DatabaseResourceLocator requires a 'sql_command' tag that is an SQL SELECT statement with one parameter '?' and as a key returns a result set with a single column and and a single row containing the data.");
+			"The DatabaseResourceLocator requires a 'sql_command' tag that is an SQL SELECT statement with one parameter '?' and as a key returns a result set with a single column and and a single row containing the data.");
 	}
 
 	column_separator_ = tag->getOption<string>("column_separator", "\n");

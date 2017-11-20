@@ -46,9 +46,9 @@ public:
 	// Constructor
 	EXCN_Resource_Definition(char const *file, int line, std::string const & m) : EXCN_Membrane(file, line, "") {
 		add_msg("========================== Resource Loader Exception ==========================\n"
-				"Please refine your Resource Definition file and try again. For instructions on how to \n"
-				"properly construct your resource definition file for the membrane code, please visit the \n"
-				"Rosetta documentation");
+			"Please refine your Resource Definition file and try again. For instructions on how to \n"
+			"properly construct your resource definition file for the membrane code, please visit the \n"
+			"Rosetta documentation");
 		add_msg(m);
 	};
 

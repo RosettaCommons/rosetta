@@ -227,11 +227,11 @@ bool DisulfJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 		is >> pos1 >> label1 >> ss1 >> pos2 >> label2 >> ss2;
 
 		if ( !( ss1 == "S" || ss1 == "H" || ss1 == "E" )  ) {
-			throw CREATE_EXCEPTION(utility::excn::BadInput, 
+			throw CREATE_EXCEPTION(utility::excn::BadInput,
 				"When reading DisulfJumpClaimer, secondary structure character '"
 				+ss1+"' was invalid. Valid characters are 'S', 'H', and 'E'." );
 		} else if ( !( ss2 == "S" || ss2 == "H" || ss2 == "E" )  ) {
-			throw CREATE_EXCEPTION(utility::excn::BadInput, 
+			throw CREATE_EXCEPTION(utility::excn::BadInput,
 				"When reading DisulfJumpClaimer, secondary structure character '"
 				+ss2+"' was invalid. Valid characters are 'S', 'H', and 'E'." );
 		}

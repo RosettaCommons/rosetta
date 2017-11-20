@@ -341,7 +341,7 @@ public:
 class EXCN_FilterFailed : public utility::excn::Exception {
 public:
 	EXCN_FilterFailed(char const *file, int line, std::string const & filter, core::Size const filter_num )
-		: utility::excn::Exception(file, line, ""), filter_( filter ), filter_num_( filter_num ) {};
+	: utility::excn::Exception(file, line, ""), filter_( filter ), filter_num_( filter_num ) {};
 
 	std::string const &
 	filter_name() const { return filter_; }

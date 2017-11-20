@@ -803,7 +803,7 @@ SilentFileData::read_stream(
 				bool init_good = tmp_struct->init_from_lines( mylines, *this );
 
 				if ( !init_good && throw_exception_on_bad_structs ) {
-					throw CREATE_EXCEPTION(utility::excn::BadInput, 
+					throw CREATE_EXCEPTION(utility::excn::BadInput,
 						"failure to read decoy "+tmp_struct->decoy_tag()+
 						" from silent-file " + filename
 					);

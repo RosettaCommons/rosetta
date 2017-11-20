@@ -53,7 +53,7 @@ EXCN_FTSketchGraph::EXCN_FTSketchGraph(
 {}
 
 EXCN_FTSketchGraph::EXCN_FTSketchGraph(char const *file, int line, std::string const& message )
-	: Parent(file, line, "Error in FoldTreeSketch: "+message )
+: Parent(file, line, "Error in FoldTreeSketch: "+message )
 {}
 
 FoldTreeSketch::FoldTreeSketch():

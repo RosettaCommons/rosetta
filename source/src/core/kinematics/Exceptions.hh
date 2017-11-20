@@ -38,7 +38,7 @@ class EXCN_InvalidFoldTree : public utility::excn::Exception {
 	typedef utility::excn::Exception Parent;
 public:
 	EXCN_InvalidFoldTree(char const *file, int line, std::string const& msg, FoldTree f )
-		: Exception(file, line, msg ), bad_tree_( f ) {};
+	: Exception(file, line, msg ), bad_tree_( f ) {};
 
 	using utility::excn::Exception::show;
 

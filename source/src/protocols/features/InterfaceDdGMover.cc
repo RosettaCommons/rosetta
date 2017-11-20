@@ -359,7 +359,7 @@ InterfaceDdGMover::get_chain_ids() const {
 void
 InterfaceDdGMover::add_chain_id( core::Size chain_id, core::pose::Pose const & pose ) {
 	if ( ! core::pose::has_chain( chain_id, pose ) ) {
-		throw CREATE_EXCEPTION(utility::excn::BadInput, 
+		throw CREATE_EXCEPTION(utility::excn::BadInput,
 			"InterfaceDdGMover cannot add chain_id " + utility::to_string( chain_id ) + " to pose; out of range"
 		);
 	}
@@ -372,7 +372,7 @@ InterfaceDdGMover::add_chain_id( core::Size chain_id, core::pose::Pose const & p
 void
 InterfaceDdGMover::add_chain_name( std::string chain_name, core::pose::Pose const & pose ) {
 	if ( ! core::pose::has_chain( chain_name, pose ) ) {
-		throw CREATE_EXCEPTION(utility::excn::BadInput, 
+		throw CREATE_EXCEPTION(utility::excn::BadInput,
 			"InterfaceDdGMover cannot add chain_name " + chain_name + " to pose; out of range"
 		);
 	}
@@ -386,7 +386,7 @@ void
 InterfaceDdGMover::add_jump_id( core::Size jump, core::pose::Pose const & pose )
 {
 	if ( jump > pose.num_jump() || jump < 1 ) {
-		throw CREATE_EXCEPTION(utility::excn::BadInput, 
+		throw CREATE_EXCEPTION(utility::excn::BadInput,
 			"InterfaceDdGMover cannot add jump " + utility::to_string( jump ) + " to pose; out of range"
 		);
 	}

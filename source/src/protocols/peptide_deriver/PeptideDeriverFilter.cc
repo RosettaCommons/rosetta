@@ -298,7 +298,7 @@ PeptideDeriverFilter::prepare_pose(
 	core::pose::Pose & pose) const {
 	// check number of chains
 	if ( pose.conformation().num_chains() < 2 ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, 
+		throw CREATE_EXCEPTION(utility::excn::Exception,
 			"Input PDB contains less than 2 chains.");
 	}
 

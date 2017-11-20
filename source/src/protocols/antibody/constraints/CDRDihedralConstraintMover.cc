@@ -316,13 +316,13 @@ CDRDihedralConstraintMover::add_harmonic_cluster_constraint(core::pose::Pose & p
 		pose.add_constraints(cst->get_all_constraints());
 		return true;
 	}
-	catch(utility::excn::Exception &excn) {
-		TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
-		excn.show( TR );
-		return false;
-	}
+catch(utility::excn::Exception &excn) {
+	TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
+	std::cerr << "Exception : " << std::endl;
+	excn.show( std::cerr );
+	excn.show( TR );
+	return false;
+}
 }
 
 core::Size

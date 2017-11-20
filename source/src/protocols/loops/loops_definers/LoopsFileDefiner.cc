@@ -71,7 +71,7 @@ LoopsFileDefiner::parse_my_tag(
 ) {
 
 	if ( !tag->hasOption("name") ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, 
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,
 			"Unable to create unnamed LoopsDefiner (type: LoopsFile)" );
 	}
 	string const loops_name(tag->getOption<string>("name"));

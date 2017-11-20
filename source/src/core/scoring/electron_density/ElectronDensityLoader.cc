@@ -70,7 +70,7 @@ ElectronDensityLoader::create_resource(
 ) const {
 
 	if ( ! dynamic_cast< ElectronDensityOptions const * >( &options ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, 
+		throw CREATE_EXCEPTION(utility::excn::Exception,
 			"ElectronDensityLoader expected to get a ElectronDensityOptions object, "
 			"but was given a ResourceOptions of type '" + options.type() + "', "
 			"which has the name '" + options.name() + "'." );

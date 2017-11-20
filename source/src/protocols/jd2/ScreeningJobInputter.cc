@@ -115,7 +115,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 		utility::json_spirit::read(data,job_json_data);
 		job_object_data = job_json_data.get_obj();
 	} catch(std::runtime_error &) {
-		throw CREATE_EXCEPTION(utility::excn::BadInput, 
+		throw CREATE_EXCEPTION(utility::excn::BadInput,
 			"screening file " + file_name + "is incorrectly formatted. "
 			"it must be a dict with two keys: 'params' containing a list of needed params, and "
 			"'jobs' which must be a list of dicts. each dict should contain keys 'group_name', 'proteins' and 'ligands'");

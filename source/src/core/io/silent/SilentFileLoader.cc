@@ -77,7 +77,7 @@ SilentFileLoader::create_resource(
 ) const {
 
 	if ( ! dynamic_cast< SilentFileRMOptions const * >( &options ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, 
+		throw CREATE_EXCEPTION(utility::excn::Exception,
 			"SilentFileLoader expected to get a SilentFileRMOptions object, "
 			"but was given a ResourceOptions of type '" + options.type() + "', "
 			"which has the name '" + options.name() + "'." );

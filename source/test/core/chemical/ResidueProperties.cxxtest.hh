@@ -68,7 +68,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	{
 		//std::string msg = e.msg();
 		//std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
-	    //TS_ASSERT_EQUALS( msg_lines.size(), 3 );
+		//TS_ASSERT_EQUALS( msg_lines.size(), 3 );
 		//TS_ASSERT_EQUALS( msg_lines[1], expected_output );
 		//std::cout << "_____________" << e.msg() << std::endl;
 		TS_ASSERT( e.msg().find(expected_output) != std::string::npos );

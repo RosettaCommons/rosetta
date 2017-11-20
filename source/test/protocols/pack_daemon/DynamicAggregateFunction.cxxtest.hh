@@ -199,7 +199,7 @@ public:
 				"STATE trpcage";
 			bool flag = e.msg().find(expected_error_message) != std::string::npos;
 			TS_ASSERT(flag);
-			if (!flag) {
+			if ( !flag ) {
 				std::cout << "Actual error message\n\n" << e.msg() << std::endl;
 			}
 		}
@@ -1112,7 +1112,7 @@ public:
 		} catch (utility::excn::Exception & e ) {
 			//std::cout << e.msg();
 			std::string expected_error_message =
- 				"Expected to read an equals sign after reading amino-acid-set name'polar' but found '{'\n"
+				"Expected to read an equals sign after reading amino-acid-set name'polar' but found '{'\n"
 				"Error encountered while reading AA_SET command\n"
 				"AA_SET polar { d, e,h,k,n,q,r,s,t}\n"
 				"Line # 1";
