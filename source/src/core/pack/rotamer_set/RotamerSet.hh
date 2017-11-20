@@ -88,9 +88,27 @@ public:
 		utility::graph::GraphCOP packer_neighbor_graph
 	) = 0;
 
+	/// @brief Append a rotamer to the list; it will not be sorted into the same group as other rotamers
+	/// of the same group or amino acid unless the last group/amino acid is already the same. Instead it
+	/// will sit at the end of the list of Rotamers. There are performance implications of using this
+	/// function instead of add_rotamer_into_existing_group: there are several places in the code which
+	/// scale quadratically with the number of amino acid groups (but where we assume that this number is small)
+	/// so if you call this function N times oscilating between ASP and ASN rotamers, you will get
+	/// O(N^2) performance. If you do not need your rotamers to appear in a particular order,
+	/// use add_rotamer_into_existing_group instead.
 	virtual
 	void
 	add_rotamer(
+		conformation::Residue const & rotamer
+	) = 0;
+
+	/// @brief Add a rotamer to the RotamerSet where you will group it with other residues of the same type
+	/// or barring that, the same group. This will keep the total number of residue type groups down. It will
+	/// not guarantee (it cannot guarantee) that the newly added rotamer will appear after existing rotamers
+	/// or at the end of the list of rotamers -- if you need that kind of guarantee, use add_rotamer instead.
+	virtual
+	void
+	add_rotamer_into_existing_group(
 		conformation::Residue const & rotamer
 	) = 0;
 
@@ -175,6 +193,7 @@ public:
 	Size
 	num_rotamers() const = 0;
 
+	/// @brief Return the index in the RotamerSet for the current rotamer
 	virtual
 	Size
 	id_for_current_rotamer() const = 0;

@@ -47,7 +47,7 @@ void AddResiduesRotamerSetOperation::alter_rotamer_set(
 		cur_res->seqpos(seqnum);
 		cur_res->chain(existing_residue.chain());
 		cur_res->copy_residue_connections_from(existing_residue);
-		rotamer_set.add_rotamer(*cur_res);
+		rotamer_set.add_rotamer_into_existing_group(*cur_res);
 	}
 }
 

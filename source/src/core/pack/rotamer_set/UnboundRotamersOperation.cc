@@ -137,7 +137,7 @@ UnboundRotamersOperation::alter_rotamer_set(
 			TR.Debug << "Adding 'unbound' rotamer at position " << seqnum << std::endl;
 			conformation::ResidueOP newrsd = dup_residue( pose.residue(seqnum), ubr_pose.residue(seqnum) );
 			newrsd->place( pose.residue(seqnum), pose.conformation() );
-			rotamer_set.add_rotamer( *newrsd );
+			rotamer_set.add_rotamer_into_existing_group( *newrsd );
 		} else {
 			TR.Debug << "Residue names do not match. Skipping 'unbound' rotamer at position " << seqnum << std::endl;
 		}

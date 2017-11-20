@@ -61,12 +61,9 @@ SpecialRotamerRSO::clone() const{
 void
 SpecialRotamerRSO::alter_rotamer_set(
 	core::pose::Pose const & pose,
-	//mjo commenting out 'sfxn' because it is unused and causes a warning
-	core::scoring::ScoreFunction const & /*sfxn*/,
-	//mjo commenting out 'ptask' because it is unused and causes a warning
-	core::pack::task::PackerTask const & /*ptask*/,
-	//mjo commenting out 'packer_neighbor_graph' because it is unused and causes a warning
-	utility::graph::GraphCOP /*packer_neighbor_graph*/,
+	core::scoring::ScoreFunction const &,
+	core::pack::task::PackerTask const &,
+	utility::graph::GraphCOP,
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 )
 {
@@ -76,23 +73,40 @@ SpecialRotamerRSO::alter_rotamer_set(
 		return;
 	}
 	if ( rotamer_set.resid() == seqpos_ ) {
-		// make sure to remove any rotamers from original set that were already set as variant pink
+
+		// Make two passes over the rotamer set. In the first pass, look for all of the existing
+		// SPECIAL_ROT rotamers (i.e. "variant pink") and for each one, create a new rotamer
+		// that does not have the variant that will be a replacement for the SPECIAL_ROT rotamer.
+		// Record which rotamers should be replaced. Then add all of the new rotamers to the
+		// Rotamer set using the add_rotamer_into_existing_group function.
+		// Finally, iterate across the rotamer set a second time, and mark all the original
+		// SPECIAL_ROT rotamers for deletion in a rotamers2dropb vector. Give this vector
+		// to the rotamer_set so that it can delete them en masse.
+
 		core::pack::rotamer_set::Rotamers variant_rotamers;
-		utility::vector1< bool > rotamers2dropb( rotamer_set.num_rotamers(), false );
+		std::set< core::conformation::ResidueCOP > rotamers_2_drop;
 		for ( core::Size r(1); r<=rotamer_set.num_rotamers(); ++r ) {
 			if ( ! rotamer_set.rotamer(r)->has_variant_type( core::chemical::SPECIAL_ROT ) ) continue;
-			rotamers2dropb[r] = true;
+			rotamers_2_drop.insert( rotamer_set.rotamer(r) );
 			core::conformation::ResidueOP variant_rot( core::pose::remove_variant_type_from_residue( *rotamer_set.rotamer(r), core::chemical::SPECIAL_ROT, pose ) );
 			variant_rotamers.push_back( variant_rot );
-			rotamer_set.add_rotamer( *variant_rot );
-			rotamers2dropb.push_back( false );
+		}
+		for ( auto const & variant_rot : variant_rotamers ) {
+			rotamer_set.add_rotamer_into_existing_group( *variant_rot );
+		}
+
+		utility::vector1< bool > rotamers2dropb( rotamer_set.num_rotamers(), false );
+		for ( core::Size r(1); r <= rotamer_set.num_rotamers(); ++r ) {
+			if ( rotamers_2_drop.count( rotamer_set.rotamer(r) ) ) {
+				//tr << "Temp: dropping rotamer " << r << "; has SPECIAL_ROT?: " << rotamer_set.rotamer(r)->has_variant_type( core::chemical::SPECIAL_ROT ) << std::endl;
+				rotamers2dropb[ r ] = true;
+			}
 		}
 		rotamer_set.drop_rotamers( rotamers2dropb );
 
 		// add the new rotamers
 		for ( core::Size i(1); i <= new_rots_.size(); ++i ) {
-			rotamer_set.add_rotamer( *new_rots_[i] );
-
+			rotamer_set.add_rotamer_into_existing_group( *new_rots_[i] );
 		}
 	}
 }

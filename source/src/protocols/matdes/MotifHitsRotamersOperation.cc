@@ -163,7 +163,7 @@ MotifHitsRotamersOperation::alter_rotamer_set(
 			// core::io::pdb::dump_pdb_residue(*res,atoms,out)    ;
 			// out << "ENDMDL" << std::endl ;
 			res->place( pose.residue(seqnum), pose.conformation() );
-			rotamer_set.add_rotamer( *res );
+			rotamer_set.add_rotamer_into_existing_group( *res );
 			++count  ;
 			++total_count_ ;
 		}

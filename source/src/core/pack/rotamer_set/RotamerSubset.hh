@@ -21,23 +21,24 @@
 // Package headers
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-
+#include <core/pack/task/PackerTask.fwd.hh>
 
 //Project headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/graph/Graph.fwd.hh>
 
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
-#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <utility/vector1.hh>
+
+// C++ headers
+#include <list>
 
 #ifdef WIN32
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
@@ -81,6 +82,12 @@ public:
 	virtual
 	void
 	add_rotamer(
+		conformation::Residue const & rotamer
+	);
+
+	virtual
+	void
+	add_rotamer_into_existing_group(
 		conformation::Residue const & rotamer
 	);
 
@@ -290,7 +297,8 @@ public: // noop functions:
 	// DATA
 private:
 
-	Rotamers rotamers_;
+	mutable Rotamers rotamers_;
+	mutable std::list< ResidueOP > rotamers_waiting_for_sort_;
 
 	mutable Size n_residue_types_;
 	mutable Size n_residue_groups_;

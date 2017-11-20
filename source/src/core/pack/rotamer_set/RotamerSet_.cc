@@ -63,6 +63,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
+#include <list>
 #include <string>
 #include <iostream>
 
@@ -72,6 +73,7 @@
 #include <utility/serialization/serialization.hh>
 
 // Cereal headers
+#include <cereal/types/list.hpp>
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
@@ -127,8 +129,9 @@ RotamerSet_::build_rotamers(
 		(*rotsetop_iter)->alter_rotamer_set( pose, scorefxn, the_task, packer_neighbor_graph, *this );
 	}
 
-	// tt << "Built " << num_rotamers() << " rotamers for residue " << resid() << " " << pose.residue(resid()).name() << std::endl;
-	// tt << *this << std::endl;
+	tt.flush();
+	//tt << "Built " << num_rotamers() << " rotamers for residue " << resid() << " " << pose.residue(resid()).name() << " with " << get_n_residue_groups() << " groups." << std::endl;
+	//tt << *this << std::endl;
 }
 
 void
@@ -136,24 +139,24 @@ RotamerSet_::add_rotamer(
 	conformation::Residue const & rotamer
 )
 {
-	//tt << "RotamerSet_::add_rotamer" << '\n';
-	//++n_residue_types_; // TOTAL HACK -- possible to add 50 HIS's and declare there to be 50 different AA types.
-	//tt << "TOTAL HACK BEING USED in " << __FILE__ << " line " << __LINE__ << ".  For efficiency, refactor!" << '\n';
-	//residue_type_rotamers_begin_.push_back( num_rotamers() + 1);
-	//n_rotamers_for_restype_.push_back( 1 );
-	//rotamers_.push_back( rotamer.clone() );
-
 	prepare_for_new_residue_type( rotamer.type() );
 	push_back_rotamer( rotamer.clone() );
+}
+
+void
+RotamerSet_::add_rotamer_into_existing_group(
+	conformation::Residue const & rotamer
+)
+{
+	rotamer_offsets_require_update_ = true;
+	rotamers_waiting_for_sort_.push_back( rotamer.clone() );
 }
 
 
 Size
 RotamerSet_::get_n_residue_types() const
 {
-	//std::cout << "B get_n_residue_types: " << n_residue_types_ << std::endl;
 	update_rotamer_offsets();
-	//std::cout << "A get_n_residue_types: " << n_residue_types_ << std::endl;
 	return n_residue_types_;
 }
 
@@ -199,12 +202,14 @@ RotamerSet_::get_n_rotamers_for_residue_group( Size which_resgroup ) const
 Size
 RotamerSet_::get_residue_type_index_for_rotamer( Size which_rotamer ) const
 {
+	update_rotamer_offsets();
 	return residue_type_for_rotamers_[ which_rotamer ];
 }
 
 Size
 RotamerSet_::get_residue_group_index_for_rotamer( Size which_rotamer ) const
 {
+	update_rotamer_offsets();
 	return residue_group_for_rotamers_[ which_rotamer ];
 }
 
@@ -654,6 +659,7 @@ RotamerSet_::compute_one_body_energies(
 {
 	using namespace conformation;
 	using namespace scoring;
+	update_rotamer_offsets();
 
 	std::fill( energies.begin(), energies.end(), core::PackerEnergy( 0.0 ) );
 
@@ -731,6 +737,7 @@ RotamerSet_::compute_one_and_two_body_energies(
 {
 	using namespace conformation;
 	using namespace scoring;
+	update_rotamer_offsets();
 
 	std::fill( one_body_energies.begin(), one_body_energies.end(), core::PackerEnergy( 0.0 ) );
 
@@ -817,6 +824,7 @@ RotamerSet_::compute_one_body_energy_maps(
 	using namespace conformation;
 	using namespace scoring;
 
+	update_rotamer_offsets();
 	EnergyMap default_map_of_zeroes;
 
 	std::fill( energies.begin(), energies.end(), default_map_of_zeroes );
@@ -921,6 +929,7 @@ RotamerSet_::compute_one_body_energy_maps(
 Size
 RotamerSet_::num_rotamers() const
 {
+	update_rotamer_offsets();
 	return rotamers_.size();
 }
 
@@ -928,6 +937,7 @@ RotamerSet_::num_rotamers() const
 Size
 RotamerSet_::id_for_current_rotamer() const
 {
+	update_rotamer_offsets();
 	return id_for_current_rotamer_;
 }
 
@@ -935,6 +945,7 @@ RotamerSet_::id_for_current_rotamer() const
 conformation::ResidueCOP
 RotamerSet_::rotamer( Size rot_id ) const
 {
+	update_rotamer_offsets();
 	return rotamers_[ rot_id ];
 }
 
@@ -948,19 +959,15 @@ RotamerSet_::rotamer_data_cache( Size rot_id ) const
 conformation::Residue const &
 RotamerSet_::rotamer_ref( Size rot_id ) const
 {
+	update_rotamer_offsets();
 	return *rotamers_[ rot_id ];
 }
 
 
-/// @details In handing out non-const data, the guarantee of rotamer-type contiguity
-/// within the rotamers_ array, and the correspondence of the rotamer offset
-/// data is lost.  Future access to rotamer offset data first requires an update
-/// of the rotamer offset arrays.
 conformation::ResidueOP
 RotamerSet_::nonconst_rotamer( Size rot_id )
 {
-	rotamer_offsets_require_update_ = true;
-
+	update_rotamer_offsets();
 	return rotamers_[ rot_id ];
 }
 
@@ -1198,24 +1205,6 @@ RotamerSet_::prepare_for_new_residue_type( core::chemical::ResidueType const & r
 }
 
 
-bool
-RotamerSet_::different_restype( core::chemical::ResidueType const & rt1, core::chemical::ResidueType const & rt2 ) const
-{
-	return & rt1 != & rt2;
-}
-
-/// @details The logic to determine if two residue types should be classified as part of the same group.
-/// The thinking is as follows.  Two residue types are in the same group if they have the same residue type.
-/// They're in the same group if their residue types differ, but they have the same name3 (HIS vs HIS_D have
-/// the same name3) and they have the same neighbor radius (SER and PhosphoSER should have different groups).
-/// The goal is to organize residue types together which will be packed together (as happens in multistate design
-/// with HIS and HISD) and that have the same reach (as is needed for the AANeighborSparseMatrix).
-bool
-RotamerSet_::different_resgroup( core::chemical::ResidueType const & rt1, core::chemical::ResidueType const & rt2 ) const
-{
-	return & rt1 != & rt2 && ( rt1.name3() != rt2.name3() || rt1.nbr_radius() != rt2.nbr_radius() );
-}
-
 
 void
 RotamerSet_::new_residue_type()
@@ -1451,6 +1440,10 @@ RotamerSet_::update_rotamer_offsets() const
 {
 	if ( ! rotamer_offsets_require_update_ ) return;
 
+	if ( ! rotamers_waiting_for_sort_.empty() ) {
+		sort_new_rotamers_into_rotset_vector( rotamers_, rotamers_waiting_for_sort_, id_for_current_rotamer_ );
+	}
+
 	if ( rotamers_.size() == 0 ) {
 		n_residue_types_ = 0;
 		n_residue_groups_ = 0;
@@ -1546,6 +1539,152 @@ RotamerSet_::show( std::ostream & out ) const {
 	}
 }
 
+
+bool
+different_restype( core::chemical::ResidueType const & rt1, core::chemical::ResidueType const & rt2 )
+{
+	return & rt1 != & rt2;
+}
+
+/// @details The logic to determine if two residue types should be classified as part of the same group.
+/// The thinking is as follows.  Two residue types are in the same group if they have the same residue type.
+/// OR, they're in the same group if their residue types differ but they have the same name3 (HIS vs HIS_D have
+/// the same name3) and they have the same neighbor radius (SER and PhosphoSER should have different groups).
+/// The goal is to organize residue types together which will be packed together (as happens in multistate design
+/// with HIS and HISD) and that have the same reach (as is needed for the AANeighborSparseMatrix).
+bool
+different_resgroup( core::chemical::ResidueType const & rt1, core::chemical::ResidueType const & rt2 )
+{
+	return & rt1 != & rt2 && ( rt1.name3() != rt2.name3() || rt1.nbr_radius() != rt2.nbr_radius() );
+}
+
+void
+sort_new_rotamers_into_rotset_vector(
+	utility::vector1< conformation::ResidueOP > & rotamers,
+	std::list< conformation::ResidueOP > & rotamers_waiting_for_sort,
+	core::Size & id_for_current_rotamer
+)
+{
+	using core::chemical::ResidueType;
+	using conformation::ResidueOP;
+
+	Rotamers new_rotamers_vector;
+	Size new_id_for_current_rotamer = id_for_current_rotamer;
+	new_rotamers_vector.reserve( rotamers.size() + rotamers_waiting_for_sort.size() );
+
+	std::map< ResidueType const *, std::list< ResidueOP > > new_rots_for_types;
+	std::map< ResidueType const *, bool > restype_already_present_for_restypes;
+	std::map< ResidueType const *, bool > resgroup_already_present_for_restypes;
+	std::map< ResidueType const *, std::list< ResidueType const * > > same_group_for_existing_restypes;
+
+	std::set< ResidueType const * > new_restypes_set;
+	std::list< ResidueType const * > new_restypes_list; // rotamer ordering must be deterministic and cannot depend on ResidueType addresses. Use this list to preserve the order in which rotamers were appended to the RotamerSet_
+	std::set< ResidueType const * > existing_restypes_set;
+	std::list< ResidueType const * > existing_restypes_list;
+
+	for ( auto rotamer : rotamers_waiting_for_sort ) {
+		new_rots_for_types[ & rotamer->type() ].push_back( rotamer );
+		if ( ! new_restypes_set.count( & rotamer->type() ) ) {
+			new_restypes_set.insert( & rotamer->type() );
+			new_restypes_list.push_back( & rotamer->type() );
+		}
+	}
+
+	for ( auto rotamer : rotamers ) {
+		if ( ! existing_restypes_set.count( & rotamer->type() ) ) {
+			existing_restypes_set.insert( & rotamer->type() );
+			existing_restypes_list.push_back( & rotamer->type() );
+		}
+	}
+
+	for ( auto new_restype : new_restypes_list ) {
+		if ( existing_restypes_set.count( new_restype ) ) {
+			restype_already_present_for_restypes[ new_restype ] = true;
+		} else {
+			for ( auto existing_restype : existing_restypes_list ) {
+				if ( ! different_resgroup( *new_restype, *existing_restype ) ) {
+					resgroup_already_present_for_restypes[ new_restype ] = true;
+					same_group_for_existing_restypes[ existing_restype ].push_back( new_restype );
+					break;
+				}
+			}
+		}
+	}
+
+	// OK -- now figure out for the restypes that do not have either an existing
+	// restype or resgroup whether any of them should be grouped together.
+	utility::vector1< ResidueType const * > restypes_w_no_existing_group;
+	for ( auto new_restype : new_restypes_list ) {
+		if ( restype_already_present_for_restypes.count( new_restype ) ) continue;
+		if ( resgroup_already_present_for_restypes.count( new_restype ) ) continue;
+		restypes_w_no_existing_group.push_back( new_restype );
+	}
+
+	utility::vector1< bool > restype_w_no_group_claimed( restypes_w_no_existing_group.size(), false );
+	std::map< ResidueType const *, std::list< ResidueType const * > > groupless_restype_bands;
+	for ( Size ii = 1; ii <= restypes_w_no_existing_group.size(); ++ii ) {
+		auto iirt = restypes_w_no_existing_group[ ii ];
+		for ( Size jj = ii+1; jj <= restypes_w_no_existing_group.size(); ++jj ) {
+			if ( restype_w_no_group_claimed[ jj ] ) continue;
+			auto jjrt = restypes_w_no_existing_group[ jj ];
+			if ( ! different_resgroup( *iirt, *jjrt ) ) {
+				groupless_restype_bands[ iirt ].push_back( jjrt );
+				restype_w_no_group_claimed[ jj ] = true;
+			}
+		}
+	}
+
+	ResidueType const * last_rt( 0 );
+	for ( Size ii = 1; ii <= rotamers.size(); ++ii ) {
+
+		if ( last_rt != & rotamers[ ii ]->type() ) {
+			if ( new_rots_for_types.count( last_rt ) ) {
+				for ( auto const & rot : new_rots_for_types[ last_rt ] ) {
+					if ( new_id_for_current_rotamer != 0 && new_id_for_current_rotamer > new_rotamers_vector.size() ) {
+						++new_id_for_current_rotamer;
+					}
+					new_rotamers_vector.push_back( rot );
+				}
+			}
+			if ( same_group_for_existing_restypes.count( last_rt ) ) {
+				for ( auto new_rt : same_group_for_existing_restypes[ last_rt ] ) {
+					for ( auto const & rot : new_rots_for_types[ new_rt ] ) {
+						if ( new_id_for_current_rotamer != 0 && new_id_for_current_rotamer > new_rotamers_vector.size() ) {
+							++new_id_for_current_rotamer;
+						}
+						new_rotamers_vector.push_back( rot );
+					}
+				}
+			}
+		}
+
+		new_rotamers_vector.push_back( rotamers[ ii ] );
+		last_rt = & rotamers[ ii ]->type();
+	}
+
+	for ( Size ii = 1; ii <= restypes_w_no_existing_group.size(); ++ii ) {
+		if ( restype_w_no_group_claimed[ ii ] ) continue;
+		ResidueType const * iirt = restypes_w_no_existing_group[ ii ];
+		for ( auto const & rot : new_rots_for_types[ iirt ] ) {
+			assert( new_id_for_current_rotamer == 0 || new_id_for_current_rotamer <= new_rotamers_vector.size() );
+			new_rotamers_vector.push_back( rot );
+		}
+		for ( auto jjrt : groupless_restype_bands[ iirt ] ) {
+			for ( auto const & rot : new_rots_for_types[ jjrt ] ) {
+				assert( new_id_for_current_rotamer == 0 || new_id_for_current_rotamer <= new_rotamers_vector.size() );
+				new_rotamers_vector.push_back( rot );
+			}
+		}
+	}
+
+	debug_assert( new_id_for_current_rotamer == 0 ||
+		rotamers[ id_for_current_rotamer ] == new_rotamers_vector[ new_id_for_current_rotamer ] );
+
+	rotamers.swap( new_rotamers_vector );
+	id_for_current_rotamer = new_id_for_current_rotamer;
+	rotamers_waiting_for_sort.clear();
+}
+
 } // rotamer_set
 } // pack
 } // core
@@ -1559,6 +1698,7 @@ core::pack::rotamer_set::RotamerSet_::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet >( this ) );
 	arc( CEREAL_NVP( bump_selector_ ) ); // class core::pack::rotamer_set::BumpSelector
 	arc( CEREAL_NVP( rotamers_ ) ); // Rotamers
+	arc( CEREAL_NVP( rotamers_waiting_for_sort_ ) ); // std::list< ResidueOP >
 	arc( CEREAL_NVP( n_residue_types_ ) ); // Size
 	arc( CEREAL_NVP( n_residue_groups_ ) ); // Size
 	arc( CEREAL_NVP( residue_type_rotamers_begin_ ) ); // utility::vector1<Size>
@@ -1580,6 +1720,7 @@ core::pack::rotamer_set::RotamerSet_::load( Archive & arc ) {
 	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet >( this ) );
 	arc( bump_selector_ ); // class core::pack::rotamer_set::BumpSelector
 	arc( rotamers_ ); // Rotamers
+	arc( rotamers_waiting_for_sort_ ); // std::list< ResidueOP >
 	arc( n_residue_types_ ); // Size
 	arc( n_residue_groups_ ); // Size
 	arc( residue_type_rotamers_begin_ ); // utility::vector1<Size>

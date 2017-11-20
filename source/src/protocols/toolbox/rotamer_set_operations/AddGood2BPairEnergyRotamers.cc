@@ -145,7 +145,7 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 	}//loop over all extra rotamers
 
 	for ( std::list< std::pair< Real, core::conformation::ResidueCOP > >::const_iterator list_it( rots_to_keep.begin() ), list_end( rots_to_keep.end() ); list_it != list_end; list_it++ ) {
-		rotamer_set.add_rotamer( *(list_it->second) );
+		rotamer_set.add_rotamer_into_existing_group( *(list_it->second) );
 	}
 	tr << "At pdb position " <<  this_pdbpos << ", " << rots_to_keep.size() << " additional rotamers were added. The standard set already contained " << number_passing_cutoff - rots_to_keep.size() << " rotamers passing the desired score cutoff." << std::endl;
 

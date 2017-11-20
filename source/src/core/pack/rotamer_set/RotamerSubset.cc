@@ -14,6 +14,10 @@
 // Unit Headers
 #include <core/pack/rotamer_set/RotamerSubset.hh>
 
+// Package headers
+#include <core/pack/rotamer_set/RotamerSet_.hh>
+
+
 // Project Headers
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
@@ -35,6 +39,7 @@
 
 // Cereal headers
 #include <cereal/access.hpp>
+#include <cereal/types/list.hpp>
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
@@ -75,6 +80,14 @@ RotamerSubset::add_rotamer(
 	push_back_rotamer( rotamer.clone() );
 }
 
+void
+RotamerSubset::add_rotamer_into_existing_group(
+	conformation::Residue const & rotamer
+)
+{
+	rotamer_offsets_require_update_ = true;
+	rotamers_waiting_for_sort_.push_back( rotamer.clone() );
+}
 
 Size
 RotamerSubset::get_n_residue_types() const
@@ -359,6 +372,10 @@ RotamerSubset::update_rotamer_offsets() const
 {
 	if ( ! rotamer_offsets_require_update_ ) return;
 
+	if ( ! rotamers_waiting_for_sort_.empty() ) {
+		sort_new_rotamers_into_rotset_vector( rotamers_, rotamers_waiting_for_sort_, id_for_current_rotamer_ );
+	}
+
 	if ( rotamers_.size() == 0 ) {
 		n_residue_types_ = 0;
 		n_residue_groups_ = 0;
@@ -548,6 +565,7 @@ void
 core::pack::rotamer_set::RotamerSubset::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet >( this ) );
 	arc( CEREAL_NVP( rotamers_ ) ); // Rotamers
+	arc( CEREAL_NVP( rotamers_waiting_for_sort_ ) ); // std::list< ResidueOP >
 	arc( CEREAL_NVP( n_residue_types_ ) ); // Size
 	arc( CEREAL_NVP( n_residue_groups_ ) ); // Size
 	arc( CEREAL_NVP( residue_type_rotamers_begin_ ) ); // utility::vector1<Size>
@@ -568,6 +586,7 @@ void
 core::pack::rotamer_set::RotamerSubset::load( Archive & arc ) {
 	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet >( this ) );
 	arc( rotamers_ ); // Rotamers
+	arc( rotamers_waiting_for_sort_ ); // std::list< ResidueOP >
 	arc( n_residue_types_ ); // Size
 	arc( n_residue_groups_ ); // Size
 	arc( residue_type_rotamers_begin_ ); // utility::vector1<Size>

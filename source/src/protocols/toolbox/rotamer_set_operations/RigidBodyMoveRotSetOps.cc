@@ -155,7 +155,7 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 
 	//finally, add the new rotamers
 	for ( core::Size i = 1; i <= new_rots.size(); ++i ) {
-		rotamer_set.add_rotamer( *new_rots[i] );
+		rotamer_set.add_rotamer_into_existing_group( *new_rots[i] );
 	}
 
 	tr.Debug <<
