@@ -1084,13 +1084,15 @@ public:
 		//native.dump_scored_pdb("native.pdb", *scorefxn_);
 		//pose.dump_scored_pdb("pose.pdb", *scorefxn_);
 
-		//talaris2013 score terms
-		//total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref
+		//ref2015 score terms
+		//total fa_atr fa_rep fa_sol fa_intra_sol_xover4 lk_ball_wtd fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama_prepro omega fa_dun P_aa_pp yhh_planarity ref
 
 		utility::vector1< Real > total_native;
 		utility::vector1< Real > fa_atr_native;
 		utility::vector1< Real > fa_rep_native;
 		utility::vector1< Real > fa_sol_native;
+		utility::vector1< Real > fa_intra_sol_xover4_native;
+		utility::vector1< Real > lk_ball_wtd_native;
 		utility::vector1< Real > fa_intra_rep_native;
 		utility::vector1< Real > fa_elec_native;
 		utility::vector1< Real > pro_close_native;
@@ -1099,16 +1101,19 @@ public:
 		utility::vector1< Real > hbond_bb_sc_native;
 		utility::vector1< Real > hbond_sc_native;
 		utility::vector1< Real > dslf_fa13_native;
-		utility::vector1< Real > rama_native;
+		utility::vector1< Real > rama_prepro_native;
 		utility::vector1< Real > omega_native;
 		utility::vector1< Real > fa_dun_native;
 		utility::vector1< Real > p_aa_pp_native;
+		utility::vector1< Real > yhh_planarity_native;
 		utility::vector1< Real > ref_native;
 
 		utility::vector1< Real > total;
 		utility::vector1< Real > fa_atr;
 		utility::vector1< Real > fa_rep;
 		utility::vector1< Real > fa_sol;
+		utility::vector1< Real > fa_intra_sol_xover4;
+		utility::vector1< Real > lk_ball_wtd;
 		utility::vector1< Real > fa_intra_rep;
 		utility::vector1< Real > fa_elec;
 		utility::vector1< Real > pro_close;
@@ -1117,16 +1122,19 @@ public:
 		utility::vector1< Real > hbond_bb_sc;
 		utility::vector1< Real > hbond_sc;
 		utility::vector1< Real > dslf_fa13;
-		utility::vector1< Real > rama;
+		utility::vector1< Real > rama_prepro;
 		utility::vector1< Real > omega;
 		utility::vector1< Real > fa_dun;
 		utility::vector1< Real > p_aa_pp;
+		utility::vector1< Real > yhh_planarity;
 		utility::vector1< Real > ref;
 
 		utility::vector1< Real > diff_total;
 		utility::vector1< Real > diff_fa_atr;
 		utility::vector1< Real > diff_fa_rep;
 		utility::vector1< Real > diff_fa_sol;
+		utility::vector1< Real > diff_fa_intra_sol_xover4;
+		utility::vector1< Real > diff_lk_ball_wtd;
 		utility::vector1< Real > diff_fa_intra_rep;
 		utility::vector1< Real > diff_fa_elec;
 		utility::vector1< Real > diff_pro_close;
@@ -1135,17 +1143,18 @@ public:
 		utility::vector1< Real > diff_hbond_bb_sc;
 		utility::vector1< Real > diff_hbond_sc;
 		utility::vector1< Real > diff_dslf_fa13;
-		utility::vector1< Real > diff_rama;
+		utility::vector1< Real > diff_rama_prepro;
 		utility::vector1< Real > diff_omega;
 		utility::vector1< Real > diff_fa_dun;
 		utility::vector1< Real > diff_p_aa_pp;
+		utility::vector1< Real > diff_yhh_planarity_native;
 		utility::vector1< Real > diff_ref;
 
 
 		utility::vector1< Size > resnums;
 
-		//talaris2013 score terms
-		//total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref
+		//ref2015 score terms
+		//total fa_atr fa_rep fa_sol fa_intra_sol_xover4 lk_ball_wtd fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama_prepro omega fa_dun P_aa_pp yhh_planarity ref
 
 		TR << "Initialized vectors" << std::endl;
 		TR << "Adding native energies" << std::endl;
@@ -1155,18 +1164,21 @@ public:
 			fa_atr_native.push_back(       native.energies().residue_total_energies(i)[scoring::fa_atr] );
 			fa_rep_native.push_back(       native.energies().residue_total_energies(i)[scoring::fa_rep] );
 			fa_sol_native.push_back(       native.energies().residue_total_energies(i)[scoring::fa_sol] );
+			fa_intra_sol_xover4_native.push_back( native.energies().residue_total_energies(i)[scoring::fa_intra_sol_xover4] );
+			lk_ball_wtd_native.push_back(  native.energies().residue_total_energies(i)[scoring::lk_ball_wtd] );
 			fa_intra_rep_native.push_back( native.energies().residue_total_energies(i)[scoring::fa_intra_rep] );
-			fa_elec_native.push_back(    native.energies().residue_total_energies(i)[scoring::fa_elec] );
+			fa_elec_native.push_back(      native.energies().residue_total_energies(i)[scoring::fa_elec] );
 			pro_close_native.push_back(    native.energies().residue_total_energies(i)[scoring::pro_close] );
 			hbond_sr_bb_native.push_back(  native.energies().residue_total_energies(i)[scoring::hbond_sr_bb] );
 			hbond_lr_bb_native.push_back(  native.energies().residue_total_energies(i)[scoring::hbond_lr_bb] );
 			hbond_bb_sc_native.push_back(  native.energies().residue_total_energies(i)[scoring::hbond_bb_sc] );
 			hbond_sc_native.push_back(     native.energies().residue_total_energies(i)[scoring::hbond_sc] );
 			dslf_fa13_native.push_back(    native.energies().residue_total_energies(i)[scoring::dslf_fa13] );
-			rama_native.push_back(         native.energies().residue_total_energies(i)[scoring::rama] );
+			rama_prepro_native.push_back(  native.energies().residue_total_energies(i)[scoring::rama_prepro] );
 			omega_native.push_back(        native.energies().residue_total_energies(i)[scoring::omega] );
 			fa_dun_native.push_back(       native.energies().residue_total_energies(i)[scoring::fa_dun] );
 			p_aa_pp_native.push_back(      native.energies().residue_total_energies(i)[scoring::p_aa_pp] );
+			yhh_planarity_native.push_back(native.energies().residue_total_energies(i)[scoring::yhh_planarity] );
 			ref_native.push_back(          native.energies().residue_total_energies(i)[scoring::ref] );
 		}
 
@@ -1177,18 +1189,21 @@ public:
 			fa_atr.push_back(       pose.energies().residue_total_energies(i)[scoring::fa_atr] );
 			fa_rep.push_back(       pose.energies().residue_total_energies(i)[scoring::fa_rep] );
 			fa_sol.push_back(       pose.energies().residue_total_energies(i)[scoring::fa_sol] );
+			fa_intra_sol_xover4.push_back( pose.energies().residue_total_energies(i)[scoring::fa_intra_sol_xover4] );
+			lk_ball_wtd.push_back(  pose.energies().residue_total_energies(i)[scoring::lk_ball_wtd] );
 			fa_intra_rep.push_back( pose.energies().residue_total_energies(i)[scoring::fa_intra_rep] );
-			fa_elec.push_back(    pose.energies().residue_total_energies(i)[scoring::fa_elec] );
+			fa_elec.push_back(      pose.energies().residue_total_energies(i)[scoring::fa_elec] );
 			pro_close.push_back(    pose.energies().residue_total_energies(i)[scoring::pro_close] );
 			hbond_sr_bb.push_back(  pose.energies().residue_total_energies(i)[scoring::hbond_sr_bb] );
 			hbond_lr_bb.push_back(  pose.energies().residue_total_energies(i)[scoring::hbond_lr_bb] );
 			hbond_bb_sc.push_back(  pose.energies().residue_total_energies(i)[scoring::hbond_bb_sc] );
 			hbond_sc.push_back(     pose.energies().residue_total_energies(i)[scoring::hbond_sc] );
 			dslf_fa13.push_back(    pose.energies().residue_total_energies(i)[scoring::dslf_fa13] );
-			rama.push_back(         pose.energies().residue_total_energies(i)[scoring::rama] );
+			rama_prepro.push_back(  pose.energies().residue_total_energies(i)[scoring::rama_prepro] );
 			omega.push_back(        pose.energies().residue_total_energies(i)[scoring::omega] );
 			fa_dun.push_back(       pose.energies().residue_total_energies(i)[scoring::fa_dun] );
 			p_aa_pp.push_back(      pose.energies().residue_total_energies(i)[scoring::p_aa_pp] );
+			yhh_planarity.push_back(pose.energies().residue_total_energies(i)[scoring::yhh_planarity] );
 			ref.push_back(          pose.energies().residue_total_energies(i)[scoring::ref] );
 
 			resnums.push_back( i ); //only need for pose or native, one or the other
@@ -1200,6 +1215,8 @@ public:
 		Real sum_fa_atr(0);
 		Real sum_fa_rep(0);
 		Real sum_fa_sol(0);
+		Real sum_fa_intra_sol_xover4(0);
+		Real sum_lk_ball_wtd(0);
 		Real sum_fa_intra_rep(0);
 		Real sum_fa_elec(0);
 		Real sum_pro_close(0);
@@ -1208,10 +1225,11 @@ public:
 		Real sum_hbond_bb_sc(0);
 		Real sum_hbond_sc(0);
 		Real sum_dslf_fa13(0);
-		Real sum_rama(0);
+		Real sum_rama_prepro(0);
 		Real sum_omega(0);
 		Real sum_fa_dun(0);
 		Real sum_p_aa_pp(0);
+		Real sum_yhh_planarity(0);
 		Real sum_ref(0);
 
 
@@ -1235,6 +1253,8 @@ public:
 				Real diff_fa_atr = fa_atr[ii] - fa_atr_native[ii];
 				Real diff_fa_rep = fa_rep[ii] - fa_rep_native[ii];
 				Real diff_fa_sol = fa_sol[ii] - fa_sol_native[ii];
+				Real diff_fa_intra_sol_xover4 = fa_intra_sol_xover4[ii] - fa_intra_sol_xover4_native[ii];
+				Real diff_lk_ball_wtd = lk_ball_wtd[ii] - lk_ball_wtd_native[ii];
 				Real diff_fa_intra_rep = fa_intra_rep[ii] - fa_intra_rep_native[ii];
 				Real diff_fa_elec = fa_elec[ii] - fa_elec_native[ii];
 				Real diff_pro_close = pro_close[ii] - pro_close_native[ii];
@@ -1243,28 +1263,32 @@ public:
 				Real diff_hbond_bb_sc = hbond_bb_sc[ii] - hbond_bb_sc_native[ii];
 				Real diff_hbond_sc = hbond_sc[ii] - hbond_sc_native[ii];
 				Real diff_dslf_fa13 = dslf_fa13[ii] - dslf_fa13_native[ii];
-				Real diff_rama = rama[ii] - rama_native[ii];
+				Real diff_rama_prepro = rama_prepro[ii] - rama_prepro_native[ii];
 				Real diff_omega = omega[ii] - omega_native[ii];
 				Real diff_fa_dun = fa_dun[ii] - fa_dun_native[ii];
 				Real diff_p_aa_pp = p_aa_pp[ii] - p_aa_pp_native[ii];
+				Real diff_yhh_planarity = yhh_planarity[ii] - yhh_planarity_native[ii];
 				Real diff_ref = ref[ii] - ref_native[ii];
 
 				sum_total        += diff_total        ;
 				sum_fa_atr       += diff_fa_atr       ;
 				sum_fa_rep       += diff_fa_rep       ;
 				sum_fa_sol       += diff_fa_sol       ;
+				sum_fa_intra_sol_xover4 += diff_fa_intra_sol_xover4;
+				sum_lk_ball_wtd  += diff_lk_ball_wtd  ;
 				sum_fa_intra_rep += diff_fa_intra_rep ;
-				sum_fa_elec    += diff_fa_elec    ;
+				sum_fa_elec      += diff_fa_elec      ;
 				sum_pro_close    += diff_pro_close    ;
 				sum_hbond_sr_bb  += diff_hbond_sr_bb  ;
 				sum_hbond_lr_bb  += diff_hbond_lr_bb  ;
 				sum_hbond_bb_sc  += diff_hbond_bb_sc  ;
 				sum_hbond_sc     += diff_hbond_sc     ;
 				sum_dslf_fa13    += diff_dslf_fa13    ;
-				sum_rama         += diff_rama         ;
+				sum_rama_prepro  += diff_rama_prepro  ;
 				sum_omega        += diff_omega        ;
 				sum_fa_dun       += diff_fa_dun       ;
 				sum_p_aa_pp      += diff_p_aa_pp      ;
+				sum_yhh_planarity += diff_yhh_planarity;
 				sum_ref          += diff_ref          ;
 
 				//will print in columns
@@ -1273,18 +1297,21 @@ public:
 				TR << std::setprecision(4) << std::fixed << diff_fa_atr       << " ";
 				TR << std::setprecision(4) << std::fixed << diff_fa_rep       << " ";
 				TR << std::setprecision(4) << std::fixed << diff_fa_sol       << " ";
+				TR << std::setprecision(4) << std::fixed << diff_fa_intra_sol_xover4 << " ";
+				TR << std::setprecision(4) << std::fixed << diff_lk_ball_wtd  << " ";
 				TR << std::setprecision(4) << std::fixed << diff_fa_intra_rep << " ";
-				TR << std::setprecision(4) << std::fixed << diff_fa_elec    << " ";
+				TR << std::setprecision(4) << std::fixed << diff_fa_elec      << " ";
 				TR << std::setprecision(4) << std::fixed << diff_pro_close    << " ";
 				TR << std::setprecision(4) << std::fixed << diff_hbond_sr_bb  << " ";
 				TR << std::setprecision(4) << std::fixed << diff_hbond_lr_bb  << " ";
 				TR << std::setprecision(4) << std::fixed << diff_hbond_bb_sc  << " ";
 				TR << std::setprecision(4) << std::fixed << diff_hbond_sc     << " ";
 				TR << std::setprecision(4) << std::fixed << diff_dslf_fa13    << " ";
-				TR << std::setprecision(4) << std::fixed << diff_rama         << " ";
+				TR << std::setprecision(4) << std::fixed << diff_rama_prepro  << " ";
 				TR << std::setprecision(4) << std::fixed << diff_omega        << " ";
 				TR << std::setprecision(4) << std::fixed << diff_fa_dun       << " ";
 				TR << std::setprecision(4) << std::fixed << diff_p_aa_pp      << " ";
+				TR << std::setprecision(4) << std::fixed << diff_yhh_planarity << " ";
 				TR << std::setprecision(4) << std::fixed << diff_ref          << " ";
 				TR << std::endl;
 
@@ -1297,22 +1324,25 @@ public:
 		TR << sum_fa_atr      <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_fa_rep      <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_fa_sol      <<  std::setprecision(4) << std::fixed << " ";
+		TR << sum_fa_intra_sol_xover4 <<  std::setprecision(4) << std::fixed << " ";
+		TR << sum_lk_ball_wtd <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_fa_intra_rep<<  std::setprecision(4) << std::fixed << " ";
-		TR << sum_fa_elec   <<  std::setprecision(4) << std::fixed << " ";
+		TR << sum_fa_elec     <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_pro_close   <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_hbond_sr_bb <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_hbond_lr_bb <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_hbond_bb_sc <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_hbond_sc    <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_dslf_fa13   <<  std::setprecision(4) << std::fixed << " ";
-		TR << sum_rama        <<  std::setprecision(4) << std::fixed << " ";
+		TR << sum_rama_prepro <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_omega       <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_fa_dun      <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_p_aa_pp     <<  std::setprecision(4) << std::fixed << " ";
+		TR << sum_yhh_planarity <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_ref         <<  std::setprecision(4) << std::fixed << " ";
 		TR << std::endl;
 
-		TR << pose.pdb_info()->name() << " score_terms: total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref" << std::endl;
+		TR << pose.pdb_info()->name() << " score_terms: total fa_atr fa_rep fa_sol fa_intra_sol_xover4 lk_ball_wt fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama_prepro omega fa_dun p_aa_pp yhh_planarity ref" << std::endl;
 
 		return;
 	}
