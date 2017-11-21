@@ -393,6 +393,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_chem_shift" ] = rna_chem_shift;
 	name2score_type_[ "rna_chem_map"] = rna_chem_map;
 	name2score_type_[ "rna_chem_map_lores"] = rna_chem_map_lores;
+	name2score_type_[ "rna_partition"] = rna_partition;
 	name2score_type_[ "dab_sasa" ] = dab_sasa;
 	name2score_type_[ "dab_sev" ] = dab_sev;
 	name2score_type_[ "sa" ] = sa;

@@ -1005,6 +1005,55 @@ append_virtual_residue_to_full_model_info( pose::Pose & pose )
 	set_full_model_info( pose, new_full_model_info );
 }
 
+
+//////////////////////////////////////////////////////////////////////
+std::string get_current_global_sequence( pose::Pose const & pose)
+{
+
+	std::string global_sequence = const_full_model_info( pose ).full_model_parameters()->global_sequence();
+	add_new_sequence_into_global_sequence(pose, global_sequence);
+
+	utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
+
+	for ( Size i = 1; i <= other_pose_list.size(); i++ ) {
+		add_new_sequence_into_global_sequence(*(other_pose_list[ i ]), global_sequence);
+	}
+	return global_sequence;
+}
+
+//////////////////////////////////////////////////////////////////////
+void
+add_new_sequence_into_global_sequence( pose::Pose const & pose,
+	std::string & current_global_sequence )
+{
+	std::string seq = pose.sequence();
+	utility::vector1<Size> const & res_list = const_full_model_info( pose ).res_list();
+	utility::vector1< Size > global_mapping = const_full_model_info( pose ).full_model_parameters()->global_mapping();
+
+	for ( Size input_pose_seq_num = 1; input_pose_seq_num <= res_list.size(); input_pose_seq_num++ ) {
+		Size const full_seq_num = res_list[ input_pose_seq_num ];
+		current_global_sequence[ global_mapping[ full_seq_num ] - 1 ] = seq[ input_pose_seq_num - 1 ];
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+std::string get_current_global_sequence(
+	utility::vector1< conformation::ResidueCOP > const &resvect,
+	utility::vector1< Size > const & global_mapping,
+	utility::vector1<Size> const & res_list,
+	std::string const & native_sequence ) {
+
+	Size const nres( resvect.size() );
+	std::string current_global_sequence = native_sequence;
+
+	for ( Size ir = 1; ir <= nres; ++ir ) {
+		// TODO: is this right - figure out if seqpos is relative to the PDB numbering
+		Size const full_seq_num = res_list[ resvect[ir]->seqpos() ];
+		current_global_sequence[ global_mapping[ full_seq_num ] - 1 ] = resvect[ir]->name1();
+	}
+	return current_global_sequence;
+}
+
 } //full_model_info
 } //pose
 } //core

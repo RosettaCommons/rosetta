@@ -31,6 +31,8 @@
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/Tracer.hh>
+
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -80,6 +82,8 @@
 using namespace core;
 using namespace core::pose::datacache;
 using namespace basic::datacache;
+
+static basic::Tracer TR( "core.pose.full_model_info.FullModelInfo" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -153,6 +157,14 @@ FullModelInfo::set_full_model_parameters( FullModelParametersCOP setting ){
 std::string const &
 FullModelInfo::full_sequence() const {
 	return full_model_parameters_->full_sequence();
+}
+std::string const &
+FullModelInfo::global_sequence() const {
+	return full_model_parameters_->global_sequence();
+}
+utility::vector1< Size > const &
+FullModelInfo::global_mapping() const {
+	return full_model_parameters_->global_mapping();
 }
 utility::vector1< int > const &
 FullModelInfo::conventional_numbering() const {

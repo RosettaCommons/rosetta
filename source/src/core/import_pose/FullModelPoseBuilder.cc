@@ -166,7 +166,6 @@ FullModelPoseBuilder::initialize_further_from_options() {
 
 	initialize_full_model_parameters();
 
-
 	set_extra_minimize_res( full_model_parameters_->conventional_to_full( options_[ full_model::extra_min_res ].resnum_and_chain() ) );
 	set_sample_res( full_model_parameters_->conventional_to_full( options_[ full_model::sample_res ].resnum_and_chain() ) ); //stuff that can be resampled.
 	set_working_res( full_model_parameters_->conventional_to_full( options_[ full_model::working_res ].resnum_and_chain() ) ); //all working stuff
@@ -196,7 +195,7 @@ FullModelPoseBuilder::initialize_further_from_options() {
 	}
 
 	//set_full_model_parameters( full_model_parameters_ );
-
+	set_global_seq_file( options_[ full_model::global_seq_file ].value() );
 	set_disulfide_file( options_[ OptionKeys::stepwise::protein::disulfide_file ]() );
 	if ( options_[ OptionKeys::constraints::cst_file ].user() ) set_constraint_file( options_[ OptionKeys::constraints::cst_file ]()[ 1 ] );
 }
@@ -392,11 +391,9 @@ FullModelPoseBuilder::fill_full_model_info( vector1< Pose * > & pose_pointers ) 
 
 	full_model_parameters_->set_parameter_as_res_list_in_pairs( EXTRA_MINIMIZE_JUMP, extra_minimize_jump_res_ );
 	full_model_parameters_->set_parameter_as_res_list_in_pairs( FIVEPRIME_CAP,  fiveprime_res_ );
+	full_model_parameters_->read_global_seq_info( global_seq_file_ );
 	full_model_parameters_->read_disulfides( disulfide_file_ );
 	if ( constraint_file_ != "" ) full_model_parameters_->read_cst_file( constraint_file_ );
-
-
-
 
 	// AMW: can't figure out how to move this yet.
 	// move this code block somewhere else when ready.

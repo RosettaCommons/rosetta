@@ -534,13 +534,6 @@ void
 setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_residue_map,
 	utility::vector1< core::sequence::SequenceOP > & fasta_sequences );
 
-
-void
-get_conventional_chains_and_numbering( utility::vector1< core::sequence::SequenceCOP > const & fasta_sequences,
-	utility::vector1< char > & conventional_chains,
-	utility::vector1< int  > & conventional_numbering,
-	utility::vector1< std::string > & conventional_segids );
-
 utility::vector1< Size >
 get_cutpoints( utility::vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	std::map< Size, std::string > const & non_standard_residue_map,

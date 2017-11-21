@@ -22,6 +22,8 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/util.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
@@ -138,6 +140,8 @@ FullModelParameters::FullModelParameters( FullModelParameters const & src ) :
 	ReferenceCount( src ),
 	utility::pointer::enable_shared_from_this< FullModelParameters >( src ),
 	full_sequence_( src.full_sequence_ ),
+	global_sequence_( src.global_sequence_ ),
+	global_mapping_( src.global_mapping_ ),
 	conventional_numbering_( src.conventional_numbering_ ),
 	conventional_chains_( src.conventional_chains_ ),
 	conventional_segids_( src.conventional_segids_ ),
@@ -728,6 +732,41 @@ FullModelParameters::full_model_pose_for_constraints() const {
 
 ////////////////////////////////////////////////////
 void
+FullModelParameters::read_global_seq_info( std::string const & global_seq_file ) {
+	if ( global_seq_file.size() == 0 ) {
+		return;
+	}
+
+	// Read as FASTA
+	utility::vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( global_seq_file );
+	if ( fasta_sequences.size() > 1 ) {
+		TR.Warning << "Can't handle more than one global sequence for now." << std::endl;
+	}
+
+	// Fill in global sequence
+	global_sequence_ = fasta_sequences[ 1 ]->sequence();
+
+	// Fill in global mapping
+	utility::vector1< char > global_to_pdb_chains;
+	utility::vector1< std::string > global_to_pdb_segids;
+	utility::vector1< int  > global_to_pdb_numbering; // Length is same as global sequence, values are PDB numbering
+	core::sequence::get_conventional_chains_and_numbering( fasta_sequences, global_to_pdb_chains, global_to_pdb_numbering, global_to_pdb_segids );
+
+
+	for ( Size fullmodel_idx = 1; fullmodel_idx <= conventional_numbering_.size(); fullmodel_idx++ ) {
+		for ( Size global_idx = 1; global_idx <= global_to_pdb_numbering.size(); global_idx++ ) {
+			// Do we need to also compare segids? what's a segid?
+			if ( ( global_to_pdb_chains[ global_idx ] == conventional_chains_[ fullmodel_idx ] ) &&
+					( global_to_pdb_numbering[ global_idx ] == conventional_numbering_[ fullmodel_idx ] ) ) {
+				global_mapping_.push_back( global_idx );
+				break;
+			}
+		}
+	}
+}
+
+////////////////////////////////////////////////////
+void
 FullModelParameters::read_disulfides( std::string const & disulfide_file ) {
 
 	if ( disulfide_file.size() == 0 ) return;
@@ -866,6 +905,8 @@ template< class Archive >
 void
 core::pose::full_model_info::FullModelParameters::save( Archive & arc ) const {
 	arc( CEREAL_NVP( full_sequence_ ) ); // std::string
+	arc( CEREAL_NVP( global_sequence_ ) ); // std::string
+	arc( CEREAL_NVP( global_mapping_ ) ); // utility::vector1< Size >
 	arc( CEREAL_NVP( conventional_numbering_ ) ); // utility::vector1<int>
 	arc( CEREAL_NVP( conventional_chains_ ) ); // utility::vector1<char>
 	arc( CEREAL_NVP( conventional_segids_ ) ); // utility::vector1<std::string>
@@ -884,6 +925,8 @@ template< class Archive >
 void
 core::pose::full_model_info::FullModelParameters::load( Archive & arc ) {
 	arc( full_sequence_ ); // std::string
+	arc( global_sequence_ ); // std::string
+	arc( global_mapping_ ); // utility::vector1< Size >
 	arc( conventional_numbering_ ); // utility::vector1<int>
 	arc( conventional_chains_ ); // utility::vector1<char>
 	arc( conventional_segids_ ); // utility::vector1<std::string>

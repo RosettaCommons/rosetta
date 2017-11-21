@@ -212,7 +212,15 @@ check_sample_sugar_in_full_model_info( core::pose::Pose const & pose,
 void
 append_virtual_residue_to_full_model_info( core::pose::Pose & pose );
 
+std::string get_current_global_sequence( pose::Pose const & pose );
 
+void add_new_sequence_into_global_sequence( pose::Pose const & pose, std::string & current_global_sequence );
+
+std::string get_current_global_sequence(
+	utility::vector1< conformation::ResidueCOP > const &resvect,
+	utility::vector1< Size > const & global_mapping,
+	utility::vector1<Size> const & res_list,
+	std::string const & native_sequence);
 
 
 } //full_model_info

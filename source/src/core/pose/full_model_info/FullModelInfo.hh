@@ -83,6 +83,8 @@ public:
 	void set_full_model_parameters( FullModelParametersCOP setting );
 
 	std::string const & full_sequence() const;
+	std::string const & global_sequence() const;
+	utility::vector1< Size > const & global_mapping() const;
 	utility::vector1< int > const & conventional_numbering() const;
 	utility::vector1< char > const & conventional_chains() const;
 	utility::vector1< Size > const & cutpoint_open_in_full_model() const;

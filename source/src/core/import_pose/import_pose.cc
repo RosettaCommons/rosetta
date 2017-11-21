@@ -939,7 +939,7 @@ get_sequence_information(
 	vector1< char > conventional_chains;
 	vector1< std::string > conventional_segids;
 	vector1< int  > conventional_numbering;
-	get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering, conventional_segids );
+	core::sequence::get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering, conventional_segids );
 
 	full_model_parameters->set_conventional_numbering( conventional_numbering );
 	full_model_parameters->set_conventional_segids( conventional_segids );
@@ -1033,58 +1033,6 @@ get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	return cutpoints;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////
-// looks for tab-delimited tags like 'chain:A' and 'res_num:5-20' in fasta IDs.
-// move this to util.cc in core?
-///////////////////////////////////////////////////////////////////////////////////////
-void
-get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
-	vector1< char > & conventional_chains,
-	vector1< int > & conventional_numbering,
-	vector1< std::string > & conventional_segids ) {
-	using utility::string_split;
-	bool found_info_in_previous_sequence( false );
-	Size count( 0 );
-	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
-		utility::vector1< char > chains;
-		vector1< int > resnum;
-		vector1< std::string > segids;
-		bool found_info( false );
-		std::string tag;
-		std::stringstream ss( fasta_sequences[n]->id() );
-		while ( ss.good() ) {
-			ss >> tag;
-			bool string_is_ok( false );
-			std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > > resnum_and_chain_and_segid = utility::get_resnum_and_chain_and_segid( tag, string_is_ok );
-			if ( !string_is_ok ) continue;
-			for ( Size n = 0; n < std::get< 0 >( resnum_and_chain_and_segid ).size(); n++ ) {
-				if ( std::get< 1 >( resnum_and_chain_and_segid )[n] == ' ' ) continue; // there better be a chain. accept "A:1" but not just "1"
-				resnum.push_back( std::get< 0 >( resnum_and_chain_and_segid )[n] );
-				chains.push_back( std::get< 1 >( resnum_and_chain_and_segid )[n] );
-				segids.push_back( std::get< 2 >( resnum_and_chain_and_segid )[n] );
-			}
-			found_info = true;
-		}
-		if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
-
-		Size const clean_len = core::pose::rna::remove_bracketed( fasta_sequences[n]->sequence() ).size();
-		if ( !found_info || resnum.size() != clean_len ) { /*happens with stray numbers*/
-			resnum.clear();
-			for ( Size q = 1; q <= clean_len; ++q ) {
-				resnum.push_back( ++count );
-				chains.push_back( ' ' ); // unknown chain
-				segids.push_back( "    " ); // unknown chain
-			}
-		}
-		std::string const sequence = fasta_sequences[n]->sequence();
-		runtime_assert( clean_len == resnum.size() ); //sequence.size() == resnum.size() );
-		for ( Size q = 1; q <= clean_len; q++ ) conventional_chains.push_back( chains[ q ] );
-		for ( Size q = 1; q <= clean_len; q++ ) conventional_numbering.push_back( resnum[q] );
-		for ( Size q = 1; q <= clean_len; q++ ) conventional_segids.push_back( segids[q] );
-
-		found_info_in_previous_sequence  = found_info;
-	}
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // Need a 'water bank' to hold up to 6 waters for each Mg(2+) during stepwise modeling

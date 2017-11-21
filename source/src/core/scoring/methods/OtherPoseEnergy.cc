@@ -78,6 +78,7 @@ OtherPoseEnergy::finalize_total_energy(
 	other_pose_scorefxn->set_weight( loop_close, 0.0 );
 	other_pose_scorefxn->set_weight( missing_res, 0.0 );
 	other_pose_scorefxn->set_weight( free_res, 0.0 );
+	other_pose_scorefxn->set_weight( rna_partition, 0.0 );
 
 	totals[ other_pose ] = 0.0;
 

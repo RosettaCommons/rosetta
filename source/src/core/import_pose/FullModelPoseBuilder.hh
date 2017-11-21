@@ -73,6 +73,7 @@ public:
 	void set_rna_north_sugar( utility::vector1< Size > const & rna_north_sugar ) { rna_north_sugar_ = rna_north_sugar; }
 	void set_rna_south_sugar( utility::vector1< Size > const & rna_south_sugar ) { rna_south_sugar_ = rna_south_sugar; }
 	void set_rna_sample_sugar( utility::vector1< Size > const & rna_sample_sugar ) { rna_sample_sugar_ = rna_sample_sugar; }
+	void set_global_seq_file( std::string const & global_seq_file ) { global_seq_file_ = global_seq_file; }
 	void set_disulfide_file( std::string const & disulfide_file ) { disulfide_file_ = disulfide_file; }
 	void set_constraint_file( std::string const & constraint_file ) { constraint_file_ = constraint_file; }
 
@@ -121,6 +122,7 @@ private:
 	utility::vector1< Size > rna_north_sugar_;
 	utility::vector1< Size > rna_south_sugar_;
 	utility::vector1< Size > rna_sample_sugar_;
+	std::string global_seq_file_ = "";
 	std::string disulfide_file_ = "";
 	std::string constraint_file_ = "";
 

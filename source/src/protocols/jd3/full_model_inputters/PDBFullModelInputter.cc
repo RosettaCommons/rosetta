@@ -207,6 +207,7 @@ PDBFullModelInputter::list_options_read(
 		+ full_model::rna::bulge_res
 		+ full_model::extra_min_jump_res
 		+ full_model::virtual_sugar_res
+		+ full_model::global_seq_file
 		+ OptionKeys::stepwise::alignment_anchor_res
 		+ full_model::motif_mode
 		+ full_model::calc_rms_res

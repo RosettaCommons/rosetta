@@ -101,6 +101,8 @@ public:
 	slice( utility::vector1< Size > const & slice_res ) const;
 
 	std::string const & full_sequence() const { return full_sequence_;}
+	std::string const & global_sequence() const { return global_sequence_;}
+	utility::vector1< Size > const & global_mapping() const { return global_mapping_;}
 	std::map< Size, std::string > const & non_standard_residue_map() const { return non_standard_residue_map_; }
 	std::map< Size, std::string > & non_standard_residue_map_nonconst() { return non_standard_residue_map_; }
 	std::string full_annotated_sequence() const;
@@ -206,6 +208,9 @@ public:
 	FullModelParametersCOP parent_full_model_parameters() const { return parent_full_model_parameters_; }
 
 	void
+	read_global_seq_info( std::string const & global_seq_file );
+
+	void
 	read_disulfides( std::string const & disulfide_file );
 
 private:
@@ -264,6 +269,8 @@ private:
 private:
 
 	std::string full_sequence_;
+	std::string global_sequence_; // Full native sequence on which partition function scoring will be based.
+	utility::vector1< Size > global_mapping_; // Mapping from full_sequence to global_sequence.
 	utility::vector1< int >  conventional_numbering_; // permits user to use numbering other than 1, 2, 3...
 	utility::vector1< char > conventional_chains_;    // permits user to use chains other than A, B, C, ..
 	utility::vector1< std::string > conventional_segids_;    // permits user to use segids (i.e., for large structures. subsets of a chain)

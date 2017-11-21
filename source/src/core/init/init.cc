@@ -197,6 +197,7 @@
 #include <core/scoring/rna/RNA_JR_SuiteEnergyCreator.hh>
 #include <core/scoring/rna/RNA_LJ_BaseEnergyCreator.hh>
 #include <core/scoring/rna/RNA_PairwiseLowResolutionEnergyCreator.hh>
+#include <core/scoring/rna/RNA_PartitionEnergyCreator.hh>
 #include <core/scoring/rna/RNP_LowResEnergyCreator.hh>
 #include <core/scoring/rna/RNP_LowResStackEnergyCreator.hh>
 #include <core/scoring/rna/RNA_SugarCloseEnergyCreator.hh>
@@ -559,6 +560,7 @@ static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomStackingEnergyCreator 
 static EnergyMethodRegistrator< scoring::rna::RNA_JR_SuiteEnergyCreator > RNA_JR_SuiteEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_LJ_BaseEnergyCreator > RNA_LJ_BaseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_PairwiseLowResolutionEnergyCreator > RNA_PairwiseLowResolutionEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::rna::RNA_PartitionEnergyCreator > RNA_PartitionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNP_LowResEnergyCreator > RNP_LowResEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNP_LowResStackEnergyCreator > RNP_LowResStackEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_StubCoordinateEnergyCreator > RNA_StubCoordinateEnergyCreator_registrator;

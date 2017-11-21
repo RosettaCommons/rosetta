@@ -7526,6 +7526,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	################################
 	# full_model_info --> may replace stepwise stuff above.
 	Option_Group( 'full_model',
+		Option( 'global_seq_file', 'String', desc='File with global sequence and modeled sequence.', default=''),
 		Option( 'cutpoint_open',   'ResidueChainVector',desc='open cutpoints in full model',default=[]),
 		Option( 'cutpoint_closed', 'ResidueChainVector',desc='closed cutpoints in full model',default=[]),
 		Option( 'cyclize', 'ResidueChainVector',desc='cyclize points in full model',default=[]),

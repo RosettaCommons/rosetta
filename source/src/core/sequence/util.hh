@@ -66,6 +66,13 @@ std::string read_fasta_file_return_str( std::string const & filename );
 ///         Note: section detection string is case insensitive
 std::string read_fasta_file_section(std::string const & filename, std::string const &section);
 
+/// @brief looks for tab-delimited tags like 'chain:A' and 'res_num:5-20' in fasta IDs.
+void
+get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & fasta_sequences,
+	utility::vector1< char > & conventional_chains,
+	utility::vector1< int > & conventional_numbering,
+	utility::vector1< std::string > & conventional_segids );
+
 /// @brief Return a string of concatenated SequenceCOP sequences
 std::string get_concatenated_sequence( utility::vector1< SequenceCOP > const & fasta_sequences );
 

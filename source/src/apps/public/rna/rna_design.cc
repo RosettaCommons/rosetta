@@ -61,10 +61,13 @@
 
 
 // option key includes
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <platform/types.hh>
@@ -200,9 +203,9 @@ rna_design_test()
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-	pose::Pose pose;
+	pose::Pose pose = *(core::import_pose::initialize_pose_and_other_poses_from_command_line( rsd_set ));
 	std::string pdb_file  = option[ in::file::s ][1];
-	core::import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
+	// core::import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 	protocols::rna::denovo::ensure_phosphate_nomenclature_matches_mini( pose );
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
@@ -249,8 +252,7 @@ rna_design_test()
 	} else {
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			// If residue is far from ligand, skip
-			if ( residues_too_distant( pose.residue( ii ), pose.residue( pose.size() ), option[ ligand_distance ]() ) ) continue;
-
+			if ( option[ ligand_distance ].user() && residues_too_distant( pose.residue( ii ), pose.residue( pose.size() ), option[ ligand_distance ]() ) ) continue;
 			if ( !pose.residue_type( ii ).is_RNA() ) continue;
 			//task->nonconst_residue_task( ii ).restrict_absent_nas( empty_na_vector );
 			task->nonconst_residue_task( ii ).allow_aa( na_rad );
@@ -268,7 +270,7 @@ rna_design_test()
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !pose.residue_type( ii ).is_RNA() ) continue;
-		if ( residues_too_distant( pose.residue( ii ), pose.residue( pose.size() ), option[ ligand_distance ]() ) ) continue;
+		if ( option[ ligand_distance ].user() && residues_too_distant( pose.residue( ii ), pose.residue( pose.size() ), option[ ligand_distance ]() ) ) continue;
 
 		//Hmmm, extras.
 		//task->nonconst_residue_task( ii ).and_extrachi_cutoff( 0 );
@@ -436,7 +438,7 @@ main( int argc, char * argv [] )
 		NEW_OPT( final_minimize, "Do a final minimization (compare to minimized starting structures!", false );
 		NEW_OPT( multiround, "Do a multiround protocol instead", false );
 		NEW_OPT( ligand_distance, "Distance from ligand to design", 10.0 );
-
+		option.add_relevant( OptionKeys::full_model::global_seq_file );
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup

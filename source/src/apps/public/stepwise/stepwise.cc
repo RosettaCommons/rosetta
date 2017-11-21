@@ -361,6 +361,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::full_model::rna::force_north_sugar_list );
 		option.add_relevant( OptionKeys::full_model::rna::bulge_res );
 		option.add_relevant( OptionKeys::full_model::extra_min_res );
+		option.add_relevant( OptionKeys::full_model::global_seq_file );
 		option.add_relevant( OptionKeys::full_model::rna::terminal_res );
 		option.add_relevant( OptionKeys::full_model::rna::block_stack_above_res );
 		option.add_relevant( OptionKeys::full_model::rna::block_stack_below_res );
