@@ -221,7 +221,7 @@ rna_design_test()
 	task->initialize_from_command_line();
 
 	utility::vector1< std::string > names;
-	if ( option[ all_RNA ] ) {
+	if ( option[ all_RNA ].value() ) {
 		//auto const RNA_rsd_types = ResidueTypeFinder( *rsd_set ).base_property( RNA ).get_all_possible_residue_types();
 		//for ( auto const & type : RNA_rsd_types ) { names.emplace_back( type->name3() ); }
 		// Explicitly permit names of particular interest.
@@ -253,13 +253,14 @@ rna_design_test()
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			// If residue is far from ligand, skip
 			if ( option[ ligand_distance ].user() && residues_too_distant( pose.residue( ii ), pose.residue( pose.size() ), option[ ligand_distance ]() ) ) continue;
+
 			if ( !pose.residue_type( ii ).is_RNA() ) continue;
 			//task->nonconst_residue_task( ii ).restrict_absent_nas( empty_na_vector );
 			task->nonconst_residue_task( ii ).allow_aa( na_rad );
 			task->nonconst_residue_task( ii ).allow_aa( na_ura );
 			task->nonconst_residue_task( ii ).allow_aa( na_rgu );
 			task->nonconst_residue_task( ii ).allow_aa( na_rcy );
-			if ( option[ all_RNA ] ) {
+			if ( option[ all_RNA ].value() ) {
 				for ( auto const & name : names ) {
 					task->nonconst_residue_task( ii ).allow_noncanonical_aa(name);
 				}
@@ -296,7 +297,7 @@ rna_design_test()
 	utility::vector1< pose::PoseOP > pose_list;
 	Size pos( pdb_file.find( ".pdb" ) );
 
-	if ( option[ multiround ] ) {
+	if ( option[ multiround ]() ) {
 		// TODO: also fill results vector
 		core::pose::Pose start_pose = pose;
 		for ( Size ii = 1; ii <= nstruct; ++ii ) {
@@ -342,7 +343,7 @@ rna_design_test()
 		}
 	} else {
 		pack::pack_rotamers_loop( pose, *scorefxn, task, nstruct, results, pose_list);
-		if ( option[ final_minimize ] ) {
+		if ( option[ final_minimize ]() ) {
 			for ( auto const & poseop : pose_list ) {
 				AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( *poseop ) );
 				atom_level_domain_map->set( true );

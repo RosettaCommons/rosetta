@@ -1524,8 +1524,14 @@ rms_at_corresponding_atoms_no_super(
 		// }
 
 		if ( !is_calc_rms[ (iter.first).rsd() ] ) continue;
-		if ( mod_pose.residue( (iter.first).rsd() ).is_virtual( (iter.first).atomno() ) ) continue;
-		if ( ref_pose.residue( (iter.second).rsd() ).is_virtual( (iter.second).atomno() ) ) continue;
+		// Unless this is THE VRT that has made it into the atom_id_map
+		if ( !mod_pose.residue(  (iter.first).rsd() ).is_virtual_residue() ) {
+			if ( mod_pose.residue( (iter.first).rsd() ).is_virtual( (iter.first).atomno() ) ) continue;
+		}
+		if ( !ref_pose.residue(  (iter.second).rsd() ).is_virtual_residue() ) {
+			if ( ref_pose.residue( (iter.second).rsd() ).is_virtual( (iter.second).atomno() ) ) continue;
+		}
+
 		Vector const & p1(  mod_pose.xyz( iter.first ));
 		Vector const & p2(  ref_pose.xyz( iter.second ));
 

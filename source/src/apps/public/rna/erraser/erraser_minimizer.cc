@@ -44,7 +44,7 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <devel/init.hh>
-
+#include <basic/options/option.hh>
 #include <utility/excn/Exceptions.hh>
 
 //////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ void*
 my_main ( void* ) {
 
 	ErraserMinimizerMoverOP emm( new ErraserMinimizerMover );
-	emm->initialize_from_options();
+	emm->initialize_from_options( option );
 
 	protocols::jd2::JobDistributor::get_instance()->go( emm );
 

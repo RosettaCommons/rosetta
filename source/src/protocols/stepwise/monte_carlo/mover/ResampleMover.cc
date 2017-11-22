@@ -226,7 +226,11 @@ ResampleMover::apply( pose::Pose & pose,
 		stepwise_modeler_->set_moving_res_and_reset( remodel_res );
 		stepwise_modeler_->set_figure_out_prepack_res( true );
 	}
-	utility::vector1< Size > const & moving_res = get_moving_res_from_full_model_info( pose );
+	utility::vector1< Size > moving_res = get_moving_res_from_full_model_info( pose );
+	if ( moving_res.empty() && options_->force_moving_res_for_erraser() ) {
+		if ( is_single_attachment ) moving_res = utility::vector1< Size >( 1, remodel_res + 1 );
+		else moving_res = utility::vector1< Size >( 1, remodel_res );
+	}
 	if ( ! minimize_single_res_ ) stepwise_modeler_->set_working_minimize_res( moving_res );
 
 	if ( is_single_attachment ) {

@@ -1468,15 +1468,19 @@ ChiralFlipNaming::apply( ResidueType & rsd ) const {
 		}
 
 	} else if ( rsd.aa() == na_rad ) {
+		rsd.aa( na_lra );
 		rsd.name3( " 0A" );
 		rsd.interchangeability_group( " 0A" );
 	} else if ( rsd.aa() == na_rcy ) {
+		rsd.aa( na_lrc );
 		rsd.name3( " 0C" );
 		rsd.interchangeability_group( " 0C" );
 	} else if ( rsd.aa() == na_rgu ) {
+		rsd.aa( na_lrg );
 		rsd.name3( " 0G" );
 		rsd.interchangeability_group( " 0G" );
 	} else if ( rsd.aa() == na_ura ) {
+		rsd.aa( na_lur );
 		rsd.name3( " 0U" );
 		rsd.interchangeability_group( " 0U" );
 	} else {

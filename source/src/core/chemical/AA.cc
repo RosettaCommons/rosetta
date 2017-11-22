@@ -358,52 +358,66 @@ is_aa_name_unknown( std::string const & name){
 
 AA
 get_L_equivalent( AA const aa ) {
-	if ( aa==aa_dal ) return aa_ala;
-	else if ( aa==aa_dcs ) return aa_cys;
-	else if ( aa==aa_das ) return aa_asp;
-	else if ( aa==aa_dgu ) return aa_glu;
-	else if ( aa==aa_dph ) return aa_phe;
-	else if ( aa==aa_dhi ) return aa_his;
-	else if ( aa==aa_dil ) return aa_ile;
-	else if ( aa==aa_dly ) return aa_lys;
-	else if ( aa==aa_dle ) return aa_leu;
-	else if ( aa==aa_dme ) return aa_met;
-	else if ( aa==aa_dan ) return aa_asn;
-	else if ( aa==aa_dpr ) return aa_pro;
-	else if ( aa==aa_dgn ) return aa_gln;
-	else if ( aa==aa_dar ) return aa_arg;
-	else if ( aa==aa_dse ) return aa_ser;
-	else if ( aa==aa_dth ) return aa_thr;
-	else if ( aa==aa_dva ) return aa_val;
-	else if ( aa==aa_dtr ) return aa_trp;
-	else if ( aa==aa_dty ) return aa_tyr;
+	switch( aa ) {
+	case aa_dal : return aa_ala;
+	case aa_dcs : return aa_cys;
+	case aa_das : return aa_asp;
+	case aa_dgu : return aa_glu;
+	case aa_dph : return aa_phe;
+	case aa_dhi : return aa_his;
+	case aa_dil : return aa_ile;
+	case aa_dly : return aa_lys;
+	case aa_dle : return aa_leu;
+	case aa_dme : return aa_met;
+	case aa_dan : return aa_asn;
+	case aa_dpr : return aa_pro;
+	case aa_dgn : return aa_gln;
+	case aa_dar : return aa_arg;
+	case aa_dse : return aa_ser;
+	case aa_dth : return aa_thr;
+	case aa_dva : return aa_val;
+	case aa_dtr : return aa_trp;
+	case aa_dty : return aa_tyr;
+		// RNA
+	case na_rad : return na_lra;
+	case na_rcy : return na_lrc;
+	case na_rgu : return na_lrg;
+	case na_ura : return na_lur;
 
-	return aa_unk;
+	default : return aa_unk;
+	}
 }
 
 AA
 get_D_equivalent( AA const aa ) {
-	if ( aa==aa_ala ) return aa_dal;
-	else if ( aa==aa_cys ) return aa_dcs;
-	else if ( aa==aa_asp ) return aa_das;
-	else if ( aa==aa_glu ) return aa_dgu;
-	else if ( aa==aa_phe ) return aa_dph;
-	else if ( aa==aa_his ) return aa_dhi;
-	else if ( aa==aa_ile ) return aa_dil;
-	else if ( aa==aa_lys ) return aa_dly;
-	else if ( aa==aa_leu ) return aa_dle;
-	else if ( aa==aa_met ) return aa_dme;
-	else if ( aa==aa_asn ) return aa_dan;
-	else if ( aa==aa_pro ) return aa_dpr;
-	else if ( aa==aa_gln ) return aa_dgn;
-	else if ( aa==aa_arg ) return aa_dar;
-	else if ( aa==aa_ser ) return aa_dse;
-	else if ( aa==aa_thr ) return aa_dth;
-	else if ( aa==aa_val ) return aa_dva;
-	else if ( aa==aa_trp ) return aa_dtr;
-	else if ( aa==aa_tyr ) return aa_dty;
+	switch( aa ) {
+	case aa_ala : return aa_dal;
+	case aa_cys : return aa_dcs;
+	case aa_asp : return aa_das;
+	case aa_glu : return aa_dgu;
+	case aa_phe : return aa_dph;
+	case aa_his : return aa_dhi;
+	case aa_ile : return aa_dil;
+	case aa_lys : return aa_dly;
+	case aa_leu : return aa_dle;
+	case aa_met : return aa_dme;
+	case aa_asn : return aa_dan;
+	case aa_pro : return aa_dpr;
+	case aa_gln : return aa_dgn;
+	case aa_arg : return aa_dar;
+	case aa_ser : return aa_dse;
+	case aa_thr : return aa_dth;
+	case aa_val : return aa_dva;
+	case aa_trp : return aa_dtr;
+	case aa_tyr : return aa_dty;
+		// RNA
+	case na_lra : return na_rad;
+	case na_lrc : return na_rcy;
+	case na_lrg : return na_rgu;
+	case na_lur : return na_ura;
 
-	return aa_unk;
+	default : return aa_unk;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

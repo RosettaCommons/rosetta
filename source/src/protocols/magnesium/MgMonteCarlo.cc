@@ -158,9 +158,27 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 ///////////////////////////////////////////
 void
 MgMonteCarlo::setup_mg_water_fold_tree( pose::Pose & pose ) const {
+	// AMW: I am going to mess with this a little:
+	// 1. We need to retain the jumps from the input FT, ideally? TODO
+	// 2. We need to jump each Mg off its nearest polymer neighbor.
+	// 3. We need to jump each HOH off its nearest Mg. (at most 6 per Mg, only w/in 3-ish A)
+
 	using namespace core::kinematics;
+	//FoldTree f( pose.size() );
+	//vector1< Size > mg_res = get_mg_res( pose );
+	//for ( Size n = 1; n <= pose.size(); n++ ) {
+	// if ( pose.residue_type( n ).name3() == "HOH" ) {
+	//  f.new_jump( n, 1, n - 1 /* cutpoint */ );
+	// }
+	//}
+
 	FoldTree f( pose.size() );
 	vector1< Size > mg_res = get_mg_res( pose );
+	// Add jumps per Mg
+	//for ( Size const mg : mg_res ) {
+	// for ( Size ii = 1; ii <= )
+	//}
+
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).name3() == "HOH" ) {
 			f.new_jump( n, 1, n - 1 /* cutpoint */ );

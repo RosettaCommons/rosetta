@@ -90,7 +90,18 @@ ReferenceEnergy::residue_energy(
 		AA const & aa( rsd.aa() );
 		AA const aa2 ( is_d_aminoacid(aa) ? get_l_equivalent(aa) : aa);
 		if ( Size(aa2) > aa_weights_.size() ) return;
-		emap[ ref ] += aa_weights_[ aa2 ];
+		// Catch L-RNA
+		if ( aa2 == na_lra ) {
+			emap[ ref ] += aa_weights_[ na_rad ];
+		} else if ( aa2 == na_lrc ) {
+			emap[ ref ] += aa_weights_[ na_rcy ];
+		} else if ( aa2 == na_lrg ) {
+			emap[ ref ] += aa_weights_[ na_rgu ];
+		} else if ( aa2 == na_lur ) {
+			emap[ ref ] += aa_weights_[ na_ura ];
+		} else {
+			emap[ ref ] += aa_weights_[ aa2 ];
+		}
 		//   if ( rsd.is_DNA() ) {
 		//    std::cout << "using dna refE " << aa_weights_[aa] << std::endl;
 		//   }

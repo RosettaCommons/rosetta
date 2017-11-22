@@ -430,6 +430,7 @@ get_hb_don_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_rad :
+		case na_lra :
 			if ( aname == " N6 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
@@ -447,6 +448,7 @@ get_hb_don_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_rgu :
+		case na_lrg :
 			if ( aname == " N1 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
@@ -464,6 +466,7 @@ get_hb_don_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_rcy :
+		case na_lrc :
 			if ( aname == " N4 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
@@ -477,6 +480,7 @@ get_hb_don_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_ura :
+		case na_lur :
 			if ( aname == " N3 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
@@ -652,6 +656,7 @@ get_hb_acc_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_rad :
+		case na_lra :
 			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ) {
 				if ( aname == " N1 " && acc_rsd.has_variant_type( chemical::PROTONATED_N1_ADENOSINE ) ) {
 					utility_exit_with_message( "acc_rsd.aa()==na_rad, aname == \" N1 \" and acc_rsd.has_variant_type(\"PROTONATED_N1_ADENOSINE\")!");
@@ -669,6 +674,7 @@ get_hb_acc_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_rgu :
+		case na_lrg :
 			if ( aname == " N3 " || aname == " N7 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
@@ -684,6 +690,7 @@ get_hb_acc_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_rcy :
+		case na_lrc :
 			if ( aname == " O2 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
@@ -699,6 +706,7 @@ get_hb_acc_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_ura :
+		case na_lur :
 			if ( aname == " O2 " || aname == " O4 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.

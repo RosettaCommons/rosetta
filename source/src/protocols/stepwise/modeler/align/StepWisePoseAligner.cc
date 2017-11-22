@@ -155,6 +155,18 @@ StepWisePoseAligner::get_rmsd_no_superimpose( pose::Pose const & pose,
 
 	if ( superimpose_atom_id_map_.size() > 0  && check_align ) {
 		superimpose_rmsd_ = rms_at_corresponding_atoms_no_super( pose, reference_pose, superimpose_atom_id_map_ );
+		if ( superimpose_rmsd_ != superimpose_rmsd_ ) {
+			TR << "NAN PROBLEM" << std::endl;
+			TR << "rmsd_res_in_pose_ " << rmsd_res_in_pose_ << std::endl;
+			TR << "superimpose_res_in_pose_ " << superimpose_res_in_pose_ << std::endl;
+			TR << "superimpose rmsd: " << superimpose_rmsd_ << "  is greater than " << check_alignment_tolerance_ << std::endl;
+			output_atom_id_map( superimpose_atom_id_map_, pose, reference_pose );
+			pose.dump_pdb( "_CHECK_POSE.pdb" );
+			reference_pose_local_->dump_pdb( "_REFERENCE_POSE.pdb" );
+		}
+
+		//TR << "superimpose_rmsd_: " << superimpose_rmsd_ << std::endl;
+		//TR << "check_alignment_tolerance_: " << check_alignment_tolerance_ << std::endl;
 		if ( superimpose_rmsd_ > check_alignment_tolerance_ ) {
 			pose.dump_pdb( "CHECK_POSE.pdb" );
 			reference_pose_local_->dump_pdb( "REFERENCE_POSE.pdb" );
@@ -402,6 +414,7 @@ StepWisePoseAligner::update_superimpose_atom_id_map( pose::Pose const & pose ) {
 			if ( extra_suite_atoms_upper.find( atom_name ) != extra_suite_atoms_upper.end() ) continue; // never use phosphates to superimpose
 			if ( extra_suite_atoms_lower.find( atom_name ) != extra_suite_atoms_lower.end() ) continue; // never use carbonyl oxygens to superimpose
 			if ( sample_sugar && core::chemical::rna::sugar_atoms.has_value( atom_name ) ) continue;
+
 			if ( mod_reference_pose_local_ ) {
 				add_to_atom_id_map_after_checks( superimpose_atom_id_map_,
 					atom_name,

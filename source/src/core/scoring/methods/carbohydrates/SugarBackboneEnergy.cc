@@ -108,6 +108,8 @@ SugarBackboneEnergy::residue_energy(
 		is_exocyclic_bond = has_exocyclic_glycosidic_linkage( pose.conformation(), rsd.seqpos() );
 	}
 
+	if ( prev_rsd_num == 0 ) return;
+
 	conformation::Residue const & prev_rsd( pose.residue( prev_rsd_num));
 	// Get the angles.
 	// (Convert the psi and omega to between 0 and 360 because that's what the functions expect.)

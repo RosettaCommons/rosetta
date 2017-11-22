@@ -138,6 +138,12 @@ private:
 	sampler::StepWiseSamplerOP
 	initialize_rna_bond_sampler( core::pose::Pose const & pose );
 
+	sampler::StepWiseSamplerOP
+	initialize_ligand_bond_sampler( core::pose::Pose const & pose );
+
+	sampler::StepWiseSamplerOP
+	initialize_carbohydrate_bond_sampler( core::pose::Pose const & pose );
+
 	void
 	initialize_full_rigid_body_sampler();
 

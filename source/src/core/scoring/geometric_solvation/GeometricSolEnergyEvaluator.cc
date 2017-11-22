@@ -850,7 +850,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	//   HBEvalType hbe = potential_backbone_backbone_hbond ? ( hbond_evaluation_type( occ_atm, occ_rsd, acc_atm, acc_rsd) ) : hbe_SP3SC;
 	//   HBEvalType hbe = potential_backbone_backbone_hbond ? hbe_BSC : hbe_SP3SC;
 	hbe = potential_backbone_backbone_hbond ? ( HBEvalTuple( occ_atm, occ_rsd, acc_atm, acc_rsd ) ) :
-		HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( acc_atm, acc_rsd), seq_sep_other );
+		HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( acc_atm, acc_rsd ), seq_sep_other );
 
 	Size const base_atm( acc_rsd.atom_base( acc_atm ) );
 	Vector const & acc_atm_xyz( acc_rsd.atom( acc_atm ).xyz() );

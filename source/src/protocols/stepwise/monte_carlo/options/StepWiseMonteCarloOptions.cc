@@ -85,7 +85,8 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	checkpointing_frequency_( 0 ),
 	continue_until_none_missing_( false ),
 	eval_base_pairs_( false ),
-	superimpose_over_all_( false )
+	superimpose_over_all_( false ),
+	force_moving_res_for_erraser_( false )
 {
 	StepWiseBasicOptions::initialize_variables();
 	set_silent_file( "default.out" );
@@ -168,6 +169,7 @@ StepWiseMonteCarloOptions::initialize_from_options_collection( utility::options:
 	continue_until_none_missing_ = options[ OptionKeys::stepwise::monte_carlo::continue_until_none_missing ]();
 	eval_base_pairs_ = options[ basic::options::OptionKeys::rna::evaluate_base_pairs ]();
 	superimpose_over_all_ = options[ basic::options::OptionKeys::stepwise::superimpose_over_all ]();
+	force_moving_res_for_erraser_ = options[ basic::options::OptionKeys::stepwise::force_moving_res_for_erraser ]();
 
 	if ( test_all_moves_ ) {
 		set_num_random_samples( 0 );
@@ -226,7 +228,8 @@ StepWiseMonteCarloOptions::list_options_read( utility::options::OptionKeyList & 
 		+ OptionKeys::stepwise::monte_carlo::checkpointing_frequency
 		+ OptionKeys::stepwise::monte_carlo::continue_until_none_missing
 		+ OptionKeys::rna::evaluate_base_pairs
-		+ OptionKeys::stepwise::superimpose_over_all;
+		+ OptionKeys::stepwise::superimpose_over_all
+		+ OptionKeys::stepwise::force_moving_res_for_erraser;
 }
 
 ///////////////////////////////////////////////////////////////////

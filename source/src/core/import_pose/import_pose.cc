@@ -1609,7 +1609,8 @@ check_working_res( utility::vector1< Size > const & working_res,
 			if ( !working_res.has_value( n ) /* && !reference_pose */ ) {
 				utility_exit_with_message( "Working res does not have input_domain_map residue "+ObjexxFCL::string_of(n) );
 			}
-			if ( sample_res.has_value( n ) ) utility_exit_with_message( "Sample res should not have "+ObjexxFCL::string_of(n) );
+			// then how can you sample something from input?
+			//if ( sample_res.has_value( n ) ) utility_exit_with_message( "Sample res should not have "+ObjexxFCL::string_of(n) );
 		}
 	}
 }

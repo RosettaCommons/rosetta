@@ -414,7 +414,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		if ( sequence_char != pose.residue_type( n ).name1() ) {
 			TR << res_list << std::endl;
 			TR << "no match at " << n << " conventional numbering: " << res_num << "  sequence: " << sequence_char << " pose sequence: " <<  pose.residue_type( n ).name1() << std::endl;
-			TR << "POSE SEQUENCE " << pose.sequence() << std::endl;
+			TR << "POSE SEQUENCE       " << pose.sequence() << std::endl;
 			TR << "FULL MODEL SEQUENCE " << sequence << std::endl;
 			TR << "CLEANED FM SEQUENCE " << clean_seq << std::endl;
 			return false;

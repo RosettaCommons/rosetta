@@ -1483,7 +1483,7 @@ is_protein( pose::Pose const & pose, utility::vector1< Size > const & moving_res
 	if ( pose.residue_type( example_res ).is_protein() ) {
 		return true;
 	} else {
-		runtime_assert( pose.residue_type( example_res ).is_RNA() || !pose.residue_type( example_res ).is_polymer() );
+		runtime_assert( pose.residue_type( example_res ).is_RNA() || pose.residue_type( example_res ).is_carbohydrate() || !pose.residue_type( example_res ).is_polymer() );
 		return false;
 	}
 }

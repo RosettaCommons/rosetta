@@ -26,6 +26,7 @@
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/magnesium/MgMonteCarlo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
@@ -50,7 +51,7 @@ static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMasterMov
 //
 // Factored out of StepWiseMonteCarlo.
 //
-//    -- rhiju, 2015
+//   -- rhiju, 2015
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using namespace core;
@@ -58,6 +59,7 @@ using namespace core::pose;
 using namespace protocols::stepwise::monte_carlo::rna;
 using namespace protocols::stepwise::modeler;
 using namespace core::pose::full_model_info;
+using namespace protocols::magnesium;
 
 namespace protocols {
 namespace stepwise {
@@ -342,32 +344,125 @@ name_from_move( StepWiseMove const & stepwise_move, Pose const & start_pose ) {
 /////////////////////////////////////////////////////////
 void
 StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::Pose & output_pose, bool const checkpointing_breadcrumbs ) {
+	utility::vector1< Size > residues_to_rebuild;
+	for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
+		residues_to_rebuild.push_back( ii );
+	}
+	resample_full_model( start_pose, output_pose, checkpointing_breadcrumbs, residues_to_rebuild );
+}
+
+void
+StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::Pose & output_pose, bool const checkpointing_breadcrumbs, utility::vector1< Size > const & residues_to_rebuild ) {
+	// Generates a set of 'bad residues' based on DOFs and other criteria. Then, only rebuilds the ones also present in
+	// residues_to_rebuild.
+
 	using namespace options;
 	output_pose = start_pose;
-	runtime_assert( options_->skip_deletions() ); // totally inelegant, must be set outside.
+
 	initialize();
 
-	utility::vector1< StepWiseMove > stepwise_moves, internal_moves, terminal_moves;
-	stepwise_move_selector_->get_resample_terminal_move_elements( output_pose, terminal_moves );
-	stepwise_move_selector_->get_resample_internal_local_move_elements( output_pose, internal_moves );
+	// AMW: This was the old, move selector dependent method.
+	//stepwise_move_selector_->figure_out_all_possible_moves( start_pose );
+	//for ( StepWiseMove const & stepwise_move : stepwise_move_selector_->swa_moves() ) {
+	// TR << "Possible Move: " << stepwise_move << "." << std::endl;
+	//}
 
-	// get first terminal move
-	if ( terminal_moves.size() >= 1 ) {
-		stepwise_moves.push_back( terminal_moves[1] );
+	utility::vector1< StepWiseMove > stepwise_moves;//, internal_moves, terminal_moves;
+	//stepwise_move_selector_->get_resample_terminal_move_elements( output_pose, terminal_moves );
+	//stepwise_move_selector_->get_resample_internal_local_move_elements( output_pose, internal_moves );
+	//for ( StepWiseMove const & stepwise_move : terminal_moves ) {
+	// TR << "Applying terminal move: " << stepwise_move << "." << std::endl;
+	//}
+	//for ( StepWiseMove const & stepwise_move : internal_moves ) {
+	// TR << "Applying internal move: " << stepwise_move << "." << std::endl;
+	//}
+
+	// Pose analysis.
+	for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
+		if ( !residues_to_rebuild.contains( ii ) ) continue;
+		if ( start_pose.residue( ii ).is_virtual_residue() ) continue;
+
+		if ( !start_pose.residue( ii ).is_polymer() ) {
+			// Ligand -- jump_dock
+			TR << "Found ligand -- " << start_pose.residue( ii ).name() << " -- at " << ii << std::endl;
+			TR << start_pose.fold_tree() << std::endl;
+			MoveElement move_element;
+			move_element.push_back( ii );
+			utility::vector1< Attachment > attachments;
+
+			bool connected_by_jump = false;
+
+			// Somehow parent might not be. Might need to look for child?
+			Size attached_res = Size( start_pose.fold_tree().get_parent_residue( ii, connected_by_jump ) );
+
+			TR << "Found an attached res POSSIBLY connected by a jump: " << attached_res << std::endl;
+			if ( !connected_by_jump ) {
+				for ( Size jj = 1; jj <= start_pose.size(); ++jj ) {
+					bool connected_by_jump2 = false;
+					Size const possibly_ii = Size( start_pose.fold_tree().get_parent_residue( jj, connected_by_jump2 ) );
+					if ( ii == possibly_ii ) {
+						connected_by_jump = connected_by_jump2;
+						attached_res = jj;
+						break;
+					}
+				}
+			}
+			TR << "Found an attached res connected by a jump: " << attached_res << std::endl;
+			runtime_assert( connected_by_jump );
+			attachments.emplace_back( attached_res, JUMP_DOCK );
+			stepwise_moves.emplace_back( move_element, attachments, RESAMPLE );
+
+			continue;
+		}
+
+		//if ( start_pose.residue( ii - 1 ).is_virtual_residue() ) continue;
+		//if ( start_pose.residue( ii + 1 ).is_virtual_residue() ) continue;
+		MoveElement move_element;
+		move_element.push_back( ii );
+		utility::vector1< Attachment > attachments;
+		TR.Trace << "Triplet of concerned residues:" << std::endl;
+		if ( ii > 1 ) TR.Trace << ii - 1 << " " << start_pose.residue( ii - 1 ).name() << std::endl;
+		TR.Trace << ii << " " << start_pose.residue( ii ).name() << std::endl;
+		if ( ii < start_pose.size() ) TR.Trace << ii + 1 << " " << start_pose.residue( ii + 1 ).name() << std::endl;
+		if ( !start_pose.residue( ii ).has_lower_connect() ) {
+			// Doesn't have to be a lower terminus variant -- what matters is specifically lacking lower.
+			if ( start_pose.residue( ii ).is_carbohydrate() ) {
+				attachments.emplace_back( ii + 1, BOND_TO_NEXT );
+				stepwise_moves.emplace_back( move_element, attachments, RESAMPLE );
+			}
+		} else if ( !start_pose.residue( ii ).has_upper_connect() ) {
+			// Doesn't have to be a upper terminus variant -- what matters is specifically lacking upper.
+			if ( start_pose.residue( ii ).is_carbohydrate() ) {
+				attachments.emplace_back( ii - 1, BOND_TO_PREVIOUS );
+				stepwise_moves.emplace_back( move_element, attachments, RESAMPLE );
+			}
+		} else {
+			attachments.emplace_back( ii - 1, BOND_TO_PREVIOUS );
+			attachments.emplace_back( ii + 1, BOND_TO_NEXT );
+			stepwise_moves.emplace_back( move_element, attachments, RESAMPLE_INTERNAL_LOCAL );
+			TR << "Adding Move: " << stepwise_moves[ stepwise_moves.size() ] << "." << std::endl;
+		}
 	}
-	// get internal moves
-	for ( Size n = 1; n <= internal_moves.size(); n++ ) {
-		stepwise_moves.push_back( internal_moves[n] );
-	}
-	// get last terminal residue
-	if ( terminal_moves.size() >= 2 ) {
-		stepwise_moves.push_back( terminal_moves[2] );
-	}
+
+
+	// TODO: make this happen at the very end. Right now, do it first so we can see the cool effects.
+	// AMW: Don't support this yet.
+	// bool has_mg = false;
+	// for ( Size ii = 1; ii <= output_pose.size(); ++ii ) {
+	//  if ( output_pose.residue_type( ii ).name() == "MG" ) has_mg = true;
+	// }
+	// if ( has_mg ) {
+	// MgMonteCarlo mg;
+	// mg.set_output_pdb( true );
+	// mg.apply( output_pose );
+	//}
 
 	// do moves in serial
 	for ( StepWiseMove const & stepwise_move : stepwise_moves ) {
 		TR.Debug << "Applying Move: " << stepwise_move << "." << std::endl;
+		//continue;
 		apply( output_pose, stepwise_move, true /* figure_out_all_possible_moves */ );
+		scorefxn_->show( output_pose );
 		if ( checkpointing_breadcrumbs ) {
 			std::ofstream out( name_from_move( stepwise_move, start_pose ) );
 			out << "DONE!\n";
@@ -386,8 +481,8 @@ StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose
 	runtime_assert( options_->skip_deletions() ); // totally inelegant, must be set outside.
 	initialize();
 	add_or_delete_mover_->set_choose_random( false );
-	add_mover_->set_start_added_residue_in_aform( true  );
-	add_mover_->set_presample_added_residue(      false );
+	add_mover_->set_start_added_residue_in_aform( true );
+	add_mover_->set_presample_added_residue( false );
 
 	std::string move_type_string;
 	while ( add_or_delete_mover_->apply( full_model_pose, move_type_string ) ) {

@@ -212,6 +212,9 @@ std::string const default_jump_atom( chemical::ResidueType const & rsd ) {
 			return " Y  ";
 		}
 	}
+	if ( rsd.is_carbohydrate() ) {
+		return " C1 ";
+	}
 	if ( rsd.is_protein() ) {
 		return " CA "; // note that this does not match 'traditional' choice in FoldTree.cc
 	}
@@ -397,7 +400,7 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 	//SML PHENIX conference
 	if ( !rsd.is_RNA() ) {
 		std::cout << "name " << rsd.type().name() << std::endl;
-		if ( basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
+		if ( rsd.is_carbohydrate() || basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return Vector( 0.0, 0.0, 0.0 );
 		} else { //if not option
 			utility_exit_with_message( "non - RNA residue inside get_rna_base_centroid" );
@@ -471,7 +474,7 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	//SML PHENIX conference
 	if ( !rsd.is_RNA() && rsd.type().name() != "pdb_GAI" ) {
-		if ( basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
+		if ( rsd.is_carbohydrate() || basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return numeric::xyzMatrix< core::Real > ::identity();
 		} else if ( rsd.is_polymer() && !rsd.has_lower_connect() && !rsd.has_upper_connect() ) {
 			return numeric::xyzMatrix< core::Real > ::identity();
@@ -494,20 +497,22 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 			H_coord = rsd.xyz("N3");
 		} else {
 			// Just use the first two sidechain atoms for generality
+			// AMW TODO: instead you could imagine taking the else clause and permitting for is_purine or is_pyrimidine
+			// (if no na_analogue)
 			WC_coord = rsd.xyz( rsd.first_sidechain_atom() );
 			H_coord = rsd.xyz( rsd.first_sidechain_atom() + 1 );
 		}
 	} else {
 		// Make an axis pointing from base centroid to Watson-Crick edge.
 		std::string WC_atom;
-		if ( res_type == na_rad || res_type == na_rgu ) WC_atom = "N1";
-		if ( res_type == na_rcy || res_type == na_ura ) WC_atom = "N3";
+		if ( res_type == na_rad || res_type == na_rgu || res_type == na_lra || res_type == na_lrg ) WC_atom = "N1";
+		if ( res_type == na_rcy || res_type == na_ura || res_type == na_lrc || res_type == na_lur ) WC_atom = "N3";
 		// Make a perpendicular axis pointing from centroid towards
 		// Hoogstein edge (e.g., major groove in a double helix).
 		std::string H_atom;
-		if ( res_type == na_rad || res_type == na_rgu ) H_atom = "N7" ;
+		if ( res_type == na_rad || res_type == na_rgu || res_type == na_lra || res_type == na_lrg ) H_atom = "N7" ;
 		if ( !rsd.has( H_atom ) && rsd.name3() == "7DA" ) H_atom = "C7";
-		if ( res_type == na_rcy || res_type == na_ura ) H_atom = "C5";
+		if ( res_type == na_rcy || res_type == na_ura || res_type == na_lrc || res_type == na_lur ) H_atom = "C5";
 		if ( res_type == na_ura && rsd.name3() == "PSU" ) H_atom = "N1"; // pseudoU is flipped
 		//std::cout << "WC_atom " << WC_atom << std::endl;
 

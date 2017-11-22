@@ -63,6 +63,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerComb.hh>
+#include <protocols/stepwise/sampler/StepWiseSamplerOneTorsion.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.hh>
 #include <protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.hh>
@@ -76,7 +77,8 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/chemical/VariantType.hh>
+#include <core/chemical/rna/util.hh>
+#include <core/id/TorsionID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
@@ -276,7 +278,7 @@ StepWiseConnectionSampler::initialize_residue_level_screeners( pose::Pose & pose
 
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new StubDistanceScreener( moving_res_base_stub_, rigid_body_rotamer_->reference_stub(), max_distance_squared_ ) ) );
 
-	if ( base_centroid_checker_ && !protein_connection_ ) {
+	if ( base_centroid_checker_ && !protein_connection_ && !pose.residue_type( moving_res_ ).is_carbohydrate() ) {
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new BaseCentroidScreener( base_centroid_checker_,
 			moving_res_base_stub_ ) ) );
 	}
@@ -340,7 +342,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	//  screeners_.push_back( new ResidueContactScreener( *screening_pose_, last_append_res_,  last_prepend_res_, atom_atom_overlap_dist_cutoff_ ) );
 	// }
 
-	if ( !rigid_body_modeler_ && base_centroid_checker_ && !protein_connection_ ) {
+	if ( !rigid_body_modeler_ && base_centroid_checker_ && !protein_connection_ && !pose.residue_type( moving_res_ ).is_carbohydrate() ) {
 		bool const force_centroid_interaction = ( rigid_body_modeler_ || options_->force_centroid_interaction()
 			|| ( rna_cutpoints_closed_.size() == 0 ) );
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new BaseCentroidScreener( base_centroid_checker_, screening_pose_, force_centroid_interaction ) ) );
@@ -372,9 +374,10 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new RNA_ChainClosableGeometryScreener( rna_chain_closable_geometry_checkers_[ n ], screening_pose_, strict  /*strict*/ ) ) );
 	}
 
+	// AMW: why no PCS for carbohydrate? don't care.
 	PartitionContactScreenerOP atr_rep_screener;
 	if ( options_->atr_rep_screen() && moving_res_list_.size() > 0 &&
-			( options_->atr_rep_screen_for_docking() || !rigid_body_modeler_ ) ) {
+			( options_->atr_rep_screen_for_docking() || !rigid_body_modeler_ ) && !pose.residue_type( moving_res_ ).is_carbohydrate() ) {
 		atr_rep_screener = PartitionContactScreenerOP( new PartitionContactScreener( *screening_pose_, working_parameters_, use_loose_rep_cutoff, scorefxn_->energy_method_options() ) );
 		screeners_.push_back( atr_rep_screener );
 	}
@@ -487,7 +490,7 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	// VDW bin checker can take a while to set up... becomes rate-limiting in random, i.e.
 	//  stepwise monte carlo runs.
 	// Could in principle instantiate for proteins too.
-	if ( !options_->choose_random() && !protein_connection_ && moving_res_ > 0 ) {
+	if ( !options_->choose_random() && !protein_connection_ && moving_res_ > 0 && !pose.residue_type( moving_res_ ).is_carbohydrate() ) {
 		TR << TR.Magenta << "Creating VDW Bin Checker " << TR.Reset << std::endl;
 		VDW_bin_checker_ = RNA_VDW_BinCheckerOP( new checker::RNA_VDW_BinChecker() );
 		VDW_bin_checker_->setup_using_working_pose( *screening_pose_, working_parameters_ );
@@ -536,6 +539,8 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 		rna_chain_closure_checkers_.push_back( RNA_ChainClosureCheckerOP( new RNA_ChainClosureChecker( *screening_pose_, rna_cutpoints_closed_[n] ) ) );
 		rna_chain_closure_checkers_[n]->set_reinitialize_CCD_torsions( options_->reinitialize_CCD_torsions() );
 	}
+
+	// AMW TODO: carbohydrate loop closers?
 
 	// protein loop closers
 	utility::vector1< Size > all_moving_res = get_moving_res_including_domain_boundaries( pose, moving_res_list_ );
@@ -691,6 +696,13 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 	} else {
 		if ( protein_connection_ ) {
 			sampler_ = initialize_protein_bond_sampler( pose );
+		} else if ( moving_res_ != 0 && pose.residue_type( moving_res_ ).is_carbohydrate() ) {
+			sampler_ = initialize_carbohydrate_bond_sampler( pose );
+		} else if ( moving_res_ != 0 && !pose.residue_type( moving_res_ ).is_polymer() ) {
+			initialize_euler_angle_grid_parameters();
+			initialize_xyz_grid_parameters();
+			initialize_full_rigid_body_sampler();
+			sampler_ = initialize_ligand_bond_sampler( pose );
 		} else {
 			runtime_assert( moving_res_ == 0 || pose.residue_type( moving_res_ ).is_RNA() );
 			sampler_ = initialize_rna_bond_sampler( pose );
@@ -739,6 +751,43 @@ StepWiseConnectionSampler::initialize_rna_bond_sampler( pose::Pose const & pose 
 	return sampler;
 }
 
+
+//////////////////////////////////////////////////////////////////////
+sampler::StepWiseSamplerOP
+StepWiseConnectionSampler::initialize_ligand_bond_sampler( pose::Pose const & pose ){
+	using namespace sampler;
+	if ( moving_res_list_.size() == 0 ) return 0;
+
+	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
+	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
+	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
+		StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
+		sampler->add_external_loop_rotamer( foo );
+	}
+	sampler->add_external_loop_rotamer( rigid_body_rotamer_ );
+	sampler->init();
+	return sampler;
+}
+
+//////////////////////////////////////////////////////////////////////
+sampler::StepWiseSamplerOP
+StepWiseConnectionSampler::initialize_carbohydrate_bond_sampler( pose::Pose const & pose ){
+	using namespace sampler;
+	if ( moving_res_list_.size() == 0 ) return 0;
+
+	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
+	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
+	// Really should be sampling ring conformations or something. We'd need a special class for that.
+	//for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
+	for ( Size ii = 2; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
+		StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
+		sampler->add_external_loop_rotamer( foo );
+	}
+	sampler->init();
+	return sampler;
+}
+
+
 //////////////////////////////////////////////////////////////////////
 void
 StepWiseConnectionSampler::initialize_full_rigid_body_sampler(){
@@ -759,8 +808,7 @@ StepWiseConnectionSampler::get_rsd_alternatives_rotamer(){
 	if ( residue_alternative_sets_.size() == 0 ) return 0;
 	ResidueAlternativeStepWiseSamplerCombOP rsd_alternatives_rotamer( new ResidueAlternativeStepWiseSamplerComb() );
 	// note that following will include moving_res_ for sampler, as well as any other chunks that might move...
-	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ) {
-		ResidueAlternativeSet const & residue_alternative_set = residue_alternative_sets_[n];
+	for ( ResidueAlternativeSet const & residue_alternative_set : residue_alternative_sets_ ) {
 		ResidueAlternativeStepWiseSamplerOP rsd_alt_rotamer;
 		if ( rigid_body_rotamer_ != 0 ) {
 			rsd_alt_rotamer = ResidueAlternativeStepWiseSamplerOP( new ResidueAlternativeStepWiseSampler( residue_alternative_set,

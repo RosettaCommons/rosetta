@@ -45,20 +45,27 @@ MiniPose::~MiniPose() = default;
 ///////////////////////////////////////////////////////////////////////
 MiniPose::MiniPose( core::pose::Pose const & pose )
 {
+	// AMW: Speeding up minipose construction by pre-allocating.
 	coords_.clear();
 	atom_names_list_.clear();
 	variant_types_list_.clear();
+	coords_.resize( pose.size() );
+	atom_names_list_.resize( pose.size() );
+	variant_types_list_.resize( pose.size() );
+
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 		utility::vector1< PointPosition > xyz;
 		utility::vector1< std::string > atom_name;
+		xyz.reserve( pose.residue(i).natoms() );
+		atom_name.reserve( pose.residue(i).natoms() );
 		for ( Size j = 1; j <= pose.residue(i).natoms(); j++ ) {
 			xyz.push_back( pose.residue(i).xyz( j ) ) ;
 			atom_name.push_back( pose.residue_type(i).atom_name( j ) );
 		}
-		coords_.push_back( xyz );
-		atom_names_list_.push_back(atom_name);
-		variant_types_list_.push_back( pose.residue_type( i ).properties().get_list_of_variants() );
+		coords_[ i ] = xyz;
+		atom_names_list_[ i ] = atom_name;
+		variant_types_list_[ i ] = pose.residue_type( i ).properties().get_list_of_variants();
 	}
 	sequence_ = pose.sequence();
 	fold_tree_ = pose.fold_tree();

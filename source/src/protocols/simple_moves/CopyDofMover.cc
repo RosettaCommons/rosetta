@@ -70,7 +70,7 @@ CopyDofMover::apply( core::pose::Pose & pose )
 	} else {
 		std::map < core::id::AtomID , core::id::AtomID > atom_id_map;
 		setup_atom_id_map_match_atom_names( atom_id_map, res_map_, pose, template_pose_, backbone_only_, side_chain_only_, ignore_virtual_ );
-		CopyDofs copy_dofs( template_mini_pose_, atom_id_map, 0 );
+		CopyDofs copy_dofs( template_mini_pose_, atom_id_map, 0 ); //  like the 'blank' use
 		copy_dofs.apply( pose );
 		if ( use_hash_ ) {
 			copy_dofs_info_[ pose_string_ ]  = copy_dofs.copy_dofs_info();

@@ -225,6 +225,9 @@ StepWiseClusterer::initialize_parameters( pose::Pose const & pose ) {
 		} else if ( pose.residue_type( calc_rms_res_[1] ).is_RNA() ) {
 			if ( max_decoys_ == 0   ) max_decoys_ = 108;
 			if ( cluster_rmsd_ == 0 ) cluster_rmsd_ = 0.5;
+		} else if ( pose.residue_type( calc_rms_res_[1] ).is_carbohydrate() ) {
+			if ( max_decoys_ == 0   ) max_decoys_ = 108;
+			if ( cluster_rmsd_ == 0 ) cluster_rmsd_ = 0.5;
 		} else if ( !pose.residue_type( calc_rms_res_[1] ).is_polymer() ) {
 			// Arbitrarily suggest that if the first calc_rms_res_ is a ligand,
 			// use RNA-like parameters. These are just defaults and probably

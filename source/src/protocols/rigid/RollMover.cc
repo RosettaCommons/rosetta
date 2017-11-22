@@ -52,7 +52,7 @@ namespace protocols {
 namespace rigid {
 
 /// @details
-void RollMover::apply( core::pose::Pose & pose ){
+void RollMover::apply( core::pose::Pose & pose ) {
 
 	utility::vector1< utility::vector1< numeric::xyzVector< core::Real> > >  coords; // some of these will change for sure
 

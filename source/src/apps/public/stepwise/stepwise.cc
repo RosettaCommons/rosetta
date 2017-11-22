@@ -58,6 +58,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <protocols/moves/PyMOLMover.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
@@ -88,6 +89,7 @@ using utility::vector1;
 static basic::Tracer TR( "apps.public.stepwise.stepwise" );
 
 OPT_KEY( Boolean, use_legacy_stepwise_job_distributor )
+OPT_KEY( Boolean, pymol_observer )
 
 core::scoring::ScoreFunctionOP
 get_stepwise_score_function( OptionCollection const & option ) {
@@ -275,6 +277,9 @@ stepwise_monte_carlo_legacy()
 	if ( pose.size() > 0 && test_move.move_type() == NO_MOVE ) ( *scorefxn )( pose );
 	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
+	if ( option[ pymol_observer ].value() ) {
+		protocols::moves::AddPyMOLObserver( pose, true );
+	}
 
 	StepWiseMonteCarloOP stepwise_monte_carlo( new StepWiseMonteCarlo( scorefxn ) );
 	stepwise_monte_carlo->set_native_pose( align_pose ); //allows for alignment to be to non-native
@@ -335,6 +340,7 @@ main( int argc, char * argv [] )
 {
 	try {
 		NEW_OPT( use_legacy_stepwise_job_distributor, "Use the legacy RNA_MonteCarloJobDistributor", true );
+		NEW_OPT( pymol_observer, "Attach a PyMOLObserver", false );
 
 		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -fasta <fasta file with sequence> -s <start pdb> -input_res <input pdb1> [ -native <native pdb file> ] " << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;

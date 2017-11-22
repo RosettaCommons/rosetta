@@ -80,6 +80,7 @@ sources = {
 		"cov_test",
 		"diversify_conotoxin",
 		"evaluate_beta_mutants",
+		"erraser2",
 		"get_dihedral_b3aa",
 		"hbs_dock_design",
 		"hbs_creator",

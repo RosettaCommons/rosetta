@@ -7375,6 +7375,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'lores', 'Boolean', desc="Use coarse-grained energy function to sample; no minimize.", default='false' ),
 		Option( 'verbose_sampler', 'Boolean', desc="verbose output from StepWiseConnectionSampler sample-and-screen.", default='false' ),
 		Option( 'definitely_virtualize', 'IntegerVector', desc="definitely virtualize these residues (by seqpos)", default=[]),
+		Option( 'force_moving_res_for_erraser', 'Boolean', desc="For ERRASER resample moves, ENSURE that the appropriate residue is moving", default='false'),
 
 		Option_Group( 'monte_carlo',
 			Option( 'verbose_scores', 'Boolean', desc= "Show all score components", default='false' ),

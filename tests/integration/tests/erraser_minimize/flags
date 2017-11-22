@@ -11,3 +11,4 @@
 -edensity:realign no
 -scale_d 100
 -scale_theta 10
+-set_weights cart_bonded 1.0

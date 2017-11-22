@@ -96,6 +96,9 @@ public:
 	resample_full_model( core::pose::Pose const & start_pose, core::pose::Pose & output_pose, bool const checkpointing_breadcrumbs );
 
 	void
+	resample_full_model( core::pose::Pose const & start_pose, core::pose::Pose & output_pose, bool const checkpointing_breadcrumbs, utility::vector1< Size > const & residues_to_resample );
+
+	void
 	build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );
 
 	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting ) { submotif_library_ = setting; }

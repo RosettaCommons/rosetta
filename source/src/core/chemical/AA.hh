@@ -126,6 +126,12 @@ enum AA {
 	aa_b3cisACHC,
 	last_beta3_aa = aa_b3cisACHC,
 
+	// L-RNA
+	na_lra,
+	na_lrc,
+	na_lrg,
+	na_lur,
+
 	//Oligoureas.  Keep these together as a group, and ensure that first_oligourea and last_oligourea are set to whatever is first and last.
 	ou3_ala, //Keep this first in this group.
 	first_oligourea = ou3_ala, //Keep this second in this group.

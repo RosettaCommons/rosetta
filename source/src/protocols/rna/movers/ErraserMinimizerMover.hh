@@ -31,9 +31,9 @@
 #include <core/id/AtomID.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 
 #include <ObjexxFCL/FArray1D.fwd.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
 #include <set>
 
 namespace protocols {
@@ -59,7 +59,7 @@ public:
 	void pyrimidine_flip_trial( Pose & pose );
 	void setup_fold_tree( Pose & pose );
 
-	void initialize_from_options();
+	void initialize_from_options( utility::options::OptionCollection const & options );
 
 	void apply( Pose & pose ) override;
 
@@ -70,43 +70,6 @@ public:
 		Movers_map const & /*movers*/,
 		Pose const & /*pose*/
 	) override;
-
-	bool
-	check_in_bonded_list(
-		AtomID const & atom_id1,
-		AtomID const & atom_id2
-	);
-
-	bool
-	check_in_bond_angle_list(
-		AtomID const & central_atom,
-		AtomID const & side_one,
-		AtomID const & side_two
-	);
-
-	void
-	add_bond_constraint(
-		AtomID const & atom_id1,
-		AtomID const & atom_id2,
-		Pose const & pose,
-		core::scoring::constraints::ConstraintSetOP & cst_set
-	);
-
-	void
-	add_bond_angle_constraint(
-		AtomID const & atom_id1,
-		AtomID const & atom_id2,
-		AtomID const & atom_id3,
-		Pose const & pose,
-		core::scoring::constraints::ConstraintSetOP & cst_set
-	);
-
-	bool
-	check_if_connected_in_atom_tree(
-		Pose const & pose,
-		AtomID const & atom_id1,
-		AtomID const & atom_id2
-	);
 
 	// Virts and sidechain atoms that aren't the first base atom should not move
 	bool
@@ -147,49 +110,6 @@ public:
 		Size const my_anchor
 	);
 
-	core::Real
-	ideal_length(
-		std::string const & pucker,
-		std::string const & name,
-		std::string const & name1,
-		std::string const & name2
-	);
-
-	core::Real
-	ideal_length_ncnt(
-		std::string const & name,
-		std::string const & name1,
-		std::string const & name2
-	);
-
-	core::Real
-	ideal_angle(
-		std::string const & pucker,
-		std::string const & name,
-		std::string const & name1,
-		Size const no1,
-		std::string const & name2,
-		Size const no2,
-		std::string const & name3,
-		Size const no3
-	);
-
-	core::Real
-	ideal_angle_ncnt(
-		std::string const & name,
-		std::string const & name1,
-		Size const no1,
-		std::string const & name2,
-		Size const no2,
-		std::string const & name3,
-		Size const no3
-	);
-
-	bool
-	ideal_has_atom(
-		core::chemical::ResidueType const & rt,
-		std::string const & an );
-
 	std::string
 	get_name() const override;
 
@@ -201,6 +121,11 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void
+	scorefxn( core::scoring::ScoreFunctionOP const & sfxn ) { scorefxn_ = sfxn; }
+
+	void
+	edens_scorefxn( core::scoring::ScoreFunctionOP const & sfxn ) { edens_scorefxn_ = sfxn; }
 
 private:
 
@@ -218,9 +143,6 @@ private:
 
 	ScoreFunctionOP scorefxn_;
 	ScoreFunctionOP edens_scorefxn_;
-
-	std::map< std::string, std::map< std::string, Pose > > ideal_poses_;
-	std::map< std::string, Pose > ideal_ncnt_poses_;
 };
 
 } //movers

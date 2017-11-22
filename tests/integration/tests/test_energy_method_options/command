@@ -6,7 +6,7 @@ cd %(workdir)s
 
 # run executable
 %(bin)s/test_EnergyMethodOptions.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
-	egrep -vf special_ignore_list \
+	| egrep -vf special_ignore_list \
 	> log
 
 # test to see if exe terminated abnormaly

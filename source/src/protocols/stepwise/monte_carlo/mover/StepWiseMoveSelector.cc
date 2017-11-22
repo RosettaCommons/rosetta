@@ -671,8 +671,8 @@ StepWiseMoveSelector::get_docking_split_move_elements( pose::Pose const & pose,
 		Size const moving_res_full =  res_list[ moving_res ];
 		Size const reference_res_full = res_list[ reference_res ];
 		if ( !stepwise_addable_pose_residue( moving_res, pose ) ) continue;
-		runtime_assert( dock_domain_map[ moving_res_full ] > 0 );
-		runtime_assert( dock_domain_map[ reference_res_full ] > 0 );
+		//runtime_assert( dock_domain_map[ moving_res_full ] > 0 );
+		//runtime_assert( dock_domain_map[ reference_res_full ] > 0 );
 		if ( dock_domain_map[ moving_res_full ] == dock_domain_map[ reference_res_full ] ) continue;
 		utility::vector1< Size > const moving_partition_res = get_partition_res( partition_definition,  partition_definition[ moving_res ] );
 		utility::vector1< Size > const reference_partition_res = get_partition_res( partition_definition,  partition_definition[ reference_res ] );
@@ -1263,18 +1263,17 @@ StepWiseMoveSelector::get_terminal_move_elements( pose::Pose const & pose,
 		MoveElement const & move_element = move_elements[ n ];
 		utility::vector1< Attachment > attachments = get_attachments( pose, move_element );
 		// at least for now, each move_element should be connected to another one.
-		if ( attachments.size() == 0 ) {
+		if ( attachments.empty() ) {
 			runtime_assert( num_move_elements == 1 );
 			continue;
 		}
 		if ( attachments.size() > 1 ) continue; // not a terminal
-
 		// for now, floating base can only handle single residues.
 		if ( attachments.size() == 1 &&
 				( attachments[1].attachment_type() == JUMP_TO_PREV_IN_CHAIN || attachments[1].attachment_type() == JUMP_TO_NEXT_IN_CHAIN ) &&
 				move_element.size() > 1 ) continue;
 
-		swa_moves.push_back( StepWiseMove( move_element, attachments, move_type ) );
+		swa_moves.emplace_back( move_element, attachments, move_type );
 	}
 }
 
@@ -1636,7 +1635,7 @@ StepWiseMoveSelector::figure_out_attachment( Size const moving_res, Size const a
 			check_for_intramolecular_submotif_jump( pose, moving_res, attached_res ) ) ) {
 		attachment = Attachment( attached_res, JUMP_TO_NEXT_IN_CHAIN );
 	} else {
-		runtime_assert( dock_domain_map[ moving_res ] != dock_domain_map[ attached_res ] );
+		//runtime_assert( dock_domain_map[ moving_res ] != dock_domain_map[ attached_res ] );
 		attachment = Attachment( attached_res, JUMP_DOCK );
 	}
 	return attachment;

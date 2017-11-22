@@ -51,8 +51,10 @@ get_minimize_scorefxn( core::pose::Pose const & pose,
 	if ( options->turn_off_rna_chem_map_during_optimize() )  minimize_scorefxn->set_weight( rna_chem_map, 0.0 ); // Just for now...
 	if ( options->cart_min() && ( minimize_scorefxn->get_weight( cart_bonded ) == 0.0 ) ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
 	if ( options->mapfile_activated() ) {
-		if ( minimize_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) {
-			minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
+		if ( minimize_scorefxn->get_weight( elec_dens_fast ) == 0 ) {
+			if ( minimize_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) {
+				minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
+			}
 		}
 		if ( minimize_scorefxn->get_weight( linear_chainbreak ) == 0.0 ) {
 			minimize_scorefxn->set_weight( linear_chainbreak, 100.0 );

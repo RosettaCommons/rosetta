@@ -230,6 +230,9 @@ public:
 	bool superimpose_over_all() const { return superimpose_over_all_; }
 	void set_superimpose_over_all( bool const setting ) { superimpose_over_all_ = setting; }
 
+	bool force_moving_res_for_erraser() const { return force_moving_res_for_erraser_; }
+	void set_force_moving_res_for_erraser( bool const setting ) { force_moving_res_for_erraser_ = setting; }
+
 private:
 
 	bool verbose_scores_;
@@ -280,6 +283,7 @@ private:
 	bool continue_until_none_missing_;
 	bool eval_base_pairs_;
 	bool superimpose_over_all_;
+	bool force_moving_res_for_erraser_ = false;
 
 };
 

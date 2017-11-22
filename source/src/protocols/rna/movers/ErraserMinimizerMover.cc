@@ -102,6 +102,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/options/OptionCollection.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 
@@ -171,77 +172,29 @@ ErraserMinimizerMover::ErraserMinimizerMover():
 	scorefxn_( new ScoreFunction() ),
 	edens_scorefxn_( new ScoreFunction() )
 {
-	// Initialize our ideal residues.
-	//Names of the pdb files
-	std::string const path( basic::database::full_name("chemical/residue_type_sets/fa_standard/residue_types/nucleic/rna_phenix/ideal_geometry/") );
-	utility::vector1< std::string > pdb_file_list;
-	pdb_file_list.push_back( path + "/A_n_std.pdb" );
-	pdb_file_list.push_back( path + "/A_s_std.pdb" );
-	pdb_file_list.push_back( path + "/G_n_std.pdb" );
-	pdb_file_list.push_back( path + "/G_s_std.pdb" );
-	pdb_file_list.push_back( path + "/C_n_std.pdb" );
-	pdb_file_list.push_back( path + "/C_s_std.pdb" );
-	pdb_file_list.push_back( path + "/U_n_std.pdb" );
-	pdb_file_list.push_back( path + "/U_s_std.pdb" );
-
-	chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_STANDARD);
-	Pose ref_pose;
-	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[1] );
-	ideal_poses_[ "north" ][ "  A" ] = ref_pose;
-	ref_pose.clear();
-	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[2] );
-	ideal_poses_[ "south" ][ "  A" ] = ref_pose;
-	ref_pose.clear();
-	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[3] );
-	ideal_poses_[ "north" ][ "  G" ] = ref_pose;
-	ref_pose.clear();
-	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[4] );
-	ideal_poses_[ "south" ][ "  G" ] = ref_pose;
-	ref_pose.clear();
-	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[5] );
-	ideal_poses_[ "north" ][ "  C" ] = ref_pose;
-	ref_pose.clear();
-	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[6] );
-	ideal_poses_[ "south" ][ "  C" ] = ref_pose;
-	ref_pose.clear();
-	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[7] );
-	ideal_poses_[ "north" ][ "  U" ] = ref_pose;
-	ref_pose.clear();
-	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[8] );
-	ideal_poses_[ "south" ][ "  U" ] = ref_pose;
-	ref_pose.clear();
-
-	// Get all nonnatural RNA RTs.
-	// We don't have phenix ideal coordinates for NCNTs, but we have QM.
-	utility::vector1< ResidueTypeCOP > ncnts = ResidueTypeFinder( *rsd_set ).name1('X').base_property( RNA ).get_possible_base_residue_types();
-	for ( Size ii = 1; ii <= ncnts.size(); ++ii ) {
-		std::stringstream ss;
-		ss << "X[" << ncnts[ii]->name() << "]X[" << ncnts[ii]->name() << "]X[" << ncnts[ii]->name() << "]";
-		make_pose_from_sequence( ref_pose, ss.str(), rsd_set );
-		ideal_ncnt_poses_[ ncnts[ii]->name3() ] = ref_pose;
-	}
-
-	initialize_from_options();
+	initialize_from_options( option );
 }
 
-void ErraserMinimizerMover::initialize_from_options() {
-	vary_bond_geometry_ = option[ basic::options::OptionKeys::rna::vary_geometry ].value();
-	constrain_phosphate_ = option[ constrain_P ].value();
-	ready_set_only_ =     option[ ready_set_only ].value();
-	skip_minimize_ =      option[ skip_minimize ].value();
-	attempt_pyrimidine_flip_ = option[ attempt_pyrimidine_flip ].value();
-	std::copy( option[ fixed_res ].value().begin(), option[ fixed_res ].value().end(), std::inserter( fixed_res_list_, fixed_res_list_.end() ) );
-	cutpoint_list_ = option[ full_model::cutpoint_open ].value();
+void ErraserMinimizerMover::initialize_from_options( utility::options::OptionCollection const & options ) {
+	// We're going to keep this default true -- if you have to turn it on with this option, then
+	// that turns it on for stepwise steps too. That's terrible.
+	//vary_bond_geometry_ = options[ basic::options::OptionKeys::rna::vary_geometry ].value();
+	constrain_phosphate_ = options[ constrain_P ].value();
+	ready_set_only_ =     options[ ready_set_only ].value();
+	skip_minimize_ =      options[ skip_minimize ].value();
+	attempt_pyrimidine_flip_ = options[ attempt_pyrimidine_flip ].value();
+	std::copy( options[ fixed_res ].value().begin(), options[ fixed_res ].value().end(), std::inserter( fixed_res_list_, fixed_res_list_.end() ) );
+	cutpoint_list_ = options[ full_model::cutpoint_open ].value();
 
 	if ( !ready_set_only_ ) {
 		//Setup score function.
-		std::string score_weight_file = "stepwise/rna/rna_hires_elec_dens";
-		if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
-			score_weight_file = option[ basic::options::OptionKeys::score::weights ]();
+		std::string score_weight_file = "stepwise/rna/rna_res_level_energy4_elec_dens";
+		if ( options[ basic::options::OptionKeys::score::weights ].user() ) {
+			score_weight_file = options[ basic::options::OptionKeys::score::weights ]();
 			TR << "User passed in score:weight option: " << score_weight_file << std::endl;
 		}
 		scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
-		edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
+		//edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
 	}
 }
 
@@ -265,250 +218,14 @@ void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
 
 	if ( !ready_set_only_ ) {
 		//Setup score function.
-		std::string score_weight_file = "stepwise/rna/rna_hires_elec_dens";
+		std::string score_weight_file = "stepwise/rna/rna_res_level_energy4_elec_dens";
 		if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
 			score_weight_file = option[ basic::options::OptionKeys::score::weights ]();
 			TR << "User passed in score:weight option: " << score_weight_file << std::endl;
 		}
 		scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
-		edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
+		//edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
 	}
-}
-
-bool
-ErraserMinimizerMover::check_in_bonded_list(
-	core::id::AtomID const & atom_id1,
-	core::id::AtomID const & atom_id2
-) {
-	for ( auto & bond : bonded_atom_list_ ) {
-		if ( atom_id1 == bond.first && atom_id2 == bond.second ) return true;
-		if ( atom_id2 == bond.first && atom_id1 == bond.second ) return true;
-	}
-
-	return false;
-}
-
-bool
-ErraserMinimizerMover::check_in_bond_angle_list(
-	core::id::AtomID const & central_atom,
-	core::id::AtomID const & side_one,
-	core::id::AtomID const & side_two
-) {
-	for ( auto & angle : bond_angle_list_ ) {
-		if ( central_atom != angle.first ) continue;
-
-		if ( side_one == angle.second.first && side_two == angle.second.second ) return true;
-		if ( side_two == angle.second.first && side_one == angle.second.second ) return true;
-	}
-
-	return false;
-}
-
-Real
-ErraserMinimizerMover::ideal_length(
-	std::string const & pucker,
-	std::string const & name,
-	std::string const & name1,
-	std::string const & name2
-) {
-	// We could work with this for inter-residue measures too...
-	// OK, here's the deal. We have a map of ideal residues to draw on.
-	return ideal_poses_[ pucker ][ name ].residue(2).xyz( name1 ).distance(
-		ideal_poses_[ pucker ][ name ].residue(2).xyz( name2 ) );
-}
-
-Real
-ErraserMinimizerMover::ideal_length_ncnt(
-	std::string const & name,
-	std::string const & name1,
-	std::string const & name2
-) {
-	// We could work with this for inter-residue measures too...
-	// OK, here's the deal. We have a map of ideal residues to draw on.
-	return ideal_ncnt_poses_[ name ].residue(2).xyz( name1 ).distance(
-		ideal_ncnt_poses_[ name ].residue(2).xyz( name2 ) );
-}
-
-
-Real
-ErraserMinimizerMover::ideal_angle(
-	std::string const & pucker,
-	std::string const & name,
-	std::string const & name1,
-	Size const no1,
-	std::string const & name2,
-	Size const no2,
-	std::string const & name3,
-	Size const no3
-) {
-	// We could work with this for inter-residue measures too...
-	// OK, here's the deal. We have a map of ideal residues to draw on.
-	return angle_radians(
-		ideal_poses_[ pucker ][ name ].residue(no1).xyz( name1 ),
-		ideal_poses_[ pucker ][ name ].residue(no2).xyz( name2 ),
-		ideal_poses_[ pucker ][ name ].residue(no3).xyz( name3 )
-	);
-}
-
-Real
-ErraserMinimizerMover::ideal_angle_ncnt(
-	std::string const & name,
-	std::string const & name1,
-	Size const no1,
-	std::string const & name2,
-	Size const no2,
-	std::string const & name3,
-	Size const no3
-) {
-	// We could work with this for inter-residue measures too...
-	// OK, here's the deal. We have a map of ideal residues to draw on.
-	return angle_radians(
-		ideal_ncnt_poses_[ name ].residue(no1).xyz( name1 ),
-		ideal_ncnt_poses_[ name ].residue(no2).xyz( name2 ),
-		ideal_ncnt_poses_[ name ].residue(no3).xyz( name3 )
-	);
-}
-
-bool
-ErraserMinimizerMover::ideal_has_atom(
-	ResidueType const & rt,
-	std::string const & an
-) {
-	// Look in ncnt or normal?
-	if ( rt.name1() == 'X' ) {
-		return ideal_ncnt_poses_[ rt.name3() ].residue_type( 2 ).has( an );
-	} else {
-		return ideal_poses_[ "north" ][ rt.name3() ].residue_type( 2 ).has( an );
-	}
-}
-
-void
-ErraserMinimizerMover::add_bond_constraint(
-	AtomID const & atom_id1,
-	AtomID const & atom_id2,
-	core::pose::Pose const & pose,
-	core::scoring::constraints::ConstraintSetOP & cst_set
-) {
-	#define IDEAL_PHOS 1.60708825
-	Real const delta_cutoff = 115.0;
-	std::string const & atom_name1 = pose.residue_type( atom_id1.rsd() ).atom_name( atom_id1.atomno() );
-	std::string const & atom_name2 = pose.residue_type( atom_id2.rsd() ).atom_name( atom_id2.atomno() );
-
-	if ( !ideal_has_atom( pose.residue_type( atom_id1.rsd() ), atom_name1 ) ) return;
-	if ( !ideal_has_atom( pose.residue_type( atom_id2.rsd() ), atom_name2 ) ) return;
-
-	// already addressed, just return
-	if ( check_in_bonded_list( atom_id1, atom_id2 ) ) return;
-	bonded_atom_list_.push_back( std::make_pair( atom_id1, atom_id2 ) );
-
-	Real const bond_length_sd_( 0.05 );
-	Real bond_length = 0;//( pose_reference_.residue( atom_id1.rsd() ).xyz( atom_name1 ) -
-	//pose_reference_.residue( atom_id2.rsd() ).xyz( atom_name2 ) ).length();
-	// either same or different residue
-	if ( atom_id1.rsd() == atom_id2.rsd() ) {
-		if ( pose.residue_type( atom_id1.rsd() ).name1() == 'X' ) {
-			bond_length = ideal_length_ncnt( pose.residue_type( atom_id1.rsd() ).name3(), atom_name1, atom_name2 );
-		} else {
-			std::string pucker = pose.torsion( TorsionID( atom_id1.rsd(), id::BB, DELTA) ) > delta_cutoff ? "south" : "north";
-			bond_length = ideal_length( pucker, pose.residue_type( atom_id1.rsd() ).name3(), atom_name1, atom_name2 );
-		}
-	} else {
-		// polymeric connection for them to be bonded in atom tree--so we are
-		// assuming either O5' to LOWER or O3' to UPPER?
-		bond_length = IDEAL_PHOS; // ( ideal_length( pucker, pose.residue_type( atom_id1.rsd() ).name()
-	}
-	func::FuncOP dist_harm_func_( new core::scoring::func::HarmonicFunc( bond_length, bond_length_sd_ ) );
-	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( atom_id1, atom_id2, dist_harm_func_, rna_bond_geometry ) ) ) );
-
-	TR.Trace << "PUTTING CONSTRAINT ON DISTANCE: " <<
-		atom_id2.rsd() << " " << atom_name1 << "; "  <<
-		atom_id1.rsd() << " " << atom_name2 << " "  <<
-		bond_length << std::endl;
-}
-
-void
-ErraserMinimizerMover::add_bond_angle_constraint(
-	AtomID const & atom_id1,
-	AtomID const & atom_id2,
-	AtomID const & atom_id3,
-	core::pose::Pose const & pose,
-	core::scoring::constraints::ConstraintSetOP & cst_set
-) {
-	Real const delta_cutoff = 115.0;
-	if ( atom_id2 == atom_id3 ) return;
-	if ( atom_id1 == atom_id3 ) return;
-	if ( atom_id1 == atom_id2 ) return;
-
-	std::string const & atom_name1 = pose.residue_type( atom_id1.rsd() ).atom_name( atom_id1.atomno() );
-	std::string const & atom_name2 = pose.residue_type( atom_id2.rsd() ).atom_name( atom_id2.atomno() );
-	std::string const & atom_name3 = pose.residue_type( atom_id3.rsd() ).atom_name( atom_id3.atomno() );
-
-	if ( !ideal_has_atom( pose.residue_type( atom_id1.rsd() ), atom_name1 ) ) return;
-	if ( !ideal_has_atom( pose.residue_type( atom_id2.rsd() ), atom_name2 ) ) return;
-	if ( !ideal_has_atom( pose.residue_type( atom_id3.rsd() ), atom_name3 ) ) return;
-
-	// if already handled, return
-	if ( check_in_bond_angle_list( atom_id1, atom_id2, atom_id3 ) ) return;
-
-	bond_angle_list_.push_back( std::make_pair( atom_id1, std::make_pair( atom_id2, atom_id3 ) ) );
-	Real const bond_angle_sd_( radians( 3.0 ) );
-	// pass rn - min + 1
-	Size smallest_rn = std::min( atom_id1.rsd(), std::min( atom_id2.rsd(), atom_id3.rsd() ) );
-	std::string pucker = pose.torsion( TorsionID( atom_id1.rsd(), id::BB, DELTA) ) > delta_cutoff ? "south" : "north";
-	Real bond_angle = 0;
-	if ( pose.residue_type( atom_id1.rsd() ).name1() == 'X' ) {
-		bond_angle =
-			ideal_angle_ncnt(
-			pose.residue_type( atom_id1.rsd() ).name3(),
-			atom_name2,
-			atom_id2.rsd() - smallest_rn + 2,
-			atom_name1,
-			atom_id1.rsd() - smallest_rn + 2,
-			atom_name3,
-			atom_id3.rsd() - smallest_rn + 2
-		);
-	} else {
-		bond_angle =
-			ideal_angle( pucker,
-			pose.residue_type( atom_id1.rsd() ).name3(),
-			atom_name2,
-			atom_id2.rsd() - smallest_rn + 2,
-			atom_name1,
-			atom_id1.rsd() - smallest_rn + 2,
-			atom_name3,
-			atom_id3.rsd() - smallest_rn + 2
-		);
-	}
-
-	if ( bond_angle < 0.001 ) TR.Warning << "WHAT THE HELL????????? " << std::endl;
-
-	cst_set->add_constraint( ConstraintCOP( new AngleConstraint(
-		atom_id2, atom_id1, atom_id3,
-		FuncOP( new HarmonicFunc( bond_angle, bond_angle_sd_ ) ),
-		rna_bond_geometry ) ) );
-
-	TR.Trace << "PUTTING CONSTRAINT ON ANGLE: "
-		<< atom_id2.rsd() << " " << atom_name2 << "; "
-		<< atom_id1.rsd() << " " << atom_name1 << "; "
-		<< atom_id3.rsd() << " " << atom_name3 << " ==> "
-		<< degrees( bond_angle ) << " " << degrees( bond_angle_sd_ ) << std::endl;
-}
-
-bool
-ErraserMinimizerMover::check_if_connected_in_atom_tree(
-	core::pose::Pose const & pose,
-	AtomID const & atom_id1,
-	AtomID const & atom_id2
-) {
-	if ( atom_id1.rsd() == atom_id2.rsd() ) return true;
-
-	core::kinematics::tree::AtomCOP atom1( pose.atom_tree().atom( atom_id1 ).get_self_ptr() );
-	core::kinematics::tree::AtomCOP atom2( pose.atom_tree().atom( atom_id2 ).get_self_ptr() );
-
-	if ( atom1->parent() == atom2 ) return true;
-	if ( atom2->parent() == atom1 ) return true;
-
-	return false;
 }
 
 // Virts and sidechain atoms that aren't the first base atom should not move
@@ -517,8 +234,8 @@ ErraserMinimizerMover::i_want_this_atom_to_move(
 	chemical::ResidueType const & residue_type,
 	Size const & atomno
 ) {
-	if ( atomno > residue_type.first_sidechain_atom() &&
-			atomno != chemical::rna::first_base_atom_index( residue_type ) ) return false;
+	// First trial. I just want to fix this nonplanar ring, but maybe this will make tiny improvements in general.
+	runtime_assert( scorefxn_->get_weight( cart_bonded ) > 0 );
 
 	if ( residue_type.is_virtual( atomno ) ) {
 		//  TR << "Is this virtual? " << residue2.atom_name( atomno ) << std::endl;
@@ -537,8 +254,6 @@ ErraserMinimizerMover::vary_bond_geometry(
 	ObjexxFCL::FArray1D< bool > & allow_insert, // Operationally: not fixed, cutpoint, virt
 	std::set< Size > const & chunk
 ) {
-	ConstraintSetOP cst_set = pose.constraint_set()->clone();
-
 	Size const nres( pose.size() );
 	TR << "Enter vary_bond_geometry....." << std::endl;
 
@@ -555,7 +270,8 @@ ErraserMinimizerMover::vary_bond_geometry(
 
 		if ( chunk.find( i ) == chunk.end() ) continue;
 		if ( pose.residue_type( i ).aa() == core::chemical::aa_vrt ) continue; //FCC
-		if ( !allow_insert( i ) ) continue;
+		// can't skip just for allow_insert false: carbohydrates can misleadingly have this
+		if ( !allow_insert( i ) && !pose.residue_type( i ).is_carbohydrate() ) continue;
 
 		chemical::ResidueType const & residue_type( pose.residue_type( i ) );
 
@@ -596,94 +312,6 @@ ErraserMinimizerMover::vary_bond_geometry(
 			mm.set( DOF_ID( AtomID( j, i ), PHI ), true );
 		}
 	}
-
-	// Next, build lists on bonds and bond angles and restrain them to present values.
-	for ( Size i = 1; i <= nres; i++ )  {
-		// Don't do anything for protein residues, because we don't have them as ideals.
-		// In the future, apply cart_bonded.
-		if ( pose.residue_type( i ).is_protein() ) continue;
-
-		if ( chunk.find( i ) == chunk.end() ) continue;
-		if ( pose.residue_type( i ).aa() == core::chemical::aa_vrt ) continue; //FCC
-		if ( !allow_insert( i ) ) continue;
-
-		chemical::ResidueType const & residue_type( pose.residue_type( i ) );
-
-		for ( Size j = 1; j <= residue_type.natoms(); j++ ) {
-			if ( !i_want_this_atom_to_move( residue_type, j ) ) continue;
-
-			AtomID j_atomid( j, i );
-			utility::vector1< AtomID > nbrs( pose.conformation().bonded_neighbor_all_res( j_atomid ) );
-
-			// Constrain all mobile bond lengths.
-			for ( auto const & nbr : nbrs ) {
-				if ( nbr.rsd() > nres || nbr.rsd() < 1 ) continue;
-				// Don't do anything for protein residues, because we don't have them as ideals.
-				// In the future, apply cart_bonded.
-				if ( pose.residue_type( nbr.rsd() ).is_protein() ) continue;
-
-				chemical::ResidueType const & residue_type2( pose.residue_type( nbr.rsd() ) );
-				Size const k( nbr.atomno() );
-
-				if ( ! check_if_connected_in_atom_tree( pose, j_atomid, nbr ) ) continue;
-
-				if ( i_want_this_atom_to_move( residue_type2, k ) )  {
-					add_bond_constraint( j_atomid, nbr, pose, cst_set );
-				}
-			}
-
-			// Bond angles
-			for ( auto const & nbr : nbrs ) {
-				if ( nbr.rsd() > nres || nbr.rsd() < 1 ) continue;
-				// Don't do anything for protein residues, because we don't have them as ideals.
-				// In the future, apply cart_bonded.
-				if ( pose.residue_type( nbr.rsd() ).is_protein() ) continue;
-
-				chemical::ResidueType const & residue_type2( pose.residue_type( nbr.rsd() ) );
-
-				if ( ! check_if_connected_in_atom_tree( pose, j_atomid, nbr ) ) continue;
-				Size const k( nbr.atomno() ) ;
-
-				for ( auto const & ang_nbr : nbrs ) {
-					// Don't do anything for protein residues, because we don't have them as ideals.
-					// In the future, apply cart_bonded.
-					if ( pose.residue_type( ang_nbr.rsd() ).is_protein() ) continue;
-
-					if ( ang_nbr.rsd() > nres || ang_nbr.rsd() < 1 ) continue;
-					chemical::ResidueType const & residue_type3( pose.residue_type( ang_nbr.rsd() ) );
-
-					if ( !check_if_connected_in_atom_tree( pose, j_atomid, ang_nbr ) ) continue;
-					Size const q( ang_nbr.atomno() ) ;
-
-					if ( i_want_this_atom_to_move( residue_type2, k ) &&
-							i_want_this_atom_to_move( residue_type3, q ) )  {
-						add_bond_angle_constraint( j_atomid, nbr, ang_nbr, pose, cst_set );
-					}
-				}
-
-				utility::vector1< AtomID > nbrs2( pose.conformation().bonded_neighbor_all_res( nbr ) );
-
-				for ( auto const & nbr2 : nbrs2 ) {
-					// Don't do anything for protein residues, because we don't have them as ideals.
-					// In the future, apply cart_bonded.
-					if ( pose.residue_type( nbr2.rsd() ).is_protein() ) continue;
-
-					if ( nbr2.rsd() > nres || nbr2.rsd() < 1 ) break;
-					chemical::ResidueType const & residue_type3( pose.residue_type( nbr2.rsd() ) );
-
-					if ( ! check_if_connected_in_atom_tree( pose, nbr, nbr2 ) ) continue;
-					Size const q( nbr2.atomno() ) ;
-
-					if ( i_want_this_atom_to_move( residue_type2, k ) &&
-							i_want_this_atom_to_move( residue_type3, q ) )  {
-						add_bond_angle_constraint( j_atomid, nbr, nbr2, pose, cst_set );
-					}
-				}
-			}
-		}
-	}
-
-	pose.constraint_set( cst_set );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -696,6 +324,14 @@ ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 	if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
 		TR.Warning << "add_virtual_res() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
 		return pose.fold_tree().root();
+	}
+
+	if ( pose.residue_type( nres ).aa() == core::chemical::aa_vrt ) {
+		TR.Warning << "add_virtual_res() called but pose already has a VRT residue ... rerooting." << std::endl;
+		kinematics::FoldTree newF( pose.fold_tree() );
+		newF.reorder( nres );
+		pose.fold_tree( newF );
+		return nres;
 	}
 
 	// attach virt res there
@@ -971,39 +607,39 @@ identify_chunks(
 	utility::vector1< std::set< Size > > res_list_sliced;
 	std::set< Size > res_list_current;
 	while ( res_list_unsliced.size() != 0 ) {
-		TR << "Unsliced: " << res_list_unsliced.size() << std::endl;
-		TR << "Current:  " << res_list_current.size() << std::endl;
+		TR.Trace << "Unsliced: " << res_list_unsliced.size() << std::endl;
+		TR.Trace << "Current:  " << res_list_current.size() << std::endl;
 		for ( auto const & sl : sliced_list_final ) {
-			TR << "One slice:  " << sl.size() << std::endl;
+			TR.Trace << "One slice:  " << sl.size() << std::endl;
 		}
 
 		if ( res_list_current.size() == 0 ) {
 			// python pop 0 to res_list_current
 			Size res = *res_list_unsliced.begin();
-			TR << "Starting new chunk from scratch with res " << res << std::endl;
+			TR.Trace << "Starting new chunk from scratch with res " << res << std::endl;
 			chunk_size = res_list_unsliced.size() / n_chunk_left;
 			res_list_unsliced.erase(res_list_unsliced.begin());
 			res_list_current.insert( res );
-			TR << "Objective is to get " << chunk_size << " res in this chunk." << std::endl;
+			TR.Trace << "Objective is to get " << chunk_size << " res in this chunk." << std::endl;
 			n_chunk_left -= 1;
 		}
 
 		std::set< Size > res_list_new = find_nearby_res(pose, res_list_current, 3.5 );
-		TR << "Adding " << res_list_new.size() << " new residues near res_list_current" << std::endl;
-		TR << "To wit, res_list_new: [ ";
-		for ( auto const elem : res_list_new ) TR << elem << " ";
-		TR << "]" << std::endl;
+		TR.Trace << "Adding " << res_list_new.size() << " new residues near res_list_current" << std::endl;
+		TR.Trace << "To wit, res_list_new: [ ";
+		for ( auto const elem : res_list_new ) TR.Trace << elem << " ";
+		TR.Trace << "]" << std::endl;
 
 		// Remove all residues previously in a res list from res_list_new
 		clean_res_list( res_list_new, res_list_sliced );
 
 		if ( res_list_new.size() == 0 && res_list_current.size() < chunk_size * 0.7 ) {
-			TR << "No nearby new residues identified, but the current res list size " <<  res_list_current.size();
-			TR << " is still less than chunk_size * 0.7 " << chunk_size * 0.7 << std::endl;
+			TR.Trace << "No nearby new residues identified, but the current res list size " <<  res_list_current.size();
+			TR.Trace << " is still less than chunk_size * 0.7 " << chunk_size * 0.7 << std::endl;
 			while ( true ) {
 				// "pop 0th element to res"
 				Size res = *res_list_unsliced.begin();
-				TR << "So, we pop " << res << std::endl;
+				TR.Trace << "So, we pop " << res << std::endl;
 				res_list_unsliced.erase(res_list_unsliced.begin());
 				if ( res_list_current.find( res ) == res_list_current.end() ) {
 					res_list_new.insert(res);
@@ -1012,21 +648,21 @@ identify_chunks(
 			}
 		}
 
-		TR << "Inserting res_list_new ( " << res_list_new.size() << " residues ) into current " << std::endl;
+		TR.Trace << "Inserting res_list_new ( " << res_list_new.size() << " residues ) into current " << std::endl;
 		res_list_current.insert( res_list_new.begin(), res_list_new.end() );
 
-		TR << "We have obtained a residue list of " << res_list_current.size() << " and our target chunk size is " << chunk_size << std::endl;
+		TR.Trace << "We have obtained a residue list of " << res_list_current.size() << " and our target chunk size is " << chunk_size << std::endl;
 		if ( res_list_current.size() >= chunk_size || res_list_new.size() == 0 ) {
-			TR << "We have exceeded chunk size with res_list_current or failed at res_list_new" << std::endl;
+			TR.Trace << "We have exceeded chunk size with res_list_current or failed at res_list_new" << std::endl;
 
-			TR << "res_list_current: [ ";
+			TR.Trace << "res_list_current: [ ";
 			for ( auto const elem : res_list_current ) TR << elem << " ";
-			TR << "]" << std::endl;
+			TR.Trace << "]" << std::endl;
 
 			std::set< Size > unused;
 			fill_gaps_and_remove_isolated_res( res_list_current, total_res, unused );
 
-			TR << "Gonna remove res_list_current from res_list_unsliced" << std::endl;
+			TR.Trace << "Gonna remove res_list_current from res_list_unsliced" << std::endl;
 			for ( auto const & res : res_list_current ) {
 				//TR << "Trying to remove " << res << std::endl;
 				if ( res_list_unsliced.find(res) != res_list_unsliced.end() ) {
@@ -1036,23 +672,23 @@ identify_chunks(
 				}
 			}
 
-			TR << "Gonna add this chunk to my lists of chunks" << std::endl;
+			TR.Trace << "Gonna add this chunk to my lists of chunks" << std::endl;
 			res_list_sliced.push_back( res_list_current );
 			sliced_list_final.push_back( res_list_current );
 			if ( n_chunk_left == 0 ) {
 				return;
 			} else if ( n_chunk_left == 1 ) {
-				TR << "What remains is: ";
+				TR.Trace << "What remains is: ";
 				for ( Size const res : res_list_unsliced ) TR << res << " ";
 				//if ( res_list_unsliced.size() == 0 ) break;
-				TR << std::endl;
+				TR.Trace << std::endl;
 				res_list_current = res_list_unsliced;
 				std::set< Size > removed_res;
 				fill_gaps_and_remove_isolated_res(res_list_current, total_res, removed_res);
 				sliced_list_final.push_back( res_list_current );
-				TR << "Adding res_list_current to the list of sliced_list_final" << std::endl;
+				TR.Trace << "Adding res_list_current to the list of sliced_list_final" << std::endl;
 				while ( removed_res.size() != 0 ) {
-					TR << "Trying to remove res from each sliced list, to some end" << std::endl;
+					TR.Trace << "Trying to remove res from each sliced list, to some end" << std::endl;
 					std::set< Size > res_remove;
 					for ( Size const res : removed_res ) {
 						std::set< Size > just_res;
@@ -1077,7 +713,7 @@ identify_chunks(
 				}
 				break;
 			} else {
-				TR << "Ready for new beginnings." << std::endl;
+				TR.Trace << "Ready for new beginnings." << std::endl;
 				res_list_current.clear();
 				res_list_current.insert(*res_list_unsliced.begin());
 				res_list_unsliced.erase(res_list_unsliced.begin());
@@ -1137,12 +773,16 @@ ErraserMinimizerMover::apply(
 
 	if ( ready_set_only_ ) return;
 
-	// Setup fold tree using user input or using Rhiju's function
-	if ( cutpoint_list_.size() == 0 ) {
-		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
-	} else {
-		setup_fold_tree( pose );
+	// If this pose 'comes with' a particularly opinionated FT, don't change it.
+	if ( pose.fold_tree().num_cutpoint() == 0 ) {
+		// Setup fold tree using user input or using Rhiju's function
+		if ( cutpoint_list_.size() == 0 ) {
+			core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
+		} else {
+			setup_fold_tree( pose );
+		}
 	}
+	//TR << pose.fold_tree();
 
 	// Add a virtual residue for density scoring
 	Size const virtual_res_pos = add_virtual_res( pose );
@@ -1154,16 +794,11 @@ ErraserMinimizerMover::apply(
 	std::string const & working_sequence = pose.sequence();
 	TR << "Pose sequence = " << working_sequence << std::endl;
 
-	TR << "Do we have to flip pyrimidines?" << std::endl;
 	// Try flipping the pyrimidines
 	if ( attempt_pyrimidine_flip_ ) {
+		TR << "Do we have to flip pyrimidines?" << std::endl;
 		pyrimidine_flip_trial( pose );
 	}
-	TR << "Back from a possibly pyrimidine flip trial." << std::endl;
-
-	TR << "Do we skip minimization?" << std::endl;
-	if ( skip_minimize_ ) return;
-	TR << "Apparently not." << std::endl;
 
 	// If we have more than 150 residues, we need to "slice." This involves
 	// designing ~100-residue chunks of the pose and making only those DOFs
@@ -1173,7 +808,6 @@ ErraserMinimizerMover::apply(
 	// an appropriate output file exists.
 	utility::vector1< std::set< Size > > chunks;
 	// AMW TODO: read chunks from temp file if exists
-	TR << "About to try to identify chunks if needed." << std::endl;
 	identify_chunks( pose, chunks, virtual_res_pos );
 	Size const n_chunk = chunks.size();
 	TR << "Identified " << n_chunk << " chunks" << std::endl;
@@ -1228,16 +862,26 @@ ErraserMinimizerMover::apply(
 	for ( Size i = 1; i <= fold_tree.num_jump(); ++i ) {
 		Size const ustream   = fold_tree.upstream_jump_residue( i );
 		Size const dstream = fold_tree.downstream_jump_residue( i );
+		TR << "Considering jump number " << i << " from " << ustream << " to " << dstream << std::endl;
 		cut_lower.insert( ustream );
 		cut_upper.insert( dstream );
 
 		if ( pose.residue_type( ustream ).aa() == core::chemical::aa_vrt ) continue;
 		if ( pose.residue_type( dstream ).aa() == core::chemical::aa_vrt ) continue;
 
-		if ( fixed_res_list_.size() != 0 &&
+		// Skip MG-water jumps. We do these poorly.
+		if ( ( pose.residue_type( ustream ).aa() == core::chemical::aa_h2o &&
+				pose.residue_type( dstream ).name() == "MG" ) ||
+				( pose.residue_type( dstream ).aa() == core::chemical::aa_h2o &&
+				pose.residue_type( ustream ).name() == "MG" ) ) continue;
+
+		TR << "not all virts..." << std::endl;
+		if ( fixed_res_list_.empty() || ( fixed_res_list_.size() != 0 &&
 				fixed_res_list_.find( ustream ) == fixed_res_list_.end() &&
-				fixed_res_list_.find( dstream ) == fixed_res_list_.end() ) {
+				fixed_res_list_.find( dstream ) == fixed_res_list_.end() ) ) {
 			mm.set_jump( i, true );
+
+			TR << "not fixed_res! " << fixed_res_list_ << std::endl;
 		}
 	}
 
@@ -1316,7 +960,6 @@ ErraserMinimizerMover::apply(
 		if ( n_chunk != 1 ) {
 			turn_off_for_chunks( chunk_mm, pose, chunks[chunk_i] );
 		}
-
 		protocols::stepwise::modeler::output_movemap( chunk_mm, pose );
 		scorefxn_->show( TR, pose );
 		Real const score_before = ( ( *scorefxn_ )( pose ) );
@@ -1328,36 +971,41 @@ ErraserMinimizerMover::apply(
 		// Start Minimizing the Full Structure
 		Pose const start_pose = pose;
 		AtomTreeMinimizer minimizer;
-		float const dummy_tol( 0.00000001 );
+		float const dummy_tol( 0.0001 );
+		Size const min_iter = std::min( 5000, std::max( 2000, int( nres_moving * 24 ) ) );
 
 		TR << "Minimize using dfpmin with use_nb_list=true .." << std::endl;
-		MinimizerOptions min_options_dfpmin( option[ run::min_type ], dummy_tol, true, false, false );
-		min_options_dfpmin.max_iter( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
+		MinimizerOptions min_options_dfpmin( "lbfgs_armijo_nonmonotone" /*option[ run::min_type ]*/, dummy_tol, true, false, false );
+		min_options_dfpmin.max_iter( min_iter );
 		minimizer.run( pose, chunk_mm, *scorefxn_, min_options_dfpmin );
 
 		scorefxn_->show( TR, pose );
 		Real const score = ( ( *scorefxn_ )( pose ) );
 		Real const edens_score = ( ( *edens_scorefxn_ )( pose ) );
+		TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
+		TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
+		/*
 		if ( score > score_before + 5 || edens_score > edens_score_before * 0.9 ) {
-			TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
-			TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
-			TR << "The minimization went wild!!! Try alternative minimization using dfpmin with use_nb_list=false .." << std::endl;
+		TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
+		TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
+		TR << "The minimization went wild!!! Try alternative minimization using dfpmin with use_nb_list=false .." << std::endl;
 
-			pose = start_pose;
+		pose = start_pose;
 
-			MinimizerOptions min_options_dfpmin_no_nb( "lbfgs_armijo_nonmonotone", dummy_tol, false, false, false );
-			min_options_dfpmin_no_nb.max_iter( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
-			minimizer.run( pose, chunk_mm, *scorefxn_, min_options_dfpmin_no_nb );
-			scorefxn_->show( std::cout, pose );
-			Real const score = ( ( *scorefxn_ ) ( pose ) );
-			Real const edens_score = ( ( *edens_scorefxn_ ) ( pose ) );
-			if ( score > score_before + 5 || edens_score > edens_score_before * 0.9 ) {
-				TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
-				TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
-				pose = start_pose;
-				TR << "The minimization went wild again!!! Skip the minimization!!!!!" << std::endl;
-			}
+		MinimizerOptions min_options_dfpmin_no_nb( "lbfgs_armijo_nonmonotone", dummy_tol, false, false, false );
+		min_options_dfpmin_no_nb.max_iter( min_iter );
+		minimizer.run( pose, chunk_mm, *scorefxn_, min_options_dfpmin_no_nb );
+		scorefxn_->show( std::cout, pose );
+		Real const score = ( ( *scorefxn_ ) ( pose ) );
+		Real const edens_score = ( ( *edens_scorefxn_ ) ( pose ) );
+		if ( score > score_before + 5 || edens_score > edens_score_before * 0.9 ) {
+		TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
+		TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
+		pose = start_pose;
+		TR << "The minimization went wild again!!! Skip the minimization!!!!!" << std::endl;
 		}
+		}
+		*/
 		time_t chunk_end = time(0);
 		out << "CPU time for chunk: " << (chunk_end-chunk_start) << " seconds." << std::endl;
 		out << "DONE!" << std::endl;
@@ -1366,6 +1014,8 @@ ErraserMinimizerMover::apply(
 		pose.pdb_info()->obsolete( false );
 
 		pose.dump_pdb( fn.str() );
+
+		protocols::viewer::clear_conformation_viewers();
 	}
 	pose.pdb_info()->obsolete( false );
 

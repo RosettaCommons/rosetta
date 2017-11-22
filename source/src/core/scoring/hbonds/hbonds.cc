@@ -499,6 +499,19 @@ identify_hbonds_1way(
 			//std::cout << "coords " << acc_rsd.atom(aatm ) << "\t" << acc_rsd.atom(base ) << "\t" << acc_rsd.atom(base2) << std::endl;
 			//std::cout << "seqpos " << don_rsd.seqpos() << "\t" << acc_rsd.seqpos() << std::endl;
 
+			// Just skip nans for now?
+			/*if ( acc_rsd.atom(aatm ).xyz().x() != acc_rsd.atom(aatm ).xyz().x() ) continue;
+			if ( acc_rsd.atom(aatm ).xyz().y() != acc_rsd.atom(aatm ).xyz().y() ) continue;
+			if ( acc_rsd.atom(aatm ).xyz().z() != acc_rsd.atom(aatm ).xyz().z() ) continue;
+			if ( acc_rsd.atom(base ).xyz().x() != acc_rsd.atom(base ).xyz().x() ) continue;
+			if ( acc_rsd.atom(base ).xyz().y() != acc_rsd.atom(base ).xyz().y() ) continue;
+			if ( acc_rsd.atom(base ).xyz().z() != acc_rsd.atom(base ).xyz().z() ) continue;
+			if ( acc_rsd.atom(base2).xyz().x() != acc_rsd.atom(base2).xyz().x() ) continue;
+			if ( acc_rsd.atom(base2).xyz().y() != acc_rsd.atom(base2).xyz().y() ) continue;
+			if ( acc_rsd.atom(base2).xyz().z() != acc_rsd.atom(base2).xyz().z() ) continue;
+			*/
+			//std::cout << "not skipping... " << std::endl;
+
 			hb_energy_deriv( database, hbond_set.hbond_options(),
 				hbe_type, datm_xyz, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz(),
