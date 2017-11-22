@@ -205,6 +205,11 @@ public:
 		return TracerImpl::get_all_channels_string();
 	}
 
+	/// @brief global super mute flag that allow to mute all io no matter what.
+	static bool super_mute() { return TracerImpl::super_mute(); }
+	static void super_mute(bool f) { TracerImpl::super_mute(f); }
+
+
 protected:
 
 	/// @brief The function which handles the construct-on-first use

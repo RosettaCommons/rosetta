@@ -14,6 +14,8 @@ print('-------- Test/Demo for capturing Tracers output in PyRosetta --------')
 import rosetta, pyrosetta
 
 
+rosetta.basic.Tracer.super_mute(False)
+
 T = rosetta.basic.PyTracer()
 rosetta.basic.Tracer.set_ios_hook(T, rosetta.basic.Tracer.get_all_channels_string(), False)
 
