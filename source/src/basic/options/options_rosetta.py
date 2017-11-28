@@ -4297,6 +4297,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 ),
 	),
 
+	Option_Group( 'partial_thread',
+		Option( 'skip_repack', 'Boolean', desc= 'Do not repack sidechain missing density and idealize/optimize h-bonds', default = 'false' ),
+	),
+
 	Option_Group( 'cm', # comparative modeling
 		Option_Group('sanitize',
 #			Option('bound_delta', 'Real', desc = 'Distance in Angstroms from aligned position before a penalty is incurred', default = '0.5'),

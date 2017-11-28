@@ -54,6 +54,7 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
+#include <basic/options/keys/partial_thread.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -117,6 +118,7 @@ main( int argc, char* argv [] ) {
 
 		SequenceOP fasta_seq = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1];
 		map< string, Pose > poses = poses_from_cmd_line( option[ in::file::template_pdb ]() );
+		bool skip_repack = option[ partial_thread::skip_repack ]();
 
 		vector1< string > align_fns = option[ in::file::alignment ]();
 		typedef vector1< string >::const_iterator aln_iter;
@@ -143,7 +145,7 @@ main( int argc, char* argv [] ) {
 					Pose query_pose, template_pose;
 					make_pose_from_sequence( query_pose, fasta_seq->sequence(), *(rsd_set_from_cmd_line().lock()) );
 					template_pose = pose_it->second;
-					PartialThreadingMover mover(*it,template_pose);
+					PartialThreadingMover mover(*it,template_pose,skip_repack);
 					mover.apply(query_pose);
 					string const id_out( it->sequence(2)->id() );
 

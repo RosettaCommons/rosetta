@@ -52,8 +52,9 @@ static basic::Tracer tr( "protocols.comparative_modeling.threading" );
 
 PartialThreadingMover::PartialThreadingMover(
 	core::sequence::SequenceAlignment const & align,
-	core::pose::Pose const & template_pose
-) : template_pose_( template_pose ), align_( align ) {}
+	core::pose::Pose const & template_pose,
+	bool const skip_repack
+) : template_pose_( template_pose ), align_( align ), skip_repack_( skip_repack ) {}
 
 void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 	using namespace core::scoring;
@@ -128,15 +129,18 @@ void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 
 	//////////
 	// 3) repack all missing atoms & idealize H
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-	core::pack::pack_missing_sidechains( query_pose, missing );
+	if ( skip_repack_ == false ) {
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+		core::pack::pack_missing_sidechains( query_pose, missing );
 
-	for ( core::Size ii = 1; ii <= query_pose.size(); ++ii ) {
-		core::conformation::ResidueOP iires = query_pose.residue( ii ).clone();
-		core::conformation::idealize_hydrogens( *iires, query_pose.conformation() );
-		query_pose.replace_residue( ii, *iires, false );
+		for ( core::Size ii = 1; ii <= query_pose.size(); ++ii ) {
+			core::conformation::ResidueOP iires = query_pose.residue( ii ).clone();
+			core::conformation::idealize_hydrogens( *iires, query_pose.conformation() );
+			query_pose.replace_residue( ii, *iires, false );
+		}
+		core::pack::optimize_H_and_notify( query_pose, missing );
 	}
-	core::pack::optimize_H_and_notify( query_pose, missing );
+
 } // apply
 
 

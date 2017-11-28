@@ -41,7 +41,8 @@ public:
 	/// threading model.
 	PartialThreadingMover(
 		core::sequence::SequenceAlignment const & align,
-		core::pose::Pose const & template_pose
+		core::pose::Pose const & template_pose,
+		bool const skip_repack = false
 	);
 
 	~PartialThreadingMover() override = default;
@@ -55,6 +56,8 @@ public:
 private:
 	core::pose::Pose template_pose_;
 	core::sequence::SequenceAlignment align_;
+	bool skip_repack_;
+
 }; // PartialThreadingMover
 
 } // comparative_modeling
