@@ -149,8 +149,6 @@ bool RNA_SilentStruct::init_from_lines(
 	utility::vector1< std::string > const & lines,
 	SilentFileData & container
 ) {
-	bool success( false );
-
 	utility::vector1< std::string > energy_names_;
 	utility::vector1< std::string >::const_iterator iter = lines.begin();
 	if ( iter->substr(0,9) != "SEQUENCE:" ) {
@@ -181,7 +179,7 @@ bool RNA_SilentStruct::init_from_lines(
 			tr.Error << "bad format in sequence line of silent file" << std::endl;
 			tr.Error << "line = " << *iter << std::endl;
 			tr.Error << "tag = " << tag << std::endl;
-			return success;
+			return false; /*false means failure*/
 		}
 		sequence( temp_seq );
 
@@ -345,8 +343,7 @@ bool RNA_SilentStruct::init_from_lines(
 
 			if ( tag != decoy_tag() ) { // decoy_tag should be last tag.
 				tr.Warning  << "parse error(" << *iter << ") " << tag << " != " << decoy_tag() << std::endl;
-				success = false;
-				break;
+				return false; /*false means failure*/
 			}
 		} // conformation lines
 	} // for ( iter ... )
@@ -356,8 +353,7 @@ bool RNA_SilentStruct::init_from_lines(
 		tr.Debug << " generating simple fold-tree " << fold_tree();
 	}
 
-	success = true;
-	return success;
+	return true; /*true means success*/
 } // init_from_lines
 
 /// @brief Resize this silent-struct to the appropriate number of residues.

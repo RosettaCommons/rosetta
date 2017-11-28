@@ -1439,8 +1439,8 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 
 	//int cend = clock();
 	pose->energies().reset_nblist();
-	std::cout << "STARTSCORE: --------- " << std::endl;
 	start_score = scorefxn( *pose );
+	std::cout << "STARTSCORE: --------- " << start_score << std::endl;
 	scorefxn.show(std::cout, *pose);
 
 	//std::cout << "setup_for_scoring" << std::endl;

@@ -123,7 +123,6 @@ int main( int argc, char * argv [] ) {
 		core::Real const steric_wt = option[ steric_weight ];
 		core::Real const missing_pt_wt = option[ missing_point_weight ];
 		core::Real const extra_pt_wt = option[ extra_point_weight ];
-		core::Real origin_space = option[ origin_cutoff ];
 		std::string const input_espGrid_file = option[ espGrid_file ];
 
 		using namespace basic::options;
@@ -153,7 +152,7 @@ int main( int argc, char * argv [] ) {
 		}
 
 		//get search space from grid dimensions
-		origin_space = std::max( std::max( (npf.pocketGrid_dim_.x()/2)*npf.pocketGrid_spacing_ , (npf.pocketGrid_dim_.y()/2)*npf.pocketGrid_spacing_ ) , (npf.pocketGrid_dim_.z()/2)*npf.pocketGrid_spacing_ );
+		core::Real origin_space = std::max( std::max( (npf.pocketGrid_dim_.x()/2)*npf.pocketGrid_spacing_ , (npf.pocketGrid_dim_.y()/2)*npf.pocketGrid_spacing_ ) , (npf.pocketGrid_dim_.z()/2)*npf.pocketGrid_spacing_ );
 		std::cout<<"origin_space : "<< origin_space <<std::endl;
 
 		// Input ligands can be read in by several ways

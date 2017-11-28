@@ -264,7 +264,7 @@ main( int argc, char * argv [] )
 						if ( input_pose.pdb_info()->number(j) - input_pose.pdb_info()->number(k)<6 && input_pose.pdb_info()->number(k) - input_pose.pdb_info()->number(j)<6 ) continue;
 
 
-						core::Real tx=0,ty=0,tz =0;
+						//core::Real tx=0,ty=0,tz =0;
 						core::Real cminX=tx1,cminY=ty1,cminZ=tz1,cmaxX=tx1,cmaxY=ty1,cmaxZ=tz1;
 						if ( cminX > tx2 ) cminX = tx2;
 						if ( cminY > ty2 ) cminY = ty2;
@@ -286,28 +286,30 @@ main( int argc, char * argv [] )
 
 
 
-						int count=0;
+						// As far as I can tell, the following calculation was figuring out a centroid position without
+						// ever using the result.  We can skip this if we're not going to use it.
+						/*int count=0;
 						//core::conformation::Residue const & rsd1 = input_pose.residue(j);
 						//core::conformation::Residue const & rsd2 = input_pose.residue(k);
 						for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
-							if ( !rsd1.atom_is_backbone(i) && !rsd1.atom_is_hydrogen(i) ) {
-								tx+=rsd1.atom(i).xyz()(1);
-								ty+=rsd1.atom(i).xyz()(2);
-								tz+=rsd1.atom(i).xyz()(3);
-								count++;
-							}
+						if ( !rsd1.atom_is_backbone(i) && !rsd1.atom_is_hydrogen(i) ) {
+						tx+=rsd1.atom(i).xyz()(1);
+						ty+=rsd1.atom(i).xyz()(2);
+						tz+=rsd1.atom(i).xyz()(3);
+						count++;
+						}
 						}
 						tx+=rsd1.xyz("CA")(1);
 						ty+=rsd1.xyz("CA")(2);
 						tz+=rsd1.xyz("CA")(3);
 						count++;
 						for ( Size i = 1, i_end = rsd2.nheavyatoms(); i <= i_end; ++i ) {
-							if ( !rsd2.atom_is_backbone(i) && !rsd2.atom_is_hydrogen(i) ) {
-								tx+=rsd2.atom(i).xyz()(1);
-								ty+=rsd2.atom(i).xyz()(2);
-								tz+=rsd2.atom(i).xyz()(3);
-								count++;
-							}
+						if ( !rsd2.atom_is_backbone(i) && !rsd2.atom_is_hydrogen(i) ) {
+						tx+=rsd2.atom(i).xyz()(1);
+						ty+=rsd2.atom(i).xyz()(2);
+						tz+=rsd2.atom(i).xyz()(3);
+						count++;
+						}
 						}
 						tx+=rsd2.xyz("CA")(1);
 						ty+=rsd2.xyz("CA")(2);
@@ -315,7 +317,7 @@ main( int argc, char * argv [] )
 						count++;
 						tx/=count;
 						ty/=count;
-						tz/=count;
+						tz/=count;*/
 
 						int gridResCount=0;
 						core::Real gridDDG = 0.;

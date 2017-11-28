@@ -1475,9 +1475,11 @@ make_fragments() {
 						core::Real dist2 = 999.0;
 						if ( rsd_j.aa() != core::chemical::aa_pro ) {
 							if ( rsd_j.is_lower_terminus() && !rsd_j.has("H") ) {
+								// The logic below was using "dist1" instead of "dist2", which made no sense.
+								// Corrected by VKM, 26 Nov. 2017.
 								dist2 =                  (rsd_j.atom("1H").xyz() - rsd_k.atom("O").xyz()).length_squared();
-								dist2 = std::min( dist1, (rsd_j.atom("2H").xyz() - rsd_k.atom("O").xyz()).length_squared() );
-								dist2 = std::min( dist1, (rsd_j.atom("3H").xyz() - rsd_k.atom("O").xyz()).length_squared() );
+								dist2 = std::min( dist2, (rsd_j.atom("2H").xyz() - rsd_k.atom("O").xyz()).length_squared() );
+								dist2 = std::min( dist2, (rsd_j.atom("3H").xyz() - rsd_k.atom("O").xyz()).length_squared() );
 							} else {
 								dist2 = (rsd_j.atom("H").xyz() - rsd_k.atom("O").xyz()).length_squared();
 							}

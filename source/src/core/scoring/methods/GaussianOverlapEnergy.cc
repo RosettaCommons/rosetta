@@ -128,8 +128,8 @@ GaussianOverlapEnergy::residue_pair_energy(
 				score = (r1+r2)/(d2*d2*d2*d2*sqrt(d2));
 			} else {
 				score = ((sqrt(numeric::NumericTraits<Real>::pi())*r1*r2)/(sqrt(r1*r1+r2*r2)))*(exp(-d2/(r1*r1+r2*r2)));
-				emap[ gauss ] += score;
 			}
+			emap[ gauss ] += score; //This was incorrectly placed in the "else" block above.  --VKM, 26 Nov. 2017.
 		}
 	}
 }

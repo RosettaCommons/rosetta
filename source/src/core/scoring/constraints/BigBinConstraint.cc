@@ -180,37 +180,39 @@ void BigBinConstraint::read_def(
 	}
 
 	Real const two_pi( 6.283185 );
-	Real omega_lower_ = radians( -175.0 );
-	Real omega_upper_ = radians(  175.0 );
+	Real omega_lower = radians( -175.0 );
+	Real omega_upper = radians(  175.0 );
 
 	using ObjexxFCL::string_of;
 
 	if ( bin_ == 'O' ) {
-		omega_lower_ = radians( -10.0 );
-		omega_upper_ = radians(  10.0 );
+		//The following assignments are never used, and were flagged by clang analysis.
+		//Uncomment if ever they're to be used for something.
+		/*omega_lower = radians( -10.0 );
+		omega_upper = radians(  10.0 );*/
 	} else {
-		Real psi_upper_( 0.0 ), psi_lower_( 0.0 );
-		Real phi_upper_( 0.0 ), phi_lower_( 0.0 );
+		Real psi_upper( 0.0 ), psi_lower( 0.0 );
+		Real phi_upper( 0.0 ), phi_lower( 0.0 );
 		if ( bin_ == 'G' ) {
-			phi_lower_ = radians(    0.0 );
-			phi_upper_ = radians(  180.0 );
-			psi_lower_ = radians( -100.0 );
-			psi_upper_ = radians(  100.0 );
+			phi_lower = radians(    0.0 );
+			phi_upper = radians(  180.0 );
+			psi_lower = radians( -100.0 );
+			psi_upper = radians(  100.0 );
 		} else if ( bin_ == 'E' ) {
-			phi_lower_ = radians(    0.0 );
-			phi_upper_ = radians(  180.0 );
-			psi_lower_ = radians(  100.0 );
-			psi_upper_ = radians(  -90.0 );
+			phi_lower = radians(    0.0 );
+			phi_upper = radians(  180.0 );
+			psi_lower = radians(  100.0 );
+			psi_upper = radians(  -90.0 );
 		} else if ( bin_ == 'A' ) {
-			phi_lower_ = radians( -180.0 );
-			phi_upper_ = radians(    0.0 );
-			psi_lower_ = radians(  -50.0 );
-			psi_upper_ = radians(  -30.0 );
+			phi_lower = radians( -180.0 );
+			phi_upper = radians(    0.0 );
+			psi_lower = radians(  -50.0 );
+			psi_upper = radians(  -30.0 );
 		} else if ( bin_ == 'B' ) {
-			phi_lower_ = radians( -180.0 );
-			phi_upper_ = radians(    0.0 );
-			psi_lower_ = radians(  100.0 );
-			psi_upper_ = radians(  175.0 );
+			phi_lower = radians( -180.0 );
+			phi_upper = radians(    0.0 );
+			psi_lower = radians(  100.0 );
+			psi_upper = radians(  175.0 );
 		} else {
 			utility_exit_with_message(
 				"Error: don't recognize bin " + string_of(bin_) + "!"
@@ -218,13 +220,13 @@ void BigBinConstraint::read_def(
 		}
 
 		func::FuncOP phi_func( new PeriodicBoundFunc(
-			phi_lower_, phi_upper_, sdev_, "phi_" + string_of(bin_), two_pi
+			phi_lower, phi_upper, sdev_, "phi_" + string_of(bin_), two_pi
 			) );
 		func::FuncOP psi_func( new PeriodicBoundFunc(
-			psi_lower_, psi_upper_, sdev_, "psi_" + string_of(bin_), two_pi
+			psi_lower, psi_upper, sdev_, "psi_" + string_of(bin_), two_pi
 			) );
 		func::FuncOP omega_func( new PeriodicBoundFunc(
-			omega_lower_, omega_upper_, sdev_, "omega_" + string_of(bin_), two_pi
+			omega_lower, omega_upper, sdev_, "omega_" + string_of(bin_), two_pi
 			) );
 
 		ConstraintOP phi_cst( new DihedralConstraint( C0_, N1_, CA1_, C1_, phi_func ) );

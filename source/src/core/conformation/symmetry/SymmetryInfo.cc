@@ -680,7 +680,6 @@ SymmetryInfo::initialize(
 /////////////////////////////////////////////////////////////////////////////
 std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 {
-	bool fail( false );
 
 	std::string tag;
 	Size num_bb_indep, num_chi_indep, num_jump_indep;
@@ -694,10 +693,9 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 	//symminfo.torsion_changes_move_other_monomers_ = false;
 
 	s >> tag ;
-	if ( tag != "SYMMETRY_INFO" || s.fail() ) {
-		fail = true;
-	} else {
-		bool nres_monomer_set=false,
+	if ( tag == "SYMMETRY_INFO" && !s.fail() ) {
+		bool fail=false,
+			nres_monomer_set=false,
 			scoring_subunit_set=false,
 			njump_monomer_set=false,
 			npseudo_set=false,

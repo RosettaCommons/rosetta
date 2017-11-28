@@ -313,7 +313,7 @@ pep_rmsd_analysis(
 	Size prot_end,
 	Size pep_begin,
 	Size pep_anchor,
-	Size pep_end
+	Size const pep_end
 )
 {
 
@@ -356,10 +356,9 @@ pep_rmsd_analysis(
 	else if ( pep_nterm > ref_pep_nterm ) {
 		pep_begin += pep_nterm - ref_pep_nterm;
 		nterm = ref_pep_nterm;
-	}
-	if ( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm;
-	else if ( pep_cterm > ref_pep_cterm ) {
-		pep_end -= pep_cterm - ref_pep_cterm;
+	} else if ( pep_cterm > ref_pep_cterm ) {
+		//if ( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm; //This calculation is never used.
+		//pep_end -= pep_cterm - ref_pep_cterm; //This calculation is never used.
 		cterm = ref_pep_cterm;
 	}
 	//superpose if needed

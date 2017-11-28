@@ -1844,6 +1844,8 @@ print_vertices( std::list< PDvertexOP > & fv, std::list< PDvertexOP > & iv )
 			}
 		}
 
+		debug_assert( finite_partner != nullptr ); //Clang analysis seems to think that this pointer is null.
+
 		Vector vrt( finite_partner->xyz() + 5.0*(*itr)->direction() );
 		TR << "ATOM  " << I(5,(*itr)->id()) << "  FE  VRT X" <<
 			I(4,(*itr)->id() ) << "    " <<
@@ -1882,6 +1884,8 @@ print_vertices( std::list< PDvertexOP > & v )
 			}
 
 			//  TR << "There are " << finite_count << " finite vertices" << std::endl;
+
+			debug_assert( finite_partner != nullptr ); //Clang analysis is warning that finite_partner is null.
 
 			Vector vrt( finite_partner->xyz() + 5.0*(*itr)->direction() );
 			TR << "ATOM  " << I(5,(*itr)->id()) << "  FE  INF X" <<

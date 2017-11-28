@@ -651,7 +651,6 @@ pep_rmsd_analysis(
 	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) );
 	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) );
 	Size this_pep_begin( pep_begin );
-	Size this_pep_end( pep_end );
 
 	Size ref_prot_chain( 1 );
 	for ( Size i = 1; i <= ref_pose.conformation().num_chains(); ++i ) {
@@ -666,7 +665,7 @@ pep_rmsd_analysis(
 
 	Size pep_nterm( pep_anchor - this_pep_begin );
 	Size ref_pep_nterm( ref_pep_anchor - ref_pep_begin );
-	Size pep_cterm( this_pep_end - pep_anchor );
+	Size pep_cterm( pep_end - pep_anchor );
 	Size ref_pep_cterm( ref_pep_end - ref_pep_anchor );
 
 	Size nterm( pep_nterm );
@@ -676,9 +675,10 @@ pep_rmsd_analysis(
 		this_pep_begin += pep_nterm - ref_pep_nterm;
 		nterm = ref_pep_nterm;
 	}
-	if ( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm;
-	else if ( pep_cterm > ref_pep_cterm ) {
-		this_pep_end -= pep_cterm - ref_pep_cterm;
+	/*if ( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm; //This calculation is never used.
+	else*/
+	if ( pep_cterm > ref_pep_cterm ) {
+		//this_pep_end -= pep_cterm - ref_pep_cterm; //This calculation is never used.
 		cterm = ref_pep_cterm;
 	}
 	//superpose if needed
@@ -729,11 +729,10 @@ pep_phipsi_analysis(
 	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) );
 	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) );
 	Size this_pep_begin( pep_begin );
-	Size this_pep_end( pep_end );
 
 	Size pep_nterm( pep_anchor - this_pep_begin );
 	Size ref_pep_nterm( ref_pep_anchor - ref_pep_begin );
-	Size pep_cterm( this_pep_end - pep_anchor );
+	Size pep_cterm( pep_end - pep_anchor );
 	Size ref_pep_cterm( ref_pep_end - ref_pep_anchor );
 
 	Size nterm( pep_nterm );
@@ -743,9 +742,10 @@ pep_phipsi_analysis(
 		this_pep_begin += pep_nterm - ref_pep_nterm;
 		nterm = ref_pep_nterm;
 	}
-	if ( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm;
-	else if ( pep_cterm > ref_pep_cterm ) {
-		this_pep_end -= pep_cterm - ref_pep_cterm;
+	/*if ( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm; //This calculation is never used
+	else*/
+	if ( pep_cterm > ref_pep_cterm ) {
+		//this_pep_end -= pep_cterm - ref_pep_cterm; //This calculation is never used
 		cterm = ref_pep_cterm;
 	}
 

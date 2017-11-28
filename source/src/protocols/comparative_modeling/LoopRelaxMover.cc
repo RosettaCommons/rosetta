@@ -559,7 +559,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			using core::Real;
 			using core::pose::Pose;
 			for ( Size ii = 1; ii <= n_rebuild_tries(); ++ii ) {
-				core::Real current_sc( rebuild_filter() + 1 );
 				TR.Debug << "Remodeling attempt " << ii << "." << std::endl;
 				if ( remodel() == "old_loop_relax" ) {
 					LoopRebuild loop_rebuild( cen_scorefxn_, *loops );
@@ -738,12 +737,10 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					}//if ( remodel() == "perturb_kic" )
 					tmp_all_loops_closed = remodel_mover->get_all_loops_closed();
 				}
-				current_sc = (*cen_scorefxn_)( pose );
 
 				if ( option[ OptionKeys::cm::loop_rebuild_filter ].user() || (remodel() == "old_loop_relax") ) {
 					TR << "classic check for loop closure" << std::endl;
-					current_sc = (*cen_scorefxn_)( pose );
-					if ( current_sc <= rebuild_filter() ) {
+					if ( ( *cen_scorefxn_ )( pose ) <= rebuild_filter() ) {
 						all_loops_closed = true;
 						break;  //fpd changed >= to <=
 						// ... don't we want to stop when our score is _less_ than the cutoff
