@@ -148,6 +148,8 @@ private:
 	utility::vector1< std::string > sequence_strings_;
 	bool minimize_rna_;
 	bool minimize_rna_has_been_specified_ = false;
+	utility::vector1< std::string > helical_substructs_;
+	utility::vector1< std::string > input_initialization_pdbs_;
 };
 
 } //setup

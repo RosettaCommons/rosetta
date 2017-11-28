@@ -139,7 +139,8 @@ public:
 
 	void
 	setup_movemap( core::kinematics::MoveMap & mm,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose,
+		bool const & check_for_vrt_phos = false );
 
 	AtomID_MapperCOP
 	atom_id_mapper() const { return atom_id_mapper_; }

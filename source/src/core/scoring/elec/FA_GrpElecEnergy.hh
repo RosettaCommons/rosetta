@@ -370,6 +370,7 @@ private:
 	GroupElec groupelec_;
 
 	bool exclude_protein_protein_;
+	bool exclude_RNA_RNA_;
 	bool exclude_monomer_;
 	bool exclude_DNA_DNA_;
 	//Real intrares_scale_;

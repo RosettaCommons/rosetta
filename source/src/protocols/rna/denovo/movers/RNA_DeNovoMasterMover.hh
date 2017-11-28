@@ -24,6 +24,7 @@
 #include <protocols/rna/denovo/base_pairs/RNA_BasePairHandler.fwd.hh>
 #include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_JumpMover.fwd.hh>
+#include <protocols/rna/denovo/movers/RNA_HelixMover.fwd.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
@@ -61,10 +62,15 @@ public:
 		core::Size const & cycle_number );
 
 	void
-	setup_rnp_fold_tree( core::pose::Pose & pose, bool const & refine_pose );
+	setup_rnp_fold_tree( core::pose::Pose & pose, bool const & refine_pose, bool const & randomize );
 
 	void
 	setup_rigid_body_mover( core::pose::Pose const & pose,
+		core::Real const & rot_mag,
+		core::Real const & trans_mag );
+
+	void
+	setup_dock_into_density_mover( core::pose::Pose const & pose,
 		core::Real const & rot_mag,
 		core::Real const & trans_mag );
 
@@ -77,7 +83,7 @@ public:
 	movers::RNA_JumpMoverOP rna_jump_mover(){ return rna_jump_mover_; }
 
 	void
-	do_random_moves( core::pose::Pose & pose, Size const & monte_carlo_cycles );
+	do_random_moves( core::pose::Pose & pose, Size const & monte_carlo_cycles, bool const & check_num_rna_res = false );
 
 	void set_close_loops( bool const & setting ){ close_loops_ = setting; }
 	bool close_loops() const { return close_loops_; }
@@ -88,6 +94,17 @@ public:
 	std::string move_type() const { return move_type_; }
 	bool success() const { return ( move_type_.size() > 0 ); }
 
+	void
+	search_rigid_body_orientation( core::pose::Pose & pose );
+
+	void
+	set_rna_helix_mover( movers::RNA_HelixMoverOP const rna_helix_mover ){ rna_helix_mover_ = rna_helix_mover; }
+
+	movers::RNA_HelixMoverOP rna_helix_mover(){ return rna_helix_mover_; }
+
+	void
+	set_helix_mover_magnitude( core::Real const & rot_mag, core::Real const & trans_mag );
+
 private:
 
 	void
@@ -95,6 +112,9 @@ private:
 
 	void
 	RNA_move_trial( core::pose::Pose & pose );
+
+	void
+	dock_into_density_trial( core::pose::Pose & pose );
 
 	void
 	random_jump_trial( core::pose::Pose & pose );
@@ -114,8 +134,9 @@ private:
 	void
 	randomize_rnp_rigid_body_orientations( core::pose::Pose & pose );
 
-	core::kinematics::FoldTree
-	get_rnp_docking_fold_tree( core::pose::Pose const & pose );
+
+	// core::kinematics::FoldTree
+	// get_rnp_docking_fold_tree( core::pose::Pose const & pose );
 
 private:
 
@@ -123,6 +144,7 @@ private:
 
 	core::Size frag_size_;
 	core::Real jump_change_frequency_;
+	core::Real dock_into_density_freq_;
 	bool close_loops_;
 	bool do_rnp_docking_;
 	std::string move_type_;
@@ -131,8 +153,10 @@ private:
 	movers::RNA_JumpMoverOP rna_jump_mover_;
 	libraries::RNA_ChunkLibraryOP rna_chunk_library_;
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_;
-	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_, rnp_docking_mover_;
+	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_, rnp_docking_mover_,
+		dock_into_density_mover_;
 	core::kinematics::FoldTree rnp_docking_ft_;
+	movers::RNA_HelixMoverOP rna_helix_mover_;
 
 };
 

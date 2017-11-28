@@ -91,6 +91,7 @@ using namespace basic::options::OptionKeys;
 //OPT_KEY( Integer, Nreps )
 OPT_KEY( Boolean, get_vdw )
 OPT_KEY( Boolean, get_dist )
+OPT_KEY( Boolean, get_dist_for_pair )
 OPT_KEY( Boolean, get_restypes )
 OPT_KEY( Boolean, use_CEN )
 OPT_KEY( Boolean, dump_pdbs )
@@ -150,7 +151,9 @@ void get_atom_vdw( core::pose::Pose const & poseFA,
 	utility::vector1< std::string > const & RNA_atoms_A,
 	utility::vector1< std::string > const & RNA_atoms_C,
 	utility::vector1< std::string > const & RNA_atoms_G,
-	utility::vector1< std::string > const & RNA_atoms_U )
+	utility::vector1< std::string > const & RNA_atoms_U,
+	core::Real const & cutoff = 20.0,
+	bool const & include_base_cen = false )
 {
 	// Convert to centroid for protein part
 	core::pose::Pose pose = poseFA;
@@ -174,16 +177,14 @@ void get_atom_vdw( core::pose::Pose const & poseFA,
 			if ( !pose.residue( rsd2 ).is_protein() ) continue;
 			// Check how close they are
 			if ( basic::options::option[ use_CEN ]() ) {
-				if ( (pose.residue( rsd1 ).xyz( " P  " ) - pose.residue( rsd2 ).xyz( "CEN" )).length() > 20.0 ) continue;
+				if ( (pose.residue( rsd1 ).xyz( " P  " ) - pose.residue( rsd2 ).xyz( "CEN" )).length() > cutoff ) continue;
 			} else {
-				if ( (pose.residue( rsd1 ).xyz( " P  " ) - pose.residue( rsd2 ).actcoord()).length() > 20.0 ) continue;
+				if ( (pose.residue( rsd1 ).xyz( " P  " ) - pose.residue( rsd2 ).actcoord()).length() > cutoff ) continue;
 			}
 			//std::cout << "Residue 1 " << pose.residue( rsd1 ).name1() << " Residue 2 " << pose.residue( rsd2 ).name1() << std::endl;
 			for ( core::Size prot_atom = 1; prot_atom <= protein_atoms.size(); ++prot_atom ) {
 				// CB is the same as CEN in glycine residues
-				if ( basic::options::option[ use_CEN ]() ) {
-					if ( pose.residue( rsd2 ).name1() == seq_GLY && protein_atoms[prot_atom] == " CB " ) continue;
-				}
+				if ( pose.residue( rsd2 ).name1() == seq_GLY && protein_atoms[prot_atom] == " CB " ) continue;
 				for ( core::Size RNA_atom = 1; RNA_atom <= RNA_atoms_common.size(); ++RNA_atom ) {
 					//std::cout << "RNA atom " << RNA_atoms_common[ RNA_atom ] << std::endl;
 					//std::cout << "protein atom " << protein_atoms[ prot_atom ] << std::endl;
@@ -202,6 +203,28 @@ void get_atom_vdw( core::pose::Pose const & poseFA,
 						<< RNA_atoms_common[ RNA_atom ] << " "
 						<< protein_atoms[ prot_atom ] << " "
 						<< distance << "\n";
+				}
+				if ( include_base_cen ) {
+
+					core::Vector rna_to_prot;
+					core::Vector rna_base_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd1), false /*verbose*/);
+					if ( !basic::options::option[ use_CEN ]() && protein_atoms[prot_atom] == "CEN" ) {
+						rna_to_prot = rna_base_centroid -
+							pose.residue( rsd2 ).actcoord();
+					} else {
+						rna_to_prot = rna_base_centroid -
+							pose.residue( rsd2 ).xyz( protein_atoms[ prot_atom ] );
+					}
+					core::Real distance = rna_to_prot.length();
+					out_file << pose.residue( rsd1 ).name1() << " "
+						<< pose.residue( rsd2 ).name1() << " "
+						<< "RCEN" << " "
+						<< protein_atoms[ prot_atom ] << " "
+						<< distance << "\n";
+
+
+
+
 				}
 
 				if ( pose.residue( rsd1 ).name1() == seq_a ) {
@@ -621,6 +644,15 @@ void calculate_distances( ) {
 			atom_vdw_file.open("RNP_atom_vdw_distances_actualCEN.txt");
 		}
 	}
+
+	std::ofstream dist_for_pair_file;
+	if ( basic::options::option[ get_dist_for_pair ]() ) {
+		if ( basic::options::option[ use_CEN ]() ) {
+			dist_for_pair_file.open("RNP_pair_distances.txt");
+		} else {
+			dist_for_pair_file.open("RNP_pair_distances_actualCEN.txt");
+		}
+	}
 	//core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	//pose = *(protocols::stepwise::setup::initialize_pose_and_other_poses_from_command_line( rsd_set ));
 	// Can make handling PDB vs silent files nicer later, just want it to work for now
@@ -649,6 +681,10 @@ void calculate_distances( ) {
 			if ( basic::options::option[ get_vdw ]() ) {
 				get_atom_vdw( pose, atom_vdw_file, RNA_atoms_common, protein_atoms, RNA_atoms_A, RNA_atoms_C, RNA_atoms_G, RNA_atoms_U );
 				//get_atom_vdw( pose, input_structs[ s ], atom_vdw_file, RNA_atoms_common, protein_atoms, RNA_atoms_A, RNA_atoms_C, RNA_atoms_G, RNA_atoms_U );
+			}
+			if ( basic::options::option[ get_dist_for_pair ]() ) {
+				utility::vector1< std::string > blank;
+				get_atom_vdw( pose, dist_for_pair_file, RNA_atoms_common, protein_atoms, blank, blank, blank, blank, 30.0, true );
 			}
 			if ( basic::options::option[ dump_pdbs ]() ) {
 				std::string tag = "rosetta_after_calc_dist_pdbs/";
@@ -849,6 +885,7 @@ int main( int argc, char ** argv ) {
 		//NEW_OPT( Nreps, "Number of times to calculate complex score (top 20% will be averaged)", 10);
 		NEW_OPT( get_vdw, "Do the vdw atom calculation", false );
 		NEW_OPT( get_dist, "Calculate distances around the base", false );
+		NEW_OPT( get_dist_for_pair, "Get distances for pair score calculation", false );
 		NEW_OPT( get_restypes, "Figure out the residue environments", false );
 		NEW_OPT( use_CEN, "Use CEN atom for the protein centroid (otherwise use the actual centroid)", true );
 		NEW_OPT( dump_pdbs, "dump a pdb of the pose", false );

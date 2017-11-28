@@ -217,6 +217,7 @@ FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
 	parent( methods::EnergyMethodCreatorOP( new FA_ElecEnergyCreator ) ),
 	coulomb_( options ),
 	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
+	exclude_RNA_RNA_( options.exclude_RNA_RNA_fa_elec() ),
 	exclude_monomer_( options.exclude_monomer_fa_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
 	eval_intrares_ST_only_( options.eval_intrares_elec_ST_only() ),
@@ -231,6 +232,7 @@ FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
 	parent( src ),
 	coulomb_( src.coulomb() ),
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
+	exclude_RNA_RNA_( src.exclude_RNA_RNA_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
 	eval_intrares_ST_only_( src.eval_intrares_ST_only_ ),
@@ -597,6 +599,8 @@ FA_ElecEnergy::defines_score_for_residue_pair(
 	} else if ( exclude_monomer_ && monomer_test( rsd1.seqpos(), rsd2.seqpos()) ) {
 		return false;
 	} else if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) {
+		return false;
+	} else if ( exclude_RNA_RNA_ && rsd1.is_RNA() && rsd2.is_RNA() ) {
 		return false;
 	}
 

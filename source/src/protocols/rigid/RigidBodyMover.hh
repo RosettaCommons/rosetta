@@ -354,12 +354,17 @@ public:
 	void spin_axis( core::Vector spin_axis_in );
 	void rot_center( core::Vector const & rot_center_in );
 
+	void spin_mag( core::Real const & spin_mag );
+
 	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override;
 
 protected:
 	core::Vector spin_axis_;
 	bool update_spin_axis_;
+
+	core::Real spin_mag_;
+	bool default_spin_mag_;
 
 };  // class RigidBodySpinMover
 

@@ -62,7 +62,7 @@ public:
 
 	Real
 	bump_parameter_rnp( Size const atom_RNA, Size const atom_protein,
-		char const which_residue ) const;
+		chemical::ResidueType const & rna_type ) const;
 
 private: //data
 

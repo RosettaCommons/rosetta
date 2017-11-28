@@ -619,7 +619,7 @@ std::ostream
 }
 
 
-RigidBodySpinMover::RigidBodySpinMover() : parent(), spin_axis_( 0.0 )
+RigidBodySpinMover::RigidBodySpinMover() : parent(), spin_axis_( 0.0 ), default_spin_mag_( true )
 {
 	moves::Mover::type( "RigidBodySpin" );
 }
@@ -629,7 +629,7 @@ RigidBodySpinMover::RigidBodySpinMover() : parent(), spin_axis_( 0.0 )
 RigidBodySpinMover::RigidBodySpinMover(
 	int const rb_jump_in
 ):
-	RigidBodyMover( rb_jump_in ), spin_axis_( 0.0 ), update_spin_axis_( true )
+	RigidBodyMover( rb_jump_in ), spin_axis_( 0.0 ), update_spin_axis_( true ), default_spin_mag_( true )
 {
 	moves::Mover::type( "RigidBodySpin" );
 }
@@ -638,7 +638,9 @@ RigidBodySpinMover::RigidBodySpinMover( RigidBodySpinMover const & src ) :
 	//utility::pointer::ReferenceCount(),
 	parent( src ),
 	spin_axis_( src.spin_axis_ ),
-	update_spin_axis_( src.update_spin_axis_ )
+	update_spin_axis_( src.update_spin_axis_ ),
+	spin_mag_( src.spin_mag_ ),
+	default_spin_mag_( src.default_spin_mag_ )
 {}
 
 RigidBodySpinMover::~RigidBodySpinMover() = default;
@@ -655,6 +657,13 @@ RigidBodySpinMover::rot_center ( core::Vector const & rot_center_in )
 {
 	rot_center_ = rot_center_in;
 	update_spin_axis_ = false;
+}
+
+void
+RigidBodySpinMover::spin_mag( core::Real const & spin_mag )
+{
+	spin_mag_ = spin_mag;
+	default_spin_mag_ = false;
 }
 
 void
@@ -678,7 +687,14 @@ RigidBodySpinMover::apply( core::pose::Pose & pose )
 		<< rot_center_.z() << std::endl;
 	// comments for set_rb_center() explain which stub to use when!
 	flexible_jump.set_rb_center( dir_, downstream_stub, rot_center_ );
-	flexible_jump.rotation_by_axis( upstream_stub, spin_axis_, rot_center_, 360.0f*numeric::random::rg().uniform() );
+	core::Real spin_angle;
+	if ( default_spin_mag_ ) {
+		spin_angle = 360.0f*numeric::random::rg().uniform();
+	} else {
+		spin_angle = spin_mag_ * numeric::random::rg().gaussian();
+	}
+	flexible_jump.rotation_by_axis( upstream_stub, spin_axis_, rot_center_, spin_angle );
+	//flexible_jump.rotation_by_axis( upstream_stub, spin_axis_, rot_center_, 360.0f*numeric::random::rg().uniform() );
 	TRBM << "Spin: " << "Jump (after):  " << flexible_jump << std::endl;
 	pose.set_jump( rb_jump_, flexible_jump );
 	protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);

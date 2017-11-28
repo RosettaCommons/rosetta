@@ -184,6 +184,7 @@ enum ScoreType {
 	rnp_stack, // low-res RNA-protein stacking interactions
 	rnp_stack_xy, // low-res RNA-protein stacking interactions, statistical potential in xy grid
 	rnp_pair, // low-res RNA-protein pair interactions (distance and environment dependent)
+	rnp_pair_dist, // low-res RNA-protein pair interactions, simple distance dependent
 	rnp_aa_to_rna_backbone, // low-res potential describing interactions between AAs and RNA backbone
 
 	rna_mg_point, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.

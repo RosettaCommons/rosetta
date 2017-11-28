@@ -75,11 +75,29 @@ public:
 	core::scoring::ScoreFunctionOP
 	clone_scorefxn() const{ return scorefxn_->clone(); }
 
+	void set_skip_chi_min( bool const & setting ) { skip_chi_min_ = setting; }
+	bool skip_chi_min() const { return skip_chi_min_; }
+
+	void set_min_tol( float const & setting ) { min_tol_ = setting; }
+
 private:
 
 	// Make this a Mover?
 	void
 	o2prime_trials( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP const & scorefxn ) const;
+
+
+	// utility::vector1< core::Size >
+	// get_residues_within_dist_of_RNA( core::pose::Pose const & pose ) const;
+
+	void
+	packing_trials( core::pose::Pose & pose,
+		core::scoring::ScoreFunctionCOP const & packer_scorefxn ) const;
+
+	void
+	packing_trials( core::pose::Pose & pose,
+		core::scoring::ScoreFunctionCOP const & packer_scorefxn,
+		utility::vector1< core::Size > residues_to_pack ) const;
 
 	void
 	setup_movemap( core::kinematics::MoveMap & mm, core::pose::Pose & pose );
@@ -103,6 +121,8 @@ private:
 	toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
+	bool skip_chi_min_;
+	float min_tol_;
 }; // class RNA_Minimizer
 
 std::ostream &operator<< ( std::ostream &os, RNA_Minimizer const &mover );

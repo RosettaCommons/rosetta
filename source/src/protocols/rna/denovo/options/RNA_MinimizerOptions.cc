@@ -41,7 +41,12 @@ RNA_MinimizerOptions::RNA_MinimizerOptions():
 	vary_bond_geometry_( false ),
 	minimizer_use_coordinate_constraints_( false ),
 	min_type_( "lbfgs_armijo_nonmonotone" ), //Parin S. Jan 12, 2012
-	minimize_bps_( false )
+	minimize_bps_( false ),
+	minimize_all_protein_( false ),
+	minimize_protein_sc_( false ),
+	protein_packing_( false ),
+	protein_pack_all_( false ),
+	protein_packing_distance_( 10.0 )
 {}
 
 //Destructor
@@ -87,6 +92,12 @@ RNA_MinimizerOptions::initialize_from_options( utility::options::OptionCollectio
 	set_min_type( opts[ OptionKeys::rna::denovo::minimize::min_type ]() );
 	if ( opts[ OptionKeys::rna::denovo::minimize::skip_coord_constraints]() ) set_minimizer_use_coordinate_constraints( false );
 	set_minimize_bps( opts[ OptionKeys::rna::denovo::minimize::minimize_bps ]() ) ;
+	set_minimize_all_protein( opts[ OptionKeys::rna::denovo::minimize::minimize_all_protein ]() );
+	set_minimize_protein_sc( opts[ OptionKeys::rna::denovo::minimize::minimize_protein_sc ]() );
+
+	set_protein_packing( opts[ OptionKeys::rna::denovo::minimize::protein_packing ]() );
+	set_protein_pack_all( opts[ OptionKeys::rna::denovo::minimize::protein_pack_all ]() );
+	set_protein_packing_distance( opts[ OptionKeys::rna::denovo::minimize::protein_packing_distance ]() );
 }
 
 void
@@ -102,7 +113,12 @@ RNA_MinimizerOptions::list_options_read( utility::options::OptionKeyList & opts 
 		+ OptionKeys::rna::denovo::minimize::minimizer_use_coordinate_constraints
 		+ OptionKeys::rna::denovo::minimize::min_type
 		+ OptionKeys::rna::denovo::minimize::skip_coord_constraints
-		+ OptionKeys::rna::denovo::minimize::minimize_bps;
+		+ OptionKeys::rna::denovo::minimize::minimize_bps
+		+ OptionKeys::rna::denovo::minimize::minimize_all_protein
+		+ OptionKeys::rna::denovo::minimize::minimize_protein_sc
+		+ OptionKeys::rna::denovo::minimize::protein_packing
+		+ OptionKeys::rna::denovo::minimize::protein_pack_all
+		+ OptionKeys::rna::denovo::minimize::protein_packing_distance;
 }
 
 } //options

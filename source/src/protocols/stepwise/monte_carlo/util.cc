@@ -142,15 +142,15 @@ output_to_silent_file( std::string const & silent_file,
 // given pose, build in other residues in a deterministic manner. No optimization.
 // used to estimate 'rms_fill' in stepwise_monte_carlo.
 void
-build_full_model( pose::Pose const & start_pose, pose::Pose & full_model_pose ){
+build_full_model( pose::Pose const & start_pose, pose::Pose & full_model_pose, bool const & enumerate /*=true*/, Real const & skip_bulge_freq /*=0.2*/ ){
 	scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 	options::StepWiseMonteCarloOptionsOP options( new options::StepWiseMonteCarloOptions );
 	options->set_skip_deletions( true );
-	options->set_enumerate( true ); // prevent randomness.
-	options->set_skip_bulge_frequency( 0.2 ); // to avoid getting stuck
+	options->set_enumerate( enumerate ); // prevent randomness.
+	options->set_skip_bulge_frequency( skip_bulge_freq ); // to avoid getting stuck
 	options->set_filter_complex_cycles( false ); // also to avoid getting stuck.
 	mover::StepWiseMasterMover master_mover( scorefxn, options );
-	master_mover.build_full_model( start_pose, full_model_pose );
+	master_mover.build_full_model( start_pose, full_model_pose, !enumerate );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////

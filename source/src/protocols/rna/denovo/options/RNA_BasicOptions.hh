@@ -69,6 +69,12 @@ public:
 	void set_move_first_rigid_body( bool const & setting ){ move_first_rigid_body_ = setting; }
 	bool move_first_rigid_body() const { return move_first_rigid_body_; }
 
+	void set_dock_into_density( bool const & setting ){ dock_into_density_ = setting; }
+	bool dock_into_density() const { return dock_into_density_; }
+
+	void set_model_with_density( bool const & setting ){ model_with_density_ = setting; }
+	bool model_with_density() const { return model_with_density_; }
+
 	void set_verbose( bool const & setting ){ verbose_ = setting; }
 	bool verbose() const { return verbose_; }
 
@@ -76,6 +82,8 @@ private:
 
 	bool dump_pdb_;
 	bool move_first_rigid_body_;
+	bool dock_into_density_;
+	bool model_with_density_;
 	bool verbose_;
 
 };

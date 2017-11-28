@@ -34,7 +34,6 @@ initialize_native_and_align_pose( core::pose::PoseOP & native_pose,
 	core::chemical::ResidueTypeSetCAP rsd_set,
 	core::pose::PoseCOP start_pose );
 
-
 } //setup
 } //stepwise
 } //protocols

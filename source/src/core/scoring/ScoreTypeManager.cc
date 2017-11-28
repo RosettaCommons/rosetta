@@ -425,6 +425,7 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "rnp_base_pair"] = rnp_base_pair;
 	name2score_type_[ "rnp_pair"] = rnp_pair;
+	name2score_type_[ "rnp_pair_dist"] = rnp_pair_dist;
 	name2score_type_[ "rnp_stack"] = rnp_stack;
 	name2score_type_[ "rnp_stack_xy"] = rnp_stack_xy;
 	name2score_type_[ "rnp_aa_to_rna_backbone"] = rnp_aa_to_rna_backbone;

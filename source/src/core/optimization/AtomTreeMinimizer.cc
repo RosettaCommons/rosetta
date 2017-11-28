@@ -62,6 +62,7 @@ AtomTreeMinimizer::run(
 	MinimizerOptions const & options
 ) /*const*/
 {
+
 	check_setup( pose, move_map, scorefxn, options);
 
 	if ( options.deriv_check() ) {
@@ -104,7 +105,6 @@ AtomTreeMinimizer::run(
 
 	Real const start_func( f( dofs ) );
 
-	//std::cout << "start_func: " << start_func <<  std::endl;
 	//pose.energies().show( std::cout );
 
 	// now do the optimization with the low-level minimizer function

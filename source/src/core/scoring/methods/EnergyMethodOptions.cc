@@ -84,6 +84,7 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	split_unfolded_label_type_(SPLIT_UNFOLDED_MM),
 	split_unfolded_value_type_(SPLIT_UNFOLDED_BOLTZ),
 	exclude_protein_protein_fa_elec_(false), // rosetta++ defaulted to true!
+	exclude_RNA_RNA_fa_elec_(false),
 	exclude_monomer_fa_elec_(false),
 	elec_max_dis_(5.5),
 	elec_min_dis_(/*1.5*/1.6),
@@ -157,6 +158,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		method_weights_ = src.method_weights_;
 		ss_weights_ = src.ss_weights_;
 		exclude_protein_protein_fa_elec_ = src.exclude_protein_protein_fa_elec_;
+		exclude_RNA_RNA_fa_elec_ = src.exclude_RNA_RNA_fa_elec_;
 		exclude_monomer_fa_elec_ = src.exclude_monomer_fa_elec_;
 		elec_max_dis_ = src.elec_max_dis_;
 		elec_min_dis_ = src.elec_min_dis_;
@@ -368,9 +370,19 @@ EnergyMethodOptions::exclude_protein_protein_fa_elec() const {
 	return exclude_protein_protein_fa_elec_;
 }
 
+bool
+EnergyMethodOptions::exclude_RNA_RNA_fa_elec() const {
+	return exclude_RNA_RNA_fa_elec_;
+}
+
 void
 EnergyMethodOptions::exclude_protein_protein_fa_elec( bool const setting ) {
 	exclude_protein_protein_fa_elec_ = setting;
+}
+
+void
+EnergyMethodOptions::exclude_RNA_RNA_fa_elec( bool const setting ) {
+	exclude_RNA_RNA_fa_elec_ = setting;
 }
 
 bool
@@ -904,6 +916,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.method_weights_ == b.method_weights_ ) &&
 		( a.ss_weights_ == b.ss_weights_ ) &&
 		( a.exclude_protein_protein_fa_elec_ == b.exclude_protein_protein_fa_elec_ ) &&
+		( a.exclude_RNA_RNA_fa_elec_ == b.exclude_RNA_RNA_fa_elec_ ) &&
 		( a.exclude_monomer_fa_elec_ == b.exclude_monomer_fa_elec_ ) &&
 		( a.elec_max_dis_ == b.elec_max_dis_ ) &&
 		( a.elec_min_dis_ == b.elec_min_dis_ ) &&
@@ -994,6 +1007,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: atom_vdw_atom_type_set_name: " << atom_vdw_atom_type_set_name_ << std::endl;
 	out << "EnergyMethodOptions::show: exclude_protein_protein_fa_elec: "
 		<< (exclude_protein_protein_fa_elec_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: exclude_RNA_RNA_fa_elec: "
+		<< (exclude_RNA_RNA_fa_elec_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_monomer_fa_elec: "
 		<< (exclude_monomer_fa_elec_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: elec_max_dis: " << elec_max_dis_ << std::endl;
@@ -1131,6 +1146,9 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_keys.push_back("exclude_protein_protein_fa_elec");
 	option_values.push_back(exclude_protein_protein_fa_elec_ ? "1" : "0");
 
+	option_keys.push_back("exclude_RNA_RNA_fa_elec");
+	option_values.push_back(exclude_RNA_RNA_fa_elec_ ? "1" : "0");
+
 	option_keys.push_back("exclude_monomer_fa_elec");
 	option_values.push_back(exclude_monomer_fa_elec_ ? "1" : "0");
 
@@ -1260,6 +1278,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( method_weights_ ) ); // MethodWeights
 	arc( CEREAL_NVP( ss_weights_ ) ); // class core::scoring::SecondaryStructureWeights
 	arc( CEREAL_NVP( exclude_protein_protein_fa_elec_ ) ); // _Bool
+	arc( CEREAL_NVP( exclude_RNA_RNA_fa_elec_ ) ); // _Bool
 	arc( CEREAL_NVP( exclude_monomer_fa_elec_ ) ); // _Bool
 	arc( CEREAL_NVP( elec_max_dis_ ) ); // core::Real
 	arc( CEREAL_NVP( elec_min_dis_ ) ); // core::Real
@@ -1323,6 +1342,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( method_weights_ ); // MethodWeights
 	arc( ss_weights_ ); // class core::scoring::SecondaryStructureWeights
 	arc( exclude_protein_protein_fa_elec_ ); // _Bool
+	arc( exclude_RNA_RNA_fa_elec_ ); // _Bool
 	arc( exclude_monomer_fa_elec_ ); // _Bool
 	arc( elec_max_dis_ ); // core::Real
 	arc( elec_min_dis_ ); // core::Real

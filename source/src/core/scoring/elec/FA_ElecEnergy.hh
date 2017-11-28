@@ -516,6 +516,7 @@ private:
 	etable::coulomb::Coulomb coulomb_;
 
 	bool exclude_protein_protein_;
+	bool exclude_RNA_RNA_;
 	bool exclude_monomer_;
 	bool exclude_DNA_DNA_;
 

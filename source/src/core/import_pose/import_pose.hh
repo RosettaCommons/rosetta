@@ -375,7 +375,8 @@ cleanup( core::pose::Pose & pose,
 
 core::pose::full_model_info::FullModelParametersOP
 get_sequence_information( std::string const & fasta_file,
-	utility::vector1< core::Size > & cutpoint_open_in_full_model );
+	utility::vector1< core::Size > & cutpoint_open_in_full_model,
+	bool const add_virt = false );
 
 void
 setup_for_density_scoring( core::pose::Pose & pose );

@@ -39,6 +39,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -173,6 +174,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( basic::options::OptionKeys::rna::data_file );
 
 		option.add_relevant( constraints::cst_file );
+
+		// see if we can get density scoring to work
+		option.add_relevant( basic::options::OptionKeys::edensity::mapfile );
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup

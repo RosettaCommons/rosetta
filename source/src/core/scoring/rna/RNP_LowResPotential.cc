@@ -322,6 +322,15 @@ RNP_LowResPotential::evaluate_rnp_base_pair_score(
 	if ( xbin > 10 ) xbin = 10;
 	if ( ybin > 10 ) ybin = 10;
 
+	// std::cout << "x distance: " << x;
+	// std::cout << " y distance: " << y;
+	// std::cout << " xbin: " << xbin;
+	// std::cout << " ybin: " << ybin;
+	// std::cout << " Residue 1: " << rsd1.name1();
+	// std::cout << " Residue 2: " << rsd2.name1();
+	// std::cout << " SCORE: " << rnp_basepair_xy_( xbin, ybin, base_num, aa ) << std::endl;
+
+
 	rnp_bp_score = rnp_basepair_xy_( xbin, ybin, base_num, aa );
 
 }
@@ -375,9 +384,16 @@ RNP_LowResPotential::evaluate_rnp_aa_rna_backbone_score(
 	aa = protein_rsd.aa();
 
 	// get the dbin
-	Size d_bin = Size( dist_to_backbone ) + 1 - 2; // subtract 2 b/c bins span from 3-10
+	Size d_bin = Size( dist_to_backbone ) - 2; // subtract 2 b/c bins span from 3-10
+	//Size d_bin = Size( dist_to_backbone ) + 1 - 2; // subtract 2 b/c bins span from 3-10
 	if ( d_bin < 1 ) d_bin = 1;
 	if ( d_bin > num_backbone_dbins_ ) d_bin = num_backbone_dbins_;
+
+	// // Check that it's being computed correctly
+	// std::cout << "Distance: " << dist_to_backbone;
+	// std::cout << " d_bin: " << d_bin;
+	// std::cout << " AA: " << protein_rsd.name1();
+	// std::cout << " SCORE: " << rnp_aa_rna_backbone_( d_bin, aa ) << std::endl;
 
 	return rnp_aa_rna_backbone_( d_bin, aa );
 

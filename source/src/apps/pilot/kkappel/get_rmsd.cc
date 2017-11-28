@@ -84,6 +84,8 @@ using utility::vector1;
 
 OPT_KEY( Boolean, dump_structures )
 OPT_KEY( Boolean, rmsd_nosuper )
+OPT_KEY( Boolean, backbone_rmsd )
+OPT_KEY( Boolean, heavy_atom_rmsd )
 OPT_KEY( Boolean, protein_align )
 OPT_KEY( Boolean, rna_rmsd )
 OPT_KEY( IntegerVector, rmsd_res )
@@ -200,6 +202,8 @@ get_rmsd()
 					native_rmsd_residues.push_back( i );
 				}
 			}
+			//std::cout << "RMSD RESIDUES: " << rmsd_residues << std::endl;
+			//std::cout << "NATIVE RMSD RESIDUES: " << native_rmsd_residues << std::endl;
 		} else {
 			native_rmsd_residues = option[ native_rmsd_res ]();
 			rmsd_residues = option[ rmsd_res ]();
@@ -236,24 +240,49 @@ get_rmsd()
 		RNA_backbone_atoms.push_back(" C2'");
 		RNA_backbone_atoms.push_back(" O2'");
 
+		// do backbone RMSD
 		// then get the rmsd
 		//core::id::AtomID_Map< id::AtomID > atom_map_rms;
 		std::map<core::id::AtomID, core::id::AtomID> atom_map_rms;
-		//core::pose::initialize_atomid_map( atom_map_rms, pose, id::AtomID::BOGUS_ATOM_ID() );
-		for ( core::Size i = 1; i<= native_rmsd_residues.size(); ++i ) {
-			for ( core::Size j = 1; j<= RNA_backbone_atoms.size(); ++j ) {
-				std::string name = RNA_backbone_atoms[ j ];
-				if ( !pose.residue(rmsd_residues[i]).has( name ) ) continue;
-				if ( !native_pose->residue(native_rmsd_residues[i]).has( name ) ) continue;
-				id::AtomID const id1( pose.residue( rmsd_residues[ i ] ).atom_index(name), rmsd_residues[ i ]);
-				id::AtomID const id2( native_pose->residue( native_rmsd_residues[ i ]).atom_index(name), native_rmsd_residues[ i ] );
-				atom_map_rms[ id1 ] = id2;
-				//std::cout << "added native residue " << native_rmsd_residues[i] << " rmsd residue " << rmsd_residues[i] << " name " << name <<std::endl;
+		//core::pose::initialize_atomid_map( atom_map_rms, pose, id::BOGUS_ATOM_ID );
+		if ( option[ backbone_rmsd ]() ) {
+			for ( core::Size i = 1; i<= native_rmsd_residues.size(); ++i ) {
+				for ( core::Size j = 1; j<= RNA_backbone_atoms.size(); ++j ) {
+					std::string name = RNA_backbone_atoms[ j ];
+					//std::cout << "CHECKING native residue " << native_rmsd_residues[i] << " rmsd residue " << rmsd_residues[i] << " name " << name <<std::endl;
+					if ( !pose.residue(rmsd_residues[i]).has( name ) ) continue;
+					if ( !native_pose->residue(native_rmsd_residues[i]).has( name ) ) continue;
+					id::AtomID const id1( pose.residue( rmsd_residues[ i ] ).atom_index(name), rmsd_residues[ i ]);
+					id::AtomID const id2( native_pose->residue( native_rmsd_residues[ i ]).atom_index(name), native_rmsd_residues[ i ] );
+					atom_map_rms[ id1 ] = id2;
+					//std::cout << "added native residue " << native_rmsd_residues[i] << " rmsd residue " << rmsd_residues[i] << " name " << name <<std::endl;
+				}
+				//id::AtomID const id1( pose.residue( rmsd_residues[ i ] ).atom_index(" P  "), rmsd_residues[ i ]);
+				//id::AtomID const id2( native_pose->residue( native_rmsd_residues[ i ]).atom_index(" P  "), native_rmsd_residues[ i ] );
+				//atom_map_rms[ id1 ] = id2;
 			}
-			//id::AtomID const id1( pose.residue( rmsd_residues[ i ] ).atom_index(" P  "), rmsd_residues[ i ]);
-			//id::AtomID const id2( native_pose->residue( native_rmsd_residues[ i ]).atom_index(" P  "), native_rmsd_residues[ i ] );
-			//atom_map_rms[ id1 ] = id2;
+		} else if ( option[ heavy_atom_rmsd ] () ) {
+			// do heavy atom RMSD
+			for ( core::Size i = 1; i<= native_rmsd_residues.size(); ++i ) {
+				core::conformation::Residue const & rsd1 = native_pose->residue( native_rmsd_residues[i] );
+				core::conformation::Residue const & rsd2 = pose.residue( rmsd_residues[i] );
+
+				for ( Size j = 1; j<=rsd1.nheavyatoms(); ++j ) {
+					std::string name( rsd1.atom_name( j ) );
+					//std::cout << "CHECKING native residue " << native_rmsd_residues[i] << " rmsd residue " << rmsd_residues[i] << " name " << name <<std::endl;
+					if ( !rsd2.has( name ) ) continue;
+					if ( rsd1.is_virtual(j) ) continue;
+					Size const j2( rsd2.atom_index( name ) );
+					if ( rsd2.is_virtual(j2) ) continue;
+					id::AtomID const id1( rsd1.atom_index( name ), native_rmsd_residues[ i ] );
+					id::AtomID const id2( rsd2.atom_index( name ), rmsd_residues[ i ] );
+					atom_map_rms[ id2 ] = id1;
+					//atom_map_rms[ id1 ] = id2;
+					//std::cout << "added native residue " << native_rmsd_residues[i] << " rmsd residue " << rmsd_residues[i] << " name " << name <<std::endl;
+				}
+			}
 		}
+
 		rmsd = rms_at_corresponding_atoms_no_super( pose, *native_pose, atom_map_rms );
 		//rmsd = rms_at_corresponding_atoms_no_super( pose, *native_pose, atom_map_rms, rmsd_residues );
 
@@ -331,6 +360,8 @@ main( int argc, char * argv [] )
 		option.add_relevant( in::file::native );
 		NEW_OPT( rmsd_nosuper, "Calculate rmsd without superposition first", false);
 		NEW_OPT( rna_rmsd, "Calculate rmsd over rna", true);
+		NEW_OPT( backbone_rmsd, "Calculate RNA heavy backbone atoms", false);
+		NEW_OPT( heavy_atom_rmsd, "Calculate rmsd over all heavy atoms", false);
 		NEW_OPT( protein_align, "align structures over protein residues", true);
 		NEW_OPT( dump_structures, "dump superimposed structures", false);
 		NEW_OPT( rmsd_res, "residues to calculate rmsd for", 1);

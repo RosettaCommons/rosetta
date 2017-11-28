@@ -360,7 +360,7 @@ AtomLevelDomainMap::calculate_atom_id_domain_map( core::pose::Pose const & pose 
 ////////////////////////////////////////////////////////////////////////////
 void
 AtomLevelDomainMap::setup_movemap( core::kinematics::MoveMap & mm,
-	core::pose::Pose const & pose ){
+	core::pose::Pose const & pose, bool const & check_for_vrt_phos ){
 
 	using namespace core::id;
 
@@ -374,6 +374,13 @@ AtomLevelDomainMap::setup_movemap( core::kinematics::MoveMap & mm,
 
 		utility::vector1< TorsionID > torsion_ids;
 		for ( Size torsion_number = 1; torsion_number <= pose.residue( i ).mainchain_torsions().size(); torsion_number++ ) {
+			if ( check_for_vrt_phos ) {
+				if ( pose.residue( i ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) &&
+						( torsion_number==1 || torsion_number==2 || torsion_number==3 ) ) {
+					//  std::cout << "VRT PHOS AT " << i << " " << torsion_number << std::endl;
+					continue;
+				}
+			}
 			torsion_ids.push_back( TorsionID( i, id::BB, torsion_number ) );
 		}
 		for ( Size torsion_number = 1; torsion_number <= pose.residue_type( i ).nchi(); torsion_number++ ) {

@@ -80,6 +80,21 @@ public:
 	void set_minimize_bps( bool const & setting ){ minimize_bps_ = setting; }
 	bool minimize_bps() const { return minimize_bps_; }
 
+	void set_minimize_all_protein( bool const & setting ){ minimize_all_protein_ = setting; }
+	bool minimize_all_protein() const { return minimize_all_protein_; }
+
+	void set_minimize_protein_sc( bool const & setting ){ minimize_protein_sc_ = setting; }
+	bool minimize_protein_sc() const { return minimize_protein_sc_; }
+
+	void set_protein_packing( bool const & setting ){ protein_packing_ = setting; }
+	bool protein_packing() const { return protein_packing_; }
+
+	void set_protein_pack_all( bool const & setting ){ protein_pack_all_ = setting; }
+	bool protein_pack_all() const { return protein_pack_all_; }
+
+	void set_protein_packing_distance( core::Real const & setting ){ protein_packing_distance_ = setting; }
+	core::Real protein_packing_distance() const { return protein_packing_distance_; }
+
 	void set_deriv_check( bool const & setting ){ deriv_check_ = setting; }
 	bool deriv_check() const { return deriv_check_; }
 
@@ -102,6 +117,11 @@ private:
 	bool minimizer_use_coordinate_constraints_;
 	std::string min_type_;
 	bool minimize_bps_;
+	bool minimize_all_protein_;
+	bool minimize_protein_sc_;
+	bool protein_packing_;
+	bool protein_pack_all_;
+	core::Real protein_packing_distance_;
 
 };
 

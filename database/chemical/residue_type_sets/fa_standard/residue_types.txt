@@ -71,7 +71,7 @@ residue_types/nucleic/rna_nonnatural/OMU.params
 residue_types/nucleic/rna_nonnatural/FMA.params
 residue_types/nucleic/rna_nonnatural/FMC.params
 residue_types/nucleic/rna_nonnatural/FMG.params
-residue_types/nucleic/rna_nonnatural/FMU.params
+residue_types/nucleic/rna_nonnatural/2FU.params
 # OP1 => SP1
 residue_types/nucleic/rna_nonnatural/SRA.params
 residue_types/nucleic/rna_nonnatural/SRC.params
@@ -145,6 +145,8 @@ residue_types/nucleic/rna_nonnatural/MOU.params
 residue_types/nucleic/rna_nonnatural/MHU.params
 residue_types/nucleic/rna_nonnatural/M3G.params
 residue_types/nucleic/rna_nonnatural/M26.params
+
+residue_types/nucleic/rna_nonnatural/FMU.params
 
 # Modomics support
 #01A	1,2′-O-dimethyladenosine	m1Am	œ	œ	C12O4N5H17	295.128053	295.298867

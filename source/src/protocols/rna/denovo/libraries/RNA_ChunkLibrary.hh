@@ -103,6 +103,8 @@ public:
 
 	ChunkSetOP chunk_set( Size const n ) const { return chunk_sets_[ n ];  };
 
+	utility::vector1< ChunkSetOP > chunk_sets() const { return chunk_sets_;  };
+
 	void add_chunk_set( std::string const & silent_file,
 		core::pose::ResMap const & res_map,
 		core::pose::Pose const & big_pose );

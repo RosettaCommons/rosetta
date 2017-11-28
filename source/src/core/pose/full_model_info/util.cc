@@ -417,6 +417,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 			TR << "POSE SEQUENCE       " << pose.sequence() << std::endl;
 			TR << "FULL MODEL SEQUENCE " << sequence << std::endl;
 			TR << "CLEANED FM SEQUENCE " << clean_seq << std::endl;
+			TR << "Check that all your input PDBs have residues in the same order as in your fasta file!" << std::endl;
 			return false;
 		}
 	}

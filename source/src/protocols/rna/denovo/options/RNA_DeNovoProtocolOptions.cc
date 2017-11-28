@@ -20,6 +20,7 @@
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/options/OptionCollection.hh>
@@ -41,6 +42,7 @@ RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
 	nstruct_( 1 ),
 	lores_scorefxn_( "rna/denovo/rna_lores.wts" ),
 	output_lores_silent_file_( false ),
+	align_output_( true ),
 	output_filters_( false ),
 	overwrite_( false ),
 	binary_rna_output_( false ),
@@ -99,9 +101,18 @@ RNA_DeNovoProtocolOptions::initialize_from_options( utility::options::OptionColl
 	set_output_filters(  opts[ basic::options::OptionKeys::rna::denovo::output_filters ] );
 	set_overwrite(  opts[ out::overwrite ] );
 
+	if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		// should we have an option that allows this to be
+		// turned on again if we have density (?)
+		set_align_output( false );
+	}
+
 	// note that althrough the following variables are held in the base class RNA_FragmentMonteCarloOptions, they are not initialized from command-line there.
 	// they really should only be set up for runs using the rna_denovo exectuable -- so they are set up here.
 	if ( opts[ in::file::s ].user() ) set_chunk_pdb_files( opts[ in::file::s ]() );
+	if ( opts[ basic::options::OptionKeys::rna::denovo::initial_structures ].user() ) {
+		set_chunk_initialization_pdb_files( opts[ basic::options::OptionKeys::rna::denovo::initial_structures ]() );
+	}
 	if ( opts[ in::file::silent ].user() )  set_chunk_silent_files( opts[ in::file::silent ]() );
 	if ( opts[ in::file::input_res ].user() )  set_input_res( opts[ in::file::input_res ]() ) ;
 
@@ -140,7 +151,8 @@ RNA_DeNovoProtocolOptions::list_options_read( utility::options::OptionKeyList & 
 		+ OptionKeys::out::save_times
 		+ OptionKeys::rna::denovo::use_legacy_setup
 		+ OptionKeys::rna::denovo::cst_gap
-		+ OptionKeys::rna::denovo::dump_stems;
+		+ OptionKeys::rna::denovo::dump_stems
+		+ OptionKeys::rna::denovo::initial_structures;
 }
 
 } //options

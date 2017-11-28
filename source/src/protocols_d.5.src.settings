@@ -46,9 +46,11 @@ sources = {
     "protocols/rna/denovo/movers": [
         "RNA_DeNovoMasterMover",
         "RNA_FragmentMover",
+        "RNA_HelixMover",
         "RNA_JumpMover",
         "RNA_Minimizer",
         "RNA_Relaxer",
+	"RNP_HighResMover",
     ],
     "protocols/rna/denovo/options": [
         "RNA_BasicOptions",

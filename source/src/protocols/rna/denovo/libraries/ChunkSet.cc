@@ -170,9 +170,6 @@ ChunkSet::insert_protein_chunk_into_pose( core::pose::Pose & pose, Size const & 
 	using namespace core::pose;
 	using namespace core::id;
 
-	// FOR TESTING
-	//pose.dump_pdb( "pose_before_fix_protein.pdb" );
-
 	core::pose::MiniPose const & scratch_pose ( *(mini_pose_list_[ chunk_pose_index ]) );
 
 	// check whether this pose contains protein residues, if not, return
@@ -212,8 +209,6 @@ ChunkSet::insert_protein_chunk_into_pose( core::pose::Pose & pose, Size const & 
 		pose.set_jump( i, initial_jumps[i] );
 	}
 
-	// FOR TESTING
-	//pose.dump_pdb( "pose_after_fix_protein.pdb" );
 }
 
 ///////////////////////////////////////////////////////////////////////

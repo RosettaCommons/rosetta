@@ -301,6 +301,8 @@ ScoreFunction::_add_weights_from_stream( std::istream & data, bool patch/*=false
 			energy_method_options_->set_strand_strand_weights( values[1], values[2] );
 		} else if ( tag == "NO_PROTEIN_PROTEIN_FA_ELEC" ) {
 			energy_method_options_->exclude_protein_protein_fa_elec( true );
+		} else if ( tag == "NO_RNA_RNA_FA_ELEC" ) {
+			energy_method_options_->exclude_RNA_RNA_fa_elec( true );
 		} else if ( tag == "NO_MONOMER_FA_ELEC" ) {
 			energy_method_options_->exclude_monomer_fa_elec( true );
 		} else if ( tag == "INCLUDE_DNA_DNA" ) {

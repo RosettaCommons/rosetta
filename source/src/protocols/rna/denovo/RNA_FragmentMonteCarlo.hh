@@ -26,6 +26,8 @@
 #include <protocols/rna/movers/RNA_LoopCloser.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_Relaxer.fwd.hh>
+#include <protocols/rna/denovo/movers/RNP_HighResMover.fwd.hh>
+#include <protocols/rna/denovo/movers/RNA_HelixMover.fwd.hh>
 #include <protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
@@ -97,6 +99,9 @@ public:
 	void
 	set_user_input_chunk_library( libraries::RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_library_ = setting; }
 
+	void
+	set_user_input_chunk_initialization_library( libraries::RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_initialization_library_ = setting; }
+
 	libraries::RNA_ChunkLibraryCOP rna_chunk_library() const { return rna_chunk_library_; }
 
 	void show(std::ostream & output) const override;
@@ -129,7 +134,8 @@ private:
 	initialize_libraries( core::pose::Pose & pose );
 
 	void
-	initialize_movers();
+	initialize_movers( core::pose::Pose const & pose );
+	// initialize_movers();
 
 	void
 	initialize_score_functions();
@@ -156,7 +162,11 @@ private:
 	void
 	get_rigid_body_move_mags( core::Size const & r,
 		core::Real & rot_mag,
-		core::Real & trans_mag ) const;
+		core::Real & trans_mag,
+		core::Real const & rot_mag_init,
+		core::Real const & trans_mag_init,
+		core::Real const & rot_mag_final,
+		core::Real const & trans_mag_final ) const;
 
 	bool
 	check_score_filter( core::Real const lores_score_, std::list< core::Real > & all_lores_score_ );
@@ -179,6 +189,16 @@ private:
 	void
 	check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 
+	void
+	setup_full_initial_structure( core::pose::Pose & pose ) const;
+
+	core::Real
+	randomize_and_close_all_chains( core::pose::Pose & pose ) const;
+
+	void
+	copy_structure_keep_fold_tree( core::pose::Pose & pose,
+		core::pose::Pose const & pose_to_copy ) const;
+
 private:
 
 	// The parameters in this OptionsCOP should not change:
@@ -188,18 +208,25 @@ private:
 	// Movers (currently must be set up outside, but should write auto-setup code)
 	base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler_;
 	libraries::RNA_ChunkLibraryCOP user_input_rna_chunk_library_;
+	libraries::RNA_ChunkLibraryCOP user_input_rna_chunk_initialization_library_;
 	libraries::RNA_ChunkLibraryOP rna_chunk_library_;
+	libraries::RNA_ChunkLibraryOP rna_chunk_initialization_library_;
 	setup::RNA_DeNovoPoseInitializerCOP rna_de_novo_pose_initializer_;
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_;
+	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_init_;
 	movers::RNA_DeNovoMasterMoverOP rna_denovo_master_mover_;
+	movers::RNA_DeNovoMasterMoverOP rna_denovo_master_mover_init_;
+	movers::RNA_HelixMoverOP rna_helix_mover_;
 	movers::RNA_MinimizerOP rna_minimizer_;
 	movers::RNA_RelaxerOP rna_relaxer_;
+	movers::RNP_HighResMoverOP rnp_high_res_mover_;
 
 	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
 
 	core::scoring::ScoreFunctionCOP denovo_scorefxn_;
 	core::scoring::ScoreFunctionCOP hires_scorefxn_;
 	core::scoring::ScoreFunctionCOP chem_shift_scorefxn_;
+	core::scoring::ScoreFunctionOP chainbreak_sfxn_;
 	core::scoring::ScoreFunctionCOP final_scorefxn_;
 	core::scoring::ScoreFunctionOP working_denovo_scorefxn_;
 

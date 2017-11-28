@@ -85,7 +85,8 @@ namespace setup {
 RNA_DeNovoParameters::RNA_DeNovoParameters( std::string const & filename ):
 	filename_( filename ),
 	secstruct_defined_( false ),
-	is_rna_and_protein_( false )
+	is_rna_and_protein_( false ),
+	use_fold_tree_from_silent_file_( false )
 {
 	if ( filename_.size() > 0 ) read_parameters_from_file( filename_ );
 }
@@ -93,7 +94,8 @@ RNA_DeNovoParameters::RNA_DeNovoParameters( std::string const & filename ):
 //Constructor
 RNA_DeNovoParameters::RNA_DeNovoParameters():
 	secstruct_defined_( false ),
-	is_rna_and_protein_( false )
+	is_rna_and_protein_( false ),
+	use_fold_tree_from_silent_file_( false )
 {
 }
 

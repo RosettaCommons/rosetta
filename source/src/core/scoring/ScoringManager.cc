@@ -56,6 +56,7 @@
 #include <core/scoring/dna/DNA_BasePotential.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/rna/RNP_LowResPotential.hh>
+#include <core/scoring/rna/RNP_LowResPairDistPotential.hh>
 #include <core/scoring/rna/RNP_LowResStackData.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/scoring/rna/RNA_SuitePotential.hh>
@@ -511,7 +512,7 @@ ScoringManager::get_RamaPrePro() const
 	utility::thread::safely_create_load_once_object_by_OP( creator, rama_pp_, SAFELY_PASS_MUTEX(rama_pp_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(rama_pp_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rama_pp_;
 }
-
+///////////////////////////////////////////////////////////////////////////////
 
 /// @brief Get an instance of the P_AA_ABEGO3 scoring object.
 /// @details Threadsafe and lazily loaded.  Used by AbegoEnergy.
@@ -727,6 +728,18 @@ ScoringManager::get_RNP_LowResPotential() const
 	utility::thread::safely_create_load_once_object_by_OP( creator, rnp_low_res_potential_, SAFELY_PASS_MUTEX( rnp_lowres_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rnp_lowres_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rnp_low_res_potential_;
 }
+
+/// @brief Get an instance of the RNP_LowResPairDistPotential scoring object.
+/// @details Threadsafe and lazily loaded.
+/// @author Rewritten by Andrew Watkins using templates by Vikram Mulligan
+rna::RNP_LowResPairDistPotential const &
+ScoringManager::get_RNP_LowResPairDistPotential() const
+{
+	boost::function< rna::RNP_LowResPairDistPotentialOP() > creator( boost::bind( &ScoringManager::create_rnp_lowrespairdistpotential_instance ) );
+	utility::thread::safely_create_load_once_object_by_OP( creator, rnp_low_res_pair_dist_potential_, SAFELY_PASS_MUTEX( rnp_lowrespairdist_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rnp_lowrespairdist_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
+	return *rnp_low_res_pair_dist_potential_;
+}
+
 
 /// @brief Get an instance of the RNP_LowResStackData scoring object.
 /// @details Threadsafe and lazily loaded.
@@ -1651,6 +1664,15 @@ ScoringManager::create_rna_lowresolutionpotential_instance() {
 rna::RNP_LowResPotentialOP
 ScoringManager::create_rnp_lowrespotential_instance() {
 	return rna::RNP_LowResPotentialOP( new rna::RNP_LowResPotential );
+}
+
+/// @brief Create an instance of the RNP_LowResPairDistPotential object, by owning pointer.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Andrew Watkins (amw579@stanford.edu)
+rna::RNP_LowResPairDistPotentialOP
+ScoringManager::create_rnp_lowrespairdistpotential_instance() {
+	return rna::RNP_LowResPairDistPotentialOP( new rna::RNP_LowResPairDistPotential );
 }
 
 /// @brief Create an instance of the RNP_LowResStackData object, by owning pointer.

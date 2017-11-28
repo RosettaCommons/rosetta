@@ -170,6 +170,10 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 			if ( rsd == rsd2 ) continue;
 			Vector rsd2_centroid;
 			bool const is_rsd2_protein( pose.residue(rsd2).is_protein() );
+			bool is_rsd2_centroid = pose.residue_type(rsd2).mode() == core::chemical::CENTROID_t;
+			if ( is_rsd2_protein && !is_rsd2_centroid && !use_actual_centroid ) {
+				return;
+			}
 			// Only look at RNA/protein and protein/RNA distances here
 			//if ((is_rsd2_protein && is_rsd_protein) || (!is_rsd2_protein && !is_rsd_protein)) continue;
 			if ( pose.residue(rsd).is_RNA() && pose.residue(rsd2).is_RNA() ) {

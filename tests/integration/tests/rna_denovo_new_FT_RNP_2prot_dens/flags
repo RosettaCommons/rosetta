@@ -1,0 +1,18 @@
+-fasta fasta.txt 
+-secstruct_file secstruct.txt 
+-minimize_rna true
+-nstruct 1
+-out:file:silent test_new_FT_RNP.out 
+-rna:denovo:lores_scorefxn rna/denovo/rna_lores_with_rnp_aug.wts
+-cycles 1000
+-s subset_native_protein.pdb helix_1.pdb subset_native_protein_2.pdb
+-ignore_zero_occupancy false 
+-new_fold_tree_initializer true
+-edensity:mapfile mini_1a9n_map.mrc
+-edensity:mapreso 5.0
+-randomize_init_rnp false
+-rna_protein_docking true
+-dock_each_chunk_per_chain true
+-rnp_high_res_cycles 1
+-convert_protein_CEN false
+-FA_low_res_rnp_scoring true

@@ -15,6 +15,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_JumpMover.fwd.hh>
+#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/rna/denovo/base_pairs/BasePairStep.hh>
 #include <protocols/rna/denovo/setup/RNA_DeNovoParameters.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
@@ -55,7 +56,9 @@ public:
 	void
 	setup_fold_tree_and_jumps_and_variants( core::pose::Pose & pose,
 		protocols::rna::denovo::movers::RNA_JumpMover const & rna_jump_mover,
-		protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const;
+		protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map,
+		protocols::rna::denovo::libraries::RNA_ChunkLibrary const & rna_chunk_library,
+		bool const & enumerate = false ) const;
 
 	void
 	setup_fold_tree_and_jumps_and_variants( core::pose::Pose & pose ) const;
@@ -63,9 +66,33 @@ public:
 	void
 	set_root_at_first_rigid_body( bool const setting ){ root_at_first_rigid_body_ = setting; }
 
+	void
+	set_dock_each_chunk( bool const & setting ){ dock_each_chunk_ = setting; }
+
+	void
+	set_dock_each_chunk_per_chain( bool const & setting ){ dock_each_chunk_per_chain_ = setting; }
+
+	void
+	set_center_jumps_in_single_stranded( bool const & setting ){ center_jumps_in_single_stranded_ = setting; }
+
+	void
+	set_new_fold_tree_initializer( bool const & setting ){ new_fold_tree_initializer_ = setting; }
+
+	bool new_fold_tree_initializer() const { return new_fold_tree_initializer_; }
+
+	void
+	set_model_with_density( bool const & setting ){ model_with_density_ = setting; }
+
+	bool model_with_density() const { return model_with_density_; }
+
 	void set_bps_moves( bool const & setting ){ bps_moves_ = setting; }
 
 	RNA_DeNovoParameters const & rna_params() const { return rna_params_; }
+
+	void
+	setup_chainbreak_variants( core::pose::Pose & pose,
+		protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const;
+
 
 private:
 
@@ -82,11 +109,20 @@ private:
 
 	void
 	setup_jumps( core::pose::Pose & pose,
-		protocols::rna::denovo::movers::RNA_JumpMover const & rna_jump_mover ) const;
+		protocols::rna::denovo::movers::RNA_JumpMover const & rna_jump_mover,
+		protocols::rna::denovo::libraries::RNA_ChunkLibrary const & rna_chunk_library,
+		bool const & enumerate = false ) const;
+
 
 	void
-	setup_chainbreak_variants( core::pose::Pose & pose,
-		protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const;
+	setup_fold_tree_through_build_full_model_info(
+		core::pose::Pose & pose,
+		protocols::rna::denovo::libraries::RNA_ChunkLibrary const & chunk_library,
+		bool const & enumerate = false ) const;
+
+	core::kinematics::FoldTree
+	setup_fold_tree_legacy( core::pose::Pose & pose,
+		protocols::rna::denovo::movers::RNA_JumpMover const & rna_jump_mover ) const;
 
 	void
 	setup_block_stack_variants(
@@ -103,6 +139,11 @@ private:
 	bool const assume_non_stem_is_loop; // legacy parameter.
 	bool bps_moves_;
 	bool root_at_first_rigid_body_;
+	bool dock_each_chunk_;
+	bool dock_each_chunk_per_chain_;
+	bool center_jumps_in_single_stranded_;
+	bool new_fold_tree_initializer_;
+	bool model_with_density_;
 
 };
 

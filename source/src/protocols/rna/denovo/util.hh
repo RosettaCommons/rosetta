@@ -127,7 +127,8 @@ get_rigid_body_jumps( core::pose::Pose const & pose );
 bool
 let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
 	core::pose::Pose const & pose,
-	bool const move_first_rigid_body  = false );
+	bool const & move_first_rigid_body  = false,
+	bool const & allow_first_rigid_body = false );
 
 core::Size
 get_anchor_rsd( core::pose::Pose const & pose );
@@ -184,7 +185,7 @@ virtualize_bulges( core::pose::Pose & input_pose,
 	bool const verbose );
 
 core::scoring::ScoreFunctionOP
-get_rna_hires_scorefxn();
+get_rna_hires_scorefxn( bool const & include_protein_terms=false );
 
 utility::vector1< core::Size >
 get_moving_res( core::pose::Pose const & pose,
@@ -201,6 +202,17 @@ base_pair_moving( core::pose::rna::BasePair const & base_pair,
 	core::pose::Pose const & pose );
 
 void delete_non_protein_from_pose( core::pose::Pose & pose );
+
+utility::vector1< core::Size >
+get_residues_within_dist_of_RNA(
+	core::pose::Pose const & pose,
+	core::Real const & dist_cutoff );
+
+
+core::kinematics::FoldTree
+get_rnp_docking_fold_tree( core::pose::Pose const & pose,
+	bool const & with_density = false );
+
 
 } //denovo
 } //rna

@@ -172,6 +172,8 @@ RNA_JumpMover::add_new_RNA_jump(
 
 	pose.fold_tree( fold_tree );
 
+	//std::cout << "Setting jump for " << jump_pos1 << " " << jump_pos2 << std::endl;
+	//std::cout << new_jump << std::endl;
 	pose.set_jump( which_jump, new_jump );
 
 	// wait, don't leave jumps connected to virtual atoms -- happens in 'edge' cases where we fake-treat DNA as an RNA with virtual 2'-OH.

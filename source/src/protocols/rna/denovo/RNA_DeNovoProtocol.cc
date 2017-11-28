@@ -179,8 +179,13 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	RNA_DeNovoPoseInitializerOP rna_de_novo_pose_initializer( new RNA_DeNovoPoseInitializer( *rna_params_ )  );
 	rna_de_novo_pose_initializer->set_bps_moves( options_->bps_moves() );
 	rna_de_novo_pose_initializer->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
+	rna_de_novo_pose_initializer->set_dock_each_chunk( options_->dock_each_chunk() );
+	rna_de_novo_pose_initializer->set_dock_each_chunk_per_chain( options_->dock_each_chunk_per_chain() );
+	rna_de_novo_pose_initializer->set_center_jumps_in_single_stranded( options_->center_jumps_in_single_stranded() );
+	rna_de_novo_pose_initializer->set_new_fold_tree_initializer( options_->new_fold_tree_initializer() );
+	rna_de_novo_pose_initializer->set_model_with_density( options_->model_with_density() );
 	bool refine_pose( refine_pose_list_.size() > 0 || options_->refine_pose() );
-	if ( !refine_pose ) rna_de_novo_pose_initializer->initialize_for_de_novo_protocol( pose, options_->ignore_secstruct() ); // virtualize phosphates, but no chainbreaks -- PUT HIGHER?
+	if ( !refine_pose || options_->refine_native_get_good_FT() ) rna_de_novo_pose_initializer->initialize_for_de_novo_protocol( pose, options_->ignore_secstruct() ); // virtualize phosphates, but no chainbreaks -- PUT HIGHER?
 
 	//Keep a copy for resetting after each decoy.
 	Pose start_pose = pose;
@@ -207,7 +212,20 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
 
 	rna_fragment_monte_carlo_->set_user_input_chunk_library( user_input_chunk_library );
+
+	if ( options_->initial_structures_provided() ) {
+		utility::vector1< std::string > silent_files_empty;
+		RNA_ChunkLibraryOP user_input_chunk_initialization_library( new RNA_ChunkLibrary( options_->chunk_initialization_pdb_files(),
+			silent_files_empty, pose, options_->input_res_initialize(), rna_params_->allow_insert_res() ) );
+		rna_fragment_monte_carlo_->set_user_input_chunk_initialization_library( user_input_chunk_initialization_library );
+	}
 	rna_fragment_monte_carlo_->set_rna_base_pair_handler( rna_base_pair_handler ); // could later have this look inside pose's sec_struct_info
+
+	//the jd will take care of outfile tagging
+	//rna_fragment_monte_carlo_->set_out_file_tag( out_file_tag );
+	rna_fragment_monte_carlo_->set_native_pose( get_native_pose() );
+	rna_fragment_monte_carlo_->set_denovo_scorefxn( denovo_scorefxn_ );
+	rna_fragment_monte_carlo_->set_hires_scorefxn( hires_scorefxn_ );
 
 
 	protocols::rna::setup::RNA_JobDistributorOP denovo_job_distributor;
@@ -248,14 +266,10 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 			pose = start_pose;
 		}
 
-		rna_fragment_monte_carlo_->set_out_file_tag( out_file_tag );
-		rna_fragment_monte_carlo_->set_native_pose( get_native_pose() );
-		rna_fragment_monte_carlo_->set_denovo_scorefxn( denovo_scorefxn_ );
-		rna_fragment_monte_carlo_->set_hires_scorefxn( hires_scorefxn_ );
 		rna_fragment_monte_carlo_->set_refine_pose( refine_pose );
 		rna_fragment_monte_carlo_->set_is_rna_and_protein( rna_params_->is_rna_and_protein() ); // need to know this for the high resolution stuff
 		if ( options_->filter_vdw() ) rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
-		if ( !refine_pose ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_initializer( rna_de_novo_pose_initializer ); // only used for resetting fold-tree & cutpoints on each try.
+		if ( !refine_pose || options_->refine_native_get_good_FT() ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_initializer( rna_de_novo_pose_initializer ); // only used for resetting fold-tree & cutpoints on each try.
 		rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final );  // used for filtering.
 		if ( outputter != 0 ) rna_fragment_monte_carlo_->set_outputter( outputter); // accumulate stats in histogram.
 
@@ -346,6 +360,7 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 		denovo_scorefxn_->set_weight( core::scoring::grid_vdw, options_->grid_vdw_weight() );
 	}
 
+
 	// initial_denovo_scorefxn_ = denovo_scorefxn_->clone();
 	if ( options_->chainbreak_weight() > -1.0 ) denovo_scorefxn_->set_weight( chainbreak, options_->chainbreak_weight() );
 	if ( options_->linear_chainbreak_weight() > -1.0 ) denovo_scorefxn_->set_weight( linear_chainbreak, options_->linear_chainbreak_weight() );
@@ -353,7 +368,17 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 	initialize_constraints( pose );
 
 	// RNA high-resolution score function.
-	hires_scorefxn_ = get_rna_hires_scorefxn();//->clone();
+	hires_scorefxn_ = get_rna_hires_scorefxn( rna_params_->is_rna_and_protein() );//->clone();
+
+	if ( options_->model_with_density() ) {
+		// Then we should turn on the density score terms in the low-res and the high-res score functions
+		if ( denovo_scorefxn_->get_weight( core::scoring::elec_dens_fast ) <= 0 ) {
+			denovo_scorefxn_->set_weight( core::scoring::elec_dens_fast, 10.0 );
+		}
+		if ( hires_scorefxn_->get_weight( core::scoring::elec_dens_fast ) <= 0 ) {
+			hires_scorefxn_->set_weight( core::scoring::elec_dens_fast, 10.0 );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -446,7 +471,7 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	using namespace core::io::silent;
 	using namespace core::scoring;
 
-	if ( rna_params_->is_rna_and_protein() && !options_->minimize_structure() ) {
+	if ( rna_params_->is_rna_and_protein() && (!options_->minimize_structure() || options_->output_lores_silent_file() ) ) {
 		// convert back to full atom (should give stupid coords... ok for now b/c protein doesn't move)
 		// if protein sidechains have moved, then the pose should already be in full atom by now (?!)
 		// if the structure is getting minimized, then it should already be converted back to full atom
@@ -475,7 +500,9 @@ RNA_DeNovoProtocol::output_to_silent_file(
 void
 RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag ) const
 {
-	rna_fragment_monte_carlo_->align_pose( pose, true /*verbose*/ );
+	if ( options_->align_output() ) { // true unless density map is supplied
+		rna_fragment_monte_carlo_->align_pose( pose, true /*verbose*/ );
+	}
 	if ( rna_params_->is_rna_and_protein() && !options_->minimize_structure() ) {
 		// copy the pose because we'll switch the residue type set when we output to silent file
 		// this is a stupid hack b/c right now the pose has both centroid and full atom residues!

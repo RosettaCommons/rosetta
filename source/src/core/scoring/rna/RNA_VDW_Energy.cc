@@ -221,8 +221,6 @@ const {
 
 	RNA_pos = rna_rsd.seqpos();
 
-	char const which_nucleotide = rna_rsd.name1(); //a,c,g,u
-
 	utility::vector1< utility::vector1< Size > > const &
 		atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
 	utility::vector1< Size > const & rna_atom_numbers( atom_numbers_for_vdw_calculation[ RNA_pos ] );
@@ -244,7 +242,9 @@ const {
 			Real clash, bump_dsq, j;
 			if ( !centroid_mode && !protein_rsd.atom_is_backbone( n ) ) {
 				j = protein_atom_name_to_num( " CEN", protein_rsd.name3());
-				bump_dsq = rna_atom_vdw_.bump_parameter_rnp( m, j, which_nucleotide );
+				// double check that we're getting the correct values here
+
+				bump_dsq = rna_atom_vdw_.bump_parameter_rnp( m, j, rna_rsd.type() );
 				// maybe at some point later we want to use the actual centroid/COM
 				clash = bump_dsq - i_xyz.distance_squared( protein_rsd.actcoord() ); // instead of protein_rsd.xyz(n);
 			} else {
@@ -252,9 +252,14 @@ const {
 				//Size const j = protein_rsd.atom_type_index( n );
 				// Need some check that this is really one of the atoms that we have data for!
 
-				bump_dsq = rna_atom_vdw_.bump_parameter_rnp( m, j, which_nucleotide );
+				bump_dsq = rna_atom_vdw_.bump_parameter_rnp( m, j, rna_rsd.type() );
 				clash = bump_dsq - i_xyz.distance_squared( protein_rsd.xyz( n ) );
 			}
+			//   std::cout << "RNA residue: " << rna_rsd.name1();
+			//   std::cout << " RNA atom: " << rna_rsd.atom_name( i );
+			//   std::cout << " protein residue: " << protein_rsd.name1();
+			//   std::cout << " protein atom: " << protein_rsd.atom_name( n );
+			//   std::cout << " bump_dsq: " << bump_dsq << std::endl;
 
 			//if ( clash > -5.0 ) {
 			if ( clash > 0.0 ) {

@@ -199,10 +199,14 @@ public:
 	bool
 	exclude_protein_protein_fa_elec() const;
 
-
 	void
 	exclude_protein_protein_fa_elec( bool const setting );
 
+	bool
+	exclude_RNA_RNA_fa_elec() const;
+
+	void
+	exclude_RNA_RNA_fa_elec( bool const setting );
 
 	bool
 	exclude_monomer_fa_elec() const;
@@ -587,6 +591,7 @@ private:
 	MethodWeights method_weights_;
 	SecondaryStructureWeights ss_weights_;
 	bool exclude_protein_protein_fa_elec_;
+	bool exclude_RNA_RNA_fa_elec_;
 	bool exclude_monomer_fa_elec_;
 	core::Real elec_max_dis_;
 	core::Real elec_min_dis_;

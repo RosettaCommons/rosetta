@@ -19,6 +19,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.fwd.hh>
 #include <protocols/rna/denovo/setup/RNA_DeNovoParameters.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/rna/BasePair.hh>
 #include <core/pose/Pose.hh>
 
@@ -84,12 +85,11 @@ public:
 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const &
 	chain_connections() const { return chain_connections_; }
 
-	void set_rna_and_protein( bool const & setting ) { is_rna_and_protein_ = setting; }
-
-	bool is_rna_and_protein() const { return is_rna_and_protein_; }
-
 	void set_rna_secstruct_legacy( std::string const & setting ){ rna_secstruct_legacy_ = setting; secstruct_defined_ = true; }
 	std::string rna_secstruct_legacy() const { return rna_secstruct_legacy_; }
+
+	void set_rna_and_protein( bool const & setting ) { is_rna_and_protein_ = setting; }
+	bool is_rna_and_protein() const { return is_rna_and_protein_; }
 
 	void
 	add_cutpoint_open( Size const n ) { cutpoints_open_.push_back( n ); }
@@ -105,6 +105,12 @@ public:
 	Size
 	check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
 		core::pose::rna::BasePair const & rna_pairing_check ) const;
+
+	void set_use_fold_tree_from_silent_file( bool const & setting ) { use_fold_tree_from_silent_file_ = setting; }
+	bool use_fold_tree_from_silent_file() const { return use_fold_tree_from_silent_file_; }
+
+	void set_fold_tree_from_silent_file( core::kinematics::FoldTree const & fold_tree ) { fold_tree_from_silent_file_ = fold_tree; }
+	core::kinematics::FoldTree fold_tree_from_silent_file() const { return fold_tree_from_silent_file_; }
 
 private:
 
@@ -148,6 +154,8 @@ private:
 	std::string rna_secstruct_legacy_;
 	bool secstruct_defined_;
 	bool is_rna_and_protein_;
+	bool use_fold_tree_from_silent_file_;
+	core::kinematics::FoldTree fold_tree_from_silent_file_;
 
 };
 

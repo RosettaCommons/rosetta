@@ -1,0 +1,11 @@
+-fasta fasta.txt 
+-secstruct_file secstruct.txt 
+-minimize_rna true
+-nstruct 1 
+-out:file:silent test_FT_density.out 
+-cycles 1000
+-s A_helix_1.pdb B_helix_1.pdb
+-ignore_zero_occupancy false 
+-new_fold_tree_initializer true
+-edensity:mapfile mini_1a9n_map.mrc
+-edensity:mapreso 5.0

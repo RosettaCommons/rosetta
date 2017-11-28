@@ -571,6 +571,7 @@ sources = {
 	"pilot/kkappel" : [
 		"analyze_docked_RNA_motifs",
 		"calculate_distances",
+		"check_frag_rmsd",
 		"check_rnp_coarse",
 		"get_rmsd",
 		"score_rnp_lowres",

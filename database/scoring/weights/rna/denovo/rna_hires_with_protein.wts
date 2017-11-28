@@ -1,0 +1,30 @@
+NO_HB_ENV_DEP
+fa_atr          0.23
+fa_rep          0.12
+fa_intra_rep    0.0029
+rna_torsion     0.10
+rna_sugar_close 0.7
+hbond_sr_bb_sc  0.62
+hbond_lr_bb_sc  3.4
+hbond_sc        3.4
+geom_sol        0.62
+ch_bond         0.42
+lk_nonpolar     0.32
+fa_elec_rna_phos_phos 1.05
+atom_pair_constraint 1.0
+
+# Terms from the protein scorefxn
+pro_close 1.25
+dslf_fa13 1.25
+rama 0.25
+omega 0.625
+fa_dun 0.7
+p_aa_pp 0.4
+yhh_planarity 0.625
+# why wasn't linear chainbreak on before?
+linear_chainbreak 20.0
+
+# and we need fa_elec
+# but we need NO_RNA_RNA_FA_ELEC from my other branch
+fa_elec 0.875
+NO_RNA_RNA_FA_ELEC

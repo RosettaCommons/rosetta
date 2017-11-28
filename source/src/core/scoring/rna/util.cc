@@ -68,6 +68,7 @@ protein_atom_name_to_num( std::string const & name, std::string const & resname 
 	if ( name == " C  " ) return 4;
 	if ( name == "OCbb" ) return 5;
 	if ( name == " O  " ) return 5;
+	if ( name == " OXT" ) return 5;
 	if ( name == " CEN" && resname != "" ) {
 		if ( resname == "ALA" ) return 6;
 		if ( resname == "CYS" ) return 7;

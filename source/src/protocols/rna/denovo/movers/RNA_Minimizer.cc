@@ -91,7 +91,9 @@ RNA_Minimizer::RNA_Minimizer( options::RNA_MinimizerOptionsCOP options /* = 0 */
 	coord_cst_weight_( 1.0 ),
 	perform_minimizer_run_( true ),
 	include_default_linear_chainbreak_( true  ),
-	close_loops_( true )
+	close_loops_( true ),
+	skip_chi_min_( false ),
+	min_tol_( 0.0000025 )
 {
 	Mover::type("RNA_Minimizer");
 }
@@ -107,7 +109,17 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( scorefxn_ == 0 ) scorefxn_ = get_rna_hires_scorefxn(); //->clone();
+
+	// Figure out whether the pose contains protein residues
+	bool contains_protein = false;
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue( i ).is_protein() ) {
+			contains_protein = true;
+			break;
+		}
+	}
+
+	if ( scorefxn_ == 0 ) scorefxn_ = get_rna_hires_scorefxn( contains_protein ); //->clone();
 
 	time_t pdb_start_time = time(NULL);
 	scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
@@ -121,7 +133,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	if ( include_default_linear_chainbreak_ && !scorefxn_->has_nonzero_weight( linear_chainbreak ) ) scorefxn_->set_weight( linear_chainbreak, 5.0 );
 
 	AtomTreeMinimizer minimizer;
-	float const dummy_tol( 0.0000025);
+	float dummy_tol = min_tol_;
 	bool const use_nblist( true );
 	MinimizerOptions minimizer_options( options_->min_type(), dummy_tol, use_nblist, options_->deriv_check(), options_->deriv_check() );
 	minimizer_options.nblist_auto_update( true );
@@ -156,7 +168,54 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 		Real const suppress = static_cast<Real>(r)/options_->minimize_rounds();
 		minimize_scorefxn_->set_weight( fa_rep, fa_rep_final * suppress  );
 
-		if ( !options_->skip_o2prime_trials() ) o2prime_trials( pose, minimize_scorefxn_ );
+		/// Packing RNA o2' and protein sidechains
+		if ( !contains_protein ) {
+
+			// the pose doesn't contain protein residues, so let's just do normal o2' packing
+			if ( !options_->skip_o2prime_trials() ) packing_trials( pose, minimize_scorefxn_ );
+
+		} else if ( !options_->protein_packing() ) {
+
+			// the pose contains protein residues, but we don't want to pack them
+			// get a list of all the RNA residues
+			if ( !options_->skip_o2prime_trials() ) {
+				utility::vector1< core::Size > all_RNA_residues;
+				for ( core::Size res = 1; res <= pose.size(); ++res ) {
+					if ( pose.residue(res).is_RNA() ) all_RNA_residues.push_back( res );
+				}
+				packing_trials( pose, minimize_scorefxn_, all_RNA_residues );
+			}
+
+		} else {
+
+			// the pose contains protein residues, and we want to pack at least some of them
+			if ( options_->protein_pack_all() ) {
+				if ( !options_->skip_o2prime_trials() ) {
+					// pack everything
+					packing_trials( pose, minimize_scorefxn_ );
+				} else {
+					// pack all protein, none of the RNA
+					utility::vector1< core::Size > residues_to_pack;
+					for ( core::Size i = 1; i <= pose.size(); ++i ) {
+						if ( pose.residue( i ).is_protein() ) residues_to_pack.push_back( i );
+					}
+					packing_trials( pose, minimize_scorefxn_, residues_to_pack );
+				}
+			} else {
+				// pack some of the protein residues
+				// get a list of the residues within distance cutoff of RNA
+				utility::vector1< core::Size > residues_to_pack = get_residues_within_dist_of_RNA( pose, options_->protein_packing_distance() );
+				//utility::vector1< core::Size > residues_to_pack = get_residues_within_dist_of_RNA( pose );
+				// add all the RNA residues as well, if specified
+				if ( !options_->skip_o2prime_trials() ) {
+					for ( core::Size i = 1; i <= pose.size(); ++i ) {
+						if ( pose.residue( i ).is_RNA() ) residues_to_pack.push_back( i );
+					}
+				}
+				packing_trials( pose, minimize_scorefxn_, residues_to_pack );
+			}
+
+		}
 
 		//Prevent explosions on first minimize.
 		// this is silly. in first round, just make sure coordinate_constraint is one, and use constraints 'supplemented' with coordinate constraints.
@@ -225,7 +284,12 @@ RNA_Minimizer::o2prime_trials(
 	//task->initialize_from_command_line(); //Jan 20, 2012 Testing.
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
-		if ( !pose.residue_type(i).is_RNA() ) continue;
+		// if it's not RNA, then let's prevent repacking
+		// (default behavior is different for other residue types)
+		if ( !pose.residue_type(i).is_RNA() ) {
+			task->nonconst_residue_task(i).prevent_repacking();
+			continue;
+		}
 
 		task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		task->nonconst_residue_task(i).or_include_current( true );
@@ -233,6 +297,48 @@ RNA_Minimizer::o2prime_trials(
 
 	TR << "Orienting 2' hydroxyls..." << std::endl;
 	pack::rotamer_trials( pose, *packer_scorefxn_, task);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_Minimizer::packing_trials(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionCOP const & packer_scorefxn ) const
+{
+	utility::vector1< core::Size > residues;
+	for ( core::Size i=1; i <= pose.size(); ++i ) {
+		residues.push_back( i );
+	}
+
+	packing_trials( pose, packer_scorefxn, residues );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_Minimizer::packing_trials(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionCOP const & packer_scorefxn,
+	utility::vector1< core::Size > residues_to_pack ) const
+{
+	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
+
+	for ( Size i=1; i<= pose.size(); ++i ) {
+		// Check whether this is in the list of residues to pack
+		if ( std::find(residues_to_pack.begin(), residues_to_pack.end(), i ) != residues_to_pack.end() ) {
+			// if it's RNA
+			if ( pose.residue( i ).is_RNA() ) {
+				task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
+				task->nonconst_residue_task(i).or_include_current( true );
+			} else if ( pose.residue( i ).is_protein() ) {
+				task->nonconst_residue_task(i).restrict_to_repacking();
+				task->nonconst_residue_task(i).or_include_current( true );
+			}
+		} else { // don't pack this
+			task->nonconst_residue_task(i).prevent_repacking();
+		}
+	}
+	TR << "Orienting 2' hydroxyls..." << std::endl;
+	pack::rotamer_trials( pose, *packer_scorefxn, task );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,10 +368,15 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 			// this is not general. Sigh:
 			if ( pose.residue(i).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) &&
 					( j == 1 || j == 2 || j == 3 ) ) {
+				//std::cout << "VRT PHOS at " << i << " " << j << std::endl;
 				continue;
 			}
 			mm.set( rna_torsion_id, true );
 		}
+	}
+
+	if ( skip_chi_min_ ) {
+		mm.set_chi( false );
 	}
 
 	// jumps
@@ -285,6 +396,47 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 		if ( pose.residue_type( jump_pos1 ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) mm.set_jump( n, true );
 		if ( pose.residue_type( jump_pos2 ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) mm.set_jump( n, true );
 	}
+	// If I understand correctly, everything up until here is identical to the atom_level_domain_map
+	// setup_movemap function (but that's nicer and more general!) EXCEPT the VIRTUAL_PHOSPHATE check
+	// let's just add that into the atom level domain map function and use that
+	// -Kalli
+	// ok also the atom_level_domain_map seems totally screwed up for protein residues
+	// did it get hacked somewhere??
+	//atom_level_domain_map_->setup_movemap( mm, pose, true /*check for vrt phos*/ );
+	// explicitly turn off torsions between chains ??
+
+	// check whether we want to relax the protein residues
+	if ( options_->minimize_all_protein() || options_->minimize_protein_sc() ) {
+		// go through all the protein residues and turn them on
+		for ( Size i = 1; i<=nres; ++i ) {
+			if ( !pose.residue(i).is_protein() ) continue;
+			if ( options_->minimize_all_protein() ) {
+				mm.set_bb( i, true );
+			}
+			mm.set_chi( i, true );
+		}
+		// check for jumps between protein residues, allow these to move as well
+		// (only if we're minimizing all of the protein
+		if ( options_->minimize_all_protein() ) {
+			for ( Size n = 1; n<=pose.fold_tree().num_jump(); n++ ) {
+				Size const jump_r1( pose.fold_tree().upstream_jump_residue( n ));
+				Size const jump_r2( pose.fold_tree().downstream_jump_residue( n ));
+				if ( pose.residue( jump_r1 ).is_protein() && pose.residue( jump_r2 ).is_protein() ) {
+					mm.set_jump( n, true );
+				}
+			}
+		}
+	}
+
+	// revise density jumps
+	if ( options_->model_with_density() && !options_->dock_into_density() ) { // default
+		// get the rigid body jumps
+		utility::vector1< Size > rigid_body_jumps = get_rigid_body_jumps( pose );
+		// set the first one to false
+		if ( rigid_body_jumps.size() > 0 ) {
+			mm.set_jump( rigid_body_jumps[ 1 ], false );
+		}
+	}
 
 	// allow rigid body movements... check for virtual residue at end and at least two chunks with jumps to it.
 	protocols::rna::denovo::let_rigid_body_jumps_move( mm, pose, options_->move_first_rigid_body() );
@@ -293,6 +445,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 
 	// vary bond geometry
 	if ( options_->vary_bond_geometry() ) simple_moves::setup_vary_rna_bond_geometry( mm, pose, atom_level_domain_map_ );
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////

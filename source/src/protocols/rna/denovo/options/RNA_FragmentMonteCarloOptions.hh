@@ -73,6 +73,12 @@ public:
 	void set_refine_pose( bool const & setting ){ refine_pose_ = setting; }
 	bool refine_pose() const { return refine_pose_; }
 
+	void set_override_refine_pose_rounds( bool const & setting ){ override_refine_pose_rounds_ = setting; }
+	bool override_refine_pose_rounds() const { return override_refine_pose_rounds_; }
+
+	void set_refine_native_get_good_FT( bool const & setting ){ refine_native_get_good_FT_ = setting; }
+	bool refine_native_get_good_FT() const { return refine_native_get_good_FT_; }
+
 	void set_temperature( core::Real const setting ){ temperature_ = setting; };
 	core::Real temperature() const { return temperature_; }
 
@@ -153,17 +159,67 @@ public:
 	void set_gradual_constraints( bool const setting ){ gradual_constraints_ = setting; }
 	bool gradual_constraints() const { return gradual_constraints_; }
 
+	void set_ramp_rnp_vdw( bool const & setting ){ ramp_rnp_vdw_ = setting; }
+	bool ramp_rnp_vdw() const { return ramp_rnp_vdw_; }
+
 	void set_grid_vdw_weight( core::Real const & setting ){ grid_vdw_weight_ = setting; }
 	core::Real grid_vdw_weight() const { return grid_vdw_weight_; }
 
-	void set_convert_protein_centroid( bool const setting ){ convert_protein_centroid_ = setting; }
+	void set_convert_protein_centroid( bool const & setting ){ convert_protein_centroid_ = setting; }
 	bool convert_protein_centroid() const { return convert_protein_centroid_; }
 
-	void set_rna_protein_docking( bool const setting ){ rna_protein_docking_ = setting; }
+	void set_rna_protein_docking( bool const & setting ){ rna_protein_docking_ = setting; }
 	bool rna_protein_docking() const { return rna_protein_docking_; }
 
-	void set_rna_protein_docking_freq( core::Size const setting ){ rna_protein_docking_freq_ = setting; }
-	core::Size rna_protein_docking_freq() const { return rna_protein_docking_freq_; }
+	void set_small_docking_moves( bool const & setting ){ small_docking_moves_ = setting; }
+	bool small_docking_moves() const { return small_docking_moves_; }
+
+	void set_docking_move_size( core::Real const & setting ){
+		if ( setting > 1.0 ) {
+			docking_move_size_ = 1.0;
+		} else if ( setting < 0.0 ) {
+			docking_move_size_ = 0.0;
+		} else {
+			docking_move_size_ = setting;
+		}
+	}
+	core::Real docking_move_size() const { return docking_move_size_; }
+
+	void set_rna_protein_docking_legacy( bool const & setting ){ rna_protein_docking_legacy_ = setting; }
+	bool rna_protein_docking_legacy() const { return rna_protein_docking_legacy_; }
+
+	void set_rna_protein_docking_freq( core::Real const & setting ){ rna_protein_docking_freq_ = setting; }
+	core::Real rna_protein_docking_freq() const { return rna_protein_docking_freq_; }
+
+	void set_docking( bool const & setting ){ docking_ = setting; }
+	bool docking() const { return docking_; }
+
+	void set_randomize_init_rnp( bool const & setting ){ randomize_init_rnp_ = setting; }
+	bool randomize_init_rnp() const { return randomize_init_rnp_; }
+
+	void set_rnp_high_res_relax( bool const & setting ){ rnp_high_res_relax_ = setting; }
+	bool rnp_high_res_relax() const { return rnp_high_res_relax_; }
+
+	void set_rnp_high_res_cycles( core::Real const & setting ){ rnp_high_res_cycles_ = setting; }
+	core::Real rnp_high_res_cycles() const { return rnp_high_res_cycles_; }
+
+	void set_rnp_pack_first( bool const & setting ){ rnp_pack_first_ = setting; }
+	bool rnp_pack_first() const { return rnp_pack_first_; }
+
+	void set_rnp_ramp_rep( bool const & setting ){ rnp_ramp_rep_ = setting; }
+	bool rnp_ramp_rep() const { return rnp_ramp_rep_; }
+
+	void set_rnp_min_first( bool const & setting ){ rnp_min_first_ = setting; }
+	bool rnp_min_first() const { return rnp_min_first_; }
+
+	void set_dock_into_density_legacy( bool const & setting ){ dock_into_density_legacy_ = setting; }
+	bool dock_into_density_legacy() const { return dock_into_density_legacy_; }
+
+	void set_new_fold_tree_initializer( bool const & setting ){ new_fold_tree_initializer_ = setting; }
+	bool new_fold_tree_initializer() const { return new_fold_tree_initializer_; }
+
+	void set_initial_structures_provided( bool const & setting ){ initial_structures_provided_ = setting; }
+	bool initial_structures_provided() const { return initial_structures_provided_; }
 
 	void set_monte_carlo_cycles( core::Size const setting ){ monte_carlo_cycles_ = setting; }
 	core::Size monte_carlo_cycles() const { return monte_carlo_cycles_; }
@@ -182,6 +238,15 @@ public:
 
 	void set_root_at_first_rigid_body( bool const & setting ){ root_at_first_rigid_body_ = setting; }
 	bool root_at_first_rigid_body() const { return root_at_first_rigid_body_; }
+
+	void set_dock_each_chunk( bool const & setting ){ dock_each_chunk_ = setting; }
+	bool dock_each_chunk() const { return dock_each_chunk_; }
+
+	void set_dock_each_chunk_per_chain( bool const & setting ){ dock_each_chunk_per_chain_ = setting; }
+	bool dock_each_chunk_per_chain() const { return dock_each_chunk_per_chain_; }
+
+	void set_center_jumps_in_single_stranded( bool const & setting ){ center_jumps_in_single_stranded_ = setting; }
+	bool center_jumps_in_single_stranded() const { return center_jumps_in_single_stranded_; }
 
 	void set_suppress_bp_constraint( core::Real const & setting ){ suppress_bp_constraint_ = setting; }
 	core::Real suppress_bp_constraint() const { return suppress_bp_constraint_; }
@@ -217,6 +282,26 @@ public:
 	utility::vector1< std::string > const & chunk_pdb_files() const { return chunk_pdb_files_; };
 
 	void
+	set_helical_substructs( utility::vector1< std::string > const & setting ) {
+		helical_substructs_ = setting;
+	}
+
+	utility::vector1< std::string > const & helical_substructs() const { return helical_substructs_; }
+
+	void
+	set_helical_substruct_res( utility::vector1< utility::vector1< core::Size > > const & setting ) {
+		helical_substruct_res_ = setting;
+	}
+
+	utility::vector1< utility::vector1< core::Size > > const & helical_substruct_res() const { return helical_substruct_res_;}
+
+	void
+	set_chunk_initialization_pdb_files( utility::vector1< std::string > const & input_files ) {
+		chunk_initialization_pdb_files_ = input_files;
+	}
+	utility::vector1< std::string > const & chunk_initialization_pdb_files() const { return chunk_initialization_pdb_files_; }
+
+	void
 	set_chunk_silent_files( utility::vector1< std::string > const & chunk_silent_files ) {
 		chunk_silent_files_ = chunk_silent_files;
 	}
@@ -224,6 +309,9 @@ public:
 
 	void set_input_res( utility::vector1< Size > const & input_res ) { input_res_ = input_res; }
 	utility::vector1< Size > const & input_res() const { return input_res_; };
+
+	void set_input_res_initialize( utility::vector1< Size > const & input_res ) { input_res_initialize_ = input_res; }
+	utility::vector1< Size > const & input_res_initialize() const { return input_res_initialize_; }
 
 	void set_output_score_frequency( core::Size const & setting ){ output_score_frequency_ = setting; }
 	core::Size output_score_frequency() const { return output_score_frequency_; }
@@ -299,6 +387,9 @@ private:
 	core::Real autofilter_score_quantile_;
 	bool titrate_stack_bonus_;
 	bool root_at_first_rigid_body_;
+	bool dock_each_chunk_;
+	bool dock_each_chunk_per_chain_;
+	bool center_jumps_in_single_stranded_;
 	core::Real suppress_bp_constraint_;
 
 	bool filter_lores_base_pairs_;
@@ -330,17 +421,35 @@ private:
 	utility::vector1< std::string > VDW_rep_screen_info_;
 	bool vdw_rep_screen_include_sidechains_;
 	bool gradual_constraints_;
+	bool ramp_rnp_vdw_;
 	core::Real grid_vdw_weight_;
 
 	bool convert_protein_centroid_;
 
 	bool rna_protein_docking_;
-	core::Size rna_protein_docking_freq_;
+	bool small_docking_moves_;
+	core::Real docking_move_size_;
+	bool rna_protein_docking_legacy_;
+	core::Real rna_protein_docking_freq_;
+	bool docking_;
+
+	bool randomize_init_rnp_;
+	bool rnp_high_res_relax_;
+	core::Size rnp_high_res_cycles_;
+	bool rnp_pack_first_;
+	bool rnp_ramp_rep_;
+	bool rnp_min_first_;
+
+	bool dock_into_density_legacy_;
+	bool new_fold_tree_initializer_;
+	bool initial_structures_provided_;
 
 	bool simple_rmsd_cutoff_relax_;
 
 	bool refine_from_silent_;
 	bool refine_pose_;
+	bool override_refine_pose_rounds_;
+	bool refine_native_get_good_FT_;
 	bool bps_moves_;
 	bool disallow_bps_at_extra_min_res_;
 	bool allow_fragment_moves_in_bps_;
@@ -356,8 +465,12 @@ private:
 	std::string jump_library_file_;
 
 	utility::vector1< std::string > chunk_pdb_files_;
+	utility::vector1< std::string > helical_substructs_;
+	utility::vector1< utility::vector1< Size > > helical_substruct_res_;
+	utility::vector1< std::string > chunk_initialization_pdb_files_;
 	utility::vector1< std::string > chunk_silent_files_;
 	utility::vector1< core::Size > input_res_;
+	utility::vector1< core::Size > input_res_initialize_;
 
 	bool rmsd_screen_;
 	bool disallow_realign_;

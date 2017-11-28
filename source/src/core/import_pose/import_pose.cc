@@ -916,14 +916,15 @@ cleanup( pose::Pose & pose, bool const force_cut_at_rna_chainbreak /* = false */
 FullModelParametersOP
 get_sequence_information(
 	std::string const & fasta_file,
-	vector1< Size > & cutpoint_open_in_full_model )
+	vector1< Size > & cutpoint_open_in_full_model,
+	bool const append_virtual /*=false*/ )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
 
 	// calebgeniesse: setup for edensity scoring, if map is provided via cmd-line
-	if ( option[ edensity::mapfile ].user() ) {
+	if ( option[ edensity::mapfile ].user() || append_virtual ) {
 		// update fasta_sequences accordingly
 		Size idx = fasta_sequences.size();
 		fasta_sequences[idx]->append_char('X');
@@ -950,7 +951,6 @@ get_sequence_information(
 		conventional_chains, conventional_numbering, conventional_segids );
 	return full_model_parameters;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //calebgeniesse: setup for density scoring

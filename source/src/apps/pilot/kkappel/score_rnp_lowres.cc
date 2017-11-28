@@ -73,6 +73,7 @@
 using namespace basic::options::OptionKeys;
 
 OPT_KEY( Boolean, dump )
+OPT_KEY( Boolean, low_res )
 
 static basic::Tracer TR( "apps.pilot.kkappel.score_rnp_lowres" );
 
@@ -83,6 +84,7 @@ void check_structures() {
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::io::silent;
+	using namespace core::scoring;
 
 	// input stream
 	PoseInputStreamOP input;
@@ -109,6 +111,17 @@ void check_structures() {
 	//sfxn = core::scoring::get_score_function();
 
 
+	core::scoring::ScoreFunctionOP sfxn;
+	//sfxn = core::scoring::get_score_function( "rnp_lowres" );
+	//sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "rnp_lores" );
+	//sfxn = core::scoring::get_score_function();
+	if ( option[ score::weights ].user() ) {
+		sfxn = get_score_function();
+	} else {
+		sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "rnp_lores" );
+	}
+
+
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
 	SilentFileOptions opts; // initialized from the command line
@@ -118,25 +131,24 @@ void check_structures() {
 
 		input->fill_pose( pose, *rsd_set );
 
+		//std::cout << "FOLD TREE: " << std::endl;
+		//pose.fold_tree().show( std::cout );
+		//pose.dump_pdb( "pose_dump.pdb" );
+
 		// tag
 		std::string tag = tag_from_pose( pose );
 
-		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */, true /* keep energies! */ );
+		if ( option[ low_res ]() ) {
+			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */, true /* keep energies! */ );
+		}
 
 		if ( basic::options::option[ dump ]() ) {
 			std::string out_pdb_file = tag + "_dump.pdb";
 			pose.dump_pdb( out_pdb_file );
 		}
 
-		core::scoring::ScoreFunctionOP sfxn;
-		//sfxn = core::scoring::get_score_function( "rnp_lowres" );
-		sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "rnp_lores" );
-		//sfxn = core::scoring::get_score_function();
-
 		// score it
-		std::cout << "Scoring pose" << std::endl;
 		(*sfxn)( pose );
-		std::cout << "Done scoring pose" << std::endl;
 
 		// write it to the silent file
 		BinarySilentStruct s( opts, pose, tag );
@@ -149,7 +161,9 @@ int main( int argc, char ** argv ) {
 
 	try {
 		using namespace basic::options;
+		option.add_relevant( score::weights );
 		NEW_OPT( dump, "dump the final structure", false );
+		NEW_OPT( low_res, "switch protein to centroid", true );
 
 		devel::init( argc, argv );
 		check_structures();

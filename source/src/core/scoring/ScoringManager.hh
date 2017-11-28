@@ -95,6 +95,7 @@
 #include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
 #include <core/scoring/rna/RNP_LowResPotential.fwd.hh>
+#include <core/scoring/rna/RNP_LowResPairDistPotential.fwd.hh>
 #include <core/scoring/rna/RNP_LowResStackData.fwd.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.fwd.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh>
@@ -358,6 +359,12 @@ public:
 	/// @note Targeted object is also threadsafe, to the best of my ability to tell.
 	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 	rna::RNP_LowResPotential const & get_RNP_LowResPotential() const;
+
+	/// @brief Get an instance of the RNP_LowResPairDistPotential scoring object.
+	/// @details Threadsafe and lazily loaded.
+	/// @note Targeted object is also threadsafe, to the best of my ability to tell.
+	/// @author Rewritten by Andrew Watkins (amw579@stanford.edu)
+	rna::RNP_LowResPairDistPotential const & get_RNP_LowResPairDistPotential() const;
 
 	/// @brief Get an instance of the RNP_LowResStackData scoring object.
 	/// @details Threadsafe and lazily loaded.
@@ -831,6 +838,12 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	static rna::RNP_LowResPotentialOP create_rnp_lowrespotential_instance();
 
+	/// @brief Create an instance of the RNP_LowResPairDistPotential object, by owning pointer.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Andrew Watkins (amw579@stanford.edu)
+	static rna::RNP_LowResPairDistPotentialOP create_rnp_lowrespairdistpotential_instance();
+
 	/// @brief Create an instance of the RNP_LowResStackData object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 	/// @note Not intended for use outside of ScoringManager.
@@ -1059,6 +1072,7 @@ private:
 	mutable utility::thread::ReadWriteMutex loopclose_sixdtransrot_mutex_;
 	mutable std::mutex rna_lowres_mutex_;
 	mutable std::mutex rnp_lowres_mutex_;
+	mutable std::mutex rnp_lowrespairdist_mutex_;
 	mutable std::mutex rnp_lowresstack_mutex_;
 	mutable std::mutex rna_chemshift_mutex_;
 	mutable std::mutex rna_dms_mutex_;
@@ -1125,6 +1139,7 @@ private:
 	//mutable std::atomic_bool loopclose_sixdtransrot_bool_;
 	mutable std::atomic_bool rna_lowres_bool_;
 	mutable std::atomic_bool rnp_lowres_bool_;
+	mutable std::atomic_bool rnp_lowrespairdist_bool_;
 	mutable std::atomic_bool rnp_lowresstack_bool_;
 	mutable std::atomic_bool rna_chemshift_bool_;
 	mutable std::atomic_bool rna_dms_bool_;
@@ -1186,6 +1201,7 @@ private:
 	mutable carbon_hbonds::CarbonHBondPotentialOP carbon_hbond_potential_;
 	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
 	mutable rna::RNP_LowResPotentialOP rnp_low_res_potential_;
+	mutable rna::RNP_LowResPairDistPotentialOP rnp_low_res_pair_dist_potential_;
 	mutable rna::RNP_LowResStackDataOP rnp_low_res_stack_data_;
 	mutable rna::chemical_shift::RNA_ChemicalShiftPotentialOP rna_chemical_shift_potential_;
 	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;

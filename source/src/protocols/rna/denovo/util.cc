@@ -34,6 +34,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
@@ -854,11 +855,15 @@ get_rigid_body_jumps( core::pose::Pose const & pose ) {
 bool
 let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
 	pose::Pose const & pose,
-	bool const move_first_rigid_body /* = false */ ){
+	bool const & move_first_rigid_body /* = false */,
+	bool const & allow_single_rigid_body /* = false */ ){
 
 	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
 	Size const found_jumps = rigid_body_jumps.size();
-	if ( found_jumps <= 1 )  return false; // nothing to rotate/translate relative to another object.
+
+	if ( found_jumps < 1 ) return false; // didn't find any rigid body jumps
+	if ( !allow_single_rigid_body && found_jumps <= 1 ) return false; // nothing to rotate/translate relative to another object,
+	// and we don't care about absolute coords
 
 	Size start = ( move_first_rigid_body ) ? 1 : 2;
 	for ( Size n = start; n <= rigid_body_jumps.size(); n++ ) movemap.set_jump( rigid_body_jumps[n], true );
@@ -1328,12 +1333,14 @@ virtualize_bulges( core::pose::Pose & input_pose,
 
 //////////////////////////////////////////////////////////////////////////////////////////
 core::scoring::ScoreFunctionOP
-get_rna_hires_scorefxn() {
+get_rna_hires_scorefxn( bool const & include_protein_terms ) {
 	core::scoring::ScoreFunctionOP scorefxn_;
 	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
 		scorefxn_ = core::scoring::get_score_function();
-	} else {
+	} else if ( !include_protein_terms ) {
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
+	} else {
+		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "rna/denovo/rna_hires_with_protein" );
 	}
 	return scorefxn_;
 }
@@ -1433,6 +1440,120 @@ delete_non_protein_from_pose( core::pose::Pose & pose ) {
 	}
 
 }
+/////////////////////////////////////////////////////////////////////////////////
+
+
+utility::vector1< core::Size >
+get_residues_within_dist_of_RNA(
+	core::pose::Pose const & pose,
+	core::Real const & dist_cutoff )
+{
+
+	utility::vector1< core::Size > residues_near_RNA;
+	core::Real dist_cutoff_squared = dist_cutoff * dist_cutoff;
+
+	// there's probably a better way to do this...
+	// go through all the residues in the pose, check distances
+	for ( core::Size r1=1; r1 <= pose.size(); ++r1 ) {
+		if ( !pose.residue( r1 ).is_protein() ) continue;
+		for ( core::Size r2 = 1; r2 <=pose.size(); ++r2 ) {
+			if ( !pose.residue( r2 ).is_RNA() ) continue;
+			// r1 is the protein residue, r2 is the RNA residue
+			// check if they're within distance cutoff
+			// use proxy atoms
+			//" C1'" for RNA, " CB " for protein, except GLY, " CA "
+			core::Real dist_sq;
+			if ( pose.residue(r1).name3() != "GLY" ) {
+				dist_sq = ( pose.residue( r1 ).xyz( " CB " ) - pose.residue( r2 ).xyz( " C1'" ) ).length_squared();
+			} else {
+				dist_sq = ( pose.residue( r1 ).xyz( " CA " ) - pose.residue( r2 ).xyz( " C1'" ) ).length_squared();
+			}
+			if ( dist_sq < dist_cutoff_squared ) {
+				// add the protein residue to the list and get out!
+				residues_near_RNA.push_back( r1 );
+				break;
+			}
+
+		}
+	}
+
+	// std::cout << "Residues that will get packed: " << std::endl;
+	// std::cout << residues_near_RNA << std::endl;
+
+	return residues_near_RNA;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+core::kinematics::FoldTree
+get_rnp_docking_fold_tree( pose::Pose const & pose, bool const & with_density ) {
+
+	// This is super simple right now, later update this so that it can take
+	// user input docking jumps, that's sort of the next simplest thing that
+	// we can do, but eventually can try to be smart looking at chains and
+	// distances (a little difficult if there are e.g. 2 RNA chains in a helix
+	// that together bind to the protein, you'd need to make sure that you end
+	// up with only one jump between the RNA and the protein
+
+	// We want a fold tree that puts all the consecutive protein residues in one edge
+	// and all consecutive RNA residues in another edge, with a jump between the
+	// RNA and protein edge
+	// Right now this will fail if there is e.g. RNA -> protein -> RNA or
+	// protein -> RNA -> protein
+
+	// We also need to make sure that linear_chainbreak is getting computed....
+
+	// This is terrible, but I'm not going to fix it right now b/c it works
+	// for initial test cases that I care about...
+	// next on my to do list: replace all of the fold tree nonsense in rna_denovo
+	// with nice stepwise framework
+
+	core::kinematics::FoldTree ft;
+	bool prev_RNA = false;
+	bool prev_protein = false;
+	utility::vector1< core::Size > rna_protein_jumps;
+
+	for ( core::Size i=1; i <= pose.size(); ++i ) {
+		if ( pose.residue( i ).is_RNA() && prev_protein ) {
+			rna_protein_jumps.push_back( i );
+		} else if ( pose.residue( i ).is_protein() && prev_RNA ) {
+			rna_protein_jumps.push_back( i );
+		}
+		if ( pose.residue( i ).is_RNA() ) {
+			prev_RNA = true;
+			prev_protein = false;
+		} else if ( pose.residue( i ).is_protein() ) {
+			prev_protein = true;
+			prev_RNA = false;
+		}
+	}
+
+	// Make the fold tree
+	for ( core::Size i=1; i <= rna_protein_jumps.size(); ++i ) {
+		if ( i == 1 ) { // add the first edge
+			ft.add_edge(1, rna_protein_jumps[i] - 1, kinematics::Edge::PEPTIDE );
+		}
+		// add the jump
+		ft.add_edge( rna_protein_jumps[i] - 1, rna_protein_jumps[i], i );
+		if ( i == rna_protein_jumps.size() ) { // add the last edge
+			if ( with_density ) {
+				// if we're using density, then the last residue in the pose better be a virtual residue
+				ft.add_edge( rna_protein_jumps[i], pose.total_residue()-1, kinematics::Edge::PEPTIDE );
+				// add the jump from the virtual residue to the first residue in the pose
+				ft.add_edge( pose.total_residue(), 1, i+1 );
+			} else {
+				ft.add_edge( rna_protein_jumps[i], pose.total_residue(), kinematics::Edge::PEPTIDE );
+			}
+		}
+	}
+
+	if ( with_density ) {
+		ft.reorder( pose.size() );
+	}
+
+	return ft;
+
+}
+
 
 } //denovo
 } //rna

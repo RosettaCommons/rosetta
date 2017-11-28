@@ -52,7 +52,7 @@ output_to_silent_file( std::string const & silent_file,
 	core::pose::PoseCOP native_pose );
 
 void
-build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );
+build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose, bool const & enumerate = true, core::Real const & skip_bulge_freq = 0.2 );
 
 core::pose::PoseOP
 build_full_model( core::pose::Pose const & start_pose );

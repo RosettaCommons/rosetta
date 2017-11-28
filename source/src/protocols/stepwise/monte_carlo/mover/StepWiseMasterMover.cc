@@ -474,15 +474,15 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 /////////////////////////////////////////////////////////
 // Called by build_full_model() in stepwise/monte_carlo/util.cc
 void
-StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose & full_model_pose ) {
+StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose & full_model_pose, bool const & choose_random /* =false */ ) {
 	using namespace options;
 	full_model_pose = start_pose;
 
 	runtime_assert( options_->skip_deletions() ); // totally inelegant, must be set outside.
 	initialize();
-	add_or_delete_mover_->set_choose_random( false );
-	add_mover_->set_start_added_residue_in_aform( true );
-	add_mover_->set_presample_added_residue( false );
+	add_or_delete_mover_->set_choose_random( choose_random );
+	add_mover_->set_start_added_residue_in_aform( true  );
+	add_mover_->set_presample_added_residue(      false );
 
 	std::string move_type_string;
 	while ( add_or_delete_mover_->apply( full_model_pose, move_type_string ) ) {

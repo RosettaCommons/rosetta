@@ -20,9 +20,11 @@
 #include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/rna/denovo/libraries/RNA_LibraryManager.hh>
 #include <protocols/rna/denovo/movers/RNA_JumpMover.hh>
+#include <protocols/rna/denovo/movers/RNA_HelixMover.hh>
 #include <protocols/rna/denovo/movers/RNA_DeNovoMasterMover.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <protocols/rna/denovo/movers/RNA_Relaxer.hh>
+#include <protocols/rna/denovo/movers/RNP_HighResMover.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/rna/denovo/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
@@ -44,6 +46,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
+#include <basic/options/option.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/copydofs/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -115,7 +119,7 @@ void
 RNA_FragmentMonteCarlo::initialize( pose::Pose & pose ) {
 	initialize_parameters();
 	initialize_libraries( pose );
-	initialize_movers();
+	initialize_movers( pose ); // need the pose here for the RNP high res mover - Kalli
 	initialize_score_functions();
 }
 
@@ -150,7 +154,38 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 		pose = start_pose;
 
-		if ( !refine_pose_ && rna_de_novo_pose_initializer_ != nullptr ) rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *(rna_denovo_master_mover_->rna_jump_mover()), atom_level_domain_map_ );
+		// save constraints
+		core::scoring::constraints::ConstraintSetOP pose_constraints = pose.constraint_set()->clone();
+
+		kinematics::FoldTree initial_structures_ft;
+		Pose initial_structure;
+
+		// set up initial conformations, or initial rigid body arrangements
+		// (differs from refine_native, because a partial structure may be provided)
+		if ( options_->initial_structures_provided() ) {
+			setup_full_initial_structure( pose );
+			initial_structure = pose;
+		}
+
+		Pose save_structure;
+		if ( refine_pose_ && options_->refine_native_get_good_FT() ) {
+			save_structure = pose;
+		}
+
+		if ( (!refine_pose_ || options_->refine_native_get_good_FT()) && rna_de_novo_pose_initializer_ != nullptr ) rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *(rna_denovo_master_mover_->rna_jump_mover()), atom_level_domain_map_, *rna_chunk_library_ );
+
+		// the new fold tree initializer changes the structure of the pose, but especially with density
+		// we really need to use it to get a reasonable fold tree
+		// but if we're refining native, really all we want from the pose initializer is a nice fold tree
+		if ( refine_pose_ && options_->refine_native_get_good_FT() ) {
+			copy_structure_keep_fold_tree( pose, save_structure );
+		}
+
+		if ( options_->initial_structures_provided() ) {
+			copy_structure_keep_fold_tree( pose, initial_structure );
+		}
+
+		pose.constraint_set( pose_constraints );
 
 		if ( !options_->bps_moves() ) rna_base_pair_handler_->setup_base_pair_constraints( pose, atom_level_domain_map_, options_->suppress_bp_constraint() ); // needs to happen after setting cutpoint variants, etc.
 
@@ -162,6 +197,8 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 		if ( refine_pose_ ) core::pose::copydofs::copy_dofs_match_atom_names( pose, start_pose );
 
+		if ( options_->initial_structures_provided() ) core::pose::copydofs::copy_dofs_match_atom_names( pose, initial_structure );
+
 		rna_denovo_master_mover_->set_close_loops( options_->close_loops_after_each_move() );
 		if ( options_->close_loops_after_each_move() ) rna_loop_closer_->apply( pose );
 
@@ -172,7 +209,14 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 				pose, options_->vdw_rep_screen_include_sidechains() );
 		}
 
-		if ( !refine_pose_ ) rna_denovo_master_mover_->do_random_moves( pose, monte_carlo_cycles_ );
+		if ( !refine_pose_ && !options_->initial_structures_provided() ) {
+			if ( is_rna_and_protein_ ) {
+				// putting this here to be sure to affect ONLY rna-protein runs
+				rna_denovo_master_mover_->do_random_moves( pose, monte_carlo_cycles_, true /* set heat cycles based on number of RNA res only */  );
+			} else {
+				rna_denovo_master_mover_->do_random_moves( pose, monte_carlo_cycles_ );
+			}
+		}
 
 		// this works here I think, doesn't create atom mapping issues, but it may create some issues with
 		// the score function
@@ -180,7 +224,15 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */, false /* keep energies! */ );
 		}
 
-		if ( is_rna_and_protein_ ) rna_denovo_master_mover_->setup_rnp_fold_tree( pose, refine_pose_ );
+		if ( is_rna_and_protein_ && options_->rna_protein_docking() && options_->rna_protein_docking_legacy() ) {
+			rna_denovo_master_mover_->setup_rnp_fold_tree( pose, refine_pose_, options_->randomize_init_rnp() /* default true*/ );
+			// try doing initial search of rigid body positions
+			// make an option
+			// for now let's only do this if we have density
+			if ( options_->model_with_density() && options_->randomize_init_rnp() ) {
+				rna_denovo_master_mover_->search_rigid_body_orientation( pose );
+			}
+		}
 
 		monte_carlo.reset( pose );
 
@@ -301,8 +353,23 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	if ( options_->minimize_structure() ) {
 		if ( is_rna_and_protein_ ) {
 			// convert the pose back to full atom
-			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, false /* no sloppy match */, true /* only switch protein residues */, false /* don't keep the energies! */ );
-			rna_chunk_library_->insert_random_protein_chunks( pose ); //actually not random if only one chunk in each region.
+			if ( options_->convert_protein_centroid() ) {
+				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, false /* no sloppy match */, true /* only switch protein residues */, false /* don't keep the energies! */ );
+				rna_chunk_library_->insert_random_protein_chunks( pose ); //actually not random if only one chunk in each region.
+			}
+
+			if ( options_->rnp_min_first() ) {
+				rna_minimizer_->set_atom_level_domain_map( atom_level_domain_map_ );
+				rna_minimizer_->apply( pose );
+			}
+
+			// default true
+			if ( options_->rnp_high_res_relax() ) {
+				rnp_high_res_mover_->initialize( pose );
+				rnp_high_res_mover_->apply( pose );
+			}
+			rna_minimizer_->set_atom_level_domain_map( atom_level_domain_map_ );
+			rna_minimizer_->apply( pose );
 		} else {
 			rna_minimizer_->set_atom_level_domain_map( atom_level_domain_map_ );
 			rna_minimizer_->apply( pose );
@@ -335,7 +402,13 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 void
 RNA_FragmentMonteCarlo::initialize_parameters() {
 	// parameters for run.
-	rounds_ = refine_pose_ ? 1 : options_->rounds();
+	//rounds_ = refine_pose_ ? 1 : options_->rounds();
+	if ( refine_pose_ && !options_->override_refine_pose_rounds() ) {
+		rounds_ = 1;
+	} else {
+		rounds_ = options_->rounds();
+	}
+
 	if ( options_->rmsd_screen() > 0 ) {
 		// Ideally should be able to do alignment in general case (even without rmsd_screen),
 		// but running into a funny issue with rerooting.
@@ -368,6 +441,12 @@ RNA_FragmentMonteCarlo::initialize_libraries( pose::Pose & pose ) {
 		if ( !options_->bps_moves() || options_->disallow_bps_at_extra_min_res() ) rna_chunk_library_->atom_level_domain_map()->disallow_movement_of_input_res( pose );
 	}
 
+	// set up the initialization library, just used to provide initial rigid body orientations of chunks
+	// especially useful with density maps
+	if ( user_input_rna_chunk_initialization_library_ != nullptr ) {
+		rna_chunk_initialization_library_ = user_input_rna_chunk_initialization_library_->clone();
+	}
+
 	if ( rna_base_pair_handler_ == nullptr ) rna_base_pair_handler_ = RNA_BasePairHandlerOP( new RNA_BasePairHandler( pose ) );
 
 	if ( options_->bps_moves() ) {
@@ -383,15 +462,38 @@ RNA_FragmentMonteCarlo::initialize_libraries( pose::Pose & pose ) {
 
 ////////////////////////////////////////////////////////////////////////////
 void
-RNA_FragmentMonteCarlo::initialize_movers() {
+RNA_FragmentMonteCarlo::initialize_movers( core::pose::Pose const & pose ) {
 	rna_loop_closer_ = protocols::rna::movers::RNA_LoopCloserOP( new protocols::rna::movers::RNA_LoopCloser );
 	rna_loop_closer_->set_atom_level_domain_map( atom_level_domain_map_ );
+
+	if ( options_->initial_structures_provided() ) {
+		rna_loop_closer_init_ = protocols::rna::movers::RNA_LoopCloserOP( new protocols::rna::movers::RNA_LoopCloser );
+		rna_loop_closer_init_->set_atom_level_domain_map( rna_chunk_initialization_library_->atom_level_domain_map() );
+	}
 
 	// MasterMover handles fragments, jumps, chunks, docking
 	rna_denovo_master_mover_ = RNA_DeNovoMasterMoverOP( new RNA_DeNovoMasterMover( options_, atom_level_domain_map_,
 		rna_base_pair_handler_, rna_loop_closer_,
 		rna_chunk_library_ ) );
 
+	if ( options_->initial_structures_provided() ) {
+		rna_denovo_master_mover_init_ = RNA_DeNovoMasterMoverOP( new RNA_DeNovoMasterMover( options_,
+			rna_chunk_initialization_library_->atom_level_domain_map(),
+			rna_base_pair_handler_, rna_loop_closer_init_,
+			rna_chunk_initialization_library_ ) );
+	}
+
+	if ( options_->dock_each_chunk_per_chain() && (options_->helical_substruct_res().size() > 0) ) {
+		bool move_first_rigid_body = false;
+		if ( options_->move_first_rigid_body() || options_->dock_into_density() ) {
+			move_first_rigid_body = true;
+		}
+		rna_helix_mover_ = protocols::rna::denovo::movers::RNA_HelixMoverOP( new protocols::rna::denovo::movers::RNA_HelixMover(
+			options_->helical_substruct_res(), rna_base_pair_handler_, move_first_rigid_body ));
+		// check whether the helix mover actually has helices that it can move
+		// if not, don't set it in the master mover (so it will never be called)
+		rna_denovo_master_mover_->set_rna_helix_mover( rna_helix_mover_ );
+	}
 
 	if ( options_->relax_structure() || options_->minimize_structure() ) {
 		rna_minimizer_ = RNA_MinimizerOP( new RNA_Minimizer( options_ ) );
@@ -400,6 +502,12 @@ RNA_FragmentMonteCarlo::initialize_movers() {
 
 		rna_relaxer_ = RNA_RelaxerOP( new RNA_Relaxer( rna_denovo_master_mover_->rna_fragment_mover(), rna_minimizer_) );
 		rna_relaxer_->simple_rmsd_cutoff_relax( options_->simple_rmsd_cutoff_relax() );
+	}
+
+	// separate dependency on minimize_structure?
+	if ( is_rna_and_protein_ && options_->minimize_structure() && options_->rnp_high_res_relax() ) {
+		rnp_high_res_mover_ = RNP_HighResMoverOP( new RNP_HighResMover( rna_denovo_master_mover_->rna_fragment_mover(), rna_loop_closer_, options_ ));
+		rnp_high_res_mover_->initialize( pose );
 	}
 
 	if ( outputter_ == 0 ) {
@@ -419,6 +527,11 @@ RNA_FragmentMonteCarlo::initialize_score_functions() {
 		chem_shift_scorefxn->set_weight( rna_chem_shift, CS_weight );
 		chem_shift_scorefxn_ = chem_shift_scorefxn;
 	}
+
+	if ( options_->initial_structures_provided() ) {
+		chainbreak_sfxn_ = ScoreFunctionFactory::create_score_function( "empty" );
+		chainbreak_sfxn_->set_weight( linear_chainbreak, 10.0 );
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -435,13 +548,40 @@ RNA_FragmentMonteCarlo::update_rna_denovo_master_mover( Size const & r /*round n
 	}
 
 	Real rot_mag, trans_mag;
-	get_rigid_body_move_mags( r, rot_mag, trans_mag );
+	Real const rot_mag_init( 10.0 ),   rot_mag_final( 0.2 );
+	Real const trans_mag_init( 5.0 ), trans_mag_final( 0.1 );
+	get_rigid_body_move_mags( r, rot_mag, trans_mag, rot_mag_init, trans_mag_init,
+		rot_mag_final, trans_mag_final );
 
 	// finer rigid body moves
-	rna_denovo_master_mover_->setup_rigid_body_mover( pose, rot_mag, trans_mag ); // needs to happen after fold_tree is decided...
+	// only set up the rigid body mover if we specified virtual anchor, RNA/protein docking, or docking into density
+	if ( options_->docking() ) {
+		rna_denovo_master_mover_->setup_rigid_body_mover( pose, rot_mag, trans_mag ); // needs to happen after fold_tree is decided...
+	}
+
+	if ( options_->dock_into_density() && options_->dock_into_density_legacy() ) {
+		// Should we make rot_mag and trans_mag be different than for rigid body mover??
+		// maybe it should also be an option?
+		rna_denovo_master_mover_->setup_dock_into_density_mover( pose, rot_mag, trans_mag );
+	}
+
+	// set helix docking rotation and translation magnitudes
+	if ( options_->dock_each_chunk_per_chain() && (options_->helical_substruct_res().size() > 0) ) {
+		// max angle 10? max trans 2?
+		Real const hel_rot_mag_init( 30.0 ), hel_rot_mag_final( 0.2 );
+		Real const hel_trans_mag_init( 5.0 ), hel_trans_mag_final( 0.1 );
+		//Real const hel_rot_mag_init( 10.0 ), hel_rot_mag_final( 0.2 );
+		//Real const hel_trans_mag_init( 2.0 ), hel_trans_mag_final( 0.1 );
+		Real helix_rot_mag, helix_trans_mag;
+		get_rigid_body_move_mags( r, helix_rot_mag, helix_trans_mag,
+			hel_rot_mag_init, hel_trans_mag_init,
+			hel_rot_mag_final, hel_trans_mag_final );
+
+		rna_denovo_master_mover_->set_helix_mover_magnitude( helix_rot_mag, helix_trans_mag );
+	}
 
 	// reset the magnitude of the RNP docking perturbation each round
-	if ( is_rna_and_protein_ && options_->rna_protein_docking() ) {
+	if ( is_rna_and_protein_ && options_->rna_protein_docking() && options_->rna_protein_docking_legacy() ) {
 		rna_denovo_master_mover_->setup_rna_protein_docking_mover( pose, rot_mag, trans_mag );
 	}
 }
@@ -459,17 +599,29 @@ RNA_FragmentMonteCarlo::update_frag_size( Size const & r ) const
 	return frag_size;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::get_rigid_body_move_mags( Size const & r,
 	Real & rot_mag,
-	Real & trans_mag ) const
+	Real & trans_mag,
+	Real const & rot_mag_init,
+	Real const & trans_mag_init,
+	Real const & rot_mag_final,
+	Real const & trans_mag_final ) const
 {
-	//Keep moves coarse for early rounds. For the last 1/4 of modeling, plateau to the finest moves.
-	Real suppress ( 3.0 / 4.0 * r / rounds_ );
+
+	Real suppress;
+	if ( options_->small_docking_moves() ) {
+		suppress = 1.0;
+	} else {
+		//Keep moves coarse for early rounds. For the last 1/4 of modeling, plateau to the finest moves.
+		suppress = (1.0 - options_->docking_move_size()) + 3.0 / 4.0 * r / rounds_;
+		//suppress = 3.0 / 4.0 * r / rounds_;
+	}
 	if ( suppress > 1.0 ) suppress = 1.0;
 
-	Real const rot_mag_init( 10.0 ),   rot_mag_final( 0.2 );
-	Real const trans_mag_init( 5.0 ), trans_mag_final( 0.1 );
+	// Real const rot_mag_init( 10.0 ),   rot_mag_final( 0.2 );
+	// Real const trans_mag_init( 5.0 ), trans_mag_final( 0.1 );
 	rot_mag   = rot_mag_init   +  (rot_mag_final - rot_mag_init ) * suppress;
 	trans_mag = trans_mag_init +  (trans_mag_final - trans_mag_init ) * suppress;
 }
@@ -547,6 +699,7 @@ RNA_FragmentMonteCarlo::update_denovo_scorefxn_weights( Size const r )
 	Real const coordinate_constraint_final_weight = denovo_scorefxn_->get_weight( coordinate_constraint );
 	Real const base_pair_constraint_final_weight  = denovo_scorefxn_->get_weight( base_pair_constraint );
 	Real const rna_chem_map_lores_final_weight    = denovo_scorefxn_->get_weight( rna_chem_map_lores );
+	Real const rnp_vdw_final_weight               = denovo_scorefxn_->get_weight( rnp_vdw );
 
 	//Keep score function coarse for early rounds.
 	// Real const suppress  = (r - 1.0) / (rounds - 1.0);
@@ -555,6 +708,8 @@ RNA_FragmentMonteCarlo::update_denovo_scorefxn_weights( Size const r )
 	working_denovo_scorefxn_->set_weight( rna_base_axis,      suppress*rna_base_axis_final_weight  );
 	working_denovo_scorefxn_->set_weight( rna_base_stagger,   suppress*rna_base_stagger_final_weight  );
 	if ( options_->titrate_stack_bonus() ) working_denovo_scorefxn_->set_weight( rna_base_stack_axis,suppress*rna_base_stack_axis_final_weight  );
+
+	if ( options_->ramp_rnp_vdw() ) working_denovo_scorefxn_->set_weight( rnp_vdw, suppress*rnp_vdw_final_weight );
 
 	if ( options_->gradual_constraints() ) {
 		working_denovo_scorefxn_->set_weight( atom_pair_constraint,  suppress*atom_pair_constraint_final_weight  );
@@ -798,6 +953,91 @@ RNA_FragmentMonteCarlo::check_for_loop_modeling_case( std::map< core::id::AtomID
 		}
 	}
 	atom_id_map = loop_atom_id_map;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::setup_full_initial_structure( core::pose::Pose & pose ) const
+{
+
+	rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *(rna_denovo_master_mover_init_->rna_jump_mover()), rna_chunk_initialization_library_->atom_level_domain_map(), *rna_chunk_initialization_library_, true /*enumerate for new fold tree initializer*/ );
+
+	Size tries = 1;
+	core::Real score = 100.;
+	Pose start_pose = pose;
+	while ( score > 0.5 && tries < 4 ) {
+		pose = start_pose;
+		score = randomize_and_close_all_chains( pose );
+		tries += 1;
+	}
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+core::Real
+RNA_FragmentMonteCarlo::randomize_and_close_all_chains( core::pose::Pose & pose ) const
+{
+
+	/////////////////
+	// do random moves and close chains //
+
+	// randomize pose - we won't do this again later
+	if ( is_rna_and_protein_ ) {
+		rna_denovo_master_mover_init_->do_random_moves( pose, monte_carlo_cycles_, true );
+	} else {
+		rna_denovo_master_mover_init_->do_random_moves( pose, monte_carlo_cycles_ );
+	}
+
+	protocols::moves::MonteCarlo mc( pose, *chainbreak_sfxn_, options_->temperature() );
+	mc.score_function( *chainbreak_sfxn_ );
+
+	core::Real score = 100.0;
+	Size i = 0;
+	while ( score > 1.0 && i < 200 ) {
+		++i;
+		rna_denovo_master_mover_init_->rna_fragment_mover()->random_fragment_insertion( pose, 1 /*frag_size*/ );
+		mc.boltzmann( pose );
+		if ( mc.last_accepted_score() < 1.0 ) {
+			rna_loop_closer_init_->apply( pose );
+		}
+		score = mc.last_accepted_score();
+	}
+	pose = mc.lowest_score_pose();
+	rna_loop_closer_init_->apply( pose );
+
+	options::RNA_FragmentMonteCarloOptionsOP options_chainbreak = options_->clone();
+	options_chainbreak->set_dock_into_density( false );
+	options_chainbreak->set_minimize_rounds( 1 );
+	options_chainbreak->set_skip_o2prime_trials( true );
+	options_chainbreak->set_protein_packing( false );
+
+	RNA_MinimizerOP chainbreak_rna_min_ = RNA_MinimizerOP( new RNA_Minimizer( options_chainbreak ) );
+	chainbreak_rna_min_->set_score_function( chainbreak_sfxn_ );
+	chainbreak_rna_min_->set_atom_level_domain_map( rna_chunk_initialization_library_->atom_level_domain_map() );
+	chainbreak_rna_min_->set_skip_chi_min( true );
+	chainbreak_rna_min_->set_min_tol( 0.0001 ); // to keep it fast
+	chainbreak_rna_min_->apply( pose );
+
+	return (*chainbreak_sfxn_)( pose );
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::copy_structure_keep_fold_tree( core::pose::Pose & pose,
+	core::pose::Pose const & pose_to_copy ) const
+{
+
+	// keep the fold tree from the pose
+	kinematics::FoldTree save_ft = pose.fold_tree();
+
+	// but get everything else from the pose_to_copy
+	pose = pose_to_copy;
+	pose.fold_tree( save_ft );
+
+	// and then set up the chainbreak variants properly
+	rna_de_novo_pose_initializer_->setup_chainbreak_variants( pose, atom_level_domain_map_ );
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////

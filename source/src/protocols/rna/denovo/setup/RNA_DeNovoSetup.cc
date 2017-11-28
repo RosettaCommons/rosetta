@@ -53,6 +53,7 @@
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <utility/options/OptionCollection.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -207,6 +208,10 @@ void RNA_DeNovoSetup::initialize_inputs_from_options( utility::options::OptionCo
 		minimize_rna_ = opts[ OptionKeys::rna::denovo::minimize_rna ]();
 		minimize_rna_has_been_specified_ = true;
 	}
+	if ( opts[ OptionKeys::rna::denovo::helical_substructs ].user() ) helical_substructs_ = opts[ OptionKeys::rna::denovo::helical_substructs ]();
+	if ( opts[ OptionKeys::rna::denovo::initial_structures ].user() ) {
+		input_initialization_pdbs_ = option[ OptionKeys::rna::denovo::initial_structures ]();
+	}
 
 }
 
@@ -291,7 +296,14 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		// numbers & chains based on fasta header lines.
 		if ( sequence_strings_.size() > 0 ) utility_exit_with_message( "Cannot specify both -sequence and -fasta" );
 		if ( fasta_files_.size() != 1 ) utility_exit_with_message( "Please specify exactly one fasta file." );
-		full_model_parameters = core::import_pose::get_sequence_information( fasta_files_[ 1 ], cutpoint_open_in_full_model );
+		bool append_virtual = false;
+		// AMW: hey Kalli, is this where we would want to also append a virtual... say, if -please_give_new_FT is true?
+		if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ||
+				opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ) {
+			// if a density map was supplied by the user, the virtual residue would have been appended by default anyway
+			append_virtual = true;
+		}
+		full_model_parameters = core::import_pose::get_sequence_information( fasta_files_[ 1 ], cutpoint_open_in_full_model, append_virtual );
 		if ( offset != 0 ) {
 			vector1< int > new_numbering = full_model_parameters->conventional_numbering();
 			for ( Size n = 1; n <= new_numbering.size(); n++ ) { new_numbering[ n ] += offset; }
@@ -299,6 +311,11 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		}
 
 	} else {
+		if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ||
+				opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ) {
+
+			utility_exit_with_message( "Please use fasta files to specify sequence if providing a density map or doing RNA/protein docking");
+		}
 		// basic read-in of sequence from command line
 		if ( sequence_strings_.size() == 0 ) utility_exit_with_message( "Must specify -sequence or -fasta" );
 		std::string sequence( sequence_strings_[1] );
@@ -329,9 +346,27 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	////////////////////
 	// Other useful residues.
 	if ( opts[ full_model::cutpoint_open ].user() ) {
-		cutpoint_open_in_full_model  =
+		vector1< Size > cutpoint_open_in_full_model_from_command_line  =
 			full_model_parameters->conventional_to_full( opts[ full_model::cutpoint_open ].resnum_and_chain() );
+		// check whether these residues are already in cutpoint_open_in_full_model
+		// if not, add them
+		for ( Size n = 1; n<=cutpoint_open_in_full_model_from_command_line.size(); ++n ) {
+			if ( !cutpoint_open_in_full_model.has_value( cutpoint_open_in_full_model_from_command_line[ n ] ) ) {
+				cutpoint_open_in_full_model.push_back( cutpoint_open_in_full_model_from_command_line[ n ] );
+			}
+		}
 	}
+	// AMW: Hey maybe there could be a single signifier for 'this is an edensity-or-docking-case'?
+	if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ||
+			opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ) {
+
+		// double check that a cutpoint was added at the last residue (a virtual residue)
+		// essential for the fold tree to get set up properly
+		if ( !cutpoint_open_in_full_model.has_value( sequence.size() - 1 ) ) {
+			cutpoint_open_in_full_model.push_back( sequence.size() - 1 );
+		}
+	}
+
 	vector1< Size > working_res        =
 		full_model_parameters->conventional_to_full( opts[ full_model::working_res ].resnum_and_chain() ); //all working stuff
 	std::sort( working_res.begin(), working_res.end() ); // some the following depends on correct order.
@@ -373,7 +408,26 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	// "general" secondary structure includes non-canonical pairs that should be connected by jumps during run; used with -bps_moves.
 	RNA_SecStruct secstruct_general( opts[ OptionKeys::rna::denovo::secstruct_general ](), opts[ OptionKeys::rna::denovo::secstruct_general_file ](), sequence );
 
-	secstruct.check_compatible_with_sequence( sequence, true  /*check_complementarity*/ );
+	// At this point the virtual residue for density scoring has already been added
+	// so there's a mismatch is sequence and secondary structure length
+	// so we need to check against the sequence, minus the last residue
+	bool model_with_density( false );
+	if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) model_with_density = true;// we'll stick this in rna_params_ later
+	if ( model_with_density || option[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ) {
+		std::string sequence_without_last;
+		for ( core::Size i=0; i<sequence.size()-1; ++i ) {
+			sequence_without_last+=sequence[i];
+		}
+		// And check that the last residue really is virtual?
+		// AMW: we can't do this: the secstruct is too long to be compatible with a shorter sequence!
+		/*
+		std::cout << "SEQUENCE WITHOUT LAST" << std::endl;
+		std::cout << sequence_without_last << std::endl;
+		secstruct.check_compatible_with_sequence( sequence_without_last, true );
+		*/
+	} else {
+		secstruct.check_compatible_with_sequence( sequence, true  /*check_complementarity*/ );
+	}
 	secstruct_general.check_compatible_with_sequence( sequence, false /*check_complementarity*/ );
 
 	if ( !secstruct_general.blank() && !options_->bps_moves() ) utility_exit_with_message("cannot supply secstruct_general without bps_moves");
@@ -382,6 +436,9 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	// Step 4
 	////////////////////
 	/////////////
+	//vector1< std::string > input_pdbs = opts[ in::file::s ]();
+	//vector1< std::string > input_silent_files = option[ in::file::silent ]();
+
 	std::string const working_native_pdb = opts[ OptionKeys::rna::denovo::working_native ]();
 	vector1< std::string > obligate_pair_explicit = opts[ OptionKeys::rna::denovo::obligate_pair_explicit ]();
 	vector1< std::string > chain_connections = opts[ OptionKeys::rna::denovo::chain_connection ]();
@@ -398,6 +455,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	vector1< vector1< int > > resnum_list;
 	vector1< Size > input_res;
 	Size input_res_user_defined_count( 0 );
+	vector1< vector1< Size > > helical_substruct_res;
 	for ( std::string const & pdb : input_pdbs_ ) {
 		std::string pdb_seq;
 		vector1< int > resnum;
@@ -440,7 +498,62 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 			utility_exit_with_message("The sequence in "+pdb+" does not match target sequence!!");
 		}
 		resnum_list.push_back( resnum_in_full_model );
+
+		// check whether this is one of the helical_substructs
+		if ( helical_substructs_.contains( pdb ) ) {
+			helical_substruct_res.push_back( resnum_in_full_model );
+		}
 	}
+
+
+	///////
+	// Also set up the input res for the initialization pdbs
+	///////
+
+	vector1< vector1< int > > resnum_list_initialize;
+	vector1< Size > input_res_initialize;
+	//Size input_res_initialize_user_defined_count( 0 );
+	for ( auto const & pdb : input_initialization_pdbs_ ) {
+		std::string pdb_seq;
+		vector1< int > resnum;
+		vector1< char >  chain;
+		vector1< std::string >  segid;
+		get_seq_and_resnum( pdb, pdb_seq, resnum, chain, segid );
+		vector1< Size > resnum_in_full_model;
+		// don't allow input res from -input_res flag for initialization structures
+
+		// figure out residue numbers from PDB resnum & chain.
+		resnum_in_full_model = full_model_parameters->conventional_to_full( std::make_tuple( resnum, chain, segid ) );
+
+		std::string actual_seq = "";
+		for ( Size q = 1; q <= resnum_in_full_model.size(); q++ ) {
+			Size const i = resnum_in_full_model[ q ];
+			if ( input_res_initialize.has_value( i ) )  TR << TR.Red << "WARNING! Input residue " << resnum[q] << " " << chain[q] << " exists in two pdb files!!" << std::endl;
+			actual_seq += sequence[ i - 1 ];
+			input_res_initialize.push_back( i );
+		}
+		if ( pdb_seq != actual_seq ) {
+			TR << TR.Red << "   pdb_seq: " << pdb_seq << std::endl;
+			TR << TR.Red << "target_seq: " << actual_seq << std::endl;
+			for ( Size q = 1; q <= resnum_in_full_model.size(); q++ ) {
+				if ( q > actual_seq.size() ) {
+					TR << "mismatch in length beyond " << q << std::endl;
+					break;
+				}
+				if ( pdb_seq[q-1] != actual_seq[q-1] ) {
+					Size n( resnum_in_full_model[ q ] );
+					TR << "mismatch in sequence: pdb  " << pdb_seq[q-1] << " vs target " << actual_seq[q-1] << " at " << full_model_parameters->full_to_conventional( n ) << std::endl;
+				}
+			}
+			utility_exit_with_message("The sequence in "+pdb+" does not match target sequence!!");
+		}
+		resnum_list_initialize.push_back( resnum_in_full_model );
+	}
+	////////////////
+	// done with setup of initialization input res
+	///////////////
+
+
 
 
 	////////////////////
@@ -491,6 +604,11 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		}
 
 		resnum_list.push_back( resnum_in_full_model );
+
+		// check whether this is one of the helical_substructs
+		if ( helical_substructs_.contains( silent ) ) {
+			helical_substruct_res.push_back( resnum_in_full_model );
+		}
 	}
 	runtime_assert( input_silent_res_user_defined_count == input_silent_res.size() );
 
@@ -668,6 +786,13 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	vector1< Size > working_cutpoint( working_cutpoint_open ); working_cutpoint.append( working_cutpoint_closed );
 	working_stems = working_secstruct.stems();
 	vector1< Size > working_input_res = working_res_map( input_res, working_res );
+	vector1< Size > working_input_res_initialize = working_res_map( input_res_initialize, working_res );
+	TR.Debug << "IN setup helical substruct res: " << helical_substruct_res << std::endl;
+	vector1< vector1< Size > > working_helical_substruct_res;
+	for ( Size i=1; i<= helical_substruct_res.size(); ++i ) {
+		working_helical_substruct_res.push_back( working_res_map( helical_substruct_res[i] , working_res) );
+	}
+	TR.Debug << "IN setup working helical substruct res: " << working_helical_substruct_res << std::endl;
 	if ( options_->fixed_stems() ) {
 		update_working_obligate_pairs_with_stems( working_obligate_pairs, working_stems, working_input_res );
 	}
@@ -702,6 +827,14 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		}
 	}
 
+
+	// Try to set stuff up for density scoring ?
+	if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		//  pose::addVirtualResAsRoot( full_pose );
+	}
+	TR.Debug << "THE SEQUENCE:" << std::endl;
+	TR.Debug << full_pose.sequence() << std::endl;
+
 	////////////////////////
 	// Working native pose
 	////////////////////////
@@ -712,6 +845,10 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		// all, though.
 		PoseOP align_pose;
 		stepwise::setup::initialize_native_and_align_pose( native_pose_, align_pose, rsd_set_, pose_ );
+		// if we're using density, append the virtual residue
+		if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+			core::pose::addVirtualResAsRoot( *native_pose_ );
+		}
 
 		// if refine native, set the full_pose equal to the native_pose
 		if ( opts[ OptionKeys::rna::denovo::refine_native ]() ) {
@@ -723,6 +860,9 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		std::string native_pdb_file  = opts[ OptionKeys::rna::denovo::working_native ];
 		native_pose_ = PoseOP( new Pose );
 		core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
+		if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+			core::pose::addVirtualResAsRoot( *native_pose_ );
+		}
 	} else {
 		runtime_assert( !opts[ OptionKeys::rna::denovo::refine_native ]() );
 	}
@@ -736,6 +876,11 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	}
 
 
+	if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		//  pose::addVirtualResAsRoot( *pose_ );
+	}
+	TR.Debug << "THE SEQUENCE OF THE POSE:" << std::endl;
+	TR.Debug << pose_->sequence() << std::endl;
 
 	////////////////////
 	// Step 11
@@ -987,6 +1132,52 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;
 
 
+
+	/////////////////
+	/// Get the fold tree from a specified silent file
+	/// this is a bit of a weird hack for being able refine from an initial structure with density
+	/// reading the pose from the silent file directly creates a big mess...
+	////////////////
+	bool use_fold_tree_from_silent_file = false;
+	core::kinematics::FoldTree fold_tree_from_silent_file;
+	if ( option[ OptionKeys::rna::denovo::get_fold_tree_from_silent_file ].user() ) {
+
+		// if this works, unify with the refine silent pose list stuff
+
+		vector1<pose::PoseOP> refine_pose_list;
+		std::string ft_silent_file = option[ OptionKeys::rna::denovo::get_fold_tree_from_silent_file ]();
+
+		if ( !ft_silent_file.empty() ) {
+
+			core::import_pose::pose_stream::SilentFilePoseInputStreamOP input;
+
+			if ( option[ OptionKeys::rna::denovo::fold_tree_from_silent_file_tag ].user() ) {
+				utility::vector1< std::string > filename_vector;
+				filename_vector.push_back( ft_silent_file );
+				input = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream( filename_vector,
+					option[ OptionKeys::rna::denovo::fold_tree_from_silent_file_tag ]() ));
+			} else {
+				input = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream( ft_silent_file ));
+			}
+
+			int pose_count = 1;
+			input->set_order_by_energy( true );
+			while ( input->has_another_pose() && pose_count < 2 ) {
+
+				pose::PoseOP new_pose( new pose::Pose );
+				input->fill_pose( *new_pose, *rsd_set_ );
+				fold_tree_from_silent_file = new_pose->fold_tree();
+				use_fold_tree_from_silent_file = true;
+				pose_count += 1;
+
+				//new_pose->dump_pdb( "test_pose_dump_" + ObjexxFCL::string_of( pose_count ) + ".pdb" );
+
+			}
+		}
+
+	}
+
+
 	////////////////////
 	// Step 17
 	////////////////////
@@ -1007,7 +1198,8 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	rna_params_->set_virtual_anchor_attachment_points( working_virtual_anchor );
 	rna_params_->set_rna_and_protein( is_rna_and_protein );
 	rna_params_->set_rna_secstruct_legacy( working_secstruct_legacy );
-
+	rna_params_->set_use_fold_tree_from_silent_file( use_fold_tree_from_silent_file );
+	rna_params_->set_fold_tree_from_silent_file( fold_tree_from_silent_file );
 
 	////////////////////
 	// Step 18
@@ -1046,6 +1238,8 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 
 	// some stuff to update in *options*
 	options_->set_input_res( working_input_res );
+	options_->set_input_res_initialize( working_input_res_initialize );
+	options_->set_helical_substruct_res( working_helical_substruct_res );
 	options_->set_extra_minimize_res( working_res_map( extra_minimize_res, working_res ) );
 	options_->set_extra_minimize_chi_res( working_res_map( extra_minimize_chi_res, working_res ) );
 	options_->set_output_jump_res( working_res_map( output_jump_res, working_res ) );
@@ -1057,6 +1251,8 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	// could also set up other stuff inside full_model_parameters -- see protocols/stepise/FullModelInfoSetupFromCommandLine.cc
 	// a better route, however, would be to *deprecate* this setup code, and instead use that stepwise code + build_full_model to
 	// handle FARFAR setup. -- rhiju & amwatkins, dec. 2016.
+	TR.Debug << "CUTPOINT OPEN IN FULL MODEL" << std::endl;
+	TR.Debug << cutpoint_open_in_full_model << std::endl;
 	full_model_parameters->set_parameter_as_res_list( CUTPOINT_OPEN, cutpoint_open_in_full_model );
 	full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,
 		full_model_parameters->conventional_to_full( opts[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
@@ -1073,7 +1269,11 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	// Set up FullModelInfo (so we can use info stored there like SYN_CHI_RES)
 	FullModelInfoOP full_model_info( new FullModelInfo( full_model_parameters ) );
 	full_model_info->set_res_list( working_res );
+	TR.Debug << working_res << std::endl;
+	// need to include the virtual res if we're using a density map
+	TR.Debug << "where the issue is?" << std::endl;
 	set_full_model_info( *pose_, full_model_info );
+	TR.Debug << "done where the issue is?" << std::endl;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1117,6 +1317,12 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 		std::string const sequence = core::sequence::read_fasta_file_return_str( option[ in::file::fasta ]()[1] );
 		core::pose::make_pose_from_sequence( *pose_, sequence, *rsd_set_ );
 	}
+
+	// Try to set stuff up for density scoring ?
+	if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		//  pose::addVirtualResAsRoot( *pose_ );
+	}
+	TR.Debug << pose_->sequence() << std::endl;
 
 	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
 		ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[ OptionKeys::constraints::cst_file ](1), ConstraintSetOP( new ConstraintSet ), *pose_ );
@@ -1162,15 +1368,41 @@ RNA_DeNovoSetup::get_refine_pose_list( std::string const & input_silent_file,
 	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_res_and_chain_and_segid,
 	core::chemical::ResidueTypeSetCOP rsd_set_ ) const
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::import_pose::pose_stream;
+
 	vector1<pose::PoseOP> refine_pose_list;
 	if ( !input_silent_file.empty() ) {
-		core::import_pose::pose_stream::SilentFilePoseInputStream input( input_silent_file );
-		input.set_order_by_energy( true );
-		while ( input.has_another_pose() ) {
+
+		core::import_pose::pose_stream::SilentFilePoseInputStreamOP input;
+
+		if ( option[ OptionKeys::rna::denovo::refine_silent_tags ].user() ) {
+			utility::vector1< std::string > filename_vector;
+			filename_vector.push_back( input_silent_file );
+			input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream( filename_vector,
+				option[ OptionKeys::rna::denovo::refine_silent_tags ]() ));
+		} else {
+			input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream( input_silent_file ));
+		}
+
+		int pose_count = 1;
+		input->set_order_by_energy( true );
+		while ( input->has_another_pose() ) {
 			pose::PoseOP new_pose( new pose::Pose );
-			input.fill_pose( *new_pose, *rsd_set_ );
+			input->fill_pose( *new_pose, *rsd_set_ );
 			protocols::rna::denovo::set_output_res_and_chain( *new_pose, output_res_and_chain_and_segid );
 			refine_pose_list.push_back( new_pose );
+
+			//new_pose->dump_pdb( "test_pose_dump_" + ObjexxFCL::string_of( pose_count ) + ".pdb" );
+
+			if ( option[ OptionKeys::rna::denovo::refine_silent_number_of_poses ].user() ) {
+				pose_count += 1;
+				if ( pose_count > option[ OptionKeys::rna::denovo::refine_silent_number_of_poses ]() ) {
+					break;
+				}
+			}
+
 		}
 	}
 	return refine_pose_list;

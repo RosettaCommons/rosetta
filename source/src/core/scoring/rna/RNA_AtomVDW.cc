@@ -251,10 +251,10 @@ RNA_AtomVDW::bump_parameter( Size const atom1, Size const atom2,
 
 Real
 RNA_AtomVDW::bump_parameter_rnp( Size const atom_RNA, Size const atom_protein,
-	char const which_residue ) const
+	chemical::ResidueType const & rna_type ) const
 {
 	return rnp_vdw_parameter_( atom_RNA, atom_protein,
-		rna_residue_name_to_num( which_residue ) );
+		rna_residue_type_to_num( rna_type ) );
 
 }
 

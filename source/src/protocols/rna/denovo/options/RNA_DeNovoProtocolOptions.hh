@@ -62,6 +62,9 @@ public:
 	void set_output_lores_silent_file( bool const setting ){ output_lores_silent_file_ = setting; }
 	bool output_lores_silent_file() const { return output_lores_silent_file_; }
 
+	void set_align_output( bool const setting ) { align_output_ = setting; }
+	bool align_output() const { return align_output_; }
+
 	void set_binary_rna_output( bool const setting ){ binary_rna_output_ = setting; }
 	bool binary_rna_output() const { return binary_rna_output_; }
 
@@ -100,6 +103,7 @@ private:
 	std::string silent_file_;
 
 	bool output_lores_silent_file_;
+	bool align_output_;
 	bool output_filters_;
 	bool overwrite_;
 	bool binary_rna_output_;
