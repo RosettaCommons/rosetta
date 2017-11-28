@@ -717,6 +717,11 @@ sources = {
 		"xfrags",
 		"util",
 	],
+	"core/scoring/netcharge_energy": [
+		"NetChargeConstraint",
+		"NetChargeEnergy",
+		"NetChargeEnergySetup",
+	],
 	"core/scoring/nv": [
 		"NVlookup",
 		"NVscore",

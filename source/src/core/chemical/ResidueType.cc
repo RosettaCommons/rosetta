@@ -153,6 +153,7 @@ ResidueType::ResidueType(
 	has_polymer_dependent_groups_(false),
 	atom_depends_on_lower_polymeric_connection_(),
 	atom_depends_on_upper_polymeric_connection_(),
+	net_formal_charge_(0),
 	finalized_(false),
 	nondefault_(false)
 {
@@ -297,6 +298,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	has_polymer_dependent_groups_ = residue_type.has_polymer_dependent_groups_;
 	atom_depends_on_lower_polymeric_connection_ = residue_type.atom_depends_on_lower_polymeric_connection_;
 	atom_depends_on_upper_polymeric_connection_ = residue_type.atom_depends_on_upper_polymeric_connection_;
+	net_formal_charge_ = residue_type.net_formal_charge_;
 	finalized_ = residue_type.finalized_;
 	defined_adducts_ = residue_type.defined_adducts_;
 	nondefault_ = residue_type.nondefault_;
@@ -2329,6 +2331,22 @@ ResidueType::atom_depends_on_polymeric_connection( core::Size const atom_index )
 	debug_assert( atom_index > 0 && atom_index <= natoms() );
 	if ( !is_polymer() ) return false;
 	return atom_depends_on_lower_polymeric_connection_[atom_index] || atom_depends_on_upper_polymeric_connection_[atom_index];
+}
+
+/// @brief Get the net formal charge on this residue type.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+signed long int
+ResidueType::net_formal_charge() const {
+	return net_formal_charge_;
+}
+
+/// @brief Set the net formal charge on this residue type.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ResidueType::net_formal_charge(
+	signed long int charge_in
+) {
+	net_formal_charge_ = charge_in;
 }
 
 /// @brief Is this one of SRI's special heteropolymer building blocks?
@@ -5049,6 +5067,7 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	arc( CEREAL_NVP( has_polymer_dependent_groups_ ) ); //bool
 	arc( CEREAL_NVP( atom_depends_on_lower_polymeric_connection_ ) ); //utility::vector1<bool>
 	arc( CEREAL_NVP( atom_depends_on_upper_polymeric_connection_ ) ); //utility::vector1<bool>
+	arc( CEREAL_NVP( net_formal_charge_ ) ); //core::Size
 	// EXEMPT finalized_
 	// ( will call finalization function on load )
 	arc( CEREAL_NVP( defined_adducts_ ) ); // utility::vector1<Adduct>
@@ -5253,6 +5272,7 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( has_polymer_dependent_groups_ ); //bool
 	arc( atom_depends_on_lower_polymeric_connection_ ); //utility::vector1<bool>
 	arc( atom_depends_on_upper_polymeric_connection_ ); //utility::vector1<bool>
+	arc( net_formal_charge_ ); //core::Size
 	arc( defined_adducts_ ); // utility::vector1<Adduct>
 	arc( nondefault_ ); // _Bool
 

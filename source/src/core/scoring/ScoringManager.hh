@@ -48,6 +48,7 @@
 #include <core/scoring/WaterAdductHBondPotential.fwd.hh>
 
 #include <core/scoring/aa_composition_energy/AACompositionEnergySetup.fwd.hh>
+#include <core/scoring/netcharge_energy/NetChargeEnergySetup.fwd.hh>
 
 #include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
 #include <core/scoring/carbohydrates/OmegaPreferencesFunction.fwd.hh>
@@ -608,6 +609,12 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1< core::scoring::aa_composition_energy::AACompositionEnergySetupOP > get_cloned_aa_comp_setup_helpers( core::scoring::methods::EnergyMethodOptions const &options ) const;
 
+	/// @brief Get a vector of owning pointers to data used by the NetChargeEnergy score term.
+	/// @details If this vector has not yet been populated, this loads the data from disk (lazy loading).
+	/// @note The lazy loading has been made threadsafe.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1< core::scoring::netcharge_energy::NetChargeEnergySetupOP > get_cloned_netcharge_setup_helpers( core::scoring::methods::EnergyMethodOptions const &options ) const;
+
 	/// @brief Get a particular MainchainScoreTable for the rama_prepro score term, for a particular residue type.
 	/// @details If this has not yet been populated, loads the data from disk (lazy loading)
 	/// in a threadsafe manner.
@@ -1012,6 +1019,12 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	static core::scoring::aa_composition_energy::AACompositionEnergySetupOP create_aa_composition_energy_setup_instance( std::string const &filename );
 
+	/// @brief Create an instance of an NetChargeEnergySetup object, by owning pointer.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	static core::scoring::netcharge_energy::NetChargeEnergySetupOP create_netcharge_energy_setup_instance( std::string const &filename );
+
 private:
 
 #ifdef MULTI_THREADED
@@ -1078,6 +1091,7 @@ private:
 	mutable utility::thread::ReadWriteMutex etable_mutex_;
 	mutable std::mutex cp_rep_map_mutex_;
 	mutable utility::thread::ReadWriteMutex aa_comp_mutex_;
+	mutable utility::thread::ReadWriteMutex netcharge_mutex_;
 #ifdef OLDER_GXX_STDLIB
 	// Older versions of GCC lack the atomic_load and atomic_store functions for std::shared_ptr,
 	// so we also need std::atomic_bools as a workaround
@@ -1218,6 +1232,11 @@ private:
 	/// @details Accessor function has been made threadsafe (as of the wee hours of 26 July 2017).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	mutable std::map< std::string, core::scoring::aa_composition_energy::AACompositionEnergySetupOP > aa_composition_setup_helpers_;
+
+	/// @brief Cached data used by the NetChargeEnergy.
+	/// @details Accessor function has been made threadsafe.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	mutable std::map< std::string, core::scoring::netcharge_energy::NetChargeEnergySetupOP > netcharge_setup_helpers_;
 
 	/// @brief Cached mainchain torsion potentials, used by rama_prepro.
 	/// @details This one is for potentials for residues NOT occurring before proline.

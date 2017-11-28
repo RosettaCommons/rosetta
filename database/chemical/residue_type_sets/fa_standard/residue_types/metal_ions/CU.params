@@ -17,6 +17,7 @@ BOND CU    V3
 BOND CU    V4
 NBR_ATOM CU
 NBR_RADIUS 5.0
+NET_FORMAL_CHARGE +2
 # tetrahedral geometry with 2.2 distance from center to vertex
 # chirality is defined so that viewing from V1 to CU, V2-V3-V4 are in clockwise direction.
 ICOOR_INTERNAL   CU      0.000000    0.000000    0.000000  CU     V1    V2

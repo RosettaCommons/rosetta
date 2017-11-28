@@ -12,6 +12,7 @@
 sources = {
 	"protocols/aa_composition": [
 		"AddCompositionConstraintMover",
+		"AddNetChargeConstraintMover",
 		"AddHelixSequenceConstraintsMover",
 		"ClearCompositionConstraintsMover",
 		"util",

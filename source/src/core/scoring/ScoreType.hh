@@ -615,11 +615,13 @@ enum ScoreType {
 	// hydrate/SPaDES protocol
 	wat_desolv,
 
+	//Some of Vikram's score terms:
 	ring_close, //General score term for enforcing ring closure in proline-like noncanonicals.  NOTE: EITHER ring_close, OR pro_close, OR cart_bonded should be used -- otherwise we'll double-count!
 	aa_repeat, //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
 	aa_composition, //A wholebody score term for penalizing deviation from a desired amino acid composition.
 	aspartimide_penalty, //A context-independent two-body score term for penalizing two-residue sequences likely to produce the aspartimide side-product during peptide synthesis.
 	hbnet, //A bonus for hydrogen-bonded networks, which ramps nonlinearly with the size of the network.  Fundamentally non-pairwise decomposable (but packer-compatbile due to Alex Ford's nice framework).
+	netcharge, //A penalty for deviating from a desired net charge in a pose or region selected by a ResidueSelector.
 
 	// dna env/pair potential
 	dna_env,

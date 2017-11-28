@@ -16,6 +16,7 @@ BOND CA    V2
 BOND CA    V3
 BOND CA    V4
 CHARGE CA FORMAL +2
+NET_FORMAL_CHARGE +2
 NBR_ATOM CA
 NBR_RADIUS 5.0
 # tetrahedral geometry with 2.2 distance from center to vertex

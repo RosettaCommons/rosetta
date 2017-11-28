@@ -81,6 +81,7 @@
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/aa_composition_energy/AACompositionEnergySetup.hh>
+#include <core/scoring/netcharge_energy/NetChargeEnergySetup.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableOptions.hh>
 #include <core/scoring/memb_etable/MembEtable.hh>
@@ -195,6 +196,7 @@ ScoringManager::ScoringManager() :
 	etable_mutex_(),
 	cp_rep_map_mutex_(),
 	aa_comp_mutex_(),
+	netcharge_mutex_(),
 #ifdef OLDER_GXX_STDLIB
 	pairE_bool_(false),
 	genborn_bool_(false),
@@ -311,6 +313,7 @@ ScoringManager::ScoringManager() :
 	memb_etables_(),
 	cp_rep_map_byname_(),
 	aa_composition_setup_helpers_(),
+	netcharge_setup_helpers_(),
 	rama_prepro_mainchain_potentials_(),
 	rama_prepro_mainchain_potentials_beforeproline_(),
 #ifdef MULTI_THREADED
@@ -1236,6 +1239,30 @@ ScoringManager::get_cloned_aa_comp_setup_helpers(
 	return return_vect;
 }
 
+/// @brief Get a vector of owning pointers to data used by the NetChargeEnergy score term.
+/// @details If this vector has not yet been populated, this loads the data from disk (lazy loading).
+/// @note The lazy loading has been made threadsafe.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+utility::vector1< core::scoring::netcharge_energy::NetChargeEnergySetupOP >
+ScoringManager::get_cloned_netcharge_setup_helpers(
+	core::scoring::methods::EnergyMethodOptions const &options
+) const {
+	core::Size const n_setup_helpers( options.netcharge_setup_file_count() );
+
+	// Vector in which to return a clone of the data:
+	utility::vector1< core::scoring::netcharge_energy::NetChargeEnergySetupOP > return_vect;
+	return_vect.reserve(n_setup_helpers);
+
+	// Load the data if necessary (once, in a threadsafe manner), and populate the return vector:
+	for ( core::Size i(1); i<=n_setup_helpers; ++i ) {
+		boost::function< core::scoring::netcharge_energy::NetChargeEnergySetupOP () > creator( boost::bind( &ScoringManager::create_netcharge_energy_setup_instance, boost::cref( options.netcharge_setup_file(i) ) ) );
+		return_vect.push_back( ( utility::thread::safely_check_map_for_key_and_insert_if_absent(creator, SAFELY_PASS_MUTEX(netcharge_mutex_), options.netcharge_setup_file(i), netcharge_setup_helpers_) )->clone() );
+	}
+
+	return return_vect;
+}
+
+
 /// @brief Get a particular MainchainScoreTable for the rama_prepro score term.
 /// @details If this has not yet been populated, loads the data from disk (lazy loading)
 /// in a threadsafe manner.
@@ -2033,6 +2060,20 @@ ScoringManager::create_aa_composition_energy_setup_instance(
 ) {
 	using namespace core::scoring::aa_composition_energy;
 	AACompositionEnergySetupOP op_to_return( new AACompositionEnergySetup );
+	op_to_return->initialize_from_file( filename );
+	return op_to_return;
+}
+
+/// @brief Create an instance of an NetChargeEnergySetup object, by owning pointer.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::scoring::netcharge_energy::NetChargeEnergySetupOP
+ScoringManager::create_netcharge_energy_setup_instance(
+	std::string const &filename
+) {
+	using namespace core::scoring::netcharge_energy;
+	NetChargeEnergySetupOP op_to_return( new NetChargeEnergySetup );
 	op_to_return->initialize_from_file( filename );
 	return op_to_return;
 }

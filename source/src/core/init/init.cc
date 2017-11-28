@@ -85,6 +85,7 @@
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
 #include <core/scoring/methods/GoapEnergyCreator.hh>
 #include <core/scoring/methods/RingClosureEnergyCreator.hh>
+#include <core/scoring/netcharge_energy/NetChargeEnergyCreator.hh>
 
 #include <core/pack/dunbrack/DunbrackEnergyCreator.hh>
 #include <core/pack/dunbrack/cenrot/CenRotDunEnergyCreator.hh>
@@ -442,6 +443,7 @@ static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_Energy
 static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RingClosureEnergyCreator > RingClosureEnergyCreator_registrator;
 static EnergyMethodRegistrator< carbohydrates::SugarBackboneEnergyCreator > SugarBackboneEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::netcharge_energy::NetChargeEnergyCreator > NetChargeEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< pack::dunbrack::DunbrackEnergyCreator > DunbrackEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::dunbrack::cenrot::CenRotDunEnergyCreator > CenRotDunEnergyCreator_registrator;

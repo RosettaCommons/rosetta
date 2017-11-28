@@ -125,6 +125,35 @@ public:
 		return;
 	}
 
+	/// @brief Get the nth netcharge setup file name from the list of setup files.
+	///
+	inline std::string const & netcharge_setup_file( core::Size const index ) const {
+		runtime_assert_string_msg( index > 0 && index <= netcharge_setup_files_.size(), "Error in core::scoring::methods::EnergyMethodOptions::netcharge_setup_file(): The index of the file requested is greater than the number of filenames stored." );
+		return netcharge_setup_files_[index];
+	}
+
+	/// @brief Get the number of netcharge setup files.
+	///
+	inline core::Size netcharge_setup_file_count() const {
+		return netcharge_setup_files_.size();
+	}
+
+	/// @brief Set the netcharge setup file names.
+	/// @details Overrides existing.
+	inline void set_netcharge_setup_files( utility::vector1 < std::string > const &input_filenames ) {
+		netcharge_setup_files_ = input_filenames;
+		return;
+	}
+
+	/// @brief Appends additional files to the netcharge setup file names.
+	/// @details Does not override existing.
+	inline void append_netcharge_setup_files( utility::vector1 < std::string > const &input_filenames ) {
+		for ( core::Size i=1, imax=input_filenames.size(); i<=imax; ++i ) {
+			netcharge_setup_files_.push_back( input_filenames[i] );
+		}
+		return;
+	}
+
 	/// @brief Get the penalty for each aspartimide-forming two-residue sequence.
 	/// @details Used by the aspartimide_penalty score term.
 	inline core::Real const &
@@ -549,6 +578,7 @@ private:
 	// the assignment operator, the == comparison operator, and the show method in the .cc file!
 	/////////////////////////////////////////////////
 	utility::vector1 < std::string > aa_composition_setup_files_;
+	utility::vector1 < std::string > netcharge_setup_files_;
 	core::Real aspartimide_penalty_value_;
 	std::string atom_vdw_atom_type_set_name_;
 	std::string unfolded_energies_type_;

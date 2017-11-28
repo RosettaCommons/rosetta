@@ -1649,6 +1649,14 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool atom_depends_on_polymeric_connection( core::Size const atom_index ) const;
 
+	/// @brief Get the net formal charge on this residue type.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	signed long int net_formal_charge() const;
+
+	/// @brief Set the net formal charge on this residue type.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void net_formal_charge( signed long int charge_in );
+
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
 	///
 	bool is_sri() const;
@@ -2837,6 +2845,11 @@ private:
 	/// polymer bond.
 	/// @details empty if this is a ligand instead of a polymer bond.
 	utility::vector1 < bool > atom_depends_on_upper_polymeric_connection_;
+
+	/// @brief The formal charge on this residue.
+	/// @details Must be an integer, but can be negative or positive.  Defaults to 0.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	signed long int net_formal_charge_;
 
 	////////////////
 	/// @brief Is all the derived data appropriately updated?

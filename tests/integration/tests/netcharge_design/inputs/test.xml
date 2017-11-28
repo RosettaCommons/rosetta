@@ -1,0 +1,39 @@
+<ROSETTASCRIPTS>
+	# Design the surface of one of Scott's helical bundles, requiring
+	# a positive "foot" a negative "head", and zero overall net charge.
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" >
+			<Reweight scoretype="netcharge" weight="3.0" />
+			<Set netcharge_setup_file="net_zero.charge" /> #Loaded from database and applied globally
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Neighborhood name="select_bottom_two_thirds" resnums="43" distance="38" />
+		<Neighborhood name="select_top_two_thirds" resnums="7" distance="38" />
+		<Layer name="select_boundary_surf" select_core="false" select_boundary="true" select_surface="true" />
+		<And name="select_bottom_surf" selectors="select_bottom_two_thirds,select_boundary_surf" />
+		<And name="select_top_surf" selectors="select_top_two_thirds,select_boundary_surf" />
+		<Not name="select_core" selector="select_boundary_surf" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="no_repack_core" selector="select_core" >
+			<PreventRepackingRLT />
+		</OperateOnResidueSubset>
+		<ReadResfile name="allowed_for_design" filename="inputs/design.resfile" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<AddNetChargeConstraintMover name="constrain_top" selector="select_top_surf" filename="inputs/top.charge" />
+		<AddNetChargeConstraintMover name="constrain_bottom" selector="select_bottom_surf" filename="inputs/bottom.charge" />
+		<PackRotamersMover name="design" scorefxn="r15" task_operations="no_repack_core,allowed_for_design" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="constrain_top" />
+		<Add mover="constrain_bottom" />
+		<Add mover="design" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15" />
+</ROSETTASCRIPTS>

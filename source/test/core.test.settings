@@ -477,6 +477,11 @@ sources = {
 		"MMTorsionScore"
 		#"MMLJEnergy"
 	],
+	"scoring/netcharge_energy" : [
+		"NetChargeEnergyTests_packer",
+		"NetChargeEnergyTests_packer_symm",
+		"NetChargeEnergyTests_tailfxns",
+	],
 	"scoring/nv" : [
 		"NVlookup",
 		"NVscore",
@@ -985,12 +990,17 @@ testinputfiles = [
 	"scoring/mm/par_all27_prot_na.prm",
 	"scoring/model-5.pdb",
 	"scoring/native_for_rmstest.pdb",
+	"scoring/netcharge_energy/constant_tailfxns.charge",
+	"scoring/netcharge_energy/linear_tailfxns.charge",
+	"scoring/netcharge_energy/negative_three.charge",
+	"scoring/netcharge_energy/quadratic_tailfxns.charge",
 	"scoring/nonideal_glycine.pdb",
 	"scoring/rms_util.u",
 	"scoring/sc_NNQQNY.pdb",
 	"scoring/symmetry/2akf.pdb",
 	"scoring/symmetry/atom_pair_constraint.data",
 	"scoring/symmetry/coordinate_constraint.data",
+	"scoring/symmetry/C3.symm",
 	"scoring/symmetry/fa_atr.data",
 	"scoring/symmetry/fa_intra_atr.data",
 	"scoring/symmetry/fa_intra_sol.data",

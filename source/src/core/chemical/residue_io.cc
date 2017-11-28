@@ -483,6 +483,10 @@ read_topology_file(
 /// but not omega, are used, so "NCAA_ROTLIB_BB_TORSIONS 1 2" is implied and needs not be
 /// written out explicitly).
 ///
+/// NET_FORMAL_CHARGE:
+/// The overall charge on this residue.  This must be an integer, though it can be positive or
+/// negative.
+///
 /// NRCHI_START_ANGLE:
 /// The lower bound for non rotameric chi sampling (sometimes you don't want
 /// 0 or 180 to be minimum so you get both sides of these critical values;
@@ -1126,6 +1130,12 @@ read_topology_file(
 			rsd->rotamer_library_specification( ncaa_libspec );
 
 			// End of NCAA library entries.
+		} else if ( tag == "NET_FORMAL_CHARGE" ) {
+			signed long int charge_in(0);
+			l >> charge_in;
+			runtime_assert_string_msg( !l.fail(), "Error parsing NET_FORMAL_CHARGE line in params file.  A signed integer must be provided." );
+			runtime_assert_string_msg( l.eof(), "Error parsing NET_FORMAL_CHARGE line in params file.  Nothign can follow the value provided.");
+			rsd->net_formal_charge( charge_in );
 		} else if ( tag == "PEPTOID_ROTLIB_PATH" || tag == "PEPTOID_ROTLIB_NUM_ROTAMER_BINS" ) {
 			using namespace core::chemical::rotamers;
 			PeptoidRotamerLibrarySpecificationOP peptoid_libspec;

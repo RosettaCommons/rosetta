@@ -117,6 +117,17 @@ void ScoreFunctionLoader::load_data(
 					emoptions.append_aa_composition_setup_files( filevect );
 				}
 
+				// Set up the list of netcharge score term setup files:
+				if ( mod_tag->hasOption("netcharge_setup_file") ) {
+					std::stringstream filelist( mod_tag->getOption<std::string>("netcharge_setup_file") );
+					utility::vector1 < std::string > filevect;
+					while ( !filelist.eof() ) {
+						std::string tempstring("");
+						filelist >> tempstring;
+						if ( !filelist.fail() ) filevect.push_back( tempstring );
+					}
+					emoptions.append_netcharge_setup_files( filevect );
+				}
 				if ( mod_tag->hasOption( "softrep_etable" ) ) {
 					if ( mod_tag->getOption<bool>( "softrep_etable" ) ) {
 						emoptions.etable_type( core::scoring::FA_STANDARD_SOFT );
@@ -257,22 +268,23 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	// "Reweight" tag
 	AttributeList reweight_attributes;
 	reweight_attributes
-		+ XMLSchemaAttribute::required_attribute( "scoretype", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "weight", xsct_real , "XRW TO DO" );
+		+ XMLSchemaAttribute::required_attribute( "scoretype", xs_string , "The name of a score term to be reweighted." )
+		+ XMLSchemaAttribute( "weight", xsct_real , "The score term weight to be assigned." );
 
 	// "Set" tag
 	AttributeList set_attributes;
 	core::scoring::hbonds::HBondOptions::append_schema_attributes( set_attributes );
 	core::scoring::etable::EtableOptions::append_schema_attributes( set_attributes );
 	set_attributes
-		+ XMLSchemaAttribute( "aa_composition_setup_file", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "softrep_etable", xsct_rosetta_bool , "XRW TO DO" )
-		+ XMLSchemaAttribute( "fa_elec_min_dis", xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "fa_elec_max_dis", xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "fa_elec_dielectric", xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "fa_elec_no_dis_dep_die", xsct_rosetta_bool , "XRW TO DO" )
-		+ XMLSchemaAttribute( "exclude_protein_protein_fa_elec", xsct_rosetta_bool , "XRW TO DO" )
-		+ XMLSchemaAttribute( "exclude_DNA_DNA", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "aa_composition_setup_file", xs_string , "A list of one or more .comp files specifying desired amino acid compositions, used to set up the aa_composition score term." )
+		+ XMLSchemaAttribute( "netcharge_setup_file", xs_string , "A list of one or more .charge files specifying desired net charges, used to set up the netcharge score term." )
+		+ XMLSchemaAttribute( "softrep_etable", xsct_rosetta_bool , "Should this scorefunction use a softened energy table for the fa_rep score term?" )
+		+ XMLSchemaAttribute( "fa_elec_min_dis", xsct_real , "The minimum distance for the fa_elec (Coulombic) score term." )
+		+ XMLSchemaAttribute( "fa_elec_max_dis", xsct_real , "The maximum distance for the fa_elec (Coulombic) score term." )
+		+ XMLSchemaAttribute( "fa_elec_dielectric", xsct_real , "The dielectric constant for the fa_elec (Coulombic) score term." )
+		+ XMLSchemaAttribute( "fa_elec_no_dis_dep_die", xsct_rosetta_bool , "If true, the distance dependence of the dielectric constant used for the fa_elec (Coulombic) term is disabled." )
+		+ XMLSchemaAttribute( "exclude_protein_protein_fa_elec", xsct_rosetta_bool , "If true, then the electrostatic interactions between protein residues are not calculated.  Used with exclude_DNA_DNA, this can be useful to speed up the calculation of DNA-protein interactions." )
+		+ XMLSchemaAttribute( "exclude_DNA_DNA", xsct_rosetta_bool , "If true, then the electrostatic interactions between DNA residues are not calculated.  Used with exclude_protein_protein, this can be useful to speed up the calculation of DNA-protein interactions." )
 		+ XMLSchemaAttribute( "pb_bound_tag", xs_string , "XRW TO DO" )
 		+ XMLSchemaAttribute( "pb_unbound_tag", xs_string , "XRW TO DO" )
 		+ XMLSchemaAttribute( "scale_sc_dens", xsct_real , "XRW TO DO" )
@@ -281,14 +293,14 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	// ScoreFunction complex type
 	AttributeList scorefunction_ct_attributes;
 	scorefunction_ct_attributes
-		+ XMLSchemaAttribute::required_attribute( "name", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "weights", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "patch", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "symmetric", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string , "A unique identifier given to this ScoreFunction for use in RosettaScripts." )
+		+ XMLSchemaAttribute( "weights", xs_string , "A .wts file specifying the relative weights of score terms." )
+		+ XMLSchemaAttribute( "patch", xs_string , "A patch file specifying how the relative weights of score terms given in a weights file should be modified." )
+		+ XMLSchemaAttribute( "symmetric", xsct_rosetta_bool , "If true, this scorefunction can be used to score symmetric poses.  If false, it can only be used on asymmetric poses." )
 		+ XMLSchemaAttribute( "hs_hash", xs_decimal, "XRW TO DO" );
 	XMLSchemaSimpleSubelementList subelements;
 	subelements
-		.add_simple_subelement( "Reweight", reweight_attributes , "")
+		.add_simple_subelement( "Reweight", reweight_attributes , "Allows specific score terms to be reweighted.")
 		.add_simple_subelement( "Set", set_attributes , "");
 	XMLSchemaComplexTypeGenerator scorefunction_ct_gen;
 	scorefunction_ct_gen

@@ -186,7 +186,7 @@ AACompositionEnergy::calculate_energy(
 
 		// Const owning pointer to the setup helper:
 		AACompositionEnergySetupCOP helper( setup_helpers[ihelper] );
-		if ( helper->n_property_sets() == 0 ) return 0.0; //Return 0 if we're not tracking any properties.
+		if ( helper->n_property_sets() == 0 ) continue; //Skip calculation if we're not tracking any properties.
 
 		// Number of residues:
 		core::Size const nres( resvect.size() );

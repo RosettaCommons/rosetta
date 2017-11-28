@@ -24,6 +24,7 @@ using protocols::moves::MoverRegistrator;
 
 // A //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< aa_composition::AddCompositionConstraintMoverCreator > reg_AddCompositionConstraintMoverCreator;
+static MoverRegistrator< aa_composition::AddNetChargeConstraintMoverCreator > reg_AddNetChargeConstraintMoverCreator;
 static MoverRegistrator< aa_composition::AddHelixSequenceConstraintsMoverCreator > reg_AddHelixSequenceConstraintsMoverCreator;
 static MoverRegistrator< aa_composition::ClearCompositionConstraintsMoverCreator > reg_ClearCompositionConstraintsMoverCreator;
 
