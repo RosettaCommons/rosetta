@@ -69,8 +69,9 @@ enum mpi_tags {
 	mpi_work_pool_jd_job_failed_retry_limit_exceeded,
 	mpi_work_pool_jd_job_success_and_archival_complete,
 	mpi_work_pool_jd_archive_job_result,
-	mpi_work_pool_jd_output_job_result_already_available,
-	mpi_work_pool_jd_accept_and_output_job_result,
+	mpi_work_pool_jd_output_job_result_already_available, // when the result is already being held on the output node
+	mpi_work_pool_jd_accept_and_output_job_result, // when the result is on node0 and is sent along with the output spec
+	mpi_work_pool_jd_output_job_result_on_archive, // when the result is on an archive node and must be fetched
 	mpi_work_pool_jd_archival_completed,
 	mpi_work_pool_jd_output_completed,
 	mpi_work_pool_jd_retrieve_job_result,
@@ -166,6 +167,9 @@ private:
 	process_accept_and_output_job_result_request( int remote_node );
 
 	void
+	process_retrieve_result_from_archive_and_output_request();
+
+	void
 	process_failed_to_retrieve_job_result_request( int archival_node );
 
 	void
@@ -179,6 +183,11 @@ private:
 
 	void
 	send_error_message_to_node0( std::string const & error_message );
+
+	/// @brief Pull the next output specification off the queue (out of the heap) and
+	/// send it to the indicated node (either an archive or an output/worker)
+	bool
+	send_output_instruction_to_node( int output_node );
 
 	/// @brief Sends the next job in the queue to the remote node that has requested a job.
 	/// Returns true if the job was sent, and false if there were no jobs that could be sent
@@ -197,14 +206,33 @@ private:
 	void
 	potentially_discard_some_job_results();
 
-	//void
-	//query_job_queen_for_more_jobs_for_current_node();
+	/// @brief For node0 instructing an archive node or a worker/outputter
+	/// node to output a job result that node0 has been storing
+	void
+	send_output_spec_and_job_result_to_remote(
+		Size node_id,
+		output::OutputSpecificationOP spec
+	);
 
-	//void
-	//mark_node_as_complete( Size digraph_node );
+	/// @brief For node0 instructing an archive node to output a
+	/// job whose result the archive node is already storing
+	void
+	send_output_spec_to_remote(
+		Size node_id,
+		output::OutputSpecificationOP spec
+	);
 
-	//void
-	//find_jobs_for_next_node();
+	/// @brief For node0 instructing a worker/outputter node that
+	/// a job result lives on a particular archive node
+	void
+	send_output_spec_and_retrieval_instruction_to_remote(
+		Size node_id, // node that will perform the output
+		Size archive_node, // node where the job lives
+		output::OutputSpecificationOP spec
+	);
+
+	void
+	update_output_list_empty_bool();
 
 	void
 	queue_jobs_for_next_node_to_run();
@@ -232,6 +260,9 @@ private:
 
 	void
 	assign_jobs_to_idling_nodes();
+
+	void
+	assign_output_tasks_to_idling_nodes();
 
 	void
 	store_deallocation_messages( std::list< deallocation::DeallocationMessageOP > const & messages );
@@ -342,8 +373,13 @@ private:
 	std::string mpi_rank_string_;
 	int mpi_nprocs_;
 	int n_archives_;
+	// nodes 1..max_n_outputters_ write output
+	// The nodes in the range from n_archives_ to max_n_outputters_ are both worker nodes
+	// and output nodes. They request work from node0 and sometimes are given jobs and sometimes
+	// are given output specifications.
+	int max_n_outputters_;
 	bool store_on_node0_;
-	bool output_on_node0_;
+	//bool output_on_node0_; -- no output is performed from node 0
 	bool compress_job_results_;
 
 	bool archive_on_disk_;
@@ -367,6 +403,20 @@ private:
 	// The heap for keeping track of which archives are holding the least
 	// number of JobResults
 	utility::heap n_results_per_archive_;
+
+	// keep track of which archives are busy outputting already; don't keep track of the
+	// non-archive output nodes, since they will tell us whenever they complete their tasks
+	utility::vector1< bool > archive_currently_outputting_;
+	// where was the JobResult stored that this given outputter is outputting?
+	// E.g. if node_outputter_is_outputting_for_[ 3 ] is 2, that means node 3
+	// is writing the output that was stored previously on node 2.
+	utility::vector1< int > node_outputter_is_outputting_for_;
+	// The list of output specifications that should be sent to the archive nodes
+	// when they are next ready to output again. No output is performed on node 0.
+	utility::vector1< std::list< output::OutputSpecificationOP > > jobs_to_output_for_archives_;
+	utility::heap n_outstanding_output_tasks_for_archives_;
+	std::list< output::OutputSpecificationOP > jobs_to_output_with_results_stored_on_node0_;
+	bool output_list_empty_;
 
 	// the worker node that is currently running each job
 	WorkerNodeForJobMap  worker_node_for_job_;

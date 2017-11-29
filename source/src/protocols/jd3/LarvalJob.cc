@@ -214,7 +214,7 @@ protocols::jd3::LarvalJob::LarvalJob() : nstruct_index_( 0 ), job_index_( 0 ) {}
 template< class Archive >
 void
 protocols::jd3::LarvalJob::save( Archive & arc ) const {
-	TR << "Serializing LarvalJob" << std::endl;
+	//TR << "Serializing LarvalJob" << std::endl;
 	arc( CEREAL_NVP( inner_job_ ) ); // InnerLarvalJobOP
 	arc( CEREAL_NVP( nstruct_index_ ) ); // core::Size
 	arc( CEREAL_NVP( job_index_ ) ); // core::Size
@@ -230,7 +230,7 @@ protocols::jd3::LarvalJob::save( Archive & arc ) const {
 template< class Archive >
 void
 protocols::jd3::LarvalJob::load( Archive & arc ) {
-	TR << "Deserializing LarvalJob" << std::endl;
+	//TR << "Deserializing LarvalJob" << std::endl;
 
 	arc( inner_job_ ); // InnerLarvalJobOP
 	arc( nstruct_index_ ); // core::Size

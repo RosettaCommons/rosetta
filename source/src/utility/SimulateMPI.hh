@@ -116,6 +116,10 @@ public:
 	SimulateMPIMessageOP pop_next_message_for_node_of_type( platform::Size dst, simulate_mpi_message_type msg_type );
 	SimulateMPIMessageOP pop_next_message_of_type( platform::Size dst, platform::Size src, simulate_mpi_message_type msg_type );
 
+	MsgQueue const & messages_from_node( platform::Size src ) const;
+	MsgQueue const & messages_for_node( platform::Size dst ) const;
+
+
 private:
 	void clear_processed_msgs( MsgQueue & );
 
@@ -244,6 +248,14 @@ public:
 	send_doubles_to_node(
 		int destination,
 		vector1< double > const & message);
+
+	static
+	bool
+	incoming_message_queue_is_empty();
+
+	static
+	bool
+	outgoing_message_queue_is_empty();
 
 private:
 

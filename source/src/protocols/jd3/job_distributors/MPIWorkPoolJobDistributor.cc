@@ -68,19 +68,32 @@ using core::Size;
 
 MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 	n_archives_( basic::options::option[ basic::options::OptionKeys::jd3::n_archive_nodes ] ),
+	max_n_outputters_( 0 ),
 	store_on_node0_( n_archives_ == 0 ||
 	! basic::options::option[ basic::options::OptionKeys::jd3::do_not_archive_on_node0 ]() ),
-	output_on_node0_( n_archives_ == 0 || ( store_on_node0_ &&
-	! basic::options::option[ basic::options::OptionKeys::jd3::do_not_output_from_node0 ]() ) ),
 	compress_job_results_( basic::options::option[ basic::options::OptionKeys::jd3::compress_job_results ]() ),
 	archive_on_disk_( basic::options::option[ basic::options::OptionKeys::jd3::archive_on_disk ].user() ),
 	archive_dir_name_( basic::options::option[ basic::options::OptionKeys::jd3::archive_on_disk ]() ),
 	n_results_per_archive_( n_archives_ + 1 ),
+	archive_currently_outputting_( n_archives_, false ),
+	jobs_to_output_for_archives_( n_archives_ ),
+	n_outstanding_output_tasks_for_archives_( n_archives_ ),
+	output_list_empty_( true ),
 	default_retry_limit_( 1 )
 {
 	mpi_rank_ = utility::mpi_rank();
 	mpi_rank_string_ = utility::to_string( mpi_rank_ );
 	mpi_nprocs_ = utility::mpi_nprocs();
+	max_n_outputters_ = std::max( int( std::ceil( mpi_nprocs_ *
+		basic::options::option[ basic::options::OptionKeys::jd3::mpi_fraction_outputters ])), 0 );
+
+	if ( max_n_outputters_ < n_archives_ ) {
+		max_n_outputters_ = n_archives_;
+	}
+	if ( max_n_outputters_ <= 0 ) {
+		max_n_outputters_ = 1;
+	}
+
 	job_extractor_.reset( new JobExtractor );
 
 	if ( mpi_rank_ == 0 ) {
@@ -182,6 +195,7 @@ MPIWorkPoolJobDistributor::go_master()
 	}
 
 	for ( int ii = 1; ii <= n_archives_; ++ii ) {
+		if ( node_outputter_is_outputting_for_[ ii ] != -1 ) continue;
 		utility::send_integer_to_node( ii, 0 ); // archive is expecting a node ID
 		send_spin_down_signal_to_node( ii );
 	}
@@ -194,6 +208,14 @@ MPIWorkPoolJobDistributor::go_master()
 		case mpi_work_pool_jd_new_job_request :
 			process_job_request_from_node( worker_node );
 			break;
+		case mpi_work_pool_jd_output_completed :
+			process_output_complete_message( worker_node );
+			if ( worker_node <= n_archives_ ) {
+				// Now it's time to spin down the archive, now that it is done outputting
+				utility::send_integer_to_node( worker_node, 0 ); // archive is expecting a node ID
+				send_spin_down_signal_to_node( worker_node );
+			}
+			break;
 		default :
 			// error -- we should not have gotten here
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "received inappropriate signal "
@@ -204,6 +226,7 @@ MPIWorkPoolJobDistributor::go_master()
 
 	job_queen_->flush();
 
+	TR << "Exiting go_master" << std::endl;
 }
 
 void
@@ -222,6 +245,9 @@ MPIWorkPoolJobDistributor::go_archive()
 			break;
 		case mpi_work_pool_jd_accept_and_output_job_result :
 			process_accept_and_output_job_result_request( remote_node );
+			break;
+		case mpi_work_pool_jd_output_job_result_on_archive :
+			process_retrieve_result_from_archive_and_output_request();
 			break;
 		case mpi_work_pool_jd_retrieve_and_discard_job_result :
 			process_retrieve_and_discard_job_result_request( remote_node );
@@ -258,6 +284,12 @@ MPIWorkPoolJobDistributor::go_worker()
 		case mpi_work_pool_jd_deallocation_message :
 			retrieve_deallocation_messages_and_new_job_and_run();
 			break;
+		case mpi_work_pool_jd_accept_and_output_job_result :
+			process_accept_and_output_job_result_request( 0 );
+			break;
+		case mpi_work_pool_jd_output_job_result_on_archive :
+			process_retrieve_result_from_archive_and_output_request();
+			break;
 		case mpi_work_pool_jd_spin_down :
 			done = true;
 			break;
@@ -277,12 +309,20 @@ MPIWorkPoolJobDistributor::master_setup()
 	}
 	for ( int ii = 1; ii <= n_archives_; ++ii ) {
 		n_results_per_archive_.heap_insert( ii, 0, err );
+		n_outstanding_output_tasks_for_archives_.heap_insert( ii, 0, err );
 	}
+	node_outputter_is_outputting_for_.resize( max_n_outputters_, -1 );
 }
 
 void
 MPIWorkPoolJobDistributor::process_job_request_from_node( int worker_node )
 {
+	if ( worker_node <= max_n_outputters_ && ! output_list_empty_ ) {
+		bool work_was_sent = send_output_instruction_to_node( worker_node );
+		debug_assert( work_was_sent );
+		return;
+	}
+
 	if ( jobs_ready_to_go() ) {
 		bool job_sent = send_next_job_to_node( worker_node );
 		if ( job_sent ) {
@@ -349,6 +389,7 @@ MPIWorkPoolJobDistributor::process_job_succeeded( int worker_node )
 
 	Size job_id = utility::receive_size_from_node( worker_node );
 	Size nresults = utility::receive_size_from_node( worker_node );
+	TR << "Nresults from job " << job_id << ": " << nresults << std::endl;
 
 	// Now pick a node to archive the job result on, perhaps storing the
 	// job result on this node.
@@ -382,6 +423,11 @@ MPIWorkPoolJobDistributor::pick_archival_node()
 	float nresults = n_results_per_archive_.heap_head();
 	nresults += 1;
 	n_results_per_archive_.reset_coval( archive_node, nresults );
+
+	//TR << "Picked archival node " << archive_node << std::endl;
+	//for ( int ii = 1; ii <= n_archives_; ++ii ) {
+	// TR << "  " << ii << " " << n_results_per_archive_.coval_for_val( ii ) << std::endl;
+	//}
 	return archive_node;
 }
 
@@ -464,22 +510,42 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 }
 
 void
-MPIWorkPoolJobDistributor::process_output_complete_message( int archival_node )
+MPIWorkPoolJobDistributor::process_output_complete_message( int remote_node )
 {
-	// OK -- the archival node has told us that it is done outputting a job, so we can
-	// decrement the number of jobs that we are saying it as doing. There are two ways
-	// that the archival node may have been instructed to output a job:
-	// 1. The JobResult was already being archived on that node, and now that the output
-	// has been made, the archive node has discarded the result, so we decrement
-	// the number of results it is holding, or
-	// 2. The JobResult had previously been held on the master node, and the archive node
-	// was selected to perform the output. We incremented the number of jobs it was holding
-	// as a surrogate for saying the node is slightly more busy than it previously had been
-	// and now that output is complete, we will decrement that count again.
+	debug_assert( node_outputter_is_outputting_for_[ remote_node ] >= 0 &&
+		node_outputter_is_outputting_for_[ remote_node ] <= n_archives_ );
 
-	float new_result_count = n_results_per_archive_.coval_for_val( archival_node ) - 1;
+	int const archive_node = node_outputter_is_outputting_for_[ remote_node ];
+	node_outputter_is_outputting_for_[ remote_node ] = -1;
+
+	float new_result_count = n_results_per_archive_.coval_for_val( archive_node ) - 1;
 	debug_assert( new_result_count >= 0 );
-	n_results_per_archive_.heap_replace( archival_node, new_result_count );
+	n_results_per_archive_.reset_coval( archive_node, new_result_count );
+
+	if ( remote_node <= n_archives_ ) {
+		TR << "Remote " << n_archives_ << " has completed an output" << std::endl;
+		if ( jobs_to_output_for_archives_[ remote_node ].empty() ) {
+			TR << "Sending remote " << remote_node << " an output archived on another node, if available." << std::endl;
+			bool sent = send_output_instruction_to_node( remote_node );
+			archive_currently_outputting_[ remote_node ] = sent;
+			if ( sent ) {
+				TR << "... output work was available" << std::endl;
+			} else {
+				TR << "... output work was NOT available" << std::endl;
+			}
+		} else {
+			TR << "Sending remote " << remote_node << " an output that they already have archived" << std::endl;
+			output::OutputSpecificationOP spec = jobs_to_output_for_archives_[ remote_node ].front();
+			jobs_to_output_for_archives_[ remote_node ].pop_front();
+			send_output_spec_to_remote( remote_node, spec );
+
+			float remaining = n_outstanding_output_tasks_for_archives_.coval_for_val( remote_node ) + 1;
+			debug_assert( -1 * remaining == jobs_to_output_for_archives_[ remote_node ].size() );
+			n_outstanding_output_tasks_for_archives_.reset_coval( remote_node, remaining );
+		}
+		update_output_list_empty_bool();
+	}
+	// else, it was a worker/output node that reported it was done; no need to do anything else.
 }
 
 
@@ -656,6 +722,70 @@ MPIWorkPoolJobDistributor::process_accept_and_output_job_result_request( int rem
 		oss << " for result id ( " << spec->result_id().first << ", " << spec->result_id().second << " )\n";
 		oss << "Error message from cereal library:\n";
 		oss << e.what() << "\n";
+		TR << oss.str() << std::endl;
+		utility::send_string_to_node( 0, oss.str() );
+		// do not exit immediately as this will cause the MPI process to exit before
+		// the head node has a chance to flush its output
+		return;
+	}
+
+	write_output( spec, job_and_result );
+
+	// now tell node0 we are done
+	utility::send_integer_to_node( 0, mpi_rank_ );
+	utility::send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
+}
+
+void
+MPIWorkPoolJobDistributor::process_retrieve_result_from_archive_and_output_request()
+{
+	// remote node should be node 0
+	Size const remote_node( 0 );
+	int const archive_node = utility::receive_integer_from_node( remote_node );
+	std::string output_spec_string = utility::receive_string_from_node( remote_node );
+	output::OutputSpecificationOP spec;
+	try {
+		spec = deserialize_output_specification( output_spec_string );
+	} catch ( cereal::Exception & e ) {
+		utility::send_integer_to_node( 0, mpi_rank_ );
+		utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
+		std::ostringstream oss;
+		oss << "Error on output node " << mpi_rank_ << " trying to deserialize output specification\n";
+		oss << "Error message from cereal library:\n";
+		oss << e.what() << "\n";
+		TR << oss.str() << std::endl;
+		utility::send_string_to_node( 0, oss.str() );
+		// do not exit immediately as this will cause the MPI process to exit before
+		// the head node has a chance to flush its output
+		return;
+
+	}
+
+// Now request the job and result string from the archive.
+	utility::send_integer_to_node( archive_node, mpi_rank_ ); // say I need to talk
+	utility::send_integer_to_node( archive_node, mpi_work_pool_jd_retrieve_and_discard_job_result );
+	utility::send_size_to_node( archive_node, spec->result_id().first );
+	utility::send_size_to_node( archive_node, spec->result_id().second );
+
+	int retrieval_success = utility::receive_integer_from_node( archive_node );
+	// If we cannot get the job result from the remote, the program needs to exit.
+	// The archive node will tell node0 that the result could not be retrieved, and will
+	// spin down all the nodes.
+	if ( retrieval_success != mpi_work_pool_jd_job_result_retrieved ) return;
+
+	LarvalJobAndResult job_and_result;
+
+	std::string job_and_result_string = utility::receive_string_from_node( archive_node );
+	try {
+		job_and_result = deserialize_larval_job_and_result( job_and_result_string );
+	} catch ( cereal::Exception & e ) {
+		utility::send_integer_to_node( 0, mpi_rank_ );
+		utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
+		std::ostringstream oss;
+		oss << "Error on archive node " << mpi_rank_ << " trying to deserialize larval job and job result";
+		oss << " for result id ( " << spec->result_id().first << ", " << spec->result_id().second << " )\n";
+		oss << "Error message from cereal library:\n";
+		oss << e.what() << "\n";
 		utility::send_string_to_node( 0, oss.str() );
 		// do not exit immediately as this will cause the MPI process to exit before
 		// the head node has a chance to flush its output
@@ -780,6 +910,40 @@ MPIWorkPoolJobDistributor::send_error_message_to_node0( std::string const & erro
 	utility::send_string_to_node( 0, error_message );
 }
 
+bool
+MPIWorkPoolJobDistributor::send_output_instruction_to_node( int output_node )
+{
+
+	// figure out what output to tell the remote to perform:
+	if ( ! jobs_to_output_with_results_stored_on_node0_.empty() ) {
+		output::OutputSpecificationOP spec = jobs_to_output_with_results_stored_on_node0_.front();
+		jobs_to_output_with_results_stored_on_node0_.pop_front();
+		send_output_spec_and_job_result_to_remote( output_node, spec );
+		update_output_list_empty_bool();
+		return true;
+	}
+
+	// Tell the worker node to get an output result from the archive that has the most work
+	// if any of the archives have any work.
+
+	// Grab the next spec to output off the heap
+	int archive_w_most_work = n_outstanding_output_tasks_for_archives_.head_item();
+	if ( jobs_to_output_for_archives_[ archive_w_most_work ].empty() ) return false;
+
+	output::OutputSpecificationOP spec = jobs_to_output_for_archives_[ archive_w_most_work ].front();
+	jobs_to_output_for_archives_[ archive_w_most_work ].pop_front();
+	float remaining = n_outstanding_output_tasks_for_archives_.heap_head() + 1;
+	debug_assert( -1 * remaining == jobs_to_output_for_archives_[ archive_w_most_work ].size() );
+	n_outstanding_output_tasks_for_archives_.reset_coval( archive_w_most_work, remaining );
+
+	send_output_spec_and_retrieval_instruction_to_remote( output_node, archive_w_most_work, spec );
+	update_output_list_empty_bool();
+
+	return true;
+
+}
+
+
 /// @throws If the LarvalJob fails to serialize (perhaps an object stored in the
 /// const_data_map of the inner-larval-job has not implemented the save & load
 /// routines), then this function will throw a EXCN_Msg_Exception
@@ -890,6 +1054,11 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 	// ask the job queen if she wants to output any results
 	std::list< output::OutputSpecificationOP > jobs_to_output =
 		job_queen_->jobs_that_should_be_output();
+
+	if ( jobs_to_output.empty() ) return;
+
+	std::list< output::OutputSpecificationOP > outputs_for_node0;
+
 	for ( auto spec : jobs_to_output ) {
 		JobResultID result_id = spec->result_id();
 		auto location_map_iter = job_result_location_map_.find( result_id );
@@ -908,66 +1077,19 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 		Size node_housing_result = location_map_iter->second;
 		job_result_location_map_.erase( location_map_iter );
 
-
-		LarvalJobAndResult job_and_result;
 		if ( node_housing_result == 0 ) {
 			// ok, we have the result on this node -- we optionally could ship the result
 			// to another node and output it there.
-
-			std::string serialized_job_and_result;
-			if ( archive_on_disk_ ) {
-				serialized_job_and_result = get_string_from_disk( result_id.first, result_id.second );
-				if ( serialized_job_and_result.empty() ) {
-					// OK -- exit
-					std::ostringstream oss;
-					oss << "Error trying to retrieve a serialized job result from disk for job result (";
-					oss << result_id.first << ", " << result_id.second << " ) which should have been in ";
-					oss << "\"" << filename_for_archive( result_id.first, result_id.second ) << "\"\n";
-					throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
-				}
-				remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
-			} else {
-				auto job_and_result_iter = job_results_.find( result_id );
-				if ( job_and_result_iter == job_results_.end() ) {
-					std::ostringstream oss;
-					oss << "Error trying to find job result ( " << result_id.first << ", ";
-					oss << result_id.second << " ); node 0 thinks it ought to have this result.\n";
-					throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
-				}
-				serialized_job_and_result = std::move( *job_and_result_iter->second );
-				job_results_.erase( job_and_result_iter );
-			}
-
-			if ( output_on_node0_ ) {
-				try {
-					job_and_result = deserialize_larval_job_and_result( serialized_job_and_result );
-				} catch ( cereal::Exception & e ) {
-					throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to deserialize LarvalJob & JobResult pair for job #" +
-						utility::to_string( result_id.first ) + " result index #" + utility::to_string( result_id.second ) +
-						"\nError message from the cereal library:\n" + e.what() + "\n" );
-				}
-				write_output( spec, job_and_result );
-			} else {
-				// Pick an archival node to perform the output -- this increments the
-				// number of results that we're saying this node is holding, and when the node
-				// reports that it is done outputting the result, then we will decrement that count
-				// again.
-
-				Size archive_node = pick_archival_node();
-				utility::send_integer_to_node( archive_node, 0 ); // say "I need to talk to you"
-				utility::send_integer_to_node( archive_node,
-					mpi_work_pool_jd_accept_and_output_job_result );
-				utility::send_string_to_node( archive_node, serialize_output_specification( spec ) );
-
-				utility::send_string_to_node( archive_node, serialized_job_and_result );
-			}
-
+			outputs_for_node0.push_back( spec );
 		} else {
-			utility::send_integer_to_node( node_housing_result, 0 ); // say "I need to talk to you"
-			utility::send_integer_to_node( node_housing_result,
-				mpi_work_pool_jd_output_job_result_already_available );
-			utility::send_string_to_node( node_housing_result,
-				serialize_output_specification( spec ) );
+			if ( ! archive_currently_outputting_[ node_housing_result ] ) {
+				TR << "Sending output to archive " << node_housing_result << std::endl;
+				send_output_spec_to_remote( node_housing_result, spec );
+				archive_currently_outputting_[ node_housing_result ] = true;
+			} else {
+				TR << "Pushing back output into queue for archive " << node_housing_result << std::endl;
+				jobs_to_output_for_archives_[ node_housing_result ].push_back( spec );
+			}
 		}
 
 		// and now erase the record of where the job had been stored, and,
@@ -975,10 +1097,38 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 		// had been output (as opposed to discarded) -- but compactly within the
 		// output_jobs_ DIET -- (Note some day, I'll figure out how to do this efficiently.
 		// For now, the JD does not track which jobs have already been output.)
-		job_result_location_map_.erase( result_id );
-
-		// output_jobs_.insert( result_id.first );
 	}
+
+	int count_archive( 1 );
+	for ( auto spec : outputs_for_node0 ) {
+
+		bool sent( false );
+		while ( count_archive <= n_archives_ ) {
+			if ( ! archive_currently_outputting_[ count_archive ] ) {
+				// send the job to the remote node and have it start outputting it
+				send_output_spec_and_job_result_to_remote( count_archive, spec );
+				archive_currently_outputting_[ count_archive ] = true;
+				sent = true;
+				break;
+			} else {
+				++count_archive;
+			}
+		}
+		if ( ! sent ) {
+			jobs_to_output_with_results_stored_on_node0_.push_back( spec );
+		}
+	}
+
+	// Now update the n_outstanding_output_tasks_for_archives_ heap
+	// Negate the coval so that the archives with the most work are at
+	// the top of the heap
+	for ( int ii = 1; ii <= n_archives_; ++ii ) {
+		n_outstanding_output_tasks_for_archives_.reset_coval( ii,
+			-1 * float(  jobs_to_output_for_archives_[ ii ].size()  ) );
+	}
+
+	update_output_list_empty_bool();
+	if ( ! output_list_empty_ ) { assign_output_tasks_to_idling_nodes(); }
 }
 
 void
@@ -1036,6 +1186,117 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 	}
 }
 
+
+void
+MPIWorkPoolJobDistributor::send_output_spec_and_job_result_to_remote(
+	Size node_id,
+	output::OutputSpecificationOP spec
+)
+{
+	TR << "Sending output spec for " << spec->result_id().first << " " << spec->result_id().second << " with output_id " << spec->output_index().primary_output_index << " " << spec->output_index().secondary_output_index << " to node " << node_id << std::endl;
+
+	node_outputter_is_outputting_for_[ node_id ] = 0;
+
+	JobResultID result_id = spec->result_id();
+	std::string serialized_job_and_result;
+	if ( archive_on_disk_ ) {
+		serialized_job_and_result = get_string_from_disk( result_id.first, result_id.second );
+		if ( serialized_job_and_result.empty() ) {
+			// OK -- exit
+			std::ostringstream oss;
+			oss << "Error trying to retrieve a serialized job result from disk for job result (";
+			oss << result_id.first << ", " << result_id.second << " ) which should have been in ";
+			oss << "\"" << filename_for_archive( result_id.first, result_id.second ) << "\"\n";
+			throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+		}
+		remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
+	} else {
+		auto job_and_result_iter = job_results_.find( result_id );
+		if ( job_and_result_iter == job_results_.end() ) {
+			std::ostringstream oss;
+			oss << "Error trying to find job result ( " << result_id.first << ", ";
+			oss << result_id.second << " ); node 0 thinks it ought to have this result.\n";
+			throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+		}
+		serialized_job_and_result = std::move( *job_and_result_iter->second );
+		job_results_.erase( job_and_result_iter );
+	}
+
+	if ( node_id <= (Size) n_archives_ ) {
+		utility::send_integer_to_node( node_id, 0 ); // say "I need to talk to you"
+	} // else, worker node is already expecting a message from node 0
+
+	utility::send_integer_to_node( node_id,
+		mpi_work_pool_jd_accept_and_output_job_result );
+	utility::send_string_to_node( node_id, serialize_output_specification( spec ) );
+	utility::send_string_to_node( node_id, serialized_job_and_result );
+
+}
+
+void
+MPIWorkPoolJobDistributor::send_output_spec_to_remote(
+	Size node_id,
+	output::OutputSpecificationOP spec
+)
+{
+	node_outputter_is_outputting_for_[ node_id ] = node_id;
+
+	//float new_result_count = n_results_per_archive_.coval_for_val( node_id ) - 1;
+	//debug_assert( new_result_count >= 0 );
+	//n_results_per_archive_.heap_replace( node_id, new_result_count );
+
+	utility::send_integer_to_node( node_id, 0 ); // say "I need to talk to you"
+	utility::send_integer_to_node( node_id,
+		mpi_work_pool_jd_output_job_result_already_available );
+	utility::send_string_to_node( node_id,
+		serialize_output_specification( spec ) );
+}
+
+void
+MPIWorkPoolJobDistributor::send_output_spec_and_retrieval_instruction_to_remote(
+	Size node_id, // node that will perform the output
+	Size archive_node, // node where the job lives
+	output::OutputSpecificationOP spec
+)
+{
+	node_outputter_is_outputting_for_[ node_id ] = archive_node;
+
+	// record the fact that there will be one fewer results held on the archive
+	// float new_result_count = n_results_per_archive_.coval_for_val( archive_node ) - 1;
+	// debug_assert( new_result_count >= 0 );
+	// n_results_per_archive_.heap_replace( archive_node, new_result_count );
+
+	if ( node_id <= (Size) n_archives_ ) {
+		utility::send_integer_to_node( node_id, 0 ); // say "I need to talk to you"
+	}
+	// otherwise, we're talking to a worker node who is already waiting for
+	//  an instruction from node0 -- we don't need to introduce ourselves
+
+
+	utility::send_integer_to_node( node_id,
+		mpi_work_pool_jd_output_job_result_on_archive );
+	utility::send_integer_to_node( node_id, archive_node );
+	utility::send_string_to_node( node_id,
+		serialize_output_specification( spec ) );
+}
+
+
+void
+MPIWorkPoolJobDistributor::update_output_list_empty_bool()
+{
+	if ( ! jobs_to_output_with_results_stored_on_node0_.empty() ) {
+		output_list_empty_ = false;
+		return;
+	}
+	for ( auto const & output_list : jobs_to_output_for_archives_ ) {
+		if ( ! output_list.empty() ) {
+			output_list_empty_ = false;
+			return;
+		}
+	}
+	output_list_empty_ = true;
+}
+
 //void
 //MPIWorkPoolJobDistributor::queue_jobs_for_next_node_to_run()
 //{
@@ -1078,7 +1339,11 @@ MPIWorkPoolJobDistributor::not_done()
 	if ( ! worker_nodes_waiting_for_jobs_.empty() && ! job_extractor_->job_queue_empty() ) {
 		assign_jobs_to_idling_nodes();
 	}
-	return we_are_not_done;
+
+	// Even if there are no more jobs to hand out, if there are any outputs that have not
+	// yet been written, we should keep the main listening loop going
+
+	return we_are_not_done || ! output_list_empty_;
 }
 
 bool
@@ -1144,6 +1409,24 @@ MPIWorkPoolJobDistributor::assign_jobs_to_idling_nodes()
 			// put this node back into the queue of nodes waiting for jobs
 			worker_nodes_waiting_for_jobs_.push_back( worker_node );
 		}
+	}
+}
+
+void
+MPIWorkPoolJobDistributor::assign_output_tasks_to_idling_nodes()
+{
+	for ( auto iter = worker_nodes_waiting_for_jobs_.begin(),
+			iter_end = worker_nodes_waiting_for_jobs_.end();
+			iter != iter_end; /* no increment */ ) {
+		if ( output_list_empty_ ) break;
+		auto iter_next = iter;
+		++iter_next;
+		Size worker = *iter;
+		if ( worker <= (Size) max_n_outputters_ ) {
+			send_output_instruction_to_node( worker );
+			worker_nodes_waiting_for_jobs_.erase( iter );
+		}
+		iter = iter_next;
 	}
 }
 
@@ -1463,6 +1746,7 @@ MPIWorkPoolJobDistributor::worker_send_job_result_to_master_and_archive(
 	utility::vector1< int > archival_nodes = utility::receive_integers_from_node( 0 );
 	for ( Size ii = 1; ii <= nresults; ++ii ) {
 		int archival_node = archival_nodes[ ii ];
+		TR << "Archiving result " << ii << " of " << nresults << " on node " << archival_node << std::endl;
 		utility::send_integer_to_node( archival_node, mpi_rank_ );
 		utility::send_integer_to_node( archival_node, mpi_work_pool_jd_archive_job_result );
 		utility::send_size_to_node( archival_node, larval_job->job_index() );
@@ -1520,13 +1804,16 @@ MPIWorkPoolJobDistributor::write_output(
 	LarvalJobAndResult const & job_and_result
 )
 {
+	TR << "Writing output for result (" << spec->result_id().first << ", ";
+	TR << spec->result_id().second << ") with output index ";
+	TR << spec->output_index().primary_output_index << ", ";
+	TR << spec->output_index().secondary_output_index << std::endl;
+
 	// This is a two step process. Why? Because the MPIMultithreadedJobDistributor is going
 	// to deserializize the job results and perform output in separate threads, so the
 	// interaction with the outputters will need to be thread safe. (The JD still guarantees
 	// that only one thread will interact with the JobQueen herself at any one point in time).
-	if ( n_archives_ > 1 || ( n_archives_ == 1 && ( ! store_on_node0_ || output_on_node0_ ) ) ) {
-		TR << "Setting output suffix: " << mpi_rank_string_ << " n_archives: " << n_archives_ << " store_on_node0_ " << store_on_node0_ << " output_on_node0_ " << output_on_node0_ << std::endl;
-
+	if ( max_n_outputters_ > 1 ) {
 		spec->jd_output_suffix( mpi_rank_string_ );
 	}
 	output::ResultOutputterOP outputter = job_queen_->result_outputter( *spec );

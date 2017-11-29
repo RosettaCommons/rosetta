@@ -1058,7 +1058,7 @@ StandardJobQueen::build_output_index(
 {
 	JobOutputIndex output_index;
 	output_index.primary_output_index   = job->nstruct_index();
-	output_index.n_primary_outputs      = job->nstruct_max();
+	output_index.n_primary_outputs      = std::max( job->nstruct_max(), (Size) 1000 );
 	output_index.secondary_output_index = result_index;
 	output_index.n_secondary_outputs    = n_results_for_job;
 

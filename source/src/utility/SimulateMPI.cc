@@ -163,6 +163,19 @@ SimulateMPIData::pop_next_message_of_type(
 	return msg;
 }
 
+SimulateMPIData::MsgQueue const &
+SimulateMPIData::messages_from_node( platform::Size src ) const
+{
+	return messages_from_node_[ src ];
+}
+
+SimulateMPIData::MsgQueue const &
+SimulateMPIData::messages_for_node( platform::Size dst ) const
+{
+	return messages_for_node_[ dst ];
+}
+
+
 /// @details Erase elements of the queue that have already been processed
 /// until we arrive at an element that has not yet been processed and then
 /// return.
@@ -448,6 +461,24 @@ SimulateMPI::send_doubles_to_node(
 	msg->set_doubles_msg( message );
 	simulation_->queue_message( msg );
 
+}
+
+bool
+SimulateMPI::incoming_message_queue_is_empty()
+{
+	for ( auto msg : simulation_->messages_for_node( rank_ ) ) {
+		if ( ! msg->processed() ) return false;
+	}
+	return true;
+}
+
+bool
+SimulateMPI::outgoing_message_queue_is_empty()
+{
+	for ( auto msg : simulation_->messages_for_node( rank_ ) ) {
+		if ( ! msg->processed() ) return false;
+	}
+	return true;
 }
 
 

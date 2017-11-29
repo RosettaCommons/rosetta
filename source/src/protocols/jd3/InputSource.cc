@@ -94,7 +94,7 @@ void InputSource::pose_id( core::Size setting ) { pose_id_ = setting; }
 template< class Archive >
 void
 protocols::jd3::InputSource::save( Archive & arc ) const {
-	TR << "Serializing InputSource: " << input_tag_ << " " << pose_id_ << std::endl;
+	//TR << "Serializing InputSource: " << input_tag_ << " " << pose_id_ << std::endl;
 	arc( CEREAL_NVP( origin_ ) ); // std::string
 	arc( CEREAL_NVP( input_tag_ ) ); // std::string
 	arc( CEREAL_NVP( pose_id_ ) ); // core::Size
@@ -107,7 +107,7 @@ protocols::jd3::InputSource::load( Archive & arc ) {
 	arc( origin_ ); // std::string
 	arc( input_tag_ ); // std::string
 	arc( pose_id_ ); // core::Size
-	TR << "Deserializing InputSource: " << input_tag_ << " " << pose_id_ << std::endl;
+	//TR << "Deserializing InputSource: " << input_tag_ << " " << pose_id_ << std::endl;
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::InputSource );
