@@ -2660,8 +2660,8 @@ public:
 			TS_ASSERT( false /*no exception should be thrown*/ );
 		}
 
-		// OK!
-		// Now we read the mail we got from node 0
+// OK!
+// Now we read the mail we got from node 0
 
 		SimulateMPI::set_mpi_rank( 2 );
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
