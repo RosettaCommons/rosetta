@@ -12,12 +12,14 @@
 /// @author Sergey Lyskov (sergey.lyskov@jhu.edu).
 
 #include <ui/task/node.h>
-#include <ui/task/util.h>
+
+#include <ui/config/util.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTimer>
 #include <QDataStream>
+#include <QAuthenticator>
 
 #include <ctime>
 #include <algorithm>
@@ -28,6 +30,16 @@ namespace task {
 QNetworkAccessManager * network_access_manager()
 {
 	static QSharedPointer<QNetworkAccessManager> manager = QSharedPointer<QNetworkAccessManager>(new QNetworkAccessManager);
+
+	QAbstractSocket::connect(manager.data(), &QNetworkAccessManager::authenticationRequired, /*SIGNAL( authenticationRequired(QNetworkReply *, QAuthenticator *) )*/
+							 [=](QNetworkReply * reply, QAuthenticator * authenticator) {
+								 qDebug() << "authenticationRequired! " << reply->url().host();
+
+								 //UserCredentials c = get_user_credentials( reply->url().host() );
+								 config::UserCredentials c = config::get_user_credentials();
+								 authenticator->setUser(c.user);
+								 authenticator->setPassword(c.password);
+							 });
 
 	return manager.data();
 }
@@ -43,42 +55,245 @@ QString server_url()
 	return "http://127.0.0.1:64078";
 }
 
-
-Node::TimeStamp get_utc_timestamp()
+Updater & Updater::get()
 {
-	return /*std::time_t t =*/ std::time(nullptr);
+	static std::shared_ptr<Updater> o( new Updater() );
+
+	return *o.get();
 }
 
 
-/// calculate appropriate delay in sec until next network retry should be made
-int get_retry_interval()
+void Updater::subscribe(Node *node)
 {
-	const double desired_interval = 5;
-	const double series_length = 5;
+	QUuid id = node->node_id();
 
-	static double current_interval = desired_interval;
-	static double average_interval = desired_interval;
-	static Node::TimeStamp last_retry = get_utc_timestamp();
+	auto range = subscribers_.equal_range(id);
+    for(auto it = range.first; it != range.second; ++it)
+		if( it->second == node ) return;
 
-	Node::TimeStamp now = get_utc_timestamp();
+	subscribers_.emplace_hint(range.second, std::make_pair(id, node));
+	//connect(node, SIGNAL( destroyed(QObject *) ), this, SLOT(unsubscribe(QObject *)));
 
-	double interval = now - last_retry;
+	if(listen_) {
+		abort_network_operation();
+		listen_to_updates();
+	}
 
-	average_interval = (average_interval * series_length + interval) / (series_length+1);
-	if( average_interval < desired_interval ) current_interval = (current_interval+1.0) * 1.1;
-	else current_interval = current_interval / 1.1;
-	qDebug() << "get_retry_interval() average_interval:" << average_interval << "  current_interval:" << current_interval;
-
-	// if( interval < desired_interval ) current_interval = (current_interval+1.0) * 2.0;
-	// else current_interval = current_interval / 2.0;
-	// qDebug() << "get_retry_interval() interval:" << interval << "  current_interval:" << current_interval;
-
-	current_interval = std::min(current_interval, 60.0);
-
-	last_retry = now;
-	return current_interval;
+	// if( not subscribers_.contains(id) ) {
+	// 	subscribers_[id] = node;
+	// 	connect(node, SIGNAL( destroyed(QObject *) ), this, SLOT(unsubscribe(QObject *)));
+	// 	if(listen_) {
+	// 		abort_network_operation();
+	// 		listen_to_updates();
+	// 	}
+	// }
 }
 
+// void Updater::unsubscribe(Node *node)
+// {
+// 	qDebug() << "Updater::unsubscribe for node_id: " << node->node_id() << " node:" << node;
+// 	auto range = subscribers_.equal_range( node->node_id() );
+//     for(auto it = range.first; it != range.second; ++it) {
+// 		if( it->second == node ) {
+// 			subscribers_.erase(it);
+// 			if(listen_) {
+// 				abort_network_operation();
+// 				listen_to_updates();
+// 			}
+// 			break;
+// 		}
+// 	}
+// }
+
+// void Updater::unsubscribe(QObject *obj)
+// {
+// 	// Fixme: refactor to create new list to prevent potential race conditions
+// 	// we do not know which node this was (since Node part of the object is already destroyed) so we will just check all subscribers
+//     for(auto it = subscribers_.rbegin(); it != subscribers_.rend(); ++it) {
+// 		if( not it->second ) {
+// 			qDebug() << "Updater::unsubscribe for obj: " << obj << " Node: " << it->first;
+// 			subscribers_.erase( std::next(it++).base() );
+// 		}
+// 	}
+// 	// keep current listener connection if more subscribers remains
+// 	//if( listen_   and  subscribers_.empty() ) {
+// 	if(listen_) {
+// 		qDebug() << "Updater::unsubscribe: new subscribers list:" << subscribers_;
+// 		abort_network_operation();
+// 		listen_to_updates();
+// 	}
+// 	//if( Node *node = qobject_cast<Node *>(obj) ) unsubscribe(node); <-- does not work because Node instance is already destroyed at this point
+// 	// for(auto &k : subscribers_.keys() ) {
+// 	// 	if(not subscribers_[k]) {
+// 	// 		qDebug() << "Updater::unsubscribe for obj: " << obj << " Node: " << k;
+// 	// 		subscribers_.remove(k);
+// 	// 		if(listen_) {
+// 	// 			abort_network_operation();
+// 	// 			listen_to_updates();
+// 	// 		}
+// 	// 		break;  // iterator will be invalidated after this call. However there is no point of further iterating since all other subscribers should be fine...
+// 	// 	}
+// 	// }
+// }
+
+
+bool Updater::erase_deleted_subscribers()
+{
+	bool flag = false;
+	for(auto it = subscribers_.begin(); it != subscribers_.end(); ) {
+		if( not it->second ) {
+			qDebug() << "Updater::erase_deleted_subscribers erasing:" << it->first;
+			it = subscribers_.erase(it);
+			flag = true;
+		}
+		else ++it;
+	}
+	return flag;
+}
+
+
+void Updater::listen(bool l)
+{
+	if(l) {
+		if(not listen_) {
+			listen_to_updates();
+			listen_ = true;
+		}
+	} else {
+		if(listen_) {
+			listen_ = false;
+			abort_network_operation();
+		}
+	}
+}
+
+void Updater::abort_network_operation()
+{
+	if(reply_) {
+		//qDebug() << "Updater::abort_network_operation ABORTING previous request!";
+		disconnect(reply_, SIGNAL(finished()), 0, 0); // we have to disconnet 'finished' signal because call to abort() will issue 'finished'
+		Q_EMIT reply_->abort();
+		reply_->deleteLater();
+		reply_ = nullptr;
+	}
+}
+
+void Updater::listen_to_updates()
+{
+	abort_network_operation();
+	if( subscribers_.empty() ) return;
+	//
+
+	//qDebug() << "Updater::listen_to_updates...";
+
+	// QVariantMap r;
+	// r["node_id"]   = node_id_.toByteArray();
+	//QList<QUuid> keys;
+	QVariantList l;
+	for(auto it = subscribers_.begin(); it != subscribers_.end(); ++it) {
+		l << it->first.toString().mid(1, 36);
+		if( it != subscribers_.begin() ) {
+			auto jt = it;
+			++it;
+			for(; it != subscribers_.end(); ++it) {
+				if( jt->first != it->first ) break;
+			}
+			if( it == subscribers_.end() ) break;
+		}
+	}
+
+
+    //for(auto const & e : keys) l << e.toString().mid(1, 36);;
+	QJsonDocument jd = QJsonDocument::fromVariant(l);
+	//qDebug() << "Updater::listen_to_updates jd: " << jd;
+
+    QUrl url( server_url() + "/updates" );
+	QNetworkRequest request(url);
+	request.setHeader( QNetworkRequest::ContentTypeHeader, "application/json; charset=utf-8" );
+	//request.setHeader( QNetworkRequest::ContentTypeHeader, "application/octet-stream" );
+    reply_ = network_access_manager()->post( request, jd.toJson(QJsonDocument::Compact));
+
+    connect(reply_, SIGNAL(finished()), this, SLOT(updates_finished()));
+    if( reply_->isFinished() ) { updates_finished(); }
+
+	connect(reply_, SIGNAL(readyRead()), this, SLOT(update_data_ready()));
+}
+
+void Updater::updates_finished()
+{
+	if(reply_) {
+		reply_->deleteLater();
+		reply_ = nullptr;
+		qDebug() << "Updater::updates_finished! Initiating retry...";
+		//if(listen_) QTimer::singleShot(64*1000, this, SLOT( listen_to_updates() ));
+		if(listen_) QTimer::singleShot(5*1000, this, SLOT( listen_to_updates() ));
+	}
+}
+
+void Updater::update_data_ready()
+{
+	//qDebug() << "Updater::update_data_ready...";
+
+	while( reply_->canReadLine() ) {
+		QByteArray d = reply_->readLine();
+		//qDebug() << "Node::update_data_ready: got raw data: " << d;
+		if( not d.isEmpty() ) d.resize( d.size() -1 ); // removing '\n' at the end
+		if( d.size() >= 36+1+ 36+1 +1  and  d.at(36) == ' '  and  d.at(36+36+1) == ' ' ) {
+			QUuid tree_id( d.left(36) );
+			QUuid node_id( d.mid(37, 36) );
+			TimeStamp time = d.mid(36+36+2).toInt();
+			//qDebug() << "Node::update_data_ready: got data: " << tree_id << node_id << " time:" << time;
+
+			auto range = subscribers_.equal_range(tree_id);
+			for(auto it = range.first; it != range.second; ++it) {
+				QPointer<Node> node(it->second);
+				if( node ) {
+					node->execute( node_id, [time](Node &n) {
+							if( n.local_modification_time() < time  and
+								(has_permission(n.flags(), Node::Flags::topology_in) or has_permission(n.flags(), Node::Flags::data_in) ) ) {
+								qDebug() << "Node:" << n.node_id() << " update_if_outdatad: honoring update request: local_modification_time=" << n.local_modification_time() << " server_modification_time=" << time;
+								n.data_is_outdated();
+							} else {
+								//qDebug() << "Node::update_if_outdatad: ignoring update request: local_modification_time=" << n.local_modification_time() << " server_modification_time=" << time;
+							}
+						});
+				}
+			}
+
+			// auto it = subscribers_.find(tree_id);
+			// if( it != subscribers_.end() ) {
+			// 	QPointer<Node> node (*it);
+			// 	if( node ) {
+			// 		node->execute( node_id, [time](Node &n) {
+			// 				if( n.local_modification_time() < time ) {
+			// 					qDebug() << "Node:" << n.node_id() << " update_if_outdatad: honoring update request: local_modification_time=" << n.local_modification_time() << " server_modification_time=" << time;
+			// 					n.data_is_outdated();
+			// 				} else {
+			// 					//qDebug() << "Node::update_if_outdatad: ignoring update request: local_modification_time=" << n.local_modification_time_ << " server_modification_time=" << time;
+			// 				}
+			// 			});
+			// 	}
+			// 	else { // QPointer<Node> is nullptr so Node object was destroyed
+			// 		subscribers_.remove(tree_id);
+			// 		listen(listen_);
+			// 	}
+			// }
+		}
+		else {
+			if( erase_deleted_subscribers() ) {
+				if(listen_) {
+					qDebug() << "Updater::update_data_ready: new subscribers list:" << subscribers_;
+					abort_network_operation();
+					listen_to_updates();
+				}
+				break; // abort_network_operation() will set reply_ to nullptr, so we have to break
+			}
+		}
+	}
+	// else {
+	// 		qDebug() << "Project::update_data_ready: canReadLine() is false!";
+	// }
+}
 
 
 
@@ -90,6 +305,11 @@ Node::Node(QString const &_type, Flags _flags, QUuid _node_id) : type_(_type), f
 {
 }
 
+Node::~Node()
+{
+	//qDebug() << "Node::~Node(): " << node_id_;
+	abort_network_operation();
+}
 
 // std::string Node::type() const
 // {
@@ -97,10 +317,10 @@ Node::Node(QString const &_type, Flags _flags, QUuid _node_id) : type_(_type), f
 // }
 
 
-QByteArray Node::data() const
-{
-	return QByteArray();
-}
+// QByteArray Node::data() const
+// {
+// 	return QByteArray();
+// }
 
 
 // void Node::data(QByteArray const &)
@@ -183,30 +403,40 @@ void Node::execute( QUuid const & node_id, std::function< void(Node &) > const &
 }
 
 
+// return number of nodes in tree
+int Node::tree_size() const
+{
+	int r = 0;
+	for(auto const &it : leafs_) r += 1 + it.second->tree_size();
+	return r;
+}
+
+
 void Node::abort_network_operation()
 {
 	if(reply_) {
 		qDebug() << "Node::abort_network_operation ABORTING previous request!";
 		disconnect(reply_, SIGNAL(finished()), 0, 0); // we have to disconnet 'finished' signal because call to abort() will issue 'finished'
-		reply_->abort();
+		Q_EMIT reply_->abort();
 		reply_->deleteLater();
 		reply_ = nullptr;
 	}
 }
 
-bool Node::syncing(bool recursive) const
+int Node::syncing(bool recursive) const
 {
+	int r = 0;
 	if(reply_) {
-		qDebug() << "Node " << node_id_ << " is still syncing...";
-		return true;
+		//qDebug() << "Node " << node_id_ << " is still syncing...";
+		++r;
 	}
 
 	if(recursive) {
 		for(auto const &l : leafs_) {
-			if( l.second->syncing(true) ) return true;
+			r += l.second->syncing(true);
 		}
 	}
-	return false;
+	return r;
 }
 
 void Node::node_synced()
@@ -289,13 +519,13 @@ void Node::data_is_fresh(bool recursive)
 	}
 
 	if( has_permission(flags_, Flags::data_out ) ) {
-		QVariant qvd;
+		QJsonValue jv;
 		if(get_data_) {
-			qvd = get_data_();
-			if( static_cast<QMetaType::Type>( qvd.type() ) == QMetaType::QByteArray ) qvd = qvd.toByteArray().toBase64();
+			jv = get_data_();
+			//if( static_cast<QMetaType::Type>( qvd.type() ) == QMetaType::QByteArray ) qvd = qvd.toByteArray().toBase64();
 			//qDebug() << "Node:" << node_id_ << " Setting custom data: " << qvd;
 		}
-		r["data"] = qvd;
+		r["data"] = jv;
 	}
 
 	// QByteArray d;
@@ -304,6 +534,7 @@ void Node::data_is_fresh(bool recursive)
 
 	QJsonDocument jd = QJsonDocument::fromVariant(r);
 	//qDebug() << "jd: " << jd;
+	//qDebug() << "jd: " << jd.toBinaryData();
 
 	QUrl url( server_url() + "/node" + /*'/' + task_id_.toString().mid(1, 36) + */ '/' + node_id_.toString().mid(1, 36) + '/' + QString::number(local_modification_time_) );
 
@@ -314,6 +545,8 @@ void Node::data_is_fresh(bool recursive)
 	QNetworkRequest request(url);
 	//request.setHeader( QNetworkRequest::ContentTypeHeader, "application/octet-stream" );
 	request.setHeader( QNetworkRequest::ContentTypeHeader, "application/json; charset=utf-8" );
+
+
 
 	// todo: add Content-Encoding gzip: request.setRawHeader(QByteArray("Content-Encoding"), QByteArray("gzip"));
 	// QByteArray d = qCompress(jd.toJson(QJsonDocument::Compact), 5);
@@ -369,8 +602,8 @@ void Node::data_upload_finished(void)
             qDebug() << "Node::upload_finished with error: " << reply_->error() << " reply:" << reply_->readAll() << " initiating retry...";
 			reply_ = nullptr;
 
-			QTimer::singleShot(get_retry_interval()*1000.0, this, SLOT(data_is_fresh()));
-			// put retry code here
+			//QTimer::singleShot(get_retry_interval()*1000.0, this, SLOT(data_is_fresh()));
+			QTimer::singleShot(get_retry_interval()*1000.0, [this]() { data_is_fresh(recursive_); });
 		}
  	}
 }
@@ -379,7 +612,7 @@ void Node::data_upload_finished(void)
 /// assume that server have an updated version of data with (blob_id, blob_modification_time) and initiate sync
 void Node::data_is_outdated()
 {
-	qDebug() << "Node::data_is_outdated for " << node_id_;
+	qDebug() << "Node::data_is_outdated for" << node_id_;
 	abort_network_operation();
 
         //server_modification_time = modification_time;
@@ -403,7 +636,7 @@ void Node::data_download_finished(void)
 	if(reply_) {
  		reply_->deleteLater();
 
-		qDebug() << "Node::data_download_finished for " << node_id_;
+		qDebug() << "Node::data_download_finished for" << node_id_;
 
         if( reply_->error() == QNetworkReply::NoError ) {
 			//reply_->deleteLater();
@@ -420,13 +653,19 @@ void Node::data_download_finished(void)
 
 			node_synced();
 			Q_EMIT synced();
-
 		} else {
-            qDebug() << "Node::data_download_finished with error: " << reply_->error() << " initiating retry...";
-			//reply->deleteLater();
-			reply_ = nullptr;
+			if( reply_->error() == QNetworkReply::ContentGoneError ) { // node is no longer there...
+				qDebug() << "Node::data_download_finished with error: " << reply_->error() << " aborting...";
+				reply_ = nullptr;
 
-			// put retry code here
+				node_synced();
+				Q_EMIT synced();
+			} else {
+				qDebug() << "Node::data_download_finished with error: " << reply_->error() << " initiating retry...";
+				reply_ = nullptr;
+
+				QTimer::singleShot(0, this, SLOT( data_is_outdated() ));
+			}
 		}
  	}
 }
@@ -436,11 +675,13 @@ void Node::update_from_json(QJsonObject const &root, bool forced)
 {
 	if( root["modification_time"].isDouble() ) {
 		server_modification_time_ = root["modification_time"].toDouble();
-		//qDebug() << "Node::download_finished modification_time:" << server_modification_time;
+		//qDebug() << "Node::download_finished modification_time:" << server_modification_time_;
 
 		if( local_modification_time_ < server_modification_time_  or  forced ) {
 
 			if( has_permission(flags_, Flags::topology_in)  and  root["leafs"].isObject() ) {
+				//qDebug() << "Node::download_finished updating topology for node " << node_id_;
+
 				auto jo_leafs = root["leafs"].toObject();
 
 				struct LeafInfo {
@@ -463,6 +704,9 @@ void Node::update_from_json(QJsonObject const &root, bool forced)
 					new_leafs.insert( std::make_pair(key, li) );
 				}
 
+				std::vector<QString> new_keys, errased_keys;
+				//std::transform(new_leafs.begin(), new_leafs.end(), back_inserter(new_keys), [](std::pair<const QString, LeafInfo> const &p) { return p.first; } );
+
                 std::vector<NodeSP> new_nodes;
 
                 //begin_topology_update(this);
@@ -482,6 +726,9 @@ void Node::update_from_json(QJsonObject const &root, bool forced)
 						new_nodes.push_back(l);
 
                         it = leafs_.insert( std::make_pair(nt->first, new_nodes.back() ) ).first;
+
+						new_keys.push_back(nt->first);
+
 						++it;
 						++nt;
 					}
@@ -497,27 +744,52 @@ void Node::update_from_json(QJsonObject const &root, bool forced)
 							new_nodes.push_back(l);
 
 							it = leafs_.insert( std::make_pair(nt->first, new_nodes.back()  ) ).first;
+
+							new_keys.push_back(nt->first);
 						}
 						++it;
 						++nt;
 					}
 					else {
                         qDebug() << "Errasing node: " << it->first;
+						errased_keys.push_back(it->first);
 						it = leafs_.erase(it);
-
 					}
 				}
 
-				while( it != leafs_.end() ) it = leafs_.erase(it);
+				while( it != leafs_.end() ) {
+					std::transform(it, leafs_.end(), back_inserter(errased_keys), [](typename Map::value_type const &p) { return p.first; } );
+					it = leafs_.erase(it);
+				}
 
                 //end_topology_update();
+
+				//Q_EMIT topology_updated(this, new_keys, errased_keys);
+				if(topology_updated_) topology_updated_(this, new_keys, errased_keys);
 
                 for(auto n : new_nodes) n->data_is_outdated();
 			}
 
 			if( has_permission(flags_, Flags::data_in) ) {
 				//begin_topology_update(this);
-				data( QByteArray::fromBase64( root["data"].toVariant().toByteArray() ) );
+
+
+				//data( QByteArray::fromBase64( root["data"].toVariant().toByteArray() ) );
+				if(set_data_) {
+					// QJsonValue d = root["data"];
+					// if( not d.isUndefined() ) set_data_(d);
+
+					QJsonValue d = root["data"];
+					if( not d.isUndefined() ) {
+						set_data_( d/*.toVariant()*/ );
+					} else {
+						//qDebug() << "Data-setting-callback COULD NOT BE CALLED because isUndefined() is true for 'data' key!!! node_id:" << node_id_;
+					}
+				} else {
+					//qDebug() << "Data-setting-callback is not set for node " << node_id_;
+				}
+
+
 				//end_topology_update();
 				//qDebug() << "Setting data: " << QByteArray::fromBase64( root["data"].toVariant().toByteArray() );
 			}
@@ -529,62 +801,6 @@ void Node::update_from_json(QJsonObject const &root, bool forced)
 
 
 
-void Node::updates_finished()
-{
-	if(update_reply) {
-		update_reply->deleteLater();
-		update_reply = nullptr;
-		qDebug() << "Nodes::updates_finished! Initiating retry...";
-		listen_to_updates();
-	}
-}
-
-void Node::update_data_ready()
-{
-	//qDebug() << "Project::update_data_ready...";
-	while( update_reply->canReadLine() ) {
-		QByteArray d = update_reply->readLine();
-		//qDebug() << "Node::update_data_ready: got raw data: " << d;
-		if( not d.isEmpty() ) d.resize( d.size() -1 ); // removing '\n' at the end
-		if( d.length() >= 36+1+1  and  d.indexOf(' ') == 36 ) {
-			QUuid node_id( d.left(36) );
-			TimeStamp time = d.mid(37).toInt();
-			//qDebug() << "Node::update_data_ready: got data: " << node_id << " : " << time;
-
-			execute( node_id, [time](Node &n) {
-					//n.update_if_outdatad(time);
-					if( n.local_modification_time_ < time ) {
-						qDebug() << "Node:" << n.node_id_ << " update_if_outdatad: honoring update request: local_modification_time=" << n.local_modification_time_ << " server_modification_time=" << time;
-						n.data_is_outdated();
-					} else {
-						//qDebug() << "Node::update_if_outdatad: ignoring update request: local_modification_time=" << n.local_modification_time_ << " server_modification_time=" << time;
-					}
-
-				});
-		}
-	}
-	// else {
-	// 		qDebug() << "Project::update_data_ready: canReadLine() is false!";
-	// }
-}
-
-void Node::listen_to_updates()
-{
-	Q_ASSERT(parent_ == nullptr);
-
-    QUrl url( server_url() + "/updates/" + node_id_.toString().mid(1, 36) );
-
-	QNetworkRequest request(url);
-	//request.setHeader( QNetworkRequest::ContentTypeHeader, "application/octet-stream" );
-
-    update_reply = network_access_manager()->get(request);
-    //update_reply->setReadBufferSize(0);  // setting unlimited buffere size
-
-    connect(update_reply, SIGNAL(finished()), this, SLOT(updates_finished()));
-    if( update_reply->isFinished() ) { updates_finished(); }
-
-	connect(update_reply, SIGNAL(readyRead()), this, SLOT(update_data_ready()));
-}
 
 
 

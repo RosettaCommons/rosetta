@@ -38,14 +38,22 @@ public  Q_SLOTS:
 
 private Q_SLOTS:
 	void on_new_task_clicked();
-    void on_submit_clicked();
+    void on_delete_task_clicked();
 
+    void on_action_new_project_triggered();
     void on_action_open_project_triggered();
     void on_action_save_project_triggered();
+	void on_action_save_project_as_triggered();
+
+	void on_action_preferences_triggered();
 
     void on_project_doubleClicked(const QModelIndex &index);
 
 private:
+
+	void save_project(bool avoid_asking_file_name_if_possible);
+
+
     Ui::ProjectView *ui;
 
 	ProjectModel * project_model_ = nullptr;

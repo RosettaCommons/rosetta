@@ -39,13 +39,12 @@ struct PNode
 	}
 
 	PNode(PNode *_parent, QString const &_name, TaskSP const &t) : parent(_parent), name(_name), type("task"), task(t) {
+		if( !t->input() .empty() ) leafs.push_back( std::make_shared<PNode>(this, "input",  t, static_cast<File const & (Task::*)() const>( &Task::input)  ) );
 		if( !t->script().empty() ) leafs.push_back( std::make_shared<PNode>(this, "script", t, static_cast<File const & (Task::*)() const>( &Task::script) ) );
-
-		//if( !t->script().empty() ) leafs.push_back( std::make_shared<PNode>(this, "script", t, &Task::script) );
-		//if( !t->output().empty() ) leafs.push_back( std::make_shared<PNode>(this, "output", t, nullptr) );
+		if( !t->flags() .empty() ) leafs.push_back( std::make_shared<PNode>(this, "flags",  t, static_cast<File const & (Task::*)() const>( &Task::flags)  ) );
 	}
 
-	PNode(PNode *_parent, QString const &_name, TaskSP const &t, File const & (Task::*/* f */)() const) : parent(_parent), name(_name), type("script"), task(t) {
+	PNode(PNode *_parent, QString const &_name, TaskSP const &t, File const & (Task::*/* f */)() const) : parent(_parent), name(_name), type("file"), task(t) {
 	}
 
 

@@ -15,6 +15,7 @@
 #define UI_TASK_NODE_H
 
 #include <ui/util/exception.h>
+#include <ui/task/util.h>
 
 #include <QObject>
 #include <QUuid>
@@ -27,6 +28,7 @@
 #include <memory>
 #include <type_traits>
 #include <functional>
+#include <map>
 
 namespace ui {
 namespace task {
@@ -40,6 +42,53 @@ class Node;
 using NodeWP  = std::weak_ptr< Node >;
 using NodeSP  = std::shared_ptr< Node >;
 using NodeCSP = std::shared_ptr< Node const >;
+
+
+class Updater final : public QObject
+{
+    Q_OBJECT
+
+private:
+	Updater() {}
+
+public:
+
+	static Updater & get();
+
+	/// check/set if Updater is currently listen (connect to remote server) to updates
+	bool listen() const { return listen_; }
+	void listen(bool);
+
+	/// subscribe and unsubscribe Node for updates
+	void subscribe(Node *);
+	//	void unsubscribe(Node *);
+
+
+public Q_SLOTS:
+	//void unsubscribe(QObject *);
+
+private Q_SLOTS:
+	void updates_finished();
+	void update_data_ready();
+
+	/// subscribe to server update channel. This signal can be used for all, even non-root nodes.
+	void listen_to_updates();
+
+private:
+	// stop outgoing network operations if any
+	void abort_network_operation();
+
+	// erase deleted subscribers from watch list and return true if at least one subscribers was deleted
+	bool erase_deleted_subscribers();
+
+private:
+	//QMap <QUuid, QPointer<Node> > subscribers_;
+	std::multimap <QUuid, QPointer<Node> > subscribers_;
+
+	bool listen_ = true;
+
+	QPointer<QNetworkReply> reply_;
+};
 
 
 class Node final : public QObject
@@ -56,28 +105,32 @@ public:
 		all          = data_in | data_out | topology_in | topology_out,
 	};
 
-	using TimeStamp = int64_t;
 	TimeStamp const _T_unknown_  = 0;
 	TimeStamp const _T_outdated_ = 1;
 
 	using Map = std::map< QString, NodeSP >;
 	using Key = Map::key_type;
 
-	using SetDataCallback = std::function< void (QVariant &&) >;
-	using GetDataCallback = std::function< QVariant (void) >;
+	using SetDataCallback = std::function< void (QJsonValue const &) >;
+	using GetDataCallback = std::function< QJsonValue (void) >;
+
+	using TopologyUpdatedCallback = std::function< void (Node const *, std::vector<QString> const & new_keys, std::vector<QString> const & errased_keys) >;
 
 	//explicit Node(QUuid _node_id = QUuid());
 
 	explicit Node(Flags _flags=Flags::none, QUuid _node_id = QUuid::createUuid());
 	explicit Node(QString const &_type, Flags _flags, QUuid _node_id = QUuid::createUuid());
 
-	virtual ~Node() {}
+	~Node();
 
 
 	/// return node type as string
 	QString type() const { return type_; }
 
 	QUuid node_id() const { return node_id_; }
+
+	Flags flags() const { return flags_; }
+
 
 	/// Add new leaf this node, If node was already added to some other Node then remove it first.
     void add(Key const &, NodeSP const &);
@@ -105,6 +158,13 @@ public:
 	int node_index(Node *node);
 
 
+	TimeStamp local_modification_time() const { return local_modification_time_; }
+
+	// execute given function on self and leafs
+	void execute( std::function< void(Node &) > const &f );
+	void execute( QUuid const & node_id, std::function< void(Node &) > const &f );
+
+
 	// return a reference to Node assosiatate with Key. If not such node found - create it. If node found but type could not be cast to NodeType std::bad_cast is thrown
 	// template <class NodeType=Node>
 	// NodeType & at(Key const &key) {
@@ -120,6 +180,9 @@ public:
 	void set_data_callback(SetDataCallback const &set_data) { set_data_ = set_data; }
 	void get_data_callback(GetDataCallback const &get_data) { get_data_ = get_data; }
 
+	void topology_updated_callback(TopologyUpdatedCallback const &topology_updated_callback) { topology_updated_ = topology_updated_callback; }
+
+
 	bool operator ==(Node const &r) const;
 	bool operator !=(Node const &r) const { return not (*this == r); }
 
@@ -128,21 +191,21 @@ public:
 	friend QDataStream &operator>>(QDataStream &, Node &);
 
 
+	// check if current node is syncing and if so return number of syncing nodes
+	int syncing(bool recursive=false) const;
+
+	// return number of nodes in tree
+	int tree_size() const;
+
 private:
 
-	// execute given function on self and leafs
-	void execute( std::function< void(Node &) > const &f );
-	void execute( QUuid const & node_id, std::function< void(Node &) > const &f );
-
-
-	bool syncing(bool recursive=false) const;
 	void abort_network_operation();
 
 	void node_synced();
 
 
 Q_SIGNALS:
-	void data(QByteArray const &);
+	//void data(QByteArray const &);
 
 	/// Emitted when node finished network operation
 	void synced();
@@ -150,8 +213,11 @@ Q_SIGNALS:
 	/// Emitted when node and all its leafs finished synced operation
     void tree_synced();
 
+	/// Emitted when node recieve new topology from remote server
+	// moved to callback void topology_updated(Node const *, std::vector<QString> const & new_keys, std::vector<QString> const & errased_keys);
+
 public Q_SLOTS:
-	QByteArray data() const;
+	//QByteArray data() const;
 
 	/// assume that current node data/topology is fresh and start upload process
 	void data_is_fresh(bool recursive);
@@ -160,17 +226,14 @@ public Q_SLOTS:
 	/// assume that server have an updated version of data with (blob_id, blob_modification_time) and initiate sync
 	void data_is_outdated();
 
-	/// subscribe to server update channel. For now this signal must be called only for root nodes.
-	void listen_to_updates();
+	/// subscribe to server update channel. This signal can be used for all, even non-root nodes.
+	//void listen_to_updates();
 
 
 private Q_SLOTS:
 	void data_upload_finished();
     void data_download_finished();
 	void update_from_json(QJsonObject const &root, bool forced);
-
-	void updates_finished();
-	void update_data_ready();
 
 private:
 	QString type_;
@@ -190,14 +253,13 @@ private:
 	SetDataCallback set_data_;
 	GetDataCallback get_data_;
 
+	TopologyUpdatedCallback topology_updated_;
+
 	// sync state
 	bool recursive_;
 	QPointer<QNetworkReply> reply_;
 	TimeStamp local_modification_time_  = _T_outdated_;
 	TimeStamp server_modification_time_ = _T_unknown_;
-
-	// updates
-	QPointer<QNetworkReply> update_reply;
 };
 
 

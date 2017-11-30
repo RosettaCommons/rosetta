@@ -36,7 +36,7 @@ public:
 	virtual QString type() const = 0;
 
 private:
-	virtual QByteArray data() const = 0;
+	virtual QByteArray const & data() const = 0;
 	virtual void data(QByteArray const &) = 0;
 
 	//virtual QByteArray file_data() const = 0;
@@ -64,7 +64,7 @@ public:
 	void init_from_file(QString const & file_name);
 
 	// we pulling FileMixin methods into public because they now have double function as accessor to file data
-	QByteArray data() const override { return file_data_; };
+	QByteArray const & data() const override { return file_data_; };
 	void data(QByteArray const &_file_data) override { file_data_ = _file_data; }
 
     //QByteArray file_data() const override { return file_data_; };
@@ -99,27 +99,29 @@ class Task : public QObject
 	Q_OBJECT
 
 public:
-	enum class State {_draft_, _queued_, _running_, _finished_};
+	enum class State {_draft_, _queued_, _running_, _finished_, _unknown_};
 
 public:
 	explicit Task() {}
 	explicit Task(QString const &description);
-
-	//std::string type() const override;
-
-	/// return reference to 'input' node which will contain all input data
-	//Node &input();
-
-	/// return reference to 'output' node which will contain all output data
-	//Node &output();
-
-	/// return reference to 'xml script' node which will contain all Rosetta XML script for this task
-	//File &script();
+	~Task();
 
 	// return current Task State
-	QString state() const;
+	State state() const { return state_; }
+
+	// return queue that will be used to run this Task
+	QString queue() const { return queue_; }
+
+	// return true if there is any outgoing/pending network operations
+	bool is_syncing() const;
+
+	// return <current_value, max_value> for syncing operation progress
+	std::pair<int, int> syncing_progress() const;
+
 
 	Project *project() const { return project_; }
+
+	std::map<QString, FileSP> const & output() const { return output_; }
 
 	// should not be needed, add/remove Tasks should be done on Project level
 	// void project(Project *p)  { project_ = p; }
@@ -129,7 +131,7 @@ public:
 	///   1. sync all nodes to cloud
 	///   2. set state to _queued_
 	///   3. sync root node to cloud
-	void submit();
+	void submit(QString const & queue);
 
 	/// return task UUID if task was already submitted other wise return NULL UUID
 	QUuid task_id() const;
@@ -147,6 +149,8 @@ public:
 	File const &flags() const { return flags_; }
 	void flags(File &&flags) { if( flags_ != flags ) { flags_ = std::move(flags); Q_EMIT changed(); } }
 
+	/// subscribe to network update stream
+	void subscribe();
 
 	bool operator ==(Task const &r) const;
 	bool operator !=(Task const &r) const { return not (*this == r); }
@@ -154,6 +158,10 @@ public:
 	// serialization
 	friend QDataStream &operator<<(QDataStream &, Task const&);
 	friend QDataStream &operator>>(QDataStream &, Task &);
+
+
+	static QString to_string(Task::State state);
+	static Task::State from_string(QString const &s);
 
 Q_SIGNALS:
 	void submitted();
@@ -165,25 +173,36 @@ private Q_SLOTS:
 
 	void post_submit(void);
 
+	//void output_topology_updated(Node const *, std::vector<QString> const & new_keys, std::vector<QString> const &  errased_keys);
+	//void output_topology_updated(Node const *);
+
 
 private:
 	void create_sync_tree();
 
-	void assign_input_node();
-	void assign_script_node();
-	void assign_flags_node();
-	void assign_output_node();
+	/// connect nodes and Task structre, assign callback's
+	void connect_task_and_nodes();
+
+	void output_topology_updated(Node const *, std::vector<QString> const & new_keys, std::vector<QString> const &  errased_keys);
+
+
+	// void assign_input_node();
+	// void assign_script_node();
+	// void assign_flags_node();
+	// void assign_output_node();
 
 private:
-	QVariant task_data();
-	void task_data(QVariant &&);
+	QJsonValue task_data();
+	void task_data(QJsonValue const &);
 
 	/// Some project functions require access to project_
 	friend void Project::add(Project::Key const &, TaskSP const &);
-	friend bool Project::erase(Task *task);
+	friend bool Project::erase(TaskSP const &task);
 	friend void Project::assign_ownership(TaskSP const &t);
 
 	State state_ = State::_draft_;
+
+	QString queue_;
 
 	/// UUID for cloud syncing. Zero id by default (will be set to a new random value on 'submit' event).
 	//QUuid task_id_;
@@ -191,6 +210,7 @@ private:
 	QString description_;
 
 	File input_, script_, flags_;
+	std::map<QString, FileSP> output_;
 
 	NodeWP input_node_, script_node_, flags_node_;
 	NodeWP output_node_;

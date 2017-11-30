@@ -12,10 +12,11 @@
 /// @author Sergey Lyskov (sergey.lyskov@jhu.edu).
 
 #include <ui/task/task.h>
+#include <ui/task/util.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QVariant>
+//#include <QVariant>
 #include <QDataStream>
 #include <QFile>
 
@@ -26,15 +27,6 @@ Node::Key const _input_key_ {"input"};
 Node::Key const _output_key_{"output"};
 
 Node::Key const _script_key_ {"script"};
-
-
-static std::map<QString, Task::State> const _String_to_Task_State_ = {
-	{"draft",    Task::State::_draft_},
-	{"queued",   Task::State::_queued_},
-	{"running",  Task::State::_running_},
-	{"finished", Task::State::_finished_},
-	//{"unknown",  Task::State::_unknown_},
-};
 
 File::File(QString const &file_name)
 {
@@ -80,19 +72,29 @@ QDataStream &operator>>(QDataStream &in, File &f)
 	return in;
 }
 
+static std::map<QString, Task::State> const _String_to_Task_State_ = {
+	{"draft",    Task::State::_draft_},
+	{"queued",   Task::State::_queued_},
+	{"running",  Task::State::_running_},
+	{"finished", Task::State::_finished_},
+	{"unknown",  Task::State::_unknown_},
+};
 
-QString to_string(Task::State state)
+QString Task::to_string(Task::State state)
 {
 	for(auto it = _String_to_Task_State_.begin(); it != _String_to_Task_State_.end(); ++it) {
 		if( it->second == state ) return it->first;
 	}
+	//return State::_unknown_;
 	throw std::out_of_range("");
 }
 
-
-Task::State from_string(QString const &s)
+Task::State Task::from_string(QString const &s)
 {
-	return _String_to_Task_State_.at(s);
+	auto it = _String_to_Task_State_.find(s);
+	if( it != _String_to_Task_State_.end() ) return it->second;
+	return Task::State::_unknown_;
+	//return _String_to_Task_State_.at(s);
 }
 
 
@@ -103,10 +105,9 @@ Task::Task(QString const &description) : description_(description)
 	//output(); // forcing creation in output node
 }
 
-
-QString Task::state() const
+Task::~Task()
 {
-	return to_string(state_);
+	//qDebug() << "Task::~Task()";
 }
 
 void Task::description(QString const &d)
@@ -114,6 +115,19 @@ void Task::description(QString const &d)
 	if( description_ != d ) {
 		description_ = d;
 		Q_EMIT changed();
+	}
+}
+
+
+void Task::subscribe()
+{
+	// if(auto sp = output_node_.lock() ) {
+	// 	qDebug() << "Task[" << task_id() << "]: Name:" << (project_ ? *project_->find(this) : "''") << " Task::subscribe";
+	// 	Updater::get().subscribe( sp.get() );
+	// }
+	if(root_) {
+		qDebug() << "Task[" << task_id() << "]: Name:" << (project_ ? *project_->find(this) : "''") << " Task::subscribe";
+		Updater::get().subscribe( root_.get() );
 	}
 }
 
@@ -167,17 +181,36 @@ QUuid Task::task_id() const
 	else return QUuid();
 }
 
-
-void Task::submit()
+bool Task::is_syncing() const
 {
+	if(root_) return root_->syncing(true);
+	return false;
+}
+
+// return <current_value, max_value> for syncing operation progress
+std::pair<int, int> Task::syncing_progress() const
+{
+	if(root_) {
+		return std::make_pair(root_->syncing(true), root_->tree_size());
+	}
+	else return std::make_pair(0, 0);
+}
+
+
+
+void Task::submit(QString const & queue)
+{
+	queue_ = queue;
 	state_ = State::_draft_;
 
 	create_sync_tree();
-	qDebug() << "Task[" << task_id() << "]: Task::submit() Name:" << (project_ ? *project_->find(this) : "''");
+	qDebug() << "Task[" << task_id() << "]: Task::submit() Name:" << (project_ ? *project_->find(this) : "''") << " queue:" << queue_;
 
 	connect(root_.get(), SIGNAL(tree_synced()), this, SLOT(draft_to_queued()));
 
 	root_->data_is_fresh(true);
+
+	Q_EMIT changed();
 }
 
 
@@ -200,6 +233,7 @@ void Task::post_submit(void)
 	disconnect(root_.get(), SIGNAL(synced()), this, SLOT(post_submit()));
 	Q_EMIT submitted();
 	Q_EMIT changed();
+	subscribe();
 }
 
 
@@ -207,33 +241,65 @@ void Task::create_sync_tree()
 {
 	//QUuid task_id = QUuid::createUuid();  /// each distinct submitted Task _must_ have unique id
 
-	TaskQP qtask(this);
-
 	root_ = std::make_shared<Node>("task", Node::Flags::data_in | Node::Flags::data_out | Node::Flags::topology_out/*, task_id*/);
-	root_->get_data_callback( [qtask]() { if(qtask) return qtask->task_data(); else return QVariant(); } );
-	root_->set_data_callback( [qtask](QVariant &&ba) { if(qtask) return qtask->task_data( std::move(ba) ); } );
 
 	auto input_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
-	input_node->get_data_callback( [qtask]() -> QVariant { if(qtask) return qtask->input_.data(); else return QVariant(); } );
 	root_->add("input", input_node);
-	assign_input_node();
+	//assign_input_node();
 
 	auto script_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
-	script_node->get_data_callback( [qtask]() -> QVariant { if(qtask) return qtask->script_.data(); else return QVariant(); } );
 	root_->add("script", script_node);
-	assign_script_node();  //script_node_ = script_node;
+	//assign_script_node();  //script_node_ = script_node;
 
 	auto flags_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
-	flags_node->get_data_callback( [qtask]() -> QVariant { if(qtask) return qtask->flags_.data(); else return QVariant(); } );
 	root_->add("flags", flags_node);
-	assign_flags_node();
+	//assign_flags_node();
 
 	auto output_node = std::make_shared<Node>(Node::Flags::topology_in);
 	root_->add("output", output_node);
-	assign_output_node();
+	//assign_output_node();
+
+	connect_task_and_nodes();
 }
 
-void Task::assign_input_node()
+void Task::connect_task_and_nodes()
+{
+	if(root_) {
+		TaskQP qtask(this);
+
+		root_->get_data_callback( [qtask]() { if(qtask) return qtask->task_data(); else return QJsonValue(); } );
+		root_->set_data_callback( [qtask](QJsonValue const &ba) { if(qtask) return qtask->task_data(ba); } );
+
+		input_node_ = root_->leaf("input");
+		if(auto input_node = input_node_.lock() ) input_node->get_data_callback( [qtask]() -> QJsonValue { if(qtask) return QJsonValue( QLatin1String( qtask->input_.data().toBase64() ) ); else return QJsonValue(); } );
+
+		script_node_ = root_->leaf("script");
+		if(auto script_node = script_node_.lock() )  script_node->get_data_callback( [qtask]() -> QJsonValue { if(qtask) return QJsonValue( QLatin1String( qtask->script_.data().toBase64() ) ); else return QJsonValue(); } );
+
+		flags_node_ = root_->leaf("flags");
+		if(auto flags_node = flags_node_.lock() ) flags_node->get_data_callback( [qtask]() -> QJsonValue { if(qtask) return QJsonValue( QLatin1String( qtask->flags_.data().toBase64() ) ); else return QJsonValue(); } );
+
+		output_node_ = root_->leaf("output");
+		if(auto output_node = output_node_.lock() ) {
+			output_node->topology_updated_callback(
+				[qtask](Node const *node, std::vector<QString> const & new_keys, std::vector<QString> const & errased_keys) -> void
+				{ if(qtask) qtask->output_topology_updated(node, new_keys, errased_keys); }
+		    );
+			// connect(output_node.get(), SIGNAL(        topology_updated(Node const *, std::vector<QString> const & , std::vector<QString> const & ) ),
+			// 		this,                SLOT( output_topology_updated(Node const *, std::vector<QString> const & , std::vector<QString> const & ) ));
+		}
+
+		connect(root_.get(), SIGNAL(tree_synced()), this, SIGNAL(changed()));
+
+	} else {
+		input_node_.reset();
+		script_node_.reset();
+		flags_node_.reset();
+		output_node_.reset();
+	}
+}
+
+/*void Task::assign_input_node()
 {
 	if(root_) input_node_ = root_->leaf("input");
 	else input_node_.reset();
@@ -252,13 +318,14 @@ void Task::assign_output_node()
 {
 	if(root_) output_node_ = root_->leaf("output");
 	else output_node_.reset();
-}
+}*/
 
-QVariant Task::task_data()
+QJsonValue Task::task_data()
 {
 	//qDebug() << "Task[" << task_id() << "]: task_data()...";
-	QVariantMap r;
+	QJsonObject r;
 	r["state"] = to_string(state_);
+	r["queue"] = queue_;
 	r["description"] = description_;
 
 	//QJsonDocument jd = QJsonDocument::fromVariant(r);
@@ -266,8 +333,74 @@ QVariant Task::task_data()
 	return r;
 }
 
-void Task::task_data(QVariant &&)
+void Task::task_data(QJsonValue const &jv)
 {
+	qDebug() << "Task[" << task_id() << "]: task_data(...): " << jv;
+
+	bool changed = false;
+	QJsonObject const o = jv.toObject();
+
+	QJsonValue st = o["state"];
+	if( st.isString() ) {
+		State state = from_string( st.toString() );
+
+		if( state != State::_unknown_  and  state != state_) {
+			state_ = state;
+			changed = true;
+		}
+	}
+
+	auto ds = o["description"];
+	if( ds.isString() ) {
+		auto description = ds.toString();
+		if( description != description_) {
+			description_ = description;
+			changed = true;
+		}
+	}
+
+	auto q = o["queue"];
+	if( q.isString() ) {
+		auto queue = q.toString();
+		if( queue != queue_) {
+			queue_ = queue;
+			changed = true;
+		}
+	}
+
+	if(changed) Q_EMIT this->changed();
+}
+
+void Task::output_topology_updated(Node const *, std::vector<QString> const & new_keys, std::vector<QString> const & errased_keys)
+{
+	qDebug() << "Task::output_topology_updated: New keys: " << new_keys << " Errased keys:" << errased_keys;
+
+	if(auto output_node = output_node_.lock() ) {
+		TaskQP qtask(this);
+
+		for(auto const &k : errased_keys) output_.erase(k);
+
+		for(auto const &k : new_keys) {
+			if(NodeSP leaf = output_node->leaf(k) ) {
+				FileSP file_sp = std::make_shared<File>();
+				file_sp->file_name(k);
+				output_[k] = file_sp;
+
+				qDebug() << "Task::output_topology_updated: setting set-data-callback for node: " << leaf->node_id();
+				leaf->set_data_callback( [qtask, file_sp](QJsonValue const &jv) {
+						//qDebug() << "Data update for output key(jv):" << jv;
+						auto ba = QByteArray::fromBase64( jv.toVariant().toByteArray() );
+
+						qDebug() << "Data update for output key:" << file_sp->file_name() << "  data: " << ba.left(64) << ( ba.size() > 64 ? "..." : "");
+						if(qtask) {
+							file_sp->data(ba);
+							Q_EMIT qtask->changed();
+						}
+					} );
+
+			}
+		}
+	}
 }
 
 
@@ -305,6 +438,8 @@ QDataStream &operator<<(QDataStream &out, Task const&t)
 	out << t.script_;
 	out << t.flags_;
 
+	out << t.output_;
+
 	out << (t.root_ != nullptr);
     if( t.root_ != nullptr ) out << *t.root_;
 
@@ -334,16 +469,21 @@ QDataStream &operator>>(QDataStream &in, Task &t)
 	in >> t.script_;
 	in >> t.flags_;
 
+	in >> t.output_;
+
 	bool root;
 	in >> root;
 	if(root) {
 		t.root_ = std::make_shared<Node>();
 		in >> *t.root_;
 
-		t.assign_input_node();
-		t.assign_script_node();
-		t.assign_flags_node();
-		t.assign_output_node();
+		t.connect_task_and_nodes();
+		// t.assign_input_node();
+		// t.assign_script_node();
+		// t.assign_flags_node();
+		// t.assign_output_node();
+
+		if( t.state_ != Task::State::_draft_ ) t.subscribe();
 	}
 
 	return in;

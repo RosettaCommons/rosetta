@@ -26,6 +26,7 @@ namespace task {
 //Project::Project(QUuid _project_id) : Node(QUuid()), project_id(_project_id)
 Project::Project()
 {
+	//get_user_credentials();
 }
 
 
@@ -38,7 +39,7 @@ Project::Project()
 /// Add new Task
 void Project::add(Key const &key, TaskSP const &task)
 {
-	if( task->project_ ) task->project_->erase( task.get() );
+	if( task->project_ ) task->project_->erase(task);
 
 	tasks_[key] = task;
     task->project_ = this;
@@ -46,9 +47,10 @@ void Project::add(Key const &key, TaskSP const &task)
 
 
 // erase given Task from this project
-bool Project::erase(Task *task)
+bool Project::erase(TaskSP const &task)
 {
-    auto it = find_if(tasks_.begin(), tasks_.end(), [&](Map::value_type const &p) { return p.second.get() == task; } );
+    //auto it = find_if(tasks_.begin(), tasks_.end(), [&](Map::value_type const &p) { return p.second.get() == task; } );
+    auto it = find_if(tasks_.begin(), tasks_.end(), [&](Map::value_type const &p) { return p.second == task; } );
 
 	if( it == tasks_.end() ) return false;
 
@@ -96,6 +98,11 @@ bool Project::operator ==(Project const &rhs) const
 }
 
 
+// void Project::listen_to_updates()
+// {
+// 	for(auto & p : tasks_) p.listen_to_updates();
+// }
+
 
 
 quint64 const _Project_magic_number_   = 0xFFF1D6BF94D5E57F;
@@ -131,7 +138,10 @@ QDataStream &operator>>(QDataStream &in, Project &p)
 
 	in >> p.tasks_;
 
-	for(auto &t : p.tasks_) p.assign_ownership(t.second);
+	for(auto &t : p.tasks_) {
+		p.assign_ownership(t.second);
+		//listen_to_updates();  // moved to Task operator>>
+	}
 
 	return in;
 }

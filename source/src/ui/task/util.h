@@ -7,8 +7,56 @@
 
 #include <QDataStream>
 
+// NetworkCall extra includes
+#include <QJsonDocument>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
+#include <QPointer>
+
+
 namespace ui {
 namespace task {
+
+using TimeStamp = int64_t;
+
+TimeStamp get_utc_timestamp();
+
+/// calculate appropriate delay in sec until next network retry should be made
+int get_retry_interval();
+
+
+/// Simple wrapper around QNetworkReply to model RPC calls
+/// Store results and perform retry if needed
+class NetworkCall final : public QObject
+{
+    Q_OBJECT
+public:
+	NetworkCall(QObject * parent=nullptr);
+
+	void call(QString const & address, QNetworkAccessManager::Operation operation, QJsonDocument const &post_data=QJsonDocument());
+	void call(QString const & address, QNetworkAccessManager::Operation operation = QNetworkAccessManager::Operation::GetOperation, QByteArray const &post_data=QByteArray(), QString const &content_type="application/octet-stream");
+
+	QByteArray result() const;
+	QJsonDocument json() const;
+
+
+Q_SIGNALS:
+	void finished();
+
+private Q_SLOTS:
+	void network_operation_is_finished();
+
+private:
+	void abort_network_operation();
+
+	QString address_;
+	QString content_type_;
+	QByteArray post_data_;
+	QNetworkAccessManager::Operation operation_;
+
+	QPointer<QNetworkReply> reply_;
+	QByteArray result_;
+};
 
 
 quint64 const _std_map_QDataStream_magic_number_   = 0xFFF2C04ABB492107;
@@ -52,6 +100,8 @@ QDataStream &operator>>(QDataStream &in, std::map<K, std::shared_ptr<T> > &r)
 	std::swap(m, r);
 	return in;
 }
+
+
 
 
 } // namespace task

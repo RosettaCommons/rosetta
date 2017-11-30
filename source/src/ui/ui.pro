@@ -20,20 +20,24 @@ QMAKE_CXXFLAGS += \
 
 SOURCES += \
     ui_lib_test.cpp \
+    config/config_dialog.cpp \
     task/node.cpp \
     task/project.cpp \
     task/project_model.cpp \
     task/project_view.cpp \
     task/task.cpp \
     task/task_view.cpp \
+    task/util.cpp \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.cpp \
     ui_protocols/helical_bundle/HelixOptionWidget.cpp \
     ui_core/pose_draw/SimplePoseDrawOpenGLWidget.cpp \
-    ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.cpp
+    ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.cpp \
+    ../../../src/ui/config/util.cpp
 
 
 HEADERS  += \
     ui_lib_test.h \
+    config/config_dialog.h \
     task/node.h \
     task/project.h \
     task/project_model.h \
@@ -50,10 +54,12 @@ HEADERS  += \
     ui_core/pose_draw/SimplePoseDrawOpenGLWidget.fwd.h \
     ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.h \
     ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.fwd.h \
-    util/exception.h
+    util/exception.h \
+    ../../../src/ui/config/util.h
 
 
 FORMS    += \
+    config/config_dialog.ui \
     task/project_view.ui \
     task/task_view.ui \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.ui \

@@ -64,6 +64,9 @@ public:
 	/// @brief Set the pose that we'll be drawing.
 	void set_pose( core::pose::PoseCOP pose );
 
+	/// @brief Get currently assigned pose object
+	core::pose::PoseCOP pose() const { return pose_; }
+
 	/// @brief Set the residue selector that we'll use for colouring the pose.
 	/// @details Only used if colour_mode_ == SPODGLW_colour_by_selection.
 	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );

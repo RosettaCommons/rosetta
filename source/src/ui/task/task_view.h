@@ -3,12 +3,13 @@
 
 #include <ui/task/task.fwd.h>
 
+#include <ui/task/util.h>
+
 #include <QWidget>
 
 namespace Ui {
 class TaskView;
 }
-
 
 namespace ui {
 namespace task {
@@ -35,11 +36,25 @@ private Q_SLOTS:
 
 	void on_submit_clicked();
 
+    void on_output_clicked(const QModelIndex &index);
+
+	void create_output_context_menu(const QPoint &pos);
+	void on_action_output_save_as();
+
+
+	void on_queues_finished();
+
 private:
+	QWidget * create_viewer_for_file(FileSP const &);
+
 
 	Ui::TaskView *ui;
 
 	TaskSP task_;
+
+	QWidget *viewer_ = nullptr;
+
+	NetworkCall queues;
 };
 
 } // namespace task

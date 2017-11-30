@@ -46,9 +46,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="submit">
+       <widget class="QPushButton" name="delete_task">
         <property name="text">
-         <string>Submit Task</string>
+         <string>Delete Task</string>
         </property>
        </widget>
       </item>
@@ -82,8 +82,12 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="action_new_project"/>
     <addaction name="action_open_project"/>
     <addaction name="action_save_project"/>
+    <addaction name="action_save_project_as"/>
+    <addaction name="separator"/>
+    <addaction name="action_preferences"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -102,6 +106,30 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_save_project_as">
+   <property name="text">
+    <string>Save Project as...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="action_new_project">
+   <property name="text">
+    <string>New Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_preferences">
+   <property name="text">
+    <string>Preferences...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+,</string>
    </property>
   </action>
  </widget>

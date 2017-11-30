@@ -50,7 +50,7 @@ public:
     void add(Key const &, TaskSP const &);
 
 	// erase given Task from this project
-	bool erase(Task *task);
+	bool erase(TaskSP const &task);
 
 	// return number of tasks in Project
 	int size() const { return tasks_.size(); }
@@ -71,8 +71,9 @@ public:
 	friend QDataStream &operator>>(QDataStream &, Project &);
 
 private:
+	//void listen_to_updates();
 
-	//QUuid const project_id;
+private:
 
 	Map tasks_;
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1152</width>
-    <height>604</height>
+    <width>1151</width>
+    <height>960</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -68,31 +68,18 @@
      <x>360</x>
      <y>0</y>
      <width>771</width>
-     <height>351</height>
+     <height>371</height>
     </rect>
    </property>
    <property name="title">
     <string>Rosetta XML Script</string>
    </property>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLineEdit" name="script_file_name">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>30</y>
-      <width>71</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>File name:</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="script_file_name">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>30</y>
-      <width>561</width>
+      <width>631</width>
       <height>21</height>
      </rect>
     </property>
@@ -103,10 +90,10 @@
    <widget class="QPlainTextEdit" name="script">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>60</y>
-      <width>741</width>
-      <height>261</height>
+      <width>751</width>
+      <height>301</height>
      </rect>
     </property>
     <property name="readOnly">
@@ -131,9 +118,9 @@
    <property name="geometry">
     <rect>
      <x>360</x>
-     <y>360</y>
+     <y>370</y>
      <width>771</width>
-     <height>151</height>
+     <height>141</height>
     </rect>
    </property>
    <property name="title">
@@ -142,27 +129,14 @@
    <widget class="QLineEdit" name="flags_file_name">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>10</x>
       <y>20</y>
-      <width>561</width>
+      <width>631</width>
       <height>21</height>
      </rect>
     </property>
     <property name="focusPolicy">
      <enum>Qt::NoFocus</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>71</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>File name:</string>
     </property>
    </widget>
    <widget class="QPushButton" name="flags_set_from_file">
@@ -183,7 +157,7 @@
      <rect>
       <x>10</x>
       <y>50</y>
-      <width>741</width>
+      <width>751</width>
       <height>81</height>
      </rect>
     </property>
@@ -230,12 +204,22 @@
      <string>set from file</string>
     </property>
    </widget>
+   <widget class="ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget" name="input_preview" native="true">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>59</y>
+      <width>311</width>
+      <height>271</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>530</y>
+     <y>920</y>
      <width>41</width>
      <height>16</height>
     </rect>
@@ -248,7 +232,7 @@
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>530</y>
+     <y>920</y>
      <width>60</width>
      <height>16</height>
     </rect>
@@ -264,19 +248,141 @@
    </property>
   </widget>
   <widget class="QPushButton" name="submit">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>930</x>
-     <y>530</y>
-     <width>211</width>
-     <height>61</height>
+     <x>1000</x>
+     <y>920</y>
+     <width>131</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>Submit</string>
    </property>
   </widget>
+  <widget class="QWidget" name="syncing" native="true">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>900</y>
+     <width>651</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <widget class="QProgressBar" name="syncing_progress">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>12</y>
+      <width>551</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>10</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Syncing...</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_5">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>510</y>
+     <width>1121</width>
+     <height>391</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Output</string>
+   </property>
+   <widget class="QListView" name="output">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>361</width>
+      <height>351</height>
+     </rect>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::ExtendedSelection</enum>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>20</y>
+      <width>731</width>
+      <height>361</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Preview</string>
+    </property>
+    <widget class="QWidget" name="preview" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>20</y>
+       <width>731</width>
+       <height>341</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>926</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Queue:</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="queue">
+   <property name="geometry">
+    <rect>
+     <x>860</x>
+     <y>920</y>
+     <width>141</width>
+     <height>31</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ui/ui_core/pose_draw/SimplePoseDrawOpenGLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>description</tabstop>
   <tabstop>name</tabstop>

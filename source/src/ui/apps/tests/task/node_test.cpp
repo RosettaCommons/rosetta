@@ -4,6 +4,7 @@
 #include <ui/task/task.h>
 
 #include <QBuffer>
+#include <QThread>
 
 using namespace ui::task;
 
@@ -67,6 +68,11 @@ NodeTest::~NodeTest()
 
 void NodeTest::initTestCase()
 {
+	QCoreApplication::setOrganizationName("RosettaCommons");
+    QCoreApplication::setOrganizationDomain("RosettaCommons.org");
+    QCoreApplication::setApplicationName("Workbench");
+
+	QSettings::setDefaultFormat(QSettings::IniFormat); // comment this out later, when config editor functionality is in place
 }
 
 void NodeTest::cleanupTestCase()
@@ -163,9 +169,9 @@ void NodeTest::test_project_serialization()
 
 void NodeTest::test_node_upload_and_download()
 {
-	QUuid const root_id     (0, 0, 0, 0x10, 0x00, 0, 0, 0, 0, 0, 0);
-	QUuid const leaf_1_id   (0, 0, 0, 0x11, 0x00, 0, 0, 0, 0, 0, 0);
-	QUuid const leaf_1_1_id (0, 0, 0, 0x11, 0x10, 0, 0, 0, 0, 0, 0);
+	QUuid const root_id     (0xa000000a, 0, 0, 0x10, 0x00, 0, 0, 0, 0, 0, 9);
+	QUuid const leaf_1_id   (0xb000000b, 0, 0, 0x11, 0x00, 0, 0, 0, 0, 0, 8);
+	QUuid const leaf_1_1_id (0xc000000c, 0, 0, 0x11, 0x10, 0, 0, 0, 0, 0, 7);
 
 	NodeSP root = std::make_shared<Node>(Node::Flags::all, root_id);
 
@@ -209,7 +215,7 @@ void NodeTest::test_node_upload_and_download()
 
 
 	// Insert new leaf into orignal version
-	QUuid const leaf_1_2_id(0, 0, 0, 0x11, 0x20, 0, 0, 0, 0, 0, 0);
+	QUuid const leaf_1_2_id(0xd000000d, 0, 0, 0x11, 0x20, 0, 0, 0, 0, 0, 6);
 	auto leaf_1_2 = std::make_shared<Node>(Node::Flags::all, leaf_1_2_id);
 	leaf_1->add("leaf_1_2", leaf_1_2);
 
@@ -217,15 +223,17 @@ void NodeTest::test_node_upload_and_download()
 
 	QSignalSpy spy_root2(root.get(), SIGNAL( tree_synced() ) );
 
+	QThread::sleep(1); // to make sure timestamp is changed
 
-	// start listening to updates and check if tree became synced
-	root_dwn->listen_to_updates();
 	leaf_1->data_is_fresh(true);
 
 	QCOMPARE(spy_root2.wait(2000), true);
 	QCOMPARE(spy_root2.count(), 1);
 
-	QCOMPARE(spy_root_dwn.wait(8000), true);
+	// start listening to updates and check if tree became synced
+	Updater::get().subscribe( root_dwn.get() );  //root_dwn->listen_to_updates();
+
+	QCOMPARE(spy_root_dwn.wait(16000), true);
 	QCOMPARE(spy_root_dwn.count(), 2);
 
 	QCOMPARE( *root, *root_dwn );
@@ -244,7 +252,7 @@ void NodeTest::test_task_upload_and_download()
 	QSignalSpy spy(task.get(), SIGNAL( submitted() ) );
 
 	// Uploading
-	task->submit();
+    task->submit("test");
 
 	QCOMPARE(spy.wait(1000), true);
 	QCOMPARE(spy.count(), 1);
