@@ -83,6 +83,7 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+#include <boost/foreach.hpp>
 
 static basic::Tracer TR( "protocols.membrane.symmetry.SymmetricAddMembraneMover" );
 
@@ -181,13 +182,15 @@ SymmetricAddMembraneMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 SymmetricAddMembraneMover::parse_my_tag(
-	utility::tag::TagCOP,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & dm,
+	protocols::filters::Filters_map const & fm,
+	protocols::moves::Movers_map const & mm,
+	core::pose::Pose const & pose
 )
-{}
+{
+	protocols::membrane::AddMembraneMover::parse_my_tag(tag, dm, fm, mm, pose);
+}
 
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
@@ -353,9 +356,29 @@ void SymmetricAddMembraneMover::provide_xml_schema( utility::tag::XMLSchemaDefin
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "include_lips", xsct_rosetta_bool, "Include lipid accessibility information from a lipsfile")
+		+ XMLSchemaAttribute( "spanfile", xs_string, "Path to input spanfile")
+		+ XMLSchemaAttribute( "lipsfile", xs_string, "Path to input lipsfile")
+		+ XMLSchemaAttribute( "anchor_rsd", xsct_non_negative_integer, "Index of membrane residue anchor")
+		+ XMLSchemaAttribute( "membrane_rsd", xsct_non_negative_integer, "Membrane residue position")
+		+ XMLSchemaAttribute( "thickness", xsct_real, "Thickness of membrane. Score function is optimized to 15 Angstroms.")
+		+ XMLSchemaAttribute( "steepness", xsct_real, "Steepness of membrane transition. Score function optimized to 10.")
+		+ XMLSchemaAttribute( "membrane_core", xsct_real, "width of membrane core for Elazar calibrated LK potential" )
+		+ XMLSchemaAttribute( "span_starts", xsct_residue_number_cslist, "comma separated list of span starting residues" )
+		+ XMLSchemaAttribute( "span_ends", xsct_residue_number_cslist, "comma separated list of span ending residues" )
+		+ XMLSchemaAttribute( "span_starts_num", xs_string, "comma separated list of span starting residues, in rosetta numbering" )
+		+ XMLSchemaAttribute( "span_ends_num", xs_string, "comma separated list of span ending residues in rosetta numbering" )
+		+ XMLSchemaAttribute( "span_orientations", xs_string, "comma separated list of span orientations, only in2out or out2in allowed" );
+	AttributeList span_subtag_attributes;
+	span_subtag_attributes + XMLSchemaAttribute( "start", xsct_non_negative_integer, "residue where span starts" )
+		+ XMLSchemaAttribute( "end", xsct_non_negative_integer, "resdiue where span ends" )
+		+ XMLSchemaAttribute( "orientation", xs_string, "span orientation, whether in2out or out2in" );
+	XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "Span", span_subtag_attributes, "membrane spans" );
+	attributes_for_parse_center_normal_from_tag( attlist );
 
-
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Symmetry-enabled form of AddMembraneMover", attlist );
+	//protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Symmetry-enabled form of AddMembraneMover", attlist );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Symmetry-enabled form of AddMembraneMover", attlist, ssl );
 }
 
 std::string SymmetricAddMembraneMoverCreator::keyname() const {

@@ -109,11 +109,11 @@ public:
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void
 	parse_my_tag(
-		utility::tag::TagCOP,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & dm,
+		protocols::filters::Filters_map const & fm,
+		protocols::moves::Movers_map const & mm,
+		core::pose::Pose const & pose
 	) override;
 
 	/////////////////////
@@ -166,6 +166,8 @@ private:
 	/// spanfile and lipsfiles paths
 	void
 	init_from_cmd();
+
+	utility::vector1< core::conformation::membrane::SpanOP > spans_from_xml_;
 
 };
 

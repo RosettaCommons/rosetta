@@ -1,0 +1,17 @@
+-parser:protocol ./input/score.xml
+
+-mp:scoring:hbond
+-overwrite
+
+-parser:script_vars s1=1
+-parser:script_vars e1=21
+-parser:script_vars o1=out2in
+-parser:script_vars s2=22
+-parser:script_vars e2=42
+-parser:script_vars o2=out2in
+-parser:script_vars memb_core=10
+-parser:script_vars steepness=4
+
+-s input/gpa2.pdb
+-run:constant_seed
+-nodelay

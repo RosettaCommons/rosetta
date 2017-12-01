@@ -22,6 +22,10 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 
 // Utility Headers
@@ -50,8 +54,26 @@ public:
 
 	~AsymFoldandDockRbTrialMover(){}
 
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	//void find_new_jump_residue( core::pose::Pose & pose );
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	) override;
+
+	virtual std::string get_name() const override;
+
+	static
+	std::string mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;

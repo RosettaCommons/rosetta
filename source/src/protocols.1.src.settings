@@ -24,6 +24,7 @@ sources = {
 		"ConstraintsMap",
 		"DistanceConstraintGenerator",
 		"HydrogenBondConstraintGenerator",
+		"MembraneSpanConstraintGenerator",
 		"MetalContactsConstraintGenerator",
 		"RemoveConstraints",
 	        "ResidueTypeConstraintGenerator",

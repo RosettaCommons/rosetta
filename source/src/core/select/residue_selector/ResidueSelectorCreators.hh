@@ -108,6 +108,14 @@ public:
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
 
+class ResidueInMembraneSelectorCreator : public ResidueSelectorCreator {
+public:
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+};
+
+
 class NeighborhoodResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;

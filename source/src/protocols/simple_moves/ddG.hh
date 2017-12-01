@@ -98,6 +98,7 @@ public :
 
 
 private :
+
 	/// @brief Helper method to appropriately form unbound complex. Returns false if monomer.
 	bool unbind(Pose & pose) const;
 	void setup_task(Pose const & pose);
@@ -133,7 +134,6 @@ private :
 
 	/// true when PB potential is part of scorefxn
 	bool pb_enabled_;
-
 	/// distance in A to separate moledules
 	core::Real translate_by_; //dflt set to 1000. Default resets to 100 for RosettaScripts with a scorefxn containing PB_elec.
 };

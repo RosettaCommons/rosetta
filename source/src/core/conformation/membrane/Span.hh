@@ -38,6 +38,13 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
+/// @brief Define the orientation of a secondary structure span
+/// relative to the membrane
+enum Orientation {
+	in = 1, /* The span vector is parallel to the membrane normal */
+	out = 2 /* The span vector is antiparallel to the membrane normal */
+};
+
 class Span : public utility::pointer::ReferenceCount {
 
 public: // constructors
@@ -49,7 +56,7 @@ public: // constructors
 
 	/// @brief Custom Constructor - Construct new span
 	/// @details Constructor from start and end
-	Span( core::Size start, core::Size end );
+	Span( core::Size start, core::Size end, Orientation orient=in );
 
 	/// @brief Copy Consturctor
 	/// @details Make a deep copy of this object
@@ -73,6 +80,11 @@ public: // getters
 	/// @details Get the end position of a transmembrane span
 	core::Size end() const;
 
+	/// @brief Get the orientation of the span
+	Orientation orientation() const;
+
+	/// @brief Set the orientation of the span
+	void orientation( Orientation orient_in );
 
 	/// @brief Get residue closest to center
 	core::Size center() const;
@@ -98,6 +110,9 @@ private: // data
 	// Specify start/end position of a transmembrane span
 	core::Size start_;
 	core::Size end_;
+
+	// Specify the orientation of the transmembran span
+	Orientation orientation_;
 
 #ifdef    SERIALIZATION
 public:

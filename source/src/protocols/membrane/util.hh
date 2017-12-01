@@ -69,6 +69,13 @@
 namespace protocols {
 namespace membrane {
 
+/// @brief Check if the orientation of the TM span matches
+/// the orientation of the span in the pose
+bool
+check_orientation(
+	core::pose::Pose & pose,
+	core::Size span_no );
+
 /////////////////////////////////////////////////////////////////////////
 // Methods for calculating rmsds between protein transmembrane regions //
 /////////////////////////////////////////////////////////////////////////

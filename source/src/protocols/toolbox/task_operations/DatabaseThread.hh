@@ -71,6 +71,8 @@ public:
 	void leave_as_is(utility::vector1<core::Size> const & vector) {leave_as_is_=vector; };//setter
 	void target_sequence( std::string const & seq ) {target_sequence_ = seq; };//setter
 	std::string target_sequence() const {return target_sequence_; };//getter
+	bool itterative() const{ return itterative_;}
+	void itterative( bool const b ){ itterative_ = b ; }
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "DatabaseThread"; }
@@ -87,6 +89,8 @@ private:
 	utility::vector1<core::Size> revert_to_template_;
 	utility::vector1<std::string> full_database_;
 	utility::vector1<core::Size> designable_,leave_as_is_;
+	bool itterative_ = false;
+	mutable core::Size count_;
 };
 } //namespace protocols
 } //namespace toolbox

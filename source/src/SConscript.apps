@@ -74,7 +74,6 @@ actual.library_path = \
     [ "#build/src/" + build.platform ] + \
     [ "#build/external/" + build.platform ]
 
-
 # Libraries.  Gives priority to user defined libraries.
 actual.libraries = \
     requested.libraries + \

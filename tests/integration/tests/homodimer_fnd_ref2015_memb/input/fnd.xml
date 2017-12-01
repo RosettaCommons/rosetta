@@ -1,0 +1,176 @@
+<ROSETTASCRIPTS>
+  <TASKOPERATIONS>
+    <InitializeFromCommandline name="init"/>
+    <RestrictToRepacking name="rtr"/>
+  </TASKOPERATIONS>
+  <SCOREFXNS>
+    <!--  switched to this 19Jun16 for ResidueLipophilicity-->
+    <ScoreFunction name="score0" weights="%%score_func_0%%" symmetric="1">
+      <Reweight scoretype="mp_helicality" weight="100"/>
+    </ScoreFunction>
+    <ScoreFunction name="score1" weights="%%score_func_1%%" symmetric="1">
+      <Reweight scoretype="mp_helicality" weight="100"/>
+    </ScoreFunction>
+    <ScoreFunction name="score2" weights="%%score_func_2%%" symmetric="1">
+      <Reweight scoretype="mp_helicality" weight="100"/>
+    </ScoreFunction>
+    <ScoreFunction name="score3" weights="%%score_func_3%%" symmetric="1">
+      <Reweight scoretype="mp_helicality" weight="100"/>
+    </ScoreFunction>
+    <ScoreFunction name="score5" weights="%%score_func_5%%" symmetric="1">
+      <Reweight scoretype="mp_helicality" weight="100"/>
+    </ScoreFunction>
+
+    <!--<fullatom weights="talaris2014" symmetric=1/>-->
+    <ScoreFunction name="mpframework" weights="mpframework_docking_fa_2015" symmetric="1"/>
+    <ScoreFunction name="mpframeworkNotSymm" weights="mpframework_docking_fa_2015" symmetric="0"/>
+    <ScoreFunction name="ref" weights="ref2015_memb" symmetric="1">
+      <Reweight scoretype="mp_helicality" weight="100"/>
+    </ScoreFunction>
+    <ScoreFunction name="refNotSymm" weights="ref2015_memb" symmetric="0">
+      <Reweight scoretype="mp_helicality" weight="100"/>
+    </ScoreFunction>
+
+    <ScoreFunction name="helicality" symmetric="1">
+      <Reweight scoretype="mp_helicality" weight="1"/>
+    </ScoreFunction>
+    <ScoreFunction name="helicality_notsymm" symmetric="0">
+      <Reweight scoretype="mp_helicality" weight="1"/>
+    </ScoreFunction>
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+   <!--<Chain name="chA" chains="A"/>-->
+   <!--<Chain name="chB" chains="B"/>-->
+   <!--<Or name="chains" selectors="chA,chB"/>-->
+   <Layer name="layer" select_core="1" select_boundary="1" select_surface="1"/>
+ </RESIDUE_SELECTORS>
+  <MOVERS>
+    <SetupForSymmetry name="symm" definition="%%symm_file%%"/>
+    <SymmetricAddMembraneMover name="add_memb" membrane_core="%%membrane_core%%" steepness="%%steepness%%" span_starts_num="%%span_starts%%" span_ends_num="%%span_ends%%" span_orientations="%%span_oris%%"/>
+    <!--<SymmetricAddMembraneMover name="add_memb" membrane_core="%%membrane_core%%" steepness="%%steepness%%">-->
+    <!--  <Span start="%%span_start_1%%" end="%%span_end_1%%" orientation="%%span_orientation_1%%"/>-->
+    <!--  <Span start="%%span_start_2%%" end="%%span_end_2%%" orientation="%%span_orientation_2%%"/>-->
+    <!--</SymmetricAddMembraneMover>-->
+    <MembranePositionFromTopologyMover name="init_pos"/>
+    <FastRelax name="fast_relax" scorefxn="%%energy_function%%" task_operations="init"/>
+
+    Fragment movers
+    <SingleFragmentMover name="frag9" fragments="%%frags9mers%%" policy="uniform">
+      <MoveMap>
+        <Span begin="1" end="24" chi="1" bb="1"/>
+      </MoveMap>
+    </SingleFragmentMover>
+    <SingleFragmentMover name="frag3" fragments="%%frags3mers%%" policy="smooth">
+      <MoveMap>
+        <Span begin="1" end="24" chi="1" bb="1"/>
+      </MoveMap>
+    </SingleFragmentMover>
+
+    Fold-and-dock specific movers
+    <SymFoldandDockRbTrialMover name="rbtrial" rot_mag="8.0" trans_mag="3.0" rotate_anchor_to_x="1"/>
+    <SymFoldandDockRbTrialMover name="rbtrial_smooth" rot_mag="1.0" trans_mag="0.1" rotate_anchor_to_x="1"/>
+    <SymFoldandDockMoveRbJumpMover name="rbjump"/>
+    <SymFoldandDockSlideTrialMover name="slidetrial"/>
+
+    Random movers
+    <RandomMover name="early_stage_moveset" movers="frag9,rbtrial,rbjump,slidetrial" weights="1.0,0.2,1.0,0.1" repeats="1"/>
+    <RandomMover name="final_stage_moveset" movers="frag3,rbtrial_smooth,rbjump,slidetrial" weights="1.0,0.2,1.0,0.1" repeats="1"/>
+
+    Monte Carlo Movers
+    <GenericMonteCarlo name="stage1" scorefxn_name="score0" mover_name="early_stage_moveset" temperature="2.0" trials="200" recover_low="1"/>
+    <GenericMonteCarlo name="stage2" scorefxn_name="score1" mover_name="early_stage_moveset" temperature="2.0" trials="200" recover_low="1"/>
+    <GenericMonteCarlo name="stage3a" scorefxn_name="score2" mover_name="early_stage_moveset" temperature="2.0" trials="20" recover_low="1"/>
+    <GenericMonteCarlo name="stage3b" scorefxn_name="score5" mover_name="early_stage_moveset" temperature="2.0" trials="20" recover_low="1"/>
+    <GenericMonteCarlo name="stage4" scorefxn_name="score3" mover_name="final_stage_moveset" temperature="2.0" trials="400" recover_low="1"/>
+
+    Special stage 3 logic
+    <ParsedProtocol name="stage3_cyc">
+      <Add mover="stage3a"/>
+      <Add mover="stage3b"/>
+    </ParsedProtocol>
+    <LoopOver name="stage3" mover_name="stage3_cyc" iterations="5" drift="1"/>
+
+    Converts the centroid-level pose to fullatom for scoring
+    <SwitchResidueTypeSetMover name="fullatom" set="fa_standard"/>
+    <ExtractAsymmetricPose name="extract_asp"/>
+    <MinMover name="min_mover" scorefxn="refNotSymm" chi="1" bb="1" jump="1"/>
+    <PackRotamersMover name="pack" scorefxn="refNotSymm" task_operations="init,rtr"/>
+    <RotamerTrialsMinMover name="RTmin" scorefxn="refNotSymm" task_operations="init,rtr"/>
+    <DumpPdb name="dump_pdb" fname="dump.pdb" scorefxn="%%energy_function%%"/>
+  </MOVERS>
+  <FILTERS>
+    <ScoreType name="total" scorefxn="%%energy_function%%" score_type="total_score" confidence="0" threshold="0"/>
+    <Sasa name="a_sasa" confidence="0" threshold="300"/>
+
+    <ResidueLipophilicity name="a_res_lipo" threshold="1000" confidence="0"/>
+    <SpanTopologyMatchPose name="a_span_topo" confidence="0"/>
+    <Ddg name="a_ddg" scorefxn="%%energy_function%%NotSymm" chain_num="2" repeats="5" extreme_value_removal="true" confidence="0" threshold="-5"/>
+    <PackStat name="a_pack" confidence="0" threshold="0.3"/>
+    <BuriedUnsatHbonds2 name="a_unsat" scorefxn="%%energy_function%%" confidence="0"/>
+    <ShapeComplementarity name="a_shape" confidence="0"/>
+    <TMsSpanMembrane name="a_tms_span" confidence="0" min_distance="25"/>
+    <TMsSpanMembrane name="a_tms_span_fa" confidence="0" min_distance="25"/>
+    <HelixHelixAngle name="a_hha_ang" angle_or_dist="angle" start_helix_1="%%span_start_1%%" end_helix_1="%%span_end_1%%" start_helix_2="%%span_start_2%%" end_helix_2="%%span_end_2%%" confidence="0"/>
+    <HelixHelixAngle name="a_hha_dst_vec" angle_or_dist="dist" dist_by_atom="0" start_helix_1="%%span_start_1%%" end_helix_1="%%span_end_1%%" start_helix_2="%%span_start_2%%" end_helix_2="%%span_end_2%%" confidence="0"/>
+    <HelixHelixAngle name="a_hha_dst_atm" angle_or_dist="dist" dist_by_atom="1" start_helix_1="%%span_start_1%%" end_helix_1="%%span_end_1%%" start_helix_2="%%span_start_2%%" end_helix_2="%%span_end_2%%" confidence="0"/>
+    <MembAccesResidueLipophilicity name="a_marl" confidence="0" verbose="0"/>
+    <ScoreType name="a_helicality" scorefxn="helicality_notsymm" score_type="mp_helicality" confidence="0" threshold="10"/>
+    <ScoreType name="a_helicality_symm" scorefxn="helicality" score_type="mp_helicality" confidence="0" threshold="10"/>
+    <MPSpanAngle name="a_angle_1" tm="1" ang_min="0" ang_max="50" confidence="0"/>
+    <MPSpanAngle name="a_angle_2" tm="2" ang_min="0" ang_max="50" confidence="0"/>
+    <RmsdFromResidueSelector name="a_rmsd" CA_only="1" reference_selector="layer" query_selector="layer" confidence="0" threshold="15"/>
+    <BindingStrain name="a_bind" scorefxn="%%energy_function%%" jump="1" confidence="0" threshold="5"/>
+    <PoseInfo name="info"/>
+  </FILTERS>
+  <PROTOCOLS>
+   <Add mover="symm"/>
+   <Add mover="add_memb"/>
+
+   <Add mover="stage1"/>
+   <Add mover="stage2"/>
+   <Add mover="stage3"/>
+   <Add mover="stage4"/>
+
+   <Add filter="a_helicality_symm"/>
+   <Add filter="a_angle_1"/>
+   <Add filter="a_angle_2"/>
+
+   <Add mover="fullatom"/>
+
+   <Add filter="a_tms_span"/>
+   <Add mover="fast_relax"/>
+
+   <Add filter="total"/>
+   <Add filter="a_sasa"/>
+
+   <Add filter="a_span_topo"/>
+
+   <Add filter="a_rmsd"/> TRUN ME ON!!!!!!!!!!!
+   <Add mover="extract_asp"/>
+   <!--<Add mover="pack"/>-->
+   <!--<Add mover="min_mover"/>-->
+   <!--<Add mover="RTmin"/>-->
+   <!--<Add mover="RTmin"/>-->
+
+   <Add filter="a_tms_span"/>
+   <Add filter="total"/>
+   <Add filter="a_sasa"/>
+   <Add filter="a_span_topo"/>
+
+   <Add filter="a_res_lipo"/>
+   <Add filter="a_pack"/>
+   <Add filter="a_unsat"/>
+   <Add filter="a_shape"/>
+   <Add filter="a_ddg"/>
+   <Add filter="a_hha_ang"/>
+   <Add filter="a_hha_dst_vec"/>
+   <Add filter="a_hha_dst_atm"/>
+   <Add filter="a_marl"/>
+   <Add filter="a_tms_span_fa"/>
+   <Add filter="a_helicality"/>
+   <Add filter="a_angle_1"/>
+   <Add filter="a_angle_2"/>
+   <Add filter="a_bind"/>
+  </PROTOCOLS>
+  <OUTPUT scorefxn="%%energy_function%%NotSymm"/>
+</ROSETTASCRIPTS>

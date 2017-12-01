@@ -1,0 +1,19 @@
+# score3 from rosetta++, used in stage 4 of the ClassicAbinitio protocol.
+# added adjustments to a membrane protein energy function (Jonathan Weinstein, Assaf Elazar and Sarel Fleishman, 2017)
+env     1.0
+pair    1.0
+cbeta   1.0
+vdw     1.0
+rg      3.0
+cenpack 1.0
+hs_pair 1.0
+ss_pair 1.0
+rsigma  1.0
+sheet   1.0
+
+STRAND_STRAND_WEIGHTS 0 6
+
+mp_res_lipo 1.0
+mp_nonhelix 2.019
+mp_span_ang 1
+mp_helicality 1

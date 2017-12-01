@@ -24,7 +24,6 @@
 #include <core/conformation/membrane/Span.hh>
 
 // Project Headers
-//#include <core/conformation/membrane/Exceptions.hh>
 // This class isn't actually used--it's just an indirect way of including
 #include <utility/excn/Exceptions.hh>
 
@@ -180,7 +179,7 @@ void SpanningTopology::show( std::ostream & ) const {
 	// print individual spans
 	for ( core::Size i = 1; i <= topology_.size(); ++i ) {
 		TR << "Span " << i << ": start: " << topology_[ i ]->start();
-		TR << ", end: " << topology_[ i ]->end() << std::endl;
+		TR << ", end: " << topology_[ i ]->end() << " orientation: " << topology_[ i  ]->orientation() << std::endl;
 	}
 
 } // show
@@ -485,6 +484,12 @@ SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::str
 		// add to chain topology
 		SpanOP span( new Span( start, end ) );
 		topology_.push_back( span );
+
+		//if ( orientation == "c2n" ) {
+		//initial_orientation = in;
+		//} else {
+		//initial_orientation = out;
+		//}
 	}
 
 	// Close the izstream
@@ -646,7 +651,13 @@ std::ostream & operator << ( std::ostream & os, SpanningTopology const & spans )
 	// print individual spans
 	for ( core::Size i = 1; i <= spans.nspans(); ++i ) {
 		os << "Span " << i << ": start: " << spans.get_spans()[ i ]->start();
-		os << ", end: " << spans.get_spans()[ i ]->end() << std::endl;
+		os << ", end: " << spans.get_spans()[ i ]->end();
+		os << ", orientation:";
+		if ( spans.get_spans()[ i ]->orientation() == in ) {
+			os << " in " << std::endl;
+		} else {
+			os << " out" << std::endl;
+		}
 	}
 	return os;
 }

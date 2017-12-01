@@ -167,6 +167,7 @@ private: // data
 
 	// user-defined membrane
 	bool user_defined_membrane_;
+	bool flip_if_needed_ = false;
 
 };
 

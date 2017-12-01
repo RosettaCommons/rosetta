@@ -137,6 +137,7 @@ static MoverRegistrator< docking::DockingInitialPerturbationCreator > reg_Dockin
 static MoverRegistrator< docking::DockMCMProtocolCreator > DockMCMProtocolCreator;
 static MoverRegistrator< docking::DockMinMoverCreator > reg_DockMinMoverCreator;
 static MoverRegistrator< docking::DockSetupMoverCreator > reg_DockSetupMoverCreator;
+static MoverRegistrator< docking::DockingSlideIntoContactCreator > reg_DockingSlideIntoContactCreator;
 
 static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator;
 static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator;
@@ -303,6 +304,8 @@ static MoverRegistrator< md::CartesianMDCreator > reg_CartesianMDCreator;
 static MoverRegistrator< mean_field::GenMeanFieldMoverCreator > reg_GenMeanFieldMoverCreator;
 
 static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMoverCreator;
+static MoverRegistrator< membrane::AddMembraneSpanConstraintCreator > reg_AddMembraneSpanConstraintCreator;
+static MoverRegistrator< membrane::AddMembraneSpanTermZConstraintCreator > reg_AddMembraneSpanTermZConstraintCreator;
 static MoverRegistrator< membrane::AddMPLigandMoverCreator > reg_AddMPLigandMoverCreator;
 static MoverRegistrator< membrane::FlipMoverCreator > reg_FlipMoverCreator;
 static MoverRegistrator< membrane::MembranePositionFromTopologyMoverCreator > reg_MembranePositionFromTopologyMoverCreator;
@@ -468,6 +471,7 @@ static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::DisulfideInsertionMoverCreator > reg_DisulfideInsertionMoverCreator;
 static MoverRegistrator< simple_moves::DumpSingleResidueRotamersCreator > reg_DumpSingleResidueRotamersCreator;
 static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
+static MoverRegistrator< simple_moves::AddPDBInfoMoverCreator > reg_AddPDBInfoMoverCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 
 static MoverRegistrator< simple_moves::ConvertRealToVirtualMoverCreator > reg_ConvertRealToVirtualMoverCreator;
@@ -551,6 +555,9 @@ static MoverRegistrator< simple_moves::WriteFiltersToPoseCreator > reg_WriteFilt
 static MoverRegistrator< stepwise::monte_carlo::mover::AddMoverCreator > reg_AddMoverCreator;
 
 static MoverRegistrator< struct_fragment::StructFragmentMoverCreator > reg_StructFragmentMoverCreator;
+
+static MoverRegistrator< simple_moves::asym_fold_and_dock::AsymFoldandDockMoveRbJumpMoverCreator > reg_AsymFoldandDockMoveRbJumpMoverCreator;
+static MoverRegistrator< simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMoverCreator > reg_AsymFoldandDockRbTrialMoverCreator;
 
 static MoverRegistrator< symmetric_docking::SymDockProtocolCreator > SymDockProtocolCreator;
 static MoverRegistrator< symmetric_docking::SymFoldandDockMoveRbJumpMoverCreator > SymFoldandDockMoveRbJumpMoverCreator;

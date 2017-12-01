@@ -54,6 +54,7 @@
 #include <protocols/membrane/SetMembranePositionMover.hh>
 
 #include <protocols/moves/DsspMover.hh>
+#include <core/pose/selection.hh>
 
 // Package Headers
 #include <core/conformation/Residue.hh>
@@ -89,6 +90,7 @@
 
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <boost/foreach.hpp>
 
 #include <core/pose/util.hh>
 #include <utility/string_util.hh>
@@ -122,7 +124,9 @@ AddMembraneMover::AddMembraneMover() :
 	normal_( 0, 0, 1 ),
 	thickness_( 15 ),
 	steepness_( 10 ),
-	user_defined_( false )
+	membrane_core_( 15 ),
+	user_defined_( false ),
+	got_spans_from_xml_( false )
 {
 	register_options();
 	init_from_cmd();
@@ -143,7 +147,9 @@ AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 	normal_( 0, 0, 1 ),
 	thickness_( 15 ),
 	steepness_( 10 ),
-	user_defined_( false )
+	membrane_core_( 15 ),
+	user_defined_( false ),
+	got_spans_from_xml_( false )
 {
 	register_options();
 	init_from_cmd();
@@ -168,7 +174,9 @@ AddMembraneMover::AddMembraneMover(
 	normal_( 0, 0, 1 ),
 	thickness_( 15 ),
 	steepness_( 10 ),
-	user_defined_( false )
+	membrane_core_( 15 ),
+	user_defined_( false ),
+	got_spans_from_xml_( false )
 {
 	register_options();
 	init_from_cmd();
@@ -194,7 +202,9 @@ AddMembraneMover::AddMembraneMover(
 	normal_( 0, 0, 1 ),
 	thickness_( 15 ),
 	steepness_( 10 ),
-	user_defined_( false )
+	membrane_core_( 15 ),
+	user_defined_( false ),
+	got_spans_from_xml_( false )
 {
 	register_options();
 	init_from_cmd();
@@ -218,7 +228,9 @@ AddMembraneMover::AddMembraneMover(
 	normal_( 0, 0, 1 ),
 	thickness_( 15 ),
 	steepness_( 10 ),
-	user_defined_( false )
+	membrane_core_( 15 ),
+	user_defined_( false ),
+	got_spans_from_xml_( false )
 {
 	register_options();
 	init_from_cmd();
@@ -244,7 +256,9 @@ AddMembraneMover::AddMembraneMover(
 	normal_( 0, 0, 1 ),
 	thickness_( 15 ),
 	steepness_( 10 ),
-	user_defined_( false )
+	membrane_core_( 15 ),
+	user_defined_( false ),
+	got_spans_from_xml_( false )
 {
 	register_options();
 	init_from_cmd();
@@ -270,7 +284,9 @@ AddMembraneMover::AddMembraneMover(
 	normal_( init_normal ),
 	thickness_( 15 ),
 	steepness_( 10 ),
-	user_defined_( false )
+	membrane_core_( 15 ),
+	user_defined_( false ),
+	got_spans_from_xml_( false  )
 {}
 
 /// @brief Create a deep copy of the data in this mover
@@ -302,7 +318,7 @@ AddMembraneMover::parse_my_tag(
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
+	core::pose::Pose const & pose
 ) {
 
 	// Read in include lips option (boolean)
@@ -340,8 +356,86 @@ AddMembraneMover::parse_my_tag(
 		steepness_ = tag->getOption< core::Real >( "steepness" );
 	}
 
+	// Read in membrane core
+	if ( tag->hasOption( "membrane_core" ) ) {
+		membrane_core_ = tag->getOption< core::Real >( "membrane_core" );
+	}
+
+	if ( tag->hasOption( "span_starts" ) || tag->hasOption( "span_starts_num" ) ) {
+		using namespace core::conformation::membrane;
+		core::conformation::membrane::Orientation orientation;
+		utility::vector1< core::Size > span_starts;
+		span_starts.clear();
+		utility::vector1< core::Size > span_ends;
+		span_ends.clear();
+		if ( tag->hasOption( "span_starts_num" ) ) {
+			for ( auto const & i : utility::string_split( tag->getOption< std::string >("span_starts_num"), ',') ) {
+				span_starts.push_back( std::atof( i.c_str() ) );
+			}
+			for ( auto const & i : utility::string_split( tag->getOption< std::string >("span_ends_num"), ',') ) {
+				span_ends.push_back( std::atof( i.c_str() ) );
+			}
+		} else if ( tag->hasOption( "span_starts" ) ) {
+			std::string span_starts_str = tag->getOption< std::string >("span_starts");
+			std::string span_ends_str = tag->getOption< std::string >("span_ends");
+			span_starts = core::pose::get_resnum_list_ordered( span_starts_str, pose );
+			span_ends = core::pose::get_resnum_list_ordered( span_ends_str, pose );
+		} else {
+			runtime_assert_string_msg(true, "span_orientations specified, but neither span_starts nor span_starts_num were");
+		}
+		std::string span_oris_str( tag->getOption< std::string >("span_orientations") );
+		utility::vector1<std::string> span_oris( utility::string_split(span_oris_str, ',') );
+		runtime_assert( span_starts.size() == span_ends.size() && span_starts.size() == span_oris.size() );
+
+		for ( core::Size i=1; i<=span_starts.size(); ++i ) {
+			core::Size start = span_starts[ i ];
+			core::Size end = span_ends[ i ];
+			if ( span_oris[i] == "out2in" ) {
+				orientation = out;
+			} else if ( span_oris[i] == "in2out" ) {
+				orientation = in;
+			} else {
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "provided orientation is wrong for span number acceptable options are in2out or out2in.");
+			}
+			core::conformation::membrane::SpanOP span( new core::conformation::membrane::Span( start, end, orientation ) );
+			core::Size offset = 0;
+			topology_->add_span( *span, offset );
+		}
+		TR << "finished reading span from span_starts/ends/orientations (xml) " << std::endl;
+	}
+
 	// Use general method to read in center / normal
 	read_center_normal_from_tag( center_, normal_, tag );
+
+	// if the user supplied a span in RosettaScripts xml, parse those and keep them in topology_. this will
+	// be used to create the span topology
+	utility::vector1<TagCOP> const sub_tags(tag->getTags());
+	if ( !sub_tags.empty()  ) {
+		if ( spanfile_ != "" ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "user provided span in a span file AND in the xml subtags. remove one of them");
+		}
+		BOOST_FOREACH ( TagCOP const sub_tag, sub_tags  ) {
+			if ( sub_tag->getName() == "Span" ) {
+				using namespace core::conformation::membrane;
+				got_spans_from_xml_ = true;
+				core::Size start = sub_tag->getOption< core::Size >( "start" );
+				core::Size end  = sub_tag->getOption< core::Size >( "end" );
+				std::string orientation_tag = sub_tag->getOption< std::string >( "orientation" );
+				core::conformation::membrane::Orientation orientation;
+				if ( orientation_tag == "out2in" ) {
+					orientation = out;
+				} else if ( orientation_tag == "in2out" ) {
+					orientation = in;
+				} else {
+					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "provided orientation is wrong for span number acceptable options are in2out or out2in.");
+				}
+				core::conformation::membrane::SpanOP span( new core::conformation::membrane::Span( start, end, orientation  ) );
+				core::Size offset = 0;
+				topology_->add_span( *span, offset );
+			}
+		}
+		TR << "finished reading span from sub tags (xml) " << std::endl;
+	}
 
 }
 
@@ -418,9 +512,8 @@ AddMembraneMover::apply( Pose & pose ) {
 
 	// Step 1: Initialize the Membrane residue
 	core::Size membrane_pos = initialize_membrane_residue( pose, membrane_rsd_ );
-
 	// Step 2: Initialize the spanning topology
-	if ( topology_->nres_topo() == 0 ) {
+	if ( topology_->nres_topo() == 0 and ! got_spans_from_xml_ ) {
 		if ( spanfile_ == "single_TM_mode" ) {
 			TR << "Single TM Mode: Defining a single TM helix from the length of the input pose" << std::endl;
 			// Define teh span as teh whole helix, excluding the membrane residue
@@ -449,14 +542,16 @@ AddMembraneMover::apply( Pose & pose ) {
 	MembraneInfoOP mem_info;
 	if ( !include_lips_ ) {
 		mem_info = MembraneInfoOP(
-			new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, thickness_, steepness_, topology_ ) );
+			new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, membrane_core_, thickness_, steepness_, topology_ ) );
 	} else {
 		LipidAccInfoOP lips( new LipidAccInfo( lipsfile_ ) );
-		mem_info = MembraneInfoOP( new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, thickness_, steepness_, lips, topology_ ) );
+		mem_info = MembraneInfoOP( new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, membrane_core_, thickness_, steepness_, lips, topology_ ) );
 	}
 
 	// Step 4: Add membrane info object to the pose conformation
 	pose.conformation().set_membrane_info( mem_info );
+	TR << "MembraneInfo:" << std::endl;
+	mem_info->show( TR );
 
 	// Step 5: Accommodate user defined positions
 	if ( user_defined_ ) {
@@ -499,6 +594,7 @@ AddMembraneMover::register_options() {
 	option.add_relevant( OptionKeys::mp::setup::membrane_rsd );
 	option.add_relevant( OptionKeys::mp::thickness );
 	option.add_relevant( OptionKeys::mp::steepness );
+	option.add_relevant( OptionKeys::mp::membrane_core );
 
 }
 
@@ -542,6 +638,12 @@ AddMembraneMover::init_from_cmd() {
 	if ( option[ OptionKeys::mp::steepness ].user() ) {
 		TR.Warning << "About to set a new membrane steepness not currently optimized for the scoring function" << std::endl;
 		steepness_ = option[ OptionKeys::mp::steepness ]();
+	}
+
+	// Read in membrane core parameter
+	if ( option[ OptionKeys::mp::membrane_core ].user() ) {
+		TR << "Warning: About to set a new membrane core not currently optimized for the scoring function" << std::endl;
+		membrane_core_ = option[ OptionKeys::mp::membrane_core ]();
 	}
 
 	// Use general method to read in center/normal from the command line
@@ -615,6 +717,7 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 	}
 
 	// DONE :D
+	//topology_->show();
 	return membrane_pos;
 }
 
@@ -689,11 +792,26 @@ void AddMembraneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		+ XMLSchemaAttribute( "anchor_rsd", xsct_non_negative_integer, "Index of membrane residue anchor")
 		+ XMLSchemaAttribute( "membrane_rsd", xsct_non_negative_integer, "Membrane residue position")
 		+ XMLSchemaAttribute( "thickness", xsct_real, "Thickness of membrane. Score function is optimized to 15 Angstroms.")
-		+ XMLSchemaAttribute( "steepness", xsct_real, "Steepness of membrane transition. Score function optimized to 10.");
+		+ XMLSchemaAttribute( "steepness", xsct_real, "Steepness of membrane transition. Score function optimized to 10.")
+		+ XMLSchemaAttribute( "membrane_core", xsct_real, "width of membrane ocre for Elazar calibrated LK potential" )
+		+ XMLSchemaAttribute( "span_starts", xsct_residue_number_cslist, "comma separated list of span starting residues" )
+		+ XMLSchemaAttribute( "span_ends", xsct_residue_number_cslist, "comma separated list of span ending residues" )
+		+ XMLSchemaAttribute( "span_starts_num", xs_string, "comma separated list of span starting residues, in rosetta numbering" )
+		+ XMLSchemaAttribute( "span_ends_num", xs_string, "comma separated list of span ending residues in rosetta_numbering" )
+		+ XMLSchemaAttribute( "span_orientations", xs_string, "comma separated list of span orientations, only in2out or out2in allowed" );
+
+	AttributeList span_subtag_attributes;
+	span_subtag_attributes + XMLSchemaAttribute( "start", xsct_non_negative_integer, "residue where span starts" )
+		+ XMLSchemaAttribute( "end", xsct_non_negative_integer, "resdiue where span ends" )
+		+ XMLSchemaAttribute( "orientation", xs_string, "span orientation, whether in2out or out2in" );
+
+	XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "Span", span_subtag_attributes, "membrane spans" );
 
 	attributes_for_parse_center_normal_from_tag( attlist );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Add membrane to a pose", attlist );
+	//protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Add membrane to a pose", attlist);
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Add membrane to a pose", attlist, ssl );
 }
 
 std::string AddMembraneMoverCreator::keyname() const {

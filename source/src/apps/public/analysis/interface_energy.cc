@@ -84,7 +84,7 @@ OPT_KEY( String, face2 )
 ///  with the '_' character.
 ///
 void load_set(std::string setf, utility::vector1<Size>& rset,
-	core::pose::Pose &ps) {
+core::pose::Pose &ps) {
 
 	std::ifstream setfs(setf.c_str());
 	if ( !setfs ) {

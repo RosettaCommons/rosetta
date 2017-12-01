@@ -184,6 +184,25 @@ public:
 
 	// protocol functions
 	void apply( core::pose::Pose & pose ) override;
+
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
+
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose ) override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 	void show(std::ostream & output=std::cout) const override;
 
 	// setters

@@ -97,6 +97,31 @@ using basic::Warning;
 namespace protocols {
 namespace membrane {
 
+/// @brief Check if the orientation of the TM span matches
+/// the orientation of the span in the pose
+bool
+check_orientation(
+	core::pose::Pose & pose,
+	core::Size span_no )
+{
+
+	using namespace core::conformation::membrane;
+	core::Vector normal( pose.conformation().membrane_info()->membrane_normal( pose.conformation() ) );
+	core::Vector h_axis( calc_helix_axis( pose, span_no ) );
+	core::Real dir( normal.dot(h_axis) );
+	Orientation o( pose.conformation().membrane_info()->spanning_topology()->span( span_no )->orientation() );
+
+	// If the span is parallel to the normal (in) and matches expt, return true
+	if ( dir > 0 && o == in ) {
+		return true;
+		// If the span is anti-parallel to the normal (out) and matches expt, return true
+	} else if ( dir < 0 && o == out ) {
+		return true;
+	}
+	return false;
+}
+
+
 /////////////////////////////////////////////////////////////////////////
 // Methods for calculating rmsds between protein transmembrane regions //
 /////////////////////////////////////////////////////////////////////////

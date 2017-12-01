@@ -75,6 +75,7 @@ namespace membrane {
 MembraneInfo::MembraneInfo() :
 	thickness_( 0 ),
 	steepness_( 0 ),
+	membrane_core_( 0 ),
 	membrane_rsd_num_( 0 ),
 	membrane_jump_( 0 ),
 	lipid_acc_data_( 0 ),
@@ -89,12 +90,14 @@ MembraneInfo::MembraneInfo() :
 MembraneInfo::MembraneInfo(
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
+	core::Size membrane_core,
 	core::Real thickness,
 	core::Real steepness,
 	SpanningTopologyOP topology
 ) :
 	thickness_( thickness ),
 	steepness_( steepness ),
+	membrane_core_( membrane_core ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
 	lipid_acc_data_( 0 ),
@@ -109,6 +112,7 @@ MembraneInfo::MembraneInfo(
 MembraneInfo::MembraneInfo(
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
+	core::Size membrane_core,
 	core::Real thickness,
 	core::Real steepness,
 	LipidAccInfoOP lips,
@@ -116,6 +120,7 @@ MembraneInfo::MembraneInfo(
 ) :
 	thickness_( thickness ),
 	steepness_( steepness ),
+	membrane_core_( membrane_core ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
 	lipid_acc_data_( lips ),
@@ -127,6 +132,7 @@ MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	utility::pointer::ReferenceCount(),
 	thickness_( src.thickness_ ),
 	steepness_( src.steepness_ ),
+	membrane_core_( src.membrane_core_ ),
 	membrane_rsd_num_( src.membrane_rsd_num_ ),
 	membrane_jump_( src.membrane_jump_ ),
 	lipid_acc_data_( src.lipid_acc_data_ ),
@@ -145,6 +151,7 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 	// Make a deep copy of everything
 	this->thickness_ = src.thickness_;
 	this->steepness_ = src.steepness_;
+	this->membrane_core_ = src.membrane_core_;
 	this->membrane_rsd_num_ = src.membrane_rsd_num_;
 	this->membrane_jump_ = src.membrane_jump_;
 	this->lipid_acc_data_ = src.lipid_acc_data_;
@@ -170,6 +177,7 @@ MembraneInfo::show( std::ostream & output ) const {
 	output << "Membrane Residue Num: " << membrane_rsd_num_ << std::endl;
 	output << "Membrane Fold Tree Jump: " << membrane_jump_ << std::endl;
 	output << "Membrane Thickness: " << thickness_ << std::endl;
+	output << "Membrane core: " << membrane_core_ << std::endl;
 	output << "Membrane Steepness: " << steepness_ << std::endl;
 	output << "Membrane Spanning Topology " << std::endl;
 
@@ -193,6 +201,12 @@ MembraneInfo::membrane_thickness() const {
 core::Real
 MembraneInfo::membrane_steepness() const {
 	return steepness_;
+}
+
+/// @bries membrane core -> the thickness of the membrane core for Lazaridis-Karplus calculations
+core::Real
+MembraneInfo::membrane_core() const {
+	return membrane_core_;
 }
 
 // membrane position & orientation
@@ -366,6 +380,7 @@ void
 core::conformation::membrane::MembraneInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( thickness_ ) ); // core::Real
 	arc( CEREAL_NVP( steepness_ ) ); // core::Real
+	arc( CEREAL_NVP( membrane_core_ ) ); // core::Real
 	arc( CEREAL_NVP( membrane_rsd_num_ ) ); // core::Size
 	arc( CEREAL_NVP( membrane_jump_ ) ); // core::SSize
 	arc( CEREAL_NVP( lipid_acc_data_ ) ); // LipidAccInfoOP
@@ -378,6 +393,7 @@ void
 core::conformation::membrane::MembraneInfo::load( Archive & arc ) {
 	arc( thickness_ ); // core::Real
 	arc( steepness_ ); // core::Real
+	arc( membrane_core_ ); // core::Real
 	arc( membrane_rsd_num_ ); // core::Size
 	arc( membrane_jump_ ); // core::SSize
 	arc( lipid_acc_data_ ); // LipidAccInfoOP

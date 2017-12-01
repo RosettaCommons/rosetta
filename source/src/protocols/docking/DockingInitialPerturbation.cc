@@ -18,6 +18,7 @@
 
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingInitialPerturbationCreator.hh> // zhe
+#include <protocols/docking/DockingSlideIntoContactCreator.hh>
 #include <protocols/docking/metrics.hh>
 
 // Rosetta Headers
@@ -731,6 +732,56 @@ bool DockingSlideIntoContact::is_there_contact( core::Real current_score, core::
 	// neither condition satisfied
 	return false;
 
+}
+
+protocols::moves::MoverOP
+DockingSlideIntoContact::clone() const {
+	return protocols::moves::MoverOP( new DockingSlideIntoContact(*this) );
+}
+
+protocols::moves::MoverOP
+DockingSlideIntoContact::fresh_instance() const {
+	return protocols::moves::MoverOP( new DockingSlideIntoContact() );
+}
+
+void
+DockingSlideIntoContact::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
+{
+	rb_jump_ = tag->getOption< core::Size >( "rb_jump", 1 );
+	slide_axis_ = tag->getOption< core::Size >( "slide_axis", 1 );
+}
+
+std::string DockingSlideIntoContact::mover_name() {
+	return "DockingSlideIntoContact";
+}
+
+void DockingSlideIntoContact::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "rb_jump", xsct_non_negative_integer, "jump to slide", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "slide_axis", xsct_non_negative_integer, "axis to slide", "1" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "slide centroid level chains", attlist );
+}
+
+std::string DockingSlideIntoContactCreator::keyname() const {
+	return DockingSlideIntoContact::mover_name();
+}
+
+protocols::moves::MoverOP
+DockingSlideIntoContactCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DockingSlideIntoContact );
+}
+
+void DockingSlideIntoContactCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DockingSlideIntoContact::provide_xml_schema( xsd );
 }
 
 std::string

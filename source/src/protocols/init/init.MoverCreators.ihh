@@ -121,6 +121,7 @@
 #include <protocols/docking/DockMCMProtocolCreator.hh>
 #include <protocols/docking/DockMinMoverCreator.hh>
 #include <protocols/docking/DockSetupMoverCreator.hh>
+#include <protocols/docking/DockingSlideIntoContactCreator.hh>
 
 
 #include <protocols/docking/membrane/MPDockingMoverCreator.hh>
@@ -287,6 +288,8 @@
 #include <protocols/mean_field/GenMeanFieldMoverCreator.hh>
 
 #include <protocols/membrane/AddMembraneMoverCreator.hh>
+#include <protocols/membrane/AddMembraneSpanConstraintCreator.hh>
+#include <protocols/membrane/AddMembraneSpanTermZConstraintCreator.hh>
 #include <protocols/membrane/AddMPLigandMoverCreator.hh>
 #include <protocols/membrane/FlipMoverCreator.hh>
 #include <protocols/membrane/MembranePositionFromTopologyMoverCreator.hh>
@@ -458,6 +461,7 @@
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
 #include <protocols/simple_moves/DumpSingleResidueRotamersCreator.hh>
 #include <protocols/simple_moves/DumpPdbCreator.hh>
+#include <protocols/simple_moves/AddPDBInfoMoverCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>
@@ -537,6 +541,8 @@
 #include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
+#include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockMoveRbJumpMoverCreator.hh>
+#include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockRbTrialMoverCreator.hh>
 
 // T //////////////////////////////////////////////////////////////////////////
 

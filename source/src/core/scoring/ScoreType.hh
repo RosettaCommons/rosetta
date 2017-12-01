@@ -469,6 +469,11 @@ enum ScoreType {
 	FaMPEnv,
 	FaMPEnvSmooth,
 
+	MPResidueLipophilicity,
+	span_ins,
+	mp_span_ang,
+	MPHelicality,
+
 	// Whole structure energies, centroid score
 	// secondary structure scores
 	natbias_ss,
@@ -636,6 +641,11 @@ enum ScoreType {
 	// side chain neighbors
 	sidechain_neighbors,
 
+	//MPResidueLipophilicity,
+	//span_ins, // describes the difference of every membrane span from the natural average span insertion energy
+	//MPHelicality,
+	membrane_span_constraint,
+	membrane_span_term_z_constraint,
 	// etc etc
 	// Why is there a total score?
 	total_score,

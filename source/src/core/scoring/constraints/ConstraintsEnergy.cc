@@ -70,6 +70,8 @@ ConstraintsEnergyCreator::score_types_for_method() const {
 	sts.push_back( pocket_constraint );
 	sts.push_back( bond_geometry );
 	sts.push_back( rna_bond_geometry );
+	sts.push_back( membrane_span_constraint );
+	sts.push_back( membrane_span_term_z_constraint );
 	sts.push_back( metalhash_constraint );
 	sts.push_back( metalbinding_constraint );
 	return sts;

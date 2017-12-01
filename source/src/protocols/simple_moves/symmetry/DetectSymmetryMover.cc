@@ -66,18 +66,24 @@ static basic::Tracer TR( "protocols.simple_moves.symmetry.DetectSymmetry" );
 ////////////////////
 DetectSymmetry::DetectSymmetry():
 	subunit_tolerance_( 0.01),
-	plane_tolerance_( 1e-3 )
+	plane_tolerance_( 1e-3 ),
+	ignore_single_jump_( false )
 { }
 
 DetectSymmetry::DetectSymmetry(core::Real subunit_tolerance, core::Real plane_tolerance):
 	subunit_tolerance_( subunit_tolerance ),
-	plane_tolerance_( plane_tolerance )
+	plane_tolerance_( plane_tolerance ),
+	ignore_single_jump_( false )
 {
 }
 
 void
 DetectSymmetry::apply(Pose & pose) {
 	Size n_jumps = pose.num_jump();
+	if ( ignore_single_jump_ ) {
+		n_jumps --;
+		TR << "now n jumps is " << n_jumps << std::endl;
+	}
 	if ( n_jumps == 0 ) utility_exit_with_message("Only one chain! no posible symmetry.");
 	Size symmetric_type = n_jumps + 1;
 	TR << symmetric_type << " number of subunits found" << std::endl;
@@ -164,6 +170,7 @@ DetectSymmetry::parse_my_tag(
 {
 	subunit_tolerance_ = tag->getOption< core::Real >("subunit_tolerance", 0.01);
 	plane_tolerance_ = tag->getOption< core::Real >("plane_tolerance",1e-3);
+	ignore_single_jump_ = tag->getOption< bool >("ignore_single_jump", false);
 }
 
 std::string DetectSymmetry::get_name() const {
@@ -180,8 +187,8 @@ void DetectSymmetry::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	AttributeList attlist;
 	// XRW TO DO: check this
 	attlist + XMLSchemaAttribute::attribute_w_default( "subunit_tolerance" , xsct_real , "Maximum tolerated CA-rmsd between the chains." , "0.01" )
-		+ XMLSchemaAttribute::attribute_w_default( "plane_tolerance" , xsct_real , "Maximum accepted displacement(angstroms) of the center of mass of the whole pose from the xy-plane." , "1e-3" ) ;
-
+		+ XMLSchemaAttribute::attribute_w_default( "plane_tolerance" , xsct_real , "Maximum accepted displacement(angstroms) of the center of mass of the whole pose from the xy-plane." , "1e-3" )
+		+ XMLSchemaAttribute::attribute_w_default( "ignore_single_jump" , xsct_rosetta_bool, "whether to ignore a single jump when caculating the symmetry" , "false" ) ;
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover takes a non-symmetric pose composed of symmetric chains and transforms it into a symmetric system. It only works with cyclic symmetries from C2 to C99.", attlist );
 }
 

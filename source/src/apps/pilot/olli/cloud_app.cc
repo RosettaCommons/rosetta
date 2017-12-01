@@ -52,7 +52,7 @@ OPT_KEY( Boolean, new_batch )
 OPT_KEY( Integer, read_batch )
 
 class CloudArchiveManagerWrapper : public protocols::jd2::archive::BaseArchiveManager {
-public:
+	public:
 	CloudArchiveManagerWrapper();
 	virtual ~CloudArchiveManagerWrapper() {}; //virtual destructor because we have virtual functions
 	typedef utility::vector1< protocols::jd2::archive::Batch > BatchList;
@@ -63,10 +63,10 @@ public:
 	void read_batch( core::Size batch_id );
 	void generate_batch();
 
-protected:
+	protected:
 	void queue_batch( protocols::jd2::archive::Batch const& batch ) {
 		std::cout << "START BATCH" << batch << std::endl;
-	};
+		};
 
 
 	// static bool options_registered_;
@@ -74,7 +74,7 @@ protected:
 	void save_batchlist();
 	void restore_batchlist();
 
-private:
+	private:
 	// protocols::jd2::archive::AbstractArchiveBaseOP theArchive_;
 	// core::Size cancel_batches_previous_to_;
 	// bool allow_reading_of_decoys_;

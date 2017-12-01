@@ -56,15 +56,17 @@ namespace membrane {
 Span::Span() :
 	utility::pointer::ReferenceCount(),
 	start_(1),
-	end_(1)
+	end_(1),
+	orientation_( in )
 {}
 
 /// @brief Custom Constructor - Construct new span
 /// @details Constructor from start and end
-Span::Span( core::Size start, core::Size end ) :
+Span::Span( core::Size start, core::Size end, Orientation orient ) :
 	utility::pointer::ReferenceCount(),
 	start_( start ),
-	end_( end )
+	end_( end ),
+	orientation_( orient )
 {}
 
 /// @brief Copy Consturctor
@@ -72,7 +74,8 @@ Span::Span( core::Size start, core::Size end ) :
 Span::Span( Span const & src ) :
 	utility::pointer::ReferenceCount(),
 	start_( src.start_ ),
-	end_( src.end_ )
+	end_( src.end_ ),
+	orientation_( src.orientation_ )
 {}
 
 /// @brief Assignment Operator
@@ -88,6 +91,7 @@ Span::operator=( Span const & src ) {
 	// Make a deep copy of everything
 	this->start_ = src.start_;
 	this->end_ = src.end_;
+	this->orientation_ = src.orientation_;
 
 	return *this;
 }
@@ -111,6 +115,17 @@ Span::start() const {
 core::Size
 Span::end() const {
 	return end_;
+}
+
+/// @brief Get the orientation of the span
+Orientation
+Span::orientation() const {
+	return orientation_;
+}
+
+/// @brief Set the orientation of the span
+void Span::orientation( Orientation orient_in ) {
+	orientation_ = orient_in;
 }
 
 /// @brief get residue closest to center
@@ -190,6 +205,7 @@ void
 core::conformation::membrane::Span::save( Archive & arc ) const {
 	arc( CEREAL_NVP( start_ ) ); // Size
 	arc( CEREAL_NVP( end_ ) ); // Size
+	arc( CEREAL_NVP( orientation_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -198,6 +214,7 @@ void
 core::conformation::membrane::Span::load( Archive & arc ) {
 	arc( start_ ); // Size
 	arc( end_ ); // Size
+	arc( orientation_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::Span );

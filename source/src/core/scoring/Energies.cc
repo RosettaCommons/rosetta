@@ -1120,7 +1120,7 @@ Energies::set_scorefxn_info( scoring::ScoreFunctionInfoOP info )
 				/// Required by the score function, but not externally required, nor required by the previous
 				/// score function.
 				debug_assert( context_graphs_[ ii ] == nullptr );
-				debug_assert( externally_required_context_graphs_[ ii ] );
+				debug_assert( ! externally_required_context_graphs_[ ii ] );
 				require_context_graph_( ContextGraphType (ii), false );
 			}
 		}

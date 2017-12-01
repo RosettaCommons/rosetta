@@ -246,6 +246,7 @@ HBondEnergy::setup_for_packing(
 		center_ = pose.conformation().membrane_info()->membrane_center(pose.conformation());
 		thickness_ = pose.conformation().membrane_info()->membrane_thickness();
 		steepness_ = pose.conformation().membrane_info()->membrane_steepness();
+		membrane_core_ = pose.conformation().membrane_info()->membrane_core();
 
 	} else {
 		thickness_ = 0; // No membrane hydrogen bonding correction
@@ -328,6 +329,7 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 
 	} else {
 		thickness_ = 0; // no membrane hydrogen bonding correction
+		membrane_core_ = 0;
 	}
 
 	//fpd  we need secstruct info in some cases ... don't change while minimizing

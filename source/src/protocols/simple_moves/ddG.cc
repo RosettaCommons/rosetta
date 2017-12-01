@@ -579,7 +579,6 @@ ddG::unbind( pose::Pose & pose ) const
 		// We have no information about chains or jumps to move, so let's not try and unbind
 		return false;
 	}
-
 	return true;
 }
 

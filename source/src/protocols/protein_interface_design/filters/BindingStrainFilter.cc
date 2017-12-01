@@ -21,6 +21,7 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
@@ -102,6 +103,12 @@ BindingStrainFilter::apply(core::pose::Pose const & pose ) const
 void
 BindingStrainFilter::unbind( core::pose::Pose & pose ) const{
 	protocols::rigid::RigidBodyTransMover rbtm( pose, jump() );
+	// if pose is a membrane protein, translate it on the X axis, so they stay in the membrane
+	if ( pose.conformation().is_membrane() ) {
+		TR << "this is a membrane protein, translating along the X axis" << std::endl;
+		core::Vector translation_axis(1,0,0);
+		rbtm.trans_axis( translation_axis );
+	}
 	rbtm.step_size( 10000.0 );
 	rbtm.apply( pose );
 }

@@ -150,6 +150,8 @@ ScoreTypeFilter::compute( core::pose::Pose const & pose ) const {
 		}
 	}
 
+	//scorefxn_->show( *in_pose ); // use to show the constraints on the pose
+
 	(*scorefxn_)( *in_pose );
 	/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies( *in_pose );
 	core::Real const weight( (*scorefxn_)[ ScoreType( score_type_ ) ] );

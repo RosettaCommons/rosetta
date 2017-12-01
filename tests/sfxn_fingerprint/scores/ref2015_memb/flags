@@ -1,0 +1,14 @@
+-in:file:s 1AFO_A.pdb
+-mp:setup:spanfiles 1AFO_A.span
+-ignore_unrecognized_res
+-score:weights ref2015_memb
+
+#-score::elec_memb_sig_die
+#-score:memb_fa_sol
+-mp:scoring:hbond
+
+-mp:membrane_core 10
+-mp:steepness 4
+
+-run:constant_seed
+-nodelay

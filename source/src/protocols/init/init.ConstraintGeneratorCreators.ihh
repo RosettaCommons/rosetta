@@ -17,6 +17,7 @@
 #include <protocols/constraint_generator/AtomPairConstraintGeneratorCreator.hh>
 #include <protocols/constraint_generator/ResidueTypeConstraintGeneratorCreator.hh>
 #include <protocols/constraint_generator/CoordinateConstraintGeneratorCreator.hh>
+#include <protocols/constraint_generator/MembraneSpanConstraintGeneratorCreator.hh>
 #include <protocols/constraint_generator/DistanceConstraintGeneratorCreator.hh>
 #include <protocols/constraint_generator/HydrogenBondConstraintGeneratorCreator.hh>
 #include <protocols/constraint_generator/MetalContactsConstraintGeneratorCreator.hh>

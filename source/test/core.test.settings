@@ -470,6 +470,12 @@ sources = {
 		"UnfoldedStateEnergy",
 		"YHHPlanarityEnergy",
 	],
+  "scoring/membrane" : [
+    "MPHelicality",
+    "MPResidueLipophilicity",
+    "MPSpanAngle",
+    "MPSpanInsertion"
+  ],
 	"scoring/mm" : [
 		"MMBondAngleLibrary",
 		"MMBondAngleScore",

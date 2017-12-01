@@ -159,6 +159,10 @@
 #include <core/scoring/membrane/FaMPEnvEnergyCreator.hh>
 #include <core/scoring/membrane/FaMPSolvEnergyCreator.hh>
 #include <core/scoring/membrane/FaMPEnvSmoothEnergyCreator.hh>
+#include <core/scoring/membrane/MPResidueLipophilicityEnergyCreator.hh>
+#include <core/scoring/membrane/MPHelicalityEnergyCreator.hh>
+#include <core/scoring/membrane/MPSpanInsertionEnergyCreator.hh>
+#include <core/scoring/membrane/MPSpanAngleEnergyCreator.hh>
 #include <core/scoring/methods/pHEnergyCreator.hh>
 #include <core/scoring/methods/PoissonBoltzmannEnergyCreator.hh>
 #include <core/scoring/methods/ChemicalShiftAnisotropyEnergyCreator.hh>
@@ -528,6 +532,10 @@ static EnergyMethodRegistrator< scoring::membrane::FaMPSolvEnergyCreator >
 	FaMPSolvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::membrane::FaMPEnvSmoothEnergyCreator >
 	FaMPEnvSMoothEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPResidueLipophilicityEnergyCreator > MPResidueLipophilicityEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPHelicalityEnergyCreator > MPHelicalityEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPSpanInsertionEnergyCreator > MPSpanInsertionEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPSpanAngleEnergyCreator > MPSpanAngleEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SmoothCenPairEnergyCreator > SmoothCenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SmoothEnvEnergyCreator > SmoothEnvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenRotPairEnergyCreator > CenRotPairEnergyCreator_registrator;
@@ -734,6 +742,7 @@ static ResidueSelectorRegistrator< ResidueIndexSelectorCreator > reg_ResidueInde
 static ResidueSelectorRegistrator< ResidueNameSelectorCreator > reg_ResidueNameSelectorCreator;
 static ResidueSelectorRegistrator< ResidueSpanSelectorCreator > reg_ResidueSpanSelectorCreator;
 static ResidueSelectorRegistrator< TrueResidueSelectorCreator > reg_TrueResidueSelectorCreator;
+static ResidueSelectorRegistrator< ResidueInMembraneSelectorCreator > reg_ResidueInMembraneSelectorCreator;
 static ResidueSelectorRegistrator< ResiduePDBInfoHasLabelSelectorCreator > reg_ResiduePDBInfoHasLabelSelectorCreator;
 static ResidueSelectorRegistrator< SecondaryStructureSelectorCreator > reg_SecondaryStructureSelectorCreator;
 static ResidueSelectorRegistrator< SymmetricalResidueSelectorCreator > reg_SymmetricalResidueSelectorCreator;

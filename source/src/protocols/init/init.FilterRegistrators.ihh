@@ -168,6 +168,8 @@ static FilterRegistrator< protocols::simple_filters::ResidueDepthFilterCreator >
 static FilterRegistrator< protocols::simple_filters::ResidueIEFilterCreator > reg_ResidueIEFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResiduesInInterfaceFilterCreator > reg_ResiduesInInterfaceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueSelectionDistanceFilterCreator > reg_ResidueSelectionDistanceFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ResidueLipophilicityFilterCreator > reg_ResidueLipophilicityFilterCreator;
+static FilterRegistrator< protocols::simple_filters::MPSpanAngleFilterCreator > reg_MPSpanAngleFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueSetChainEnergyFilterCreator > reg_ResidueSetChainEnergyFilterCreator;
 static FilterRegistrator< protocols::simple_filters::RotamerBoltzmannWeightFilterCreator > reg_RotamerBoltzmannWeightFilterCreator;
 static FilterRegistrator< protocols::simple_filters::RotamerBoltzmannWeight2Creator > reg_RotamerBoltzmannWeight2Creator;
@@ -179,10 +181,17 @@ static FilterRegistrator< protocols::simple_filters::ScoreCutoffFilterCreator > 
 static FilterRegistrator< protocols::simple_filters::ScoreTypeFilterCreator > reg_ScoreTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SequenceDistanceFilterCreator > reg_SequenceDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ShapeComplementarityFilterCreator > reg_ScFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ShowConstraintsFilterCreator > reg_ShowConstraintsFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SigmoidFilterCreator > reg_SigmoidFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SimpleHbondsToAtomFilterCreator > reg_SimpleHbondsToAtomFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SymmetricMotifFilterCreator > reg_SymmetricMotifFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SidechainRmsdFilterCreator > reg_SidechainRmsdFilterCreator;
+static FilterRegistrator< protocols::simple_filters::SpanTopologyMatchPoseFilterCreator > reg_SpanTopologyMatchPoseFilterCreator;
+static FilterRegistrator< protocols::simple_filters::TMsAACompFilterCreator > reg_TMsAACompFilterCreator;
+static FilterRegistrator< protocols::simple_filters::TMsSpanMembraneFilterCreator > reg_TMsSpanMembraneFilterCreator;
+static FilterRegistrator< protocols::simple_filters::MembAccesResidueLipophilicityFilterCreator > reg_MembAccesResidueLipophilicityFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ResidueChiralityFilterCreator > reg_ResidueChiralityFilterCreator;
+static FilterRegistrator< protocols::simple_filters::HelixHelixAngleFilterCreator > reg_HelixHelixAngleFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DdGScanCreator > reg_DdGScanCreator;
 static FilterRegistrator< protocols::simple_filters::TaskAwareSASAFilterCreator > reg_TaskAwareSASAFilterCreator;
 static FilterRegistrator< protocols::simple_filters::TaskAwareScoreTypeFilterCreator > reg_TaskAwareScoreTypeFilterCreator;

@@ -74,8 +74,9 @@ DatabaseThread::DatabaseThread() : parent(),
 	start_res_(0),
 	end_res_(0 ),
 	allow_design_around_(true )
+
 {
-	design_.clear(); revert_to_template_.clear(); full_database_.clear(); designable_.clear(); leave_as_is_.clear();
+	design_.clear(); revert_to_template_.clear(); full_database_.clear(); designable_.clear(); leave_as_is_.clear();count_=1;
 }
 
 DatabaseThread::~DatabaseThread() {}
@@ -91,12 +92,18 @@ DatabaseThread::apply( core::pose::Pose const & pose, core::pack::task::PackerTa
 {
 	protocols::toolbox::task_operations::ThreadSequenceOperation thread;
 	std::string sequence;
+	TR<<"Length of pose:"<<pose.size()<<std::endl;
 	if ( target_sequence()=="" ) {
 		sequence=pick_sequence_from_database(pose);
 	} else {
 		sequence=target_sequence();
 	}
-	core::Size const nearest_to_start_on_pose( rosetta_scripts::find_nearest_res( pose, *template_pose_, start_res(), 1/*chain*/));
+	core::Size nearest_to_start_on_pose=0;
+	if ( template_file()=="" ) {
+		nearest_to_start_on_pose = start_res();
+	} else {
+		nearest_to_start_on_pose = rosetta_scripts::find_nearest_res( pose, *template_pose_, start_res(), 1/*chain*/);
+	}
 	if ( !designable_.empty() ) { //if user entered positions to mark for design, label those with 'X'
 		mark_designable(sequence,pose);
 	}
@@ -131,8 +138,13 @@ DatabaseThread::find_length(const core::pose::Pose &pose) const // find the leng
 
 std::string
 DatabaseThread::pick_sequence_from_database( core::pose::Pose const & pose ) const{
-	core::Size const segment_length(find_length( pose ));
-	//std::string line;
+	core::Size segment_length;
+	if ( template_file()=="" ) {
+		segment_length=end_res()-start_res()+1;
+	} else {
+		segment_length=find_length( pose );
+	}
+	TR<<"length of pose:"<<segment_length<<std::endl;
 	utility::vector1< std::string > sized_database;
 	for ( std::string const & line : full_database_ ) {
 		if ( line.length()==segment_length ) { // if length of line is the same as segment length, incorporate into vector of strings.
@@ -143,6 +155,12 @@ DatabaseThread::pick_sequence_from_database( core::pose::Pose const & pose ) con
 		utility_exit_with_message("no entries with correct length were found in the database: " + database_fname_ );
 	}
 	TR<<"Finished reading database "<<database_fname_<<" with "<<sized_database.size()<<" entries of length "<<segment_length<<std::endl;
+	if ( itterative() ) {
+		TR<<"Picked the sequence:"<<std::endl;
+		TR<<sized_database[count_]<<std::endl;
+		count_=count_+1;
+		return sized_database[count_-1];
+	}
 	core::Size const entry = numeric::random::rg().uniform() * sized_database.size() + 1;
 	TR<<"Picked the sequence:"<<std::endl;
 	TR<<sized_database[entry]<<std::endl;
@@ -172,9 +190,11 @@ void
 DatabaseThread::parse_tag(TagCOP tag, DataMap &)
 {
 	target_sequence( tag->getOption< std::string >( "target_sequence","" ) );
-	template_file( tag->getOption< std::string >( "template_file") );
+	template_file( tag->getOption< std::string >( "template_file","") );
 	template_pose_ = core::pose::PoseOP( new core::pose::Pose );
-	core::import_pose::pose_from_file( *template_pose_, template_file_ , core::import_pose::PDB_file);
+	if ( template_file()!="" ) {
+		core::import_pose::pose_from_file( *template_pose_, template_file_ , core::import_pose::PDB_file);
+	}
 	database_fname( tag->getOption< std::string >( "database","" ) );
 	if ( target_sequence()=="" ) {
 		if ( database_fname()=="" ) {
@@ -195,6 +215,8 @@ DatabaseThread::parse_tag(TagCOP tag, DataMap &)
 	allow_design_around( tag->getOption< bool >( "allow_design_around", true ) );
 	designable(utility::string_split(tag->getOption<std::string>("design_residues",""),',',core::Size()));
 	leave_as_is(utility::string_split(tag->getOption<std::string>("keep_original_identity",""),',',core::Size()));
+	itterative( tag->getOption< bool >( "itterative" ) );//if true go over database in an itterative fashion and not random
+
 }
 
 // AMW: Comma separated string list... candidate for common_simple_types?
@@ -211,7 +233,7 @@ void DatabaseThread::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		"The task operation expects either a database or a target sequence and will "
 		"fail if neither are provided. If both are provided the database will be ignored.",
 		"")
-		+ XMLSchemaAttribute::required_attribute(
+		+ XMLSchemaAttribute(
 		"template_file", xs_string,
 		"a pdb that serves as a constant template to map the start and end residues onto "
 		"the pose in case that the length of the pose is altered during design" )
@@ -219,6 +241,9 @@ void DatabaseThread::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		"database", xs_string,
 		"The database should be a text file with a list of single letter amino acids (not fasta)",
 		""  )
+		+ XMLSchemaAttribute(
+		"itterative", xs_boolean,
+		"if true go over db iteratively and not randomly" )
 
 		+ XMLSchemaAttribute::required_attribute(
 		"start_res", xsct_non_negative_integer,

@@ -1,0 +1,27 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="scfxn" weights="ref2015_memb"/>
+  </SCOREFXNS>
+  <TASKOPERATIONS>
+    <RestrictToRepacking name="rtr"/>
+  </TASKOPERATIONS>
+  <MOVERS>
+    <AddMembraneMover name="add_memb" membrane_core="%%memb_core%%" steepness="%%steepness%%">
+      <Span start="%%s1%%" end="%%e1%%" orientation="%%o1%%"/>
+      <Span start="%%s2%%" end="%%e2%%" orientation="%%o2%%"/>
+    </AddMembraneMover>
+    <MembranePositionFromTopologyMover name="init_pos"/>
+    <PackRotamersMover name="packer" scorefxn="scfxn" task_operations="rtr"/>
+    <TransformIntoMembraneMover name="transform"/>
+  </MOVERS>
+  <FILTERS>
+    <ResidueLipophilicity name="a_res_lipo" confidence="0"/>
+  </FILTERS>
+  <PROTOCOLS>
+    <Add mover="add_memb"/>
+    <Add mover="transform"/>
+    <Add mover="packer"/>
+    <Add filter="a_res_lipo"/>
+  </PROTOCOLS>
+  <OUTPUT scorefxn="scfxn"/>
+</ROSETTASCRIPTS>

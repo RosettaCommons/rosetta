@@ -99,8 +99,8 @@ OPT_KEY( String, sequence_mask_file )
 ///////////////////////////////////////////////////////////////////////
 void
 setup_mask(
-	ObjexxFCL::FArray1D_bool & sequence_mask,
-	utility::vector1< sequence::SequenceOP > const & sequences_from_alignment )
+ObjexxFCL::FArray1D_bool & sequence_mask,
+utility::vector1< sequence::SequenceOP > const & sequences_from_alignment )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

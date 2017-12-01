@@ -151,6 +151,8 @@
 #include <protocols/simple_filters/ResidueIEFilterCreator.hh>
 #include <protocols/simple_filters/ResiduesInInterfaceFilterCreator.hh>
 #include <protocols/simple_filters/ResidueSelectionDistanceFilterCreator.hh>
+#include <protocols/simple_filters/ResidueLipophilicityFilterCreator.hh>
+#include <protocols/simple_filters/MPSpanAngleFilterCreator.hh>
 #include <protocols/simple_filters/ResidueSetChainEnergyFilterCreator.hh>
 #include <protocols/simple_filters/RotamerBoltzmannWeightFilterCreator.hh>
 #include <protocols/simple_filters/RotamerBoltzmannWeight2Creator.hh>
@@ -164,6 +166,13 @@
 #include <protocols/simple_filters/SigmoidFilterCreator.hh>
 #include <protocols/simple_filters/SimpleHbondsToAtomFilterCreator.hh>
 #include <protocols/simple_filters/ShapeComplementarityFilterCreator.hh>
+#include <protocols/simple_filters/ShowConstraintsFilterCreator.hh>
+#include <protocols/simple_filters/SpanTopologyMatchPoseFilterCreator.hh>
+#include <protocols/simple_filters/TMsAACompFilterCreator.hh>
+#include <protocols/simple_filters/TMsSpanMembraneFilterCreator.hh>
+#include <protocols/simple_filters/MembAccesResidueLipophilicityFilterCreator.hh>
+#include <protocols/simple_filters/ResidueChiralityFilterCreator.hh>
+#include <protocols/simple_filters/HelixHelixAngleFilterCreator.hh>
 #include <protocols/simple_filters/SymmetricMotifFilterCreator.hh>
 #include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
 #include <protocols/simple_filters/DdGScanCreator.hh>

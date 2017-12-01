@@ -70,6 +70,7 @@ public: // Constructors & Setup
 	MembraneInfo(
 		core::Size membrane_pos,
 		core::SSize membrane_jump,
+		core::Size membrane_core,
 		core::Real thickness,
 		core::Real steepness,
 		SpanningTopologyOP topology
@@ -83,6 +84,7 @@ public: // Constructors & Setup
 	MembraneInfo(
 		core::Size membrane_pos,
 		core::SSize membrane_jump,
+		core::Size membrane_core,
 		core::Real thickness,
 		core::Real steepness,
 		LipidAccInfoOP lips,
@@ -110,6 +112,9 @@ public: // Chemical information about this membrane
 	/// @brief Effective thickness of the membrane
 	/// @details For IMM = default is 15.
 	core::Real membrane_thickness() const;
+
+	/// @brief core membrane thickness
+	core::Real membrane_core() const;
 
 	/// @brief Steepness of hydrophobic -> hydrophillic transition
 	/// @details For IMM - default is 10
@@ -197,6 +202,7 @@ private: // data
 	// Fullatom constants
 	core::Real thickness_;
 	core::Real steepness_;
+	core::Real membrane_core_;
 
 	// membrane residue number in the pose
 	core::Size membrane_rsd_num_;

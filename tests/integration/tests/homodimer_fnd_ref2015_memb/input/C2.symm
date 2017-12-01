@@ -1,0 +1,12 @@
+symmetry_name c2
+subunits 2
+recenter
+number_of_interfaces  1
+E = 2*VRT0001 + 1*(VRT0001:VRT0002)
+anchor_residue COM
+virtual_transforms_start
+start -1,0,0 0,1,0 0,0,0
+rot Rz 2
+virtual_transforms_stop
+connect_virtual JUMP1 VRT0001 VRT0002
+set_dof BASEJUMP x(50) angle_x(0:360) angle_y(0:360) angle_z(0:360)

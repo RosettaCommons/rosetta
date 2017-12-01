@@ -348,6 +348,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "mp_lipo" ] = MPLipo;
 	name2score_type_[ "mp_termini" ] = MPTermini;
 	name2score_type_[ "mp_nonhelix" ] = MPNonHelix;
+	name2score_type_[ "mp_helicality"  ] = MPHelicality;
 	name2score_type_[ "mp_tmproj" ] = MPTMProj;
 
 	// fullatom - added by @ralford 5/14/14
@@ -369,6 +370,12 @@ ScoreTypeManager::setup_score_type_names()
 
 	// hydrate/SPaDES protocol
 	name2score_type_[ "wat_desolv" ] = wat_desolv;
+
+	// ELazaridis score type, added by @jonathaw 29/3/16
+	name2score_type_[ "mp_res_lipo" ] = MPResidueLipophilicity;
+	name2score_type_[ "span_ins" ] = span_ins;
+	name2score_type_[ "mp_span_ang" ] = mp_span_ang;
+
 
 	//fpd smooth (differentiable) centroid terms
 	name2score_type_[ "cen_hb" ] = cen_hb;
@@ -501,6 +508,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "suck" ] = suck;
 	name2score_type_[ "res_type_constraint" ] = res_type_constraint;
 	name2score_type_[ "res_type_linking_constraint" ] = res_type_linking_constraint;
+	name2score_type_[ "membrane_span_constraint" ] = membrane_span_constraint;
+	name2score_type_[ "membrane_span_term_z_constraint" ] = membrane_span_term_z_constraint;
 	name2score_type_[ "pocket_constraint" ] = pocket_constraint;
 	name2score_type_[ "backbone_stub_constraint" ] = backbone_stub_constraint;
 	name2score_type_[ "backbone_stub_linear_constraint" ] = backbone_stub_linear_constraint;

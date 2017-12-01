@@ -1509,6 +1509,7 @@ get_membrane_depth_dependent_weight(
 	Vector center( 0, 0, 0 );
 	Real thickness( 15.0 );
 	Real steepness( 10.0 );
+	Real membrane_core( 15.0 );
 
 
 	if ( pose.conformation().is_membrane() ) {
@@ -1517,6 +1518,7 @@ get_membrane_depth_dependent_weight(
 		normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
 		thickness = pose.conformation().membrane_info()->membrane_thickness();
 		steepness = pose.conformation().membrane_info()->membrane_steepness();
+		membrane_core = pose.conformation().membrane_info()->membrane_core();
 
 	} else {
 
@@ -1526,11 +1528,13 @@ get_membrane_depth_dependent_weight(
 		steepness = Membrane_FAEmbed_from_pose( pose ).steepness();
 	}
 
+	tr.Debug << "thickness is " << thickness << " membrane_core is " << membrane_core << std::endl;
+
 	// Hdonor depth
 	Real fa_depth_H = dot(Hxyz-center, normal); // non consistent z_position
 	Real internal_product = std::abs(fa_depth_H);
 	Real z = internal_product;
-	z /= thickness;
+	z /= membrane_core;
 	Real zn = std::pow( z, steepness );
 	Real fa_proj_H = zn/(1 + zn);
 
@@ -1538,7 +1542,7 @@ get_membrane_depth_dependent_weight(
 	Real fa_depth_A = dot(Axyz-center, normal);
 	internal_product = std::abs(fa_depth_A);
 	z = internal_product;
-	z /= thickness;
+	z /= membrane_core;
 	zn = std::pow( z, steepness );
 	Real fa_proj_A = zn/(1 + zn);
 

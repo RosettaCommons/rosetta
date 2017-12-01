@@ -160,7 +160,7 @@ public: // Rosetta Scripts Methods
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
+		core::pose::Pose const & pose
 	) override;
 
 	/// @brief Helper Method - Add a membrane virtual residue
@@ -221,10 +221,12 @@ private:
 	// Set membrane thickness & steepness (FOR HIGHRES ONLY!!!)
 	core::Real thickness_;
 	core::Real steepness_;
+	core::Real membrane_core_;
 
 	// User defined
 	bool user_defined_;
 
+	bool got_spans_from_xml_;
 };
 
 } // membrane

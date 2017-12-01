@@ -473,6 +473,7 @@ private:
 	mutable Vector center_;
 	mutable Real thickness_;
 	mutable Real steepness_;
+	mutable Real membrane_core_;
 
 	// Used in the "const" evaluate_rotamer_pair_energies and evaluate_rotamer_background_energies
 	// methods to keep track of the sfxn weights and the neighbor counts for the two input residues

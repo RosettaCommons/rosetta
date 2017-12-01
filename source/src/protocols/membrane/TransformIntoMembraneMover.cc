@@ -24,6 +24,7 @@
 
 // Project Headers
 #include <protocols/membrane/TranslationRotationMover.hh>
+#include <protocols/membrane/FlipMover.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh>
 #include <protocols/membrane/util.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
@@ -206,6 +207,10 @@ TransformIntoMembraneMover::parse_my_tag(
 		user_defined_membrane_ = tag->getOption< bool >( "user_defined_membrane" );
 	}
 
+	if ( tag->hasOption( "flip_if_needed" ) ) {
+		flip_if_needed_ = tag->getOption< bool >( "flip_if_needed" );
+	}
+
 	// Reading in center/normal pair
 	read_center_normal_from_tag( new_mem_cntr_, new_mem_norm_, tag );
 
@@ -332,6 +337,21 @@ TransformIntoMembraneMover::apply( core::pose::Pose & pose ) {
 	// print tilt angle and distance from membrane center
 	pose_tilt_angle_and_center_distance( pose );
 
+	// check if pose is flipped compared to the required span. if so, flip it. jonathaw Jun2017
+	if ( flip_if_needed_ ) {
+		utility::vector1< utility::pointer::shared_ptr< core::conformation::membrane::Span > > const spans = pose.conformation().membrane_info()->spanning_topology()->get_spans();
+		core::conformation::membrane::Orientation ori = spans[ 1 ]->orientation();
+		core::Size start = spans[ 1 ]->start();
+
+		core::Real z = pose.conformation().membrane_info()->residue_z_position( pose.conformation(), start );
+		if ( ( ori == 1 && z > 0 ) || ( ori == 2 && z < 0 ) ) {
+			TR << "the pose requires flipping, flipping it!" << std::endl;
+			FlipMoverOP flip( new FlipMover( jump_ ) );
+			flip->apply( pose );
+		}
+	}
+
+
 	// reset foldtree and show final one
 	pose.fold_tree( orig_ft );
 	TR << "Final foldtree: Is membrane fixed? " << is_membrane_fixed( pose ) << std::endl;
@@ -383,7 +403,8 @@ void TransformIntoMembraneMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 	AttributeList attlist; // TO DO: add attributes to this list
 	attlist + XMLSchemaAttribute("jump", xsct_non_negative_integer, "Jump to use for the transformation")
 		+ XMLSchemaAttribute("use_default_membrane", xsct_rosetta_bool, "Use the default membrane (if one is not specified by the user)? If both this attribute and user_defined_membrane are false, membrane position is taken from the pose.")
-		+ XMLSchemaAttribute("user_defined_membrane", xsct_rosetta_bool, "Use a membrane defined by the user?");
+		+ XMLSchemaAttribute("user_defined_membrane", xsct_rosetta_bool, "Use a membrane defined by the user?")
+		+ XMLSchemaAttribute::attribute_w_default("flip_if_needed", xsct_rosetta_bool, "should the pose be flipped if it is in the wrong orientation?", "0");
 
 	protocols::membrane::AddMembraneMover::attributes_for_parse_center_normal_from_tag( attlist );
 
