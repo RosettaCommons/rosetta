@@ -111,7 +111,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 	core::Real prob_nonburied, // 0.95
 	bool const reduced_resolution_library
 ) :
-parent( aa_in, T, dun02, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied )
+	parent( aa_in, T, dun02, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied )
 {
 	// This is horrible but temporarily necessarily until we figure out how to distribute full beta rotlibs
 	// Betas automatically (if 3 BB) have phipsi binrange of 30

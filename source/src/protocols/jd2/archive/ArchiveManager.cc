@@ -317,7 +317,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 		send_stop_to_jobdistributor();
 		throw;
 	}
-// if ( batches_.size() == 0 ) theArchive_->generate_batch();
+	// if ( batches_.size() == 0 ) theArchive_->generate_batch();
 	sleep( 5 ); //give JobDistributor time to start up...
 #ifdef USEMPI
 	MPI_Status status;

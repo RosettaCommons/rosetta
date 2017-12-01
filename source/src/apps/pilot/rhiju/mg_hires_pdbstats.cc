@@ -76,8 +76,8 @@ OPT_KEY( Boolean, dump )
 ///////////////////////////////////////////////////////////////////////////////
 Size
 mg_hires_pdbstats_from_pose( utility::io::ozstream & out,
-pose::Pose & pose, Size const &,
-Size & total_residues, std::string const pdb_file)
+	pose::Pose & pose, Size const &,
+	Size & total_residues, std::string const pdb_file)
 {
 
 	using namespace core::conformation;

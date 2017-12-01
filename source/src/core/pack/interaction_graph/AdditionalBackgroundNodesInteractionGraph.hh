@@ -423,9 +423,9 @@ private:
 ///
 template < typename V, typename E, typename G >
 FirstClassNode< V, E, G > ::FirstClassNode( G* owner, int node_id, int num_states ) :
-V( owner, node_id, num_states ),
-num_edges_to_bg_nodes_(0),
-bg_edge_vector_up_to_date_(false)
+	V( owner, node_id, num_states ),
+	num_edges_to_bg_nodes_(0),
+	bg_edge_vector_up_to_date_(false)
 {}
 
 
@@ -563,7 +563,7 @@ void FirstClassNode< V, E, G >::update_bg_edge_vector() {
 ///
 template < typename V, typename E, typename G >
 FirstClassEdge< V, E, G >::FirstClassEdge( G* owner, int first_node_ind, int second_node_ind) :
-E ( owner, first_node_ind, second_node_ind ) {}
+	E ( owner, first_node_ind, second_node_ind ) {}
 
 
 /// @brief
@@ -595,10 +595,10 @@ FirstClassEdge< V, E, G >::~FirstClassEdge() {}
 ///
 template < typename V, typename E, typename G >
 BackgroundNode< V, E, G >::BackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index ) :
-node_index_( node_index ),
-num_incident_edges_( 0 ),
-edge_vector_up_to_date_( false ),
-owner_( owner ) {
+	node_index_( node_index ),
+	num_incident_edges_( 0 ),
+	edge_vector_up_to_date_( false ),
+	owner_( owner ) {
 }
 
 
@@ -744,9 +744,9 @@ unsigned int BackgroundNode< V, E, G >::count_dynamic_memory() const {
 template < typename V, typename E, typename G >
 BackgroundToFirstClassEdge< V, E, G >::BackgroundToFirstClassEdge
 ( AdditionalBackgroundNodesInteractionGraph< V, E, G > * owner, int fc_node_index, int bg_node_index ) :
-first_class_node_index_( fc_node_index ),
-background_node_index_( bg_node_index),
-owner_( owner )
+	first_class_node_index_( fc_node_index ),
+	background_node_index_( bg_node_index),
+	owner_( owner )
 {
 	first_class_node_ = ( FirstClassNode< V, E, G >* )(owner_->get_node( first_class_node_index_ ));
 	background_node_ = owner_->get_background_node( background_node_index_);
@@ -924,9 +924,9 @@ unsigned int BackgroundToFirstClassEdge< V, E, G >::count_dynamic_memory() const
 ///
 template < typename V, typename E, typename G >
 AdditionalBackgroundNodesInteractionGraph< V, E, G >::AdditionalBackgroundNodesInteractionGraph( int num_nodes ) :
-G( num_nodes ),
-num_bg_nodes_( -1 ),
-focused_bg_edge_( 0 )
+	G( num_nodes ),
+	num_bg_nodes_( -1 ),
+	focused_bg_edge_( 0 )
 {}
 
 

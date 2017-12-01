@@ -929,7 +929,7 @@ check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
 	using namespace pose::rna;
 	return std::any_of( base_pair_list.begin(), base_pair_list.end(),
 		[&]( BasePair const & bp2 ) {
-		return bp2 == base_pair || bp2 == base_pair.flipped();
+			return bp2 == base_pair || bp2 == base_pair.flipped();
 		} );
 }
 

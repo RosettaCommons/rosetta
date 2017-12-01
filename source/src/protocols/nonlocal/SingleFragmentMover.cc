@@ -299,7 +299,7 @@ void SingleFragmentMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.complex_type_naming_func( [] (std::string const& name) {
 		return "SingleFragmentMover_subelement_" + name + "Type";
-		});
+	});
 	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, subelements);
 
 	XMLSchemaRestriction policy_type_enum;

@@ -374,9 +374,9 @@ public:
 			TS_ASSERT( false );
 		}
 
-/// OK! let's see whether it worked.
+		/// OK! let's see whether it worked.
 
-/// 1st handshake
+		/// 1st handshake
 		utility::SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "test_mmtdriver_end_to_end handshake 1", devel::mmt_msd::handshake_begin );
 		ts_assert_mpi_buffer_has_string(  0, "test_mmtdriver_end_to_end handshake 2", "ubq_entity.resfile" );

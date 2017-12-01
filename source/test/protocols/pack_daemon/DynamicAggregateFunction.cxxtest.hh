@@ -695,8 +695,8 @@ public:
 			TS_ASSERT( false );
 		}
 
-// Now let's go and make sure that the vector variable actually has length 2
-// and not some other size.
+		// Now let's go and make sure that the vector variable actually has length 2
+		// and not some other size.
 		using namespace numeric::expression_parser;
 		ArithmeticScanner scanner;
 		scanner.add_variable( "tc_vec" );

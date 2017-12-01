@@ -533,7 +533,7 @@ JobDistributor::run_one_job(
 		return true;
 	}
 
-//These if statements determine whether a new creation of the mover is appropriate
+	//These if statements determine whether a new creation of the mover is appropriate
 	bool reinitialize_new_input(false);
 	bool new_input(false);
 	if ( current_job_->input_tag() != last_inner_job_tag ) {
@@ -652,7 +652,7 @@ JobDistributor::run_one_job(
 			return true;
 		}
 
-// the Parser might have modified the starting pose (with constraints) - so we'll refresh our copy
+		// the Parser might have modified the starting pose (with constraints) - so we'll refresh our copy
 		job_inputter_->pose_from_job(pose, current_job_);
 
 #ifdef BOINC_GRAPHICS

@@ -389,8 +389,8 @@ ResfileContents::parse_resid(
 			onError( e.msg() );
 		}
 
-// advance token counter in preparation for getting the chain
-// token "again".
+		// advance token counter in preparation for getting the chain
+		// token "again".
 		++which_token;
 	}
 

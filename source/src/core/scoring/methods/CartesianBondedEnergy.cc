@@ -2352,7 +2352,7 @@ CartesianBondedEnergy::eval_singleres_energy(
 		std::cout << "caught exception " << e.msg() << std::endl;
 		exit(0);
 	}
-//eval_singleres_ring_energies( rsd, pose, emap );//removed resparams
+	//eval_singleres_ring_energies( rsd, pose, emap );//removed resparams
 }
 
 void

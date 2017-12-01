@@ -225,7 +225,7 @@ public:
 			TS_ASSERT( false );
 		}
 
-// ok, so the mmtr should've sent node 0 a few messages
+		// ok, so the mmtr should've sent node 0 a few messages
 		utility::SimulateMPI::set_mpi_rank( 0 );
 		ts_assert_mpi_buffer_has_integer( 1, "test_MMTReceiver_handshake::handshake acknowledgement", devel::mmt_msd::handshake_acknowledged );
 		ts_assert_mpi_buffer_has_integer( 1, "test_MMTReceiver_handshake::handshake max capacity", 1 );
@@ -252,9 +252,9 @@ public:
 			TS_ASSERT( false );
 		}
 
-/// OK! let's see whether it worked.
+		/// OK! let's see whether it worked.
 
-/// handshake messages:
+		/// handshake messages:
 		utility::SimulateMPI::set_mpi_rank( 0 );
 		ts_assert_mpi_buffer_has_integer( 1, "test_MMTReceiver_end_to_end::handshake acknowledgement", devel::mmt_msd::handshake_acknowledged );
 		ts_assert_mpi_buffer_has_integer( 1, "test_MMTReceiver_end_to_end::handshake max capacity", 1 );

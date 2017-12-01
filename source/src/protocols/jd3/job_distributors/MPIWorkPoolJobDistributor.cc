@@ -483,12 +483,12 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 			utility::to_string( job_id ) + "\nError message from the cereal library:\n" + e.what() + "\n" );
 	}
 
-// Inform the JobQueen of the completed job.
-// This step had to be delayed until after the archival process completed,
-// as it assumes that the JobResult is present on the node where we
-// wrote down it would be stored. Otherwise, jobs could be launched that
-// would produce a race condition by asking for JobResults as inputs that
-// either had or had not yet completed the archival process.
+	// Inform the JobQueen of the completed job.
+	// This step had to be delayed until after the archival process completed,
+	// as it assumes that the JobResult is present on the node where we
+	// wrote down it would be stored. Otherwise, jobs could be launched that
+	// would produce a race condition by asking for JobResults as inputs that
+	// either had or had not yet completed the archival process.
 	Size const nsummaries = job_summaries.size();
 	if ( job_queen_->larval_job_needed_for_note_job_completed() ||
 			job_queen_->larval_job_needed_for_completed_job_summary() ) {
@@ -761,7 +761,7 @@ MPIWorkPoolJobDistributor::process_retrieve_result_from_archive_and_output_reque
 
 	}
 
-// Now request the job and result string from the archive.
+	// Now request the job and result string from the archive.
 	utility::send_integer_to_node( archive_node, mpi_rank_ ); // say I need to talk
 	utility::send_integer_to_node( archive_node, mpi_work_pool_jd_retrieve_and_discard_job_result );
 	utility::send_size_to_node( archive_node, spec->result_id().first );
@@ -1734,11 +1734,11 @@ MPIWorkPoolJobDistributor::worker_send_job_result_to_master_and_archive(
 		return;
 	}
 
-// Ok -- everything that needs to be serialized can be; proceed to report a
-// successful job completion.
+	// Ok -- everything that needs to be serialized can be; proceed to report a
+	// successful job completion.
 
-// now, notify node 0 that the job is complete -- node 0 will tell us where
-// to send the JobResult for archival.
+	// now, notify node 0 that the job is complete -- node 0 will tell us where
+	// to send the JobResult for archival.
 	utility::send_integer_to_node( 0, mpi_rank_ );
 	utility::send_integer_to_node( 0, mpi_work_pool_jd_job_success );
 	utility::send_size_to_node( 0, larval_job->job_index() );

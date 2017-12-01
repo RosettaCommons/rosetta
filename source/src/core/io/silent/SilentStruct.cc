@@ -392,10 +392,10 @@ SilentStruct::add_energy( std::string const & scorename, Real value, Real weight
 	bool replace( false );
 	std::for_each( silent_energies_.begin(), silent_energies_.end(),
 		[&]( SilentEnergy & s ) {
-		if ( s.name() == scorename ) {
-		s.value( value );
-		replace = true;
-		}
+			if ( s.name() == scorename ) {
+				s.value( value );
+				replace = true;
+			}
 		} );
 
 	// add this energy if we haven't added it already
@@ -414,10 +414,10 @@ SilentStruct::add_string_value(
 	bool replace( false );
 	std::for_each( silent_energies_.begin(), silent_energies_.end(),
 		[&]( SilentEnergy & s ) {
-		if ( s.name() == scorename ) {
-		s.value( value );
-		replace = true;
-		}
+			if ( s.name() == scorename ) {
+				s.value( value );
+				replace = true;
+			}
 		} );
 
 	// add this energy if we haven't added it already

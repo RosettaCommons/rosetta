@@ -1259,7 +1259,7 @@ core::Size canonical_residue_count(core::pose::Pose const & pose)
 {
 	return std::count_if( pose.begin(), pose.end(),
 		[&]( conformation::Residue const & resi ) {
-		return resi.aa() <= core::chemical::num_canonical_aas;
+			return resi.aa() <= core::chemical::num_canonical_aas;
 		} );
 }
 
@@ -1267,7 +1267,7 @@ core::Size noncanonical_residue_count(core::pose::Pose const & pose)
 {
 	return std::count_if( pose.begin(), pose.end(),
 		[&]( conformation::Residue const & resi ) {
-		return resi.aa() > core::chemical::num_canonical_aas;
+			return resi.aa() > core::chemical::num_canonical_aas;
 		} );
 }
 
@@ -1275,10 +1275,10 @@ core::Size canonical_atom_count(core::pose::Pose const & pose)
 {
 	return std::accumulate( pose.begin(), pose.end(), 0,
 		[&]( Size const posum, conformation::Residue const & resi ) {
-		if ( resi.aa() <= core::chemical::num_canonical_aas ) {
-		return posum + resi.natoms();
-		}
-		return posum;
+			if ( resi.aa() <= core::chemical::num_canonical_aas ) {
+				return posum + resi.natoms();
+			}
+			return posum;
 		} );
 }
 
@@ -1286,10 +1286,10 @@ core::Size noncanonical_atom_count(core::pose::Pose const & pose)
 {
 	return std::accumulate( pose.begin(), pose.end(), 0,
 		[&]( Size const posum, conformation::Residue const & resi ) {
-		if ( resi.aa() > core::chemical::num_canonical_aas ) {
-		return posum + resi.natoms();
-		}
-		return posum;
+			if ( resi.aa() > core::chemical::num_canonical_aas ) {
+				return posum + resi.natoms();
+			}
+			return posum;
 		} );
 }
 
@@ -1297,10 +1297,10 @@ core::Size noncanonical_chi_count(core::pose::Pose const & pose)
 {
 	return std::accumulate( pose.begin(), pose.end(), 0,
 		[&]( Size const posum, conformation::Residue const & resi ) {
-		if ( resi.aa() > core::chemical::num_canonical_aas ) {
-		return posum + resi.nchi();
-		}
-		return posum;
+			if ( resi.aa() > core::chemical::num_canonical_aas ) {
+				return posum + resi.nchi();
+			}
+			return posum;
 		} );
 }
 
@@ -1309,7 +1309,7 @@ core::Size noncanonical_chi_count(core::pose::Pose const & pose)
 Size nres_protein( pose::Pose const & pose ) {
 	return std::count_if( pose.begin(), pose.end(),
 		[&]( conformation::Residue const & resi ) {
-		return resi.is_protein();
+			return resi.is_protein();
 		} );
 }// nres_protein
 

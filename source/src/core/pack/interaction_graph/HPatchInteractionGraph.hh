@@ -785,10 +785,10 @@ private:
 ///
 template < typename V, typename E, typename G >
 HPatchNode< V, E, G >::HPatchNode( G* owner, int node_index, int num_states ) :
-FirstClassNode< V, E, G > ( owner, node_index, num_states ),
-current_state_rotamer_dots_(), // does this call the RD constructor? Yes!
-alt_state_rotamer_dots_(),
-alt_state_dots_matches_current_state_dots_( true )
+	FirstClassNode< V, E, G > ( owner, node_index, num_states ),
+	current_state_rotamer_dots_(), // does this call the RD constructor? Yes!
+	alt_state_rotamer_dots_(),
+	alt_state_dots_matches_current_state_dots_( true )
 {
 	rotamers_vector_.resize( num_states );
 	restype_group_for_rotamers_.resize( num_states, 0 );
@@ -1685,11 +1685,11 @@ void HPatchNode< V, E, G >::print() const {
 ///
 template < typename V, typename E, typename G >
 HPatchBackgroundNode< V, E, G >::HPatchBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index ) :
-BackgroundNode< V, E, G > ( owner, node_index ),
-prepared_for_simA_( false ),
-current_state_rotamer_dots_(),
-alt_state_rotamer_dots_(),
-alt_state_dots_matches_current_state_dots_( true )
+	BackgroundNode< V, E, G > ( owner, node_index ),
+	prepared_for_simA_( false ),
+	current_state_rotamer_dots_(),
+	alt_state_rotamer_dots_(),
+	alt_state_dots_matches_current_state_dots_( true )
 {}
 
 ///
@@ -2108,13 +2108,13 @@ void HPatchBackgroundNode< V, E, G >::print() const {
 ///
 template < typename V, typename E, typename G >
 HPatchEdge< V, E, G >::HPatchEdge( G* owner, int node1, int node2 ) :
-FirstClassEdge< V, E, G > ( owner, node1, node2 ),
-node_changing_( -1 ),
-node_not_changing_( -1 )
-//nodes_curr_pair_dot_counts_ // calls default RDC constructor, which is fine
-//nodes_alt_pair_dot_counts_ // calls default RDC constructor, which is fine
-//current_state_atom_atom_overlaps_ // vectors are init'd to nothing
-//alt_state_atom_atom_overlaps_;
+	FirstClassEdge< V, E, G > ( owner, node1, node2 ),
+	node_changing_( -1 ),
+	node_not_changing_( -1 )
+	//nodes_curr_pair_dot_counts_ // calls default RDC constructor, which is fine
+	//nodes_alt_pair_dot_counts_ // calls default RDC constructor, which is fine
+	//current_state_atom_atom_overlaps_ // vectors are init'd to nothing
+	//alt_state_atom_atom_overlaps_;
 {
 	nodes_curr_states_[ 0 ] = nodes_curr_states_[ 1 ] = 0;
 	nodes_alt_states_[ 0 ] = nodes_alt_states_[ 1 ] = 0;
@@ -2443,14 +2443,14 @@ unsigned int HPatchEdge< V, E, G >::count_dynamic_memory() const {
 ///
 template < typename V, typename E, typename G >
 HPatchBackgroundEdge< V, E, G >::HPatchBackgroundEdge( AdditionalBackgroundNodesInteractionGraph < V, E, G >* owner, int first_class_node_index, int background_node_index ) :
-BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
-prepared_for_simA_( false ),
-node_states_coverage_of_bg_res_(),
-nodes_curr_state_( 0 ),
-nodes_alt_state_( 0 ),
-node_states_overlap_with_bg_res_()
-//curr_dots_cache_( 0 ), // default constructed, which means they need to be sized before use
-//alt_dots_cache_( 0 ) // default constructed
+	BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
+	prepared_for_simA_( false ),
+	node_states_coverage_of_bg_res_(),
+	nodes_curr_state_( 0 ),
+	nodes_alt_state_( 0 ),
+	node_states_overlap_with_bg_res_()
+	//curr_dots_cache_( 0 ), // default constructed, which means they need to be sized before use
+	//alt_dots_cache_( 0 ) // default constructed
 {}
 
 ///
@@ -2638,30 +2638,30 @@ std::string HPatchInteractionGraph< V, E, G >::sulfur_atom = "S";
 ///
 template < typename V, typename E, typename G >
 HPatchInteractionGraph< V, E, G >::HPatchInteractionGraph( int num_nodes ) :
-AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
-hpatch_score_weight_( 1.0 ),
-num_total_residues_( 0 ),
-num_residues_assigned_as_background_( 0 ),
-some_node_in_state_0_( true ),
-fc_nodes_near_rotsub_( num_nodes, 0 ),
-fc_nodes_near_rotsub_bool_( num_nodes, true ),
-fc_exp_hphobe_djs_offsets_( num_nodes, 0 ),
-fc_n_exp_hphobes_( num_nodes, 0 ),
-prepared_for_simulated_annealing_( false ),
-observed_sufficient_hpatch_E_to_predict_min_( false ),
-hpatch_score_min_last_100_( 0 ),
-hpatch_score_min_recent_( 0 ),
-num_substitutions_since_hpatch_min_update_( 0 ),
-calculated_hpatch_deltaE_( false ),
-deltaE_for_substitution_( 0.0f ),
-node_considering_alt_state_( 0 ),
-alt_state_being_considered_( 0 ),
-total_energy_current_state_assignment_( 0 ),
-total_energy_alternate_state_assignment_( 0 ),
-hpatch_energy_current_state_assignment_( 0 ),
-hpatch_energy_alternate_state_assignment_( 0 ),
-num_commits_since_last_update_( 0 ),
-deltaE_threshold_for_avoiding_hpatch_calcs_( -1.0f )
+	AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
+	hpatch_score_weight_( 1.0 ),
+	num_total_residues_( 0 ),
+	num_residues_assigned_as_background_( 0 ),
+	some_node_in_state_0_( true ),
+	fc_nodes_near_rotsub_( num_nodes, 0 ),
+	fc_nodes_near_rotsub_bool_( num_nodes, true ),
+	fc_exp_hphobe_djs_offsets_( num_nodes, 0 ),
+	fc_n_exp_hphobes_( num_nodes, 0 ),
+	prepared_for_simulated_annealing_( false ),
+	observed_sufficient_hpatch_E_to_predict_min_( false ),
+	hpatch_score_min_last_100_( 0 ),
+	hpatch_score_min_recent_( 0 ),
+	num_substitutions_since_hpatch_min_update_( 0 ),
+	calculated_hpatch_deltaE_( false ),
+	deltaE_for_substitution_( 0.0f ),
+	node_considering_alt_state_( 0 ),
+	alt_state_being_considered_( 0 ),
+	total_energy_current_state_assignment_( 0 ),
+	total_energy_alternate_state_assignment_( 0 ),
+	hpatch_energy_current_state_assignment_( 0 ),
+	hpatch_energy_alternate_state_assignment_( 0 ),
+	num_commits_since_last_update_( 0 ),
+	deltaE_threshold_for_avoiding_hpatch_calcs_( -1.0f )
 {
 	/// set all nodes as participating in a rotamer substitution if any node's state is 0 (unassigned)
 	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) { fc_nodes_near_rotsub_[ ii ] = ii; }

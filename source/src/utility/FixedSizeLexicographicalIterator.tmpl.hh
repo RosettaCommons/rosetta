@@ -25,8 +25,8 @@ namespace utility {
 /// @details -- fake that there's one alphabet and that it has size 0.
 template < platform::Size S >
 FixedSizeLexicographicalIterator< S >::FixedSizeLexicographicalIterator() :
-dim_sizes_( 0 ),
-curr_pos_( 1 )
+	dim_sizes_( 0 ),
+	curr_pos_( 1 )
 {
 }
 
@@ -35,8 +35,8 @@ template < platform::Size S >
 FixedSizeLexicographicalIterator< S >::FixedSizeLexicographicalIterator(
 	fsarray const & dim_sizes
 ) :
-dim_sizes_( dim_sizes ),
-curr_pos_( 1 )
+	dim_sizes_( dim_sizes ),
+	curr_pos_( 1 )
 {
 	for ( Size ii = 1; ii <= S; ++ii ) {
 		assert ( dim_sizes[ ii ] > 0 );

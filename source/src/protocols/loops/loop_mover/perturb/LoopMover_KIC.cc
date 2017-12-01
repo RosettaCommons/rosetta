@@ -322,7 +322,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				"into a valid torsion set of torsion bins.  Check your inputs\n" + e.msg() );
 		}
 
-// derive torsion string from native/input pose, if requested -- warning: this overwrites the externally provided one
+		// derive torsion string from native/input pose, if requested -- warning: this overwrites the externally provided one
 		if ( basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) {
 			torsion_bins = torsion_features_string( native_pose ); // does this work at this point in the code? The loop needs to be set up!
 		}

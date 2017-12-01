@@ -646,7 +646,7 @@ BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
 		utility_exit_with_message( msg.str() );
 	}
 
-// apply user-provided movers
+	// apply user-provided movers
 	apply_movers( postfold, pose );
 
 	// set Energies object -- sets hbonds info in the Energies object in the pose

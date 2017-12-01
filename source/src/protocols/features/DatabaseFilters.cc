@@ -108,9 +108,9 @@ WriteDeletePair get_write_delete_pair(
 {
 		TR << "no score type term, looking in the job data map" <<std::endl;
 	}
-//Some applications (most ligand docking) store score terms in the job data.
-//If this is the case score_type_id will return 0
-//otherwise, we know that the score term in question is a normal scoring function term
+	//Some applications (most ligand docking) store score terms in the job data.
+	//If this is the case score_type_id will return 0
+	//otherwise, we know that the score term in question is a normal scoring function term
 
 	StructureID struct_id_to_remove;
 

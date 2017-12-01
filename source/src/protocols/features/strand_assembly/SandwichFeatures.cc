@@ -2236,7 +2236,7 @@ catch ( utility::excn::Exception const & e )
 } // catch
 
 
-// for unit_test, somehow hardcoded right now
+	// for unit_test, somehow hardcoded right now
 	if ( unit_test_pass_identifier ) {
 		return 1; // passed well
 	} else {

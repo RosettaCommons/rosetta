@@ -97,7 +97,7 @@ OPT_KEY( String, exemplar_target_pdb_num )
 //This is copy/pasted from src/apps/public/minimize.cc, but has had the constraints removed
 class NCMinimize : public moves::Mover {
 
-	public:
+public:
 	NCMinimize();
 
 	~NCMinimize();
@@ -108,11 +108,11 @@ class NCMinimize : public moves::Mover {
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
 	virtual void test_move( Pose & pose )
-		{
+	{
 		apply(pose);
-		}
+	}
 
-		private:
+private:
 	ScoreFunctionOP score_function_;
 };
 

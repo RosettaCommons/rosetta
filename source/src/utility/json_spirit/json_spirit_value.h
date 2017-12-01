@@ -481,7 +481,7 @@ typename Value_impl< Config >::Array& Value_impl< Config >::get_array()
 template< class Config >
 Pair_impl< Config >::Pair_impl( const String_type& name, const Value_type& value )
 :   name_( name )
-,   value_( value )
+	,   value_( value )
 {
 }
 

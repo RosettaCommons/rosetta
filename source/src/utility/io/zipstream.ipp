@@ -77,10 +77,10 @@ basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_zip_streambuf(
 	size_t memory_level_,
 	size_t buffer_size_
 ) :
-m_ostream( ostream_ ),
-m_output_buffer( buffer_size_, 0 ),
-m_buffer( buffer_size_, 0 ),
-m_crc( 0 )
+	m_ostream( ostream_ ),
+	m_output_buffer( buffer_size_, 0 ),
+	m_buffer( buffer_size_, 0 ),
+	m_crc( 0 )
 {
 	m_zip_stream.zalloc = (alloc_func)0;
 	m_zip_stream.zfree = (free_func)0;
@@ -351,10 +351,10 @@ basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_unzip_streambuf(
 	size_t read_buffer_size_,
 	size_t input_buffer_size_
 ) :
-m_istream( istream_ ),
-m_input_buffer( input_buffer_size_ ),
-m_buffer( read_buffer_size_ ),
-m_crc( 0 )
+	m_istream( istream_ ),
+	m_input_buffer( input_buffer_size_ ),
+	m_buffer( read_buffer_size_ ),
+	m_crc( 0 )
 {
 	// setting zalloc, zfree and opaque
 	m_zip_stream.zalloc = (alloc_func)0;

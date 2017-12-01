@@ -767,8 +767,8 @@ catch(cppdb::cppdb_error & except)
 		<< "with a user-specified protocol_id and/or batch_id. This workflow is for advanced users "
 		<< "only and is not recommended. The cppdb error is: " << except.what() << std::endl;
 }
-//Write linking tables after we have a valid batch_id
-// write_linking_tables();
+	//Write linking tables after we have a valid batch_id
+	// write_linking_tables();
 
 	ensure_structure_tags_are_ready();
 	StructureID struct_id = report_structure_features();

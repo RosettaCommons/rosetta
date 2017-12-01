@@ -193,9 +193,9 @@ CountPair1B< CrossoverBehavior >::CountPair1B(
 	conformation::Residue const & res2,
 	Size const res2_connect_atom
 ) :
-parent(),
-res1_conn_dist_( res1.path_distance( res1_connect_atom )),
-res2_conn_dist_( res2.path_distance( res2_connect_atom ))
+	parent(),
+	res1_conn_dist_( res1.path_distance( res1_connect_atom )),
+	res2_conn_dist_( res2.path_distance( res2_connect_atom ))
 {
 }
 

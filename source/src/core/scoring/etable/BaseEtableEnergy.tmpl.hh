@@ -701,16 +701,16 @@ BaseEtableEnergy< Derived >::BaseEtableEnergy(
 	methods::EnergyMethodOptions const & options,
 	bool do_classic_intrares
 ):
-parent( creator ),
-etable_( etable_in ),
-safe_max_dis2( etable_in.get_safe_max_dis2() ),
-hydrogen_interaction_cutoff2_( basic::options::option[ basic::options::OptionKeys::score::fa_Hatr ] ?
-std::pow( std::sqrt( etable_in.hydrogen_interaction_cutoff2()) + std::sqrt( safe_max_dis2 ), 2)
-: etable_in.hydrogen_interaction_cutoff2() ),
-exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
-do_classic_intrares_( do_classic_intrares ),
-put_intra_into_total_( options.put_intra_into_total() ),
-exclude_intra_res_protein_( options.exclude_intra_res_protein() )
+	parent( creator ),
+	etable_( etable_in ),
+	safe_max_dis2( etable_in.get_safe_max_dis2() ),
+	hydrogen_interaction_cutoff2_( basic::options::option[ basic::options::OptionKeys::score::fa_Hatr ] ?
+	std::pow( std::sqrt( etable_in.hydrogen_interaction_cutoff2()) + std::sqrt( safe_max_dis2 ), 2)
+	: etable_in.hydrogen_interaction_cutoff2() ),
+	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
+	do_classic_intrares_( do_classic_intrares ),
+	put_intra_into_total_( options.put_intra_into_total() ),
+	exclude_intra_res_protein_( options.exclude_intra_res_protein() )
 {}
 
 /// @details an explicit copy constructor is required so that the etable_evaluator_ instance,
@@ -718,14 +718,14 @@ exclude_intra_res_protein_( options.exclude_intra_res_protein() )
 /// the derived) class.
 template < class Derived >
 BaseEtableEnergy< Derived >::BaseEtableEnergy( BaseEtableEnergy< Derived > const & src ) :
-parent( src ),
-etable_( src.etable_ ),
-safe_max_dis2( src.safe_max_dis2 ),
-hydrogen_interaction_cutoff2_( src.hydrogen_interaction_cutoff2_ ),
-exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
-do_classic_intrares_( src.do_classic_intrares_ ),
-put_intra_into_total_( src.put_intra_into_total_ ),
-exclude_intra_res_protein_( src.exclude_intra_res_protein_ )
+	parent( src ),
+	etable_( src.etable_ ),
+	safe_max_dis2( src.safe_max_dis2 ),
+	hydrogen_interaction_cutoff2_( src.hydrogen_interaction_cutoff2_ ),
+	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
+	do_classic_intrares_( src.do_classic_intrares_ ),
+	put_intra_into_total_( src.put_intra_into_total_ ),
+	exclude_intra_res_protein_( src.exclude_intra_res_protein_ )
 {
 }
 

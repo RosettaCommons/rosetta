@@ -144,7 +144,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	std::transform( atoms.begin(), atoms.end(),
 		atoms_xyz.begin(),
 		[&]( utility::fixedsizearray1< Real,3 > const & atom ) {
-		return Vector( atom[1], atom[2], atom[3] );
+			return Vector( atom[1], atom[2], atom[3] );
 		} );
 
 	//////////////////////////////////////////////

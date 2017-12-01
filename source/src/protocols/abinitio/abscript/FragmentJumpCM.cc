@@ -206,8 +206,8 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
 		throw;
 	}
 
-// cache the result as a WriteableCacheable in the pose DataCache for later retrieval.
-// this is important for the restarting feature in Abinitio.
+	// cache the result as a WriteableCacheable in the pose DataCache for later retrieval.
+	// this is important for the restarting feature in Abinitio.
 	JumpSampleDataOP data( new JumpSampleData( moverkey(), jump_sample ) );
 	(*map)[ data->datatype() ].insert( data );
 

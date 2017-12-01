@@ -2510,7 +2510,7 @@ attribute_w_name_in_attribute_list(std::string const& attname,
 	auto found = std::find_if(
 		attlist.begin(), attlist.end(),
 		[&] (const XMLSchemaAttribute& attribute) {
-		return attribute.element_name() == attname;
+			return attribute.element_name() == attname;
 		});
 
 	return found != attlist.end();

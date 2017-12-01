@@ -150,9 +150,9 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 			return;
 		}
 
-//restore original cst-type
-//ConstraintIO::get_cst_factory().add_type( orig_atom_pair_type );
-//ConstraintFactory::get_instance()->replace_creator( orig_atom_pair_creator );
+		//restore original cst-type
+		//ConstraintIO::get_cst_factory().add_type( orig_atom_pair_type );
+		//ConstraintFactory::get_instance()->replace_creator( orig_atom_pair_creator );
 
 	}
 

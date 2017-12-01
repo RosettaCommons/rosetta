@@ -83,8 +83,8 @@ Real const RotamericSingleResiduePeptoidLibrary< T, N >::TRANS_UPPER_CIS_LOWER_S
 
 template < Size T, Size N >
 RotamericSingleResiduePeptoidLibrary< T, N >::RotamericSingleResiduePeptoidLibrary() :
-parent( T )
-//max_rotprob_( N_PHIPSI_BINS, N_PHIPSI_BINS, 0.0 )
+	parent( T )
+	//max_rotprob_( N_PHIPSI_BINS, N_PHIPSI_BINS, 0.0 )
 {}
 
 template < Size T, Size N >

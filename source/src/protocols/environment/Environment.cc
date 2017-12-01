@@ -196,7 +196,7 @@ core::conformation::ConformationOP Environment::end( ProtectedConformationCOP co
 		throw;
 	}
 
-// Reprotect Conformation if there's a superenvironment.
+	// Reprotect Conformation if there's a superenvironment.
 	if ( ! superenv().expired() ) {
 		ret_conf = ConformationOP( new ProtectedConformation( superenv(), pose.conformation() ) );
 	} else {

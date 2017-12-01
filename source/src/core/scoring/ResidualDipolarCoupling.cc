@@ -539,7 +539,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 			throw;
 		}
 
-/* Calculate the orientation tensor S for this experiment */
+		/* Calculate the orientation tensor S for this experiment */
 		S_[ex][0][0] = 0;
 		S_[ex][0][1] = 0;
 		S_[ex][0][2] = 0;
@@ -589,7 +589,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		throw;
 	}
 
-//Compute the fitting stats
+	//Compute the fitting stats
 	Real wsv2 = 0;
 	Real sw = 0;
 	Real vtot = 0;

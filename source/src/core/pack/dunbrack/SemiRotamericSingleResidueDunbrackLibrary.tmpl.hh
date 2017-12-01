@@ -184,17 +184,17 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::SemiRotamericSingleResidueDun
 	core::Real prob_buried,
 	core::Real prob_nonburied
 ) :
-parent( aa_in, false /*dun02*/, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied ), // dun02 false, since the semi rotameric library is new in 2008
-bbind_nrchi_scoring_( backbone_independent_scoring ),
-bbind_nrchi_sampling_( backbone_independent_rotamer_sampling ),
-use_shapovalov_( use_shapovalov ),
-nrchi_periodicity_( 0.0 ),
-nrchi_lower_angle_( 0.0 ),
-bbdep_nrchi_nbins_( 0 ),
-bbdep_nrchi_binsize_( 0 ),
-bbind_nrchi_nbins_( 0 ),
-bbind_nrchi_binsize_( 0 ),
-n_nrchi_sample_bins_( 0 )
+	parent( aa_in, false /*dun02*/, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied ), // dun02 false, since the semi rotameric library is new in 2008
+	bbind_nrchi_scoring_( backbone_independent_scoring ),
+	bbind_nrchi_sampling_( backbone_independent_rotamer_sampling ),
+	use_shapovalov_( use_shapovalov ),
+	nrchi_periodicity_( 0.0 ),
+	nrchi_lower_angle_( 0.0 ),
+	bbdep_nrchi_nbins_( 0 ),
+	bbdep_nrchi_binsize_( 0 ),
+	bbind_nrchi_nbins_( 0 ),
+	bbind_nrchi_binsize_( 0 ),
+	n_nrchi_sample_bins_( 0 )
 {}
 
 template < Size T, Size N >

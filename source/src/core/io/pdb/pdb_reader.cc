@@ -624,7 +624,7 @@ store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
 		// The links need to be sorted such that higher-numbered residues come later.
 		auto sort_func = []( LinkInformation const & lhs, LinkInformation const & rhs ) {
 			return ( lhs.chainID2 < rhs.chainID2 ) || ( lhs.chainID2 == rhs.chainID2 && lhs.resSeq2 < rhs.resSeq2 );
-			};
+		};
 		sort( links.begin(), links.end(), sort_func );
 	}
 

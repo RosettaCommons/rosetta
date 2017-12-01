@@ -402,7 +402,7 @@ void MultiplePoseMover::parse_my_tag(
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Exception in MultiplePoseMover with name \"" + my_name + "\": " + e.msg());
 	}
 
-// Obtain flags from selector
+	// Obtain flags from selector
 	PoseSelectorFlags flags = PSF_NONE;
 	for ( PoseSelectorOP selector : selectors_ ) {
 		// flags |= selector->get_flags();

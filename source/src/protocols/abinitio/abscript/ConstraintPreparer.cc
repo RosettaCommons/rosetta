@@ -110,7 +110,7 @@ void ConstraintPreparer::prepare( core::pose::Pose& pose, core::Real ){
 			+ cst_file() + "' : " + e.msg() );
 	}
 
-// we don't know the correct size of this vector until we see the pose.
+	// we don't know the correct size of this vector until we see the pose.
 	combine_exclude_res_.resize( pose.size(), false );
 
 	ConstraintCOPs added_constraints = constraints_->get_all_constraints();

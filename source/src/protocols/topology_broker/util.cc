@@ -210,7 +210,7 @@ void add_claims_from_file( TopologyBroker& broker, std::string const& file , Cmd
 	} catch ( BadInput &excn ) {
 		throw CREATE_EXCEPTION(BadInput,  excn.msg() + " occurred when reading file "+file ); //of course I loose the speciality of the EXCEPTION
 	}
-//that might be just eof check for is.fail() ??? don't check...not my problem ?
+	//that might be just eof check for is.fail() ??? don't check...not my problem ?
 }
 
 void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {

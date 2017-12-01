@@ -199,13 +199,13 @@ CountPair2B< CrossoverBehavior >::CountPair2B(
 	conformation::Residue const & res2,
 	Size const res2_connect_atom
 ) :
-parent(),
-res1_conn_dist_( res1.path_distance( res1_connect_atom )),
-res2_conn_dist_( res2.path_distance( res2_connect_atom )),
-// This is a cheat.  It assumes that the bond distance across the
-// intervening residue is the same distance as either of the residues
-// on either end.
-midway_dist_ ( res1.path_distance( res1_connect_atom , res2_connect_atom ) )
+	parent(),
+	res1_conn_dist_( res1.path_distance( res1_connect_atom )),
+	res2_conn_dist_( res2.path_distance( res2_connect_atom )),
+	// This is a cheat.  It assumes that the bond distance across the
+	// intervening residue is the same distance as either of the residues
+	// on either end.
+	midway_dist_ ( res1.path_distance( res1_connect_atom , res2_connect_atom ) )
 {
 }
 

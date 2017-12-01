@@ -221,6 +221,6 @@ int main( int argc, char** argv ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-// finish with 0 when there's no error
+	// finish with 0 when there's no error
 	return 0;
 }

@@ -363,7 +363,7 @@ get_struct_id_with_nth_lowest_score_from_job_data(
 		utility_exit_with_message(message.str());
 	}
 
-// shouldn't get here
+	// shouldn't get here
 	return StructureID();
 }
 
@@ -383,7 +383,7 @@ get_struct_id_with_nth_lowest_score_from_score_data(
 		utility_exit_with_message("No nth lowest score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
 	}
 
-// shouldn't get here
+	// shouldn't get here
 	return StructureID();
 }
 
@@ -419,7 +419,7 @@ StructureID get_struct_id_with_highest_score_from_job_data(
 		utility_exit_with_message("No "+score_term+" with input_tag "+input_tag);
 	}
 
-// shouldn't get here
+	// shouldn't get here
 	return StructureID();
 }
 
@@ -437,7 +437,7 @@ StructureID get_struct_id_with_highest_score_from_score_data(
 		utility_exit_with_message("No score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag);
 	}
 
-// shouldn't get here
+	// shouldn't get here
 	return StructureID();
 }
 
@@ -470,7 +470,7 @@ get_score_for_struct_id_and_score_term_from_job_data(
 		utility_exit_with_message(message.str());
 	}
 
-// shouldn't get here
+	// shouldn't get here
 	return 0;
 }
 
@@ -502,7 +502,7 @@ get_score_for_struct_id_and_score_term_from_score_data(
 		utility_exit_with_message(message.str());
 	}
 
-// shouldn't get here
+	// shouldn't get here
 	return 0;
 }
 

@@ -730,9 +730,9 @@ private:
 ///
 template < typename V, typename E, typename G >
 NPDHBondNode< V, E, G >::NPDHBondNode( G* owner, int node_index, int num_states ) :
-FirstClassNode< V, E, G > ( owner, node_index, num_states ),
-seqpos_( 0 ),
-max_natoms_( 0 )
+	FirstClassNode< V, E, G > ( owner, node_index, num_states ),
+	seqpos_( 0 ),
+	max_natoms_( 0 )
 {
 	rotamers_vector_.resize( num_states );
 	restype_group_for_rotamers_.resize( num_states, 0 );
@@ -1187,8 +1187,8 @@ void NPDHBondNode< V, E, G >::print() const {
 ///
 template < typename V, typename E, typename G >
 NPDHBondBackgroundNode< V, E, G >::NPDHBondBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index ) :
-BackgroundNode< V, E, G > ( owner, node_index ),
-prepared_for_simA_( false )
+	BackgroundNode< V, E, G > ( owner, node_index ),
+	prepared_for_simA_( false )
 {}
 
 ///
@@ -1384,9 +1384,9 @@ void NPDHBondBackgroundNode< V, E, G >::print() const {
 ///
 template < typename V, typename E, typename G >
 NPDHBondEdge< V, E, G >::NPDHBondEdge( G* owner, int node1, int node2 ) :
-FirstClassEdge< V, E, G > ( owner, node1, node2 ),
-node_changing_( -1 ),
-node_not_changing_( -1 )
+	FirstClassEdge< V, E, G > ( owner, node1, node2 ),
+	node_changing_( -1 ),
+	node_not_changing_( -1 )
 {
 	nodes_curr_states_[ 0 ] = nodes_curr_states_[ 1 ] = 0;
 	nodes_alt_states_[ 0 ] = nodes_alt_states_[ 1 ] = 0;
@@ -1635,10 +1635,10 @@ NPDHBondBackgroundEdge< V, E, G >::NPDHBondBackgroundEdge(
 	int first_class_node_index,
 	int background_node_index
 ) :
-BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
-prepared_for_simA_( false ),
-nodes_curr_state_( 0 ),
-nodes_alt_state_( 0 )
+	BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
+	prepared_for_simA_( false ),
+	nodes_curr_state_( 0 ),
+	nodes_alt_state_( 0 )
 {}
 
 ///
@@ -1800,7 +1800,7 @@ Size NPDHBondInteractionGraph< V, E, G >::num_npd_hbond_comps_later_made_ = 0;
 ///
 template < typename V, typename E, typename G >
 NPDHBondInteractionGraph< V, E, G >::NPDHBondInteractionGraph( int num_nodes ) :
-AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes )
+	AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes )
 {}
 
 ///

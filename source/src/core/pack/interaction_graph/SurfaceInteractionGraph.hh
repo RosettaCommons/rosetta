@@ -622,20 +622,20 @@ int SurfaceNode< V, E, G >::num_surface_comps_later_made_( 0 );
 ///
 template < typename V, typename E, typename G >
 SurfaceNode< V, E, G >::SurfaceNode( G* owner, int node_index, int num_states ) :
-FirstClassNode< V, E, G > ( owner, node_index, num_states ),
-rotamers_vector_( num_states ),
-calculated_surface_deltaE_( false ),
-deltaE_for_substitution_( 0.0f ),
-curr_state_total_hASA_( 0.0 ),
-alt_state_total_hASA_( 0 ),
-have_prepared_for_simA_( false ),
-surface_score_min_last_100_( 0 ),
-surface_score_min_recent_( 0 ),
-num_substitutions_since_surface_min_update_( 0 ),
-observed_sufficient_surface_E_to_predict_min_( false ),
-surface_exposed_( false ),
-is_below_buried_residue_no_hsasa_cutoff_( false ),
-num_neighbors_counting_self_(-1)
+	FirstClassNode< V, E, G > ( owner, node_index, num_states ),
+	rotamers_vector_( num_states ),
+	calculated_surface_deltaE_( false ),
+	deltaE_for_substitution_( 0.0f ),
+	curr_state_total_hASA_( 0.0 ),
+	alt_state_total_hASA_( 0 ),
+	have_prepared_for_simA_( false ),
+	surface_score_min_last_100_( 0 ),
+	surface_score_min_recent_( 0 ),
+	num_substitutions_since_surface_min_update_( 0 ),
+	observed_sufficient_surface_E_to_predict_min_( false ),
+	surface_exposed_( false ),
+	is_below_buried_residue_no_hsasa_cutoff_( false ),
+	num_neighbors_counting_self_(-1)
 {
 	// the weight to apply to the surface score is stored in the packer task. this allows users to change the
 	// weight with a command line option
@@ -2049,13 +2049,13 @@ const int SurfaceBackgroundNode< V, E, G >::MAX_SURFACE_ENERGY = 100;
 ///
 template < typename V, typename E, typename G >
 SurfaceBackgroundNode< V, E, G >::SurfaceBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index ) :
-BackgroundNode< V, E, G > ( owner, node_index ),
-curr_state_total_hASA_( 0.0 ),
-alt_state_total_hASA_( 0.0 ),
-have_prepared_for_simA_( false ),
-surface_exposed_( false ),
-is_below_buried_residue_no_hsasa_cutoff_( false ),
-num_neighbors_counting_self_(-1)
+	BackgroundNode< V, E, G > ( owner, node_index ),
+	curr_state_total_hASA_( 0.0 ),
+	alt_state_total_hASA_( 0.0 ),
+	have_prepared_for_simA_( false ),
+	surface_exposed_( false ),
+	is_below_buried_residue_no_hsasa_cutoff_( false ),
+	num_neighbors_counting_self_(-1)
 {
 	surface_energy_weight_ = get_surface_owner()->surface_score_weight();
 #ifdef FILE_DEBUG
@@ -2542,9 +2542,9 @@ Real SurfaceBackgroundNode< V, E, G >::hASA_energy( Real patch_area ) const {
 ///
 template < typename V, typename E, typename G >
 SurfaceEdge< V, E, G >::SurfaceEdge( G* owner, int node1, int node2 ) :
-FirstClassEdge< V, E, G > ( owner, node1, node2 ),
-node_changing_( -1 ),
-node_not_changing_( -1 )
+	FirstClassEdge< V, E, G > ( owner, node1, node2 ),
+	node_changing_( -1 ),
+	node_not_changing_( -1 )
 {
 
 	nodes_curr_states_[ 0 ] = nodes_curr_states_[ 1 ] = 0;
@@ -2763,9 +2763,9 @@ unsigned int SurfaceEdge< V, E, G >::count_dynamic_memory() const {
 template < typename V, typename E, typename G >
 SurfaceBackgroundEdge< V, E, G >::SurfaceBackgroundEdge
 ( AdditionalBackgroundNodesInteractionGraph < V, E, G >* owner, int first_class_node_index, int background_node_index ):
-BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
-fc_node_curr_state_( 0 ),
-fc_node_alt_state_( 0 )
+	BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
+	fc_node_curr_state_( 0 ),
+	fc_node_alt_state_( 0 )
 {
 	max_surface_deltaE_last_50_commits_ = -1.0f;
 	max_surface_deltaE_recent_50_commits_ = -1.0f;
@@ -2919,16 +2919,16 @@ unsigned int SurfaceBackgroundEdge< V, E, G >::count_dynamic_memory() const {
 ///
 template < typename V, typename E, typename G >
 SurfaceInteractionGraph< V, E, G >::SurfaceInteractionGraph( int num_nodes ) :
-AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
-num_total_residues_( 0 ),
-num_residues_assigned_as_background_( 0 ),
-num_commits_since_last_update_( 0 ),
-total_energy_current_state_assignment_( 0 ),
-total_energy_alternate_state_assignment_( 0 ),
-node_considering_alt_state_( 0 ),
-deltaE_threshold_for_avoiding_surface_calcs_( -1.0f ),
-prepared_for_simulated_annealing_( false ),
-surface_score_weight_( 1 )
+	AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
+	num_total_residues_( 0 ),
+	num_residues_assigned_as_background_( 0 ),
+	num_commits_since_last_update_( 0 ),
+	total_energy_current_state_assignment_( 0 ),
+	total_energy_alternate_state_assignment_( 0 ),
+	node_considering_alt_state_( 0 ),
+	deltaE_threshold_for_avoiding_surface_calcs_( -1.0f ),
+	prepared_for_simulated_annealing_( false ),
+	surface_score_weight_( 1 )
 {}
 
 ///

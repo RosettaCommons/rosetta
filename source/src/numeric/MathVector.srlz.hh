@@ -24,10 +24,10 @@ namespace numeric {
 template < class Archive, class T >
 void save_math_vector( Archive & archive, numeric::MathVector< T > const & vect )
 {
-  archive( vect.size() );
-  for ( platform::Size ii = 0; ii < vect.size(); ++ii ) {
-    archive( vect(ii) );
-  }
+	archive( vect.size() );
+	for ( platform::Size ii = 0; ii < vect.size(); ++ii ) {
+		archive( vect(ii) );
+	}
 }
 
 template < class Archive, class T >
@@ -35,9 +35,9 @@ void load_math_vector( Archive & archive, numeric::MathVector< T > & vect )
 {
 	platform::Size n; archive( n );
 	numeric::MathVector< T > second_vect( n );
-  for ( platform::Size ii = 0; ii < second_vect.size(); ++ii ) {
-    archive( second_vect(ii) );
-  }
+	for ( platform::Size ii = 0; ii < second_vect.size(); ++ii ) {
+		archive( second_vect(ii) );
+	}
 	vect = second_vect;
 }
 
@@ -60,14 +60,14 @@ void load_math_vector( Archive & archive, numeric::MathVector< T > & vect )
 template < class Archive, class T >
 void save( Archive & archive, typename numeric::MathVector< T > const & vect )
 {
-  save_math_vector( archive, vect );
+	save_math_vector( archive, vect );
 }
 
 /// @brief Deserialization function for MathVector's holding arbitrary data
 template < class Archive, class T >
 void load( Archive & archive, numeric::MathVector< T > & vect )
 {
-  load_math_vector( archive, vect );
+	load_math_vector( archive, vect );
 }
 
 
