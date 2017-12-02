@@ -509,7 +509,7 @@ public:
 	//bool atom_is_buried( core::pose::Pose const & pose, core::id::AtomID id );
 
 	///@brief places the rotamers of the provided h-bond network onto the provided pose
-	void place_rots_on_pose( core::pose::Pose & pose, hbond_net_struct & residues, bool use_pose=false );
+	utility::vector1< core::Size > place_rots_on_pose( core::pose::Pose & pose, hbond_net_struct & residues, bool use_pose=false );
 
 	///@brief return the number of rotamers in a network that are identical in seq or rot to the original input pose:
 	core::Size get_num_native_rot(core::pose::Pose & pose, utility::vector1< HBondResStructCOP > const & residues, core::Real sc_rmsd_cut=0.25, bool super=true);

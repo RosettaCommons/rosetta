@@ -997,9 +997,9 @@ bool one_network_is_subset_of_other( utility::vector1< HBondResStructCOP > const
 	utility::vector1< HBondResStructCOP > const & larger =  ( residues_i.size() > residues_j.size() ? residues_i : residues_j );
 	utility::vector1< HBondResStructCOP > const & smaller = ( residues_i.size() > residues_j.size() ? residues_j : residues_i );
 
-	for ( HBondResStructCOP small_guy : smaller ) {
+	for ( HBondResStructCOP const & small_guy : smaller ) {
 		bool exists_in_larger = false;
-		for ( HBondResStructCOP big_guy : larger ) {
+		for ( HBondResStructCOP const & big_guy : larger ) {
 			if ( *small_guy == *big_guy ) {
 				exists_in_larger = true;
 				break;
@@ -1020,14 +1020,14 @@ HBNet::monte_carlo_net_clash( utility::vector1< HBondResStructCOP > const & resi
 	utility::vector1< core::Size > global_rots1;
 	global_rots1.reserve( residues_i.size() );
 	core::Size const offset1 = rotamer_sets_->nrotamer_offset_for_moltenres( rotamer_sets_->resid_2_moltenres( residues_i.front()->resnum ) );
-	for ( HBondResStructCOP res : residues_i ) {
+	for ( HBondResStructCOP const & res : residues_i ) {
 		global_rots1.push_back( offset1 + res->rot_index );
 	}
 
 	utility::vector1< core::Size > global_rots2;
 	global_rots2.reserve( residues_j.size() );
 	core::Size const offset2 = rotamer_sets_->nrotamer_offset_for_moltenres( rotamer_sets_->resid_2_moltenres( residues_j.front()->resnum ) );
-	for ( HBondResStructCOP res : residues_j ) {
+	for ( HBondResStructCOP const & res : residues_j ) {
 		global_rots2.push_back( offset2 + res->rot_index );
 	}
 
@@ -1655,7 +1655,7 @@ void add_network_resids_to_pose( core::pose::Pose & pose, utility::vector1< core
 }
 
 
-void
+utility::vector1< core::Size >
 HBNet::place_rots_on_pose( pose::Pose & pose, hbond_net_struct & i, bool use_pose )
 {
 	if ( !( pose.pdb_info() ) ) {
@@ -1665,7 +1665,7 @@ HBNet::place_rots_on_pose( pose::Pose & pose, hbond_net_struct & i, bool use_pos
 	utility::vector1< core::Size > resids;
 	resids.reserve( i.rotamers.size() );
 	if ( !(i.rotamers.empty()) ) {
-		for ( const auto r : i.rotamers ) {
+		for ( const auto & r : i.rotamers ) {
 			resids.push_back( r->seqpos() );
 			pose.replace_residue( r->seqpos(), *r, false );
 			pose.pdb_info()->add_reslabel( r->seqpos(), "HBNet" );
@@ -1693,6 +1693,8 @@ HBNet::place_rots_on_pose( pose::Pose & pose, hbond_net_struct & i, bool use_pos
 	//    }
 	pose.update_residue_neighbors();
 	//pose.update_pose_chains_from_pdb_chains();
+
+	return resids;
 }
 
 // to very quickly eliminate networks with 1 or more unsatisfied heavy-atom donors or acceptors
@@ -2775,6 +2777,7 @@ HBNet::num_boundary_res( hbond_net_struct const & network ){
 void
 HBNet::select_best_networks()
 {
+
 	// TODO now that Jack's AtomLevelHBondGraph enables high-integrity unsat check on-the-fly,
 	//   this function can be refactored to be more efficient, and written in a cleaner fashion
 
@@ -2797,7 +2800,9 @@ HBNet::select_best_networks()
 		}
 	}
 	//iterator over all the networks, erase those that do not meet specified criteria
-	//std::vector< HBondNetStructOP >::iterator i = network_vector_.begin();
+	Pose ala_copy = *ala_pose_;
+	utility::vector1< core::Size > previous_resids;
+
 	i = network_vector_.begin();
 	for ( ; i != network_vector_.end(); ) {
 
@@ -2805,9 +2810,18 @@ HBNet::select_best_networks()
 
 
 		//place network residues on background pose for scoring and evaluation
-		Pose ala_copy = *ala_pose_; // deep copy
 		//place_rots_on_pose( ala_copy, **i, (*i)->is_native, bridging_waters_, pack_waters_before_unsat_check_ );
-		place_rots_on_pose( ala_copy, **i, (*i)->is_native );
+		for ( auto /*integral*/ resid : previous_resids ) {
+			ala_copy.replace_residue( resid, ala_pose_->residue( resid ), false );
+		}
+#ifndef NDEBUG
+		for ( core::Size resid = 1; resid <= ala_pose_->size(); ++resid ) {
+			debug_assert(
+				ala_copy.residue( resid ).name1() == ala_pose_->residue( resid ).name1()
+			);
+		}
+#endif
+		previous_resids = place_rots_on_pose( ala_copy, **i, (*i)->is_native );
 		//ala_copy.update_residue_neighbors();
 
 		// very quickly identify networks that have heavy atom donors or acceptors unsatisfied and get rid of them!
