@@ -66,7 +66,7 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-
+	void set_secstruct(std::string const secstruct);
 
 private:
 	/// @brief computes the weighted boltzmann sum of the passed vector
@@ -95,6 +95,7 @@ private:
 	protocols::ss_prediction::SS_predictorOP ss_predictor_;
 	/// @brief the object which communicates with psipred and interprets its output
 	core::io::external::PsiPredInterfaceOP psipred_interface_;
+	std::string secstruct_;
 };  //SSPredictionFilter
 
 //namespaces

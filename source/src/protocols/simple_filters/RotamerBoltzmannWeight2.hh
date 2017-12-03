@@ -56,7 +56,9 @@ public:
 	enum ScoreType {
 		MEAN_PROBABILITY,
 		MAX_PROBABILITY,
-		MODIFIED_DDG
+		MODIFIED_DDG,
+		PROBABILITY,
+		MIN_PROBABILITY
 	};
 	typedef std::map< core::Size, core::Real > ResidueDDGs;
 

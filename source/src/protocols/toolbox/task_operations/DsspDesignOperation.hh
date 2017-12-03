@@ -95,8 +95,9 @@ private:
 	/// @brief map sets of allowed residues to secondary structure elements
 	SecStructResidues sse_residues_;
 
-
 	BluePrintOP blueprint_;
+
+	std::string pose_secstruct_;
 
 	/// @brief initialize allowed residue sets with defaults
 	void set_default_sse_residues();

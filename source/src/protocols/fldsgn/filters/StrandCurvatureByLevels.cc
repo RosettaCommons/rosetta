@@ -227,7 +227,15 @@ bool StrandCurvatureByLevels::apply( Pose const & pose ) const
 		for ( core::Size k=begin_res; k<=end_res-step; k++ ) {
 			p1 = k ;
 			p2 = k + step ;
-			twist = numeric::dihedral_degrees( pose.residue(p1).xyz("CB"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("CB") ) ;
+			if ( (pose.residue(p1).aa() == core::chemical::aa_gly ) or ( pose.residue(p2).aa() == core::chemical::aa_gly ) ) {
+				if ( pose.residue(p1).aa() == core::chemical::aa_gly ) {
+					twist = numeric::dihedral_degrees( pose.residue(p1).xyz("2HA"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("CB") ) ;
+				} else {
+					twist = numeric::dihedral_degrees( pose.residue(p1).xyz("CB"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("2HA") ) ;
+				}
+			} else {
+				twist = numeric::dihedral_degrees( pose.residue(p1).xyz("CB"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("CB") ) ;
+			}
 			twist_sum += twist ;
 			n+=1 ;
 		}
@@ -253,16 +261,31 @@ bool StrandCurvatureByLevels::apply( Pose const & pose ) const
 		if ( concavity_reference_residue_ == "last" ) {
 			if ( (center-end_res) % 2 == 0 ) { // same orientation in a regular strand
 				//ref_ba = pose.residue(end_res).xyz("CB") - pose.residue(end_res).xyz("CA") ;
-				ref_ba = pose.residue(center).xyz("CB") - pose.residue(center).xyz("CA") ;
+				if ( pose.residue(center).aa() == core::chemical::aa_gly ) {
+					ref_ba = pose.residue(center).xyz("2HA") - pose.residue(center).xyz("CA") ;
+				} else {
+					ref_ba = pose.residue(center).xyz("CB") - pose.residue(center).xyz("CA") ;
+				}
 			} else {
-				ref_ba = pose.residue(center-1).xyz("CB") - pose.residue(center-1).xyz("CA") ;
+				if ( pose.residue(center-1).aa() == core::chemical::aa_gly ) {
+					ref_ba = pose.residue(center-1).xyz("2HA") - pose.residue(center-1).xyz("CA") ;
+				} else {
+					ref_ba = pose.residue(center-1).xyz("CB") - pose.residue(center-1).xyz("CA") ;
+				}
 			}
 		} else if ( concavity_reference_residue_ == "first" ) {
-			if ( (center-begin_res) % 2 == 0 ) { // same orientation in a regular strand
-				//ref_ba = pose.residue(begin_res).xyz("CB") - pose.residue(begin_res).xyz("CA") ;
-				ref_ba = pose.residue(center).xyz("CB") - pose.residue(center).xyz("CA") ;
+			if ( (center-begin_res) % 2 == 0 ) {
+				if ( pose.residue(center).aa() == core::chemical::aa_gly ) {
+					ref_ba = pose.residue(center).xyz("2HA") - pose.residue(center).xyz("CA") ;
+				} else {
+					ref_ba = pose.residue(center).xyz("CB") - pose.residue(center).xyz("CA") ;
+				}
 			} else {
-				ref_ba = pose.residue(center-1).xyz("CB") - pose.residue(center-1).xyz("CA") ;
+				if ( pose.residue(center-1).aa() == core::chemical::aa_gly ) {
+					ref_ba = pose.residue(center-1).xyz("2HA") - pose.residue(center-1).xyz("CA") ;
+				} else {
+					ref_ba = pose.residue(center-1).xyz("CB") - pose.residue(center-1).xyz("CA") ;
+				}
 			}
 		} else {
 			runtime_assert( concavity_reference_residue_ == "first" || concavity_reference_residue_ == "last"  );

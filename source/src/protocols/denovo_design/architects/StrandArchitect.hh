@@ -42,6 +42,8 @@ typedef utility::vector1< core::Size > StrandExtensions;
 typedef components::SegmentResid SegmentResid;
 typedef utility::vector1< SegmentResid > StrandBulges;
 typedef utility::vector1< StrandBulges > AllowedStrandBulges;
+typedef utility::vector1< SegmentResid > StrandExtended;
+typedef utility::vector1< StrandExtended > AllowedStrandExtended;
 
 ///@brief Architect that creates a beta strand
 class StrandArchitect : public protocols::denovo_design::architects::DeNovoArchitect {
@@ -97,6 +99,12 @@ public:
 	set_bulges( AllowedStrandBulges const & bulges );
 
 	void
+	set_extended( std::string const & extended_str );
+
+	void
+	set_extended( AllowedStrandExtended const & extended );
+
+	void
 	enumerate_permutations();
 
 	static void
@@ -127,6 +135,7 @@ private:
 	StructureDataOP
 	create_motif(
 		StrandBulges const & bulges,
+		StrandExtended const & extended,
 		std::string const & secstruct,
 		std::string const & abego ) const;
 
@@ -145,6 +154,7 @@ private:
 	components::StructureDataCOPs motifs_;
 	Lengths lengths_;
 	AllowedStrandBulges bulges_;
+	AllowedStrandExtended extended_;
 	bool updated_;
 
 };

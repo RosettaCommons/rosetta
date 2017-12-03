@@ -62,7 +62,8 @@ DsspDesignOperation::DsspDesignOperation()
 
 DsspDesignOperation::DsspDesignOperation( DsspDesignOperation const & rval ): parent( rval ),
 	sse_residues_( rval.sse_residues_ ),
-	blueprint_( rval.blueprint_ )
+	blueprint_( rval.blueprint_ ),
+	pose_secstruct_( "" )
 {
 }
 
@@ -183,9 +184,17 @@ DsspDesignOperation::apply( core::pose::Pose const & input_pose, core::pack::tas
 		TR << "Using blueprint..." << std::endl;
 		secstruct = blueprint_->secstruct();
 	} else {
-		core::scoring::dssp::Dssp dssp( pose );
-		dssp.dssp_reduced();
-		secstruct = dssp.get_dssp_secstruct();
+		if ( pose_secstruct_ != "" ) {
+			if ( pose_secstruct_.length() !=  pose.size() ) {
+				utility_exit_with_message("The secondary structure string provided is not the same length as the pose");
+			}
+			TR << "Using unsing SS string..." << std::endl;
+			secstruct = pose_secstruct_ ;
+		} else {
+			core::scoring::dssp::Dssp dssp( pose );
+			dssp.dssp_reduced();
+			secstruct = dssp.get_dssp_secstruct();
+		}
 	}
 	TR << "Secondary structure: " << secstruct << std::endl;
 
@@ -249,6 +258,9 @@ DsspDesignOperation::parse_tag( TagCOP tag , DataMap & )
 	// get secondary structure definition from blueprint file
 	if ( tag->hasOption( "blueprint" ) ) {
 		blueprint_ = BluePrintOP( new BluePrint( tag->getOption< std::string >( "blueprint" ) ) );
+	}
+	if ( tag->hasOption( "pose_secstruct" ) ) {
+		pose_secstruct_ = tag->getOption< std::string >( "pose_secstruct" ) ;
 	}
 
 	for ( utility::tag::TagCOP const sse_tag : tag->getTags() ) {
@@ -340,7 +352,10 @@ void DsspDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		"name", xs_string, "Name of the operation" )
 		+ XMLSchemaAttribute(
 		"blueprint", xs_string,
-		"a blueprint file which specifies the secondary structure at each position" );
+		"a blueprint file which specifies the secondary structure at each position" )
+		+ XMLSchemaAttribute(
+		"pose_secstruct", xs_string,
+		"a secondary structure string that will be used as the pose secondary structure" );
 
 	XMLSchemaComplexTypeGenerator complex_type_generator;
 	complex_type_generator

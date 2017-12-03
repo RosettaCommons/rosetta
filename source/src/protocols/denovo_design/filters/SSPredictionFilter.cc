@@ -58,7 +58,8 @@ SSPredictionFilter::SSPredictionFilter()
 	use_svm_( true ),
 	temp_( 0.6 ),
 	ss_predictor_( /* NULL */ ),
-	psipred_interface_( /* NULL */ )
+	psipred_interface_( /* NULL */ ),
+	secstruct_("")
 {}
 
 // value constructor
@@ -77,7 +78,8 @@ SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 	use_svm_( true ),
 	temp_( 0.6 ),
 	ss_predictor_( /* NULL */ ),
-	psipred_interface_( PsiPredInterfaceOP( new PsiPredInterface( cmd ) ) )
+	psipred_interface_( PsiPredInterfaceOP( new PsiPredInterface( cmd ) ) ),
+	secstruct_("")
 {}
 
 SSPredictionFilter::~SSPredictionFilter()
@@ -151,6 +153,8 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const
 	// if a blueprint is specified, use it. If not, use Dssp or pose metadata.
 	if ( blueprint_ ) {
 		wanted_ss = blueprint_->secstruct();
+	} else if ( secstruct_ != "" ) {
+		wanted_ss = secstruct_;
 	} else if ( components::StructureDataFactory::get_instance()->observer_attached( pose ) ) {
 		wanted_ss = components::StructureDataFactory::get_instance()->get_from_const_pose( pose ).ss();
 	} else {
@@ -217,13 +221,17 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const
 	}
 }
 
+void SSPredictionFilter::set_secstruct(std::string const secstruct){
+	secstruct_ = secstruct ;
+}
+
 //parse the rosetta scripts xml
 void SSPredictionFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & ){
+	core::pose::Pose const & pose ){
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 	use_probability_ = tag->getOption< bool >( "use_probability", use_probability_ );
 	mismatch_probability_ = tag->getOption< bool >( "mismatch_probability", mismatch_probability_ );
@@ -244,12 +252,23 @@ void SSPredictionFilter::parse_my_tag(
 	}
 
 	std::string blueprint_file = tag->getOption< std::string >( "blueprint", "" );
+
 	if ( blueprint_file != "" ) {
 		TR << "Dssp-derived secondary structure will be overridden by user-specified blueprint file." << std::endl;
 		blueprint_ = protocols::parser::BluePrintOP( new protocols::parser::BluePrint( blueprint_file ) );
 		if ( ! blueprint_ ) {
 			utility_exit_with_message("There was an error getting the blueprint file loaded.");
 		}
+	}
+	std::string secstruct = tag->getOption< std::string >( "secstruct", "" );
+	if ( !secstruct.empty() ) {
+		if ( !secstruct.empty() and !blueprint_file.empty() ) {
+			utility_exit_with_message("Please provide either a blueprint or secondary structure sting, not both.");
+		}
+		if ( secstruct.length() !=  pose.size() ) {
+			utility_exit_with_message("The secondary structure string provided is not the same length as the pose");
+		}
+		set_secstruct(secstruct);
 	}
 }
 
@@ -312,7 +331,12 @@ void SSPredictionFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute(
 		"blueprint", xs_string,
 		"If specified, the filter will take desired secondary structure from "
-		"a blueprint file, rather from DSSP on the pose." );
+		"a blueprint file, rather from DSSP on the pose." )
+		+ XMLSchemaAttribute(
+		"secstruct", xs_string,
+		"If specified, the filter will take desired secondary structure from "
+		"this string, rather from DSSP on the pose. Format is: 'L' for loop, 'H' for helix"
+		"and 'E' ");
 
 	protocols::filters::xsd_type_definition_w_attributes(
 		xsd, class_name(),

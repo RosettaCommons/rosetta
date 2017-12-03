@@ -73,6 +73,9 @@ StrandArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap 
 	std::string const bulge_str = tag->getOption< std::string >( "bulge", "" );
 	if ( !bulge_str.empty() ) set_bulges( bulge_str );
 
+	std::string const extended_str = tag->getOption< std::string >( "extended_abego", "" );
+	if ( !extended_str.empty() ) set_extended( extended_str );
+
 	if ( ! updated_ ) enumerate_permutations();
 }
 
@@ -86,6 +89,12 @@ StrandArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	bulge_string.base_type( xs_string );
 	bulge_string.add_restriction( xsr_pattern, "[0-9]+([,;][0-9])+" );
 	xsd.add_top_level_element( bulge_string );
+
+	XMLSchemaRestriction extended_abego_string;
+	extended_abego_string.name( "extended_abego_string" );
+	extended_abego_string.base_type( xs_string );
+	extended_abego_string.add_restriction( xsr_pattern, "[0-9]+([,;][0-9])+" );
+	xsd.add_top_level_element( extended_abego_string );
 
 	XMLSchemaRestriction register_shift_string;
 	register_shift_string.name( "register_shift_string" );
@@ -110,6 +119,7 @@ StrandArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 		+ XMLSchemaAttribute( "length", "strand_length_string", "Comma-separated list of single integers and hyphen-separated ranges to specify all possible strand lengths" )
 		+ XMLSchemaAttribute( "bulge", "bulge_string", "Specifies where bulges occur in a strand" )
 		+ XMLSchemaAttribute( "register_shift", "register_shift_string", "Specifies what register shifts are to be used.  This option is only used in the context of the BetaSheetArchitect." )
+		+ XMLSchemaAttribute( "extended_abego", "extended_abego_string", "Specifies where to place extended ABEGO E. This option is only used in the context of the BetaSheetArchitect. Sintax is the same as for bulges: semicolon-separated positions, indexed by the position relative to the strand of interest, e.g.: 1;3 will use E ABEGO in the first and third position of the strand. To allow a range, use ':', and for enumerating positions use ','." )
 		+ XMLSchemaAttribute( "orientation", "orientation_string", "Specifies the orientation of strands in a beta sheet.  This option is only used in the context of the BetaSheetArchitect." );
 
 	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
@@ -139,6 +149,7 @@ StrandArchitect::design( core::pose::Pose const &, core::Real & random ) const
 StrandArchitect::StructureDataOP
 StrandArchitect::create_motif(
 	StrandBulges const & bulges,
+	StrandExtended const & extended,
 	std::string const & secstruct,
 	std::string const & abego ) const
 {
@@ -146,6 +157,9 @@ StrandArchitect::create_motif(
 	std::string abego_str = abego;
 	for ( auto const & b : bulges ) {
 		if ( b ) abego_str[ b ] = 'A';
+	}
+	for ( auto const & e : extended ) {
+		if ( e ) abego_str[ e ] = 'E';
 	}
 	sd->add_segment( components::Segment( id(), secstruct, abego_str, false, false ) );
 	store_bulges( *sd, bulges );
@@ -163,18 +177,34 @@ StrandArchitect::compute_permutations() const
 		abego << 'X' << std::string( l, 'B' ) << 'X';
 
 		if ( bulges_.empty() ) {
-			motifs.push_back( create_motif( StrandBulges(), secstruct.str(), abego.str() ) );
+			if ( extended_.empty() ) {
+				motifs.push_back( create_motif( StrandBulges(), StrandExtended(), secstruct.str(), abego.str() ) );
+			} else {
+				for ( StrandExtended const & extendedlist : extended_ ) {
+					motifs.push_back( create_motif( StrandBulges(), extendedlist, secstruct.str(), abego.str() ) );
+				}
+			}
 		} else {
-			for ( StrandBulges const & bulgelist : bulges_ ) {
-				motifs.push_back( create_motif( bulgelist, secstruct.str(), abego.str() ) );
+			if ( extended_.empty() ) {
+				for ( StrandBulges const & bulgelist : bulges_ ) {
+					motifs.push_back( create_motif( bulgelist, StrandExtended(), secstruct.str(), abego.str() ) );
+				}
+			} else {
+				for ( StrandBulges const & bulgelist : bulges_ ) {
+					for ( StrandExtended const & extendedlist : extended_ ) {
+						motifs.push_back( create_motif( bulgelist, extendedlist, secstruct.str(), abego.str() ) );
+					}
+				}
 			}
 		}
 	}
+
 	if ( motifs.empty() ) {
 		std::stringstream msg;
 		msg << "StrandArchitect: no strand permutations could be generated with the given user input." << std::endl;
 		msg << "Lengths: " << lengths_ << std::endl;
 		msg << "Bulges: " << bulges_ << std::endl;
+		msg << "Extended ABEGO: " << extended_ << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 	return motifs;
@@ -303,6 +333,29 @@ void
 StrandArchitect::set_bulges( AllowedStrandBulges const & bulges )
 {
 	bulges_ = bulges;
+	needs_update();
+}
+
+void
+StrandArchitect::set_extended( std::string const & extended_str )
+{
+	// extended string if of format LENGTHS_B1;LENGTHS_B2;...;LENGTHS_BN
+	// LENGTHS_B1 .. LENGTHS_BN are lengths strings
+	// e.g. "2,3,4;5:8;10" means there are three extended ABEGO residues.  The first is at 2, 3 or 4.
+	// the second is at 5, 6, 7 or 8.  The third is at 10.
+	AllowedStrandExtended allowed_extended;
+	utility::vector1< std::string > const fields = utility::string_split( extended_str, ';' );
+	for ( std::string const & extended_positions : fields ) {
+		allowed_extended.push_back( parse_length_str< SegmentResid >( extended_positions ) );
+	}
+
+	set_extended( allowed_extended );
+}
+
+void
+StrandArchitect::set_extended( AllowedStrandExtended const & extended )
+{
+	extended_ = extended;
 	needs_update();
 }
 

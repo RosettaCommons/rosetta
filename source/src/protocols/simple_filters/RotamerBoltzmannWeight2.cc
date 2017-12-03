@@ -77,14 +77,22 @@ RotamerBoltzmannWeight2::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
+	core::Real temperature = default_temperature_ ;
+	if ( tag->hasOption( "temperature" ) ) {
+		temperature = tag->getOption< core::Real >( "temperature" ) ;
+	}
+	core::Real lambda = default_lambda_ ;
+	if ( tag->hasOption( "lambda" ) ) {
+		lambda = tag->getOption< core::Real >( "lambda" ) ;
+	}
 	std::string const probability_type = tag->getOption< std::string >( "probability_type", "" );
 	if ( !probability_type.empty() ) {
 		if ( probability_type == "BOLTZMANN_SUM" ) {
 			set_energy_landscape_evaluator( protocols::toolbox::EnergyLandscapeEvaluatorOP(
-				new protocols::toolbox::RotamerBoltzmannWeightEvaluator( default_temperature_, true ) ) );
+				new protocols::toolbox::RotamerBoltzmannWeightEvaluator( temperature, true ) ) );
 		} else if ( probability_type == "PNEAR" ) {
 			set_energy_landscape_evaluator( protocols::toolbox::EnergyLandscapeEvaluatorOP(
-				new protocols::toolbox::MulliganPNearEvaluator( default_temperature_, default_lambda_ ) ) );
+				new protocols::toolbox::MulliganPNearEvaluator( temperature, lambda ) ) );
 		} else {
 			std::stringstream msg;
 			msg << "RotamerBoltzmannWeight2::parse_my_tag(): invalid probability_type specified: " << probability_type << std::endl;
@@ -101,10 +109,14 @@ RotamerBoltzmannWeight2::parse_my_tag(
 			set_score_type( MAX_PROBABILITY );
 		} else if ( score_type == "MODIFIED_DDG" ) {
 			set_score_type( MODIFIED_DDG );
+		} else if ( score_type == "PROBABILITY" ) {
+			set_score_type( PROBABILITY );
+		} else if ( score_type == "MIN_PROBABILITY" ) {
+			set_score_type( MIN_PROBABILITY );
 		} else {
 			std::stringstream msg;
 			msg << "RotamerBoltzmannWeight2::parse_my_tag(): invalid score_type specified: " << score_type << std::endl;
-			msg << "Valid score types are: MEAN_PROBABILITY, MAX_PROBABILITY, MODIFIED_DDG" << std::endl;
+			msg << "Valid score types are: MEAN_PROBABILITY, MAX_PROBABILITY, MODIFIED_DDG, MIN_PROBABILITY, PROBABILITY" << std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 	}
@@ -199,6 +211,18 @@ compute_mean_probability( protocols::toolbox::pose_metric_calculators::RotamerPr
 }
 
 core::Real
+compute_probability( protocols::toolbox::pose_metric_calculators::RotamerProbabilities const & probs )
+{
+	using protocols::toolbox::pose_metric_calculators::RotamerProbabilities;
+
+	core::Real total_prob = 1.0;
+	for ( auto const & prob : probs ) {
+		total_prob = total_prob * prob.second;
+	}
+	return total_prob ;
+}
+
+core::Real
 compute_max_probability( protocols::toolbox::pose_metric_calculators::RotamerProbabilities const & probs )
 {
 	using protocols::toolbox::pose_metric_calculators::RotamerProbabilities;
@@ -210,6 +234,20 @@ compute_max_probability( protocols::toolbox::pose_metric_calculators::RotamerPro
 		if ( rp->second > max ) max = rp->second;
 	}
 	return max;
+}
+
+core::Real
+compute_min_probability( protocols::toolbox::pose_metric_calculators::RotamerProbabilities const & probs )
+{
+	using protocols::toolbox::pose_metric_calculators::RotamerProbabilities;
+
+	if ( probs.empty() ) return 0.0;
+
+	core::Real min = probs.begin()->second;
+	for ( auto rp=(++probs.begin()); rp!=probs.end(); ++rp ) {
+		if ( rp->second < min ) min = rp->second;
+	}
+	return min;
 }
 
 core::Real
@@ -269,6 +307,10 @@ RotamerBoltzmannWeight2::compute_score(
 		return -compute_max_probability( probabilities );
 	} else if ( score_type_ == MODIFIED_DDG ) {
 		return compute_modified_ddg( pose, probabilities );
+	} else if ( score_type_ == MIN_PROBABILITY ) {
+		return -compute_min_probability( probabilities );
+	} else if ( score_type_ == PROBABILITY ) {
+		return -compute_probability( probabilities );
 	} else {
 		utility_exit_with_message( "Unknown score type" );
 	}
@@ -372,8 +414,10 @@ void RotamerBoltzmannWeight2::provide_xml_schema( utility::tag::XMLSchemaDefinit
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute::attribute_w_default( "probability_type", xs_string, "XRW TO DO", "XRW TO DO")
-		+ XMLSchemaAttribute::attribute_w_default( "score_type", xs_string, "XRW TO DO", "XRW TO DO");
+	attlist + XMLSchemaAttribute::attribute_w_default( "probability_type", xs_string, "How probabilities are calculated: BOLTZMANN_SUM -- A simple boltzmann sum defined by 1/SUM( e^( -(score - score_0)/temp ) ), where score_0 is the score with the rotamer in the input pose. The score of the input pose is included in this sum, and therefore it can range from (0, 1]. All rotamers not in the input pose are essentially considered equally \"far\" from the input. PNEAR -- Probability of being near the input state, using a Gaussian to define nearness in sidechain heavy atom RMSD to the input state as proposed by Vikram Mulligan in the Baker Lab. The lambda parameter defines the width of the Gaussian. For a lambda of 0.5, a rotamer with sidechain RMSD of 0.5 will be scored as as half \"near\" and half \"far\" from the input state. PNEAR is defined as NUMERATOR/DENOMINATOR, where NUMERATOR = SUM( e^(-rms^2/lambda^2)*e(-(score - score_0)/temp) ), and DENOMINATOR = SUM( e^( -(score - score_0)/temp ).","BOLTZMANN_SUM")
+		+ XMLSchemaAttribute::attribute_w_default( "score_type", xs_string, " The method used to combine the rotamer probabilities into the single number reported by the filter. Available score types are: MEAN_PROBABILITY -- Returns the mean of all computed probabilities. MAX_PROBABILITY -- Returns the maximum of all computed probabilities. MIN_PROBABILITY -- Returns the minimum of all computed probabilities. PROBABILITY -- Returns the product of all computed probabilities. MODIFIED_DDG -- Returns a ddG value weighted by the rotamer probabilities as described in Fleishman et al. (2011) Protein Sci. 20:753.", "MODIFIED_DDG")
+		+ XMLSchemaAttribute::attribute_w_default( "lambda", xs_string, "The \"lambda\" value to be used in computing \"nearness\" to the input state during rotamer probability calculation. This is only used if \"PNEAR\" is the probability method.", "0.5")
+		+ XMLSchemaAttribute::attribute_w_default( "temperature", xs_string, "The temperature to be used in computing rotamer probabilities", "0.8");
 
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "XRW TO DO");
 
