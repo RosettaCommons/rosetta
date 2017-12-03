@@ -8,3 +8,6 @@
 -use_input_sc
 -ignore_unrecognized_res
 -restore_pre_talaris_2013_behavior
+
+# fragment picker gets confused with some of the ligands that get read in.
+-load_PDB_components false
