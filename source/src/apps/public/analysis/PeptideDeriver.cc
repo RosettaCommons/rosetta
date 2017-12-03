@@ -87,6 +87,13 @@ main( int argc, char * argv[] ) {
 			option[ in::missing_density_to_jump ].value( true );
 		}
 
+		// ignore unrecognized residues as in some cases this has
+		if ( !option[ in::ignore_unrecognized_res ].user() ) {
+			option[ in::ignore_unrecognized_res ].value( true );
+			TR << "ignoring unknown residues in input structure. If this is not the desired behavior, run PeptideDeriver with -ignore_unrecognized_res false" << std::endl;
+		}
+
+
 		// disable PDB output, method 2
 		// SilentFileJobOutputterOP job_out = new SilentFileJobOutputter;
 		// job_out->set_write_no_structures();
