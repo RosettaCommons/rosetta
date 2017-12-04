@@ -229,6 +229,10 @@ startswith(std::string const & haystack, std::string const & needle);
 bool
 endswith(std::string const & haystack, std::string const & needle);
 
+///@brief Does the string contain the other string?  This is purely convenience as I hate the C++ syntax to do this.
+bool
+contains( std::string const & haystack, std::string const & needle);
+
 /// @brief Take all of the contents from the std::istream "in" and put them in the std::string "out".
 /// @details Useful for reading the full contents of a file into a string.
 void
@@ -340,6 +344,10 @@ replace_in( std::string & s, const char from, const char *to )
 /// @brief Generate new string from 'source' by replacing all occurrences of 'from' to 'to' string.
 std::string
 replace_in( std::string const & source, std::string const & from, std::string const & to );
+
+/// @brief Call boost to erase all instances of erase_str from source.
+std::string
+remove_from_string( std::string const & source, std::string const & erase_str);
 
 /// @brief String accepted as a true value?
 bool is_true_string( std::string const & value_str );

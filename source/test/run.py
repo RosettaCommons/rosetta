@@ -510,7 +510,7 @@ def parse_valgrind_options(options, option_parser):
         sys.exit(1)
 
 def main(args):
-    ''' Script to run Unit test in Rosetta3.
+    ''' Script to run Unit test in Rosetta3.  For debugging, you must use the --unmute option to unmute tracers you are interested in. 
     '''
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)
@@ -548,13 +548,13 @@ def main(args):
     parser.add_option('--mute',
       default=[],
       action="append",
-      help="Mute specified tracer channels.",
+      help="Mute specified tracer channels. (Note - ALL are MUTED by default!)",
     )
 
     parser.add_option('--unmute',
       default=[],
       action="append",
-      help="UnMute specified tracer channels.",
+      help="UnMute specified tracer channels. (You will need this for debugging as ALL CHANNELS ARE MUTED BY DEFAULT)",
     )
 
     parser.add_option('--levels',
@@ -565,7 +565,7 @@ def main(args):
 
     parser.add_option('--level',
       action="append",
-      help="Tracer out:level configuration",
+      help="Tracer out:level configuration (For example, 400/500)",
     )
 
     parser.add_option("-c", '--compiler',

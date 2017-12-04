@@ -15,6 +15,7 @@
 #include <--path--/--class--Creator.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
@@ -23,12 +24,14 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-
+#include <core/pack/task/operation/task_op_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
+    using namespace core::pack::task::operation;
 
 --class--::--class--():
 	TaskOperation()
@@ -39,7 +42,7 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --class--::~--class--() {}
 
-core::task::operation::TaskOperationOP
+TaskOperationOP
 --class--::clone() const {
 	return TaskOperationOP( new --class--( *this ) );
 }
@@ -60,7 +63,7 @@ void
 
 
 void
---class--::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & ) const {
+--class--::apply( core::pose::Pose const & , core::pack::task::PackerTask & ) const {
 
 
 }
@@ -74,10 +77,13 @@ void
 --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
+    AttributeList attlist;
+    //attlist + XMLSchemaAttribute("motif", xs_string, motif_str);
 
+    task_op_schema_w_attributes( xsd, keyname(), attlist, "DOCUMENTATION" );
 }
 
-core::pack::task::operation::TaskOperationOP
+TaskOperationOP
 --class--Creator::create_task_operation() const
 {
 	return core::pack::task::operation::TaskOperationOP( new --class-- );

@@ -211,6 +211,7 @@ sources = {
 		"ResfileReader",
 		"fix_his_tautomer",
 		"Resfile_Silent",
+		"TaskUtilTests",
 		"operation/TaskOperations",
 		"operation/TaskOperationFactory",
 		"operation/OperateOnResidueSubset",
@@ -540,6 +541,7 @@ sources = {
 		"SequenceAlignment",
 		"SequenceProfile",
 		"SequenceUtil",
+		"SequenceMotifUtilTests",
 	],
 	"util" : [
 		#"ChainbreakUtil",

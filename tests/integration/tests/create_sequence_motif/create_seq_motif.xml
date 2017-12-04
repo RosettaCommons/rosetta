@@ -1,0 +1,20 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="select" resnums="24L,24H" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<CreateSequenceMotifMover name="motif_creator" motif="VT[^S][%PROPERTY AROMATIC][ST]X" residue_selector="select" pack_neighbors="false" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="motif_creator" />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

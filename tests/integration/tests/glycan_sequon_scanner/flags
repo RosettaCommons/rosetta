@@ -1,0 +1,3 @@
+-parser:protocol create_glycan_seq_motif.xml
+-ignore_unrecognized_res
+-s 3nps.pdb

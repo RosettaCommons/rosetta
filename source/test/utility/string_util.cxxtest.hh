@@ -316,4 +316,21 @@ public:
 		}
 
 	}
+	void test_remove_from_string() {
+		std::string s = "MY%STRING";
+		std::string new_s = utility::remove_from_string(s, "%");
+
+		std::string s2 = "+PVT+";
+		std::string new_s2 = utility::remove_from_string(s2, "+");
+
+		TS_ASSERT_EQUALS( new_s, "MYSTRING");
+		TS_ASSERT_EQUALS( new_s2, "PVT");
+
+	}
+
+	void test_contains() {
+		std::string s = "MY%STRING";
+		TS_ASSERT( utility::contains( s, "%" ));
+	}
+
 };

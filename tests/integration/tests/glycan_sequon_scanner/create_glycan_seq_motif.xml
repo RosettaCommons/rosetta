@@ -1,0 +1,20 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="select" resnums="24L,24H" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<CreateGlycanSequonMover name="motif_creator" residue_selector="select" basic_enhanced_n_sequon="%%enhanced%%" design_x_positions="%%design_x%%" pack_neighbors="1"/>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="motif_creator" />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

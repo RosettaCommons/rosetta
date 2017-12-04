@@ -18,14 +18,19 @@
 #include <protocols/antibody/design/AntibodySeqDesignTFCreator.fwd.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.fwd.hh>
 
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/operation/TaskOperations.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
-#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
+#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/Loop.fwd.hh>
+
 
 #include <utility/vector1.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

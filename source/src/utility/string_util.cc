@@ -11,6 +11,8 @@
 ///
 /// @brief  Some std::string helper functions.
 /// @author Sergey Lyskov
+/// @author Jared Adolf-Bryfogle
+
 #include <platform/types.hh>
 
 #include <utility/numbers.hh>
@@ -371,6 +373,17 @@ bool endswith(std::string const & haystack, std::string const & needle)
 	if ( haystack.length() < needle.length() ) return false;
 	else return ( haystack.compare(haystack.size()-needle.size(),needle.size(),needle) == 0 );
 }
+
+bool contains( std::string const & haystack, std::string const & needle)
+{
+	size_t pos = haystack.find( needle);
+	if ( pos != std::string::npos ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 
 #ifdef ANDROID  // the block method causes a bad_alloc exception for some unkown reason with NDK gnustl
 void slurp(std::istream & in, std::string & out)
@@ -943,5 +956,14 @@ replace_in( std::string const & name_in, std::string const & find_string, std::s
 	}
 	return name;
 }
+
+
+std::string
+remove_from_string( std::string const & source, std::string const & remove){
+
+	std::string new_s = boost::algorithm::erase_all_copy( source, remove);
+	return new_s;
+}
+
 
 } // namespace utility

@@ -101,6 +101,15 @@ public:
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public:
+
+	///@brief Return an editable reference to the stored residue subset.
+	///  Please be careful with this.  Use with knowledge.
+	///    It is here to speed up some parts instead of creating a new subset at each point in some protocol.
+	///
+	ResidueSubset &
+	subset();
+
 private:
 
 	ResidueSubset subset_;

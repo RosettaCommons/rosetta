@@ -140,6 +140,7 @@ private:
 	utility::vector1< std::list< ResfileCommandCOP > > commands_;
 };
 
+
 /// @brief abstract/interface class for Resfile reader command objects
 class ResfileCommand : public utility::pointer::ReferenceCount
 {
@@ -163,6 +164,13 @@ public:
 		Size resid
 	) const = 0;
 
+	//JAB - although this calls the name() function, the name function implemented in each command is static,
+	// and the design of the ResfileReader requires it to be.
+	// Since it can't be a virtual function in the base class,
+	// we can't call it when we don't know the complete type of the class.
+	//Hence this pure virtual.
+	virtual std::string
+	get_name() = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -189,6 +197,12 @@ public:
 	) const;
 
 	static std::string name() {return "NATRO";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 /// @brief NATAA allows repacking but no sequence changes (all rotamers are of the original residue)
@@ -211,6 +225,12 @@ public:
 	) const;
 
 	static std::string name() {return "NATAA";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 /// @brief ALLAA is deprecated; allows repacking and designing to any canonical residue (default state of PackerTask)
@@ -233,6 +253,12 @@ public:
 	) const;
 
 	static std::string name() {return "ALLAA";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 /// @brief ALLAAxc allows repacking and designing to any canonical noncysteine residue
@@ -255,6 +281,12 @@ public:
 	) const;
 
 	static std::string name() {return "ALLAAXC";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 /// @brief allows repacking and designing to any canonical residue (default state of PackerTask)
@@ -277,6 +309,13 @@ public:
 	) const;
 
 	static std::string name() {return "ALLAAWC";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
+
 };
 
 /// @brief PIKAA allows residues specifed in a following string and packing
@@ -299,6 +338,12 @@ public:
 	) const;
 
 	static std::string name() {return "PIKAA";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 private:
 	utility::vector1< bool > keep_canonical_aas_;
 	std::list< chemical::AA > na_allowed_; // nucleic acids which are allowed.
@@ -324,6 +369,12 @@ public:
 	) const;
 
 	static std::string name() {return "PIKNA";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 private:
 	utility::vector1< chemical::AA > keep_nas_;
 };
@@ -348,6 +399,12 @@ public:
 	) const;
 
 	static std::string name() {return "PIKRNA";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 private:
 	utility::vector1< chemical::AA > keep_rnas_;
 };
@@ -372,6 +429,12 @@ public:
 	) const;
 
 	static std::string name() {return "NOTAA";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 private:
 	utility::vector1< bool > keep_aas_;
 };
@@ -396,6 +459,12 @@ public:
 	) const;
 
 	static std::string name() {return "EMPTY";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 /// @brief RESET restores the list of allowd residue types to the CAAs
@@ -418,7 +487,44 @@ public:
 	) const;
 
 	static std::string name() {return "RESET";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
+
+/// @brief Allows designing on ANY residue type Property. (Only currently works with Cannonical AAs)
+/// JAB
+class PROPERTY : public ResfileCommand
+{
+public:
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new PROPERTY ); }
+
+	virtual
+	void initialize_from_tokens(
+		utility::vector1< std::string > const & tokens,
+		Size & which_token,
+		Size resid
+	);
+
+	virtual
+	void residue_action(
+		PackerTask &,
+		Size resid
+	) const;
+
+	static std::string name() {return "PROPERTY";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
+	std::string property_;
+};
+
 
 /// @brief POLAR allows polar residues and packing
 class POLAR : public ResfileCommand
@@ -440,6 +546,11 @@ public:
 	) const;
 
 	static std::string name() {return "POLAR";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
 
 };
 
@@ -463,9 +574,15 @@ public:
 	) const;
 
 	static std::string name() {return "APOLAR";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
-/// @brief APOLA is deprecated, it calls APOLAR to allow nonpolar residues and packing
+/// @brief APOLA is a deprecated version of APOLAR allows nonpolar residues and packing
 class APOLA : public ResfileCommand
 {
 public:
@@ -485,6 +602,71 @@ public:
 	) const;
 
 	static std::string name() {return "APOLA";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
+};
+
+/// @brief CHARGED allows charged residues and packing
+/// JAB
+class CHARGED : public ResfileCommand
+{
+public:
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new CHARGED ); }
+
+	virtual
+	void initialize_from_tokens(
+		utility::vector1< std::string > const & tokens,
+		Size & which_token,
+		Size resid
+	);
+
+	virtual
+	void residue_action(
+		PackerTask &,
+		Size resid
+	) const;
+
+	static std::string name() {return "CHARGED";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
+};
+
+
+///@brief AROMATIC allows designing only aromatic residues.
+/// JAB
+class AROMATIC : public ResfileCommand
+{
+public:
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new AROMATIC ); }
+
+	virtual
+	void initialize_from_tokens(
+		utility::vector1< std::string > const & tokens,
+		Size & which_token,
+		Size resid
+	);
+
+	virtual
+	void residue_action(
+		PackerTask &,
+		Size resid
+	) const;
+
+	static std::string name() {return "AROMATIC";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 ////////end of mode-style options////////////////////////
@@ -515,7 +697,15 @@ public:
 		Size resid
 	) const;
 
+
+
 	static std::string name() {return "EX";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 private:
 	bool           aro_specified_;
 	Size           which_chi_;
@@ -542,6 +732,12 @@ public:
 	) const;
 
 	static std::string name() {return "NC";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 private:
 	std::string nc_to_include_;
 };
@@ -567,6 +763,11 @@ public:
 
 	static std::string name() {return "EX_CUTOFF";}
 
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 private:
 	Size ex_cutoff_;
 };
@@ -591,6 +792,12 @@ public:
 	) const;
 
 	static std::string name() {return "USE_INPUT_SC";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 /// @brief AUTO suggests that a packer can/should reconsider the design setting at a/each residue
@@ -615,6 +822,12 @@ public:
 	) const;
 
 	static std::string name() {return "AUTO";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 /// @brief SCAN suggests to some packing routines that if there are multiple type choices for this residue, then each of them should be considered explicitly in one way or another
@@ -639,6 +852,11 @@ public:
 	) const;
 
 	static std::string name() {return "SCAN";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
 };
 
 /// @brief TARGET flags the position as "targeted", and can optionally specify a "targeted" type
@@ -668,6 +886,12 @@ public:
 	) const;
 
 	static std::string name() {return "TARGET";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 private:
 	std::string argstring_;
 };
@@ -694,6 +918,12 @@ public:
 	) const;
 
 	static std::string name() {return "NO_ADDUCTS";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 /// @brief FIX_HIS_TAUTOMER: when a histidine is present when the PackerTask is initialized, this flag will fix its tautomer (whether its hydrogen is on ND1 or NE2.  Does nothing if not histidine at initialization (meaning if it mutates to histidine later this flag will have no effect).
@@ -716,6 +946,12 @@ public:
 	) const;
 
 	static std::string name() {return "FIX_HIS_TAUTOMER";}
+
+	virtual std::string
+	get_name() {
+		return name();
+	}
+
 };
 
 ///////////end of other options//////////////////////////
@@ -728,9 +964,15 @@ get_token(
 	const utility::vector1<std::string> & tokens,
 	const bool make_upper_case = true);
 
-/// @brief utility function for resfile reader
+/// @brief Split the line into vector of strings.
+///   Each separated string is a 'token'
 utility::vector1< std::string >
 tokenize_line( std::istream & inputstream );
+
+/// @brief Split the line into vector of strings.
+///   Each separated string is a 'token'
+utility::vector1< std::string >
+tokenize_line( std::string const & line);
 
 /// @brief utility for resfile reader, commands MUST be entered into this hard-coded map
 std::map< std::string, ResfileCommandOP >

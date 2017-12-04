@@ -942,6 +942,7 @@ sources = {
 		"SimpleScoringScheme",
 		"SSManager",
 		"SWAligner",
+		"sequence_motif",
 		"util",
 	],
 

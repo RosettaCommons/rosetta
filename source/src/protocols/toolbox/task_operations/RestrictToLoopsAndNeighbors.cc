@@ -112,11 +112,11 @@ void RestrictToLoopsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDef
 	// From parent.
 	RestrictToLoops::provide_attributes( attributes );
 	attributes
-		+ XMLSchemaAttribute( "include_neighbors", xsct_rosetta_bool , "XRW TO DO" )
-		+ XMLSchemaAttribute( "design_neighbors", xsct_rosetta_bool , "XRW TO DO" )
-		+ XMLSchemaAttribute( "cutoff_dist", xsct_real , "XRW TO DO" );
+		+ XMLSchemaAttribute( "include_neighbors", xsct_rosetta_bool , "Should we include neighbors?" )
+		+ XMLSchemaAttribute( "design_neighbors", xsct_rosetta_bool , "Should we design neighbors?  Default False." )
+		+ XMLSchemaAttribute( "cutoff_dist", xsct_real , "Distance for neighbor detection. default 10.0" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "A TaskOp that restricts packing and/or design to the loops specified and optionally the neighbors." );
 }
 
 void RestrictToLoopsAndNeighbors::apply( Pose const & pose, PackerTask & task ) const

@@ -164,6 +164,7 @@ sources = {
 		"ResfileReader",
 		"RotamerSampleOptions",
 		"TaskFactory",
+		"util",
 	],
 	"core/pack/task/rna": [
 		"RNA_ResidueLevelTask",

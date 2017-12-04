@@ -49,10 +49,11 @@
 #include <protocols/docking/util.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
-#include <protocols/loops/loops_main.hh>
+#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loops.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>

@@ -129,6 +129,10 @@ ReturnResidueSubsetSelector::apply(
 	return subset_;
 }
 
+ResidueSubset &
+ReturnResidueSubsetSelector::subset(){
+	return subset_;
+}
 
 } //core
 } //select

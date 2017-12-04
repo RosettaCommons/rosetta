@@ -1,0 +1,13 @@
+cd %(workdir)s
+
+# Do the tests actually exist?
+[ -x %(bin)s/glycan_relax.%(binext)s ] || exit 1
+
+%(bin)s/glycan_relax.%(binext)s %(additional_flags)s @flags -database %(database)s -parser:script_vars enhanced=0 design_x=0\
+    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+%(bin)s/glycan_relax.%(binext)s %(additional_flags)s @flags -database %(database)s -parser:script_vars enhanced=1 design_x=1\
+    -run:constant_seed -nodelay 2>&1 | egrep -vf ../../ignore_list > log2
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+

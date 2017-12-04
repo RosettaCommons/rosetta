@@ -855,6 +855,53 @@ RESET::residue_action(
 /// @brief POLAR allows polar residues and packing
 ///polar-ness is ultimately determined in residue parameter file
 void
+PROPERTY::initialize_from_tokens(
+	utility::vector1< std::string > const & tokens,
+	Size & which_token,
+	Size /*resid*/
+)
+{
+	debug_assert( get_token( which_token, tokens ) == name() );
+	++which_token;
+	property_ = get_token( which_token, tokens );
+	++which_token;
+}
+
+void
+PROPERTY::residue_action(
+	PackerTask & task,
+	Size resid
+) const
+{
+	using namespace chemical;
+
+	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, false );
+
+	for ( ResidueLevelTask::ResidueTypeCOPListConstIter
+			restype_iter = task.residue_task( resid ).allowed_residue_types_begin(),
+			restype_iter_end = task.residue_task( resid ).allowed_residue_types_end();
+			restype_iter != restype_iter_end; ++restype_iter ) {
+		if ( (*restype_iter)->aa() > num_canonical_aas ) {
+			std::stringstream err_msg;
+			err_msg  << "PROPERTY mode read for residue " << resid << " which has been instructed to use non-canonical amino acids.";
+			onError(err_msg.str());
+			continue;
+		}
+		if ( (*restype_iter)->has_property( property_ ) ) {
+			keep_aas[ (*restype_iter)->aa() ] = true;
+		}
+	}
+	std::string mode( property_ );
+	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas, mode );
+
+}
+
+
+
+///////////////////////////////////////////////////////////////////////
+/// @brief POLAR allows polar residues and packing
+///polar-ness is ultimately determined in residue parameter file
+void
 POLAR::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
 	Size & which_token,
@@ -893,6 +940,87 @@ POLAR::residue_action(
 	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas, mode );
 
 }
+
+void
+CHARGED::initialize_from_tokens(
+	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
+	Size & which_token,
+	Size /*resid*/
+)
+{
+	debug_assert( get_token( which_token, tokens ) == name() );
+	++which_token;
+}
+
+void
+CHARGED::residue_action(
+	PackerTask & task,
+	Size resid
+) const
+{
+	using namespace chemical;
+
+	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, false );
+
+	for ( ResidueLevelTask::ResidueTypeCOPListConstIter
+			restype_iter = task.residue_task( resid ).allowed_residue_types_begin(),
+			restype_iter_end = task.residue_task( resid ).allowed_residue_types_end();
+			restype_iter != restype_iter_end; ++restype_iter ) {
+		if ( (*restype_iter)->aa() > num_canonical_aas ) {
+			std::stringstream err_msg;
+			err_msg  << "CHARGED mode read for residue " << resid << " which has been instructed to use non-canonical amino acids.";
+			onError(err_msg.str());
+			continue;
+		}
+		if ( (*restype_iter)->is_charged() ) {
+			keep_aas[ (*restype_iter)->aa() ] = true;
+		}
+	}
+	std::string mode( "CHARGED");
+	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas, mode );
+
+}
+
+void
+AROMATIC::initialize_from_tokens(
+	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
+	Size & which_token,
+	Size /*resid*/
+)
+{
+	debug_assert( get_token( which_token, tokens ) == name() );
+	++which_token;
+}
+
+void
+AROMATIC::residue_action(
+	PackerTask & task,
+	Size resid
+) const
+{
+	using namespace chemical;
+
+	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, false );
+
+	for ( ResidueLevelTask::ResidueTypeCOPListConstIter
+			restype_iter = task.residue_task( resid ).allowed_residue_types_begin(),
+			restype_iter_end = task.residue_task( resid ).allowed_residue_types_end();
+			restype_iter != restype_iter_end; ++restype_iter ) {
+		if ( (*restype_iter)->aa() > num_canonical_aas ) {
+			std::stringstream err_msg;
+			err_msg  << "AROMATIC mode read for residue " << resid << " which has been instructed to use non-canonical amino acids.";
+			onError(err_msg.str());
+			continue;
+		}
+		if ( (*restype_iter)->is_aromatic() ) {
+			keep_aas[ (*restype_iter)->aa() ] = true;
+		}
+	}
+	std::string mode( "AROMATIC");
+	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas, mode );
+
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 /// @brief APOLAR allows nonpolar residues and packing
@@ -1301,9 +1429,12 @@ create_command_map()
 	command_map[ NOTAA::name() ] = ResfileCommandOP( new NOTAA );
 	command_map[ EMPTY::name() ] = ResfileCommandOP( new EMPTY );
 	command_map[ RESET::name() ] = ResfileCommandOP( new RESET );
+	command_map[ PROPERTY::name() ] = ResfileCommandOP( new PROPERTY );
 	command_map[ POLAR::name() ] = ResfileCommandOP( new POLAR );
 	command_map[ APOLAR::name() ] = ResfileCommandOP( new APOLAR );
 	command_map[ APOLA::name() ] = ResfileCommandOP( new APOLA );
+	command_map[ AROMATIC::name() ] = ResfileCommandOP( new AROMATIC );
+	command_map[ CHARGED::name() ] = ResfileCommandOP( new CHARGED );
 	command_map[ EX::name() ] = ResfileCommandOP( new EX );
 	command_map[ EX_CUTOFF::name() ] = ResfileCommandOP( new EX_CUTOFF );
 	command_map[ NC::name() ] = ResfileCommandOP( new NC );
@@ -1457,9 +1588,16 @@ utility::vector1< std::string >
 tokenize_line( std::istream & inputstream )
 {
 
-	utility::vector1< std::string > tokens;
 	std::string input_line;
 	std::getline( inputstream, input_line );
+
+	return tokenize_line( input_line );
+}
+
+utility::vector1< std::string >
+tokenize_line( std::string const & input_line){
+
+	utility::vector1< std::string > tokens;
 
 	unsigned int llength = input_line.size();
 	unsigned int processing = 0;

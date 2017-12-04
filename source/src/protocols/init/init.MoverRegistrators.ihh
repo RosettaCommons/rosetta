@@ -72,9 +72,10 @@ static MoverRegistrator< canonical_sampling::TrialCounterObserverCreator > reg_T
 static MoverRegistrator< constraint_generator::AddConstraintsCreator > reg_AddConstraintsCreator;
 static MoverRegistrator< constraint_generator::RemoveConstraintsCreator > reg_RemoveConstraintsCreator;
 
+static MoverRegistrator< carbohydrates::CreateGlycanSequonMoverCreator > reg_CreateGlycanSequonMoverCreator;
 static MoverRegistrator< carbohydrates::GlycanRelaxMoverCreator > reg_GlycanRelaxMoverCreator;
 static MoverRegistrator< carbohydrates::GlycanTreeMinMoverCreator > reg_GlycanTreeMinMoverCreator;
-static MoverRegistrator<carbohydrates::GlycanTreeRelaxCreator > reg_GlycanTreeRelaxCreator;
+static MoverRegistrator< carbohydrates::GlycanTreeRelaxCreator > reg_GlycanTreeRelaxCreator;
 static MoverRegistrator< carbohydrates::LinkageConformerMoverCreator > reg_LinkageConformerMoverCreator;
 static MoverRegistrator< carbohydrates::SimpleGlycosylateMoverCreator > reg_SimpleGlycosylateMoverCreator;
 
@@ -464,6 +465,7 @@ static MoverRegistrator< simple_moves::ConstraintSetMoverCreator > reg_Constrain
 static MoverRegistrator< simple_moves::ContingentAcceptMoverCreator > reg_ContingentAcceptMoverCreator;
 static MoverRegistrator< simple_moves::CopyRotamerMoverCreator > reg_CopyRotamerMoverCreator;
 static MoverRegistrator< simple_moves::CoupledMoverCreator> reg_CoupledMoverCreator;
+static MoverRegistrator< simple_moves::CreateSequenceMotifMoverCreator > reg_CreateSequenceMotifMoverCreator;
 static MoverRegistrator< simple_moves::CstInfoMoverCreator> reg_CstInfoMoverCreator;
 static MoverRegistrator< simple_moves::DeleteChainMoverCreator> reg_DeleteChainMoverCreator;
 static MoverRegistrator< simple_moves::DeleteChainsMoverCreator> reg_DeleteChainsMoverCreator;

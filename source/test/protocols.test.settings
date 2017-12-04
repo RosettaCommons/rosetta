@@ -598,6 +598,7 @@ sources = {
 	],
 
 	"toolbox/task_operations" : [
+		"CreateSequenceMotifOperationTests",
 		"ConservativeDesignOperationTests",
 		"DsspDesignOperationTests",
 		"LimitAromaChi2Operation",
@@ -991,6 +992,7 @@ testinputfiles = [
 	"stepwise/modeler/align/seq_with_AAmismatch.fasta",
 	"stepwise/monte_carlo/mover/up_to_ua_handle_t_loop_3l0u_RNA.pdb",
 	"stepwise/monte_carlo/mover/t_loop.fasta",
+	"toolbox/task_operations/SequenceMotifOperation.u",
 	"toolbox/task_operations/ConservativeDesignOperation_defaults.u",
 	"toolbox/task_operations/ConservativeDesignOperation_no_native.u",
 	"toolbox/task_operations/ConservativeDesignOperation_blosum62.u",
