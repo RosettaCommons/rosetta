@@ -101,6 +101,11 @@ directory it is built to, and what settings it ultimately uses.
     # and then pull out just the relevant settings.
     # Then we set things up for the appropriate compiler type
     # and then redo the setup with the full options.
+
+    if requested['os'] == '*' or not requested['os']:
+        # Need to get os, as the compiler command may be compiler-dependent in the setup files
+        requested.os = setup_platforms.select_os(supported, requested.os)
+
     naive_settings = setup_build_settings(requested)
     naive_environment = setup_environment(naive_settings)
     if 'CXX' in naive_environment:
