@@ -454,7 +454,9 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 			if ( pose.residue_type( res_to_add ).is_RNA() ) {
 				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res_to_add );
 				if ( !pose.residue_type( res_to_add+1).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ) {
-					add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add+1 );
+					if ( pose.residue_type( res_to_add+1 ).is_RNA() ) {
+						add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add+1 );
+					}
 				}
 			}
 		}

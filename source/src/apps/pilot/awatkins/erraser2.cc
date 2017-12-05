@@ -46,6 +46,7 @@
 #include <core/pose/rna/RNA_SuiteName.hh>
 
 // basic
+#include <utility/file/file_sys_util.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -236,12 +237,51 @@ erraser2_test()
 	erraser_minimizer.scorefxn( scorefxn );
 	erraser_minimizer.edens_scorefxn( scorefxn );
 
+	{ // First pass: constrain P, initial FT
+		TR << "First pass preminimization..." << std::endl;
+		std::stringstream minimized_name;
+		minimized_name << option[ in::file::s ]()[1] << "_preminimized_round_1.pdb";
+		//if ( !utility::file::file_exists( minimized_name.str() ) ) {
+		erraser_minimizer.constrain_phosphate( true );
+		erraser_minimizer.apply( *start_pose );
+		start_pose->dump_pdb( minimized_name.str() );
+		//}
+	}
+
+	{ // Second pass: constrain P, fun FT
+		std::stringstream minimized_name;
+		minimized_name << option[ in::file::s ]()[1] << "_preminimized_round_2.pdb";
+		//if ( !utility::file::file_exists( minimized_name.str() ) ) {
+		start_pose->fold_tree( emm_ft ); // no-op if none specified
+		erraser_minimizer.constrain_phosphate( true );
+		erraser_minimizer.apply( *start_pose );
+		start_pose->dump_pdb( minimized_name.str() );
+		start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
+		//}
+	}
+
+	{ // First pass: no constrain P, fun FT
+		std::stringstream minimized_name;
+		minimized_name << option[ in::file::s ]()[1] << "_preminimized_round_3.pdb";
+		//if ( !utility::file::file_exists( minimized_name.str() ) ) {
+		start_pose->fold_tree( emm_ft ); // no-op if none specified
+		erraser_minimizer.constrain_phosphate( false );
+		erraser_minimizer.apply( *start_pose );
+		start_pose->dump_pdb( minimized_name.str() );
+		start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
+		//}
+	}
+
+
+
+
+
 	for ( Size ii = 1; ii <= nrounds; ++ii ) {
 		std::stringstream filename_stream;
-		filename_stream << "minimized_" << ii << ".pdb";
+		filename_stream << option[ in::file::s ]()[1] << "minimized_" << ii << ".pdb";
 		std::string const minimized_name = filename_stream.str();
 		filename_stream.str( "" );
-		filename_stream << "resampled_" << ii << ".pdb";
+		filename_stream << option[ in::file::s ]()[1] << "resampled_" << ii << ".pdb";
 		std::string const resampled_name = filename_stream.str();
 
 		start_pose->fold_tree( emm_ft ); // no-op if none specified
@@ -262,7 +302,10 @@ erraser2_test()
 	start_pose->fold_tree( emm_ft ); // no-op if none specified
 	erraser_minimizer.apply( *start_pose );
 	show_accuracy_report( *start_pose, "FINAL", 0/*, TR*/ );
-	start_pose->dump_pdb( "FINISHED.pdb" );
+
+	std::stringstream filename_stream;
+	filename_stream << option[ in::file::s ]()[1] << "FINISHED.pdb";
+	start_pose->dump_pdb( filename_stream.str() );
 }
 
 void resample_full_model( pose::Pose & start_pose, ScoreFunctionOP const & scorefxn, utility::vector1< Size > const & definite_residues ) {

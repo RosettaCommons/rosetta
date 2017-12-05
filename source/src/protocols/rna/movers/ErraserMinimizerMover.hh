@@ -127,6 +127,9 @@ public:
 	void
 	edens_scorefxn( core::scoring::ScoreFunctionOP const & sfxn ) { edens_scorefxn_ = sfxn; }
 
+	void
+	constrain_phosphate( bool const setting ) { constrain_phosphate_ = setting; }
+
 private:
 
 	utility::vector1< std::pair< AtomID, AtomID > > bonded_atom_list_;
