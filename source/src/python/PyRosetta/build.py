@@ -17,7 +17,7 @@
 
 from __future__ import print_function
 
-import os, sys, argparse, platform, subprocess, imp, shutil, codecs, distutils.dir_util, json
+import os, sys, argparse, platform, subprocess, imp, shutil, codecs, distutils.dir_util, json, hashlib
 
 from collections import OrderedDict
 
@@ -27,6 +27,8 @@ elif sys.platform == "cygwin" : Platform = "cygwin"
 elif sys.platform == "win32" : Platform = "windows"
 else: Platform = "unknown"
 PlatformBits = platform.architecture()[0][:2]
+
+_script_version_ = '1.0'  # used as seed for dependency tracking
 
 _machine_name_ = os.uname()[1]
 
@@ -107,10 +109,14 @@ def execute(message, command_line, return_='status', until_successes=False, term
 
 
 def update_source_file(file_name, data):
-    ''' write data to a file but only if file does not exist or it content different from data '''
+    ''' write data to a file but only if file does not exist or it content different from data
+        return True if file was written and False otherwise
+    '''
     if( not os.path.isfile(file_name)  or  open(file_name).read() != data ):
         print('Writing '+ file_name)
         with open(file_name, 'w') as f: f.write(data)
+        return True
+    return False
 
 
 def get_compiler_family():
@@ -250,18 +256,51 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False, docum
     return p
 
 
-def copy_supplemental_files(rosetta_source_path):
+def symlink(source, dest):
+    ''' Similar to os.symlink but if dest is alread exisist and if type of *source and *dest does not match or if link points to different location : remove dest first
+    '''
+    relative_source = os.path.relpath( os.path.abspath(source), os.path.dirname(dest) )
+
+    if os.path.islink(dest):
+        if os.readlink(dest) == relative_source: return
+        else: os.unlink(dest)
+    elif os.path.isdir(dest): shutil.rmtree(dest)
+    elif os.path.isfile(dest): os.remove(dest)
+
+    os.symlink(relative_source, dest)
+
+
+def symlink_tree(source, dest):
+    ''' Similar to symlink(...) above but recursivly recreate dir tree at dest and symlink all files
+    '''
+    source = os.path.abspath(source)
+    for dir_name, dirs, files in os.walk(source):
+        prefix = dir_name[len(source):] + '/'
+
+        for d in dirs:
+            dst = dest + prefix + d
+            if not os.path.isdir(dst): os.makedirs(dst)
+
+        for f in files: symlink(source + prefix + f, dest + prefix + f)
+
+
+
+def link_supplemental_files(rosetta_source_path):
     prefix = get_binding_build_root(rosetta_source_path, build=True)
     source = rosetta_source_path + '/src/python/PyRosetta/src'
 
-    distutils.dir_util.copy_tree(source, prefix, update=False)
+    #distutils.dir_util.copy_tree(source, prefix, update=False)
+    symlink_tree(source, prefix)
 
-    database_dest = prefix + '/pyrosetta/database'
-    if os.path.islink(database_dest): os.unlink(database_dest)
-    elif os.path.isdir(database_dest): shutil.rmtree(database_dest)
-    os.symlink('../../../../../../../../../database', database_dest)
 
-    if not os.path.islink(prefix + '/apps'): os.symlink('../../../../../../../scripts/PyRosetta/public', prefix + '/apps')  # creating link to PyRosetta apps dir
+    # database_dest = prefix + '/pyrosetta/database'
+    # if os.path.islink(database_dest): os.unlink(database_dest)
+    # elif os.path.isdir(database_dest): shutil.rmtree(database_dest)
+    # os.symlink('../../../../../../../../../database', database_dest)
+    symlink(rosetta_source_path + '/../database', prefix + '/pyrosetta/database')
+
+    #if not os.path.islink(prefix + '/apps'): os.symlink('../../../../../../../scripts/PyRosetta/public', prefix + '/apps')  # creating link to PyRosetta apps dir
+    symlink(rosetta_source_path + '/scripts/PyRosetta/public', prefix + '/apps')
 
 
 def setup_source_directory_links(rosetta_source_path):
@@ -319,14 +358,15 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
             libs[lib_name] = sources
             defines[lib_name] = ' '.join( G['defines'] )
 
+    modified = False
     for l in libs:
         t  = 'add_library({} OBJECT\n{})\n\n'.format(l, '\n'.join( [ rosetta_source_path + '/external/' + s for s in libs[l]] ))
         t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(l)
         if defines[l]: t += 'target_compile_options({} PRIVATE {})\n'.format(l, ' '.join( ['-D'+d for d in defines[l].split()] ) )   #  target_compile_definitions
         #t += 'target_compile_options({} PUBLIC -fPIC {})\n'.format(l, ' '.join([ '-D'+d for d in defines[l].split() ] ) )   #  target_compile_definitions
-        update_source_file(prefix + l + '.cmake', t)
+        modified |= update_source_file(prefix + l + '.cmake', t)
 
-    return list( libs.keys() )
+    return list( libs.keys() ), modified
 
 
 def generate_rosetta_cmake_files(rosetta_source_path, prefix):
@@ -349,6 +389,7 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
 
     all_libs.sort(key=key, reverse=True)
 
+    modified = False
     for lib in all_libs:
         #if lib not in 'ObjexxFCL utility numeric basic': continue
         #if lib.startswith('protocols'): continue
@@ -376,11 +417,11 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
         #t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(lib)
         t += 'set_target_properties({} PROPERTIES POSITION_INDEPENDENT_CODE ON LINKER_LANGUAGE CXX)\n'.format(lib)
         #t += '\ntarget_compile_options({} PUBLIC -fPIC)\n'.format(lib)  # Enable Position Independent Code generation for libraries
-        update_source_file(prefix + lib + '.cmake', t)
+        modified |= update_source_file(prefix + lib + '.cmake', t)
 
         libs.append(lib)
 
-    return libs
+    return libs, modified
 
 
 
@@ -389,7 +430,11 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
 
     prefix = get_binding_build_root(rosetta_source_path, source=True) + '/'
 
-    libs = generate_rosetta_cmake_files(rosetta_source_path, prefix) + generate_rosetta_external_cmake_files(rosetta_source_path, prefix)
+    l1, m1 = generate_rosetta_cmake_files(rosetta_source_path, prefix)
+    l2, m2 = generate_rosetta_external_cmake_files(rosetta_source_path, prefix)
+    libs, modified = l1 + l2, m1 or m2
+
+    with open('cmake.template') as f: cmake = f.read()
 
     if Options.external_link:
         rosetta_cmake = """
@@ -404,13 +449,11 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
             rosetta_include = ' '.join( get_rosetta_include_directories() + [Options.pybind11] ),
             defs = ' '.join([ '-D'+d for d in get_defines()])
         )
-        cmake = open('cmake.template').read()
-
         cmake = cmake.replace('#%__Rosetta_cmake_instructions__%#', rosetta_cmake)
-        cmake = cmake.replace( '#%__PyRosetta_sources__%#', '\n'.join(extra_sources))
+        cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join(extra_sources))
         cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs + ["${LINK_EXTERNAL_LIBS}"]))
 
-        update_source_file(prefix + 'CMakeLists.txt', cmake)
+        modified |= update_source_file(prefix + 'CMakeLists.txt', cmake)
 
     else:
         rosetta_cmake =  ''.join( ['include({}.cmake)\n'.format(l) for l in libs] )
@@ -418,13 +461,29 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
         rosetta_cmake += '\ninclude_directories({})\n\n'.format( ' '.join( get_rosetta_include_directories() + [Options.pybind11] ) )
         rosetta_cmake += 'add_definitions({})\n'.format(' '.join([ '-D'+d for d in get_defines()] ) )
 
-        cmake = open('cmake.template').read()
-
         cmake = cmake.replace('#%__Rosetta_cmake_instructions__%#', rosetta_cmake)
         cmake = cmake.replace( '#%__PyRosetta_sources__%#', '\n'.join(extra_sources + ['$<TARGET_OBJECTS:{}>'.format(l) for l in libs] ) )  # cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join([ os.path.abspath(prefix + f) for f in extra_sources]))
         cmake = cmake.replace('#%__Rosetta_libraries__%#', '')  # cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs))
 
-        update_source_file(prefix + 'CMakeLists.txt', cmake)
+        modified |= update_source_file(prefix + 'CMakeLists.txt', cmake)
+
+    return modified
+
+
+def run_cmake(rosetta_source_path):
+    ''' Build generate bindings '''
+    prefix = get_binding_build_root(rosetta_source_path, build=True) + '/'
+
+    config = '-DCMAKE_BUILD_TYPE={}'.format(Options.type)
+
+    if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
+
+    # if we ever go back to use static libs for intermediates: fix this on Mac: -DCMAKE_RANLIB=/usr/bin/ranlib -DCMAKE_AR=/usr/bin/ar
+
+    execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} -DPYROSETTA_PYTHON_VERSION={python_version}{py_lib}{py_include}{gcc_install_prefix} ../source'.format(config, prefix=prefix, python_version=_python_version_,
+                                                                                                                                                                        py_lib=' -DPYTHON_LIBRARY='+Options.python_lib if Options.python_lib else '',
+                                                                                                                                                                        py_include=' -DPYTHON_INCLUDE_DIR='+Options.python_include_dir if Options.python_include_dir else '',
+                                                                                                                                                                        gcc_install_prefix=' -DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''))
 
 
 def generate_bindings(rosetta_source_path):
@@ -437,6 +496,16 @@ def generate_bindings(rosetta_source_path):
 
     # generate include file that contains all headers
     skip_extensions = (".fwd.hh", ".impl.hh", ".py.hh")
+
+    signature = hashlib.md5()
+    def signature_update(s): signature.update( s.encode('ascii', errors='replace') )
+    signature_update(_script_version_)
+
+    signature_file_name = prefix + '.signature'
+    if os.path.isfile(signature_file_name):
+        with open(signature_file_name) as f: disk_signature = f.read()
+    else: disk_signature = None
+
 
     all_includes, serialization_instantiation = [], []
     for path in 'ObjexxFCL utility numeric basic core protocols'.split():
@@ -467,9 +536,13 @@ def generate_bindings(rosetta_source_path):
         for i in all_includes: fh.write( '#include <{}>\n'.format(i) )
         for s in serialization_instantiation: fh.write(s)
 
-    config = open(Options.binder_config).read()
+    for i in all_includes: signature_update(i); signature_update( str( os.path.getmtime(rosetta_source_path+'/src/'+i) ) )
+    for s in serialization_instantiation: signature_update(s)
+
+    with open(Options.binder_config) as f: config = f.read()
     if 'clang' not in Options.compiler: config += open('rosetta.gcc.config').read()
     with open(prefix + 'rosetta.config', 'w') as f: f.write(config)
+    signature_update(config)
 
     includes = ''.join( [' -isystem '+i for i in get_rosetta_system_include_directories()] ) + ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
     defines  = ''.join( [' -D'+d for d in get_defines()] )
@@ -478,37 +551,31 @@ def generate_bindings(rosetta_source_path):
 
     if Options.binder_extra_options: includes += ' ' + Options.binder_extra_options
 
-    execute(
-    'Generating bindings...',
-    'cd {prefix} && {} --config {config} --root-module rosetta --prefix {prefix}{annotate}{trace} {} -- -std=c++11 {} {}'.format(
-        Options.binder, include, includes, defines,
-        prefix=prefix,
+    binder_command_line_options = '--config {config} --root-module rosetta --prefix {prefix}{annotate}{trace} {include} -- -std=c++11 {includes} {defines}'.format(
+        prefix=prefix, include=include, includes=includes, defines=defines,
         config='./rosetta.config',
         annotate=' --annotate-includes' if Options.annotate_includes else '',
         trace=' --trace' if Options.trace else '',
-    ))
+    )
+    signature_update(binder_command_line_options)
 
-    sources = open(prefix+'rosetta.sources').read().split()
+    signature = signature.hexdigest()
+    if signature != disk_signature:
+        execute('Generating bindings...', 'cd {prefix} && {binder} {binder_command_line_options}'.format(prefix=prefix, binder=Options.binder, binder_command_line_options=binder_command_line_options) )
+        with open(signature_file_name, 'w') as f: f.write(signature)
+    else: print('No changes in include files detected, skipping Binder run...')
 
-    generate_cmake_file(rosetta_source_path, sources)
+    with open(prefix+'rosetta.sources') as f: sources = f.read().split()
+    modified = generate_cmake_file(rosetta_source_path, sources)
+
+    if modified or (signature != disk_signature): run_cmake(rosetta_source_path)
+    else: print('No changes in source files detected, skipping CMake run...')
+
 
 def build_generated_bindings(rosetta_source_path):
     ''' Build generate bindings '''
     prefix = get_binding_build_root(rosetta_source_path, build=True) + '/'
-
-    config = '-DCMAKE_BUILD_TYPE={}'.format(Options.type)
-
-    if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
-
-    # if we ever go back to use static libs for intermediates: fix this on Mac: -DCMAKE_RANLIB=/usr/bin/ranlib -DCMAKE_AR=/usr/bin/ar
-
-    execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} -DPYROSETTA_PYTHON_VERSION={python_version} {py_lib} {py_include} {gcc_install_prefix} ../source'.format(config, prefix=prefix, python_version=_python_version_,
-                                                                                                                                                                           py_lib='-DPYTHON_LIBRARY='+Options.python_lib if Options.python_lib else '',
-                                                                                                                                                                           py_include='-DPYTHON_INCLUDE_DIR='+Options.python_include_dir if Options.python_include_dir else '',
-                                                                                                                                                                           gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''))
-
     execute('Building...', 'cd {prefix} && ninja {jobs}'.format(prefix=prefix, jobs="-j{}".format(Options.jobs) if Options.jobs else ""))
-
 
 
 def generate_version_file(rosetta_source_path, file_name):
@@ -580,7 +647,7 @@ def generate_documentation(rosetta_source_path, path, version):
 
 
 def create_package(rosetta_source_path, path):
-    print('Creating Python package at: {}...'.format(path))
+    print('Creating Python package at: {}...'.format(path));  sys.stdout.flush()
 
     package_prefix = path + '/setup'
     if os.path.isdir(package_prefix): shutil.rmtree(package_prefix)
@@ -657,7 +724,7 @@ def main(args):
 
     print('Creating PyRosetta in "{}" mode in: {}'.format(Options.type, binding_build_root))
 
-    copy_supplemental_files(rosetta_source_path)
+    link_supplemental_files(rosetta_source_path)
 
     if Options.skip_generation_phase:
         print('Option --skip-generation-phase is supplied, skipping generation phase...')
