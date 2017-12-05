@@ -13,7 +13,7 @@ from __future__ import absolute_import
 import os, sys, platform, os.path, json, random, gzip
 
 import pyrosetta.rosetta as rosetta
-import pyrosetta.method_bindings
+import pyrosetta.bindings
 
 import warnings
 import logging
