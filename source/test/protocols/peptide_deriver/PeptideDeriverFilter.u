@@ -57,7 +57,7 @@ chain_pair_pose_prepared
 begin_receptor_partner_pair receptor=A partner=I options=pep_lengths= 14 is_skip_zero_isc= 0 is_do_minimize= 1
 peptide_length 14
 peptide_entry entry_type=0 pep_start=1 cyclization_type=I_1-14
-peptide_entry entry_type=1 pep_start=1 cyclization_type=I_1-14
 peptide_entry entry_type=2 pep_start=1 cyclization_type=I_1-14
+peptide_entry entry_type=1 pep_start=1 cyclization_type=I_1-14
 end_receptor_partner_pair
 

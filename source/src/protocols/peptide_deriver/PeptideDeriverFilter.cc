@@ -704,7 +704,8 @@ PeptideDeriverFilter::derive_peptide(
 			core::Length const MAX_DISTANCE = 5.0;
 			core::Size pep_nter_idx = receptor_peptide_pose->conformation().chain_begin(PEPTIDE_CHAIN);
 			core::Size pep_cter_idx = receptor_peptide_pose->conformation().chain_end(PEPTIDE_CHAIN);
-			if ( receptor_peptide_pose->residue(pep_nter_idx).is_protein() && receptor_peptide_pose->residue(pep_cter_idx).is_protein() ) {
+			// two amino acids with at least one separating position
+			if ( pep_cter_idx - pep_nter_idx > 1 && receptor_peptide_pose->residue(pep_nter_idx).is_protein() && receptor_peptide_pose->residue(pep_cter_idx).is_protein()) {
 				core::Length N_to_C_dist = receptor_peptide_pose->residue( pep_nter_idx).xyz( "N" ).distance(receptor_peptide_pose->residue( pep_cter_idx ).xyz( "C" ));
 
 				tracer.Debug << "N to C dist between positions " << pep_start << " and " << pep_end << " is: " << N_to_C_dist << std::endl;
@@ -839,13 +840,13 @@ PeptideDeriverFilter::derive_peptide(
 
 		tracer << "Outputting best peptides" << std::endl;
 		if ( best_lin->lin_isc < UNLIKELY_ISC_VALUE ) {
-			output.peptide_entry(ET_BEST_LINEAR, total_isc, best_lin);
 			for ( core::Size method = 0; method<NUM_CYCLIZATION_METHODS; ++method ) {
 				if ( any_peptide_cyclizable_by_method[method] ) {
 					// otherwise, cyc_pose_of_best_cyc is unset
 					output.peptide_entry(ET_BEST_CYCLIC, total_isc, best_cyc_by_method[method]);
 				}
 			}
+			output.peptide_entry(ET_BEST_LINEAR, total_isc, best_lin);
 		}
 	} // for each peptide_length
 

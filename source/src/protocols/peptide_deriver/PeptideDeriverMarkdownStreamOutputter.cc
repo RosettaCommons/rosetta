@@ -190,7 +190,7 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_entry(PeptideDeriverEntryTyp
 
 			// if the best linear is not the best cyclic but it can also be cyclized, we want to print this information in the best cyclic peptides table
 			// TODO : assumes entry->lin_pose.chain_sequence(n) == entry->cyc_info_set[X]->cyc_pose.chain_sequence(n) for all n.
-			if ( cyc_info->was_cyclic_model_created && entry->pep_start != cyc_report_info->best_cyclic_pep_start ) {
+			if ( cyc_info->was_cyclic_model_created && entry->pep_start != cyc_report_info->best_cyclic_pep_start) {
 				cyc_report_info->best_cyclic_peptides_ << prefix_ << ( boost::format( "| %1$-8c | %2$-7c | %3$-14d | %4$-8d | %5$-15.3f | %6$-24s | %7$-14s | %8$-24s | %9$-20s |" )
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
@@ -215,7 +215,6 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_entry(PeptideDeriverEntryTyp
 			if ( cyc_info->is_cyclizable ) {
 				cyc_report_info->best_cyclic_pep_start = entry->pep_start;
 				std::string const cyclic_isc_string = (cyc_info->was_cyclic_model_created? (boost::format("%1$.3f") % avoid_negative_zero(cyc_info->cyc_isc, 1e-3)).str() : "**");
-
 				cyc_report_info->best_cyclic_peptides_ << prefix_ << ( boost::format( "| %1$-8c | %2$-7c | %3$-14d | %4$-8d | %5$-15.3f | %6$-28s | %7$-14s | %8$-24s | %9$-20s |" )
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
