@@ -42,15 +42,20 @@
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
+static basic::Tracer TR( "core.select.residue_selector.ResidueIndexSelector" );
+
 namespace core {
 namespace select {
 namespace residue_selector {
 
 ResidueIndexSelector::ResidueIndexSelector():
-	index_str_() {}
+	index_str_(),
+	error_on_out_of_bounds_index_(true)
+{}
 
 ResidueIndexSelector::ResidueIndexSelector( std::string const & index_str ):
-	index_str_( index_str )
+	index_str_( index_str ),
+	error_on_out_of_bounds_index_(true)
 {}
 
 /// @brief Convenience constructor for a single residue index
@@ -81,16 +86,21 @@ ResidueIndexSelector::~ResidueIndexSelector() {}
 ResidueSubset
 ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 {
-	debug_assert( !index_str_.empty() );
+	runtime_assert_string_msg( !index_str_.empty(), "A residue index string must be supplied to the ResidueIndexSelector." );
 
 	ResidueSubset subset( pose.size(), false );
 	std::set< Size > const res_set( get_resnum_list( index_str_, pose ) );
 
 	for ( Size const res : res_set ) {
 		if ( res == 0 || res > subset.size() ) {
-			std::stringstream err_msg;
-			err_msg << "Residue " << res << " not found in pose!\n";
-			throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
+			if ( error_on_out_of_bounds_index() ) {
+				std::stringstream err_msg;
+				err_msg << "Residue " << res << " not found in pose!\n";
+				throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
+			} else {
+				TR.Warning << "Residue " << res << " was not found in the pose.  Ignoring and continuing." << std::endl;
+				continue;
+			}
 		}
 		subset[ res ] = true;
 	}
@@ -110,6 +120,7 @@ ResidueIndexSelector::parse_my_tag(
 		err_msg << e.msg();
 		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 	}
+	set_error_on_out_of_bounds_index( tag->getOption< bool >( "error_on_out_of_bounds_index", error_on_out_of_bounds_index() ) );
 }
 
 void
@@ -174,6 +185,7 @@ ResidueIndexSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	"(Note, residues that contain insertion codes cannot be properly identified by these PDB numbered schemes).");
 	*/
 	core::pose::attributes_for_get_resnum_selector( attributes, xsd, "resnums" );
+	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default( "error_on_out_of_bounds_index", xsct_rosetta_bool, "If true (the default), this selector throws an error if an index is selected that is not in the pose (e.g. residue 56 of a 55-residue structure).  If false, indices that don't exist in the pose are silently ignored.", "true" );
 	xsd_type_definition_w_attributes(
 		xsd, class_name(),
 		"The ResidueIndexSelector sets the positions corresponding to the residues given in the resnums string to true, and all other positions to false. Note that it does not support PDB insertion codes.",
@@ -208,6 +220,7 @@ void
 core::select::residue_selector::ResidueIndexSelector::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( CEREAL_NVP( index_str_ ) ); // std::string
+	arc( CEREAL_NVP( error_on_out_of_bounds_index_ ) ); //bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -216,6 +229,7 @@ void
 core::select::residue_selector::ResidueIndexSelector::load( Archive & arc ) {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( index_str_ ); // std::string
+	arc( error_on_out_of_bounds_index_ ); //bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::ResidueIndexSelector );

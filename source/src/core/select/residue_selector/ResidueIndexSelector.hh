@@ -92,8 +92,21 @@ public:
 	/// @brief Append additional indexes (in Rosetta numbering) to the list of indices.
 	void append_index( utility::vector1< core::Size > const & index_in );
 
+	/// @brief Is this selector set to throw an error if an out-of-range index is selected (e.g. residue
+	/// 56 of a 55-residue pose)?
+	inline bool error_on_out_of_bounds_index() const { return error_on_out_of_bounds_index_; }
+
+	/// @brief Set whether this selector set to throws an error if an out-of-range index is selected (e.g. residue
+	/// 56 of a 55-residue pose).
+	inline void set_error_on_out_of_bounds_index( bool const setting ) { error_on_out_of_bounds_index_ = setting; }
+
 private: // data members
 	std::string index_str_;
+
+	/// @brief If false, then there is no error if an index that is not in the pose is
+	/// selected.  True by default, which means that you get an error if you try to
+	/// select an index that's not in the pose.
+	bool error_on_out_of_bounds_index_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

@@ -129,9 +129,9 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		std::stringstream bad_index;
 
-		bad_index << "2,4," << trpcage.size() + 1;
+		bad_index << "2,4," << trpcage.total_residue() + 1;
 
-		ResidueSelectorOP index_rs( new ResidueIndexSelector( bad_index.str() ) );
+		ResidueIndexSelectorOP index_rs( new ResidueIndexSelector( bad_index.str() ) );
 
 		try {
 			index_rs->apply( trpcage );
@@ -140,6 +140,18 @@ public:
 			//std::cerr << "Exception (fail_index_out_of_range): '" << e.msg() << "'";
 			std::string expected_err = "Residue 21 not found in pose!";
 			TS_ASSERT( e.msg().find(expected_err) != std::string::npos );
+		}
+
+		// Also make sure that we do NOT fail if we set a do-not-fail flag:
+		index_rs->set_error_on_out_of_bounds_index(false);
+		utility::vector1< bool > my_selection( index_rs->apply(trpcage) );
+		TS_ASSERT_EQUALS( my_selection.size(), trpcage.total_residue() );
+		for ( core::Size i(1), imax(my_selection.size()); i<=imax; ++i ) {
+			if ( i!= 2 && i != 4 ) {
+				TS_ASSERT( !my_selection[i]);
+			} else {
+				TS_ASSERT( my_selection[i] );
+			}
 		}
 	}
 
