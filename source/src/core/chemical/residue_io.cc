@@ -1668,11 +1668,10 @@ setup_atom_type_reassignments_from_commandline(
 
 	std::string const errmsg( "-reassign_atom_types format should be:: -reassign_atom_types <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<new-atom-type1-name>   <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<new-atom-type2-name> ...; for example: '-chemical:reassign_atom_types fa_standard:ARG:NE:NtpR' ");
 
-	for ( Size i=1; i<= mods.size(); ++i ) {
+	for ( std::string const & mod : mods ) {
 		///
 		/// mod should look like (for example):  "fa_standard:OOC:LK_RADIUS:4.5"
 		///
-		std::string const & mod( mods[i] );
 
 		Size const pos1( mod.find(":") );
 		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
@@ -1716,11 +1715,10 @@ setup_atomic_charge_reassignments_from_commandline(
 
 	std::string const errmsg( "-set_atomic_charge format should be::  -chemical:set_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<new-charge> <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<new-charge>  ... For example: '-chemical:set_atomic_charge fa_standard:ARG:NE:-1' ");
 
-	for ( Size i=1; i<= mods.size(); ++i ) {
+	for ( std::string const & mod : mods ) {
 		///
 		/// mod should look like (for example):  "fa_standard:OOC:LK_RADIUS:4.5"
 		///
-		std::string const & mod( mods[i] );
 
 		Size const pos1( mod.find(":") );
 		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);

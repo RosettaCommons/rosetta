@@ -43,15 +43,15 @@ public:
 	StructProfileMover(core::Real rmsThreshold,Size consider_topN_frags, core::Real burialWt, bool only_loops , core::Real allowed_deviation, core::Real allowed_deviation_loops, bool eliminate_background, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res);
 	Size ss_type_convert(char ss_type);
 	void read_P_AA_SS_cen6();
-	utility::vector1<std::string> get_closest_sequence_at_res(core::pose::Pose const pose, Size res,utility::vector1<core::Real> cenList);
-	utility::vector1<utility::vector1<std::string> > get_closest_sequences(core::pose::Pose const pose,utility::vector1<core::Real> cenList);
-	utility::vector1<utility::vector1<Size> >generate_counts(utility::vector1<utility::vector1<std::string> > top_frag_sequences,core::pose::Pose const pose);
-	utility::vector1<utility::vector1<core::Real> >generate_profile_score(utility::vector1<utility::vector1<Size> > res_per_pos,core::pose::Pose const pose);
-	utility::vector1<utility::vector1<core::Real> >generate_profile_score_wo_background(utility::vector1<utility::vector1<Size> > res_per_pos, utility::vector1<core::Real> cenList, core::pose::Pose const pose);
-	void save_MSAcst_file(utility::vector1<utility::vector1<core::Real> > profile_score,core::pose::Pose const pose);
+	utility::vector1<std::string> get_closest_sequence_at_res(core::pose::Pose const & pose, Size res,utility::vector1<core::Real> cenList);
+	utility::vector1<utility::vector1<std::string> > get_closest_sequences(core::pose::Pose const & pose,utility::vector1<core::Real> cenList);
+	utility::vector1<utility::vector1<Size> >generate_counts(utility::vector1<utility::vector1<std::string> > top_frag_sequences,core::pose::Pose const & pose);
+	utility::vector1<utility::vector1<core::Real> >generate_profile_score(utility::vector1<utility::vector1<Size> > res_per_pos,core::pose::Pose const & pose);
+	utility::vector1<utility::vector1<core::Real> >generate_profile_score_wo_background(utility::vector1<utility::vector1<Size> > res_per_pos, utility::vector1<core::Real> cenList, core::pose::Pose const & pose);
+	void save_MSAcst_file(utility::vector1<utility::vector1<core::Real> > profile_score,core::pose::Pose const & pose);
 	void add_MSAcst_to_pose(utility::vector1<utility::vector1<core::Real> > profile_score,core::pose::Pose & pose);
 	core::Real get_cen_deviation(std::vector<core::Real> cenListFrag,utility::vector1<core::Real> cenListModel);
-	utility::vector1< core::Real> calc_cenlist(core::pose::Pose const pose);
+	utility::vector1< core::Real> calc_cenlist(core::pose::Pose const & pose);
 	void apply( Pose & pose ) override;
 	moves::MoverOP clone() const override { return moves::MoverOP( new StructProfileMover( *this ) ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;

@@ -24,6 +24,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/RT.hh>
+#include <core/kinematics/Jump.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <numeric/xyzMatrix.hh>

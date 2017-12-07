@@ -41,8 +41,8 @@
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/conformation/RotamerSetBase.hh>

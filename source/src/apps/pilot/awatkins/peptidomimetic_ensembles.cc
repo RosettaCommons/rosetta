@@ -31,6 +31,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/chemical/ChemicalManager.hh>
 //#include <core/pack/task/PackerTask.hh>
 //#include <core/pack/task/TaskFactory.hh>
 

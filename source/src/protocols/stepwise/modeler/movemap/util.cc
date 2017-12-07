@@ -96,6 +96,10 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 			atom_level_domain_map->set( NamedAtomID( "OVL1",  n), pose, true );
 			atom_level_domain_map->set( NamedAtomID( "OVL2",  n), pose, true );
 		}
+		if ( pose.residue_type( n ).has_variant_type( chemical::C2_BRANCH_POINT ) ) {
+			atom_level_domain_map->set( NamedAtomID( "OVL1",  n), pose, true );
+			atom_level_domain_map->set( NamedAtomID( "OVL2",  n), pose, true );
+		}
 		if ( pose.residue_type( n ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 			atom_level_domain_map->set( NamedAtomID( "OVU1", n ), pose, true );
 		}

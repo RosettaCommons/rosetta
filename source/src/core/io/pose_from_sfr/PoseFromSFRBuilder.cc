@@ -1169,17 +1169,19 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 		TR.Trace << "Found resid " << resid << " in link map " << endl;
 		// We want to sort the linkages by partner number - std::set will allow us to do this
 		std::set< std::tuple<core::Size, std::string, std::string> > connections;
-		for ( auto const & elm_pair: explicit_link_mapping.at(resid) ) {
+		for ( auto const & elm_pair : explicit_link_mapping.at(resid) ) {
 			std::string const & link_atom = elm_pair.first;
 			std::string const & partner_resid = elm_pair.second.first;
+			//TR.Trace << "Link atom is " << link_atom << std::endl;
 			debug_assert( resid_to_index_.count( partner_resid ) );
 			core::Size const & partner = resid_to_index_[ partner_resid ];
 			connections.insert( std::make_tuple( partner, partner_resid, link_atom) );
 		}
-		for ( auto const & elm_tuple: connections ) {
+		for ( auto const & elm_tuple : connections ) {
 			core::Size const & partner = std::get<0>( elm_tuple );;
 			//std::string const & partner_resid = std::get<1>( elm_tuple );
 			std::string const & link_atom = std::get<2>( elm_tuple );
+			//TR.Trace << "Link atom is " << link_atom << std::endl;
 
 			if ( unknown_main_chain_connectivity ) {
 				char const connectivity( link_atom[ CARB_MAINCHAIN_CONN_POS ] );
@@ -1194,10 +1196,14 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 				}
 			}
 
+			//bi_map[ link_info.resID1 ][ link_info.name1 ] = make_pair( link_info.resID2, link_info.name2 );
+			//bi_map[ link_info.resID2 ][ link_info.name2 ] = make_pair( link_info.resID1, link_info.name1 );
+
 			if ( rinfos_[ seqpos ].chainID() == rinfos_[ partner ].chainID() && ( // same nominal chain
 					( seqpos == partner-1 && rinfos_[ seqpos ].resSeq() == rinfos_[ partner ].resSeq()-1 ) // next residue (both in Pose & PDB numbering)
 					|| ( seqpos == partner+1 && rinfos_[ seqpos ].resSeq() == rinfos_[ partner ].resSeq()+1 ) ) // previous residue (both in Pose & PDB numbering)
-					) {
+					&& // AND doesn't include a nonstandard atom (RNA)
+					( link_atom != " O2'" && explicit_link_mapping.at( resid ).at( link_atom ).second != " O2'" ) ) {
 				// If this occurs, the link is to the next residue on the same chain, so both residues are part of
 				// the same main chain or branch, and this linkage information can be ignored, UNLESS this .pdb file
 				// came from the PDB, in which case its 3-letter codes don't tell us the main chain, so we must get
@@ -1313,13 +1319,12 @@ PoseFromSFRBuilder::get_rsd_type(
 
 	std::map< std::string, Vector > const & xyz( rinfos_[ seqpos ].xyz() );
 
-	typedef std::map< std::string, Vector > ResidueCoords;
 	using namespace core::chemical;
 	using utility::tools::make_vector1;
 	using utility::vector1;
 
 	vector1< ResidueProperty > preferred_properties, discouraged_properties;
-	vector1< VariantType > disallow_variants;  // Are variants different from properties?
+	vector1< VariantType > variants, disallow_variants;  // Are variants different from properties?
 	//VKM, 12 Jun 2017: Yes, they are, subtly.  Properties apply to a base type and MOST variants (e.g.
 	//methionine is generally hydrophobic; lysine is generally charged.  VariantTypes indicate some change
 	//on a base type (e.g. lysine + n-terminal modification).  It's a human differentiation, not really
@@ -1335,12 +1340,20 @@ PoseFromSFRBuilder::get_rsd_type(
 	// Let the ResidueTypeFinder do the search for you.
 
 	if ( is_lower_terminus ) {
-		preferred_properties.push_back( LOWER_TERMINUS );
+		if ( known_connect_atoms_on_this_residue.contains( "P" ) || known_connect_atoms_on_this_residue.contains( "N" ) ) {
+			variants.push_back( CUTPOINT_UPPER );
+		} else {
+			preferred_properties.push_back( LOWER_TERMINUS );
+		}
 	} else {
 		discouraged_properties.push_back( LOWER_TERMINUS );
 	}
 	if ( is_upper_terminus ) {
-		preferred_properties.push_back( UPPER_TERMINUS );
+		if ( known_connect_atoms_on_this_residue.contains( "O3'" ) || known_connect_atoms_on_this_residue.contains( "C" ) ) {
+			variants.push_back( CUTPOINT_LOWER );
+		} else {
+			preferred_properties.push_back( UPPER_TERMINUS );
+		}
 	} else {
 		discouraged_properties.push_back( UPPER_TERMINUS );
 	}
@@ -1361,14 +1374,14 @@ PoseFromSFRBuilder::get_rsd_type(
 	}
 
 	utility::vector1< std::string > xyz_atom_names;
-	for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-		std::string xyz_name = iter->first;
-		xyz_atom_names.push_back( xyz_name );
+	for ( auto const & xyz_elem : xyz ) {
+		xyz_atom_names.push_back( xyz_elem.first );
 	}
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *residue_type_set_ )
 		.name3( rosetta_residue_name3 )
 		.residue_base_name( residue_base_name )
+		.variants( variants )
 		.disallow_variants( disallow_variants )
 		.preferred_properties( preferred_properties )
 		.discouraged_properties( discouraged_properties )

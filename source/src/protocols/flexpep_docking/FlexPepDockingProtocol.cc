@@ -22,6 +22,7 @@
 #include <core/fragment/ConstantLengthFragSet.hh>
 
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>

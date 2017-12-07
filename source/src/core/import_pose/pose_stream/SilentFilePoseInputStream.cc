@@ -61,7 +61,7 @@ SilentFilePoseInputStream::SilentFilePoseInputStream()
 	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( SilentFileOptions() ) );
 }
 
-SilentFilePoseInputStream::SilentFilePoseInputStream( utility::vector1< FileName > fns )
+SilentFilePoseInputStream::SilentFilePoseInputStream( utility::vector1< FileName > const & fns )
 : renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
 {
 	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( SilentFileOptions() ) );
@@ -78,7 +78,7 @@ SilentFilePoseInputStream::SilentFilePoseInputStream( std::string const & fn )
 }
 
 SilentFilePoseInputStream::SilentFilePoseInputStream(
-	utility::vector1< FileName > fns,
+	utility::vector1< FileName > const & fns,
 	bool order_by_energy
 )
 : renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( order_by_energy ), record_source_( false )
@@ -88,7 +88,7 @@ SilentFilePoseInputStream::SilentFilePoseInputStream(
 }
 
 SilentFilePoseInputStream::SilentFilePoseInputStream(
-	utility::vector1< FileName > fns,
+	utility::vector1< FileName > const & fns,
 	core::Real energy_cut
 )
 : renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
@@ -98,8 +98,8 @@ SilentFilePoseInputStream::SilentFilePoseInputStream(
 }
 
 SilentFilePoseInputStream::SilentFilePoseInputStream(
-	utility::vector1< FileName > fns,
-	utility::vector1< string > input_tags
+	utility::vector1< FileName > const & fns,
+	utility::vector1< string > const & input_tags
 ) :
 	renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
 {
@@ -109,8 +109,8 @@ SilentFilePoseInputStream::SilentFilePoseInputStream(
 }
 
 SilentFilePoseInputStream::SilentFilePoseInputStream(
-	utility::vector1< FileName > fns,
-	utility::vector1< string > input_tags,
+	utility::vector1< FileName > const & fns,
+	utility::vector1< string > const & input_tags,
 	core::Real energy_cut
 ) :
 	renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
@@ -120,12 +120,12 @@ SilentFilePoseInputStream::SilentFilePoseInputStream(
 	filenames(fns);
 }
 
-void SilentFilePoseInputStream::tags( utility::vector1< string > tags ) {
+void SilentFilePoseInputStream::tags( utility::vector1< string > const & tags ) {
 	tags_ = tags;
 }
 
 void SilentFilePoseInputStream::filenames(
-	utility::vector1< FileName > filenames
+	utility::vector1< FileName > const & filenames
 ) {
 	filenames_  = filenames;
 	// read in SilentStruct objects from all of the filenames

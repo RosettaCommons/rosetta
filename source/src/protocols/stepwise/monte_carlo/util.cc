@@ -29,7 +29,9 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 

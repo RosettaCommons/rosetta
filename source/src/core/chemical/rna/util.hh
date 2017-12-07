@@ -20,8 +20,8 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzMatrix.fwd.hh>
+#include <numeric/xyzVector.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 

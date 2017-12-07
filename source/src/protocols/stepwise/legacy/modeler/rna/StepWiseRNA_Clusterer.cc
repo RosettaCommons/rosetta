@@ -48,6 +48,7 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
+#include <utility/file/FileName.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 

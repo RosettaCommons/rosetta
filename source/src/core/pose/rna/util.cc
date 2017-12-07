@@ -21,6 +21,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/conformation/Residue.hh>
@@ -42,6 +43,8 @@
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/pose/rna/BasePair.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
+#include <core/pose/rna/VDW_Grid.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
@@ -63,7 +66,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
-#include <utility/string_util.hh>
+#include <map>
 
 static basic::Tracer TR( "core.pose.rna.RNA_Util" );
 
@@ -797,13 +800,11 @@ is_cutpoint_closed_torsion(
 		if ( !pose.residue_type( torsion_seq_num ).has_variant_type( chemical::CUTPOINT_UPPER ) ) return false;
 		lower_seq_num = get_lower_cutpoint_partner_for_upper( pose, torsion_seq_num );
 		upper_seq_num = torsion_seq_num;
-
 	} else if ( torsion_id.torsion() == EPSILON || torsion_id.torsion() == ZETA ) {
 
 		if ( !pose.residue_type( torsion_seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) return false;
 		lower_seq_num = torsion_seq_num;
 		upper_seq_num = get_upper_cutpoint_partner_for_lower( pose, torsion_seq_num );
-
 	} else {
 		if ( torsion_id.torsion() != DELTA && torsion_id.torsion() != BETA && torsion_id.torsion() != GAMMA ) {
 			utility_exit_with_message( "The torsion should be DELTA( lower ), BETA( upper ) or GAMMA( upper ) !!" );
@@ -812,7 +813,6 @@ is_cutpoint_closed_torsion(
 	}
 
 	if ( upper_seq_num == 0 ) return false;
-
 	if ( lower_seq_num == 0 ) return false;
 
 	if ( pose.residue_type( lower_seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {

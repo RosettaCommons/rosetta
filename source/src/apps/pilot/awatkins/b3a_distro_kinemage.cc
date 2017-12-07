@@ -17,6 +17,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/VariantType.hh>
 

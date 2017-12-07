@@ -17,11 +17,10 @@
 #include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 
 #include <core/types.hh>
-//#include <core/chemical/rna/util.hh>
 
 // Project headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 // C++
 

@@ -24,6 +24,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/kinematics/Jump.hh>
 
 // Utility headers
 #include <utility>

@@ -23,6 +23,7 @@
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/data/RNA_ChemicalMappingEnergy.hh>
 #include <core/pose/rna/RNA_DataInfo.hh>
+#include <core/pose/rna/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/database/open.hh>

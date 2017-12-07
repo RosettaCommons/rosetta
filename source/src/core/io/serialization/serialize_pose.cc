@@ -19,6 +19,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/kinematics/Jump.hh>
 #include <numeric/xyzVector.hh>
 
 

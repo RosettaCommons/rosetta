@@ -27,6 +27,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>

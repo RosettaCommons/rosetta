@@ -22,7 +22,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/conformation/symmetry/SymSlideInfo.hh>
-#include <core/kinematics/Jump.fwd.hh>
+#include <core/kinematics/Jump.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>

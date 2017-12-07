@@ -250,6 +250,8 @@ StepWiseModeler::initialize_working_parameters_and_root( pose::Pose & pose ){
 		working_prepack_res_ = packer::figure_out_working_interface_res( pose, get_all_working_moving_res( working_parameters_ ) );
 	}
 
+	core::pose::fix_up_residue_type_variants( pose );
+
 }
 
 ////////////////////////////////////////////////////////////////////

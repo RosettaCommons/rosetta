@@ -446,13 +446,13 @@ explicit_links_from_sfr_linkage( std::map< std::string, utility::vector1< LinkIn
 	utility::vector1< core::io::ResidueInformation > const & rinfos )
 {
 	std::set< std::string > known_resid;
-	for ( core::io::ResidueInformation const & resinfo: rinfos ) {
+	for ( core::io::ResidueInformation const & resinfo : rinfos ) {
 		known_resid.insert( resinfo.resid() );
 	}
 
 	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > bi_map;
-	for ( auto const & lm_pair: link_map ) {
-		for ( LinkInformation const & link_info: lm_pair.second ) {
+	for ( auto const & lm_pair : link_map ) {
+		for ( LinkInformation const & link_info : lm_pair.second ) {
 			if ( known_resid.count( link_info.resID1 ) == 0 || known_resid.count( link_info.resID2 ) == 0 ) {
 				TR << "Link between " << link_info.resID1 << " and " << link_info.resID2 << " is ill-formed - one/both residues don't exist!." << std::endl;
 				continue;

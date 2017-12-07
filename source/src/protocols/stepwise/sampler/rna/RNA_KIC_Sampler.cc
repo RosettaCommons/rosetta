@@ -29,6 +29,7 @@
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+#include <utility/string_util.hh>
 
 using namespace core;
 using namespace core::chemical::rna;

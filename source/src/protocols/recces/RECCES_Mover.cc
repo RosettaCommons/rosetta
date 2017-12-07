@@ -26,6 +26,7 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/SimulatedTempering.hh>

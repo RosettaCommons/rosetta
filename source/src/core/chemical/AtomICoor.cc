@@ -19,6 +19,7 @@
 // Project headers
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/kinematics/Stub.hh>
 
 #include <basic/Tracer.hh>
 

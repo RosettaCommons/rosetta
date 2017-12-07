@@ -100,6 +100,9 @@ void LinearBranchEnergy::finalize_total_energy( pose::Pose & pose,
 		Residue const & upper_rsd = pose.residue( elem.res2 );
 
 		Real score_dev = 0;
+		//std::cout << "Lower_rsd " << lower_rsd.name() << " " << lower_rsd.seqpos() << " atom " << elem.res2_ovu1_overlaps << " distance to upper OVU1 is " << lower_rsd.atom( elem.res2_ovu1_overlaps ).xyz().distance( upper_rsd.atom( "OVU1" ).xyz() ) << std::endl;
+		//std::cout << "Upper_rsd " << upper_rsd.name() << " " << upper_rsd.seqpos() << " atom " << elem.res1_ovl1_overlaps << " distance to lower OVL1 is " << upper_rsd.atom( elem.res1_ovl1_overlaps ).xyz().distance( lower_rsd.atom( "OVL1" ).xyz() ) << std::endl;
+		//std::cout << "Upper_rsd " << upper_rsd.name() << " " << upper_rsd.seqpos() << " atom " << elem.res1_ovl2_overlaps << " distance to lower OVL2 is " << upper_rsd.atom( elem.res1_ovl2_overlaps ).xyz().distance( lower_rsd.atom( "OVL2" ).xyz() ) << std::endl;
 		score_dev += lower_rsd.atom( elem.res2_ovu1_overlaps ).xyz().distance( upper_rsd.atom( "OVU1" ).xyz() );
 		score_dev += upper_rsd.atom( elem.res1_ovl1_overlaps ).xyz().distance( lower_rsd.atom( "OVL1" ).xyz() );
 		if ( upper_rsd.is_carbohydrate() ) {

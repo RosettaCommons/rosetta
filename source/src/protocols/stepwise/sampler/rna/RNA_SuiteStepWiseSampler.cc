@@ -24,6 +24,7 @@
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/pose/rna/util.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 
 using namespace core;

@@ -354,6 +354,16 @@ public:
 
 };
 
+#ifdef    SERIALIZATION
+/// @brief Serialize an AtomType
+template < class Archive >
+void serialize_atom_type( Archive & arc, AtomType const & ptr );
+
+/// @brief Deserialize an AtomType
+template < class Archive >
+void deserialize_atom_type( Archive & arc, AtomType & ptr );
+#endif // SERIALIZATION
+
 } // chemical
 } // core
 

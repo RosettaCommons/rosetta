@@ -25,9 +25,9 @@
 
 // C++ headers
 #include <numeric/types.hh>
-#include <string>
+#include <iosfwd>
 #include <map>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace core
 {

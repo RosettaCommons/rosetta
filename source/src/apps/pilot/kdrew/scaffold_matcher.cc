@@ -24,6 +24,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>

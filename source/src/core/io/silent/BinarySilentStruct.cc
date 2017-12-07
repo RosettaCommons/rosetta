@@ -573,7 +573,7 @@ void BinarySilentStruct::fill_pose (
 	fill_pose( pose, *residue_set );
 } // fill_pose
 
-void BinarySilentStruct::fill_pose (
+void BinarySilentStruct::fill_pose(
 	core::pose::Pose & pose,
 	core::chemical::ResidueTypeSet const & residue_set
 ) const {
@@ -630,6 +630,10 @@ void BinarySilentStruct::fill_pose (
 					<< "  natoms_pose=" << natoms_pose
 					<< "atm_seqpos " << atm_seqpos << "  natoms_struct="
 					<< natoms_struct << ")" << tr.Reset << std::endl;
+				tr.Warning << "Likely explanations: " << std::endl;
+				tr.Warning << "\t1. You are trying to extract, with residue type set A, a silent file created with residue type set B." << std::endl;
+				tr.Warning << "\t2. The database has been updated since your silent file was made, meaning the definition of this RT has drifted." << std::endl;
+				tr.Warning << "\t3. You have passed an argument to -database that indicates a database out of sync with your chosen executable." << std::endl;
 				tr.flush();
 			}
 		}

@@ -38,18 +38,20 @@
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/CacheableResidueTypeSets.hh>
-#include <core/chemical/PoseResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.fwd.hh>
 
 #include <core/types.hh>
-#include <core/id/AtomID_Mask.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Mask.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/environment/DofPassport.fwd.hh>
 
-#include <core/kinematics/Jump.hh>
+#include <core/kinematics/Jump.fwd.hh>
+#include <core/kinematics/RT.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -58,19 +60,15 @@
 #include <core/conformation/carbohydrates/GlycanTreeSet.fwd.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSetObserver.fwd.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
-#include <core/conformation/parametric/ParametersSet.fwd.hh>
-#include <core/conformation/parametric/Parameters.hh>
 #include <core/conformation/parametric/Parameters.fwd.hh>
 #include <core/conformation/ConformationTests.fwd.hh> //Forward declaration of unit test class needed for friendship
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/signals/BufferedSignalHub.hh>
-#include <utility/signals/Link.hh>
+#include <utility/signals/BufferedSignalHub.fwd.hh>
+#include <utility/signals/Link.fwd.hh>
 #include <utility/signals/PausableSignalHub.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 #include <boost/iterator/indirect_iterator.hpp>
 

@@ -14,6 +14,7 @@
 // Unit headers
 #include <core/select/residue_selector/ResidueNameSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 
 // package headers
 #include <core/select/residue_selector/util.hh>

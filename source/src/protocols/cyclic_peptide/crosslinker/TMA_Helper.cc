@@ -25,6 +25,8 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/scoring/rms_util.hh>

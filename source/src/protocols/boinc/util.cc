@@ -25,7 +25,7 @@
 
 // Core Headers
 #include <core/chemical/util.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/import_pose/import_pose.hh>

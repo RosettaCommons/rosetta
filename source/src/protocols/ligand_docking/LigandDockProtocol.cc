@@ -22,6 +22,7 @@
 #include <core/grid/CartGrid.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <basic/options/option.hh>

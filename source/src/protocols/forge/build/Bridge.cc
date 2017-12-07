@@ -25,6 +25,7 @@
 
 #include <core/conformation/util.hh>
 #include <core/conformation/signals/LengthEvent.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 

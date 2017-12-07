@@ -33,14 +33,11 @@
 #include <numeric/HomogeneousTransform.hh>
 
 // Utility Headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <map>
-#include <string>
-
-#include <utility/vector1_bool.hh>
+#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers

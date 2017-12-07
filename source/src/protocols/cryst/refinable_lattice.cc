@@ -21,6 +21,7 @@
 #include <core/types.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>

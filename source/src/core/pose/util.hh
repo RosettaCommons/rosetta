@@ -24,7 +24,6 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/rings/AxEqDesignation.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>

@@ -25,6 +25,7 @@
 #include <core/conformation/PointGraphData.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/VariantType.hh>
 

@@ -18,6 +18,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>

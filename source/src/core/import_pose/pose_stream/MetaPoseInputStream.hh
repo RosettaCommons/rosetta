@@ -21,11 +21,8 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 
-#include <utility/vector1_bool.hh>
-
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 
 namespace core {

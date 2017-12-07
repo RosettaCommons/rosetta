@@ -17,6 +17,7 @@
 // Package headers
 #include <core/environment/DofPassport.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/ChemicalManager.hh>
 
 #include <protocols/environment/DofUnlock.hh>
 #include <protocols/environment/EnvExcn.hh>

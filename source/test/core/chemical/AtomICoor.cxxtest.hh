@@ -19,6 +19,7 @@
 // Unit Headers
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>

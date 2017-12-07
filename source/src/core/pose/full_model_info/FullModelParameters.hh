@@ -20,7 +20,6 @@
 #include <core/pose/full_model_info/FullModelParameterType.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/rna/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/types.hh>
@@ -186,7 +185,7 @@ public:
 	utility::vector1< Size >
 	chains_in_full_model() const;
 
-	Size size() const { return core::pose::rna::remove_bracketed( full_sequence_ ).size(); }
+	Size size() const;
 
 	void
 	read_cst_file( std::string const & cst_file );

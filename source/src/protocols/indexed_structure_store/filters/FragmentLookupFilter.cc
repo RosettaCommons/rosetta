@@ -19,6 +19,7 @@
 #include <utility/json_spirit/json_spirit_writer_options.h>
 
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/indexed_structure_store/FragmentLookup.hh>
 #include <core/indexed_structure_store/StructureStoreManager.hh>

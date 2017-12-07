@@ -37,6 +37,7 @@ static basic::Tracer TR("devel.splice.AddFoldUnitMover");
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <numeric/random/random.hh>
 #include <boost/unordered/unordered_map.hpp>
 

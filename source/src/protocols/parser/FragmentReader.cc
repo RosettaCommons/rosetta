@@ -46,6 +46,7 @@
 #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
+#include <utility/file/FileName.hh>
 
 
 static basic::Tracer TR( "protocols.jd2.parser.FragmentReader" );

@@ -16,6 +16,7 @@
 #include <core/indexed_structure_store/FragmentLookup.hh>
 #include <core/indexed_structure_store/FragmentStore.hh>
 
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 

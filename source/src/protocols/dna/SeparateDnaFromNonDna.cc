@@ -15,8 +15,8 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/pose/PDBInfo.hh>
-// note: Pose.hh includes Conformation.hh, FoldTree.hh, Jump.hh, and ResidueType.hh
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 

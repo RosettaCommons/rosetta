@@ -28,6 +28,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>

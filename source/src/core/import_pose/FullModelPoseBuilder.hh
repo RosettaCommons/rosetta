@@ -27,7 +27,6 @@
 #include <core/types.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
-#include <core/io/StructFileRep.hh>
 #include <core/io/StructFileReaderOptions.fwd.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -36,7 +35,7 @@
 #include <utility/options/OptionCollection.hh>
 #include <tuple>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace import_pose {
@@ -62,6 +61,8 @@ public:
 	void set_preferred_root_res( utility::vector1< Size > const & preferred_root_res ) { preferred_root_res_ = preferred_root_res; }
 	void set_jump_res( utility::vector1< Size > const & jump_res ) { jump_res_ = jump_res; }
 	void set_cutpoint_closed( utility::vector1< Size > const & cutpoint_closed ) { cutpoint_closed_ = cutpoint_closed; }
+	void set_cyclize_res( utility::vector1< Size > const & cyclize_res ) { cyclize_res_ = cyclize_res; }
+	void set_twoprime_res( utility::vector1< Size > const & twoprime_res ) { twoprime_res_ = twoprime_res; }
 	void set_fiveprime_res( utility::vector1< Size > const & fiveprime_res ) { fiveprime_res_ = fiveprime_res; }
 	void set_bulge_res( utility::vector1< Size > const & bulge_res ) { bulge_res_ = bulge_res; }
 	void set_extra_minimize_jump_res( utility::vector1< Size > const & extra_minimize_jump_res );// { extra_minimize_jump_res_ = extra_minimize_jump_res; }
@@ -111,6 +112,8 @@ private:
 	utility::vector1< Size > preferred_root_res_;
 	utility::vector1< Size > jump_res_;
 	utility::vector1< Size > cutpoint_closed_;
+	utility::vector1< Size > cyclize_res_;
+	utility::vector1< Size > twoprime_res_;
 	utility::vector1< Size > fiveprime_res_;
 	utility::vector1< Size > bulge_res_;
 	utility::vector1< Size > extra_minimize_jump_res_;

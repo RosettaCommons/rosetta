@@ -23,6 +23,7 @@
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/conformation/Conformation.fwd.hh>
 
 #include <utility/excn/Exceptions.hh>

@@ -14,6 +14,7 @@
 #include <core/types.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/rna/RNA_Info.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/FullModelPoseBuilder.hh>

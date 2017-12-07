@@ -56,7 +56,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/variant_util.hh>

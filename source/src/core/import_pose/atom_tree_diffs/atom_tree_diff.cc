@@ -27,6 +27,7 @@
 #include <core/io/pdb/Field.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/pdb/pdb_reader.hh>
+#include <core/io/StructFileRep.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>

@@ -37,6 +37,7 @@
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -46,8 +47,6 @@
 #include <utility/vector1.functions.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
-
-
 
 static basic::Tracer TR( "protocols.constraint_generator.MetalContactsConstraintGenerator" );
 

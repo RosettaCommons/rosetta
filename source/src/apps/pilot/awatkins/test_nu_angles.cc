@@ -28,6 +28,7 @@
 #include <core/scoring/ScoringManager.hh>
 
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>

@@ -22,11 +22,8 @@
 
 #include <platform/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
-
 #include <core/indexed_structure_store/H5FragmentStoreBackend.fwd.hh>
 #include <core/indexed_structure_store/FragmentStore.fwd.hh>
-
 
 #include "H5Cpp.h"
 

@@ -35,6 +35,7 @@
 #include <core/pose/rna/util.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/pose/Pose.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 
 using namespace core;

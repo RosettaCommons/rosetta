@@ -39,6 +39,7 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -1074,8 +1075,7 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 		} // i
 	}
 
-	for ( Size i = 1; i <= rna_params_.cutpoints_cyclize().size(); i++ ) {
-		Size const n( rna_params_.cutpoints_cyclize()[ i ] );
+	for ( Size const n : rna_params_.cutpoints_cyclize() ) {
 		// Need to track partner -- move back along chain until we see open cutpoint.
 		Size m;
 		for ( m = n; m > 1; m-- ) {

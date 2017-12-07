@@ -19,6 +19,7 @@
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>

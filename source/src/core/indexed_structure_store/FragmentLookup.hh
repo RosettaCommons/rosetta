@@ -22,10 +22,10 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <numeric/types.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/indexed_structure_store/FragmentStore.hh>
 #include <core/indexed_structure_store/FragmentLookup.fwd.hh>

@@ -37,6 +37,7 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 
 
 #include <core/scoring/Energies.hh>

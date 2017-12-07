@@ -15,23 +15,24 @@
 #define INCLUDED_core_pose_rna_util_hh
 
 #include <core/types.hh>
-#include <core/chemical/rna/util.hh>
+#include <core/chemical/rna/util.hh> // for some enums declared here, no fwd
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/id/types.hh>
 #include <core/id/TorsionID.fwd.hh>
+#include <core/scoring/rna/RNA_Motif.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBInfo.fwd.hh>
-#include <core/pose/rna/VDW_Grid.hh>
 #include <core/pose/rna/BasePair.fwd.hh>
 #include <core/pose/rna/BaseStack.fwd.hh>
 #include <core/pose/rna/StubStubType.fwd.hh>
-#include <core/scoring/rna/RNA_Motif.fwd.hh>
+#include <core/pose/rna/VDW_Grid.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <utility/vector1.fwd.hh>
+#include <map>
 
 namespace core {
 namespace pose {

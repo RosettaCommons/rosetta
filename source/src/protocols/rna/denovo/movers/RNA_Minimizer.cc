@@ -34,7 +34,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/chemical/rna/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>

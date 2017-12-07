@@ -23,6 +23,7 @@
 
 // Project headers
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/util.hh>

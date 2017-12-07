@@ -74,8 +74,13 @@ using core::kinematics::FoldTree;
 //                                -- rhiju, 2014
 //
 //  TODO: Make a class or mover?
+//   -- AMW: few of these functions have shared data that merit class-hood, but
+//      I agree that they should be grouped in a manner more sane than just
+//      grouping into a file of related functions!
 //  TODO: Move outside protocols/stepwise (since will soon be in use in fragment assembly)
+//   -- AMW: most of these functions are now in pose/util!
 //  TODO: Set up -cyclize flag (like what it is available for RNA in farna)
+//   -- done!
 //
 //////////////////////////////////////////////////////////////////////////////////////
 

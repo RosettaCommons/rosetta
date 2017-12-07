@@ -24,6 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 

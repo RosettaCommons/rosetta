@@ -22,6 +22,7 @@
 #include <numeric/xyzTransform.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <boost/unordered_map.hpp>
+#include <utility/SingletonBase.hh>
 
 namespace core {
 namespace scoring {

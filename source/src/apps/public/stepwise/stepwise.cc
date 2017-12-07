@@ -14,6 +14,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/util.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>

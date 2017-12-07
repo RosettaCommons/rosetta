@@ -465,7 +465,9 @@ LoopGraph::check_for_unexpected_cutpoints( pose::Pose const & pose ) const {
 	for ( Size n = 1; n < pose.size(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) && ( res_list[ n+1 ] != res_list[n] + 1 ) ) {
 			// better not be a closed chainbreak!
-			runtime_assert( ! pose.residue( n   ).has_variant_type( chemical::CUTPOINT_LOWER ) );
+			//TR << "Unexpected nonlocal cutpoint-style connection, possibly O2' based: " << res_list[n] << " " << res_list[n+1] << std::endl;
+			runtime_assert( ! pose.residue( n   ).has_variant_type( chemical::CUTPOINT_LOWER )
+				&& ! pose.residue( n   ).has_variant_type( chemical::C2_BRANCH_POINT ) );
 			runtime_assert( ! pose.residue( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) );
 		}
 	}

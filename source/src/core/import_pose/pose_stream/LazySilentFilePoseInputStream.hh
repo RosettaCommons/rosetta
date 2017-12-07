@@ -19,15 +19,13 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStruct.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <utility/file/FileName.hh>
+#include <utility/file/FileName.fwd.hh>
 
 #include <string>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 
 namespace core {

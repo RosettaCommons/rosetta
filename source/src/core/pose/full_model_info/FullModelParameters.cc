@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/pose/rna/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -513,6 +514,11 @@ FullModelParameters::full_to_conventional_resnum_and_chain_and_segid( Size const
 	} else {
 		return std::make_tuple( conventional_numbering_[ res_num ], ' ', "    " );
 	}
+}
+
+Size
+FullModelParameters::size() const {
+	return core::pose::rna::remove_bracketed( full_sequence_ ).size();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

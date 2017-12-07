@@ -16,17 +16,20 @@
 #define INCLUDED_core_import_pose_atom_tree_diffs_atom_tree_diff_hh
 
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
+
 #ifdef WIN32
 #include <core/pose/Pose.hh> // WIN32 INCLUDE
+#else
+#include <core/pose/Pose.fwd.hh>
 #endif
+
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <fstream>
 #include <map>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 
 namespace core {

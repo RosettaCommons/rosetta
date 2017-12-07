@@ -14,6 +14,8 @@
 #include <cxxtest/TestSuite.h>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
 #include <utility/excn/Exceptions.hh>
 #include <test/core/init_util.hh>

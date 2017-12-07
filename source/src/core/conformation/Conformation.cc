@@ -48,8 +48,10 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/constants.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>

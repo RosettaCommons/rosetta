@@ -28,6 +28,7 @@ static basic::Tracer TR( "protocols.simple_moves.AlignChainMover" );
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+#include <numeric/xyzMatrix.hh>
 
 namespace protocols {
 namespace simple_moves {

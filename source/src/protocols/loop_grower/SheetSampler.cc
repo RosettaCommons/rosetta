@@ -17,6 +17,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/util/kinematics_util.hh>

@@ -23,6 +23,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
 

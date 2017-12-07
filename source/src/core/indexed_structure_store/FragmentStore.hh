@@ -18,16 +18,16 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 #include <numeric/types.hh>
 
 #include <core/indexed_structure_store/FragmentStore.fwd.hh>
 #include <core/indexed_structure_store/FragmentLookup.fwd.hh>
 
 #include <vector>
-#include <string>
 #include <map>
-#include <iostream>
+#include <set>
+#include <iosfwd>
 
 #include <ctime>
 

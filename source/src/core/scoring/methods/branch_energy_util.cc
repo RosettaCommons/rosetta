@@ -29,55 +29,99 @@ namespace methods {
 void
 find_relevant_connections_onersd( pose::Pose const & pose, Size const seqpos, ResidueAtomOverlaps & branch_connection ) {
 
-	//if ( !pose.residue_type( ii ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) continue;
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 
 		if ( ii == seqpos ) {
 			// 'lower trial'
 			auto const & ii_rsd = pose.residue( ii );
 
-			// OK, this residue has FIVEPRIME_CAP. That means that it has SOME connection
-			// whose connection atom is ZO3'
-			for ( Size k = 1; k <= ii_rsd.connect_map_size(); k++ ) {
-				if ( ii_rsd.atom_name( ii_rsd.residue_connect_atom_index( k ) ) != "ZO3'" ) continue;
-				Size other( ii_rsd.connected_residue_at_resconn( k ) );
-				if ( other == 0 ) continue;
-				auto const & other_rsd = pose.residue( other );
 
-				Size const m = ii_rsd.residue_connection_conn_id( k );
-				if ( other_rsd.atom_name( other_rsd.residue_connect_atom_index( m ) ) != " P  " ) continue;
-
-				branch_connection.res1 = ii;
-				branch_connection.res2 = other;
-				branch_connection.res1_ovl1_overlaps = "P";
-				branch_connection.res1_ovl2_overlaps = "O5'";
-				branch_connection.res2_ovu1_overlaps = "ZO3'";
-				return;
-			}
-		} else {
-			// 'upper trial'
-			for ( Size jj = 1; jj <= pose.size(); ++jj ) {
-				if ( !pose.residue_type( jj ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) continue;
-
-				auto const & jj_rsd = pose.residue( jj );
-
+			if ( ii_rsd.type().has_variant_type( core::chemical::FIVEPRIME_CAP ) ) {
 				// OK, this residue has FIVEPRIME_CAP. That means that it has SOME connection
 				// whose connection atom is ZO3'
-				for ( Size k = 1; k <= jj_rsd.connect_map_size(); k++ ) {
-					if ( jj_rsd.atom_name( jj_rsd.residue_connect_atom_index( k ) ) != "ZO3'" ) continue;
+				for ( Size k = 1; k <= ii_rsd.connect_map_size(); k++ ) {
+					if ( ii_rsd.atom_name( ii_rsd.residue_connect_atom_index( k ) ) != "ZO3'" ) continue;
+					Size other( ii_rsd.connected_residue_at_resconn( k ) );
+					if ( other == 0 ) continue;
+					auto const & other_rsd = pose.residue( other );
 
-					if ( jj_rsd.connected_residue_at_resconn( k ) != ii ) break;
-					auto const & other_rsd = pose.residue( jj );
-
-					Size const m = jj_rsd.residue_connection_conn_id( k );
+					Size const m = ii_rsd.residue_connection_conn_id( k );
 					if ( other_rsd.atom_name( other_rsd.residue_connect_atom_index( m ) ) != " P  " ) continue;
 
-					branch_connection.res1 = jj;
-					branch_connection.res2 = ii;
+					branch_connection.res1 = ii;
+					branch_connection.res2 = other;
 					branch_connection.res1_ovl1_overlaps = "P";
 					branch_connection.res1_ovl2_overlaps = "O5'";
 					branch_connection.res2_ovu1_overlaps = "ZO3'";
 					return;
+				}
+			} else if ( ii_rsd.type().has_variant_type( core::chemical::C2_BRANCH_POINT ) ) {
+				// OK, this residue has C2_BRANCH_POINT. That means that it has SOME connection
+				// whose connection atom is O2'
+				for ( Size k = 1; k <= ii_rsd.connect_map_size(); k++ ) {
+					if ( ii_rsd.atom_name( ii_rsd.residue_connect_atom_index( k ) ) != " O2'" ) continue;
+					Size other( ii_rsd.connected_residue_at_resconn( k ) );
+					if ( other == 0 ) continue;
+					auto const & other_rsd = pose.residue( other );
+
+					Size const m = ii_rsd.residue_connection_conn_id( k );
+					if ( other_rsd.atom_name( other_rsd.residue_connect_atom_index( m ) ) != " P  " ) continue;
+
+					branch_connection.res1 = ii;
+					branch_connection.res2 = other;
+					branch_connection.res1_ovl1_overlaps = "P";
+					branch_connection.res1_ovl2_overlaps = "O5'";
+					branch_connection.res2_ovu1_overlaps = "O2'";
+					return;
+				}
+			}
+		} else {
+			// 'upper trial'
+			for ( Size jj = 1; jj <= pose.size(); ++jj ) {
+				if ( pose.residue_type( jj ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) {
+
+					auto const & jj_rsd = pose.residue( jj );
+
+					// OK, this residue has FIVEPRIME_CAP. That means that it has SOME connection
+					// whose connection atom is ZO3'
+					for ( Size k = 1; k <= jj_rsd.connect_map_size(); k++ ) {
+						if ( jj_rsd.atom_name( jj_rsd.residue_connect_atom_index( k ) ) != "ZO3'" ) continue;
+
+						if ( jj_rsd.connected_residue_at_resconn( k ) != ii ) break;
+						auto const & other_rsd = pose.residue( jj );
+
+						Size const m = jj_rsd.residue_connection_conn_id( k );
+						if ( other_rsd.atom_name( other_rsd.residue_connect_atom_index( m ) ) != " P  " ) continue;
+
+						branch_connection.res1 = jj;
+						branch_connection.res2 = ii;
+						branch_connection.res1_ovl1_overlaps = "P";
+						branch_connection.res1_ovl2_overlaps = "O5'";
+						branch_connection.res2_ovu1_overlaps = "ZO3'";
+						return;
+					}
+				} else if ( pose.residue_type( jj ).has_variant_type( core::chemical::C2_BRANCH_POINT ) ) {
+
+					auto const & jj_rsd = pose.residue( jj );
+
+					// OK, this residue has C2_BRANCH_POINT. That means that it has SOME connection
+					// whose connection atom is O2'
+					for ( Size k = 1; k <= jj_rsd.connect_map_size(); k++ ) {
+						if ( jj_rsd.atom_name( jj_rsd.residue_connect_atom_index( k ) ) != " O2'" ) continue;
+
+						if ( jj_rsd.connected_residue_at_resconn( k ) != ii ) break;
+						auto const & other_rsd = pose.residue( jj );
+
+						Size const m = jj_rsd.residue_connection_conn_id( k );
+						if ( other_rsd.atom_name( other_rsd.residue_connect_atom_index( m ) ) != " P  " ) continue;
+
+						branch_connection.res1 = jj;
+						branch_connection.res2 = ii;
+						branch_connection.res1_ovl1_overlaps = "P";
+						branch_connection.res1_ovl2_overlaps = "O5'";
+						branch_connection.res2_ovu1_overlaps = "O2'";
+						return;
+					}
 				}
 			}
 		}
@@ -96,31 +140,58 @@ find_relevant_connections( pose::Pose const & pose, utility::vector1< ResidueAto
 	// THIS variant. Another option is to check for the variants of each residue,
 	// THEN loop through that set, THEN deploy action for each variant that 'is relevant'.
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( !pose.residue_type( ii ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) continue;
+		if ( pose.residue_type( ii ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) {
 
-		auto const & ii_rsd = pose.residue( ii );
+			auto const & ii_rsd = pose.residue( ii );
 
-		// OK, this residue has FIVEPRIME_CAP. That means that it has SOME connection
-		// whose connection atom is ZO3'
-		for ( Size k = 1; k <= ii_rsd.connect_map_size(); k++ ) {
-			if ( ii_rsd.atom_name( ii_rsd.residue_connect_atom_index( k ) ) != "ZO3'" ) continue;
-			Size other( ii_rsd.connected_residue_at_resconn( k ) );
-			if ( other == 0 ) continue;
+			// OK, this residue has FIVEPRIME_CAP. That means that it has SOME connection
+			// whose connection atom is ZO3'
+			for ( Size k = 1; k <= ii_rsd.connect_map_size(); k++ ) {
+				if ( ii_rsd.atom_name( ii_rsd.residue_connect_atom_index( k ) ) != "ZO3'" ) continue;
+				Size other( ii_rsd.connected_residue_at_resconn( k ) );
+				if ( other == 0 ) continue;
 
-			auto const & other_rsd = pose.residue( other );
-			Size const m = ii_rsd.residue_connection_conn_id( k );
+				auto const & other_rsd = pose.residue( other );
+				Size const m = ii_rsd.residue_connection_conn_id( k );
 
-			// SPACES?!?!?!
-			if ( other_rsd.atom_name( other_rsd.residue_connect_atom_index( m ) ) != " P  " ) continue;
+				// SPACES?!?!?!
+				if ( other_rsd.atom_name( other_rsd.residue_connect_atom_index( m ) ) != " P  " ) continue;
 
-			ResidueAtomOverlaps foo;
-			foo.res1 = ii;
-			foo.res2 = other;
-			foo.res1_ovl1_overlaps = "P";
-			foo.res1_ovl2_overlaps = "O5'";
-			foo.res2_ovu1_overlaps = "ZO3'";
-			branch_connections.push_back( foo );
-			break;
+				ResidueAtomOverlaps foo;
+				foo.res1 = ii;
+				foo.res2 = other;
+				foo.res1_ovl1_overlaps = "P";
+				foo.res1_ovl2_overlaps = "O5'";
+				foo.res2_ovu1_overlaps = "ZO3'";
+				branch_connections.push_back( foo );
+				break;
+			}
+		} else if ( pose.residue_type( ii ).has_variant_type( core::chemical::C2_BRANCH_POINT ) ) {
+
+			auto const & ii_rsd = pose.residue( ii );
+
+			// OK, this residue has C2_BRANCH_POINT. That means that it has SOME connection
+			// whose connection atom is O2'
+			for ( Size k = 1; k <= ii_rsd.connect_map_size(); k++ ) {
+				if ( ii_rsd.atom_name( ii_rsd.residue_connect_atom_index( k ) ) != " O2'" ) continue;
+				Size other( ii_rsd.connected_residue_at_resconn( k ) );
+				if ( other == 0 ) continue;
+
+				auto const & other_rsd = pose.residue( other );
+				Size const m = ii_rsd.residue_connection_conn_id( k );
+
+				// SPACES?!?!?!
+				if ( other_rsd.atom_name( other_rsd.residue_connect_atom_index( m ) ) != " P  " ) continue;
+
+				ResidueAtomOverlaps foo;
+				foo.res1 = ii;
+				foo.res2 = other;
+				foo.res1_ovl1_overlaps = "P";
+				foo.res1_ovl2_overlaps = "O5'";
+				foo.res2_ovu1_overlaps = "O2'";
+				branch_connections.push_back( foo );
+				break;
+			}
 		}
 	}
 }

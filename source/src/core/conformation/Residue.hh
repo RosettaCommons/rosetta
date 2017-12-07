@@ -26,7 +26,7 @@
 #include <core/conformation/PseudoBond.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/Atom.hh>
+#include <core/chemical/Atom.fwd.hh>
 #include <core/chemical/Orbital.hh>
 
 // Project headers
@@ -34,8 +34,8 @@
 #include <core/chemical/ResConnID.hh>
 #include <core/chemical/ResidueType.hh> // also defines AtomIndices == vector1< Size >
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 
 // No fwd.hh
@@ -45,10 +45,8 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 // Numeric headers
 #include <numeric/xyzMatrix.fwd.hh>

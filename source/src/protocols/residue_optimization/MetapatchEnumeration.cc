@@ -61,6 +61,7 @@
 #include <protocols/residue_optimization/MetapatchEnumeration.hh>
 
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <utility/vector1.functions.hh>
 

@@ -6,6 +6,8 @@ TYPES C2_BRANCH_POINT
 BEGIN_SELECTOR
 PROPERTY RNA
 NOT VARIANT_TYPE C2_BRANCH_POINT
+# Properly, it COULD be. But let's say no for now -- need to figure out a new atom naming scheme.
+NOT VARIANT_TYPE CUTPOINT_LOWER
 # AMW TODO: add variants or properties here that are lacking for 2' modified RNA
 # For example: 2'F and 2'OMe RNA might have NO_2PRIME_HYDROXYL or something?
 END_SELECTOR
@@ -19,5 +21,27 @@ SET_ATOMIC_CHARGE HO2' 0.00
 ADD_CONNECT O2' ICOOR  -85.9775   68.374    1.439   O2'   C2'   C1'
 
 ADD_PROPERTY BRANCH_POINT
+
+
+ADD_ATOM OVL1 VIRT VIRT 0.0
+ADD_ATOM OVL2 VIRT VIRT 0.0
+
+## ensure that these guys are considered backbone atoms
+SET_BACKBONE_HEAVYATOM OVL1
+SET_BACKBONE_HEAVYATOM OVL2
+
+ADD_BOND O2'  OVL1
+ADD_BOND OVL1 OVL2
+
+SET_ICOOR OVL1  -151.943465   60.314519    1.606497   O2'   C2'   C3'
+SET_ICOOR OVL2   -76.418503   71.059360    1.593180  OVL1   O2'   C2'
+
+
+# Gross but I gotta add chis for the virts or else they won't get sampled? Certainly for
+# minimizer setup
+ADD_CHI N+1 C3'  C2'  O2' OVL1
+ADD_CHI N+1 C2'  O2' OVL1 OVL2
+
+
 
 END_CASE

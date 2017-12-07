@@ -49,7 +49,7 @@
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>

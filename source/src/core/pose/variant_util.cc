@@ -37,6 +37,7 @@
 #include <core/chemical/PatchOperation.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/AtomICoor.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -258,6 +259,91 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 			correctly_add_cutpoint_variants( pose, i, false );
 		}
 	}
+}
+
+// AMW TODO assume no foldtree perturbation
+void
+correctly_add_2prime_connection_variants( pose::Pose & pose, Size const twoprime_res, Size const next_res ) {
+
+	// twoprime_res can't have any other 2prime variants
+	// [none at the mo']
+	using namespace core::chemical;
+	using namespace core::id;
+
+	correctly_remove_variants_incompatible_with_upper_cutpoint_variant( pose, next_res );
+
+	// AMW: positioning TWO PRIME 'cutpoint phosphate torsions'
+	// since this is all about OP1/OP2, this actually works fine... I think. It might run into issues because of how
+	// it prepends a residue. yeah, major issues w/ the subsequent branch_conn scoring.
+
+	//if ( pose.residue_type( twoprime_res ).is_RNA() )  rna::position_cutpoint_phosphate_torsions( pose, twoprime_res, next_res );
+
+	// Manually reposition OP2, OP1 on next_res.
+	AtomID aidOP1( pose.residue( next_res ).atom_index("OP1"),  next_res );
+	AtomID aidOP2( pose.residue( next_res ).atom_index("OP2"),  next_res );
+	AtomID aidP( pose.residue( next_res ).atom_index("P"),  next_res );
+	AtomID aidO5P( pose.residue( next_res ).atom_index("O5'"),  next_res );
+	AtomID aidC5P( pose.residue( next_res ).atom_index("C5'"),  next_res );
+
+	Vector const & O2P_xyz( pose.residue( twoprime_res ).xyz( "O2'" ) );
+	Vector LOWER_xyz( pose.residue( next_res ).lower_connect().icoor().build( pose.residue( next_res ), pose.conformation() ) );
+	Vector const & P_xyz( pose.residue( next_res ).xyz( "P" ) );
+	Vector const & O5P_xyz( pose.residue( next_res ).xyz( "O5'" ) );
+	Vector const & C5P_xyz( pose.residue( next_res ).xyz( "C5'" ) );
+
+	using namespace numeric::conversions;
+
+	Real O2P_torsion_correction = numeric::dihedral_degrees( O2P_xyz, P_xyz, O5P_xyz, C5P_xyz ) - numeric::dihedral_degrees( LOWER_xyz, P_xyz, O5P_xyz, C5P_xyz );
+	Real torsion_OP2 = degrees( pose.conformation().torsion_angle( aidOP2, aidP, aidO5P, aidC5P ) ) + O2P_torsion_correction;
+	pose.conformation().set_torsion_angle( aidOP2, aidP, aidO5P, aidC5P, radians( torsion_OP2 ) );
+
+	remove_variant_type_from_pose_residue( pose, VIRTUAL_RIBOSE, twoprime_res );
+	if ( !pose.residue( twoprime_res ).has_variant_type( C2_BRANCH_POINT ) ) {
+		add_variant_type_to_pose_residue( pose, C2_BRANCH_POINT, twoprime_res   );
+	}
+	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, next_res );
+
+	// important -- to prevent artificial penalty from steric clash.
+	// AMW: this is a horrifying inline of declare_cutpoint_chemical_bond, but for 2' to 5'.
+	using namespace core::conformation;
+	// Need to clear out any chemical bonds that might have been previously tied to upper/lower of these residues.
+	// check simple loop, like  in get_upper_cutpoint_partner_for_lower() in chainbreak_util.hh
+	Residue const & lower_rsd( pose.conformation().residue( twoprime_res ) );
+	for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
+		if ( lower_rsd.residue_connect_atom_index( k ) != lower_rsd.atom_index("O2'") ) continue;
+		Size upper( lower_rsd.connected_residue_at_resconn( k ) );
+		if ( upper == 0 ) continue;
+		Residue const & upper_rsd( pose.conformation().residue( upper ) ); // upper residue.
+		Size const m = lower_rsd.residue_connection_conn_id( k );
+		runtime_assert( upper_rsd.residue_connect_atom_index( m ) == upper_rsd.lower_connect_atom() );
+		runtime_assert( upper_rsd.connected_residue_at_resconn( m ) == twoprime_res );
+		//upper_rsd.mark_connect_incomplete( m );
+		//lower_rsd.mark_connect_incomplete( k );
+		pose.conformation().sever_chemical_bond( twoprime_res, k, upper, m );
+	}
+
+	Residue const & upper_rsd( pose.conformation().residue( next_res ) );
+	for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
+		if ( upper_rsd.residue_connect_atom_index( k ) != upper_rsd.lower_connect_atom() ) continue;
+		Size lower( upper_rsd.connected_residue_at_resconn( k ) );
+		if ( lower == 0 ) continue;
+		Residue const & lower_rsd( pose.conformation().residue( lower ) ); // lower residue.
+		Size const m = upper_rsd.residue_connection_conn_id( k );
+		runtime_assert( lower_rsd.residue_connect_atom_index( m ) == lower_rsd.upper_connect_atom() );
+		runtime_assert( lower_rsd.connected_residue_at_resconn( m ) == next_res );
+		//lower_rsd.mark_connect_incomplete( m );
+		//upper_rsd.mark_connect_incomplete( k );
+		pose.conformation().sever_chemical_bond( next_res, k, lower, m );
+	}
+
+	TR << "AMW NOTE: O2' res " << lower_rsd.name() << " connect map is " << lower_rsd.connect_map_size() << std::endl;
+	pose.conformation().declare_chemical_bond(
+		twoprime_res,
+		"O2'",
+		next_res,
+		upper_rsd.atom_name( upper_rsd.lower_connect_atom() ) );
+
+	TR << "AMW NOTE: O2' res " << lower_rsd.name() << " connect map is " << lower_rsd.connect_map_size() << std::endl;
 }
 
 /// @brief Add CUTPOINT_LOWER and CUTPOINT_UPPER types to two residues, remove incompatible types, and declare
@@ -515,10 +601,22 @@ update_block_stack_variants( pose::Pose & pose, Size const & n ) {
 
 ////////////////////////////////////////////////////////////////////
 void
-fix_up_residue_type_variants( pose::Pose & pose_to_fix ) {
+fix_up_residue_type_variants(
+#ifndef GL_GRAPHICS
+	pose::Pose & pose
+#else
+	pose::Pose & pose_to_fix 
+#endif
+) {
 
 	using namespace core::chemical;
+	using namespace core::pose::full_model_info;
+#ifdef GL_GRAPHICS
 	pose::Pose pose = pose_to_fix; // costly, but prevents seg fault with graphics.
+#endif
+
+	auto const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
 
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 
@@ -551,10 +649,35 @@ fix_up_residue_type_variants( pose::Pose & pose_to_fix ) {
 		update_block_stack_variants( pose, n );
 	}
 
+	for ( auto const & cyclize_pair : full_model_info.cyclize_res() ) {
+		Size const first = cyclize_pair.first;
+		Size const second = cyclize_pair.second;
+		// Bigger number first... actually use max/min in case wrong order.
+		if ( res_list.contains( first ) && res_list.contains( second ) ) {
+			TR << "OK, now gonna add cutpoint variants (correctly!)" << std::endl;
+			core::pose::correctly_add_cutpoint_variants( pose, std::max( res_list.index( first ), res_list.index( second ) ), false, std::min( res_list.index( first ), res_list.index( second ) ) );
+		}
+	}
+
+	for ( auto const & twoprime_pair : full_model_info.twoprime_res() ) {
+		Size const first = twoprime_pair.first;
+		Size const second = twoprime_pair.second;
+		// first one ==  the one with the 2prime variant
+		// Ugh, but this function sorts them automatically.
+		// Since TYPICALLY smaller-to-larger connections are polymeric
+		// assume larger-to-smaller
+		if ( res_list.contains( second ) && res_list.contains( first ) ) {
+			TR << "OK, now gonna add 2prime variants (correctly!) " << res_list.index( first ) << " " << res_list.index( second ) << std::endl;
+			core::pose::correctly_add_2prime_connection_variants( pose, res_list.index( second ), res_list.index( first ) );
+		}
+	}
+
+#ifdef GL_GRAPHICS
 	// Just copying the conformation() makes sure that other objects (such as other_pose_list) don't get cloned --
 	//  can be important if external functions are holding OPs to those objects.
 	pose_to_fix.conformation() = pose.conformation();
 	pose_to_fix.pdb_info( pose.pdb_info() ); // silly -- ensures that PDBInfo is not flagged as 'obsolete'.
+#endif
 }
 
 } // pose

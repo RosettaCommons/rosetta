@@ -22,6 +22,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>

@@ -13,6 +13,8 @@
 
 // Unit Headers
 #include <core/conformation/PseudoBond.hh>
+#include <core/chemical/ResConnID.hh>
+#include <core/types.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

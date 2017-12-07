@@ -17,6 +17,7 @@
 
 #include <test/core/init_util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>

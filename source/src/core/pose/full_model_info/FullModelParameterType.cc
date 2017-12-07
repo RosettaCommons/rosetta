@@ -15,6 +15,7 @@
 
 #include <core/pose/full_model_info/FullModelParameterType.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
+#include <core/pose/rna/util.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
@@ -66,6 +67,8 @@ initialize_full_model_parameter_type_name(){
 		full_model_parameter_type_name[ RNA_BLOCK_STACK_BELOW ]    = "RNA_BLOCK_STACK_BELOW";
 		full_model_parameter_type_name[ FIVEPRIME_CAP ]      = "FIVEPRIME_CAP";
 		full_model_parameter_type_name[ DISULFIDE ]      = "DISULFIDE";
+		full_model_parameter_type_name[ CYCLIZE_RES ]      = "CYCLIZE_RES";
+		full_model_parameter_type_name[ TWOPRIME_RES ]      = "TWOPRIME_RES";
 		init = true;
 	}
 }

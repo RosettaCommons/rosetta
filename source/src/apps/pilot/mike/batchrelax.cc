@@ -22,6 +22,7 @@
 #include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
 #include <core/import_pose/pose_stream/util.hh>
+#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>

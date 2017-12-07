@@ -22,6 +22,7 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/chemical/ChemicalManager.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>

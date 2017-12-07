@@ -29,6 +29,7 @@
 #include <core/indexed_structure_store/H5FragmentStoreBackend.hh>
 #include <core/indexed_structure_store/BinaryFragmentStoreBackend.hh>
 
+#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 
 namespace core {

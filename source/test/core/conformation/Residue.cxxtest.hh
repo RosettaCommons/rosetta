@@ -17,6 +17,7 @@
 // Unit Headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/PseudoBond.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>

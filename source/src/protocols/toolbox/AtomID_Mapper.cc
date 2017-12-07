@@ -19,6 +19,7 @@
 #include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/methods/chainbreak_util.hh>

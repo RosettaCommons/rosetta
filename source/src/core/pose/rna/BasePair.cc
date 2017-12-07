@@ -16,6 +16,7 @@
 #include <core/pose/rna/BasePair.hh>
 #include <core/pose/rna/leontis_westhof_util.hh>
 #include <basic/Tracer.hh>
+#include <iomanip>
 
 static basic::Tracer TR( "core.pose.rna.BasePair" );
 

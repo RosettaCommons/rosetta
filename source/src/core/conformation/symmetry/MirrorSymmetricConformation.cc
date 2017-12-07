@@ -28,6 +28,7 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
 
 #include <core/conformation/PointGraph.fwd.hh>
 #include <core/conformation/PointGraphData.hh>

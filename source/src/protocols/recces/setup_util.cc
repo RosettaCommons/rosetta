@@ -18,6 +18,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>

@@ -15,6 +15,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
+#include <core/chemical/ChemicalManager.hh>
 
 #include <core/pose/Pose.hh>
 

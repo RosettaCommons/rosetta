@@ -142,6 +142,27 @@ core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue con
 		upper_rsd.atom( upper_rsd.mainchain_atoms()[ 1 ] ).xyz(),          // N
 		upper_rsd.atom( "OVU1" ).xyz() );                                  // virtual C
 
+	/*
+	* AMW:
+	* This was my originl strategy when I was adding in 2' + cyclization support. But when I
+	* added 5' caps, I needed yet another strategy. So, I think the new method is more general
+	* and I will keep to it.
+
+	std::string lower_rsd_upper_atom_name;
+	if ( lower_rsd.is_RNA() && lower_rsd.has_variant_type( chemical::BRANCH_LOWER_TERMINUS_VARIANT ) ) {
+	// Right now, this uniquely specifies an O2' branch. This should be made more specific...
+	// AMW: worse yet, this means we can't have an O2' AND O3' chainbreak. I wouldn't
+	// hope for that topology to begin with, but.......
+	// AMW TODO
+	lower_rsd_upper_atom_name = "O2'";
+	} else {
+	lower_rsd_upper_atom_name = lower_rsd.atom_name( lower_rsd.mainchain_atoms()[ nbb ] );
+	}
+	//for double-checking... ( debug )
+	Stub manual_lower_stub( lower_rsd.atom( "OVL2" ).xyz(),                // virtual CA
+	lower_rsd.atom( "OVL1" ).xyz(),                                // virtual N
+	lower_rsd.atom( lower_rsd_upper_atom_name ).xyz() );  // C
+	*/
 
 	// AMW: OVL1 may be bonded to other atoms! For example, we could hang these
 	// two atoms off a 5'-capped residue -- off the end of the triphosphate --
@@ -154,7 +175,6 @@ core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue con
 	Stub manual_lower_stub( lower_rsd.atom( "OVL2" ).xyz(),                // virtual CA
 		lower_rsd.atom( "OVL1" ).xyz(),                                // virtual N
 		lower_rsd.atom( lower_rsd.atom_name( lower_rsd.type().atom_base( lower_rsd.atom_index( "OVL1" ) ) ) ).xyz() );  // C
-
 
 	if ( distance( lower_stub, manual_lower_stub ) > 0.01 ) {
 		tr.Warning << "mismatch between manual computed and atom-tree stub: "
@@ -282,7 +302,8 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 		bool match( true );
 		Vector xyz_fixed;
 		Size const nbb( lower_rsd.mainchain_atoms().size() );
-		if ( id.atomno() == lower_rsd.mainchain_atoms()[ nbb ] ) {
+		if ( id.atomno() == lower_rsd.mainchain_atoms()[ nbb ] ||
+				lower_rsd.atom_name( id.atomno() ) == "O2'" ) {
 			xyz_fixed = upper_rsd.atom( "OVU1" ).xyz();
 		} else if ( lower_rsd.atom_name( id.atomno() ) == "OVL1" ) {
 			xyz_fixed = upper_rsd.atom( upper_rsd.mainchain_atoms()[ 1 ] ).xyz();
@@ -319,7 +340,11 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 		} else if ( id.atomno() == upper_rsd.mainchain_atoms()[ 2 ] && ! upper_rsd.is_carbohydrate() ) {
 			xyz_fixed = lower_rsd.atom( "OVL2" ).xyz();
 		} else if ( upper_rsd.atom_name( id.atomno() ) == "OVU1" ) {
-			xyz_fixed = lower_rsd.atom( lower_rsd.mainchain_atoms()[ nbb ] ).xyz();
+			if ( lower_rsd.has_variant_type( chemical::C2_BRANCH_POINT ) && lower_rsd.is_RNA() ) {
+				xyz_fixed = lower_rsd.atom( "O2'" ).xyz();
+			} else {
+				xyz_fixed = lower_rsd.atom( lower_rsd.mainchain_atoms()[ nbb ] ).xyz();
+			}
 		} else {
 			match = false;
 		}

@@ -23,6 +23,7 @@
 #include <core/pose/util.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>

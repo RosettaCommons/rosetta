@@ -117,8 +117,8 @@ FullModelPoseBuilder::initialize_input_poses_from_options( core::chemical::Resid
 		input_poses_.push_back( pose );
 	}
 
-	if ( options_[ full_model::other_poses ].user() ) {
-		get_other_poses( input_poses_, options_[ full_model::other_poses ](), rsd_set );
+	if ( options_[ basic::options::OptionKeys::full_model::other_poses ].user() ) {
+		get_other_poses( input_poses_, options_[ basic::options::OptionKeys::full_model::other_poses ](), rsd_set );
 	}
 }
 
@@ -175,7 +175,8 @@ FullModelPoseBuilder::initialize_further_from_options() {
 	set_preferred_root_res( full_model_parameters_->conventional_to_full( options_[ full_model::root_res ].resnum_and_chain() ) );
 	set_jump_res( full_model_parameters_->conventional_to_full( options_[ full_model::jump_res ].resnum_and_chain() ) );
 	set_cutpoint_closed( full_model_parameters_->conventional_to_full( options_[ full_model::cutpoint_closed ].resnum_and_chain() ) );
-	if ( options_[ full_model::cyclize ].user() ) utility_exit_with_message( "Cannot handle cyclize yet in stepwise." );
+	set_cyclize_res( full_model_parameters_->conventional_to_full( option[ full_model::cyclize ].resnum_and_chain() ) );
+	set_twoprime_res( full_model_parameters_->conventional_to_full( option[ full_model::twoprime ].resnum_and_chain() ) );
 	set_fiveprime_res( full_model_parameters_->conventional_to_full( options_[ full_model::fiveprime_cap ].resnum_and_chain() ) );
 	set_bulge_res( full_model_parameters_->conventional_to_full( options_[ full_model::rna::bulge_res ].resnum_and_chain() ) );
 	set_extra_minimize_jump_res( full_model_parameters_->conventional_to_full( options_[ full_model::extra_min_jump_res ].resnum_and_chain() ) );
@@ -387,7 +388,9 @@ FullModelPoseBuilder::fill_full_model_info( vector1< Pose * > & pose_pointers ) 
 	// Temporary. 'res_list_in_pairs' assumes that different pairs involve different residues, but that's
 	//  not the case, actually. Also, jump_res is not apparently used elsewhere in the code except to
 	//  as a sanity check in ResampleMover.
-	// full_model_parameters->set_parameter_as_res_list_in_pairs( full_model_info::JUMP, jump_res );
+	// full_model_parameters_->set_parameter_as_res_list_in_pairs( full_model_info::JUMP, jump_res );
+	full_model_parameters_->set_parameter_as_res_list_in_pairs( CYCLIZE_RES, cyclize_res_ );
+	full_model_parameters_->set_parameter_as_res_list_in_pairs( TWOPRIME_RES, twoprime_res_ );
 
 	full_model_parameters_->set_parameter_as_res_list_in_pairs( EXTRA_MINIMIZE_JUMP, extra_minimize_jump_res_ );
 	full_model_parameters_->set_parameter_as_res_list_in_pairs( FIVEPRIME_CAP,  fiveprime_res_ );

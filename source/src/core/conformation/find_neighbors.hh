@@ -29,13 +29,11 @@
 // Numeric headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyzTriple.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 #include <numeric/geometry/hashing/xyzStripeHashWithMeta.hh>
 
 // ObjexxFCL headers
-//#include <ObjexxFCL/KeyFArray1D.hh>
-//#include <ObjexxFCL/KeyFArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
 // Utility headers

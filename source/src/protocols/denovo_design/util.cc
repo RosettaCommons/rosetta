@@ -30,6 +30,7 @@
 
 //Core Headers
 #include <core/chemical/util.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>

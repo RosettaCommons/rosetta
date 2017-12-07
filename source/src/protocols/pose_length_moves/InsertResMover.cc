@@ -22,7 +22,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/util.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 

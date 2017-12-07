@@ -19,6 +19,8 @@
 #include <protocols/magnesium/MgHydrater.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/AtomID.hh>

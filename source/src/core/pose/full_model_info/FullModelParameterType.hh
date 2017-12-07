@@ -17,7 +17,7 @@
 #define INCLUDED_core_pose_full_model_info_FullModelParameterType_HH
 
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
-#include <string>
+#include <iosfwd>
 
 namespace core {
 namespace pose {
@@ -65,6 +65,8 @@ enum FullModelParameterType {
 	PREFERRED_ROOT, // good positions for roots.
 	SAMPLE,         // Whatever we can add/delete. Cannot include any FIXED_DOMAIN.
 	WORKING,        // Everything that might be modeled [SAMPLE + FIXED_DOMAIN]
+	CYCLIZE_RES,    // topological: which residues are cyclized?
+	TWOPRIME_RES,    // topological: which residues have 2-prime connections
 	// next-section: RNA-specific. Eventually expand.
 	RNA_BULGE, // nucleotides that should not be instantiated.
 	ALIGNMENT_ANCHOR_RES, // residue(s) that are part of the fixed domain to use for alignment
@@ -79,7 +81,6 @@ enum FullModelParameterType {
 	FIVEPRIME_CAP, // pair: first has 5' cap patch; second must be a cutpoint upper 7MG.
 	// next-section: anything protein-specific
 	DISULFIDE,
-
 	// done.
 	LAST_TYPE
 };

@@ -32,9 +32,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/GeneralEvent.hh>
 
-// utility headers
-#include <utility/pointer/access_ptr.hh>
-
 
 namespace core {
 namespace conformation {

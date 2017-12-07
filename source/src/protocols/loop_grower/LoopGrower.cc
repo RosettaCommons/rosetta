@@ -20,6 +20,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataMap.hh>
 
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/ResidueFactory.hh>

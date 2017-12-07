@@ -28,6 +28,7 @@
 
 //Other headers
 #include <core/conformation/Conformation.hh>
+#include <core/kinematics/Jump.hh>
 
 #include <core/select/residue_selector/ChainSelector.hh>
 

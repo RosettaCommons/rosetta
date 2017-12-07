@@ -39,6 +39,7 @@
 #include <numeric/deriv/angle_deriv.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/EnergyMap.hh>

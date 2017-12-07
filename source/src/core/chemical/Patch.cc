@@ -740,6 +740,12 @@ Patch::changes_connections_on( ResidueType const & rsd_type, std::string const &
 		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
 			if ( iter->changes_connections_on( rsd_type, atom ) ) {
+				// This doesn't 'add a CONNECT' in the proper sense, but for the purpose of
+				// relating LINKs to patch assignment, we need to encourage cutpoint patches
+				// if we find backbone LINKs
+				//|| ( atom == " N  " && ( name_ == "protein_cutpoint_upper" || name_ == "peptoid_cutpoint_upper" ) )
+				//|| ( atom == " P  " && ( name_ == "rna_cutpoint_upper" ) ) ) {
+				//tr << " aaaa " << atom << "  " << name_ << std::endl;
 				return true;
 			}
 		}

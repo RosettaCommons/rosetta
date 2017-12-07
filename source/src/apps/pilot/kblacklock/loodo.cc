@@ -40,6 +40,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>

@@ -19,14 +19,14 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh> // for its ::iterator
+#include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <utility/file/FileName.hh>
+#include <utility/file/FileName.hh> // because vector of FileName + destructor in .hh
 
 #include <string>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 
 namespace core {
@@ -42,26 +42,26 @@ class SilentFilePoseInputStream : public PoseInputStream {
 	// constructors
 public:
 	SilentFilePoseInputStream();
-	SilentFilePoseInputStream( utility::vector1< FileName > fns );
+	SilentFilePoseInputStream( utility::vector1< FileName > const & fns );
 	SilentFilePoseInputStream( std::string const & fn );
 	SilentFilePoseInputStream(
-		utility::vector1< FileName > fns,
+		utility::vector1< FileName > const & fns,
 		bool order_by_energy
 	);
 
 	SilentFilePoseInputStream(
-		utility::vector1< FileName > fns,
+		utility::vector1< FileName > const & fns,
 		core::Real energy_cut
 	);
 
 	SilentFilePoseInputStream(
-		utility::vector1< FileName > fns,
-		utility::vector1< string > input_tags
+		utility::vector1< FileName > const & fns,
+		utility::vector1< string > const & input_tags
 	);
 
 	SilentFilePoseInputStream(
-		utility::vector1< FileName > fns,
-		utility::vector1< string > input_tags,
+		utility::vector1< FileName > const & fns,
+		utility::vector1< string > const & input_tags,
 		core::Real energy_cut
 	);
 
@@ -79,8 +79,8 @@ public:
 
 public: // methods specific to SilentFilePoseInputStream class
 	void renumber_decoys( bool const setting );
-	void tags( utility::vector1< string > tags );
-	void filenames( utility::vector1< FileName > filenames );
+	void tags( utility::vector1< string > const & tags );
+	void filenames( utility::vector1< FileName > const & filenames );
 
 	core::Real energy_cut() const;
 	bool renumber_decoys() const;

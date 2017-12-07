@@ -24,6 +24,7 @@
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/import_pose/PDBSilentStruct.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 
 #include <utility/file/file_sys_util.hh>
 

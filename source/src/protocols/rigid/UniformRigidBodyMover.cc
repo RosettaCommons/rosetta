@@ -15,7 +15,7 @@
 #include <protocols/rigid/UniformRigidBodyMoverCreator.hh>
 
 // Package headers
-
+#include <core/kinematics/Jump.hh>
 // Project headers
 
 //Utility Headers

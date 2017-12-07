@@ -44,6 +44,8 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>

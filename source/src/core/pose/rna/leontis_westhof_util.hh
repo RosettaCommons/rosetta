@@ -17,6 +17,7 @@
 #define INCLUDED_core_pose_rna_leontis_westhof_util_HH
 
 #include <core/chemical/rna/util.hh>
+#include <map>
 
 namespace core {
 namespace pose {

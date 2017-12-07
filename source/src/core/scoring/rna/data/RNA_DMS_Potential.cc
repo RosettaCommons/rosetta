@@ -20,6 +20,7 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.fwd.hh>

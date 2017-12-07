@@ -21,6 +21,8 @@
 #include <core/chemical/rna/util.hh>
 #include <core/types.hh>
 
+#include <list>
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>

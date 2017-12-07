@@ -188,7 +188,7 @@ void StructProfileMover::read_P_AA_SS_cen6(){
 }
 
 
-vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose::Pose const pose, Size res,vector1<Real> cenList){
+vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose::Pose const & pose, Size res,vector1<Real> cenList){
 	vector1<string> top_hits_aa;
 	//I want to normalize the rmsd & burial
 	vector1<vector<Real> > hits_cen;
@@ -243,7 +243,7 @@ vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose:
 	return(top_hits_aa);
 }
 
-vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const pose,vector1<Real> cenList){
+vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const & pose,vector1<Real> cenList){
 	Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
 	vector1<vector1<std::string > > all_aa_hits;
 	Size nres1 = pose.size();
@@ -259,7 +259,7 @@ vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::p
 	return(all_aa_hits);
 }
 
-vector1<vector1<Size> > StructProfileMover::generate_counts(vector1<vector1<std::string> > top_frag_sequences,core::pose::Pose const pose){
+vector1<vector1<Size> > StructProfileMover::generate_counts(vector1<vector1<std::string> > top_frag_sequences,core::pose::Pose const & pose){
 	//step1---Initialize counts to zero
 	vector1<vector1<Size> > counts;
 	Size nres1 = pose.size();
@@ -294,7 +294,7 @@ vector1<vector1<Size> > StructProfileMover::generate_counts(vector1<vector1<std:
 	return(counts);
 }
 
-vector1<vector1<Real> > StructProfileMover::generate_profile_score(vector1<vector1<Size> > res_per_pos,Pose const pose){
+vector1<vector1<Real> > StructProfileMover::generate_profile_score(vector1<vector1<Size> > res_per_pos,Pose const & pose){
 	//step1---Get total counts for each position
 	vector1<Size> total_cts;
 	total_cts.resize(res_per_pos.size(),0);
@@ -319,7 +319,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score(vector1<vecto
 	return(profile_score);
 }
 
-vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background(vector1<vector1<Size> > res_per_pos, vector1<Real> cenList, Pose const pose){
+vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background(vector1<vector1<Size> > res_per_pos, vector1<Real> cenList, Pose const & pose){
 	//step1---Get total counts for each position
 	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -369,7 +369,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background
 }
 
 
-void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,core::pose::Pose const pose){
+void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,core::pose::Pose const & pose){
 	std::string profile_name( "profile" );
 	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -418,7 +418,7 @@ Real StructProfileMover::get_cen_deviation(vector<Real> cenListFrag,vector1<Real
 	return(std::sqrt(total_deviation));
 }
 
-vector1< Real> StructProfileMover::calc_cenlist(Pose const pose){
+vector1< Real> StructProfileMover::calc_cenlist(Pose const & pose){
 	using namespace core::chemical;
 	using namespace core::scoring;
 	core::pose::PoseOP centroidPose = pose.clone();

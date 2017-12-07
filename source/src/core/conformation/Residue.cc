@@ -26,6 +26,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/rings/RingConformer.hh>

@@ -29,9 +29,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-#include <string>
+#include <iosfwd>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 
 namespace core {

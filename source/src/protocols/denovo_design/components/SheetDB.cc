@@ -26,6 +26,8 @@
 
 // Core Headers
 #include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <utility/graph/Graph.hh>
 #include <utility/graph/graph_util.hh>
 #include <core/kinematics/FoldTree.hh>

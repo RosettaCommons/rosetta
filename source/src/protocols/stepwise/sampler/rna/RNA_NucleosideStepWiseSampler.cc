@@ -24,6 +24,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/chemical/rna/util.hh>
 #include <basic/Tracer.hh>
+#include <utility/string_util.hh>
 
 using namespace core;
 using namespace core::chemical::rna;

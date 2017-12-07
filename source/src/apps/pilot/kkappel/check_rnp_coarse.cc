@@ -17,6 +17,8 @@
 //Project Headers
 #include <core/pose/Pose.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>

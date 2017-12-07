@@ -16,6 +16,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>

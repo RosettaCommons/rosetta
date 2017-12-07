@@ -28,6 +28,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/kinematics/RT.hh>
 
 #include <core/types.hh>
 #include <core/pack/task/ResfileReader.hh>

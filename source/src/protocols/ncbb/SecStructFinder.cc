@@ -16,6 +16,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/rna/RNA_Info.hh>

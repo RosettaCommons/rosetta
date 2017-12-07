@@ -24,7 +24,7 @@
 
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
 
 //C++ headers
 #include <istream>

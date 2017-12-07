@@ -2192,7 +2192,7 @@ public:
 	core::Size
 	smallest_ring_size( VD const & atom, core::Size const & max_size = 999999) const;
 
-	std::list<utility::vector1<ED> > const & rings(){
+	std::list<utility::vector1<ED> > const & rings() {
 		return rings_and_their_edges_;
 	}
 

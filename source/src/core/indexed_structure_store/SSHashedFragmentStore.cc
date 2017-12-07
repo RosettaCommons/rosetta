@@ -138,7 +138,7 @@ void SSHashedFragmentStore::init_SS_stub_HashedFragmentStore(){
 }
 
 
-Size SSHashedFragmentStore::get_valid_resid(core::pose::Pose const pose,int resid){
+Size SSHashedFragmentStore::get_valid_resid(core::pose::Pose const & pose,int resid){
 	using namespace core::indexed_structure_store;
 	Size fragment_length = SSHashedFragmentStore_.begin()->second->fragment_specification.fragment_length;
 	if ( resid<1 ) {
@@ -235,7 +235,7 @@ set<std::string> SSHashedFragmentStore::potential_valid_ss_strings(std::string f
 }
 
 
-Real SSHashedFragmentStore::max_rmsd_in_region(pose::Pose const pose, vector1<Size> resids){
+Real SSHashedFragmentStore::max_rmsd_in_region(pose::Pose const & pose, vector1<Size> resids){
 	Real high_rmsd=0;
 	for ( Size ii=1; ii<=resids.size(); ++ii ) {
 		Size valid_resid = get_valid_resid(pose,resids[ii]);
@@ -247,7 +247,7 @@ Real SSHashedFragmentStore::max_rmsd_in_region(pose::Pose const pose, vector1<Si
 	return(high_rmsd);
 }
 
-Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose const pose, Size resid,bool find_closest, Real rms_threshold){
+Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose const & pose, Size resid,bool find_closest, Real rms_threshold){
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	std::string dssp_string = dssp.get_dssp_secstruct();
@@ -256,7 +256,7 @@ Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose cons
 	return(lookback_account_for_dssp_inaccuracy(pose,resid,frag_ss,find_closest,rms_threshold));
 }
 
-Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose const pose, Size resid,std::string frag_ss, bool find_closest, Real rms_threshold){
+Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose const & pose, Size resid,std::string frag_ss, bool find_closest, Real rms_threshold){
 	set<std::string> valid_frag_ss = potential_valid_ss_strings(frag_ss);
 	set<std::string>::iterator iter;
 	iter = valid_frag_ss.find("HHHHHHHHH"); //only check all helical if that was requested. This is for time.
@@ -279,7 +279,7 @@ Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose cons
 	return(low_rmsd);
 }
 
-Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose const pose, Size resid, std::string frag_ss, Real & match_rmsd, Size & match_index, Size & match_ss_index){
+Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose const & pose, Size resid, std::string frag_ss, Real & match_rmsd, Size & match_index, Size & match_ss_index){
 	using namespace core::indexed_structure_store;
 	set<std::string> valid_frag_ss = potential_valid_ss_strings(frag_ss);
 	set<std::string>::iterator iter;
@@ -318,7 +318,7 @@ Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose cons
 }
 
 
-Real SSHashedFragmentStore::lookback(pose::Pose const pose, Size resid){
+Real SSHashedFragmentStore::lookback(pose::Pose const & pose, Size resid){
 	using namespace core::indexed_structure_store;
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
@@ -329,7 +329,7 @@ Real SSHashedFragmentStore::lookback(pose::Pose const pose, Size resid){
 }
 
 
-Real SSHashedFragmentStore::lookback(pose::Pose const pose, Size resid,string frag_ss,bool find_closest){
+Real SSHashedFragmentStore::lookback(pose::Pose const & pose, Size resid,string frag_ss,bool find_closest){
 	using namespace core::indexed_structure_store;
 	core::sequence::SSManager SM;
 	Size fragmentStore_fragment_length = SSHashedFragmentStore_.begin()->second->fragment_specification.fragment_length;
@@ -433,7 +433,7 @@ std::vector< numeric::xyzVector<numeric::Real> > SSHashedFragmentStore::get_frag
 	return(selected_fragStoreOP->get_fragment_coordinates(match_index));
 }
 
-// std::vector< numeric::xyzVector<numeric::Real> > SSHashedFragmentStore::lookback_xyz(pose::Pose const pose, Size resid){
+// std::vector< numeric::xyzVector<numeric::Real> > SSHashedFragmentStore::lookback_xyz(pose::Pose const & pose, Size resid){
 //  using namespace core::indexed_structure_store;
 //  core::sequence::ABEGOManager AM;
 //  typedef numeric::xyzVector<Real> Vec;
@@ -499,7 +499,7 @@ std::vector< numeric::xyzVector<numeric::Real> > SSHashedFragmentStore::get_frag
 // };
 
 
-// vector<FragmentLookupResult> SSHashedFragmentStore::get_topN_fragments(std::string /*selectionType*/,Size topNFrags, pose::Pose const pose, Size resid,Real rms_threshold,std::string fragAbegoStr){
+// vector<FragmentLookupResult> SSHashedFragmentStore::get_topN_fragments(std::string /*selectionType*/,Size topNFrags, pose::Pose const & pose, Size resid,Real rms_threshold,std::string fragAbegoStr){
 //  vector<FragmentLookupResult> lookupResults = get_fragments_below_rms(pose,resid,rms_threshold,fragAbegoStr);
 //  //sort array based on rms
 //  std::sort(lookupResults.begin(), lookupResults.end(),less_then_match_rmsd());
@@ -510,7 +510,7 @@ std::vector< numeric::xyzVector<numeric::Real> > SSHashedFragmentStore::get_frag
 //  return(topLookupResults);
 // }
 
-void  SSHashedFragmentStore::get_hits_below_rms(pose::Pose const pose, Size resid, Real rms_threshold, vector1<vector<Real> > & hits_cen, vector1<Real> & hits_rms, vector1<std::string> & hits_aa){
+void  SSHashedFragmentStore::get_hits_below_rms(pose::Pose const & pose, Size resid, Real rms_threshold, vector1<vector<Real> > & hits_cen, vector1<Real> & hits_rms, vector1<std::string> & hits_aa){
 	//get residue coordinates
 	core::sequence::SSManager SM;
 	//---------------------------------------------------------------------

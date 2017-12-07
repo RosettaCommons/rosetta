@@ -87,9 +87,19 @@ lower_upper_connected_across_cutpoint( core::conformation::Residue const & lower
 {
 	if ( !lower_rsd.has_upper_connect() || !upper_rsd.has_lower_connect() ) return false;
 	for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
-		if ( lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
+		// Hard-code that this also is allowed to be O2'... awkward? Untold problems
+		// ahead? One issue is it might not HAVE an upper_connect_atom... and another
+		// is that it does disallow the (previously stated as undesirable but perhaps
+		// inevitable) doubly connected topology -- ohh, so you can't do branching this way.
+		//TR << "Trying " << lower_rsd.name() << " connect " << k << " " << lower_rsd.atom_name( lower_rsd.residue_connect_atom_index( k ) ) << " " <<lower_rsd.upper_connect_atom() << std::endl;
+		if ( !lower_rsd.has_upper_connect() || lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
+
 		Size upper( lower_rsd.connected_residue_at_resconn( k ) );
-		if ( upper != upper_rsd.seqpos() ) return false;
+		//TR << "About to hitch our wagon to ... " << k << std::endl;
+		// Continuing here because we need to check both 2 (cyclize cutpoints)
+		// AND 3. The core issue here is that this cycle has to check for two cases and
+		// doesn't have a lot of logic distinguishing them.
+		if ( upper != upper_rsd.seqpos() ) continue;//return false;
 		Size const m = lower_rsd.residue_connection_conn_id( k );
 		if ( upper_rsd.residue_connect_atom_index( m ) != upper_rsd.lower_connect_atom() ) return false;
 		runtime_assert( upper_rsd.connected_residue_at_resconn( m ) == lower_rsd.seqpos() );

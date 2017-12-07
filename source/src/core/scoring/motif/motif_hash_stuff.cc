@@ -21,6 +21,7 @@
 #include <basic/pymol_chains.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>

@@ -27,6 +27,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/kinematics/Stub.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>

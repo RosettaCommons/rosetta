@@ -17,7 +17,7 @@
 #define INCLUDED_core_scoring_magnesium_util_HH
 
 #include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh> // silly, for GaussianParameter
+#include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 #include <core/types.hh>
 
 namespace core {

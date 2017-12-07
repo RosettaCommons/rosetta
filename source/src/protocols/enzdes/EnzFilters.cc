@@ -28,6 +28,8 @@
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/id/AtomID.hh>

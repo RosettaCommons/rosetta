@@ -18,6 +18,7 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/conformation/Residue.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "core.scoring.magnesium.util" );
