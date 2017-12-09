@@ -91,7 +91,7 @@
   KBG   Glc           ->?)-beta-D-Glcp
   MA3   Glc           ->?)-alpha-D-Glcp
   MGL   Glc           ->?)-beta-D-Glcp
-  NDG   Glc           ->?)-alpha-D-Glcp
+  NDG   Glc           ->?)-alpha-D-Glcp 2-AcNH
   TOA   Glc           ->?)-alpha-D-Glcp
   TOC   Glc           ->?)-alpha-D-Glcp
   NAG   Glc           ->?)-beta-D-Glcp  2-AcNH
@@ -128,8 +128,8 @@
   L6S   Gal           ->?)-alpha-L-Galp
   MBG   Gal           ->?)-beta-D-Galp
   SGA   Gal           ->?)-beta-D-Galp
-  FUC   Fuc           ->?)-alpha-L-Fucp  # trivial name for ->?)-alpha-L-Galp, 6-deoxy-
-  FUL   Fuc           ->?)-beta-L-Fucp   # trivial name for ->?)-beta-L-Galp, 6-deoxy-
+  FUC   Fuc           ->?)-alpha-L-Fucp  default # trivial name for ->?)-alpha-L-Galp, 6-deoxy-
+  FUL   Fuc           ->?)-beta-L-Fucp   default # trivial name for ->?)-beta-L-Galp, 6-deoxy-
   ABE   Abe           ->?)-alpha-D-Abep  # trivial name for ->?)-alpha-D-Galp, 3,6-deoxy-
   
 

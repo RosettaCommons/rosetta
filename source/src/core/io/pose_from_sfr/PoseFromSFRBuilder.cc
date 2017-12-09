@@ -67,6 +67,7 @@
 #include <core/pose/ncbb/util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/carbohydrates/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/cryst/util.hh>
 
@@ -733,7 +734,6 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 				Residue const & last_rsd( pose.residue( old_nres ) );
 				core::Real bondlength = ( last_rsd.atom( last_rsd.upper_connect_atom() ).xyz() -
 					ii_rsd->atom( ii_rsd->lower_connect_atom() ).xyz() ).length();
-
 				if ( bondlength > 3.0 ) {
 					TR.Warning << "missing density found at residue (rosetta number) " << old_nres << std::endl;
 					pose.append_residue_by_jump( *ii_rsd, old_nres );
@@ -746,6 +746,10 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 					} else {
 						if ( !pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ) ) {
 							core::pose::add_variant_type_to_pose_residue( pose, UPPER_TERMINUS_VARIANT, old_nres );
+						}
+						if ( !pose.residue_type(old_nres+1).has_variant_type( LOWER_TERMINUS_VARIANT) ) {
+							TR << " add lower variant " << old_nres+1 << std::endl;
+							core::pose::add_variant_type_to_pose_residue( pose, LOWER_TERMINUS_VARIANT, old_nres+1 );
 						}
 					}
 

@@ -93,6 +93,7 @@ public:
 	bool suppress_zero_occ_pdb_output() const;
 	bool auto_detect_glycan_connections() const;
 	bool write_glycan_pdb_codes() const;
+	bool output_alternate_atomids() const;
 	bool maintain_links() const;
 	core::Real max_bond_length() const;
 	core::Real min_bond_length() const;
@@ -142,6 +143,7 @@ public:
 	void set_suppress_zero_occ_pdb_output( bool const setting );
 	void set_auto_detect_glycan_connections( bool const auto_detect_glycan_connections );
 	void set_write_glycan_pdb_codes( bool const write_glycan_pdb_codes );
+	void set_output_alternate_atomids( bool const output_alternate_atomids );
 	void set_maintain_links( bool const maintain_links );
 	void set_max_bond_length( core::Real const max_bond_length );
 	void set_min_bond_length( core::Real const min_bond_length );
@@ -213,6 +215,7 @@ private:
 	bool suppress_zero_occ_pdb_output_;
 	bool auto_detect_glycan_connections_;
 	bool write_glycan_pdb_codes_;
+	bool output_alternate_atomids_;
 	bool maintain_links_;
 	core::Real max_bond_length_;
 	core::Real min_bond_length_;

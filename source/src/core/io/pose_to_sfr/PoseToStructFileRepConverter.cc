@@ -399,6 +399,9 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	ai.iCode = res_info.iCode();
 	ai.serial = new_atom_num;
 	ai.name = rsd.atom_name( atom_index );
+	if ( options_.write_glycan_pdb_codes() && rsd.type().canonical_atom_aliases().count(rsd.atom_name(atom_index) ) ) {
+		ai.name = rsd.type().canonical_atom_aliases()[ai.name];
+	}
 	ai.resName = rsd.name3();
 	if ( options_.write_glycan_pdb_codes() && rsd.is_carbohydrate() ) {
 		ai.resName = NomenclatureManager::get_instance()->pdb_code_from_rosetta_name( rsd.name() );
@@ -515,7 +518,14 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 	Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );
 
 	link.name1 = pose.residue_type( ii ).atom_name( pose.residue_type( ii ).residue_connect_atom_index( conn ) );
-	link.resName1 = pose.residue_type( ii ).name3();
+	if ( options_.output_alternate_atomids() && pose.residue_type(ii).canonical_atom_aliases().count(link.name1) != 0 ) {
+		link.name1 = pose.residue_type( ii ).canonical_atom_aliases()[link.name1];
+	}
+	if ( !options_.write_glycan_pdb_codes() || !pose.residue_type(ii).is_carbohydrate() ) {
+		link.resName1 = pose.residue_type( ii ).name3();
+	} else {
+		link.resName1 = NomenclatureManager::get_instance()->pdb_code_from_rosetta_name( pose.residue(ii).name() );
+	}
 	if ( pose.pdb_info() ) {
 		link.chainID1 = pose.pdb_info()->chain( ii );
 		link.resSeq1 = pose.pdb_info()->number( ii );
@@ -531,7 +541,14 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 	link.resID1 = ss.str() + link.iCode1 + link.chainID1;
 
 	link.name2 =  pose.residue_type( jj ).atom_name( pose.residue_type( jj ).residue_connect_atom_index( jj_conn ) );
-	link.resName2 = pose.residue_type( jj ).name3();
+	if ( options_.output_alternate_atomids() && pose.residue_type( jj ).canonical_atom_aliases().count(link.name2) != 0 ) {
+		link.name2 = pose.residue_type( jj ).canonical_atom_aliases()[link.name2];
+	}
+	if ( !options_.write_glycan_pdb_codes() || !pose.residue_type(jj).is_carbohydrate() ) {
+		link.resName2 = pose.residue_type( jj ).name3();
+	} else {
+		link.resName2 = NomenclatureManager::get_instance()->pdb_code_from_rosetta_name( pose.residue(jj).name() );
+	}
 	if ( pose.pdb_info() ) {
 		link.chainID2 = pose.pdb_info()->chain( jj );
 		link.resSeq2 = pose.pdb_info()->number( jj );
@@ -636,15 +653,17 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 			if ( jj == 0 ) { continue; } // Unconnected -- don't bother with LINK record
 			Size jj_conn = ii_res.residue_connection_conn_id( conn );
 
-			// If this is a lower connect to the upper connect of the previous residue, skip it.
+			// If this is a lower connect to the upper connect of the previous residue, skip it unless it's a carbohydrate.
 			if ( ii_res.has_lower_connect() && conn == ii_res.type().lower_connect_id() &&
-					jj == ii - 1 && pose.residue(jj).has_upper_connect() && jj_conn == pose.residue_type( jj ).upper_connect_id() ) {
+					jj == ii - 1 && pose.residue(jj).has_upper_connect() && jj_conn == pose.residue_type( jj ).upper_connect_id() &&
+					( !pose.residue_type( jj ).is_carbohydrate() || !options_.write_glycan_pdb_codes() ) ) {
 				continue;
 			}
 
 			// If this is a upper connect to the lowe connect of the next residue, skip it.
 			if ( ii_res.has_upper_connect() && conn == ii_res.type().upper_connect_id() &&
-					jj == ii + 1 && pose.residue(jj).has_lower_connect() && jj_conn == pose.residue_type( jj ).lower_connect_id() ) {
+					jj == ii + 1 && pose.residue(jj).has_lower_connect() && jj_conn == pose.residue_type( jj ).lower_connect_id() &&
+					( !pose.residue_type( jj ).is_carbohydrate() || !options_.write_glycan_pdb_codes() ) )  {
 				continue;
 			}
 

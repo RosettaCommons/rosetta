@@ -54,6 +54,7 @@ sources = {
 		"GlycanTreeMinMover",
 		"GlycanTreeRelax",
 		"LinkageConformerMover",
+        "IdealizeAnomericHydrogens",
 		"SimpleGlycosylateMover",
 		"util",
 	],

@@ -77,6 +77,7 @@ static MoverRegistrator< carbohydrates::GlycanRelaxMoverCreator > reg_GlycanRela
 static MoverRegistrator< carbohydrates::GlycanTreeMinMoverCreator > reg_GlycanTreeMinMoverCreator;
 static MoverRegistrator< carbohydrates::GlycanTreeRelaxCreator > reg_GlycanTreeRelaxCreator;
 static MoverRegistrator< carbohydrates::LinkageConformerMoverCreator > reg_LinkageConformerMoverCreator;
+static MoverRegistrator< carbohydrates::IdealizeAnomericHydrogensCreator > reg_IdealizeAnomericHydrogensCreator;
 static MoverRegistrator< carbohydrates::SimpleGlycosylateMoverCreator > reg_SimpleGlycosylateMoverCreator;
 
 static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;

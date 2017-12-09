@@ -426,8 +426,8 @@ determine_glycan_links( utility::vector1< core::io::ResidueInformation > const &
 			if ( ii == jj ) { continue; } // Don't do self links
 			if ( linkage_map.count( anomeric_pair ) ) { break; } // Only one link is needed.
 			std::map< std::string, Vector > XYZs(rinfos[ jj ].xyz());
-			for ( auto pair: XYZs ) {
-				//if( (res_name == "ASN" || rinfos[jj].rosetta_resName() == "ASN") && pair.first != "ND2" ) continue;
+			for ( auto const &pair: XYZs ) {
+				if ( rinfos[jj].rosetta_resName() == "ASN" && pair.first != " ND2" ) continue;
 				// TODO: only check oxygens ??
 				Vector const & pos( pair.second );
 				core::Real distance = pos.distance( anomeric_coords );

@@ -31,6 +31,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/AA.hh>
@@ -2098,6 +2099,8 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 
 	eval_interresidue_improper_derivatives( rsd1, rsd2, res1params, res2params, weights, r1_atom_derivs, r2_atom_derivs );
 
+	eval_interresidue_ring_derivatives( rsd1, rsd2, weights, r1_atom_derivs, r2_atom_derivs );
+
 	eval_interresidue_angle_derivs_two_from_rsd1(
 		rsd1, rsd2, res1params, res2params, phi1, psi1,
 		weights, r1_atom_derivs, r2_atom_derivs );
@@ -2374,7 +2377,12 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
 		// get the conformer of the ring
-		core::chemical::rings::RingConformer rc = rsd.ring_conformer( jj, 180.0 );
+		core::chemical::rings::RingConformer rc;
+		if ( basic::options::option[ basic::options::OptionKeys::score::ideal_sugars ].user() ) {
+			rc = rsd.type().ring_conformer_set(jj)->get_lowest_energy_conformer();
+		} else {
+			rc= rsd.ring_conformer( jj, 180.0 );
+		}
 
 		// now constrain each element of the ring
 		utility::vector1< core::Size > atms = rsd.type().ring_atoms( jj );
@@ -2642,6 +2650,7 @@ CartesianBondedEnergy::eval_residue_pair_energies(
 	eval_interresidue_angle_energies_two_from_rsd1( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, pose, emap );
 	eval_interresidue_angle_energies_two_from_rsd2( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
 	eval_interresidue_bond_energy( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
+	eval_interresidue_ring_energy( rsd1, rsd2, pose, emap );
 }
 
 void
@@ -3156,6 +3165,59 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	}
 }
 
+//Evaluate the torsion constraints for alpha/beta sugars. rsd2 should be the structure being evaluated and rsd1 should be the lower connection
+void
+CartesianBondedEnergy::eval_interresidue_ring_energy(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+
+	if ( !rsd1.is_bonded( rsd2 ) ) return;
+	Size const n_rings( rsd2.type().n_rings() );
+	if ( n_rings == 0 || !rsd1.is_polymer_bonded( rsd2 ) ) return;
+	core::Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
+	//core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
+
+	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
+
+		//only apply this to 6 residue rings
+		if ( rsd2.type().ring_atoms( jj ).size() != 6 ) continue;
+
+		// 2 constrain torsion
+		core::Size lower = rsd1.connect_atom( rsd2 );//lower
+		core::Size c1 = rsd2.type().atom_index("C1");
+		core::Size c5 = rsd2.type().atom_index("C5");
+		core::Size c6 = rsd2.type().atom_index("C6");
+
+		Real alpha = -2.0944;
+		Real beta = 0;
+		Real phi0 = beta;
+		if ( rsd2.type().name().find("alpha") != std::string::npos ) {
+			phi0 = alpha;
+		}
+		core::Real angle = numeric::dihedral_radians(
+			rsd1.xyz( lower ), rsd2.xyz( c1 ), rsd2.xyz( c5 ), rsd2.xyz( c6 ) );
+		Real del_phi = basic::subtract_radian_angles(angle, phi0);
+
+		Real energy_torsion = eval_score( del_phi, Ktheta, 0 );
+
+		if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos() << " pdbpos: " <<
+				pose.pdb_info()->number(rsd2.seqpos()) << " RING torsion: " <<
+				get_restag(rsd2.type()) << " : " <<
+				rsd1.atom_name( lower ) << " , " << rsd2.atom_name( c1 ) << " , " <<
+				rsd2.atom_name( c5 ) << " , " << rsd2.atom_name( c6 ) << "   (" <<
+				Ktheta << ") " << 180/3.14 * angle << " " << 180/3.14 * phi0 << "    sc="  << energy_torsion << std::endl;
+		}
+
+		emap[ cart_bonded_ring ] += energy_torsion;
+		emap[ cart_bonded ] += energy_torsion; // potential double counting*/
+	}
+}
+
 
 void
 CartesianBondedEnergy::eval_singleres_derivatives(
@@ -3202,7 +3264,12 @@ CartesianBondedEnergy::eval_singleres_ring_derivatives(
 
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
 		// get the conformer of the ring
-		core::chemical::rings::RingConformer rc = rsd.ring_conformer( jj, 180.0 );
+		core::chemical::rings::RingConformer rc;
+		if ( basic::options::option[ basic::options::OptionKeys::score::ideal_sugars ].user() ) {
+			rc = rsd.type().ring_conformer_set(jj)->get_lowest_energy_conformer();
+		} else {
+			rc= rsd.ring_conformer( jj, 180.0 );
+		}
 
 		// now constrain each element of the ring
 		utility::vector1< core::Size > atms = rsd.type().ring_atoms( jj );
@@ -4069,6 +4136,77 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 			r2_atom_derivs[ atm4 ].f1() += dE_dphi * f1;
 			r2_atom_derivs[ atm4 ].f2() += dE_dphi * f2;
 		}
+	}
+}
+
+
+//Evaluate the torsion constraints for alpha/beta sugars. rsd2 should be the structure being evaluated and rsd1 should be the lower connection
+void
+CartesianBondedEnergy::eval_interresidue_ring_derivatives(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const
+{
+
+	if ( !rsd1.is_bonded( rsd2 ) )  return;
+	Size const n_rings( rsd2.type().n_rings() );
+	if ( n_rings == 0 || !rsd1.is_polymer_bonded( rsd2 ) ) return;
+	core::Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
+	//core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
+	Real const weight = weights[ cart_bonded_ring ] + weights[ cart_bonded ];
+
+	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
+
+		//only apply this to 6 residue rings
+		if ( rsd2.type().ring_atoms( jj ).size() != 6 ) continue;
+
+		core::Size lower = rsd1.connect_atom( rsd2 );//lower
+		core::Size c1 = rsd2.type().atom_index("C1");
+		core::Size c5 = rsd2.type().atom_index("C5");
+		core::Size c6 = rsd2.type().atom_index("C6");
+
+		Real alpha = -2.0944;
+		Real beta = 0;
+		Real phi0 = beta;
+		if ( rsd2.type().name().find("alpha") != std::string::npos ) {
+			phi0 = alpha;
+		}
+
+		Vector f1(0.0), f2(0.0);
+		Real phi=0, dE_dphi;
+
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			rsd1.xyz( lower ), rsd2.xyz( c1 ), rsd2.xyz( c5 ), rsd2.xyz( c6 ), phi, f1, f2 );
+		Real del_phi = basic::subtract_radian_angles(phi, phi0);
+		//del_phi = basic::periodic_range( del_phi, phi_step );
+		if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
+			dE_dphi = weight * Ktheta * (del_phi>0? 0.5 : -0.5);
+		} else {
+			dE_dphi = weight * Ktheta * del_phi;
+		}
+		r1_atom_derivs[ lower ].f1() += dE_dphi * f1;
+		r1_atom_derivs[ lower ].f2() += dE_dphi * f2;
+
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			rsd1.xyz( lower ), rsd2.xyz( c1 ), rsd2.xyz( c5 ), rsd2.xyz( c6 ), phi, f1, f2 );
+		r2_atom_derivs[ c1 ].f1() += dE_dphi * f1;
+		r2_atom_derivs[ c1 ].f2() += dE_dphi * f2;
+
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			rsd2.xyz( c6 ), rsd2.xyz( c5 ), rsd2.xyz( c1 ), rsd1.xyz( lower ), phi, f1, f2 );
+		r2_atom_derivs[ c5 ].f1() += dE_dphi * f1;
+		r2_atom_derivs[ c5 ].f2() += dE_dphi * f2;
+
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			rsd2.xyz( c6 ), rsd2.xyz( c5 ), rsd2.xyz( c1 ), rsd1.xyz( lower ), phi, f1, f2 );
+		r2_atom_derivs[ c6 ].f1() += dE_dphi * f1;
+		r2_atom_derivs[ c6 ].f2() += dE_dphi * f2;
 	}
 }
 

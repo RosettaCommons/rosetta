@@ -2757,6 +2757,15 @@ Conformation::set_bond_angle(
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
 	}
+	if ( residues_[ atom1.rsd() ]->is_carbohydrate() ) {
+		align_virtual_atoms_in_carbohydrate_residue( atom1.rsd() );
+	}
+	if ( ( atom2.rsd() != atom1.rsd() ) && ( residues_[ atom2.rsd() ]->is_carbohydrate() ) ) {
+		align_virtual_atoms_in_carbohydrate_residue( atom2.rsd() );
+	}
+	if ( ( atom3.rsd() != atom1.rsd() && atom3.rsd() != atom2.rsd() ) && ( residues_[ atom3.rsd() ]->is_carbohydrate() ) ) {
+		align_virtual_atoms_in_carbohydrate_residue( atom3.rsd() );
+	}
 }
 
 
@@ -2778,6 +2787,12 @@ Conformation::set_bond_length(
 	DOF_ID const dof_id( atom_tree_->set_bond_length( atom1, atom2, setting ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
+	}
+	if ( residues_[ atom1.rsd() ]->is_carbohydrate() ) {
+		align_virtual_atoms_in_carbohydrate_residue( atom1.rsd() );
+	}
+	if ( ( atom2.rsd() != atom1.rsd() ) && ( residues_[ atom2.rsd() ]->is_carbohydrate() ) ) {
+		align_virtual_atoms_in_carbohydrate_residue( atom2.rsd() );
 	}
 }
 

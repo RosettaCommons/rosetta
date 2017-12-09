@@ -803,6 +803,7 @@ read_topology_file(
 			while ( line.size() >= pos+4 ) {
 				atom2 = line.substr(pos, 4);
 				rsd->add_atom_alias( atom1, atom2 );
+				//rsd->add_canonical_atom_alias( atom1, atom2 );
 				pos += 5;
 			}
 		} else if ( tag == "BOND" ) {

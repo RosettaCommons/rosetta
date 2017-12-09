@@ -44,6 +44,10 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
 
+//Options
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // External Headers
 #include <boost/lexical_cast.hpp>
@@ -572,6 +576,8 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 
 	ResidueCOP res( conf.residue( sequence_position ).get_self_ptr() );
 
+	core::Real offset_value = basic::options::option[ basic::options::OptionKeys::in::glycan_virtual_offset ].value();
+	numeric::xyzVector< core::Real > offset(offset_value,offset_value,offset_value);
 	// Find and align VOX, if applicable.
 	if ( res->carbohydrate_info()->is_cyclic() ) {
 		if ( TR.Debug.visible() ) {
@@ -581,7 +587,9 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		uint const OX( res->atom_index( res->carbohydrate_info()->cyclic_oxygen_name() ) );
 		uint const VOX( res->atom_index( "VO" + string( 1, x + '0' ) ) );
 
-		conf.set_xyz( AtomID( VOX, sequence_position ), conf.xyz( AtomID( OX, sequence_position ) ) );
+		numeric::xyzVector< core::Real > coord = conf.xyz( AtomID( OX, sequence_position ) );
+		//coord+=offset; don't offset VOX for now
+		conf.set_xyz( AtomID( VOX, sequence_position ), coord );
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "  VOX aligned." << endl;
 		}
@@ -601,7 +609,9 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		uint const OY_ref( parent_res->connect_atom( *res ) );
 		uint const HOY_ref( parent_res->first_adjacent_heavy_atom( OY_ref ) );
 
-		conf.set_xyz( AtomID( HOY, sequence_position ), conf.xyz( AtomID( HOY_ref, parent_res_seqpos ) ) );
+		numeric::xyzVector< core::Real > coord = conf.xyz( AtomID( HOY_ref, parent_res_seqpos ) );
+		coord+=offset;
+		conf.set_xyz( AtomID( HOY, sequence_position ), coord );
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "  HOY aligned with atom " << parent_res->atom_name( HOY_ref ) <<
 				" of residue " << parent_res_seqpos << endl;
@@ -614,7 +624,9 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 			TR.Debug << "   Torsions updated." << endl;
 		}
 
-		conf.set_xyz( AtomID( OY, sequence_position ), conf.xyz( AtomID( OY_ref, parent_res_seqpos ) ) );
+		coord = conf.xyz( AtomID( OY_ref, parent_res_seqpos ) );
+		coord+=offset;
+		conf.set_xyz( AtomID( OY, sequence_position ), coord );
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "  OY aligned with atom " << parent_res->atom_name( OY_ref ) <<
 				" of residue " << parent_res_seqpos << endl;
@@ -633,7 +645,9 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		ResidueCOP downstream_res( conf.residue( downstream_res_seqpos ).get_self_ptr() );
 		uint const HOZ_ref( downstream_res->atom_index( downstream_res->carbohydrate_info()->anomeric_carbon_name() ) );
 
-		conf.set_xyz( AtomID( HOZ, sequence_position ), conf.xyz( AtomID( HOZ_ref, downstream_res_seqpos ) ) );
+		numeric::xyzVector< core::Real > coord = conf.xyz( AtomID( HOZ_ref, downstream_res_seqpos ) );
+		coord+=offset;
+		conf.set_xyz( AtomID( HOZ, sequence_position ), coord );
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "  HOZ aligned." << endl;
 		}
@@ -648,7 +662,9 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		if ( branch_res_seqpos != 0 ) {
 			ResidueCOP branch_res( conf.residue( branch_res_seqpos ).get_self_ptr() );
 			uint const HOZ_ref( branch_res->atom_index( branch_res->carbohydrate_info()->anomeric_carbon_name() ) );
-			conf.set_xyz( AtomID( HOZ, sequence_position ), conf.xyz( AtomID( HOZ_ref, branch_res_seqpos ) ) );
+			numeric::xyzVector< core::Real > coord = conf.xyz( AtomID( HOZ_ref, branch_res_seqpos ) );
+			coord+=offset;
+			conf.set_xyz( AtomID( HOZ, sequence_position ), coord );
 		} else {
 			TR << "Branch connection " << branch_connection_id << " on residue " << res->seqpos() << " is not chemically connected." << std::endl;
 		}

@@ -45,6 +45,7 @@
 
 
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -592,8 +593,17 @@ void PhenixInterface::stealBfactorsFromFile(
 
 		// fpd handle H internally
 		if (atmLine.substr(76,2) == " H") continue;
+		std::string atom_name = atmLine.substr(12,4);
+		if (basic::options::option[ basic::options::OptionKeys::inout::use_alternate_atomids ].value() ){
+				//this is a hack to get around the fact that the normal atom aliases don't include spaces in their naming conventions...they really should
+				for( auto const & res_pair: pose_asu.residue_type(resid_ros).canonical_atom_aliases() ){
+						if( res_pair.second == atom_name ){
+								atom_name = res_pair.first;
+						}
+				}
+		}
 
-		core::Size atmid = pose_asu.residue_type(resid_ros).atom_index( atmLine.substr(12,4) );
+		core::Size atmid = pose_asu.residue_type(resid_ros).atom_index( atom_name );
 		core::Real B = atof( atmLine.substr(60,6).c_str() );
 
 		pose.pdb_info()->temperature( resid_ros, atmid, B );

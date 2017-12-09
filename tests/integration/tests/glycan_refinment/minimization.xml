@@ -1,0 +1,23 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+        <ScoreFunction name="beta" weights="beta_nov15_cart" symmetric="0">
+	        <Reweight scoretype="atom_pair_constraint" weight="20.0"/>
+            <Reweight scoretype="cart_bonded_length" weight="0.5"/>
+            <Reweight scoretype="cart_bonded_torsion" weight="0.5"/>
+            <Reweight scoretype="cart_bonded_angle" weight="1.0"/>
+            <Reweight scoretype="pro_close" weight="0.0"/>
+            <Reweight scoretype="cart_bonded_ring" weight="1.0"/>
+            <Reweight scoretype="fa_intra_rep_nonprotein" weight="1.0"/>
+            <Reweight scoretype="fa_intra_atr_nonprotein" weight="1.0"/>
+		</ScoreFunction>
+	</SCOREFXNS>
+    <MOVERS>
+        <MinMover name="min" scorefxn="beta" bb="1" chi="1" cartesian="1"/>
+	</MOVERS>
+	<PROTOCOLS>
+        <Add mover="min"/>
+	</PROTOCOLS>
+ 
+</ROSETTASCRIPTS>

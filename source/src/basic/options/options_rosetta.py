@@ -176,6 +176,10 @@ Options = Option_Group( '',
 				desc='Sets minimum O-C distance for glycan connection search. Default is 1.15 Angstroms.',
 				short='Min. distance for glycan C-O bond',
 				default="1.15"),
+        Option("glycan_virtual_offset", "Real",
+                desc='Apply a very small offset to the glycan virtual positions to avoid collinearity in the angle minimization.',
+                short="Glycan virtual offset",
+                default="0"),
 
 
 		## Membrane JD2 Option
@@ -250,9 +254,6 @@ Options = Option_Group( '',
 				"Duplicate codes in successive files will overwrite previous "
 				"ones.",
 			short="Specify (a) *.codes file(s) of alternate 3-letter codes."),
-        Option("only_chairs", "Boolean",
-                desc="Triggers loading of only the chair conformations of sugars with 6 member rings.",
-                legal=["true","false"], default="false"),
         Option("maintain_links", "Boolean",
                 desc="Maintains link records in the PDB when using auto_detect_glycans",
                 legal=["true","false"], default="false"),
@@ -529,6 +530,9 @@ Options = Option_Group( '',
 				desc="The atom separation cutoff above which bonded atoms have explicit CONECT records written so "
 						"that programs like PyMOL know the atomic connectivity.  Default 0.0 Angstroms (write all records).",
 				default='0.0' ),
+        Option( 'output_alternate_atomids', 'Boolean',
+            desc="Use the alternate atom IDS as stored in the params files when available",
+            default='false'),
 
 		# Relational database options -----------------------------------------
 		Option_Group('dbms',
@@ -1448,6 +1452,7 @@ Options = Option_Group( '',
 		Option( 'just_calc_rmsd', "Boolean", desc="In rna_score, just calculate rmsd -- do not replace score.", default='false' ),
 		Option( 'envsmooth_zero_negatives', "Boolean", desc="use alternative envsmooth table with a floor of 0.0 (envsmooth awards no energy bonus)", default='false' ),
 		Option( 'rama_power', 'Real', desc='If rama > 0.0, raise to the nth power.  This has been useful for Foldit design.  Note that this creates derivative discontinuities, so it should be used with caution!  If not specified, the default rama behaviour (no power function) is preserved.', default='1.0' ),
+        Option( 'ideal_sugars', "Boolean", desc="Triggers loading of only the ideal chair conformations of sugars with 6 member rings.",legal=["true","false"], default="false"),
     Option( 'hbond_fade',"Real", desc="fade_factor for hbond geometry softmax", default='2.5' ),
     Option( 'hbond_new_sp3_acc',"Boolean", desc="fade_factor for hbond geometry softmax", default='false' ),
     Option( 'alignment_sharpness',"Real", desc="When computing a harmonic function of RMSD for the alignment score, what should the standard deviation be?", default='1.0' ),

@@ -35,9 +35,12 @@ ADD_ATOM 3HC2 Hapo HA   0.03
 # These atoms usually are named differently in the PDB, so add aliases.
 # These aliases assume a 6-membered sugar.  This will need to be fixed in the
 # future somehow. ~Labonte
-ADD_ATOM_ALIAS  CN2  C7
-ADD_ATOM_ALIAS CAN2  C8
-ADD_ATOM_ALIAS OCN2  O7
+ADD_ATOM_ALIAS  CN2  C7 
+ADD_ATOM_ALIAS CAN2  C8 
+ADD_ATOM_ALIAS OCN2  O7 
+ADD_ATOM_ALIAS 1HC2  H81
+ADD_ATOM_ALIAS 2HC2  H82 
+ADD_ATOM_ALIAS 3HC2  H83 
 
 SET_MM_ATOM_TYPE H2 HB
 

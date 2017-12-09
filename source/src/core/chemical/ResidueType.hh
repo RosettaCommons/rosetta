@@ -647,6 +647,18 @@ public:
 	Size
 	atom_index( std::string const & name ) const;
 
+	/// @brief returns atom aliases
+	std::map< std::string, std::string >
+	atom_aliases() const{
+		return atom_aliases_;
+	}
+
+	/// @brief returns atom aliases
+	std::map< std::string, std::string >
+	canonical_atom_aliases() const{
+		return canonical_atom_aliases_;
+	}
+
 #ifdef WIN32
 	// Fixes incorrect cast on WIN32 where atom_index("string") actually calls atom_index( VD )
 	inline
@@ -1095,6 +1107,10 @@ public:
 	/// @brief Add an alias name for an atom.
 	void
 	add_atom_alias( std::string const & rosetta_atom, std::string const & alias );
+
+	/// @brief store canonical to alias mapping
+	void
+	add_canonical_atom_alias( std::string const & rosetta_atom, std::string const & alias );
 
 	/// @brief Remove a given alias name for an atom.
 	/// @details If error is true, raise error if the alias can't be found
@@ -2621,6 +2637,9 @@ private:
 	/// @brief A mapping of alias atom names to canonical atom names -- Primary
 	/// Will be added to atom_name_to_vd_ during finalization
 	std::map< std::string, std::string > atom_aliases_;
+
+	/// @brief A map of canonical atom names to atom aliases (white space included)
+	std::map< std::string, std::string > canonical_atom_aliases_;
 
 	/// @brief index lookup for orbitals based on atom name -- Derived, valid during Mutable
 	/// Updated in add_orbital()

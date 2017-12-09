@@ -55,6 +55,7 @@ read_conformers_from_database_file_for_ring_size( std::string const & filename, 
 	vector1< RingConformer > conformers;
 
 	Size const n_lines( lines.size() );
+
 	for ( uint i( 1 ); i <= n_lines; ++i ) {
 		istringstream line_word_by_word( lines[ i ] );
 		RingConformer conformer;
@@ -86,9 +87,6 @@ read_conformers_from_database_file_for_ring_size( std::string const & filename, 
 
 		for ( uint tau( 1 ); tau <= ring_size; ++tau ) {
 			line_word_by_word >> conformer.tau_angles[ tau ];
-		}
-		if ( basic::options::option[ basic::options::OptionKeys::in::only_chairs ].user() && ring_size == 6 ) {
-			if (  conformer.general_name != "chair" ) continue;
 		}
 		conformers.push_back( conformer );
 	}

@@ -550,9 +550,11 @@ AddAtom::apply( ResidueType & rsd ) const
 
 // AddAtomAlias ///////////////////////////////////////////////////////////////
 
-AddAtomAlias::AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in ) :
+AddAtomAlias::AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in, std::string const & rosetta_atom_name_full, std::string const & alias_full ) :
 	rosetta_atom_name_( rosetta_atom_name_in ),
-	alias_( alias_in )
+	alias_( alias_in ),
+	rosetta_atom_name_full_( rosetta_atom_name_full ),
+	alias_full_( alias_full )
 {}
 
 /// @return  true on failure
@@ -562,6 +564,7 @@ bool
 AddAtomAlias::apply( ResidueType & rsd ) const
 {
 	rsd.add_atom_alias( rosetta_atom_name_, alias_ );
+	rsd.add_canonical_atom_alias( rosetta_atom_name_full_, alias_full_ );
 	return false;  // success
 }
 
@@ -2537,12 +2540,15 @@ patch_operation_from_patch_file_line(
 		return PatchOperationOP( new DeleteAtom( atom_name ) );
 
 	} else if ( tag == "ADD_ATOM_ALIAS" ) {
+		std::string atom1,atom2 = "";
+		atom1 = line.substr( 15, 4 ); // Rosetta atom
+		atom2 = line.substr( 20, 4);
 		l >> atom_name >> atom_alias;
 		if ( l.fail() ) {
 			utility_exit_with_message( "Failed to parse ADD_ATOM_ALIAS patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new AddAtomAlias( atom_name, atom_alias ) );
+		return PatchOperationOP( new AddAtomAlias( atom_name, atom_alias, atom1, atom2 ) );
 
 	} else if ( tag == "SET_BACKBONE_HEAVYATOM" ) {
 		l >> atom_name;
@@ -3995,6 +4001,8 @@ core::chemical::AddAtomAlias::save( Archive & arc ) const {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
 	arc( CEREAL_NVP( rosetta_atom_name_ ) ); // std::string
 	arc( CEREAL_NVP( alias_ ) ); // std::string
+	arc( CEREAL_NVP( rosetta_atom_name_full_ ) ); // std::string
+	arc( CEREAL_NVP( alias_full_ ) ); // std::string
 }
 
 /// @brief Automatically generated deserialization method
@@ -4004,6 +4012,8 @@ core::chemical::AddAtomAlias::load( Archive & arc ) {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
 	arc( rosetta_atom_name_ ); // std::string
 	arc( alias_ ); // std::string
+	arc( rosetta_atom_name_full_ ); // std::string
+	arc( alias_full_ ); // std::string
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddAtomAlias );

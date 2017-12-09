@@ -243,6 +243,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	path_distance_ = residue_type.path_distance_;
 	atom_name_to_vd_.clear(); // This must be regenerated below to hold the new vertex_descriptors
 	atom_aliases_ = residue_type.atom_aliases_;
+	canonical_atom_aliases_ = residue_type.canonical_atom_aliases_;
 	orbitals_index_ = residue_type.orbitals_index_;
 	chi_rotamers_ = residue_type.chi_rotamers_;
 	rotamer_library_specification_ = residue_type.rotamer_library_specification_;
@@ -1118,6 +1119,16 @@ ResidueType::add_atom_alias( std::string const & rosetta_atom, std::string const
 
 	atom_aliases_[ alias ] = rosetta_atom;
 	atom_aliases_[ stripped_alias ] = rosetta_atom;
+}
+
+/// @brief store map of canonical name to atom alias
+void
+ResidueType::add_canonical_atom_alias( std::string const & rosetta_atom, std::string const & alias ) {
+
+	if ( canonical_atom_aliases_.count( rosetta_atom ) != 0 ) {
+		utility_exit_with_message( "Cannot add atom alias mapping, residue type already has an atom or alias named "+rosetta_atom );
+	}
+	canonical_atom_aliases_[ rosetta_atom ] = alias;
 }
 
 
@@ -5018,6 +5029,7 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	arc( CEREAL_NVP( proton_chi_extra_samples_ ) ); // utility::vector1<utility::vector1<Real> >
 	arc( CEREAL_NVP( path_distance_ ) ); // utility::vector1<utility::vector1<int> >
 	arc( CEREAL_NVP( atom_aliases_ ) ); // std::map<std::string, std::string>
+	arc( CEREAL_NVP( canonical_atom_aliases_ ) ); // std::map<std::string, std::string>
 	arc( CEREAL_NVP( orbitals_index_ ) ); // std::map<std::string, int>
 	arc( CEREAL_NVP( chi_rotamers_ ) ); // utility::vector1<utility::vector1<std::pair<Real, Real> > >
 	arc( CEREAL_NVP( rotamer_library_specification_ ) ); // rotamers::RotamerLibrarySpecificationOP
@@ -5223,6 +5235,7 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( proton_chi_extra_samples_ ); // utility::vector1<utility::vector1<Real> >
 	arc( path_distance_ ); // utility::vector1<utility::vector1<int> >
 	arc( atom_aliases_ ); // std::map<std::string, std::string>
+	arc( canonical_atom_aliases_ ); // std::map<std::string, std::string>
 	arc( orbitals_index_ ); // std::map<std::string, int>
 	arc( chi_rotamers_ ); // utility::vector1<utility::vector1<std::pair<Real, Real> > >
 	arc( rotamer_library_specification_ ); // rotamers::RotamerLibrarySpecificationOP

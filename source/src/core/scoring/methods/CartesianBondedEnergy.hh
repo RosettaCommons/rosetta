@@ -695,6 +695,14 @@ private:
 		EnergyMap & emap
 	) const;
 
+	void
+	eval_interresidue_ring_energy(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		EnergyMap & emap
+	) const;
+
 	/////////////////////////////////
 	/// Derivative evaluation methods
 	/////////////////////////////////
@@ -818,6 +826,15 @@ private:
 		conformation::Residue const & rsd2,
 		ResidueCartBondedParameters const & res1params,
 		ResidueCartBondedParameters const & res2params,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
+
+	void
+	eval_interresidue_ring_derivatives(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs

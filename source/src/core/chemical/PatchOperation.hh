@@ -716,7 +716,7 @@ public:
 class AddAtomAlias : public PatchOperation {
 public:
 	// Constructor
-	AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in );
+	AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in, std::string const & rosetta_atom_name_full, std::string const & alias_full );
 
 	/// @brief  Apply this patch to the given ResidueType.
 	bool apply( ResidueType & rsd ) const override;
@@ -732,6 +732,8 @@ public:
 private:
 	std::string rosetta_atom_name_;
 	std::string alias_;
+	std::string rosetta_atom_name_full_;
+	std::string alias_full_;
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;

@@ -1,0 +1,24 @@
+-in::file::s inputs/toy.pdb inputs/stretched.pdb
+-parser:protocol minimization.xml
+-nstruct 1
+
+#glycan options
+-include_sugars
+-write_pdb_link_records
+-ignore_zero_occupancy false
+-no_optH false
+-alternate_3_letter_codes pdb_sugar
+-use_pdb_format_HETNAM_records false
+-auto_detect_glycan_connections
+-write_glycan_pdb_codes true
+-maintain_links true
+-only_chairs
+
+# ligand
+-ignore_unrecognized_res
+    
+-missing_density_to_jump
+-overwrite
+
+# reduce memory footprint
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
