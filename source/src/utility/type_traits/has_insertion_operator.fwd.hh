@@ -7,19 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   utility/type_traits.fwd.hh
+/// @file   utility/type_traits/has_insertion_operator.fwd.hh
 /// @brief  Implemention of type traits related to Rosetta types, forward declarations
 /// @author Sergey Lyskov
 
-#ifndef INCLUDED_utility_type_traits_fwd_hh
-#define INCLUDED_utility_type_traits_fwd_hh
+#ifndef INCLUDED_utility_type_traits_has_insertion_operator_fwd_hh
+#define INCLUDED_utility_type_traits_has_insertion_operator_fwd_hh
 
 namespace utility {
+namespace type_traits {
 
 template<typename T>
 struct has_insertion_operator_s;
 
+
+} // namespace type_traits
 } // namespace utility
 
 
-#endif // INCLUDED_utility_type_traits_fwd_hh
+#endif // INCLUDED_utility_type_traits_has_insertion_operator_fwd_hh

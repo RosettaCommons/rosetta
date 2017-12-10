@@ -7,36 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   utility/type_traits.hh
+/// @file   utility/type_traits/type_traits.hh
 /// @brief  Implemention of type traits related to Rosetta types
 /// @author Sergey Lyskov
 
-#ifndef INCLUDED_utility_type_traits_hh
-#define INCLUDED_utility_type_traits_hh
+#ifndef INCLUDED_utility_type_traits_has_insertion_operator_hh
+#define INCLUDED_utility_type_traits_has_insertion_operator_hh
 
-#include <utility/type_traits.fwd.hh>
+#include <utility/type_traits/has_insertion_operator.fwd.hh>
 
 #include <utility/stream_util.fwd.hh>
 
 #include <ostream>
 #include <utility>
 
-#include <boost/type_traits/has_left_shift.hpp>
-
 namespace utility {
+namespace type_traits {
 
 namespace has_insertion_operator_implementation {
 enum class False {};
 struct any_type {
 	template<typename T> any_type(T const&);
-
-	// #ifdef CXX11
-	// any_type() = delete;
-	// any_type & operator= ( const any_type & ) = delete;
-	// #endif
 };
 False operator<<(std::ostream const&, any_type const&);
-}
+} // namespace has_insertion_operator_implementation
+
 template<typename T>
 constexpr bool has_insertion_operator() {
 	using namespace has_insertion_operator_implementation;
@@ -48,14 +43,7 @@ struct has_insertion_operator_s {
 	static const bool value = has_insertion_operator<T>();
 };
 
-// Does not work if operator<< is defined but does not bind for a given template type
-// template<typename T>
-// struct has_insertion_operator_s
-// {
-//  static const bool value = boost::has_left_shift<std::ostream &, T const &>::value;
-// };
-
-
+} // namespace type_traits
 } // namespace utility
 
-#endif // INCLUDED_utility_type_traits_hh
+#endif // INCLUDED_utility_type_traits_has_insertion_operator_hh

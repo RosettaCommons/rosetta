@@ -22,11 +22,13 @@
 #include <string>
 #endif
 
+#include <utility/type_traits/is_string_constructible.hh>
+
+
 #include <core/types.hh>
 #include <ostream>
 #include <utility>
-
-
+#include <type_traits>
 namespace core {
 namespace id {
 
@@ -55,13 +57,15 @@ public: // Creation
 	inline
 	NamedAtomID( NamedAtomID const & ) = default;
 
-	/// @brief Property constructor
-	inline
+
+	// @brief Property constructor
+	template <class T,
+			  typename = typename std::enable_if< utility::type_traits::is_string_constructible<T>::value >::type >
 	NamedAtomID(
-		std::string  atom_in,
+		T&& atom_in,
 		Size const rsd_in
 	) :
-		atom_(std::move( atom_in )),
+		atom_( std::forward<T>(atom_in) ),
 		rsd_( rsd_in )
 	{}
 
@@ -151,6 +155,8 @@ public:
 
 }; // NamedAtomID
 
+// Explicitly instantiating constructor for PyRosetta
+template NamedAtomID::NamedAtomID(std::string const &, Size);
 
 /// @brief Globals -- may not be used until after core::init is called.
 extern NamedAtomID const GLOBAL_BOGUS_NAMED_ATOM_ID;

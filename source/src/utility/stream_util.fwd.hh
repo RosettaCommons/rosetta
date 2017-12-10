@@ -14,7 +14,7 @@
 #ifndef INCLUDED_utility_stream_util_fwd_hh
 #define INCLUDED_utility_stream_util_fwd_hh
 
-#include <utility/type_traits.fwd.hh>
+#include <utility/type_traits/has_insertion_operator.fwd.hh>
 
 #include <utility/vectorL.fwd.hh>
 #include <utility/vector0.fwd.hh>
@@ -33,31 +33,31 @@
 namespace std { // inserting operator for ::std types in to std namespace
 
 /// @brief Output function for std::map object.
-template <typename T1, typename T2, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  &&  utility::has_insertion_operator_s<T2>::value >::type * = nullptr>
+template <typename T1, typename T2, typename std::enable_if< utility::type_traits::has_insertion_operator_s<T1>::value  &&  utility::type_traits::has_insertion_operator_s<T2>::value >::type * = nullptr>
 std::ostream & operator <<(std::ostream & os, std::map<T1, T2> const & m);
 
 
 /// @brief Output function for std::list object.
-template <typename T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
+template <typename T, typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type * = nullptr>
 std::ostream & operator <<(std::ostream & os, std::list<T> const & l);
 
 /// @brief Output function for std::set object.
-template <typename T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
+template <typename T, typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type * = nullptr>
 std::ostream & operator <<(std::ostream & os, std::set<T> const & s);
 
 // forward declaration to allow output of composite types, like: vector1< std::pair >.
-template <typename T1, typename T2, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  &&  utility::has_insertion_operator_s<T2>::value >::type * = nullptr>
+template <typename T1, typename T2, typename std::enable_if< utility::type_traits::has_insertion_operator_s<T1>::value  &&  utility::type_traits::has_insertion_operator_s<T2>::value >::type * = nullptr>
 std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v);
 
 /// @brief Output function for std::vector object.
-template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
+template <class T, typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type * = nullptr>
 std::ostream & operator <<( std::ostream & os, std::vector<T> const & v);
 
 } // namespace std
 
 namespace utility {
 /// @brief Output function for utility::vectorL object.
-template <platform::SSize L, class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
+template <platform::SSize L, class T, typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type * = nullptr>
 std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v);
 
 } // namespace utility

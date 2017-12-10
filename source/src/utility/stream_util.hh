@@ -16,7 +16,8 @@
 
 #include <utility/stream_util.fwd.hh>
 
-#include <utility/type_traits.hh>
+
+#include <utility/type_traits/has_insertion_operator.hh>
 
 #include <utility/vectorL.hh>
 #include <utility/vector0.hh>
@@ -38,7 +39,7 @@ namespace utility {
 /// @brief Output function for utility::vectorL object.
 template <platform::SSize L, class T
 // For some reason, this template limitation messes up the Intel Compiler
-, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type *
+		  , typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type *
 >
 std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v) {
 	os << "[";
@@ -92,8 +93,8 @@ std::ostream & operator <<(std::ostream & os, utility::fixedsizearray1<T, S> con
 namespace std { // inserting operator for ::std types in to std namespace
 
 /// @brief Output function for std::pair object.
-template <typename T1, typename T2
-, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  &&  utility::has_insertion_operator_s<T2>::value >::type *
+template <typename T1, typename T2,
+		  typename std::enable_if< utility::type_traits::has_insertion_operator_s<T1>::value  &&  utility::type_traits::has_insertion_operator_s<T2>::value >::type *
 >
 std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v) {
 	os << "(";
@@ -107,7 +108,7 @@ std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v) {
 
 /// @brief Output function for std::map object.
 template <typename T1, typename T2
-, typename std::enable_if< utility::has_insertion_operator_s<T1>::value  &&  utility::has_insertion_operator_s<T2>::value >::type *
+		  , typename std::enable_if< utility::type_traits::has_insertion_operator_s<T1>::value  &&  utility::type_traits::has_insertion_operator_s<T2>::value >::type *
 >
 std::ostream & operator <<(std::ostream & os, std::map<T1, T2> const & m) {
 	typedef typename std::map<T1, T2>::const_iterator ConstIterator;
@@ -125,8 +126,8 @@ std::ostream & operator <<(std::ostream & os, std::map<T1, T2> const & m) {
 
 
 /// @brief Output function for std::list object.
-template <typename T
-, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type *
+template <typename T,
+		  typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type *
 >
 std::ostream & operator <<(std::ostream & os, std::list<T> const & l) {
 	typedef typename std::list<T>::const_iterator ConstIterator;
@@ -143,8 +144,8 @@ std::ostream & operator <<(std::ostream & os, std::list<T> const & l) {
 }
 
 /// @brief Output function for std::set object.
-template <typename T
-, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type *
+template <typename T,
+		  typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type *
 >
 std::ostream & operator <<(std::ostream & os, std::set<T> const & s) {
 	typedef typename std::set<T>::const_iterator ConstIterator;
@@ -161,8 +162,8 @@ std::ostream & operator <<(std::ostream & os, std::set<T> const & s) {
 }
 
 /// @brief Output function for std::vector object.
-template <class T
-, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type *
+template <class T,
+		  typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type *
 >
 std::ostream & operator <<( std::ostream & os, std::vector<T> const & v)
 {

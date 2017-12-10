@@ -1,0 +1,57 @@
+//mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+/// @file   utility/type_traits/is_string_constructible.hh
+/// @brief  Implemention of type traits related to Rosetta types, forward declarations
+/// @author Sergey Lyskov
+
+#ifndef INCLUDED_utility_type_traits_is_string_constructible_hh
+#define INCLUDED_utility_type_traits_is_string_constructible_hh
+
+#include <string>
+
+namespace utility {
+namespace type_traits {
+
+template <class T>
+struct is_string_constructible : public std::false_type {};
+
+
+template<>
+struct is_string_constructible<char *> : public std::true_type {};
+
+template<>
+struct is_string_constructible<char const *> : public std::true_type {};
+
+template<>
+struct is_string_constructible<char (&)[]> : public std::true_type {};
+
+template<>
+struct is_string_constructible<char const (&)[]> : public std::true_type {};
+
+template<std::size_t n>
+struct is_string_constructible<char (&)[n]> : public std::true_type {};
+
+template<std::size_t n>
+struct is_string_constructible<char const (&)[n]> : public std::true_type {};
+
+template<>
+struct is_string_constructible<std::string> : public std::true_type {};
+
+template<>
+struct is_string_constructible<std::string &> : public std::true_type {};
+
+template<>
+struct is_string_constructible<std::string const &> : public std::true_type {};
+
+} // namespace type_traits
+} // namespace utility
+
+#endif // INCLUDED_utility_type_traits_is_string_constructible_hh

@@ -25,6 +25,7 @@ sources = {
 		"recent_history_queue",
 		"simulate_mpi",
 		"string_util",
+		'type_traits',
                 #"TopScoreSelector",
 		"UTools",
 		"vector0",
@@ -108,4 +109,3 @@ testinputfiles = [
     "io/simple_input_file.txt",
     "io/zipped_file.txt.gz",
 ]
-
