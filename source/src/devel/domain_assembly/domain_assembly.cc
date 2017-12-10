@@ -469,7 +469,7 @@ optimize_linkers_rna_fullatom_mode(
 	//Size outside_steps_stage2 ( 5 );
 
 	// Create a rna fragment mover, set its fragsize, and then do an initialization move
-	RNA_FragmentMoverOP rna_fragment_mover = RNA_FragmentMoverOP( new RNA_FragmentMover( *all_rna_fragments, set_moveable_rna( full_pose, linker_rna) ) );
+	RNA_FragmentMoverOP rna_fragment_mover = RNA_FragmentMoverOP( new RNA_FragmentMover( *all_rna_fragments, set_moveable_rna( full_pose, linker_rna), 1 ) );
 	rna_fragment_mover -> set_frag_size( Size(1) );
 	for ( Size i = 1; i <= rna_normalize_step; ++i ) {
 		rna_fragment_mover -> apply(full_pose);

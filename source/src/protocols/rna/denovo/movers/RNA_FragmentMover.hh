@@ -52,7 +52,8 @@ public:
 
 	/// @brief Construct the protocol object given the RNA fragment library to use.
 	RNA_FragmentMover( protocols::rna::denovo::fragments::RNA_Fragments const & all_rna_fragments,
-		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
+		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+		Size const symm_hack_arity );
 
 	/// @brief Copy constructor
 	RNA_FragmentMover(RNA_FragmentMover const & object_to_copy);
@@ -69,7 +70,7 @@ public:
 	// virtual protocols::moves::MoverOP fresh_instance() const;
 
 	core::Size
-	random_fragment_insertion( core::pose::Pose & pose, Size const & frag_size );
+	random_fragment_insertion( core::pose::Pose & pose, Size const frag_size );
 
 	// is this defunct now? I think so.
 	void
@@ -89,6 +90,7 @@ private:
 	Size num_insertable_residues_;
 	Size insert_map_frag_size_;
 	Size frag_size_;
+	Size symm_hack_arity_;
 
 	fragments::RNA_FragmentHomologyExclusionCOP homology_exclusion_ = nullptr;
 

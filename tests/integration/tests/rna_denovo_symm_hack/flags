@@ -1,0 +1,9 @@
+-nstruct 10
+-fasta farfar.fasta
+-secstruct_file secstruct
+-out:file:silent farfar.out
+-include_neighbor_base_stacks
+-minimize_rna false
+-cycles 500
+-chemical::enlarge_H_lj
+-rna:denovo:symm_hack_arity 3

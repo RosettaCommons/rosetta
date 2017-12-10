@@ -292,11 +292,16 @@ CoarseRNA_Fragments::apply_random_fragment(
 	core::Size const type,
 	protocols::rna::denovo::fragments::RNA_FragmentHomologyExclusionCOP const & homology_exclusion, // AMW: don't implement this for coarse RNA yet; a lot of work to no end
 	//utility::vector1< denovo::fragments::SYN_ANTI_RESTRICTION > const & /*restriction*/,
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::Size const symm_hack_arity ) const
 {
 	Size const source_res = pick_random_fragment( pose, position, size, type );
 	//  std::cout << "applying to fragment position " << position << " from source position " << source_res << std::endl;
 	insert_fragment( pose, position, source_res, size, homology_exclusion, atom_level_domain_map );
+	for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {
+		// i-1 mod n  + 1 maps to 1..n (rather than i%n)
+		insert_fragment( pose, ( position + ii * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, source_res, size, homology_exclusion, atom_level_domain_map );
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

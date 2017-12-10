@@ -65,13 +65,15 @@ namespace movers {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 RNA_FragmentMover::RNA_FragmentMover(
 	RNA_Fragments const & rna_fragments,
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	Size const symm_hack_arity
 ) : Mover(),
 	rna_fragments_( rna_fragments ),
 	atom_level_domain_map_( atom_level_domain_map ),
 	num_insertable_residues_( 0 ),
 	insert_map_frag_size_( 0 ),
 	frag_size_( 0 ),
+	symm_hack_arity_( symm_hack_arity ),
 	homology_exclusion_( RNA_FragmentHomologyExclusionCOP( new RNA_FragmentHomologyExclusion( rna_fragments ) ) )
 {
 	Mover::type("RNA_FragmentMover");
@@ -131,7 +133,12 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 	num_insertable_residues_ = 0;
 	insert_map_.clear();
 
-	for ( Size i = 1; i <= pose.size() - frag_size_ + 1; i++ ) {
+	// If we are using hack-symmetry, we need to ensure
+	// i + n/nsymm is just as ok as i
+	Size symmetry_reduced_pose_size = pose.size() / symm_hack_arity_;
+	Size pose_size = pose.size();
+
+	for ( Size i = 1; i <= symmetry_reduced_pose_size - frag_size_ + 1; i++ ) {
 
 		// Look to see if frame has *any* insertable residues.
 		// This is different from the past. Now we have a atom-resolution
@@ -141,9 +148,17 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		bool frame_ok = false;
 		for ( Size offset = 1; offset <= frag_size_; offset++ ) {
 			Size const n = i + offset - 1;
-			if ( atom_level_domain_map_->get( n ) ||
-					( n < pose.size() &&  !pose.fold_tree().is_cutpoint( n ) &&
-					atom_level_domain_map_->get( id::AtomID( 1, n+1 ) ) /*torsions in this residue may move next one*/) ) {
+			bool subunit_ok = atom_level_domain_map_->get( n ) ||
+				( n < symmetry_reduced_pose_size &&  !pose.fold_tree().is_cutpoint( n ) &&
+				atom_level_domain_map_->get( id::AtomID( 1, n+1 ) ) /*torsions in this residue may move next one*/);
+			for ( Size cc = 1; cc < symm_hack_arity_; ++cc ) {
+				Size const pp = ( i+offset-1 + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
+				subunit_ok = subunit_ok && ( atom_level_domain_map_->get( pp ) ||
+					( pp < pose_size &&  !pose.fold_tree().is_cutpoint( pp ) &&
+					atom_level_domain_map_->get( id::AtomID( 1, pp+1 ) ) ) );
+			}
+
+			if ( subunit_ok ) {
 				frame_ok = true;
 				break;
 			}
@@ -157,6 +172,12 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 			if ( !pose.residue_type( i + offset - 1 ).is_RNA() ) {
 				frame_ok = false; break;
 			}
+			for ( Size cc = 1; cc < symm_hack_arity_; ++cc ) {
+				Size const pp = ( i+offset-1 + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
+				if ( !pose.residue_type( pp ).is_RNA() ) {
+					frame_ok = false; break;
+				}
+			}
 		}
 
 		// Check for cutpoints that interrupt frame. Wait. why?
@@ -168,6 +189,15 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 					!( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
 					pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
 				frame_ok = false; break;
+			}
+			for ( Size cc = 1; cc < symm_hack_arity_; ++cc ) {
+				Size const pp = ( i+offset-1 + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
+				if ( offset < frag_size_ &&
+						pose.fold_tree().is_cutpoint( pp ) &&
+						!( pose.residue_type( pp ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+						pose.residue_type( pp + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
+					frame_ok = false; break;
+				}
 			}
 		}
 
@@ -185,7 +215,7 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 Size
 RNA_FragmentMover::random_fragment_insertion(
 	core::pose::Pose & pose,
-	Size const & frag_size
+	Size const frag_size
 ) {
 	frag_size_ = frag_size;
 
@@ -200,7 +230,7 @@ RNA_FragmentMover::random_fragment_insertion(
 
 	// std::cout << " --- Trying fragment! at " << position << std::endl;
 
-	rna_fragments_.apply_random_fragment( pose, position, frag_size_, type, homology_exclusion_, atom_level_domain_map_ );
+	rna_fragments_.apply_random_fragment( pose, position, frag_size_, type, homology_exclusion_, atom_level_domain_map_, symm_hack_arity_ );
 
 	return position;
 }

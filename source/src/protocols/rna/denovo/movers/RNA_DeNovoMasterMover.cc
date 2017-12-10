@@ -85,7 +85,7 @@ RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( options::RNA_FragmentMonteCarloOpt
 	rna_loop_closer_( rna_loop_closer )
 {
 	RNA_Fragments const & all_rna_fragments_( RNA_LibraryManager::get_instance()->rna_fragment_library( options_->all_rna_fragments_file() ) );
-	rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, atom_level_domain_map ) );
+	rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, atom_level_domain_map, options_->symm_hack_arity() ) );
 
 	rna_jump_mover_ = RNA_JumpMoverOP( new RNA_JumpMover( RNA_LibraryManager::get_instance()->rna_jump_library_cop( options_->jump_library_file() ),
 		atom_level_domain_map ) );

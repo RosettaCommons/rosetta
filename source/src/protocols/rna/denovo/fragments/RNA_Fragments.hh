@@ -52,7 +52,8 @@ public:
 		core::Size const size,
 		core::Size const type,
 		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
-		toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
+		toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+		core::Size const symm_hack_arity ) const;
 
 	virtual FragmentLibraryOP
 	get_fragment_library_pointer(

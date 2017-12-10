@@ -309,6 +309,8 @@ RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::Option
 	} else {
 		align_pdb_ = "";
 	}
+
+	if ( opts[ basic::options::OptionKeys::rna::denovo::symm_hack_arity ].user() ) set_symm_hack_arity( opts[ basic::options::OptionKeys::rna::denovo::symm_hack_arity ] );
 }
 
 void
@@ -395,7 +397,8 @@ RNA_FragmentMonteCarloOptions::list_options_read( utility::options::OptionKeyLis
 		+ OptionKeys::rna::denovo::new_fold_tree_initializer
 		+ OptionKeys::rna::denovo::initial_structures
 		+ OptionKeys::rna::denovo::override_refine_pose_rounds
-		+ OptionKeys::rna::denovo::refine_native_get_good_FT;
+		+ OptionKeys::rna::denovo::refine_native_get_good_FT
+		+ OptionKeys::rna::denovo::symm_hack_arity;
 }
 
 

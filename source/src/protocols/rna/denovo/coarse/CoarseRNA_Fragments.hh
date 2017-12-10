@@ -79,7 +79,8 @@ public:
 		core::Size const size,
 		core::Size const type,
 		protocols::rna::denovo::fragments::RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
-		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const override;
+		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+		core::Size const symm_hack_arity ) const override;
 
 	bool
 	is_fullatom() override;

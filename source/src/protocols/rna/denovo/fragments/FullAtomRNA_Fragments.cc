@@ -331,11 +331,16 @@ FullAtomRNA_Fragments::apply_random_fragment(
 	Size const size,
 	Size const type,
 	RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
-	toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
+	toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	Size const symm_hack_arity ) const
 {
 	TorsionSet torsion_set( size, position );
 	pick_random_fragment( torsion_set, pose, position, size, homology_exclusion, type );
+
 	insert_fragment( pose, position, torsion_set, atom_level_domain_map );
+	for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {
+		insert_fragment( pose, ( position + ii * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, torsion_set, atom_level_domain_map );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -375,10 +380,8 @@ FullAtomRNA_Fragments::insert_fragment(
 			//   torsions_sampled.insert( rna_torsion_id );
 			// }
 
-			pose.set_torsion( rna_torsion_id,
-				torsion_set.torsions( j, offset ) );
+			pose.set_torsion( rna_torsion_id, torsion_set.torsions( j, offset ) );
 		}
-
 	}
 
 	//////////////////////////////////////////////////////////////
@@ -418,7 +421,6 @@ FullAtomRNA_Fragments::insert_fragment(
 
 		}
 	}
-
 }
 
 

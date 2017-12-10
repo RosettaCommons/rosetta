@@ -7107,6 +7107,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			 Option( 'secstruct_legacy', 'String', desc= "RNA sec struct in old 1D notation: H,helix; L,loop; X,unknown; N,bulge",default="" ),
 		   Option( 'lores_scorefxn', 'String', desc= "Low resolution scorefunction weights file",default="farna/rna_lores.wts" ),
 		   Option( 'set_lores_weights', 'StringVector', desc="Modification to lores scorefxnweights via the command line. Applied in ScoreFunctionFactory::create_score_function inside the function apply_user_defined_reweighting_. Format is a list of paired strings: -set_lores_weights <score_type1> <setting1> <score_type2> <setting2> ...",default=[] ),
+		   Option( 'symm_hack_arity', 'Integer', desc= "For hacky symmetry that forces matching fragment insertions, what's the n-repeats?",default="1" ),
 		   Option( 'params_file', 'String', desc= "Input file for pairings [deprecated!]",default="default.prm" ),
 		   Option( 'filter_lores_base_pairs', 'Boolean', desc= "Filter for models that satisfy structure parameters",default= 'true' ),
 		   Option( 'filter_lores_base_pairs_early', 'Boolean', desc= "Filter for models that satisfy structure parameters at round 2 of 10",default= 'true' ),

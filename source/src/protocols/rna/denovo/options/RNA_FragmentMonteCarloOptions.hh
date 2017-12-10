@@ -361,6 +361,9 @@ public:
 	void set_align_pdb( std::string const & setting ){ align_pdb_ = setting; }
 	std::string align_pdb() const { return align_pdb_; }
 
+	void set_symm_hack_arity( Size const setting ){ symm_hack_arity_ = setting; }
+	Size symm_hack_arity() const { return symm_hack_arity_; }
+
 private:
 
 	Size rounds_;
@@ -475,6 +478,8 @@ private:
 	bool rmsd_screen_;
 	bool disallow_realign_;
 	std::string align_pdb_;
+
+	Size symm_hack_arity_ = 1;
 };
 
 } //options
