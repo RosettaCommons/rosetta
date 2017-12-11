@@ -33,7 +33,7 @@
 #include <core/scoring/DerivVectorPair.fwd.hh>
 #include <utility/vector1.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
+static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
 

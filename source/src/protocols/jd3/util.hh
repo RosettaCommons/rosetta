@@ -7,42 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file --path--/--class--.cc
-/// @brief --brief--
-/// @author --name-- (--email--)
+/// @file protocols/jd3/util.hh
+/// @brief Utility functions for JD3.
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#include <--path--/--class--.hh>
-#include <basic/Tracer.hh>
-
-static basic::Tracer TR( "--namespace_dot--.--class--" );
+#ifndef INCLUDED_protocols_jd3_util_hh
+#define INCLUDED_protocols_jd3_util_hh
 
 
---namespace--
+namespace protocols {
+namespace jd3 {
 
---class--::--class--():
- utility::pointer::ReferenceCount()
-{
 
-}
-
---class--::~--class--(){}
-
---class--::--class--( --class-- const & ) {
-
-}
+///@brief Prints the job template to a Tracer.
+void
+print_job_template();
 
 
 
---class--OP
---class--::clone() const {
-	return --class--OP( new --class--( *this ) );
-}
+} //protocols
+} //jd3
 
 
---end_namespace--
-
-
-
-
-
+#endif //protocols/jd3_util_hh
 

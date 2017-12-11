@@ -76,6 +76,14 @@ bool StubID::operator != ( StubID const & rhs ) const
 } // namespace id
 } // namespace core
 
+///@brief Set the value of atom and residue.
+void
+core::id::AtomID::set( core::Size atomno_in, core::Size rsd_in){
+	atomno_ = atomno_in;
+	rsd_ = rsd_in;
+}
+
+
 #ifdef    SERIALIZATION
 
 /// @brief Automatically generated serialization method

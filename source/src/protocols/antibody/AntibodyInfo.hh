@@ -9,8 +9,8 @@
 //
 /// @file protocols/antibody/AntibodyInfo.hh
 /// @brief Class for getting antibody-specific objects and information
-/// @author Jianqing Xu (xubest@gmail.com)
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @author Jianqing Xu (xubest@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_AntibodyInfo_hh
 #define INCLUDED_protocols_antibody_AntibodyInfo_hh

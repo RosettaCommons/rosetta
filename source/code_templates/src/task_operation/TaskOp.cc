@@ -28,7 +28,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
+static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
     using namespace core::pack::task::operation;

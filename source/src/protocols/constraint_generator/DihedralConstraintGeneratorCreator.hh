@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file --path--/--class--Creator.hh
-/// @brief --brief--
-/// @author --name-- (--email--)
+/// @file protocols/constraint_generator/DihedralConstraintGeneratorCreator.hh
+/// @brief A cst generator that creates Dihedral constraints for specified residues using a residue selector.
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_--path_underscore--_--class--Creator_hh
-#define INCLUDED_--path_underscore--_--class--Creator_hh
+#ifndef INCLUDED_protocols_constraint_generator_DihedralConstraintGeneratorCreator_hh
+#define INCLUDED_protocols_constraint_generator_DihedralConstraintGeneratorCreator_hh
 
 // Unit headers
 #include <protocols/constraint_generator/ConstraintGeneratorCreator.hh>
@@ -20,9 +20,10 @@
 // Protocol headers
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 
---namespace--
+namespace protocols {
+namespace constraint_generator {
 
-class --class--Creator : public protocols::constraint_generator::ConstraintGeneratorCreator {
+class DihedralConstraintGeneratorCreator : public protocols::constraint_generator::ConstraintGeneratorCreator {
 public:
 	protocols::constraint_generator::ConstraintGeneratorOP
 	create_constraint_generator() const override;
@@ -34,6 +35,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
---end_namespace--
+} //protocols
+} //constraint_generator
 
-#endif //INCLUDED_--path--_--class--_fwd_hh
+#endif //INCLUDED_protocols/constraint_generator_DihedralConstraintGenerator_fwd_hh

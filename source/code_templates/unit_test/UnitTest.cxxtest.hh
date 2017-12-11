@@ -29,7 +29,7 @@
 // Utility, etc Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("--class--");
+static basic::Tracer TR("--class--");
 
 
 class --class-- : public CxxTest::TestSuite {

@@ -132,7 +132,8 @@ enum MainchainTorsionType {
 	psi_dihedral,
 	omega_dihedral,
 	omega2_dihedral,
-	omega3_dihedral
+	omega3_dihedral,
+
 };
 
 

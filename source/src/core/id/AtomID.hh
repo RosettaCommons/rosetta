@@ -65,6 +65,10 @@ public: // Creation
 	static constexpr AtomID BOGUS_ATOM_ID() { return AtomID(); }
 	static constexpr AtomID CHAINBREAK_BOGUS_ATOM_ID() { return AtomID(); }
 
+	///@brief Set the value of atom and residue.
+	void
+	set( core::Size atomno_in, core::Size rsd_in);
+
 public: // Properties
 
 	/// @brief Returns the AtomID residue number
@@ -90,6 +94,7 @@ public: // Properties
 	inline
 	bool
 	valid() const { return ( atomno_ > 0 ) && ( rsd_ > 0 ); }
+
 
 public: // Friends
 

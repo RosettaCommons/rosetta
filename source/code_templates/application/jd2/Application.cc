@@ -29,7 +29,7 @@
 #include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
 
-static THREAD_LOCAL basic::Tracer TR("--app_name--");
+static basic::Tracer TR("--app_name--");
 
 
 void register_options() {

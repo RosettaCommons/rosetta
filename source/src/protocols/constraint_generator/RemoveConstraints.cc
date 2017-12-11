@@ -147,7 +147,7 @@ void RemoveConstraints::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "constraint_generators", xs_string, "XRW TO DO" );
+		+ XMLSchemaAttribute::required_attribute( "constraint_generators", xs_string, "List of constraint generator names, separated by a comma" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Remove constraints defined by the specified constraint generators from the pose", attlist );
 }
 

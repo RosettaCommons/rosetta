@@ -30,6 +30,7 @@
 #include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
 #include <protocols/jd3/standard/MoverAndPoseJob.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
+#include <protocols/jd3/util.hh>
 
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
@@ -127,6 +128,14 @@ main( int argc, char * argv [] )
 			protocols::rosetta_scripts::print_information( option[ parser::info ]() );
 		} else if ( option[ parser::output_schema ].user() ) {
 			protocols::rosetta_scripts::save_schema( option[ parser::output_schema ] );
+		} else if ( ! option[ in::file::job_definition_file ].user() ) { // Just print a template script and exit if no input script is provided.
+
+			protocols::rosetta_scripts::print_template_script();
+			protocols::jd3::print_job_template();
+			TR << "\n\nExample of Basic <Options>: \n" <<
+				"<parser__protocol value=\"my_rosetta_script.xml\"/>" << std::endl <<
+				"<parser__script_vars value=\"branch=1 cartmin=0 rounds=15 min_rings=0\" />\n\n" << std::endl << std::endl;
+
 		} else { // If an input script has been provided, then we're not printing a template script and exiting.
 
 			//View does not make sense for JD3 - I think more would need to be done to get that compatible.  I think watching a single process should be possible,
@@ -135,6 +144,7 @@ main( int argc, char * argv [] )
 			protocols::jd3::JobDistributorOP jd = protocols::jd3::JobDistributorFactory::create_job_distributor();
 
 			protocols::jd3::JobQueenOP queen( new ParsedProtocolJobQueen );
+
 			jd->go( queen );
 		}
 

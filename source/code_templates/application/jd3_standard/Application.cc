@@ -53,7 +53,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR("--app_name--");
+static basic::Tracer TR("--app_name--");
 
 --new_app_options_out--
 

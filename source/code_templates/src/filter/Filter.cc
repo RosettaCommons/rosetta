@@ -21,7 +21,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
+static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
 

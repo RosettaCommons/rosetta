@@ -22,6 +22,7 @@ sources = {
 		"ConstraintGeneratorFactory",
 		"ConstraintsManager",
 		"ConstraintsMap",
+		"DihedralConstraintGenerator",
 		"DistanceConstraintGenerator",
 		"HydrogenBondConstraintGenerator",
 		"MembraneSpanConstraintGenerator",
@@ -145,6 +146,7 @@ sources = {
 		"JobSummary",
 		"LarvalJob",
 		"InputSource",
+		"util",
 	],
 	"protocols/jd3/deallocation": [
 		"DeallocationMessage",

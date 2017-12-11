@@ -201,6 +201,10 @@ class GenerateRosettaTemplates(object):
                 print("\nFeature Reporter Creator should be registered in (protocols.7) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterRegistrators.ihh and \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterCreators.ihh\n")
+            elif self.options.type == "constraint_generator":
+                print("\nConstraint Generator Creator should be registered in (protocols.7) \n" \
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.ConstraintGeneratorRegistrators.ihh and \n" \
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.ConstraintGeneratorCreators.ihh\n")
             elif re.search("jd3", self.options.type):
                 print("\n Help for creating a JD3 application can be found at https://wiki.rosettacommons.org/index.php/JD3FAQ \n" \
                      "   "+"See src/apps/pilot/andrew/fixbb_jd3.cc for a current standard JD3 example. \n")

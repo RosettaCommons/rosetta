@@ -15,7 +15,7 @@
 
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.util" );
+static basic::Tracer TR( "--namespace_dot--.util" );
 
 
 --namespace--
