@@ -13,7 +13,66 @@ from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.rosetta.core.pose import remove_upper_terminus_type_from_pose_residue
 from pyrosetta.rosetta.core.pose import add_upper_terminus_type_to_pose_residue
 from pyrosetta.rosetta.core.conformation import Residue
+
+from pyrosetta.rosetta.core.select import get_residues_from_subset
+from pyrosetta.rosetta.core.select.residue_selector import TrueResidueSelector, NeighborhoodResidueSelector
+from pyrosetta.rosetta.core.select.residue_selector import ResidueIndexSelector, AndResidueSelector
+from pyrosetta.rosetta.core.select.residue_selector import PrimarySequenceNeighborhoodSelector
+from pyrosetta.rosetta.core.select.residue_selector import NotResidueSelector
+
 from pyrosetta.bindings.utility import slice_1base_indicies, bind_method, bind_property
+
+
+@bind_method(Pose)
+def residue_pairs(self,
+                  primary_residue_selector=TrueResidueSelector(),
+                  secondary_residue_selector=TrueResidueSelector(),
+                  neighborhood_distance_maximum=None,
+                  sequence_distance_minimum=None):
+    """Iterate the permutations of residue pairs from two selections which are
+    within a cartesian and/or outside a sequence distance cutoff.
+
+    The method uses the PrimarySequenceNeighborhoodSelector and
+    NeighborhoodResidueSelector under the hood. Note that all _permutations_ of
+    residues are yielded, not _combinations_. If you prefer combinations simply
+    check `if residue_pair[0].sequence_position() > residue_pair[1].sequence_position():`.
+
+    primary_residue_selector - ResidueSelector
+    secondary_residue_selector - ResidueSelector
+    neighborhood_distance - float
+    sequence_distance - int
+
+    return - iterator(tuple(Residue, Residue))
+    """
+    primary_residue_selection = primary_residue_selector.apply(self)
+    primary_residue_indices = get_residues_from_subset(primary_residue_selection)
+
+    for primary_residue_index in primary_residue_indices:
+        temp_secondary_residue_selector = secondary_residue_selector
+
+        primary_residue_index_selector = ResidueIndexSelector(primary_residue_index)
+        temp_secondary_residue_selector = AndResidueSelector(temp_secondary_residue_selector,
+                                                             NotResidueSelector(primary_residue_index_selector))
+
+        if neighborhood_distance_maximum: # Select residues within cartesian neighborhood distance
+            neighborhood_residue_selector = NeighborhoodResidueSelector(primary_residue_index_selector,
+                                                                        neighborhood_distance_maximum,
+                                                                        False)
+            temp_secondary_residue_selector = AndResidueSelector(temp_secondary_residue_selector,
+                                                                 neighborhood_residue_selector)
+
+        if sequence_distance_minimum: # Select residues outside sequence neighborhood distance
+            sequence_residue_selector = PrimarySequenceNeighborhoodSelector(sequence_distance_minimum,
+                                                                            sequence_distance_minimum,
+                                                                            primary_residue_index_selector)
+            temp_secondary_residue_selector = AndResidueSelector(temp_secondary_residue_selector,
+                                                                 NotResidueSelector(sequence_residue_selector))
+
+        secondary_residue_selection = temp_secondary_residue_selector.apply(self)
+        secondary_residue_indices = get_residues_from_subset(secondary_residue_selection)
+
+        for secondary_residue_index in secondary_residue_indices:
+            yield tuple([self.residues[primary_residue_index], self.residues[secondary_residue_index]])
 
 
 class PoseResidueAccessor(object):

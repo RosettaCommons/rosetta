@@ -7,12 +7,15 @@
 
 from __future__ import print_function
 import timeit
+from collections import defaultdict
 
 import pyrosetta
 from pyrosetta.rosetta.core.pose import Pose
+from pyrosetta.rosetta.core.conformation import Residue
 from pyrosetta.rosetta.core.kinematics import FoldTree
+from pyrosetta.rosetta.core.select.residue_selector import ResidueIndexSelector
 
-pyrosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+pyrosetta.init(extra_options = "-constant_seed -out:mute all")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
 pose1 = pyrosetta.pose_from_sequence('ACDEFGHI')
@@ -82,5 +85,69 @@ ft.add_edge(2, 3, 2)
 assert(pose3.fold_tree().__str__() == ft.__str__())
 
 # Time Pose.residues
-#print('Time to allocate 100000 residue accessors:',
-#      timeit.timeit('pose_residues = pose.residues', setup='import pyrosetta; pose = pyrosetta.pose_from_sequence("ACDEFGHI")', number=100000))
+# print('Time to allocate 100000 residue accessors:',
+#        timeit.timeit('pose_residues = pose.residues', setup='import pyrosetta; pose = pyrosetta.pose_from_sequence("ACDEFGHI")', number=100000))
+
+# Test Pose.residue_pairs
+pose = pyrosetta.pose_from_file('../test/data/test_in_short.pdb')
+for residue_pair in pose.residue_pairs():
+    assert len(residue_pair) == 2
+    assert all([isinstance(residue, Residue) for residue in residue_pair])
+
+paired_residues = list()
+for residue_pair in pose.residue_pairs(primary_residue_selector=ResidueIndexSelector(10)):
+    assert(residue_pair[0].name1() == 'D')
+    paired_residues.append(residue_pair[1].name1())
+assert(len(paired_residues) == 19)
+assert(''.join(paired_residues) == 'DAITIHSILWIEDNLESPL')
+
+paired_residues = list()
+for residue_pair in pose.residue_pairs(primary_residue_selector=ResidueIndexSelector(10), sequence_distance_minimum=5):
+    assert(residue_pair[0].name1() == 'D')
+    paired_residues.append(residue_pair[1].name1())
+assert(len(paired_residues) == 9)
+assert(''.join(paired_residues) == 'DAITLESPL')
+
+paired_residues = list()
+for residue_pair in pose.residue_pairs(secondary_residue_selector=ResidueIndexSelector(10), sequence_distance_minimum=1):
+    assert(residue_pair[1].name1() == 'D')
+    paired_residues.append(residue_pair[0].name1())
+assert(len(paired_residues) == 17)
+assert(''.join(paired_residues) == 'DAITIHSIIEDNLESPL')
+
+paired_residues = list()
+for residue_pair in pose.residue_pairs(primary_residue_selector=ResidueIndexSelector(10), neighborhood_distance_maximum=8.5):
+    assert(residue_pair[0].name1() == 'D')
+    paired_residues.append(residue_pair[1].name1())
+assert(len(paired_residues) == 8)
+assert(''.join(paired_residues) == 'HSILWIED')
+
+paired_residues = list()
+for residue_pair in pose.residue_pairs(primary_residue_selector=ResidueIndexSelector(10), neighborhood_distance_maximum=12.5):
+    assert(residue_pair[0].name1() == 'D')
+    paired_residues.append(residue_pair[1].name1())
+assert(len(paired_residues) == 13)
+assert(''.join(paired_residues) == 'ITIHSILWIEDNL')
+
+paired_residues = list()
+for residue_pair in pose.residue_pairs(primary_residue_selector=ResidueIndexSelector(10), sequence_distance_minimum=2, neighborhood_distance_maximum=8.5):
+    assert(residue_pair[0].name1() == 'D')
+    paired_residues.append(residue_pair[1].name1())
+assert(len(paired_residues) == 4)
+assert(''.join(paired_residues) == 'HSED')
+
+paired_residues = defaultdict(list)
+for residue_pair in pose.residue_pairs(primary_residue_selector=ResidueIndexSelector('5,10'), secondary_residue_selector=ResidueIndexSelector('5,6,7,8,9,10'), sequence_distance_minimum=2, neighborhood_distance_maximum=12.5):
+    paired_residues[residue_pair[0].name1()].append(residue_pair[1].name1())
+
+assert(len(paired_residues) == 2)
+assert(paired_residues['D'] == ['I', 'H', 'S',])
+assert(paired_residues['I'] == ['I', 'L', 'D'])
+
+# Profile Pose.residue_pairs
+# import cProfile
+# pose = pyrosetta.pose_from_file("../test/data/test_in.pdb")
+# def iter_residue_pairs():
+#     for residue_pair in pose.residue_pairs(sequence_distance_minimum=2, neighborhood_distance_maximum=8.5):
+#         pass
+# cProfile.run('iter_residue_pairs()')
