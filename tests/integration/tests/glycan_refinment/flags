@@ -12,7 +12,7 @@
 -auto_detect_glycan_connections
 -write_glycan_pdb_codes true
 -maintain_links true
--only_chairs
+-ideal_sugars
 
 # ligand
 -ignore_unrecognized_res
