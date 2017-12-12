@@ -22,8 +22,8 @@ namespace keys {
 
 // Forward
 template<
-typename K1,
-typename K2
+	typename K1,
+	typename K2
 >
 class Key2Tuple;
 

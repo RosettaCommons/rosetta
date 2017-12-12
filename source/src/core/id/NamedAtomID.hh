@@ -60,7 +60,7 @@ public: // Creation
 
 	// @brief Property constructor
 	template <class T,
-			  typename = typename std::enable_if< utility::type_traits::is_string_constructible<T>::value >::type >
+		typename = typename std::enable_if< utility::type_traits::is_string_constructible<T>::value >::type >
 	NamedAtomID(
 		T&& atom_in,
 		Size const rsd_in

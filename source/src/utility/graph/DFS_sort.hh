@@ -31,7 +31,7 @@ namespace graph {
 /// See depth_first_search_sort for details
 
 template <class IncidenceGraph, class DFSVisitor, class ColorMap,
-class SortFunc>
+	class SortFunc>
 void depth_first_visit_sort_impl
 (const IncidenceGraph& g,
 	typename boost::graph_traits<IncidenceGraph>::vertex_descriptor u,

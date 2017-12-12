@@ -63,11 +63,11 @@ const int gz_reserved    = 0xE0; // bits 5..7: reserved
 
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_zip_streambuf(
 	ostream_reference ostream_,
@@ -103,11 +103,11 @@ basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_zip_streambuf(
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::~basic_zip_streambuf()
 {
@@ -117,11 +117,11 @@ basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::~basic_zip_streambuf()
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 int
 basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::sync()
@@ -134,11 +134,11 @@ basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::sync()
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 typename basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::int_type
 basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::overflow(
@@ -160,11 +160,11 @@ basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::overflow(
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 bool
 basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::zip_to_stream(
@@ -225,11 +225,11 @@ basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::zip_to_stream(
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 std::streamsize basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::flush(
 	int flush_mode
@@ -291,11 +291,11 @@ std::streamsize basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::flush(
 
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 std::streamsize basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::flush()
 {
@@ -305,11 +305,11 @@ std::streamsize basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::flush()
 
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 std::streamsize basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::flush_finalize()
 {
@@ -319,11 +319,11 @@ std::streamsize basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::flush_fin
 
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 void basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::reset_state()
 {
@@ -339,11 +339,11 @@ void basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::reset_state()
 
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_unzip_streambuf(
 	istream_reference istream_,
@@ -375,11 +375,11 @@ basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_unzip_streambuf(
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 size_t basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::fill_input_buffer()
 {
@@ -393,11 +393,11 @@ size_t basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::fill_input_buffe
 
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::~basic_unzip_streambuf()
 {
@@ -405,11 +405,11 @@ basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::~basic_unzip_streambuf(
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 typename basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::int_type
 basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::underflow()
@@ -442,11 +442,11 @@ basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::underflow()
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 std::streamsize basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::unzip_from_stream(
 	char_type * buffer_,
@@ -480,11 +480,11 @@ std::streamsize basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::unzip_f
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 void basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::put_back_from_zip_stream()
 {
@@ -500,11 +500,11 @@ void basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::put_back_from_zip_
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 int
 basic_zip_istream< Elem, Tr, ElemA, ByteT, ByteAT >::check_header()
@@ -566,11 +566,11 @@ basic_zip_istream< Elem, Tr, ElemA, ByteT, ByteAT >::check_header()
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 void basic_zip_istream< Elem, Tr, ElemA, ByteT, ByteAT >::read_footer()
 {
@@ -581,11 +581,11 @@ void basic_zip_istream< Elem, Tr, ElemA, ByteT, ByteAT >::read_footer()
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 void basic_zip_ostream< Elem, Tr, ElemA, ByteT, ByteAT >::put_long_as_uint32(
 	typename basic_zip_ostream< Elem, Tr, ElemA, ByteT, ByteAT >::ostream_reference out_,
@@ -609,11 +609,11 @@ void basic_zip_ostream< Elem, Tr, ElemA, ByteT, ByteAT >::put_long_as_uint32(
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 void basic_zip_istream< Elem, Tr, ElemA, ByteT, ByteAT >::read_uint32(
 	istream_reference in_,
@@ -635,11 +635,11 @@ void basic_zip_istream< Elem, Tr, ElemA, ByteT, ByteAT >::read_uint32(
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 void basic_zip_ostream< Elem, Tr, ElemA, ByteT, ByteAT >::add_header()
 {
@@ -656,11 +656,11 @@ void basic_zip_ostream< Elem, Tr, ElemA, ByteT, ByteAT >::add_header()
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 void basic_zip_ostream< Elem, Tr, ElemA, ByteT, ByteAT >::add_footer()
 {

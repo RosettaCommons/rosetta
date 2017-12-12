@@ -55,11 +55,11 @@ enum MPI_FILE_STATUS {
 /// @brief A stream decorator that takes raw input and zips it to a ostream.
 /// @note  The class wraps up the inflate method of the zlib library 1.1.4 http://www.gzip.org/zlib/
 template<
-typename Elem,
-typename Tr = std::char_traits< Elem >,
-typename ElemA = std::allocator< Elem >,
-typename ByteT = unsigned char,
-typename ByteAT = std::allocator< ByteT >
+	typename Elem,
+	typename Tr = std::char_traits< Elem >,
+	typename ElemA = std::allocator< Elem >,
+	typename ByteT = unsigned char,
+	typename ByteAT = std::allocator< ByteT >
 >
 class basic_mpi_streambuf :
 	public std::basic_streambuf< Elem, Tr >
@@ -132,11 +132,11 @@ private:
 /// @brief Base class for mpi ostreams
 /// @note  Contains a basic_mpi_streambuf
 template<
-typename Elem,
-typename Tr = std::char_traits< Elem >,
-typename ElemA = std::allocator< Elem >,
-typename ByteT = unsigned char,
-typename ByteAT = std::allocator< ByteT >
+	typename Elem,
+	typename Tr = std::char_traits< Elem >,
+	typename ElemA = std::allocator< Elem >,
+	typename ByteT = unsigned char,
+	typename ByteAT = std::allocator< ByteT >
 >
 class basic_mpi_ostreambase :
 	virtual public std::basic_ios< Elem, Tr >
@@ -209,11 +209,11 @@ private:
 /// mpiper.zflush();
 /// \endcode
 template<
-typename Elem,
-typename Tr = std::char_traits< Elem >,
-typename ElemA = std::allocator< Elem >,
-typename ByteT = unsigned char,
-typename ByteAT = std::allocator< ByteT >
+	typename Elem,
+	typename Tr = std::char_traits< Elem >,
+	typename ElemA = std::allocator< Elem >,
+	typename ByteT = unsigned char,
+	typename ByteAT = std::allocator< ByteT >
 >
 class basic_mpi_ostream :
 	public basic_mpi_ostreambase< Elem, Tr, ElemA, ByteT, ByteAT >,

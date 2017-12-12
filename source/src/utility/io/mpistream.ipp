@@ -23,11 +23,11 @@ namespace io {
 namespace mpi_stream {
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_mpi_streambuf(
 	std::string MPI_ONLY( filename ),
@@ -65,11 +65,11 @@ basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_mpi_streambuf(
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 void
 basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::print_header( std::string const& MPI_ONLY(header) ) {
@@ -88,11 +88,11 @@ basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::print_header( std::string
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::~basic_mpi_streambuf()
 {
@@ -102,11 +102,11 @@ basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::~basic_mpi_streambuf()
 
 ////SYNC
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 int
 basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::sync()
@@ -121,11 +121,11 @@ basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::sync()
 
 ///OVERFLOW
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 typename basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::int_type
 basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::overflow(
@@ -148,11 +148,11 @@ basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::overflow(
 
 ///+++ SEND_TO_MASTER ++++
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 bool
 basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::send_to_master(
@@ -193,11 +193,11 @@ buffer_
 }
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 std::streamsize basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::flush( bool
 #ifdef USEMPI
@@ -250,11 +250,11 @@ std::streamsize basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::flush( bo
 
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 void basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::reset_state()
 {
@@ -263,11 +263,11 @@ void basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::reset_state()
 
 
 template<
-typename Elem,
-typename Tr,
-typename ElemA,
-typename ByteT,
-typename ByteAT
+	typename Elem,
+	typename Tr,
+	typename ElemA,
+	typename ByteT,
+	typename ByteAT
 >
 
 void basic_mpi_ostream< Elem, Tr, ElemA, ByteT, ByteAT >::put_long_as_uint32(

@@ -72,11 +72,11 @@ enum EStrategy
 /// @brief A stream decorator that takes raw input and zips it to a ostream.
 /// @note  The class wraps up the inflate method of the zlib library 1.1.4 http://www.gzip.org/zlib/
 template<
-typename Elem,
-typename Tr = std::char_traits< Elem >,
-typename ElemA = std::allocator< Elem >,
-typename ByteT = unsigned char,
-typename ByteAT = std::allocator< ByteT >
+	typename Elem,
+	typename Tr = std::char_traits< Elem >,
+	typename ElemA = std::allocator< Elem >,
+	typename ByteT = unsigned char,
+	typename ByteAT = std::allocator< ByteT >
 >
 class basic_zip_streambuf :
 	public std::basic_streambuf< Elem, Tr >
@@ -164,11 +164,11 @@ private:
 /// @brief A stream decorator that takes compressed input and unzips it to a istream.
 /// @note  The class wraps up the deflate method of the zlib library 1.1.4 http://www.gzip.org/zlib/
 template<
-typename Elem,
-typename Tr = std::char_traits< Elem >,
-typename ElemA = std::allocator< Elem >,
-typename ByteT = unsigned char,
-typename ByteAT = std::allocator< ByteT >
+	typename Elem,
+	typename Tr = std::char_traits< Elem >,
+	typename ElemA = std::allocator< Elem >,
+	typename ByteT = unsigned char,
+	typename ByteAT = std::allocator< ByteT >
 >
 class basic_unzip_streambuf :
 	public std::basic_streambuf< Elem, Tr >
@@ -243,11 +243,11 @@ private:
 /// @brief Base class for zip ostreams
 /// @note  Contains a basic_zip_streambuf
 template<
-typename Elem,
-typename Tr = std::char_traits< Elem >,
-typename ElemA = std::allocator< Elem >,
-typename ByteT = unsigned char,
-typename ByteAT = std::allocator< ByteT >
+	typename Elem,
+	typename Tr = std::char_traits< Elem >,
+	typename ElemA = std::allocator< Elem >,
+	typename ByteT = unsigned char,
+	typename ByteAT = std::allocator< ByteT >
 >
 class basic_zip_ostreambase :
 	virtual public std::basic_ios< Elem, Tr >
@@ -304,11 +304,11 @@ private:
 /// @brief Base class for unzip istreams
 /// @note  Contains a basic_unzip_streambuf
 template<
-typename Elem,
-typename Tr = std::char_traits< Elem >,
-typename ElemA = std::allocator< Elem >,
-typename ByteT = unsigned char,
-typename ByteAT = std::allocator< ByteT >
+	typename Elem,
+	typename Tr = std::char_traits< Elem >,
+	typename ElemA = std::allocator< Elem >,
+	typename ByteT = unsigned char,
+	typename ByteAT = std::allocator< ByteT >
 >
 class basic_zip_istreambase :
 	virtual public std::basic_ios< Elem, Tr >
@@ -383,11 +383,11 @@ private:
 /// zipper.zflush();
 /// \endcode
 template<
-typename Elem,
-typename Tr = std::char_traits< Elem >,
-typename ElemA = std::allocator< Elem >,
-typename ByteT = unsigned char,
-typename ByteAT = std::allocator< ByteT >
+	typename Elem,
+	typename Tr = std::char_traits< Elem >,
+	typename ElemA = std::allocator< Elem >,
+	typename ByteT = unsigned char,
+	typename ByteAT = std::allocator< ByteT >
 >
 class basic_zip_ostream :
 	public basic_zip_ostreambase< Elem, Tr, ElemA, ByteT, ByteAT >,
@@ -560,11 +560,11 @@ private:
 /// unzipper>>f_r>>d_r>>ui_r>>ul_r>>us_r>>c_r>>dum_r;
 /// \endcode
 template<
-typename Elem,
-typename Tr = std::char_traits< Elem >,
-typename ElemA = std::allocator< Elem >,
-typename ByteT = unsigned char,
-typename ByteAT = std::allocator< ByteT >
+	typename Elem,
+	typename Tr = std::char_traits< Elem >,
+	typename ElemA = std::allocator< Elem >,
+	typename ByteT = unsigned char,
+	typename ByteAT = std::allocator< ByteT >
 >
 class basic_zip_istream :
 	public basic_zip_istreambase< Elem, Tr, ElemA, ByteT, ByteAT >,

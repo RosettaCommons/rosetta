@@ -42,7 +42,7 @@ class EXCN_Stop_BFS : public utility::excn::Exception {
 /// See breadth_first_search_prune for details
 
 template <class IncidenceGraph, class Buffer, class BFSVisitor,
-class ColorMap>
+	class ColorMap>
 void breadth_first_visit_prune
 (const IncidenceGraph& g,
 	typename boost::graph_traits<IncidenceGraph>::vertex_descriptor s,
@@ -89,7 +89,7 @@ void breadth_first_visit_prune
 } // breadth_first_visit
 
 template <class IncidenceGraph, class BFSVisitor,
-class ColorMap>
+	class ColorMap>
 void breadth_first_visit_prune
 (const IncidenceGraph &,
 	typename boost::graph_traits<IncidenceGraph>::vertex_descriptor s,
@@ -121,7 +121,7 @@ void breadth_first_visit_prune
 /// Any of the above functions can throw a EXCN_Stop_BFS exception, which will immediately halt the search.
 
 template <class VertexListGraph, class Buffer, class BFSVisitor,
-class ColorMap>
+	class ColorMap>
 void breadth_first_search_prune
 (const VertexListGraph& g,
 	typename boost::graph_traits<VertexListGraph>::vertex_descriptor s,
