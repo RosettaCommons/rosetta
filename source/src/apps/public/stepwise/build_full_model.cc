@@ -265,17 +265,17 @@ void BuildFullModel::make_built_residues_virtual(
 			// AMW: this is not good. Not necessary and typically destructive
 			/*ResidueOP start_rsd = 0;
 			if ( other_idx ) {
-				FullModelInfo const & other_info = const_full_model_info( *other_ops[other_idx] );
-				start_rsd = ResidueOP( new Residue( other_ops[other_idx]->residue( other_info.full_to_sub( full_model_res ) ) ) );
+			FullModelInfo const & other_info = const_full_model_info( *other_ops[other_idx] );
+			start_rsd = ResidueOP( new Residue( other_ops[other_idx]->residue( other_info.full_to_sub( full_model_res ) ) ) );
 			} else {
-				start_rsd = ResidueOP( new Residue( start_pose.residue( start_info.full_to_sub( full_model_res ) ) ) );
+			start_rsd = ResidueOP( new Residue( start_pose.residue( start_info.full_to_sub( full_model_res ) ) ) );
 			}
 			utility::vector1< std::string > variant_types = start_rsd->type().properties().get_list_of_variants();
 
 			for ( Size j = 1; j <= variant_types.size(); ++j ) {
-				VariantType const & variant_type = start_rsd->type().properties().get_variant_from_string( variant_types[j] );
-				TR << "About to add " << variant_types[j] << " to residue " << full_model_res << ": " << full_model_pose.residue_type( full_model_res ).name() << std::endl;
-				add_variant_type_to_pose_residue( full_model_pose, variant_type, full_model_res );
+			VariantType const & variant_type = start_rsd->type().properties().get_variant_from_string( variant_types[j] );
+			TR << "About to add " << variant_types[j] << " to residue " << full_model_res << ": " << full_model_pose.residue_type( full_model_res ).name() << std::endl;
+			add_variant_type_to_pose_residue( full_model_pose, variant_type, full_model_res );
 			}*/
 		} else {
 			// close cutpoints
