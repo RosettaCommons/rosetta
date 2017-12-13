@@ -497,6 +497,9 @@ StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose
 	for ( Size n = 1; n <= working_res.size(); n++ ) {
 		if ( !stepwise_addable_residue( working_res[ n ],
 				const_full_model_info( start_pose ).full_model_parameters()->non_standard_residue_map() ) ) continue;
+		if ( !res_list.has_value( working_res[ n ] ) && !bulge_res.has_value( working_res[ n ] ) ) {
+			TR.Error << "Residue " << working_res[ n ] << " not built!" << std::endl;
+		}
 		runtime_assert( res_list.has_value( working_res[ n ] ) || bulge_res.has_value( working_res[ n ] ) );
 	}
 }

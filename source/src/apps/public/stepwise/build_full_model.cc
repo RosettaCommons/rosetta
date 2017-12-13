@@ -219,6 +219,7 @@ BuildFullModel::make_built_residues_repulsive(
 
 				// Add the REPLONLY variant using the same method as
 				// add_virtual_rna_residue_type
+				TR << "About to add REPLONLY to residue " << full_model_res << ": " << full_model_pose.residue_type( full_model_res ).name() << std::endl;
 				pose::add_variant_type_to_pose_residue( full_model_pose, REPLONLY, full_model_res );
 
 				// Check in terms of transitions between input domains
@@ -233,6 +234,7 @@ BuildFullModel::make_built_residues_repulsive(
 				bool const is_cutpoint_open = ( full_model_pose.fold_tree().is_cutpoint( full_model_res ) && !is_cutpoint_closed );
 
 				if ( ( full_model_pose.size() != full_model_res ) &&  ( !is_cutpoint_open ) ) {
+					TR << "About to add REPLONLY to residue " << full_model_res + 1 << ": " << full_model_pose.residue_type( full_model_res + 1 ).name() << std::endl;
 					pose::add_variant_type_to_pose_residue( full_model_pose, REPL_PHOSPHATE, full_model_res + 1 );
 				}
 
@@ -246,7 +248,7 @@ BuildFullModel::make_built_residues_repulsive(
 void BuildFullModel::make_built_residues_virtual(
 	Pose const & start_pose,
 	Pose & full_model_pose,
-	utility::vector1< PoseOP > const & other_ops
+	utility::vector1< PoseOP > const & //other_ops
 ) {
 	using namespace OptionKeys;
 
@@ -260,7 +262,8 @@ void BuildFullModel::make_built_residues_virtual(
 
 		if ( start_info.res_list().has_value( full_model_res ) || other_idx ) {
 			// re-apply variants of residue in start_pose, to residue in full_model_pose
-			ResidueOP start_rsd = 0;
+			// AMW: this is not good. Not necessary and typically destructive
+			/*ResidueOP start_rsd = 0;
 			if ( other_idx ) {
 				FullModelInfo const & other_info = const_full_model_info( *other_ops[other_idx] );
 				start_rsd = ResidueOP( new Residue( other_ops[other_idx]->residue( other_info.full_to_sub( full_model_res ) ) ) );
@@ -271,8 +274,9 @@ void BuildFullModel::make_built_residues_virtual(
 
 			for ( Size j = 1; j <= variant_types.size(); ++j ) {
 				VariantType const & variant_type = start_rsd->type().properties().get_variant_from_string( variant_types[j] );
+				TR << "About to add " << variant_types[j] << " to residue " << full_model_res << ": " << full_model_pose.residue_type( full_model_res ).name() << std::endl;
 				add_variant_type_to_pose_residue( full_model_pose, variant_type, full_model_res );
-			}
+			}*/
 		} else {
 			// close cutpoints
 			//other_idx = start_info.get_idx_for_other_pose_with_residue( full_model_res + 1 );
@@ -535,11 +539,6 @@ main( int argc, char * argv [] )
 
 		// setup
 		devel::init(argc, argv);
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "LOWER_TERMINUS_VARIANT" );
 
 		// run
 		protocols::viewer::viewer_main( my_main );

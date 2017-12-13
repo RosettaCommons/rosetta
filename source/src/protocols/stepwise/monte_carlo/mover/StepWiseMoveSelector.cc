@@ -811,6 +811,8 @@ StepWiseMoveSelector::get_from_scratch_add_move_elements( pose::Pose const & pos
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 	Size nres_full = full_model_info.full_sequence().size();
 
+	if ( options_->from_scratch_frequency() == 0.0 ) return;
+
 	Attachments const blank_attachments;
 
 	for ( Size n = 1; n < nres_full; n++ ) {
@@ -914,7 +916,7 @@ StepWiseMoveSelector::get_docking_add_move_elements( pose::Pose const & pose,
 
 	using namespace core::pose::full_model_info;
 
-	Size const & nres( pose.size() );
+	Size const nres( pose.size() );
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	utility::vector1< Size > const dock_domain_map = const_full_model_info( pose ).dock_domain_map();
@@ -939,7 +941,8 @@ StepWiseMoveSelector::get_docking_add_move_elements( pose::Pose const & pose,
 
 			if ( already_docked[ std::make_pair( dock_domain_i, dock_domain_j ) ] ) continue;
 			if ( dock_domain_j == 0 ) continue; // not a working res.
-			if ( dock_domain_i == dock_domain_j ) continue;
+			// Special for from_scratch_frequency 0.0 -- i.e., the build_full_model case
+			if ( dock_domain_i == dock_domain_j && options_->from_scratch_frequency() != 0.0 ) continue;
 			if ( !is_addable_res( j_full, pose ) ) continue;
 
 			if ( preferred_jump_pair.find( std::make_pair( dock_domain_i, dock_domain_j ) ) !=

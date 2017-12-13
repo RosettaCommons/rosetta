@@ -383,7 +383,7 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ){
 
 		if ( pose.residue_type( res_to_add ).is_RNA() ) {
 			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add );
-			if ( res_to_add_in_full_model_numbering_ < res_list[ res_to_build_off+1 ]-1 ) {
+			if ( res_to_build_off < res_list.size() && res_to_add_in_full_model_numbering_ < res_list[ res_to_build_off+1 ]-1 ) {
 				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res_to_add );
 			}
 		}
@@ -450,7 +450,7 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 			default_jump_atom( pose.residue_type( res_to_build_off+1 ) ) );
 		pose.fold_tree( f );
 
-		if ( res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1 ) {
+		if ( res_to_build_off > 1 && res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1 ) {
 			if ( pose.residue_type( res_to_add ).is_RNA() ) {
 				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res_to_add );
 				if ( !pose.residue_type( res_to_add+1).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ) {
