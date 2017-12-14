@@ -69,6 +69,13 @@ public: // Creation
 		rsd_( rsd_in )
 	{}
 
+	// dedicated constructor for PyRosetta
+	NamedAtomID(std::string const & atom_in, Size const rsd_in) :
+		atom_( atom_in ),
+		rsd_( rsd_in )
+	{}
+
+
 	// These can't be constexpr because std::string contents can't be constexpr
 	static NamedAtomID const BOGUS_NAMED_ATOM_ID() { return NamedAtomID(); }
 	static NamedAtomID const CHAINBREAK_BOGUS_NAMED_ATOM_ID() { return NamedAtomID(); }
@@ -154,9 +161,6 @@ public:
 #endif // SERIALIZATION
 
 }; // NamedAtomID
-
-// Explicitly instantiating constructor for PyRosetta
-template NamedAtomID::NamedAtomID(std::string const &, Size);
 
 /// @brief Globals -- may not be used until after core::init is called.
 extern NamedAtomID const GLOBAL_BOGUS_NAMED_ATOM_ID;

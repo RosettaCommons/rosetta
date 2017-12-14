@@ -72,7 +72,6 @@ operator >>( std::istream & is, NamedAtomID& e )
 	return is;
 }
 
-
 } // namespace id
 } // namespace core
 
