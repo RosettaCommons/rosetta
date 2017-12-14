@@ -317,14 +317,14 @@ public:
 		TS_ASSERT( orig_gln_curr_ind != 0 );
 		conformation::ResidueCOP curr_rot = res5rots.rotamer( orig_gln_curr_ind );
 
-		std::cout << "res5rots.num_rotamers() " << res5rots.num_rotamers() << std::endl;
+		//std::cout << "res5rots.num_rotamers() " << res5rots.num_rotamers() << std::endl;
 		Size count_restypes = 1;
 		Size count_rots_per_restype = 1;
 		Size orig_nrots = res5rots.num_rotamers();
 		Size orig_nrts = res5rots.get_n_residue_types();
 		for ( Size ii = 2; ii <= res5rots.num_rotamers(); ++ii ) {
 			if ( & res5rots.rotamer(ii)->type() != & res5rots.rotamer(ii-1)->type() ) {
-				std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
+				//std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
 				TS_ASSERT_EQUALS( count_rots_per_restype, res5rots.get_n_rotamers_for_residue_type( count_restypes ));
 				count_rots_per_restype = 1;
 				++count_restypes;
@@ -339,9 +339,9 @@ public:
 		Size first_CYS_rot = res5rots.get_residue_type_begin( restype_index_for_rt( res5rots, "CYS" ) );
 		Size first_GLN_rot = res5rots.get_residue_type_begin( restype_index_for_rt( res5rots, "GLN" ) );
 		Size first_TRP_rot = res5rots.get_residue_type_begin( restype_index_for_rt( res5rots, "TRP" ) );
-		std::cout << "Cys: " << first_CYS_rot << std::endl;
-		std::cout << "Gln: " << first_GLN_rot << std::endl;
-		std::cout << "Trp: " << first_TRP_rot << std::endl;
+		//std::cout << "Cys: " << first_CYS_rot << std::endl;
+		//std::cout << "Gln: " << first_GLN_rot << std::endl;
+		//std::cout << "Trp: " << first_TRP_rot << std::endl;
 		TS_ASSERT( first_GLN_rot != 0 && first_TRP_rot != 0 );
 
 		conformation::ResidueCOP rot_CYS = res5rots.rotamer(first_CYS_rot);
@@ -365,7 +365,7 @@ public:
 		count_rots_per_restype = 1; count_restypes = 1;
 		for ( Size ii = 2; ii <= res5rots.num_rotamers(); ++ii ) {
 			if ( & res5rots.rotamer(ii)->type() != & res5rots.rotamer(ii-1)->type() ) {
-				std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
+				//std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
 				TS_ASSERT_EQUALS( count_rots_per_restype, res5rots.get_n_rotamers_for_residue_type( count_restypes ));
 				count_rots_per_restype = 1;
 				++count_restypes;
@@ -426,7 +426,7 @@ public:
 		TS_ASSERT( orig_gln_curr_ind != 0 );
 		conformation::ResidueCOP curr_rot = res5rots.rotamer( orig_gln_curr_ind );
 
-		std::cout << "res5rots.num_rotamers() " << res5rots.num_rotamers() << std::endl;
+		//std::cout << "res5rots.num_rotamers() " << res5rots.num_rotamers() << std::endl;
 		Size count_restypes = 1;
 		Size count_rots_per_restype = 1;
 		Size orig_nrots = res5rots.num_rotamers();
@@ -434,7 +434,7 @@ public:
 		Size orig_nrgs = res5rots.get_n_residue_groups();
 		for ( Size ii = 2; ii <= res5rots.num_rotamers(); ++ii ) {
 			if ( & res5rots.rotamer(ii)->type() != & res5rots.rotamer(ii-1)->type() ) {
-				std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
+				//std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
 				TS_ASSERT_EQUALS( count_rots_per_restype, res5rots.get_n_rotamers_for_residue_type( count_restypes ));
 				count_rots_per_restype = 1;
 				++count_restypes;
@@ -472,7 +472,7 @@ public:
 		count_rots_per_restype = 1; count_restypes = 1;
 		for ( Size ii = 2; ii <= res5rots.num_rotamers(); ++ii ) {
 			if ( & res5rots.rotamer(ii)->type() != & res5rots.rotamer(ii-1)->type() ) {
-				std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
+				//std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
 				TS_ASSERT_EQUALS( count_rots_per_restype, res5rots.get_n_rotamers_for_residue_type( count_restypes ));
 				count_rots_per_restype = 1;
 				++count_restypes;
@@ -506,7 +506,7 @@ public:
 		count_rots_per_restype = 1; count_restypes = 1;
 		for ( Size ii = 2; ii <= res5rots.num_rotamers(); ++ii ) {
 			if ( & res5rots.rotamer(ii)->type() != & res5rots.rotamer(ii-1)->type() ) {
-				std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
+				//std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
 				TS_ASSERT_EQUALS( count_rots_per_restype, res5rots.get_n_rotamers_for_residue_type( count_restypes ));
 				count_rots_per_restype = 1;
 				++count_restypes;
@@ -566,7 +566,7 @@ public:
 		TS_ASSERT( orig_gln_curr_ind != 0 );
 		conformation::ResidueCOP curr_rot = res5rots.rotamer( orig_gln_curr_ind );
 
-		std::cout << "res5rots.num_rotamers() " << res5rots.num_rotamers() << std::endl;
+		//std::cout << "res5rots.num_rotamers() " << res5rots.num_rotamers() << std::endl;
 		Size count_restypes = 1;
 		Size count_rots_per_restype = 1;
 		Size orig_nrots = res5rots.num_rotamers();
@@ -574,7 +574,7 @@ public:
 		Size orig_nrgs = res5rots.get_n_residue_groups();
 		for ( Size ii = 2; ii <= res5rots.num_rotamers(); ++ii ) {
 			if ( & res5rots.rotamer(ii)->type() != & res5rots.rotamer(ii-1)->type() ) {
-				std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
+				//std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
 				TS_ASSERT_EQUALS( count_rots_per_restype, res5rots.get_n_rotamers_for_residue_type( count_restypes ));
 				count_rots_per_restype = 1;
 				++count_restypes;
@@ -619,7 +619,59 @@ public:
 		count_rots_per_restype = 1; count_restypes = 1;
 		for ( Size ii = 2; ii <= res5rots.num_rotamers(); ++ii ) {
 			if ( & res5rots.rotamer(ii)->type() != & res5rots.rotamer(ii-1)->type() ) {
-				std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
+				//std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
+				TS_ASSERT_EQUALS( count_rots_per_restype, res5rots.get_n_rotamers_for_residue_type( count_restypes ));
+				count_rots_per_restype = 1;
+				++count_restypes;
+				TS_ASSERT_EQUALS( res5rots.get_residue_type_begin( count_restypes ), ii );
+			} else {
+				++count_rots_per_restype;
+			}
+			TS_ASSERT_EQUALS( res5rots.get_residue_type_index_for_rotamer( ii ), count_restypes );
+		}
+		TS_ASSERT_EQUALS( count_restypes, res5rots.get_n_residue_types() );
+	}
+
+	// Variant 4:
+	// Add more GLN rotamers to a residue that already is GLN
+	void test_rotamer_set_add_rotamer_into_existing_group4() {
+		using namespace core;
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::pack::task;
+		using namespace core::pack::rotamer_set;
+
+		PoseOP trpcage = create_trpcage_ideal_poseop();
+		ScoreFunction sfxn;
+		sfxn.set_weight( fa_atr, 0.8 );
+		sfxn.set_weight( fa_rep, 0.44 );
+		sfxn( *trpcage );
+
+		PackerTaskOP task = TaskFactory::create_packer_task( *trpcage );
+
+		task->or_include_current( true );
+		for ( Size ii = 1; ii <= trpcage->size(); ++ii ) {
+			if ( ii == 5 ) task->nonconst_residue_task( ii ).restrict_to_repacking();
+			else           task->nonconst_residue_task( ii ).prevent_repacking();
+		}
+
+		utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( *trpcage, sfxn, task );
+
+		RotamerSet_ res5rots;
+		res5rots.set_resid( 5 );
+		res5rots.build_rotamers( *trpcage, sfxn, *task, packer_neighbor_graph, true );
+		Size orig_gln_curr_ind = res5rots.id_for_current_rotamer();
+		TS_ASSERT( orig_gln_curr_ind != 0 );
+		conformation::ResidueCOP curr_rot = res5rots.rotamer( orig_gln_curr_ind );
+
+		//std::cout << "res5rots.num_rotamers() " << res5rots.num_rotamers() << std::endl;
+		Size count_restypes = 1;
+		Size count_rots_per_restype = 1;
+		Size orig_nrots = res5rots.num_rotamers();
+		Size orig_nrts = res5rots.get_n_residue_types();
+		for ( Size ii = 2; ii <= res5rots.num_rotamers(); ++ii ) {
+			if ( & res5rots.rotamer(ii)->type() != & res5rots.rotamer(ii-1)->type() ) {
+				//std::cout << "nrots for " << res5rots.rotamer(ii-1)->type().name() << ": " << count_rots_per_restype << std::endl;
 				TS_ASSERT_EQUALS( count_rots_per_restype, res5rots.get_n_rotamers_for_residue_type( count_restypes ));
 				count_rots_per_restype = 1;
 				++count_restypes;
@@ -631,9 +683,22 @@ public:
 		}
 		TS_ASSERT_EQUALS( count_restypes, res5rots.get_n_residue_types() );
 
+		Size first_GLN_rot = res5rots.get_residue_type_begin( restype_index_for_rt( res5rots, "GLN" ) );
+		//std::cout << "Gln: " << first_GLN_rot << std::endl;
+		TS_ASSERT( first_GLN_rot != 0  );
 
+		conformation::ResidueCOP rot_GLN = res5rots.rotamer(first_GLN_rot);
+		res5rots.add_rotamer_into_existing_group( *rot_GLN );
+		res5rots.add_rotamer_into_existing_group( *rot_GLN );
+		res5rots.add_rotamer_into_existing_group( *rot_GLN );
+
+		TS_ASSERT_EQUALS( res5rots.get_n_residue_types(), orig_nrts ); // should not change
+		TS_ASSERT_EQUALS( res5rots.num_rotamers(), orig_nrots + 3 );
+		TS_ASSERT_EQUALS( res5rots.id_for_current_rotamer(), orig_gln_curr_ind );
+		TS_ASSERT_EQUALS( res5rots.rotamer( res5rots.id_for_current_rotamer() ), curr_rot );
 
 	}
+
 
 
 

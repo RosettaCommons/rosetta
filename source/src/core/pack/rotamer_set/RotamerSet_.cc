@@ -81,7 +81,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-static basic::Tracer tt( "core.pack.rotamer_set.RotamerSet_", basic::t_info );
+static basic::Tracer tt( "core.pack.rotamer_set.RotamerSet_" );
 
 RotamerSet_::RotamerSet_()
 :
@@ -1054,6 +1054,11 @@ RotamerSet_::drop_rotamers( utility::vector1< bool > const & rotamers_to_delete 
 					id_for_current_rotamer_ = count_new;
 				}
 				++count_new;
+			} else if ( ii == id_for_current_rotamer_ ) {
+				// The current rotamer is being deleted
+				// Set id_for_current_rotamer_ to the sentinel value of 0
+				// to indicate that no current rotamer is present in the set.
+				id_for_current_rotamer_ = 0;
 			}
 		}
 		new_rotamers.swap( rotamers_ );
@@ -1568,6 +1573,12 @@ sort_new_rotamers_into_rotset_vector(
 	using core::chemical::ResidueType;
 	using conformation::ResidueOP;
 
+	//tt << "sorting in new rotamers; existing size: " << rotamers.size() << " and awaiting sort size: " << rotamers_waiting_for_sort.size();
+	//tt << "\nExisting:"; for ( auto const & rot : rotamers ) { tt << " " << rot->name3() << " " << &rot->type(); }
+	//tt << "\nNew:"; for ( auto const & rot : rotamers_waiting_for_sort ) { tt << " " << rot->name3() << " " << & rot->type(); }
+	//tt << std::endl;
+
+
 	Rotamers new_rotamers_vector;
 	Size new_id_for_current_rotamer = id_for_current_rotamer;
 	new_rotamers_vector.reserve( rotamers.size() + rotamers_waiting_for_sort.size() );
@@ -1661,6 +1672,21 @@ sort_new_rotamers_into_rotset_vector(
 		new_rotamers_vector.push_back( rotamers[ ii ] );
 		last_rt = & rotamers[ ii ]->type();
 	}
+	//tt << "last_rt" << last_rt << " and new_rots_for_types.count( last_rt ): " << new_rots_for_types.count( last_rt ) << std::endl;
+	if ( last_rt ) {
+		if ( new_rots_for_types.count( last_rt ) ) {
+			for ( auto const & rot : new_rots_for_types[ last_rt ] ) {
+				new_rotamers_vector.push_back( rot );
+			}
+		}
+		if ( same_group_for_existing_restypes.count( last_rt ) ) {
+			for ( auto new_rt : same_group_for_existing_restypes[ last_rt ] ) {
+				for ( auto const & rot : new_rots_for_types[ new_rt ] ) {
+					new_rotamers_vector.push_back( rot );
+				}
+			}
+		}
+	}
 
 	for ( Size ii = 1; ii <= restypes_w_no_existing_group.size(); ++ii ) {
 		if ( restype_w_no_group_claimed[ ii ] ) continue;
@@ -1679,6 +1705,11 @@ sort_new_rotamers_into_rotset_vector(
 
 	debug_assert( new_id_for_current_rotamer == 0 ||
 		rotamers[ id_for_current_rotamer ] == new_rotamers_vector[ new_id_for_current_rotamer ] );
+
+	//tt << "new_rotamers_vector.size(): " << new_rotamers_vector.size() << " == rotamers.size() + rotamers_waiting_for_sort.size() " <<
+	// rotamers.size() << " +  " << rotamers_waiting_for_sort.size() <<std::endl;
+
+	debug_assert( new_rotamers_vector.size() == rotamers.size() + rotamers_waiting_for_sort.size() );
 
 	rotamers.swap( new_rotamers_vector );
 	id_for_current_rotamer = new_id_for_current_rotamer;
